@@ -1,0 +1,80 @@
+graph TB
+    %% User Interface Layer
+    Web[🌐 Web Dashboard<br/>React + Three.js]
+    Mobile[📱 Mobile App<br/>React Native]
+    API_Docs[📚 API Documentation<br/>OpenAPI/Swagger]
+    
+    %% API Gateway
+    Gateway[🚪 API Gateway<br/>Express.js + Helmet]
+    
+    %% Core Services
+    Auth[🔐 Authentication<br/>JWT + Sessions]
+    Biomech[🏃 Biomechanics Engine<br/>Pose Analysis]
+    ML[🧠 ML Pipeline<br/>TensorFlow + Predictions]
+    RealTime[⚡ Real-time Service<br/>WebSocket + SSE]
+    
+    %% Data Processing
+    PoseProcessor[📊 Pose Processor<br/>3D Keypoint Analysis]
+    Analytics[📈 Analytics Engine<br/>Statistical Calculations]
+    VideoGen[🎥 Video Generator<br/>Clip Generation]
+    
+    %% Data Storage
+    PostgreSQL[(🐘 PostgreSQL<br/>Primary Database)]
+    Redis[(🔥 Redis<br/>Cache + Sessions)]
+    MinIO[(📦 MinIO<br/>S3 Compatible Storage)]
+    
+    %% External APIs
+    MLB_API[⚾ MLB Stats API<br/>Real Game Data]
+    ESPN_API[🏈 ESPN API<br/>Sports Data]
+    SO_API[📚 Stack Overflow API<br/>Community Support]
+    
+    %% Monitoring
+    Grafana[📊 Grafana<br/>Monitoring Dashboard]
+    Prometheus[📈 Prometheus<br/>Metrics Collection]
+    
+    %% Connections
+    Web --> Gateway
+    Mobile --> Gateway
+    Gateway --> Auth
+    Gateway --> Biomech
+    Gateway --> ML
+    Gateway --> RealTime
+    
+    Auth --> PostgreSQL
+    Auth --> Redis
+    
+    Biomech --> PoseProcessor
+    Biomech --> Analytics
+    Biomech --> VideoGen
+    
+    PoseProcessor --> MinIO
+    Analytics --> PostgreSQL
+    VideoGen --> MinIO
+    
+    ML --> PostgreSQL
+    ML --> Redis
+    
+    RealTime --> Redis
+    RealTime --> PostgreSQL
+    
+    Gateway --> MLB_API
+    Gateway --> ESPN_API
+    Gateway --> SO_API
+    
+    Prometheus --> Gateway
+    Prometheus --> PostgreSQL
+    Prometheus --> Redis
+    Grafana --> Prometheus
+    
+    %% Styling
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef database fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef monitoring fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class Web,Mobile,API_Docs frontend
+    class Gateway,Auth,Biomech,ML,RealTime,PoseProcessor,Analytics,VideoGen backend
+    class PostgreSQL,Redis,MinIO database
+    class MLB_API,ESPN_API,SO_API external
+    class Grafana,Prometheus monitoring

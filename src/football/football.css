@@ -1,0 +1,105 @@
+/* Football-specific styling */
+
+.game-card.football {
+  border-left: 4px solid #ff6b00; /* Burnt orange accent */
+}
+
+.game-card.football .game-status {
+  color: #ff6b00;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.week-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.week-selector button {
+  padding: 8px 16px;
+  background-color: #2a2a2a;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  color: #a0a0a0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.week-selector button:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+.week-selector button.active {
+  background-color: #ff6b00;
+  border-color: #ff6b00;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.rank {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff6b00;
+  min-width: 28px;
+}
+
+.team-record {
+  font-size: 13px;
+  color: #808080;
+  margin-left: auto;
+}
+
+.odds {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid #404040;
+  font-size: 12px;
+  color: #808080;
+  text-align: center;
+}
+
+.broadcast {
+  color: #ff6b00;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .week-selector {
+    width: 100%;
+  }
+
+  .week-selector button {
+    flex: 1;
+  }
+
+  .team-info {
+    flex-wrap: wrap;
+  }
+
+  .team-record {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+}

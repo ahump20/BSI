@@ -1,0 +1,98 @@
+[
+  {
+    "id": "ten-titans",
+    "name": "Tennessee Titans",
+    "league": "NFL",
+    "stats": {
+      "wins": 6,
+      "losses": 11,
+      "rating": 0.353,
+      "championships": 0,
+      "playoffAppearances": 23
+    }
+  },
+  {
+    "id": "kc-chiefs",
+    "name": "Kansas City Chiefs",
+    "league": "NFL",
+    "stats": {
+      "wins": 11,
+      "losses": 6,
+      "rating": 0.647,
+      "championships": 3,
+      "lastChampionship": 2023
+    }
+  },
+  {
+    "id": "buf-bills",
+    "name": "Buffalo Bills",
+    "league": "NFL",
+    "stats": {
+      "wins": 11,
+      "losses": 6,
+      "rating": 0.647,
+      "championships": 0,
+      "playoffAppearances": 20
+    }
+  },
+  {
+    "id": "dal-cowboys",
+    "name": "Dallas Cowboys",
+    "league": "NFL",
+    "stats": {
+      "wins": 12,
+      "losses": 5,
+      "rating": 0.706,
+      "championships": 5,
+      "lastChampionship": 1996
+    }
+  },
+  {
+    "id": "sf-49ers",
+    "name": "San Francisco 49ers",
+    "league": "NFL",
+    "stats": {
+      "wins": 12,
+      "losses": 5,
+      "rating": 0.706,
+      "championships": 5,
+      "lastChampionship": 1995
+    }
+  },
+  {
+    "id": "phi-eagles",
+    "name": "Philadelphia Eagles",
+    "league": "NFL",
+    "stats": {
+      "wins": 11,
+      "losses": 6,
+      "rating": 0.647,
+      "championships": 1,
+      "lastChampionship": 2018
+    }
+  },
+  {
+    "id": "mia-dolphins",
+    "name": "Miami Dolphins",
+    "league": "NFL",
+    "stats": {
+      "wins": 11,
+      "losses": 6,
+      "rating": 0.647,
+      "championships": 2,
+      "lastChampionship": 1974
+    }
+  },
+  {
+    "id": "det-lions",
+    "name": "Detroit Lions",
+    "league": "NFL",
+    "stats": {
+      "wins": 12,
+      "losses": 5,
+      "rating": 0.706,
+      "championships": 0,
+      "playoffAppearances": 13
+    }
+  }
+]

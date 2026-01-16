@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 MLB Draft Board | College Baseball Prospects | Blaze Sports Intel</title>
+    <meta name="description" content="2025 MLB Draft prospect rankings for college baseball. Scouting grades, tool projections, and draft analysis for SEC, Big 12, ACC and top D1 programs.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/bsi-logo-192.png">
+
+    <!-- BSI Design System -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--bsi-space-4) var(--bsi-space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+            text-decoration: none;
+            color: var(--bsi-cream);
+        }
+
+        .nav-logo img { height: 40px; width: auto; }
+
+        .nav-links {
+            display: flex;
+            gap: var(--bsi-space-6);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--bsi-cream);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--bsi-burnt-orange);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            padding: 100px 0 var(--bsi-space-10);
+            border-bottom: 3px solid var(--bsi-burnt-orange);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            margin-bottom: var(--bsi-space-4);
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { color: white; }
+
+        .hero h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+
+        .draft-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--bsi-space-6);
+            margin-top: var(--bsi-space-6);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        .meta-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Filters */
+        .filters-bar {
+            background: var(--bsi-charcoal);
+            padding: var(--bsi-space-4) 0;
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+            position: sticky;
+            top: 60px;
+            z-index: 50;
+        }
+
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--bsi-space-3);
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            background: var(--bsi-midnight);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 6px;
+            color: var(--bsi-cream);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            background: var(--bsi-midnight);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 6px;
+            color: var(--bsi-cream);
+            font-size: 0.875rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(250, 248, 245, 0.4);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-8) 0;
+        }
+
+        /* Draft Board Table */
+        .draft-table-wrapper {
+            overflow-x: auto;
+            background: var(--bsi-charcoal);
+            border-radius: 12px;
+            border: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        .draft-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        .draft-table th,
+        .draft-table td {
+            padding: var(--bsi-space-3) var(--bsi-space-4);
+            text-align: left;
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+        }
+
+        .draft-table th {
+            background: rgba(191, 87, 0, 0.15);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-burnt-orange);
+            position: sticky;
+            top: 0;
+        }
+
+        .draft-table tbody tr {
+            transition: background 0.15s;
+        }
+
+        .draft-table tbody tr:hover {
+            background: rgba(191, 87, 0, 0.08);
+        }
+
+        /* Rank Column */
+        .rank-cell {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+            width: 60px;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(191, 87, 0, 0.2);
+        }
+
+        .rank-badge.top-10 {
+            background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            color: white;
+        }
+
+        /* Player Info Cell */
+        .player-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+        }
+
+        .player-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--bsi-midnight);
+            flex-shrink: 0;
+        }
+
+        .player-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            min-width: 0;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: var(--bsi-cream);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-name a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .player-name a:hover {
+            color: var(--bsi-burnt-orange);
+        }
+
+        .player-team {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        /* Position Badge */
+        .position-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--bsi-midnight);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .position-badge.pitcher { background: rgba(25, 118, 210, 0.3); color: #64B5F6; }
+        .position-badge.catcher { background: rgba(156, 39, 176, 0.3); color: #CE93D8; }
+        .position-badge.infield { background: rgba(76, 175, 80, 0.3); color: #81C784; }
+        .position-badge.outfield { background: rgba(255, 152, 0, 0.3); color: #FFB74D; }
+
+        /* Tools Grades */
+        .tools-cell {
+            display: flex;
+            gap: var(--bsi-space-1);
+        }
+
+        .tool-grade {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .tool-grade.elite { background: #1B5E20; color: white; }
+        .tool-grade.plus { background: #2E7D32; color: white; }
+        .tool-grade.above { background: #1976D2; color: white; }
+        .tool-grade.avg { background: #F9A825; color: #1A1A1A; }
+        .tool-grade.below { background: #616161; color: white; }
+
+        /* Projection Badge */
+        .projection-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .projection-badge.first-round { background: linear-gradient(135deg, #C9A227, #A08020); color: white; }
+        .projection-badge.second-round { background: #757575; color: white; }
+        .projection-badge.day-two { background: #424242; color: rgba(255,255,255,0.8); }
+        .projection-badge.day-three { background: #212121; color: rgba(255,255,255,0.6); }
+
+        /* Loading/Empty States */
+        .loading-state, .empty-state {
+            text-align: center;
+            padding: var(--bsi-space-12);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(191, 87, 0, 0.2);
+            border-top-color: var(--bsi-burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--bsi-space-4);
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Tool Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--bsi-space-4);
+            padding: var(--bsi-space-4);
+            background: var(--bsi-midnight);
+            border-radius: 8px;
+            margin-top: var(--bsi-space-6);
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+        }
+
+        .legend-grade {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bsi-charcoal);
+            padding: var(--bsi-space-8) 0;
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        .data-source {
+            margin-top: var(--bsi-space-2);
+            font-size: 0.7rem;
+            color: rgba(250, 248, 245, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" onerror="this.style.display='none'">
+                <span class="font-display" style="font-size: 1.25rem; font-weight: 600;">BLAZE SPORTS INTEL</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/college-baseball/">College Baseball</a></li>
+                <li><a href="/college-baseball/teams/">Teams</a></li>
+                <li><a href="/college-baseball/players/">Players</a></li>
+                <li><a href="/college-baseball/draft/" class="active">Draft</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span style="color: white;">MLB Draft</span>
+            </nav>
+
+            <h1 class="font-display">2025 MLB Draft <span style="color: var(--bsi-gold);">Board</span></h1>
+            <p>College baseball prospect rankings with scouting grades, tool projections, and draft analysis.</p>
+
+            <div class="draft-meta">
+                <div class="meta-item">
+                    <div>
+                        <div class="meta-label">Draft Date</div>
+                        <div class="meta-value">July 13-15, 2025</div>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <div>
+                        <div class="meta-label">College Prospects</div>
+                        <div class="meta-value" id="total-prospects">--</div>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <div>
+                        <div class="meta-label">First Round Talent</div>
+                        <div class="meta-value" id="first-round-count">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+        <div class="container">
+            <div class="filters-row">
+                <input type="text" id="search-input" class="search-input" placeholder="Search prospects...">
+
+                <select id="position-filter" class="filter-select">
+                    <option value="">All Positions</option>
+                    <option value="P">Pitchers</option>
+                    <option value="C">Catchers</option>
+                    <option value="IF">Infielders</option>
+                    <option value="OF">Outfielders</option>
+                </select>
+
+                <select id="conference-filter" class="filter-select">
+                    <option value="">All Conferences</option>
+                    <option value="SEC">SEC</option>
+                    <option value="ACC">ACC</option>
+                    <option value="BIG12">Big 12</option>
+                    <option value="BIG10">Big Ten</option>
+                    <option value="PAC12">Pac-12</option>
+                    <option value="OTHER">Other</option>
+                </select>
+
+                <select id="round-filter" class="filter-select">
+                    <option value="">All Rounds</option>
+                    <option value="1">First Round</option>
+                    <option value="2">Second Round</option>
+                    <option value="3-10">Day Two</option>
+                    <option value="11+">Day Three</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="draft-table-wrapper">
+                <table class="draft-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Pos</th>
+                            <th>School</th>
+                            <th>Year</th>
+                            <th>B/T</th>
+                            <th>Tools</th>
+                            <th>Projection</th>
+                        </tr>
+                    </thead>
+                    <tbody id="draft-board">
+                        <tr>
+                            <td colspan="8">
+                                <div class="loading-state">
+                                    <div class="spinner"></div>
+                                    <p>Loading draft board...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <strong style="width: 100%; margin-bottom: 4px;">Tool Grades (20-80 Scale):</strong>
+                <div class="legend-item">
+                    <div class="legend-grade elite">80</div>
+                    <span>Elite (80)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-grade plus">70</div>
+                    <span>Plus (70)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-grade above">60</div>
+                    <span>Above Avg (60)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-grade avg">50</div>
+                    <span>Average (50)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-grade below">40</div>
+                    <span>Below Avg (40)</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">&copy; 2025 Blaze Sports Intel. All rights reserved.</p>
+            <p class="data-source">Draft rankings compiled from public scouting reports. Not affiliated with MLB.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 2025 MLB Draft prospects (college players)
+        // Data compiled from public scouting consensus
+        const draftProspects = [
+            {
+                rank: 1,
+                name: 'Jac Caglianone',
+                team: 'Florida',
+                conference: 'SEC',
+                position: '1B/P',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'L',
+                tools: { hit: 60, power: 80, run: 40, arm: 70, field: 50 },
+                projection: 'Top 5',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 2,
+                name: 'Charlie Condon',
+                team: 'Georgia',
+                conference: 'SEC',
+                position: 'OF/1B',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 70, power: 70, run: 45, arm: 55, field: 50 },
+                projection: 'Top 5',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 3,
+                name: 'Hagen Smith',
+                team: 'Arkansas',
+                conference: 'SEC',
+                position: 'LHP',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'L',
+                tools: { fastball: 70, slider: 70, changeup: 55, control: 60 },
+                projection: 'Top 10',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 4,
+                name: 'Chase Burns',
+                team: 'Wake Forest',
+                conference: 'ACC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 80, slider: 60, changeup: 50, control: 55 },
+                projection: 'Top 10',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 5,
+                name: 'Braden Montgomery',
+                team: 'Texas A&M',
+                conference: 'SEC',
+                position: 'OF',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'R',
+                tools: { hit: 60, power: 65, run: 55, arm: 60, field: 55 },
+                projection: 'Top 10',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 6,
+                name: 'Vance Honeycutt',
+                team: 'North Carolina',
+                conference: 'ACC',
+                position: 'OF',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'R',
+                tools: { hit: 55, power: 60, run: 70, arm: 60, field: 60 },
+                projection: 'Top 15',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 7,
+                name: 'Nick Kurtz',
+                team: 'Wake Forest',
+                conference: 'ACC',
+                position: '1B',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'R',
+                tools: { hit: 60, power: 70, run: 30, arm: 50, field: 50 },
+                projection: 'Top 15',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 8,
+                name: 'Ryan Waldschmidt',
+                team: 'Kentucky',
+                conference: 'SEC',
+                position: 'OF',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'L',
+                tools: { hit: 65, power: 55, run: 55, arm: 55, field: 55 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 9,
+                name: 'Seaver King',
+                team: 'Wake Forest',
+                conference: 'ACC',
+                position: 'SS',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 50, run: 60, arm: 60, field: 65 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 10,
+                name: 'Carson Benge',
+                team: 'Oklahoma State',
+                conference: 'BIG12',
+                position: 'OF',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 60, power: 60, run: 60, arm: 55, field: 55 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 11,
+                name: 'Cade Horton',
+                team: 'Oklahoma',
+                conference: 'SEC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 65, slider: 65, changeup: 55, control: 55 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 12,
+                name: 'Colin Houck',
+                team: 'Virginia',
+                conference: 'ACC',
+                position: 'SS',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 55, run: 55, arm: 60, field: 60 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 13,
+                name: 'JJ Wetherholt',
+                team: 'West Virginia',
+                conference: 'BIG12',
+                position: '2B',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'R',
+                tools: { hit: 70, power: 45, run: 50, arm: 50, field: 55 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 14,
+                name: 'Blake Burke',
+                team: 'Tennessee',
+                conference: 'SEC',
+                position: '1B',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'L',
+                tools: { hit: 55, power: 70, run: 35, arm: 50, field: 50 },
+                projection: 'First Round',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 15,
+                name: 'Drew Beam',
+                team: 'Tennessee',
+                conference: 'SEC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 60, slider: 60, changeup: 60, control: 60 },
+                projection: 'Late First',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 16,
+                name: 'Zach Dezenzo',
+                team: 'Ohio State',
+                conference: 'BIG10',
+                position: 'SS',
+                year: 'Sr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 60, run: 50, arm: 60, field: 55 },
+                projection: 'Late First',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 17,
+                name: 'Tommy Troy',
+                team: 'Stanford',
+                conference: 'ACC',
+                position: '2B',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 60, power: 50, run: 55, arm: 55, field: 60 },
+                projection: 'Late First',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 18,
+                name: 'Justin Crawford',
+                team: 'LSU',
+                conference: 'SEC',
+                position: 'OF',
+                year: 'So',
+                bats: 'L',
+                throws: 'L',
+                tools: { hit: 55, power: 45, run: 80, arm: 50, field: 60 },
+                projection: 'Late First',
+                round: 1,
+                espnId: null
+            },
+            {
+                rank: 19,
+                name: 'Jurrangelo Cijntje',
+                team: 'Mississippi State',
+                conference: 'SEC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 65, slider: 55, changeup: 55, control: 50 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 20,
+                name: 'Malcolm Moore',
+                team: 'Stanford',
+                conference: 'ACC',
+                position: 'C',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'R',
+                tools: { hit: 55, power: 50, run: 40, arm: 60, field: 60 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 21,
+                name: 'Nolan Schanuel',
+                team: 'Florida Atlantic',
+                conference: 'OTHER',
+                position: '1B',
+                year: 'Jr',
+                bats: 'L',
+                throws: 'L',
+                tools: { hit: 65, power: 55, run: 35, arm: 45, field: 50 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 22,
+                name: 'Wyatt Langford',
+                team: 'Florida',
+                conference: 'SEC',
+                position: 'OF',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 60, power: 55, run: 55, arm: 55, field: 55 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 23,
+                name: 'Kyle DeBarge',
+                team: 'Alabama',
+                conference: 'SEC',
+                position: 'SS',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 50, power: 55, run: 60, arm: 60, field: 60 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 24,
+                name: 'Rhett Lowder',
+                team: 'Wake Forest',
+                conference: 'ACC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 55, slider: 60, changeup: 60, control: 65 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 25,
+                name: 'Kaelen Culpepper',
+                team: 'Kansas State',
+                conference: 'BIG12',
+                position: 'SS',
+                year: 'So',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 50, power: 50, run: 65, arm: 60, field: 60 },
+                projection: 'Second Round',
+                round: 2,
+                espnId: null
+            },
+            {
+                rank: 26,
+                name: 'Arjun Nimmala',
+                team: 'Florida',
+                conference: 'SEC',
+                position: 'SS',
+                year: 'Fr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 55, run: 55, arm: 60, field: 55 },
+                projection: 'Day Two',
+                round: 3,
+                espnId: null
+            },
+            {
+                rank: 27,
+                name: 'Hurston Waldrep',
+                team: 'Georgia',
+                conference: 'SEC',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 60, slider: 60, changeup: 50, control: 50 },
+                projection: 'Day Two',
+                round: 3,
+                espnId: null
+            },
+            {
+                rank: 28,
+                name: 'Christian Moore',
+                team: 'Tennessee',
+                conference: 'SEC',
+                position: '2B',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 55, run: 50, arm: 50, field: 55 },
+                projection: 'Day Two',
+                round: 3,
+                espnId: null
+            },
+            {
+                rank: 29,
+                name: 'Trey Yesavage',
+                team: 'East Carolina',
+                conference: 'OTHER',
+                position: 'RHP',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { fastball: 60, slider: 55, changeup: 50, control: 55 },
+                projection: 'Day Two',
+                round: 4,
+                espnId: null
+            },
+            {
+                rank: 30,
+                name: 'Brayden Taylor',
+                team: 'TCU',
+                conference: 'BIG12',
+                position: '3B',
+                year: 'Jr',
+                bats: 'R',
+                throws: 'R',
+                tools: { hit: 55, power: 55, run: 45, arm: 55, field: 55 },
+                projection: 'Day Two',
+                round: 4,
+                espnId: null
+            }
+        ];
+
+        let filteredProspects = [...draftProspects];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDraftBoard();
+            updateStats();
+
+            // Filter event listeners
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('position-filter').addEventListener('change', applyFilters);
+            document.getElementById('conference-filter').addEventListener('change', applyFilters);
+            document.getElementById('round-filter').addEventListener('change', applyFilters);
+        });
+
+        function applyFilters() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const position = document.getElementById('position-filter').value;
+            const conference = document.getElementById('conference-filter').value;
+            const round = document.getElementById('round-filter').value;
+
+            filteredProspects = draftProspects.filter(p => {
+                // Search
+                if (search && !p.name.toLowerCase().includes(search) &&
+                    !p.team.toLowerCase().includes(search)) {
+                    return false;
+                }
+
+                // Position
+                if (position) {
+                    if (position === 'P' && !p.position.includes('HP')) return false;
+                    if (position === 'C' && p.position !== 'C') return false;
+                    if (position === 'IF' && !['SS', '2B', '3B', '1B'].some(pos => p.position.includes(pos)) && !p.position.includes('/')) return false;
+                    if (position === 'OF' && !p.position.includes('OF')) return false;
+                }
+
+                // Conference
+                if (conference) {
+                    if (conference === 'OTHER' && ['SEC', 'ACC', 'BIG12', 'BIG10', 'PAC12'].includes(p.conference)) return false;
+                    if (conference !== 'OTHER' && p.conference !== conference) return false;
+                }
+
+                // Round
+                if (round) {
+                    if (round === '1' && p.round !== 1) return false;
+                    if (round === '2' && p.round !== 2) return false;
+                    if (round === '3-10' && (p.round < 3 || p.round > 10)) return false;
+                    if (round === '11+' && p.round <= 10) return false;
+                }
+
+                return true;
+            });
+
+            renderDraftBoard();
+            updateStats();
+        }
+
+        function renderDraftBoard() {
+            const tbody = document.getElementById('draft-board');
+
+            if (filteredProspects.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <p>No prospects match your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredProspects.map(p => {
+                const positionClass = getPositionClass(p.position);
+                const projectionClass = getProjectionClass(p.round);
+                const toolsHtml = renderTools(p.tools, p.position);
+
+                return `
+                    <tr>
+                        <td class="rank-cell">
+                            <div class="rank-badge ${p.rank <= 10 ? 'top-10' : ''}">${p.rank}</div>
+                        </td>
+                        <td>
+                            <div class="player-cell">
+                                <div class="player-photo">
+                                    <img src="https://a.espncdn.com/i/headshots/college-baseball/players/full/${p.espnId || 'default'}.png"
+                                         alt="${p.name}"
+                                         onerror="this.src='https://a.espncdn.com/i/headshots/nophoto.png'">
+                                </div>
+                                <div class="player-info">
+                                    <div class="player-name">
+                                        ${p.espnId ? `<a href="/college-baseball/players/profile.html?id=${p.espnId}">${p.name}</a>` : p.name}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="position-badge ${positionClass}">${p.position}</span></td>
+                        <td>${p.team}</td>
+                        <td>${p.year}</td>
+                        <td>${p.bats}/${p.throws}</td>
+                        <td>
+                            <div class="tools-cell">${toolsHtml}</div>
+                        </td>
+                        <td><span class="projection-badge ${projectionClass}">${p.projection}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getPositionClass(position) {
+            if (position.includes('HP')) return 'pitcher';
+            if (position === 'C') return 'catcher';
+            if (['SS', '2B', '3B', '1B'].some(p => position.includes(p))) return 'infield';
+            if (position.includes('OF')) return 'outfield';
+            return '';
+        }
+
+        function getProjectionClass(round) {
+            if (round === 1) return 'first-round';
+            if (round === 2) return 'second-round';
+            if (round <= 10) return 'day-two';
+            return 'day-three';
+        }
+
+        function renderTools(tools, position) {
+            // Different tools for pitchers vs position players
+            const isPitcher = position.includes('HP');
+            const toolOrder = isPitcher
+                ? ['fastball', 'slider', 'changeup', 'control']
+                : ['hit', 'power', 'run', 'arm', 'field'];
+
+            return toolOrder.map(tool => {
+                const grade = tools[tool] || tools[tool.toLowerCase()] || 50;
+                const gradeClass = getGradeClass(grade);
+                const label = isPitcher
+                    ? { fastball: 'FB', slider: 'SL', changeup: 'CH', control: 'CMD' }[tool]
+                    : { hit: 'HIT', power: 'PWR', run: 'RUN', arm: 'ARM', field: 'FLD' }[tool];
+
+                return `<div class="tool-grade ${gradeClass}" title="${tool}: ${grade}">${grade}</div>`;
+            }).join('');
+        }
+
+        function getGradeClass(grade) {
+            if (grade >= 80) return 'elite';
+            if (grade >= 70) return 'plus';
+            if (grade >= 60) return 'above';
+            if (grade >= 50) return 'avg';
+            return 'below';
+        }
+
+        function updateStats() {
+            document.getElementById('total-prospects').textContent = filteredProspects.length;
+            document.getElementById('first-round-count').textContent = filteredProspects.filter(p => p.round === 1).length;
+        }
+    </script>
+</body>
+</html>

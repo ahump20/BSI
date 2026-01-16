@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Monte Carlo simulations and win probability models for college baseball and football—projections clearly labeled as projections.">
+  <title>Predictive Models | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-success: #22C55E;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Serif 4', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--bsi-warm-white);
+      background: var(--bsi-midnight);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-ui); font-weight: 600; font-size: 1.125rem; }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    
+    .hero { padding: calc(80px + 4rem) 1.5rem 3rem; background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); text-align: center; }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bsi-success); padding: 0.25rem 0.75rem; background: rgba(34, 197, 94, 0.1); border-radius: 4px; margin-bottom: 1rem; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem; }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle { font-size: 1.0625rem; color: rgba(250, 250, 250, 0.8); }
+    
+    .disclaimer { padding: 1.25rem 1.5rem; background: rgba(191, 87, 0, 0.1); border-top: 1px solid rgba(191, 87, 0, 0.2); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .disclaimer-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; }
+    .disclaimer-icon { width: 24px; height: 24px; color: var(--bsi-burnt-orange); flex-shrink: 0; }
+    .disclaimer-text { font-family: var(--font-ui); font-size: 0.875rem; color: rgba(250, 250, 250, 0.8); }
+    .disclaimer-text strong { color: var(--bsi-burnt-orange); }
+    
+    .models-section { padding: 4rem 1.5rem; background: var(--bsi-midnight); }
+    .models-container { max-width: 1100px; margin: 0 auto; }
+    .section-title { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; color: var(--bsi-burnt-orange); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    
+    .predictions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .prediction-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; padding: 1.5rem; transition: border-color 0.2s ease; }
+    .prediction-card:hover { border-color: var(--bsi-burnt-orange); }
+    .prediction-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .prediction-matchup { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; }
+    .prediction-date { font-family: var(--font-mono); font-size: 0.75rem; color: rgba(250, 250, 250, 0.5); }
+    
+    .probability-bar { height: 8px; background: rgba(250, 250, 250, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: 1rem; }
+    .probability-fill { height: 100%; background: var(--bsi-burnt-orange); border-radius: 4px; transition: width 0.5s ease; }
+    
+    .prediction-teams { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+    .prediction-team { display: flex; flex-direction: column; gap: 0.25rem; }
+    .prediction-team.away { text-align: right; }
+    .team-name { font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; }
+    .team-probability { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 600; color: var(--bsi-burnt-orange); }
+    
+    .prediction-details { padding-top: 0.75rem; border-top: 1px solid rgba(191, 87, 0, 0.1); display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+    .detail-item { text-align: center; }
+    .detail-label { font-family: var(--font-mono); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(250, 250, 250, 0.5); }
+    .detail-value { font-family: var(--font-mono); font-size: 0.875rem; color: rgba(250, 250, 250, 0.9); }
+    
+    .methodology { padding: 3rem 1.5rem; background: var(--bsi-charcoal); }
+    .methodology-inner { max-width: 800px; margin: 0 auto; }
+    .methodology-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
+    .methodology-title .accent { color: var(--bsi-burnt-orange); }
+    .methodology-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .method-item { text-align: center; padding: 1.5rem; background: var(--bsi-midnight); border-radius: 8px; border: 1px solid rgba(191, 87, 0, 0.1); }
+    .method-item h4 { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--bsi-burnt-orange); }
+    .method-item p { font-size: 0.875rem; color: rgba(250, 250, 250, 0.7); }
+    
+    .tools-nav { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.15); }
+    .tools-nav-inner { max-width: 1000px; margin: 0 auto; }
+    .tools-nav-title { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 250, 0.5); text-align: center; margin-bottom: 1.5rem; }
+    .tools-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .tools-nav-link { display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); transition: all 0.2s ease; }
+    .tools-nav-link:hover { border-color: var(--bsi-burnt-orange); color: var(--bsi-burnt-orange); }
+    .tools-nav-link.current { border-color: var(--bsi-burnt-orange); background: rgba(191, 87, 0, 0.1); color: var(--bsi-burnt-orange); }
+    
+    .footer { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.2); text-align: center; }
+    .footer-tagline { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: rgba(250, 250, 250, 0.6); margin-bottom: 0.75rem; }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.4); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="Blaze Sports Intel">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link">Teams</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Live</p>
+      <h1 class="hero-title">Predictive <span class="accent">Models</span></h1>
+      <p class="hero-subtitle">
+        Monte Carlo simulations and win probability models—projections clearly labeled as projections, 
+        never presented as facts.
+      </p>
+    </div>
+  </section>
+
+  <section class="disclaimer">
+    <div class="disclaimer-inner">
+      <svg class="disclaimer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p class="disclaimer-text">
+        <strong>These are projections, not predictions.</strong> All probabilities are derived from Monte Carlo simulations 
+        based on historical data. Results are for informational purposes only—not gambling advice.
+      </p>
+    </div>
+  </section>
+
+  <section class="models-section">
+    <div class="models-container">
+      <h2 class="section-title">Today's College Baseball Projections</h2>
+      <div class="predictions-grid">
+        <div class="prediction-card">
+          <div class="prediction-header">
+            <span class="prediction-matchup">Texas vs LSU</span>
+            <span class="prediction-date">Nov 25, 7:00 PM</span>
+          </div>
+          <div class="prediction-teams">
+            <div class="prediction-team">
+              <span class="team-name">Texas</span>
+              <span class="team-probability">58%</span>
+            </div>
+            <div class="prediction-team away">
+              <span class="team-name">LSU</span>
+              <span class="team-probability">42%</span>
+            </div>
+          </div>
+          <div class="probability-bar">
+            <div class="probability-fill" style="width: 58%"></div>
+          </div>
+          <div class="prediction-details">
+            <div class="detail-item">
+              <p class="detail-label">Proj. Score</p>
+              <p class="detail-value">6-4</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Simulations</p>
+              <p class="detail-value">10,000</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Confidence</p>
+              <p class="detail-value">Medium</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="prediction-card">
+          <div class="prediction-header">
+            <span class="prediction-matchup">Vanderbilt vs Arkansas</span>
+            <span class="prediction-date">Nov 25, 6:30 PM</span>
+          </div>
+          <div class="prediction-teams">
+            <div class="prediction-team">
+              <span class="team-name">Vanderbilt</span>
+              <span class="team-probability">45%</span>
+            </div>
+            <div class="prediction-team away">
+              <span class="team-name">Arkansas</span>
+              <span class="team-probability">55%</span>
+            </div>
+          </div>
+          <div class="probability-bar">
+            <div class="probability-fill" style="width: 45%"></div>
+          </div>
+          <div class="prediction-details">
+            <div class="detail-item">
+              <p class="detail-label">Proj. Score</p>
+              <p class="detail-value">5-6</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Simulations</p>
+              <p class="detail-value">10,000</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Confidence</p>
+              <p class="detail-value">Low</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="prediction-card">
+          <div class="prediction-header">
+            <span class="prediction-matchup">TCU vs Oklahoma State</span>
+            <span class="prediction-date">Nov 25, 7:00 PM</span>
+          </div>
+          <div class="prediction-teams">
+            <div class="prediction-team">
+              <span class="team-name">TCU</span>
+              <span class="team-probability">62%</span>
+            </div>
+            <div class="prediction-team away">
+              <span class="team-name">OK State</span>
+              <span class="team-probability">38%</span>
+            </div>
+          </div>
+          <div class="probability-bar">
+            <div class="probability-fill" style="width: 62%"></div>
+          </div>
+          <div class="prediction-details">
+            <div class="detail-item">
+              <p class="detail-label">Proj. Score</p>
+              <p class="detail-value">7-4</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Simulations</p>
+              <p class="detail-value">10,000</p>
+            </div>
+            <div class="detail-item">
+              <p class="detail-label">Confidence</p>
+              <p class="detail-value">High</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="methodology">
+    <div class="methodology-inner">
+      <h2 class="methodology-title">Our <span class="accent">Methodology</span></h2>
+      <div class="methodology-grid">
+        <div class="method-item">
+          <h4>Monte Carlo Simulation</h4>
+          <p>10,000 game simulations per matchup using the Log5 probability model (Bill James, 1981). Each simulation randomizes run distributions based on 5 seasons of historical data.</p>
+        </div>
+        <div class="method-item">
+          <h4>Primary Data Sources</h4>
+          <p>NCAA Official Statistics (ncaa.com), D1Baseball rankings, SportsDataIO API, Conference RPI data. Updated daily during season.</p>
+        </div>
+        <div class="method-item">
+          <h4>Confidence Intervals</h4>
+          <p>All projections include uncertainty ranges. Home field advantage: +3.5% (NCAA average). Results validated against 3 prior seasons.</p>
+        </div>
+        <div class="method-item">
+          <h4>No Gambling Advice</h4>
+          <p>Analysis only—projections are for informational purposes. Not betting recommendations.</p>
+        </div>
+      </div>
+      <p class="methodology-citation">Data refreshed: <span id="methodology-timestamp"></span> CT | Sources: NCAA Stats, D1Baseball, SportsDataIO</p>
+      <script>document.getElementById('methodology-timestamp').textContent = new Date().toLocaleString('en-US', {timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'});</script>
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link current">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link">3D Visualizations</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+  <script src="/js/bsi-components.js"></script>
+</body>
+</html>

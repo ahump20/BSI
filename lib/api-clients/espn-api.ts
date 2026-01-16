@@ -433,8 +433,10 @@ export class ESPNApiClient {
   private readonly config: Required<ESPNApiConfig>;
 
   // Base URLs
-  public static readonly BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
-  public static readonly COMMON_URL = 'https://site.api.espn.com/apis/common/v3/sports/baseball/college-baseball';
+  public static readonly BASE_URL =
+    'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
+  public static readonly COMMON_URL =
+    'https://site.api.espn.com/apis/common/v3/sports/baseball/college-baseball';
 
   constructor(config?: ESPNApiConfig) {
     this.config = {
@@ -621,9 +623,7 @@ export class ESPNApiClient {
     if (!response.success || !response.data) return response;
 
     // Filter to only in-progress games
-    const liveEvents = response.data.events?.filter(
-      (event) => event.status?.type?.state === 'in'
-    );
+    const liveEvents = response.data.events?.filter((event) => event.status?.type?.state === 'in');
 
     return {
       ...response,

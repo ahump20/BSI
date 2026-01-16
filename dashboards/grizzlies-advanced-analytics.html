@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memphis Grizzlies Advanced Analytics | Blaze Intelligence</title>
+    <meta
+      name="description"
+      content="Real-time Memphis Grizzlies advanced analytics powered by SportsDataIO API - NBA Pythagorean win expectancy, playoff probability, pace-adjusted ratings, and 82-game projections"
+    />
+
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      /* === GLOBAL RESET & BASE === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Memphis Grizzlies Brand Colors */
+        --grizzlies-blue: #5d76a9; /* Beale Street Blue */
+        --grizzlies-gold: #f5b112; /* Grind City Gold */
+        --grizzlies-midnight: #12173f; /* Memphis Midnight */
+        --grizzlies-steel: #6f7b8b; /* Steel Blue */
+
+        /* Blaze Intelligence System Colors */
+        --blaze-background: #0a0a0a;
+        --blaze-surface: rgba(26, 26, 26, 0.6);
+        --blaze-accent: #ff6b00;
+        --blaze-text: #e0e0e0;
+        --blaze-text-secondary: #a0a0a0;
+        --blaze-border: rgba(93, 118, 169, 0.3);
+
+        /* Glassmorphism */
+        --glass-bg: rgba(18, 23, 63, 0.4);
+        --glass-border: rgba(93, 118, 169, 0.2);
+        --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+
+        /* Typography */
+        --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background: linear-gradient(
+          135deg,
+          var(--grizzlies-midnight) 0%,
+          var(--blaze-background) 100%
+        );
+        color: var(--blaze-text);
+        min-height: 100vh;
+        padding: 2rem;
+        line-height: 1.6;
+      }
+
+      /* === HEADER === */
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        box-shadow: var(--glass-shadow);
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--grizzlies-blue), var(--grizzlies-gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+      }
+
+      .header .subtitle {
+        font-size: 1.1rem;
+        color: var(--blaze-text-secondary);
+        font-weight: 500;
+        margin-bottom: 1rem;
+      }
+
+      .header .tagline {
+        font-size: 0.9rem;
+        color: var(--grizzlies-gold);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .data-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(93, 118, 169, 0.2);
+        border: 1px solid var(--grizzlies-blue);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+        color: var(--grizzlies-blue);
+        font-family: var(--font-mono);
+      }
+
+      /* === DASHBOARD GRID === */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .analytics-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--glass-shadow);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .analytics-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--grizzlies-blue), var(--grizzlies-gold));
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .analytics-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--grizzlies-blue);
+        box-shadow: 0 12px 48px rgba(93, 118, 169, 0.3);
+      }
+
+      .analytics-card:hover::before {
+        opacity: 1;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .card-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--grizzlies-blue);
+      }
+
+      .card-icon {
+        font-size: 1.5rem;
+        opacity: 0.6;
+      }
+
+      /* === METRICS === */
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(93, 118, 169, 0.1);
+      }
+
+      .metric-row:last-child {
+        border-bottom: none;
+      }
+
+      .metric-label {
+        font-size: 0.9rem;
+        color: var(--blaze-text-secondary);
+        font-weight: 500;
+      }
+
+      .metric-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        font-family: var(--font-mono);
+        color: var(--grizzlies-gold);
+      }
+
+      .metric-value.positive {
+        color: #4ade80;
+      }
+
+      .metric-value.negative {
+        color: #f87171;
+      }
+
+      .metric-value.neutral {
+        color: var(--blaze-text);
+      }
+
+      /* === BIG STAT DISPLAY === */
+      .big-stat {
+        text-align: center;
+        padding: 2rem 0;
+      }
+
+      .big-stat-value {
+        font-size: 4rem;
+        font-weight: 900;
+        font-family: var(--font-mono);
+        background: linear-gradient(135deg, var(--grizzlies-blue), var(--grizzlies-gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+
+      .big-stat-label {
+        font-size: 1rem;
+        color: var(--blaze-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .stat-context {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: rgba(93, 118, 169, 0.1);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--blaze-text-secondary);
+        line-height: 1.6;
+      }
+
+      /* === PROGRESS BAR === */
+      .progress-container {
+        margin: 1.5rem 0;
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        color: var(--blaze-text-secondary);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 12px;
+        background: rgba(93, 118, 169, 0.2);
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--grizzlies-blue), var(--grizzlies-gold));
+        border-radius: 6px;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* === SCHEDULE TABLE === */
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+
+      .schedule-table thead {
+        background: rgba(93, 118, 169, 0.2);
+      }
+
+      .schedule-table th {
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--grizzlies-blue);
+        border-bottom: 2px solid var(--grizzlies-blue);
+      }
+
+      .schedule-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid rgba(93, 118, 169, 0.1);
+      }
+
+      .schedule-table tr:hover {
+        background: rgba(93, 118, 169, 0.1);
+      }
+
+      .game-result {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        font-family: var(--font-mono);
+      }
+
+      .game-result.win {
+        background: rgba(74, 222, 128, 0.2);
+        color: #4ade80;
+      }
+
+      .game-result.loss {
+        background: rgba(248, 113, 113, 0.2);
+        color: #f87171;
+      }
+
+      .game-result.upcoming {
+        background: rgba(93, 118, 169, 0.2);
+        color: var(--grizzlies-blue);
+      }
+
+      /* === LOADING STATE === */
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        color: var(--blaze-text-secondary);
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(93, 118, 169, 0.2);
+        border-top-color: var(--grizzlies-blue);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* === ERROR STATE === */
+      .error-message {
+        padding: 1rem;
+        background: rgba(248, 113, 113, 0.1);
+        border: 1px solid rgba(248, 113, 113, 0.3);
+        border-radius: 8px;
+        color: #f87171;
+        font-size: 0.9rem;
+        margin: 1rem 0;
+      }
+
+      /* === FOOTER === */
+      .footer {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        color: var(--blaze-text-secondary);
+        font-size: 0.85rem;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-link {
+        color: var(--grizzlies-blue);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-link:hover {
+        color: var(--grizzlies-gold);
+      }
+
+      /* === CHART CONTAINER === */
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 1.5rem 0;
+      }
+
+      .chart-container canvas {
+        max-height: 300px;
+      }
+
+      /* === MINI CHART CONTAINER === */
+      .mini-chart-container {
+        position: relative;
+        height: 150px;
+        margin: 1rem 0;
+      }
+
+      .mini-chart-container canvas {
+        max-height: 150px;
+      }
+
+      /* === RESPONSIVE === */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .big-stat-value {
+          font-size: 3rem;
+        }
+
+        .schedule-table {
+          font-size: 0.75rem;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+          padding: 0.5rem;
+        }
+
+        .chart-container {
+          height: 250px;
+        }
+
+        .mini-chart-container {
+          height: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="header">
+      <h1>🐻 Memphis Grizzlies Advanced Analytics</h1>
+      <p class="subtitle">Real-Time NBA Intelligence • Western Conference Southwest Division</p>
+      <p class="tagline">Grit & Grind Intelligence</p>
+      <div class="data-badge">📊 Powered by SportsDataIO API • NBA Pythagorean Exponent: 13.91</div>
+    </header>
+
+    <!-- DASHBOARD GRID -->
+    <div class="dashboard-grid">
+      <!-- CARD 1: NBA Pythagorean Win Expectancy -->
+      <div class="analytics-card" id="pythagorean-card">
+        <div class="card-header">
+          <h2 class="card-title">🎯 Pythagorean Win Expectancy</h2>
+          <span class="card-icon">📈</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading NBA Pythagorean analytics...</p>
+        </div>
+      </div>
+
+      <!-- CARD 2: Season Projection (82 Games) -->
+      <div class="analytics-card" id="projection-card">
+        <div class="card-header">
+          <h2 class="card-title">🔮 Season Projection</h2>
+          <span class="card-icon">🏀</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Calculating 82-game projection...</p>
+        </div>
+      </div>
+
+      <!-- CARD 3: Net Rating Analysis -->
+      <div class="analytics-card" id="netrating-card">
+        <div class="card-header">
+          <h2 class="card-title">⚖️ Net Rating Analysis</h2>
+          <span class="card-icon">📊</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Analyzing offensive/defensive ratings...</p>
+        </div>
+      </div>
+
+      <!-- CARD 4: Playoff Probability (Western Conference) -->
+      <div class="analytics-card" id="playoff-card">
+        <div class="card-header">
+          <h2 class="card-title">🎟️ Playoff Probability</h2>
+          <span class="card-icon">🏆</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Calculating Western Conference seed probability...</p>
+        </div>
+      </div>
+
+      <!-- CARD 5: Pace-Adjusted Ratings -->
+      <div class="analytics-card" id="pace-card">
+        <div class="card-header">
+          <h2 class="card-title">⚡ Pace-Adjusted Ratings</h2>
+          <span class="card-icon">🎯</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Calculating per-100-possession metrics...</p>
+        </div>
+      </div>
+
+      <!-- CARD 6: 82-Game Schedule -->
+      <div class="analytics-card" id="schedule-card" style="grid-column: 1 / -1">
+        <div class="card-header">
+          <h2 class="card-title">📅 2025 Season Schedule</h2>
+          <span class="card-icon">🗓️</span>
+        </div>
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading 82-game schedule...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="https://blazesportsintel.com" class="footer-link">Blaze Intelligence Home</a>
+        <a href="https://github.com/ahump20/BSI" class="footer-link">GitHub Repository</a>
+        <a href="mailto:austin@blazesportsintel.com" class="footer-link">Contact</a>
+      </div>
+      <p>&copy; 2025 Blaze Intelligence • Memphis Grizzlies Analytics Dashboard</p>
+      <p style="margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem">
+        Data Source: SportsDataIO NBA API • Analytics: NBA Pythagorean (13.91 exponent) • Last
+        Updated: <span id="last-updated">--</span>
+      </p>
+    </footer>
+
+    <script type="module">
+      // ========================================
+      // GRIZZLIES ADVANCED ANALYTICS DASHBOARD
+      // ========================================
+
+      // Import analytics libraries
+      import {
+        calculatePythagorean,
+        projectSeason,
+        compareTeams,
+        analyzePointDifferential,
+        calculateAdjustedPythagorean,
+        NBA_CONFIG,
+      } from '../lib/analytics/basketball/pythagorean-nba.js';
+
+      import {
+        getNBAStandings,
+        getGrizzliesStats,
+        getGrizzliesRoster,
+        getGrizzliesSchedule,
+        getLiveScores,
+        getPlayerStats,
+        GRIZZLIES_CONFIG,
+      } from '../lib/api/nba-data.js';
+
+      // ========================================
+      // MAIN INITIALIZATION
+      // ========================================
+
+      async function initializeDashboard() {
+        try {
+          console.log('🐻 Initializing Memphis Grizzlies Advanced Analytics Dashboard...');
+
+          // Fetch all data in parallel
+          const [grizzliesStats, grizzliesSchedule] = await Promise.all([
+            getGrizzliesStats('2025'),
+            getGrizzliesSchedule('2025'),
+          ]);
+
+          console.log('✅ Data fetched successfully:', { grizzliesStats, grizzliesSchedule });
+
+          // Update last updated timestamp
+          document.getElementById('last-updated').textContent = new Date().toLocaleString('en-US', {
+            timeZone: 'America/Chicago',
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          });
+
+          // Render all cards
+          renderPythagoreanCard(grizzliesStats);
+          renderProjectionCard(grizzliesStats);
+          renderNetRatingCard(grizzliesStats);
+          renderPlayoffCard(grizzliesStats);
+          renderPaceCard(grizzliesStats);
+          renderScheduleCard(grizzliesSchedule);
+        } catch (error) {
+          console.error('❌ Dashboard initialization error:', error);
+          showError('Failed to load Grizzlies data. Please check API configuration.');
+        }
+      }
+
+      // ========================================
+      // CARD RENDERERS
+      // ========================================
+
+      function renderPythagoreanCard(statsData) {
+        const card = document.getElementById('pythagorean-card');
+
+        try {
+          const { record, pointsFor, pointsAgainst } = statsData;
+          const gamesPlayed = record.wins + record.losses;
+
+          // Calculate Pythagorean expectancy
+          const pythag = calculatePythagorean(pointsFor, pointsAgainst, gamesPlayed, record.wins);
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🎯 Pythagorean Win Expectancy</h2>
+            <span class="card-icon">📈</span>
+          </div>
+
+          <div class="big-stat">
+            <div class="big-stat-value">${pythag.expectedWins}</div>
+            <div class="big-stat-label">Expected Wins (${pythag.expectedWinPct} Win%)</div>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Actual Record</span>
+            <span class="metric-value neutral">${record.wins}-${record.losses}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Expected Record</span>
+            <span class="metric-value">${pythag.expectedWins}-${pythag.expectedLosses}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Luck Factor</span>
+            <span class="metric-value ${pythag.luckFactor > 0 ? 'positive' : 'negative'}">
+              ${pythag.luckFactor > 0 ? '+' : ''}${pythag.luckFactor}
+            </span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Point Diff/Game</span>
+            <span class="metric-value ${pythag.pointDiffPerGame > 0 ? 'positive' : 'negative'}">
+              ${pythag.pointDiffPerGame > 0 ? '+' : ''}${pythag.pointDiffPerGame}
+            </span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Team Quality</span>
+            <span class="metric-value neutral">${pythag.quality}</span>
+          </div>
+
+          <div class="stat-context">
+            ${pythag.interpretation}
+            <br><br>
+            <strong>NBA Exponent:</strong> 13.91 (Daryl Morey research) •
+            <strong>Confidence:</strong> ${pythag.confidence}%
+          </div>
+        `;
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🎯 Pythagorean Win Expectancy</h2>
+            <span class="card-icon">📈</span>
+          </div>
+          <div class="error-message">Error calculating Pythagorean expectancy: ${error.message}</div>
+        `;
+        }
+      }
+
+      function renderProjectionCard(statsData) {
+        const card = document.getElementById('projection-card');
+
+        try {
+          const { record, pointsFor, pointsAgainst } = statsData;
+          const gamesPlayed = record.wins + record.losses;
+
+          const currentStats = {
+            pointsFor,
+            pointsAgainst,
+            wins: record.wins,
+            losses: record.losses,
+            gamesPlayed,
+          };
+
+          // Project 82-game season
+          const projection = projectSeason(currentStats, 82);
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🔮 Season Projection</h2>
+            <span class="card-icon">🏀</span>
+          </div>
+
+          <div class="big-stat">
+            <div class="big-stat-value">${projection.projectedFinalRecord.wins}-${projection.projectedFinalRecord.losses}</div>
+            <div class="big-stat-label">Projected Final Record (82 Games)</div>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress-label">
+              <span>Season Progress</span>
+              <span>${gamesPlayed}/82 games (${((gamesPlayed / 82) * 100).toFixed(1)}%)</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${(gamesPlayed / 82) * 100}%"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Current Record</span>
+            <span class="metric-value neutral">${record.wins}-${record.losses}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Remaining Games</span>
+            <span class="metric-value">${projection.remainingGames}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Projected Wins Added</span>
+            <span class="metric-value positive">+${projection.projectedRemainingWins}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">90% Confidence Interval</span>
+            <span class="metric-value neutral" style="font-size: 1rem;">
+              ${projection.confidenceInterval90.low} to ${projection.confidenceInterval90.high}
+            </span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Playoff Likelihood</span>
+            <span class="metric-value ${parseFloat(projection.playoffLikelihood) > 50 ? 'positive' : 'negative'}">
+              ${projection.playoffLikelihood}
+            </span>
+          </div>
+
+          <div class="stat-context">
+            Based on current point differential and Pythagorean win percentage.
+            Uses binomial distribution for 90% confidence interval.
+            Playoff threshold: ~41 wins for Western Conference 8th seed.
+          </div>
+
+          <div class="chart-container">
+            <canvas id="projection-chart"></canvas>
+          </div>
+        `;
+
+          // Create Chart.js projection visualization
+          setTimeout(() => {
+            const ctx = document.getElementById('projection-chart');
+            if (ctx) {
+              new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: Array.from({ length: 83 }, (_, i) => i),
+                  datasets: [
+                    {
+                      label: 'Current Pace',
+                      data: Array.from({ length: gamesPlayed + 1 }, (_, i) => {
+                        const winPct = record.wins / (i || 1);
+                        return (winPct * i).toFixed(1);
+                      }).concat(
+                        Array.from({ length: 82 - gamesPlayed }, (_, i) => {
+                          return (
+                            (projection.projectedFinalRecord.wins / 82) *
+                            (gamesPlayed + i + 1)
+                          ).toFixed(1);
+                        })
+                      ),
+                      borderColor: 'rgba(245, 177, 18, 1)',
+                      backgroundColor: 'rgba(245, 177, 18, 0.1)',
+                      fill: true,
+                      tension: 0.3,
+                      borderWidth: 3,
+                    },
+                    {
+                      label: 'Playoff Threshold (41 wins)',
+                      data: Array(83).fill(41),
+                      borderColor: 'rgba(93, 118, 169, 0.5)',
+                      borderDash: [10, 5],
+                      borderWidth: 2,
+                      fill: false,
+                      pointRadius: 0,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      labels: {
+                        color: 'rgba(224, 224, 224, 0.8)',
+                        font: { size: 12, family: 'Inter, sans-serif' },
+                      },
+                    },
+                    tooltip: {
+                      backgroundColor: 'rgba(18, 23, 63, 0.9)',
+                      titleColor: '#F5B112',
+                      bodyColor: '#e0e0e0',
+                      borderColor: 'rgba(93, 118, 169, 0.5)',
+                      borderWidth: 1,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Games Played',
+                        color: 'rgba(160, 160, 160, 1)',
+                        font: { size: 11 },
+                      },
+                      grid: { color: 'rgba(93, 118, 169, 0.1)' },
+                      ticks: { color: 'rgba(160, 160, 160, 1)', maxTicksLimit: 10 },
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: 'Wins',
+                        color: 'rgba(160, 160, 160, 1)',
+                        font: { size: 11 },
+                      },
+                      grid: { color: 'rgba(93, 118, 169, 0.1)' },
+                      ticks: { color: 'rgba(160, 160, 160, 1)' },
+                      beginAtZero: true,
+                      max: 82,
+                    },
+                  },
+                },
+              });
+            }
+          }, 100);
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🔮 Season Projection</h2>
+            <span class="card-icon">🏀</span>
+          </div>
+          <div class="error-message">Error calculating season projection: ${error.message}</div>
+        `;
+        }
+      }
+
+      function renderNetRatingCard(statsData) {
+        const card = document.getElementById('netrating-card');
+
+        try {
+          const { record, pointsFor, pointsAgainst } = statsData;
+          const gamesPlayed = record.wins + record.losses;
+
+          // Calculate ratings
+          const offensiveRating = (pointsFor / gamesPlayed).toFixed(1);
+          const defensiveRating = (pointsAgainst / gamesPlayed).toFixed(1);
+          const netRating = (offensiveRating - defensiveRating).toFixed(1);
+
+          // Analyze point differential
+          const diffAnalysis = analyzePointDifferential(pointsFor, pointsAgainst, gamesPlayed);
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">⚖️ Net Rating Analysis</h2>
+            <span class="card-icon">📊</span>
+          </div>
+
+          <div class="big-stat">
+            <div class="big-stat-value ${netRating > 0 ? 'positive' : 'negative'}">${netRating > 0 ? '+' : ''}${netRating}</div>
+            <div class="big-stat-label">Net Rating (Points per Game)</div>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Offensive Rating</span>
+            <span class="metric-value positive">${offensiveRating} PPG</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Defensive Rating</span>
+            <span class="metric-value negative">${defensiveRating} PPG</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Total Points For</span>
+            <span class="metric-value neutral">${pointsFor}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Total Points Against</span>
+            <span class="metric-value neutral">${pointsAgainst}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Total Differential</span>
+            <span class="metric-value ${diffAnalysis.differential > 0 ? 'positive' : 'negative'}">
+              ${diffAnalysis.differential > 0 ? '+' : ''}${diffAnalysis.differential}
+            </span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Quality Tier</span>
+            <span class="metric-value neutral">${diffAnalysis.quality}</span>
+          </div>
+
+          <div class="stat-context">
+            ${diffAnalysis.analysis}
+            <br><br>
+            <strong>Elite Tier:</strong> +8.0 Net Rating •
+            <strong>Great Tier:</strong> +5.0 •
+            <strong>Good Tier:</strong> +2.0
+          </div>
+
+          <div class="mini-chart-container">
+            <canvas id="rating-chart"></canvas>
+          </div>
+        `;
+
+          // Create Chart.js rating comparison
+          setTimeout(() => {
+            const ctx = document.getElementById('rating-chart');
+            if (ctx) {
+              new Chart(ctx, {
+                type: 'radar',
+                data: {
+                  labels: [
+                    'Offensive Rating',
+                    'Defensive Rating',
+                    'Net Rating',
+                    'Point Differential',
+                    'Win Percentage',
+                  ],
+                  datasets: [
+                    {
+                      label: 'Grizzlies Performance',
+                      data: [
+                        Math.min(offensiveRating / 1.3, 100),
+                        Math.min((130 - defensiveRating) / 0.3, 100),
+                        Math.min((parseFloat(netRating) + 10) * 5, 100),
+                        Math.min((diffAnalysis.differential / gamesPlayed + 10) * 5, 100),
+                        record.winPercentage * 100,
+                      ],
+                      backgroundColor: 'rgba(245, 177, 18, 0.2)',
+                      borderColor: 'rgba(245, 177, 18, 1)',
+                      borderWidth: 2,
+                      pointBackgroundColor: 'rgba(93, 118, 169, 1)',
+                      pointBorderColor: '#fff',
+                      pointHoverBackgroundColor: '#fff',
+                      pointHoverBorderColor: 'rgba(245, 177, 18, 1)',
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      backgroundColor: 'rgba(18, 23, 63, 0.9)',
+                      titleColor: '#F5B112',
+                      bodyColor: '#e0e0e0',
+                    },
+                  },
+                  scales: {
+                    r: {
+                      angleLines: { color: 'rgba(93, 118, 169, 0.2)' },
+                      grid: { color: 'rgba(93, 118, 169, 0.2)' },
+                      pointLabels: {
+                        color: 'rgba(160, 160, 160, 1)',
+                        font: { size: 10 },
+                      },
+                      ticks: {
+                        display: false,
+                        maxTicksLimit: 5,
+                      },
+                      beginAtZero: true,
+                      max: 100,
+                    },
+                  },
+                },
+              });
+            }
+          }, 100);
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">⚖️ Net Rating Analysis</h2>
+            <span class="card-icon">📊</span>
+          </div>
+          <div class="error-message">Error calculating net rating: ${error.message}</div>
+        `;
+        }
+      }
+
+      function renderPlayoffCard(statsData) {
+        const card = document.getElementById('playoff-card');
+
+        try {
+          const { record, conferenceRank, divisionRank } = statsData;
+
+          // Calculate playoff probability
+          const currentWins = record.wins;
+          const playoffThreshold = 41;
+          const gamesPlayed = record.wins + record.losses;
+          const remainingGames = 82 - gamesPlayed;
+          const winsNeeded = Math.max(0, playoffThreshold - currentWins);
+
+          let playoffProb = 0;
+          if (winsNeeded === 0) {
+            playoffProb = 100;
+          } else if (winsNeeded > remainingGames) {
+            playoffProb = 0;
+          } else {
+            // Simplified probability (assumes 50% win rate)
+            const winPct = currentWins / gamesPlayed;
+            playoffProb =
+              winPct * remainingGames >= winsNeeded
+                ? Math.min(95, 50 + (currentWins - playoffThreshold) * 5)
+                : Math.max(5, 50 - (winsNeeded - remainingGames) * 5);
+          }
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🎟️ Playoff Probability</h2>
+            <span class="card-icon">🏆</span>
+          </div>
+
+          <div class="big-stat">
+            <div class="big-stat-value">${playoffProb.toFixed(0)}%</div>
+            <div class="big-stat-label">Playoff Probability (Western Conference)</div>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress-label">
+              <span>Path to Playoffs (${playoffThreshold} wins needed)</span>
+              <span>${currentWins}/${playoffThreshold} wins</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${(currentWins / playoffThreshold) * 100}%"></div>
+            </div>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Current Wins</span>
+            <span class="metric-value neutral">${currentWins}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Wins Needed for Playoffs</span>
+            <span class="metric-value ${winsNeeded === 0 ? 'positive' : 'neutral'}">${winsNeeded}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Remaining Games</span>
+            <span class="metric-value">${remainingGames}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Conference Rank</span>
+            <span class="metric-value neutral">#${conferenceRank} in Western Conference</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Division Rank</span>
+            <span class="metric-value neutral">#${divisionRank} in Southwest Division</span>
+          </div>
+
+          <div class="stat-context">
+            Western Conference playoff probability based on current standings and projected win total.
+            Historically, ~41 wins clinches 8th seed in the West.
+            Uses binomial distribution with current win percentage.
+          </div>
+        `;
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">🎟️ Playoff Probability</h2>
+            <span class="card-icon">🏆</span>
+          </div>
+          <div class="error-message">Error calculating playoff probability: ${error.message}</div>
+        `;
+        }
+      }
+
+      function renderPaceCard(statsData) {
+        const card = document.getElementById('pace-card');
+
+        try {
+          const { record, pointsFor, pointsAgainst } = statsData;
+          const gamesPlayed = record.wins + record.losses;
+
+          // Estimate possessions (NBA average ~100 possessions per game)
+          const estimatedPossessions = gamesPlayed * 100;
+
+          // Calculate pace-adjusted ratings
+          const paceAdjusted = calculateAdjustedPythagorean(
+            pointsFor,
+            pointsAgainst,
+            estimatedPossessions,
+            gamesPlayed,
+            record.wins
+          );
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">⚡ Pace-Adjusted Ratings</h2>
+            <span class="card-icon">🎯</span>
+          </div>
+
+          <div class="big-stat">
+            <div class="big-stat-value">${paceAdjusted.pace}</div>
+            <div class="big-stat-label">Possessions per Game (${paceAdjusted.paceStyle})</div>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Offensive Rating (per 100)</span>
+            <span class="metric-value positive">${paceAdjusted.paceAdjustedOffRtg}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Defensive Rating (per 100)</span>
+            <span class="metric-value negative">${paceAdjusted.paceAdjustedDefRtg}</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Net Rating (per 100)</span>
+            <span class="metric-value ${paceAdjusted.netRating > 0 ? 'positive' : 'negative'}">
+              ${paceAdjusted.netRating > 0 ? '+' : ''}${paceAdjusted.netRating}
+            </span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Adjusted Pythag Win%</span>
+            <span class="metric-value neutral">${(paceAdjusted.adjustedPythagWinPct * 100).toFixed(1)}%</span>
+          </div>
+
+          <div class="metric-row">
+            <span class="metric-label">Adjusted Expected Wins</span>
+            <span class="metric-value">${paceAdjusted.adjustedExpectedWins}</span>
+          </div>
+
+          <div class="stat-context">
+            Pace-adjusted ratings normalize for tempo differences between teams.
+            All metrics calculated per 100 possessions for fair comparison.
+            <strong>League Average Pace:</strong> 100 possessions/game •
+            ${paceAdjusted.paceAdjustmentNeeded ? '⚠️ Significant pace adjustment needed' : '✅ Near league-average pace'}
+          </div>
+
+          <div class="mini-chart-container">
+            <canvas id="pace-chart"></canvas>
+          </div>
+        `;
+
+          // Create Chart.js pace comparison
+          setTimeout(() => {
+            const ctx = document.getElementById('pace-chart');
+            if (ctx) {
+              new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: ['Off Rtg (per 100)', 'Def Rtg (per 100)', 'Net Rtg (per 100)'],
+                  datasets: [
+                    {
+                      label: 'Rating',
+                      data: [
+                        paceAdjusted.paceAdjustedOffRtg,
+                        paceAdjusted.paceAdjustedDefRtg,
+                        paceAdjusted.netRating,
+                      ],
+                      backgroundColor: [
+                        'rgba(74, 222, 128, 0.6)',
+                        'rgba(248, 113, 113, 0.6)',
+                        paceAdjusted.netRating > 0
+                          ? 'rgba(245, 177, 18, 0.6)'
+                          : 'rgba(93, 118, 169, 0.6)',
+                      ],
+                      borderColor: [
+                        'rgba(74, 222, 128, 1)',
+                        'rgba(248, 113, 113, 1)',
+                        paceAdjusted.netRating > 0
+                          ? 'rgba(245, 177, 18, 1)'
+                          : 'rgba(93, 118, 169, 1)',
+                      ],
+                      borderWidth: 2,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      backgroundColor: 'rgba(18, 23, 63, 0.9)',
+                      titleColor: '#F5B112',
+                      bodyColor: '#e0e0e0',
+                      callbacks: {
+                        label: (context) => `${context.parsed.y.toFixed(1)} per 100 possessions`,
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: { color: 'rgba(93, 118, 169, 0.1)' },
+                      ticks: {
+                        color: 'rgba(160, 160, 160, 1)',
+                        font: { size: 10 },
+                      },
+                    },
+                    y: {
+                      grid: { color: 'rgba(93, 118, 169, 0.1)' },
+                      ticks: { color: 'rgba(160, 160, 160, 1)' },
+                      beginAtZero: true,
+                    },
+                  },
+                },
+              });
+            }
+          }, 100);
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">⚡ Pace-Adjusted Ratings</h2>
+            <span class="card-icon">🎯</span>
+          </div>
+          <div class="error-message">Error calculating pace-adjusted ratings: ${error.message}</div>
+        `;
+        }
+      }
+
+      function renderScheduleCard(scheduleData) {
+        const card = document.getElementById('schedule-card');
+
+        try {
+          const { schedule, totalGames } = scheduleData;
+
+          // Group games by month
+          const gamesByMonth = {};
+          schedule.forEach((game) => {
+            const date = new Date(game.date);
+            const monthKey = date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+            if (!gamesByMonth[monthKey]) gamesByMonth[monthKey] = [];
+            gamesByMonth[monthKey].push(game);
+          });
+
+          let tableHTML = '';
+          for (const [month, games] of Object.entries(gamesByMonth)) {
+            tableHTML += `
+            <div style="margin-top: 2rem;">
+              <h3 style="color: var(--grizzlies-blue); font-size: 1.2rem; margin-bottom: 1rem; font-weight: 700;">
+                ${month}
+              </h3>
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Opponent</th>
+                    <th>Location</th>
+                    <th>Result</th>
+                    <th>Arena</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${games
+                    .map((game) => {
+                      const gameDate = new Date(game.date);
+                      const formattedDate = gameDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      });
+
+                      let resultBadge = '';
+                      if (game.score) {
+                        resultBadge = `<span class="game-result ${game.score.result.toLowerCase()}">${game.score.result} ${game.score.grizzlies}-${game.score.opponent}</span>`;
+                      } else {
+                        resultBadge = '<span class="game-result upcoming">TBD</span>';
+                      }
+
+                      return `
+                      <tr>
+                        <td>${formattedDate}</td>
+                        <td><strong>${game.opponent.name}</strong></td>
+                        <td>${game.homeAway === 'home' ? '🏠 Home' : '✈️ Away'}</td>
+                        <td>${resultBadge}</td>
+                        <td style="font-size: 0.8rem; color: var(--blaze-text-secondary);">${game.arena}</td>
+                      </tr>
+                    `;
+                    })
+                    .join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+          }
+
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">📅 2025 Season Schedule</h2>
+            <span class="card-icon">🗓️</span>
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <div class="metric-row">
+              <span class="metric-label">Total Games</span>
+              <span class="metric-value neutral">${totalGames}</span>
+            </div>
+          </div>
+          ${tableHTML}
+        `;
+        } catch (error) {
+          card.innerHTML = `
+          <div class="card-header">
+            <h2 class="card-title">📅 2025 Season Schedule</h2>
+            <span class="card-icon">🗓️</span>
+          </div>
+          <div class="error-message">Error loading schedule: ${error.message}</div>
+        `;
+        }
+      }
+
+      // ========================================
+      // ERROR HANDLING
+      // ========================================
+
+      function showError(message) {
+        document.querySelectorAll('.analytics-card').forEach((card) => {
+          card.innerHTML = `
+          <div class="error-message">
+            <strong>⚠️ Error:</strong> ${message}
+            <br><br>
+            Please verify your SportsDataIO API key is configured correctly.
+          </div>
+        `;
+        });
+      }
+
+      // ========================================
+      // EXECUTE
+      // ========================================
+
+      initializeDashboard();
+    </script>
+  </body>
+</html>

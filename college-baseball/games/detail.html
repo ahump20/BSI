@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Detail | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Complete college baseball game coverage with auto-generated recaps, full box scores, and play-by-play—professional-grade analytics for every game."
+    />
+
+    <!-- Design Tokens -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Brand Colors */
+        --burnt-orange: #bf5700;
+        --burnt-orange-dark: #9c4500;
+        --burnt-orange-light: #d66d1a;
+
+        /* Neutrals */
+        --charcoal: #1a1a1a;
+        --slate: #2d2d2d;
+        --silver: #6b7280;
+        --white: #ffffff;
+        --off-white: #f9fafb;
+
+        /* Glassmorphism */
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-blur: 12px;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+        /* Typography */
+        --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'Courier New', monospace;
+
+        /* Spacing */
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+
+        /* Border Radius */
+        --radius-sm: 0.5rem;
+        --radius-md: 1rem;
+        --radius-lg: 1.5rem;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        color: var(--white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Container */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-lg);
+      }
+
+      /* Navigation */
+      .nav {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border-bottom: 1px solid var(--glass-border);
+        padding: var(--spacing-sm) 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .back-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-sm);
+        transition: all 0.3s ease;
+      }
+
+      .back-link:hover {
+        background: var(--glass-bg);
+        color: var(--white);
+      }
+
+      /* Complete Coverage Badge */
+      .complete-coverage-badge {
+        background: linear-gradient(135deg, var(--burnt-orange) 0%, #ff8c00 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 2rem;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: var(--spacing-lg);
+        box-shadow: 0 4px 16px rgba(191, 87, 0, 0.3);
+      }
+
+      /* Loading */
+      .loading {
+        text-align: center;
+        padding: var(--spacing-xl);
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 107, 0, 0.2);
+        border-top-color: var(--burnt-orange);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto var(--spacing-md);
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1.125rem;
+      }
+
+      /* Error */
+      .error {
+        background: rgba(220, 53, 69, 0.1);
+        border: 2px solid #dc3545;
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        text-align: center;
+      }
+
+      .error h3 {
+        color: #dc3545;
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .error p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.125rem;
+      }
+
+      /* Game Header */
+      .game-header {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .game-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+      }
+
+      .game-info {
+        display: flex;
+        gap: var(--spacing-md);
+        align-items: center;
+        flex-wrap: wrap;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+      }
+
+      .game-status {
+        background: var(--burnt-orange);
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .game-status.final {
+        background: #28a745;
+      }
+
+      .game-status.live {
+        background: #dc3545;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      /* Teams */
+      .teams {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-lg);
+        margin: var(--spacing-lg) 0;
+      }
+
+      .team {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+      }
+
+      .team.away {
+        flex-direction: row-reverse;
+        text-align: right;
+      }
+
+      .team-logo {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        border-radius: var(--radius-md);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem;
+      }
+
+      .team-info h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+
+      .team-record {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+      }
+
+      .team-rank {
+        display: inline-block;
+        background: var(--burnt-orange);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+      }
+
+      .score-container {
+        text-align: center;
+        min-width: 120px;
+      }
+
+      .score {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--burnt-orange);
+        line-height: 1;
+        font-family: var(--font-mono);
+      }
+
+      .score-divider {
+        color: rgba(255, 255, 255, 0.5);
+        margin: 0 0.5rem;
+      }
+
+      .inning {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      /* Line Score */
+      .line-score {
+        margin-top: var(--spacing-lg);
+        overflow-x: auto;
+      }
+
+      .line-score table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+
+      .line-score th,
+      .line-score td {
+        padding: 0.75rem;
+        text-align: center;
+        border: 1px solid var(--glass-border);
+      }
+
+      .line-score th {
+        background: rgba(255, 255, 255, 0.05);
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
+
+      .line-score .team-name {
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .line-score .total {
+        background: rgba(191, 87, 0, 0.2);
+        font-weight: 700;
+      }
+
+      /* Venue Info */
+      .venue-info {
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+      }
+
+      .venue-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Tabs */
+      .tabs {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 0.5rem;
+        margin-bottom: var(--spacing-lg);
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+      }
+
+      .tab {
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-md);
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      }
+
+      .tab:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--white);
+      }
+
+      .tab.active {
+        background: var(--burnt-orange);
+        color: white;
+      }
+
+      /* Content Sections */
+      .content-section {
+        display: none;
+      }
+
+      .content-section.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Recap Section */
+      .recap {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .recap-headline {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-lg);
+        line-height: 1.2;
+        color: var(--burnt-orange);
+      }
+
+      .recap-summary {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        margin-bottom: var(--spacing-xl);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .recap-section {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .recap-section h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Key Plays */
+      .key-play {
+        background: rgba(255, 255, 255, 0.03);
+        border-left: 4px solid var(--burnt-orange);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+        border-radius: var(--radius-sm);
+        transition: all 0.3s ease;
+      }
+
+      .key-play:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateX(4px);
+      }
+
+      .key-play.high {
+        border-left-color: #dc3545;
+      }
+
+      .key-play.medium {
+        border-left-color: #ffc107;
+      }
+
+      .key-play.low {
+        border-left-color: #28a745;
+      }
+
+      .key-play-inning {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+        letter-spacing: 0.05em;
+      }
+
+      .key-play-description {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      /* Player Performances */
+      .player-performance {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: var(--radius-sm);
+        margin-bottom: var(--spacing-sm);
+        transition: all 0.3s ease;
+      }
+
+      .player-performance:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateX(4px);
+      }
+
+      .player-performance img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .player-performance-info {
+        flex: 1;
+      }
+
+      .player-performance-name {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .player-performance-stats {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Turning Point */
+      .turning-point {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 107, 0, 0.1) 0%,
+          rgba(59, 130, 246, 0.1) 100%
+        );
+        border: 2px solid var(--burnt-orange);
+        padding: var(--spacing-lg);
+        border-radius: var(--radius-md);
+        margin-top: var(--spacing-xl);
+      }
+
+      .turning-point h4 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-sm);
+        color: var(--burnt-orange);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .turning-point p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      /* Generated Info */
+      .generated-info {
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--glass-border);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+      }
+
+      .confidence-badge {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        padding: 0.375rem 0.875rem;
+        border-radius: 2rem;
+        font-weight: 600;
+      }
+
+      /* Box Score */
+      .box-score {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-xl);
+        overflow-x: auto;
+      }
+
+      .box-score h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-md);
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .stat-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: var(--spacing-xl);
+        font-size: 0.875rem;
+      }
+
+      .stat-table th,
+      .stat-table td {
+        padding: 0.75rem 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .stat-table th {
+        background: rgba(255, 255, 255, 0.05);
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+      }
+
+      .stat-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .stat-table .player-name {
+        font-weight: 600;
+      }
+
+      .stat-table .total-row {
+        background: rgba(191, 87, 0, 0.1);
+        font-weight: 700;
+      }
+
+      .stat-table td:not(.player-name) {
+        text-align: center;
+        font-family: var(--font-mono);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: var(--spacing-sm);
+        }
+
+        .teams {
+          flex-direction: column;
+          gap: var(--spacing-md);
+        }
+
+        .team {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .team.away {
+          flex-direction: row;
+          text-align: left;
+        }
+
+        .score-container {
+          order: 3;
+          width: 100%;
+          margin-top: var(--spacing-md);
+        }
+
+        .recap-headline {
+          font-size: 1.5rem;
+        }
+
+        .recap-summary {
+          font-size: 1rem;
+        }
+
+        .stat-table {
+          font-size: 0.75rem;
+        }
+
+        .stat-table th,
+        .stat-table td {
+          padding: 0.5rem 0.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/" class="nav-brand" aria-label="Blaze Sports Intel Home">
+          <i class="fas fa-fire" aria-hidden="true"></i>
+          Blaze Sports Intel
+        </a>
+        <a href="/college-baseball/games/" class="back-link">
+          <i class="fas fa-arrow-left"></i>
+          Back to Games
+        </a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Loading State -->
+      <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading game data...</div>
+      </div>
+
+      <!-- Error State -->
+      <div id="error" class="error" style="display: none">
+        <h3>Error Loading Game</h3>
+        <p id="error-message"></p>
+      </div>
+
+      <!-- Game Content -->
+      <div id="game-content" style="display: none">
+        <!-- Complete Coverage Badge -->
+        <div class="complete-coverage-badge">
+          Complete Coverage — Full Recap + Box Score + Play-by-Play
+        </div>
+
+        <!-- Game Header -->
+        <div class="game-header">
+          <div class="game-header-top">
+            <div class="game-info">
+              <span id="game-date"></span>
+              <span id="game-venue"></span>
+              <span id="game-attendance"></span>
+            </div>
+            <div class="game-status" id="game-status">Final</div>
+          </div>
+
+          <!-- Teams -->
+          <div class="teams">
+            <div class="team away">
+              <div class="team-info">
+                <h2 id="away-team-name">Away Team</h2>
+                <div class="team-record" id="away-team-record"></div>
+              </div>
+              <img id="away-team-logo" class="team-logo" src="" alt="Away Team Logo" />
+            </div>
+
+            <div class="score-container">
+              <div class="score">
+                <span id="away-score">0</span>
+                <span class="score-divider">-</span>
+                <span id="home-score">0</span>
+              </div>
+              <div class="inning" id="inning-status"></div>
+            </div>
+
+            <div class="team home">
+              <img id="home-team-logo" class="team-logo" src="" alt="Home Team Logo" />
+              <div class="team-info">
+                <h2 id="home-team-name">Home Team</h2>
+                <div class="team-record" id="home-team-record"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Line Score -->
+          <div class="line-score" id="line-score-container"></div>
+
+          <!-- Venue Info -->
+          <div class="venue-info">
+            <div class="venue-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span id="venue-full"></span>
+            </div>
+            <div class="venue-item" id="broadcast-info" style="display: none">
+              <i class="fas fa-tv"></i>
+              <span id="broadcast"></span>
+            </div>
+            <div class="venue-item">
+              <i class="fas fa-database"></i>
+              <span>ESPN API + Blaze Intelligence</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('recap')">
+            <i class="fas fa-trophy"></i> Auto-Generated Recap
+          </button>
+          <button class="tab" onclick="switchTab('box-score')">
+            <i class="fas fa-table"></i> Complete Box Score
+          </button>
+          <button
+            class="tab"
+            onclick="switchTab('play-by-play')"
+            id="play-by-play-tab"
+            style="display: none"
+          >
+            <i class="fas fa-list"></i> Play-by-Play
+          </button>
+        </div>
+
+        <!-- Recap Section -->
+        <div id="recap-section" class="content-section active">
+          <div class="recap">
+            <h1 class="recap-headline" id="recap-headline"></h1>
+            <p class="recap-summary" id="recap-summary"></p>
+
+            <div class="recap-section" id="key-plays-section">
+              <h3><i class="fas fa-star"></i> Key Plays</h3>
+              <div id="key-plays"></div>
+            </div>
+
+            <div class="recap-section" id="player-performances-section">
+              <h3><i class="fas fa-user-check"></i> Player Performances</h3>
+              <div id="player-performances"></div>
+            </div>
+
+            <div id="turning-point-section"></div>
+
+            <div class="generated-info">
+              <span id="generated-timestamp"></span>
+              <span class="confidence-badge" id="confidence-score"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Box Score Section -->
+        <div id="box-score-section" class="content-section">
+          <div class="box-score">
+            <h3><i class="fas fa-table"></i> Batting Statistics</h3>
+            <div id="batting-tables"></div>
+
+            <h3><i class="fas fa-chart-bar"></i> Pitching Statistics</h3>
+            <div id="pitching-tables"></div>
+
+            <h3><i class="fas fa-shield-alt"></i> Fielding Statistics</h3>
+            <div id="fielding-tables"></div>
+          </div>
+        </div>
+
+        <!-- Play-by-Play Section -->
+        <div id="play-by-play-section" class="content-section">
+          <div class="box-score">
+            <h3><i class="fas fa-list"></i> Play-by-Play</h3>
+            <div id="play-by-play-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Get game ID from URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const gameId = urlParams.get('id');
+
+      if (!gameId) {
+        showError('No game ID provided. Please provide a game ID in the URL (e.g., ?id=401778104)');
+      } else {
+        loadGameData(gameId);
+      }
+
+      async function loadGameData(gameId) {
+        try {
+          const response = await fetch(
+            `/api/college-baseball/games/${gameId}?include=boxscore,recap,playbyplay`
+          );
+
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          renderGame(data);
+        } catch (error) {
+          console.error('Error loading game:', error);
+          showError(`Failed to load game data: ${error.message}`);
+        }
+      }
+
+      function renderGame(data) {
+        // Hide loading, show content
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('game-content').style.display = 'block';
+
+        // Render game header
+        renderGameHeader(data);
+
+        // Render recap
+        if (data.recap) {
+          renderRecap(data.recap);
+        }
+
+        // Render box score
+        if (data.boxscore) {
+          renderBoxScore(data.boxscore, data.competition);
+        }
+
+        // Render play-by-play
+        if (data.playByPlay) {
+          renderPlayByPlay(data.playByPlay);
+          document.getElementById('play-by-play-tab').style.display = 'inline-flex';
+        }
+      }
+
+      function renderGameHeader(data) {
+        const game = data.game;
+        const competition = data.competition;
+
+        // Date
+        const gameDate = new Date(game.date);
+        document.getElementById('game-date').innerHTML =
+          `<i class="fas fa-calendar-alt"></i> ${gameDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          })}`;
+
+        // Status
+        const statusEl = document.getElementById('game-status');
+        const statusType = game.status.type.name.toLowerCase();
+        statusEl.textContent = game.status.type.detail;
+        statusEl.className = `game-status ${statusType === 'status_final' ? 'final' : statusType === 'status_in_progress' ? 'live' : ''}`;
+
+        // Teams
+        const homeTeam = competition.competitors.find((c) => c.homeAway === 'home');
+        const awayTeam = competition.competitors.find((c) => c.homeAway === 'away');
+
+        // Away Team
+        document.getElementById('away-team-name').textContent = awayTeam.team.displayName;
+        document.getElementById('away-team-record').textContent =
+          `Record: ${awayTeam.records?.[0]?.summary || 'N/A'}`;
+        document.getElementById('away-team-logo').src =
+          awayTeam.team.logo || '/placeholder-team-logo.png';
+        if (awayTeam.rank) {
+          document.getElementById('away-team-name').innerHTML +=
+            ` <span class="team-rank">#${awayTeam.rank.current}</span>`;
+        }
+
+        // Home Team
+        document.getElementById('home-team-name').textContent = homeTeam.team.displayName;
+        document.getElementById('home-team-record').textContent =
+          `Record: ${homeTeam.records?.[0]?.summary || 'N/A'}`;
+        document.getElementById('home-team-logo').src =
+          homeTeam.team.logo || '/placeholder-team-logo.png';
+        if (homeTeam.rank) {
+          document.getElementById('home-team-name').innerHTML +=
+            ` <span class="team-rank">#${homeTeam.rank.current}</span>`;
+        }
+
+        // Scores
+        document.getElementById('away-score').textContent = awayTeam.score || '0';
+        document.getElementById('home-score').textContent = homeTeam.score || '0';
+
+        // Inning
+        if (game.status.period > 0) {
+          const inningText =
+            game.status.period > 9
+              ? `Extra Innings (${game.status.period}${getOrdinalSuffix(game.status.period)})`
+              : `${game.status.period}${getOrdinalSuffix(game.status.period)} Inning`;
+          document.getElementById('inning-status').textContent = inningText;
+        }
+
+        // Line Score
+        renderLineScore(competition.competitors);
+
+        // Venue
+        if (game.venue) {
+          document.getElementById('venue-full').textContent = game.venue.fullName;
+        }
+
+        // Attendance
+        if (game.attendance) {
+          document.getElementById('game-attendance').innerHTML =
+            `<i class="fas fa-users"></i> ${game.attendance.toLocaleString()}`;
+        }
+
+        // Broadcast
+        if (game.broadcast) {
+          document.getElementById('broadcast-info').style.display = 'flex';
+          document.getElementById('broadcast').textContent = game.broadcast;
+        }
+      }
+
+      function renderLineScore(competitors) {
+        const homeTeam = competitors.find((c) => c.homeAway === 'home');
+        const awayTeam = competitors.find((c) => c.homeAway === 'away');
+
+        if (!homeTeam.linescores || !awayTeam.linescores) return;
+
+        const innings = Math.max(homeTeam.linescores.length, awayTeam.linescores.length);
+
+        let html = '<table><thead><tr><th class="team-name">Team</th>';
+        for (let i = 1; i <= innings; i++) {
+          html += `<th>${i}</th>`;
+        }
+        html +=
+          '<th class="total">R</th><th class="total">H</th><th class="total">E</th></tr></thead><tbody>';
+
+        // Away Team
+        html += `<tr><td class="team-name">${awayTeam.team.abbreviation}</td>`;
+        awayTeam.linescores.forEach((inning) => {
+          html += `<td>${inning.displayValue}</td>`;
+        });
+        html += `<td class="total">${awayTeam.score}</td>`;
+        html += `<td class="total">${awayTeam.hits || 0}</td>`;
+        html += `<td class="total">${awayTeam.errors || 0}</td>`;
+        html += '</tr>';
+
+        // Home Team
+        html += `<tr><td class="team-name">${homeTeam.team.abbreviation}</td>`;
+        homeTeam.linescores.forEach((inning) => {
+          html += `<td>${inning.displayValue}</td>`;
+        });
+        html += `<td class="total">${homeTeam.score}</td>`;
+        html += `<td class="total">${homeTeam.hits || 0}</td>`;
+        html += `<td class="total">${homeTeam.errors || 0}</td>`;
+        html += '</tr>';
+
+        html += '</tbody></table>';
+        document.getElementById('line-score-container').innerHTML = html;
+      }
+
+      function renderRecap(recap) {
+        document.getElementById('recap-headline').textContent = recap.headline;
+        document.getElementById('recap-summary').textContent = recap.summary;
+
+        // Key Plays
+        let keyPlaysHtml = '';
+        recap.keyPlays.forEach((play) => {
+          keyPlaysHtml += `
+                    <div class="key-play ${play.impact}">
+                        <div class="key-play-inning">Inning ${play.inning} • ${play.impact.toUpperCase()} IMPACT</div>
+                        <div class="key-play-description">${play.description}</div>
+                    </div>
+                `;
+        });
+        document.getElementById('key-plays').innerHTML = keyPlaysHtml;
+
+        // Player Performances
+        let performancesHtml = '';
+        recap.playerPerformances.forEach((perf) => {
+          performancesHtml += `
+                    <div class="player-performance">
+                        <img src="${perf.player.headshot?.href || '/placeholder-player.png'}" alt="${perf.player.displayName}">
+                        <div class="player-performance-info">
+                            <div class="player-performance-name">${perf.player.displayName} - ${perf.team.displayName}</div>
+                            <div class="player-performance-stats">${perf.stats}</div>
+                        </div>
+                    </div>
+                `;
+        });
+        document.getElementById('player-performances').innerHTML = performancesHtml;
+
+        // Turning Point
+        if (recap.turningPoint) {
+          document.getElementById('turning-point-section').innerHTML = `
+                    <div class="turning-point">
+                        <h4><i class="fas fa-bolt"></i> Turning Point - Inning ${recap.turningPoint.inning}</h4>
+                        <p>${recap.turningPoint.description}</p>
+                    </div>
+                `;
+        }
+
+        // Generated Info
+        const timestamp = new Date(recap.generated.timestamp);
+        document.getElementById('generated-timestamp').textContent =
+          `Generated: ${timestamp.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT`;
+        document.getElementById('confidence-score').textContent =
+          `${(recap.generated.confidence * 100).toFixed(0)}% Confidence`;
+      }
+
+      function renderBoxScore(boxscore, competition) {
+        if (!boxscore.players) return;
+
+        const homeTeam = competition.competitors.find((c) => c.homeAway === 'home');
+        const awayTeam = competition.competitors.find((c) => c.homeAway === 'away');
+
+        // Batting Tables
+        let battingHtml = '';
+        boxscore.players.forEach((teamData) => {
+          const battingStats = teamData.statistics.find((s) => s.name === 'batting');
+          if (!battingStats) return;
+
+          const teamName =
+            teamData.team.id === homeTeam.team.id
+              ? homeTeam.team.displayName
+              : awayTeam.team.displayName;
+
+          battingHtml += `<h4 style="margin-top: 2rem; color: var(--burnt-orange);">${teamName}</h4>`;
+          battingHtml += '<table class="stat-table"><thead><tr>';
+          battingHtml += '<th>Player</th>';
+          battingStats.keys.forEach((key) => {
+            battingHtml += `<th>${key}</th>`;
+          });
+          battingHtml += '</tr></thead><tbody>';
+
+          battingStats.athletes.forEach((athleteData) => {
+            battingHtml += '<tr>';
+            battingHtml += `<td class="player-name">${athleteData.athlete.displayName}</td>`;
+            athleteData.stats.forEach((stat) => {
+              battingHtml += `<td>${stat}</td>`;
+            });
+            battingHtml += '</tr>';
+          });
+
+          battingHtml += '</tbody></table>';
+        });
+        document.getElementById('batting-tables').innerHTML = battingHtml;
+
+        // Pitching Tables
+        let pitchingHtml = '';
+        boxscore.players.forEach((teamData) => {
+          const pitchingStats = teamData.statistics.find((s) => s.name === 'pitching');
+          if (!pitchingStats) return;
+
+          const teamName =
+            teamData.team.id === homeTeam.team.id
+              ? homeTeam.team.displayName
+              : awayTeam.team.displayName;
+
+          pitchingHtml += `<h4 style="margin-top: 2rem; color: var(--burnt-orange);">${teamName}</h4>`;
+          pitchingHtml += '<table class="stat-table"><thead><tr>';
+          pitchingHtml += '<th>Pitcher</th>';
+          pitchingStats.keys.forEach((key) => {
+            pitchingHtml += `<th>${key}</th>`;
+          });
+          pitchingHtml += '</tr></thead><tbody>';
+
+          pitchingStats.athletes.forEach((athleteData) => {
+            pitchingHtml += '<tr>';
+            pitchingHtml += `<td class="player-name">${athleteData.athlete.displayName}</td>`;
+            athleteData.stats.forEach((stat) => {
+              pitchingHtml += `<td>${stat}</td>`;
+            });
+            pitchingHtml += '</tr>';
+          });
+
+          pitchingHtml += '</tbody></table>';
+        });
+        document.getElementById('pitching-tables').innerHTML = pitchingHtml;
+
+        // Fielding Tables
+        let fieldingHtml = '';
+        boxscore.players.forEach((teamData) => {
+          const fieldingStats = teamData.statistics.find((s) => s.name === 'fielding');
+          if (!fieldingStats) return;
+
+          const teamName =
+            teamData.team.id === homeTeam.team.id
+              ? homeTeam.team.displayName
+              : awayTeam.team.displayName;
+
+          fieldingHtml += `<h4 style="margin-top: 2rem; color: var(--burnt-orange);">${teamName}</h4>`;
+          fieldingHtml += '<table class="stat-table"><thead><tr>';
+          fieldingHtml += '<th>Player</th>';
+          fieldingStats.keys.forEach((key) => {
+            fieldingHtml += `<th>${key}</th>`;
+          });
+          fieldingHtml += '</tr></thead><tbody>';
+
+          fieldingStats.athletes.forEach((athleteData) => {
+            fieldingHtml += '<tr>';
+            fieldingHtml += `<td class="player-name">${athleteData.athlete.displayName}</td>`;
+            athleteData.stats.forEach((stat) => {
+              fieldingHtml += `<td>${stat}</td>`;
+            });
+            fieldingHtml += '</tr>';
+          });
+
+          fieldingHtml += '</tbody></table>';
+        });
+        document.getElementById('fielding-tables').innerHTML =
+          fieldingHtml ||
+          '<p style="color: rgba(255, 255, 255, 0.6); text-align: center; padding: 2rem;">No fielding statistics available</p>';
+      }
+
+      function renderPlayByPlay(playByPlay) {
+        document.getElementById('play-by-play-content').innerHTML =
+          '<p style="color: rgba(255, 255, 255, 0.6); text-align: center; padding: 3rem;">Play-by-play data structure varies by game. Check console for full data.</p>';
+        console.log('Play-by-play data:', playByPlay);
+      }
+
+      function switchTab(tabName) {
+        // Remove active from all tabs
+        document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+        document
+          .querySelectorAll('.content-section')
+          .forEach((section) => section.classList.remove('active'));
+
+        // Add active to selected
+        event.target.classList.add('active');
+        document.getElementById(`${tabName}-section`).classList.add('active');
+      }
+
+      function showError(message) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error-message').textContent = message;
+      }
+
+      function getOrdinalSuffix(n) {
+        const s = ['th', 'st', 'nd', 'rd'];
+        const v = n % 100;
+        return s[(v - 20) % 10] || s[v] || s[0];
+      }
+    </script>
+  </body>
+</html>

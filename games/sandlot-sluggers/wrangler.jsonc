@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler",
+  "name": "sandlot-sluggers",
+  "main": "worker/index.ts",
+  "compatibility_date": "2024-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // R2 bucket for game assets (GLB, images, built JS/CSS)
+  // Static assets from dist folder
+  "assets": {
+    "directory": "./dist",
+    "binding": "STATIC_ASSETS",
+  },
+
+  // R2 bucket for large game assets (GLB models)
+  "r2_buckets": [
+    {
+      "binding": "R2_ASSETS",
+      "bucket_name": "bsi-sandlot-sluggers-assets",
+    },
+  ],
+
+  // D1 database for game stats and leaderboards (shared game database)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bsi-game-db",
+      "database_id": "88eb676f-af0f-470c-a46a-b9429f5b51f3",
+    },
+  ],
+
+  // KV namespace for session storage and caching
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "3443edb3bb4f44c3ad7d81acd31ce25e",
+    },
+  ],
+
+  // Enable workers.dev subdomain
+  "workers_dev": true,
+
+  // Production routes
+  "routes": [
+    {
+      "pattern": "blazesportsintel.com/games/sandlot-sluggers/*",
+      "zone_name": "blazesportsintel.com",
+    },
+  ],
+
+  // Development settings
+  "dev": {
+    "port": 8787,
+    "local_protocol": "http",
+  },
+
+  // Build settings
+  "build": {
+    "command": "npm run build",
+    "cwd": ".",
+    "watch_dir": "src",
+  },
+
+  // Environment-specific overrides
+  "env": {
+    "staging": {
+      "name": "sandlot-sluggers-staging",
+      "routes": [
+        {
+          "pattern": "sandlot-staging.blazesportsintel.com/*",
+          "zone_name": "blazesportsintel.com",
+        },
+      ],
+    },
+  },
+}

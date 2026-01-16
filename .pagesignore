@@ -1,0 +1,14 @@
+Admin
+Media
+Misc
+.tmp.driveupload
+*.pptx
+*.mp4
+*.mov
+*.blend
+*.blend1
+node_modules
+blender-master
+blender-mcp-setup
+BSI-mobile-prototype
+games/sandlot-sluggers

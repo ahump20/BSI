@@ -638,7 +638,7 @@ export class CollegeBaseballAggregator {
 
     for (const source of sources) {
       try {
-        let standings: NormalizedStanding[] = [];
+        const standings: NormalizedStanding[] = [];
         const now = new Date().toISOString();
 
         if (source === 'ncaa-api') {
@@ -678,15 +678,12 @@ export class CollegeBaseballAggregator {
                 const entry = entries[i];
                 const stats = entry.stats || [];
                 const getStatValue = (name: string): number => {
-                  const stat = stats.find(
-                    (s) => s.name === name || s.abbreviation === name
-                  );
+                  const stat = stats.find((s) => s.name === name || s.abbreviation === name);
                   return stat?.value ?? 0;
                 };
 
                 standings.push({
-                  teamId:
-                    entry.team.abbreviation?.toLowerCase() || entry.team.id,
+                  teamId: entry.team.abbreviation?.toLowerCase() || entry.team.id,
                   teamName: entry.team.displayName || entry.team.name || '',
                   teamLogo: entry.team.logo,
                   conference: conf.name || '',
@@ -830,8 +827,7 @@ export class CollegeBaseballAggregator {
               rankings = poll.ranks.map((team) => ({
                 rank: team.current,
                 previousRank: team.previous,
-                teamId:
-                  team.team.abbreviation?.toLowerCase() || team.team.id,
+                teamId: team.team.abbreviation?.toLowerCase() || team.team.id,
                 teamName: team.team.displayName || team.team.name || '',
                 teamLogo: team.team.logo,
                 record: team.recordSummary,

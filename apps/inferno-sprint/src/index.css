@@ -1,0 +1,360 @@
+/* BSI: Inferno Sprint - Dark palette with ember/orange highlights */
+
+:root {
+  --bsi-bg-dark: #1a1a2e;
+  --bsi-bg-darker: #0f0f1a;
+  --bsi-ember: #ff6b35;
+  --bsi-ember-light: #ffa500;
+  --bsi-ember-glow: #ff8c42;
+  --bsi-text: #e8e8e8;
+  --bsi-text-muted: #a0a0a0;
+  --bsi-accent: #ff4500;
+}
+
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  color: var(--bsi-text);
+  font-weight: 400;
+  touch-action: none;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--bsi-bg-darker);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: max(min(3.5vw, 3.5vh), 14px);
+}
+
+body > * {
+  position: absolute;
+}
+
+/* BSI Logo area */
+.bsi-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+.bsi-icon {
+  font-size: 2em;
+  filter: drop-shadow(0 0 8px var(--bsi-ember));
+}
+
+.bsi-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--bsi-ember);
+  text-shadow:
+    0 0 20px var(--bsi-ember),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.05em;
+}
+
+.bsi-tagline {
+  font-size: 0.9em;
+  color: var(--bsi-text-muted);
+  margin: 0 0 1em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.game-intro {
+  display: block;
+  color: var(--bsi-ember-light);
+  margin-bottom: 1.2em;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* Messages */
+h4 {
+  left: 0;
+  top: 0;
+  right: 0;
+  text-align: center;
+  color: var(--bsi-ember);
+  text-shadow:
+    0 0 10px var(--bsi-ember),
+    2px 2px 4px #000;
+  font-size: 1.2em;
+}
+
+/* Disable mouse and touch events to souls counter and messages */
+h3,
+h4 {
+  pointer-events: none;
+}
+
+/* Main menu container */
+.m main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  min-width: 70%;
+}
+
+/* Main menu inner */
+nav {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(15, 15, 26, 0.98));
+  border: 1px solid var(--bsi-ember);
+  border-radius: 1em;
+  max-width: max(780px, 50vw);
+  padding: 1.5em;
+  box-shadow:
+    0 0 30px rgba(255, 107, 53, 0.3),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Menu hamburger */
+#b5 {
+  padding: 12px;
+  color: var(--bsi-ember);
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 100;
+  text-shadow: 0 0 10px var(--bsi-ember);
+}
+
+#b5:hover {
+  color: var(--bsi-ember-light);
+}
+
+/* Souls counter */
+h3 {
+  text-align: right;
+  right: 5%;
+  bottom: 0;
+  padding: 10px;
+  color: var(--bsi-ember);
+  font-size: 1.1em;
+  text-shadow:
+    0 0 8px var(--bsi-ember),
+    2px 2px 4px #000;
+}
+
+/* Timer HUD */
+#timerHud {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2em;
+  font-weight: 700;
+  color: var(--bsi-ember);
+  text-shadow:
+    0 0 15px var(--bsi-ember),
+    3px 3px 6px #000;
+  pointer-events: none;
+  z-index: 50;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+}
+
+#timerHud.warning {
+  color: #ff0;
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+#timerHud.critical {
+  color: #f00;
+  animation: pulse 0.25s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+/* Leaderboard overlay */
+#leaderboardOverlay {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(15, 15, 26, 0.99));
+  border: 2px solid var(--bsi-ember);
+  border-radius: 1em;
+  padding: 2em;
+  min-width: 300px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 0 50px rgba(255, 107, 53, 0.4);
+}
+
+#leaderboardOverlay.visible {
+  display: block;
+}
+
+#leaderboardOverlay h2 {
+  color: var(--bsi-ember);
+  margin: 0 0 1em;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+#leaderboardOverlay .lb-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5em 0;
+  border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+#leaderboardOverlay .lb-entry.you {
+  color: var(--bsi-ember-light);
+  font-weight: 700;
+}
+
+#leaderboardOverlay .lb-rank {
+  min-width: 2em;
+  color: var(--bsi-text-muted);
+}
+
+#leaderboardOverlay .lb-name {
+  flex: 1;
+  margin: 0 1em;
+}
+
+#leaderboardOverlay .lb-time {
+  font-family: monospace;
+  color: var(--bsi-ember);
+}
+
+#leaderboardOverlay .lb-close {
+  margin-top: 1.5em;
+  text-align: center;
+}
+
+/* Menu buttons */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 1em 0;
+}
+
+li {
+  cursor: pointer;
+  padding: 0.6em 1em;
+  margin-bottom: 0.4em;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid transparent;
+  border-radius: 0.5em;
+  transition: all 0.2s ease;
+}
+
+li:hover {
+  background: rgba(255, 107, 53, 0.25);
+  border-color: var(--bsi-ember);
+  transform: translateX(5px);
+  color: var(--bsi-ember-light);
+}
+
+/* Links */
+a {
+  color: var(--bsi-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--bsi-ember);
+}
+
+/* Credits */
+.controls-hint,
+.credits {
+  font-size: 0.75em;
+  color: var(--bsi-text-muted);
+  margin-top: 1em;
+}
+
+/* Hide main menu by default */
+main,
+/* Hide messages if in menu */
+.m h4,
+.m #timerHud,
+/* Hide the collision canvas */
+#hD {
+  display: none;
+}
+
+/* Canvas styling */
+#hC {
+  background: var(--bsi-bg-darker);
+}
+
+/* Loading state */
+.l h4 {
+  color: var(--bsi-ember);
+  font-size: 1.5em;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Run complete overlay */
+.run-complete {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(15, 15, 26, 0.98));
+  border: 2px solid var(--bsi-ember);
+  border-radius: 1em;
+  padding: 2em;
+  z-index: 150;
+}
+
+.run-complete h2 {
+  color: var(--bsi-ember);
+  font-size: 2em;
+  margin: 0 0 0.5em;
+  text-shadow: 0 0 20px var(--bsi-ember);
+}
+
+.run-complete .final-time {
+  font-size: 3em;
+  font-weight: 700;
+  color: var(--bsi-ember-light);
+  font-family: monospace;
+  margin: 0.3em 0;
+}
+
+.run-complete .rank {
+  font-size: 1.2em;
+  color: var(--bsi-text);
+  margin-bottom: 1em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  nav {
+    padding: 1em;
+    margin: 0.5em;
+  }
+
+  .bsi-title {
+    font-size: 1.4em;
+  }
+
+  #timerHud {
+    font-size: 1.5em;
+  }
+}

@@ -1,0 +1,92 @@
+graph LR
+    %% Data Sources
+    subgraph "📊 Data Sources"
+        PoseData[3D Pose Data]
+        GameData[Game Statistics]
+        PlayerData[Player Profiles]
+        VideoData[Video Footage]
+    end
+    
+    %% Feature Engineering
+    subgraph "🔧 Feature Engineering" 
+        Extract[Feature Extraction]
+        Transform[Data Transformation]
+        Select[Feature Selection]
+    end
+    
+    %% Model Training
+    subgraph "🧠 Model Training"
+        InjuryModel[Injury Risk Model<br/>Random Forest]
+        PerfModel[Performance Model<br/>Neural Network]
+        TraitModel[Trait Scoring Model<br/>XGBoost]
+        OutcomeModel[Game Outcome Model<br/>Ensemble]
+    end
+    
+    %% Model Evaluation
+    subgraph "📈 Evaluation"
+        Validation[Cross Validation]
+        Metrics[Performance Metrics]
+        Drift[Model Drift Detection]
+    end
+    
+    %% Deployment
+    subgraph "🚀 Deployment"
+        API[REST API Endpoints]
+        RealTime[Real-time Inference]
+        Batch[Batch Processing]
+    end
+    
+    %% Monitoring
+    subgraph "📊 Monitoring"
+        Logs[Model Logs]
+        Alerts[Performance Alerts]
+        Retraining[Auto Retraining]
+    end
+    
+    %% Flow
+    PoseData --> Extract
+    GameData --> Extract
+    PlayerData --> Extract
+    VideoData --> Extract
+    
+    Extract --> Transform
+    Transform --> Select
+    
+    Select --> InjuryModel
+    Select --> PerfModel
+    Select --> TraitModel
+    Select --> OutcomeModel
+    
+    InjuryModel --> Validation
+    PerfModel --> Validation
+    TraitModel --> Validation
+    OutcomeModel --> Validation
+    
+    Validation --> Metrics
+    Metrics --> Drift
+    
+    InjuryModel --> API
+    PerfModel --> RealTime
+    TraitModel --> Batch
+    OutcomeModel --> API
+    
+    API --> Logs
+    RealTime --> Logs
+    Batch --> Logs
+    
+    Logs --> Alerts
+    Alerts --> Retraining
+    Drift --> Retraining
+    
+    %% Styling
+    classDef data fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef processing fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef models fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef deployment fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef monitoring fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class PoseData,GameData,PlayerData,VideoData data
+    class Extract,Transform,Select processing
+    class InjuryModel,PerfModel,TraitModel,OutcomeModel models
+    class API,RealTime,Batch deployment
+    class Logs,Alerts,Retraining monitoring

@@ -1,0 +1,25 @@
+name = "backyard-baseball-api"
+main = "worker-telemetry/index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "TELEMETRY_DB"
+database_name = "bsi-game-telemetry"
+database_id = "6201538f-42b6-4740-b386-5999dc8a6e15"
+
+[[r2_buckets]]
+binding = "GAME_ASSETS"
+bucket_name = "bsi-game-assets"
+
+[env.staging]
+name = "backyard-baseball-api-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"
+
+[[env.staging.d1_databases]]
+binding = "TELEMETRY_DB"
+database_name = "bsi-game-telemetry-staging"
+database_id = "placeholder-replace-with-staging-id"

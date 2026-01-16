@@ -1,0 +1,82 @@
+{
+  "slug": "south-carolina-gamecocks",
+  "team_name": "South Carolina Gamecocks",
+  "mascot": "Gamecocks",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Program evaluating leadership after 2024 Columbia Regional exit."
+  },
+  "location": {
+    "city": "Columbia",
+    "state": "South Carolina",
+    "campus": "University of South Carolina",
+    "ballpark": {
+      "name": "Founders Park",
+      "capacity": 8200,
+      "surface": "Natural grass",
+      "recent_upgrades": "Added new pitching lab tech and LED boards in 2024 offseason."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#73000A",
+    "secondary_color_hex": "#000000"
+  },
+  "head_coach": {
+    "name": "Mark Kingston",
+    "contract_through": "2027",
+    "base_salary_estimate": 900000,
+    "staff_tenure": "Eighth season in Columbia.",
+    "playing_style": "Power-first lineup with emphasis on strikeout arms; looking to improve situational hitting."
+  },
+  "support_staff": {
+    "pitching_coach": "Matt Williams",
+    "hitting_coach": "Monte Lee",
+    "recruiting_coordinator": "Monte Lee",
+    "director_of_operations": "Scott Wingo",
+    "analytics_lead": "Alex Farmer",
+    "player_development_director": "Stuart Lake",
+    "video_coordinator": "Tracy Woodson"
+  },
+  "nil_operations": {
+    "primary_collective": "Garnet Trust",
+    "lead_contact": "Jeremy Smith",
+    "contact_channels": ["hello@garnettrust.com", "https://garnettrust.com/contact"],
+    "recent_initiatives": "Hosting fall baseball fantasy camp for donors (Oct 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Ray Tanner",
+    "baseball_admin": "Drew Marbut",
+    "financial_points_of_contact": ["gamecocktickets@sc.edu"]
+  },
+  "historical_context": {
+    "college_world_series_titles": 2,
+    "sec_titles": 6,
+    "last_super_regional": "2023",
+    "program_trend": "Fan expectations high; roster depth needs infusion after MLB departures."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-06T16:00:00-04:00",
+      "summary": "Big Spur reports Kingston evaluating offensive coordinator change; decision pending athletic director review.",
+      "source_hint": "TheBigSpur insider update",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Monitor coaching staff adjustments; update roster once fall scrimmage stats posted."
+  }
+}

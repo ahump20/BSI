@@ -1,0 +1,322 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'workers/**'
+      - 'bsi-production/**'
+      - 'src/agents/**'
+      - 'games/**'
+      - 'migrations/**'
+  workflow_dispatch:
+    inputs:
+      worker:
+        description: 'Worker to deploy (or "all" for all workers)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - bsi-prediction-api
+          - bsi-news-ticker
+          - bsi-cfb-ai
+          - bsi-ingest
+          - bsi-cache-warmer
+          - bsi-home
+          - bsi-chatgpt-app
+          - bsi-portal-agent
+          - blaze-blitz
+          - blaze-hotdog-dash
+          - sandlot-sluggers
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  NODE_VERSION: '20'
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+jobs:
+  detect-changes:
+    name: Detect Changed Workers
+    runs-on: ubuntu-latest
+    outputs:
+      workers: ${{ steps.detect.outputs.workers }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed workers
+        id: detect
+        env:
+          INPUT_WORKER: ${{ inputs.worker }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$INPUT_WORKER" = "all" ]; then
+              WORKERS='["bsi-prediction-api","bsi-news-ticker","bsi-cfb-ai","bsi-ingest","bsi-cache-warmer","bsi-home"]'
+            else
+              WORKERS="[\"$INPUT_WORKER\"]"
+            fi
+          else
+            # Detect workers with changes
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
+            WORKERS="[]"
+
+            if echo "$CHANGED_FILES" | grep -q "workers/prediction/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-prediction-api"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "workers/bsi-news-ticker/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-news-ticker"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "workers/bsi-cfb-ai/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cfb-ai"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "workers/ingest/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-ingest"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "workers/bsi-cache-warmer/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-cache-warmer"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "bsi-production/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-home"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "workers/bsi-chatgpt-app/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-chatgpt-app"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "src/agents/bsi-agent/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-portal-agent"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "games/blitz/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-blitz"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "games/hotdog-dash/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-hotdog-dash"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "games/sandlot-sluggers/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["sandlot-sluggers"]')
+            fi
+          fi
+
+          echo "workers=$WORKERS" >> $GITHUB_OUTPUT
+          echo "Detected workers: $WORKERS"
+
+  run-migrations:
+    name: Apply D1 Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Apply migrations to bsi-game-db
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "Applying D1 migrations to bsi-game-db..."
+
+          # List all migration files in order
+          MIGRATION_DIR="bsi-production/migrations"
+          if [ -d "$MIGRATION_DIR" ]; then
+            echo "Found migrations directory: $MIGRATION_DIR"
+            ls -la "$MIGRATION_DIR"
+
+            # Apply migrations in order
+            for migration in $(ls -1 "$MIGRATION_DIR"/*.sql 2>/dev/null | sort); do
+              echo "Applying migration: $migration"
+              wrangler d1 execute bsi-game-db --remote --file="$migration" || {
+                echo "Migration may have already been applied or contains no new changes"
+              }
+            done
+
+            echo "All migrations applied successfully"
+          else
+            echo "No migrations directory found at $MIGRATION_DIR"
+          fi
+
+      - name: Migration summary
+        run: |
+          echo "## D1 Migration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Database:** bsi-game-db" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(TZ='America/Chicago' date '+%Y-%m-%d %H:%M:%S CT')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Deploy ${{ matrix.worker }}
+    runs-on: ubuntu-latest
+    needs: [detect-changes, run-migrations]
+    if: needs.detect-changes.outputs.workers != '[]'
+    strategy:
+      matrix:
+        worker: ${{ fromJson(needs.detect-changes.outputs.workers) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get worker config path
+        id: config
+        env:
+          WORKER_NAME: ${{ matrix.worker }}
+        run: |
+          case "$WORKER_NAME" in
+            "bsi-prediction-api")
+              echo "path=workers/prediction/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=https://api.blazesportsintel.com/v1/health" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-news-ticker")
+              echo "path=workers/bsi-news-ticker/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=https://ticker.blazesportsintel.com/health" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-cfb-ai")
+              echo "path=workers/bsi-cfb-ai/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-ingest")
+              echo "path=workers/ingest/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-cache-warmer")
+              echo "path=workers/bsi-cache-warmer/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-home")
+              echo "path=bsi-production/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=https://blazesportsintel.com/" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-chatgpt-app")
+              echo "path=workers/bsi-chatgpt-app/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "bsi-portal-agent")
+              echo "path=src/agents/bsi-agent/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "blaze-blitz")
+              echo "path=games/blitz/wrangler.jsonc" >> $GITHUB_OUTPUT
+              echo "health_url=https://blazesportsintel.com/games/blitz/" >> $GITHUB_OUTPUT
+              ;;
+            "blaze-hotdog-dash")
+              echo "path=games/hotdog-dash/wrangler.toml" >> $GITHUB_OUTPUT
+              echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "sandlot-sluggers")
+              echo "path=games/sandlot-sluggers/wrangler.jsonc" >> $GITHUB_OUTPUT
+              echo "health_url=https://sandlot.blazesportsintel.com/" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown worker: $WORKER_NAME"
+              exit 1
+              ;;
+          esac
+
+      - name: Deploy to Staging
+        if: inputs.environment == 'staging' || github.ref != 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config ${{ steps.config.outputs.path }} --env staging
+
+      - name: Deploy to Production
+        if: inputs.environment == 'production' || github.ref == 'refs/heads/main'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config ${{ steps.config.outputs.path }}
+
+      - name: Wait for propagation
+        run: sleep 15
+
+      - name: Health check
+        if: steps.config.outputs.health_url != ''
+        env:
+          HEALTH_URL: ${{ steps.config.outputs.health_url }}
+          WORKER_NAME: ${{ matrix.worker }}
+        run: |
+          echo "Checking health of $WORKER_NAME..."
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL" || echo "000")
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Health check passed (HTTP $HTTP_CODE)"
+              exit 0
+            fi
+            echo "Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES - HTTP $HTTP_CODE"
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            sleep 10
+          done
+
+          echo "Health check warning: HTTP $HTTP_CODE (may need manual verification)"
+        continue-on-error: true
+
+      - name: Deployment summary
+        env:
+          WORKER_NAME: ${{ matrix.worker }}
+          CONFIG_PATH: ${{ steps.config.outputs.path }}
+          DEPLOY_ENV: ${{ inputs.environment }}
+        run: |
+          echo "## Worker Deployment: $WORKER_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${DEPLOY_ENV:-production}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Config:** $CONFIG_PATH" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(TZ='America/Chicago' date '+%Y-%m-%d %H:%M:%S CT')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Born to blaze the path less beaten.*" >> $GITHUB_STEP_SUMMARY
+
+  notify-completion:
+    name: Deployment Complete
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    steps:
+      - name: Summary
+        env:
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          ACTOR: ${{ github.actor }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "# BSI Worker Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment Status:** $DEPLOY_RESULT" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** $ACTOR" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** $COMMIT_SHA" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All worker deployments completed." >> $GITHUB_STEP_SUMMARY

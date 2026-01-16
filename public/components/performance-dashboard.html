@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Performance Dashboard - Blaze Sports Intel</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      font-weight: 500;
+    }
+
+    select, input, button {
+      padding: 10px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, input:focus {
+      border-color: #667eea;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 12px 24px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2rem;
+      opacity: 0.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .panel:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel h2 {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .metric-large {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 20px 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      opacity: 0.7;
+      font-size: 0.95rem;
+    }
+
+    .metric-value {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .grade-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .grade-a {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+      border: 2px solid #4ade80;
+    }
+
+    .grade-b {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+      border: 2px solid #fbbf24;
+    }
+
+    .grade-c {
+      background: rgba(251, 146, 60, 0.2);
+      color: #fb923c;
+      border: 2px solid #fb923c;
+    }
+
+    .grade-d {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 2px solid #ef4444;
+    }
+
+    .quality-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .quality-excellent {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+      border: 1px solid #4ade80;
+    }
+
+    .quality-good {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+      border: 1px solid #fbbf24;
+    }
+
+    .quality-fair {
+      background: rgba(251, 146, 60, 0.2);
+      color: #fb923c;
+      border: 1px solid #fb923c;
+    }
+
+    .quality-poor {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 350px;
+      margin-top: 20px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.05);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .test-result {
+      padding: 15px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+    }
+
+    .test-result.passed {
+      border-left-color: #4ade80;
+    }
+
+    .test-result.failed {
+      border-left-color: #ef4444;
+    }
+
+    .test-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .test-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .test-status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .test-status.passed {
+      background: rgba(74, 222, 128, 0.2);
+      color: #4ade80;
+    }
+
+    .test-status.failed {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .timestamp {
+      opacity: 0.6;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .button-group {
+        width: 100%;
+      }
+
+      button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Model Performance Dashboard</h1>
+      <p>Comprehensive Testing & Validation Metrics</p>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="sportSelect">Sport</label>
+        <select id="sportSelect">
+          <option value="NFL">NFL</option>
+          <option value="MLB">MLB</option>
+          <option value="NBA">NBA</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="daysInput">Trend Days</label>
+        <input type="number" id="daysInput" value="30" min="7" max="90">
+      </div>
+
+      <div class="button-group">
+        <button onclick="loadAccuracyMetrics()">Load Metrics</button>
+        <button onclick="loadCalibration()">Load Calibration</button>
+        <button onclick="loadTrend()">Load Trend</button>
+        <button onclick="runBacktest()">Run Backtest</button>
+        <button onclick="runFullSuite()">Run Full Suite</button>
+      </div>
+    </div>
+
+    <!-- Overall Metrics -->
+    <div class="grid">
+      <div class="panel">
+        <h2>📊 Overall Accuracy</h2>
+        <div class="metric-large" id="overallAccuracy">--</div>
+        <div class="metric-row">
+          <span class="metric-label">Total Predictions</span>
+          <span class="metric-value" id="totalPredictions">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Correct Predictions</span>
+          <span class="metric-value" id="correctPredictions">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Brier Score</span>
+          <span class="metric-value" id="brierScore">--</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>🎯 Calibration Quality</h2>
+        <div id="calibrationQuality" class="quality-badge quality-excellent" style="display: none;">Excellent</div>
+        <div class="metric-row">
+          <span class="metric-label">Calibration Error</span>
+          <span class="metric-value" id="calibrationError">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Total Predictions</span>
+          <span class="metric-value" id="calibrationTotal">--</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>⚡ Performance Grade</h2>
+        <div id="performanceGrade" class="grade-badge grade-a" style="display: none;">A</div>
+        <div class="metric-row">
+          <span class="metric-label">Avg Latency</span>
+          <span class="metric-value" id="avgLatency">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">P95 Latency</span>
+          <span class="metric-value" id="p95Latency">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Throughput</span>
+          <span class="metric-value" id="throughput">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sport Comparison Table -->
+    <div class="panel">
+      <h2>🏆 Sport-by-Sport Comparison</h2>
+      <div class="table-container">
+        <table id="sportComparisonTable">
+          <thead>
+            <tr>
+              <th>Sport</th>
+              <th>Total Predictions</th>
+              <th>Accuracy</th>
+              <th>Brier Score</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" class="loading">Load metrics to see sport comparison</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Calibration Chart -->
+    <div class="panel">
+      <h2>📈 Calibration Analysis</h2>
+      <div class="chart-container">
+        <canvas id="calibrationChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Accuracy Trend Chart -->
+    <div class="panel">
+      <h2>📉 Accuracy Trend (with 7-day Moving Average)</h2>
+      <div class="chart-container">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Confidence Breakdown -->
+    <div class="panel">
+      <h2>🎲 Confidence Level Breakdown</h2>
+      <div class="table-container">
+        <table id="confidenceTable">
+          <thead>
+            <tr>
+              <th>Confidence Level</th>
+              <th>Total Predictions</th>
+              <th>Accuracy</th>
+              <th>Brier Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4" class="loading">Load metrics to see confidence breakdown</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Test Results -->
+    <div class="panel">
+      <h2>🧪 Test Results</h2>
+      <div id="testResults">
+        <div class="loading">Run tests to see results</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/v1/predictions';
+    let calibrationChartInstance = null;
+    let trendChartInstance = null;
+
+    async function loadAccuracyMetrics() {
+      try {
+        const sport = document.getElementById('sportSelect').value;
+
+        const response = await fetch(`${API_BASE}/accuracy/metrics?sport=${sport}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch accuracy metrics');
+        }
+
+        const data = await response.json();
+
+        // Update overall metrics
+        document.getElementById('overallAccuracy').textContent = `${data.overall.accuracy}%`;
+        document.getElementById('totalPredictions').textContent = data.overall.totalPredictions;
+        document.getElementById('correctPredictions').textContent = data.overall.correctPredictions;
+        document.getElementById('brierScore').textContent = data.overall.brierScore.toFixed(3);
+
+        // Update sport comparison table
+        if (data.bySport) {
+          const tbody = document.getElementById('sportComparisonTable').querySelector('tbody');
+          tbody.innerHTML = '';
+
+          for (const [sport, metrics] of Object.entries(data.bySport)) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>${sport}</strong></td>
+              <td>${metrics.totalPredictions}</td>
+              <td>${metrics.accuracy.toFixed(1)}%</td>
+              <td>${metrics.brierScore.toFixed(3)}</td>
+              <td>${metrics.accuracy >= 70 ? '✅ Good' : metrics.accuracy >= 60 ? '⚠️ Fair' : '❌ Poor'}</td>
+            `;
+            tbody.appendChild(row);
+          }
+        }
+
+        // Update confidence table
+        if (data.byConfidence) {
+          const tbody = document.getElementById('confidenceTable').querySelector('tbody');
+          tbody.innerHTML = '';
+
+          for (const [conf, metrics] of Object.entries(data.byConfidence)) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>${conf.toUpperCase()}</strong></td>
+              <td>${metrics.totalPredictions}</td>
+              <td>${metrics.accuracy.toFixed(1)}%</td>
+              <td>${metrics.brierScore.toFixed(3)}</td>
+            `;
+            tbody.appendChild(row);
+          }
+        }
+
+      } catch (error) {
+        console.error('Error loading accuracy metrics:', error);
+        alert('Failed to load accuracy metrics: ' + error.message);
+      }
+    }
+
+    async function loadCalibration() {
+      try {
+        const sport = document.getElementById('sportSelect').value;
+
+        const response = await fetch(`${API_BASE}/accuracy/calibration?sport=${sport}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch calibration data');
+        }
+
+        const data = await response.json();
+
+        // Update calibration metrics
+        document.getElementById('calibrationError').textContent = `${data.overallCalibrationError}%`;
+        document.getElementById('calibrationTotal').textContent = data.totalPredictions;
+
+        const qualityBadge = document.getElementById('calibrationQuality');
+        qualityBadge.textContent = data.calibrationQuality.toUpperCase();
+        qualityBadge.className = `quality-badge quality-${data.calibrationQuality}`;
+        qualityBadge.style.display = 'inline-block';
+
+        // Update calibration chart
+        const ctx = document.getElementById('calibrationChart');
+
+        if (calibrationChartInstance) {
+          calibrationChartInstance.destroy();
+        }
+
+        const buckets = data.buckets.map(b => b.bucket);
+        const predicted = data.buckets.map(b => b.predictedWinRate);
+        const actual = data.buckets.map(b => b.actualWinRate);
+
+        calibrationChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: buckets,
+            datasets: [
+              {
+                label: 'Predicted Win Rate',
+                data: predicted,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Actual Win Rate',
+                data: actual,
+                borderColor: '#4ade80',
+                backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+              },
+              {
+                label: 'Perfect Calibration',
+                data: [5, 15, 25, 35, 45, 55, 65, 75, 85, 95],
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                borderWidth: 1,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  color: '#ffffff',
+                  callback: function(value) {
+                    return value + '%';
+                  }
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#ffffff'
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error('Error loading calibration:', error);
+        alert('Failed to load calibration data: ' + error.message);
+      }
+    }
+
+    async function loadTrend() {
+      try {
+        const sport = document.getElementById('sportSelect').value;
+        const days = document.getElementById('daysInput').value;
+
+        const response = await fetch(`${API_BASE}/accuracy/trend?sport=${sport}&days=${days}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch trend data');
+        }
+
+        const data = await response.json();
+
+        // Update trend chart
+        const ctx = document.getElementById('trendChart');
+
+        if (trendChartInstance) {
+          trendChartInstance.destroy();
+        }
+
+        const dates = data.trend.map(t => t.date);
+        const accuracy = data.trend.map(t => t.accuracy);
+        const movingAvg = data.trend.map(t => t.movingAvgAccuracy || null);
+
+        trendChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: 'Daily Accuracy',
+                data: accuracy,
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 1,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3
+              },
+              {
+                label: '7-Day Moving Average',
+                data: movingAvg,
+                borderColor: '#fbbf24',
+                backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: false,
+                pointRadius: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: false,
+                min: 50,
+                max: 100,
+                ticks: {
+                  color: '#ffffff',
+                  callback: function(value) {
+                    return value + '%';
+                  }
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              },
+              x: {
+                ticks: {
+                  color: '#ffffff',
+                  maxRotation: 45,
+                  minRotation: 45
+                },
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)'
+                }
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error('Error loading trend:', error);
+        alert('Failed to load trend data: ' + error.message);
+      }
+    }
+
+    async function runBacktest() {
+      try {
+        const sport = document.getElementById('sportSelect').value;
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = 'Running Backtest...';
+
+        const response = await fetch(`${API_BASE}/testing/backtest?sport=${sport}&sampleSize=100`, {
+          method: 'POST'
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to run backtest');
+        }
+
+        const data = await response.json();
+
+        displayTestResult('Backtest', data);
+
+        button.disabled = false;
+        button.textContent = 'Run Backtest';
+
+      } catch (error) {
+        console.error('Error running backtest:', error);
+        alert('Failed to run backtest: ' + error.message);
+        event.target.disabled = false;
+        event.target.textContent = 'Run Backtest';
+      }
+    }
+
+    async function runFullSuite() {
+      try {
+        const button = event.target;
+        button.disabled = true;
+        button.textContent = 'Running Full Suite...';
+
+        const response = await fetch(`${API_BASE}/testing/fullsuite`, {
+          method: 'POST'
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to run full suite');
+        }
+
+        const data = await response.json();
+
+        displayTestResult('Full Test Suite', data);
+
+        // Update performance metrics
+        if (data.performance) {
+          const perfGrade = document.getElementById('performanceGrade');
+          perfGrade.textContent = data.performance.overall.performanceGrade;
+          perfGrade.className = `grade-badge grade-${data.performance.overall.performanceGrade.toLowerCase()}`;
+          perfGrade.style.display = 'inline-block';
+
+          document.getElementById('avgLatency').textContent = `${data.performance.overall.avgLatency}ms`;
+
+          if (data.performance.benchmarks?.winProbability) {
+            document.getElementById('p95Latency').textContent = `${data.performance.benchmarks.winProbability.p95Latency}ms`;
+            document.getElementById('throughput').textContent = `${data.performance.benchmarks.winProbability.throughput}/sec`;
+          }
+        }
+
+        button.disabled = false;
+        button.textContent = 'Run Full Suite';
+
+      } catch (error) {
+        console.error('Error running full suite:', error);
+        alert('Failed to run full suite: ' + error.message);
+        event.target.disabled = false;
+        event.target.textContent = 'Run Full Suite';
+      }
+    }
+
+    function displayTestResult(testName, data) {
+      const container = document.getElementById('testResults');
+
+      // Clear loading message if present
+      if (container.querySelector('.loading')) {
+        container.innerHTML = '';
+      }
+
+      const resultDiv = document.createElement('div');
+      resultDiv.className = 'test-result';
+
+      let detailsHtml = '';
+
+      // Format result details based on test type
+      if (data.overall) {
+        // Backtest or similar
+        resultDiv.className += data.overall.accuracy >= 65 ? ' passed' : ' failed';
+        detailsHtml = `
+          <div class="metric-row">
+            <span class="metric-label">Overall Accuracy</span>
+            <span class="metric-value">${data.overall.accuracy}%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Total Tests</span>
+            <span class="metric-value">${data.totalTests}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Brier Score</span>
+            <span class="metric-value">${data.overall.avgBrierScore}</span>
+          </div>
+        `;
+      } else if (data.sports) {
+        // Full suite
+        resultDiv.className += ' passed';
+        detailsHtml = '<div style="margin-top: 10px;">';
+        for (const [sport, results] of Object.entries(data.sports)) {
+          if (results.backtest) {
+            detailsHtml += `
+              <div class="metric-row">
+                <span class="metric-label">${sport} Accuracy</span>
+                <span class="metric-value">${results.backtest.overall.accuracy}%</span>
+              </div>
+            `;
+          }
+        }
+        detailsHtml += '</div>';
+      }
+
+      resultDiv.innerHTML = `
+        <div class="test-result-header">
+          <span class="test-name">${testName}</span>
+          <span class="test-status ${data.overall?.accuracy >= 65 || data.sports ? 'passed' : 'failed'}">
+            ${data.overall?.accuracy >= 65 || data.sports ? 'PASSED' : 'FAILED'}
+          </span>
+        </div>
+        ${detailsHtml}
+        <div class="timestamp">Test ID: ${data.testId} | ${new Date(data.timestamp).toLocaleString()}</div>
+      `;
+
+      container.insertBefore(resultDiv, container.firstChild);
+    }
+
+    // Load initial metrics on page load
+    window.addEventListener('load', () => {
+      loadAccuracyMetrics();
+      loadCalibration();
+      loadTrend();
+    });
+  </script>
+  <!-- Cookie Consent Banner (GDPR/CCPA Compliance) -->
+  <script src="/components/cookie-banner.js"></script>
+</body>
+</html>

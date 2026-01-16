@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alabama Crimson Tide Advanced Analytics | Blaze Sports Intel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        :root {
+            --team-primary: #9E1B32;
+            --team-secondary: #828A8F;
+            --team-accent: #FFFFFF;
+            --bg-dark: #0D0D0D;
+            --bg-card: #1A1A1A;
+            --bg-card-hover: #242424;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success: #22C55E;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .dashboard-container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+        .team-header {
+            background: linear-gradient(135deg, var(--team-primary) 0%, #7A1526 100%);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-header::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 300px; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(130, 138, 143, 0.15));
+            pointer-events: none;
+        }
+
+        .team-title { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+
+        .team-logo {
+            width: 72px; height: 72px;
+            background: var(--text-primary);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; font-weight: 700;
+            color: var(--team-primary);
+        }
+
+        .team-name h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .team-name p { color: rgba(255, 255, 255, 0.7); font-size: 14px; }
+
+        .header-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; }
+
+        .header-stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .header-stat-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .header-stat-label { font-size: 11px; color: rgba(255, 255, 255, 0.7); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover { background: var(--bg-card-hover); border-color: var(--team-primary); }
+
+        .stat-card.full-width { grid-column: 1 / -1; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+
+        .card-badge {
+            background: var(--team-primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .standings-table { width: 100%; border-collapse: collapse; }
+
+        .standings-table th {
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .standings-table td {
+            padding: 10px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .standings-table tr:last-child td { border-bottom: none; }
+        .standings-table tr.highlight { background: rgba(158, 27, 50, 0.2); }
+        .standings-table tr.highlight td:first-child { border-left: 3px solid var(--team-primary); padding-left: 12px; }
+
+        .team-cell { display: flex; align-items: center; gap: 8px; }
+
+        .team-abbr {
+            width: 26px; height: 26px;
+            background: var(--bg-card-hover);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .pythagorean-display { text-align: center; padding: 16px; }
+        .pyth-value { font-size: 42px; font-weight: 700; color: var(--team-primary); margin-bottom: 8px; }
+        .pyth-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+
+        .pyth-comparison {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pyth-stat { text-align: center; }
+        .pyth-stat-value { font-size: 20px; font-weight: 600; }
+        .pyth-stat-label { font-size: 11px; color: var(--text-secondary); }
+
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .neutral { color: var(--warning); }
+
+        .schedule-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .game-item:hover { background: var(--bg-card-hover); }
+        .game-item.upcoming { border-left: 3px solid var(--warning); }
+
+        .game-info { display: flex; align-items: center; gap: 10px; }
+        .game-date { font-size: 11px; color: var(--text-secondary); min-width: 70px; }
+        .game-opponent { font-weight: 500; font-size: 13px; }
+        .game-location { font-size: 11px; color: var(--text-muted); }
+
+        .game-result { display: flex; align-items: center; gap: 8px; }
+
+        .result-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .result-badge.win { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .result-badge.loss { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .result-badge.scheduled { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+
+        .game-score { font-weight: 600; min-width: 50px; text-align: right; font-size: 13px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+        .stat-item {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { font-size: 11px; color: var(--text-secondary); }
+
+        .stat-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 4px;
+            font-size: 11px;
+        }
+
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        .loading-spinner { display: flex; justify-content: center; align-items: center; padding: 40px; }
+
+        .spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--team-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-message { text-align: center; padding: 30px; color: var(--danger); font-size: 14px; }
+
+        .last-updated { text-align: center; padding: 16px; color: var(--text-muted); font-size: 11px; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 16px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover { color: var(--team-primary); }
+
+        .efficiency-bars { display: flex; flex-direction: column; gap: 12px; }
+
+        .efficiency-item { display: flex; flex-direction: column; gap: 6px; }
+        .efficiency-label { display: flex; justify-content: space-between; font-size: 12px; }
+        .efficiency-label span:first-child { color: var(--text-secondary); }
+        .efficiency-label span:last-child { font-weight: 600; }
+
+        .efficiency-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .efficiency-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .fill-offense { background: linear-gradient(90deg, var(--team-primary), #C23152); }
+        .fill-defense { background: linear-gradient(90deg, var(--team-secondary), #9CA3AF); }
+        .fill-special { background: linear-gradient(90deg, var(--warning), #FBBF24); }
+
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 16px; }
+            .team-header { padding: 20px; }
+            .team-name h1 { font-size: 22px; }
+            .header-stats { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <a href="/dashboards" class="back-link">← Back to Dashboards</a>
+
+        <header class="team-header">
+            <div class="team-title">
+                <div class="team-logo">BAMA</div>
+                <div class="team-name">
+                    <h1>Alabama Crimson Tide</h1>
+                    <p>SEC • 2025 Season</p>
+                </div>
+            </div>
+            <div class="header-stats" id="headerStats">
+                <div class="loading-spinner"><div class="spinner"></div></div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">SEC Standings</span>
+                    <span class="card-badge">Conference</span>
+                </div>
+                <div id="standingsContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">Pythagorean Expectancy</span>
+                    <span class="card-badge">Analytics</span>
+                </div>
+                <div id="pythagoreanContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">Offensive Performance</span>
+                    <span class="card-badge">Offense</span>
+                </div>
+                <div id="offenseContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">Defensive Performance</span>
+                    <span class="card-badge">Defense</span>
+                </div>
+                <div id="defenseContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card full-width">
+                <div class="card-header">
+                    <span class="card-title">2025 Schedule & Results</span>
+                    <span class="card-badge">Schedule</span>
+                </div>
+                <div id="scheduleContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">Scoring Analysis</span>
+                    <span class="card-badge">Points</span>
+                </div>
+                <div id="scoringContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <span class="card-title">Efficiency Metrics</span>
+                    <span class="card-badge">Advanced</span>
+                </div>
+                <div id="efficiencyContent">
+                    <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated">Loading data...</div>
+    </div>
+
+    <script>
+        const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
+        const ESPN_V2 = 'https://site.api.espn.com/apis/v2/sports/football/college-football';
+        const TEAM_ID = '333';
+        const TEAM_NAME = 'Alabama';
+        const TEAM_ABBR = 'ALA';
+        const CONFERENCE = 'SEC';
+        const CONF_GROUP = '8';
+        const CFB_PYTHAGOREAN_EXP = 2.37;
+
+        let teamData = null;
+        let standingsData = null;
+        let scheduleData = null;
+        let statsData = null;
+
+        async function fetchTeamData() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}`);
+                if (!response.ok) throw new Error('Failed to fetch team data');
+                const data = await response.json();
+                teamData = data.team;
+                return teamData;
+            } catch (error) {
+                console.error('Error fetching team data:', error);
+                return null;
+            }
+        }
+
+        async function fetchStandings() {
+            try {
+                const response = await fetch(`${ESPN_V2}/standings?group=${CONF_GROUP}`);
+                if (!response.ok) throw new Error('Failed to fetch standings');
+                const data = await response.json();
+                standingsData = data;
+                return data;
+            } catch (error) {
+                console.error('Error fetching standings:', error);
+                return null;
+            }
+        }
+
+        async function fetchSchedule() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}/schedule`);
+                if (!response.ok) throw new Error('Failed to fetch schedule');
+                const data = await response.json();
+                scheduleData = data;
+                return data;
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+                return null;
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEAM_ID}/statistics`);
+                if (!response.ok) throw new Error('Failed to fetch stats');
+                const data = await response.json();
+                statsData = data;
+                return data;
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+                return null;
+            }
+        }
+
+        function getTeamRecord(team) {
+            if (team?.record?.items) {
+                const overall = team.record.items.find(r => r.type === 'total') || team.record.items[0];
+                if (overall?.stats) {
+                    const wins = overall.stats.find(s => s.name === 'wins')?.value || 0;
+                    const losses = overall.stats.find(s => s.name === 'losses')?.value || 0;
+                    return { wins, losses };
+                }
+                if (overall?.summary) {
+                    const parts = overall.summary.split('-');
+                    return { wins: parseInt(parts[0]) || 0, losses: parseInt(parts[1]) || 0 };
+                }
+            }
+            return { wins: 0, losses: 0 };
+        }
+
+        function renderHeaderStats() {
+            const container = document.getElementById('headerStats');
+            if (!teamData) {
+                container.innerHTML = '<div class="error-message">Unable to load team stats</div>';
+                return;
+            }
+
+            const record = getTeamRecord(teamData);
+            const winPct = record.wins + record.losses > 0
+                ? ((record.wins / (record.wins + record.losses)) * 100).toFixed(1) + '%'
+                : '0.0%';
+
+            let confRecord = '-';
+            if (teamData.record?.items) {
+                const confItem = teamData.record.items.find(r => r.type === 'vsconf' || r.type === 'conference');
+                if (confItem?.summary) confRecord = confItem.summary;
+            }
+
+            let ranking = '-';
+            if (teamData.rank) ranking = `#${teamData.rank}`;
+
+            let homeRecord = '-', awayRecord = '-';
+            if (teamData.record?.items) {
+                const home = teamData.record.items.find(r => r.type === 'home');
+                const away = teamData.record.items.find(r => r.type === 'road');
+                if (home?.summary) homeRecord = home.summary;
+                if (away?.summary) awayRecord = away.summary;
+            }
+
+            container.innerHTML = `
+                <div class="header-stat">
+                    <div class="header-stat-value">${record.wins}-${record.losses}</div>
+                    <div class="header-stat-label">Overall</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">${confRecord}</div>
+                    <div class="header-stat-label">SEC</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">${homeRecord}</div>
+                    <div class="header-stat-label">Home</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">${awayRecord}</div>
+                    <div class="header-stat-label">Away</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">${winPct}</div>
+                    <div class="header-stat-label">Win %</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value">${ranking}</div>
+                    <div class="header-stat-label">AP Rank</div>
+                </div>
+            `;
+        }
+
+        function renderStandings() {
+            const container = document.getElementById('standingsContent');
+            if (!standingsData?.standings) {
+                container.innerHTML = '<div class="error-message">Unable to load standings</div>';
+                return;
+            }
+
+            let confTeams = [];
+            standingsData.standings.forEach(group => {
+                if (group.entries) {
+                    group.entries.forEach(entry => {
+                        if (entry.team) {
+                            const stats = {};
+                            entry.stats?.forEach(stat => {
+                                stats[stat.name] = stat.displayValue || stat.value;
+                            });
+                            confTeams.push({
+                                id: entry.team.id,
+                                name: entry.team.displayName || entry.team.name,
+                                abbr: entry.team.abbreviation,
+                                confWins: parseInt(stats.conferenceWins) || parseInt(stats.wins) || 0,
+                                confLosses: parseInt(stats.conferenceLosses) || parseInt(stats.losses) || 0,
+                                overallWins: parseInt(stats.wins) || 0,
+                                overallLosses: parseInt(stats.losses) || 0,
+                                pct: stats.winPercent || '.000'
+                            });
+                        }
+                    });
+                }
+            });
+
+            confTeams.sort((a, b) => {
+                if (b.confWins !== a.confWins) return b.confWins - a.confWins;
+                return a.confLosses - b.confLosses;
+            });
+
+            const displayTeams = confTeams.slice(0, 12);
+
+            if (displayTeams.length === 0) {
+                container.innerHTML = '<div class="error-message">No standings data</div>';
+                return;
+            }
+
+            let html = `<table class="standings-table"><thead><tr>
+                <th>Team</th><th>Conf</th><th>Overall</th><th>PCT</th>
+            </tr></thead><tbody>`;
+
+            displayTeams.forEach(team => {
+                const isTeam = team.id === TEAM_ID;
+                html += `<tr class="${isTeam ? 'highlight' : ''}">
+                    <td><div class="team-cell"><span class="team-abbr">${team.abbr}</span><span>${team.name}</span></div></td>
+                    <td>${team.confWins}-${team.confLosses}</td>
+                    <td>${team.overallWins}-${team.overallLosses}</td>
+                    <td>${team.pct}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function calculatePythagorean() {
+            const container = document.getElementById('pythagoreanContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to calculate</div>';
+                return;
+            }
+
+            let pointsScored = 0, pointsAllowed = 0, gamesPlayed = 0;
+
+            scheduleData.events.forEach(event => {
+                const competition = event.competitions?.[0];
+                if (competition?.status?.type?.completed) {
+                    const competitors = competition.competitors || [];
+                    let teamScore = 0, oppScore = 0;
+                    competitors.forEach(comp => {
+                        if (comp.team?.id === TEAM_ID) {
+                            teamScore = parseInt(comp.score) || 0;
+                        } else {
+                            oppScore = parseInt(comp.score) || 0;
+                        }
+                    });
+                    if (teamScore > 0 || oppScore > 0) {
+                        pointsScored += teamScore;
+                        pointsAllowed += oppScore;
+                        gamesPlayed++;
+                    }
+                }
+            });
+
+            if (gamesPlayed === 0) {
+                container.innerHTML = '<div class="error-message">No completed games</div>';
+                return;
+            }
+
+            const psExp = Math.pow(pointsScored, CFB_PYTHAGOREAN_EXP);
+            const paExp = Math.pow(pointsAllowed, CFB_PYTHAGOREAN_EXP);
+            const pythWinPct = psExp / (psExp + paExp);
+            const expectedWins = Math.round(pythWinPct * gamesPlayed);
+            const record = getTeamRecord(teamData);
+            const actualWins = record.wins;
+            const winDiff = actualWins - expectedWins;
+            const diffClass = winDiff > 0 ? 'positive' : winDiff < 0 ? 'negative' : 'neutral';
+            const diffSign = winDiff > 0 ? '+' : '';
+
+            container.innerHTML = `
+                <div class="pythagorean-display">
+                    <div class="pyth-value">${(pythWinPct * 100).toFixed(1)}%</div>
+                    <div class="pyth-label">Expected Win Percentage</div>
+                    <div class="pyth-comparison">
+                        <div class="pyth-stat">
+                            <div class="pyth-stat-value">${expectedWins}</div>
+                            <div class="pyth-stat-label">Expected W</div>
+                        </div>
+                        <div class="pyth-stat">
+                            <div class="pyth-stat-value">${actualWins}</div>
+                            <div class="pyth-stat-label">Actual W</div>
+                        </div>
+                        <div class="pyth-stat">
+                            <div class="pyth-stat-value ${diffClass}">${diffSign}${winDiff}</div>
+                            <div class="pyth-stat-label">Luck</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to load schedule</div>';
+                return;
+            }
+
+            const games = scheduleData.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            if (games.length === 0) {
+                container.innerHTML = '<div class="error-message">No games scheduled</div>';
+                return;
+            }
+
+            let html = '<div class="schedule-list">';
+            games.forEach(event => {
+                const comp = event.competitions?.[0];
+                if (!comp) return;
+
+                const isCompleted = comp.status?.type?.completed;
+                const competitors = comp.competitors || [];
+                let isHome = false, opponentName = '', opponentRank = '', teamScore = 0, oppScore = 0;
+
+                competitors.forEach(c => {
+                    if (c.team?.id === TEAM_ID) {
+                        isHome = c.homeAway === 'home';
+                        teamScore = parseInt(c.score) || 0;
+                    } else {
+                        opponentName = c.team?.abbreviation || c.team?.displayName || 'TBD';
+                        if (c.curatedRank?.current && c.curatedRank.current <= 25) {
+                            opponentRank = `#${c.curatedRank.current} `;
+                        }
+                        oppScore = parseInt(c.score) || 0;
+                    }
+                });
+
+                const gameDate = new Date(event.date);
+                const dateStr = gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const prefix = isHome ? 'vs' : '@';
+                const isWin = teamScore > oppScore;
+
+                if (isCompleted) {
+                    html += `
+                        <div class="game-item">
+                            <div class="game-info">
+                                <span class="game-date">${dateStr}</span>
+                                <span class="game-opponent">${prefix} ${opponentRank}${opponentName}</span>
+                            </div>
+                            <div class="game-result">
+                                <span class="result-badge ${isWin ? 'win' : 'loss'}">${isWin ? 'W' : 'L'}</span>
+                                <span class="game-score">${teamScore}-${oppScore}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const timeStr = gameDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                    html += `
+                        <div class="game-item upcoming">
+                            <div class="game-info">
+                                <span class="game-date">${dateStr}</span>
+                                <span class="game-opponent">${prefix} ${opponentRank}${opponentName}</span>
+                            </div>
+                            <div class="game-result">
+                                <span class="result-badge scheduled">${timeStr}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderOffense() {
+            const container = document.getElementById('offenseContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to load data</div>';
+                return;
+            }
+
+            let totalPoints = 0, gamesPlayed = 0, maxPoints = 0;
+            scheduleData.events.forEach(event => {
+                const comp = event.competitions?.[0];
+                if (comp?.status?.type?.completed) {
+                    comp.competitors?.forEach(c => {
+                        if (c.team?.id === TEAM_ID) {
+                            const pts = parseInt(c.score) || 0;
+                            totalPoints += pts;
+                            if (pts > maxPoints) maxPoints = pts;
+                            gamesPlayed++;
+                        }
+                    });
+                }
+            });
+
+            const ppg = gamesPlayed > 0 ? (totalPoints / gamesPlayed).toFixed(1) : '0.0';
+
+            container.innerHTML = `
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">${ppg}</div>
+                        <div class="stat-label">Points/Game</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${totalPoints}</div>
+                        <div class="stat-label">Total Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${maxPoints}</div>
+                        <div class="stat-label">Season High</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${gamesPlayed}</div>
+                        <div class="stat-label">Games</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDefense() {
+            const container = document.getElementById('defenseContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to load data</div>';
+                return;
+            }
+
+            let totalAllowed = 0, gamesPlayed = 0, shutouts = 0, minAllowed = 999;
+            scheduleData.events.forEach(event => {
+                const comp = event.competitions?.[0];
+                if (comp?.status?.type?.completed) {
+                    comp.competitors?.forEach(c => {
+                        if (c.team?.id !== TEAM_ID) {
+                            const pts = parseInt(c.score) || 0;
+                            totalAllowed += pts;
+                            if (pts === 0) shutouts++;
+                            if (pts < minAllowed) minAllowed = pts;
+                        } else {
+                            gamesPlayed++;
+                        }
+                    });
+                }
+            });
+
+            const papg = gamesPlayed > 0 ? (totalAllowed / gamesPlayed).toFixed(1) : '0.0';
+            if (minAllowed === 999) minAllowed = 0;
+
+            container.innerHTML = `
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">${papg}</div>
+                        <div class="stat-label">Points Allowed/G</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${totalAllowed}</div>
+                        <div class="stat-label">Total Allowed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${shutouts}</div>
+                        <div class="stat-label">Shutouts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${minAllowed}</div>
+                        <div class="stat-label">Fewest Allowed</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderScoring() {
+            const container = document.getElementById('scoringContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to load data</div>';
+                return;
+            }
+
+            let pointsScored = 0, pointsAllowed = 0, gamesPlayed = 0;
+            let wins = 0, losses = 0, blowouts = 0, closeGames = 0;
+
+            scheduleData.events.forEach(event => {
+                const comp = event.competitions?.[0];
+                if (comp?.status?.type?.completed) {
+                    let teamScore = 0, oppScore = 0;
+                    comp.competitors?.forEach(c => {
+                        if (c.team?.id === TEAM_ID) {
+                            teamScore = parseInt(c.score) || 0;
+                        } else {
+                            oppScore = parseInt(c.score) || 0;
+                        }
+                    });
+                    pointsScored += teamScore;
+                    pointsAllowed += oppScore;
+                    gamesPlayed++;
+
+                    const margin = Math.abs(teamScore - oppScore);
+                    if (teamScore > oppScore) wins++;
+                    else losses++;
+                    if (margin >= 21) blowouts++;
+                    if (margin <= 7) closeGames++;
+                }
+            });
+
+            const diff = pointsScored - pointsAllowed;
+            const diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'neutral';
+            const diffSign = diff > 0 ? '+' : '';
+            const avgMargin = gamesPlayed > 0 ? (diff / gamesPlayed).toFixed(1) : '0.0';
+            const marginSign = parseFloat(avgMargin) > 0 ? '+' : '';
+
+            container.innerHTML = `
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value ${diffClass}">${diffSign}${diff}</div>
+                        <div class="stat-label">Point Diff</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${marginSign}${avgMargin}</div>
+                        <div class="stat-label">Avg Margin</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${blowouts}</div>
+                        <div class="stat-label">Blowouts (21+)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${closeGames}</div>
+                        <div class="stat-label">Close Games (≤7)</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEfficiency() {
+            const container = document.getElementById('efficiencyContent');
+            if (!scheduleData?.events) {
+                container.innerHTML = '<div class="error-message">Unable to load data</div>';
+                return;
+            }
+
+            let pointsScored = 0, pointsAllowed = 0, gamesPlayed = 0;
+            scheduleData.events.forEach(event => {
+                const comp = event.competitions?.[0];
+                if (comp?.status?.type?.completed) {
+                    comp.competitors?.forEach(c => {
+                        if (c.team?.id === TEAM_ID) {
+                            pointsScored += parseInt(c.score) || 0;
+                            gamesPlayed++;
+                        } else {
+                            pointsAllowed += parseInt(c.score) || 0;
+                        }
+                    });
+                }
+            });
+
+            const ppg = gamesPlayed > 0 ? pointsScored / gamesPlayed : 0;
+            const papg = gamesPlayed > 0 ? pointsAllowed / gamesPlayed : 0;
+
+            // Normalize to 0-100 scale (assuming max ~50 ppg)
+            const offPct = Math.min((ppg / 50) * 100, 100);
+            const defPct = Math.max(100 - (papg / 50) * 100, 0);
+            const overallPct = (offPct + defPct) / 2;
+
+            container.innerHTML = `
+                <div class="efficiency-bars">
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">
+                            <span>Offensive Rating</span>
+                            <span>${ppg.toFixed(1)} PPG</span>
+                        </div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill fill-offense" style="width: ${offPct}%"></div>
+                        </div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">
+                            <span>Defensive Rating</span>
+                            <span>${papg.toFixed(1)} PA/G</span>
+                        </div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill fill-defense" style="width: ${defPct}%"></div>
+                        </div>
+                    </div>
+                    <div class="efficiency-item">
+                        <div class="efficiency-label">
+                            <span>Overall Efficiency</span>
+                            <span>${overallPct.toFixed(0)}%</span>
+                        </div>
+                        <div class="efficiency-bar">
+                            <div class="efficiency-fill fill-special" style="width: ${overallPct}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const options = {
+                timeZone: 'America/Chicago',
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: 'numeric', minute: '2-digit', hour12: true
+            };
+            document.getElementById('lastUpdated').textContent =
+                `Last updated: ${now.toLocaleString('en-US', options)} CT • Data from ESPN`;
+        }
+
+        async function initDashboard() {
+            try {
+                await Promise.all([fetchTeamData(), fetchStandings(), fetchSchedule()]);
+                renderHeaderStats();
+                renderStandings();
+                calculatePythagorean();
+                renderSchedule();
+                renderOffense();
+                renderDefense();
+                renderScoring();
+                renderEfficiency();
+                updateLastUpdated();
+            } catch (error) {
+                console.error('Dashboard init error:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+        setInterval(initDashboard, 300000);
+    </script>
+</body>
+</html>

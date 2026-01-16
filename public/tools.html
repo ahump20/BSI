@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Tools | Blaze Sports Intel</title>
+  <meta name="description" content="Interactive analytics tools for sports intelligence. Win probability, player comparison, draft value calculator, and advanced team composition optimization.">
+
+  <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bsi-midnight);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .nav {
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--bsi-burnt-orange); }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(191,87,0,0.1) 0%, transparent 100%);
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tools-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tool-card {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .tool-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .tool-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .tool-card p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .tool-tag {
+      display: inline-block;
+      background: rgba(191, 87, 0, 0.2);
+      color: var(--bsi-burnt-orange);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+      <ul class="nav-links">
+        <li><a href="/college-baseball">College Baseball</a></li>
+        <li><a href="/mlb">MLB</a></li>
+        <li><a href="/nfl">NFL</a></li>
+        <li><a href="/nba">NBA</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Analytics Tools</h1>
+    <p>Interactive calculators and analysis tools powered by advanced statistical models. Make data-driven decisions with championship-caliber intelligence.</p>
+  </section>
+
+  <div class="tools-grid">
+    <a href="/tools/team-archetype-builder" class="tool-card">
+      <div class="tool-icon">&#9878;</div>
+      <h2>Team Archetype Builder</h2>
+      <p>Build and analyze team compositions using archetypal player profiles. Identify roster strengths, weaknesses, and optimal lineup configurations.</p>
+      <span class="tool-tag">Pro Feature</span>
+    </a>
+
+    <a href="/tools/composition-optimizer" class="tool-card">
+      <div class="tool-icon">&#9881;</div>
+      <h2>Composition Optimizer</h2>
+      <p>Monte Carlo simulation engine for roster optimization. Run thousands of scenarios to find the optimal team composition for any matchup.</p>
+      <span class="tool-tag">Pro Feature</span>
+    </a>
+
+    <a href="/tools/win-probability" class="tool-card">
+      <div class="tool-icon">&#128200;</div>
+      <h2>Win Probability Calculator</h2>
+      <p>Real-time win probability calculations based on game state, historical data, and situational factors. Track momentum shifts play-by-play.</p>
+      <span class="tool-tag">Free</span>
+    </a>
+
+    <a href="/tools/player-comparison" class="tool-card">
+      <div class="tool-icon">&#9878;</div>
+      <h2>Player Comparison</h2>
+      <p>Side-by-side statistical comparison of players across multiple metrics. Visualize performance differentials with radar charts and trend analysis.</p>
+      <span class="tool-tag">Free</span>
+    </a>
+
+    <a href="/tools/draft-value" class="tool-card">
+      <div class="tool-icon">&#128176;</div>
+      <h2>Draft Pick Value Calculator</h2>
+      <p>Calculate the expected value of draft picks using historical signing data, slot values, and projected WAR contributions.</p>
+      <span class="tool-tag">Free</span>
+    </a>
+
+    <a href="/tools/schedule-strength" class="tool-card">
+      <div class="tool-icon">&#128197;</div>
+      <h2>Schedule Strength Analyzer</h2>
+      <p>Evaluate strength of schedule using opponent ratings, rest advantages, and travel factors. Identify soft spots and difficult stretches.</p>
+      <span class="tool-tag">Free</span>
+    </a>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+  </footer>
+</body>
+</html>

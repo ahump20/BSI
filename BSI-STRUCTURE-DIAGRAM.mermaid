@@ -1,0 +1,97 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#1a1a2e', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#ff6b35', 'lineColor': '#ff6b35', 'secondaryColor': '#16213e', 'tertiaryColor': '#0f3460'}}}%%
+
+flowchart TB
+    subgraph ROOT["BSI Canonical Source"]
+        direction TB
+
+        subgraph ADMIN["ADMIN - Gray/Yellow"]
+            Legal["Legal/
+            accessibility, ai-disclosure,
+            cookies, copyright, privacy, terms"]
+            Financials["Financials/
+            BSI_Financial.xlsx"]
+            Investor["Investor/
+            Pitch Decks, Business Plans"]
+        end
+
+        subgraph ARCHIVES["ARCHIVES - Gray"]
+            DupReview["Duplicates_Review/
+            35 file sets pending deletion"]
+            ZipFiles["Historical .zip exports"]
+        end
+
+        subgraph CODE["CODE - Orange"]
+            App["app/ - Next.js routes"]
+            Components["components/ - React"]
+            Functions["functions/ - CF Pages"]
+            Workers["workers/ - CF Workers
+            baseball-rankings, bsi-cbb,
+            bsi-cfb-ai, bsi-ticker, ingest"]
+            Scripts["scripts/ - Build tools"]
+            Src["src/ - Source files"]
+        end
+
+        subgraph DATA["DATA - Blue"]
+            CFB["cfb/ - College Football"]
+            CFP["cfp/ - Playoff Rankings"]
+            CBB["college-baseball/
+            analytics, rankings, standings, teams"]
+            MLB["mlb/"]
+            NFL["nfl/"]
+        end
+
+        subgraph DESIGN["DESIGN - Purple"]
+            Logos["logos/
+            BSI Logo Assets 1-4.png"]
+            Brand["brand-guidelines/
+            bsi-design-system.css"]
+            OG["og-templates/"]
+        end
+
+        subgraph DOCS["DOCS - Green/Yellow"]
+            Arch["Architecture/
+            BLAZE-REGRESSION, ESPN-STYLE,
+            GRAPHICS-ENGINE, etc."]
+            API["API/
+            API.md, API_UPGRADE_RESEARCH"]
+            Guides["Guides/
+            DEPLOYMENT, DEVELOPER-ONBOARDING"]
+            Business["Business/
+            BSI_Business_Plan, Brand Story"]
+        end
+
+        subgraph MEDIA["MEDIA - Purple"]
+            Images["images/ - Production assets"]
+            Origin["origin/ - Source files
+            headshot, blaze-and-austin,
+            texas-longhorns-kid, etc."]
+        end
+
+        subgraph PUBLIC["PUBLIC - Red"]
+            CSS["css/ - Stylesheets"]
+            JS["js/ - Scripts"]
+            PubImages["images/ - Web assets"]
+            HTML["*.html - Pages"]
+        end
+
+        MISC["MISC - Gray
+        skills/, uncategorized"]
+
+        CONFIG["ROOT CONFIG - Orange
+        package.json, wrangler.toml,
+        tsconfig.json, next.config.ts"]
+    end
+
+    ADMIN --> Legal
+    ADMIN --> Financials
+    ADMIN --> Investor
+
+    CODE --> Workers
+    CODE --> Functions
+    CODE --> Components
+
+    DATA --> CBB
+    DATA --> CFB
+
+    PUBLIC --> HTML
+    PUBLIC --> JS

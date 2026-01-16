@@ -1,0 +1,131 @@
+erDiagram
+    TEAMS {
+        int id PK
+        string name
+        string sport
+        string division
+        string abbreviation
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    PLAYERS {
+        int id PK
+        int team_id FK
+        string name
+        string position
+        date birth_date
+        decimal height_cm
+        decimal weight_kg
+        timestamp created_at
+    }
+    
+    GAMES {
+        int id PK
+        int home_team_id FK
+        int away_team_id FK
+        datetime game_time
+        int home_score
+        int away_score
+        string status
+        int attendance
+        jsonb weather_data
+    }
+    
+    GAME_STATS {
+        int id PK
+        int game_id FK
+        int player_id FK
+        jsonb stats_data
+        decimal minutes_played
+        timestamp recorded_at
+    }
+    
+    ANALYTICS {
+        int id PK
+        int team_id FK
+        int season
+        string metric_type
+        decimal metric_value
+        jsonb metric_data
+        timestamp calculation_date
+        string data_source
+    }
+    
+    POSE_DATA {
+        int id PK
+        int player_id FK
+        timestamp recorded_at
+        jsonb keypoints
+        string sport
+        string action_type
+        decimal confidence_score
+    }
+    
+    BIOMECH_ANALYSIS {
+        int id PK
+        int pose_data_id FK
+        int player_id FK
+        jsonb biomech_metrics
+        jsonb risk_assessment
+        decimal overall_score
+        timestamp analyzed_at
+    }
+    
+    INJURIES {
+        int id PK
+        int player_id FK
+        string injury_type
+        string body_part
+        date injury_date
+        date return_date
+        string severity
+        text description
+    }
+    
+    PREDICTIONS {
+        int id PK
+        int player_id FK
+        string prediction_type
+        jsonb prediction_data
+        decimal confidence
+        date prediction_date
+        date target_date
+        boolean is_realized
+    }
+    
+    LIVE_SCORES {
+        int id PK
+        int game_id FK
+        int quarter_period
+        int home_score
+        int away_score
+        timestamp last_update
+        jsonb event_data
+    }
+    
+    API_CACHE {
+        int id PK
+        string cache_key UK
+        jsonb response_data
+        string api_source
+        timestamp expires_at
+        int hit_count
+    }
+    
+    %% Relationships
+    TEAMS ||--o{ PLAYERS : has
+    TEAMS ||--o{ GAMES : "home team"
+    TEAMS ||--o{ GAMES : "away team"
+    TEAMS ||--o{ ANALYTICS : generates
+    
+    PLAYERS ||--o{ GAME_STATS : plays
+    PLAYERS ||--o{ POSE_DATA : generates
+    PLAYERS ||--o{ BIOMECH_ANALYSIS : analyzed
+    PLAYERS ||--o{ INJURIES : suffers
+    PLAYERS ||--o{ PREDICTIONS : subject_of
+    
+    GAMES ||--o{ GAME_STATS : contains
+    GAMES ||--o{ LIVE_SCORES : tracked
+    
+    POSE_DATA ||--|| BIOMECH_ANALYSIS : analyzed_from

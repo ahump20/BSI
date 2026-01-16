@@ -1,0 +1,54 @@
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant Auth
+    participant Cache
+    participant Database
+    participant ExtAPI as External APIs
+    participant ML as ML Pipeline
+    
+    Note over Client,ML: Biomechanics Analysis Request
+    
+    Client->>Gateway: POST /api/v1/pose/ingest
+    Gateway->>Auth: Validate JWT Token
+    Auth-->>Gateway: Token Valid
+    
+    Gateway->>Cache: Check Rate Limit
+    Cache-->>Gateway: Within Limits
+    
+    Gateway->>Database: Store Pose Data
+    Database-->>Gateway: Data Stored
+    
+    Gateway->>ML: Trigger Analysis
+    
+    ML->>Database: Fetch Historical Data
+    Database-->>ML: Historical Metrics
+    
+    ML->>ML: Calculate Biomech Features
+    ML->>ML: Risk Assessment
+    ML->>ML: Performance Scoring
+    
+    ML->>Database: Store Analysis Results
+    Database-->>ML: Results Stored
+    
+    ML-->>Gateway: Analysis Complete
+    Gateway-->>Client: 202 Accepted
+    
+    Note over Client,ML: Real-time Results via WebSocket
+    
+    Gateway->>Client: WebSocket: Analysis Results
+    
+    Note over Client,ML: External Data Integration
+    
+    Client->>Gateway: GET /api/mlb/138
+    Gateway->>Cache: Check Cache
+    Cache-->>Gateway: Cache Miss
+    
+    Gateway->>ExtAPI: Fetch MLB Data
+    ExtAPI-->>Gateway: Team Data
+    
+    Gateway->>ML: Calculate Analytics
+    ML-->>Gateway: Pythagorean Win %
+    
+    Gateway->>Cache: Store Result (5min TTL)
+    Gateway-->>Client: Team Data + Analytics

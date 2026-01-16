@@ -1,0 +1,86 @@
+{
+  "conference": "Southeastern Conference",
+  "season": "2025",
+  "teams": [
+    {
+      "slug": "alabama-crimson-tide",
+      "name": "Alabama Crimson Tide",
+      "data_file": "alabama-crimson-tide.json"
+    },
+    {
+      "slug": "arkansas-razorbacks",
+      "name": "Arkansas Razorbacks",
+      "data_file": "arkansas-razorbacks.json"
+    },
+    {
+      "slug": "auburn-tigers",
+      "name": "Auburn Tigers",
+      "data_file": "auburn-tigers.json"
+    },
+    {
+      "slug": "florida-gators",
+      "name": "Florida Gators",
+      "data_file": "florida-gators.json"
+    },
+    {
+      "slug": "georgia-bulldogs",
+      "name": "Georgia Bulldogs",
+      "data_file": "georgia-bulldogs.json"
+    },
+    {
+      "slug": "kentucky-wildcats",
+      "name": "Kentucky Wildcats",
+      "data_file": "kentucky-wildcats.json"
+    },
+    {
+      "slug": "lsu-tigers",
+      "name": "LSU Tigers",
+      "data_file": "lsu-tigers.json"
+    },
+    {
+      "slug": "mississippi-state-bulldogs",
+      "name": "Mississippi State Bulldogs",
+      "data_file": "mississippi-state-bulldogs.json"
+    },
+    {
+      "slug": "missouri-tigers",
+      "name": "Missouri Tigers",
+      "data_file": "missouri-tigers.json"
+    },
+    {
+      "slug": "ole-miss-rebels",
+      "name": "Ole Miss Rebels",
+      "data_file": "ole-miss-rebels.json"
+    },
+    {
+      "slug": "oklahoma-sooners",
+      "name": "Oklahoma Sooners",
+      "data_file": "oklahoma-sooners.json"
+    },
+    {
+      "slug": "south-carolina-gamecocks",
+      "name": "South Carolina Gamecocks",
+      "data_file": "south-carolina-gamecocks.json"
+    },
+    {
+      "slug": "tennessee-volunteers",
+      "name": "Tennessee Volunteers",
+      "data_file": "tennessee-volunteers.json"
+    },
+    {
+      "slug": "texas-am-aggies",
+      "name": "Texas A&M Aggies",
+      "data_file": "texas-am-aggies.json"
+    },
+    {
+      "slug": "texas-longhorns",
+      "name": "Texas Longhorns",
+      "data_file": "texas-longhorns.json"
+    },
+    {
+      "slug": "vanderbilt-commodores",
+      "name": "Vanderbilt Commodores",
+      "data_file": "vanderbilt-commodores.json"
+    }
+  ]
+}

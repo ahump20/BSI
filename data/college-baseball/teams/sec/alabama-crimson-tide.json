@@ -1,0 +1,121 @@
+{
+  "slug": "alabama-crimson-tide",
+  "team_name": "Alabama Crimson Tide",
+  "mascot": "Crimson Tide",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "First SEC season without divisional split; Texas and Oklahoma join in 2025 schedule."
+  },
+  "location": {
+    "city": "Tuscaloosa",
+    "state": "Alabama",
+    "campus": "University of Alabama",
+    "ballpark": {
+      "name": "Sewell-Thomas Stadium",
+      "capacity": 5867,
+      "surface": "Natural grass",
+      "recent_upgrades": "Added new performance lab and renovated player lounge ahead of 2024 season."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#9E1B32",
+    "secondary_color_hex": "#FFFFFF"
+  },
+  "head_coach": {
+    "name": "Rob Vaughn",
+    "contract_through": "2028",
+    "base_salary_estimate": 625000,
+    "staff_tenure": "Second season in Tuscaloosa after decade at Maryland.",
+    "playing_style": "Aggressive baserunning with high-contact lineup; prioritizes defensive versatility.",
+    "recent_quotes": "Stressed to Tuscaloosa News (Aug 2024) that portal pitching depth remains the top priority."
+  },
+  "support_staff": {
+    "pitching_coach": "Jason Jackson",
+    "hitting_coach": "Matt Swope",
+    "recruiting_coordinator": "Rob Vaughn",
+    "director_of_operations": "Cam Hobson",
+    "analytics_lead": null,
+    "player_development_director": "Jake Steele",
+    "video_coordinator": "Cody Gaskins"
+  },
+  "nil_operations": {
+    "primary_collective": "Yea Alabama",
+    "lead_contact": "Gideon M. Smith (baseball liaison)",
+    "contact_channels": ["operations@yeaalabama.com", "https://www.yeaalabama.com/contact"],
+    "recent_initiatives": "Launched summer 2024 meet-and-greet series with Diamond Dolls alumni to support pitching lab fundraising.",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [
+      {
+        "name": "Gage Miller",
+        "position": "IF",
+        "notes": "All-SEC bat returns after 18 HR season; shifting between 2B/3B depending on matchup."
+      },
+      {
+        "name": "Ian Petrutz",
+        "position": "OF",
+        "notes": "Power corner outfielder; staff expects jump after full offseason with Vaughn staff."
+      }
+    ],
+    "key_departures": [
+      {
+        "name": "Ben Hess",
+        "destination": "MLB Draft (Chicago White Sox)",
+        "notes": "Friday-night anchor leaves rotation thin; staff exploring grad transfers."
+      }
+    ],
+    "incoming_transfers": [
+      {
+        "name": "Cole Mathis",
+        "position": "RHP/1B",
+        "previous_school": "College of Charleston",
+        "notes": "Two-way impact target to stabilize rotation; awaiting fall medical clearance."
+      }
+    ],
+    "impact_freshmen": [
+      {
+        "name": "Tyler Owens",
+        "position": "RHP",
+        "hometown": "Alabaster, AL",
+        "notes": "Mid-90s with riding fastball; pitched for Birmingham Bulls travel squad."
+      }
+    ],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Greg Byrne",
+    "baseball_admin": "Alex Thompson",
+    "financial_points_of_contact": ["baseballtickets@ia.ua.edu"]
+  },
+  "historical_context": {
+    "college_world_series_titles": 0,
+    "sec_titles": 14,
+    "last_super_regional": "2023",
+    "program_trend": "Upswing after 2023 NCAA run and facility reinvestment."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-18T08:00:00-05:00",
+      "summary": "Local beat reports team prioritizing veteran bullpen arm from Sun Belt in portal; no commitment yet.",
+      "source_hint": "Tuscaloosa News fall ball notebook, Oct 2024",
+      "confidence": "medium",
+      "status": "pending"
+    },
+    {
+      "timestamp": "2024-09-12T12:30:00-05:00",
+      "summary": "Strength staff implemented dual-monitor force-plate assessments after partnering with Druid City Performance Lab.",
+      "source_hint": "Program strength coach interview on Tide 100.9 radio",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "partial",
+    "next_actions": "Confirm NIL contact info with collective rep; validate player development staffing titles."
+  }
+}

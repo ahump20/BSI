@@ -1,0 +1,82 @@
+{
+  "slug": "vanderbilt-commodores",
+  "team_name": "Vanderbilt Commodores",
+  "mascot": "Commodores",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Tim Corbin continuing national power run with 2024 Super Regional trip."
+  },
+  "location": {
+    "city": "Nashville",
+    "state": "Tennessee",
+    "campus": "Vanderbilt University",
+    "ballpark": {
+      "name": "Hawkins Field",
+      "capacity": 3700,
+      "surface": "Artificial turf",
+      "recent_upgrades": "Pitch lab renovation and player nutrition lounge finished Aug 2024."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#866D4B",
+    "secondary_color_hex": "#000000"
+  },
+  "head_coach": {
+    "name": "Tim Corbin",
+    "contract_through": "2030",
+    "base_salary_estimate": 1700000,
+    "staff_tenure": "Entering 22nd season; 2014 and 2019 national champion.",
+    "playing_style": "Data-driven pitching factory with on-base discipline and elite defense."
+  },
+  "support_staff": {
+    "pitching_coach": "Scott Brown",
+    "hitting_coach": "Mike Baxter",
+    "recruiting_coordinator": "David Macias",
+    "director_of_operations": "Kyle Duvall",
+    "analytics_lead": "Cameron Walker",
+    "player_development_director": "Tyler Beede",
+    "video_coordinator": "Ben Senger"
+  },
+  "nil_operations": {
+    "primary_collective": "Anchor Impact",
+    "lead_contact": "Candice Storey Lee",
+    "contact_channels": ["anchorimpact@vanderbilt.edu"],
+    "recent_initiatives": "Expanding baseball internship partnerships with Nashville music industry (Sept 2024).",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Candice Storey Lee",
+    "baseball_admin": "Kevin Colon",
+    "financial_points_of_contact": ["ticket.office@vanderbilt.edu"]
+  },
+  "historical_context": {
+    "college_world_series_titles": 2,
+    "sec_titles": 4,
+    "last_super_regional": "2024",
+    "program_trend": "Consistent Omaha contender with deep donor support."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-04T13:00:00-05:00",
+      "summary": "D1Baseball fall report noted freshmen RHPs sitting 95+ with new seam-shifted wake focus.",
+      "source_hint": "D1Baseball Vanderbilt fall report",
+      "confidence": "medium",
+      "status": "pending"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Fill roster intel once fall scrimmage stats released; verify NIL contact structure."
+  }
+}

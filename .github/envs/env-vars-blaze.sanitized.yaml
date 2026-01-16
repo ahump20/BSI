@@ -1,0 +1,201 @@
+# Sanitized Environment Variables Template for Blaze Sports Intelligence
+#
+# IMPORTANT: This file contains PLACEHOLDER values only - NO real secrets!
+# Real secrets and sensitive values must be set via GitHub Secrets or Cloudflare Pages environment variables.
+#
+# For GitHub Actions secrets, go to:
+# Repository Settings > Secrets and variables > Actions > New repository secret
+#
+# For Cloudflare Pages environment variables, go to:
+# Cloudflare Dashboard > Workers & Pages > [Your Project] > Settings > Environment variables
+
+# ====================
+# DEPLOYMENT SECRETS (Set in GitHub Secrets)
+# ====================
+# These are required for CI/CD deployment via GitHub Actions
+CLOUDFLARE_API_TOKEN: 'placeholder_get_from_cloudflare_dashboard'
+CLOUDFLARE_ACCOUNT_ID: 'placeholder_32_character_account_id'
+CLOUDFLARE_PAGES_PROJECT: 'blazesportsintel'
+
+# ====================
+# APPLICATION ENVIRONMENT
+# ====================
+NODE_ENV: 'production'
+PYTHON_ENV: 'production'
+DEBUG: 'false'
+LOG_LEVEL: 'info'
+
+# ====================
+# API ENDPOINTS
+# ====================
+API_BASE_URL: 'https://api.blazesportsintel.com'
+API_URL: 'https://api.blazesportsintel.com'
+APP_URL: 'https://blazesportsintel.com'
+FRONTEND_URL: 'https://blazesportsintel.com'
+
+# Client-side environment variables (exposed to browser via VITE_ prefix)
+VITE_API_BASE_URL: 'https://api.blazesportsintel.com'
+VITE_SENTRY_DSN: 'placeholder_sentry_dsn_if_using_sentry'
+VITE_ANALYTICS_ID: 'placeholder_analytics_id_if_using_analytics'
+
+# Next.js public environment variables (if using Next.js)
+NEXT_PUBLIC_API_URL: 'https://api.blazesportsintel.com'
+NEXT_PUBLIC_SENTRY_DSN: 'placeholder_sentry_dsn'
+NEXT_PUBLIC_SENTRY_ENVIRONMENT: 'production'
+NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE: '0.2'
+NEXT_PUBLIC_SENTRY_REPLAYS_SESSION_SAMPLE_RATE: '0.1'
+NEXT_PUBLIC_SENTRY_REPLAYS_ERROR_SAMPLE_RATE: '1.0'
+NEXT_PUBLIC_DATADOG_APPLICATION_ID: 'placeholder_datadog_app_id'
+NEXT_PUBLIC_DATADOG_CLIENT_TOKEN: 'placeholder_datadog_client_token'
+NEXT_PUBLIC_DATADOG_SITE: 'datadoghq.com'
+NEXT_PUBLIC_DATADOG_SESSION_SAMPLE_RATE: '100'
+NEXT_PUBLIC_DATADOG_REPLAY_SAMPLE_RATE: '20'
+
+# ====================
+# CLOUDFLARE SETTINGS
+# ====================
+CLOUDFLARE_ZONE_ID: 'placeholder_zone_id_if_needed'
+
+# ====================
+# DATABASE CONNECTIONS
+# ====================
+# Set these in Cloudflare Pages environment variables, NOT in GitHub Secrets
+DATABASE_URL: 'postgresql://username:password@host.provider.tech/dbname?sslmode=require'
+NEON_DATABASE_URL: 'postgresql://username:password@host.neon.tech/dbname?sslmode=require'
+NEON_PROJECT_ID: 'placeholder_neon_project_id'
+NEON_BRANCH: 'main'
+
+POSTGRES_HOST: 'placeholder_postgres_host'
+POSTGRES_PORT: '5432'
+POSTGRES_DB: 'placeholder_database_name'
+POSTGRES_USER: 'placeholder_database_user'
+POSTGRES_PASSWORD: 'placeholder_database_password'
+
+# ====================
+# REDIS / CACHE
+# ====================
+REDIS_URL: 'redis://placeholder_redis_host:6379'
+REDIS_HOST: 'placeholder_redis_host'
+REDIS_PORT: '6379'
+REDIS_DB: '0'
+
+# ====================
+# OBJECT STORAGE (S3/MinIO)
+# ====================
+MINIO_URL: 'https://s3.placeholder-region.amazonaws.com'
+MINIO_ACCESS_KEY: 'placeholder_access_key'
+MINIO_SECRET_KEY: 'placeholder_secret_key'
+MINIO_BUCKET_MEDIA: 'media'
+MINIO_BUCKET_DATA: 'analytics'
+MINIO_BUCKET_BIOMECH: 'biomechanics'
+
+# ====================
+# SPORTS DATA API KEYS
+# ====================
+# Set these as GitHub Secrets or Cloudflare environment variables
+SPORTSDATAIO_API_KEY: 'placeholder_sportsdata_io_api_key'
+MLB_API_KEY: 'placeholder_mlb_api_key'
+NFL_API_KEY: 'placeholder_nfl_api_key'
+NBA_API_KEY: 'placeholder_nba_api_key'
+NCAA_API_KEY: 'placeholder_ncaa_api_key'
+
+# ====================
+# AI/ML SERVICE API KEYS
+# ====================
+# Set these as GitHub Secrets or Cloudflare environment variables
+OPENAI_API_KEY: 'placeholder_openai_api_key'
+ANTHROPIC_API_KEY: 'placeholder_anthropic_api_key'
+GEMINI_API_KEY: 'placeholder_gemini_api_key'
+
+# ====================
+# MONITORING & OBSERVABILITY
+# ====================
+# Sentry
+SENTRY_DSN: 'placeholder_sentry_dsn'
+SENTRY_ENVIRONMENT: 'production'
+SENTRY_RELEASE: 'placeholder_git_sha_or_version'
+SENTRY_TRACES_SAMPLE_RATE: '0.2'
+SENTRY_PROFILES_SAMPLE_RATE: '0.1'
+SENTRY_EDGE_TRACES_SAMPLE_RATE: '0.2'
+SENTRY_AUTH_TOKEN: 'placeholder_sentry_auth_token_for_releases'
+SENTRY_ORG: 'placeholder_sentry_org'
+SENTRY_PROJECT: 'placeholder_sentry_project'
+
+# Datadog
+DATADOG_API_KEY: 'placeholder_datadog_api_key'
+DD_API_KEY: 'placeholder_datadog_api_key'
+DATADOG_SITE: 'datadoghq.com'
+DATADOG_ENV: 'production'
+DATADOG_SERVICE: 'blaze-sports-intel-web'
+
+# Prometheus & Grafana
+PROMETHEUS_PORT: '9090'
+GRAFANA_USER: 'admin'
+GRAFANA_PASSWORD: 'placeholder_secure_password'
+
+# ====================
+# SECURITY & AUTHENTICATION
+# ====================
+# IMPORTANT: Generate secure random strings for production!
+JWT_SECRET: 'placeholder_generate_secure_random_string_min_32_chars'
+SESSION_SECRET: 'placeholder_generate_secure_random_string_min_32_chars'
+CORS_ORIGINS: 'https://blazesportsintel.com,https://www.blazesportsintel.com'
+
+# ====================
+# EMAIL SERVICE
+# ====================
+SMTP_HOST: 'placeholder_smtp_host'
+SMTP_PORT: '587'
+SMTP_USER: 'placeholder_smtp_username'
+SMTP_PASSWORD: 'placeholder_smtp_password'
+EMAIL_FROM: 'noreply@blazesportsintel.com'
+
+# ====================
+# FEATURE FLAGS
+# ====================
+ENABLE_BIOMECHANICS: 'true'
+ENABLE_MONTE_CARLO: 'true'
+ENABLE_REAL_TIME: 'true'
+ENABLE_3D_VISUALIZATION: 'true'
+
+# ====================
+# PERFORMANCE TUNING
+# ====================
+WORKER_THREADS: '4'
+MAX_UPLOAD_SIZE: '100MB'
+CACHE_TTL: '3600'
+RATE_LIMIT_PER_MINUTE: '100'
+
+# ====================
+# MACHINE LEARNING CONFIGURATION
+# ====================
+TENSORFLOW_BACKEND: 'cpu'
+MODEL_STORAGE_PATH: './models'
+MODEL_VERSION_PREFIX: 'v'
+ML_BATCH_SIZE: '32'
+ML_EPOCHS: '100'
+ML_VALIDATION_SPLIT: '0.2'
+ML_LEARNING_RATE: '0.001'
+ML_PATIENCE: '10'
+ML_MIN_DELTA: '0.001'
+FEATURE_STORE_TTL: '86400'
+FEATURE_CACHE_SIZE: '10000'
+ENABLE_FEATURE_DRIFT_DETECTION: 'true'
+MODEL_RETRAIN_GAME_OUTCOME: 'weekly'
+MODEL_RETRAIN_SEASON_WINS: 'monthly'
+MODEL_RETRAIN_PLAYER_PERFORMANCE: 'daily'
+
+# ====================
+# VISUAL TESTING (OPTIONAL)
+# ====================
+APPLITOOLS_API_KEY: 'placeholder_applitools_api_key_if_using'
+APPLITOOLS_SERVER_URL: 'placeholder_applitools_server_url'
+# ====================
+# NOTES
+# ====================
+# 1. Never commit real secrets to this file
+# 2. Use GitHub Secrets for CI/CD-specific secrets (CLOUDFLARE_*)
+# 3. Use Cloudflare Pages environment variables for runtime secrets (DATABASE_URL, API_KEYS, etc.)
+# 4. Rotate secrets regularly
+# 5. Use different values for production, staging, and development environments
+# 6. For local development, copy .env.example to .env and fill in real values

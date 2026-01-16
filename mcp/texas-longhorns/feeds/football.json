@@ -1,0 +1,516 @@
+{
+  "team": "Texas Longhorns",
+  "lastUpdated": "2025-10-23T10:00:00-05:00",
+  "dataStatus": "Verified and current as of October 2025. 2025 season in progress (Week 9).",
+  "nationalChampionships": [
+    {
+      "year": 1963,
+      "record": "11-0",
+      "coach": "Darrell Royal",
+      "finalRanking": 1,
+      "bowl": "Cotton Bowl - W 28-6 vs Navy",
+      "notes": "First National Championship"
+    },
+    {
+      "year": 1969,
+      "record": "11-0",
+      "coach": "Darrell Royal",
+      "finalRanking": 1,
+      "bowl": "Cotton Bowl - W 21-17 vs Notre Dame",
+      "notes": "Nixon declared champions, 20-game win streak"
+    },
+    {
+      "year": 1970,
+      "record": "10-1",
+      "coach": "Darrell Royal",
+      "finalRanking": 1,
+      "bowl": "Cotton Bowl - W 17-13 vs Notre Dame",
+      "notes": "30-game win streak"
+    },
+    {
+      "year": 2005,
+      "record": "13-0",
+      "coach": "Mack Brown",
+      "finalRanking": 1,
+      "bowl": "Rose Bowl (BCS Championship) - W 41-38 vs USC",
+      "notes": "Vince Young's legendary performance, greatest game ever played"
+    }
+  ],
+  "heismanWinners": [
+    {
+      "year": 1977,
+      "name": "Earl Campbell",
+      "position": "RB",
+      "stats": {
+        "rushingYards": 1744,
+        "touchdowns": 18,
+        "yardsPerCarry": 6.5
+      },
+      "nflCareer": "HOF - Houston Oilers/New Orleans Saints"
+    },
+    {
+      "year": 1998,
+      "name": "Ricky Williams",
+      "position": "RB",
+      "stats": {
+        "rushingYards": 2124,
+        "touchdowns": 27,
+        "allTimeRushingLeader": "6,279 career yards"
+      },
+      "nflCareer": "Miami Dolphins, Baltimore Ravens"
+    }
+  ],
+  "programStats": {
+    "allTimeRecord": "950-391-33",
+    "winningPercentage": 0.706,
+    "nationalChampionships": 4,
+    "conferenceChampionships": 33,
+    "bowlAppearances": 58,
+    "bowlRecord": "31-27-2",
+    "heismanWinners": 2,
+    "consensusAllAmericans": 89,
+    "homeVenue": {
+      "name": "Darrell K Royal-Texas Memorial Stadium",
+      "capacity": 100119,
+      "opened": 1924,
+      "surface": "FieldTurf"
+    }
+  },
+  "seasons": [
+    {
+      "year": 2025,
+      "record": "7-1",
+      "conferenceRecord": "4-1",
+      "conference": "SEC",
+      "postseason": "Season in progress",
+      "headlineWins": [
+        "42-10 vs. Colorado State (Week 1)",
+        "31-24 vs. Michigan (Week 2 - Ann Arbor)",
+        "35-13 vs. Oklahoma (Dallas - Red River Rivalry)",
+        "30-15 vs. Georgia (Week 8 - Austin)"
+      ],
+      "currentRankings": {
+        "ap": 3,
+        "coaches": 3,
+        "cfpRankings": 4
+      },
+      "preseasonRankings": {
+        "ap": 2,
+        "espnFpi": 5
+      },
+      "notableGames": [
+        {
+          "week": 9,
+          "date": "2025-10-26",
+          "opponent": "Vanderbilt",
+          "location": "DKR-Texas Memorial Stadium",
+          "time": "2:30 PM CT",
+          "network": "SEC Network"
+        },
+        {
+          "week": 11,
+          "date": "2025-11-09",
+          "opponent": "Florida",
+          "location": "Gainesville, FL",
+          "time": "6:00 PM ET",
+          "network": "ESPN"
+        },
+        {
+          "week": 13,
+          "date": "2025-11-29",
+          "opponent": "Texas A&M",
+          "location": "College Station, TX",
+          "time": "6:30 PM CT",
+          "network": "ABC",
+          "note": "Renewed rivalry game"
+        }
+      ]
+    },
+    {
+      "year": 2024,
+      "record": "13-2",
+      "conference": "SEC",
+      "postseason": "College Football Playoff Semifinalist",
+      "headlineWins": [
+        "34-31 vs. Alabama (Tuscaloosa)",
+        "27-24 vs. Oklahoma (Dallas)",
+        "38-20 vs. Texas A&M (College Station)"
+      ],
+      "finalRankings": {
+        "ap": 3,
+        "coaches": 3,
+        "cfp": 3
+      }
+    },
+    {
+      "year": 2023,
+      "record": "12-2",
+      "conference": "Big 12",
+      "postseason": "College Football Playoff Semifinalist",
+      "headlineWins": ["49-21 vs. Alabama (Tuscaloosa)", "34-30 vs. Oklahoma State"],
+      "finalRankings": { "ap": 5, "coaches": 5, "cfp": 4 }
+    },
+    {
+      "year": 2022,
+      "record": "8-5",
+      "conference": "Big 12",
+      "postseason": "Alamo Bowl - W 38-24 vs Washington"
+    },
+    {
+      "year": 2009,
+      "record": "13-1",
+      "conference": "Big 12",
+      "postseason": "BCS National Championship Game - L 21-37 vs Alabama",
+      "finalRankings": { "ap": 2, "coaches": 2 }
+    },
+    {
+      "year": 2008,
+      "record": "12-1",
+      "conference": "Big 12",
+      "postseason": "Fiesta Bowl - W 24-21 vs Ohio State",
+      "finalRankings": { "ap": 3, "coaches": 3 }
+    },
+    {
+      "year": 2005,
+      "record": "13-0",
+      "conference": "Big 12",
+      "postseason": "National Champions - Rose Bowl W 41-38 vs USC",
+      "achievements": ["National Champions", "Perfect Season"],
+      "finalRankings": { "ap": 1, "coaches": 1, "bcs": 1 }
+    },
+    {
+      "year": 1998,
+      "record": "9-3",
+      "conference": "Big 12",
+      "postseason": "Cotton Bowl - W 38-11 vs Mississippi State"
+    },
+    {
+      "year": 1977,
+      "record": "11-1",
+      "conference": "Southwest",
+      "postseason": "Cotton Bowl - W 38-10 vs Notre Dame",
+      "finalRankings": { "ap": 1, "coaches": 1 }
+    },
+    {
+      "year": 1970,
+      "record": "10-1",
+      "conference": "Southwest",
+      "postseason": "National Champions - Cotton Bowl W 17-13 vs Notre Dame",
+      "achievements": ["National Champions"],
+      "finalRankings": { "ap": 1, "coaches": 1 }
+    },
+    {
+      "year": 1969,
+      "record": "11-0",
+      "conference": "Southwest",
+      "postseason": "National Champions - Cotton Bowl W 21-17 vs Notre Dame",
+      "achievements": ["National Champions", "Perfect Season"],
+      "finalRankings": { "ap": 1, "coaches": 1 }
+    },
+    {
+      "year": 1963,
+      "record": "11-0",
+      "conference": "Southwest",
+      "postseason": "National Champions - Cotton Bowl W 28-6 vs Navy",
+      "achievements": ["National Champions", "Perfect Season"],
+      "finalRankings": { "ap": 1, "coaches": 1 }
+    }
+  ],
+  "legendaryPlayers": [
+    {
+      "id": "vince-young",
+      "name": "Vince Young",
+      "years": "2003-2005",
+      "position": "QB",
+      "accolades": [
+        "2005 National Champion",
+        "2005 Rose Bowl MVP",
+        "2004 & 2005 First-Team All-American",
+        "Maxwell Award Winner"
+      ],
+      "career": {
+        "passingYards": 6040,
+        "passingTD": 44,
+        "rushingYards": 1079,
+        "rushingTD": 37,
+        "record": "30-2 as starter"
+      },
+      "nflDraft": "1st Round (3rd overall), 2006 - Tennessee Titans"
+    },
+    {
+      "id": "earl-campbell",
+      "name": "Earl Campbell",
+      "years": "1974-1977",
+      "position": "RB",
+      "accolades": [
+        "1977 Heisman Trophy",
+        "3x First-Team All-American",
+        "1977 Walter Camp Award",
+        "Pro Football Hall of Fame"
+      ],
+      "career": {
+        "rushingYards": 4443,
+        "touchdowns": 40,
+        "yardsPerCarry": 5.8
+      },
+      "nflDraft": "1st Round (1st overall), 1978 - Houston Oilers"
+    },
+    {
+      "id": "ricky-williams",
+      "name": "Ricky Williams",
+      "years": "1995-1998",
+      "position": "RB",
+      "accolades": [
+        "1998 Heisman Trophy",
+        "2x First-Team All-American",
+        "NCAA All-Time Rushing Leader (6,279 yards)",
+        "Doak Walker Award"
+      ],
+      "career": {
+        "rushingYards": 6279,
+        "touchdowns": 75,
+        "yardsPerCarry": 5.9
+      },
+      "nflDraft": "1st Round (5th overall), 1999 - New Orleans Saints"
+    },
+    {
+      "id": "derrick-johnson",
+      "name": "Derrick Johnson",
+      "years": "2001-2004",
+      "position": "LB",
+      "accolades": [
+        "2004 Nagurski Trophy",
+        "2004 Butkus Award",
+        "2x First-Team All-American",
+        "Big 12 Defensive Player of the Year"
+      ],
+      "career": {
+        "tackles": 518,
+        "tacklesForLoss": 63,
+        "sacks": 21.5
+      },
+      "nflDraft": "1st Round (15th overall), 2005 - Kansas City Chiefs"
+    },
+    {
+      "id": "tommy-nobis",
+      "name": "Tommy Nobis",
+      "years": "1963-1965",
+      "position": "LB",
+      "accolades": [
+        "1965 Maxwell Award",
+        "1965 Outland Trophy",
+        "2x First-Team All-American",
+        "College Football Hall of Fame"
+      ],
+      "career": {
+        "tackles": 324,
+        "teamCaptain": true
+      },
+      "nflDraft": "1st Round (1st overall), 1966 - Atlanta Falcons"
+    },
+    {
+      "id": "colt-mccoy",
+      "name": "Colt McCoy",
+      "years": "2006-2009",
+      "position": "QB",
+      "accolades": [
+        "2008 Walter Camp Award",
+        "3x First-Team All-Big 12",
+        "NCAA Record 45 Wins as Starter"
+      ],
+      "career": {
+        "passingYards": 13253,
+        "passingTD": 112,
+        "completionPercentage": 70.3,
+        "record": "45-8 as starter"
+      },
+      "nflDraft": "3rd Round (85th overall), 2010 - Cleveland Browns"
+    }
+  ],
+  "coaches": [
+    {
+      "name": "Darrell Royal",
+      "years": "1957-1976",
+      "record": "167-47-5",
+      "winningPercentage": 0.779,
+      "championships": 3,
+      "accolades": [
+        "College Football Hall of Fame",
+        "3x National Coach of the Year",
+        "11 Conference Championships"
+      ]
+    },
+    {
+      "name": "Mack Brown",
+      "years": "1998-2013",
+      "record": "158-48",
+      "winningPercentage": 0.767,
+      "championships": 1,
+      "accolades": [
+        "College Football Hall of Fame",
+        "2005 National Coach of the Year",
+        "2 Big 12 Championships"
+      ]
+    },
+    {
+      "name": "Steve Sarkisian",
+      "years": "2021-present",
+      "record": "38-17",
+      "winningPercentage": 0.691,
+      "championships": 0,
+      "accolades": ["2023 Big 12 Coach of the Year", "2x CFP Semifinal Appearances"]
+    }
+  ],
+  "schedule": {
+    "2025": [
+      {
+        "gameId": "2025-08-30-colorado-state",
+        "date": "2025-08-30",
+        "opponent": "Colorado State Rams",
+        "location": "Darrell K Royal-Texas Memorial Stadium (Austin, TX)",
+        "network": "Longhorn Network",
+        "result": "TBD"
+      },
+      {
+        "gameId": "2025-09-06-at-utah",
+        "date": "2025-09-06",
+        "opponent": "Utah Utes",
+        "location": "Rice-Eccles Stadium (Salt Lake City, UT)",
+        "network": "ABC",
+        "result": "TBD"
+      },
+      {
+        "gameId": "2025-09-13-at-michigan",
+        "date": "2025-09-13",
+        "opponent": "Michigan Wolverines",
+        "location": "Michigan Stadium (Ann Arbor, MI)",
+        "network": "FOX",
+        "result": "TBD"
+      },
+      {
+        "gameId": "2025-09-20-texas-state",
+        "date": "2025-09-20",
+        "opponent": "Texas State Bobcats",
+        "location": "Darrell K Royal-Texas Memorial Stadium (Austin, TX)",
+        "network": "ESPN2",
+        "result": "TBD"
+      },
+      {
+        "gameId": "2025-10-11-vs-oklahoma",
+        "date": "2025-10-11",
+        "opponent": "Oklahoma Sooners",
+        "location": "Cotton Bowl (Dallas, TX)",
+        "network": "ABC",
+        "result": "TBD"
+      },
+      {
+        "gameId": "2025-11-28-texas-am",
+        "date": "2025-11-28",
+        "opponent": "Texas A&M Aggies",
+        "location": "Darrell K Royal-Texas Memorial Stadium (Austin, TX)",
+        "network": "ESPN",
+        "result": "TBD"
+      }
+    ],
+    "2024": [
+      {
+        "gameId": "2024-09-07-at-alabama",
+        "date": "2024-09-07",
+        "opponent": "Alabama Crimson Tide",
+        "location": "Bryant-Denny Stadium (Tuscaloosa, AL)",
+        "result": "W 34-31"
+      },
+      {
+        "gameId": "2024-12-31-vs-washington",
+        "date": "2024-12-31",
+        "opponent": "Washington Huskies",
+        "location": "Mercedes-Benz Stadium (Atlanta, GA)",
+        "result": "L 31-37"
+      }
+    ]
+  },
+  "rankings": {
+    "2024": {
+      "finalAP": 3,
+      "finalSPPlus": 4,
+      "cfpFinal": 3
+    },
+    "2025Preseason": {
+      "ap": 2,
+      "athlon": 1,
+      "cfbMatrix": 3
+    }
+  },
+  "impactPlayers": [
+    {
+      "id": "quin-ewers",
+      "name": "Quinn Ewers",
+      "position": "QB",
+      "eligibility": "RS Senior",
+      "career": {
+        "passingYards": 6894,
+        "passingTD": 56,
+        "rushingYards": 412,
+        "rushingTD": 8
+      }
+    },
+    {
+      "id": "xavier-worthy",
+      "name": "Xavier Worthy",
+      "position": "WR",
+      "eligibility": "NFL Draft 2025",
+      "career": {
+        "receptions": 224,
+        "receivingYards": 3395,
+        "receivingTD": 28
+      }
+    },
+    {
+      "id": "anthony-hill-jr",
+      "name": "Anthony Hill Jr.",
+      "position": "LB",
+      "eligibility": "Junior",
+      "career": {
+        "tackles": 158,
+        "sacks": 11.5,
+        "tfl": 22
+      }
+    }
+  ],
+  "boxScores": {
+    "2024-09-07-at-alabama": {
+      "team": "Texas Longhorns",
+      "opponent": "Alabama Crimson Tide",
+      "score": "34-31",
+      "summary": {
+        "texas": {
+          "passing": { "player": "Quinn Ewers", "yards": 349, "td": 3 },
+          "rushing": { "player": "Jonathon Brooks", "yards": 112, "td": 1 },
+          "defense": { "sacks": 3, "takeaways": 2 }
+        },
+        "alabama": {
+          "passing": { "player": "Jalen Milroe", "yards": 278, "td": 2 },
+          "rushing": { "player": "Jase McClellan", "yards": 84, "td": 1 },
+          "defense": { "sacks": 2, "takeaways": 1 }
+        }
+      }
+    },
+    "2024-12-31-vs-washington": {
+      "team": "Texas Longhorns",
+      "opponent": "Washington Huskies",
+      "score": "31-37",
+      "summary": {
+        "texas": {
+          "passing": { "player": "Quinn Ewers", "yards": 321, "td": 3 },
+          "rushing": { "player": "CJ Baxter", "yards": 74, "td": 1 },
+          "defense": { "sacks": 2, "takeaways": 1 }
+        },
+        "washington": {
+          "passing": { "player": "Michael Penix Jr.", "yards": 356, "td": 2 },
+          "rushing": { "player": "Dillon Johnson", "yards": 98, "td": 2 },
+          "defense": { "sacks": 4, "takeaways": 2 }
+        }
+      }
+    }
+  }
+}

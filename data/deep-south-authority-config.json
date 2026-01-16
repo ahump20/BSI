@@ -1,0 +1,249 @@
+{
+  "brand": {
+    "name": "Blaze Intelligence",
+    "tagline": "The Deep South Sports Authority",
+    "mission": "Texas • SEC • Every Player • Every Level",
+    "heritage": "From Friday Night Lights to Sunday in the Show"
+  },
+  "sportsHierarchy": [
+    {
+      "order": 1,
+      "sport": "Baseball",
+      "levels": [
+        "Youth/Little League",
+        "Perfect Game Select",
+        "Texas High School (UIL)",
+        "SEC Baseball",
+        "Minor League Systems",
+        "MLB"
+      ],
+      "focusTeams": {
+        "mlb": ["Cardinals"],
+        "milb": ["Memphis Redbirds", "Springfield Cardinals"],
+        "college": ["Texas", "LSU", "Vanderbilt", "Arkansas", "Ole Miss"],
+        "highSchool": ["Lake Travis", "Southlake Carroll", "Katy"],
+        "perfectGame": ["Texas Elite", "Houston Banditos", "Dallas Tigers"]
+      }
+    },
+    {
+      "order": 2,
+      "sport": "Football",
+      "levels": ["Texas Youth Football", "Texas High School (UIL 6A-1A)", "SEC Football", "NFL"],
+      "focusTeams": {
+        "nfl": ["Titans"],
+        "college": ["Texas Longhorns", "Alabama", "Georgia", "LSU", "Tennessee"],
+        "highSchool": {
+          "6A": ["Duncanville", "North Shore", "Westlake", "Southlake Carroll"],
+          "5A": ["Aledo", "Denton Ryan", "College Station"],
+          "4A": ["Carthage", "China Spring"],
+          "3A": ["Franklin", "Brock"],
+          "2A": ["Albany", "Mart"],
+          "1A": ["Benjamin", "Westbrook"]
+        }
+      },
+      "daveCampbellsModel": {
+        "features": [
+          "State Rankings",
+          "Recruit Database",
+          "Game Predictions",
+          "Historical Archives"
+        ],
+        "coverage": "2,000+ Texas high school teams",
+        "legacy": "Since 1960"
+      }
+    },
+    {
+      "order": 3,
+      "sport": "Basketball",
+      "levels": ["AAU/Select", "Texas High School", "SEC Basketball", "NBA"],
+      "focusTeams": {
+        "nba": ["Grizzlies"],
+        "college": ["Texas", "Kentucky", "Auburn", "Tennessee", "Arkansas"],
+        "highSchool": ["Duncanville", "Atascocita", "Shadow Creek"],
+        "aau": ["Texas Titans", "Houston Hoops", "DFW Elite"]
+      }
+    },
+    {
+      "order": 4,
+      "sport": "Track & Field",
+      "levels": ["USATF Youth", "Texas UIL", "SEC Track", "USA Track & Field"],
+      "focusPrograms": {
+        "college": ["Texas", "LSU", "Arkansas", "Texas A&M", "Florida"],
+        "highSchool": ["DeSoto", "Fort Bend Marshall", "Humble Summer Creek"],
+        "clubs": ["Houston Elite", "Wings Track Club", "Texas Thunder"]
+      }
+    }
+  ],
+  "regions": {
+    "texas": {
+      "metros": [
+        "Houston",
+        "Dallas-Fort Worth",
+        "San Antonio",
+        "Austin",
+        "East Texas",
+        "West Texas",
+        "Rio Grande Valley"
+      ],
+      "uil": {
+        "districts": 245,
+        "schools": 1480,
+        "athletes": 825000
+      }
+    },
+    "sec": {
+      "states": [
+        "Texas",
+        "Louisiana",
+        "Mississippi",
+        "Alabama",
+        "Georgia",
+        "Tennessee",
+        "Florida",
+        "South Carolina",
+        "Kentucky",
+        "Arkansas",
+        "Missouri"
+      ],
+      "schools": 16,
+      "championships": {
+        "football": 13,
+        "baseball": 12,
+        "basketball": 7,
+        "track": 42
+      }
+    },
+    "deepSouth": {
+      "coverage": "11 states, 50,000+ athletes tracked",
+      "pipeline": "Youth to Professional Development"
+    }
+  },
+  "dataIntegrations": {
+    "perfectGame": {
+      "api": "enabled",
+      "coverage": "13U-18U travel baseball",
+      "rankings": "National player rankings",
+      "events": "500+ tournaments annually",
+      "recruiting": "MLB draft pipeline"
+    },
+    "hudl": {
+      "integration": "verified",
+      "schools": 1200,
+      "films": "Game film analysis"
+    },
+    "maxPreps": {
+      "sync": "daily",
+      "stats": "Real-time statistics"
+    },
+    "recruitingServices": {
+      "247Sports": "SEC recruiting rankings",
+      "Rivals": "Texas HS recruiting",
+      "On3": "NIL valuations"
+    }
+  },
+  "analytics": {
+    "championshipModels": {
+      "txHSFootball": {
+        "algorithm": "Neural Network + Historical",
+        "accuracy": "94.6%",
+        "factors": [
+          "Returning starters",
+          "Coaching tenure",
+          "District strength",
+          "Historical performance",
+          "Transfer impact"
+        ]
+      },
+      "secBaseball": {
+        "metrics": ["RPI", "Strength of Schedule", "Pitching depth", "Team ERA+", "OPS+"],
+        "projections": "CWS probability"
+      },
+      "perfectGameRankings": {
+        "system": "Composite scoring",
+        "inputs": ["Event performance", "Velocity", "Exit velocity", "60-yard dash", "Scout grades"]
+      }
+    },
+    "playerDevelopment": {
+      "biomechanics": "MediaPipe pose analysis",
+      "characterAssessment": "Micro-expression detection",
+      "performanceTracking": "Longitudinal metrics",
+      "injuryPrevention": "Workload management"
+    }
+  },
+  "contentPipeline": {
+    "updateFrequency": {
+      "liveScores": "Real-time",
+      "rankings": "Weekly (Tuesday)",
+      "recruiting": "Daily",
+      "analytics": "Post-game within 2 hours"
+    },
+    "automation": {
+      "gameRecaps": "AI-generated with human review",
+      "statUpdates": "Automated ingestion",
+      "socialMedia": "Scheduled posts",
+      "newsletters": "Weekly Deep South Digest"
+    }
+  },
+  "monetization": {
+    "subscriptions": {
+      "free": {
+        "price": "$0",
+        "features": ["Scores", "Standings", "Basic stats", "Schedules", "News"]
+      },
+      "pro": {
+        "price": "$29/month",
+        "features": [
+          "Advanced analytics",
+          "Predictions",
+          "API access",
+          "Historical data",
+          "Player comparisons",
+          "Box scores"
+        ]
+      },
+      "enterprise": {
+        "price": "$199/month",
+        "features": [
+          "Bulk export",
+          "Custom alerts",
+          "Priority support",
+          "White-label",
+          "Dedicated API",
+          "Raw data access"
+        ]
+      }
+    },
+    "services": {
+      "recruiting": "Player profile optimization",
+      "scouting": "Professional evaluation reports",
+      "analytics": "Team consulting packages",
+      "camps": "Blaze Intelligence Showcase Events"
+    }
+  },
+  "partnerships": {
+    "targeted": [
+      "Texas High School Coaches Association",
+      "SEC Network",
+      "Perfect Game USA",
+      "Baseball America",
+      "Dave Campbell's Texas Football (licensing model)"
+    ],
+    "technology": [
+      "Cloudflare (infrastructure)",
+      "MediaPipe (biomechanics)",
+      "TensorFlow (ML models)",
+      "Three.js (visualizations)"
+    ]
+  },
+  "competitiveAdvantage": {
+    "unique": [
+      "Only platform covering full Texas-SEC pipeline",
+      "Character assessment via micro-expressions",
+      "Youth to pro longitudinal tracking",
+      "Dave Campbell's model for all sports"
+    ],
+    "savings": "67-80% vs competitor platforms",
+    "accuracy": "94.6% prediction accuracy (with methodology)",
+    "latency": "<100ms data updates"
+  }
+}

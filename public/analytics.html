@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Blaze Sports Intel Analytics Hub—live scoreboards, predictive models, NIL valuations, and real-time sports data.">
+  <title>Analytics Hub | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --burnt-orange: #BF5700;
+      --burnt-orange-dark: #A34700;
+      --burnt-orange-light: #FF7720;
+      --charcoal: #1a1a1a;
+      --charcoal-light: #2d2d2d;
+      --steel: #4a4a4a;
+      --silver: #9a9a9a;
+      --cream: #f5f5f0;
+      --white: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #3b82f6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, var(--charcoal) 50%, #1a1510 100%);
+      color: var(--cream);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--cream);
+      text-decoration: none;
+    }
+    .nav-logo:hover { color: var(--burnt-orange); }
+    .nav-logo img { height: 40px; width: auto; }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    .nav-link {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: rgba(245, 245, 240, 0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--burnt-orange); }
+
+    /* Dropdown Navigation */
+    .nav-dropdown { position: relative; display: inline-block; }
+    .dropdown-trigger { cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .dropdown-arrow { font-size: 0.65em; transition: transform 0.2s ease; }
+    .nav-dropdown:hover .dropdown-arrow { transform: rotate(180deg); }
+    .dropdown-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px); min-width: 220px; background: rgba(26, 26, 26, 0.98); backdrop-filter: blur(20px); border: 1px solid rgba(191, 87, 0, 0.3); border-radius: 8px; padding: 0.75rem 0; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 1000; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+    .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .dropdown-menu a { display: block; padding: 0.5rem 1rem; color: var(--cream); opacity: 0.8; font-size: 0.875rem; transition: all 0.15s ease; text-decoration: none; }
+    .dropdown-menu a:hover { background: rgba(191, 87, 0, 0.2); opacity: 1; color: var(--burnt-orange); }
+    .dropdown-header { padding: 0.5rem 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--burnt-orange); font-weight: 600; }
+    .dropdown-divider { height: 1px; background: rgba(191, 87, 0, 0.2); margin: 0.5rem 0; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* Hero */
+    .hero {
+      padding: calc(80px + 4rem) 2rem 3rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(191, 87, 0, 0.08) 0%, transparent 100%);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(191, 87, 0, 0.15);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--burnt-orange);
+      margin-bottom: 1.5rem;
+    }
+    .hero-badge .pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .hero h1 .accent { color: var(--burnt-orange); }
+    .hero p {
+      font-size: 1.125rem;
+      color: rgba(245, 245, 240, 0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      padding: 1rem 2rem;
+      background: var(--charcoal-light);
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .status-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .status-dot.loading { background: var(--warning); animation: pulse 1s infinite; }
+    .status-dot.error { background: var(--error); }
+    .status-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-value {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    /* Main Container */
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Live Scores Section */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.25rem 0.625rem;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--success);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .section-title .live-indicator::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    .view-all {
+      font-size: 0.875rem;
+      color: var(--burnt-orange);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .view-all:hover { text-decoration: underline; }
+
+    /* Scores Grid */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .score-card {
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: all 0.2s;
+    }
+    .score-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+      transform: translateY(-2px);
+    }
+    .score-card.live { border-left: 3px solid var(--success); }
+    .score-card.final { border-left: 3px solid var(--silver); }
+    .score-league {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      color: var(--burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .score-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .score-team {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .team-name {
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+    .team-name.winner { color: var(--burnt-orange); }
+    .team-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .score-status {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(245, 245, 240, 0.1);
+      font-size: 0.8125rem;
+      color: rgba(245, 245, 240, 0.6);
+    }
+    .score-status.live { color: var(--success); font-weight: 500; }
+
+    /* NIL Section */
+    .nil-section {
+      margin-bottom: 3rem;
+    }
+    .nil-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .nil-card {
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+    .nil-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+    }
+    .nil-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .nil-rank {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--burnt-orange);
+    }
+    .nil-trend {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .nil-trend.up { color: var(--success); }
+    .nil-trend.down { color: var(--error); }
+    .nil-school {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .nil-conference {
+      font-size: 0.8125rem;
+      color: rgba(245, 245, 240, 0.6);
+      margin-bottom: 1rem;
+    }
+    .nil-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--burnt-orange);
+    }
+    .nil-label {
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.5);
+      margin-top: 0.25rem;
+    }
+
+    /* Tools Grid */
+    .tools-section {
+      margin-bottom: 3rem;
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .tool-card {
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+    }
+    .tool-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+      transform: translateY(-2px);
+    }
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .tool-title {
+      font-size: 1.0625rem;
+      font-weight: 600;
+    }
+    .tool-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.625rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+    .tool-status.live {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .tool-status.beta {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .tool-desc {
+      font-size: 0.875rem;
+      color: rgba(245, 245, 240, 0.7);
+      line-height: 1.5;
+    }
+
+    /* Data Sources */
+    .sources-section {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+    .sources-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .sources-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .source-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+    }
+    .source-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+    }
+    .source-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .source-type {
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.5);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .footer-tagline {
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(245, 245, 240, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    .footer-tagline .accent { color: var(--burnt-orange); }
+    .footer-copy {
+      font-size: 0.8125rem;
+      color: rgba(245, 245, 240, 0.4);
+    }
+    .footer-timestamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.3);
+      margin-top: 0.5rem;
+    }
+
+    /* News Section */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .news-card {
+      background: var(--charcoal-light);
+      border: 1px solid rgba(191, 87, 0, 0.15);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s;
+      display: block;
+    }
+    .news-card:hover {
+      border-color: rgba(191, 87, 0, 0.4);
+      transform: translateY(-2px);
+    }
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.625rem;
+    }
+    .news-sport {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      color: var(--burnt-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .news-time {
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.5);
+    }
+    .news-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+    }
+    .news-source {
+      font-size: 0.75rem;
+      color: rgba(245, 245, 240, 0.5);
+    }
+
+    /* Loading States */
+    .skeleton {
+      background: linear-gradient(90deg, var(--charcoal-light) 25%, rgba(191, 87, 0, 0.1) 50%, var(--charcoal-light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/bsi-logo.png" alt="BSI" onerror="this.style.display='none'">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <div class="nav-links">
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link dropdown-trigger">Dashboards <span class="dropdown-arrow">▼</span></a>
+          <div class="dropdown-menu">
+            <div class="dropdown-header">League Analytics</div>
+            <a href="/dashboards/mlb-league-analytics">MLB</a>
+            <a href="/dashboards/nfl-league-analytics">NFL</a>
+            <a href="/dashboards/nba-league-analytics">NBA</a>
+            <a href="/dashboards/ncaa-football-league-analytics">NCAA Football</a>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-header">Team Analytics</div>
+            <a href="/dashboards/cardinals-advanced-analytics">St. Louis Cardinals</a>
+            <a href="/dashboards/titans-advanced-analytics">Tennessee Titans</a>
+            <a href="/dashboards/grizzlies-advanced-analytics">Memphis Grizzlies</a>
+            <a href="/dashboards/longhorns-advanced-analytics">Texas Longhorns</a>
+          </div>
+        </div>
+        <a href="/nil-valuation" class="nav-link">NIL</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      <span>LIVE DATA FEEDS ACTIVE</span>
+    </div>
+    <h1>Analytics <span class="accent">Command Center</span></h1>
+    <p>Real-time scores, NIL valuations, and predictive models—all verified data from primary sources.</p>
+  </section>
+
+  <section class="status-bar">
+    <div class="status-inner">
+      <div class="status-item">
+        <span class="status-dot" id="mlb-status"></span>
+        <span class="status-label">MLB API</span>
+        <span class="status-value" id="mlb-status-text">Checking...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="nil-status"></span>
+        <span class="status-label">NIL Data</span>
+        <span class="status-value" id="nil-status-text">Checking...</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot" id="update-status"></span>
+        <span class="status-label">Last Update</span>
+        <span class="status-value" id="update-time">--</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <!-- Live Scores -->
+    <section class="scores-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          Live Scores
+          <span class="live-indicator">Live</span>
+        </h2>
+        <a href="/live-scoreboards" class="view-all">View All Games &rarr;</a>
+      </div>
+      <div class="scores-grid" id="scores-grid">
+        <!-- Populated by JS -->
+        <div class="score-card">
+          <div class="skeleton" style="height: 120px;"></div>
+        </div>
+        <div class="score-card">
+          <div class="skeleton" style="height: 120px;"></div>
+        </div>
+        <div class="score-card">
+          <div class="skeleton" style="height: 120px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NIL Rankings -->
+    <section class="nil-section">
+      <div class="section-header">
+        <h2 class="section-title">Top NIL Programs</h2>
+        <a href="/nil-valuation" class="view-all">Full Rankings &rarr;</a>
+      </div>
+      <div class="nil-grid" id="nil-grid">
+        <!-- Populated by JS -->
+        <div class="nil-card">
+          <div class="skeleton" style="height: 140px;"></div>
+        </div>
+        <div class="nil-card">
+          <div class="skeleton" style="height: 140px;"></div>
+        </div>
+        <div class="nil-card">
+          <div class="skeleton" style="height: 140px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics Tools -->
+    <section class="tools-section">
+      <div class="section-header">
+        <h2 class="section-title">Analytics Tools</h2>
+      </div>
+      <div class="tools-grid">
+        <a href="/live-scoreboards" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">Live Scoreboards</span>
+            <span class="tool-status live">Live</span>
+          </div>
+          <p class="tool-desc">Real-time game tracking with complete box scores for MLB, NFL, and college sports.</p>
+        </a>
+        <a href="/nil-valuation" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">NIL Valuation Engine</span>
+            <span class="tool-status live">Live</span>
+          </div>
+          <p class="tool-desc">FMNV calculations, roster optimization, and Transfer Portal market intelligence.</p>
+        </a>
+        <a href="/predictive-models" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">Predictive Models</span>
+            <span class="tool-status live">Live</span>
+          </div>
+          <p class="tool-desc">Monte Carlo simulations and win probability. Projections clearly labeled as projections.</p>
+        </a>
+        <a href="/historical-research" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">Historical Research</span>
+            <span class="tool-status live">Live</span>
+          </div>
+          <p class="tool-desc">Decades of college baseball data. Player tracking from college through the pros.</p>
+        </a>
+        <a href="/recruiting-intel" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">Recruiting Intel</span>
+            <span class="tool-status beta">Beta</span>
+          </div>
+          <p class="tool-desc">Cross-sport recruiting aggregation. Class rankings and transfer portal activity.</p>
+        </a>
+        <a href="/3d-visualizations" class="tool-card">
+          <div class="tool-header">
+            <span class="tool-title">3D Visualizations</span>
+            <span class="tool-status beta">Beta</span>
+          </div>
+          <p class="tool-desc">WebGPU-powered pitch tunneling analysis and trajectory visualization.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Latest Headlines -->
+    <section class="news-section" style="margin-bottom: 3rem;">
+      <div class="section-header">
+        <h2 class="section-title">Latest Headlines</h2>
+      </div>
+      <div class="news-grid" id="news-grid">
+        <!-- Populated by JS -->
+        <div class="news-card">
+          <div class="skeleton" style="height: 80px;"></div>
+        </div>
+        <div class="news-card">
+          <div class="skeleton" style="height: 80px;"></div>
+        </div>
+        <div class="news-card">
+          <div class="skeleton" style="height: 80px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Sources -->
+    <section class="sources-section">
+      <h3 class="sources-title">Verified Data Sources</h3>
+      <div class="sources-grid">
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">MLB Statcast</div>
+            <div class="source-type">Official API</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">NCAA Stats</div>
+            <div class="source-type">Official Feed</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">BALLDONTLIE</div>
+            <div class="source-type">Multi-Sport API</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">CFBD</div>
+            <div class="source-type">College Football</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">ESPN Hidden APIs</div>
+            <div class="source-type">Real-time Scores</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">On3 NIL</div>
+            <div class="source-type">Valuation Data</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">SportsDataIO</div>
+            <div class="source-type">Live Scores</div>
+          </div>
+        </div>
+        <div class="source-badge">
+          <span class="dot"></span>
+          <div>
+            <div class="source-name">MySportsFeeds</div>
+            <div class="source-type">Backup Provider</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil.</p>
+    <p class="footer-copy">&copy; 2025 Blaze Sports Intel. Built on Cloudflare.</p>
+    <p class="footer-timestamp">Data sources: MLB StatsAPI, SportsDataIO, ESPN API, D1Baseball | <span id="footer-timestamp"></span></p>
+  </footer>
+
+  <script>
+    // Format currency
+    function formatCurrency(value) {
+      if (value >= 1000000) {
+        return '$' + (value / 1000000).toFixed(1) + 'M';
+      }
+      return '$' + (value / 1000).toFixed(0) + 'K';
+    }
+
+    // Format timestamp in America/Chicago
+    function getChicagoTimestamp() {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }).format(new Date());
+    }
+
+    // Update footer timestamp
+    document.getElementById('footer-timestamp').textContent = 'Data as of ' + getChicagoTimestamp() + ' CT';
+
+    // Fetch NIL data
+    async function loadNILData() {
+      const nilStatus = document.getElementById('nil-status');
+      const nilStatusText = document.getElementById('nil-status-text');
+      const nilGrid = document.getElementById('nil-grid');
+
+      try {
+        const response = await fetch('/api/nil/valuations');
+        if (!response.ok) throw new Error('Failed to fetch');
+
+        const data = await response.json();
+
+        nilStatus.classList.remove('loading', 'error');
+        nilStatusText.textContent = 'Connected';
+
+        if (data.programs && data.programs.length > 0) {
+          const top6 = data.programs.slice(0, 6);
+          nilGrid.innerHTML = top6.map(program => `
+            <div class="nil-card">
+              <div class="nil-header">
+                <span class="nil-rank">#${program.rank}</span>
+                <span class="nil-trend ${program.yearOverYearChange > 0 ? 'up' : 'down'}">
+                  ${program.yearOverYearChange > 0 ? '↑' : '↓'} ${formatCurrency(Math.abs(program.yearOverYearChange))}
+                </span>
+              </div>
+              <div class="nil-school">${program.school}</div>
+              <div class="nil-conference">${program.conference}</div>
+              <div class="nil-value">${formatCurrency(program.totalRosterValue)}</div>
+              <div class="nil-label">Total Roster Value</div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('NIL API error:', error);
+        nilStatus.classList.add('error');
+        nilStatus.classList.remove('loading');
+        nilStatusText.textContent = 'Offline';
+
+        // Show fallback data
+        nilGrid.innerHTML = `
+          <div class="nil-card">
+            <div class="nil-header">
+              <span class="nil-rank">#1</span>
+              <span class="nil-trend up">↑ $2.1M</span>
+            </div>
+            <div class="nil-school">Texas</div>
+            <div class="nil-conference">SEC</div>
+            <div class="nil-value">$22.0M</div>
+            <div class="nil-label">Total Roster Value</div>
+          </div>
+          <div class="nil-card">
+            <div class="nil-header">
+              <span class="nil-rank">#2</span>
+              <span class="nil-trend up">↑ $2.4M</span>
+            </div>
+            <div class="nil-school">Alabama</div>
+            <div class="nil-conference">SEC</div>
+            <div class="nil-value">$18.4M</div>
+            <div class="nil-label">Total Roster Value</div>
+          </div>
+          <div class="nil-card">
+            <div class="nil-header">
+              <span class="nil-rank">#3</span>
+              <span class="nil-trend up">↑ $4.7M</span>
+            </div>
+            <div class="nil-school">Ohio State</div>
+            <div class="nil-conference">Big Ten</div>
+            <div class="nil-value">$18.3M</div>
+            <div class="nil-label">Total Roster Value</div>
+          </div>
+        `;
+      }
+    }
+
+    // Load live scores from real APIs
+    async function loadScores() {
+      const mlbStatus = document.getElementById('mlb-status');
+      const mlbStatusText = document.getElementById('mlb-status-text');
+      const updateStatus = document.getElementById('update-status');
+      const updateTime = document.getElementById('update-time');
+      const scoresGrid = document.getElementById('scores-grid');
+
+      const allGames = [];
+      let mlbConnected = false;
+      let nflConnected = false;
+
+      // Fetch MLB scores
+      try {
+        const mlbResponse = await fetch('/api/mlb/scores');
+        if (mlbResponse.ok) {
+          const mlbData = await mlbResponse.json();
+          mlbConnected = true;
+          if (mlbData.games && mlbData.games.length > 0) {
+            mlbData.games.slice(0, 3).forEach(game => {
+              allGames.push({
+                league: 'MLB',
+                status: game.status?.state === 'Live' ? 'In Progress' : game.status?.state || 'Final',
+                away: {
+                  name: game.teams?.away?.abbreviation || game.teams?.away?.name || 'Away',
+                  score: game.teams?.away?.score || 0
+                },
+                home: {
+                  name: game.teams?.home?.abbreviation || game.teams?.home?.name || 'Home',
+                  score: game.teams?.home?.score || 0
+                },
+                detail: game.status?.isLive
+                  ? `${game.status.inningState || ''} ${game.status.inning || ''}`.trim()
+                  : (game.status?.detailedState || 'Final')
+              });
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('MLB API unavailable:', e.message);
+      }
+
+      // Fetch NFL scores
+      try {
+        const nflResponse = await fetch('/api/nfl/scores');
+        if (nflResponse.ok) {
+          const nflData = await nflResponse.json();
+          nflConnected = true;
+          // API returns { games: { live: [], final: [], scheduled: [] } }
+          const nflGames = [
+            ...(nflData.games?.live || []),
+            ...(nflData.games?.final || []),
+            ...(nflData.games?.scheduled || [])
+          ];
+          nflGames.slice(0, 3).forEach(game => {
+            const isLive = game.Quarter && game.Quarter !== 'F' && game.Quarter !== 'P';
+            const isFinal = game.Quarter === 'F' || game.Quarter === 'F/OT';
+            allGames.push({
+              league: 'NFL',
+              status: isLive ? 'In Progress' : (isFinal ? 'Final' : 'Scheduled'),
+              away: {
+                name: game.AwayTeam || 'Away',
+                score: game.AwayScore || 0
+              },
+              home: {
+                name: game.HomeTeam || 'Home',
+                score: game.HomeScore || 0
+              },
+              detail: isLive
+                ? `Q${game.Quarter || ''} - ${game.TimeRemaining || ''}`
+                : (isFinal ? 'Final' : formatGameTime(game.Date))
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('NFL API unavailable:', e.message);
+      }
+
+      // Fetch NCAA Football scores
+      try {
+        const ncaaResponse = await fetch('/api/ncaa/football-scores');
+        if (ncaaResponse.ok) {
+          const ncaaData = await ncaaResponse.json();
+          const ncaaGames = ncaaData.games || ncaaData.rawData || [];
+          ncaaGames.slice(0, 2).forEach(game => {
+            allGames.push({
+              league: 'NCAA FB',
+              status: game.status || 'Final',
+              away: {
+                name: game.awayTeam || game.AwayTeam || 'Away',
+                score: game.awayScore || game.AwayTeamScore || 0
+              },
+              home: {
+                name: game.homeTeam || game.HomeTeam || 'Home',
+                score: game.homeScore || game.HomeTeamScore || 0
+              },
+              detail: game.statusDetail || game.Status || 'Final'
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('NCAA Football API unavailable:', e.message);
+      }
+
+      // Fetch NBA scores
+      try {
+        const nbaResponse = await fetch('/api/nba/scores');
+        if (nbaResponse.ok) {
+          const nbaData = await nbaResponse.json();
+          // API returns { games: [ { teams: { away: {...}, home: {...} }, status: {...} } ] }
+          const nbaGames = nbaData.games || [];
+          nbaGames.slice(0, 3).forEach(game => {
+            const isLive = game.status?.isLive || game.status?.state === 'in';
+            const isFinal = game.status?.isFinal || game.status?.state === 'post';
+            allGames.push({
+              league: 'NBA',
+              status: isLive ? 'In Progress' : (isFinal ? 'Final' : 'Scheduled'),
+              away: {
+                name: game.teams?.away?.abbreviation || game.teams?.away?.team || 'Away',
+                score: parseInt(game.teams?.away?.score) || 0
+              },
+              home: {
+                name: game.teams?.home?.abbreviation || game.teams?.home?.team || 'Home',
+                score: parseInt(game.teams?.home?.score) || 0
+              },
+              detail: isLive
+                ? `Q${game.status?.period || ''} - ${game.status?.clock || ''}`
+                : (isFinal ? 'Final' : game.status?.detail || 'TBD')
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('NBA API unavailable:', e.message);
+      }
+
+      // Update status indicators
+      if (mlbConnected) {
+        mlbStatus.classList.remove('loading', 'error');
+        mlbStatusText.textContent = 'Connected';
+      } else {
+        mlbStatus.classList.add('error');
+        mlbStatus.classList.remove('loading');
+        mlbStatusText.textContent = 'Offline';
+      }
+
+      updateStatus.classList.remove('loading', 'error');
+      updateTime.textContent = new Date().toLocaleTimeString('en-US', {
+        timeZone: 'America/Chicago',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }) + ' CT';
+
+      // Render games or show no-games message
+      if (allGames.length === 0) {
+        scoresGrid.innerHTML = `
+          <div class="score-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+            <p style="color: rgba(245, 245, 240, 0.6);">No games currently available. Check back during game days.</p>
+            <p style="font-size: 0.875rem; color: rgba(245, 245, 240, 0.4); margin-top: 0.5rem;">
+              Live data from MLB Stats API, SportsDataIO, and ESPN
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      scoresGrid.innerHTML = allGames.map(game => {
+        const isLive = game.status === 'In Progress';
+        const awayWinner = game.away.score > game.home.score;
+        const homeWinner = game.home.score > game.away.score;
+
+        return `
+          <div class="score-card ${isLive ? 'live' : 'final'}">
+            <div class="score-league">${game.league}</div>
+            <div class="score-teams">
+              <div class="score-team">
+                <span class="team-name ${awayWinner ? 'winner' : ''}">${game.away.name}</span>
+                <span class="team-score">${game.away.score}</span>
+              </div>
+              <div class="score-team">
+                <span class="team-name ${homeWinner ? 'winner' : ''}">${game.home.name}</span>
+                <span class="team-score">${game.home.score}</span>
+              </div>
+            </div>
+            <div class="score-status ${isLive ? 'live' : ''}">${game.detail}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Format game time to readable format
+    function formatGameTime(dateString) {
+      if (!dateString) return 'TBD';
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('en-US', {
+        timeZone: 'America/Chicago',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }) + ' CT';
+    }
+
+    // Load sports news headlines via BSI API
+    async function loadNews() {
+      const newsGrid = document.getElementById('news-grid');
+
+      try {
+        const response = await fetch('/api/news?limit=3');
+        if (!response.ok) throw new Error('Failed to fetch news');
+
+        const data = await response.json();
+        const headlines = data.headlines || [];
+
+        if (headlines.length === 0) {
+          newsGrid.innerHTML = `
+            <div class="news-card" style="grid-column: 1 / -1; text-align: center;">
+              <p style="color: rgba(245, 245, 240, 0.6);">News headlines temporarily unavailable.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Map sport codes to display names
+        const sportNames = { MLB: 'MLB', NFL: 'NFL', NBA: 'NBA', NCAAF: 'NCAA FB', NCAAB: 'NCAA BB' };
+
+        newsGrid.innerHTML = headlines.slice(0, 6).map(news => {
+          const publishedDate = new Date(news.published);
+          const timeAgo = getTimeAgo(publishedDate);
+          const sportDisplay = sportNames[news.sport] || news.sport;
+
+          return `
+            <a href="${news.link}" class="news-card" target="_blank" rel="noopener">
+              <div class="news-meta">
+                <span class="news-sport">${sportDisplay}</span>
+                <span class="news-time">${timeAgo}</span>
+              </div>
+              <h3 class="news-title">${news.title}</h3>
+              <span class="news-source">${news.source}</span>
+            </a>
+          `;
+        }).join('');
+      } catch (e) {
+        console.warn('News API unavailable:', e.message);
+        newsGrid.innerHTML = `
+          <div class="news-card" style="grid-column: 1 / -1; text-align: center;">
+            <p style="color: rgba(245, 245, 240, 0.6);">News headlines temporarily unavailable.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Calculate time ago string
+    function getTimeAgo(date) {
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays === 1) return 'Yesterday';
+      return `${diffDays}d ago`;
+    }
+
+    // Auto-refresh scores during live games
+    let refreshInterval = null;
+
+    function startAutoRefresh() {
+      // Refresh every 30 seconds
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(() => {
+        loadScores();
+        document.getElementById('footer-timestamp').textContent = 'Data as of ' + getChicagoTimestamp() + ' CT';
+      }, 30000);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set initial loading states
+      document.getElementById('mlb-status').classList.add('loading');
+      document.getElementById('nil-status').classList.add('loading');
+      document.getElementById('update-status').classList.add('loading');
+
+      // Load data
+      setTimeout(loadScores, 300);
+      setTimeout(loadNILData, 500);
+      setTimeout(loadNews, 700);
+
+      // Start auto-refresh for live data
+      startAutoRefresh();
+
+      // Refresh timestamps every minute
+      setInterval(() => {
+        document.getElementById('footer-timestamp').textContent = 'Data as of ' + getChicagoTimestamp() + ' CT';
+      }, 60000);
+    });
+  </script>
+  <script src="/js/bsi-components.js"></script>
+</body>
+</html>

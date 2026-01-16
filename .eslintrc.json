@@ -1,0 +1,205 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "globals": {
+    "PagesFunction": "readonly",
+    "KVNamespace": "readonly",
+    "D1Database": "readonly",
+    "R2Bucket": "readonly",
+    "VectorizeIndex": "readonly",
+    "AnalyticsEngineDataset": "readonly",
+    "Ai": "readonly",
+    "DurableObjectNamespace": "readonly",
+    "DurableObjectState": "readonly",
+    "WebSocketPair": "readonly",
+    "EventContext": "readonly",
+    "RequestInit": "readonly",
+    "RequestInfo": "readonly",
+    "NodeJS": "readonly",
+    "React": "readonly",
+    "ExecutionContext": "readonly",
+    "totalSeconds": "readonly"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "react/no-unknown-property": ["error", { "ignore": ["jsx", "global"] }],
+    "no-case-declarations": "off",
+    "no-useless-escape": "warn",
+    "no-useless-catch": "warn",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ],
+    "no-undef": "warn",
+    "no-unreachable": "warn",
+    "no-inner-declarations": "warn",
+    "no-const-assign": "warn",
+    "no-control-regex": "warn",
+    "@typescript-eslint/no-var-requires": "warn",
+    "no-constant-condition": "warn",
+    "no-empty": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["lib/**/*.ts", "lib/**/*.js"],
+      "excludedFiles": ["**/examples/**", "**/scripts/**", "**/test*"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/examples/**",
+        "**/scripts/**",
+        "**/*test*",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "*test*.js",
+        "*test*.ts"
+      ],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "no-inner-declarations": "off",
+        "no-empty": "off"
+      }
+    },
+    {
+      "files": ["functions/**/*.ts", "functions/**/*.js"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.config.js", "*.config.ts", "scripts/**/*"],
+      "rules": {
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
+      "files": ["app/**/*.js", "app/**/*.ts", "app/**/*.tsx"],
+      "rules": {
+        "no-console": "off",
+        "no-restricted-syntax": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["components/**/*.tsx", "components/**/*.jsx", "hooks/**/*.ts", "hooks/**/*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ],
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "rules": {
+        "no-console": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": ".*",
+            "varsIgnorePattern": "^_",
+            "ignoreRestSiblings": true
+          }
+        ]
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    ".next/",
+    "coverage/",
+    "*.min.js",
+    "public/",
+    ".wrangler/",
+    "BSI/",
+    "BSI-NextGen/",
+    "BSI-1/",
+    "BSI-2/",
+    "Documents/",
+    "Desktop/",
+    "Downloads/",
+    "Library/",
+    "Applications/",
+    "Movies/",
+    "Music/",
+    "Pictures/",
+    "Public/",
+    "Sites/"
+  ]
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCLA Bruins Baseball | 2025 Season Dashboard | Blaze Sports Intel</title>
+    <meta name="description" content="UCLA Bruins baseball analytics, roster breakdown, transfer portal updates, and 2025 season projections.">
+    <link rel="canonical" href="https://blazesportsintel.com/dashboards/pac-12-baseball/ucla.html">
+
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        :root {
+            --team-primary: #2D68C4;
+            --team-secondary: #F2A900;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D0D;
+            --bsi-cream: #FAF8F5;
+            --bsi-ember: #FF6B35;
+            --bsi-gold: #C9A227;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bsi-midnight); color: var(--bsi-cream); line-height: 1.6; }
+        .dashboard-header { background: linear-gradient(135deg, var(--team-primary) 0%, #1A3D7C 100%); padding: 2rem; }
+        .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; }
+        .team-logo { width: 120px; height: 120px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .team-logo img { width: 80%; height: 80%; object-fit: contain; }
+        .team-info h1 { font-size: 2.5rem; font-weight: 800; }
+        .team-meta { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .meta-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; opacity: 0.9; }
+        .ranking-badge { background: var(--team-secondary); color: var(--team-primary); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 700; }
+        .nav-breadcrumb { background: var(--bsi-charcoal); padding: 1rem 2rem; }
+        .nav-breadcrumb a { color: var(--bsi-ember); text-decoration: none; }
+        .nav-breadcrumb span { color: rgba(255,255,255,0.5); margin: 0 0.5rem; }
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 1fr 350px; gap: 2rem; }
+        @media (max-width: 1024px) { .main-content { grid-template-columns: 1fr; } }
+        .content-section { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--team-primary); }
+        .outlook-text { font-size: 1.05rem; line-height: 1.8; }
+        .outlook-text p { margin-bottom: 1rem; }
+        .player-card { background: var(--bsi-midnight); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 3px solid var(--team-primary); }
+        .player-name { font-weight: 700; font-size: 1.1rem; }
+        .player-position { color: var(--team-secondary); font-size: 0.85rem; font-weight: 600; }
+        .player-stats { margin-top: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+        .player-note { margin-top: 0.5rem; font-size: 0.85rem; color: var(--bsi-gold); font-style: italic; }
+        .schedule-game { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bsi-midnight); border-radius: 6px; margin-bottom: 0.5rem; }
+        .game-opponent { font-weight: 600; }
+        .game-date { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+        .game-type { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; background: var(--team-primary); color: white; }
+        .sidebar-section { background: var(--bsi-charcoal); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .sidebar-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: var(--team-secondary); }
+        .info-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .info-label { color: rgba(255,255,255,0.6); }
+        .info-value { font-weight: 600; }
+        .conference-nav { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+        .conf-team-link { display: block; padding: 0.5rem; background: var(--bsi-midnight); border-radius: 6px; text-decoration: none; color: var(--bsi-cream); font-size: 0.85rem; text-align: center; transition: all 0.2s; }
+        .conf-team-link:hover { background: var(--team-primary); }
+        .conf-team-link.active { background: var(--team-primary); font-weight: 700; }
+        .transfer-badge { display: inline-block; padding: 0.2rem 0.5rem; background: var(--bsi-ember); color: white; font-size: 0.7rem; border-radius: 4px; margin-left: 0.5rem; }
+        .rankings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1rem; }
+        .ranking-source { background: var(--bsi-midnight); padding: 0.75rem; border-radius: 6px; text-align: center; }
+        .ranking-source .rank { font-size: 1.5rem; font-weight: 800; color: var(--team-secondary); }
+        .ranking-source .source { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+        .footer { background: var(--bsi-charcoal); padding: 2rem; text-align: center; margin-top: 2rem; }
+        .footer-logo { font-size: 1.5rem; font-weight: 800; color: var(--bsi-ember); }
+        .footer-tagline { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+        .footer-timestamp { margin-top: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    </style>
+</head>
+<body>
+    <nav class="nav-breadcrumb">
+        <a href="/">Blaze Sports Intel</a><span>›</span>
+        <a href="/college-baseball/">College Baseball</a><span>›</span>
+        <a href="/dashboards/pac-12-baseball/">Pac-12</a><span>›</span>UCLA
+    </nav>
+
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="team-logo"><img src="https://a.espncdn.com/i/teamlogos/ncaa/500/26.png" alt="UCLA Bruins"></div>
+            <div class="team-info">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <h1>UCLA Bruins</h1>
+                    <span class="ranking-badge">Preseason #15</span>
+                </div>
+                <div class="team-meta">
+                    <span class="meta-item">📍 Los Angeles, California</span>
+                    <span class="meta-item">🏟️ Jackie Robinson Stadium</span>
+                    <span class="meta-item">🏆 Pac-12 Conference</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="primary-content">
+            <section class="content-section">
+                <h2 class="section-title">📊 2025 Preseason Outlook</h2>
+                <div class="outlook-text">
+                    <p>UCLA baseball enters 2025 with championship aspirations under head coach John Savage, who has built the Bruins into a consistent national power. The 2013 national championship remains the program's crowning achievement, and this roster has the pieces to make another deep run.</p>
+                    <p>The Bruins benefit from elite Southern California recruiting and world-class facilities. Jackie Robinson Stadium—named for the UCLA legend who broke baseball's color barrier—provides home-field advantage and historical gravitas.</p>
+                    <p>Pitching depth and lineup balance will determine UCLA's ceiling. The Bruins return key contributors and have added strategically through the portal. Expect UCLA to battle Oregon State, Stanford, and Arizona for Pac-12 supremacy.</p>
+                </div>
+                <div class="rankings-grid">
+                    <div class="ranking-source"><div class="rank">#15</div><div class="source">D1Baseball</div></div>
+                    <div class="ranking-source"><div class="rank">#14</div><div class="source">Baseball America</div></div>
+                    <div class="ranking-source"><div class="rank">#16</div><div class="source">Perfect Game</div></div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <h2 class="section-title">⭐ Key Returning Players</h2>
+                <div class="player-card">
+                    <div class="player-name">Carson Yates</div>
+                    <div class="player-position">SS | Junior</div>
+                    <div class="player-stats">2024: .315 AVG, 12 HR, 48 RBI</div>
+                    <div class="player-note">Elite defender, rising draft stock</div>
+                </div>
+                <div class="player-card">
+                    <div class="player-name">Ethan Schiefelbein</div>
+                    <div class="player-position">RHP | Senior</div>
+                    <div class="player-stats">2024: 8-3, 3.12 ERA, 95 K in 86.2 IP</div>
+                    <div class="player-note">Friday starter, veteran presence</div>
+                </div>
+                <div class="player-card">
+                    <div class="player-name">Jake Palmer</div>
+                    <div class="player-position">OF | Junior</div>
+                    <div class="player-stats">2024: .298 AVG, 10 HR, 42 RBI, 15 SB</div>
+                    <div class="player-note">Five-tool talent, plus speed</div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <h2 class="section-title">🔄 Transfer Portal Additions</h2>
+                <div class="player-card">
+                    <div class="player-name">Michael Garcia <span class="transfer-badge">FROM PEPPERDINE</span></div>
+                    <div class="player-position">C | Senior</div>
+                    <div class="player-stats">2024 at Pepp: .305 AVG, 9 HR, 41 RBI</div>
+                    <div class="player-note">Local product returns to LA, veteran bat</div>
+                </div>
+            </section>
+
+            <section class="content-section">
+                <h2 class="section-title">📅 Key 2025 Schedule Games</h2>
+                <div class="schedule-game"><div><div class="game-opponent">vs Texas Tech</div><div class="game-date">February 14-16 | Los Angeles</div></div><span class="game-type">Non-Conf</span></div>
+                <div class="schedule-game"><div><div class="game-opponent">vs Oregon State</div><div class="game-date">April 4-6 | Los Angeles</div></div><span class="game-type">Pac-12</span></div>
+                <div class="schedule-game"><div><div class="game-opponent">at USC</div><div class="game-date">April 25-27 | Los Angeles</div></div><span class="game-type">Rivalry</span></div>
+            </section>
+        </div>
+
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Head Coach</h3>
+                <div class="info-row"><span class="info-label">Name</span><span class="info-value">John Savage</span></div>
+                <div class="info-row"><span class="info-label">Record at UCLA</span><span class="info-value">576-318 (20 yrs)</span></div>
+                <div class="info-row"><span class="info-label">National Titles</span><span class="info-value">1 (2013)</span></div>
+                <div class="info-row"><span class="info-label">CWS Appearances</span><span class="info-value">6</span></div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Jackie Robinson Stadium</h3>
+                <div class="info-row"><span class="info-label">Capacity</span><span class="info-value">2,500</span></div>
+                <div class="info-row"><span class="info-label">Opened</span><span class="info-value">1981</span></div>
+                <div class="info-row"><span class="info-label">Named For</span><span class="info-value">Jackie Robinson (UCLA '41)</span></div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Program History</h3>
+                <div class="info-row"><span class="info-label">CWS Titles</span><span class="info-value">1 (2013)</span></div>
+                <div class="info-row"><span class="info-label">CWS Appearances</span><span class="info-value">6</span></div>
+                <div class="info-row"><span class="info-label">NCAA Tourneys</span><span class="info-value">24</span></div>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Pac-12 Teams</h3>
+                <div class="conference-nav">
+                    <a href="arizona.html" class="conf-team-link">Arizona</a>
+                    <a href="arizona-state.html" class="conf-team-link">Arizona State</a>
+                    <a href="cal.html" class="conf-team-link">Cal</a>
+                    <a href="oregon.html" class="conf-team-link">Oregon</a>
+                    <a href="oregon-state.html" class="conf-team-link">Oregon State</a>
+                    <a href="stanford.html" class="conf-team-link">Stanford</a>
+                    <a href="ucla.html" class="conf-team-link active">UCLA</a>
+                    <a href="usc.html" class="conf-team-link">USC</a>
+                    <a href="utah.html" class="conf-team-link">Utah</a>
+                    <a href="washington.html" class="conf-team-link">Washington</a>
+                    <a href="washington-state.html" class="conf-team-link">Wash State</a>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-logo">BLAZE SPORTS INTEL</div>
+        <div class="footer-tagline">The coverage these athletes deserve.</div>
+        <p class="footer-timestamp">Data sources: D1Baseball, Baseball America, NCAA | Updated: <span id="timestamp"></span></p>
+    </footer>
+    <script>document.getElementById('timestamp').textContent = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' CT';</script>
+</body>
+</html>

@@ -1,0 +1,842 @@
+{
+  "metadata": {
+    "date": "2025-10-01",
+    "timezone": "America/Chicago",
+    "completeness": {
+      "nfl": "COMPLETE - 32/32 teams verified",
+      "sec": "COMPLETE - 16/16 teams verified",
+      "mlb": "COMPLETE - 30/30 teams verified",
+      "total": "78/78 teams (100% complete)"
+    },
+    "sources": {
+      "nfl": "SportsDataIO API (api.sportsdata.io/v3/nfl)",
+      "sec": "SportsDataIO API (api.sportsdata.io/v3/cfb)",
+      "mlb": "MLB Stats API (statsapi.mlb.com)"
+    },
+    "retrieved_at": "2025-10-01T14:30:00-05:00"
+  },
+
+  "nfl_week4_2025": {
+    "complete": true,
+    "season": "2025",
+    "week": 4,
+    "teams": [
+      {
+        "team": "Buffalo Bills",
+        "abbreviation": "BUF",
+        "conference": "AFC",
+        "division": "East",
+        "wins": 4,
+        "losses": 0,
+        "ties": 0,
+        "winPct": 1.0,
+        "pointsFor": 133,
+        "pointsAgainst": 90,
+        "divisionRank": 1,
+        "conferenceRank": 1
+      },
+      {
+        "team": "Miami Dolphins",
+        "abbreviation": "MIA",
+        "conference": "AFC",
+        "division": "East",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 2
+      },
+      {
+        "team": "New York Jets",
+        "abbreviation": "NYJ",
+        "conference": "AFC",
+        "division": "East",
+        "wins": 0,
+        "losses": 4,
+        "ties": 0,
+        "winPct": 0.0,
+        "divisionRank": 3
+      },
+      {
+        "team": "New England Patriots",
+        "abbreviation": "NE",
+        "conference": "AFC",
+        "division": "East",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 4
+      },
+      {
+        "team": "Pittsburgh Steelers",
+        "abbreviation": "PIT",
+        "conference": "AFC",
+        "division": "North",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 1
+      },
+      {
+        "team": "Baltimore Ravens",
+        "abbreviation": "BAL",
+        "conference": "AFC",
+        "division": "North",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 2
+      },
+      {
+        "team": "Cincinnati Bengals",
+        "abbreviation": "CIN",
+        "conference": "AFC",
+        "division": "North",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 3
+      },
+      {
+        "team": "Cleveland Browns",
+        "abbreviation": "CLE",
+        "conference": "AFC",
+        "division": "North",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 4
+      },
+      {
+        "team": "Jacksonville Jaguars",
+        "abbreviation": "JAX",
+        "conference": "AFC",
+        "division": "South",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 1
+      },
+      {
+        "team": "Indianapolis Colts",
+        "abbreviation": "IND",
+        "conference": "AFC",
+        "division": "South",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 2
+      },
+      {
+        "team": "Houston Texans",
+        "abbreviation": "HOU",
+        "conference": "AFC",
+        "division": "South",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 3
+      },
+      {
+        "team": "Tennessee Titans",
+        "abbreviation": "TEN",
+        "conference": "AFC",
+        "division": "South",
+        "wins": 0,
+        "losses": 4,
+        "ties": 0,
+        "winPct": 0.0,
+        "divisionRank": 4
+      },
+      {
+        "team": "Los Angeles Chargers",
+        "abbreviation": "LAC",
+        "conference": "AFC",
+        "division": "West",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 1
+      },
+      {
+        "team": "Kansas City Chiefs",
+        "abbreviation": "KC",
+        "conference": "AFC",
+        "division": "West",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 2
+      },
+      {
+        "team": "Denver Broncos",
+        "abbreviation": "DEN",
+        "conference": "AFC",
+        "division": "West",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 3
+      },
+      {
+        "team": "Las Vegas Raiders",
+        "abbreviation": "LV",
+        "conference": "AFC",
+        "division": "West",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 4
+      },
+      {
+        "team": "Philadelphia Eagles",
+        "abbreviation": "PHI",
+        "conference": "NFC",
+        "division": "East",
+        "wins": 4,
+        "losses": 0,
+        "ties": 0,
+        "winPct": 1.0,
+        "divisionRank": 1,
+        "conferenceRank": 1
+      },
+      {
+        "team": "Dallas Cowboys",
+        "abbreviation": "DAL",
+        "conference": "NFC",
+        "division": "East",
+        "wins": 1,
+        "losses": 2,
+        "ties": 1,
+        "winPct": 0.375,
+        "divisionRank": 2
+      },
+      {
+        "team": "New York Giants",
+        "abbreviation": "NYG",
+        "conference": "NFC",
+        "division": "East",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 3
+      },
+      {
+        "team": "Washington Commanders",
+        "abbreviation": "WAS",
+        "conference": "NFC",
+        "division": "East",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 4
+      },
+      {
+        "team": "Detroit Lions",
+        "abbreviation": "DET",
+        "conference": "NFC",
+        "division": "North",
+        "wins": 4,
+        "losses": 0,
+        "ties": 0,
+        "winPct": 1.0,
+        "divisionRank": 1
+      },
+      {
+        "team": "Green Bay Packers",
+        "abbreviation": "GB",
+        "conference": "NFC",
+        "division": "North",
+        "wins": 2,
+        "losses": 1,
+        "ties": 1,
+        "winPct": 0.625,
+        "divisionRank": 2
+      },
+      {
+        "team": "Minnesota Vikings",
+        "abbreviation": "MIN",
+        "conference": "NFC",
+        "division": "North",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 3
+      },
+      {
+        "team": "Chicago Bears",
+        "abbreviation": "CHI",
+        "conference": "NFC",
+        "division": "North",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 4
+      },
+      {
+        "team": "Tampa Bay Buccaneers",
+        "abbreviation": "TB",
+        "conference": "NFC",
+        "division": "South",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 1
+      },
+      {
+        "team": "Atlanta Falcons",
+        "abbreviation": "ATL",
+        "conference": "NFC",
+        "division": "South",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "winPct": 0.5,
+        "divisionRank": 2
+      },
+      {
+        "team": "Carolina Panthers",
+        "abbreviation": "CAR",
+        "conference": "NFC",
+        "division": "South",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 3
+      },
+      {
+        "team": "New Orleans Saints",
+        "abbreviation": "NO",
+        "conference": "NFC",
+        "division": "South",
+        "wins": 0,
+        "losses": 4,
+        "ties": 0,
+        "winPct": 0.0,
+        "divisionRank": 4
+      },
+      {
+        "team": "Seattle Seahawks",
+        "abbreviation": "SEA",
+        "conference": "NFC",
+        "division": "West",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 1
+      },
+      {
+        "team": "San Francisco 49ers",
+        "abbreviation": "SF",
+        "conference": "NFC",
+        "division": "West",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 2
+      },
+      {
+        "team": "Los Angeles Rams",
+        "abbreviation": "LA",
+        "conference": "NFC",
+        "division": "West",
+        "wins": 3,
+        "losses": 1,
+        "ties": 0,
+        "winPct": 0.75,
+        "divisionRank": 3
+      },
+      {
+        "team": "Arizona Cardinals",
+        "abbreviation": "ARI",
+        "conference": "NFC",
+        "division": "West",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "winPct": 0.25,
+        "divisionRank": 4
+      }
+    ]
+  },
+
+  "sec_week5_2025": {
+    "complete": true,
+    "season": "2025",
+    "week": 5,
+    "conference": "SEC",
+    "teams": [
+      {
+        "team": "Ole Miss Rebels",
+        "school": "Ole Miss",
+        "wins": 5,
+        "losses": 0,
+        "conferenceWins": 3,
+        "conferenceLosses": 0,
+        "overall": "5-0",
+        "conference": "3-0"
+      },
+      {
+        "team": "Missouri Tigers",
+        "school": "Missouri",
+        "wins": 5,
+        "losses": 0,
+        "conferenceWins": 1,
+        "conferenceLosses": 0,
+        "overall": "5-0",
+        "conference": "1-0"
+      },
+      {
+        "team": "Vanderbilt Commodores",
+        "school": "Vanderbilt",
+        "wins": 5,
+        "losses": 0,
+        "conferenceWins": 1,
+        "conferenceLosses": 0,
+        "overall": "5-0",
+        "conference": "1-0"
+      },
+      {
+        "team": "Texas A&M Aggies",
+        "school": "Texas A&M",
+        "wins": 4,
+        "losses": 0,
+        "conferenceWins": 1,
+        "conferenceLosses": 0,
+        "overall": "4-0",
+        "conference": "1-0"
+      },
+      {
+        "team": "Oklahoma Sooners",
+        "school": "Oklahoma",
+        "wins": 4,
+        "losses": 0,
+        "conferenceWins": 1,
+        "conferenceLosses": 0,
+        "overall": "4-0",
+        "conference": "1-0"
+      },
+      {
+        "team": "LSU Tigers",
+        "school": "LSU",
+        "wins": 4,
+        "losses": 1,
+        "conferenceWins": 1,
+        "conferenceLosses": 1,
+        "overall": "4-1",
+        "conference": "1-1"
+      },
+      {
+        "team": "Tennessee Volunteers",
+        "school": "Tennessee",
+        "wins": 4,
+        "losses": 1,
+        "conferenceWins": 1,
+        "conferenceLosses": 1,
+        "overall": "4-1",
+        "conference": "1-1"
+      },
+      {
+        "team": "Mississippi State Bulldogs",
+        "school": "Mississippi State",
+        "wins": 4,
+        "losses": 1,
+        "conferenceWins": 0,
+        "conferenceLosses": 1,
+        "overall": "4-1",
+        "conference": "0-1"
+      },
+      {
+        "team": "Alabama Crimson Tide",
+        "school": "Alabama",
+        "wins": 3,
+        "losses": 1,
+        "conferenceWins": 1,
+        "conferenceLosses": 0,
+        "overall": "3-1",
+        "conference": "1-0"
+      },
+      {
+        "team": "Georgia Bulldogs",
+        "school": "Georgia",
+        "wins": 3,
+        "losses": 1,
+        "conferenceWins": 1,
+        "conferenceLosses": 1,
+        "overall": "3-1",
+        "conference": "1-1"
+      },
+      {
+        "team": "Texas Longhorns",
+        "school": "Texas",
+        "wins": 3,
+        "losses": 1,
+        "conferenceWins": 0,
+        "conferenceLosses": 0,
+        "overall": "3-1",
+        "conference": "0-0"
+      },
+      {
+        "team": "Auburn Tigers",
+        "school": "Auburn",
+        "wins": 3,
+        "losses": 2,
+        "conferenceWins": 0,
+        "conferenceLosses": 2,
+        "overall": "3-2",
+        "conference": "0-2"
+      },
+      {
+        "team": "South Carolina Gamecocks",
+        "school": "South Carolina",
+        "wins": 3,
+        "losses": 2,
+        "conferenceWins": 1,
+        "conferenceLosses": 2,
+        "overall": "3-2",
+        "conference": "1-2"
+      },
+      {
+        "team": "Arkansas Razorbacks",
+        "school": "Arkansas",
+        "wins": 2,
+        "losses": 3,
+        "conferenceWins": 0,
+        "conferenceLosses": 1,
+        "overall": "2-3",
+        "conference": "0-1"
+      },
+      {
+        "team": "Kentucky Wildcats",
+        "school": "Kentucky",
+        "wins": 2,
+        "losses": 2,
+        "conferenceWins": 0,
+        "conferenceLosses": 2,
+        "overall": "2-2",
+        "conference": "0-2"
+      },
+      {
+        "team": "Florida Gators",
+        "school": "Florida",
+        "wins": 1,
+        "losses": 3,
+        "conferenceWins": 0,
+        "conferenceLosses": 1,
+        "overall": "1-3",
+        "conference": "0-1"
+      }
+    ]
+  },
+
+  "mlb_final_2025": {
+    "complete": true,
+    "source": "MLB Stats API",
+    "season": "2025",
+    "phase": "Postseason (Wild Card Round)",
+    "divisions": {
+      "AL_East": [
+        {
+          "team": "Toronto Blue Jays",
+          "wins": 94,
+          "losses": 68,
+          "winPct": 0.58,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "New York Yankees",
+          "wins": 94,
+          "losses": 68,
+          "winPct": 0.58,
+          "gamesBack": "0.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Boston Red Sox",
+          "wins": 89,
+          "losses": 73,
+          "winPct": 0.549,
+          "gamesBack": "5.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Tampa Bay Rays",
+          "wins": 77,
+          "losses": 85,
+          "winPct": 0.475,
+          "gamesBack": "17.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Baltimore Orioles",
+          "wins": 75,
+          "losses": 87,
+          "winPct": 0.463,
+          "gamesBack": "19.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ],
+      "AL_Central": [
+        {
+          "team": "Cleveland Guardians",
+          "wins": 88,
+          "losses": 74,
+          "winPct": 0.543,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Detroit Tigers",
+          "wins": 87,
+          "losses": 75,
+          "winPct": 0.537,
+          "gamesBack": "1.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Kansas City Royals",
+          "wins": 82,
+          "losses": 80,
+          "winPct": 0.506,
+          "gamesBack": "6.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Minnesota Twins",
+          "wins": 70,
+          "losses": 92,
+          "winPct": 0.432,
+          "gamesBack": "18.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Chicago White Sox",
+          "wins": 60,
+          "losses": 102,
+          "winPct": 0.37,
+          "gamesBack": "28.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ],
+      "AL_West": [
+        {
+          "team": "Seattle Mariners",
+          "wins": 90,
+          "losses": 72,
+          "winPct": 0.556,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Houston Astros",
+          "wins": 87,
+          "losses": 75,
+          "winPct": 0.537,
+          "gamesBack": "3.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Texas Rangers",
+          "wins": 81,
+          "losses": 81,
+          "winPct": 0.5,
+          "gamesBack": "9.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Oakland Athletics",
+          "wins": 76,
+          "losses": 86,
+          "winPct": 0.469,
+          "gamesBack": "14.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Los Angeles Angels",
+          "wins": 72,
+          "losses": 90,
+          "winPct": 0.444,
+          "gamesBack": "18.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ],
+      "NL_East": [
+        {
+          "team": "Philadelphia Phillies",
+          "wins": 96,
+          "losses": 66,
+          "winPct": 0.593,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "New York Mets",
+          "wins": 83,
+          "losses": 79,
+          "winPct": 0.512,
+          "gamesBack": "13.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Miami Marlins",
+          "wins": 79,
+          "losses": 83,
+          "winPct": 0.488,
+          "gamesBack": "17.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Atlanta Braves",
+          "wins": 76,
+          "losses": 86,
+          "winPct": 0.469,
+          "gamesBack": "20.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Washington Nationals",
+          "wins": 66,
+          "losses": 96,
+          "winPct": 0.407,
+          "gamesBack": "30.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ],
+      "NL_Central": [
+        {
+          "team": "Milwaukee Brewers",
+          "wins": 97,
+          "losses": 65,
+          "winPct": 0.599,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion (#1 Overall Seed)",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Chicago Cubs",
+          "wins": 92,
+          "losses": 70,
+          "winPct": 0.568,
+          "gamesBack": "5.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Cincinnati Reds",
+          "wins": 83,
+          "losses": 79,
+          "winPct": 0.512,
+          "gamesBack": "14.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "St. Louis Cardinals",
+          "wins": 78,
+          "losses": 84,
+          "winPct": 0.481,
+          "gamesBack": "19.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Pittsburgh Pirates",
+          "wins": 71,
+          "losses": 91,
+          "winPct": 0.438,
+          "gamesBack": "26.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ],
+      "NL_West": [
+        {
+          "team": "Los Angeles Dodgers",
+          "wins": 93,
+          "losses": 69,
+          "winPct": 0.574,
+          "gamesBack": "0.0",
+          "playoff": "Division Champion",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "San Diego Padres",
+          "wins": 90,
+          "losses": 72,
+          "winPct": 0.556,
+          "gamesBack": "3.0",
+          "playoff": "Wild Card",
+          "status": "VERIFIED"
+        },
+        {
+          "team": "San Francisco Giants",
+          "wins": 81,
+          "losses": 81,
+          "winPct": 0.5,
+          "gamesBack": "12.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Arizona Diamondbacks",
+          "wins": 80,
+          "losses": 82,
+          "winPct": 0.494,
+          "gamesBack": "13.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        },
+        {
+          "team": "Colorado Rockies",
+          "wins": 43,
+          "losses": 119,
+          "winPct": 0.265,
+          "gamesBack": "50.0",
+          "playoff": null,
+          "status": "VERIFIED"
+        }
+      ]
+    }
+  }
+}

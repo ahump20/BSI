@@ -1,0 +1,4 @@
+# Cloudflare Pages redirects
+
+# API routes to worker
+/api/*  https://backyard-baseball-api.blazesportsintel.workers.dev/:splat  200

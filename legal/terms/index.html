@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms of Service | Blaze Sports Intel™</title>
+    <meta
+      name="description"
+      content="Comprehensive Terms of Service for Blaze Sports Intel - Texas law governing sports analytics platform"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://blazesportsintel.com/legal/terms" />
+
+    <!-- Texas/US Compliance -->
+    <meta name="geo.region" content="US-TX" />
+    <meta name="geo.placename" content="Austin, Texas" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-orange: #ff6b00;
+        --primary-blue: #0066cc;
+        --dark-bg: #0a0a0a;
+        --light-bg: #1a1a1a;
+        --text-white: #ffffff;
+        --text-gray: #b0b0b0;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --warning-bg: rgba(255, 107, 0, 0.1);
+        --warning-border: rgba(255, 107, 0, 0.3);
+        --danger-bg: rgba(220, 38, 127, 0.1);
+        --danger-border: rgba(220, 38, 127, 0.3);
+      }
+
+      body {
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+        color: var(--text-white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 2rem;
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .header-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .meta-item {
+        background: var(--light-bg);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        text-align: center;
+      }
+
+      .meta-label {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+      }
+
+      .meta-value {
+        font-weight: 600;
+        color: var(--text-white);
+      }
+
+      .content {
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        padding: 3rem;
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        color: var(--primary-orange);
+        margin: 3rem 0 1.5rem 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+      }
+
+      h3 {
+        color: var(--primary-blue);
+        margin: 2rem 0 1rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      h4 {
+        color: var(--text-white);
+        margin: 1.5rem 0 0.75rem 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      p {
+        margin-bottom: 1.25rem;
+        color: var(--text-gray);
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 1.25rem 0 1.25rem 2rem;
+        color: var(--text-gray);
+      }
+
+      li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .highlight-box {
+        background: var(--light-bg);
+        border-left: 4px solid var(--primary-orange);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 0.75rem;
+      }
+
+      .warning-box {
+        background: var(--warning-bg);
+        border: 2px solid var(--warning-border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .danger-box {
+        background: var(--danger-bg);
+        border: 2px solid var(--danger-border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .legal-section {
+        background: var(--light-bg);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 1px solid var(--glass-border);
+      }
+
+      .contact-info {
+        background: var(--light-bg);
+        padding: 2rem;
+        border-radius: 1rem;
+        margin: 2rem 0;
+        border: 1px solid var(--glass-border);
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .contact-section {
+        background: var(--glass-bg);
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--glass-border);
+      }
+
+      .nav-link {
+        color: var(--primary-orange);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-blue);
+        text-decoration: underline;
+      }
+
+      .back-home {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        margin: 3rem 0;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .back-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);
+      }
+
+      .legal-caps {
+        font-size: 1.1em;
+        font-weight: 700;
+        color: var(--text-white);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .arbitration-notice {
+        background: var(--danger-bg);
+        border: 3px solid var(--danger-border);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: center;
+      }
+
+      .arbitration-notice h3 {
+        color: #dc267f;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+      }
+
+      .texas-flag {
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .content {
+          padding: 1.5rem;
+        }
+
+        .header-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+
+        .header,
+        .content {
+          background: white;
+          border: 1px solid black;
+        }
+      }
+
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+
+      @media (prefers-contrast: high) {
+        .highlight-box {
+          border-width: 3px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Terms of Service</h1>
+
+        <div class="header-meta">
+          <div class="meta-item">
+            <div class="meta-label">Effective Date</div>
+            <div class="meta-value">September 28, 2025</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Last Updated</div>
+            <div class="meta-value">January 10, 2025</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Governing Law</div>
+            <div class="meta-value">
+              <span class="texas-flag">🏴󠁵󠁳󠁴󠁸󠁿</span>Texas, United States
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Jurisdiction</div>
+            <div class="meta-value">Austin, Texas Courts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="danger-box">
+          <p class="legal-caps">
+            <strong>Important Legal Notice:</strong> These Terms of Service contain binding
+            arbitration clauses, liability limitations, and sports data disclaimers. Please read
+            carefully before using our services. Texas law governs this agreement.
+          </p>
+        </div>
+
+        <h2>1. ACCEPTANCE OF TERMS</h2>
+
+        <p>
+          By accessing or using the Blaze Sports Intel platform ("Service"), operated by Blaze
+          Sports Intel ("Company," "we," "our," "us"), you ("User," "you," "your") agree to these
+          Terms of Service ("Terms"). If you disagree, do not use the Service.
+        </p>
+
+        <div class="legal-section">
+          <h3>1.1 Eligibility</h3>
+          <ul>
+            <li>You must be at least 13 years old</li>
+            <li>If under 18, parental consent required under Texas law</li>
+            <li>Not prohibited from using the Service under applicable law</li>
+            <li>Legal capacity to enter binding agreements</li>
+          </ul>
+        </div>
+
+        <h2>2. SERVICE DESCRIPTION</h2>
+
+        <p>
+          Blaze Sports Intel provides sports data aggregation, analytics, and intelligence services
+          covering Baseball → Football → Basketball → Track & Field, with focus on Texas and Deep
+          South region athletics.
+        </p>
+
+        <h3>2.1 What We Provide</h3>
+        <ul>
+          <li><strong>Real-time scores and statistics</strong> for MLB, NFL, NCAA Division I</li>
+          <li>
+            <strong>Texas High School Sports:</strong> Football, baseball, basketball coverage
+          </li>
+          <li><strong>Historical sports data</strong> and trend analysis</li>
+          <li><strong>Power rankings and analytics</strong> using validated methodologies</li>
+          <li><strong>API integration services</strong> with rate limiting and authentication</li>
+          <li><strong>Custom data visualizations</strong> and interactive dashboards</li>
+          <li><strong>Perfect Game baseball data</strong> and youth sports analytics</li>
+          <li>
+            <strong>AI Copilot:</strong> Semantic search and RAG-powered sports intelligence at
+            <a href="/copilot" class="nav-link">/copilot</a>
+          </li>
+        </ul>
+
+        <h3>2.2 AI Copilot Feature Terms</h3>
+        <div class="legal-section">
+          <p><strong>Our AI Copilot service uses Cloudflare Workers AI for:</strong></p>
+          <ul>
+            <li>
+              <strong>Semantic Search:</strong> Query expansion using @cf/baai/bge-base-en-v1.5
+              embeddings
+            </li>
+            <li>
+              <strong>RAG Insights:</strong> AI-generated analysis using
+              @cf/meta/llama-3.1-8b-instruct
+            </li>
+            <li>
+              <strong>3D Visualizations:</strong> Interactive Babylon.js
+              baseball/football/basketball field renders
+            </li>
+            <li>
+              <strong>Conversation History:</strong> Chat sessions stored 90 days for quality
+              improvement
+            </li>
+          </ul>
+          <p class="legal-caps">
+            <strong>AI Disclaimer:</strong> Copilot responses are AI-generated and may contain
+            errors. Not a substitute for professional sports analysis or coaching advice. Always
+            verify critical information.
+          </p>
+        </div>
+
+        <h2>3. SPORTS DATA AND CONTENT</h2>
+
+        <div class="warning-box">
+          <h3>3.1 Data Accuracy Disclaimer</h3>
+          <p class="legal-caps">
+            <strong>Critical Notice:</strong> Sports data provided "as-is" without warranty. Not
+            responsible for third-party data errors. Live scores may have delays up to 15 minutes.
+          </p>
+        </div>
+
+        <div class="legal-section">
+          <h3>3.2 Data Sources</h3>
+          <p>Sports data provided through licensed agreements with:</p>
+          <ul>
+            <li><strong>MLB Advanced Media:</strong> Official league statistics</li>
+            <li><strong>NCAA:</strong> College sports data under license</li>
+            <li><strong>Perfect Game:</strong> Youth baseball tournaments and recruitment</li>
+            <li><strong>MaxPreps:</strong> Texas high school sports data</li>
+            <li><strong>Sports Reference LLC:</strong> Historical statistics</li>
+            <li><strong>Conference Databases:</strong> SEC, Big 12, other conference data</li>
+          </ul>
+
+          <h3>3.3 Intellectual Property</h3>
+          <ul>
+            <li>All content © 2025 Blaze Sports Intel unless noted</li>
+            <li>
+              <strong>Blaze Sports Intel™</strong> and <strong>Blaze Intelligence™</strong> are
+              registered trademarks
+            </li>
+            <li>Team names, logos property of respective owners</li>
+            <li>User-generated content remains yours with license to us</li>
+            <li>No unauthorized commercial use of our analytics or methodologies</li>
+          </ul>
+        </div>
+
+        <h2>4. USER RESPONSIBILITIES AND PROHIBITED USES</h2>
+
+        <h3>4.1 Account Responsibilities</h3>
+        <ul>
+          <li>Provide accurate, current information</li>
+          <li>Maintain security of credentials</li>
+          <li>Notify us of unauthorized access</li>
+          <li>Responsible for all account activity</li>
+          <li>Comply with Texas and federal law</li>
+        </ul>
+
+        <h3>4.2 Prohibited Activities</h3>
+        <div class="legal-section">
+          <p>You agree NOT to use the Service for:</p>
+          <ul>
+            <li>
+              <strong>Illegal Activities:</strong> Any unlawful purpose under Texas or federal law
+            </li>
+            <li><strong>Data Scraping:</strong> Automated data extraction without authorization</li>
+            <li><strong>Commercial Redistribution:</strong> Selling or redistributing our data</li>
+            <li>
+              <strong>Gambling Operations:</strong> Operating betting services (prohibited in Texas)
+            </li>
+            <li><strong>System Interference:</strong> Unauthorized access or service disruption</li>
+            <li><strong>Reverse Engineering:</strong> Attempting to reverse engineer algorithms</li>
+            <li><strong>Rate Limit Circumvention:</strong> Bypassing API usage limits</li>
+            <li><strong>False Information:</strong> Providing misleading data or credentials</li>
+          </ul>
+        </div>
+
+        <h2>5. API USAGE TERMS</h2>
+
+        <h3>5.1 Rate Limits</h3>
+        <ul>
+          <li><strong>Free Tier:</strong> 1,000 requests per hour</li>
+          <li><strong>Premium Tier:</strong> 10,000 requests per hour</li>
+          <li><strong>Enterprise:</strong> Custom limits with SLA</li>
+          <li>Automatic throttling for exceeded limits</li>
+          <li>Exponential backoff required</li>
+        </ul>
+
+        <h3>5.2 Acceptable Use</h3>
+        <ul>
+          <li>Personal or internal business use</li>
+          <li>Attribution required: "Data from Blaze Sports Intel"</li>
+          <li>No high-frequency trading applications</li>
+          <li>Comply with data provider restrictions</li>
+          <li>Respect rate limits and retry policies</li>
+        </ul>
+
+        <h2>6. PAYMENT TERMS (When Applicable)</h2>
+
+        <div class="legal-section">
+          <h3>6.1 Subscription Services</h3>
+          <ul>
+            <li>Monthly/annual billing cycles</li>
+            <li>Automatic renewal unless cancelled 30 days prior</li>
+            <li>Pro-rata refunds at our discretion</li>
+            <li>Price changes with 30-day notice</li>
+            <li>Texas sales tax applies where required</li>
+          </ul>
+
+          <h3>6.2 Refund Policy</h3>
+          <ul>
+            <li><strong>14-day money-back guarantee</strong> for new subscriptions</li>
+            <li>No refunds for API overages or usage-based charges</li>
+            <li>Disputed charges subject to investigation</li>
+            <li>Refunds processed within 5-7 business days</li>
+          </ul>
+        </div>
+
+        <h2>7. DISCLAIMER OF WARRANTIES</h2>
+
+        <div class="danger-box">
+          <p class="legal-caps">
+            <strong
+              >The service is provided "as is" and "as available" without warranties of any kind,
+              express or implied, including but not limited to warranties of merchantability,
+              fitness for a particular purpose, or non-infringement.</strong
+            >
+          </p>
+        </div>
+
+        <div class="legal-section">
+          <h3>7.1 Specific Disclaimers</h3>
+          <ul>
+            <li><strong>No Uptime Guarantees:</strong> Service availability not guaranteed</li>
+            <li><strong>Data Accuracy:</strong> Sports statistics may contain errors</li>
+            <li><strong>Third-Party Services:</strong> Dependent on external data providers</li>
+            <li><strong>Force Majeure:</strong> Not liable for events beyond our control</li>
+          </ul>
+        </div>
+
+        <h2>8. LIMITATION OF LIABILITY</h2>
+
+        <div class="danger-box">
+          <h3>8.1 MAXIMUM LIABILITY</h3>
+          <p class="legal-caps">
+            <strong
+              >To the maximum extent permitted by Texas law, our total liability shall not exceed
+              the amount paid by you for the service in the 12 months preceding the claim, or $100,
+              whichever is greater.</strong
+            >
+          </p>
+        </div>
+
+        <div class="legal-section">
+          <h3>8.2 EXCLUSION OF DAMAGES</h3>
+          <p class="legal-caps"><strong>We shall not be liable for:</strong></p>
+          <ul>
+            <li>
+              <strong>Indirect Damages:</strong> Lost profits, data, or business opportunities
+            </li>
+            <li><strong>Sports-Related Decisions:</strong> Any decisions based on our analytics</li>
+            <li><strong>Data Inaccuracies:</strong> Errors in sports statistics or predictions</li>
+            <li><strong>Service Interruptions:</strong> Downtime, outages, or data loss</li>
+            <li>
+              <strong>Third-Party Actions:</strong> Actions of data providers or hosting services
+            </li>
+            <li>
+              <strong>Financial Losses:</strong> Any losses related to sports betting or fantasy
+              sports
+            </li>
+          </ul>
+        </div>
+
+        <h2>9. INDEMNIFICATION</h2>
+
+        <p>
+          You agree to indemnify and hold harmless Blaze Sports Intel, its officers, directors,
+          employees, and agents from any claims, damages, or expenses arising from:
+        </p>
+        <ul>
+          <li>Your use of the Service</li>
+          <li>Your violation of these Terms</li>
+          <li>Your violation of any third-party rights</li>
+          <li>Any content you submit to the platform</li>
+          <li>Your violation of Texas or federal law</li>
+        </ul>
+
+        <h2>10. DISPUTE RESOLUTION</h2>
+
+        <div class="arbitration-notice">
+          <h3>⚖️ Binding Arbitration Required</h3>
+          <p class="legal-caps">
+            <strong
+              >You agree to arbitrate all disputes instead of court trials. Any disputes arising
+              from these Terms or the Service shall be resolved through binding arbitration in
+              Austin, Texas, not in court, except for claims in small claims court.</strong
+            >
+          </p>
+        </div>
+
+        <div class="legal-section">
+          <h3>10.1 Arbitration Rules</h3>
+          <ul>
+            <li><strong>Rules:</strong> American Arbitration Association (AAA) Commercial Rules</li>
+            <li><strong>Location:</strong> Austin, Texas (in-person or virtual)</li>
+            <li>
+              <strong>Individual Claims Only:</strong> No class actions or collective proceedings
+            </li>
+            <li>
+              <strong>Cost Allocation:</strong> Each party bears own costs unless Texas law requires
+              otherwise
+            </li>
+            <li><strong>Appeals:</strong> Limited appeal rights under Texas Arbitration Act</li>
+          </ul>
+
+          <h3>10.2 Governing Law</h3>
+          <p>
+            These Terms are governed by Texas law, without regard to conflict of law principles. Any
+            legal proceedings must be brought in Travis County, Texas courts.
+          </p>
+
+          <h3>10.3 Opt-Out Right</h3>
+          <p>
+            You may opt-out of arbitration by mailing written notice within 30 days to:
+            legal@blazesportsintel.com
+          </p>
+        </div>
+
+        <h2>11. TERMINATION</h2>
+
+        <h3>11.1 Termination by You</h3>
+        <p>
+          You may terminate your account at any time through account settings or by contacting
+          support.
+        </p>
+
+        <h3>11.2 Termination by Us</h3>
+        <div class="legal-section">
+          <p>We may terminate or suspend your account immediately for:</p>
+          <ul>
+            <li>Violation of these Terms</li>
+            <li>Fraudulent or illegal activity</li>
+            <li>Non-payment of fees (for paid services)</li>
+            <li>Harmful behavior toward other users or staff</li>
+            <li>Violation of Texas or federal law</li>
+          </ul>
+
+          <h3>11.3 Effect of Termination</h3>
+          <ul>
+            <li>Access to Service immediately suspended</li>
+            <li>Data deletion after reasonable retention period</li>
+            <li>Outstanding payment obligations remain</li>
+            <li>Surviving provisions continue to apply</li>
+          </ul>
+        </div>
+
+        <h2>12. DMCA COMPLIANCE</h2>
+
+        <h3>12.1 Copyright Policy</h3>
+        <div class="legal-section">
+          <p>We respect intellectual property. To report infringement:</p>
+          <ul>
+            <li><strong>Email:</strong> dmca@blazesportsintel.com</li>
+            <li>
+              <strong>Include:</strong> Identification of copyrighted work, location of infringing
+              material, contact information, good faith statement
+            </li>
+            <li><strong>Response Time:</strong> Expeditious removal per DMCA requirements</li>
+          </ul>
+
+          <h3>12.2 Counter-Notification</h3>
+          <p>
+            If content wrongly removed, provide counter-notice with identification of removed
+            material, statement of good faith belief, and consent to Texas jurisdiction.
+          </p>
+        </div>
+
+        <h2>13. ACCESSIBILITY</h2>
+
+        <p>
+          We strive for WCAG AA compliance under Texas accessibility laws. Report issues to:
+          accessibility@blazesportsintel.com
+        </p>
+
+        <h2>14. MODIFICATIONS</h2>
+
+        <h3>14.1 Changes to Terms</h3>
+        <ul>
+          <li>30-day notice for material changes</li>
+          <li>Continued use constitutes acceptance</li>
+          <li>Right to terminate if you disagree</li>
+          <li>Changes posted with effective date</li>
+        </ul>
+
+        <h3>14.2 Service Modifications</h3>
+        <p>
+          We may modify, suspend, or discontinue features with reasonable notice, except in
+          emergency situations.
+        </p>
+
+        <h2>15. GENERAL PROVISIONS</h2>
+
+        <div class="legal-section">
+          <h3>15.1 Severability</h3>
+          <p>If any provision is found unenforceable, remainder continues in effect.</p>
+
+          <h3>15.2 Entire Agreement</h3>
+          <p>These Terms, Privacy Policy, and other legal notices constitute entire agreement.</p>
+
+          <h3>15.3 Assignment</h3>
+          <p>We may assign these Terms; you may not without consent.</p>
+
+          <h3>15.4 Force Majeure</h3>
+          <p>
+            No liability for circumstances beyond reasonable control, including natural disasters,
+            government actions, or network failures.
+          </p>
+
+          <h3>15.5 Texas Law Compliance</h3>
+          <p>
+            These Terms comply with Texas Business & Commerce Code, Texas Consumer Protection Act,
+            and applicable federal regulations.
+          </p>
+        </div>
+
+        <h2>16. CONTACT INFORMATION</h2>
+
+        <div class="contact-info">
+          <div class="contact-grid">
+            <div class="contact-section">
+              <h4>Legal Department</h4>
+              <p>
+                <strong>Blaze Sports Intel</strong><br />
+                Legal Department<br />
+                Austin, Texas 78701<br />
+                United States
+              </p>
+              <p>
+                <strong>Email:</strong> legal@blazesportsintel.com<br />
+                <strong>Subject:</strong> "Terms Inquiry - [Topic]"
+              </p>
+            </div>
+            <div class="contact-section">
+              <h4>General Support</h4>
+              <p>
+                <strong>Email:</strong> support@blazesportsintel.com<br />
+                <strong>Website:</strong>
+                <a href="https://blazesportsintel.com" class="nav-link">blazesportsintel.com</a
+                ><br />
+                <strong>Response Time:</strong> 24-48 hours
+              </p>
+            </div>
+            <div class="contact-section">
+              <h4>Arbitration Opt-Out</h4>
+              <p>
+                <strong>Deadline:</strong> 30 days from first use<br />
+                <strong>Method:</strong> Written notice to legal@blazesportsintel.com<br />
+                <strong>Required Info:</strong> Name, address, username
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <p>
+            <strong>Final Notice:</strong> By using Blaze Sports Intel, you acknowledge reading,
+            understanding, and agreeing to these Terms of Service. These Terms are governed by Texas
+            law and include binding arbitration provisions. Contact us with questions before using
+            the Service.
+          </p>
+        </div>
+
+        <a href="/" class="back-home">← Return to Blaze Sports Intel</a>
+      </div>
+    </div>
+
+    <script>
+      // Accessibility: Announce important legal notices
+      window.addEventListener('load', function () {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.textContent =
+          'Terms of Service loaded. This agreement is governed by Texas law and includes binding arbitration provisions.';
+        announcement.style.position = 'absolute';
+        announcement.style.left = '-9999px';
+        document.body.appendChild(announcement);
+
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 2000);
+      });
+
+      // Smooth scrolling for internal links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        });
+      });
+
+      // Highlight arbitration clauses for user awareness
+      function highlightArbitration() {
+        const arbitrationElements = document.querySelectorAll('.arbitration-notice, .danger-box');
+        arbitrationElements.forEach((element) => {
+          element.style.animation = 'pulse 2s ease-in-out';
+        });
+      }
+
+      // Call highlight function after page load
+      setTimeout(highlightArbitration, 1000);
+    </script>
+  </body>
+</html>

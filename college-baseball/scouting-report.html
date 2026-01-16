@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Professional College Baseball Scouting Reports - MLB Draft Projections, Player Comparisons, Injury Risk Assessment, Development Roadmaps"
+    />
+    <title>Professional Scouting Engine | Blaze Sports Intel</title>
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <style>
+      :root {
+        --color-primary: #ff6b00;
+        --color-secondary: #0066cc;
+        --color-background: #0a0a0a;
+        --color-surface: #1a1a1a;
+        --color-surface-elevated: #2a2a2a;
+        --color-text: #ffffff;
+        --color-text-secondary: #a0a0a0;
+        --color-success: #00c853;
+        --color-warning: #ffa000;
+        --color-danger: #d32f2f;
+        --spacing-unit: 8px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: var(--color-background);
+        color: var(--color-text);
+        line-height: 1.6;
+        padding: 0;
+        padding-top: 80px;
+      }
+
+      /* Navigation */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 107, 0, 0.15);
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: var(--color-primary);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: calc(var(--spacing-unit) * 2);
+      }
+
+      header {
+        margin-bottom: calc(var(--spacing-unit) * 4);
+        padding-bottom: calc(var(--spacing-unit) * 2);
+        border-bottom: 2px solid var(--color-primary);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+        color: var(--color-text);
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        color: var(--color-text-secondary);
+      }
+
+      .search-controls {
+        display: flex;
+        gap: calc(var(--spacing-unit) * 2);
+        margin-bottom: calc(var(--spacing-unit) * 4);
+        flex-wrap: wrap;
+      }
+
+      .input-group {
+        flex: 1;
+        min-width: 250px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: calc(var(--spacing-unit) * 1.5);
+        background: var(--color-surface);
+        border: 1px solid var(--color-surface-elevated);
+        border-radius: 4px;
+        color: var(--color-text);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+      }
+
+      button {
+        padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background: #ff8533;
+      }
+
+      button:disabled {
+        background: var(--color-surface-elevated);
+        color: var(--color-text-secondary);
+        cursor: not-allowed;
+      }
+
+      .report-card {
+        background: var(--color-surface);
+        border-radius: 8px;
+        padding: calc(var(--spacing-unit) * 3);
+        margin-bottom: calc(var(--spacing-unit) * 3);
+        border: 1px solid var(--color-surface-elevated);
+      }
+
+      .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: calc(var(--spacing-unit) * 3);
+        padding-bottom: calc(var(--spacing-unit) * 2);
+        border-bottom: 1px solid var(--color-surface-elevated);
+      }
+
+      .grade-badge {
+        padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+        border-radius: 4px;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .grade-high {
+        background: var(--color-success);
+        color: white;
+      }
+
+      .grade-medium {
+        background: var(--color-warning);
+        color: white;
+      }
+
+      .grade-low {
+        background: var(--color-danger);
+        color: white;
+      }
+
+      .component-scores {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: calc(var(--spacing-unit) * 2);
+        margin-bottom: calc(var(--spacing-unit) * 3);
+      }
+
+      .score-card {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        border-left: 4px solid var(--color-primary);
+      }
+
+      .score-card h4 {
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--color-text-secondary);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .score-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .score-detail {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        margin-top: calc(var(--spacing-unit) * 0.5);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--color-background);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: calc(var(--spacing-unit) * 1);
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--color-primary);
+        transition: width 0.5s ease;
+      }
+
+      .roles-list,
+      .risks-list {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      .roles-list ul,
+      .risks-list ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .roles-list li {
+        padding: calc(var(--spacing-unit) * 1);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+        background: var(--color-success);
+        color: white;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+
+      .risks-list li {
+        padding: calc(var(--spacing-unit) * 1);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+        background: var(--color-danger);
+        color: white;
+        border-radius: 4px;
+      }
+
+      .loading {
+        text-align: center;
+        padding: calc(var(--spacing-unit) * 6);
+        color: var(--color-text-secondary);
+      }
+
+      .error {
+        background: var(--color-danger);
+        color: white;
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      .citations {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        padding: calc(var(--spacing-unit) * 2);
+        background: var(--color-surface-elevated);
+        border-radius: 4px;
+        margin-top: calc(var(--spacing-unit) * 3);
+      }
+
+      .citations strong {
+        color: var(--color-text);
+      }
+
+      /* Professional Features Styles */
+      .pro-section {
+        background: var(--color-surface);
+        border-radius: 8px;
+        padding: calc(var(--spacing-unit) * 3);
+        margin-bottom: calc(var(--spacing-unit) * 3);
+        border: 1px solid var(--color-surface-elevated);
+      }
+
+      .pro-section h3 {
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 2);
+        padding-bottom: calc(var(--spacing-unit) * 1);
+        border-bottom: 2px solid var(--color-surface-elevated);
+      }
+
+      .draft-projection {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: calc(var(--spacing-unit) * 2);
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      .draft-stat {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .draft-stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--color-text-secondary);
+        margin-bottom: calc(var(--spacing-unit) * 0.5);
+      }
+
+      .draft-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .mlb-comp-card {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        border-left: 4px solid var(--color-success);
+      }
+
+      .mlb-comp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .mlb-comp-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .similarity-badge {
+        background: var(--color-success);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .injury-risk-low {
+        background: var(--color-success);
+        color: white;
+        padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+        border-radius: 4px;
+        display: inline-block;
+        font-weight: 600;
+      }
+
+      .injury-risk-moderate {
+        background: var(--color-warning);
+        color: white;
+        padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+        border-radius: 4px;
+        display: inline-block;
+        font-weight: 600;
+      }
+
+      .injury-risk-high {
+        background: var(--color-danger);
+        color: white;
+        padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+        border-radius: 4px;
+        display: inline-block;
+        font-weight: 600;
+      }
+
+      .roadmap-phase {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      .roadmap-phase h4 {
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .priority-area {
+        background: var(--color-background);
+        padding: calc(var(--spacing-unit) * 1.5);
+        border-radius: 4px;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+        border-left: 3px solid var(--color-primary);
+      }
+
+      .export-buttons {
+        display: flex;
+        gap: calc(var(--spacing-unit) * 2);
+        margin-top: calc(var(--spacing-unit) * 3);
+        flex-wrap: wrap;
+      }
+
+      .export-btn {
+        flex: 1;
+        min-width: 150px;
+        padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
+        background: var(--color-surface-elevated);
+        color: var(--color-text);
+        border: 2px solid var(--color-primary);
+        border-radius: 6px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .export-btn:hover {
+        background: var(--color-primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+      }
+
+      .valuation-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: calc(var(--spacing-unit) * 2);
+      }
+
+      .valuation-card {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        border-top: 3px solid var(--color-success);
+      }
+
+      /* Video Library Styles */
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: calc(var(--spacing-unit) * 2);
+      }
+
+      .video-card {
+        background: var(--color-surface-elevated);
+        border-radius: 6px;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        border: 1px solid rgba(255, 107, 0, 0.3);
+      }
+
+      .video-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(255, 107, 0, 0.2);
+      }
+
+      .video-thumbnail {
+        position: relative;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 2px solid var(--color-primary);
+      }
+
+      .video-play-icon {
+        font-size: 3rem;
+        color: var(--color-primary);
+        opacity: 0.9;
+        transition: all 0.2s;
+      }
+
+      .video-card:hover .video-play-icon {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      .video-duration {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .video-info {
+        padding: calc(var(--spacing-unit) * 2);
+      }
+
+      .video-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .video-meta {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .video-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: opacity 0.2s;
+      }
+
+      .video-link:hover {
+        opacity: 0.8;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .search-controls {
+          flex-direction: column;
+        }
+
+        .component-scores {
+          grid-template-columns: 1fr;
+        }
+
+        .draft-projection {
+          grid-template-columns: 1fr;
+        }
+
+        .valuation-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .export-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/college-baseball/" class="nav-brand" aria-label="College Baseball Home">
+          <i class="fas fa-baseball-ball" aria-hidden="true"></i>
+          College Baseball
+        </a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball/" class="nav-link">Hub</a></li>
+          <li><a href="/college-baseball/games/" class="nav-link">Games</a></li>
+          <li><a href="/college-baseball/standings/" class="nav-link">Standings</a></li>
+          <li><a href="/college-baseball/teams/" class="nav-link">Teams</a></li>
+          <li><a href="/college-baseball/players/" class="nav-link">Players</a></li>
+          <li>
+            <a
+              href="/college-baseball/scouting-report"
+              class="nav-link"
+              style="color: var(--color-primary)"
+              aria-current="page"
+              >Scouting Reports</a
+            >
+          </li>
+          <li>
+            <a href="/college-baseball/scouting-comparison" class="nav-link"
+              ><i class="fas fa-balance-scale"></i> Compare Players</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <header>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+          "
+        >
+          <div style="flex: 1; min-width: 300px">
+            <h1>⚾ Professional Scouting Engine</h1>
+            <p style="color: var(--color-text-secondary); margin-top: 8px; font-size: 1.1rem">
+              MLB Draft Projections • Player Comparisons • Injury Risk Assessment • Development
+              Roadmaps • Market Valuations
+            </p>
+            <p style="color: var(--color-text-secondary); margin-top: 4px; font-size: 0.9rem">
+              Powered by 4-Model Ensemble: Velocity Time-Series • Intangibles Rubric • Scout Notes
+              NLP • Champion Enigma Engine™
+            </p>
+          </div>
+          <div style="display: flex; align-items: center">
+            <a
+              href="/college-baseball/scouting-comparison"
+              style="
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, var(--color-primary) 0%, #ff8533 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: 600;
+                font-size: 1rem;
+                transition:
+                  transform 0.2s,
+                  box-shadow 0.2s;
+              "
+            >
+              <i class="fas fa-balance-scale"></i>
+              Compare Players
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div class="search-controls">
+        <div class="input-group">
+          <label for="playerId">Player ID</label>
+          <input
+            type="text"
+            id="playerId"
+            placeholder="Enter player ID (e.g., demo_player_001)"
+            value="demo_player_001"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="teamId">Team ID (Optional)</label>
+          <input type="text" id="teamId" placeholder="Enter team ID (e.g., texas)" />
+        </div>
+
+        <div class="input-group" style="display: flex; align-items: flex-end">
+          <button id="fetchReportBtn" onclick="fetchScoutingReport()">
+            Generate Scouting Report
+          </button>
+        </div>
+      </div>
+
+      <div id="reportContainer"></div>
+    </div>
+
+    <script>
+      const API_BASE =
+        window.location.hostname === 'localhost'
+          ? 'http://localhost:8788'
+          : 'https://blazesportsintel.com';
+
+      async function fetchScoutingReport() {
+        const playerId = document.getElementById('playerId').value.trim();
+        const teamId = document.getElementById('teamId').value.trim();
+        const container = document.getElementById('reportContainer');
+        const btn = document.getElementById('fetchReportBtn');
+
+        if (!playerId) {
+          container.innerHTML = '<div class="error">Please enter a player ID</div>';
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Generating Report...';
+        container.innerHTML =
+          '<div class="loading">🤖 Running ensemble models...<br/>Velocity • Intangibles • NLP • Enigma Engine</div>';
+
+        try {
+          const url = new URL(`${API_BASE}/api/college-baseball/scouting-professional`);
+          url.searchParams.set('player_id', playerId);
+          if (teamId) url.searchParams.set('team_id', teamId);
+
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(`API returned ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          if (!data.player_id) {
+            throw new Error('Invalid response format');
+          }
+
+          renderReport(data);
+        } catch (error) {
+          console.error('Fetch error:', error);
+          container.innerHTML = `
+          <div class="error">
+            <strong>Error:</strong> ${error.message}
+            <br/><small>Check console for details</small>
+          </div>
+        `;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Generate Scouting Report';
+        }
+      }
+
+      function renderReport(data) {
+        const container = document.getElementById('reportContainer');
+        const comp = data.component_scores;
+        const final = data.final_recommendation;
+        const draft = data.draft_projection || {};
+        const comps = data.mlb_comparisons || [];
+        const injury = data.injury_risk_assessment || {};
+        const roadmap = data.development_roadmap || {};
+        const valuation = data.market_valuation || {};
+        const progression = data.progression_analysis || {};
+        const videos = data.video_library || {};
+
+        const gradeClass =
+          final.draft_grade >= 80
+            ? 'grade-high'
+            : final.draft_grade >= 60
+              ? 'grade-medium'
+              : 'grade-low';
+
+        const injuryRiskClass =
+          injury.overall_risk === 'Low'
+            ? 'injury-risk-low'
+            : injury.overall_risk === 'Moderate'
+              ? 'injury-risk-moderate'
+              : 'injury-risk-high';
+
+        let html = `
+        <!-- Header Card -->
+        <div class="report-card">
+          <div class="report-header">
+            <div>
+              <h2>Player ID: ${data.player_id}</h2>
+              ${data.team_id ? `<p style="color: var(--color-text-secondary);">Team: ${data.team_id}</p>` : ''}
+            </div>
+            <div class="grade-badge ${gradeClass}">
+              ${final.draft_grade}
+            </div>
+          </div>
+
+          <!-- Export Buttons -->
+          ${
+            data.export_urls
+              ? `
+            <div class="export-buttons">
+              <a href="${data.export_urls.pdf}" class="export-btn" target="_blank">
+                <i class="fas fa-file-pdf"></i>
+                Export PDF
+              </a>
+              <a href="${data.export_urls.csv}" class="export-btn" target="_blank">
+                <i class="fas fa-file-csv"></i>
+                Export CSV
+              </a>
+              <a href="${data.export_urls.json}" class="export-btn" target="_blank">
+                <i class="fas fa-file-code"></i>
+                Export JSON
+              </a>
+            </div>
+          `
+              : ''
+          }
+        </div>
+
+        <!-- MLB Draft Projection -->
+        ${
+          draft.projected_round
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-trophy"></i> MLB Draft Projection</h3>
+          <div class="draft-projection">
+            <div class="draft-stat">
+              <div class="draft-stat-label">Projected Round</div>
+              <div class="draft-stat-value">${draft.projected_round}</div>
+            </div>
+            <div class="draft-stat">
+              <div class="draft-stat-label">Pick Range</div>
+              <div class="draft-stat-value">${draft.pick_range}</div>
+            </div>
+            <div class="draft-stat">
+              <div class="draft-stat-label">Signing Bonus</div>
+              <div class="draft-stat-value">${draft.signing_bonus_range}</div>
+            </div>
+            <div class="draft-stat">
+              <div class="draft-stat-label">Draft Grade</div>
+              <div class="draft-stat-value">${draft.draft_grade}/100</div>
+            </div>
+          </div>
+          ${
+            draft.comparable_picks && draft.comparable_picks.length > 0
+              ? `
+            <div style="margin-top: 16px;">
+              <h4 style="color: var(--color-text-secondary); margin-bottom: 8px;">Comparable Draft Picks:</h4>
+              <p style="color: var(--color-text-secondary);">
+                ${draft.comparable_picks.map((p) => `${p.name} (${p.year}, Round ${p.round})`).join(' • ')}
+              </p>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        `
+            : ''
+        }
+
+        <!-- MLB Comparisons -->
+        ${
+          comps.length > 0
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-chart-line"></i> MLB Player Comparisons</h3>
+          ${comps
+            .map(
+              (comp) => `
+            <div class="mlb-comp-card">
+              <div class="mlb-comp-header">
+                <div class="mlb-comp-name">${comp.name}</div>
+                <div class="similarity-badge">${comp.similarity_score}% Similar</div>
+              </div>
+              <p style="color: var(--color-text-secondary); margin-bottom: 8px;">
+                <strong>Peak Velocity:</strong> ${comp.peak_velocity} mph •
+                <strong>Career WAR:</strong> ${comp.career_war?.toFixed(1) || 'N/A'} •
+                <strong>Draft:</strong> ${comp.draft_year || 'N/A'}
+              </p>
+              ${comp.style_notes ? `<p style="color: var(--color-text-secondary); font-style: italic;">"${comp.style_notes}"</p>` : ''}
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Injury Risk Assessment -->
+        ${
+          injury.overall_risk
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-heart-pulse"></i> Injury Risk Assessment</h3>
+          <div style="margin-bottom: 16px;">
+            <div class="${injuryRiskClass}" style="font-size: 1.1rem;">
+              ${injury.overall_risk} Risk (${injury.risk_score}/100)
+            </div>
+          </div>
+          ${
+            injury.risk_factors && injury.risk_factors.length > 0
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-bottom: 16px;">
+              <h4 style="color: var(--color-warning); margin-bottom: 8px;">⚠️ Risk Factors:</h4>
+              <ul style="margin-left: 20px; color: var(--color-text-secondary);">
+                ${injury.risk_factors.map((r) => `<li>${r}</li>`).join('')}
+              </ul>
+            </div>
+          `
+              : ''
+          }
+          ${
+            injury.preventive_measures && injury.preventive_measures.length > 0
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-bottom: 16px;">
+              <h4 style="color: var(--color-success); margin-bottom: 8px;">✅ Preventive Measures:</h4>
+              <ul style="margin-left: 20px; color: var(--color-text-secondary);">
+                ${injury.preventive_measures.map((m) => `<li>${m}</li>`).join('')}
+              </ul>
+            </div>
+          `
+              : ''
+          }
+          ${
+            injury.recommended_workload
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px;">
+              <h4 style="color: var(--color-primary); margin-bottom: 8px;">📊 Recommended Workload:</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; color: var(--color-text-secondary);">
+                <div><strong>Pitches/Outing:</strong> ${injury.recommended_workload.pitches_per_outing}</div>
+                <div><strong>Innings/Start:</strong> ${injury.recommended_workload.innings_per_start}</div>
+                <div><strong>Days Rest:</strong> ${injury.recommended_workload.days_rest}</div>
+                <div><strong>Season Target:</strong> ${injury.recommended_workload.season_innings_target} innings</div>
+              </div>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Development Roadmap -->
+        ${
+          roadmap.priority_areas && roadmap.priority_areas.length > 0
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-road"></i> Development Roadmap</h3>
+
+          <h4 style="color: var(--color-text-secondary); margin-bottom: 12px;">Priority Areas:</h4>
+          ${roadmap.priority_areas
+            .map(
+              (area) => `
+            <div class="priority-area">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: var(--color-text);">${area.area}</strong>
+                <span style="color: var(--color-${area.priority === 'High' ? 'danger' : area.priority === 'Medium' ? 'warning' : 'success'}); font-weight: 600;">
+                  ${area.priority} Priority
+                </span>
+              </div>
+              <div style="color: var(--color-text-secondary); font-size: 0.875rem;">
+                Current: ${area.current_level} → Target: ${area.target}
+              </div>
+            </div>
+          `
+            )
+            .join('')}
+
+          ${
+            roadmap.short_term_plan
+              ? `
+            <div class="roadmap-phase">
+              <h4>📅 Short-Term Plan (${roadmap.short_term_plan.timeline})</h4>
+              <ul style="margin-left: 20px; color: var(--color-text-secondary);">
+                ${roadmap.short_term_plan.action_items.map((item) => `<li>${item}</li>`).join('')}
+              </ul>
+            </div>
+          `
+              : ''
+          }
+
+          ${
+            roadmap.long_term_plan
+              ? `
+            <div class="roadmap-phase">
+              <h4>🎯 Long-Term Plan (${roadmap.long_term_plan.timeline})</h4>
+              <ul style="margin-left: 20px; color: var(--color-text-secondary);">
+                ${roadmap.long_term_plan.goals.map((goal) => `<li>${goal}</li>`).join('')}
+              </ul>
+            </div>
+          `
+              : ''
+          }
+
+          ${
+            roadmap.recommended_resources && roadmap.recommended_resources.length > 0
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-top: 16px;">
+              <h4 style="color: var(--color-primary); margin-bottom: 8px;">📚 Recommended Resources:</h4>
+              <ul style="margin-left: 20px; color: var(--color-text-secondary);">
+                ${roadmap.recommended_resources.map((r) => `<li>${r}</li>`).join('')}
+              </ul>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Market Valuation -->
+        ${
+          valuation.college_scholarship_value || valuation.professional_contract_projection
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-dollar-sign"></i> Market Valuation</h3>
+          <div class="valuation-grid">
+            ${
+              valuation.college_scholarship_value
+                ? `
+              <div class="valuation-card">
+                <h4 style="color: var(--color-primary); margin-bottom: 8px;">🎓 College Scholarship</h4>
+                <p style="color: var(--color-text-secondary);">${valuation.college_scholarship_value}</p>
+              </div>
+            `
+                : ''
+            }
+            ${
+              valuation.professional_contract_projection
+                ? `
+              <div class="valuation-card">
+                <h4 style="color: var(--color-primary); margin-bottom: 8px;">⚾ Professional Contract</h4>
+                <p style="color: var(--color-text-secondary); margin-bottom: 8px;">
+                  <strong>Signing Bonus:</strong> ${valuation.professional_contract_projection.signing_bonus}
+                </p>
+                ${
+                  valuation.professional_contract_projection.arbitration_projection
+                    ? `
+                  <p style="color: var(--color-text-secondary); margin-bottom: 8px;">
+                    <strong>Arbitration:</strong> ${valuation.professional_contract_projection.arbitration_projection}
+                  </p>
+                `
+                    : ''
+                }
+                ${
+                  valuation.professional_contract_projection.free_agency_potential
+                    ? `
+                  <p style="color: var(--color-text-secondary);">
+                    <strong>Free Agency:</strong> ${valuation.professional_contract_projection.free_agency_potential}
+                  </p>
+                `
+                    : ''
+                }
+              </div>
+            `
+                : ''
+            }
+            ${
+              valuation.nil_earning_potential
+                ? `
+              <div class="valuation-card">
+                <h4 style="color: var(--color-primary); margin-bottom: 8px;">💰 NIL Potential</h4>
+                <p style="color: var(--color-text-secondary); margin-bottom: 8px;">
+                  <strong>Annual Estimate:</strong> ${valuation.nil_earning_potential.annual_estimate}
+                </p>
+                <p style="color: var(--color-text-secondary); font-size: 0.875rem;">
+                  ${valuation.nil_earning_potential.sources}
+                </p>
+              </div>
+            `
+                : ''
+            }
+          </div>
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Progression Analysis -->
+        ${
+          progression.velocity_progression || progression.performance_progression
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-chart-area"></i> Progression Analysis</h3>
+          ${
+            progression.velocity_progression
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-bottom: 16px;">
+              <h4 style="color: var(--color-primary); margin-bottom: 8px;">⚡ Velocity Progression</h4>
+              <p style="color: var(--color-text-secondary);">
+                <strong>Trend:</strong>
+                <span style="color: var(--color-${progression.velocity_progression.direction === 'up' ? 'success' : progression.velocity_progression.direction === 'down' ? 'danger' : 'text-secondary'});">
+                  ${progression.velocity_progression.direction === 'up' ? '📈 Improving' : progression.velocity_progression.direction === 'down' ? '📉 Declining' : '➡️ Stable'}
+                </span>
+                (${progression.velocity_progression.change > 0 ? '+' : ''}${progression.velocity_progression.change} mph)
+              </p>
+              <p style="color: var(--color-text-secondary); font-size: 0.875rem;">
+                Recent Average: ${progression.velocity_progression.recent_avg} mph •
+                Older Average: ${progression.velocity_progression.older_avg} mph
+              </p>
+            </div>
+          `
+              : ''
+          }
+          ${
+            progression.trajectory
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px;">
+              <p style="color: var(--color-text); font-weight: 600; margin-bottom: 4px;">Overall Trajectory:</p>
+              <p style="color: var(--color-text-secondary);">${progression.trajectory}</p>
+            </div>
+          `
+              : ''
+          }
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Video Library & Game Film -->
+        ${
+          videos.highlight_reel || (videos.recent_games && videos.recent_games.length > 0)
+            ? `
+        <div class="pro-section">
+          <h3><i class="fas fa-video"></i> Game Film & Video Library</h3>
+
+          ${
+            videos.highlight_reel
+              ? `
+            <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-bottom: 20px; border: 2px solid var(--color-primary);">
+              <h4 style="color: var(--color-primary); margin-bottom: 8px;">🎬 Highlight Reel</h4>
+              <p style="color: var(--color-text-secondary); margin-bottom: 12px;">
+                ${videos.highlight_reel.description || 'Complete highlight reel featuring best pitches, strikeouts, and key performances'}
+              </p>
+              <a href="${videos.highlight_reel.url}" target="_blank" rel="noopener noreferrer" class="video-link" style="font-size: 1rem;">
+                <i class="fas fa-play-circle"></i>
+                Watch Highlight Reel (${videos.highlight_reel.duration || 'Full'})
+              </a>
+            </div>
+          `
+              : ''
+          }
+
+          ${
+            videos.recent_games && videos.recent_games.length > 0
+              ? `
+            <h4 style="color: var(--color-text-secondary); margin-bottom: 16px;">Recent Game Film:</h4>
+            <div class="video-grid">
+              ${videos.recent_games
+                .map(
+                  (video) => `
+                <a href="${video.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+                  <div class="video-card">
+                    <div class="video-thumbnail">
+                      <i class="fas fa-play-circle video-play-icon"></i>
+                      ${video.duration ? `<div class="video-duration">${video.duration}</div>` : ''}
+                    </div>
+                    <div class="video-info">
+                      <div class="video-title">${video.title || 'Game Film'}</div>
+                      <div class="video-meta">
+                        ${video.date ? `${video.date}` : 'Recent'} ${video.opponent ? `• vs ${video.opponent}` : ''}
+                        ${video.result ? `<br/>${video.result}` : ''}
+                      </div>
+                      ${
+                        video.performance_highlights
+                          ? `
+                        <p style="color: var(--color-text-secondary); font-size: 0.875rem; margin-top: 8px;">
+                          ${video.performance_highlights}
+                        </p>
+                      `
+                          : ''
+                      }
+                      <div class="video-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        Watch Film
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              `
+                )
+                .join('')}
+            </div>
+          `
+              : ''
+          }
+
+          ${
+            videos.practice_footage && videos.practice_footage.length > 0
+              ? `
+            <h4 style="color: var(--color-text-secondary); margin-top: 24px; margin-bottom: 16px;">Practice & Training:</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;">
+              ${videos.practice_footage
+                .map(
+                  (video) => `
+                <a href="${video.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; background: var(--color-surface-elevated); padding: 12px; border-radius: 6px; border: 1px solid rgba(255, 107, 0, 0.2); display: block; transition: all 0.2s;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-play-circle" style="color: var(--color-primary); font-size: 1.5rem;"></i>
+                    <div style="flex: 1;">
+                      <div style="color: var(--color-text); font-weight: 600; margin-bottom: 4px;">${video.title}</div>
+                      <div style="color: var(--color-text-secondary); font-size: 0.875rem;">${video.description || 'Training footage'}</div>
+                    </div>
+                  </div>
+                </a>
+              `
+                )
+                .join('')}
+            </div>
+          `
+              : ''
+          }
+        </div>
+        `
+            : ''
+        }
+
+        <!-- Component Scores (Original) -->
+        <div class="report-card">
+          <h3>Component Scores</h3>
+          <div class="component-scores">
+            <!-- Velocity Model -->
+            <div class="score-card">
+              <h4>⚡ Velocity Model</h4>
+              <div class="score-value">${comp.velocity_model.consistency}</div>
+              <div class="score-detail">
+                Trend: ${comp.velocity_model.trend}<br/>
+                Avg: ${comp.velocity_model.avg_velocity?.toFixed(1)} mph<br/>
+                Fatigue Risk: ${comp.velocity_model.fatigue_risk}%
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${comp.velocity_model.consistency}%"></div>
+              </div>
+            </div>
+
+            <!-- Intangibles Model -->
+            <div class="score-card">
+              <h4>🎯 Intangibles Model</h4>
+              <div class="score-value">${comp.intangibles_model.overall_intangibles}</div>
+              <div class="score-detail">
+                Leadership: ${comp.intangibles_model.leadership}<br/>
+                Work Ethic: ${comp.intangibles_model.work_ethic}<br/>
+                Composure: ${comp.intangibles_model.composure}
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${comp.intangibles_model.overall_intangibles}%"></div>
+              </div>
+            </div>
+
+            <!-- Scout Notes NLP -->
+            <div class="score-card">
+              <h4>📝 Scout Notes NLP</h4>
+              <div class="score-value">${comp.scout_notes_model.sentiment_score}</div>
+              <div class="score-detail">
+                Sentiment: ${comp.scout_notes_model.sentiment > 0 ? '👍 Positive' : comp.scout_notes_model.sentiment < 0 ? '👎 Negative' : '➖ Neutral'}<br/>
+                Key Phrases: ${comp.scout_notes_model.key_phrases?.length || 0}<br/>
+                Concerns: ${comp.scout_notes_model.concerns?.length || 0}
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${comp.scout_notes_model.sentiment_score}%"></div>
+              </div>
+            </div>
+
+            <!-- Champion Enigma Engine -->
+            <div class="score-card">
+              <h4>🧠 Champion Enigma Engine™</h4>
+              <div class="score-value">${comp.champion_enigma_engine.football_iq_equivalent}</div>
+              <div class="score-detail">
+                Confidence: ${(comp.champion_enigma_engine.confidence * 100).toFixed(0)}%<br/>
+                Pattern Recognition: ${comp.champion_enigma_engine.cognitive_traits?.pattern_recognition || 'N/A'}<br/>
+                Decision Speed: ${comp.champion_enigma_engine.cognitive_traits?.decision_speed || 'N/A'}
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${comp.champion_enigma_engine.football_iq_equivalent}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 32px;">Final Recommendation</h3>
+          <div style="background: var(--color-surface-elevated); padding: 16px; border-radius: 6px; margin-bottom: 24px;">
+            <p style="font-size: 1.25rem; margin-bottom: 8px;">
+              <strong>Draft Grade:</strong> ${final.draft_grade}/100
+            </p>
+            <p style="margin-bottom: 8px;">
+              <strong>Confidence:</strong> ${final.confidence_level}
+            </p>
+            <p style="margin-bottom: 8px;">
+              <strong>Decision Velocity Score:</strong> ${final.decision_velocity_score}/100
+            </p>
+            <p style="margin-bottom: 0;">
+              <strong>Recommendation:</strong> ${final.recommendation}
+            </p>
+          </div>
+
+          <div class="roles-list">
+            <h3>✅ Role Suggestions</h3>
+            <ul>
+              ${final.role_suggestions.map((role) => `<li>${role}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="risks-list">
+            <h3>⚠️ Risk Factors</h3>
+            <ul>
+              ${final.risk_factors.map((risk) => `<li>${risk}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="citations">
+            <strong>Data Sources:</strong> ${data.citations.sources.join(', ')}<br/>
+            <strong>Fetched:</strong> ${data.citations.fetched_at} (${data.citations.timezone})
+          </div>
+        </div>
+      `;
+
+        container.innerHTML = html;
+      }
+
+      // Auto-fetch on page load if player ID is set
+      window.addEventListener('DOMContentLoaded', () => {
+        const playerId = document.getElementById('playerId').value.trim();
+        if (playerId) {
+          fetchScoutingReport();
+        }
+      });
+    </script>
+  </body>
+</html>

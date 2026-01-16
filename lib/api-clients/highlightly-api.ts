@@ -349,7 +349,10 @@ export class HighlightlyApiClient {
   // PRIVATE HELPERS
   // ---------------------------------------------------------------------------
 
-  private async fetch<T>(endpoint: string, params?: Record<string, string>): Promise<HighlightlyApiResponse<T>> {
+  private async fetch<T>(
+    endpoint: string,
+    params?: Record<string, string>
+  ): Promise<HighlightlyApiResponse<T>> {
     const startTime = Date.now();
 
     // Build URL with query params
@@ -363,7 +366,7 @@ export class HighlightlyApiClient {
     }
 
     const headers: Record<string, string> = {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'User-Agent': this.config.userAgent,
       'x-rapidapi-key': this.config.rapidApiKey,
       'x-rapidapi-host': HighlightlyApiClient.RAPIDAPI_HOST,
@@ -440,7 +443,9 @@ export class HighlightlyApiClient {
   /**
    * Get live NCAA college baseball matches
    */
-  async getLiveCollegeMatches(): Promise<HighlightlyApiResponse<HighlightlyPaginatedResponse<HighlightlyMatch>>> {
+  async getLiveCollegeMatches(): Promise<
+    HighlightlyApiResponse<HighlightlyPaginatedResponse<HighlightlyMatch>>
+  > {
     return this.getMatches('NCAA');
   }
 
@@ -530,7 +535,9 @@ export class HighlightlyApiClient {
   /**
    * Get today's college baseball games
    */
-  async getTodayGames(): Promise<HighlightlyApiResponse<HighlightlyPaginatedResponse<HighlightlyMatch>>> {
+  async getTodayGames(): Promise<
+    HighlightlyApiResponse<HighlightlyPaginatedResponse<HighlightlyMatch>>
+  > {
     const today = new Date().toISOString().split('T')[0];
     return this.getMatches('NCAA', today);
   }
@@ -555,7 +562,12 @@ export class HighlightlyApiClient {
   /**
    * Health check - verify API is accessible and key is valid
    */
-  async healthCheck(): Promise<{ healthy: boolean; latency_ms: number; rateLimitRemaining?: number; error?: string }> {
+  async healthCheck(): Promise<{
+    healthy: boolean;
+    latency_ms: number;
+    rateLimitRemaining?: number;
+    error?: string;
+  }> {
     const startTime = Date.now();
     try {
       // Make a lightweight request to verify credentials

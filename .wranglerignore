@@ -1,0 +1,53 @@
+# Wrangler Ignore File
+# Prevents Wrangler from bundling source files during deployment
+# Only deploy production-ready files from dist/
+
+# Source directories (development only)
+functions/
+lib/
+src/
+
+# TypeScript files
+*.ts
+*.tsx
+tsconfig*.json
+
+# Node modules
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# Development files
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+__tests__/
+tests/
+
+# Build artifacts (not needed in deployment)
+*.map
+*.log
+
+# Documentation (not needed in production)
+*.md
+docs/
+
+# Configuration files
+.env*
+.eslintrc*
+.prettierrc*
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.backup
+*.bak
+~*
+
+# OS files
+.DS_Store
+Thumbs.db

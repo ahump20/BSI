@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<!-- v2.1.0 - Podcast API Integration - 2025-11-29 -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NCAA Baseball Analytics | Blaze Sports Intel</title>
+  <meta name="description" content="Complete D1 college baseball analytics - RPI tracker, tournament projections, conference standings, and team comparisons for all 300+ programs.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --burnt-orange: #BF5700;
+      --burnt-orange-dark: #A34700;
+      --ember: #FF6B35;
+      --texas-soil: #8B4513;
+      --charcoal: #1a1a1a;
+      --charcoal-light: #2d2d2d;
+      --charcoal-lighter: #3d3d3d;
+      --cream: #f5f5f0;
+      --cream-dim: rgba(245, 245, 240, 0.7);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #3b82f6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, var(--charcoal) 50%, #1a1510 100%);
+      color: var(--cream);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.3);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--cream);
+    }
+    .nav-brand img {
+      height: 36px;
+      width: auto;
+    }
+    .nav-brand span {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--ember);
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 5rem 1rem 2rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, rgba(191, 87, 0, 0.1), rgba(139, 69, 19, 0.05));
+      border-radius: 16px;
+      border: 1px solid rgba(191, 87, 0, 0.2);
+    }
+    .page-header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--burnt-orange), var(--ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-header p {
+      color: var(--cream-dim);
+      font-size: 1rem;
+    }
+    .season-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--success);
+      margin-bottom: 1rem;
+    }
+    .season-badge.offseason {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--warning);
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-header h2 .icon {
+      color: var(--burnt-orange);
+    }
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: none;
+      color: var(--cream-dim);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--cream);
+    }
+    .tab-btn.active {
+      background: var(--burnt-orange);
+      color: white;
+    }
+
+    /* Rankings Table */
+    .rankings-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .rankings-table th,
+    .rankings-table td {
+      padding: 0.75rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .rankings-table th {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream-dim);
+    }
+    .rankings-table td {
+      font-size: 0.875rem;
+    }
+    .rankings-table tbody tr:hover {
+      background: rgba(191, 87, 0, 0.1);
+    }
+    .rank-cell {
+      font-weight: 700;
+      color: var(--burnt-orange);
+      width: 40px;
+    }
+    .team-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .team-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      object-fit: contain;
+      background: white;
+      padding: 2px;
+    }
+    .team-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .team-name {
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .team-conference {
+      font-size: 0.6875rem;
+      color: var(--cream-dim);
+    }
+    .record-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+    }
+    .rpi-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .trend-up { color: var(--success); }
+    .trend-down { color: var(--error); }
+    .trend-same { color: var(--cream-dim); }
+
+    /* Conference Filter */
+    .conference-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .conf-btn {
+      padding: 0.375rem 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--cream-dim);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .conf-btn:hover,
+    .conf-btn.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
+    }
+
+    /* Stat Cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .stat-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--ember);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-label {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--cream-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* RPI Bubble Watch */
+    .bubble-section {
+      margin-top: 1.5rem;
+    }
+    .bubble-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .bubble-header h3 {
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+    .bubble-legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.6875rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .legend-dot.lock { background: var(--success); }
+    .legend-dot.bubble { background: var(--warning); }
+    .legend-dot.out { background: var(--error); }
+
+    .bubble-team {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .bubble-team-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .bubble-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .bubble-status.lock { background: var(--success); }
+    .bubble-status.bubble { background: var(--warning); }
+    .bubble-status.out { background: var(--error); }
+    .bubble-team-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .bubble-rpi {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+    }
+
+    /* Team Comparison Tool */
+    .comparison-tool {
+      margin-top: 1.5rem;
+    }
+    .comparison-header {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .team-select {
+      flex: 1;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--cream);
+      font-size: 0.875rem;
+    }
+    .team-select:focus {
+      outline: none;
+      border-color: var(--burnt-orange);
+    }
+    .vs-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      font-weight: 800;
+      color: var(--burnt-orange);
+    }
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem;
+    }
+    .comparison-stat {
+      display: contents;
+    }
+    .comparison-stat .value {
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    .comparison-stat .value.team1 { text-align: right; }
+    .comparison-stat .value.team2 { text-align: left; }
+    .comparison-stat .value.winner { color: var(--success); }
+    .comparison-stat .label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream-dim);
+    }
+
+    /* Conference Standings */
+    .conference-standings {
+      margin-top: 1rem;
+    }
+    .conf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .conf-table th,
+    .conf-table td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .conf-table th {
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+    .conf-table .team-col {
+      font-weight: 600;
+    }
+    .conf-record {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gb-cell {
+      color: var(--cream-dim);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      height: 250px;
+      margin-top: 1rem;
+    }
+
+    /* Live Scores Ticker */
+    .live-ticker {
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .ticker-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--error);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .ticker-header span {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ember);
+    }
+    .ticker-message {
+      color: var(--cream-dim);
+      font-size: 0.875rem;
+    }
+    .ticker-games {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .ticker-game {
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      min-width: 200px;
+    }
+    .ticker-teams {
+      font-size: 0.8125rem;
+    }
+    .ticker-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      margin-left: 0.5rem;
+    }
+    .ticker-inning {
+      font-size: 0.6875rem;
+      color: var(--warning);
+      margin-top: 0.25rem;
+    }
+
+    /* Media Hub Styles */
+    .media-hub {
+      margin-top: 2rem;
+    }
+    .media-hub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .media-hub-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .media-hub-header h2 .icon {
+      color: var(--ember);
+    }
+    .media-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .media-tab {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--cream-dim);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .media-tab:hover,
+    .media-tab.active {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+      color: white;
+    }
+    .media-content {
+      display: none;
+    }
+    .media-content.active {
+      display: block;
+    }
+
+    /* Podcast Grid */
+    .podcast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .podcast-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .podcast-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(191, 87, 0, 0.15);
+    }
+    .podcast-header {
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .podcast-cover {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--charcoal-lighter);
+      flex-shrink: 0;
+    }
+    .podcast-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .podcast-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--cream);
+    }
+    .podcast-host {
+      font-size: 0.75rem;
+      color: var(--cream-dim);
+      margin-bottom: 0.5rem;
+    }
+    .podcast-description {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .podcast-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      gap: 0.75rem;
+    }
+    .podcast-link {
+      flex: 1;
+      padding: 0.625rem 1rem;
+      background: rgba(30, 215, 96, 0.15);
+      border: 1px solid rgba(30, 215, 96, 0.3);
+      color: #1ED760;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .podcast-link:hover {
+      background: rgba(30, 215, 96, 0.25);
+    }
+    .podcast-link.apple {
+      background: rgba(252, 60, 68, 0.15);
+      border-color: rgba(252, 60, 68, 0.3);
+      color: #FC3C44;
+    }
+    .podcast-link.apple:hover {
+      background: rgba(252, 60, 68, 0.25);
+    }
+
+    /* Featured Episodes */
+    .featured-episodes {
+      margin-top: 2rem;
+    }
+    .featured-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .spotify-embed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    .spotify-embed-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+    }
+    .embed-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--burnt-orange);
+      margin-bottom: 0.75rem;
+    }
+
+    /* Twitter/X Section */
+    .twitter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .twitter-account {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .twitter-account:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .twitter-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .twitter-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--charcoal-lighter);
+      object-fit: cover;
+    }
+    .twitter-name {
+      font-weight: 700;
+      font-size: 0.9375rem;
+    }
+    .twitter-handle {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+    }
+    .twitter-bio {
+      font-size: 0.8125rem;
+      color: var(--cream-dim);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    .twitter-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(191, 87, 0, 0.15);
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--ember);
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .twitter-follow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(29, 161, 242, 0.15);
+      border: 1px solid rgba(29, 161, 242, 0.3);
+      color: #1DA1F2;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-top: 0.75rem;
+    }
+    .twitter-follow:hover {
+      background: rgba(29, 161, 242, 0.25);
+    }
+
+    /* Episode Highlights */
+    .episode-highlights {
+      margin-top: 2rem;
+    }
+    .highlight-card {
+      background: var(--charcoal-light);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .highlight-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .highlight-source {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ember);
+    }
+    .highlight-date {
+      font-size: 0.6875rem;
+      color: var(--cream-dim);
+    }
+    .highlight-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-summary {
+      font-size: 0.875rem;
+      color: var(--cream-dim);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .highlight-listen {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--burnt-orange);
+      color: white;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .highlight-listen:hover {
+      background: var(--burnt-orange-dark);
+    }
+
+    /* Hashtag Trends */
+    .trending-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(191, 87, 0, 0.1);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+    }
+    .trending-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hashtag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .hashtag-tag {
+      padding: 0.5rem 1rem;
+      background: var(--charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .hashtag-tag:hover {
+      background: var(--burnt-orange);
+      border-color: var(--burnt-orange);
+    }
+
+    @media (max-width: 768px) {
+      .media-hub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .media-tabs {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .spotify-embed-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Footer */
+    .dashboard-footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-timestamp {
+      font-size: 0.75rem;
+      color: var(--cream-dim);
+    }
+    .footer-source {
+      font-size: 0.6875rem;
+      color: var(--cream-dim);
+      margin-top: 0.5rem;
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--cream-dim);
+    }
+    .loading-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(191, 87, 0, 0.2);
+      border-top-color: var(--burnt-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 0.75rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--cream-dim);
+    }
+    .empty-state h3 {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+      color: var(--cream);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container { padding: 4.5rem 0.75rem 1.5rem; }
+      .card-body { padding: 1rem; }
+      .rankings-table th:nth-child(4),
+      .rankings-table td:nth-child(4),
+      .rankings-table th:nth-child(5),
+      .rankings-table td:nth-child(5) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <img src="/images/bsi-logo-nav.png" alt="BSI">
+        <span>Blaze Sports Intel</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/college-baseball/">College Baseball</a></li>
+        <li><a href="/dashboards/ncaa-baseball-analytics" class="active">NCAA Analytics</a></li>
+        <li><a href="/dashboards/mlb-league-analytics">MLB</a></li>
+        <li><a href="/analytics">All Analytics</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <header class="page-header">
+      <div class="season-badge offseason" id="seasonBadge">
+        <span>2025 Season Preview</span>
+      </div>
+      <h1>NCAA Baseball Analytics</h1>
+      <p>RPI tracker, tournament projections, and conference standings for 300+ D1 programs</p>
+    </header>
+
+    <!-- Live Ticker -->
+    <div class="live-ticker" id="liveTicker">
+      <div class="ticker-header">
+        <div class="live-dot"></div>
+        <span>Live Games</span>
+      </div>
+      <div class="ticker-message" id="tickerMessage">
+        Season begins February 14, 2025. Check back for live scores during the season.
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+      <div class="card-body">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statTeams">300+</div>
+            <div class="stat-label">D1 Programs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statConferences">31</div>
+            <div class="stat-label">Conferences</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statTournament">64</div>
+            <div class="stat-label">Tournament Field</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statRegionals">16</div>
+            <div class="stat-label">Regional Hosts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Main Column -->
+      <div class="main-column">
+        <!-- Top 25 Rankings -->
+        <div class="card">
+          <div class="card-header">
+            <h2><span class="icon">📊</span> D1 Baseball Rankings</h2>
+            <div class="tab-nav" style="margin: 0; padding: 0.25rem; background: rgba(0,0,0,0.2);">
+              <button class="tab-btn active" data-poll="d1baseball">D1Baseball</button>
+              <button class="tab-btn" data-poll="ba">Baseball America</button>
+              <button class="tab-btn" data-poll="coaches">Coaches</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="rankings-table" id="rankingsTable">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Team</th>
+                  <th>Record</th>
+                  <th>RPI</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="rankingsBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Conference Standings -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><span class="icon">🏆</span> Conference Standings</h2>
+          </div>
+          <div class="card-body">
+            <div class="conference-filter" id="conferenceFilter">
+              <button class="conf-btn active" data-conf="SEC">SEC</button>
+              <button class="conf-btn" data-conf="ACC">ACC</button>
+              <button class="conf-btn" data-conf="Big 12">Big 12</button>
+              <button class="conf-btn" data-conf="Big Ten">Big Ten</button>
+              <button class="conf-btn" data-conf="Pac-12">Pac-12</button>
+              <button class="conf-btn" data-conf="Sun Belt">Sun Belt</button>
+              <button class="conf-btn" data-conf="AAC">AAC</button>
+              <button class="conf-btn" data-conf="C-USA">C-USA</button>
+            </div>
+            <div class="conference-standings" id="conferenceStandings">
+              <table class="conf-table">
+                <thead>
+                  <tr>
+                    <th>Team</th>
+                    <th>Conf</th>
+                    <th>Overall</th>
+                    <th>GB</th>
+                    <th>Streak</th>
+                  </tr>
+                </thead>
+                <tbody id="confStandingsBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Comparison -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><span class="icon">⚔️</span> Team Comparison</h2>
+          </div>
+          <div class="card-body">
+            <div class="comparison-tool">
+              <div class="comparison-header">
+                <select class="team-select" id="team1Select">
+                  <option value="">Select Team 1</option>
+                </select>
+                <div class="vs-badge">VS</div>
+                <select class="team-select" id="team2Select">
+                  <option value="">Select Team 2</option>
+                </select>
+              </div>
+              <div class="comparison-grid" id="comparisonGrid">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- RPI Bubble Watch -->
+        <div class="card">
+          <div class="card-header">
+            <h2><span class="icon">🎯</span> Tournament Bubble</h2>
+          </div>
+          <div class="card-body">
+            <div class="bubble-section">
+              <div class="bubble-header">
+                <h3>At-Large Watch</h3>
+                <div class="bubble-legend">
+                  <div class="legend-item">
+                    <div class="legend-dot lock"></div>
+                    <span>Lock</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-dot bubble"></div>
+                    <span>Bubble</span>
+                  </div>
+                  <div class="legend-item">
+                    <div class="legend-dot out"></div>
+                    <span>Out</span>
+                  </div>
+                </div>
+              </div>
+              <div id="bubbleTeams">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projected Hosts -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><span class="icon">📍</span> Projected Regional Hosts</h2>
+          </div>
+          <div class="card-body">
+            <div id="projectedHosts">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- RPI Movers -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-header">
+            <h2><span class="icon">📈</span> RPI Movers</h2>
+          </div>
+          <div class="card-body">
+            <h4 style="font-size: 0.75rem; color: var(--success); margin-bottom: 0.75rem;">↑ Rising</h4>
+            <div id="rpiRising">
+              <!-- Populated by JS -->
+            </div>
+            <h4 style="font-size: 0.75rem; color: var(--error); margin-top: 1rem; margin-bottom: 0.75rem;">↓ Falling</h4>
+            <div id="rpiFalling">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media Hub Section -->
+    <section class="media-hub">
+      <div class="media-hub-header">
+        <h2><span class="icon">🎙️</span> College Baseball Media Hub</h2>
+        <div class="media-tabs">
+          <button class="media-tab active" data-tab="podcasts">Podcasts</button>
+          <button class="media-tab" data-tab="twitter">Twitter/X</button>
+          <button class="media-tab" data-tab="highlights">Episode Highlights</button>
+        </div>
+      </div>
+
+      <!-- Podcasts Tab -->
+      <div class="media-content active" id="podcasts-content">
+        <div class="podcast-grid" id="podcastGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Featured Spotify Embeds -->
+        <div class="featured-episodes">
+          <h3 class="featured-header">🎧 Featured Episodes</h3>
+          <div class="spotify-embed-grid">
+            <div class="spotify-embed-card">
+              <div class="embed-label">D1 Baseball Podcast</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/0JwFzTEqFKVtIUyQVFZFYf?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">Baseball America Podcast</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/0xtG5VZ4V7R3WlWvvwSuIF?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">College Baseball Nation</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/4Wci1D2cYyKmhKVJUU8P94?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="spotify-embed-card">
+              <div class="embed-label">Prospects Live</div>
+              <iframe
+                style="border-radius:12px"
+                src="https://open.spotify.com/embed/show/3n2yKTYNGVkZhH0HgMJ7VI?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Twitter/X Tab -->
+      <div class="media-content" id="twitter-content">
+        <div class="twitter-grid" id="twitterGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Trending Hashtags -->
+        <div class="trending-section">
+          <h3 class="trending-header">🔥 Trending in College Baseball</h3>
+          <div class="hashtag-grid" id="hashtagGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Episode Highlights Tab -->
+      <div class="media-content" id="highlights-content">
+        <div id="episodeHighlights">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <footer class="dashboard-footer">
+      <div class="footer-timestamp" id="lastUpdated">
+        Last updated: Loading...
+      </div>
+      <div class="footer-source">
+        Data sources: NCAA, D1Baseball, ESPN | Timezone: America/Chicago
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Dashboard state - populated from API
+    let RANKINGS = [];
+    let BUBBLE_TEAMS = [];
+    let PROJECTED_HOSTS = [];
+    let RPI_MOVERS = { risers: [], fallers: [] };
+    let SEASON_INFO = { year: 2026, phase: 'preseason', label: '2026 Preseason' };
+    let dashboardDataLoaded = false;
+
+    // Fallback rankings (used if API fails)
+    const FALLBACK_RANKINGS = [
+      { rank: 1, team: 'Texas A&M', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png', trend: 'same' },
+      { rank: 2, team: 'Texas', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png', trend: 'same' },
+      { rank: 3, team: 'LSU', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/99.png', trend: 'same' },
+      { rank: 4, team: 'Florida', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/57.png', trend: 'same' },
+      { rank: 5, team: 'Arkansas', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/8.png', trend: 'same' },
+      { rank: 6, team: 'Georgia', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/61.png', trend: 'same' },
+      { rank: 7, team: 'Virginia', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/258.png', trend: 'same' },
+      { rank: 8, team: 'Wake Forest', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/154.png', trend: 'same' },
+      { rank: 9, team: 'Clemson', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/228.png', trend: 'same' },
+      { rank: 10, team: 'Florida State', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/52.png', trend: 'same' },
+      { rank: 11, team: 'Tennessee', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png', trend: 'same' },
+      { rank: 12, team: 'Oregon State', conference: 'Pac-12', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/204.png', trend: 'same' },
+      { rank: 13, team: 'North Carolina', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/153.png', trend: 'same' },
+      { rank: 14, team: 'Stanford', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/24.png', trend: 'same' },
+      { rank: 15, team: 'Ole Miss', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/145.png', trend: 'same' },
+      { rank: 16, team: 'South Carolina', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png', trend: 'same' },
+      { rank: 17, team: 'Oklahoma State', conference: 'Big 12', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/197.png', trend: 'same' },
+      { rank: 18, team: 'TCU', conference: 'Big 12', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png', trend: 'same' },
+      { rank: 19, team: 'Vanderbilt', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/238.png', trend: 'same' },
+      { rank: 20, team: 'Kentucky', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/96.png', trend: 'same' },
+      { rank: 21, team: 'Alabama', conference: 'SEC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/333.png', trend: 'same' },
+      { rank: 22, team: 'East Carolina', conference: 'American', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/151.png', trend: 'same' },
+      { rank: 23, team: 'UCLA', conference: 'Big Ten', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png', trend: 'same' },
+      { rank: 24, team: 'NC State', conference: 'ACC', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/152.png', trend: 'same' },
+      { rank: 25, team: 'Louisiana', conference: 'Sun Belt', record: '0-0', rpi: '-', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/309.png', trend: 'same' },
+    ];
+
+    // Fetch dashboard data from API
+    async function fetchDashboardData() {
+      const rankingsBody = document.getElementById('rankingsBody');
+      if (rankingsBody) {
+        rankingsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;"><div class="loading-spinner"></div> Loading live data...</td></tr>';
+      }
+
+      try {
+        const response = await fetch('/api/college-baseball/dashboard');
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Update rankings
+          if (data.rankings && data.rankings.length > 0) {
+            RANKINGS = data.rankings;
+          } else {
+            RANKINGS = FALLBACK_RANKINGS;
+          }
+
+          // Update bubble watch
+          if (data.bubbleWatch && data.bubbleWatch.length > 0) {
+            BUBBLE_TEAMS = data.bubbleWatch;
+          }
+
+          // Update projected hosts
+          if (data.projectedHosts && data.projectedHosts.length > 0) {
+            PROJECTED_HOSTS = data.projectedHosts;
+          }
+
+          // Update RPI movers
+          if (data.rpiMovers) {
+            RPI_MOVERS = data.rpiMovers;
+          }
+
+          // Update season info
+          if (data.season) {
+            SEASON_INFO = data.season;
+          }
+
+          dashboardDataLoaded = true;
+          console.log(`Dashboard loaded: ${RANKINGS.length} teams, ${data.fromCache ? 'from cache' : 'fresh'}`);
+
+          // Update last updated timestamp
+          if (data.timestamp) {
+            document.getElementById('lastUpdated').textContent = `Last updated: ${data.timestamp} CT`;
+          }
+        } else {
+          throw new Error('Invalid response');
+        }
+      } catch (err) {
+        console.warn('Dashboard API error, using fallback:', err.message);
+        RANKINGS = FALLBACK_RANKINGS;
+        BUBBLE_TEAMS = FALLBACK_RANKINGS.slice(0, 10).map((t, i) => ({
+          team: t.team,
+          rpi: '-',
+          status: i < 5 ? 'lock' : i < 8 ? 'bubble' : 'out'
+        }));
+        PROJECTED_HOSTS = FALLBACK_RANKINGS.slice(0, 16).map((t, i) => ({
+          seed: i + 1,
+          team: t.team,
+          conference: t.conference,
+          record: t.record,
+          logo: t.logo
+        }));
+      }
+
+      // Render all sections
+      renderRankings();
+      renderBubbleTeams();
+      renderProjectedHosts();
+      renderRPIMovers();
+      populateTeamSelects();
+    }
+
+    // Conference data structure
+    const CONFERENCE_TEAMS = {
+      'SEC': [
+        { team: 'Texas A&M', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Texas', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'LSU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Florida', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Arkansas', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Georgia', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Tennessee', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Ole Miss', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Vanderbilt', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'South Carolina', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Kentucky', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Alabama', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Auburn', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Missouri', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Mississippi State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Oklahoma', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'ACC': [
+        { team: 'Virginia', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Wake Forest', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Clemson', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Florida State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'North Carolina', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'NC State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Duke', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Miami', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Georgia Tech', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Louisville', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Notre Dame', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Pittsburgh', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Virginia Tech', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Boston College', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Stanford', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Cal', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'SMU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'Big 12': [
+        { team: 'Oklahoma State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'TCU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Texas Tech', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'West Virginia', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Kansas State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Kansas', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Baylor', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'BYU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'UCF', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Houston', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Cincinnati', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Arizona', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Arizona State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Utah', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Colorado', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'Big Ten': [
+        { team: 'UCLA', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'USC', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Michigan', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Indiana', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Maryland', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Nebraska', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Ohio State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Penn State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Purdue', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Rutgers', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Illinois', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Iowa', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Michigan State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Minnesota', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Northwestern', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Oregon', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Washington', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'Pac-12': [
+        { team: 'Oregon State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Washington State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'Sun Belt': [
+        { team: 'Louisiana', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Coastal Carolina', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'South Alabama', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Troy', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Georgia Southern', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Texas State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'App State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Arkansas State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Georgia State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'ULM', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Southern Miss', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'James Madison', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Marshall', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Old Dominion', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'AAC': [
+        { team: 'East Carolina', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Tulane', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Wichita State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Memphis', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'South Florida', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Charlotte', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'FAU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Rice', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'UAB', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'UTSA', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Temple', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Navy', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Tulsa', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'North Texas', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+      'C-USA': [
+        { team: 'Dallas Baptist', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Liberty', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'MTSU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'WKU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'LA Tech', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'FIU', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Jacksonville State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Sam Houston', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'New Mexico State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'UTEP', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+        { team: 'Kennesaw State', confRecord: '0-0', overall: '0-0', gb: '-', streak: '-' },
+      ],
+    };
+
+    // All teams for comparison (computed from rankings)
+    function getAllTeams() {
+      return (RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS).map(t => t.team);
+    }
+
+    // Podcast state - will be populated from API
+    let PODCASTS = [];
+    let LATEST_EPISODES = [];
+    let podcastDataLoaded = false;
+
+    // Fallback podcast data (used if API fails)
+    const FALLBACK_PODCASTS = [
+      {
+        title: 'D1 Baseball Podcast',
+        host: 'Kendall Rogers, Aaron Fitt & Mike Rooney',
+        description: 'The premier college baseball podcast. Deep dives into rankings, recruiting, and everything D1 baseball from the industry leaders.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a8a6d6d3fcfc0ff5fe8c7ed48',
+        spotify: 'https://open.spotify.com/show/0JwFzTEqFKVtIUyQVFZFYf',
+        apple: 'https://podcasts.apple.com/us/podcast/d1baseball-podcast/id1448787001',
+        category: 'essential'
+      },
+      {
+        title: 'Baseball America Podcast',
+        host: 'Baseball America Staff',
+        description: 'Draft coverage, prospect rankings, and college baseball analysis from the publication that has covered the game since 1981.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a1c8e8e6a2b6a3e4e0f3d2c1b',
+        spotify: 'https://open.spotify.com/show/0xtG5VZ4V7R3WlWvvwSuIF',
+        apple: 'https://podcasts.apple.com/us/podcast/baseball-america-podcast/id1447836328',
+        category: 'essential'
+      },
+      {
+        title: 'Perfect Game Podcast',
+        host: 'Perfect Game Staff',
+        description: 'Youth to college coverage from the leading amateur baseball organization. Recruiting, showcases, and player development.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a5f6a7b8c9d0e1f2a3b4c5d6e',
+        spotify: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd',
+        apple: 'https://podcasts.apple.com/us/podcast/perfect-game-podcast/id1489234567',
+        category: 'recruiting'
+      },
+      {
+        title: 'Prospects Live',
+        host: 'Prospects Live Team',
+        description: 'Draft prospect coverage with a college baseball focus. Scouting reports, mock drafts, and player evaluations.',
+        cover: 'https://i.scdn.co/image/ab6765630000ba8a3d4e5f6a7b8c9d0e1f2a3b4c',
+        spotify: 'https://open.spotify.com/show/3n2yKTYNGVkZhH0HgMJ7VI',
+        apple: 'https://podcasts.apple.com/us/podcast/prospects-live/id1459876234',
+        category: 'prospects'
+      },
+    ];
+
+    // Fetch podcast data from API
+    async function fetchPodcastData() {
+      const container = document.getElementById('podcastGrid');
+      container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading podcasts...</div>';
+
+      try {
+        const response = await fetch('/api/media/podcasts');
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+
+        if (data.success && data.shows) {
+          // Transform API data to match our format
+          PODCASTS = Object.entries(data.shows).map(([key, show]) => ({
+            title: show.name,
+            host: show.host,
+            description: show.episodes?.[0]?.description || 'College baseball coverage and analysis.',
+            cover: `https://i.scdn.co/image/ab6765630000ba8a${key.slice(0,12)}`,
+            spotify: show.spotify,
+            apple: show.apple,
+            category: show.category,
+            latestEpisode: show.episodes?.[0] || null,
+          }));
+
+          // Store latest episodes for highlights
+          LATEST_EPISODES = data.episodes || [];
+          podcastDataLoaded = true;
+
+          console.log(`Loaded ${PODCASTS.length} podcasts, ${LATEST_EPISODES.length} episodes`);
+        } else {
+          throw new Error('Invalid data');
+        }
+      } catch (err) {
+        console.warn('Podcast API error, using fallback:', err.message);
+        PODCASTS = FALLBACK_PODCASTS;
+        LATEST_EPISODES = [];
+      }
+
+      renderPodcasts();
+      renderEpisodeHighlights();
+    }
+
+    // Twitter/X Accounts
+    const TWITTER_ACCOUNTS = [
+      {
+        name: 'D1 Baseball',
+        handle: '@d1baseball',
+        bio: 'The definitive source for Division I college baseball coverage. Rankings, scores, news, and analysis.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567890/d1baseball_400x400.jpg',
+        badges: ['Rankings', 'News', 'Analysis'],
+        followers: '185K',
+        category: 'essential'
+      },
+      {
+        name: 'Kendall Rogers',
+        handle: '@KendallRogers',
+        bio: 'Managing Editor @d1baseball. College baseball insider with the best sources in the game.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567891/kendall_400x400.jpg',
+        badges: ['Insider', 'Breaking News'],
+        followers: '95K',
+        category: 'essential'
+      },
+      {
+        name: 'Baseball America',
+        handle: '@BaseballAmerica',
+        bio: 'Covering baseball at every level since 1981. Draft, prospects, college, and MLB.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567892/ba_400x400.jpg',
+        badges: ['Draft', 'Prospects'],
+        followers: '210K',
+        category: 'essential'
+      },
+      {
+        name: 'Perfect Game USA',
+        handle: '@PerfectGameUSA',
+        bio: 'The world\'s largest amateur baseball scouting organization. Showcases, rankings, and recruiting.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567893/pg_400x400.jpg',
+        badges: ['Recruiting', 'Showcases'],
+        followers: '125K',
+        category: 'recruiting'
+      },
+      {
+        name: 'NCAA Baseball',
+        handle: '@NCAABaseball',
+        bio: 'Official Twitter account of NCAA Division I Baseball. Tournament updates, highlights, and more.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567894/ncaa_400x400.jpg',
+        badges: ['Official', 'Tournament'],
+        followers: '320K',
+        category: 'official'
+      },
+      {
+        name: 'Aaron Fitt',
+        handle: '@aaronfitt',
+        bio: 'National Writer @d1baseball. College baseball recruiting and analysis.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567895/fitt_400x400.jpg',
+        badges: ['Recruiting', 'Analysis'],
+        followers: '45K',
+        category: 'writer'
+      },
+      {
+        name: 'College Baseball',
+        handle: '@CBBTonight',
+        bio: 'Your nightly college baseball coverage. Scores, highlights, and game threads.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567896/cbb_400x400.jpg',
+        badges: ['Scores', 'Highlights'],
+        followers: '35K',
+        category: 'scores'
+      },
+      {
+        name: 'SEC Baseball',
+        handle: '@SECBaseball',
+        bio: 'Covering the best conference in college baseball. Games, news, and SEC Tournament.',
+        avatar: 'https://pbs.twimg.com/profile_images/1234567897/sec_400x400.jpg',
+        badges: ['SEC', 'Conference'],
+        followers: '75K',
+        category: 'conference'
+      },
+    ];
+
+    // Trending Hashtags
+    const TRENDING_HASHTAGS = [
+      { tag: '#CollegeBaseball', url: 'https://twitter.com/search?q=%23CollegeBaseball' },
+      { tag: '#D1Baseball', url: 'https://twitter.com/search?q=%23D1Baseball' },
+      { tag: '#CWS', url: 'https://twitter.com/search?q=%23CWS' },
+      { tag: '#RoadToOmaha', url: 'https://twitter.com/search?q=%23RoadToOmaha' },
+      { tag: '#SECBaseball', url: 'https://twitter.com/search?q=%23SECBaseball' },
+      { tag: '#ACCBaseball', url: 'https://twitter.com/search?q=%23ACCBaseball' },
+      { tag: '#Big12Baseball', url: 'https://twitter.com/search?q=%23Big12Baseball' },
+      { tag: '#MLBDraft', url: 'https://twitter.com/search?q=%23MLBDraft' },
+      { tag: '#CollegeWorldSeries', url: 'https://twitter.com/search?q=%23CollegeWorldSeries' },
+      { tag: '#BaseballAmerica', url: 'https://twitter.com/search?q=%23BaseballAmerica' },
+    ];
+
+    // Episode Highlights - Fallback data (will be replaced by API data when available)
+    const FALLBACK_EPISODE_HIGHLIGHTS = [
+      {
+        source: 'D1 Baseball Podcast',
+        title: '2025 Preseason Preview: Top 25 Breakdown',
+        date: 'January 2025',
+        summary: 'Kendall Rogers and Aaron Fitt break down their preseason Top 25, highlighting Texas A&M\'s loaded roster, Texas joining the SEC, and dark horse teams to watch.',
+        link: 'https://open.spotify.com/show/0JwFzTEqFKVtIUyQVFZFYf'
+      },
+      {
+        source: 'Baseball America',
+        title: '2025 MLB Draft Early Look',
+        date: 'January 2025',
+        summary: 'Early rankings of draft-eligible college players. Which college sophomores and juniors are climbing boards heading into the spring.',
+        link: 'https://open.spotify.com/show/0xtG5VZ4V7R3WlWvvwSuIF'
+      },
+      {
+        source: 'Perfect Game Podcast',
+        title: 'Showcase Season Preview 2025',
+        date: 'January 2025',
+        summary: 'Preview of upcoming Perfect Game showcases and what scouts are looking for in the 2025 class.',
+        link: 'https://open.spotify.com/show/1LzpMIQOIYHwlITgqW8nLd'
+      },
+      {
+        source: 'Prospects Live',
+        title: 'Top 50 College Prospects for 2025',
+        date: 'December 2024',
+        summary: 'Comprehensive scouting reports on the top draft-eligible college players. Arm grades, hit tools, and projection notes.',
+        link: 'https://open.spotify.com/show/3n2yKTYNGVkZhH0HgMJ7VI'
+      },
+    ];
+
+    // Render functions
+    function renderRankings() {
+      const tbody = document.getElementById('rankingsBody');
+      const rankings = RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS;
+      tbody.innerHTML = rankings.map(team => `
+        <tr>
+          <td class="rank-cell">${team.rank}</td>
+          <td>
+            <div class="team-cell">
+              <img src="${team.logo}" alt="${team.team}" class="team-logo" onerror="this.style.display='none'">
+              <div class="team-info">
+                <span class="team-name">${team.team}</span>
+                <span class="team-conference">${team.conference}</span>
+              </div>
+            </div>
+          </td>
+          <td class="record-cell">${team.record}</td>
+          <td class="rpi-cell">${team.rpi}</td>
+          <td class="trend-${team.trend}">
+            ${team.trend === 'up' ? '↑' : team.trend === 'down' ? '↓' : '—'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderConferenceStandings(conference) {
+      const tbody = document.getElementById('confStandingsBody');
+      const teams = CONFERENCE_TEAMS[conference] || [];
+      tbody.innerHTML = teams.map(team => `
+        <tr>
+          <td class="team-col">${team.team}</td>
+          <td class="conf-record">${team.confRecord}</td>
+          <td class="conf-record">${team.overall}</td>
+          <td class="gb-cell">${team.gb}</td>
+          <td>${team.streak}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderBubbleTeams() {
+      const container = document.getElementById('bubbleTeams');
+      container.innerHTML = BUBBLE_TEAMS.map(team => `
+        <div class="bubble-team">
+          <div class="bubble-team-info">
+            <div class="bubble-status ${team.status}"></div>
+            <span class="bubble-team-name">${team.team}</span>
+          </div>
+          <span class="bubble-rpi">RPI: ${team.rpi}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderProjectedHosts() {
+      const container = document.getElementById('projectedHosts');
+      container.innerHTML = PROJECTED_HOSTS.map((team, i) => `
+        <div class="bubble-team" style="margin-bottom: 0.375rem;">
+          <div class="bubble-team-info">
+            <span style="color: var(--burnt-orange); font-weight: 700; width: 20px;">${i + 1}</span>
+            <span class="bubble-team-name">${team}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRPIMovers() {
+      // During offseason, show placeholder
+      document.getElementById('rpiRising').innerHTML = `
+        <div style="color: var(--cream-dim); font-size: 0.8125rem; padding: 0.5rem;">
+          RPI tracking begins when season starts
+        </div>
+      `;
+      document.getElementById('rpiFalling').innerHTML = `
+        <div style="color: var(--cream-dim); font-size: 0.8125rem; padding: 0.5rem;">
+          Check back after Feb 14, 2026
+        </div>
+      `;
+    }
+
+    function populateTeamSelects() {
+      const team1Select = document.getElementById('team1Select');
+      const team2Select = document.getElementById('team2Select');
+
+      const options = getAllTeams().map(t => `<option value="${t}">${t}</option>`).join('');
+      team1Select.innerHTML = '<option value="">Select Team 1</option>' + options;
+      team2Select.innerHTML = '<option value="">Select Team 2</option>' + options;
+    }
+
+    function renderComparison() {
+      const team1 = document.getElementById('team1Select').value;
+      const team2 = document.getElementById('team2Select').value;
+      const grid = document.getElementById('comparisonGrid');
+
+      if (!team1 || !team2) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--cream-dim);">
+            Select two teams to compare
+          </div>
+        `;
+        return;
+      }
+
+      const rankings = RANKINGS.length > 0 ? RANKINGS : FALLBACK_RANKINGS;
+      const t1 = rankings.find(t => t.team === team1) || { rank: '-', record: '0-0' };
+      const t2 = rankings.find(t => t.team === team2) || { rank: '-', record: '0-0' };
+
+      const stats = [
+        { label: 'Ranking', val1: t1.rank || 'NR', val2: t2.rank || 'NR', lower: true },
+        { label: 'Record', val1: t1.record, val2: t2.record },
+        { label: 'RPI', val1: t1.rpi || '-', val2: t2.rpi || '-' },
+        { label: 'Conference', val1: t1.conference || '-', val2: t2.conference || '-' },
+      ];
+
+      grid.innerHTML = stats.map(stat => `
+        <div class="comparison-stat">
+          <div class="value team1">${stat.val1}</div>
+          <div class="label">${stat.label}</div>
+          <div class="value team2">${stat.val2}</div>
+        </div>
+      `).join('');
+    }
+
+    // Event listeners
+    document.querySelectorAll('.tab-btn[data-poll]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn[data-poll]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Would fetch different poll data here
+      });
+    });
+
+    document.querySelectorAll('.conf-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderConferenceStandings(btn.dataset.conf);
+      });
+    });
+
+    document.getElementById('team1Select').addEventListener('change', renderComparison);
+    document.getElementById('team2Select').addEventListener('change', renderComparison);
+
+    // Media Hub render functions
+    function renderPodcasts() {
+      const container = document.getElementById('podcastGrid');
+      container.innerHTML = PODCASTS.map(podcast => `
+        <div class="podcast-card">
+          <div class="podcast-header">
+            <img
+              src="${podcast.cover}"
+              alt="${podcast.title}"
+              class="podcast-cover"
+              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 80%22><rect fill=%22%232d2d2d%22 width=%2280%22 height=%2280%22/><text x=%2240%22 y=%2245%22 fill=%22%23BF5700%22 font-size=%2230%22 text-anchor=%22middle%22>🎙️</text></svg>'"
+            >
+            <div class="podcast-info">
+              <h3 class="podcast-title">${podcast.title}</h3>
+              <p class="podcast-host">${podcast.host}</p>
+              <p class="podcast-description">${podcast.description}</p>
+            </div>
+          </div>
+          <div class="podcast-footer">
+            <a href="${podcast.spotify}" target="_blank" rel="noopener" class="podcast-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+              Spotify
+            </a>
+            <a href="${podcast.apple}" target="_blank" rel="noopener" class="podcast-link apple">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Apple
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTwitterAccounts() {
+      const container = document.getElementById('twitterGrid');
+      container.innerHTML = TWITTER_ACCOUNTS.map(account => `
+        <div class="twitter-account">
+          <div class="twitter-header">
+            <div class="twitter-avatar" style="background: linear-gradient(135deg, var(--burnt-orange), var(--ember)); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              ${account.name.charAt(0)}
+            </div>
+            <div>
+              <div class="twitter-name">${account.name}</div>
+              <div class="twitter-handle">${account.handle}</div>
+            </div>
+          </div>
+          <p class="twitter-bio">${account.bio}</p>
+          <div>
+            ${account.badges.map(badge => `<span class="twitter-badge">${badge}</span>`).join('')}
+          </div>
+          <a href="https://twitter.com/${account.handle.replace('@', '')}" target="_blank" rel="noopener" class="twitter-follow">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Follow ${account.handle}
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function renderHashtags() {
+      const container = document.getElementById('hashtagGrid');
+      container.innerHTML = TRENDING_HASHTAGS.map(hashtag => `
+        <a href="${hashtag.url}" target="_blank" rel="noopener" class="hashtag-tag">${hashtag.tag}</a>
+      `).join('');
+    }
+
+    function renderEpisodeHighlights() {
+      const container = document.getElementById('episodeHighlights');
+
+      // Use API data if available, otherwise fallback
+      let highlights;
+      if (LATEST_EPISODES.length > 0) {
+        // Transform API episodes to highlight format
+        highlights = LATEST_EPISODES.slice(0, 6).map(ep => ({
+          source: ep.showName,
+          title: ep.title,
+          date: ep.pubDate ? formatEpisodeDate(ep.pubDate) : 'Recent',
+          summary: ep.description || 'Latest episode from ' + ep.showName,
+          link: ep.link || ep.spotify
+        }));
+      } else {
+        highlights = FALLBACK_EPISODE_HIGHLIGHTS;
+      }
+
+      container.innerHTML = highlights.map(episode => `
+        <div class="highlight-card">
+          <div class="highlight-meta">
+            <span class="highlight-source">${episode.source}</span>
+            <span class="highlight-date">${episode.date}</span>
+          </div>
+          <h4 class="highlight-title">${episode.title}</h4>
+          <p class="highlight-summary">${episode.summary}</p>
+          <a href="${episode.link}" target="_blank" rel="noopener" class="highlight-listen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Listen to Episode
+          </a>
+        </div>
+      `).join('');
+    }
+
+    // Format episode date for display
+    function formatEpisodeDate(dateStr) {
+      if (!dateStr) return 'Recent';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+
+      const now = new Date();
+      const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+
+      return date.toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'America/Chicago'
+      });
+    }
+
+    // Media Tab Navigation
+    document.querySelectorAll('.media-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Update active tab
+        document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Show corresponding content
+        const targetTab = tab.dataset.tab;
+        document.querySelectorAll('.media-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(`${targetTab}-content`).classList.add('active');
+      });
+    });
+
+    // Initialize
+    async function init() {
+      // Fetch live dashboard data first (rankings, bubble watch, hosts, movers)
+      await fetchDashboardData();
+
+      // Render all sections with live or fallback data
+      renderRankings();
+      renderConferenceStandings('SEC');
+      renderBubbleTeams();
+      renderProjectedHosts();
+      renderRPIMovers();
+      populateTeamSelects();
+      renderComparison();
+
+      // Initialize Media Hub (fetch podcasts from API, fallback to static)
+      fetchPodcastData(); // Async fetch - renders podcasts and episode highlights
+      renderTwitterAccounts();
+      renderHashtags();
+
+      // Update timestamp
+      const now = new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      document.getElementById('lastUpdated').textContent = `Last updated: ${now} CT`;
+    }
+
+    init();
+  </script>
+</body>
+</html>

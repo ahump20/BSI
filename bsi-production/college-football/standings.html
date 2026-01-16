@@ -493,14 +493,14 @@
       border-bottom: none;
     }
 
-    /* Team Row - Featured (Texas) */
-    .teams-table tbody tr.featured {
+    /* Team Row - User Favorite (highlighted based on localStorage preferences) */
+    .teams-table tbody tr.user-favorite {
       background: rgba(191, 87, 0, 0.1);
     }
-    .teams-table tbody tr.featured:hover {
+    .teams-table tbody tr.user-favorite:hover {
       background: rgba(191, 87, 0, 0.15);
     }
-    .teams-table tbody tr.featured .team-name-text {
+    .teams-table tbody tr.user-favorite .team-name-text {
       color: var(--bsi-burnt-orange);
       font-weight: 700;
     }
@@ -863,6 +863,7 @@
 
   <script src="/src/js/freshness-indicator.js"></script>
   <script src="/src/js/truth-state.js"></script>
+  <script src="/src/js/user-favorites.js"></script>
   <script>
     (function() {
       'use strict';
@@ -876,8 +877,7 @@
       var lastSyncTime = null;
       var refreshInterval = null;
 
-      // Featured team for highlighting
-      var FEATURED_TEAM = 'Texas';
+      // User favorites for highlighting (from localStorage, no hardcoded teams)
 
       // Team logo URLs (ESPN CDN)
       var TEAM_LOGOS = {
@@ -1089,10 +1089,9 @@
         return CONFERENCE_LOGOS[key] || null;
       }
 
-      // Check if team is featured (Texas)
-      function isFeaturedTeam(teamName) {
-        var name = (teamName || '').toLowerCase();
-        return name === 'texas' || name === 'texas longhorns';
+      // Check if team is in user's favorites (from localStorage)
+      function isUserFavorite(teamName) {
+        return window.BSIFavorites && window.BSIFavorites.isFavorite(teamName);
       }
 
       // Generate streak indicator
@@ -1206,9 +1205,9 @@
           var teamName = typeof team === 'string' ? team : (team.name || team.team?.displayName || 'Unknown');
           var teamData = typeof team === 'object' ? team : {};
 
-          // Check if featured team
-          if (isFeaturedTeam(teamName)) {
-            row.classList.add('featured');
+          // Highlight if user has favorited this team
+          if (isUserFavorite(teamName)) {
+            row.classList.add('user-favorite');
           }
 
           // Team cell

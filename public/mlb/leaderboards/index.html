@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLB Leaderboards - Advanced Sabermetrics | Blaze Sports Intel</title>
+  <meta name="description" content="MLB leaderboards with advanced sabermetrics: wOBA, wRC+, WAR, FIP, xFIP. Sortable batting and pitching stats powered by FanGraphs data.">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+      color: #ffffff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.1), rgba(0, 102, 204, 0.1));
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b00, #8B4513);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    .controls-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .controls-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+
+    select, input {
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    select:hover, input:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 107, 0, 0.5);
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #ff6b00;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .tab-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .tab:hover {
+      background: rgba(255, 107, 0, 0.2);
+      border-color: rgba(255, 107, 0, 0.5);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.3), rgba(0, 102, 204, 0.3));
+      border-color: #ff6b00;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2em;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #ff6b00;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    thead {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(0, 102, 204, 0.2));
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    th {
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid rgba(255, 107, 0, 0.5);
+      cursor: pointer;
+      transition: background 0.3s ease;
+      white-space: nowrap;
+    }
+
+    th:hover {
+      background: rgba(255, 107, 0, 0.3);
+    }
+
+    th.sortable::after {
+      content: ' ⇅';
+      opacity: 0.3;
+    }
+
+    th.sorted-asc::after {
+      content: ' ↑';
+      opacity: 1;
+      color: #ff6b00;
+    }
+
+    th.sorted-desc::after {
+      content: ' ↓';
+      opacity: 1;
+      color: #ff6b00;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    tr:hover {
+      background: rgba(255, 107, 0, 0.1);
+    }
+
+    .rank-cell {
+      font-weight: 700;
+      color: #ff6b00;
+    }
+
+    .player-name {
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .team-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(0, 102, 204, 0.3);
+      border-radius: 4px;
+      font-size: 0.85em;
+      margin-left: 8px;
+    }
+
+    .stat-highlight {
+      font-weight: 600;
+      color: #ff6b00;
+    }
+
+    .stat-good {
+      color: #28a745;
+    }
+
+    .stat-average {
+      color: #ffc107;
+    }
+
+    .stat-poor {
+      color: #dc3545;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 250px;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -125px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85em;
+      line-height: 1.4;
+      border: 1px solid rgba(255, 107, 0, 0.3);
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .data-source {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .data-source a {
+      color: #ff6b00;
+      text-decoration: none;
+    }
+
+    .data-source a:hover {
+      text-decoration: underline;
+    }
+
+    .legend {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+    }
+
+    .legend h3 {
+      margin-bottom: 10px;
+      color: #ff6b00;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      gap: 5px;
+    }
+
+    .legend-abbr {
+      font-weight: 600;
+      color: #8B4513;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .controls-row {
+        grid-template-columns: 1fr;
+      }
+
+      .table-container {
+        padding: 10px;
+      }
+
+      th, td {
+        padding: 8px;
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>⚾ MLB Leaderboards</h1>
+    <p class="subtitle">Advanced Sabermetrics & Statistical Leaders</p>
+  </div>
+
+  <div class="tab-container">
+    <div class="tab active" onclick="switchLeaderboard('batting')">Batting Leaders</div>
+    <div class="tab" onclick="switchLeaderboard('pitching')">Pitching Leaders</div>
+    <div class="tab" onclick="switchLeaderboard('war')">WAR Leaders</div>
+    <div class="tab" onclick="switchLeaderboard('wrc')">wRC+ Leaders</div>
+    <div class="tab" onclick="switchLeaderboard('fip')">FIP Leaders</div>
+  </div>
+
+  <div class="controls-container">
+    <div class="controls-row">
+      <div class="control-group">
+        <label for="seasonSelect">Season</label>
+        <select id="seasonSelect" onchange="loadLeaderboard()">
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="leagueSelect">League</label>
+        <select id="leagueSelect" onchange="loadLeaderboard()">
+          <option value="all">All</option>
+          <option value="al">American League</option>
+          <option value="nl">National League</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="positionSelect">Position</label>
+        <select id="positionSelect" onchange="loadLeaderboard()">
+          <option value="all">All Positions</option>
+          <option value="c">Catcher</option>
+          <option value="1b">First Base</option>
+          <option value="2b">Second Base</option>
+          <option value="3b">Third Base</option>
+          <option value="ss">Shortstop</option>
+          <option value="of">Outfield</option>
+          <option value="dh">Designated Hitter</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="qualifiedSelect">Qualified Only</label>
+        <select id="qualifiedSelect" onchange="loadLeaderboard()">
+          <option value="y">Yes</option>
+          <option value="n">No (All Players)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="limitSelect">Results</label>
+        <select id="limitSelect" onchange="loadLeaderboard()">
+          <option value="25">Top 25</option>
+          <option value="50" selected>Top 50</option>
+          <option value="100">Top 100</option>
+          <option value="200">Top 200</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="legendContainer"></div>
+
+  <div class="loading" id="loadingSpinner">
+    <div class="spinner"></div>
+    <p>Loading leaderboard...</p>
+  </div>
+
+  <div class="table-container" id="tableContainer" style="display: none;"></div>
+
+  <div class="data-source">
+    <p>
+      <strong>Data Source:</strong> <a href="https://www.fangraphs.com" target="_blank">FanGraphs</a> |
+      <strong>Last Updated:</strong> <span id="lastUpdated">Loading...</span>
+    </p>
+    <p style="margin-top: 10px; font-size: 0.85em;">
+      Advanced metrics include wOBA (Weighted On-Base Average), wRC+ (Weighted Runs Created Plus),
+      FIP (Fielding Independent Pitching), and WAR (Wins Above Replacement)
+    </p>
+  </div>
+
+  <script>
+    let currentCategory = 'batting';
+    let currentSort = { column: 'WAR', direction: 'desc' };
+
+    const battingColumns = [
+      { key: 'playername', label: 'Player', tooltip: 'Player Name' },
+      { key: 'Pos', label: 'Pos', tooltip: 'Position' },
+      { key: 'teamname', label: 'Team', tooltip: 'Team' },
+      { key: 'G', label: 'G', tooltip: 'Games Played' },
+      { key: 'PA', label: 'PA', tooltip: 'Plate Appearances' },
+      { key: 'HR', label: 'HR', tooltip: 'Home Runs' },
+      { key: 'R', label: 'R', tooltip: 'Runs' },
+      { key: 'RBI', label: 'RBI', tooltip: 'Runs Batted In' },
+      { key: 'SB', label: 'SB', tooltip: 'Stolen Bases' },
+      { key: 'AVG', label: 'AVG', tooltip: 'Batting Average' },
+      { key: 'OBP', label: 'OBP', tooltip: 'On-Base Percentage' },
+      { key: 'SLG', label: 'SLG', tooltip: 'Slugging Percentage' },
+      { key: 'wOBA', label: 'wOBA', tooltip: 'Weighted On-Base Average - measures overall offensive value' },
+      { key: 'wRC+', label: 'wRC+', tooltip: 'Weighted Runs Created Plus (100 = league average, higher is better)' },
+      { key: 'ISO', label: 'ISO', tooltip: 'Isolated Power - measures raw power' },
+      { key: 'BABIP', label: 'BABIP', tooltip: 'Batting Average on Balls In Play' },
+      { key: 'BB%', label: 'BB%', tooltip: 'Walk Percentage' },
+      { key: 'K%', label: 'K%', tooltip: 'Strikeout Percentage' },
+      { key: 'WAR', label: 'WAR', tooltip: 'Wins Above Replacement - total value' },
+    ];
+
+    const pitchingColumns = [
+      { key: 'playername', label: 'Player', tooltip: 'Player Name' },
+      { key: 'teamname', label: 'Team', tooltip: 'Team' },
+      { key: 'G', label: 'G', tooltip: 'Games' },
+      { key: 'GS', label: 'GS', tooltip: 'Games Started' },
+      { key: 'IP', label: 'IP', tooltip: 'Innings Pitched' },
+      { key: 'W', label: 'W', tooltip: 'Wins' },
+      { key: 'L', label: 'L', tooltip: 'Losses' },
+      { key: 'SV', label: 'SV', tooltip: 'Saves' },
+      { key: 'ERA', label: 'ERA', tooltip: 'Earned Run Average' },
+      { key: 'WHIP', label: 'WHIP', tooltip: 'Walks + Hits per Inning Pitched' },
+      { key: 'K/9', label: 'K/9', tooltip: 'Strikeouts per 9 innings' },
+      { key: 'BB/9', label: 'BB/9', tooltip: 'Walks per 9 innings' },
+      { key: 'FIP', label: 'FIP', tooltip: 'Fielding Independent Pitching - measures what a pitcher can control' },
+      { key: 'xFIP', label: 'xFIP', tooltip: 'Expected FIP - normalizes HR/FB rate' },
+      { key: 'SIERA', label: 'SIERA', tooltip: 'Skill-Interactive ERA - another ERA estimator' },
+      { key: 'K%', label: 'K%', tooltip: 'Strikeout Percentage' },
+      { key: 'BB%', label: 'BB%', tooltip: 'Walk Percentage' },
+      { key: 'LOB%', label: 'LOB%', tooltip: 'Left On Base Percentage' },
+      { key: 'WAR', label: 'WAR', tooltip: 'Wins Above Replacement - total value' },
+    ];
+
+    async function switchLeaderboard(category) {
+      currentCategory = category;
+
+      // Update active tab
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Reset position filter for pitching
+      if (category === 'pitching' || category === 'fip') {
+        document.getElementById('positionSelect').value = 'all';
+        document.getElementById('positionSelect').disabled = true;
+      } else {
+        document.getElementById('positionSelect').disabled = false;
+      }
+
+      await loadLeaderboard();
+    }
+
+    async function loadLeaderboard() {
+      const season = document.getElementById('seasonSelect').value;
+      const league = document.getElementById('leagueSelect').value;
+      const position = document.getElementById('positionSelect').value;
+      const qualified = document.getElementById('qualifiedSelect').value;
+      const limit = document.getElementById('limitSelect').value;
+
+      document.getElementById('loadingSpinner').style.display = 'block';
+      document.getElementById('tableContainer').style.display = 'none';
+
+      try {
+        const stat = (currentCategory === 'batting' || currentCategory === 'wrc' || currentCategory === 'war') ? 'bat' : 'pit';
+        const url = `/api/mlb/leaderboards/${currentCategory}?season=${season}&stat=${stat}&lg=${league}&pos=${position}&qual=${qualified}&limit=${limit}&sortby=${currentSort.column}&sortdir=${currentSort.direction}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('tableContainer').style.display = 'block';
+
+        renderLeaderboard(data);
+
+        // Update last updated timestamp
+        const lastUpdated = new Date(data.meta.lastUpdated);
+        document.getElementById('lastUpdated').textContent = lastUpdated.toLocaleString('en-US', {
+          timeZone: 'America/Chicago',
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        }) + ' CDT';
+
+        // Show legend
+        renderLegend(data.leaderboard.type);
+
+      } catch (error) {
+        console.error('Failed to load leaderboard:', error);
+        document.getElementById('loadingSpinner').innerHTML = `
+          <p style="color: #dc3545;">❌ Failed to load leaderboard</p>
+          <p style="font-size: 0.9em; color: rgba(255, 255, 255, 0.6);">${error.message}</p>
+          <button onclick="loadLeaderboard()" style="margin-top: 20px; padding: 10px 20px; background: #ff6b00; border: none; border-radius: 8px; color: white; cursor: pointer;">Retry</button>
+        `;
+      }
+    }
+
+    function renderLegend(type) {
+      const legendContainer = document.getElementById('legendContainer');
+
+      if (type === 'bat') {
+        legendContainer.innerHTML = `
+          <div class="legend">
+            <h3>Batting Metric Definitions</h3>
+            <div class="legend-grid">
+              <div class="legend-item"><span class="legend-abbr">wOBA:</span> Weighted On-Base Average</div>
+              <div class="legend-item"><span class="legend-abbr">wRC+:</span> Weighted Runs Created+ (100 = avg)</div>
+              <div class="legend-item"><span class="legend-abbr">ISO:</span> Isolated Power (SLG - AVG)</div>
+              <div class="legend-item"><span class="legend-abbr">BABIP:</span> Batting Avg on Balls In Play</div>
+              <div class="legend-item"><span class="legend-abbr">BB%:</span> Walk Percentage</div>
+              <div class="legend-item"><span class="legend-abbr">K%:</span> Strikeout Percentage</div>
+              <div class="legend-item"><span class="legend-abbr">WAR:</span> Wins Above Replacement</div>
+            </div>
+          </div>
+        `;
+      } else {
+        legendContainer.innerHTML = `
+          <div class="legend">
+            <h3>Pitching Metric Definitions</h3>
+            <div class="legend-grid">
+              <div class="legend-item"><span class="legend-abbr">FIP:</span> Fielding Independent Pitching</div>
+              <div class="legend-item"><span class="legend-abbr">xFIP:</span> Expected FIP (normalized HR/FB)</div>
+              <div class="legend-item"><span class="legend-abbr">SIERA:</span> Skill-Interactive ERA</div>
+              <div class="legend-item"><span class="legend-abbr">K%:</span> Strikeout Percentage</div>
+              <div class="legend-item"><span class="legend-abbr">BB%:</span> Walk Percentage</div>
+              <div class="legend-item"><span class="legend-abbr">LOB%:</span> Left On Base Percentage</div>
+              <div class="legend-item"><span class="legend-abbr">WAR:</span> Wins Above Replacement</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderLeaderboard(data) {
+      const container = document.getElementById('tableContainer');
+      const columns = data.leaderboard.type === 'bat' ? battingColumns : pitchingColumns;
+
+      let html = '<table><thead><tr><th class="rank-cell">#</th>';
+
+      columns.forEach(col => {
+        const sortClass = currentSort.column === col.key
+          ? (currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc')
+          : '';
+        html += `
+          <th class="sortable ${sortClass}" onclick="sortBy('${col.key}')">
+            <span class="tooltip">
+              ${col.label}
+              <span class="tooltip-text">${col.tooltip}</span>
+            </span>
+          </th>
+        `;
+      });
+
+      html += '</tr></thead><tbody>';
+
+      data.data.forEach((player, index) => {
+        html += `<tr><td class="rank-cell">${index + 1}</td>`;
+
+        columns.forEach(col => {
+          let value = player[col.key];
+          let cellClass = '';
+
+          if (col.key === 'playername') {
+            cellClass = 'player-name';
+            value = `${value}<span class="team-badge">${player.teamname || ''}</span>`;
+          } else if (col.key === 'WAR') {
+            cellClass = 'stat-highlight';
+            value = typeof value === 'number' ? value.toFixed(1) : value;
+          } else if (col.key === 'wRC+' || col.key === 'FIP' || col.key === 'xFIP') {
+            cellClass = 'stat-highlight';
+            value = typeof value === 'number' ? Math.round(value) : value;
+          } else if (typeof value === 'number' && !Number.isInteger(value)) {
+            value = value.toFixed(3);
+          }
+
+          html += `<td class="${cellClass}">${value !== null && value !== undefined ? value : '-'}</td>`;
+        });
+
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function sortBy(column) {
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.column = column;
+        currentSort.direction = 'desc';
+      }
+
+      loadLeaderboard();
+    }
+
+    // Load default leaderboard on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadLeaderboard();
+    });
+  </script>
+</body>
+</html>

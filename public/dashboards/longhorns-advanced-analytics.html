@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texas Longhorns - Advanced Analytics | Blaze Sports Intel</title>
+    <meta name="description" content="Texas Longhorns analytics dashboard with live ESPN data, Pythagorean expectations, and SEC standings - Powered by Blaze Sports Intel">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blaze-orange: #FF6B35;
+            --texas-burnt-orange: #BF5700;
+            --texas-white: #FFFFFF;
+            --dark-bg: #0D0D0D;
+            --card-bg: #1A1A1A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--texas-burnt-orange) 0%, #8B4513 100%);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .team-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 24px;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .header-stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .header-stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 4px;
+        }
+
+        .header-stat-value {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        /* Navigation */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 16px;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--texas-burnt-orange);
+        }
+
+        /* Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-badge {
+            background: rgba(191, 87, 0, 0.15);
+            color: var(--texas-burnt-orange);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Standings Table */
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .standings-table th,
+        .standings-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .standings-table th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .standings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .standings-table tr.highlight {
+            background: rgba(191, 87, 0, 0.15);
+        }
+
+        .standings-table tr.highlight td {
+            color: var(--texas-burnt-orange);
+        }
+
+        .team-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .win-loss {
+            font-weight: 600;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .neutral {
+            color: var(--text-secondary);
+        }
+
+        /* Pythagorean Section */
+        .pyth-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .pyth-stat {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .pyth-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .pyth-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .pyth-value.expected {
+            color: var(--texas-burnt-orange);
+        }
+
+        .luck-indicator {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .luck-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin: 12px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .luck-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .luck-fill.lucky {
+            background: linear-gradient(90deg, var(--success), #34D399);
+        }
+
+        .luck-fill.unlucky {
+            background: linear-gradient(90deg, var(--danger), #F87171);
+        }
+
+        /* Schedule */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-game {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .schedule-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .schedule-opponent {
+            font-weight: 500;
+        }
+
+        .schedule-result {
+            text-align: right;
+        }
+
+        .schedule-score {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .schedule-outcome {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-outcome.win {
+            color: var(--success);
+        }
+
+        .schedule-outcome.loss {
+            color: var(--danger);
+        }
+
+        /* Scoring Analysis */
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .scoring-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .scoring-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .scoring-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Full Width Card */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--texas-burnt-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: var(--texas-burnt-orange);
+            text-decoration: none;
+        }
+
+        .data-timestamp {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .header-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pyth-grid,
+            .scoring-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Error State */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboards/ncaa-football-league-analytics.html" class="nav-back">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 8H3m0 0l5 5m-5-5l5-5"/></svg>
+            Back to NCAA Football Analytics
+        </a>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="team-badge">
+                    <span>SEC</span>
+                </div>
+                <h1>Texas Longhorns <span style="font-size: 32px;">🤘</span></h1>
+                <p class="subtitle">Advanced Analytics Dashboard - 2025 Season (Final)</p>
+
+                <div class="header-stats" id="headerStats">
+                    <div class="header-stat">
+                        <div class="header-stat-label">Record</div>
+                        <div class="header-stat-value" id="record">--</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-label">Win %</div>
+                        <div class="header-stat-value" id="winPct">--</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-label">Conference</div>
+                        <div class="header-stat-value" id="confRecord">--</div>
+                    </div>
+                    <div class="header-stat">
+                        <div class="header-stat-label">Point Diff</div>
+                        <div class="header-stat-value" id="pointDiff">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- SEC Standings -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">SEC Standings</h2>
+                    <span class="card-badge">Final</span>
+                </div>
+                <div class="card-body" id="standingsBody">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Pythagorean Analysis -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Pythagorean Win Expectancy</h2>
+                    <span class="card-badge">CFB (2.37)</span>
+                </div>
+                <div class="card-body" id="pythagoreanBody">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Season Schedule/Results -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Season Results</h2>
+                    <span class="card-badge">2025</span>
+                </div>
+                <div class="card-body" id="scheduleBody">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+
+            <!-- Scoring Analysis -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Scoring Analysis</h2>
+                    <span class="card-badge">Season</span>
+                </div>
+                <div class="card-body" id="scoringBody">
+                    <div class="loading"><div class="spinner"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Data provided by ESPN | Powered by <a href="/">Blaze Sports Intel</a></div>
+            <div style="margin-top: 8px;">Hook 'em! 🤘</div>
+            <div class="data-timestamp" id="timestamp">Last updated: Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        // ESPN College Football API Endpoints
+        const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
+        const ESPN_V2 = 'https://site.api.espn.com/apis/v2/sports/football/college-football';
+        const TEXAS_ID = '251';
+        const CFB_PYTHAGOREAN_EXP = 2.37;
+        const SEC_TEAMS = [
+            'Texas Longhorns', 'Georgia Bulldogs', 'Alabama Crimson Tide', 'Tennessee Volunteers',
+            'LSU Tigers', 'Ole Miss Rebels', 'Texas A&M Aggies', 'Missouri Tigers',
+            'Kentucky Wildcats', 'South Carolina Gamecocks', 'Florida Gators', 'Vanderbilt Commodores',
+            'Oklahoma Sooners', 'Arkansas Razorbacks', 'Auburn Tigers', 'Mississippi State Bulldogs'
+        ];
+
+        // Initialize dashboard
+        async function initDashboard() {
+            try {
+                await Promise.all([
+                    loadStandings(),
+                    loadSchedule()
+                ]);
+                updateTimestamp();
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+            }
+        }
+
+        // Load SEC standings
+        async function loadStandings() {
+            try {
+                const response = await fetch(`${ESPN_V2}/standings?group=8`);
+                const data = await response.json();
+
+                let secTeams = [];
+                let texasData = null;
+
+                // Parse standings from ESPN V2 format
+                if (data.children) {
+                    for (const conf of data.children) {
+                        // Look for SEC
+                        if (conf.name && conf.name.includes('SEC')) {
+                            // SEC might have divisions
+                            if (conf.children) {
+                                for (const div of conf.children) {
+                                    if (div.standings && div.standings.entries) {
+                                        div.standings.entries.forEach(entry => {
+                                            const team = extractTeamData(entry);
+                                            if (team) {
+                                                secTeams.push(team);
+                                                if (team.name === 'Texas Longhorns') {
+                                                    texasData = team;
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            } else if (conf.standings && conf.standings.entries) {
+                                conf.standings.entries.forEach(entry => {
+                                    const team = extractTeamData(entry);
+                                    if (team) {
+                                        secTeams.push(team);
+                                        if (team.name === 'Texas Longhorns') {
+                                            texasData = team;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // If no SEC data found, try to fetch Texas directly
+                if (secTeams.length === 0) {
+                    const teamResponse = await fetch(`${ESPN_BASE}/teams/${TEXAS_ID}`);
+                    const teamData = await teamResponse.json();
+
+                    if (teamData.team) {
+                        const team = teamData.team;
+                        const record = team.record?.items?.[0];
+                        const stats = {};
+
+                        if (record && record.stats) {
+                            record.stats.forEach(s => {
+                                stats[s.name] = s.value;
+                            });
+                        }
+
+                        texasData = {
+                            name: team.displayName,
+                            logo: team.logos?.[0]?.href || '',
+                            wins: stats.wins || 0,
+                            losses: stats.losses || 0,
+                            pct: stats.winPercent || 0,
+                            pointsFor: stats.pointsFor || 0,
+                            pointsAgainst: stats.pointsAgainst || 0,
+                            pointDiff: (stats.pointsFor || 0) - (stats.pointsAgainst || 0),
+                            confWins: stats.conferenceWins || 0,
+                            confLosses: stats.conferenceLosses || 0
+                        };
+                    }
+                }
+
+                // Sort SEC teams by wins
+                secTeams.sort((a, b) => {
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    return b.pct - a.pct;
+                });
+
+                // Update header stats
+                if (texasData) {
+                    document.getElementById('record').textContent = `${texasData.wins}-${texasData.losses}`;
+                    document.getElementById('winPct').textContent = texasData.pct > 0 ? `.${Math.round(texasData.pct * 1000)}` : '--';
+                    document.getElementById('confRecord').textContent = texasData.confWins !== undefined ? `${texasData.confWins}-${texasData.confLosses}` : '--';
+
+                    const diffStr = texasData.pointDiff >= 0 ? `+${texasData.pointDiff}` : texasData.pointDiff;
+                    document.getElementById('pointDiff').textContent = diffStr;
+
+                    // Render Pythagorean
+                    renderPythagorean(texasData);
+
+                    // Render scoring analysis
+                    renderScoring(texasData);
+                }
+
+                // Render standings (show top 10 or available teams)
+                if (secTeams.length > 0) {
+                    renderStandings(secTeams.slice(0, 10));
+                } else {
+                    document.getElementById('standingsBody').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">SEC standings data unavailable. Showing team data only.</div>';
+                }
+
+            } catch (error) {
+                console.error('Standings error:', error);
+                document.getElementById('standingsBody').innerHTML = '<div class="error-message">Failed to load standings</div>';
+            }
+        }
+
+        function extractTeamData(entry) {
+            const team = entry.team;
+            const stats = {};
+
+            if (entry.stats) {
+                entry.stats.forEach(s => {
+                    stats[s.name] = s.value;
+                });
+            }
+
+            return {
+                name: team?.displayName,
+                logo: team?.logos?.[0]?.href || '',
+                wins: stats.wins || 0,
+                losses: stats.losses || 0,
+                pct: stats.winPercent || 0,
+                pointsFor: stats.pointsFor || 0,
+                pointsAgainst: stats.pointsAgainst || 0,
+                pointDiff: (stats.pointsFor || 0) - (stats.pointsAgainst || 0),
+                confWins: stats.conferenceWins || 0,
+                confLosses: stats.conferenceLosses || 0
+            };
+        }
+
+        function renderStandings(teams) {
+            const html = `
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Team</th>
+                            <th>W</th>
+                            <th>L</th>
+                            <th>PCT</th>
+                            <th>DIFF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${teams.map(team => `
+                            <tr class="${team.name === 'Texas Longhorns' ? 'highlight' : ''}">
+                                <td>
+                                    <div class="team-name">
+                                        ${team.logo ? `<img src="${team.logo}" alt="" class="team-logo">` : ''}
+                                        ${team.name}
+                                    </div>
+                                </td>
+                                <td class="win-loss">${team.wins}</td>
+                                <td class="win-loss">${team.losses}</td>
+                                <td>${(team.pct * 1).toFixed(3)}</td>
+                                <td class="${team.pointDiff > 0 ? 'positive' : team.pointDiff < 0 ? 'negative' : 'neutral'}">
+                                    ${team.pointDiff > 0 ? '+' : ''}${team.pointDiff}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('standingsBody').innerHTML = html;
+        }
+
+        function renderPythagorean(team) {
+            const totalGames = team.wins + team.losses;
+
+            if (totalGames === 0 || team.pointsFor === 0) {
+                document.getElementById('pythagoreanBody').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">Insufficient data for Pythagorean analysis</div>';
+                return;
+            }
+
+            const pfPow = Math.pow(team.pointsFor, CFB_PYTHAGOREAN_EXP);
+            const paPow = Math.pow(team.pointsAgainst, CFB_PYTHAGOREAN_EXP);
+            const expectedWinPct = pfPow / (pfPow + paPow);
+            const expectedWins = expectedWinPct * totalGames;
+            const expectedLosses = totalGames - expectedWins;
+            const luckFactor = team.wins - expectedWins;
+
+            const luckClass = luckFactor > 0 ? 'lucky' : 'unlucky';
+            const luckWidth = Math.min(100, Math.abs(luckFactor) * 10 + 50);
+            const luckText = luckFactor > 1 ? 'Overperforming' : luckFactor < -1 ? 'Underperforming' : 'Performing as expected';
+
+            const html = `
+                <div class="pyth-grid">
+                    <div class="pyth-stat">
+                        <div class="pyth-label">Actual Wins</div>
+                        <div class="pyth-value">${team.wins}</div>
+                    </div>
+                    <div class="pyth-stat">
+                        <div class="pyth-label">Expected Wins</div>
+                        <div class="pyth-value expected">${expectedWins.toFixed(1)}</div>
+                    </div>
+                    <div class="pyth-stat">
+                        <div class="pyth-label">Actual Losses</div>
+                        <div class="pyth-value">${team.losses}</div>
+                    </div>
+                    <div class="pyth-stat">
+                        <div class="pyth-label">Expected Losses</div>
+                        <div class="pyth-value expected">${expectedLosses.toFixed(1)}</div>
+                    </div>
+                </div>
+                <div class="luck-indicator">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-secondary);">Luck Factor</span>
+                        <span style="font-size: 20px; font-weight: 700;" class="${luckFactor >= 0 ? 'positive' : 'negative'}">
+                            ${luckFactor >= 0 ? '+' : ''}${luckFactor.toFixed(1)} wins
+                        </span>
+                    </div>
+                    <div class="luck-bar">
+                        <div class="luck-fill ${luckClass}" style="width: ${luckWidth}%"></div>
+                    </div>
+                    <div style="text-align: center; font-size: 13px; color: var(--text-secondary);">${luckText}</div>
+                </div>
+            `;
+            document.getElementById('pythagoreanBody').innerHTML = html;
+        }
+
+        function renderScoring(team) {
+            const gamesPlayed = team.wins + team.losses;
+
+            if (gamesPlayed === 0) {
+                document.getElementById('scoringBody').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No games played yet</div>';
+                return;
+            }
+
+            const ppg = (team.pointsFor / gamesPlayed).toFixed(1);
+            const papg = (team.pointsAgainst / gamesPlayed).toFixed(1);
+            const diffPerGame = ((team.pointsFor - team.pointsAgainst) / gamesPlayed).toFixed(1);
+
+            const html = `
+                <div class="scoring-grid">
+                    <div class="scoring-stat">
+                        <div class="scoring-value" style="color: var(--success);">${ppg}</div>
+                        <div class="scoring-label">Points Per Game</div>
+                    </div>
+                    <div class="scoring-stat">
+                        <div class="scoring-value" style="color: var(--danger);">${papg}</div>
+                        <div class="scoring-label">Points Allowed Per Game</div>
+                    </div>
+                    <div class="scoring-stat">
+                        <div class="scoring-value">${team.pointsFor}</div>
+                        <div class="scoring-label">Total Points Scored</div>
+                    </div>
+                    <div class="scoring-stat">
+                        <div class="scoring-value">${team.pointsAgainst}</div>
+                        <div class="scoring-label">Total Points Allowed</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 16px; background: rgba(191, 87, 0, 0.1); border-radius: 10px; border: 1px solid rgba(191, 87, 0, 0.3); text-align: center;">
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">Point Differential Per Game</div>
+                    <div style="font-size: 28px; font-weight: 700;" class="${parseFloat(diffPerGame) >= 0 ? 'positive' : 'negative'}">
+                        ${parseFloat(diffPerGame) >= 0 ? '+' : ''}${diffPerGame}
+                    </div>
+                </div>
+            `;
+            document.getElementById('scoringBody').innerHTML = html;
+        }
+
+        // Load schedule
+        async function loadSchedule() {
+            try {
+                const response = await fetch(`${ESPN_BASE}/teams/${TEXAS_ID}/schedule`);
+                const data = await response.json();
+
+                const events = data.events || [];
+
+                // Get all games (most recent first for completed, then upcoming)
+                const completedGames = events
+                    .filter(e => e.competitions?.[0]?.status?.type?.completed)
+                    .slice(-10)
+                    .reverse();
+
+                if (completedGames.length === 0) {
+                    document.getElementById('scheduleBody').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No completed games found</div>';
+                    return;
+                }
+
+                const html = `
+                    <div class="schedule-list">
+                        ${completedGames.map(game => {
+                            const comp = game.competitions[0];
+                            const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
+                            const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+                            const isHome = homeTeam?.team?.id === TEXAS_ID;
+                            const texas = isHome ? homeTeam : awayTeam;
+                            const opponent = isHome ? awayTeam : homeTeam;
+                            const texasScore = parseInt(texas?.score || 0);
+                            const opponentScore = parseInt(opponent?.score || 0);
+                            const won = texasScore > opponentScore;
+                            const gameDate = new Date(game.date);
+
+                            return `
+                                <div class="schedule-game">
+                                    <div>
+                                        <div class="schedule-date">${gameDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                                        <div class="schedule-opponent">${isHome ? 'vs' : '@'} ${opponent?.team?.displayName || 'TBD'}</div>
+                                    </div>
+                                    <div class="schedule-result">
+                                        <div class="schedule-score">${texasScore}-${opponentScore}</div>
+                                        <div class="schedule-outcome ${won ? 'win' : 'loss'}">${won ? 'W' : 'L'}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                document.getElementById('scheduleBody').innerHTML = html;
+
+            } catch (error) {
+                console.error('Schedule error:', error);
+                document.getElementById('scheduleBody').innerHTML = '<div class="error-message">Failed to load schedule</div>';
+            }
+        }
+
+        // Utility functions
+        function updateTimestamp() {
+            const now = new Date();
+            const options = {
+                timeZone: 'America/Chicago',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+            document.getElementById('timestamp').textContent = `Last updated: ${now.toLocaleString('en-US', options)} CT`;
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Refresh every 5 minutes
+        setInterval(initDashboard, 300000);
+    </script>
+</body>
+</html>

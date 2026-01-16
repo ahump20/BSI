@@ -1,0 +1,102 @@
+# BSI Prediction API Worker
+# Cloudflare Worker for game predictions, season projections, and calibration
+#
+# Deploy: wrangler deploy --config workers/prediction/wrangler.toml
+
+name = "bsi-prediction-api"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Account settings
+account_id = "a12cb329d84130460eed99b816e4d0d3"
+
+[vars]
+ENVIRONMENT = "production"
+MODEL_VERSION = "1.0.0"
+SIMULATION_COUNT = "10000"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "BSI_HISTORICAL_DB"
+database_name = "bsi-historical-db"
+database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
+
+# KV Namespace bindings
+[[kv_namespaces]]
+binding = "BSI_PREDICTION_CACHE"
+id = "eebf04d329c0419e92eec884f39a636d"
+
+[[kv_namespaces]]
+binding = "BSI_SPORTS_CACHE"
+id = "c912d983175e4a1480225cfd57ed3434"
+
+# R2 Bucket for model storage (future use)
+# [[r2_buckets]]
+# binding = "MODEL_STORAGE"
+# bucket_name = "bsi-models"
+
+# Route configuration
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/predict/*"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/explain/*"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/calibration/*"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/health"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/webhook/*"
+zone_name = "blazesportsintel.com"
+
+[[routes]]
+pattern = "api.blazesportsintel.com/v1/state/*"
+zone_name = "blazesportsintel.com"
+
+# Development settings
+[dev]
+port = 8788
+local_protocol = "http"
+
+# Observability
+[observability.logs]
+enabled = true
+
+# Limits (Cloudflare Workers limits)
+[limits]
+cpu_ms = 50
+
+# Placement hints for low latency
+[placement]
+mode = "smart"
+
+# Staging environment
+[env.staging]
+name = "bsi-prediction-api-staging"
+[env.staging.vars]
+ENVIRONMENT = "staging"
+MODEL_VERSION = "1.0.0-staging"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/predict/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/explain/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/calibration/*"
+zone_name = "blazesportsintel.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.blazesportsintel.com/v1/health"
+zone_name = "blazesportsintel.com"

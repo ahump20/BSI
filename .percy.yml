@@ -1,0 +1,84 @@
+# Percy Visual Testing Configuration
+# https://docs.percy.io/docs/configuration
+
+version: 2
+
+static:
+  # Base URL for static site testing
+  base-url: /
+
+  # Files to include in snapshots
+  files: '**/*.html'
+
+  # Files to ignore
+  ignore-files:
+    - 'node_modules/**'
+    - 'dist/**'
+    - '.git/**'
+    - '*.map'
+
+# Snapshot options
+snapshot:
+  # Widths to test (mobile, tablet, desktop)
+  widths:
+    - 375 # Mobile (iPhone SE)
+    - 768 # Tablet (iPad)
+    - 1280 # Desktop
+    - 1920 # Large desktop
+
+  # Minimum height for snapshots
+  min-height: 1024
+
+  # Enable JavaScript
+  enable-javascript: true
+
+  # Percy-specific CSS to hide dynamic content
+  percy-css: |
+    /* Hide dynamic timestamps */
+    [data-timestamp] {
+      visibility: hidden;
+    }
+
+    /* Hide live score updates */
+    .live-indicator,
+    .live-score {
+      visibility: hidden;
+    }
+
+    /* Hide animated elements during snapshots */
+    * {
+      animation-duration: 0s !important;
+      transition-duration: 0s !important;
+    }
+
+# Discovery options
+discovery:
+  # Allow Percy to discover pages by following links
+  allowed-hostnames:
+    - localhost
+    - blazesportsintel.com
+    - '*.blazesportsintel.pages.dev'
+
+  # Network idle timeout
+  network-idle-timeout: 750
+
+# Agent configuration
+agent:
+  # Asset discovery
+  asset-discovery:
+    # Scan for assets in these directories
+    allowed-hostnames:
+      - localhost
+      - 'localhost:*'
+      - blazesportsintel.com
+      - '*.blazesportsintel.pages.dev'
+
+    # Cache discovered assets
+    cache-responses: true
+
+    # Request headers
+    request-headers:
+      User-Agent: Percy/Agent
+
+# Defer uploads until after tests complete
+defer-uploads: true

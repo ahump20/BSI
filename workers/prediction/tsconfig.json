@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ES2022",
+    "lib": ["ES2021"],
+    "types": ["@cloudflare/workers-types"],
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": "../..",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["index.ts", "../../lib/prediction/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

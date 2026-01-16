@@ -1,0 +1,34 @@
+{
+    "FileVersion": 3,
+    "EngineAssociation": "5.3",
+    "Category": "",
+    "Description": "Backyard Baseball - A stylized baseball game with cinematic camera cuts",
+    "Modules": [
+        {
+            "Name": "BackyardBaseball",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+            "AdditionalDependencies": [
+                "Engine"
+            ]
+        }
+    ],
+    "Plugins": [
+        {
+            "Name": "EnhancedInput",
+            "Enabled": true
+        },
+        {
+            "Name": "Niagara",
+            "Enabled": true
+        },
+        {
+            "Name": "GameplayAbilities",
+            "Enabled": true
+        }
+    ],
+    "TargetPlatforms": [
+        "Windows",
+        "Mac"
+    ]
+}

@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "id": "2024-baseball-sec-title",
+      "sport": "baseball",
+      "date": "2024-05-26",
+      "headline": "Texas claims SEC baseball crown in debut season",
+      "summary": "The Longhorns rode a dominant rotation and late-inning power to clinch the SEC title in Hoover.",
+      "source": "Blaze Sports Intel - Diamond Insights"
+    },
+    {
+      "id": "2024-football-bama-upset",
+      "sport": "football",
+      "date": "2024-09-07",
+      "headline": "Quinn Ewers outduels Alabama in Tuscaloosa",
+      "summary": "Texas delivered a defining 34-31 road win behind Ewers' 349-yard masterpiece and a resilient defense.",
+      "source": "Blaze Sports Intel - Gridiron Report"
+    },
+    {
+      "id": "2024-wbb-final-four",
+      "sport": "basketball",
+      "date": "2024-04-05",
+      "headline": "Vic Schaefer guides Texas women back to Final Four",
+      "summary": "The Longhorns survived a gauntlet of elite offenses to punch a ticket to Cleveland.",
+      "source": "Blaze Sports Intel - Courtside Vault"
+    },
+    {
+      "id": "2024-track-double-sweep",
+      "sport": "track_field",
+      "date": "2024-03-31",
+      "headline": "Texas sweeps sprint relays at Texas Relays",
+      "summary": "The Longhorns controlled every exchange and posted national-leading marks in multiple relays.",
+      "source": "Blaze Sports Intel - Track Lab"
+    }
+  ]
+}

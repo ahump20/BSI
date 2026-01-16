@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>College Baseball Players - Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="College baseball player statistics, draft prospects, and scouting reports. Track NCAA baseball's top players with comprehensive stats and MLB Draft projections."
+    />
+
+    <!-- Fonts & Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- AOS Animation -->
+    <link
+      href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+      rel="stylesheet"
+      integrity="sha256-4vhXLaXY+HHBmie8qJrJidHFGh5j6dFT5RrQVqZ2r7E="
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+      integrity="sha256-sNMqvD8z8EcuEp5bRIxvLvYd8scJJK8t4dA4bCvYzwM="
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Blaze Design System -->
+    <link rel="stylesheet" href="/public/css/blaze-design-system.css" />
+    <link rel="stylesheet" href="/public/css/blaze-components.css" />
+    <link rel="stylesheet" href="/public/css/blaze-detail-maximizer.css" />
+
+    <style>
+      :root {
+        /* Blaze Brand Colors */
+        --color-primary: #bf5700;
+        --color-primary-dark: #9a4600;
+        --color-primary-light: #d96b00;
+
+        /* Neutrals */
+        --color-bg: #0a0a0a;
+        --color-bg-elevated: #1a1a1a;
+        --color-border: rgba(255, 255, 255, 0.1);
+        --color-text: #ffffff;
+        --color-text-secondary: rgba(255, 255, 255, 0.9);
+        --color-text-tertiary: rgba(255, 255, 255, 0.9);
+
+        /* Semantic Colors */
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --color-danger: #ef4444;
+        --color-info: #3b82f6;
+
+        /* Glass Morphism */
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --glass-blur: 12px;
+
+        /* Spacing */
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-md: 1rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-2xl: 3rem;
+
+        /* Typography */
+        --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'Courier New', monospace;
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Navigation */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border-bottom: 1px solid var(--glass-border);
+        padding: var(--spacing-md) var(--spacing-xl);
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--spacing-lg);
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: var(--spacing-lg);
+        list-style: none;
+      }
+
+      .nav-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .nav-link:hover {
+        color: var(--color-primary);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: var(--spacing-2xl) var(--spacing-xl);
+        background: linear-gradient(135deg, rgba(191, 87, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .hero-container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        padding: var(--spacing-xs) var(--spacing-md);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 100px;
+        font-size: 0.875rem;
+        color: var(--color-primary);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: var(--spacing-md);
+        background: linear-gradient(135deg, var(--color-text) 0%, var(--color-text-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
+        font-size: 1.125rem;
+        color: var(--color-text-secondary);
+        max-width: 600px;
+      }
+
+      /* Main Content */
+      .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-2xl) var(--spacing-xl);
+      }
+
+      /* Search & Filters */
+      .search-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-lg);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 250px;
+        display: flex;
+        gap: var(--spacing-sm);
+      }
+
+      .search-input {
+        flex: 1;
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        font-size: 0.9375rem;
+        transition: all 0.2s;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .search-btn {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        background: var(--color-primary);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .search-btn:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .filter-group {
+        display: flex;
+        gap: var(--spacing-sm);
+        flex-wrap: wrap;
+      }
+
+      .filter-select {
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .filter-checkbox {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .filter-checkbox input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .filter-checkbox:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* Stats Bar */
+      .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .stat-card {
+        padding: var(--spacing-lg);
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        font-family: var(--font-mono);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-xs);
+      }
+
+      /* Sort Bar */
+      .sort-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-md);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+      }
+
+      .sort-label {
+        font-size: 0.875rem;
+        color: var(--color-text-secondary);
+      }
+
+      .sort-select {
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        color: var(--color-text);
+        cursor: pointer;
+      }
+
+      /* Players Grid */
+      .players-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--spacing-lg);
+      }
+
+      .player-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s;
+      }
+
+      .player-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--color-primary);
+      }
+
+      .player-header {
+        padding: var(--spacing-lg);
+        background: linear-gradient(135deg, rgba(191, 87, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .player-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .player-team {
+        font-size: 0.9375rem;
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .player-meta {
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+        font-size: 0.875rem;
+        color: var(--color-text-tertiary);
+      }
+
+      .player-meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+      }
+
+      .player-bio {
+        padding: var(--spacing-md) var(--spacing-lg);
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .bio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: var(--spacing-md);
+        font-size: 0.875rem;
+      }
+
+      .bio-item {
+        text-align: center;
+      }
+
+      .bio-label {
+        color: var(--color-text-tertiary);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .bio-value {
+        color: var(--color-text);
+        font-weight: 600;
+        margin-top: var(--spacing-xs);
+      }
+
+      .player-stats {
+        padding: var(--spacing-lg);
+      }
+
+      .stats-table {
+        width: 100%;
+        font-size: 0.875rem;
+        border-collapse: collapse;
+      }
+
+      .stats-table th {
+        text-align: left;
+        padding: var(--spacing-sm);
+        color: var(--color-text-tertiary);
+        font-weight: 500;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .stats-table td {
+        padding: var(--spacing-sm);
+        color: var(--color-text);
+        font-family: var(--font-mono);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .stats-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .stat-highlight {
+        color: var(--color-primary);
+        font-weight: 700;
+      }
+
+      .player-draft {
+        padding: var(--spacing-lg);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+        border-top: 1px solid rgba(59, 130, 246, 0.3);
+      }
+
+      .draft-badge {
+        display: inline-block;
+        padding: var(--spacing-xs) var(--spacing-md);
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        border-radius: 100px;
+        font-size: 0.75rem;
+        color: var(--color-info);
+        font-weight: 600;
+        margin-bottom: var(--spacing-md);
+      }
+
+      .draft-projection {
+        font-size: 0.9375rem;
+        color: var(--color-text-secondary);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .draft-tools {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--spacing-sm);
+      }
+
+      .tool-item {
+        text-align: center;
+      }
+
+      .tool-grade {
+        width: 32px;
+        height: 32px;
+        margin: 0 auto var(--spacing-xs);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.875rem;
+      }
+
+      .tool-grade.grade-80 {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+
+      .tool-grade.grade-70 {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+      }
+
+      .tool-grade.grade-60 {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+      }
+
+      .tool-grade.grade-50 {
+        background: linear-gradient(135deg, #6b7280, #4b5563);
+        color: white;
+      }
+
+      .tool-label {
+        font-size: 0.75rem;
+        color: var(--color-text-tertiary);
+      }
+
+      /* Loading State */
+      .loading-container {
+        text-align: center;
+        padding: var(--spacing-2xl);
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--color-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        margin-top: var(--spacing-md);
+        color: var(--color-text-secondary);
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: var(--spacing-2xl);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+      }
+
+      .empty-icon {
+        font-size: 3rem;
+        color: var(--color-text-tertiary);
+        margin-bottom: var(--spacing-md);
+      }
+
+      .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .empty-message {
+        color: var(--color-text-secondary);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .players-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .search-filters {
+          flex-direction: column;
+        }
+
+        .search-box {
+          min-width: 100%;
+        }
+
+        .draft-tools {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <a href="/college-baseball/" class="nav-brand" aria-label="College Baseball Home">
+          <i class="fas fa-baseball-ball" aria-hidden="true"></i>
+          College Baseball
+        </a>
+        <ul class="nav-links">
+          <li><a href="/college-baseball/" class="nav-link">Hub</a></li>
+          <li><a href="/college-baseball/games/" class="nav-link">Games</a></li>
+          <li><a href="/college-baseball/standings/" class="nav-link">Standings</a></li>
+          <li><a href="/college-baseball/teams/" class="nav-link">Teams</a></li>
+          <li>
+            <a
+              href="/college-baseball/players/"
+              class="nav-link"
+              style="color: var(--color-primary)"
+              aria-current="page"
+              >Players</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-container">
+        <div class="hero-badge" data-aos="fade-up">
+          <i class="fas fa-trophy" aria-hidden="true"></i>
+          Player Database & Draft Prospects
+        </div>
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">College Baseball Players</h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+          Individual player statistics, MLB Draft prospect tracking, and scouting reports. Practice
+          to Play. Blaze Data Wins the Day.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+      <!-- Search & Filters -->
+      <div class="search-filters" data-aos="fade-up">
+        <div class="search-box">
+          <label for="search-input" class="visually-hidden">Search players</label>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search by player name, team, or hometown..."
+            aria-label="Search players by name, team, or hometown"
+          />
+          <button id="search-btn" class="search-btn" aria-label="Search">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            Search
+          </button>
+        </div>
+
+        <div class="filter-group">
+          <label for="team-filter" class="visually-hidden">Filter by team</label>
+          <select id="team-filter" class="filter-select" aria-label="Filter by team">
+            <option value="">All Teams</option>
+            <option value="LSU">LSU Tigers</option>
+            <option value="Texas">Texas Longhorns</option>
+            <option value="Texas A&M">Texas A&M Aggies</option>
+            <option value="Arkansas">Arkansas Razorbacks</option>
+            <option value="Florida">Florida Gators</option>
+            <option value="Vanderbilt">Vanderbilt Commodores</option>
+            <option value="Tennessee">Tennessee Volunteers</option>
+            <option value="Ole Miss">Ole Miss Rebels</option>
+            <option value="Mississippi State">Mississippi State Bulldogs</option>
+            <option value="Georgia">Georgia Bulldogs</option>
+          </select>
+
+          <label for="position-filter" class="visually-hidden">Filter by position</label>
+          <select id="position-filter" class="filter-select" aria-label="Filter by position">
+            <option value="">All Positions</option>
+            <option value="P">Pitcher (P)</option>
+            <option value="C">Catcher (C)</option>
+            <option value="IF">Infield (IF)</option>
+            <option value="OF">Outfield (OF)</option>
+          </select>
+
+          <label for="class-filter" class="visually-hidden">Filter by class year</label>
+          <select id="class-filter" class="filter-select" aria-label="Filter by class year">
+            <option value="">All Classes</option>
+            <option value="Fr">Freshman</option>
+            <option value="So">Sophomore</option>
+            <option value="Jr">Junior</option>
+            <option value="Sr">Senior</option>
+          </select>
+
+          <label class="filter-checkbox">
+            <input type="checkbox" id="draft-only-filter" />
+            <span>Draft Prospects Only</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar" data-aos="fade-up">
+        <div class="stat-card">
+          <div class="stat-value" id="total-players">0</div>
+          <div class="stat-label">Total Players</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="draft-prospects">0</div>
+          <div class="stat-label">Draft Prospects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="pitchers">0</div>
+          <div class="stat-label">Pitchers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="position-players">0</div>
+          <div class="stat-label">Position Players</div>
+        </div>
+      </div>
+
+      <!-- Sort Bar -->
+      <div class="sort-bar" data-aos="fade-up">
+        <label for="sort-select" class="sort-label">Sort by:</label>
+        <select id="sort-select" class="sort-select" aria-label="Sort players by statistic">
+          <option value="mlbRank">MLB Draft Rank</option>
+          <option value="avg">Batting Average</option>
+          <option value="homeRuns">Home Runs</option>
+          <option value="rbi">RBI</option>
+          <option value="ops">OPS</option>
+          <option value="era">ERA</option>
+          <option value="strikeouts">Strikeouts</option>
+          <option value="whip">WHIP</option>
+        </select>
+      </div>
+
+      <!-- Players Grid -->
+      <div id="players-container">
+        <div
+          class="loading-container"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading players"
+        >
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <p class="loading-text">Loading players...</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Blaze Particle System & Charts -->
+    <script src="/public/js/blaze-particles.js"></script>
+    <script src="/public/js/blaze-charts.js"></script>
+
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100,
+      });
+
+      // Initialize Blaze Particle System (respects prefers-reduced-motion)
+      if (typeof BlazeParticles !== 'undefined') {
+        BlazeParticles.init({
+          particleCount: 150000,
+          quality: 'auto', // auto-scales based on device performance
+        });
+      }
+
+      // State
+      let allPlayers = [];
+      let currentFilters = {
+        search: '',
+        team: '',
+        position: '',
+        class: '',
+        draftOnly: false,
+      };
+      let currentSort = 'mlbRank';
+
+      // DOM Elements
+      const searchInput = document.getElementById('search-input');
+      const searchBtn = document.getElementById('search-btn');
+      const teamFilter = document.getElementById('team-filter');
+      const positionFilter = document.getElementById('position-filter');
+      const classFilter = document.getElementById('class-filter');
+      const draftOnlyFilter = document.getElementById('draft-only-filter');
+      const sortSelect = document.getElementById('sort-select');
+      const playersContainer = document.getElementById('players-container');
+
+      // Event Listeners
+      searchBtn.addEventListener('click', () => {
+        currentFilters.search = searchInput.value.trim();
+        loadPlayers();
+      });
+
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          currentFilters.search = searchInput.value.trim();
+          loadPlayers();
+        }
+      });
+
+      teamFilter.addEventListener('change', (e) => {
+        currentFilters.team = e.target.value;
+        loadPlayers();
+      });
+
+      positionFilter.addEventListener('change', (e) => {
+        currentFilters.position = e.target.value;
+        loadPlayers();
+      });
+
+      classFilter.addEventListener('change', (e) => {
+        currentFilters.class = e.target.value;
+        loadPlayers();
+      });
+
+      draftOnlyFilter.addEventListener('change', (e) => {
+        currentFilters.draftOnly = e.target.checked;
+        loadPlayers();
+      });
+
+      sortSelect.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderPlayers(allPlayers);
+      });
+
+      // Load Players from API
+      async function loadPlayers() {
+        playersContainer.innerHTML = `
+        <div class="loading-container" role="status" aria-live="polite" aria-label="Loading players">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <p class="loading-text">Loading players...</p>
+        </div>
+      `;
+
+        try {
+          const params = new URLSearchParams();
+          if (currentFilters.search) params.append('search', currentFilters.search);
+          if (currentFilters.team) params.append('team', currentFilters.team);
+          if (currentFilters.position) params.append('position', currentFilters.position);
+          if (currentFilters.class) params.append('class', currentFilters.class);
+          if (currentFilters.draftOnly) params.append('draft', 'true');
+
+          const response = await fetch(`/api/college-baseball/players?${params}`);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          allPlayers = data.players || [];
+
+          updateStats(allPlayers);
+          renderPlayers(allPlayers);
+        } catch (error) {
+          console.error('Error loading players:', error);
+          playersContainer.innerHTML = `
+          <div class="empty-state" role="alert">
+            <div class="empty-icon">
+              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            </div>
+            <h3 class="empty-title">Error Loading Players</h3>
+            <p class="empty-message">${error.message}</p>
+          </div>
+        `;
+        }
+      }
+
+      // Update Stats Bar
+      function updateStats(players) {
+        document.getElementById('total-players').textContent = players.length;
+
+        const draftProspects = players.filter((p) => p.draftProspect?.isDraftEligible).length;
+        document.getElementById('draft-prospects').textContent = draftProspects;
+
+        const pitchers = players.filter((p) => p.position === 'P').length;
+        document.getElementById('pitchers').textContent = pitchers;
+
+        const positionPlayers = players.filter((p) => p.position !== 'P').length;
+        document.getElementById('position-players').textContent = positionPlayers;
+      }
+
+      // Sort Players
+      function sortPlayers(players, sortBy) {
+        const sorted = [...players];
+
+        switch (sortBy) {
+          case 'mlbRank':
+            sorted.sort(
+              (a, b) => (a.draftProspect?.mlbRank || 999) - (b.draftProspect?.mlbRank || 999)
+            );
+            break;
+          case 'avg':
+            sorted.sort((a, b) => (b.battingStats?.avg || 0) - (a.battingStats?.avg || 0));
+            break;
+          case 'homeRuns':
+            sorted.sort(
+              (a, b) => (b.battingStats?.homeRuns || 0) - (a.battingStats?.homeRuns || 0)
+            );
+            break;
+          case 'rbi':
+            sorted.sort((a, b) => (b.battingStats?.rbi || 0) - (a.battingStats?.rbi || 0));
+            break;
+          case 'ops':
+            sorted.sort((a, b) => (b.battingStats?.ops || 0) - (a.battingStats?.ops || 0));
+            break;
+          case 'era':
+            sorted.sort((a, b) => (a.pitchingStats?.era || 99) - (b.pitchingStats?.era || 99));
+            break;
+          case 'strikeouts':
+            sorted.sort(
+              (a, b) => (b.pitchingStats?.strikeouts || 0) - (a.pitchingStats?.strikeouts || 0)
+            );
+            break;
+          case 'whip':
+            sorted.sort((a, b) => (a.pitchingStats?.whip || 99) - (b.pitchingStats?.whip || 99));
+            break;
+          default:
+            break;
+        }
+
+        return sorted;
+      }
+
+      // Render Players
+      function renderPlayers(players) {
+        if (players.length === 0) {
+          playersContainer.innerHTML = `
+          <div class="empty-state" role="status">
+            <div class="empty-icon">
+              <i class="fas fa-user-slash" aria-hidden="true"></i>
+            </div>
+            <h3 class="empty-title">No Players Found</h3>
+            <p class="empty-message">Try adjusting your search or filter criteria.</p>
+          </div>
+        `;
+          return;
+        }
+
+        const sortedPlayers = sortPlayers(players, currentSort);
+
+        playersContainer.innerHTML = `
+        <div class="players-grid">
+          ${sortedPlayers.map((player) => createPlayerCard(player)).join('')}
+        </div>
+      `;
+      }
+
+      // Create Player Card
+      function createPlayerCard(player) {
+        const isPitcher = player.position === 'P';
+        const hasDraftProspect = player.draftProspect?.isDraftEligible;
+
+        return `
+        <div class="player-card">
+          <div class="player-header">
+            <div class="player-name">${player.name}</div>
+            <div class="player-team">
+              <i class="fas fa-university" aria-hidden="true"></i>
+              ${player.team}
+            </div>
+            <div class="player-meta">
+              <span class="player-meta-item">
+                <i class="fas fa-hashtag" aria-hidden="true"></i>
+                #${player.jersey}
+              </span>
+              <span class="player-meta-item">
+                <i class="fas fa-map-pin" aria-hidden="true"></i>
+                ${player.position}
+              </span>
+              <span class="player-meta-item">
+                <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                ${player.classYear}
+              </span>
+              <span class="player-meta-item">
+                <i class="fas fa-trophy" aria-hidden="true"></i>
+                ${player.conference}
+              </span>
+            </div>
+          </div>
+
+          <div class="player-bio">
+            <div class="bio-grid">
+              <div class="bio-item">
+                <div class="bio-label">Height</div>
+                <div class="bio-value">${player.bio.height}</div>
+              </div>
+              <div class="bio-item">
+                <div class="bio-label">Weight</div>
+                <div class="bio-value">${player.bio.weight} lbs</div>
+              </div>
+              <div class="bio-item">
+                <div class="bio-label">Bats</div>
+                <div class="bio-value">${player.bio.bats}</div>
+              </div>
+              <div class="bio-item">
+                <div class="bio-label">Throws</div>
+                <div class="bio-value">${player.bio.throws}</div>
+              </div>
+              <div class="bio-item" style="grid-column: 1 / -1;">
+                <div class="bio-label">Hometown</div>
+                <div class="bio-value">${player.bio.hometown}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="player-stats">
+            ${isPitcher ? createPitchingStatsTable(player) : createBattingStatsTable(player)}
+          </div>
+
+          ${hasDraftProspect ? createDraftProspectSection(player) : ''}
+        </div>
+      `;
+      }
+
+      // Create Batting Stats Table
+      function createBattingStatsTable(player) {
+        const stats = player.battingStats;
+        if (!stats)
+          return '<p style="text-align: center; color: var(--color-text-secondary);">No batting stats available</p>';
+
+        return `
+        <table class="stats-table" role="table" aria-label="Batting statistics">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Batting Average">AVG</th>
+              <th scope="col" abbr="Home Runs">HR</th>
+              <th scope="col" abbr="Runs Batted In">RBI</th>
+              <th scope="col" abbr="On-base Plus Slugging">OPS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="stat-highlight">${stats.avg.toFixed(3)}</td>
+              <td class="stat-highlight">${stats.homeRuns}</td>
+              <td class="stat-highlight">${stats.rbi}</td>
+              <td class="stat-highlight">${stats.ops.toFixed(3)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="stats-table" style="margin-top: var(--spacing-md);">
+          <thead>
+            <tr>
+              <th>G</th>
+              <th>AB</th>
+              <th>R</th>
+              <th>H</th>
+              <th>2B</th>
+              <th>3B</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${stats.games}</td>
+              <td>${stats.atBats}</td>
+              <td>${stats.runs}</td>
+              <td>${stats.hits}</td>
+              <td>${stats.doubles}</td>
+              <td>${stats.triples}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="stats-table" style="margin-top: var(--spacing-md);">
+          <thead>
+            <tr>
+              <th>BB</th>
+              <th>SO</th>
+              <th>SB</th>
+              <th>OBP</th>
+              <th>SLG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${stats.walks}</td>
+              <td>${stats.strikeouts}</td>
+              <td>${stats.stolenBases}</td>
+              <td>${stats.obp.toFixed(3)}</td>
+              <td>${stats.slg.toFixed(3)}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      }
+
+      // Create Pitching Stats Table
+      function createPitchingStatsTable(player) {
+        const stats = player.pitchingStats;
+        if (!stats)
+          return '<p style="text-align: center; color: var(--color-text-secondary);">No pitching stats available</p>';
+
+        return `
+        <table class="stats-table" role="table" aria-label="Pitching statistics">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Earned Run Average">ERA</th>
+              <th scope="col" abbr="Wins-Losses">W-L</th>
+              <th scope="col" abbr="Strikeouts">SO</th>
+              <th scope="col" abbr="Walks and Hits per Inning Pitched">WHIP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="stat-highlight">${stats.era.toFixed(2)}</td>
+              <td class="stat-highlight">${stats.wins}-${stats.losses}</td>
+              <td class="stat-highlight">${stats.strikeouts}</td>
+              <td class="stat-highlight">${stats.whip.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="stats-table" style="margin-top: var(--spacing-md);">
+          <thead>
+            <tr>
+              <th>G</th>
+              <th>GS</th>
+              <th>CG</th>
+              <th>SHO</th>
+              <th>SV</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${stats.games}</td>
+              <td>${stats.gamesStarted}</td>
+              <td>${stats.completeGames}</td>
+              <td>${stats.shutouts}</td>
+              <td>${stats.saves}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="stats-table" style="margin-top: var(--spacing-md);">
+          <thead>
+            <tr>
+              <th>IP</th>
+              <th>H</th>
+              <th>R</th>
+              <th>ER</th>
+              <th>BB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${stats.inningsPitched.toFixed(1)}</td>
+              <td>${stats.hits}</td>
+              <td>${stats.runs}</td>
+              <td>${stats.earnedRuns}</td>
+              <td>${stats.walks}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      }
+
+      // Create Draft Prospect Section
+      function createDraftProspectSection(player) {
+        const draft = player.draftProspect;
+        if (!draft) return '';
+
+        const isPitcher = player.position === 'P';
+        const tools = isPitcher
+          ? ['fastball', 'slider', 'changeup', 'control', 'stamina']
+          : ['hitting', 'power', 'speed', 'fielding', 'arm'];
+
+        return `
+        <div class="player-draft">
+          <div class="draft-badge">
+            <i class="fas fa-star" aria-hidden="true"></i>
+            MLB Draft Rank: #${draft.mlbRank}
+          </div>
+          <div class="draft-projection">
+            <strong>Projection:</strong> ${draft.projection}
+          </div>
+          <div class="draft-tools">
+            ${tools
+              .map((tool) => {
+                const grade = draft.tools[tool] || 50;
+                const gradeClass =
+                  grade >= 80
+                    ? 'grade-80'
+                    : grade >= 70
+                      ? 'grade-70'
+                      : grade >= 60
+                        ? 'grade-60'
+                        : 'grade-50';
+                return `
+                <div class="tool-item">
+                  <div class="tool-grade ${gradeClass}">${grade}</div>
+                  <div class="tool-label">${tool.charAt(0).toUpperCase() + tool.slice(1)}</div>
+                </div>
+              `;
+              })
+              .join('')}
+          </div>
+        </div>
+      `;
+      }
+
+      // Initial Load
+      loadPlayers();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation | Blaze Sports Intel</title>
+  <meta name="description" content="Interactive API documentation for Blaze Sports Intel - Sports data, analytics, and AI-powered insights.">
+
+  <!-- Swagger UI CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-texas-soil: #8B4513;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-cream: #FAF8F5;
+      --bsi-gold: #C9A227;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: var(--bsi-cream);
+    }
+
+    /* Header */
+    .bsi-header {
+      background: linear-gradient(135deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .bsi-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .bsi-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .bsi-logo-text {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .bsi-nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    .bsi-nav a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .bsi-nav a:hover {
+      color: var(--bsi-ember);
+    }
+
+    /* Version Badge */
+    .bsi-version {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .version-badge {
+      background: var(--bsi-burnt-orange);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Swagger UI Customization */
+    .swagger-ui {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 40px;
+    }
+
+    .swagger-ui .topbar {
+      display: none;
+    }
+
+    .swagger-ui .info .title {
+      color: var(--bsi-charcoal);
+    }
+
+    .swagger-ui .opblock.opblock-get .opblock-summary-method {
+      background: var(--bsi-burnt-orange);
+    }
+
+    .swagger-ui .opblock.opblock-post .opblock-summary-method {
+      background: #10B981;
+    }
+
+    .swagger-ui .opblock.opblock-put .opblock-summary-method {
+      background: var(--bsi-gold);
+    }
+
+    .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+      background: #EF4444;
+    }
+
+    .swagger-ui .btn.execute {
+      background: var(--bsi-burnt-orange);
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .swagger-ui .btn.execute:hover {
+      background: var(--bsi-ember);
+      border-color: var(--bsi-ember);
+    }
+
+    .swagger-ui .scheme-container {
+      background: transparent;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    /* Info Section */
+    .bsi-info {
+      background: white;
+      border-radius: 12px;
+      padding: 24px 32px;
+      margin: 20px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .bsi-info h2 {
+      margin: 0 0 16px;
+      color: var(--bsi-charcoal);
+      font-size: 24px;
+    }
+
+    .bsi-info p {
+      margin: 0 0 16px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .quick-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bsi-cream);
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--bsi-charcoal);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .quick-link:hover {
+      border-color: var(--bsi-burnt-orange);
+      color: var(--bsi-burnt-orange);
+    }
+
+    /* Footer */
+    .bsi-footer {
+      text-align: center;
+      padding: 24px;
+      color: #666;
+      font-size: 13px;
+      border-top: 1px solid #e5e5e5;
+      margin-top: 40px;
+    }
+
+    .bsi-footer a {
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .bsi-header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 20px;
+      }
+
+      .bsi-nav {
+        display: none;
+      }
+
+      .bsi-info {
+        margin: 16px;
+        padding: 16px;
+      }
+
+      .swagger-ui {
+        padding: 16px;
+      }
+
+      .quick-links {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="bsi-header">
+    <a href="/" class="bsi-logo">
+      <div class="bsi-logo-icon">BSI</div>
+      <span class="bsi-logo-text">Blaze Sports Intel</span>
+    </a>
+
+    <nav class="bsi-nav">
+      <a href="/">Home</a>
+      <a href="/analytics.html">Analytics</a>
+      <a href="/college-baseball/">College Baseball</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+
+    <div class="bsi-version">
+      <span class="version-badge">API v2.2.0</span>
+      <span class="status-badge">
+        <span class="status-dot"></span>
+        Operational
+      </span>
+    </div>
+  </header>
+
+  <!-- Info Section -->
+  <section class="bsi-info">
+    <h2>API Documentation</h2>
+    <p>
+      Interactive documentation for the Blaze Sports Intel API.
+      Get real-time sports data, standings, predictions, and AI-powered insights for MLB, NFL, NBA, and College Baseball.
+    </p>
+    <div class="quick-links">
+      <a href="/api/health" class="quick-link" target="_blank">
+        <span>Health Check</span>
+      </a>
+      <a href="/api/admin/secrets-status" class="quick-link" target="_blank">
+        <span>Secrets Status</span>
+      </a>
+      <a href="/api/admin/api-tests/all" class="quick-link" target="_blank">
+        <span>Run API Tests</span>
+      </a>
+      <a href="https://github.com/ahump20/BSI" class="quick-link" target="_blank">
+        <span>GitHub Repo</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Swagger UI Container -->
+  <div id="swagger-ui"></div>
+
+  <!-- Footer -->
+  <footer class="bsi-footer">
+    <p>
+      &copy; 2025 <a href="/">Blaze Sports Intel</a>.
+      Built with grit in Boerne, Texas.
+      <br>
+      <a href="/privacy.html">Privacy</a> &bull;
+      <a href="/terms.html">Terms</a> &bull;
+      <a href="mailto:Austin@blazesportsintel.com">Contact</a>
+    </p>
+  </footer>
+
+  <!-- Swagger UI JS -->
+  <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+  <script>
+    // Inline OpenAPI specification
+    const spec = {
+      openapi: "3.0.3",
+      info: {
+        title: "Blaze Sports Intel API",
+        version: "2.2.0",
+        description: "Comprehensive sports data and analytics API covering MLB, NFL, NBA, and College Baseball. Includes real-time scores, standings, predictions, and AI-powered insights.",
+        contact: {
+          name: "Austin Humphrey",
+          email: "Austin@blazesportsintel.com",
+          url: "https://blazesportsintel.com"
+        }
+      },
+      servers: [
+        { url: "https://blazesportsintel.com/api", description: "Production" }
+      ],
+      tags: [
+        { name: "Health", description: "System health and monitoring" },
+        { name: "MLB", description: "Major League Baseball endpoints" },
+        { name: "NFL", description: "National Football League endpoints" },
+        { name: "NBA", description: "National Basketball Association endpoints" },
+        { name: "College Baseball", description: "NCAA Division I Baseball endpoints" },
+        { name: "AI Copilot", description: "AI-powered search and insights" },
+        { name: "Admin", description: "Administrative endpoints" }
+      ],
+      paths: {
+        "/health": {
+          get: {
+            tags: ["Health"],
+            summary: "Health Check",
+            description: "Comprehensive health check for all services and dependencies",
+            responses: {
+              "200": { description: "All services healthy" },
+              "503": { description: "Some services degraded" }
+            }
+          }
+        },
+        "/mlb/standings": {
+          get: {
+            tags: ["MLB"],
+            summary: "Get MLB Standings",
+            description: "Returns current standings for all MLB teams",
+            parameters: [
+              { name: "season", in: "query", schema: { type: "integer" }, description: "Season year" },
+              { name: "division", in: "query", schema: { type: "string" }, description: "Filter by division" }
+            ],
+            responses: {
+              "200": { description: "Standings data" }
+            }
+          }
+        },
+        "/mlb/scores": {
+          get: {
+            tags: ["MLB"],
+            summary: "Get MLB Scores",
+            description: "Returns live and completed game scores",
+            parameters: [
+              { name: "date", in: "query", schema: { type: "string", format: "date" }, description: "Date (YYYY-MM-DD)" }
+            ],
+            responses: {
+              "200": { description: "Game scores" }
+            }
+          }
+        },
+        "/nfl/standings": {
+          get: {
+            tags: ["NFL"],
+            summary: "Get NFL Standings",
+            description: "Returns current standings for all NFL teams",
+            parameters: [
+              { name: "season", in: "query", schema: { type: "integer" } },
+              { name: "conference", in: "query", schema: { type: "string", enum: ["AFC", "NFC"] } }
+            ],
+            responses: {
+              "200": { description: "Standings data" }
+            }
+          }
+        },
+        "/nfl/scores": {
+          get: {
+            tags: ["NFL"],
+            summary: "Get NFL Scores",
+            description: "Returns live and completed game scores",
+            parameters: [
+              { name: "week", in: "query", schema: { type: "integer" } },
+              { name: "season", in: "query", schema: { type: "integer" } }
+            ],
+            responses: {
+              "200": { description: "Game scores" }
+            }
+          }
+        },
+        "/nba/standings": {
+          get: {
+            tags: ["NBA"],
+            summary: "Get NBA Standings",
+            description: "Returns current standings for all NBA teams",
+            parameters: [
+              { name: "conference", in: "query", schema: { type: "string", enum: ["Eastern", "Western"] } }
+            ],
+            responses: {
+              "200": { description: "Standings data" }
+            }
+          }
+        },
+        "/college-baseball/standings": {
+          get: {
+            tags: ["College Baseball"],
+            summary: "Get College Baseball Standings",
+            description: "Returns standings for NCAA Division I baseball",
+            parameters: [
+              { name: "conference", in: "query", schema: { type: "string" }, description: "Conference name (SEC, Big 12, etc.)" }
+            ],
+            responses: {
+              "200": { description: "Standings data" }
+            }
+          }
+        },
+        "/college-baseball/games": {
+          get: {
+            tags: ["College Baseball"],
+            summary: "Get College Baseball Games",
+            description: "Returns game schedules and scores",
+            parameters: [
+              { name: "date", in: "query", schema: { type: "string", format: "date" } },
+              { name: "teamId", in: "query", schema: { type: "integer" } }
+            ],
+            responses: {
+              "200": { description: "Games data" }
+            }
+          }
+        },
+        "/copilot/search": {
+          post: {
+            tags: ["AI Copilot"],
+            summary: "Semantic Search",
+            description: "Search sports data using natural language",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["query", "sport"],
+                    properties: {
+                      query: { type: "string", example: "Cardinals pitchers with ERA under 3.50" },
+                      sport: { type: "string", enum: ["mlb", "nfl", "nba", "college-baseball"] },
+                      limit: { type: "integer", default: 10 }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": { description: "Search results" },
+              "401": { description: "Unauthorized" }
+            }
+          }
+        },
+        "/admin/secrets-status": {
+          get: {
+            tags: ["Admin"],
+            summary: "Secrets Status",
+            description: "Check which secrets and bindings are configured",
+            responses: {
+              "200": { description: "All required secrets configured" },
+              "503": { description: "Missing required secrets" }
+            }
+          }
+        },
+        "/admin/api-tests/{provider}": {
+          get: {
+            tags: ["Admin"],
+            summary: "API Provider Tests",
+            description: "Test external API provider connectivity",
+            parameters: [
+              {
+                name: "provider",
+                in: "path",
+                required: true,
+                schema: { type: "string", enum: ["mlb", "espn", "sportsdataio", "cfbd", "all"] },
+                description: "Provider to test"
+              }
+            ],
+            responses: {
+              "200": { description: "All tests passed" },
+              "503": { description: "Some tests failed" }
+            }
+          }
+        }
+      }
+    };
+
+    // Initialize Swagger UI
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        spec: spec,
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        defaultModelsExpandDepth: -1,
+        docExpansion: "list",
+        filter: true,
+        tryItOutEnabled: true
+      });
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+graph TB
+    %% CDN and Edge
+    subgraph "🌐 Cloudflare Edge"
+        CDN[CDN + Cache]
+        WAF[Web Application Firewall]
+        DDoS[DDoS Protection]
+    end
+    
+    %% Load Balancing
+    subgraph "⚖️ Load Balancing"
+        LB[Application Load Balancer]
+        HealthCheck[Health Checks]
+    end
+    
+    %% Application Tier
+    subgraph "🚀 Application Servers"
+        App1[API Server 1<br/>Node.js + Express]
+        App2[API Server 2<br/>Node.js + Express]
+        App3[API Server 3<br/>Node.js + Express]
+    end
+    
+    %% Processing Tier  
+    subgraph "🔄 Processing Layer"
+        Worker1[Pose Processor 1<br/>Python + OpenCV]
+        Worker2[Pose Processor 2<br/>Python + OpenCV]
+        MLService[ML Service<br/>TensorFlow Serving]
+    end
+    
+    %% Data Tier
+    subgraph "💾 Data Layer"
+        PrimaryDB[(Primary PostgreSQL<br/>Read/Write)]
+        ReplicaDB[(Read Replica<br/>Read Only)]
+        RedisCluster[(Redis Cluster<br/>Cache + Sessions)]
+    end
+    
+    %% Storage
+    subgraph "📦 Object Storage"
+        S3[MinIO/S3<br/>Video + Assets]
+        Backup[Automated Backups<br/>Cross-Region Sync]
+    end
+    
+    %% Monitoring
+    subgraph "📊 Observability"
+        Logs[Centralized Logging<br/>ELK Stack]
+        Metrics[Metrics Collection<br/>Prometheus]
+        Alerts[Alert Manager<br/>PagerDuty]
+        Tracing[Distributed Tracing<br/>Jaeger]
+    end
+    
+    %% External Services
+    subgraph "🔌 External APIs"
+        NeonDB[(Neon Database<br/>Serverless PostgreSQL)]
+        SOAPI[Stack Overflow API]
+        SportsAPIs[Sports Data APIs<br/>MLB, ESPN, etc.]
+    end
+    
+    %% Traffic Flow
+    Users[👥 Users] --> CDN
+    CDN --> WAF
+    WAF --> DDoS
+    DDoS --> LB
+    
+    LB --> App1
+    LB --> App2
+    LB --> App3
+    
+    App1 --> Worker1
+    App2 --> Worker2
+    App3 --> MLService
+    
+    App1 --> PrimaryDB
+    App2 --> ReplicaDB
+    App3 --> RedisCluster
+    
+    Worker1 --> S3
+    Worker2 --> S3
+    MLService --> S3
+    
+    PrimaryDB --> Backup
+    S3 --> Backup
+    
+    App1 --> Logs
+    App2 --> Metrics
+    App3 --> Alerts
+    Worker1 --> Tracing
+    
+    App1 --> NeonDB
+    App2 --> SOAPI
+    App3 --> SportsAPIs
+    
+    HealthCheck --> App1
+    HealthCheck --> App2
+    HealthCheck --> App3
+    
+    %% Styling
+    classDef edge fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef app fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef storage fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef monitoring fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef external fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class CDN,WAF,DDoS,LB,HealthCheck edge
+    class App1,App2,App3,Worker1,Worker2,MLService app
+    class PrimaryDB,ReplicaDB,RedisCluster data
+    class S3,Backup storage
+    class Logs,Metrics,Alerts,Tracing monitoring
+    class NeonDB,SOAPI,SportsAPIs external

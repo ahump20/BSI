@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorado Buffaloes Baseball | Blaze Sports Intel</title>
+    <meta name="description" content="Colorado Buffaloes do not field a baseball team. Learn about Big 12 baseball programs from Blaze Sports Intel.">
+    <meta property="og:title" content="Colorado Buffaloes Baseball | Blaze Sports Intel">
+    <meta property="og:description" content="Colorado does not field a varsity baseball team. Explore other Big 12 baseball programs.">
+    <link rel="canonical" href="https://blazesportsintel.com/college-baseball/teams/colorado.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <style>
+        body {
+            font-family: var(--bsi-font-sans);
+            background: var(--bsi-midnight);
+            color: var(--bsi-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        /* Hero */
+        .team-hero {
+            background: linear-gradient(135deg, #CFB87C 0%, #000000 100%);
+            padding: 120px 0 var(--bsi-space-12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255,255,255,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            font-size: var(--bsi-text-sm);
+            color: rgba(255,255,255,0.7);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .breadcrumb a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-6);
+        }
+
+        .team-logo-large {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-3);
+        }
+
+        .team-title {
+            font-family: var(--bsi-font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-2);
+            color: white;
+        }
+
+        .team-subtitle {
+            font-size: var(--bsi-text-lg);
+            color: rgba(255,255,255,0.8);
+        }
+
+        .team-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            background: rgba(239, 68, 68, 0.3);
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-full);
+            font-size: var(--bsi-text-sm);
+            font-weight: 600;
+            margin-top: var(--bsi-space-3);
+            color: #fca5a5;
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-12) 0;
+        }
+
+        /* No Baseball Notice */
+        .no-baseball-notice {
+            background: linear-gradient(135deg, rgba(207, 184, 124, 0.1), rgba(0, 0, 0, 0.2));
+            border: 2px solid rgba(207, 184, 124, 0.3);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-10);
+            text-align: center;
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .no-baseball-icon {
+            font-size: 64px;
+            margin-bottom: var(--bsi-space-6);
+            opacity: 0.5;
+        }
+
+        .no-baseball-notice h2 {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-2xl);
+            margin-bottom: var(--bsi-space-4);
+            color: #CFB87C;
+        }
+
+        .no-baseball-notice p {
+            color: var(--bsi-text-secondary);
+            font-size: var(--bsi-text-lg);
+            max-width: 600px;
+            margin: 0 auto var(--bsi-space-6);
+        }
+
+        /* History Section */
+        .history-section {
+            background: var(--bsi-charcoal);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-8);
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .history-section h3 {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-xl);
+            margin-bottom: var(--bsi-space-4);
+            color: #CFB87C;
+        }
+
+        .history-section p {
+            color: var(--bsi-text-secondary);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .history-section ul {
+            color: var(--bsi-text-secondary);
+            padding-left: var(--bsi-space-6);
+        }
+
+        .history-section li {
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        /* Alternative Teams Section */
+        .alt-teams-section {
+            margin-top: var(--bsi-space-10);
+        }
+
+        .alt-teams-section h3 {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-xl);
+            margin-bottom: var(--bsi-space-6);
+            text-align: center;
+        }
+
+        .alt-teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--bsi-space-4);
+        }
+
+        .alt-team-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-5);
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-4);
+            text-decoration: none;
+            color: var(--bsi-text-primary);
+            transition: all var(--bsi-transition-fast);
+        }
+
+        .alt-team-card:hover {
+            border-color: #CFB87C;
+            transform: translateY(-2px);
+        }
+
+        .alt-team-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .alt-team-info h4 {
+            font-weight: 600;
+            margin-bottom: var(--bsi-space-1);
+        }
+
+        .alt-team-info p {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .team-header { flex-direction: column; text-align: center; }
+            .no-baseball-notice { padding: var(--bsi-space-6); }
+            .no-baseball-icon { font-size: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bsi-nav-placeholder"></div>
+
+    <!-- Team Hero -->
+    <section class="team-hero">
+        <div class="container">
+            <div class="hero-content">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="/">Home</a>
+                    <span>/</span>
+                    <a href="/college-baseball/">College Baseball</a>
+                    <span>/</span>
+                    <a href="/college-baseball/teams/">Teams</a>
+                    <span>/</span>
+                    <span>Colorado</span>
+                </nav>
+
+                <div class="team-header">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/38.png" alt="Colorado Buffaloes" class="team-logo-large">
+                    <div>
+                        <h1 class="team-title">Colorado Buffaloes</h1>
+                        <p class="team-subtitle">Big 12 • Boulder, CO</p>
+                        <span class="team-badge">No Baseball Program</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- No Baseball Notice -->
+        <div class="no-baseball-notice">
+            <div class="no-baseball-icon">&#9918;</div>
+            <h2>Colorado Does Not Field a Baseball Team</h2>
+            <p>
+                The University of Colorado Boulder does not sponsor varsity baseball. The program was discontinued in 1980 due to budget constraints and has not been reinstated.
+            </p>
+            <a href="/college-baseball/teams/" style="display: inline-flex; align-items: center; gap: var(--bsi-space-2); background: #CFB87C; color: #000; padding: var(--bsi-space-3) var(--bsi-space-6); border-radius: var(--bsi-radius-md); text-decoration: none; font-weight: 600;">
+                Browse Big 12 Baseball Teams
+            </a>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+            <h3>Program History</h3>
+            <p>
+                Colorado had a varsity baseball program from 1895 to 1980, competing for 85 seasons before the program was discontinued. During that time, the Buffaloes had several successful seasons but never reached the College World Series.
+            </p>
+            <p><strong>Key historical facts:</strong></p>
+            <ul>
+                <li><strong>Years Active:</strong> 1895-1980 (85 seasons)</li>
+                <li><strong>Conference:</strong> Big 8 (baseball)</li>
+                <li><strong>Discontinuation:</strong> 1980 due to Title IX compliance and budget constraints</li>
+                <li><strong>Home Field:</strong> Potts Field (historical)</li>
+                <li><strong>Notable Fact:</strong> Colorado is one of only two current Big 12 members without varsity baseball (Kansas does not field a team either)</li>
+            </ul>
+            <p style="margin-top: var(--bsi-space-4);">
+                There have been periodic discussions about reinstating baseball at Colorado, but the significant costs of facilities, scholarships, and Title IX compliance have prevented the program from returning. Club baseball continues at CU Boulder through student organizations.
+            </p>
+        </div>
+
+        <!-- Alternative Teams Section -->
+        <div class="alt-teams-section">
+            <h3>Explore Other Big 12 Baseball Programs</h3>
+            <div class="alt-teams-grid">
+                <a href="/college-baseball/teams/texas.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>Texas Longhorns</h4>
+                        <p>6x National Champions</p>
+                    </div>
+                </a>
+                <a href="/college-baseball/teams/tcu.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png" alt="TCU" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>TCU Horned Frogs</h4>
+                        <p>Consistent CWS Contender</p>
+                    </div>
+                </a>
+                <a href="/college-baseball/teams/oklahoma.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/201.png" alt="Oklahoma" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>Oklahoma Sooners</h4>
+                        <p>2x National Champions</p>
+                    </div>
+                </a>
+                <a href="/college-baseball/teams/arizona.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/12.png" alt="Arizona" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>Arizona Wildcats</h4>
+                        <p>4x National Champions</p>
+                    </div>
+                </a>
+                <a href="/college-baseball/teams/arizona-state.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/9.png" alt="Arizona State" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>Arizona State Sun Devils</h4>
+                        <p>5x National Champions</p>
+                    </div>
+                </a>
+                <a href="/college-baseball/teams/houston.html" class="alt-team-card">
+                    <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/248.png" alt="Houston" class="alt-team-logo">
+                    <div class="alt-team-info">
+                        <h4>Houston Cougars</h4>
+                        <p>Strong Texas Recruiting</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Live Scoreboard Sidebar -->
+    <aside style="position: fixed; right: var(--bsi-space-4); top: 100px; width: 300px; z-index: 50; display: none;" class="live-scoreboard-sidebar" id="scoreboard-sidebar">
+        <div style="background: var(--bsi-charcoal); border: 1px solid var(--bsi-border-subtle); border-radius: var(--bsi-radius-lg); padding: var(--bsi-space-4);">
+            <div id="live-scoreboard"></div>
+        </div>
+    </aside>
+
+    <div id="bsi-footer-placeholder"></div>
+
+    <script src="/js/bsi-components.js"></script>
+    <script src="/js/team-espn-ids.js"></script>
+    <script src="/js/college-baseball-data.js"></script>
+    <script src="/js/live-scoreboard.js"></script>
+    <script src="/js/team-page-init.js"></script>
+</body>
+</html>

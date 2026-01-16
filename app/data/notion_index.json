@@ -1,0 +1,68 @@
+{
+  "portfolio": [
+    {
+      "title": "Cardinals Analytics MCP Server",
+      "description": "Production-ready TypeScript/Node.js server with Redis caching and Winston logging for real-time baseball analytics",
+      "url": "https://github.com/ahump20/cardinals-analytics-mcp"
+    },
+    {
+      "title": "Blaze Intelligence Frameworks",
+      "description": "Decision Velocity Model, Pattern Recognition Hierarchy, and Cognitive Load Distribution frameworks",
+      "url": "https://austin-humphrey-portfolio.pages.dev/frameworks"
+    },
+    {
+      "title": "The ShowIQ App",
+      "description": "Grades real-life baseball swings against MLB The Show mechanics using AI-driven analytics",
+      "url": "https://blazebackyard.com/showiq"
+    },
+    {
+      "title": "Gamer-Athlete Hybrid Camps",
+      "description": "Merging eSports analytics with physical training for next-generation athlete development",
+      "url": "https://blaze-intelligence.pages.dev/programs/hybrid-camps"
+    }
+  ],
+  "resources": [
+    {
+      "name": "FBS Power Conferences 2025 Data",
+      "type": "dataset",
+      "format": "CSV/JSON",
+      "url": "/data/fbs_power_conferences_2025.json"
+    },
+    {
+      "name": "MLB Teams Reference",
+      "type": "dataset",
+      "format": "JSON",
+      "url": "/data/mlb_teams.json"
+    },
+    {
+      "name": "NFL Teams Reference",
+      "type": "dataset",
+      "format": "JSON",
+      "url": "/data/nfl_teams.json"
+    },
+    {
+      "name": "NIL Valuation Templates",
+      "type": "templates",
+      "format": "CSV",
+      "url": "/data/nil-templates.json"
+    }
+  ],
+  "assets": {
+    "fbs_power_conferences_json": "/data/fbs_power_conferences_2025.json",
+    "fbs_power_conferences_csv": "/data/fbs_power_conferences_2025.csv",
+    "mlb_teams_json": "/data/mlb_teams.json",
+    "nfl_teams_json": "/data/nfl_teams.json",
+    "fcs_teams_json": "/data/fcs_teams.json",
+    "blaze_sports_data_json": "/data/blaze-sports-data-2025.json",
+    "nil_templates_json": "/data/nil-templates.json"
+  },
+  "admin": {
+    "cms_url": "https://notion.so/humphrey-austin/master-index",
+    "dashboard_url": "https://blaze-worker.humphrey-austin20.workers.dev/admin",
+    "analytics_url": "https://blaze-intelligence.pages.dev/analytics"
+  },
+  "meta": {
+    "updated": "2025-01-23T18:00:00Z",
+    "version": "1.0.0"
+  }
+}

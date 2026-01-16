@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bsi-game-backend",
+  "main": "index.ts",
+  "compatibility_date": "2025-03-07",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Worker settings
+  "workers_dev": true,
+  "minify": true,
+
+  // Environment variables
+  "vars": {
+    "ENVIRONMENT": "production",
+  },
+
+  // Observability - full sampling for debugging
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
+
+  // D1 Database - Game data storage
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bsi-game-db",
+      "database_id": "88eb676f-af0f-470c-a46a-b9429f5b51f3",
+    },
+  ],
+
+  // KV Namespace - Leaderboard caching and rate limiting
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "a53c3726fc3044be82e79d2d1e371d26",
+    },
+  ],
+
+  // R2 Bucket - Character sprites and stadium images
+  "r2_buckets": [
+    {
+      "binding": "ASSETS",
+      "bucket_name": "bsi-game-assets",
+    },
+  ],
+}

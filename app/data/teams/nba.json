@@ -1,0 +1,98 @@
+[
+  {
+    "id": "mem-grizzlies",
+    "name": "Memphis Grizzlies",
+    "league": "NBA",
+    "stats": {
+      "wins": 51,
+      "losses": 31,
+      "rating": 0.622,
+      "championships": 0,
+      "playoffAppearances": 12
+    }
+  },
+  {
+    "id": "gs-warriors",
+    "name": "Golden State Warriors",
+    "league": "NBA",
+    "stats": {
+      "wins": 44,
+      "losses": 38,
+      "rating": 0.537,
+      "championships": 7,
+      "lastChampionship": 2022
+    }
+  },
+  {
+    "id": "lal-lakers",
+    "name": "Los Angeles Lakers",
+    "league": "NBA",
+    "stats": {
+      "wins": 47,
+      "losses": 35,
+      "rating": 0.573,
+      "championships": 17,
+      "lastChampionship": 2020
+    }
+  },
+  {
+    "id": "bos-celtics",
+    "name": "Boston Celtics",
+    "league": "NBA",
+    "stats": {
+      "wins": 64,
+      "losses": 18,
+      "rating": 0.78,
+      "championships": 18,
+      "lastChampionship": 2024
+    }
+  },
+  {
+    "id": "den-nuggets",
+    "name": "Denver Nuggets",
+    "league": "NBA",
+    "stats": {
+      "wins": 57,
+      "losses": 25,
+      "rating": 0.695,
+      "championships": 1,
+      "lastChampionship": 2023
+    }
+  },
+  {
+    "id": "mil-bucks",
+    "name": "Milwaukee Bucks",
+    "league": "NBA",
+    "stats": {
+      "wins": 49,
+      "losses": 33,
+      "rating": 0.598,
+      "championships": 2,
+      "lastChampionship": 2021
+    }
+  },
+  {
+    "id": "phx-suns",
+    "name": "Phoenix Suns",
+    "league": "NBA",
+    "stats": {
+      "wins": 49,
+      "losses": 33,
+      "rating": 0.598,
+      "championships": 0,
+      "playoffAppearances": 31
+    }
+  },
+  {
+    "id": "okc-thunder",
+    "name": "Oklahoma City Thunder",
+    "league": "NBA",
+    "stats": {
+      "wins": 57,
+      "losses": 25,
+      "rating": 0.695,
+      "championships": 1,
+      "lastChampionship": 1979
+    }
+  }
+]

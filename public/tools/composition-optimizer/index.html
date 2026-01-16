@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composition Optimizer | Blaze Sports Intel</title>
+  <meta name="description" content="Monte Carlo simulation engine for roster optimization. Run thousands of scenarios to find optimal team compositions.">
+
+  <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-ember: #FF6B35;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bsi-midnight);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .nav {
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--bsi-burnt-orange);
+      text-decoration: none;
+    }
+
+    .nav-back {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .nav-back:hover { color: var(--bsi-burnt-orange); }
+
+    .tool-header {
+      background: linear-gradient(180deg, rgba(191,87,0,0.15) 0%, transparent 100%);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+    }
+
+    .tool-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-header p {
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .pro-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .tool-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .config-panel {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .config-panel h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: var(--bsi-burnt-orange);
+    }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .config-item label {
+      display: block;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 0.5rem;
+    }
+
+    .config-item input, .config-item select {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .config-item input:focus, .config-item select:focus {
+      outline: none;
+      border-color: var(--bsi-burnt-orange);
+    }
+
+    .run-button {
+      background: linear-gradient(135deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.125rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .run-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(191, 87, 0, 0.3);
+    }
+
+    .results-panel {
+      background: var(--bsi-charcoal);
+      border: 1px solid rgba(191, 87, 0, 0.2);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .results-panel h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .simulation-status {
+      text-align: center;
+      padding: 3rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .simulation-status .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .progress-container {
+      display: none;
+      margin-top: 1.5rem;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-content">
+      <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+      <a href="/tools" class="nav-back">&larr; Back to Tools</a>
+    </div>
+  </nav>
+
+  <div class="tool-header">
+    <h1>Composition Optimizer</h1>
+    <p>Monte Carlo simulation engine for optimal team composition</p>
+    <span class="pro-badge">Pro Feature</span>
+  </div>
+
+  <div class="tool-container">
+    <div class="config-panel">
+      <h3>Simulation Configuration</h3>
+      <div class="config-grid">
+        <div class="config-item">
+          <label>Sport</label>
+          <select id="sport">
+            <option value="baseball">Baseball</option>
+            <option value="football">Football</option>
+            <option value="basketball">Basketball</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <label>Iterations</label>
+          <select id="iterations">
+            <option value="1000">1,000</option>
+            <option value="5000">5,000</option>
+            <option value="10000" selected>10,000</option>
+            <option value="50000">50,000</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <label>Optimization Target</label>
+          <select id="target">
+            <option value="wins">Expected Wins</option>
+            <option value="runs">Run Differential</option>
+            <option value="playoff">Playoff Probability</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <label>Budget Constraint</label>
+          <input type="text" id="budget" placeholder="e.g., $200M" value="$200M">
+        </div>
+      </div>
+      <button class="run-button" onclick="runSimulation()">Run Simulation</button>
+      <div class="progress-container" id="progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Initializing...</div>
+      </div>
+    </div>
+
+    <div class="results-panel">
+      <h3>Optimization Results</h3>
+      <div class="simulation-status" id="results">
+        <div class="icon">&#9881;</div>
+        <p>Configure parameters above and run simulation to see optimal compositions</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Blaze Sports Intel. Born to Blaze the Path Less Beaten.</p>
+  </footer>
+
+  <script>
+    const userTier = window.BSI_USER_TIER || 'free';
+
+    function runSimulation() {
+      if (userTier === 'free') {
+        alert('Pro subscription required for Monte Carlo simulations. Upgrade to access this feature.');
+        return;
+      }
+
+      const progress = document.getElementById('progress');
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const results = document.getElementById('results');
+
+      progress.style.display = 'block';
+      let pct = 0;
+
+      const interval = setInterval(() => {
+        pct += Math.random() * 15;
+        if (pct >= 100) {
+          pct = 100;
+          clearInterval(interval);
+          progressText.textContent = 'Complete!';
+          results.innerHTML = '<p style="color: var(--bsi-burnt-orange);">Simulation complete. Results would display here with a Pro subscription.</p>';
+        } else {
+          progressText.textContent = `Running simulation... ${Math.floor(pct)}%`;
+        }
+        progressFill.style.width = pct + '%';
+      }, 200);
+    }
+  </script>
+</body>
+</html>

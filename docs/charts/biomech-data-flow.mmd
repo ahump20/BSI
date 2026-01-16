@@ -1,0 +1,70 @@
+flowchart TD
+    %% Input Sources
+    Camera1[📹 Camera 1<br/>Front View]
+    Camera2[📹 Camera 2<br/>Side View]
+    Camera3[📹 Camera 3<br/>Back View]
+    Camera4[📹 Camera 4<br/>Overhead]
+    
+    %% Pose Estimation
+    PoseEst[🎯 3D Pose Estimation<br/>MediaPipe + OpenPose]
+    
+    %% Feature Extraction
+    Features[🔍 Feature Extraction<br/>30+ Biomech Metrics]
+    
+    %% Feature Categories
+    Kinematic[📐 Kinematic Features<br/>• Joint Angles<br/>• Angular Velocities<br/>• Linear Accelerations]
+    Temporal[⏱️ Temporal Features<br/>• Ground Contact Time<br/>• Phase Durations<br/>• Rhythm Patterns]
+    Spatial[📏 Spatial Features<br/>• Center of Mass<br/>• Hip-Shoulder Separation<br/>• Stride Length]
+    
+    %% Risk Assessment
+    RiskEngine[⚠️ Risk Assessment<br/>Injury Prediction Model]
+    
+    %% Performance Analysis
+    PerfAnalysis[📊 Performance Analysis<br/>Trait Scoring + Projections]
+    
+    %% Outputs
+    Dashboard[📱 Coach Dashboard<br/>Real-time Metrics]
+    Alerts[🚨 Risk Alerts<br/>Injury Prevention]
+    Videos[🎥 Video Clips<br/>Annotated Highlights]
+    Reports[📋 Performance Reports<br/>Detailed Analytics]
+    
+    %% Data Flow
+    Camera1 --> PoseEst
+    Camera2 --> PoseEst
+    Camera3 --> PoseEst
+    Camera4 --> PoseEst
+    
+    PoseEst --> Features
+    
+    Features --> Kinematic
+    Features --> Temporal  
+    Features --> Spatial
+    
+    Kinematic --> RiskEngine
+    Temporal --> RiskEngine
+    Spatial --> RiskEngine
+    
+    Kinematic --> PerfAnalysis
+    Temporal --> PerfAnalysis
+    Spatial --> PerfAnalysis
+    
+    RiskEngine --> Dashboard
+    RiskEngine --> Alerts
+    
+    PerfAnalysis --> Dashboard
+    PerfAnalysis --> Reports
+    
+    Features --> Videos
+    
+    %% Styling
+    classDef input fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef processing fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef features fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef analysis fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef output fill:#fff8e1,stroke:#ff6f00,stroke-width:2px
+    
+    class Camera1,Camera2,Camera3,Camera4 input
+    class PoseEst,Features processing
+    class Kinematic,Temporal,Spatial features
+    class RiskEngine,PerfAnalysis analysis
+    class Dashboard,Alerts,Videos,Reports output

@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏀 CBB Analytics | Blaze Sports Intel</title>
+    <meta
+      name="description"
+      content="Practice to Play. Blaze Data Wins the Day. Real-time College Basketball standings, team statistics, and SEC-focused analytics powered by ESPN."
+    />
+
+    <!-- Design Tokens (Canonical) -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css" />
+
+    <!-- Fonts & Icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Three.js for 3D Graphics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Postprocessing Library (pmndrs/postprocessing) -->
+    <script src="https://cdn.jsdelivr.net/npm/postprocessing@6.35.3/build/postprocessing.umd.min.js"></script>
+
+    <!-- Blaze Graphics Modules Ultra V5 - Championship Edition -->
+    <script type="module" src="/lib/graphics/blaze-particle-engine-ultra-v5.js"></script>
+    <script type="module" src="/lib/graphics/blaze-postprocessing-ultra-v5.js"></script>
+    <script type="module" src="/lib/graphics/blaze-card-interactions.js"></script>
+
+    <!-- Ultra Interactions CSS -->
+    <link rel="stylesheet" href="/css/blaze-ultra-interactions.css" />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: linear-gradient(135deg, #0d0d12 0%, #161620 50%, #0d0d12 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      #particle-field {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .header {
+        background: rgba(31, 31, 46, 0.7);
+        border-bottom: 2px solid var(--blaze-burnt-orange);
+        padding: 20px 40px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        box-shadow: 0 8px 32px 0 rgba(191, 87, 0, 0.1);
+      }
+
+      .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--blaze-ember);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .nav-link:hover {
+        color: var(--blaze-ember);
+      }
+
+      .nav-link.active {
+        color: var(--blaze-ember);
+        border-bottom: 2px solid var(--blaze-ember);
+        padding-bottom: 4px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 60px;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, rgba(191, 87, 0, 0.1) 0%, transparent 100%);
+        border-radius: 16px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-copper));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+      }
+
+      .hero-subtitle {
+        font-size: 1.3rem;
+        color: var(--text-tertiary);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 40px;
+        border-bottom: 2px solid var(--glass-border);
+        overflow-x: auto;
+      }
+
+      .tab {
+        padding: 15px 30px;
+        background: transparent;
+        border: none;
+        color: var(--text-tertiary);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+      }
+
+      .tab:hover {
+        color: var(--text-primary);
+      }
+
+      .tab.active {
+        color: var(--blaze-ember);
+        border-bottom-color: var(--blaze-ember);
+      }
+
+      .card {
+        background: var(--glass-light);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        box-shadow: 0 8px 32px 0 rgba(191, 87, 0, 0.1);
+      }
+
+      .card-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--blaze-ember);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .standings-table th {
+        background: rgba(31, 31, 46, 0.7);
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        color: var(--blaze-copper);
+        border-bottom: 2px solid var(--blaze-burnt-orange);
+      }
+
+      .standings-table td {
+        padding: 15px;
+        border-bottom: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+      }
+
+      .standings-table tr:hover {
+        background: var(--glass-light);
+      }
+
+      .team-name {
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .stat-highlight {
+        color: var(--blaze-ember);
+        font-weight: 700;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-tertiary);
+      }
+
+      .loading i {
+        font-size: 3rem;
+        color: var(--blaze-burnt-orange);
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error {
+        background: rgba(220, 38, 38, 0.1);
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        color: #fca5a5;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .data-source {
+        font-size: 0.9rem;
+        color: var(--text-tertiary);
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid var(--glass-border);
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+        .header {
+          padding: 15px 20px;
+        }
+        .nav-links {
+          gap: 15px;
+        }
+        .standings-table {
+          font-size: 0.9rem;
+        }
+        .standings-table th,
+        .standings-table td {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Three.js Particle Background -->
+    <canvas id="particle-field"></canvas>
+    <header class="header">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <i class="fas fa-fire"></i>
+          BLAZE SPORTS INTEL
+        </a>
+        <nav class="nav-links">
+          <a href="/mlb" class="nav-link">⚾ MLB</a>
+          <a href="/nfl" class="nav-link">🏈 NFL</a>
+          <a href="/cfb" class="nav-link">🎓 CFB</a>
+          <a href="/cbb" class="nav-link active">🏀 CBB</a>
+          <a href="/analytics.html" class="nav-link">📊 Analytics</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="hero">
+        <h1>🏀 College Basketball Intelligence</h1>
+        <p
+          style="
+            font-size: 1.1rem;
+            color: var(--blaze-copper);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+          "
+        >
+          Practice to Play. Blaze Data Wins the Day.
+        </p>
+        <p class="hero-subtitle">Real-time CBB standings, team statistics, and SEC-focused analytics powered by ESPN</p>
+      </div>
+
+      <div id="root"></div>
+    </div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      function CBBDashboard() {
+        const [activeTab, setActiveTab] = useState('standings');
+        const [teams, setTeams] = useState([]);
+        const [selectedTeam, setSelectedTeam] = useState(null);
+        const [schedule, setSchedule] = useState([]);
+        const [loading, setLoading] = useState(true);
+        const [error, setError] = useState(null);
+
+        useEffect(() => {
+          if (activeTab === 'teams') {
+            fetchTeams();
+          } else if (activeTab === 'schedule') {
+            fetchSchedule();
+          }
+        }, [activeTab]);
+
+        const fetchTeams = async () => {
+          setLoading(true);
+          setError(null);
+          try {
+            const response = await fetch('/api/cbb/teams');
+            if (!response.ok) throw new Error('Failed to fetch teams');
+            const data = await response.json();
+            setTeams(data.teams || []);
+            setLoading(false);
+          } catch (err) {
+            console.error('Error fetching teams:', err);
+            setError(err.message);
+            setLoading(false);
+          }
+        };
+
+        const fetchSchedule = async () => {
+          setLoading(true);
+          setError(null);
+          try {
+            // Fetch current week games
+            const response = await fetch('/api/cbb/scoreboard?week=1');
+            if (!response.ok) throw new Error('Failed to fetch schedule');
+            const data = await response.json();
+            setSchedule(data.games || []);
+            setLoading(false);
+          } catch (err) {
+            console.error('Error fetching schedule:', err);
+            setError(err.message);
+            setLoading(false);
+          }
+        };
+
+        const renderStandings = () => {
+          return (
+            <div className="card">
+              <h2 className="card-title">
+                <i className="fas fa-trophy"></i>
+                CBB Standings
+              </h2>
+              <p style={{ color: 'var(--text-tertiary)', marginBottom: '20px' }}>
+                College Basketball standings will be available during the regular season
+              </p>
+              <div
+                style={{ background: 'var(--dark-slate)', padding: '30px', borderRadius: '8px', textAlign: 'center' }}
+              >
+                <i
+                  className="fas fa-basketball-ball"
+                  style={{ fontSize: '3rem', color: 'var(--blaze-ember)', marginBottom: '15px' }}
+                ></i>
+                <p style={{ color: 'var(--text-secondary)' }}>Real-time standings and playoff picture coming soon</p>
+              </div>
+            </div>
+          );
+        };
+
+        const renderTeams = () => {
+          if (loading) {
+            return (
+              <div className="loading">
+                <i className="fas fa-basketball-ball"></i>
+                <p style={{ marginTop: '20px' }}>Loading CBB teams...</p>
+              </div>
+            );
+          }
+
+          if (error) {
+            return (
+              <div className="error">
+                <strong>⚠️ Data Unavailable</strong>
+                <p>{error}</p>
+              </div>
+            );
+          }
+
+          // Group teams by conference
+          const divisions = {
+            SEC: [],
+            'Big Ten': [],
+            ACC: [],
+            'Big 12': [],
+            'Pac-12': [],
+            'Big East': [],
+            American: [],
+            'Atlantic 10': [],
+            'Conference USA': [],
+            MAC: [],
+            'Mountain West': [],
+            'West Coast': [],
+            Independent: [],
+          };
+
+          teams.forEach((team) => {
+            const confName = team.conference?.name || team.conference || 'Independent';
+            // Handle various conference name formats
+            let mappedConf = confName;
+            if (confName.includes('SEC')) mappedConf = 'SEC';
+            else if (confName.includes('Big Ten')) mappedConf = 'Big Ten';
+            else if (confName.includes('ACC')) mappedConf = 'ACC';
+            else if (confName.includes('Big 12')) mappedConf = 'Big 12';
+            else if (confName.includes('Pac-12')) mappedConf = 'Pac-12';
+            else if (confName.includes('Big East')) mappedConf = 'Big East';
+            else if (confName.includes('American')) mappedConf = 'American';
+            else if (confName.includes('Atlantic 10') || confName.includes('A-10')) mappedConf = 'Atlantic 10';
+            else if (confName.includes('Conference USA') || confName.includes('C-USA')) mappedConf = 'Conference USA';
+            else if (confName.includes('MAC')) mappedConf = 'MAC';
+            else if (confName.includes('Mountain West')) mappedConf = 'Mountain West';
+            else if (confName.includes('West Coast') || confName.includes('WCC')) mappedConf = 'West Coast';
+
+            if (divisions[mappedConf]) {
+              divisions[mappedConf].push(team);
+            } else {
+              divisions['Independent'].push(team);
+            }
+          });
+
+          return (
+            <div>
+              {Object.keys(divisions).map(
+                (division) =>
+                  divisions[division].length > 0 && (
+                    <div key={division} className="card">
+                      <h2 className="card-title">
+                        <i className="fas fa-basketball-ball"></i>
+                        {division}
+                      </h2>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                          gap: '15px',
+                        }}
+                      >
+                        {divisions[division]
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((team) => (
+                            <div
+                              key={team.id}
+                              style={{
+                                background: `linear-gradient(135deg, #${team.color}22 0%, var(--dark-slate) 100%)`,
+                                padding: '20px',
+                                borderRadius: '8px',
+                                border: '1px solid var(--glass-border)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                              }}
+                              onMouseOver={(e) => (e.currentTarget.style.borderColor = `#${team.color}`)}
+                              onMouseOut={(e) => (e.currentTarget.style.borderColor = 'var(--glass-border)')}
+                            >
+                              {team.logos && team.logos[0] && (
+                                <img
+                                  src={team.logos[0].href}
+                                  alt={team.name}
+                                  style={{ width: '60px', height: '60px', marginBottom: '10px', objectFit: 'contain' }}
+                                />
+                              )}
+                              <div className="team-name" style={{ fontSize: '1.1rem', marginBottom: '5px' }}>
+                                {team.name}
+                              </div>
+                              <div style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+                                {team.abbreviation}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )
+              )}
+              <div className="card">
+                <div className="data-source">
+                  <i className="fas fa-database"></i> Data Source: ESPN CBB API via blazesportsintel.com/api • Last
+                  Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        const renderPlayers = () => {
+          return (
+            <div className="card">
+              <h2 className="card-title">
+                <i className="fas fa-star"></i>
+                Player Statistics
+              </h2>
+              <p style={{ color: 'var(--text-tertiary)', marginBottom: '20px' }}>
+                College Basketball player statistics and advanced metrics coming soon
+              </p>
+              <div
+                style={{ background: 'var(--dark-slate)', padding: '30px', borderRadius: '8px', textAlign: 'center' }}
+              >
+                <i
+                  className="fas fa-users"
+                  style={{ fontSize: '3rem', color: 'var(--blaze-ember)', marginBottom: '15px' }}
+                ></i>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  Scoring leaders, assist leaders, rebounding stats, and more
+                </p>
+              </div>
+            </div>
+          );
+        };
+
+        const renderSchedule = () => {
+          if (loading) {
+            return (
+              <div className="loading">
+                <i className="fas fa-calendar"></i>
+                <p style={{ marginTop: '20px' }}>Loading CBB schedule...</p>
+              </div>
+            );
+          }
+
+          if (error) {
+            return (
+              <div className="error">
+                <strong>⚠️ Data Unavailable</strong>
+                <p>{error}</p>
+              </div>
+            );
+          }
+
+          return (
+            <div className="card">
+              <h2 className="card-title">
+                <i className="fas fa-calendar-day"></i>
+                Week 1 Schedule
+              </h2>
+              <div style={{ display: 'grid', gap: '15px' }}>
+                {schedule.map((game, idx) => {
+                  const isComplete = game.status?.completed;
+                  const isLive = game.status?.type === 'STATUS_IN_PROGRESS';
+                  const homeTeam = game.teams?.find((t) => t.homeAway === 'home');
+                  const awayTeam = game.teams?.find((t) => t.homeAway === 'away');
+
+                  return (
+                    <div
+                      key={game.id || idx}
+                      style={{
+                        background: 'var(--dark-slate)',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        border: `1px solid ${isLive ? '#10b981' : 'var(--glass-border)'}`,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                          <span className="team-name">{awayTeam?.team?.displayName || 'TBD'}</span>
+                          {isComplete && awayTeam?.winner && (
+                            <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
+                          )}
+                          <span className="stat-highlight" style={{ marginLeft: 'auto' }}>
+                            {awayTeam?.score ?? '-'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span className="team-name">{homeTeam?.team?.displayName || 'TBD'}</span>
+                          {isComplete && homeTeam?.winner && (
+                            <i className="fas fa-check-circle" style={{ color: '#10b981' }}></i>
+                          )}
+                          <span className="stat-highlight" style={{ marginLeft: 'auto' }}>
+                            {homeTeam?.score ?? '-'}
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ marginLeft: '30px', textAlign: 'right' }}>
+                        <div
+                          style={{
+                            color: isLive ? '#10b981' : isComplete ? 'var(--text-tertiary)' : 'var(--blaze-ember)',
+                            fontWeight: '600',
+                            marginBottom: '5px',
+                          }}
+                        >
+                          {game.status?.detail || 'Scheduled'}
+                        </div>
+                        <div style={{ color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+                          {new Date(game.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            timeZone: 'America/Chicago',
+                          })}{' '}
+                          CDT
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="data-source">
+                <i className="fas fa-database"></i> Data Source: ESPN CBB API via blazesportsintel.com/api • Last
+                Updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CDT
+              </div>
+            </div>
+          );
+        };
+
+        return (
+          <div>
+            <div className="tabs">
+              <button
+                className={`tab ${activeTab === 'standings' ? 'active' : ''}`}
+                onClick={() => setActiveTab('standings')}
+              >
+                <i className="fas fa-list-ol"></i> Standings
+              </button>
+              <button className={`tab ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
+                <i className="fas fa-users"></i> Teams
+              </button>
+              <button
+                className={`tab ${activeTab === 'players' ? 'active' : ''}`}
+                onClick={() => setActiveTab('players')}
+              >
+                <i className="fas fa-user"></i> Players
+              </button>
+              <button
+                className={`tab ${activeTab === 'schedule' ? 'active' : ''}`}
+                onClick={() => setActiveTab('schedule')}
+              >
+                <i className="fas fa-calendar"></i> Schedule
+              </button>
+            </div>
+
+            {activeTab === 'standings' && renderStandings()}
+            {activeTab === 'teams' && renderTeams()}
+            {activeTab === 'players' && renderPlayers()}
+            {activeTab === 'schedule' && renderSchedule()}
+          </div>
+        );
+      }
+
+      ReactDOM.render(<CBBDashboard />, document.getElementById('root'));
+    </script>
+
+    <!-- Blaze Ultra Graphics System V5 - Championship Edition -->
+    <script type="module">
+      import { BlazeParticleEngineUltraV5 } from '/lib/graphics/blaze-particle-engine-ultra-v5.js';
+      import { BlazePostprocessingUltraV5 } from '/lib/graphics/blaze-postprocessing-ultra-v5.js';
+      import { BlazeCardInteractions } from '/lib/graphics/blaze-card-interactions.js';
+
+      // Global references
+      let blazeParticles = null;
+      let blazePostprocessing = null;
+      let cardInteractions = null;
+
+      async function initChampionshipGraphics() {
+        try {
+          console.log('🏆 Initializing CBB Ultra V5 Championship Graphics System...');
+
+          // Initialize Ultra V5 Particle Engine (500K particles max, device-adaptive)
+          blazeParticles = new BlazeParticleEngineUltraV5('particle-field', {
+            // Let engine auto-detect optimal count (500K/250K/50K based on device)
+            enableMouseInteraction: true,
+            enableParallax: true,
+            enableDataReactivity: true,
+            accentColor: '#BF5700', // Burnt orange
+            secondaryColor: '#A9D5DB', // Powder blue
+            tertiaryColor: '#E6382F', // Red
+            quaternaryColor: '#FFD700' // Gold
+          });
+
+          const particlesInitialized = await blazeParticles.init();
+          if (!particlesInitialized) {
+            console.warn('⚠️ Particle engine failed to initialize');
+            return;
+          }
+
+          console.log(`✅ Ultra V5 Particle Engine initialized`);
+          console.log(`   Device Tier: ${blazeParticles.deviceTier}`);
+          console.log(`   Particle Count: ${blazeParticles.config.particleCount.toLocaleString()}`);
+          console.log(`   Renderer: ${blazeParticles.useWebGPU ? 'WebGPU' : 'WebGL2'}`);
+
+          // Initialize 10-Stage Postprocessing Pipeline
+          if (blazeParticles.renderer) {
+            try {
+              blazePostprocessing = new BlazePostprocessingUltraV5(
+                blazeParticles.scene,
+                blazeParticles.camera,
+                blazeParticles.renderer
+              );
+
+              const postInitialized = await blazePostprocessing.init();
+              if (postInitialized) {
+                console.log('✅ Ultra V5 Postprocessing initialized');
+                console.log(`   Pipeline: ${blazePostprocessing.config.enabledStages.join(', ')}`);
+
+                // Override particle render method to use postprocessing
+                const originalAnimate = blazeParticles.animate.bind(blazeParticles);
+                blazeParticles.animate = function() {
+                  requestAnimationFrame(() => this.animate());
+
+                  const time = performance.now() * 0.001;
+                  this.frameCount++;
+
+                  // Update particle positions (keep existing logic)
+                  if (this.particleSystem) {
+                    const positions = this.particleSystem.geometry.attributes.position.array;
+                    const count = this.config.particleCount;
+
+                    for (let i = 0; i < count; i++) {
+                      const i3 = i * 3;
+                      positions[i3] += this.particleVelocities[i3];
+                      positions[i3 + 1] += this.particleVelocities[i3 + 1];
+                      positions[i3 + 2] += this.particleVelocities[i3 + 2];
+
+                      if (this.config.enableTurbulence) {
+                        const phase = this.particlePhases[i];
+                        const turbulence = Math.sin(time + phase) * 0.5;
+                        positions[i3 + 1] += turbulence;
+                      }
+
+                      const dist = Math.sqrt(
+                        positions[i3] ** 2 +
+                        positions[i3 + 1] ** 2 +
+                        positions[i3 + 2] ** 2
+                      );
+                      if (dist > 180) {
+                        const scale = 160 / dist;
+                        positions[i3] *= scale;
+                        positions[i3 + 1] *= scale;
+                        positions[i3 + 2] *= scale;
+                      }
+                    }
+
+                    this.particleSystem.geometry.attributes.position.needsUpdate = true;
+
+                    if (this.particleSystem.material.uniforms) {
+                      this.particleSystem.material.uniforms.time.value = time;
+                      this.particleSystem.material.uniforms.cameraPosition.value.copy(this.camera.position);
+                    }
+
+                    this.particleSystem.rotation.y += 0.0002;
+                  }
+
+                  // Update data nodes
+                  if (this.dataNodes) {
+                    this.dataNodes.forEach(node => {
+                      node.mesh.rotation.x += node.rotationSpeed.x;
+                      node.mesh.rotation.y += node.rotationSpeed.y;
+                      node.mesh.rotation.z += node.rotationSpeed.z;
+
+                      if (node.mesh.material.emissiveIntensity !== undefined) {
+                        node.mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2 + node.mesh.position.x) * 0.1;
+                      }
+                    });
+                  }
+
+                  // Mouse parallax
+                  if (this.mouse && this.config.enableMouseInteraction) {
+                    this.camera.position.x += (this.mouse.x * 10 - this.camera.position.x) * 0.05;
+                    this.camera.position.y += (this.mouse.y * 10 - this.camera.position.y) * 0.05;
+                  }
+
+                  // Render with postprocessing
+                  if (blazePostprocessing && blazePostprocessing.initialized) {
+                    const deltaTime = time - (this.lastTime || time);
+                    blazePostprocessing.render(deltaTime);
+                    this.lastTime = time;
+                  } else {
+                    this.renderer.render(this.scene, this.camera);
+                  }
+                };
+              }
+            } catch (postError) {
+              console.warn('⚠️ Postprocessing initialization failed, using basic renderer:', postError);
+            }
+          }
+
+          // Setup scroll-driven effects
+          let lastScrollProgress = 0;
+          window.addEventListener('scroll', () => {
+            if (blazePostprocessing && blazePostprocessing.initialized) {
+              const scrollProgress = Math.min(
+                window.scrollY / (document.documentElement.scrollHeight - window.innerHeight),
+                1
+              );
+              if (Math.abs(scrollProgress - lastScrollProgress) > 0.01) {
+                blazePostprocessing.updateOnScroll(scrollProgress);
+                lastScrollProgress = scrollProgress;
+              }
+            }
+          }, { passive: true });
+
+          // Setup hover effects for cards (postprocessing boost)
+          setTimeout(() => {
+            document.querySelectorAll('.card, .tab, .standings-table tr').forEach((card) => {
+              card.addEventListener('mouseenter', () => {
+                if (blazePostprocessing && blazePostprocessing.initialized) {
+                  blazePostprocessing.onCardHover(true);
+                }
+              });
+              card.addEventListener('mouseleave', () => {
+                if (blazePostprocessing && blazePostprocessing.initialized) {
+                  blazePostprocessing.onCardHover(false);
+                }
+              });
+            });
+          }, 1000); // Wait for React to render cards
+
+          // Initialize 3D card tilt interactions
+          setTimeout(() => {
+            cardInteractions = new BlazeCardInteractions('.card, .tab');
+          }, 1000);
+
+          console.log('🎉 CBB Ultra V5 Championship Graphics System Ready!');
+          console.log(`   🔥 Particles: ${blazeParticles.config.particleCount.toLocaleString()} (holographic)`);
+          console.log(`   🎬 Postprocessing: ${blazePostprocessing ? blazePostprocessing.config.enabledStages.length : 0} stages`);
+          console.log(`   🎮 Performance: Adaptive quality scaling enabled`);
+          console.log(`   ⚡ FPS: Monitoring with auto-adjustment`);
+
+        } catch (error) {
+          console.error('❌ Error initializing CBB Ultra V5 championship graphics:', error);
+        }
+      }
+
+      // Initialize on load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChampionshipGraphics);
+      } else {
+        initChampionshipGraphics();
+      }
+
+      // Export for global access (debugging)
+      window.blazeGraphics = {
+        get particles() { return blazeParticles; },
+        get postprocessing() { return blazePostprocessing; },
+        get cardInteractions() { return cardInteractions; },
+        updateGameData: (data) => {
+          if (blazeParticles && blazeParticles.config.enableDataReactivity) {
+            blazeParticles.updateWithGameData(data);
+          }
+        }
+      };
+    </script>
+    <!-- Cookie Consent Banner -->
+    <script src="/components/CookieConsent.js"></script>
+
+    <!-- Universal Footer -->
+    <div id="footer-container"></div>
+    <script src="/lib/footer.js"></script>
+  </body>
+</html>

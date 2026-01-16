@@ -1,0 +1,86 @@
+{
+  "slug": "georgia-bulldogs",
+  "team_name": "Georgia Bulldogs",
+  "mascot": "Bulldogs",
+  "conference": "SEC",
+  "season_window": {
+    "start_year": 2024,
+    "end_year": 2025,
+    "notes": "Second year of Wes Johnson era after 2024 Athens Regional host spot."
+  },
+  "location": {
+    "city": "Athens",
+    "state": "Georgia",
+    "campus": "University of Georgia",
+    "ballpark": {
+      "name": "Foley Field",
+      "capacity": 3112,
+      "surface": "Natural grass",
+      "recent_upgrades": "Scoreboard overhaul and pitching lab expansion targeted for winter 2024."
+    }
+  },
+  "branding": {
+    "primary_color_hex": "#BA0C2F",
+    "secondary_color_hex": "#000000"
+  },
+  "head_coach": {
+    "name": "Wes Johnson",
+    "contract_through": "2029",
+    "base_salary_estimate": 900000,
+    "staff_tenure": "Second season after Minnesota Twins MLB pitching coach stint.",
+    "playing_style": "Velocity-centric pitching development with on-base heavy offense.",
+    "recent_quotes": "Told DawgNation (Oct 2024) roster will ride two-way talent more in midweeks."
+  },
+  "support_staff": {
+    "pitching_coach": "Sean Kenny",
+    "hitting_coach": "Matt Greer",
+    "recruiting_coordinator": "Josh Simpson",
+    "director_of_operations": "Bryant Gaskill",
+    "analytics_lead": "Chris Gilmore",
+    "player_development_director": "Justin Holmes",
+    "video_coordinator": "TBD"
+  },
+  "nil_operations": {
+    "primary_collective": "Classic City Collective",
+    "lead_contact": "Matt Hibbs",
+    "contact_channels": [
+      "info@classiccitycollective.com",
+      "https://classiccitycollective.com/contact"
+    ],
+    "recent_initiatives": "Launched 'Diamond Dawgs Society' fall 2024 for baseball-only donors with locker room access.",
+    "intel_status": "needs_verification"
+  },
+  "roster_overview": {
+    "returning_starters": [],
+    "key_departures": [],
+    "incoming_transfers": [],
+    "impact_freshmen": [],
+    "injury_report": []
+  },
+  "front_office": {
+    "athletic_director": "Josh Brooks",
+    "baseball_admin": "Mike White",
+    "financial_points_of_contact": ["ugabtix@sports.uga.edu"]
+  },
+  "historical_context": {
+    "college_world_series_titles": 1,
+    "sec_titles": 6,
+    "last_super_regional": "2024",
+    "program_trend": "Upward trajectory after 2024 national seed; portal pitching still priority."
+  },
+  "intel_notes": [
+    {
+      "timestamp": "2024-10-16T10:45:00-04:00",
+      "summary": "Local NIL leaders gauging interest in co-branded events with Atlanta Braves minor league affiliates.",
+      "source_hint": "Athens Banner-Herald interview with Classic City Collective director",
+      "confidence": "low",
+      "status": "needs_follow_up"
+    }
+  ],
+  "data_quality": {
+    "last_reviewed": "2024-10-20",
+    "reviewed_by": "Deep South Intel bot",
+    "completeness": "sparse",
+    "next_actions": "Verify ops titles, populate returning starter list after fall roster release."
+  }
+}

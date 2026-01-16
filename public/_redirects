@@ -1,0 +1,40 @@
+# Cloudflare Pages Redirects
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Redirect www to apex domain (301 permanent)
+https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
+
+# Handle common typos and legacy URLs
+/home /dashboard 301
+/sports /dashboard 301
+/login /auth/login 301
+/signup /auth/signup 301
+/register /auth/signup 301
+/subscribe /pricing 301
+/plans /pricing 301
+
+# ============================================
+# Tools
+# ============================================
+# NOTE: Cloudflare Pages automatically serves .html files at clean URLs
+# (e.g., /tools/draft-value.html is served at /tools/draft-value)
+# No explicit rewrites needed - they would cause redirect loops
+
+# ============================================
+# League Score Redirects (legacy URL patterns)
+# ============================================
+/scores/mlb /mlb/scores 301
+/scores/nfl /nfl/scores 301
+/scores/nba /nba/scores 301
+
+# ============================================
+# Legal Page Redirects
+# ============================================
+/legal/privacy /privacy 301
+/legal/terms /terms 301
+
+# ============================================
+# Static Asset Rewrites
+# ============================================
+# CSS assets commonly requested without public/ prefix
+/css/bsi-tokens.css /public/css/bsi-tokens.css 200
