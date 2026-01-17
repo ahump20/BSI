@@ -49,11 +49,14 @@ jobs:
           echo "Functions and lib copied to output"
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy out --project-name=blazesportsintel --branch=${{ github.ref_name }} --commit-dirty=true
+          projectName: blazesportsintel
+          directory: out
+          branch: ${{ github.ref_name }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Wait for deployment propagation
         if: github.ref == 'refs/heads/main'
