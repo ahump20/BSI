@@ -1,0 +1,11 @@
+# Blazecraft Simulation Dependencies
+# Install with: pip install -r requirements.txt
+
+numpy>=1.21.0
+
+# MicroRTS environment (optional - for actual game running)
+# gym-microrts>=0.5.0
+
+# RL agents (optional - for trained agent loading)
+# stable-baselines3>=1.6.0
+# torch>=1.12.0
