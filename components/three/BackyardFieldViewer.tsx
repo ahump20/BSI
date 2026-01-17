@@ -110,7 +110,7 @@ export function BackyardFieldViewer({
         onCamerasReady?.(camerasRef.current);
 
         const desiredCamera =
-          (camerasRef.current.has(initialCameraSelection ?? '') ? initialCameraSelection : null) ||
+          (initialCameraSelection && camerasRef.current.has(initialCameraSelection) ? initialCameraSelection : null) ||
           cameraPresets.find((preset) => camerasRef.current.has(preset.id))?.id ||
           null;
 
