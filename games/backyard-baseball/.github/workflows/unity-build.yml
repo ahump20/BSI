@@ -101,7 +101,7 @@ jobs:
           cp web/_redirects web/ || true
 
       - name: Deploy to Cloudflare Pages Staging
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3.1.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
@@ -133,7 +133,7 @@ jobs:
           cp web/_redirects web/ || true
 
       - name: Deploy to Cloudflare Pages Production
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v3.1.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
