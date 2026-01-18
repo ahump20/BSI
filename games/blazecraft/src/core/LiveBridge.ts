@@ -96,6 +96,9 @@ const DEMO_REGIONS = ['workshop', 'market', 'barracks', 'stables', 'library', 't
 // Re-export EventPayload as AgentEvent for compatibility
 export type AgentEvent = EventPayload;
 
+// Phase 2.1: Processing mode for event handling
+export type ProcessingMode = 'running' | 'stopped' | 'held';
+
 export class LiveBridge {
   private eventSource: EventSource | null = null;
   private status: ConnectionStatus = 'disconnected';
@@ -108,6 +111,10 @@ export class LiveBridge {
   private cityState: CityState;
   private callbacks: LiveBridgeCallbacks;
   private config: Required<LiveBridgeConfig>;
+
+  // Phase 2.1: Processing control state
+  private processingMode: ProcessingMode = 'running';
+  private eventBuffer: EventPayload[] = [];
 
   // Public callback setters for post-construction assignment
   set onEvent(handler: ((event: EventPayload) => void) | undefined) {
@@ -148,10 +155,10 @@ export class LiveBridge {
   constructor(callbacks: LiveBridgeCallbacks = {}, config: LiveBridgeConfig = {}) {
     this.callbacks = callbacks;
     this.config = {
-      baseUrl: config.baseUrl ?? '/api/events',
+      baseUrl: config.baseUrl ?? '/api/blazecraft/events',  // Updated to correct endpoint
       sessionId: config.sessionId ?? 'main',
       autoReconnect: config.autoReconnect ?? true,
-      maxReconnectAttempts: config.maxReconnectAttempts ?? 2,  // A2: Faster demo fallback (was 5)
+      maxReconnectAttempts: config.maxReconnectAttempts ?? 3,  // Give live connection more chances
       demoEventInterval: config.demoEventInterval ?? 3000,
     };
     this.cityState = createInitialCityState();
@@ -168,7 +175,8 @@ export class LiveBridge {
     this.setStatus('connecting');
 
     try {
-      const url = `${this.config.baseUrl}/stream?session=${this.config.sessionId}`;
+      // Connect directly to SSE endpoint (no /stream suffix needed)
+      const url = `${this.config.baseUrl}?clientId=${this.config.sessionId}`;
       this.eventSource = new EventSource(url);
 
       this.eventSource.onopen = () => {
@@ -176,7 +184,8 @@ export class LiveBridge {
         this.hasReceivedActivity = false;
         this.setStatus('live');
 
-        // Start activity timeout - fall back to demo if no meaningful events within 5s
+        // Start activity timeout - fall back to demo if no meaningful events within 30s
+        // Extended from 5s to give real connections time to send events
         this.activityTimeout = setTimeout(() => {
           if (!this.hasReceivedActivity && this.status === 'live') {
             console.log('[LiveBridge] No activity after connect, falling back to demo');
@@ -184,9 +193,33 @@ export class LiveBridge {
             this.eventSource = null;
             this.startDemoMode();
           }
-        }, 5000);
+        }, 30000);
       };
 
+      // Handle 'connected' event from server
+      this.eventSource.addEventListener('connected', (e: MessageEvent) => {
+        console.log('[LiveBridge] SSE connected:', e.data);
+        this.markActivity();
+      });
+
+      // Handle 'heartbeat' event - keep connection alive, counts as activity
+      this.eventSource.addEventListener('heartbeat', () => {
+        // Heartbeats confirm connection is alive but don't count as "meaningful" activity
+        // We only mark activity on actual events
+      });
+
+      // Handle 'message' events (actual game events)
+      this.eventSource.addEventListener('message', (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          this.markActivity();
+          this.handleIncomingEvent(data);
+        } catch (err) {
+          console.error('[LiveBridge] Failed to parse message:', err);
+        }
+      });
+
+      // Fallback for unnamed events (backward compatibility)
       this.eventSource.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
@@ -269,6 +302,59 @@ export class LiveBridge {
    */
   getDemoAgents(): Record<string, AgentState> {
     return Object.fromEntries(this.demoAgents);
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Phase 2.1: Processing Control Methods
+  // ─────────────────────────────────────────────────────────────
+
+  /**
+   * Stop processing events - events are discarded
+   */
+  stop(): void {
+    this.processingMode = 'stopped';
+  }
+
+  /**
+   * Hold events - buffer but don't process until resume
+   */
+  hold(): void {
+    this.processingMode = 'held';
+  }
+
+  /**
+   * Resume processing - process buffered events then continue live
+   */
+  resume(): void {
+    // Process any buffered events first
+    if (this.eventBuffer.length > 0) {
+      for (const event of this.eventBuffer) {
+        this.processEvent(event);
+      }
+      this.eventBuffer = [];
+    }
+    this.processingMode = 'running';
+  }
+
+  /**
+   * Get current processing mode
+   */
+  getProcessingMode(): ProcessingMode {
+    return this.processingMode;
+  }
+
+  /**
+   * Get buffered event count (when in hold mode)
+   */
+  getBufferedEventCount(): number {
+    return this.eventBuffer.length;
+  }
+
+  /**
+   * Clear buffered events without processing
+   */
+  clearBuffer(): void {
+    this.eventBuffer = [];
   }
 
   /**
@@ -354,7 +440,83 @@ export class LiveBridge {
     }
   }
 
+  /**
+   * Handle events from our live events API endpoint
+   * Converts API format to internal EventPayload format
+   */
+  private handleIncomingEvent(data: {
+    type: string;
+    agentId: string;
+    agentName: string;
+    sessionId: string;
+    timestamp: string;
+    data?: {
+      filePath?: string;
+      taskDescription?: string;
+      buildingKind?: string;
+      status?: string;
+      message?: string;
+    };
+  }): void {
+    // Map API event types to internal types
+    const typeMap: Record<string, EventPayload['type']> = {
+      agent_spawn: 'spawn',
+      task_start: 'task_start',
+      task_complete: 'task_complete',
+      file_edit: 'task_complete', // Treat file edits as completions
+      error: 'error',
+      status: 'status',
+    };
+
+    const internalType = typeMap[data.type] || 'status';
+
+    // Build file list from filePath if present
+    const files = data.data?.filePath ? [data.data.filePath] : undefined;
+
+    const event: EventPayload = {
+      type: internalType,
+      agentId: data.agentId,
+      agentName: data.agentName,
+      timestamp: data.timestamp,
+      data: {
+        files,
+        region: data.data?.buildingKind,
+        message: data.data?.message || data.data?.taskDescription,
+      },
+    };
+
+    this.processEvent(event);
+
+    // Update agent tracking
+    const agentState: AgentState = {
+      id: data.agentId,
+      name: data.agentName,
+      status: internalType === 'error' ? 'error' : 'working',
+      region: data.data?.buildingKind || 'townhall',
+      spawnedAt: Date.now(),
+      lastUpdate: Date.now(),
+    };
+
+    this.callbacks.onAgentUpdate?.({ [data.agentId]: agentState });
+  }
+
   private processEvent(event: EventPayload): void {
+    // Phase 2.1: Check processing mode
+    switch (this.processingMode) {
+      case 'stopped':
+        // Discard event
+        return;
+
+      case 'held':
+        // Buffer event for later processing
+        this.eventBuffer.push(event);
+        return;
+
+      case 'running':
+        // Process normally
+        break;
+    }
+
     // Notify callback
     this.callbacks.onEvent?.(event);
 

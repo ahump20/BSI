@@ -7,6 +7,7 @@
 
 import React from 'react';
 import type { Unit } from '@data/replay-schema';
+import { IconCastle, IconCrossedSwords, IconShield, IconMarket } from './Icons';
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -159,16 +160,16 @@ const styles = {
 // Helpers
 // ─────────────────────────────────────────────────────────────
 
-function getUnitIcon(type: string): string {
+function getUnitIcon(type: string): React.ReactNode {
   switch (type) {
-    case 'base': return '🏰';
-    case 'barracks': return '🏭';
-    case 'worker': return '⛏️';
-    case 'light': return '⚔️';
-    case 'heavy': return '🛡️';
-    case 'ranged': return '🏹';
-    case 'resource': return '💎';
-    default: return '❓';
+    case 'base': return <IconCastle size={28} color="#FFD700" />;
+    case 'barracks': return <IconMarket size={28} color="#E74C3C" />;
+    case 'worker': return <IconCrossedSwords size={28} color="#3498DB" />;
+    case 'light': return <IconCrossedSwords size={28} color="#BF5700" />;
+    case 'heavy': return <IconShield size={28} color="#9B59B6" />;
+    case 'ranged': return <IconCrossedSwords size={28} color="#2ECC71" />;
+    case 'resource': return <IconCastle size={28} color="#F1C40F" />;
+    default: return '?';
   }
 }
 

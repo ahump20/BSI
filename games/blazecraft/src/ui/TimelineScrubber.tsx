@@ -7,6 +7,7 @@
 
 import React, { useCallback, useRef } from 'react';
 import type { PlaybackState } from '@core/ReplayEngine';
+import { IconSkipBack, IconStepBack, IconPlay, IconPause, IconStepForward, IconSkipForward } from './Icons';
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -189,16 +190,16 @@ export function TimelineScrubber({
             onClick={() => onSeek(0)}
             title="Jump to start (Home)"
           >
-            ⏮
+            <IconSkipBack size={16} />
           </button>
 
           {/* Step Back */}
           <button
             style={styles.button}
             onClick={() => onStep(-1)}
-            title="Step back (←)"
+            title="Step back"
           >
-            ◀
+            <IconStepBack size={16} />
           </button>
 
           {/* Play/Pause */}
@@ -207,16 +208,16 @@ export function TimelineScrubber({
             onClick={onPlayPause}
             title={playbackState === 'playing' ? 'Pause (Space)' : 'Play (Space)'}
           >
-            {playbackState === 'playing' ? '⏸' : '▶'}
+            {playbackState === 'playing' ? <IconPause size={18} /> : <IconPlay size={18} />}
           </button>
 
           {/* Step Forward */}
           <button
             style={styles.button}
             onClick={() => onStep(1)}
-            title="Step forward (→)"
+            title="Step forward"
           >
-            ▶
+            <IconStepForward size={16} />
           </button>
 
           {/* Jump to End */}
@@ -225,7 +226,7 @@ export function TimelineScrubber({
             onClick={() => onSeek(totalTicks - 1)}
             title="Jump to end (End)"
           >
-            ⏭
+            <IconSkipForward size={16} />
           </button>
         </div>
 

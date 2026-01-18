@@ -13,6 +13,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { IconAgent, IconHold, IconGear, IconFailed, IconPin } from './Icons';
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -238,12 +239,12 @@ const styles = {
 // Helpers
 // ─────────────────────────────────────────────────────────────
 
-function getAgentIcon(status: string): string {
+function getAgentIcon(status: string): React.ReactNode {
   switch (status) {
-    case 'working': return '🤖';
-    case 'hold': return '⏸️';
-    case 'idle': return '😴';
-    case 'error': return '⚠️';
+    case 'working': return <IconAgent size={28} color="#2ECC71" />;
+    case 'hold': return <IconHold size={28} color="#F1C40F" />;
+    case 'idle': return <IconGear size={28} color="#888" />;
+    case 'error': return <IconFailed size={28} color="#E74C3C" />;
     default: return '?';
   }
 }
@@ -348,7 +349,7 @@ export function HeroPortrait({ agent, onSelect, onClickAgent }: HeroPortraitProp
 
           {/* Region tag */}
           <div style={styles.regionTag}>
-            <span>📍</span>
+            <span><IconPin size={10} color="#BF5700" /></span>
             <span>{agent.region}</span>
           </div>
 
