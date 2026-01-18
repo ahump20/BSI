@@ -5,6 +5,14 @@
   color: #f9fafb;
   line-height: 1.5;
   font-size: 16px;
+
+  /* BSI Design Tokens */
+  --bsi-burnt-orange: #bf5700;
+  --bsi-gold: #c9a227;
+  --bsi-texas-soil: #8b4513;
+  --bsi-charcoal: #1a1a1a;
+  --bsi-midnight: #0d0d0d;
+  --bsi-ember: #ff6b35;
 }
 
 body {

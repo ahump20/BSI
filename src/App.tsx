@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import { CapabilityGrid } from "./components/CapabilityGrid";
 import { ExperienceCenter } from "./components/ExperienceCenter";
+import { FilmGrain } from "./components/FilmGrain";
 import { Footer } from "./components/Footer";
 import { GraphicsShowcase } from "./components/GraphicsShowcase";
 import { Header } from "./components/Header";
@@ -14,6 +15,7 @@ import {
 
 export const App: FC = () => (
   <div>
+    <FilmGrain />
     <Header />
     <main id="main-content">
       <Hero />

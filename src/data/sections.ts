@@ -1,8 +1,14 @@
 import { z } from "zod";
 
-import type { IconName } from "../components/Icon";
+import type { IconName } from "../components/Icons";
 
-const iconSchema = z.enum(["dashboard", "brain", "chart", "shield", "layers", "sparkle"]);
+const iconSchema = z.enum([
+  "trophy", "chart", "dashboard", "brain", "layers", "sparkle",
+  "gold", "lightning", "shield", "stop", "play", "pause",
+  "inspect", "terminate", "gear", "sword", "crossedSwords",
+  "hourglass", "duration", "completed", "failed", "target",
+  "files", "workers", "pin"
+]);
 
 const capabilitySchema = z.object({
   title: z.string(),

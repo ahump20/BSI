@@ -3,7 +3,7 @@ import type { FC } from "react";
 import type { AnalyticsCapability, PipelineCapability } from "../data/sections";
 import styles from "../styles/CapabilityGrid.module.css";
 
-import { Icon } from "./Icon";
+import { Icon } from "./Icons";
 
 type Capability = AnalyticsCapability | PipelineCapability;
 
