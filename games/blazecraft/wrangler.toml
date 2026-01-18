@@ -1,0 +1,33 @@
+name = "blazecraft"
+compatibility_date = "2024-11-06"
+pages_build_output_dir = "dist"
+
+# D1 Database for replay metadata
+[[d1_databases]]
+binding = "BLAZECRAFT_DB"
+database_name = "blazecraft-db"
+database_id = "c4968b0b-d941-4b4b-a00f-f08d84fe395d"
+
+# R2 Bucket for replay files
+[[r2_buckets]]
+binding = "BLAZECRAFT_REPLAYS"
+bucket_name = "blazecraft-replays"
+
+# R2 Bucket for 3D assets (GLB models, textures)
+[[r2_buckets]]
+binding = "BLAZECRAFT_ASSETS"
+bucket_name = "bsi-blazecraft-assets"
+
+# KV namespace for session/cache
+[[kv_namespaces]]
+binding = "BLAZECRAFT_CACHE"
+id = "864d8d1215f94046a3465520b1bf8f06"
+
+# Analytics Engine for telemetry
+[[analytics_engine_datasets]]
+binding = "BLAZECRAFT_ANALYTICS"
+dataset = "blazecraft_analytics"
+
+[vars]
+ENVIRONMENT = "production"
+APP_VERSION = "0.1.0"
