@@ -1,0 +1,828 @@
+/**
+ * WC3 Theme - Warcraft III Frozen Throne inspired styling
+ * BlazeCraft Edition - Fantasy-metal fused with Blaze/BSI dark modern base
+ *
+ * Design tokens:
+ * - Panels:    Dark blues/grays with beveled edges
+ * - Gold:      #C9A227 → #8B6914 gradients for accents
+ * - Metal:     Gunmetal with rivet details
+ * - Blaze:     #E86C2C orange accent (Blaze brand)
+ * - Parchment: Cream/tan for tooltips
+ */
+
+/* ─────────────────────────────────────────────────────────────
+   CSS Variables - BlazeCraft Token System
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Core background tokens */
+  --bg: #0b0d10;
+  --panel: #12161c;
+  --panel2: #0f1318;
+  --border: #2a313b;
+  --bevel-hi: rgba(255, 255, 255, 0.12);
+  --bevel-lo: rgba(0, 0, 0, 0.55);
+  --text: #e8eef6;
+  --muted: #a7b2c0;
+
+  /* Brand accents */
+  --blaze: #E86C2C;
+  --gold: #C9A227;
+
+  /* Status indicators */
+  --ok: #48C774;
+  --warn: #D4A017;
+  --bad: #D84C4C;
+
+  /* Shadow tokens */
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --inner: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.55);
+
+  /* Legacy stone colors (for backwards compat) */
+  --wc3-stone-dark: #0f1318;
+  --wc3-stone-mid: #12161c;
+  --wc3-stone-light: #1a1f28;
+  --wc3-stone-border: #2a313b;
+  --wc3-stone-highlight: #2a313b;
+  --wc3-stone-shadow: #0b0d10;
+
+  /* Gold colors */
+  --wc3-gold: #C9A227;
+  --wc3-gold-dark: #9B7B1C;
+  --wc3-gold-light: #E0C060;
+  --wc3-gold-shadow: #8B6914;
+
+  /* Metal colors */
+  --wc3-metal-dark: #1a1f28;
+  --wc3-metal-mid: #2a313b;
+  --wc3-metal-light: #3a4555;
+  --wc3-metal-rivet: #12161c;
+
+  /* Text colors */
+  --wc3-text-cream: #e8eef6;
+  --wc3-text-gold: #C9A227;
+  --wc3-text-dim: #a7b2c0;
+
+  /* Status colors */
+  --wc3-hp-high: #48C774;
+  --wc3-hp-mid: #D4A017;
+  --wc3-hp-low: #D84C4C;
+  --wc3-mana: #3498DB;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Base Panel Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-panel {
+  background: linear-gradient(180deg, var(--wc3-stone-mid) 0%, var(--wc3-stone-dark) 100%);
+  border: 3px solid var(--wc3-stone-border);
+  box-shadow:
+    inset 0 1px 0 var(--wc3-stone-highlight),
+    inset 0 -1px 0 var(--wc3-stone-shadow),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+}
+
+.wc3-panel-inset {
+  background: linear-gradient(180deg, var(--wc3-stone-dark) 0%, #050403 100%);
+  border: 2px solid var(--wc3-stone-shadow);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 1px 0 var(--wc3-stone-highlight);
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Button Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-button {
+  background: linear-gradient(180deg, var(--wc3-stone-light) 0%, var(--wc3-stone-mid) 50%, var(--wc3-stone-dark) 100%);
+  border: 2px solid var(--wc3-stone-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 var(--wc3-stone-shadow);
+  color: var(--wc3-text-cream);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  position: relative;
+}
+
+.wc3-button:hover {
+  background: linear-gradient(180deg, #3a342e 0%, var(--wc3-stone-light) 50%, var(--wc3-stone-mid) 100%);
+  border-color: var(--wc3-gold-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 215, 0, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 var(--wc3-stone-shadow),
+    0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.wc3-button:active,
+.wc3-button.pressed {
+  background: linear-gradient(180deg, var(--wc3-stone-dark) 0%, var(--wc3-stone-mid) 100%);
+  border-color: var(--wc3-gold);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(255, 215, 0, 0.5);
+  transform: translateY(1px);
+}
+
+.wc3-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.wc3-button:disabled:hover {
+  background: linear-gradient(180deg, var(--wc3-stone-light) 0%, var(--wc3-stone-mid) 50%, var(--wc3-stone-dark) 100%);
+  border-color: var(--wc3-stone-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 var(--wc3-stone-shadow);
+}
+
+/* Button with cooldown overlay */
+.wc3-button .cooldown-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+  pointer-events: none;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.1s linear;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Gold Frame Styles (for portraits)
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-frame-gold {
+  position: relative;
+  background: var(--wc3-stone-dark);
+  border: 3px solid var(--wc3-gold-dark);
+  box-shadow:
+    inset 0 0 0 2px var(--wc3-stone-shadow),
+    0 0 0 1px var(--wc3-gold-shadow),
+    0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+.wc3-frame-gold::before,
+.wc3-frame-gold::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--wc3-gold);
+}
+
+/* Top-left corner bracket */
+.wc3-frame-gold::before {
+  top: -4px;
+  left: -4px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Bottom-right corner bracket */
+.wc3-frame-gold::after {
+  bottom: -4px;
+  right: -4px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Additional corner brackets via pseudo-elements on children */
+.wc3-frame-gold-corners::before,
+.wc3-frame-gold-corners::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--wc3-gold);
+}
+
+.wc3-frame-gold-corners::before {
+  top: -4px;
+  right: -4px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.wc3-frame-gold-corners::after {
+  bottom: -4px;
+  left: -4px;
+  border-right: none;
+  border-top: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Metal Strip Styles (for header)
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-metal-strip {
+  background: linear-gradient(180deg,
+    var(--wc3-metal-light) 0%,
+    var(--wc3-metal-mid) 20%,
+    var(--wc3-metal-dark) 80%,
+    #1a1a1e 100%
+  );
+  border-bottom: 2px solid #0a0a0c;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Rivet decorations */
+.wc3-metal-strip::before,
+.wc3-metal-strip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle at 30% 30%,
+    var(--wc3-metal-light) 0%,
+    var(--wc3-metal-dark) 50%,
+    var(--wc3-metal-rivet) 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.wc3-metal-strip::before {
+  left: 12px;
+}
+
+.wc3-metal-strip::after {
+  right: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Resource/HP/MP Bars
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-bar-container {
+  background: var(--wc3-stone-shadow);
+  border: 1px solid var(--wc3-stone-border);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.wc3-hp-bar {
+  height: 100%;
+  background: linear-gradient(180deg,
+    #4ade80 0%,
+    var(--wc3-hp-high) 50%,
+    #22c55e 100%
+  );
+  box-shadow: 0 0 4px rgba(46, 204, 113, 0.5);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.wc3-hp-bar.medium {
+  background: linear-gradient(180deg,
+    #fbbf24 0%,
+    var(--wc3-hp-mid) 50%,
+    #d97706 100%
+  );
+  box-shadow: 0 0 4px rgba(243, 156, 18, 0.5);
+}
+
+.wc3-hp-bar.low {
+  background: linear-gradient(180deg,
+    #f87171 0%,
+    var(--wc3-hp-low) 50%,
+    #dc2626 100%
+  );
+  box-shadow: 0 0 4px rgba(231, 76, 60, 0.5);
+}
+
+.wc3-mana-bar {
+  height: 100%;
+  background: linear-gradient(180deg,
+    #60a5fa 0%,
+    var(--wc3-mana) 50%,
+    #2563eb 100%
+  );
+  box-shadow: 0 0 4px rgba(52, 152, 219, 0.5);
+  transition: width 0.3s ease;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Command Card Specific
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-command-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  padding: 6px;
+  background: var(--wc3-stone-shadow);
+  border-radius: 2px;
+}
+
+.wc3-command-button {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  position: relative;
+  min-height: 52px;
+}
+
+.wc3-command-button .icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.wc3-command-button .label {
+  font-size: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--wc3-text-dim);
+}
+
+.wc3-command-button .hotkey {
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--wc3-gold);
+  font-family: monospace;
+}
+
+.wc3-command-button .mana-cost {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 0.45rem;
+  font-weight: 600;
+  color: var(--wc3-mana);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Minimap Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-minimap-container {
+  background: var(--wc3-stone-dark);
+  border: 3px solid var(--wc3-stone-border);
+  box-shadow:
+    inset 0 0 0 1px var(--wc3-stone-shadow),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.wc3-minimap-header {
+  background: linear-gradient(180deg, var(--wc3-stone-mid) 0%, var(--wc3-stone-dark) 100%);
+  border-bottom: 1px solid var(--wc3-stone-border);
+  padding: 4px 8px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Hero Portrait Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-hero-portrait {
+  position: relative;
+  padding: 8px;
+}
+
+.wc3-hero-portrait .portrait-image {
+  width: 64px;
+  height: 64px;
+  background: var(--wc3-stone-shadow);
+  border: 2px solid var(--wc3-gold-dark);
+  box-shadow:
+    inset 0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.wc3-hero-portrait .level-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: linear-gradient(135deg, var(--wc3-gold) 0%, var(--wc3-gold-dark) 100%);
+  color: var(--wc3-stone-dark);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.wc3-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.wc3-hero-stat {
+  background: var(--wc3-stone-shadow);
+  border: 1px solid var(--wc3-stone-border);
+  padding: 4px 6px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.6rem;
+}
+
+.wc3-hero-stat .label {
+  color: var(--wc3-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wc3-hero-stat .value {
+  color: var(--wc3-text-cream);
+  font-weight: 600;
+  font-family: monospace;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Sidebar Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-sidebar {
+  background: linear-gradient(180deg, var(--wc3-stone-mid) 0%, var(--wc3-stone-dark) 100%);
+  border-color: var(--wc3-stone-border);
+}
+
+.wc3-sidebar-section {
+  border-bottom: 1px solid var(--wc3-stone-border);
+  padding: 0.5rem;
+}
+
+.wc3-sidebar-header {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--wc3-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--wc3-stone-shadow);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Bottom Bar Styles
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-bottom-bar {
+  background: linear-gradient(180deg, var(--wc3-stone-mid) 0%, var(--wc3-stone-dark) 100%);
+  border-top: 3px solid var(--wc3-stone-border);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Connection Status Indicator
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-connection-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--wc3-stone-shadow);
+  border: 1px solid var(--wc3-stone-border);
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wc3-connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.wc3-connection-dot.live {
+  background: var(--wc3-hp-high);
+  color: var(--wc3-hp-high);
+  animation: pulse-glow 2s infinite;
+}
+
+.wc3-connection-dot.demo {
+  background: var(--wc3-hp-mid);
+  color: var(--wc3-hp-mid);
+}
+
+.wc3-connection-dot.disconnected {
+  background: var(--wc3-hp-low);
+  color: var(--wc3-hp-low);
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 12px currentColor;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Utility Classes
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-text-gold {
+  color: var(--wc3-gold);
+}
+
+.wc3-text-cream {
+  color: var(--wc3-text-cream);
+}
+
+.wc3-text-dim {
+  color: var(--wc3-text-dim);
+}
+
+.wc3-glow-gold {
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.5);
+}
+
+.wc3-border-gold {
+  border-color: var(--wc3-gold-dark);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Typography - Cinzel for Warcraft-style headings
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-heading {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.wc3-heading-lg {
+  font-size: 1.5rem;
+}
+
+.wc3-heading-md {
+  font-size: 1rem;
+}
+
+.wc3-heading-sm {
+  font-size: 0.75rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Tooltip System - Parchment style
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-tooltip {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  max-width: 280px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #d4c5a3 0%, #c4b48f 100%);
+  border: 2px solid #8b7355;
+  border-radius: 4px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: #2a2015;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.wc3-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wc3-tooltip-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #3a2a15;
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+
+.wc3-tooltip-hotkey {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-left: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #5a4a30;
+}
+
+.wc3-tooltip-desc {
+  color: #4a3a25;
+}
+
+.wc3-tooltip-disabled {
+  font-style: italic;
+  color: #7a6a55;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Texture Overlays - CSS-based procedural textures
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-texture-metal {
+  position: relative;
+}
+
+.wc3-texture-metal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+.wc3-texture-stone {
+  position: relative;
+}
+
+.wc3-texture-stone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 8px 8px;
+  opacity: 0.7;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Scout Strip - Rotating message bar
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-scout-strip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(18, 22, 28, 0.95) 0%, rgba(11, 13, 16, 0.98) 100%);
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--muted);
+  overflow: hidden;
+}
+
+.wc3-scout-strip-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: scout-fade 4s ease-in-out;
+}
+
+.wc3-scout-strip-icon {
+  color: var(--gold);
+  font-size: 0.8rem;
+}
+
+.wc3-scout-strip-text {
+  white-space: nowrap;
+}
+
+@keyframes scout-fade {
+  0% { opacity: 0; transform: translateY(8px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Resource Counter Animations
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-counter-flash-gold {
+  animation: counter-flash-gold 0.5s ease-out;
+}
+
+.wc3-counter-flash-red {
+  animation: counter-flash-red 0.5s ease-out;
+}
+
+@keyframes counter-flash-gold {
+  0% { background: var(--gold); color: var(--bg); }
+  100% { background: transparent; color: inherit; }
+}
+
+@keyframes counter-flash-red {
+  0% { background: var(--bad); color: white; }
+  100% { background: transparent; color: inherit; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Enhanced Panel Frame - Beveled metal look
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-panel-frame {
+  background: linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  box-shadow:
+    var(--shadow),
+    var(--inner);
+  position: relative;
+}
+
+.wc3-panel-frame::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Reserved/Disabled Command Slot
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-command-reserved {
+  background: linear-gradient(180deg, #0a0c0f 0%, #050607 100%) !important;
+  border-color: #1a1e25 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.wc3-command-reserved::after {
+  content: 'SOON';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 0.4rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Hover Glow - Blaze/Orange accent
+   ───────────────────────────────────────────────────────────── */
+
+.wc3-hover-glow:hover {
+  box-shadow: 0 0 12px rgba(232, 108, 44, 0.4);
+  border-color: var(--blaze);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Reduced Motion Support
+   ───────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .wc3-scout-strip-inner,
+  .wc3-counter-flash-gold,
+  .wc3-counter-flash-red,
+  .wc3-connection-dot.live {
+    animation: none;
+  }
+
+  .wc3-tooltip {
+    transition: none;
+  }
+}
