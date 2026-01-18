@@ -1,0 +1,500 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "matchId": "demo-match-001",
+    "timestamp": "2025-01-17T10:30:00-06:00",
+    "map": {
+      "name": "Training Grounds",
+      "width": 16,
+      "height": 16,
+      "cells": [
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "wall"},{"terrain": "wall"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "resource", "resourceAmount": 100},{"terrain": "resource", "resourceAmount": 100},{"terrain": "ground"}],
+        [{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"},{"terrain": "ground"}]
+      ]
+    },
+    "agents": [
+      {
+        "id": "agent-blue",
+        "name": "BlueBot-PPO",
+        "team": "0",
+        "type": "ppo",
+        "version": "v2.1",
+        "color": "#3498DB"
+      },
+      {
+        "id": "agent-red",
+        "name": "RedBot-A2C",
+        "team": "1",
+        "type": "a2c",
+        "version": "v1.8",
+        "color": "#E74C3C"
+      }
+    ],
+    "duration": 100,
+    "winner": "0",
+    "gameVersion": "microrts-1.0",
+    "simulatorVersion": "blazecraft-demo"
+  },
+  "ticks": [
+    {
+      "tick": 0,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 10, "maxHp": 10, "currentAction": "idle"},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 8}, "hp": 10, "maxHp": 10, "currentAction": "idle"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 13, "y": 6}, "hp": 10, "maxHp": 10, "currentAction": "idle"},
+        {"id": "worker-r2", "type": "worker", "team": "1", "position": {"x": 13, "y": 8}, "hp": 10, "maxHp": 10, "currentAction": "idle"}
+      ],
+      "resources": {
+        "0": {"minerals": 5, "supplyUsed": 2, "supplyMax": 4},
+        "1": {"minerals": 5, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "eco",
+          "reason": "Game start - prioritizing economy to build resource advantage",
+          "confidence": 0.85,
+          "entropy": 0.4,
+          "timeToDecision": 12
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "eco",
+          "reason": "Initial phase - gathering resources for early expansion",
+          "confidence": 0.78,
+          "entropy": 0.55,
+          "timeToDecision": 18
+        }
+      ]
+    },
+    {
+      "tick": 10,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 8}, "hp": 10, "maxHp": 10, "currentAction": "idle"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-r2", "type": "worker", "team": "1", "position": {"x": 13, "y": 8}, "hp": 10, "maxHp": 10, "currentAction": "idle"}
+      ],
+      "resources": {
+        "0": {"minerals": 5, "supplyUsed": 2, "supplyMax": 4},
+        "1": {"minerals": 5, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "worker-b1", "type": "move", "targetPosition": {"x": 1, "y": 2}, "executedAtTick": 1},
+        {"unitId": "worker-r1", "type": "move", "targetPosition": {"x": 14, "y": 2}, "executedAtTick": 1}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "eco",
+          "reason": "Continuing resource collection - need 10 minerals for barracks",
+          "confidence": 0.92,
+          "entropy": 0.25,
+          "timeToDecision": 8
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "scout",
+          "reason": "Sending second worker to scout enemy base while first gathers",
+          "confidence": 0.65,
+          "entropy": 0.72,
+          "timeToDecision": 24
+        }
+      ]
+    },
+    {
+      "tick": 20,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100, "productionProgress": 0.3},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 1},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 3}, "hp": 10, "maxHp": 10, "currentAction": "move", "targetPosition": {"x": 2, "y": 1}},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-r2", "type": "worker", "team": "1", "position": {"x": 8, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "move", "targetPosition": {"x": 5, "y": 7}}
+      ],
+      "resources": {
+        "0": {"minerals": 8, "supplyUsed": 2, "supplyMax": 4},
+        "1": {"minerals": 6, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "worker-b2", "type": "move", "targetPosition": {"x": 2, "y": 1}, "executedAtTick": 15},
+        {"unitId": "worker-r2", "type": "move", "targetPosition": {"x": 5, "y": 7}, "executedAtTick": 12}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "eco",
+          "reason": "Building third worker - saturation point not reached",
+          "confidence": 0.88,
+          "entropy": 0.32,
+          "timeToDecision": 10
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "scout",
+          "reason": "Worker approaching enemy territory - need intel on build order",
+          "confidence": 0.71,
+          "entropy": 0.58,
+          "timeToDecision": 15
+        }
+      ]
+    },
+    {
+      "tick": 30,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50, "productionProgress": 0.5},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 1}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 10, "maxHp": 10, "currentAction": "build"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-r2", "type": "worker", "team": "1", "position": {"x": 4, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "idle"}
+      ],
+      "resources": {
+        "0": {"minerals": 2, "supplyUsed": 3, "supplyMax": 4},
+        "1": {"minerals": 9, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "worker-b3", "type": "build", "producingType": "barracks", "executedAtTick": 25}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "tech",
+          "reason": "Barracks under construction - transitioning to military production",
+          "confidence": 0.94,
+          "entropy": 0.18,
+          "timeToDecision": 6
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "harass",
+          "reason": "Scout found enemy barracks - disrupting with worker before military units spawn",
+          "confidence": 0.82,
+          "entropy": 0.45,
+          "timeToDecision": 11
+        }
+      ],
+      "events": [
+        {"type": "building_started", "data": {"unitId": "barracks-blue", "builderId": "worker-b3"}}
+      ]
+    },
+    {
+      "tick": 40,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 1}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 8, "maxHp": 10, "currentAction": "attack", "targetId": "worker-r2"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 1},
+        {"id": "worker-r2", "type": "worker", "team": "1", "position": {"x": 3, "y": 6}, "hp": 7, "maxHp": 10, "currentAction": "attack", "targetId": "worker-b3"}
+      ],
+      "resources": {
+        "0": {"minerals": 4, "supplyUsed": 3, "supplyMax": 4},
+        "1": {"minerals": 10, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "worker-r2", "type": "attack", "targetId": "worker-b3", "executedAtTick": 35},
+        {"unitId": "worker-b3", "type": "attack", "targetId": "worker-r2", "executedAtTick": 36}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "defend",
+          "reason": "Worker under attack near barracks - must protect production",
+          "confidence": 0.89,
+          "entropy": 0.28,
+          "timeToDecision": 5
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "harass",
+          "reason": "Trading damage with enemy worker - delaying their economy",
+          "confidence": 0.75,
+          "entropy": 0.62,
+          "timeToDecision": 14
+        }
+      ],
+      "events": [
+        {"type": "building_completed", "data": {"unitId": "barracks-blue"}},
+        {"type": "combat_started", "data": {"attacker": "worker-r2", "defender": "worker-b3"}}
+      ]
+    },
+    {
+      "tick": 50,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50, "productionProgress": 0.4},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest", "resources": 0},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "idle"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 30, "maxHp": 50, "productionProgress": 0.6}
+      ],
+      "resources": {
+        "0": {"minerals": 3, "supplyUsed": 3, "supplyMax": 4},
+        "1": {"minerals": 2, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "barracks-blue", "type": "produce", "producingType": "light", "executedAtTick": 45}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "rush",
+          "reason": "Harasser killed - now producing light unit for counter-attack",
+          "confidence": 0.91,
+          "entropy": 0.22,
+          "timeToDecision": 7
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "tech",
+          "reason": "Lost scout but gathered intel - building barracks for defense",
+          "confidence": 0.68,
+          "entropy": 0.78,
+          "timeToDecision": 22
+        }
+      ],
+      "events": [
+        {"type": "unit_killed", "data": {"unitId": "worker-r2", "killerId": "worker-b3"}},
+        {"type": "building_started", "data": {"unitId": "barracks-red", "builderId": "worker-r1"}}
+      ]
+    },
+    {
+      "tick": 60,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50},
+        {"id": "light-b1", "type": "light", "team": "0", "position": {"x": 4, "y": 7}, "hp": 20, "maxHp": 20, "currentAction": "move", "targetPosition": {"x": 10, "y": 7}},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 50, "maxHp": 50, "productionProgress": 0.2}
+      ],
+      "resources": {
+        "0": {"minerals": 6, "supplyUsed": 4, "supplyMax": 6},
+        "1": {"minerals": 5, "supplyUsed": 1, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "light-b1", "type": "move", "targetPosition": {"x": 10, "y": 7}, "executedAtTick": 55}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "rush",
+          "reason": "Light infantry moving toward enemy base - timing attack before their units spawn",
+          "confidence": 0.95,
+          "entropy": 0.15,
+          "timeToDecision": 4
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "defend",
+          "reason": "Detected incoming unit - must complete barracks and produce defender",
+          "confidence": 0.72,
+          "entropy": 0.65,
+          "timeToDecision": 19
+        }
+      ],
+      "events": [
+        {"type": "unit_produced", "data": {"unitId": "light-b1", "producerId": "barracks-blue"}}
+      ]
+    },
+    {
+      "tick": 70,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 85, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50, "productionProgress": 0.6},
+        {"id": "light-b1", "type": "light", "team": "0", "position": {"x": 13, "y": 7}, "hp": 18, "maxHp": 20, "currentAction": "attack", "targetId": "base-red"},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 6}, "hp": 10, "maxHp": 10, "currentAction": "attack", "targetId": "light-b1"},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 50, "maxHp": 50}
+      ],
+      "resources": {
+        "0": {"minerals": 8, "supplyUsed": 4, "supplyMax": 6},
+        "1": {"minerals": 8, "supplyUsed": 1, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "light-b1", "type": "attack", "targetId": "base-red", "executedAtTick": 65},
+        {"unitId": "worker-r1", "type": "attack", "targetId": "light-b1", "executedAtTick": 68}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "rush",
+          "reason": "Attacking enemy base - forcing worker to defend instead of gather",
+          "confidence": 0.97,
+          "entropy": 0.08,
+          "timeToDecision": 3
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "defend",
+          "reason": "Base under attack! Worker pulled to defend - need to kill attacker quickly",
+          "confidence": 0.88,
+          "entropy": 0.35,
+          "timeToDecision": 8
+        }
+      ],
+      "events": [
+        {"type": "building_completed", "data": {"unitId": "barracks-red"}}
+      ]
+    },
+    {
+      "tick": 80,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 65, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50},
+        {"id": "light-b1", "type": "light", "team": "0", "position": {"x": 14, "y": 7}, "hp": 8, "maxHp": 20, "currentAction": "attack", "targetId": "base-red"},
+        {"id": "light-b2", "type": "light", "team": "0", "position": {"x": 5, "y": 7}, "hp": 20, "maxHp": 20, "currentAction": "move", "targetPosition": {"x": 12, "y": 7}},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-r1", "type": "worker", "team": "1", "position": {"x": 14, "y": 6}, "hp": 5, "maxHp": 10, "currentAction": "attack", "targetId": "light-b1"},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 50, "maxHp": 50, "productionProgress": 0.8}
+      ],
+      "resources": {
+        "0": {"minerals": 4, "supplyUsed": 5, "supplyMax": 6},
+        "1": {"minerals": 8, "supplyUsed": 1, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "light-b2", "type": "move", "targetPosition": {"x": 12, "y": 7}, "executedAtTick": 75}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "rush",
+          "reason": "Reinforcements incoming - maintaining pressure while second unit arrives",
+          "confidence": 0.98,
+          "entropy": 0.05,
+          "timeToDecision": 2
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "defend",
+          "reason": "Critical situation - light unit almost ready but base health dropping fast",
+          "confidence": 0.55,
+          "entropy": 1.2,
+          "timeToDecision": 35
+        }
+      ],
+      "events": [
+        {"type": "unit_produced", "data": {"unitId": "light-b2", "producerId": "barracks-blue"}}
+      ]
+    },
+    {
+      "tick": 90,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "base-red", "type": "base", "team": "1", "position": {"x": 14, "y": 7}, "hp": 35, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50},
+        {"id": "light-b2", "type": "light", "team": "0", "position": {"x": 13, "y": 7}, "hp": 20, "maxHp": 20, "currentAction": "attack", "targetId": "base-red"},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 7}, "hp": 10, "maxHp": 10, "currentAction": "return", "resources": 1},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "light-r1", "type": "light", "team": "1", "position": {"x": 12, "y": 6}, "hp": 20, "maxHp": 20, "currentAction": "attack", "targetId": "light-b2"},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 50, "maxHp": 50}
+      ],
+      "resources": {
+        "0": {"minerals": 7, "supplyUsed": 4, "supplyMax": 6},
+        "1": {"minerals": 5, "supplyUsed": 2, "supplyMax": 4}
+      },
+      "actions": [
+        {"unitId": "light-r1", "type": "attack", "targetId": "light-b2", "executedAtTick": 88}
+      ],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "rush",
+          "reason": "Enemy defender spawned but base is low - continue pressure to finish",
+          "confidence": 0.92,
+          "entropy": 0.25,
+          "timeToDecision": 6
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "defend",
+          "reason": "Defender finally ready! Engaging enemy unit - must save the base",
+          "confidence": 0.78,
+          "entropy": 0.48,
+          "timeToDecision": 12
+        }
+      ],
+      "events": [
+        {"type": "unit_killed", "data": {"unitId": "light-b1", "killerId": "worker-r1"}},
+        {"type": "unit_killed", "data": {"unitId": "worker-r1", "killerId": "light-b1"}},
+        {"type": "unit_produced", "data": {"unitId": "light-r1", "producerId": "barracks-red"}}
+      ]
+    },
+    {
+      "tick": 100,
+      "units": [
+        {"id": "base-blue", "type": "base", "team": "0", "position": {"x": 1, "y": 7}, "hp": 100, "maxHp": 100},
+        {"id": "barracks-blue", "type": "barracks", "team": "0", "position": {"x": 3, "y": 7}, "hp": 50, "maxHp": 50},
+        {"id": "light-b2", "type": "light", "team": "0", "position": {"x": 14, "y": 7}, "hp": 8, "maxHp": 20, "currentAction": "idle"},
+        {"id": "worker-b1", "type": "worker", "team": "0", "position": {"x": 1, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b2", "type": "worker", "team": "0", "position": {"x": 2, "y": 2}, "hp": 10, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "worker-b3", "type": "worker", "team": "0", "position": {"x": 2, "y": 6}, "hp": 6, "maxHp": 10, "currentAction": "harvest"},
+        {"id": "barracks-red", "type": "barracks", "team": "1", "position": {"x": 12, "y": 7}, "hp": 50, "maxHp": 50}
+      ],
+      "resources": {
+        "0": {"minerals": 12, "supplyUsed": 4, "supplyMax": 6},
+        "1": {"minerals": 5, "supplyUsed": 0, "supplyMax": 4}
+      },
+      "actions": [],
+      "agentStates": [
+        {
+          "agentId": "agent-blue",
+          "intent": "eco",
+          "reason": "Victory achieved! Enemy base destroyed - returning to economic mode",
+          "confidence": 0.99,
+          "entropy": 0.02,
+          "timeToDecision": 1
+        },
+        {
+          "agentId": "agent-red",
+          "intent": "retreat",
+          "reason": "Base lost - game over. Analyzing what went wrong for next match.",
+          "confidence": 0.45,
+          "entropy": 1.8,
+          "timeToDecision": 50
+        }
+      ],
+      "events": [
+        {"type": "unit_killed", "data": {"unitId": "base-red", "killerId": "light-b2"}},
+        {"type": "unit_killed", "data": {"unitId": "light-r1", "killerId": "light-b2"}},
+        {"type": "game_over", "data": {"winner": "0", "reason": "base_destroyed"}}
+      ]
+    }
+  ]
+}
