@@ -40,9 +40,7 @@ export default defineConfig({
     globals: true,
 
     // Test file patterns
-    include: [
-      'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'
-    ],
+    include: ['tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 
     // Default timeout (10 seconds)
     testTimeout: 10000,
@@ -54,25 +52,15 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      include: [
-        'lib/**/*.{js,ts}',
-        'functions/**/*.{js,ts}'
-      ],
-      exclude: [
-        'node_modules/',
-        'dist/',
-        'tests/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/mockData/*'
-      ],
+      include: ['lib/**/*.{js,ts}', 'functions/**/*.{js,ts}'],
+      exclude: ['node_modules/', 'dist/', 'tests/', '**/*.d.ts', '**/*.config.*', '**/mockData/*'],
       // Target coverage thresholds
       thresholds: {
         lines: 80,
         functions: 80,
         branches: 80,
-        statements: 80
-      }
+        statements: 80,
+      },
     },
 
     // Reporter configuration
@@ -86,8 +74,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
       '@lib': path.resolve(__dirname, './lib'),
       '@functions': path.resolve(__dirname, './functions'),
-      '@tests': path.resolve(__dirname, './tests')
-    }
+      '@tests': path.resolve(__dirname, './tests'),
+    },
   },
 
   // Resolve configuration
@@ -96,7 +84,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
       '@lib': path.resolve(__dirname, './lib'),
       '@functions': path.resolve(__dirname, './functions'),
-      '@tests': path.resolve(__dirname, './tests')
-    }
-  }
+      '@tests': path.resolve(__dirname, './tests'),
+    },
+  },
 });

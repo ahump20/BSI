@@ -75,26 +75,31 @@ games/backyard/
 ## Gameplay
 
 ### Objective
+
 Score as many points as possible in 60 seconds by timing your swings to hit the ball.
 
 ### Controls
+
 - **Desktop**: Click or press SPACEBAR to swing
 - **Mobile**: Tap anywhere on the screen to swing
 
 ### Scoring
+
 | Hit Type | Base Points |
-|----------|-------------|
+| -------- | ----------- |
 | Single   | 100         |
 | Double   | 200         |
 | Triple   | 350         |
 | Home Run | 500         |
 
 ### Multiplier System
+
 - 3+ hit streak: 1.5x multiplier
 - 5+ hit streak: 2.0x multiplier
 - 10+ hit streak: 3.0x multiplier
 
 ### Game Over Conditions
+
 1. 60 seconds elapsed
 2. 3 outs recorded (whiffs or ground balls)
 
@@ -106,29 +111,29 @@ All characters are **100% original IP** with unique stats affecting gameplay.
 
 ### Starter Characters (Available Immediately)
 
-| Name | Nickname | Power | Contact | Speed | Special Ability |
-|------|----------|-------|---------|-------|-----------------|
-| Ember Ellis | The Spark | 6 | 8 | 7 | Hot Streak - Faster multiplier growth |
-| Marcus Jackson | Big Mac | 10 | 4 | 3 | Power Surge - Double HR points |
-| Sofia Ramirez | Speedy | 4 | 7 | 10 | Speed Demon - Singles become doubles |
-| Tommy Chen | T-Bone | 6 | 6 | 6 | Student of the Game - Wider timing window |
+| Name           | Nickname  | Power | Contact | Speed | Special Ability                           |
+| -------------- | --------- | ----- | ------- | ----- | ----------------------------------------- |
+| Ember Ellis    | The Spark | 6     | 8       | 7     | Hot Streak - Faster multiplier growth     |
+| Marcus Jackson | Big Mac   | 10    | 4       | 3     | Power Surge - Double HR points            |
+| Sofia Ramirez  | Speedy    | 4     | 7       | 10    | Speed Demon - Singles become doubles      |
+| Tommy Chen     | T-Bone    | 6     | 6       | 6     | Student of the Game - Wider timing window |
 
 ### Unlockable Characters
 
-| Name | Unlock Requirement |
-|------|-------------------|
-| Jazz Williams | Score 2,500 points |
-| Diesel Martinez | Hit 10 home runs |
-| Radar O'Brien | 8 hit streak |
-| Hurricane Nakamura | Play 10 games |
-| Ollie Santos | Score 5,000 points |
-| Zeus Thunders | Hit 25 home runs |
+| Name               | Unlock Requirement |
+| ------------------ | ------------------ |
+| Jazz Williams      | Score 2,500 points |
+| Diesel Martinez    | Hit 10 home runs   |
+| Radar O'Brien      | 8 hit streak       |
+| Hurricane Nakamura | Play 10 games      |
+| Ollie Santos       | Score 5,000 points |
+| Zeus Thunders      | Hit 25 home runs   |
 
 ### Secret Characters
 
-| Name | Unlock Requirement |
-|------|-------------------|
-| Blaze the Dog | Score 10,000 points |
+| Name                  | Unlock Requirement  |
+| --------------------- | ------------------- |
+| Blaze the Dog         | Score 10,000 points |
 | Austin "Ace" Maverick | Score 25,000 points |
 
 ---
@@ -142,13 +147,13 @@ All characters are **100% original IP** with unique stats affecting gameplay.
 
 ### Unlockable Fields
 
-| Field | Unlock Requirement |
-|-------|-------------------|
-| Treehouse Heights | Play 5 games |
-| Rusty's Junkyard | Score 3,000 points |
-| Downtown Rooftop | Hit 15 home runs |
-| Old MacDonald's Farm | Play 15 games |
-| Blaze Stadium | Score 15,000 points |
+| Field                | Unlock Requirement  |
+| -------------------- | ------------------- |
+| Treehouse Heights    | Play 5 games        |
+| Rusty's Junkyard     | Score 3,000 points  |
+| Downtown Rooftop     | Hit 15 home runs    |
+| Old MacDonald's Farm | Play 15 games       |
+| Blaze Stadium        | Score 15,000 points |
 
 ---
 
@@ -161,6 +166,7 @@ POST /api/backyard/submit-score
 ```
 
 **Request Body:**
+
 ```json
 {
   "playerId": "player_123",
@@ -182,6 +188,7 @@ POST /api/backyard/submit-score
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -205,12 +212,14 @@ GET /api/backyard/leaderboard?limit=10&period=alltime
 ```
 
 **Query Parameters:**
+
 - `limit` (optional): Number of entries (default: 10, max: 100)
 - `offset` (optional): Pagination offset (default: 0)
 - `period` (optional): `alltime`, `daily`, `weekly`, `monthly`
 - `character` (optional): Filter by character ID
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -241,6 +250,7 @@ GET /api/backyard/player?id=player_123
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -266,12 +276,7 @@ GET /api/backyard/player?id=player_123
 import { BackyardBaseballEmbed } from '@/games/backyard/BackyardBaseballEmbed';
 
 export default function GamePage() {
-  return (
-    <BackyardBaseballEmbed
-      width="100%"
-      height="600px"
-    />
-  );
+  return <BackyardBaseballEmbed width="100%" height="600px" />;
 }
 ```
 
@@ -303,20 +308,20 @@ export default function GamePage() {
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| width | string/number | '100%' | Container width |
-| height | string/number | '600px' | Container height |
-| playerId | string | auto-generated | Custom player ID |
-| playerName | string | undefined | Player name for leaderboard |
-| defaultCharacterId | string | undefined | Pre-select character |
-| defaultFieldId | string | undefined | Pre-select field |
-| autoStart | boolean | false | Skip menu and start immediately |
-| apiBaseUrl | string | '/api/backyard' | API endpoint base URL |
-| showLeaderboard | boolean | true | Show leaderboard after game |
-| onGameEnd | function | undefined | Callback when game ends |
-| onScoreSubmit | function | undefined | Callback when score submitted |
-| onError | function | undefined | Callback for errors |
+| Prop               | Type          | Default         | Description                     |
+| ------------------ | ------------- | --------------- | ------------------------------- |
+| width              | string/number | '100%'          | Container width                 |
+| height             | string/number | '600px'         | Container height                |
+| playerId           | string        | auto-generated  | Custom player ID                |
+| playerName         | string        | undefined       | Player name for leaderboard     |
+| defaultCharacterId | string        | undefined       | Pre-select character            |
+| defaultFieldId     | string        | undefined       | Pre-select field                |
+| autoStart          | boolean       | false           | Skip menu and start immediately |
+| apiBaseUrl         | string        | '/api/backyard' | API endpoint base URL           |
+| showLeaderboard    | boolean       | true            | Show leaderboard after game     |
+| onGameEnd          | function      | undefined       | Callback when game ends         |
+| onScoreSubmit      | function      | undefined       | Callback when score submitted   |
+| onError            | function      | undefined       | Callback for errors             |
 
 ---
 
@@ -354,13 +359,13 @@ wrangler kv:namespace create BACKYARD_CACHE
 
 ## Performance Targets
 
-| Metric | Target |
-|--------|--------|
-| Initial Load | < 5 seconds |
-| Frame Rate | 60 FPS |
-| Time to Interactive | < 3 seconds |
-| Bundle Size (gzipped) | < 500 KB |
-| Mobile Battery Impact | Low |
+| Metric                | Target      |
+| --------------------- | ----------- |
+| Initial Load          | < 5 seconds |
+| Frame Rate            | 60 FPS      |
+| Time to Interactive   | < 3 seconds |
+| Bundle Size (gzipped) | < 500 KB    |
+| Mobile Battery Impact | Low         |
 
 ### Optimization Tips
 
@@ -388,6 +393,7 @@ wrangler kv:namespace create BACKYARD_CACHE
 ### Device Testing
 
 Test on:
+
 - iPhone 12+ (Safari)
 - Samsung Galaxy S21+ (Chrome)
 - iPad (Safari)
@@ -415,10 +421,9 @@ Test on:
 // In your Next.js page
 import dynamic from 'next/dynamic';
 
-const BackyardBaseball = dynamic(
-  () => import('@/games/backyard/BackyardBaseballEmbed'),
-  { ssr: false }
-);
+const BackyardBaseball = dynamic(() => import('@/games/backyard/BackyardBaseballEmbed'), {
+  ssr: false,
+});
 
 export default function GamesPage() {
   return (
@@ -477,4 +482,4 @@ This game is **100% original intellectual property**:
 
 ---
 
-*Built with passion by Blaze Sports Intel. Born to Blaze the Path Less Beaten.*
+_Built with passion by Blaze Sports Intel. Born to Blaze the Path Less Beaten._

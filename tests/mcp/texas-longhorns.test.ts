@@ -6,22 +6,22 @@ import {
   get_rankings_context,
   search_archive,
   LonghornsError,
-  type Sport
+  type Sport,
 } from '../../mcp/texas-longhorns/server';
 
 const TIMESTAMP_REGEX = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (CDT|CST)$/;
 
 describe('Texas Longhorns MCP server', () => {
   it('rejects soccer sport requests', async () => {
-    await expect(
-      get_team_seasons({ sport: 'soccer' as unknown as Sport })
-    ).rejects.toThrowError(LonghornsError);
+    await expect(get_team_seasons({ sport: 'soccer' as unknown as Sport })).rejects.toThrowError(
+      LonghornsError
+    );
   });
 
   it('rejects soccer archive queries', async () => {
-    await expect(
-      search_archive({ query: 'latest soccer news' })
-    ).rejects.toThrowError(LonghornsError);
+    await expect(search_archive({ query: 'latest soccer news' })).rejects.toThrowError(
+      LonghornsError
+    );
   });
 
   it('returns sports in mandated order for seasons and rankings', async () => {
@@ -30,7 +30,7 @@ describe('Texas Longhorns MCP server', () => {
       'baseball',
       'football',
       'basketball',
-      'track_field'
+      'track_field',
     ]);
 
     const rankings = await get_rankings_context();
@@ -38,7 +38,7 @@ describe('Texas Longhorns MCP server', () => {
       'baseball',
       'football',
       'basketball',
-      'track_field'
+      'track_field',
     ]);
   });
 
@@ -63,12 +63,6 @@ describe('Texas Longhorns MCP server', () => {
     const response = await search_archive({ query: 'Texas' });
     expect(response.citations.some((citation) => citation.id === 'archive-feed')).toBe(true);
     const sports = response.result.results.map((entry) => entry.sport);
-    expect(sports).toEqual([
-      'baseball',
-      'football',
-      'basketball',
-      'track_field',
-      'track_field'
-    ]);
+    expect(sports).toEqual(['baseball', 'football', 'basketball', 'track_field', 'track_field']);
   });
 });

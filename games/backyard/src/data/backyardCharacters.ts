@@ -14,9 +14,9 @@ export interface BackyardCharacter {
   description: string;
 
   // Core batting stats (1-10 scale)
-  power: number;      // Affects hit distance and home run potential
-  contact: number;    // Affects timing window and hit consistency
-  speed: number;      // Affects base running (future feature)
+  power: number; // Affects hit distance and home run potential
+  contact: number; // Affects timing window and hit consistency
+  speed: number; // Affects base running (future feature)
 
   // Visual properties
   uniformColor: string;
@@ -45,7 +45,8 @@ export const STARTER_CHARACTERS: BackyardCharacter[] = [
     name: 'Ember Ellis',
     nickname: 'The Spark',
     age: 11,
-    description: 'A fiery competitor from Austin who never gives up. Her quick reflexes make her a natural at the plate.',
+    description:
+      'A fiery competitor from Austin who never gives up. Her quick reflexes make her a natural at the plate.',
     power: 6,
     contact: 8,
     speed: 7,
@@ -165,7 +166,8 @@ export const UNLOCKABLE_CHARACTERS: BackyardCharacter[] = [
     name: 'Riley "Radar" O\'Brien',
     nickname: 'Radar',
     age: 11,
-    description: 'Has an uncanny ability to read pitches. The ball looks like a beach ball to Radar.',
+    description:
+      'Has an uncanny ability to read pitches. The ball looks like a beach ball to Radar.',
     power: 5,
     contact: 10,
     speed: 5,
@@ -249,7 +251,8 @@ export const SECRET_CHARACTERS: BackyardCharacter[] = [
     name: 'Blaze the Dog',
     nickname: 'Good Boy',
     age: 4, // Dog years
-    description: 'The official mascot of Blaze Sports Intel. A golden retriever who loves baseball.',
+    description:
+      'The official mascot of Blaze Sports Intel. A golden retriever who loves baseball.',
     power: 7,
     contact: 7,
     speed: 10,

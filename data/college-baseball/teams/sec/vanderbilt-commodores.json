@@ -42,9 +42,7 @@
   "nil_operations": {
     "primary_collective": "Anchor Impact",
     "lead_contact": "Candice Storey Lee",
-    "contact_channels": [
-      "anchorimpact@vanderbilt.edu"
-    ],
+    "contact_channels": ["anchorimpact@vanderbilt.edu"],
     "recent_initiatives": "Expanding baseball internship partnerships with Nashville music industry (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -58,9 +56,7 @@
   "front_office": {
     "athletic_director": "Candice Storey Lee",
     "baseball_admin": "Kevin Colon",
-    "financial_points_of_contact": [
-      "ticket.office@vanderbilt.edu"
-    ]
+    "financial_points_of_contact": ["ticket.office@vanderbilt.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 2,

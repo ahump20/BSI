@@ -15,8 +15,8 @@ import { createClutchPerformanceCalculator } from '../api/services/clutch-perfor
 
 async function main() {
   const args = process.argv.slice(2);
-  const gameIdArg = args.find(a => a.startsWith('--game-id='));
-  const seasonArg = args.find(a => a.startsWith('--season='));
+  const gameIdArg = args.find((a) => a.startsWith('--game-id='));
+  const seasonArg = args.find((a) => a.startsWith('--season='));
 
   const gameId = gameIdArg ? gameIdArg.split('=')[1] : null;
   const season = seasonArg ? seasonArg.split('=')[1] : '2024-25';
@@ -40,15 +40,18 @@ async function main() {
       console.log(`[Clutch Score Calculator] Calculated ${results.length} scores`);
     } else {
       // Calculate for all games in season
-      const gamesResult = await db.query(`
+      const gamesResult = await db.query(
+        `
         SELECT DISTINCT game_id
         FROM clutch_situations cs
         JOIN games g ON cs.game_id = g.game_id
         WHERE g.season = $1
         ORDER BY game_id
-      `, [season]);
+      `,
+        [season]
+      );
 
-      const gameIds: string[] = gamesResult.rows.map(r => r.game_id);
+      const gameIds: string[] = gamesResult.rows.map((r) => r.game_id);
       console.log(`[Clutch Score Calculator] Found ${gameIds.length} games in ${season}`);
 
       results = await calculator.calculateScoresForGames(gameIds);
@@ -58,7 +61,7 @@ async function main() {
 
       if (results.errors.length > 0) {
         console.log(`  Errors:`);
-        results.errors.forEach(err => {
+        results.errors.forEach((err) => {
           console.log(`    - ${err.game_id}: ${err.error}`);
         });
       }

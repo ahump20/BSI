@@ -11,13 +11,13 @@ This document catalogs all secrets required for BSI deployment.
 
 ## Quick Reference
 
-| Category | Required | Set Via | Verification |
-|----------|----------|---------|--------------|
-| Sports Data APIs | 2 | Cloudflare Secrets | `/api/admin/secrets-status` |
-| Authentication | 3 | Cloudflare Secrets | `/api/admin/secrets-status` |
-| Payments (Stripe) | 4 | Cloudflare Secrets | `/api/admin/secrets-status` |
-| AI Services | 0-3 | Cloudflare Secrets | Optional fallbacks |
-| Cloudflare Bindings | 2+ | wrangler.toml | Auto-configured |
+| Category            | Required | Set Via            | Verification                |
+| ------------------- | -------- | ------------------ | --------------------------- |
+| Sports Data APIs    | 2        | Cloudflare Secrets | `/api/admin/secrets-status` |
+| Authentication      | 3        | Cloudflare Secrets | `/api/admin/secrets-status` |
+| Payments (Stripe)   | 4        | Cloudflare Secrets | `/api/admin/secrets-status` |
+| AI Services         | 0-3      | Cloudflare Secrets | Optional fallbacks          |
+| Cloudflare Bindings | 2+       | wrangler.toml      | Auto-configured             |
 
 ---
 
@@ -223,17 +223,17 @@ This document catalogs all secrets required for BSI deployment.
 
 These are configured in `wrangler.toml`, not as secrets:
 
-| Binding | Type | Resource Name |
-|---------|------|---------------|
-| `KV` | KV Namespace | `a53c3726fc3044be82e79d2d1e371d26` |
-| `NIL_CACHE` | KV Namespace | Same as KV |
-| `DB` | D1 Database | `bsi-historical-db` |
-| `NIL_DB` | D1 Database | Same as DB |
-| `SPORTS_DATA` | R2 Bucket | `blaze-sports-data-lake` |
-| `NIL_ARCHIVE` | R2 Bucket | `blaze-nil-archive` |
-| `AI` | Workers AI | Auto-configured |
-| `VECTORIZE` | Vectorize | `sports-scouting-index` |
-| `ANALYTICS` | Analytics Engine | `bsi_sports_metrics` |
+| Binding       | Type             | Resource Name                      |
+| ------------- | ---------------- | ---------------------------------- |
+| `KV`          | KV Namespace     | `a53c3726fc3044be82e79d2d1e371d26` |
+| `NIL_CACHE`   | KV Namespace     | Same as KV                         |
+| `DB`          | D1 Database      | `bsi-historical-db`                |
+| `NIL_DB`      | D1 Database      | Same as DB                         |
+| `SPORTS_DATA` | R2 Bucket        | `blaze-sports-data-lake`           |
+| `NIL_ARCHIVE` | R2 Bucket        | `blaze-nil-archive`                |
+| `AI`          | Workers AI       | Auto-configured                    |
+| `VECTORIZE`   | Vectorize        | `sports-scouting-index`            |
+| `ANALYTICS`   | Analytics Engine | `bsi_sports_metrics`               |
 
 ---
 
@@ -241,12 +241,12 @@ These are configured in `wrangler.toml`, not as secrets:
 
 Set these in [github.com/ahump20/BSI/settings/secrets/actions](https://github.com/ahump20/BSI/settings/secrets/actions):
 
-| Secret | Purpose |
-|--------|---------|
-| `CLOUDFLARE_API_TOKEN` | Wrangler deployment |
-| `CLOUDFLARE_ACCOUNT_ID` | Account identification |
+| Secret                     | Purpose                                 |
+| -------------------------- | --------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`     | Wrangler deployment                     |
+| `CLOUDFLARE_ACCOUNT_ID`    | Account identification                  |
 | `CLOUDFLARE_PAGES_PROJECT` | Pages project name (`blazesportsintel`) |
-| `SPORTSDATAIO_API_KEY` | API tests in CI |
+| `SPORTSDATAIO_API_KEY`     | API tests in CI                         |
 
 ---
 

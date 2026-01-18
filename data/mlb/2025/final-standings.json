@@ -7,61 +7,271 @@
     "AL_East": {
       "name": "American League East",
       "standings": [
-        {"team": "New York Yankees", "wins": 95, "losses": 67, "pct": 0.586, "gb": "-", "streak": "W3"},
-        {"team": "Tampa Bay Rays", "wins": 89, "losses": 73, "pct": 0.549, "gb": "6.0", "streak": "L1"},
-        {"team": "Toronto Blue Jays", "wins": 85, "losses": 77, "pct": 0.525, "gb": "10.0", "streak": "W2"},
-        {"team": "Baltimore Orioles", "wins": 79, "losses": 83, "pct": 0.488, "gb": "16.0", "streak": "L2"},
-        {"team": "Boston Red Sox", "wins": 74, "losses": 88, "pct": 0.457, "gb": "21.0", "streak": "W1"}
+        {
+          "team": "New York Yankees",
+          "wins": 95,
+          "losses": 67,
+          "pct": 0.586,
+          "gb": "-",
+          "streak": "W3"
+        },
+        {
+          "team": "Tampa Bay Rays",
+          "wins": 89,
+          "losses": 73,
+          "pct": 0.549,
+          "gb": "6.0",
+          "streak": "L1"
+        },
+        {
+          "team": "Toronto Blue Jays",
+          "wins": 85,
+          "losses": 77,
+          "pct": 0.525,
+          "gb": "10.0",
+          "streak": "W2"
+        },
+        {
+          "team": "Baltimore Orioles",
+          "wins": 79,
+          "losses": 83,
+          "pct": 0.488,
+          "gb": "16.0",
+          "streak": "L2"
+        },
+        {
+          "team": "Boston Red Sox",
+          "wins": 74,
+          "losses": 88,
+          "pct": 0.457,
+          "gb": "21.0",
+          "streak": "W1"
+        }
       ]
     },
     "AL_Central": {
       "name": "American League Central",
       "standings": [
-        {"team": "Cleveland Guardians", "wins": 91, "losses": 71, "pct": 0.562, "gb": "-", "streak": "W2"},
-        {"team": "Minnesota Twins", "wins": 87, "losses": 75, "pct": 0.537, "gb": "4.0", "streak": "L1"},
-        {"team": "Detroit Tigers", "wins": 82, "losses": 80, "pct": 0.506, "gb": "9.0", "streak": "W1"},
-        {"team": "Chicago White Sox", "wins": 71, "losses": 91, "pct": 0.438, "gb": "20.0", "streak": "L4"},
-        {"team": "Kansas City Royals", "wins": 69, "losses": 93, "pct": 0.426, "gb": "22.0", "streak": "L2"}
+        {
+          "team": "Cleveland Guardians",
+          "wins": 91,
+          "losses": 71,
+          "pct": 0.562,
+          "gb": "-",
+          "streak": "W2"
+        },
+        {
+          "team": "Minnesota Twins",
+          "wins": 87,
+          "losses": 75,
+          "pct": 0.537,
+          "gb": "4.0",
+          "streak": "L1"
+        },
+        {
+          "team": "Detroit Tigers",
+          "wins": 82,
+          "losses": 80,
+          "pct": 0.506,
+          "gb": "9.0",
+          "streak": "W1"
+        },
+        {
+          "team": "Chicago White Sox",
+          "wins": 71,
+          "losses": 91,
+          "pct": 0.438,
+          "gb": "20.0",
+          "streak": "L4"
+        },
+        {
+          "team": "Kansas City Royals",
+          "wins": 69,
+          "losses": 93,
+          "pct": 0.426,
+          "gb": "22.0",
+          "streak": "L2"
+        }
       ]
     },
     "AL_West": {
       "name": "American League West",
       "standings": [
-        {"team": "Houston Astros", "wins": 98, "losses": 64, "pct": 0.605, "gb": "-", "streak": "W5"},
-        {"team": "Texas Rangers", "wins": 93, "losses": 69, "pct": 0.574, "gb": "5.0", "streak": "W2"},
-        {"team": "Seattle Mariners", "wins": 84, "losses": 78, "pct": 0.519, "gb": "14.0", "streak": "L1"},
-        {"team": "Los Angeles Angels", "wins": 76, "losses": 86, "pct": 0.469, "gb": "22.0", "streak": "W1"},
-        {"team": "Oakland Athletics", "wins": 62, "losses": 100, "pct": 0.383, "gb": "36.0", "streak": "L6"}
+        {
+          "team": "Houston Astros",
+          "wins": 98,
+          "losses": 64,
+          "pct": 0.605,
+          "gb": "-",
+          "streak": "W5"
+        },
+        {
+          "team": "Texas Rangers",
+          "wins": 93,
+          "losses": 69,
+          "pct": 0.574,
+          "gb": "5.0",
+          "streak": "W2"
+        },
+        {
+          "team": "Seattle Mariners",
+          "wins": 84,
+          "losses": 78,
+          "pct": 0.519,
+          "gb": "14.0",
+          "streak": "L1"
+        },
+        {
+          "team": "Los Angeles Angels",
+          "wins": 76,
+          "losses": 86,
+          "pct": 0.469,
+          "gb": "22.0",
+          "streak": "W1"
+        },
+        {
+          "team": "Oakland Athletics",
+          "wins": 62,
+          "losses": 100,
+          "pct": 0.383,
+          "gb": "36.0",
+          "streak": "L6"
+        }
       ]
     },
     "NL_East": {
       "name": "National League East",
       "standings": [
-        {"team": "Atlanta Braves", "wins": 101, "losses": 61, "pct": 0.623, "gb": "-", "streak": "W4"},
-        {"team": "Philadelphia Phillies", "wins": 94, "losses": 68, "pct": 0.580, "gb": "7.0", "streak": "W2"},
-        {"team": "New York Mets", "wins": 86, "losses": 76, "pct": 0.531, "gb": "15.0", "streak": "L2"},
-        {"team": "Miami Marlins", "wins": 74, "losses": 88, "pct": 0.457, "gb": "27.0", "streak": "W1"},
-        {"team": "Washington Nationals", "wins": 68, "losses": 94, "pct": 0.420, "gb": "33.0", "streak": "L3"}
+        {
+          "team": "Atlanta Braves",
+          "wins": 101,
+          "losses": 61,
+          "pct": 0.623,
+          "gb": "-",
+          "streak": "W4"
+        },
+        {
+          "team": "Philadelphia Phillies",
+          "wins": 94,
+          "losses": 68,
+          "pct": 0.58,
+          "gb": "7.0",
+          "streak": "W2"
+        },
+        {
+          "team": "New York Mets",
+          "wins": 86,
+          "losses": 76,
+          "pct": 0.531,
+          "gb": "15.0",
+          "streak": "L2"
+        },
+        {
+          "team": "Miami Marlins",
+          "wins": 74,
+          "losses": 88,
+          "pct": 0.457,
+          "gb": "27.0",
+          "streak": "W1"
+        },
+        {
+          "team": "Washington Nationals",
+          "wins": 68,
+          "losses": 94,
+          "pct": 0.42,
+          "gb": "33.0",
+          "streak": "L3"
+        }
       ]
     },
     "NL_Central": {
       "name": "National League Central",
       "standings": [
-        {"team": "Milwaukee Brewers", "wins": 92, "losses": 70, "pct": 0.568, "gb": "-", "streak": "W3"},
-        {"team": "Chicago Cubs", "wins": 88, "losses": 74, "pct": 0.543, "gb": "4.0", "streak": "L1"},
-        {"team": "Cincinnati Reds", "wins": 84, "losses": 78, "pct": 0.519, "gb": "8.0", "streak": "W2"},
-        {"team": "St. Louis Cardinals", "wins": 79, "losses": 83, "pct": 0.488, "gb": "13.0", "streak": "L2"},
-        {"team": "Pittsburgh Pirates", "wins": 72, "losses": 90, "pct": 0.444, "gb": "20.0", "streak": "W1"}
+        {
+          "team": "Milwaukee Brewers",
+          "wins": 92,
+          "losses": 70,
+          "pct": 0.568,
+          "gb": "-",
+          "streak": "W3"
+        },
+        {
+          "team": "Chicago Cubs",
+          "wins": 88,
+          "losses": 74,
+          "pct": 0.543,
+          "gb": "4.0",
+          "streak": "L1"
+        },
+        {
+          "team": "Cincinnati Reds",
+          "wins": 84,
+          "losses": 78,
+          "pct": 0.519,
+          "gb": "8.0",
+          "streak": "W2"
+        },
+        {
+          "team": "St. Louis Cardinals",
+          "wins": 79,
+          "losses": 83,
+          "pct": 0.488,
+          "gb": "13.0",
+          "streak": "L2"
+        },
+        {
+          "team": "Pittsburgh Pirates",
+          "wins": 72,
+          "losses": 90,
+          "pct": 0.444,
+          "gb": "20.0",
+          "streak": "W1"
+        }
       ]
     },
     "NL_West": {
       "name": "National League West",
       "standings": [
-        {"team": "Los Angeles Dodgers", "wins": 104, "losses": 58, "pct": 0.642, "gb": "-", "streak": "W6"},
-        {"team": "San Diego Padres", "wins": 91, "losses": 71, "pct": 0.562, "gb": "13.0", "streak": "W3"},
-        {"team": "Arizona Diamondbacks", "wins": 87, "losses": 75, "pct": 0.537, "gb": "17.0", "streak": "L1"},
-        {"team": "San Francisco Giants", "wins": 81, "losses": 81, "pct": 0.500, "gb": "23.0", "streak": "W1"},
-        {"team": "Colorado Rockies", "wins": 65, "losses": 97, "pct": 0.401, "gb": "39.0", "streak": "L5"}
+        {
+          "team": "Los Angeles Dodgers",
+          "wins": 104,
+          "losses": 58,
+          "pct": 0.642,
+          "gb": "-",
+          "streak": "W6"
+        },
+        {
+          "team": "San Diego Padres",
+          "wins": 91,
+          "losses": 71,
+          "pct": 0.562,
+          "gb": "13.0",
+          "streak": "W3"
+        },
+        {
+          "team": "Arizona Diamondbacks",
+          "wins": 87,
+          "losses": 75,
+          "pct": 0.537,
+          "gb": "17.0",
+          "streak": "L1"
+        },
+        {
+          "team": "San Francisco Giants",
+          "wins": 81,
+          "losses": 81,
+          "pct": 0.5,
+          "gb": "23.0",
+          "streak": "W1"
+        },
+        {
+          "team": "Colorado Rockies",
+          "wins": 65,
+          "losses": 97,
+          "pct": 0.401,
+          "gb": "39.0",
+          "streak": "L5"
+        }
       ]
     }
   },
@@ -72,7 +282,12 @@
     "worldSeriesSchedule": "October 24 - November 1, 2025",
     "alcsTeams": ["Houston Astros", "New York Yankees"],
     "nlcsTeams": ["Los Angeles Dodgers", "Atlanta Braves"],
-    "wildCardTeams": ["Tampa Bay Rays", "Texas Rangers", "Philadelphia Phillies", "San Diego Padres"]
+    "wildCardTeams": [
+      "Tampa Bay Rays",
+      "Texas Rangers",
+      "Philadelphia Phillies",
+      "San Diego Padres"
+    ]
   },
   "notes": [
     "2025 World Series scheduled for October 24 - November 1, 2025 (Dodgers vs Astros)",

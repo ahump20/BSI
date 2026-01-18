@@ -152,15 +152,11 @@ export class TickerRoom implements DurableObject {
     const { leagues, types, minPriority } = message.payload || {};
 
     if (leagues && Array.isArray(leagues)) {
-      ws.clientState.subscribedLeagues = new Set(
-        leagues.filter((l) => VALID_LEAGUES.includes(l))
-      );
+      ws.clientState.subscribedLeagues = new Set(leagues.filter((l) => VALID_LEAGUES.includes(l)));
     }
 
     if (types && Array.isArray(types)) {
-      ws.clientState.subscribedTypes = new Set(
-        types.filter((t) => VALID_TYPES.includes(t))
-      );
+      ws.clientState.subscribedTypes = new Set(types.filter((t) => VALID_TYPES.includes(t)));
     }
 
     if (minPriority && [1, 2, 3].includes(minPriority)) {
@@ -244,12 +240,10 @@ export class TickerRoom implements DurableObject {
     for (const [, ws] of this.connections) {
       if (ws.clientState) {
         for (const league of ws.clientState.subscribedLeagues) {
-          stats.subscriptions.byLeague[league] =
-            (stats.subscriptions.byLeague[league] || 0) + 1;
+          stats.subscriptions.byLeague[league] = (stats.subscriptions.byLeague[league] || 0) + 1;
         }
         for (const type of ws.clientState.subscribedTypes) {
-          stats.subscriptions.byType[type] =
-            (stats.subscriptions.byType[type] || 0) + 1;
+          stats.subscriptions.byType[type] = (stats.subscriptions.byType[type] || 0) + 1;
         }
       }
     }

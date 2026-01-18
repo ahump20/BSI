@@ -11,6 +11,7 @@
 Diamond Sluggers is an original mobile baseball game capturing the nostalgic charm of classic arcade sports games while being 100% legally distinct from any existing IP. The game features 16 unique kid characters, 8 Texas-inspired backyard stadiums, timing-based batting mechanics, and a progression system designed for ages 8-14 (while remaining engaging for adults).
 
 **Core Philosophy:**
+
 - Fun first, realism second
 - Mobile-optimized touch controls
 - Kid-friendly content, no predatory monetization
@@ -24,14 +25,14 @@ Diamond Sluggers is an original mobile baseball game capturing the nostalgic cha
 
 **Primary Recommendation: Phaser.js + Capacitor**
 
-| Layer | Technology | Justification |
-|-------|------------|---------------|
-| Game Engine | Phaser 3.x | Mature 2D engine, excellent mobile performance, TypeScript support |
-| Cross-Platform | Capacitor | Native iOS/Android builds from web code, Cloudflare Pages deployment for web |
-| State Management | Custom GameState class | Lightweight, game-specific, no external dependencies |
-| Storage | localStorage + Cloudflare D1 | Local-first with cloud sync capability |
-| Backend | Cloudflare Workers | API for leaderboards, cloud saves, matchmaking |
-| Assets | Cloudflare R2 | CDN-delivered sprites, audio, stadium backgrounds |
+| Layer            | Technology                   | Justification                                                                |
+| ---------------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| Game Engine      | Phaser 3.x                   | Mature 2D engine, excellent mobile performance, TypeScript support           |
+| Cross-Platform   | Capacitor                    | Native iOS/Android builds from web code, Cloudflare Pages deployment for web |
+| State Management | Custom GameState class       | Lightweight, game-specific, no external dependencies                         |
+| Storage          | localStorage + Cloudflare D1 | Local-first with cloud sync capability                                       |
+| Backend          | Cloudflare Workers           | API for leaderboards, cloud saves, matchmaking                               |
+| Assets           | Cloudflare R2                | CDN-delivered sprites, audio, stadium backgrounds                            |
 
 **Why Phaser over Unity/Godot for this project:**
 
@@ -124,13 +125,13 @@ export type GamePhase =
   | 'results';
 
 export interface BaseState {
-  first: string | null;   // Character ID on first
+  first: string | null; // Character ID on first
   second: string | null;
   third: string | null;
 }
 
 export interface TeamState {
-  lineup: string[];       // Array of character IDs
+  lineup: string[]; // Array of character IDs
   currentBatterIndex: number;
   score: number;
   hits: number;
@@ -181,26 +182,26 @@ export class GameState {
       activePowerUps: [],
       pitchHistory: [],
       lastPlay: null,
-      pauseState: null
+      pauseState: null,
     };
   }
 
   // State transition with validation
   transition(newPhase: GamePhase): boolean {
     const validTransitions: Record<GamePhase, GamePhase[]> = {
-      'menu': ['team-select'],
+      menu: ['team-select'],
       'team-select': ['menu', 'stadium-select'],
       'stadium-select': ['team-select', 'pre-game'],
       'pre-game': ['pitching'],
-      'pitching': ['batting', 'between-innings'],
-      'batting': ['ball-in-play', 'pitching'],
+      pitching: ['batting', 'between-innings'],
+      batting: ['ball-in-play', 'pitching'],
       'ball-in-play': ['baserunning', 'fielding', 'between-innings'],
-      'baserunning': ['pitching', 'between-innings'],
-      'fielding': ['baserunning', 'pitching', 'between-innings'],
+      baserunning: ['pitching', 'between-innings'],
+      fielding: ['baserunning', 'pitching', 'between-innings'],
       'between-innings': ['pitching', 'game-over'],
       'power-up-active': ['pitching', 'batting', 'ball-in-play'],
       'game-over': ['results'],
-      'results': ['menu', 'team-select']
+      results: ['menu', 'team-select'],
     };
 
     if (validTransitions[this.state.phase]?.includes(newPhase)) {
@@ -222,7 +223,7 @@ export class GameState {
   }
 
   private emit(event: string, data: any): void {
-    this.listeners.get(event)?.forEach(cb => cb(data));
+    this.listeners.get(event)?.forEach((cb) => cb(data));
   }
 
   // Serialization for save/load
@@ -265,14 +266,14 @@ export class CloudSaveManager {
       userId: await this.getUserId(),
       saveData: JSON.parse(localData),
       timestamp: Date.now(),
-      checksum: await this.calculateChecksum(localData)
+      checksum: await this.calculateChecksum(localData),
     };
 
     try {
       const response = await fetch(`${this.apiBase}/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       return response.ok;
@@ -331,7 +332,7 @@ export class CloudSaveManager {
     const encoder = new TextEncoder();
     const buffer = await crypto.subtle.digest('SHA-256', encoder.encode(data));
     return Array.from(new Uint8Array(buffer))
-      .map(b => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
   }
 }
@@ -455,7 +456,7 @@ export class SwingZone {
       yoyo: true,
       onComplete: () => {
         this.visualFeedback.setAlpha(0);
-      }
+      },
     });
 
     // Haptic feedback
@@ -466,7 +467,7 @@ export class SwingZone {
     // Emit swing event with timestamp
     scene.events.emit('swing', {
       timestamp: scene.time.now,
-      position: pointer ? { x: pointer.x, y: pointer.y } : null
+      position: pointer ? { x: pointer.x, y: pointer.y } : null,
     });
   }
 
@@ -489,9 +490,9 @@ export class SwingZone {
 
 export interface SwingResult {
   type: 'perfect' | 'good' | 'early' | 'late' | 'miss' | 'foul';
-  power: number;        // 0-1 multiplier
-  launchAngle: number;  // Degrees
-  direction: number;    // -45 (pull) to +45 (opposite field)
+  power: number; // 0-1 multiplier
+  launchAngle: number; // Degrees
+  direction: number; // -45 (pull) to +45 (opposite field)
   exitVelocity: number; // Pixels per second
 }
 
@@ -531,8 +532,8 @@ export class PhysicsSystem {
     }
 
     // Apply batter stats
-    const powerStat = batter.power / 10;      // 0-1
-    const contactStat = batter.contact / 10;  // 0-1
+    const powerStat = batter.power / 10; // 0-1
+    const contactStat = batter.contact / 10; // 0-1
 
     // Power: weighted combination of timing and batter power
     const power = basePower * (0.6 + powerStat * 0.4);
@@ -544,7 +545,7 @@ export class PhysicsSystem {
     } else if (type === 'early') {
       launchAngle = 35 + Math.random() * 25; // Pop fly tendency
     } else if (type === 'late') {
-      launchAngle = 5 + Math.random() * 20;  // Ground ball tendency
+      launchAngle = 5 + Math.random() * 20; // Ground ball tendency
     } else {
       launchAngle = 0;
     }
@@ -562,7 +563,7 @@ export class PhysicsSystem {
       power,
       launchAngle,
       direction,
-      exitVelocity
+      exitVelocity,
     };
   }
 
@@ -575,17 +576,17 @@ export class PhysicsSystem {
       return {
         outcome: swing.type === 'miss' ? 'strike' : 'foul',
         trajectory: [],
-        landingPosition: null
+        landingPosition: null,
       };
     }
 
-    const gravity = 980;  // px/s^2
-    const dt = 1 / 60;    // 60fps simulation
+    const gravity = 980; // px/s^2
+    const dt = 1 / 60; // 60fps simulation
     const trajectory: Vector2[] = [];
 
     // Initial velocity components
-    const radAngle = swing.launchAngle * Math.PI / 180;
-    const radDirection = swing.direction * Math.PI / 180;
+    const radAngle = (swing.launchAngle * Math.PI) / 180;
+    const radDirection = (swing.direction * Math.PI) / 180;
 
     let vx = swing.exitVelocity * Math.cos(radAngle) * Math.cos(radDirection);
     let vy = swing.exitVelocity * Math.cos(radAngle) * Math.sin(radDirection);
@@ -595,7 +596,9 @@ export class PhysicsSystem {
     vx += weather.wind.x * 50;
     vy += weather.wind.y * 50;
 
-    let x = 0, y = 0, z = 0;
+    let x = 0,
+      y = 0,
+      z = 0;
     const startY = 100; // Height of contact
     z = startY;
 
@@ -639,12 +642,12 @@ export class PhysicsSystem {
       outcome,
       trajectory,
       landingPosition: { x, y },
-      distance
+      distance,
     };
   }
 
   private static getFenceDistance(x: number, y: number, stadium: StadiumData): number {
-    const angle = Math.atan2(y, x) * 180 / Math.PI;
+    const angle = (Math.atan2(y, x) * 180) / Math.PI;
     const dims = stadium.dimensions;
 
     // Interpolate between field dimensions based on angle
@@ -682,10 +685,7 @@ export class AISystem {
     this.difficulty = difficulty;
   }
 
-  selectPitch(
-    gameState: GameStateData,
-    batter: CharacterData
-  ): PitchSelection {
+  selectPitch(gameState: GameStateData, batter: CharacterData): PitchSelection {
     const count = { balls: gameState.balls, strikes: gameState.strikes };
     const outs = gameState.outs;
     const runnersOn = this.countRunners(gameState.bases);
@@ -720,7 +720,7 @@ export class AISystem {
     const accuracyPenalty = {
       easy: 0.15,
       medium: 0.08,
-      hard: 0.03
+      hard: 0.03,
     }[this.difficulty];
 
     // Add random error to location
@@ -734,7 +734,7 @@ export class AISystem {
       location,
       speed: pitchData.speed,
       breakingAmount: pitchData.break,
-      isStrike
+      isStrike,
     };
 
     this.pitchHistory.push(selection);
@@ -777,7 +777,7 @@ export class AISystem {
       fastball: { speed: 600, break: 0.1 },
       curveball: { speed: 450, break: 0.8 },
       changeup: { speed: 400, break: 0.3 },
-      slider: { speed: 500, break: 0.6 }
+      slider: { speed: 500, break: 0.6 },
     };
     return data[type] || data.fastball;
   }
@@ -838,7 +838,7 @@ export class FieldingSystem {
       third: { x: 250, y: 350 },
       left: { x: 200, y: 150 },
       center: { x: 400, y: 100 },
-      right: { x: 600, y: 150 }
+      right: { x: 600, y: 150 },
     };
 
     for (const [pos, coords] of Object.entries(positions)) {
@@ -847,7 +847,7 @@ export class FieldingSystem {
         targetPosition: null,
         isMoving: false,
         hasBall: false,
-        throwTarget: null
+        throwTarget: null,
       });
     }
   }
@@ -895,7 +895,7 @@ export class FieldingSystem {
 
       const direction = {
         x: state.targetPosition.x - state.position.x,
-        y: state.targetPosition.y - state.position.y
+        y: state.targetPosition.y - state.position.y,
       };
 
       const dist = Math.sqrt(direction.x ** 2 + direction.y ** 2);
@@ -913,7 +913,7 @@ export class FieldingSystem {
         }
       } else {
         // Move toward target
-        const moveSpeed = fielderSpeed * deltaTime / 1000;
+        const moveSpeed = (fielderSpeed * deltaTime) / 1000;
         state.position.x += (direction.x / dist) * moveSpeed;
         state.position.y += (direction.y / dist) * moveSpeed;
       }
@@ -961,7 +961,7 @@ export class BaseRunningSystem {
     home: { x: 400, y: 550 },
     first: { x: 550, y: 400 },
     second: { x: 400, y: 250 },
-    third: { x: 250, y: 400 }
+    third: { x: 250, y: 400 },
   };
 
   advanceAll(): void {
@@ -975,7 +975,7 @@ export class BaseRunningSystem {
   }
 
   advanceRunner(characterId: string): void {
-    const runner = this.runners.find(r => r.characterId === characterId);
+    const runner = this.runners.find((r) => r.characterId === characterId);
     if (!runner) return;
 
     const nextBase = this.getNextBase(runner.currentBase);
@@ -986,7 +986,7 @@ export class BaseRunningSystem {
   }
 
   holdRunner(characterId: string): void {
-    const runner = this.runners.find(r => r.characterId === characterId);
+    const runner = this.runners.find((r) => r.characterId === characterId);
     if (!runner || !runner.isMoving) return;
 
     // Stop at current base if safe
@@ -995,7 +995,7 @@ export class BaseRunningSystem {
   }
 
   attemptSteal(characterId: string): boolean {
-    const runner = this.runners.find(r => r.characterId === characterId);
+    const runner = this.runners.find((r) => r.characterId === characterId);
     if (!runner) return false;
 
     const nextBase = this.getNextBase(runner.currentBase);
@@ -1021,11 +1021,11 @@ export class BaseRunningSystem {
       const targetPos = this.basePositions[runner.targetBase];
       const direction = {
         x: targetPos.x - runner.position.x,
-        y: targetPos.y - runner.position.y
+        y: targetPos.y - runner.position.y,
       };
 
       const dist = Math.sqrt(direction.x ** 2 + direction.y ** 2);
-      const moveAmount = runner.speed * deltaTime / 1000;
+      const moveAmount = (runner.speed * deltaTime) / 1000;
 
       if (dist <= moveAmount) {
         // Reached base
@@ -1045,7 +1045,7 @@ export class BaseRunningSystem {
 
     // Remove scored runners
     for (const id of scoredRunners) {
-      const index = this.runners.findIndex(r => r.characterId === id);
+      const index = this.runners.findIndex((r) => r.characterId === id);
       if (index >= 0) {
         this.runners.splice(index, 1);
       }
@@ -1067,7 +1067,7 @@ export class BaseRunningSystem {
       targetBase: null,
       position: { ...this.basePositions[base] },
       isMoving: false,
-      speed
+      speed,
     });
   }
 
@@ -1101,24 +1101,24 @@ export const ADDITIONAL_CHARACTERS: CharacterData[] = [
       contact: 7,
       speed: 8,
       fielding: 7,
-      pitching: 9
+      pitching: 9,
     },
     ability: {
       name: 'Tornado Curve',
       description: 'Curveball breaks twice as much for 3 pitches',
       cooldown: 4,
-      type: 'active'
+      type: 'active',
     },
     colors: {
       primary: '#8B5CF6', // Purple
-      secondary: '#6D28D9'
+      secondary: '#6D28D9',
     },
     unlockCondition: 'tournament-win', // Win a tournament
     voiceLines: {
-      selected: 'Let\'s spin \'em dizzy!',
-      homeRun: 'That\'s outta here!',
-      strikeout: 'Sit down!'
-    }
+      selected: "Let's spin 'em dizzy!",
+      homeRun: "That's outta here!",
+      strikeout: 'Sit down!',
+    },
   },
   {
     id: 'theo-calculator',
@@ -1132,24 +1132,24 @@ export const ADDITIONAL_CHARACTERS: CharacterData[] = [
       contact: 10,
       speed: 5,
       fielding: 8,
-      pitching: 8
+      pitching: 8,
     },
     ability: {
       name: 'Probability Shield',
-      description: 'See pitch location before it\'s thrown (batting only)',
+      description: "See pitch location before it's thrown (batting only)",
       cooldown: 5,
-      type: 'active'
+      type: 'active',
     },
     colors: {
       primary: '#0EA5E9', // Sky blue
-      secondary: '#0284C7'
+      secondary: '#0284C7',
     },
     unlockCondition: 'perfect-game', // Pitch a perfect game
     voiceLines: {
-      selected: 'I\'ve done the math.',
+      selected: "I've done the math.",
       homeRun: 'Statistically inevitable!',
-      strikeout: 'Calculated.'
-    }
+      strikeout: 'Calculated.',
+    },
   },
   {
     id: 'mia-shadow',
@@ -1163,24 +1163,24 @@ export const ADDITIONAL_CHARACTERS: CharacterData[] = [
       contact: 8,
       speed: 9,
       fielding: 10,
-      pitching: 4
+      pitching: 4,
     },
     ability: {
       name: 'Vanish Catch',
       description: 'Teleport to any fly ball location instantly (once per inning)',
       cooldown: 0, // Per-inning cooldown
-      type: 'triggered'
+      type: 'triggered',
     },
     colors: {
       primary: '#1F2937', // Dark gray
-      secondary: '#111827'
+      secondary: '#111827',
     },
     unlockCondition: 'home-run-robbed', // Rob 3 home runs
     voiceLines: {
       selected: 'Now you see me...',
       homeRun: 'From the shadows!',
-      strikeout: '...'
-    }
+      strikeout: '...',
+    },
   },
   {
     id: 'pete-powerhouse',
@@ -1194,25 +1194,25 @@ export const ADDITIONAL_CHARACTERS: CharacterData[] = [
       contact: 5,
       speed: 3,
       fielding: 6,
-      pitching: 4
+      pitching: 4,
     },
     ability: {
       name: 'Mega Slam',
       description: 'Next home run clears any fence by 100ft and scores all runners',
       cooldown: 6,
-      type: 'active'
+      type: 'active',
     },
     colors: {
       primary: '#DC2626', // Red
-      secondary: '#991B1B'
+      secondary: '#991B1B',
     },
     unlockCondition: 'grand-slam', // Hit a grand slam
     voiceLines: {
       selected: 'Time to crush it!',
       homeRun: 'BOOM!',
-      strikeout: 'I\'ll get it next time.'
-    }
-  }
+      strikeout: "I'll get it next time.",
+    },
+  },
 ];
 ```
 
@@ -1220,26 +1220,27 @@ export const ADDITIONAL_CHARACTERS: CharacterData[] = [
 
 Each character should have strengths and weaknesses, creating meaningful team-building choices:
 
-| Character | Power | Contact | Speed | Field | Pitch | Total | Role |
-|-----------|-------|---------|-------|-------|-------|-------|------|
-| Maya Thunder | 6 | 8 | 10 | 9 | 5 | 38 | Leadoff/OF |
-| Jackson Rocket | 10 | 6 | 5 | 7 | 6 | 34 | Cleanup/1B |
-| Emma Glove | 5 | 7 | 7 | 10 | 7 | 36 | Utility/SS |
-| Tyler Knuckle | 4 | 6 | 6 | 8 | 10 | 34 | Pitcher |
-| Sophia Spark | 7 | 8 | 8 | 8 | 7 | 38 | 3-hole/3B |
-| Marcus Dash | 5 | 7 | 10 | 9 | 4 | 35 | Leadoff/CF |
-| Olivia Cannon | 8 | 7 | 4 | 9 | 6 | 34 | 5-hole/C |
-| Carlos Magic | 6 | 9 | 7 | 8 | 7 | 37 | 2-hole/2B |
-| Isabella Ice | 7 | 8 | 6 | 7 | 9 | 37 | Pitcher/Closer |
-| Ryan Wall | 8 | 7 | 4 | 10 | 5 | 34 | 6-hole/1B |
-| Lily Zoom | 6 | 9 | 9 | 7 | 6 | 37 | Leadoff/OF |
-| Diego Fire | 9 | 8 | 7 | 8 | 8 | 40 | Cleanup (Unlockable) |
-| Zoe Whirlwind | 5 | 7 | 8 | 7 | 9 | 36 | Pitcher |
-| Theo Calculator | 4 | 10 | 5 | 8 | 8 | 35 | Contact/2B |
-| Mia Shadow | 6 | 8 | 9 | 10 | 4 | 37 | CF/Defense |
-| Pete Powerhouse | 10 | 5 | 3 | 6 | 4 | 28 | Power/DH |
+| Character       | Power | Contact | Speed | Field | Pitch | Total | Role                 |
+| --------------- | ----- | ------- | ----- | ----- | ----- | ----- | -------------------- |
+| Maya Thunder    | 6     | 8       | 10    | 9     | 5     | 38    | Leadoff/OF           |
+| Jackson Rocket  | 10    | 6       | 5     | 7     | 6     | 34    | Cleanup/1B           |
+| Emma Glove      | 5     | 7       | 7     | 10    | 7     | 36    | Utility/SS           |
+| Tyler Knuckle   | 4     | 6       | 6     | 8     | 10    | 34    | Pitcher              |
+| Sophia Spark    | 7     | 8       | 8     | 8     | 7     | 38    | 3-hole/3B            |
+| Marcus Dash     | 5     | 7       | 10    | 9     | 4     | 35    | Leadoff/CF           |
+| Olivia Cannon   | 8     | 7       | 4     | 9     | 6     | 34    | 5-hole/C             |
+| Carlos Magic    | 6     | 9       | 7     | 8     | 7     | 37    | 2-hole/2B            |
+| Isabella Ice    | 7     | 8       | 6     | 7     | 9     | 37    | Pitcher/Closer       |
+| Ryan Wall       | 8     | 7       | 4     | 10    | 5     | 34    | 6-hole/1B            |
+| Lily Zoom       | 6     | 9       | 9     | 7     | 6     | 37    | Leadoff/OF           |
+| Diego Fire      | 9     | 8       | 7     | 8     | 8     | 40    | Cleanup (Unlockable) |
+| Zoe Whirlwind   | 5     | 7       | 8     | 7     | 9     | 36    | Pitcher              |
+| Theo Calculator | 4     | 10      | 5     | 8     | 8     | 35    | Contact/2B           |
+| Mia Shadow      | 6     | 8       | 9     | 10    | 4     | 37    | CF/Defense           |
+| Pete Powerhouse | 10    | 5       | 3     | 6     | 4     | 28    | Power/DH             |
 
 **Design Principles:**
+
 - No character exceeds 40 total stat points
 - Diego Fire is the "ultimate" unlockable but not strictly better (weak speed for steal situations)
 - Pete Powerhouse has highest power but lowest total (high risk/reward)
@@ -1277,23 +1278,23 @@ export const CHARACTER_UNLOCK_REQUIREMENTS: Record<string, UnlockRequirement> = 
   'zoe-whirlwind': {
     type: 'achievement',
     value: 'tournament-champion',
-    description: 'Win a tournament'
+    description: 'Win a tournament',
   },
   'theo-calculator': {
     type: 'achievement',
     value: 'perfect-game',
-    description: 'Pitch a perfect game (no hits, no walks)'
+    description: 'Pitch a perfect game (no hits, no walks)',
   },
   'mia-shadow': {
     type: 'achievement',
     value: 'home-run-robber',
-    description: 'Rob 3 home runs'
+    description: 'Rob 3 home runs',
   },
   'pete-powerhouse': {
     type: 'achievement',
     value: 'grand-slam',
-    description: 'Hit a grand slam'
-  }
+    description: 'Hit a grand slam',
+  },
 };
 
 export const ACHIEVEMENTS: Achievement[] = [
@@ -1302,71 +1303,71 @@ export const ACHIEVEMENTS: Achievement[] = [
     name: 'First Victory',
     description: 'Win your first game',
     icon: '🏆',
-    requirement: { type: 'wins', value: 1 }
+    requirement: { type: 'wins', value: 1 },
   },
   {
     id: 'home-run-derby',
     name: 'Home Run Derby',
     description: 'Hit 5 home runs in a single game',
     icon: '🎆',
-    requirement: { type: 'stat', stat: 'homeRunsInGame', value: 5 }
+    requirement: { type: 'stat', stat: 'homeRunsInGame', value: 5 },
   },
   {
     id: 'shutout',
     name: 'Shutout',
     description: 'Win without allowing any runs',
     icon: '🔒',
-    requirement: { type: 'special', value: 'shutout' }
+    requirement: { type: 'special', value: 'shutout' },
   },
   {
     id: 'perfect-game',
     name: 'Perfect Game',
     description: 'Pitch a complete game with no hits or walks',
     icon: '💎',
-    requirement: { type: 'special', value: 'perfect-game' }
+    requirement: { type: 'special', value: 'perfect-game' },
   },
   {
     id: 'grand-slam',
     name: 'Grand Slam',
     description: 'Hit a home run with bases loaded',
     icon: '🎰',
-    requirement: { type: 'special', value: 'grand-slam' }
+    requirement: { type: 'special', value: 'grand-slam' },
   },
   {
     id: 'comeback-kid',
     name: 'Comeback Kid',
     description: 'Win after being down by 5+ runs',
     icon: '📈',
-    requirement: { type: 'special', value: 'comeback-5' }
+    requirement: { type: 'special', value: 'comeback-5' },
   },
   {
     id: 'home-run-robber',
     name: 'Home Run Robber',
     description: 'Rob 3 home runs total',
     icon: '🚔',
-    requirement: { type: 'stat', stat: 'homeRunsRobbed', value: 3 }
+    requirement: { type: 'stat', stat: 'homeRunsRobbed', value: 3 },
   },
   {
     id: 'tournament-champion',
     name: 'Tournament Champion',
     description: 'Win a full tournament',
     icon: '👑',
-    requirement: { type: 'special', value: 'tournament-win' }
+    requirement: { type: 'special', value: 'tournament-win' },
   },
   {
     id: 'century-club',
     name: 'Century Club',
     description: 'Score 100 total runs',
     icon: '💯',
-    requirement: { type: 'stat', stat: 'totalRuns', value: 100 }
+    requirement: { type: 'stat', stat: 'totalRuns', value: 100 },
   },
   {
     id: 'full-roster',
     name: 'Full Roster',
     description: 'Unlock all 16 characters',
     icon: '🎭',
-    requirement: { type: 'collection', value: 16 }
-  }
+    requirement: { type: 'collection', value: 16 },
+  },
 ];
 ```
 
@@ -1390,14 +1391,14 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
     theme: 'beach',
     environment: {
       background: '#00CED1', // Turquoise water
-      grass: '#F4A460',      // Sandy
-      dirt: '#DEB887',       // Beach sand
-      fence: '#8B4513'       // Wooden fence
+      grass: '#F4A460', // Sandy
+      dirt: '#DEB887', // Beach sand
+      fence: '#8B4513', // Wooden fence
     },
     dimensions: {
-      leftField: 175,   // Short - balls carry well
+      leftField: 175, // Short - balls carry well
       centerField: 195,
-      rightField: 185
+      rightField: 185,
     },
     features: [
       {
@@ -1405,31 +1406,31 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
         name: 'Tide Pool',
         position: { x: -160, y: 160 },
         effect: 'Balls landing in tide pool are ground rule doubles',
-        visual: 'animated-water'
+        visual: 'animated-water',
       },
       {
         type: 'obstacle',
         name: 'Seagull Flock',
         position: { x: 50, y: 180 },
         effect: 'Random seagulls can deflect fly balls',
-        visual: 'flying-seagulls'
+        visual: 'flying-seagulls',
       },
       {
         type: 'bonus',
         name: 'Sandcastle Tower',
         position: { x: 170, y: 170 },
         effect: 'Home runs that knock down the sandcastle earn 200 bonus points',
-        visual: 'sandcastle'
-      }
+        visual: 'sandcastle',
+      },
     ],
     weather: {
-      wind: { x: 1.2, y: 0.5 },  // Strong sea breeze
+      wind: { x: 1.2, y: 0.5 }, // Strong sea breeze
       temperature: 88,
       condition: 'sunny',
-      specialEffect: 'salt-spray'
+      specialEffect: 'salt-spray',
     },
     unlockCondition: 'win50',
-    difficulty: 'medium'
+    difficulty: 'medium',
   },
   {
     id: 'marfa-lights',
@@ -1439,14 +1440,14 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
     theme: 'desert-night',
     environment: {
       background: '#4B0082', // Indigo twilight
-      grass: '#6B8E23',      // Olive desert grass
-      dirt: '#D2691E',       // Red desert dirt
-      fence: '#8B0000'       // Dark red
+      grass: '#6B8E23', // Olive desert grass
+      dirt: '#D2691E', // Red desert dirt
+      fence: '#8B0000', // Dark red
     },
     dimensions: {
       leftField: 205,
-      centerField: 250,  // Deep center!
-      rightField: 200
+      centerField: 250, // Deep center!
+      rightField: 200,
     },
     features: [
       {
@@ -1454,31 +1455,31 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
         name: 'Marfa Lights',
         position: { x: 0, y: 50 },
         effect: 'Mysterious floating lights occasionally illuminate the outfield',
-        visual: 'glowing-orbs'
+        visual: 'glowing-orbs',
       },
       {
         type: 'obstacle',
         name: 'Tumbleweeds',
         position: { x: -100, y: 180 },
         effect: 'Rolling tumbleweeds can knock ground balls off course',
-        visual: 'rolling-tumbleweed'
+        visual: 'rolling-tumbleweed',
       },
       {
         type: 'bonus',
         name: 'Art Installation',
         position: { x: 200, y: 220 },
         effect: 'Home runs hitting the art piece score triple points',
-        visual: 'modern-sculpture'
-      }
+        visual: 'modern-sculpture',
+      },
     ],
     weather: {
-      wind: { x: -0.8, y: 0.2 },  // Desert wind
+      wind: { x: -0.8, y: 0.2 }, // Desert wind
       temperature: 72,
       condition: 'dusk',
-      specialEffect: 'long-shadows'
+      specialEffect: 'long-shadows',
     },
     unlockCondition: 'win60',
-    difficulty: 'hard'
+    difficulty: 'hard',
   },
   {
     id: 'nasa-training',
@@ -1488,14 +1489,14 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
     theme: 'space',
     environment: {
       background: '#1C1C1C', // Space black
-      grass: '#228B22',      // Artificial turf green
-      dirt: '#A9A9A9',       // Moon dust gray
-      fence: '#C0C0C0'       // Silver
+      grass: '#228B22', // Artificial turf green
+      dirt: '#A9A9A9', // Moon dust gray
+      fence: '#C0C0C0', // Silver
     },
     dimensions: {
       leftField: 200,
       centerField: 235,
-      rightField: 200
+      rightField: 200,
     },
     features: [
       {
@@ -1503,32 +1504,32 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
         name: 'Low Gravity Zone',
         position: { x: 0, y: 100 },
         effect: 'Fly balls in center field stay airborne 20% longer',
-        visual: 'gravity-distortion'
+        visual: 'gravity-distortion',
       },
       {
         type: 'obstacle',
         name: 'Rover',
         position: { x: -150, y: 190 },
         effect: 'The roving Mars robot can catch ground balls',
-        visual: 'mars-rover'
+        visual: 'mars-rover',
       },
       {
         type: 'bonus',
         name: 'Rocket Launchpad',
         position: { x: 0, y: 230 },
         effect: 'Home runs over center trigger a rocket launch animation and 500 bonus points',
-        visual: 'rocket-pad'
-      }
+        visual: 'rocket-pad',
+      },
     ],
     weather: {
-      wind: { x: 0, y: 0 },  // Climate controlled
+      wind: { x: 0, y: 0 }, // Climate controlled
       temperature: 70,
       condition: 'indoor',
-      specialEffect: 'star-field'
+      specialEffect: 'star-field',
     },
     unlockCondition: 'championship-win',
-    difficulty: 'expert'
-  }
+    difficulty: 'expert',
+  },
 ];
 ```
 
@@ -1536,16 +1537,16 @@ export const ADDITIONAL_STADIUMS: StadiumData[] = [
 
 Each stadium should feel meaningfully different:
 
-| Stadium | Dimensions | Wind | Special Mechanic |
-|---------|------------|------|------------------|
-| Boerne Backyard | Medium | Light right | Oak tree doubles |
-| San Antonio Lot | Asymmetric | Strong left | Cactus hazards |
-| Austin Treehouse | Deep center | Updraft | Treehouse bonus |
-| Houston Bayou | Short right | Swirling | Water home runs |
-| Dallas Construction | Huge center | Updraft | Crane bonus |
-| Galveston Beach | Short overall | Sea breeze | Seagull deflections |
-| Marfa Mystery | Very deep | Desert gusts | Tumbleweed interference |
-| NASA Training | Medium | None (indoor) | Low gravity zone |
+| Stadium             | Dimensions    | Wind          | Special Mechanic        |
+| ------------------- | ------------- | ------------- | ----------------------- |
+| Boerne Backyard     | Medium        | Light right   | Oak tree doubles        |
+| San Antonio Lot     | Asymmetric    | Strong left   | Cactus hazards          |
+| Austin Treehouse    | Deep center   | Updraft       | Treehouse bonus         |
+| Houston Bayou       | Short right   | Swirling      | Water home runs         |
+| Dallas Construction | Huge center   | Updraft       | Crane bonus             |
+| Galveston Beach     | Short overall | Sea breeze    | Seagull deflections     |
+| Marfa Mystery       | Very deep     | Desert gusts  | Tumbleweed interference |
+| NASA Training       | Medium        | None (indoor) | Low gravity zone        |
 
 ---
 
@@ -1563,8 +1564,8 @@ export interface PowerUp {
   name: string;
   description: string;
   category: PowerUpCategory;
-  duration: number;        // Seconds, 0 = instant
-  cooldown: number;        // Innings between uses
+  duration: number; // Seconds, 0 = instant
+  cooldown: number; // Innings between uses
   rarity: 'common' | 'rare' | 'legendary';
   effect: PowerUpEffect;
   visualEffect: string;
@@ -1583,7 +1584,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'timing-window', multiplier: 3 },
     visualEffect: 'bat-grow',
-    soundEffect: 'power-up'
+    soundEffect: 'power-up',
   },
   {
     id: 'eagle-eye',
@@ -1595,7 +1596,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'pitch-preview', duration: 15 },
     visualEffect: 'trajectory-line',
-    soundEffect: 'vision'
+    soundEffect: 'vision',
   },
   {
     id: 'power-surge',
@@ -1607,7 +1608,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'rare',
     effect: { type: 'power-multiplier', multiplier: 3 },
     visualEffect: 'lightning-bat',
-    soundEffect: 'electric'
+    soundEffect: 'electric',
   },
   {
     id: 'time-freeze',
@@ -1619,7 +1620,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'legendary',
     effect: { type: 'slow-motion', speedMultiplier: 0.3 },
     visualEffect: 'time-distortion',
-    soundEffect: 'whoosh'
+    soundEffect: 'whoosh',
   },
 
   // Pitching Power-Ups
@@ -1633,7 +1634,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'visibility-reduction', opacity: 0.4 },
     visualEffect: 'smoke-trail',
-    soundEffect: 'whoosh'
+    soundEffect: 'whoosh',
   },
   {
     id: 'curveball-king',
@@ -1645,7 +1646,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'rare',
     effect: { type: 'break-multiplier', multiplier: 2 },
     visualEffect: 'spin-lines',
-    soundEffect: 'curve'
+    soundEffect: 'curve',
   },
   {
     id: 'heat-seeker',
@@ -1657,7 +1658,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'rare',
     effect: { type: 'perfect-location', zone: 'corner' },
     visualEffect: 'target-lock',
-    soundEffect: 'lock-on'
+    soundEffect: 'lock-on',
   },
 
   // Fielding Power-Ups
@@ -1671,7 +1672,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'catch-radius', multiplier: 2 },
     visualEffect: 'magnetic-field',
-    soundEffect: 'magnet'
+    soundEffect: 'magnet',
   },
   {
     id: 'rocket-arm',
@@ -1683,7 +1684,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'throw-speed', multiplier: 10 },
     visualEffect: 'fire-trail',
-    soundEffect: 'rocket'
+    soundEffect: 'rocket',
   },
   {
     id: 'shadow-fielder',
@@ -1695,7 +1696,7 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'legendary',
     effect: { type: 'extra-fielder', position: 'optimal' },
     visualEffect: 'ghost-player',
-    soundEffect: 'ethereal'
+    soundEffect: 'ethereal',
   },
 
   // Baserunning Power-Ups
@@ -1709,19 +1710,19 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'common',
     effect: { type: 'speed-multiplier', multiplier: 1.5 },
     visualEffect: 'speed-lines',
-    soundEffect: 'zoom'
+    soundEffect: 'zoom',
   },
   {
     id: 'sticky-cleats',
     name: 'Sticky Cleats',
-    description: 'Can\'t be thrown out for one base advancement',
+    description: "Can't be thrown out for one base advancement",
     category: 'baserunning',
     duration: 0, // One play
     cooldown: 4,
     rarity: 'rare',
     effect: { type: 'safe-advance', guaranteed: true },
     visualEffect: 'glow-feet',
-    soundEffect: 'safe'
+    soundEffect: 'safe',
   },
   {
     id: 'teleport',
@@ -1733,8 +1734,8 @@ export const POWER_UPS: PowerUp[] = [
     rarity: 'legendary',
     effect: { type: 'instant-advance', bases: 1 },
     visualEffect: 'poof',
-    soundEffect: 'teleport'
-  }
+    soundEffect: 'teleport',
+  },
 ];
 ```
 
@@ -1758,7 +1759,7 @@ export class PowerUpSystem {
       { condition: 'divingCatch', chance: 0.4, pool: 'fielding' },
       { condition: 'stolenBase', chance: 0.25, pool: 'baserunning' },
       { condition: 'leadChange', chance: 0.5, pool: 'any' },
-      { condition: 'clutchHit', chance: 0.6, pool: 'batting' }
+      { condition: 'clutchHit', chance: 0.6, pool: 'batting' },
     ];
 
     for (const trigger of triggers) {
@@ -1771,21 +1772,18 @@ export class PowerUpSystem {
   }
 
   private grantRandomPowerUp(pool: string): PowerUp {
-    const eligible = POWER_UPS.filter(p =>
-      (pool === 'any' || p.category === pool) &&
-      !this.isOnCooldown(p.id)
+    const eligible = POWER_UPS.filter(
+      (p) => (pool === 'any' || p.category === pool) && !this.isOnCooldown(p.id)
     );
 
     // Weighted by rarity
     const weights: Record<string, number> = {
       common: 0.6,
       rare: 0.3,
-      legendary: 0.1
+      legendary: 0.1,
     };
 
-    const weighted = eligible.flatMap(p =>
-      Array(Math.floor(weights[p.rarity] * 100)).fill(p)
-    );
+    const weighted = eligible.flatMap((p) => Array(Math.floor(weights[p.rarity] * 100)).fill(p));
 
     const selected = weighted[Math.floor(Math.random() * weighted.length)];
     this.availablePowerUps.push(selected);
@@ -1794,7 +1792,7 @@ export class PowerUpSystem {
   }
 
   activatePowerUp(powerUpId: string): boolean {
-    const index = this.availablePowerUps.findIndex(p => p.id === powerUpId);
+    const index = this.availablePowerUps.findIndex((p) => p.id === powerUpId);
     if (index < 0) return false;
 
     const powerUp = this.availablePowerUps.splice(index, 1)[0];
@@ -1802,7 +1800,7 @@ export class PowerUpSystem {
     this.activePowerUps.push({
       powerUp,
       activatedAt: Date.now(),
-      remainingDuration: powerUp.duration * 1000
+      remainingDuration: powerUp.duration * 1000,
     });
 
     this.cooldowns.set(powerUpId, powerUp.cooldown);
@@ -1861,7 +1859,7 @@ Play through a full season with standings and playoffs:
 
 export interface SeasonConfig {
   teamName: string;
-  roster: string[];          // Character IDs
+  roster: string[]; // Character IDs
   gamesPerSeason: 12 | 24 | 48;
   playoffTeams: 4 | 8;
 }
@@ -1900,37 +1898,50 @@ export class SeasonManager {
       {
         teamId: 'player',
         teamName: this.config.teamName,
-        wins: 0, losses: 0, runsFor: 0, runsAgainst: 0, streak: 0,
-        isPlayer: true
+        wins: 0,
+        losses: 0,
+        runsFor: 0,
+        runsAgainst: 0,
+        streak: 0,
+        isPlayer: true,
       },
       ...cpuTeams.map((team, i) => ({
         teamId: `cpu-${i}`,
         teamName: team.name,
-        wins: 0, losses: 0, runsFor: 0, runsAgainst: 0, streak: 0,
-        isPlayer: false
-      }))
+        wins: 0,
+        losses: 0,
+        runsFor: 0,
+        runsAgainst: 0,
+        streak: 0,
+        isPlayer: false,
+      })),
     ];
 
-    const schedule = this.generateSchedule(teams.map(t => t.teamId));
+    const schedule = this.generateSchedule(teams.map((t) => t.teamId));
 
     return { teams, currentWeek: 1, schedule };
   }
 
   private generateCPUTeams(count: number): { name: string; roster: string[] }[] {
     const teamNames = [
-      'Lubbock Lasers', 'Beaumont Bombers', 'Tyler Tornados',
-      'Odessa Outlaws', 'Killeen Knights', 'McAllen Mustangs',
-      'Abilene Aces', 'Brownsville Blazers'
+      'Lubbock Lasers',
+      'Beaumont Bombers',
+      'Tyler Tornados',
+      'Odessa Outlaws',
+      'Killeen Knights',
+      'McAllen Mustangs',
+      'Abilene Aces',
+      'Brownsville Blazers',
     ];
 
-    return teamNames.slice(0, count).map(name => ({
+    return teamNames.slice(0, count).map((name) => ({
       name,
-      roster: this.generateRandomRoster()
+      roster: this.generateRandomRoster(),
     }));
   }
 
   private generateRandomRoster(): string[] {
-    const allCharacters = CHARACTERS.map(c => c.id);
+    const allCharacters = CHARACTERS.map((c) => c.id);
     const shuffled = [...allCharacters].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 9);
   }
@@ -1949,7 +1960,7 @@ export class SeasonManager {
             homeTeam: round % 2 === 0 ? teamIds[i] : teamIds[j],
             awayTeam: round % 2 === 0 ? teamIds[j] : teamIds[i],
             completed: false,
-            result: null
+            result: null,
           });
         }
       }
@@ -1959,9 +1970,11 @@ export class SeasonManager {
   }
 
   getNextPlayerGame(): ScheduledGame | null {
-    return this.standings.schedule.find(
-      g => !g.completed && (g.homeTeam === 'player' || g.awayTeam === 'player')
-    ) || null;
+    return (
+      this.standings.schedule.find(
+        (g) => !g.completed && (g.homeTeam === 'player' || g.awayTeam === 'player')
+      ) || null
+    );
   }
 
   recordGameResult(gameIndex: number, result: GameResult): void {
@@ -1973,8 +1986,8 @@ export class SeasonManager {
     const winner = result.homeScore > result.awayScore ? game.homeTeam : game.awayTeam;
     const loser = winner === game.homeTeam ? game.awayTeam : game.homeTeam;
 
-    const winnerRecord = this.standings.teams.find(t => t.teamId === winner)!;
-    const loserRecord = this.standings.teams.find(t => t.teamId === loser)!;
+    const winnerRecord = this.standings.teams.find((t) => t.teamId === winner)!;
+    const loserRecord = this.standings.teams.find((t) => t.teamId === loser)!;
 
     winnerRecord.wins++;
     winnerRecord.streak = winnerRecord.streak >= 0 ? winnerRecord.streak + 1 : 1;
@@ -1982,8 +1995,8 @@ export class SeasonManager {
     loserRecord.streak = loserRecord.streak <= 0 ? loserRecord.streak - 1 : -1;
 
     // Update runs
-    const homeRecord = this.standings.teams.find(t => t.teamId === game.homeTeam)!;
-    const awayRecord = this.standings.teams.find(t => t.teamId === game.awayTeam)!;
+    const homeRecord = this.standings.teams.find((t) => t.teamId === game.homeTeam)!;
+    const awayRecord = this.standings.teams.find((t) => t.teamId === game.awayTeam)!;
     homeRecord.runsFor += result.homeScore;
     homeRecord.runsAgainst += result.awayScore;
     awayRecord.runsFor += result.awayScore;
@@ -1998,51 +2011,53 @@ export class SeasonManager {
     const currentWeek = Math.floor(currentGameIndex / 4) + 1;
 
     this.standings.schedule
-      .filter((g, i) =>
-        !g.completed &&
-        Math.floor(i / 4) + 1 === currentWeek &&
-        g.homeTeam !== 'player' &&
-        g.awayTeam !== 'player'
+      .filter(
+        (g, i) =>
+          !g.completed &&
+          Math.floor(i / 4) + 1 === currentWeek &&
+          g.homeTeam !== 'player' &&
+          g.awayTeam !== 'player'
       )
-      .forEach(game => {
+      .forEach((game) => {
         const homeStrength = this.getTeamStrength(game.homeTeam);
         const awayStrength = this.getTeamStrength(game.awayTeam);
         const homeAdvantage = 0.1;
 
-        const homeWinChance = (homeStrength + homeAdvantage) / (homeStrength + awayStrength + homeAdvantage);
+        const homeWinChance =
+          (homeStrength + homeAdvantage) / (homeStrength + awayStrength + homeAdvantage);
         const homeWins = Math.random() < homeWinChance;
 
         game.completed = true;
         game.result = {
           homeScore: homeWins ? Math.floor(Math.random() * 8) + 3 : Math.floor(Math.random() * 5),
-          awayScore: homeWins ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 8) + 3
+          awayScore: homeWins ? Math.floor(Math.random() * 5) : Math.floor(Math.random() * 8) + 3,
         };
 
         // Update standings (simplified)
         const winner = homeWins ? game.homeTeam : game.awayTeam;
-        const winnerRecord = this.standings.teams.find(t => t.teamId === winner)!;
+        const winnerRecord = this.standings.teams.find((t) => t.teamId === winner)!;
         winnerRecord.wins++;
       });
   }
 
   private getTeamStrength(teamId: string): number {
-    const team = this.standings.teams.find(t => t.teamId === teamId);
+    const team = this.standings.teams.find((t) => t.teamId === teamId);
     if (!team) return 0.5;
     return 0.5 + (team.wins - team.losses) * 0.02;
   }
 
   isPlayoffTime(): boolean {
-    return this.standings.schedule.every(g => g.completed);
+    return this.standings.schedule.every((g) => g.completed);
   }
 
   getPlayoffBracket(): PlayoffBracket {
     const sorted = [...this.standings.teams]
-      .sort((a, b) => b.wins - a.wins || (b.runsFor - b.runsAgainst) - (a.runsFor - a.runsAgainst))
+      .sort((a, b) => b.wins - a.wins || b.runsFor - b.runsAgainst - (a.runsFor - a.runsAgainst))
       .slice(0, this.config.playoffTeams);
 
     return {
-      teams: sorted.map(t => t.teamId),
-      rounds: this.generatePlayoffRounds(sorted.map(t => t.teamId))
+      teams: sorted.map((t) => t.teamId),
+      rounds: this.generatePlayoffRounds(sorted.map((t) => t.teamId)),
     };
   }
 
@@ -2057,8 +2072,8 @@ export class SeasonManager {
           { team1: teams[0], team2: teams[7] },
           { team1: teams[3], team2: teams[4] },
           { team1: teams[2], team2: teams[5] },
-          { team1: teams[1], team2: teams[6] }
-        ]
+          { team1: teams[1], team2: teams[6] },
+        ],
       });
     }
 
@@ -2079,16 +2094,16 @@ Standalone mode focusing on power hitting:
 // Home Run Derby mode
 
 export interface DerbyConfig {
-  rounds: number;           // 2 or 3
-  outsPerRound: 10 | 15;    // Outs = non-HR hits
-  timePerRound?: number;    // Optional timed mode
-  participants: string[];   // 4 or 8 character IDs
+  rounds: number; // 2 or 3
+  outsPerRound: 10 | 15; // Outs = non-HR hits
+  timePerRound?: number; // Optional timed mode
+  participants: string[]; // 4 or 8 character IDs
 }
 
 export interface DerbyState {
   currentRound: number;
   currentParticipant: string;
-  scores: Map<string, number[]>;  // Character ID -> HRs per round
+  scores: Map<string, number[]>; // Character ID -> HRs per round
   eliminated: string[];
   outs: number;
   timeRemaining?: number;
@@ -2105,7 +2120,7 @@ export class HomeRunDerbyManager {
 
   private initializeState(): DerbyState {
     const scores = new Map<string, number[]>();
-    this.config.participants.forEach(id => scores.set(id, []));
+    this.config.participants.forEach((id) => scores.set(id, []));
 
     return {
       currentRound: 1,
@@ -2113,7 +2128,7 @@ export class HomeRunDerbyManager {
       scores,
       eliminated: [],
       outs: 0,
-      timeRemaining: this.config.timePerRound
+      timeRemaining: this.config.timePerRound,
     };
   }
 
@@ -2133,7 +2148,7 @@ export class HomeRunDerbyManager {
         distance,
         totalHRs: currentScores[this.state.currentRound - 1],
         outsRemaining: this.config.outsPerRound - this.state.outs,
-        message: `HOME RUN! ${Math.floor(distance)} ft`
+        message: `HOME RUN! ${Math.floor(distance)} ft`,
       };
     } else {
       this.state.outs++;
@@ -2145,17 +2160,16 @@ export class HomeRunDerbyManager {
       return {
         isHomeRun: false,
         distance: 0,
-        totalHRs: this.state.scores.get(this.state.currentParticipant)![this.state.currentRound - 1] || 0,
+        totalHRs:
+          this.state.scores.get(this.state.currentParticipant)![this.state.currentRound - 1] || 0,
         outsRemaining: this.config.outsPerRound - this.state.outs,
-        message: `OUT! ${this.config.outsPerRound - this.state.outs} outs remaining`
+        message: `OUT! ${this.config.outsPerRound - this.state.outs} outs remaining`,
       };
     }
   }
 
   private endTurn(): void {
-    const participants = this.config.participants.filter(
-      p => !this.state.eliminated.includes(p)
-    );
+    const participants = this.config.participants.filter((p) => !this.state.eliminated.includes(p));
 
     const currentIndex = participants.indexOf(this.state.currentParticipant);
 
@@ -2171,19 +2185,19 @@ export class HomeRunDerbyManager {
 
   private endRound(): void {
     // Eliminate bottom half (or lowest in final)
-    const remaining = this.config.participants.filter(
-      p => !this.state.eliminated.includes(p)
-    );
+    const remaining = this.config.participants.filter((p) => !this.state.eliminated.includes(p));
 
-    const roundScores = remaining.map(p => ({
-      id: p,
-      score: this.state.scores.get(p)![this.state.currentRound - 1] || 0
-    })).sort((a, b) => b.score - a.score);
+    const roundScores = remaining
+      .map((p) => ({
+        id: p,
+        score: this.state.scores.get(p)![this.state.currentRound - 1] || 0,
+      }))
+      .sort((a, b) => b.score - a.score);
 
     if (this.state.currentRound < this.config.rounds) {
       // Eliminate bottom half
       const cutoff = Math.floor(roundScores.length / 2);
-      roundScores.slice(cutoff).forEach(p => this.state.eliminated.push(p.id));
+      roundScores.slice(cutoff).forEach((p) => this.state.eliminated.push(p.id));
 
       this.state.currentRound++;
       this.state.currentParticipant = roundScores[0].id;
@@ -2197,9 +2211,7 @@ export class HomeRunDerbyManager {
   getWinner(): string | null {
     if (this.state.currentRound !== -1) return null;
 
-    const remaining = this.config.participants.filter(
-      p => !this.state.eliminated.includes(p)
-    );
+    const remaining = this.config.participants.filter((p) => !this.state.eliminated.includes(p));
 
     return remaining.reduce((best, current) => {
       const bestTotal = this.getTotalHRs(best);
@@ -2215,7 +2227,7 @@ export class HomeRunDerbyManager {
 
   getLeaderboard(): { id: string; hrs: number }[] {
     return this.config.participants
-      .map(id => ({ id, hrs: this.getTotalHRs(id) }))
+      .map((id) => ({ id, hrs: this.getTotalHRs(id) }))
       .sort((a, b) => b.hrs - a.hrs);
   }
 }
@@ -2242,6 +2254,7 @@ Free practice with adjustable settings:
 **Base Game: $4.99 Premium (No Ads)**
 
 Includes:
+
 - All 16 characters (earned through gameplay)
 - All 8 stadiums (earned through gameplay)
 - All game modes
@@ -2317,7 +2330,7 @@ export class PrivacyManager {
       allowCloudSync: !this.isChild,
       showLeaderboards: !this.isChild,
       allowChat: false, // Never allow chat
-      allowUserContent: false // Never allow UGC
+      allowUserContent: false, // Never allow UGC
     };
   }
 }
@@ -2330,12 +2343,14 @@ export class PrivacyManager {
 ### Phase 1: Core Loop (Weeks 1-4)
 
 **Week 1-2: Foundation**
+
 - [ ] Phaser project setup with TypeScript
 - [ ] Basic scene structure (Boot, Menu, Game)
 - [ ] Touch input system with swing detection
 - [ ] Simple ball physics (pitch to plate)
 
 **Week 3-4: Batting Mechanics**
+
 - [ ] Timing-based swing system
 - [ ] Hit result calculation (single/double/triple/HR/out)
 - [ ] Ball trajectory visualization
@@ -2346,12 +2361,14 @@ export class PrivacyManager {
 ### Phase 2: Characters and Content (Weeks 5-8)
 
 **Week 5-6: Character System**
+
 - [ ] All 16 character definitions
 - [ ] Character selection UI
 - [ ] Stat-based gameplay modifiers
 - [ ] Character abilities (basic implementation)
 
 **Week 7-8: Stadium System**
+
 - [ ] All 8 stadium definitions
 - [ ] Stadium-specific physics (wind, dimensions)
 - [ ] Stadium feature interactions
@@ -2362,12 +2379,14 @@ export class PrivacyManager {
 ### Phase 3: Game Modes and Polish (Weeks 9-12)
 
 **Week 9-10: Game Modes**
+
 - [ ] Quick Play mode complete
 - [ ] Home Run Derby mode
 - [ ] Season mode structure
 - [ ] Practice mode
 
 **Week 11-12: Progression and Polish**
+
 - [ ] Save/load system
 - [ ] Unlock progression
 - [ ] Achievement system
@@ -2379,12 +2398,14 @@ export class PrivacyManager {
 ### Phase 4: Testing and Launch (Weeks 13-16)
 
 **Week 13-14: Testing**
+
 - [ ] Device testing (iOS/Android physical devices)
 - [ ] Performance optimization
 - [ ] User testing with target age group
 - [ ] Bug fixes
 
 **Week 15-16: Launch Preparation**
+
 - [ ] App store assets (screenshots, video)
 - [ ] App store submission
 - [ ] Web version deployment to blazesportsintel.com/game
@@ -2398,25 +2419,25 @@ export class PrivacyManager {
 
 ### Device Testing Matrix
 
-| Device | OS | Resolution | Result |
-|--------|-----|------------|--------|
-| iPhone SE | iOS 15+ | 750x1334 | |
-| iPhone 14 | iOS 17 | 1170x2532 | |
-| iPad Mini | iPadOS 17 | 1488x2266 | |
-| iPad Pro | iPadOS 17 | 2048x2732 | |
-| Pixel 6 | Android 13 | 1080x2400 | |
-| Galaxy S21 | Android 12 | 1080x2400 | |
-| Budget Android | Android 10 | 720x1280 | |
+| Device         | OS         | Resolution | Result |
+| -------------- | ---------- | ---------- | ------ |
+| iPhone SE      | iOS 15+    | 750x1334   |        |
+| iPhone 14      | iOS 17     | 1170x2532  |        |
+| iPad Mini      | iPadOS 17  | 1488x2266  |        |
+| iPad Pro       | iPadOS 17  | 2048x2732  |        |
+| Pixel 6        | Android 13 | 1080x2400  |        |
+| Galaxy S21     | Android 12 | 1080x2400  |        |
+| Budget Android | Android 10 | 720x1280   |        |
 
 ### Performance Targets
 
-| Metric | Target | Acceptable |
-|--------|--------|------------|
-| Framerate | 60 fps | 30 fps minimum |
-| Load time | < 3 seconds | < 5 seconds |
-| Memory | < 150 MB | < 250 MB |
-| Bundle size | < 50 MB | < 100 MB |
-| Battery drain | < 10%/hour | < 15%/hour |
+| Metric        | Target      | Acceptable     |
+| ------------- | ----------- | -------------- |
+| Framerate     | 60 fps      | 30 fps minimum |
+| Load time     | < 3 seconds | < 5 seconds    |
+| Memory        | < 150 MB    | < 250 MB       |
+| Bundle size   | < 50 MB     | < 100 MB       |
+| Battery drain | < 10%/hour  | < 15%/hour     |
 
 ### Accessibility Checklist
 
@@ -2446,6 +2467,7 @@ export class PrivacyManager {
 ### Character Name Verification
 
 All 16 character names have been verified as original:
+
 - No matches to Humongous Entertainment characters
 - No matches to MLB players (current or historical)
 - No matches to other video game franchises
@@ -2466,6 +2488,7 @@ Diamond Sluggers is designed to capture the magic of nostalgic backyard baseball
 The existing code foundation in `/Users/AustinHumphrey/BSI/public/game/` provides a solid starting point. The Phaser-based implementation in `/Users/AustinHumphrey/BSI/apps/games/phaser-bbp-web/` can be extended with the systems outlined in this document.
 
 Next steps:
+
 1. Review and approve character/stadium additions
 2. Begin Phase 1 implementation
 3. Set up automated testing pipeline
@@ -2473,6 +2496,6 @@ Next steps:
 
 ---
 
-*Document created: 2025-11-26*
-*Project: Diamond Sluggers*
-*Repository: github.com/ahump20/BSI*
+_Document created: 2025-11-26_
+_Project: Diamond Sluggers_
+_Repository: github.com/ahump20/BSI_

@@ -17,7 +17,7 @@ const DB_NAME = 'blazesports-historical';
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
   Accept: 'application/json',
-  'Accept-Encoding': 'gzip, deflate'
+  'Accept-Encoding': 'gzip, deflate',
 };
 
 /**
@@ -31,7 +31,7 @@ function executeD1Command(sql) {
 
     execSync(cmd, {
       stdio: 'pipe',
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     });
     return true;
   } catch (error) {
@@ -91,7 +91,9 @@ function buildTeamInsertSQL(teamData) {
       ${logoUrl ? `'${logoUrl}'` : 'NULL'},
       1
     )
-  `.trim().replace(/\s+/g, ' ');
+  `
+    .trim()
+    .replace(/\s+/g, ' ');
 }
 
 /**
@@ -114,7 +116,6 @@ async function processTeam(teamId) {
       console.log(`  ⚠️ Skipped (already exists or error)`);
       return { teamId, name: teamName, inserted: false, error: 'Execution failed' };
     }
-
   } catch (error) {
     console.error(`  ❌ Failed: ${error.message}`);
     return { teamId, name: null, inserted: false, error: error.message };
@@ -157,7 +158,7 @@ async function main() {
     process.exit(1);
   }
 
-  const teams = config.teams.split(',').map(t => t.trim());
+  const teams = config.teams.split(',').map((t) => t.trim());
 
   console.log(`Processing ${teams.length} teams:\n`);
 
@@ -167,7 +168,7 @@ async function main() {
     results.push(result);
 
     // Rate limiting - wait 200ms between requests
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   console.log('\n' + '='.repeat(60));
@@ -197,7 +198,7 @@ async function main() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error('❌ Fatal error:', error);
     process.exit(1);
   });

@@ -16,24 +16,28 @@
 ## Milestones
 
 ### Milestone 1: Foundation & SEO ✅
+
 **Status:** Complete
 **Due Date:** January 11, 2025
 **Description:** Establish foundational documentation, SEO infrastructure, and canonical URLs.
 **Issues:** #1-6
 
 ### Milestone 2: Page Enhancements ✅
+
 **Status:** Complete
 **Due Date:** January 11, 2025
 **Description:** Improve key user-facing pages with enhanced CTAs, interactive widgets, and competitive analysis.
 **Issues:** #7-9
 
 ### Milestone 3: Technical Infrastructure ✅
+
 **Status:** Complete
 **Due Date:** January 11, 2025
 **Description:** Implement performance monitoring, accessibility testing, and design system.
 **Issues:** #10-12
 
 ### Milestone 4: Governance & Process
+
 **Status:** In Progress
 **Due Date:** January 18, 2025
 **Description:** Establish project management workflows, CI/CD enhancements, and comprehensive documentation.
@@ -42,12 +46,14 @@
 ## Labels
 
 ### Priority Labels
+
 - `priority: critical` - Must be addressed immediately
 - `priority: high` - Should be completed in current sprint
 - `priority: medium` - Should be completed within month
 - `priority: low` - Nice-to-have enhancement
 
 ### Type Labels
+
 - `type: documentation` - Documentation improvements
 - `type: feature` - New feature or enhancement
 - `type: bug` - Bug fix
@@ -55,6 +61,7 @@
 - `type: refactor` - Code refactoring without feature changes
 
 ### Domain Labels
+
 - `ui-change` - Impacts user interface or UX
 - `performance` - Performance optimization or monitoring
 - `a11y` - Accessibility improvements
@@ -64,6 +71,7 @@
 - `design-system` - Design system/tokens/components
 
 ### Status Labels
+
 - `status: blocked` - Blocked by external dependency
 - `status: in-progress` - Currently being worked on
 - `status: needs-review` - Awaiting code review
@@ -76,6 +84,7 @@
 ---
 
 #### Issue #1: Create Site Inventory and Information Architecture
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: documentation`, `priority: high`, `seo`
 **Status:** ✅ Closed
@@ -84,6 +93,7 @@
 Create comprehensive documentation of all site routes and visual information architecture to serve as single source of truth for development.
 
 **Tasks:**
+
 - [x] Create `/docs/site-inventory.csv` with all 49 routes
 - [x] Document metadata: type, purpose, status, data source, last updated
 - [x] Create `/docs/ia-sitemap.mmd` Mermaid diagram showing site hierarchy
@@ -91,18 +101,21 @@ Create comprehensive documentation of all site routes and visual information arc
 - [x] Identify consolidation opportunities
 
 **Acceptance Criteria:**
+
 - Site inventory CSV exists with complete route listing
 - IA diagram renders properly in GitHub and Mermaid Live Editor
 - All sport hubs documented with sub-pages
 - Legacy URLs clearly marked for redirect handling
 
 **Files Changed:**
+
 - `/docs/site-inventory.csv` (49 rows)
 - `/docs/ia-sitemap.mmd` (visual hierarchy)
 
 ---
 
 #### Issue #2: Implement Legal URL Canonicalization
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: infrastructure`, `priority: high`, `seo`, `legal`
 **Status:** ✅ Closed
@@ -111,6 +124,7 @@ Create comprehensive documentation of all site routes and visual information arc
 Establish canonical URLs for legal pages using 301 redirects to consolidate SEO authority and prevent duplicate content penalties.
 
 **Tasks:**
+
 - [x] Create `/public/_redirects` file for Cloudflare Pages
 - [x] Add redirect: `/privacy` → `/legal/privacy` (301)
 - [x] Add redirect: `/terms` → `/legal/terms` (301)
@@ -119,6 +133,7 @@ Establish canonical URLs for legal pages using 301 redirects to consolidate SEO 
 - [x] Document redirects in `/docs/redirects.csv`
 
 **Acceptance Criteria:**
+
 - `_redirects` file created with proper syntax
 - All 4 redirects return HTTP 301 status code
 - Old URLs redirect to canonical destinations
@@ -126,12 +141,14 @@ Establish canonical URLs for legal pages using 301 redirects to consolidate SEO 
 - Test with: `curl -I https://blazesportsintel.com/privacy`
 
 **Files Changed:**
+
 - `/public/_redirects` (4 rules)
 - `/docs/redirects.csv` (tracking document)
 
 ---
 
 #### Issue #3: Build Coverage Matrix API Endpoint
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: feature`, `priority: high`, `api`
 **Status:** ✅ Closed
@@ -140,6 +157,7 @@ Establish canonical URLs for legal pages using 301 redirects to consolidate SEO 
 Create API endpoint that returns season-by-season data coverage information for all sports, enabling transparent Historical Data page widget.
 
 **Tasks:**
+
 - [x] Create `/functions/api/coverage-matrix.js`
 - [x] Integrate with D1 database for CWS historical data
 - [x] Query game counts per year (2000-2007)
@@ -149,6 +167,7 @@ Create API endpoint that returns season-by-season data coverage information for 
 - [x] Add placeholders for NCAA Football, NFL, NBA
 
 **Acceptance Criteria:**
+
 - Endpoint returns valid JSON: `GET /api/coverage-matrix`
 - CWS data shows years 2000-2007 with game counts
 - Each year includes: games, status, dateRange, lastUpdated
@@ -157,6 +176,7 @@ Create API endpoint that returns season-by-season data coverage information for 
 - America/Chicago timezone in timestamps
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -177,11 +197,13 @@ Create API endpoint that returns season-by-season data coverage information for 
 ```
 
 **Files Changed:**
+
 - `/functions/api/coverage-matrix.js` (new endpoint)
 
 ---
 
 #### Issue #4: Generate Sitemap and Robots.txt
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: feature`, `priority: high`, `seo`
 **Status:** ✅ Closed
@@ -190,6 +212,7 @@ Create API endpoint that returns season-by-season data coverage information for 
 Create XML sitemap and robots.txt to improve search engine discoverability and control crawling behavior.
 
 **Tasks:**
+
 - [x] Generate `/public/sitemap.xml` with 40+ URLs
 - [x] Set lastmod date: 2025-01-11 (ISO 8601)
 - [x] Configure changefreq: hourly → monthly based on page type
@@ -200,6 +223,7 @@ Create XML sitemap and robots.txt to improve search engine discoverability and c
 - [x] Reference sitemap: `Sitemap: https://blazesportsintel.com/sitemap.xml`
 
 **Acceptance Criteria:**
+
 - sitemap.xml validates against XML Sitemap Protocol 0.9
 - All URLs use HTTPS and absolute paths
 - Priority reflects business value (College Baseball = 1.0)
@@ -208,6 +232,7 @@ Create XML sitemap and robots.txt to improve search engine discoverability and c
 - Submit to Google Search Console after deployment
 
 **Priority Strategy:**
+
 - 1.0: Homepage, College Baseball hub
 - 0.9: Sport hubs, Copilot, HistoricalData
 - 0.8: Standings, games, scores
@@ -215,12 +240,14 @@ Create XML sitemap and robots.txt to improve search engine discoverability and c
 - 0.5-0.6: Legal, utility pages
 
 **Files Changed:**
+
 - `/public/sitemap.xml` (40+ URLs)
 - `/public/robots.txt` (crawler directives)
 
 ---
 
 #### Issue #5: Verify Legal Page Canonical Tags
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: documentation`, `priority: medium`, `seo`, `legal`
 **Status:** ✅ Closed
@@ -229,6 +256,7 @@ Create XML sitemap and robots.txt to improve search engine discoverability and c
 Audit all legal pages to ensure proper canonical link tags are present for SEO.
 
 **Tasks:**
+
 - [x] Check `/legal/privacy/index.html` for canonical tag
 - [x] Check `/legal/terms/index.html` for canonical tag
 - [x] Check `/legal/cookie-policy/index.html` for canonical tag
@@ -237,6 +265,7 @@ Audit all legal pages to ensure proper canonical link tags are present for SEO.
 - [x] Document findings
 
 **Acceptance Criteria:**
+
 - All legal pages have `<link rel="canonical">` in `<head>`
 - Canonical URLs match production domain
 - No duplicate or conflicting canonical tags
@@ -244,16 +273,19 @@ Audit all legal pages to ensure proper canonical link tags are present for SEO.
 
 **Findings:**
 ✅ All legal pages already have proper canonical tags:
+
 ```html
-<link rel="canonical" href="https://blazesportsintel.com/legal/privacy">
+<link rel="canonical" href="https://blazesportsintel.com/legal/privacy" />
 ```
 
 **Files Changed:**
+
 - None (verification only)
 
 ---
 
 #### Issue #6: Create Phase 1 Execution Summary
+
 **Milestone:** Foundation & SEO
 **Labels:** `type: documentation`, `priority: high`
 **Status:** ✅ Closed
@@ -262,6 +294,7 @@ Audit all legal pages to ensure proper canonical link tags are present for SEO.
 Document Phase 1 completion with technical details, deployment instructions, and next steps roadmap.
 
 **Tasks:**
+
 - [x] Create `/docs/SITE-IMPROVEMENT-EXECUTION-SUMMARY.md`
 - [x] Document all completed tasks (#1-5)
 - [x] Include code examples and SQL patterns
@@ -271,6 +304,7 @@ Document Phase 1 completion with technical details, deployment instructions, and
 - [x] Document risks and mitigations
 
 **Acceptance Criteria:**
+
 - Summary document exists with executive summary
 - All 6 tasks documented with technical details
 - Deployment instructions included
@@ -278,6 +312,7 @@ Document Phase 1 completion with technical details, deployment instructions, and
 - Performance metrics baseline established
 
 **Files Changed:**
+
 - `/docs/SITE-IMPROVEMENT-EXECUTION-SUMMARY.md` (comprehensive documentation)
 
 ---
@@ -287,6 +322,7 @@ Document Phase 1 completion with technical details, deployment instructions, and
 ---
 
 #### Issue #7: Enhance Homepage with Dual-CTA Hero
+
 **Milestone:** Page Enhancements
 **Labels:** `type: feature`, `priority: high`, `ui-change`
 **Status:** ✅ Closed
@@ -295,6 +331,7 @@ Document Phase 1 completion with technical details, deployment instructions, and
 Upgrade homepage hero section with dual call-to-action buttons and social proof elements to improve conversion and engagement.
 
 **Tasks:**
+
 - [x] Add "View Analytics" primary CTA button
 - [x] Add "Launch AI Copilot" secondary CTA button
 - [x] Include 3 proof elements (data badges):
@@ -306,6 +343,7 @@ Upgrade homepage hero section with dual call-to-action buttons and social proof 
 - [x] Add hover effects and transitions
 
 **Acceptance Criteria:**
+
 - Two CTA buttons visible above fold
 - Primary CTA links to `/analytics`
 - Secondary CTA links to `/copilot`
@@ -315,11 +353,13 @@ Upgrade homepage hero section with dual call-to-action buttons and social proof 
 - No layout shift (CLS < 0.1)
 
 **Files Changed:**
+
 - `/index.html` or `/public/index.html` (hero section)
 
 ---
 
 #### Issue #8: Build Historical Data Coverage Matrix Widget
+
 **Milestone:** Page Enhancements
 **Labels:** `type: feature`, `priority: high`, `ui-change`, `api`
 **Status:** ✅ Closed
@@ -328,6 +368,7 @@ Upgrade homepage hero section with dual call-to-action buttons and social proof 
 Create interactive widget on Historical Data page that visualizes data coverage using the `/api/coverage-matrix` endpoint.
 
 **Tasks:**
+
 - [x] Fetch data from `/api/coverage-matrix`
 - [x] Render grid showing years 2000-2024 for each sport
 - [x] Color-code year boxes:
@@ -341,6 +382,7 @@ Create interactive widget on Historical Data page that visualizes data coverage 
 - [x] Show loading skeleton during fetch
 
 **Acceptance Criteria:**
+
 - Widget fetches and renders coverage data
 - Color coding matches game count thresholds
 - Tooltips show accurate game counts
@@ -350,12 +392,14 @@ Create interactive widget on Historical Data page that visualizes data coverage 
 - Responsive design (grid wraps on mobile)
 
 **Files Changed:**
+
 - `/HistoricalData/index.html` or `/historicalcomparisons/index.html`
 - JavaScript for widget logic
 
 ---
 
 #### Issue #9: Create Features Comparison Page
+
 **Milestone:** Page Enhancements
 **Labels:** `type: feature`, `priority: medium`, `ui-change`, `seo`
 **Status:** ✅ Closed
@@ -364,6 +408,7 @@ Create interactive widget on Historical Data page that visualizes data coverage 
 Build `/features` page with competitive analysis table highlighting Blaze's advantages over ESPN.
 
 **Tasks:**
+
 - [x] Create `/features/index.html`
 - [x] Build comparison table: Blaze vs ESPN
 - [x] Highlight features:
@@ -378,6 +423,7 @@ Build `/features` page with competitive analysis table highlighting Blaze's adva
 - [x] Use design system Table component
 
 **Acceptance Criteria:**
+
 - Features page accessible at `/features`
 - Table compares Blaze vs ESPN across 6+ dimensions
 - Visual indicators (✅ ❌) for feature availability
@@ -387,6 +433,7 @@ Build `/features` page with competitive analysis table highlighting Blaze's adva
 - Sitemap updated with /features URL
 
 **Files Changed:**
+
 - `/features/index.html` (new page)
 - `/public/sitemap.xml` (add /features entry)
 
@@ -397,6 +444,7 @@ Build `/features` page with competitive analysis table highlighting Blaze's adva
 ---
 
 #### Issue #10: Implement Core Web Vitals Monitoring
+
 **Milestone:** Technical Infrastructure
 **Labels:** `type: infrastructure`, `priority: high`, `performance`
 **Status:** ✅ Closed
@@ -405,6 +453,7 @@ Build `/features` page with competitive analysis table highlighting Blaze's adva
 Add real-time performance monitoring for Core Web Vitals (LCP, INP, CLS) using web-vitals library and establish performance budgets.
 
 **Tasks:**
+
 - [x] Add Lighthouse CI to GitHub Actions workflow
 - [x] Install web-vitals library for Real User Monitoring (RUM)
 - [x] Create `/public/js/vitals-tracker.js`
@@ -418,6 +467,7 @@ Add real-time performance monitoring for Core Web Vitals (LCP, INP, CLS) using w
 - [x] Add performance badge to README
 
 **Acceptance Criteria:**
+
 - web-vitals library installed and configured
 - Vitals tracked on all major pages
 - Analytics endpoint receives metric data
@@ -426,6 +476,7 @@ Add real-time performance monitoring for Core Web Vitals (LCP, INP, CLS) using w
 - Documentation includes debugging guide
 
 **Files Changed:**
+
 - `.github/workflows/lighthouse-ci.yml` (new workflow)
 - `/public/js/vitals-tracker.js` (RUM script)
 - `/functions/api/analytics/vitals.js` (analytics endpoint)
@@ -434,6 +485,7 @@ Add real-time performance monitoring for Core Web Vitals (LCP, INP, CLS) using w
 ---
 
 #### Issue #11: Add Accessibility Quality Gates
+
 **Milestone:** Technical Infrastructure
 **Labels:** `type: infrastructure`, `priority: high`, `a11y`
 **Status:** ✅ Closed
@@ -442,6 +494,7 @@ Add real-time performance monitoring for Core Web Vitals (LCP, INP, CLS) using w
 Integrate axe-core accessibility testing into E2E test suite to enforce WCAG 2.2 AA compliance.
 
 **Tasks:**
+
 - [x] Install @axe-core/playwright package
 - [x] Create Playwright config: `playwright.config.js`
 - [x] Write accessibility test suite:
@@ -454,6 +507,7 @@ Integrate axe-core accessibility testing into E2E test suite to enforce WCAG 2.2
 - [x] Block PRs if critical violations found
 
 **Acceptance Criteria:**
+
 - Playwright tests run on every PR
 - axe-core scans Copilot and Analytics pages
 - Zero critical or serious accessibility violations
@@ -463,6 +517,7 @@ Integrate axe-core accessibility testing into E2E test suite to enforce WCAG 2.2
 - GitHub Actions workflow succeeds
 
 **Files Changed:**
+
 - `playwright.config.js` (new config)
 - `/tests/accessibility/*.spec.js` (2 test files)
 - `.github/workflows/a11y-tests.yml` (new workflow)
@@ -471,6 +526,7 @@ Integrate axe-core accessibility testing into E2E test suite to enforce WCAG 2.2
 ---
 
 #### Issue #12: Implement Design System with Component Library
+
 **Milestone:** Technical Infrastructure
 **Labels:** `type: feature`, `priority: high`, `design-system`, `ui-change`
 **Status:** ✅ Closed
@@ -479,6 +535,7 @@ Integrate axe-core accessibility testing into E2E test suite to enforce WCAG 2.2
 Create centralized design system with design tokens and reusable component library to ensure UI consistency across the platform.
 
 **Tasks:**
+
 - [x] Create `/styles/tokens.json` with design tokens:
   - Brand colors (Blaze orange #BF5700)
   - Typography (font families, sizes, weights)
@@ -495,6 +552,7 @@ Create centralized design system with design tokens and reusable component libra
 - [x] Add accessibility features (keyboard nav, ARIA, focus management)
 
 **Acceptance Criteria:**
+
 - tokens.json uses Design Tokens Community Group schema
 - tokens.css auto-generated from JSON
 - All 4 components export factory functions + styles
@@ -508,6 +566,7 @@ Create centralized design system with design tokens and reusable component libra
 - Components follow vanilla JS pattern (no framework dependency)
 
 **Files Changed:**
+
 - `/styles/tokens.json` (244 lines)
 - `/styles/tokens.css` (203 lines)
 - `/components/Button.js` (365 lines)
@@ -517,33 +576,34 @@ Create centralized design system with design tokens and reusable component libra
 - `/docs/DESIGN-SYSTEM.md` (734 lines)
 
 **Component API Examples:**
+
 ```javascript
 // Button
 const button = Button({
   text: 'Submit',
   variant: 'primary',
-  onClick: handleSubmit
+  onClick: handleSubmit,
 });
 
 // Card
 const card = Card({
   title: 'MLB Standings',
   content: '<p>Content</p>',
-  variant: 'glass'
+  variant: 'glass',
 });
 
 // Table
 const table = Table({
   caption: 'Team Standings',
   columns: [{ key: 'team', label: 'Team', sortable: true }],
-  data: [{ team: 'Cardinals', wins: 92 }]
+  data: [{ team: 'Cardinals', wins: 92 }],
 });
 
 // Modal
 const modal = Modal({
   title: 'Confirm Action',
   content: '<p>Are you sure?</p>',
-  size: 'md'
+  size: 'md',
 });
 modal.open();
 ```
@@ -555,6 +615,7 @@ modal.open();
 ---
 
 #### Issue #13: Setup GitHub Project Board
+
 **Milestone:** Governance & Process
 **Labels:** `type: infrastructure`, `priority: high`
 **Status:** 🔄 Open
@@ -563,6 +624,7 @@ modal.open();
 Create GitHub Project Board to track all improvement plan tasks with proper organization using milestones, labels, and acceptance criteria.
 
 **Tasks:**
+
 - [ ] Create this document: `/docs/GITHUB-PROJECT-SETUP.md`
 - [ ] Create 4 GitHub milestones:
   - Milestone 1: Foundation & SEO (Complete)
@@ -592,6 +654,7 @@ Create GitHub Project Board to track all improvement plan tasks with proper orga
   - Done
 
 **Acceptance Criteria:**
+
 - All 15 issues created from this document
 - Each issue has milestone, labels, acceptance criteria
 - Project board shows all issues organized by status
@@ -603,6 +666,7 @@ Create GitHub Project Board to track all improvement plan tasks with proper orga
 **Implementation Instructions:**
 
 1. **Create Milestones:**
+
    ```bash
    # Via GitHub UI: Repository → Issues → Milestones → New Milestone
    # Or via GitHub CLI:
@@ -613,6 +677,7 @@ Create GitHub Project Board to track all improvement plan tasks with proper orga
    ```
 
 2. **Create Labels:**
+
    ```bash
    # Priority labels
    gh label create "priority: critical" --color "d73a4a" --description "Must be addressed immediately"
@@ -663,12 +728,14 @@ Create GitHub Project Board to track all improvement plan tasks with proper orga
    ```
 
 **Files Changed:**
+
 - `/docs/GITHUB-PROJECT-SETUP.md` (this document)
 - GitHub UI: milestones, labels, issues, project board
 
 ---
 
 #### Issue #14: Enhance CI/CD Pipeline
+
 **Milestone:** Governance & Process
 **Labels:** `type: infrastructure`, `priority: high`, `performance`, `a11y`
 **Status:** 🔄 Open
@@ -677,6 +744,7 @@ Create GitHub Project Board to track all improvement plan tasks with proper orga
 Strengthen CI/CD pipeline with pre-commit hooks, staging environment, visual regression testing, and stricter code review requirements.
 
 **Tasks:**
+
 - [ ] Add pre-commit hooks using Husky:
   - ESLint for JavaScript linting
   - Prettier for code formatting
@@ -699,6 +767,7 @@ Strengthen CI/CD pipeline with pre-commit hooks, staging environment, visual reg
   - Require linear history
 
 **Acceptance Criteria:**
+
 - Husky pre-commit hooks installed and configured
 - Commits blocked if linting/formatting fails
 - Staging environment auto-deploys on PR
@@ -710,6 +779,7 @@ Strengthen CI/CD pipeline with pre-commit hooks, staging environment, visual reg
 - Documentation updated with CI/CD workflow
 
 **Files Changed:**
+
 - `.husky/pre-commit` (new hook)
 - `package.json` (add husky, prettier, eslint)
 - `.github/workflows/visual-regression.yml` (new workflow)
@@ -719,6 +789,7 @@ Strengthen CI/CD pipeline with pre-commit hooks, staging environment, visual reg
 ---
 
 #### Issue #15: Expand Documentation Suite
+
 **Milestone:** Governance & Process
 **Labels:** `type: documentation`, `priority: medium`
 **Status:** 🔄 Open
@@ -727,6 +798,7 @@ Strengthen CI/CD pipeline with pre-commit hooks, staging environment, visual reg
 Create comprehensive documentation to support external contributors, API consumers, deployment processes, and performance optimization.
 
 **Tasks:**
+
 - [ ] Create `/docs/CONTRIBUTING.md`:
   - Code style guide
   - Branch naming conventions
@@ -759,6 +831,7 @@ Create comprehensive documentation to support external contributors, API consume
   - Regression prevention strategies
 
 **Acceptance Criteria:**
+
 - CONTRIBUTING.md covers all contributor workflows
 - API.md documents all 20+ endpoints with examples
 - OpenAPI spec validates and renders in Swagger UI
@@ -769,6 +842,7 @@ Create comprehensive documentation to support external contributors, API consume
 - Code examples tested and verified
 
 **Files Changed:**
+
 - `/docs/CONTRIBUTING.md` (new)
 - `/docs/API.md` (new, with OpenAPI spec)
 - `/docs/DEPLOYMENT.md` (new)
@@ -780,14 +854,17 @@ Create comprehensive documentation to support external contributors, API consume
 ## Implementation Instructions
 
 ### Step 1: Create Milestones
+
 Navigate to: `Repository → Issues → Milestones → New Milestone`
 
 Create 4 milestones with the information from the [Milestones](#milestones) section above.
 
 ### Step 2: Create Labels
+
 Use GitHub CLI or UI to create all labels from the [Labels](#labels) section above.
 
 **GitHub CLI Method:**
+
 ```bash
 # See label creation commands in Issue #13 task list
 ```
@@ -796,6 +873,7 @@ Use GitHub CLI or UI to create all labels from the [Labels](#labels) section abo
 Navigate to: `Repository → Issues → Labels → New Label`
 
 ### Step 3: Create Issues
+
 For each issue (#1-15) in this document:
 
 1. Navigate to: `Repository → Issues → New Issue`
@@ -811,16 +889,19 @@ For each issue (#1-15) in this document:
 6. Click "Submit new issue"
 
 **For Issues #1-12 (Already Complete):**
+
 - Create issue with full details
 - Immediately close with comment: "✅ Completed on January 11, 2025. See: `/docs/SITE-IMPROVEMENT-EXECUTION-SUMMARY.md`"
 - This creates historical record while marking as done
 
 **For Issues #13-15 (Current/Future Work):**
+
 - Create issue and leave open
 - Assign to current milestone (Governance & Process)
 - Apply "status: in-progress" label if actively working
 
 ### Step 4: Create Project Board
+
 1. Navigate to: `Repository → Projects → New Project`
 2. Select: **Board** template
 3. Name: "Platform Enhancement Tracker"
@@ -835,6 +916,7 @@ For each issue (#1-15) in this document:
 7. Drag current issues (#13-15) to "In Progress" column
 
 ### Step 5: Link from README
+
 Add section to main `README.md`:
 
 ```markdown
@@ -850,36 +932,45 @@ Track our progress on the [Platform Enhancement Project Board](https://github.co
 
 When creating new issues outside this plan, use this template:
 
-```markdown
+````markdown
 ## Description
+
 [Brief description of the issue or enhancement]
 
 ## Context
+
 [Why is this needed? What problem does it solve?]
 
 ## Tasks
+
 - [ ] Task 1
 - [ ] Task 2
 - [ ] Task 3
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 - [ ] Criterion 3
 
 ## Files Changed
+
 - `/path/to/file1.js` (description)
 - `/path/to/file2.html` (description)
 
 ## Example Code/Output
+
 ```language
 // Example code or expected output
 ```
+````
 
 ## Related Issues
+
 - Closes #XXX
 - Depends on #YYY
 - Related to #ZZZ
+
 ```
 
 ## Maintenance
@@ -922,3 +1013,4 @@ When creating new phases:
 **Current Task:** Creating GitHub issues from this document
 **Next:** Implement CI/CD enhancements and documentation expansion
 **Blockers:** None
+```

@@ -24,12 +24,14 @@ Both issues have been **completely resolved** through manual SQL backfill and pr
 The SQLite `SUBSTR()` function was being called with 4 arguments when it only accepts 2 or 3:
 
 **❌ INCORRECT (4 arguments):**
+
 ```sql
 SELECT SUBSTR(date, 1, 4, 0) FROM historical_games
 -- ERROR: wrong number of arguments to function SUBSTR
 ```
 
 **✅ CORRECT (3 arguments):**
+
 ```sql
 SELECT SUBSTR(date, 1, 4) FROM historical_games
 -- Returns first 4 characters (year) from ISO date string
@@ -45,6 +47,7 @@ SUBSTR(string, start, length)   -- Extract specific length from start
 ```
 
 **Examples:**
+
 ```sql
 -- Extract year from '2007-06-24'
 SUBSTR(date, 1, 4) → '2007'
@@ -69,11 +72,13 @@ SUBSTR(date, 6) → '06-24'
 ### Data Coverage Issue
 
 **Before Fix:**
+
 - Each year 2000-2007 had only **2 games** (championship finals only)
 - Missing: Opening Round, Elimination Games, Winner's Bracket, Bracket Finals
 - Total missing: **133 games** across 8 years
 
 **After Fix:**
+
 - All years 2000-2007 have **complete bracket data** (15-18 games each)
 - Includes: Full tournament structure from opening round through championship
 - Total added: **133 games** validated against official sources
@@ -83,11 +88,13 @@ SUBSTR(date, 6) → '06-24'
 The College World Series format changed in 2003:
 
 **2000-2002: Single Championship Game**
+
 - 8-team double-elimination bracket
 - Final: Single winner-take-all game
 - Total games per year: 14-16
 
 **2003-2007: Best-of-Three Championship**
+
 - 8-team double-elimination bracket
 - Finals: Best-of-three series (first introduced in 2003)
 - Total games per year: 15-18
@@ -118,16 +125,16 @@ All game data cross-validated using multiple authoritative sources:
 
 All files located in `/Users/AustinHumphrey/BSI/scripts/`:
 
-| Year | File | Games Added | Champion | Championship Score |
-|------|------|-------------|----------|-------------------|
-| 2000 | `manual-cws-2000.sql` | 15 | LSU | defeated Stanford 2-1 |
-| 2001 | `manual-cws-2001.sql` | 15 | Miami (FL) | defeated Stanford 2-1 |
-| 2002 | `manual-cws-2002.sql` | 16 | Texas | defeated South Carolina 12-6 |
-| 2003 | `manual-cws-2003.sql` | 18 | Rice | defeated Stanford 2-1 |
-| 2004 | `manual-cws-2004.sql` | 17 | Cal State Fullerton | defeated Texas 2-0 |
-| 2005 | `manual-cws-2005.sql` | 17 | Texas | defeated Florida 2-0 |
-| 2006 | `manual-cws-2006.sql` | 18 | Oregon State | defeated North Carolina 2-1 |
-| 2007 | `manual-cws-2007.sql` | 17 | Oregon State | defeated North Carolina 2-0 |
+| Year | File                  | Games Added | Champion            | Championship Score           |
+| ---- | --------------------- | ----------- | ------------------- | ---------------------------- |
+| 2000 | `manual-cws-2000.sql` | 15          | LSU                 | defeated Stanford 2-1        |
+| 2001 | `manual-cws-2001.sql` | 15          | Miami (FL)          | defeated Stanford 2-1        |
+| 2002 | `manual-cws-2002.sql` | 16          | Texas               | defeated South Carolina 12-6 |
+| 2003 | `manual-cws-2003.sql` | 18          | Rice                | defeated Stanford 2-1        |
+| 2004 | `manual-cws-2004.sql` | 17          | Cal State Fullerton | defeated Texas 2-0           |
+| 2005 | `manual-cws-2005.sql` | 17          | Texas               | defeated Florida 2-0         |
+| 2006 | `manual-cws-2006.sql` | 18          | Oregon State        | defeated North Carolina 2-1  |
+| 2007 | `manual-cws-2007.sql` | 17          | Oregon State        | defeated North Carolina 2-0  |
 
 **Total:** 133 games added across 8 years (100% coverage for 2000-2007)
 
@@ -160,6 +167,7 @@ VALUES
 ```
 
 **Key Features:**
+
 - `INSERT OR IGNORE`: Prevents duplicate entries (idempotent)
 - **Game ID Format**: `cws-{year}-{date}-{team1-abbr}-{team2-abbr}`
 - **Championship IDs**: `cws-finals-{year}-game{1,2,3}`
@@ -179,6 +187,7 @@ VALUES
 ### Execution Commands
 
 **Single File Execution:**
+
 ```bash
 # Execute one SQL file
 wrangler d1 execute blazesports-historical \
@@ -201,6 +210,7 @@ wrangler d1 execute blazesports-historical \
 ```
 
 **Batch Execution (All Years):**
+
 ```bash
 # Execute all manual SQL files sequentially
 for year in {2000..2007}; do
@@ -213,6 +223,7 @@ done
 ```
 
 **Verify Results:**
+
 ```bash
 # Count games by year
 wrangler d1 execute blazesports-historical --remote --command="
@@ -257,35 +268,46 @@ The Cloudflare Worker endpoint `functions/api/college-baseball/stats-historical.
 Added **season existence checks** to all 4 handler functions:
 
 **Handlers Updated:**
+
 1. `handleTeamStats(db, teamId, season, corsHeaders)`
 2. `handlePlayerStats(db, playerId, season, corsHeaders)`
 3. `handleConferenceStats(db, conferenceAbbr, season, corsHeaders)`
 4. `handleOverviewStats(db, season, corsHeaders)`
 
 **New Validation Logic:**
+
 ```javascript
 // Check if season has any games in the database
-const seasonExists = await db.prepare(`
+const seasonExists = await db
+  .prepare(
+    `
   SELECT COUNT(*) AS count
   FROM games g
   JOIN seasons s ON g.season_id = s.season_id
   WHERE s.year = ?
-`).bind(season).first();
+`
+  )
+  .bind(season)
+  .first();
 
 if (!seasonExists || seasonExists.count === 0) {
-  return new Response(JSON.stringify({
-    success: false,
-    error: 'Data missing',
-    message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
-    season: parseInt(season)
-  }), {
-    status: 404,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-  });
+  return new Response(
+    JSON.stringify({
+      success: false,
+      error: 'Data missing',
+      message: `No games found for season ${season}. This data may not have been ingested yet. Please back-fill the database or contact support.`,
+      season: parseInt(season),
+    }),
+    {
+      status: 404,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    }
+  );
 }
 ```
 
 **Benefits:**
+
 - ✅ Explicit 404 responses for missing data years
 - ✅ Informative error messages with actionable guidance
 - ✅ Prevents silent failures and client-side crashes
@@ -304,16 +326,16 @@ if (!seasonExists || seasonExists.count === 0) {
 
 ### Game Distribution by Year
 
-| Year | Games | Date Range | Champion |
-|------|-------|------------|----------|
-| 2000 | 15 ✅ | June 9-24 | LSU |
-| 2001 | 15 ✅ | June 8-23 | Miami (FL) |
-| 2002 | 16 ✅ | June 14-24 | Texas |
-| 2003 | 18 ✅ | June 13-24 | Rice |
+| Year | Games | Date Range | Champion            |
+| ---- | ----- | ---------- | ------------------- |
+| 2000 | 15 ✅ | June 9-24  | LSU                 |
+| 2001 | 15 ✅ | June 8-23  | Miami (FL)          |
+| 2002 | 16 ✅ | June 14-24 | Texas               |
+| 2003 | 18 ✅ | June 13-24 | Rice                |
 | 2004 | 17 ✅ | June 15-27 | Cal State Fullerton |
-| 2005 | 17 ✅ | June 15-26 | Texas |
-| 2006 | 18 ✅ | June 15-26 | Oregon State |
-| 2007 | 17 ✅ | June 15-24 | Oregon State |
+| 2005 | 17 ✅ | June 15-26 | Texas               |
+| 2006 | 18 ✅ | June 15-26 | Oregon State        |
+| 2007 | 17 ✅ | June 15-24 | Oregon State        |
 
 **Coverage:** 8/8 years = **100% complete** for 2000-2007
 
@@ -324,6 +346,7 @@ if (!seasonExists || seasonExists.count === 0) {
 ### Database Query Tests
 
 **Test 1: Year Range Coverage**
+
 ```sql
 SELECT
   SUBSTR(date, 1, 4) as year,
@@ -338,6 +361,7 @@ ORDER BY year;
 **Expected:** All years 2000-2007 should show 15-18 games each.
 
 **Test 2: SUBSTR Syntax Validation**
+
 ```sql
 -- This should execute without errors
 SELECT
@@ -352,6 +376,7 @@ LIMIT 5;
 **Expected:** Clean extraction of date components with no SUBSTR errors.
 
 **Test 3: Data Integrity**
+
 ```sql
 -- Verify all championship finals exist
 SELECT
@@ -368,6 +393,7 @@ ORDER BY year;
 ### API Endpoint Tests
 
 **Test 1: Valid Season with Data**
+
 ```bash
 curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?team=251&season=2025" | jq
 ```
@@ -375,11 +401,13 @@ curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?team
 **Expected:** Returns team stats with `success: true`
 
 **Test 2: Valid Season WITHOUT Data (e.g., 2000)**
+
 ```bash
 curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?team=251&season=2000" | jq
 ```
 
 **Expected:**
+
 ```json
 {
   "success": false,
@@ -390,6 +418,7 @@ curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?team
 ```
 
 **Test 3: Overview Stats for Complete Season**
+
 ```bash
 curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?season=2025" | jq
 ```
@@ -403,37 +432,45 @@ curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?seas
 ### Notable Tournament Facts Documented
 
 **2000:**
+
 - LSU defeated Stanford 2-1 in championship series
 - Stanford's Bud Selig Award winner: Jason Young
 
 **2001:**
+
 - Miami (FL) defeated Stanford 2-1
 - Back-to-back finals appearances for Stanford
 
 **2002:**
+
 - Texas defeated South Carolina 12-6 in single-game championship
 - Last year of single-game championship format
 - Huston Street (Texas) - tournament's Most Outstanding Player
 
 **2003:**
+
 - First year of best-of-three championship format
 - Rice defeated Stanford 2-1 (14-2 in decisive Game 3)
 - Rice's first national championship
 
 **2004:**
+
 - Cal State Fullerton defeated Texas 2-0
 - Fullerton's 4th national title
 
 **2005:**
+
 - Texas defeated Florida 2-0
 - Texas's 6th national championship
 
 **2006:**
+
 - Oregon State defeated North Carolina 2-1
 - Historic tournament: First team to lose twice in Omaha and win championship
 - Oregon State recovered from 0-2 deficit in finals
 
 **2007:**
+
 - Oregon State defeated North Carolina 2-0 (repeat champions)
 - Undefeated 5-0 record in Omaha
 - First repeat champion since LSU (1996-1997)
@@ -447,6 +484,7 @@ curl -s "https://blazesportsintel.com/api/college-baseball/stats-historical?seas
 The same manual backfill process can be applied to later years if needed:
 
 1. **Check Coverage:**
+
    ```sql
    SELECT
      SUBSTR(date, 1, 4) as year,
@@ -482,11 +520,13 @@ The `scripts/ingest-cws-historical.js` Node.js script was designed for automated
 ### Common Issues
 
 **Issue 1: SUBSTR Error Reoccurs**
+
 ```
 Error: wrong number of arguments to function SUBSTR
 ```
 
 **Solution:** Verify all SUBSTR calls use exactly 2 or 3 arguments:
+
 ```sql
 -- Correct
 SUBSTR(date, 1, 4)
@@ -496,11 +536,13 @@ SUBSTR(date, 1, 4, 0)  -- TOO MANY ARGUMENTS
 ```
 
 **Issue 2: Duplicate Game Errors**
+
 ```
 Error: UNIQUE constraint failed: historical_games.game_id
 ```
 
 **Solution:** SQL files use `INSERT OR IGNORE` to prevent duplicates. If error persists, manually delete duplicate game IDs:
+
 ```sql
 DELETE FROM historical_games
 WHERE game_id = 'cws-2007-20070615-rice-louisville'
@@ -508,6 +550,7 @@ LIMIT 1;
 ```
 
 **Issue 3: API Returns Empty Arrays**
+
 ```json
 {
   "success": true,
@@ -516,6 +559,7 @@ LIMIT 1;
 ```
 
 **Solution:** This is expected behavior when no games exist for the requested season. The new error handling (v1.1.0) now returns 404 instead:
+
 ```json
 {
   "success": false,
@@ -525,11 +569,13 @@ LIMIT 1;
 ```
 
 **Issue 4: Wrangler Authentication Errors**
+
 ```
 Error: Not logged in to Cloudflare
 ```
 
 **Solution:**
+
 ```bash
 wrangler login
 # Or use API token

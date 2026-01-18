@@ -3,6 +3,7 @@
 ## Overview
 
 A comprehensive real-time communication feedback system that analyzes multiple modalities:
+
 - **Tone Analysis**: Vocal pitch, pace, volume, emotion
 - **Body Language**: Posture, gestures, movement patterns
 - **Facial Expressions**: Micro-expressions, emotional states
@@ -107,9 +108,11 @@ A comprehensive real-time communication feedback system that analyzes multiple m
 ## Component Details
 
 ### 1. Video/Audio Capture Module
+
 **Location**: `/apps/web/lib/feedback/capture.ts`
 
 **Features**:
+
 - MediaStream API for camera/microphone access
 - Configurable quality settings (720p, 30fps default)
 - Audio resampling to 16kHz mono
@@ -117,9 +120,11 @@ A comprehensive real-time communication feedback system that analyzes multiple m
 - Privacy controls (blur background, audio-only mode)
 
 ### 2. Vision Analysis Engine
+
 **Location**: `/api/feedback/vision_analyzer.py`
 
 **Capabilities**:
+
 - **Facial Expression Analysis**:
   - 7 basic emotions (happy, sad, angry, fearful, disgusted, surprised, neutral)
   - Micro-expression detection (fleeting emotions <500ms)
@@ -141,9 +146,11 @@ A comprehensive real-time communication feedback system that analyzes multiple m
   - Symmetry analysis
 
 ### 3. Audio Analysis Engine
+
 **Location**: `/api/feedback/audio_analyzer.py`
 
 **Capabilities**:
+
 - **Tone Analysis**:
   - Pitch (F0) tracking and variance
   - Volume levels and dynamic range
@@ -170,6 +177,7 @@ A comprehensive real-time communication feedback system that analyzes multiple m
   - Confidence markers (vocal fry, upspeak)
 
 ### 4. Feedback Scoring Engine
+
 **Location**: `/lib/analytics/feedback-scoring-engine.ts`
 
 **Multi-Dimensional Scoring** (inspired by Diamond Certainty Engine):
@@ -207,6 +215,7 @@ A comprehensive real-time communication feedback system that analyzes multiple m
    - Overall polish: 20%
 
 ### 5. Real-Time Feedback Delivery
+
 **WebSocket Message Format**:
 
 ```typescript
@@ -229,7 +238,7 @@ interface FeedbackMessage {
     facial: {
       dominantEmotion: string;
       emotionConfidence: number;
-      microExpressions: Array<{emotion: string, intensity: number}>;
+      microExpressions: Array<{ emotion: string; intensity: number }>;
       eyeContact: number; // 0-100
       blinkRate: number; // per minute
     };
@@ -253,7 +262,7 @@ interface FeedbackMessage {
 
     speech: {
       transcript: string;
-      fillerWords: Array<{word: string, count: number}>;
+      fillerWords: Array<{ word: string; count: number }>;
       pauseCount: number;
       articulationScore: number; // 0-100
       dialect: {
@@ -283,53 +292,63 @@ interface FeedbackMessage {
 ### 6. Creative Novel Features
 
 **A. Charisma Heatmap**
+
 - Tracks which moments elicited strongest positive response
 - Visual timeline showing engagement peaks/valleys
 - Identifies "charisma moments" for replay
 
 **B. Mirror Mode**
+
 - Side-by-side comparison with exemplar speakers
 - Overlay expert body language patterns
 - Real-time deviation highlighting
 
 **C. Cognitive Load Detection**
+
 - Pupil dilation tracking
 - Increased blink rate
 - Speech hesitations
 - Suggests when to pause or simplify
 
 **D. Cultural Adaptation Insights**
+
 - Detects audience cultural context
 - Suggests gesture modifications (e.g., avoid "thumbs up" in certain cultures)
 - Adapts formality recommendations
 
 **E. Voice Signature Analysis**
+
 - Creates unique vocal fingerprint
 - Tracks consistency across sessions
 - Detects stress-induced voice changes
 
 **F. Micro-Learning Moments**
+
 - Pauses session to deliver 5-second coaching tips
 - Gamified improvement challenges
 - Achievement unlocks for mastery
 
 **G. Audience Simulation Mode**
+
 - AI-generated virtual audience reactions
 - Adaptive difficulty (friendly → challenging)
 - Prepares for high-stakes presentations
 
 **H. Breath Pattern Analysis**
+
 - Respiratory rate from chest movement
 - Breath control quality
 - Anxiety detection from shallow breathing
 
 **I. Linguistic Complexity Scoring**
+
 - Vocabulary sophistication
 - Sentence structure variety
 - Reading level estimation
 - Jargon detection
 
 **J. Energy Pacing Coach**
+
 - Tracks energy expenditure over session
 - Suggests when to modulate intensity
 - Prevents burnout in long presentations
@@ -337,6 +356,7 @@ interface FeedbackMessage {
 ## Database Schema
 
 ### feedback_sessions
+
 ```sql
 CREATE TABLE feedback_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -367,6 +387,7 @@ CREATE INDEX idx_feedback_sessions_start_time ON feedback_sessions(start_time);
 ```
 
 ### feedback_frames
+
 ```sql
 CREATE TABLE feedback_frames (
   id BIGSERIAL PRIMARY KEY,
@@ -394,6 +415,7 @@ CREATE INDEX idx_feedback_frames_timestamp ON feedback_frames(session_id, timest
 ```
 
 ### feedback_suggestions
+
 ```sql
 CREATE TABLE feedback_suggestions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -416,6 +438,7 @@ CREATE INDEX idx_feedback_suggestions_session_id ON feedback_suggestions(session
 ```
 
 ### dialect_profiles
+
 ```sql
 CREATE TABLE dialect_profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -437,6 +460,7 @@ CREATE INDEX idx_dialect_profiles_user_id ON dialect_profiles(user_id);
 ## API Endpoints
 
 ### Session Management
+
 ```
 POST   /api/v1/feedback/sessions/start
 POST   /api/v1/feedback/sessions/:id/stop
@@ -446,6 +470,7 @@ DELETE /api/v1/feedback/sessions/:id
 ```
 
 ### Real-Time Feedback
+
 ```
 WS     /api/feedback/stream (WebSocket connection)
 POST   /api/v1/feedback/process-frame (single frame analysis)
@@ -453,6 +478,7 @@ POST   /api/v1/feedback/process-audio (audio chunk analysis)
 ```
 
 ### Analytics
+
 ```
 GET    /api/v1/feedback/analytics/:userId/trends
 GET    /api/v1/feedback/analytics/:sessionId/summary
@@ -461,6 +487,7 @@ GET    /api/v1/feedback/analytics/leaderboard
 ```
 
 ### Calibration
+
 ```
 POST   /api/v1/feedback/calibrate/baseline (establish user baseline)
 POST   /api/v1/feedback/calibrate/dialect (dialect profiling)
@@ -470,18 +497,21 @@ GET    /api/v1/feedback/calibrate/status/:userId
 ## Deployment Considerations
 
 ### Performance Targets
+
 - **Latency**: <200ms frame-to-feedback
 - **Throughput**: 100 concurrent sessions
 - **Frame Rate**: 10 FPS processing (30 FPS capture with sampling)
 - **Audio Chunk**: 1-second buffers
 
 ### Scalability
+
 - **Horizontal scaling**: Multiple AI worker instances
 - **Load balancing**: Redis-based job distribution
 - **Caching**: Aggressive Redis caching for user baselines
 - **CDN**: Video/audio storage via MinIO + CDN
 
 ### Privacy & Security
+
 - **Encryption**: End-to-end encryption for video/audio streams
 - **Data retention**: 30-day automatic deletion
 - **Opt-in recording**: Explicit consent for session recording
@@ -491,6 +521,7 @@ GET    /api/v1/feedback/calibrate/status/:userId
 ## Technology Stack Summary
 
 ### Frontend
+
 - React 19 + TypeScript
 - MediaStream API (video/audio capture)
 - Web Audio API (audio processing)
@@ -499,6 +530,7 @@ GET    /api/v1/feedback/calibrate/status/:userId
 - WebSocket (real-time communication)
 
 ### Backend
+
 - **WebSocket Server**: Node.js + Express + ws library
 - **AI Processing**: Python 3.11 + FastAPI
 - **Computer Vision**: MediaPipe, OpenCV
@@ -508,6 +540,7 @@ GET    /api/v1/feedback/calibrate/status/:userId
 - **Storage**: MinIO S3
 
 ### ML Models
+
 - **Face Analysis**: MediaPipe Face Mesh + custom emotion classifier
 - **Pose Detection**: MediaPipe Pose
 - **Speech-to-Text**: OpenAI Whisper (base or small model)

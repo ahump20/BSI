@@ -7,18 +7,21 @@
 Use one of these free tools to generate PWA icons:
 
 **Option A: PWA Asset Generator**
+
 ```bash
 npm install -g pwa-asset-generator
 pwa-asset-generator public/game/logo.png public/game/icons --icon-only
 ```
 
 **Option B: Online Tool**
+
 1. Go to https://realfavicongenerator.net/
 2. Upload a 512x512 baseball-themed logo
 3. Download icons
 4. Extract to `/Users/AustinHumphrey/BSI/public/game/icons/`
 
 **Required Sizes:**
+
 - icon-72.png
 - icon-96.png
 - icon-128.png
@@ -41,6 +44,7 @@ python3 -m http.server 8000
 ```
 
 Test:
+
 - [ ] Game loads
 - [ ] Character selection works
 - [ ] Can select 3+ characters
@@ -60,6 +64,7 @@ chmod +x deploy-game.sh
 ```
 
 The script will:
+
 1. Check all files exist
 2. Validate JSON
 3. Deploy to Cloudflare Pages
@@ -68,6 +73,7 @@ The script will:
 ### Step 4: Test on Mobile
 
 **iOS (iPhone/iPad):**
+
 1. Open Safari
 2. Go to https://blazesportsintel.com/game
 3. Tap Share icon (⬆️)
@@ -78,6 +84,7 @@ The script will:
 8. Play game!
 
 **Android:**
+
 1. Open Chrome
 2. Go to https://blazesportsintel.com/game
 3. Tap menu (⋮)
@@ -91,6 +98,7 @@ The script will:
 Test these core features:
 
 **Gameplay:**
+
 - [ ] Pitch comes toward plate
 - [ ] Tap "SWING" button responds
 - [ ] Ball physics work
@@ -98,18 +106,21 @@ Test these core features:
 - [ ] Inning progresses
 
 **Progression:**
+
 - [ ] Play 3-inning game
 - [ ] Win or lose
 - [ ] Stats save (close and reopen)
 - [ ] Win streak tracks
 
 **Characters:**
+
 - [ ] 3 starter characters available
 - [ ] Can select and deselect
 - [ ] Stats display
 - [ ] Locked characters show unlock requirement
 
 **PWA:**
+
 - [ ] Installs to home screen
 - [ ] Works offline (turn off wifi/data)
 - [ ] Splash screen shows
@@ -118,13 +129,17 @@ Test these core features:
 ## Troubleshooting
 
 ### Icons Don't Show
+
 **Fix:** Regenerate icons with correct naming (icon-192.png not icon-192x192.png)
 
 ### Game Won't Load
+
 **Fix:** Check browser console (F12) for errors. Likely missing JavaScript file.
 
 ### Can't Deploy
+
 **Fix:**
+
 ```bash
 # Login to Cloudflare again
 wrangler login
@@ -134,19 +149,23 @@ wrangler login
 ```
 
 ### Offline Mode Not Working
+
 **Fix:** Service worker might not have registered. Clear cache and reload:
+
 ```javascript
 // In browser console:
-navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister()));
 location.reload();
 ```
 
 ### Touch Not Working
+
 **Fix:** Ensure you're testing on actual device, not simulator. Some simulators don't support touch events properly.
 
 ## Customization
 
 ### Change Colors
+
 Edit `/Users/AustinHumphrey/BSI/public/game/index.html`:
 
 ```css
@@ -159,6 +178,7 @@ background: linear-gradient(135deg, #YOUR_COLOR_1, #YOUR_COLOR_2);
 ```
 
 ### Change Game Length
+
 Edit `/Users/AustinHumphrey/BSI/public/game/js/main.js`:
 
 ```javascript
@@ -170,9 +190,11 @@ maxInnings: 6, // For longer games
 ```
 
 ### Add More Characters
+
 Edit `/Users/AustinHumphrey/BSI/public/game/js/characters.js`:
 
 Add new character object to CHARACTERS array:
+
 ```javascript
 {
     id: 'your-character',
@@ -219,12 +241,14 @@ const targetFPS = 30; // Instead of 60
 ### If Loading Takes Too Long
 
 1. **Minify JavaScript:**
+
 ```bash
 npm install -g terser
 terser public/game/js/*.js -o public/game/js/game.min.js
 ```
 
 2. **Update HTML to use minified version:**
+
 ```html
 <script src="/game/js/game.min.js"></script>
 ```
@@ -236,24 +260,27 @@ Add game link to `/Users/AustinHumphrey/BSI/public/index.html`:
 ```html
 <!-- In navigation menu -->
 <nav>
-    <a href="/">Home</a>
-    <a href="/mlb">MLB</a>
-    <a href="/nfl">NFL</a>
-    <a href="/game">🎮 Play Game</a> <!-- Add this -->
+  <a href="/">Home</a>
+  <a href="/mlb">MLB</a>
+  <a href="/nfl">NFL</a>
+  <a href="/game">🎮 Play Game</a>
+  <!-- Add this -->
 </nav>
 
 <!-- Or as a featured section -->
 <section class="game-feature">
-    <h2>🎮 Diamond Sluggers</h2>
-    <p>Play our nostalgic mobile baseball game!</p>
-    <a href="/game" class="cta-button">Play Now</a>
+  <h2>🎮 Diamond Sluggers</h2>
+  <p>Play our nostalgic mobile baseball game!</p>
+  <a href="/game" class="cta-button">Play Now</a>
 </section>
 ```
 
 ## Promotion Ideas
 
 ### Social Media
+
 Tweet/post:
+
 ```
 🎮 New game alert! Diamond Sluggers is now live!
 
@@ -269,25 +296,27 @@ Play now: blazesportsintel.com/game
 ```
 
 ### Blog Post
+
 Create `/Users/AustinHumphrey/BSI/public/blog/diamond-sluggers-launch.html`:
 
 ```html
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Introducing Diamond Sluggers | Blaze Sports Intel</title>
-</head>
-<body>
+  </head>
+  <body>
     <article>
-        <h1>Introducing Diamond Sluggers</h1>
-        <p>We're excited to launch Diamond Sluggers, our nostalgic mobile baseball game...</p>
-        <a href="/game">Play Now</a>
+      <h1>Introducing Diamond Sluggers</h1>
+      <p>We're excited to launch Diamond Sluggers, our nostalgic mobile baseball game...</p>
+      <a href="/game">Play Now</a>
     </article>
-</body>
+  </body>
 </html>
 ```
 
 ### Email Newsletter
+
 ```
 Subject: 🎮 New: Play Baseball on Your Phone!
 
@@ -314,37 +343,39 @@ To track game usage, add to `/Users/AustinHumphrey/BSI/public/game/index.html`:
 ```html
 <!-- Before </body> -->
 <script>
-// Track game starts
-function trackGameStart() {
+  // Track game starts
+  function trackGameStart() {
     if (window.gtag) {
-        gtag('event', 'game_start', {
-            'event_category': 'engagement',
-            'event_label': 'diamond_sluggers'
-        });
+      gtag('event', 'game_start', {
+        event_category: 'engagement',
+        event_label: 'diamond_sluggers',
+      });
     }
-}
+  }
 
-// Track game completions
-function trackGameEnd(won) {
+  // Track game completions
+  function trackGameEnd(won) {
     if (window.gtag) {
-        gtag('event', 'game_complete', {
-            'event_category': 'engagement',
-            'event_label': won ? 'win' : 'loss'
-        });
+      gtag('event', 'game_complete', {
+        event_category: 'engagement',
+        event_label: won ? 'win' : 'loss',
+      });
     }
-}
+  }
 </script>
 ```
 
 ## Getting Help
 
 ### Resources
+
 - **Full Documentation:** `/Users/AustinHumphrey/BSI/DIAMOND-SLUGGERS-DOCUMENTATION.md`
 - **Implementation Details:** `/Users/AustinHumphrey/BSI/GAME-IMPLEMENTATION-SUMMARY.md`
 - **Character Data:** `/Users/AustinHumphrey/BSI/public/game/js/characters.js`
 - **Stadium Data:** `/Users/AustinHumphrey/BSI/public/game/js/stadiums.js`
 
 ### Support
+
 - **Email:** ahump20@outlook.com
 - **Site:** blazesportsintel.com
 
@@ -352,14 +383,16 @@ function trackGameEnd(won) {
 
 **Q: Characters won't unlock**
 A: Check win count in browser console:
+
 ```javascript
 // Open browser dev tools (F12)
-JSON.parse(localStorage.getItem('diamond-sluggers-save')).stats.wins
+JSON.parse(localStorage.getItem('diamond-sluggers-save')).stats.wins;
 // Should return your win count
 ```
 
 **Q: Can't see the ball**
 A: Check canvas rendering in console:
+
 ```javascript
 // Should log "Rendering game..."
 // If not, JavaScript may have errors
@@ -367,15 +400,15 @@ A: Check canvas rendering in console:
 
 **Q: Offline mode not working**
 A: Service worker may need manual registration:
+
 ```javascript
-navigator.serviceWorker.register('/game/sw.js').then(
-    reg => console.log('SW registered', reg)
-);
+navigator.serviceWorker.register('/game/sw.js').then((reg) => console.log('SW registered', reg));
 ```
 
 ## Next Steps After Launch
 
 ### Week 1
+
 - [ ] Monitor Cloudflare Analytics
 - [ ] Fix any critical bugs
 - [ ] Gather initial user feedback
@@ -383,6 +416,7 @@ navigator.serviceWorker.register('/game/sw.js').then(
 - [ ] Add game link to main site
 
 ### Month 1
+
 - [ ] Analyze which characters are most popular
 - [ ] See which stadiums get played most
 - [ ] Adjust difficulty if too easy/hard
@@ -390,6 +424,7 @@ navigator.serviceWorker.register('/game/sw.js').then(
 - [ ] Create gameplay video for YouTube
 
 ### Month 3
+
 - [ ] Consider adding multiplayer
 - [ ] Implement leaderboards
 - [ ] Add new characters/stadiums

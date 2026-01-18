@@ -5,6 +5,7 @@ This document provides instructions for building, running, and deploying Blaze S
 ## Overview
 
 BSI Games consists of:
+
 - **Web Games**: Phaser-based games embedded in Next.js site
 - **Native Games** (future): Godot-based games for mobile/desktop
 
@@ -77,6 +78,7 @@ pnpm build
 ```
 
 Outputs to `dist/` directory. Files are:
+
 - `index.html` - Entry point
 - `assets/index-[hash].js` - Game code bundle (~15KB)
 - `assets/phaser-[hash].js` - Phaser library (~1.5MB, gzips to ~326KB)
@@ -102,6 +104,7 @@ pnpm build:games
 ```
 
 This:
+
 1. Builds Phaser game to `apps/games/phaser-bbp-web/dist`
 2. Copies dist to `apps/web/public/games/bbp-web`
 3. Next.js serves it as static files
@@ -126,6 +129,7 @@ This:
 #### Mobile Testing
 
 **Browser DevTools:**
+
 1. Open game in Chrome
 2. Press F12 → Toggle device toolbar
 3. Test on various screen sizes
@@ -133,6 +137,7 @@ This:
 5. Test touch controls (click-and-drag to simulate touch)
 
 **Real Device:**
+
 1. Build and deploy to preview environment
 2. Open on mobile device
 3. Test touch controls, orientation, performance
@@ -146,6 +151,7 @@ This:
    - Or create original art using design tools
 
 2. **Optimize Asset**
+
    ```bash
    # Images: Convert to WebP
    cwebp -q 80 input.png -o output.webp
@@ -155,11 +161,13 @@ This:
    ```
 
 3. **Add to Project**
+
    ```
    Place in: apps/games/phaser-bbp-web/assets/[sprites|audio]/filename.ext
    ```
 
 4. **Load in BootScene**
+
    ```typescript
    // src/scenes/BootScene.ts
    preload(): void {
@@ -169,6 +177,7 @@ This:
    ```
 
 5. **Use in Game**
+
    ```typescript
    // src/scenes/GameScene.ts
    create(): void {
@@ -186,13 +195,13 @@ This:
 
 Current version uses geometric shapes. To upgrade:
 
-| Current | Replacement | Priority |
-|---------|-------------|----------|
-| Rectangle sprites | Character sprites | High |
-| Circle ball | Baseball sprite | Medium |
-| Gradient fields | Stadium background | Medium |
-| No audio | Sound effects | Low |
-| System fonts | Custom font (optional) | Low |
+| Current           | Replacement            | Priority |
+| ----------------- | ---------------------- | -------- |
+| Rectangle sprites | Character sprites      | High     |
+| Circle ball       | Baseball sprite        | Medium   |
+| Gradient fields   | Stadium background     | Medium   |
+| No audio          | Sound effects          | Low      |
+| System fonts      | Custom font (optional) | Low      |
 
 See **Asset Replacement Roadmap** below.
 
@@ -222,6 +231,7 @@ cd apps/web && pnpm build  # Build Next.js site
 ```
 
 Output:
+
 - Next.js site: `apps/web/.next/`
 - Game embedded at: `apps/web/public/games/bbp-web/`
 
@@ -230,6 +240,7 @@ Output:
 **Automatic (via CI/CD):**
 
 Push to main branch triggers:
+
 1. `pnpm install` (all workspaces)
 2. `pnpm build:games` (builds game)
 3. `pnpm -w build` (builds site)
@@ -252,11 +263,13 @@ wrangler pages deploy .next --project-name blazesportsintel
 #### Game Bundle Size
 
 Current:
+
 - Game code: ~15KB (minified)
 - Phaser library: ~1.5MB (~326KB gzipped)
 - Total: ~341KB over network
 
 **Optimization:**
+
 - Phaser is code-split (loads separately)
 - Vite tree-shakes unused Phaser features
 - Served with Brotli compression on Cloudflare
@@ -270,6 +283,7 @@ Current:
 #### Monitoring
 
 Check performance in:
+
 - Lighthouse CI (automated on PRs)
 - Browser DevTools Performance tab
 - Real User Monitoring (Datadog RUM)
@@ -282,6 +296,7 @@ Check performance in:
 **Target**: Original cartoon characters
 
 **Steps**:
+
 1. Generate 2-3 batter sprites using AI (Midjourney)
 2. Generate 1 pitcher sprite
 3. Optimize to WebP format
@@ -296,6 +311,7 @@ Check performance in:
 **Target**: Baseball sprite + simple field background
 
 **Steps**:
+
 1. Create/generate baseball sprite (16x16px)
 2. Create simple grass/dirt field background (800x600px)
 3. Update GameScene.ts
@@ -309,12 +325,14 @@ Check performance in:
 **Target**: Basic sound effects
 
 **Sounds Needed**:
+
 - Bat swing (whoosh)
 - Ball hit (crack)
 - Strike sound (thud)
 - Crowd cheer (for home runs)
 
 **Steps**:
+
 1. Generate sounds using AI audio tool (ElevenLabs or Soundful)
 2. Convert to MP3 format
 3. Update AudioSystem.ts
@@ -329,6 +347,7 @@ Check performance in:
 **Target**: Styled UI with icons
 
 **Steps**:
+
 1. Design scoreboard UI (Figma or AI-generated)
 2. Create button sprites for menu
 3. Add icons for outs, strikes, balls
@@ -355,6 +374,7 @@ pnpm build
 ### Game Not Loading in Next.js
 
 1. Verify build output exists:
+
    ```bash
    ls apps/web/public/games/bbp-web/
    # Should see: index.html, assets/
@@ -375,6 +395,7 @@ pnpm build
 ### Poor Performance on Mobile
 
 1. **Check Frame Rate**:
+
    ```typescript
    // Add to GameScene.ts update()
    console.log(this.game.loop.actualFps);

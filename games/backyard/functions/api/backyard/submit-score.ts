@@ -68,10 +68,7 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
 
     // Validate score is reasonable (anti-cheat basic check)
     if (body.score < 0 || body.score > 100000) {
-      return jsonResponse(
-        { success: false, error: 'Invalid score value' },
-        400
-      );
+      return jsonResponse({ success: false, error: 'Invalid score value' }, 400);
     }
 
     const { playerId, playerName, score, characterId, fieldId, stats } = body;
@@ -91,7 +88,8 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         stats.longestStreak
       );
 
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         UPDATE backyard_players SET
           player_name = COALESCE(?, player_name),
           high_score = ?,
@@ -110,7 +108,8 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
           END,
           updated_at = CURRENT_TIMESTAMP
         WHERE player_id = ?
-      `)
+      `
+      )
         .bind(
           playerName || null,
           newHighScore,
@@ -129,13 +128,15 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         .run();
     } else {
       // Insert new player
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         INSERT INTO backyard_players (
           player_id, player_name, high_score, games_played,
           total_hits, total_home_runs, total_singles, total_doubles, total_triples,
           total_whiffs, longest_streak, total_play_time_seconds, favorite_character_id
         ) VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `)
+      `
+      )
         .bind(
           playerId,
           playerName || null,
@@ -154,13 +155,15 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     }
 
     // 2. Insert individual game score record
-    await env.DB.prepare(`
+    await env.DB.prepare(
+      `
       INSERT INTO backyard_scores (
         player_id, score, character_id, field_id,
         total_pitches, total_hits, singles, doubles, triples,
         home_runs, whiffs, longest_streak, duration_seconds, multiplier_peak
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `)
+    `
+    )
       .bind(
         playerId,
         score,
@@ -187,35 +190,35 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: [
-          'game_play',           // event type
-          'backyard_baseball',   // game name
-          characterId,           // character used
-          fieldId || 'default',  // field played
+          'game_play', // event type
+          'backyard_baseball', // game name
+          characterId, // character used
+          fieldId || 'default', // field played
           stats.homeRuns > 0 ? 'home_run_hit' : 'no_home_run',
         ],
         doubles: [
-          score,                     // final score
-          stats.totalHits,           // hits
-          stats.homeRuns,            // home runs
-          stats.longestStreak,       // streak
-          stats.durationSeconds,     // play time
+          score, // final score
+          stats.totalHits, // hits
+          stats.homeRuns, // home runs
+          stats.longestStreak, // streak
+          stats.durationSeconds, // play time
         ],
         indexes: [playerId],
       });
     }
 
     // 5. Get player's current rank
-    const rankResult = await env.DB.prepare(`
+    const rankResult = await env.DB.prepare(
+      `
       SELECT COUNT(*) + 1 as rank FROM backyard_players
       WHERE high_score > ?
-    `)
+    `
+    )
       .bind(existingPlayer ? Math.max(existingPlayer.high_score as number, score) : score)
       .first();
 
     // 5. Get updated player stats
-    const updatedPlayer = await env.DB.prepare(
-      'SELECT * FROM backyard_players WHERE player_id = ?'
-    )
+    const updatedPlayer = await env.DB.prepare('SELECT * FROM backyard_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 
@@ -234,10 +237,7 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     });
   } catch (error: any) {
     console.error('Submit score error:', error);
-    return jsonResponse(
-      { success: false, error: error.message || 'Internal server error' },
-      500
-    );
+    return jsonResponse({ success: false, error: error.message || 'Internal server error' }, 500);
   }
 }
 

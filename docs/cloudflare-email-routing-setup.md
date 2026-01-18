@@ -1,16 +1,17 @@
 # Cloudflare Email Routing Configuration for blazesportsintel.com
 
 ## Overview
+
 Configure email forwarding for legal and compliance addresses to route all messages to `austin@blazesportsintel.com`.
 
 ## Required Email Addresses
 
-| Email Address | Purpose | Forward To |
-|---------------|---------|------------|
-| privacy@blazesportsintel.com | GDPR/CCPA data requests, privacy inquiries | austin@blazesportsintel.com |
-| legal@blazesportsintel.com | Legal notices, terms violations, compliance | austin@blazesportsintel.com |
-| dmca@blazesportsintel.com | Copyright takedown notices (DMCA) | austin@blazesportsintel.com |
-| accessibility@blazesportsintel.com | WCAG compliance, accessibility feedback | austin@blazesportsintel.com |
+| Email Address                      | Purpose                                     | Forward To                  |
+| ---------------------------------- | ------------------------------------------- | --------------------------- |
+| privacy@blazesportsintel.com       | GDPR/CCPA data requests, privacy inquiries  | austin@blazesportsintel.com |
+| legal@blazesportsintel.com         | Legal notices, terms violations, compliance | austin@blazesportsintel.com |
+| dmca@blazesportsintel.com          | Copyright takedown notices (DMCA)           | austin@blazesportsintel.com |
+| accessibility@blazesportsintel.com | WCAG compliance, accessibility feedback     | austin@blazesportsintel.com |
 
 ## Setup Instructions
 
@@ -42,6 +43,7 @@ If not already enabled:
 For each email address, create a catch-all or specific routing rule:
 
 #### Option A: Catch-All Rule (Recommended)
+
 Forward ALL emails to austin@blazesportsintel.com:
 
 1. Go to **Routing rules** section
@@ -50,9 +52,10 @@ Forward ALL emails to austin@blazesportsintel.com:
 4. Action: **Send to an email** → Select `austin@blazesportsintel.com`
 5. Click **Save**
 
-This single rule forwards all mail addressed to *@blazesportsintel.com to austin@blazesportsintel.com.
+This single rule forwards all mail addressed to \*@blazesportsintel.com to austin@blazesportsintel.com.
 
 #### Option B: Specific Address Rules
+
 Create individual rules for each address:
 
 1. Go to **Routing rules** section
@@ -62,21 +65,25 @@ Create individual rules for each address:
 For each address:
 
 **Privacy Address:**
+
 - Custom address: `privacy`
 - Action: Send to → `austin@blazesportsintel.com`
 - Save
 
 **Legal Address:**
+
 - Custom address: `legal`
 - Action: Send to → `austin@blazesportsintel.com`
 - Save
 
 **DMCA Address:**
+
 - Custom address: `dmca`
 - Action: Send to → `austin@blazesportsintel.com`
 - Save
 
 **Accessibility Address:**
+
 - Custom address: `accessibility`
 - Action: Send to → `austin@blazesportsintel.com`
 - Save
@@ -120,14 +127,17 @@ No manual DNS configuration required.
 ## Compliance Notes
 
 ### GDPR/CCPA Compliance
+
 - privacy@blazesportsintel.com provides clear contact point for data subject requests
 - Response required within 30 days (GDPR) or 45 days (CCPA)
 
 ### DMCA Safe Harbor
+
 - dmca@blazesportsintel.com satisfies DMCA designated agent requirement
 - Must also register with U.S. Copyright Office at https://www.copyright.gov/dmca-directory/
 
 ### Accessibility Compliance
+
 - accessibility@blazesportsintel.com provides contact for WCAG AA compliance feedback
 - Response recommended within 5 business days
 

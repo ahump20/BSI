@@ -36,13 +36,13 @@ const RATE_LIMIT_DELAY = 2000; // 2 seconds between API requests
 const VENUE_MAP = {
   '2000-2010': 'Rosenblatt Stadium',
   '2011-2019': 'TD Ameritrade Park Omaha',
-  '2020-present': 'Charles Schwab Field Omaha'
+  '2020-present': 'Charles Schwab Field Omaha',
 };
 
 const ATTENDANCE_DEFAULTS = {
   'Rosenblatt Stadium': 23000,
   'TD Ameritrade Park Omaha': 24000,
-  'Charles Schwab Field Omaha': 24000
+  'Charles Schwab Field Omaha': 24000,
 };
 
 // Team name normalization
@@ -58,7 +58,7 @@ const TEAM_NAME_MAP = {
   'South Carolina Gamecocks': 'South Carolina',
   'North Carolina Tar Heels': 'North Carolina',
   'Virginia Cavaliers': 'Virginia',
-  'Vanderbilt Commodores': 'Vanderbilt'
+  'Vanderbilt Commodores': 'Vanderbilt',
 };
 
 // ============================================================================
@@ -67,7 +67,7 @@ const TEAM_NAME_MAP = {
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
-const specificYear = args.find(arg => arg.startsWith('--year='))?.split('=')[1];
+const specificYear = args.find((arg) => arg.startsWith('--year='))?.split('=')[1];
 
 if (specificYear && (parseInt(specificYear) < START_YEAR || parseInt(specificYear) > END_YEAR)) {
   console.error(`❌ Year must be between ${START_YEAR} and ${END_YEAR}`);
@@ -95,44 +95,47 @@ async function fetchWikipediaPage(year) {
   return new Promise((resolve, reject) => {
     const options = {
       headers: {
-        'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com; austin@blazesportsintel.com)',
-        Accept: 'application/json'
-      }
+        'User-Agent':
+          'BlazeSportsIntel/1.0 (https://blazesportsintel.com; austin@blazesportsintel.com)',
+        Accept: 'application/json',
+      },
     };
 
-    https.get(url, options, (res) => {
-      let data = '';
+    https
+      .get(url, options, (res) => {
+        let data = '';
 
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
 
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(data);
 
-          if (json.error) {
-            console.error(`   ⚠️  Wikipedia API error: ${json.error.info}`);
+            if (json.error) {
+              console.error(`   ⚠️  Wikipedia API error: ${json.error.info}`);
+              resolve(null);
+              return;
+            }
+
+            if (!json.parse || !json.parse.text || !json.parse.text['*']) {
+              console.error(`   ⚠️  No HTML content in response`);
+              resolve(null);
+              return;
+            }
+
+            resolve(json.parse.text['*']);
+          } catch (error) {
+            console.error(`   ⚠️  Failed to parse Wikipedia response: ${error.message}`);
             resolve(null);
-            return;
           }
-
-          if (!json.parse || !json.parse.text || !json.parse.text['*']) {
-            console.error(`   ⚠️  No HTML content in response`);
-            resolve(null);
-            return;
-          }
-
-          resolve(json.parse.text['*']);
-        } catch (error) {
-          console.error(`   ⚠️  Failed to parse Wikipedia response: ${error.message}`);
-          resolve(null);
-        }
+        });
+      })
+      .on('error', (error) => {
+        console.error(`   ⚠️  Wikipedia API request failed: ${error.message}`);
+        resolve(null);
       });
-    }).on('error', (error) => {
-      console.error(`   ⚠️  Wikipedia API request failed: ${error.message}`);
-      resolve(null);
-    });
   });
 }
 
@@ -208,14 +211,12 @@ function parseGameResults(html, year) {
       innings: 9, // Default, will adjust if we find extra innings info
       extra_innings: 0,
       lead_changes: 0, // Not available from Wikipedia
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
   }
 
   // Remove duplicates by game_id
-  const uniqueGames = Array.from(
-    new Map(games.map(g => [g.game_id, g])).values()
-  );
+  const uniqueGames = Array.from(new Map(games.map((g) => [g.game_id, g])).values());
 
   return uniqueGames;
 }
@@ -225,7 +226,10 @@ function parseGameResults(html, year) {
  */
 function normalizeTeamName(name) {
   // Remove common suffixes
-  name = name.replace(/\s+(Bulldogs|Tigers|Longhorns|Hurricanes|Chanticleers|Beavers|Gamecocks|Tar Heels|Cavaliers|Commodores|Cardinals|Sun Devils|Bears|Green Wave|Cornhuskers|Volunteers|Demon Deacons|Bruins|Trojans|Blue Devils|Seminoles|Gators|Wildcats|Razorbacks|Crimson Tide|Rebels|Aggies|Red Raiders)$/i, '');
+  name = name.replace(
+    /\s+(Bulldogs|Tigers|Longhorns|Hurricanes|Chanticleers|Beavers|Gamecocks|Tar Heels|Cavaliers|Commodores|Cardinals|Sun Devils|Bears|Green Wave|Cornhuskers|Volunteers|Demon Deacons|Bruins|Trojans|Blue Devils|Seminoles|Gators|Wildcats|Razorbacks|Crimson Tide|Rebels|Aggies|Red Raiders)$/i,
+    ''
+  );
 
   // Apply manual mappings
   if (TEAM_NAME_MAP[name.trim()]) {
@@ -305,7 +309,7 @@ function generateInsertSQL(games) {
   sql += `  lead_changes, created_at\n`;
   sql += `)\nVALUES\n`;
 
-  const values = games.map(g => {
+  const values = games.map((g) => {
     const escapeSql = (str) => String(str).replace(/'/g, "''");
     return `  ('${escapeSql(g.game_id)}', '${g.date}', '${escapeSql(g.home_team)}', '${escapeSql(g.away_team)}', ${g.home_score}, ${g.away_score}, '${g.sport}', '${escapeSql(g.tournament_round)}', '${escapeSql(g.venue)}', ${g.attendance}, ${g.innings}, ${g.extra_innings}, ${g.lead_changes}, '${g.created_at}')`;
   });
@@ -341,7 +345,7 @@ function executeD1Command(sql, successMessage) {
     // Pass CLOUDFLARE_API_TOKEN from environment
     const env = {
       ...process.env,
-      CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || ''
+      CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || '',
     };
 
     const output = execSync(
@@ -453,7 +457,7 @@ async function main() {
 
     // Rate limit: wait 2 seconds between requests
     if (year !== years[years.length - 1]) {
-      await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY));
+      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY));
     }
   }
 
@@ -476,7 +480,7 @@ async function main() {
 }
 
 // Run the script
-main().catch(error => {
+main().catch((error) => {
   console.error(`\n❌ Fatal error: ${error.message}`);
   console.error(error.stack);
   process.exit(1);

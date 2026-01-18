@@ -31,6 +31,8 @@ interface Env {
   DB: D1Database;
   KV: KVNamespace;
   JWT_SECRET: string;
+  STRIPE_PRO_PRICE_ID: string;
+  STRIPE_ENTERPRISE_PRICE_ID: string;
 }
 
 const corsHeaders = {
@@ -141,12 +143,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
           pro: {
             price: 29,
             interval: 'month',
-            priceId: 'price_1SX9voLvpRBk20R2pW0AjUIv',
+            priceId: env.STRIPE_PRO_PRICE_ID || '',
           },
           enterprise: {
             price: 199,
             interval: 'month',
-            priceId: 'price_1SX9w7LvpRBk20R2DJkKAH3y',
+            priceId: env.STRIPE_ENTERPRISE_PRICE_ID || '',
           },
         },
       }),

@@ -13,6 +13,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `@cloudflare/mcp-server-cloudflare` (v0.2.0)
 
 **Capabilities**:
+
 - Manage Cloudflare Workers deployments
 - Query D1 databases
 - Monitor KV storage
@@ -21,10 +22,12 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 - Control R2 bucket operations
 
 **Configuration**:
+
 - ✅ API Token: Configured from environment
 - ✅ Account ID: a12cb329d84130460eed99b816e4d0d3
 
 **Example Commands**:
+
 ```
 "Deploy the latest build to blazesportsintel.com"
 "Show me KV cache hit rates for the football API"
@@ -39,6 +42,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `@modelcontextprotocol/server-github` (v2025.4.8)
 
 **Capabilities**:
+
 - Create and manage issues
 - Create pull requests
 - Search code across repositories
@@ -47,10 +51,12 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 - Automate CI/CD workflows
 
 **Configuration**:
+
 - ✅ Personal Access Token: Configured (repo: ahump20/BSI)
 - ✅ Full repository access
 
 **Example Commands**:
+
 ```
 "Create a PR for Phase 3 basketball implementation"
 "Search the BSI repo for all Monte Carlo simulation code"
@@ -66,16 +72,19 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `@modelcontextprotocol/server-brave-search` (v0.6.2)
 
 **Capabilities**:
+
 - Privacy-focused web search
 - Real-time sports data lookup
 - API documentation research
 - News and scores retrieval
 
 **Configuration**:
+
 - ⚠️ **API Key Required**: You need to get a Brave Search API key
 - **Status**: Configured but needs activation
 
 **How to Get API Key**:
+
 1. Visit: https://brave.com/search/api/
 2. Sign up for Brave Search API
 3. Get your API key
@@ -88,6 +97,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
    ```
 
 **Example Commands** (after API key setup):
+
 ```
 "Search for current MLB playoff standings"
 "Find the latest college baseball CWS schedule"
@@ -102,6 +112,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `@modelcontextprotocol/server-filesystem` (v2025.8.21)
 
 **Capabilities**:
+
 - Secure read/write operations
 - Directory traversal
 - File search
@@ -109,12 +120,14 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 - Access control
 
 **Configuration**:
+
 - ✅ Allowed directories:
   - `/Users/AustinHumphrey/BSI` (project root)
   - `/Users/AustinHumphrey/Documents`
   - `/Users/AustinHumphrey/Desktop`
 
 **Example Commands**:
+
 ```
 "List all JavaScript files in the src/ directory"
 "Search for files containing 'Monte Carlo' in BSI"
@@ -129,6 +142,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `mcp-sqlite` (v1.0.7)
 
 **Capabilities**:
+
 - Query SQLite databases
 - Natural language SQL generation
 - Schema inspection
@@ -136,10 +150,12 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 - Migration assistance
 
 **Configuration**:
+
 - ✅ Database path: `/Users/AustinHumphrey/BSI/dev.db`
 - ℹ️ Database will be created if it doesn't exist
 
 **Example Commands**:
+
 ```
 "Create a table for storing game scores"
 "Query all baseball games from March 2025"
@@ -155,6 +171,7 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 **Package**: `@modelcontextprotocol/server-postgres` (latest)
 
 **Capabilities**:
+
 - Query PostgreSQL databases
 - Natural language to SQL
 - Schema management
@@ -162,10 +179,12 @@ This document describes the **6 MCP servers** now configured for Claude Code, en
 - Performance optimization
 
 **Configuration**:
+
 - ✅ Connection: `postgresql://localhost/blazesports`
 - ℹ️ Requires PostgreSQL running locally
 
 **Example Commands**:
+
 ```
 "Connect to blazesports database"
 "Show all tables in the database"
@@ -188,26 +207,31 @@ MCP servers are loaded when Claude Code starts. To activate them:
 ### Testing Each Server
 
 **Cloudflare**:
+
 ```
 "Show me all Cloudflare Workers in my account"
 ```
 
 **GitHub**:
+
 ```
 "Search for 'seasonal routing' in the BSI repository"
 ```
 
 **Brave Search** (after API key):
+
 ```
 "Search for college baseball rankings 2025"
 ```
 
 **Filesystem**:
+
 ```
 "List all markdown files in the docs/ folder"
 ```
 
 **SQLite**:
+
 ```
 "Create a sample games table in dev.db"
 ```
@@ -287,6 +311,7 @@ MCP servers are loaded when Claude Code starts. To activate them:
 - Rotate tokens regularly for security
 
 **Current file permissions**:
+
 ```bash
 chmod 600 ~/.config/claude/mcp.json
 ```

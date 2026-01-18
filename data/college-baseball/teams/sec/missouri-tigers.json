@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "Every True Tiger Foundation",
     "lead_contact": "Eric Nichols",
-    "contact_channels": [
-      "info@everytruetiger.org",
-      "https://www.everytruetiger.org/contact"
-    ],
+    "contact_channels": ["info@everytruetiger.org", "https://www.everytruetiger.org/contact"],
     "recent_initiatives": "Exploring shared baseball-softball NIL events during 2025 opening weekend.",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Laird Veatch",
     "baseball_admin": "Tim Jamieson",
-    "financial_points_of_contact": [
-      "tickets@mizzou.edu"
-    ]
+    "financial_points_of_contact": ["tickets@mizzou.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 1,

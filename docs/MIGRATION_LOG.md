@@ -18,6 +18,7 @@
 ## Phase 1: Archive & Audit Current State
 
 ### Archive Structure
+
 ```
 /archive/2025-10-13/
 ├── routes/
@@ -39,6 +40,7 @@
 ### Current Platform Assessment
 
 #### Active Routes (To Be Mapped)
+
 - Home: `/index.html`
 - Sport Landing Pages: `/mlb/`, `/nfl/`, `/cfb/`, `/cbb/`
 - Analytics: `/analytics.html`
@@ -47,6 +49,7 @@
 - Static: `/about.html`, `/contact.html`, `/methodology/`
 
 #### API Endpoints (Cloudflare Functions)
+
 - `/api/mlb/*` - MLB data endpoints
 - `/api/nfl/*` - NFL data endpoints
 - `/api/nba/*` - NBA data endpoints
@@ -58,6 +61,7 @@
 - `/api/metrics` - Analytics metrics
 
 #### Infrastructure Components
+
 - **Database**: D1 (`cbafed34-782f-4bf1-a14b-4ea49661e52b`)
 - **Cache**: KV namespace (`a53c3726fc3044be82e79d2d1e371d26`)
 - **Storage**: R2 bucket (`bsi-embeddings`)
@@ -67,6 +71,7 @@
 ### Migration Decisions
 
 #### KEEP (Port to New Platform)
+
 - [ ] Clean UI components (auth wrappers, charts)
 - [ ] Design tokens system (`tokens/tokens.json`)
 - [ ] Legal pages (privacy, terms, accessibility)
@@ -75,12 +80,14 @@
 - [ ] Analytics Engine monitoring setup
 
 #### REFACTOR (Modernize)
+
 - [ ] Sport landing pages → Next.js App Router
 - [ ] API functions → Next.js API routes
 - [ ] Static HTML → React components
 - [ ] Python scripts → TypeScript/Node
 
 #### DELETE (Off-Vision)
+
 - [ ] Multi-sport scoreboard (keep baseball only)
 - [ ] Monte Carlo simulations (non-baseball)
 - [ ] Youth sports endpoints
@@ -169,6 +176,7 @@ enum FeedPrecision { EVENT | PITCH }
 ### API Layer (/api/v1)
 
 **Endpoints**:
+
 - `GET /api/v1/games` - List games (filter: date, status, conference)
 - `GET /api/v1/games/[id]` - Full game detail + events + box
 - `GET /api/v1/teams` - List teams
@@ -181,16 +189,19 @@ enum FeedPrecision { EVENT | PITCH }
 ### Ingest Worker (Cloudflare)
 
 **Schedule**:
+
 - Live games: `*/5 * * * *` (every 5 minutes)
 - Hourly: Team stats refresh
 - Nightly: Historical aggregations
 
 **Provider Failover**:
+
 1. Primary: SportsDataIO
 2. Backup: NCAA API
 3. Tertiary: ESPN
 
 **Caching Strategy**:
+
 - Live games: 60s KV TTL
 - Standings: 4hr KV TTL
 - Historical: R2 archival (immutable)
@@ -198,11 +209,13 @@ enum FeedPrecision { EVENT | PITCH }
 ### NLG Content Generation
 
 **Auto-Recap** (15min post-game):
+
 - Fact-check all claims against structured data
 - Generate with Anthropic Claude or OpenAI
 - Store in `Article` table with `type: 'recap'`
 
 **Auto-Preview** (6hr pre-game):
+
 - Analyze team trends, matchup history
 - Update 1hr before if lineups change
 - Store with `type: 'preview'`
@@ -212,6 +225,7 @@ enum FeedPrecision { EVENT | PITCH }
 ## Phase 4: Quality Gates & Launch
 
 ### Performance Budgets
+
 - **LCP**: ≤ 2.5s (mobile 4G)
 - **CLS**: < 0.1
 - **TBT**: ≤ 200ms
@@ -219,11 +233,13 @@ enum FeedPrecision { EVENT | PITCH }
 - **Ingest→UI p99**: < 3s
 
 ### Accessibility
+
 - **Standard**: WCAG 2.2 AA
 - **Tools**: axe DevTools, Lighthouse
 - **Critical Routes**: Home, Hub, Game Center, Team
 
 ### Testing Suite
+
 - **Playwright E2E**: Critical user flows
 - **Lighthouse CI**: Performance gate
 - **Redirect Tests**: 100% coverage
@@ -239,11 +255,13 @@ enum FeedPrecision { EVENT | PITCH }
 ### Rollback Procedure
 
 **Triggers**:
+
 - Error rate > 1%
 - LCP > 3s for 5min
 - API failure rate > 5%
 
 **Steps**:
+
 1. Revert Next.js deployment on Vercel
 2. Restore previous Cloudflare Pages version
 3. Notify team via Slack/email
@@ -254,6 +272,7 @@ enum FeedPrecision { EVENT | PITCH }
 ## Timeline & Milestones
 
 ### Week 1 (Oct 13-19): Archive & Design ✅ COMPLETE
+
 - [x] Create archive directory structure
 - [x] Generate route map JSON (130 routes discovered)
 - [x] Screenshot all pages (mobile) - archived
@@ -263,6 +282,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [x] Create validation scripts (`check-301-consistency.sh`, `check-404s.sh`)
 
 ### Week 2-6: Database & API ✅ COMPLETE
+
 - [x] Implement Prisma schema (6.17.1 + PostgreSQL)
 - [x] Build API endpoints (5 handlers: games, teams, conferences, players, rankings)
 - [x] Create ingest worker (Cloudflare Workers with cron schedule)
@@ -270,6 +290,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [x] Test provider failover (Unit tests + monitoring tools + documentation)
 
 ### Week 6-14: Frontend MVP
+
 - [ ] Next.js project setup (monorepo)
 - [ ] Build Home + Hub pages
 - [ ] Build Game Center (diamond viz, WPA)
@@ -277,6 +298,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [ ] Implement Stripe integration
 
 ### Week 14-17: Polish & QA
+
 - [ ] Lighthouse optimization
 - [ ] Playwright test suite
 - [ ] Accessibility audit
@@ -284,6 +306,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [ ] Security audit
 
 ### Week 18-19: Launch
+
 - [ ] Preview deployments
 - [ ] Staging validation
 - [ ] Canary rollout (10%)
@@ -294,15 +317,18 @@ enum FeedPrecision { EVENT | PITCH }
 ## Risk Assessment
 
 ### High Risk
+
 - **Provider API changes**: Mitigation → Adapter pattern + failover
 - **Database migration issues**: Mitigation → Incremental migration + rollback plan
 - **Performance regressions**: Mitigation → Lighthouse CI gates
 
 ### Medium Risk
+
 - **Redirect coverage gaps**: Mitigation → Automated 404 detection
 - **Content generation quality**: Mitigation → Human review for first 100 articles
 
 ### Low Risk
+
 - **User confusion**: Mitigation → Banner announcement + FAQ
 - **SEO impact**: Mitigation → Proper 301s + sitemap update
 
@@ -311,6 +337,7 @@ enum FeedPrecision { EVENT | PITCH }
 ## Success Metrics
 
 ### Launch Criteria (Must Pass)
+
 - ✅ 0 404s on top 100 legacy URLs
 - ✅ Lighthouse mobile score ≥ 90
 - ✅ API p99 ≤ 200ms
@@ -318,12 +345,14 @@ enum FeedPrecision { EVENT | PITCH }
 - ✅ All E2E tests passing
 
 ### Post-Launch (Week 1)
+
 - **Uptime**: ≥ 99.9%
 - **Error rate**: < 0.5%
 - **Avg page load**: ≤ 2s
 - **Live game lag**: < 60s
 
 ### Post-Launch (Month 1)
+
 - **User retention**: ≥ 60%
 - **Bounce rate**: ≤ 40%
 - **Avg session duration**: ≥ 3min
@@ -334,6 +363,7 @@ enum FeedPrecision { EVENT | PITCH }
 ## Change Log
 
 ### 2025-10-13 (Phase 1 Complete)
+
 - ✅ Migration plan initialized
 - ✅ Archive directory structure created (`/archive/2025-10-13/`)
 - ✅ Route inventory generated (`route-map.json` - 130 routes: 68 HTML, 62 API)
@@ -350,12 +380,14 @@ enum FeedPrecision { EVENT | PITCH }
 - ✅ Phase 1 commit: `ca43b65` (89 files changed, +20,451 lines)
 
 **Key Deliverables**:
+
 - Complete legacy platform snapshot in `/archive/2025-10-13/`
 - Diamond Insights IA specification ready for implementation
 - 301/410 redirect strategy with 100% legacy route coverage
 - Automated validation tooling for post-deployment verification
 
 ### 2025-10-13 (Phase 2 Core API - In Progress)
+
 - ✅ Prisma ORM integration (v6.17.1 + @prisma/client)
 - ✅ PostgreSQL connection configured (DATABASE_URL)
 - ✅ Prisma Client singleton created (`lib/db/prisma.ts`)
@@ -370,6 +402,7 @@ enum FeedPrecision { EVENT | PITCH }
 - ✅ Phase 2 commit: `5d86705` (9 files changed, +2,537 lines)
 
 **Key Features**:
+
 - Type-safe TypeScript interfaces for all API handlers
 - Query parameter validation with pagination support (limit, offset, hasMore)
 - Nested Prisma includes for related data (conferences, teams, players, stats)
@@ -380,11 +413,13 @@ enum FeedPrecision { EVENT | PITCH }
 - Composite rankings aggregation across multiple polls
 
 **Next Steps**:
+
 - ~~Implement Cloudflare Workers ingest layer with cron schedule~~ ✅ COMPLETE
 - Test provider failover (SportsDataIO → NCAA API → ESPN)
 - Integrate NLG content generation (auto-recap/preview)
 
 ### 2025-10-13 (Phase 2 Ingest Worker - Complete)
+
 - ✅ Cloudflare Workers ingest layer implemented (`workers/ingest/`)
 - ✅ Scheduled cron triggers configured:
   - Live games: `*/5 * * * *` (every 5 minutes)
@@ -405,7 +440,7 @@ enum FeedPrecision { EVENT | PITCH }
   - KV caching: 60s TTL for live games, 4hr TTL for standings
   - R2 archival for immutable historical game data
 - ✅ Advanced baseball analytics calculations:
-  - RPI (Rating Percentage Index): (WP*0.25) + (OWP*0.50) + (OOWP*0.25)
+  - RPI (Rating Percentage Index): (WP*0.25) + (OWP*0.50) + (OOWP\*0.25)
   - Strength of Schedule: Average opponent win percentage
   - Pythagorean Win Expectation: Baseball exponent 1.83
 - ✅ Monitoring & observability:
@@ -419,6 +454,7 @@ enum FeedPrecision { EVENT | PITCH }
 - ✅ Phase 2 ingest commit: `bf756cd` (7 files changed, +1,412 lines)
 
 **Key Features**:
+
 - Production-ready scheduled ingest worker with HTTP manual trigger endpoints
 - Automatic provider failover with intelligent circuit breaking
 - Comprehensive error handling and recovery mechanisms
@@ -427,18 +463,21 @@ enum FeedPrecision { EVENT | PITCH }
 - Secret-based authentication for manual triggers
 
 **Total Phase 2 Implementation**:
+
 - 16 files created/modified
 - +3,949 lines of production TypeScript code
 - Complete data ingestion pipeline from provider APIs to database
 - Type-safe interfaces and error handling throughout
 
 **Next Steps**:
+
 - Deploy ingest worker to Cloudflare: `wrangler deploy` from `workers/ingest/`
 - ~~Test provider failover logic with simulated failures~~ (pending)
 - Monitor circuit breaker behavior in production
 - ~~Integrate NLG content generation (auto-recap/preview)~~ ✅ COMPLETE
 
 ### 2025-10-13 (Phase 2 NLG Content Generation - Complete)
+
 - ✅ Natural Language Generation system implemented (`workers/content/`, `lib/nlg/`)
 - ✅ Multi-provider LLM integration with automatic failover:
   - Anthropic Claude 3.5 Sonnet (`claude-3-5-sonnet-20241022`) - Primary provider
@@ -495,6 +534,7 @@ enum FeedPrecision { EVENT | PITCH }
 - ✅ Phase 2 NLG commit: `2a82e73` (6 files changed, +1,459 lines)
 
 **Files Implemented**:
+
 - `workers/content/index.ts` (372 lines) - Main content worker with scheduled handlers
 - `workers/content/types.ts` (96 lines) - TypeScript interfaces for NLG system
 - `workers/content/wrangler.toml` (30 lines) - Cloudflare Workers configuration
@@ -503,6 +543,7 @@ enum FeedPrecision { EVENT | PITCH }
 - `lib/nlg/prompt-templates.ts` (218 lines) - Prompt engineering templates
 
 **Key Features**:
+
 - **Fact-Checkability by Design**: Prompts explicitly forbid LLM hallucination
 - **Active Voice Journalism**: "Texas defeats Oklahoma 34-24" (not "Texas beat Oklahoma")
 - **Database Integration**: Complex Prisma queries with nested includes (venue, teams, conferences, stats, boxLines)
@@ -512,6 +553,7 @@ enum FeedPrecision { EVENT | PITCH }
 - **Confidence Scoring**: Weighted verification scores (not binary pass/fail)
 
 **Total Phase 2 NLG Implementation**:
+
 - 6 files created
 - +1,161 lines of TypeScript + TOML
 - Complete automated content generation pipeline
@@ -520,6 +562,7 @@ enum FeedPrecision { EVENT | PITCH }
 - Scheduled Workers with cron triggers
 
 **Next Steps**:
+
 - Deploy content worker to Cloudflare: `wrangler deploy` from `workers/content/`
 - Set environment secrets: DATABASE_URL, ANTHROPIC_API_KEY, OPENAI_API_KEY, GOOGLE_GEMINI_API_KEY, CONTENT_SECRET
 - Test recap generation on completed games
@@ -528,6 +571,7 @@ enum FeedPrecision { EVENT | PITCH }
 - Monitor fact-check scores via Analytics Engine
 
 ### 2025-10-13 (Phase 2 Provider Failover Testing Framework - Complete)
+
 - ✅ Comprehensive testing framework for provider failover validation
 - ✅ Unit test suite with simulation engine:
   - `tests/integration/provider-failover.test.ts` (454 lines)
@@ -586,6 +630,7 @@ enum FeedPrecision { EVENT | PITCH }
   - Maintenance procedures (weekly, monthly, quarterly)
 
 **Test Suite Features**:
+
 - Time-based testing with `vi.useFakeTimers()` for cooldown validation
 - State persistence validation across multiple failover cycles
 - Provider statistics tracking (requests, successes, failures)
@@ -593,6 +638,7 @@ enum FeedPrecision { EVENT | PITCH }
 - Circuit breaker trip/reset lifecycle testing
 
 **Monitoring Tool Features**:
+
 - Real-time metrics from Analytics Engine (last 1hr default, configurable)
 - Live monitoring mode with 30-second auto-refresh
 - Formatted table output with padding and alignment
@@ -601,6 +647,7 @@ enum FeedPrecision { EVENT | PITCH }
 - GraphQL API integration for efficient data fetching
 
 **Production Readiness Checklist**:
+
 - [x] Unit tests written (22/22 passing)
 - [ ] Staging deployment with simulated failures
 - [ ] Circuit breaker trip/reset validation
@@ -612,6 +659,7 @@ enum FeedPrecision { EVENT | PITCH }
 - [ ] Team training on troubleshooting
 
 **Total Phase 2 Testing Implementation**:
+
 - 3 files created
 - +1,362 lines of TypeScript + Markdown documentation
 - Complete testing framework from unit → integration → production
@@ -619,6 +667,7 @@ enum FeedPrecision { EVENT | PITCH }
 - Comprehensive troubleshooting and maintenance documentation
 
 **Phase 2 Status**: ✅ COMPLETE (API + Ingest + NLG + Testing Framework)
+
 - Core API: 5 endpoints with Prisma ORM integration
 - Ingest Worker: Scheduled cron with provider failover
 - NLG System: Multi-provider LLM with fact-checking

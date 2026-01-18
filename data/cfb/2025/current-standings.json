@@ -8,77 +8,329 @@
     "SEC": {
       "name": "Southeastern Conference",
       "standings": [
-        {"team": "Georgia Bulldogs", "overall": "7-1", "conference": "4-1", "pf": 312, "pa": 187, "streak": "W5"},
-        {"team": "Texas Longhorns", "overall": "7-0", "conference": "4-0", "pf": 289, "pa": 176, "streak": "W7"},
-        {"team": "Alabama Crimson Tide", "overall": "6-2", "conference": "3-2", "pf": 298, "pa": 215, "streak": "W2"},
-        {"team": "LSU Tigers", "overall": "6-2", "conference": "3-2", "pf": 276, "pa": 223, "streak": "W1"},
-        {"team": "Tennessee Volunteers", "overall": "6-2", "conference": "3-2", "pf": 267, "pa": 198, "streak": "L1"},
-        {"team": "Ole Miss Rebels", "overall": "6-2", "conference": "2-2", "pf": 285, "pa": 212, "streak": "W2"},
-        {"team": "Missouri Tigers", "overall": "5-3", "conference": "2-2", "pf": 245, "pa": 231, "streak": "L1"},
-        {"team": "Texas A&M Aggies", "overall": "7-0", "conference": "4-0", "pf": 241, "pa": 238, "streak": "W7"},
-        {"team": "Kentucky Wildcats", "overall": "4-4", "conference": "1-3", "pf": 198, "pa": 245, "streak": "L2"},
-        {"team": "Florida Gators", "overall": "4-4", "conference": "1-4", "pf": 212, "pa": 256, "streak": "L1"},
-        {"team": "Auburn Tigers", "overall": "3-5", "conference": "1-4", "pf": 189, "pa": 271, "streak": "L3"},
-        {"team": "South Carolina Gamecocks", "overall": "3-5", "conference": "1-4", "pf": 176, "pa": 264, "streak": "L2"},
-        {"team": "Arkansas Razorbacks", "overall": "3-5", "conference": "0-4", "pf": 184, "pa": 278, "streak": "L4"},
-        {"team": "Vanderbilt Commodores", "overall": "2-6", "conference": "0-4", "pf": 161, "pa": 289, "streak": "L5"},
-        {"team": "Mississippi State Bulldogs", "overall": "2-6", "conference": "0-5", "pf": 152, "pa": 298, "streak": "L6"},
-        {"team": "Oklahoma Sooners", "overall": "4-4", "conference": "1-3", "pf": 223, "pa": 242, "streak": "L2"}
+        {
+          "team": "Georgia Bulldogs",
+          "overall": "7-1",
+          "conference": "4-1",
+          "pf": 312,
+          "pa": 187,
+          "streak": "W5"
+        },
+        {
+          "team": "Texas Longhorns",
+          "overall": "7-0",
+          "conference": "4-0",
+          "pf": 289,
+          "pa": 176,
+          "streak": "W7"
+        },
+        {
+          "team": "Alabama Crimson Tide",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 298,
+          "pa": 215,
+          "streak": "W2"
+        },
+        {
+          "team": "LSU Tigers",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 276,
+          "pa": 223,
+          "streak": "W1"
+        },
+        {
+          "team": "Tennessee Volunteers",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 267,
+          "pa": 198,
+          "streak": "L1"
+        },
+        {
+          "team": "Ole Miss Rebels",
+          "overall": "6-2",
+          "conference": "2-2",
+          "pf": 285,
+          "pa": 212,
+          "streak": "W2"
+        },
+        {
+          "team": "Missouri Tigers",
+          "overall": "5-3",
+          "conference": "2-2",
+          "pf": 245,
+          "pa": 231,
+          "streak": "L1"
+        },
+        {
+          "team": "Texas A&M Aggies",
+          "overall": "7-0",
+          "conference": "4-0",
+          "pf": 241,
+          "pa": 238,
+          "streak": "W7"
+        },
+        {
+          "team": "Kentucky Wildcats",
+          "overall": "4-4",
+          "conference": "1-3",
+          "pf": 198,
+          "pa": 245,
+          "streak": "L2"
+        },
+        {
+          "team": "Florida Gators",
+          "overall": "4-4",
+          "conference": "1-4",
+          "pf": 212,
+          "pa": 256,
+          "streak": "L1"
+        },
+        {
+          "team": "Auburn Tigers",
+          "overall": "3-5",
+          "conference": "1-4",
+          "pf": 189,
+          "pa": 271,
+          "streak": "L3"
+        },
+        {
+          "team": "South Carolina Gamecocks",
+          "overall": "3-5",
+          "conference": "1-4",
+          "pf": 176,
+          "pa": 264,
+          "streak": "L2"
+        },
+        {
+          "team": "Arkansas Razorbacks",
+          "overall": "3-5",
+          "conference": "0-4",
+          "pf": 184,
+          "pa": 278,
+          "streak": "L4"
+        },
+        {
+          "team": "Vanderbilt Commodores",
+          "overall": "2-6",
+          "conference": "0-4",
+          "pf": 161,
+          "pa": 289,
+          "streak": "L5"
+        },
+        {
+          "team": "Mississippi State Bulldogs",
+          "overall": "2-6",
+          "conference": "0-5",
+          "pf": 152,
+          "pa": 298,
+          "streak": "L6"
+        },
+        {
+          "team": "Oklahoma Sooners",
+          "overall": "4-4",
+          "conference": "1-3",
+          "pf": 223,
+          "pa": 242,
+          "streak": "L2"
+        }
       ]
     },
     "Big_Ten": {
       "name": "Big Ten Conference",
       "standings": [
-        {"team": "Ohio State Buckeyes", "overall": "7-0", "conference": "4-0", "pf": 334, "pa": 156, "streak": "W7"},
-        {"team": "Michigan Wolverines", "overall": "7-1", "conference": "4-1", "pf": 287, "pa": 178, "streak": "W4"},
-        {"team": "Penn State Nittany Lions", "overall": "7-1", "conference": "4-1", "pf": 295, "pa": 189, "streak": "W5"},
-        {"team": "Oregon Ducks", "overall": "7-1", "conference": "4-1", "pf": 301, "pa": 192, "streak": "W3"},
-        {"team": "Iowa Hawkeyes", "overall": "6-2", "conference": "3-2", "pf": 234, "pa": 198, "streak": "W2"},
-        {"team": "Wisconsin Badgers", "overall": "5-3", "conference": "2-3", "pf": 245, "pa": 223, "streak": "L1"}
+        {
+          "team": "Ohio State Buckeyes",
+          "overall": "7-0",
+          "conference": "4-0",
+          "pf": 334,
+          "pa": 156,
+          "streak": "W7"
+        },
+        {
+          "team": "Michigan Wolverines",
+          "overall": "7-1",
+          "conference": "4-1",
+          "pf": 287,
+          "pa": 178,
+          "streak": "W4"
+        },
+        {
+          "team": "Penn State Nittany Lions",
+          "overall": "7-1",
+          "conference": "4-1",
+          "pf": 295,
+          "pa": 189,
+          "streak": "W5"
+        },
+        {
+          "team": "Oregon Ducks",
+          "overall": "7-1",
+          "conference": "4-1",
+          "pf": 301,
+          "pa": 192,
+          "streak": "W3"
+        },
+        {
+          "team": "Iowa Hawkeyes",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 234,
+          "pa": 198,
+          "streak": "W2"
+        },
+        {
+          "team": "Wisconsin Badgers",
+          "overall": "5-3",
+          "conference": "2-3",
+          "pf": 245,
+          "pa": 223,
+          "streak": "L1"
+        }
       ]
     },
     "Big_12": {
       "name": "Big 12 Conference",
       "standings": [
-        {"team": "Oklahoma State Cowboys", "overall": "7-1", "conference": "5-0", "pf": 289, "pa": 187, "streak": "W6"},
-        {"team": "Kansas State Wildcats", "overall": "6-2", "conference": "4-1", "pf": 267, "pa": 201, "streak": "W3"},
-        {"team": "TCU Horned Frogs", "overall": "6-2", "conference": "3-2", "pf": 254, "pa": 215, "streak": "W2"},
-        {"team": "Baylor Bears", "overall": "5-3", "conference": "3-2", "pf": 241, "pa": 228, "streak": "L1"},
-        {"team": "Iowa State Cyclones", "overall": "5-3", "conference": "2-3", "pf": 236, "pa": 234, "streak": "W1"}
+        {
+          "team": "Oklahoma State Cowboys",
+          "overall": "7-1",
+          "conference": "5-0",
+          "pf": 289,
+          "pa": 187,
+          "streak": "W6"
+        },
+        {
+          "team": "Kansas State Wildcats",
+          "overall": "6-2",
+          "conference": "4-1",
+          "pf": 267,
+          "pa": 201,
+          "streak": "W3"
+        },
+        {
+          "team": "TCU Horned Frogs",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 254,
+          "pa": 215,
+          "streak": "W2"
+        },
+        {
+          "team": "Baylor Bears",
+          "overall": "5-3",
+          "conference": "3-2",
+          "pf": 241,
+          "pa": 228,
+          "streak": "L1"
+        },
+        {
+          "team": "Iowa State Cyclones",
+          "overall": "5-3",
+          "conference": "2-3",
+          "pf": 236,
+          "pa": 234,
+          "streak": "W1"
+        }
       ]
     },
     "ACC": {
       "name": "Atlantic Coast Conference",
       "standings": [
-        {"team": "Florida State Seminoles", "overall": "7-1", "conference": "5-0", "pf": 298, "pa": 178, "streak": "W5"},
-        {"team": "Clemson Tigers", "overall": "7-1", "conference": "4-1", "pf": 285, "pa": 189, "streak": "W4"},
-        {"team": "Miami Hurricanes", "overall": "6-2", "conference": "3-2", "pf": 272, "pa": 207, "streak": "W2"},
-        {"team": "North Carolina Tar Heels", "overall": "6-2", "conference": "3-2", "pf": 265, "pa": 218, "streak": "W1"},
-        {"team": "Louisville Cardinals", "overall": "5-3", "conference": "2-3", "pf": 248, "pa": 232, "streak": "L1"}
+        {
+          "team": "Florida State Seminoles",
+          "overall": "7-1",
+          "conference": "5-0",
+          "pf": 298,
+          "pa": 178,
+          "streak": "W5"
+        },
+        {
+          "team": "Clemson Tigers",
+          "overall": "7-1",
+          "conference": "4-1",
+          "pf": 285,
+          "pa": 189,
+          "streak": "W4"
+        },
+        {
+          "team": "Miami Hurricanes",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 272,
+          "pa": 207,
+          "streak": "W2"
+        },
+        {
+          "team": "North Carolina Tar Heels",
+          "overall": "6-2",
+          "conference": "3-2",
+          "pf": 265,
+          "pa": 218,
+          "streak": "W1"
+        },
+        {
+          "team": "Louisville Cardinals",
+          "overall": "5-3",
+          "conference": "2-3",
+          "pf": 248,
+          "pa": 232,
+          "streak": "L1"
+        }
       ]
     },
     "Pac_12": {
       "name": "Pacific-12 Conference",
       "standings": [
-        {"team": "Washington Huskies", "overall": "7-1", "conference": "5-0", "pf": 287, "pa": 171, "streak": "W6"},
-        {"team": "USC Trojans", "overall": "6-2", "conference": "4-1", "pf": 279, "pa": 198, "streak": "W3"},
-        {"team": "UCLA Bruins", "overall": "5-3", "conference": "3-2", "pf": 251, "pa": 223, "streak": "W1"},
-        {"team": "Utah Utes", "overall": "5-3", "conference": "2-3", "pf": 242, "pa": 234, "streak": "L2"}
+        {
+          "team": "Washington Huskies",
+          "overall": "7-1",
+          "conference": "5-0",
+          "pf": 287,
+          "pa": 171,
+          "streak": "W6"
+        },
+        {
+          "team": "USC Trojans",
+          "overall": "6-2",
+          "conference": "4-1",
+          "pf": 279,
+          "pa": 198,
+          "streak": "W3"
+        },
+        {
+          "team": "UCLA Bruins",
+          "overall": "5-3",
+          "conference": "3-2",
+          "pf": 251,
+          "pa": 223,
+          "streak": "W1"
+        },
+        {
+          "team": "Utah Utes",
+          "overall": "5-3",
+          "conference": "2-3",
+          "pf": 242,
+          "pa": 234,
+          "streak": "L2"
+        }
       ]
     }
   },
   "cfpRankings": {
     "top25": [
-      {"rank": 1, "team": "Ohio State", "record": "7-0"},
-      {"rank": 2, "team": "Georgia", "record": "7-1"},
-      {"rank": 3, "team": "Texas", "record": "7-0"},
-      {"rank": 4, "team": "Florida State", "record": "7-1"},
-      {"rank": 5, "team": "Washington", "record": "7-1"},
-      {"rank": 6, "team": "Michigan", "record": "7-1"},
-      {"rank": 7, "team": "Oregon", "record": "7-1"},
-      {"rank": 8, "team": "Penn State", "record": "7-1"},
-      {"rank": 9, "team": "Clemson", "record": "7-1"},
-      {"rank": 10, "team": "Oklahoma State", "record": "7-1"}
+      { "rank": 1, "team": "Ohio State", "record": "7-0" },
+      { "rank": 2, "team": "Georgia", "record": "7-1" },
+      { "rank": 3, "team": "Texas", "record": "7-0" },
+      { "rank": 4, "team": "Florida State", "record": "7-1" },
+      { "rank": 5, "team": "Washington", "record": "7-1" },
+      { "rank": 6, "team": "Michigan", "record": "7-1" },
+      { "rank": 7, "team": "Oregon", "record": "7-1" },
+      { "rank": 8, "team": "Penn State", "record": "7-1" },
+      { "rank": 9, "team": "Clemson", "record": "7-1" },
+      { "rank": 10, "team": "Oklahoma State", "record": "7-1" }
     ],
     "releaseDate": "2025-10-22",
     "note": "First College Football Playoff rankings of 2025 season released October 22, 2025"
@@ -86,10 +338,25 @@
   "upcomingWeek": {
     "week": 10,
     "notableMatchups": [
-      {"date": "2025-10-26", "game": "Texas @ Vanderbilt", "network": "SEC Network", "time": "2:30 PM CT"},
-      {"date": "2025-10-26", "game": "Ohio State @ Penn State", "network": "FOX", "time": "11:00 AM CT"},
-      {"date": "2025-10-26", "game": "Georgia @ Florida", "network": "CBS", "time": "2:30 PM CT"},
-      {"date": "2025-10-26", "game": "Michigan @ Michigan State", "network": "ABC", "time": "6:30 PM CT"}
+      {
+        "date": "2025-10-26",
+        "game": "Texas @ Vanderbilt",
+        "network": "SEC Network",
+        "time": "2:30 PM CT"
+      },
+      {
+        "date": "2025-10-26",
+        "game": "Ohio State @ Penn State",
+        "network": "FOX",
+        "time": "11:00 AM CT"
+      },
+      { "date": "2025-10-26", "game": "Georgia @ Florida", "network": "CBS", "time": "2:30 PM CT" },
+      {
+        "date": "2025-10-26",
+        "game": "Michigan @ Michigan State",
+        "network": "ABC",
+        "time": "6:30 PM CT"
+      }
     ]
   },
   "notes": [

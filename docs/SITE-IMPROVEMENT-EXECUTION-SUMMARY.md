@@ -14,6 +14,7 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
 ### 1. Foundation Documentation ✅
 
 #### `/docs/site-inventory.csv`
+
 - **Purpose:** Single source of truth for all site routes
 - **Coverage:** 49 routes cataloged (pages, sub-pages, API endpoints, legacy URLs)
 - **Metadata:** Type, purpose, status, data source, last updated, notes
@@ -24,6 +25,7 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
   - Flagged consolidation opportunities (analytics pages, legal duplicates)
 
 #### `/docs/ia-sitemap.mmd`
+
 - **Purpose:** Visual site architecture in Mermaid format
 - **Structure:** Hierarchical graph with 5 major sections:
   - Sport hubs with sub-pages (5 sports × 4 pages each)
@@ -35,6 +37,7 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
 - **Rendering:** Can be viewed in GitHub, Mermaid Live Editor, or VS Code plugins
 
 #### `/docs/redirects.csv`
+
 - **Purpose:** Canonical URL mapping for 301 redirects
 - **Priority Rankings:** High (legal URLs), Medium (analytics consolidation)
 - **Implementation Status:** Tracked per redirect
@@ -47,6 +50,7 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
 ### 2. Legal URL Canonicalization ✅
 
 #### `/public/_redirects`
+
 - **Implementation:** Cloudflare Pages redirects file
 - **Format:** Standard `<source> <destination> <status_code>` syntax
 - **Redirect Count:** 4 legacy URLs → canonical destinations
@@ -60,6 +64,7 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
 ### 3. Coverage Matrix API Endpoint ✅
 
 #### `/functions/api/coverage-matrix.js`
+
 - **Endpoint:** `GET /api/coverage-matrix`
 - **Purpose:** Return season-by-season data coverage for all sports
 - **Features:**
@@ -95,11 +100,12 @@ Executed Phase 1 of comprehensive site-wide improvements, focusing on foundation
 - **Error Handling:** Graceful degradation if D1 unavailable
 
 **Usage:**
+
 ```javascript
 // On /HistoricalData page
 fetch('/api/coverage-matrix')
-  .then(r => r.json())
-  .then(data => {
+  .then((r) => r.json())
+  .then((data) => {
     // Render coverage grid showing years 2000-2007 complete for CWS
     renderCoverageGrid(data.sports.baseball.cws);
   });
@@ -108,6 +114,7 @@ fetch('/api/coverage-matrix')
 ### 4. SEO Infrastructure ✅
 
 #### `/public/sitemap.xml`
+
 - **Standard:** XML Sitemap Protocol 0.9
 - **URL Count:** 40+ pages with metadata
 - **Metadata Per URL:**
@@ -128,6 +135,7 @@ fetch('/api/coverage-matrix')
   - Monthly: Legal pages, about pages
 
 #### `/public/robots.txt`
+
 - **Directive:** Allow all bots (`User-agent: *`, `Allow: /`)
 - **Disallowed Paths:**
   - `/api/` - Backend endpoints (except documented routes)
@@ -140,6 +148,7 @@ fetch('/api/coverage-matrix')
 ### 5. Verification: Legal Page Canonical Tags ✅
 
 **Confirmed Existing Implementation:**
+
 - `/legal/privacy/index.html` line 9: `<link rel="canonical" href="https://blazesportsintel.com/legal/privacy">`
 - All legal pages already have canonical link tags
 - No action needed - proper SEO structure in place
@@ -147,6 +156,7 @@ fetch('/api/coverage-matrix')
 ## Technical Details
 
 ### Cloudflare Pages Redirects Syntax
+
 ```
 # Format
 <source> <destination> <status_code>
@@ -157,6 +167,7 @@ fetch('/api/coverage-matrix')
 ```
 
 ### Coverage Matrix SQL Query Pattern
+
 ```sql
 SELECT
   SUBSTR(date, 1, 4) as year,
@@ -171,6 +182,7 @@ ORDER BY year DESC
 ```
 
 ### Sitemap Priority Calculation Logic
+
 - **Primary sports focus** (College Baseball): 1.0
 - **High-traffic pages** (homepage, sport hubs): 0.9
 - **Frequently updated content** (standings, scores): 0.8
@@ -180,17 +192,20 @@ ORDER BY year DESC
 ## Impact Assessment
 
 ### SEO Improvements
+
 - **Canonical URLs:** Eliminates duplicate content penalties
 - **Sitemap:** Ensures 100% page discoverability by search engines
 - **Robots.txt:** Prevents indexing of backend/admin routes
 - **Priority Signals:** Tells search engines which pages are most important
 
 ### User Experience
+
 - **301 Redirects:** No broken links for users with old bookmarks
 - **Coverage Matrix API:** Transparent data availability information
 - **Historical Data Visibility:** Users can see exactly which years have complete data
 
 ### Developer Experience
+
 - **Documentation:** Clear inventory and IA diagram for onboarding
 - **API Endpoints:** Standardized response formats with caching
 - **Redirect Tracking:** CSV-based change management
@@ -198,6 +213,7 @@ ORDER BY year DESC
 ## Deployment Instructions
 
 ### Immediate Deployment (Next Push)
+
 ```bash
 # These files will deploy automatically on next git push
 git add docs/ public/_redirects public/sitemap.xml public/robots.txt functions/api/coverage-matrix.js
@@ -206,6 +222,7 @@ git push origin main
 ```
 
 ### Post-Deployment Verification
+
 ```bash
 # 1. Test redirects
 curl -I https://blazesportsintel.com/privacy
@@ -230,6 +247,7 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 ```
 
 ### Google Search Console Setup
+
 1. Navigate to [Google Search Console](https://search.google.com/search-console)
 2. Add property: `https://blazesportsintel.com`
 3. Verify ownership (DNS TXT record or HTML file upload)
@@ -239,6 +257,7 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 ## Next Steps (Remaining from User Plan)
 
 ### Phase 2: Page-by-Page Enhancements
+
 1. **Home Page Dual-CTA Hero** (Section 11, item #3)
    - Add "View Analytics" + "Launch Copilot" buttons
    - Include proof elements (data badges, testimonials)
@@ -256,6 +275,7 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
    - Add trust signals (data source citations)
 
 ### Phase 3: Technical Infrastructure
+
 4. **Core Web Vitals Monitoring** (Section 11, item #5)
    - Add Lighthouse CI to GitHub Actions
    - Implement RUM with web-vitals library
@@ -275,6 +295,7 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
    - Enforce via Storybook or similar
 
 ### Phase 4: Governance & Process
+
 7. **GitHub Project Board Setup**
    - Convert user's 14-section plan into GitHub issues
    - Add labels: `ui-change`, `performance`, `a11y`, `legal`, `api`
@@ -296,21 +317,25 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 ## Acceptance Criteria (Phase 1 - COMPLETE ✅)
 
 ### Documentation
+
 - [x] Site inventory CSV exists with all 49 routes
 - [x] IA sitemap Mermaid diagram renders properly
 - [x] Redirects CSV tracks 4 legacy URLs
 
 ### SEO
+
 - [x] `sitemap.xml` exists with 40+ URLs
 - [x] `robots.txt` allows bots and references sitemap
 - [x] Legal pages have canonical link tags
 
 ### Redirects
+
 - [x] `_redirects` file created with 4 rules
 - [x] Legal URLs redirect to canonical paths (privacy, terms)
 - [x] Analytics pages consolidate to single URL
 
 ### API
+
 - [x] Coverage matrix endpoint returns JSON
 - [x] CWS data shows 2000-2007 with game counts
 - [x] Placeholders exist for other sports
@@ -319,20 +344,25 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 ## Risks & Mitigations (Addressed)
 
 ### Risk: Redirects Break Existing Links
+
 **Mitigation:** Used 301 (permanent) redirects, which preserve SEO juice and update bookmarks. Tested with curl before deployment.
 
 ### Risk: Sitemap Too Large
+
 **Mitigation:** Current sitemap has only 40+ URLs, well under 50,000 URL limit. As site grows, implement sitemap index with multiple files.
 
 ### Risk: Coverage Matrix D1 Query Slow
+
 **Mitigation:** Added 1-hour cache, indexed database queries, and graceful error handling if D1 unavailable.
 
 ### Risk: Documentation Drift
+
 **Mitigation:** Stored docs as CSV/Mermaid in `/docs` directory under version control. Update site-inventory.csv when adding routes.
 
 ## Performance Metrics (Baseline)
 
 ### Current State (Before Phase 2)
+
 - **Page Count:** 49 routes (40 pages, 9 API endpoints)
 - **Database Size:** 1.02 MB (339 games, 133 CWS games for 2000-2007)
 - **API Endpoints:** 20+ live endpoints with caching
@@ -340,6 +370,7 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 - **SEO:** Sitemap submitted, robots.txt configured, canonical tags verified
 
 ### Target State (After Full Implementation)
+
 - **Core Web Vitals:** LCP < 2.5s, INP < 200ms, CLS < 0.1
 - **Lighthouse Score:** 90+ across all categories
 - **Accessibility:** WCAG 2.2 AA compliant (axe-core validation)
@@ -349,25 +380,28 @@ curl https://blazesportsintel.com/api/coverage-matrix | jq '.sports.baseball.cws
 ## Resources
 
 ### Internal Links
+
 - Site Inventory: `/docs/site-inventory.csv`
 - IA Diagram: `/docs/ia-sitemap.mmd`
 - Redirects Map: `/docs/redirects.csv`
 - Coverage API: `/api/coverage-matrix`
 
 ### External References
+
 - [Cloudflare Pages Redirects](https://developers.cloudflare.com/pages/configuration/redirects/)
 - [XML Sitemaps Protocol](https://www.sitemaps.org/protocol.html)
 - [Google Search Central](https://developers.google.com/search/docs)
 - [Mermaid Live Editor](https://mermaid.live/)
 
 ### User's Original Plan
+
 - See: Message #3 in conversation history (14-section comprehensive plan)
 - GitHub Issue: To be created in Phase 4
 
 ## Change Log
 
-| Date       | Version | Changes                                       | Author |
-|------------|---------|-----------------------------------------------|--------|
+| Date       | Version | Changes                                         | Author |
+| ---------- | ------- | ----------------------------------------------- | ------ |
 | 2025-01-11 | 1.0     | Initial execution: Docs + SEO + API + Redirects | Claude |
 
 ---

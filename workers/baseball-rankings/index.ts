@@ -41,7 +41,10 @@ function formatCentralTimeTimestamp(isoDate: string): string {
   }).format(date);
 }
 
-function renderMovement(entry: RankingEntry): { label: string; direction: 'up' | 'down' | 'steady'; } {
+function renderMovement(entry: RankingEntry): {
+  label: string;
+  direction: 'up' | 'down' | 'steady';
+} {
   const raw = entry.movement?.trim();
   if (!raw || raw === '0' || raw === '—' || raw === '-') {
     return { label: '—', direction: 'steady' };

@@ -1,0 +1,19 @@
+{
+  "name": "backyard-baseball-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "db:migrate": "wrangler d1 migrations apply bsi-game-telemetry --remote",
+    "db:migrate:staging": "wrangler d1 migrations apply bsi-game-telemetry-staging --remote",
+    "db:create": "wrangler d1 create bsi-game-telemetry"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.4"
+  }
+}

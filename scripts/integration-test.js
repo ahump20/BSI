@@ -7,21 +7,27 @@
  */
 
 import { getMlbTeam, getMlbStandings } from '../lib/api/mlb.js';
-import { toTeamCardView as mlbTeamView, toStandingsView as mlbStandingsView } from '../lib/adapters/mlb.js';
+import {
+  toTeamCardView as mlbTeamView,
+  toStandingsView as mlbStandingsView,
+} from '../lib/adapters/mlb.js';
 import { getNflTeam, getNflStandings } from '../lib/api/nfl.js';
-import { toTeamCardView as nflTeamView, toStandingsView as nflStandingsView } from '../lib/adapters/nfl.js';
+import {
+  toTeamCardView as nflTeamView,
+  toStandingsView as nflStandingsView,
+} from '../lib/adapters/nfl.js';
 
 const TEST_CONFIGS = {
   MLB: {
     teamId: '138', // St. Louis Cardinals
     sport: 'MLB',
-    expectation: 'Cardinals'
+    expectation: 'Cardinals',
   },
   NFL: {
     teamId: '10', // Tennessee Titans
     sport: 'NFL',
-    expectation: 'Titans'
-  }
+    expectation: 'Titans',
+  },
 };
 
 class IntegrationTestRunner {
@@ -30,7 +36,7 @@ class IntegrationTestRunner {
       passed: 0,
       failed: 0,
       warnings: 0,
-      errors: []
+      errors: [],
     };
     this.startTime = Date.now();
   }
@@ -51,7 +57,6 @@ class IntegrationTestRunner {
   }
 
   async testMlbIntegration() {
-
     try {
       // Test API layer
       const teamData = await getMlbTeam(TEST_CONFIGS.MLB.teamId);
@@ -90,15 +95,12 @@ class IntegrationTestRunner {
         standingsViewModel.division && standingsViewModel.division.length > 0,
         'MLB standings view model has division data'
       );
-
-
     } catch (error) {
       await this.assert(false, `MLB Integration failed: ${error.message}`);
     }
   }
 
   async testNflIntegration() {
-
     try {
       // Test API layer
       const teamData = await getNflTeam(TEST_CONFIGS.NFL.teamId);
@@ -137,25 +139,16 @@ class IntegrationTestRunner {
         standingsViewModel.conference && standingsViewModel.conference.length > 0,
         'NFL standings view model has conference data'
       );
-
-
     } catch (error) {
       await this.assert(false, `NFL Integration failed: ${error.message}`);
     }
   }
 
   async testTypeScriptCompilation() {
-
     // Test that imports resolve correctly
-    await this.assert(
-      typeof getMlbTeam === 'function',
-      'MLB API functions imported correctly'
-    );
+    await this.assert(typeof getMlbTeam === 'function', 'MLB API functions imported correctly');
 
-    await this.assert(
-      typeof getNflTeam === 'function',
-      'NFL API functions imported correctly'
-    );
+    await this.assert(typeof getNflTeam === 'function', 'NFL API functions imported correctly');
 
     await this.assert(
       typeof mlbTeamView === 'function',
@@ -166,11 +159,9 @@ class IntegrationTestRunner {
       typeof nflTeamView === 'function',
       'NFL adapter functions imported correctly'
     );
-
   }
 
   async testErrorHandling() {
-
     try {
       // Test invalid team ID
       const invalidTeamResult = await getMlbTeam('99999');
@@ -186,15 +177,12 @@ class IntegrationTestRunner {
         nullAdapterResult && nullAdapterResult.name,
         'Adapter handles null input gracefully'
       );
-
-
     } catch (error) {
       await this.assert(false, `Error handling test failed: ${error.message}`);
     }
   }
 
   async runAll() {
-
     await this.testTypeScriptCompilation();
     await this.testMlbIntegration();
     await this.testNflIntegration();
@@ -206,13 +194,12 @@ class IntegrationTestRunner {
     if (this.results.failed > 0) {
       process.exit(1);
     }
-
   }
 }
 
 // Run the test suite
 const runner = new IntegrationTestRunner();
-runner.runAll().catch(error => {
+runner.runAll().catch((error) => {
   console.error('🚨 Test runner failed:', error);
   process.exit(1);
 });

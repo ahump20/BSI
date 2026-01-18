@@ -13,6 +13,7 @@ These scripts help ensure the security and quality of npm dependencies used in B
 Scans all dependencies in `package.json` and generates a Socket.dev-compatible payload.
 
 **Usage:**
+
 ```bash
 # Standard audit with full output
 node scripts/audit-deps.js
@@ -25,12 +26,14 @@ node scripts/audit-deps.js --json
 ```
 
 **What it does:**
+
 - Reads package.json dependencies (production, dev, and optional)
 - Formats data for Socket MCP tool
 - Displays dependency summary and Socket payload
 - Outputs 40+ dependencies from BSI's stack
 
 **Output includes:**
+
 - Dependency count by type (production/dev/optional)
 - Complete list of packages with versions
 - Ready-to-use Socket:depscore() payload
@@ -40,6 +43,7 @@ node scripts/audit-deps.js --json
 Checks a package before adding it to your dependencies.
 
 **Usage:**
+
 ```bash
 # Check latest version
 node scripts/check-new-dep.js <package-name>
@@ -53,12 +57,14 @@ node scripts/check-new-dep.js itty-router 5.0.0
 ```
 
 **What it does:**
+
 - Fetches package metadata from npm registry
 - Displays package information (description, license, maintainers)
 - Generates Socket MCP payload for the single package
 - Provides decision criteria and next steps
 
 **Pre-install workflow:**
+
 1. Run this script
 2. Copy Socket:depscore() payload
 3. Run through Socket MCP tool
@@ -68,13 +74,13 @@ node scripts/check-new-dep.js itty-router 5.0.0
 
 Socket evaluates packages across **5 dimensions** with weighted scores:
 
-| Dimension | Weight | What it measures |
-|-----------|--------|------------------|
-| **Vulnerability** | 35% | Known CVEs, security vulnerabilities |
-| **Supply Chain** | 25% | Typosquatting, hijacking risk, suspicious patterns |
-| **Maintenance** | 20% | Active development, regular updates |
-| **Quality** | 15% | Code quality, documentation, testing |
-| **License** | 5% | OSS compliance, license clarity |
+| Dimension         | Weight | What it measures                                   |
+| ----------------- | ------ | -------------------------------------------------- |
+| **Vulnerability** | 35%    | Known CVEs, security vulnerabilities               |
+| **Supply Chain**  | 25%    | Typosquatting, hijacking risk, suspicious patterns |
+| **Maintenance**   | 20%    | Active development, regular updates                |
+| **Quality**       | 15%    | Code quality, documentation, testing               |
+| **License**       | 5%     | OSS compliance, license clarity                    |
 
 ### Score Thresholds
 
@@ -85,17 +91,19 @@ Socket evaluates packages across **5 dimensions** with weighted scores:
 ### Interpreting Results
 
 **Good package example:**
+
 ```
 pkg:npm/hono@4.11.1:
-  license: 100, maintenance: 96, quality: 97, 
+  license: 100, maintenance: 96, quality: 97,
   supplyChain: 99, vulnerability: 100
 Weighted: 98.1 ✅
 ```
 
 **Concerning package example:**
+
 ```
 pkg:npm/sketchy-lib@1.0.0:
-  license: 50, maintenance: 30, quality: 45, 
+  license: 50, maintenance: 30, quality: 45,
   supplyChain: 60, vulnerability: 80
 Weighted: 54.5 ❌
 ```
@@ -105,6 +113,7 @@ Weighted: 54.5 ❌
 ### Manual Workflow
 
 1. **Before adding any new dependency:**
+
    ```bash
    node scripts/check-new-dep.js <package-name>
    # Review Socket scores
@@ -154,16 +163,17 @@ Or add to Wrangler pre-deploy hook:
 After running either script, you'll get a payload like:
 
 ```javascript
-Socket:depscore({
+Socket: depscore({
   packages: [
-    { depname: "hono", ecosystem: "npm", version: "4.11.1" },
-    { depname: "zod", ecosystem: "npm", version: "3.22.0" },
+    { depname: 'hono', ecosystem: 'npm', version: '4.11.1' },
+    { depname: 'zod', ecosystem: 'npm', version: '3.22.0' },
     // ... more packages
-  ]
-})
+  ],
+});
 ```
 
 **To evaluate:**
+
 1. Copy the entire payload
 2. Use the Socket MCP tool in your environment
 3. Review the returned scores
@@ -186,12 +196,14 @@ These scripts are for **build-time** and **pre-deploy** checks only, not runtime
 As of the initial audit, BSI uses:
 
 **Production packages:** ~19 including:
+
 - `hono`, `zod`, `react`, `react-dom`, `lucide-react`
 - `@tanstack/react-query`, `framer-motion`, `recharts`
 - `@amplitude/analytics-browser`, `@sentry/node`
 - `luxon`, `fuse.js`, `clsx`, `tailwind-merge`
 
 **Dev packages:** ~29 including:
+
 - `@cloudflare/workers-types`, `wrangler`
 - `next`, `vite`, `vitest`, `playwright`
 - `typescript`, `eslint`, `prettier`
@@ -202,15 +214,18 @@ As of the initial audit, BSI uses:
 ## Troubleshooting
 
 **"Cannot find module" error:**
+
 - Ensure you're running from BSI root directory
 - Verify package.json exists at `../package.json` relative to scripts/
 
 **"Error fetching latest version":**
+
 - Check network connectivity
 - Verify package name is correct on npm registry
 - Use specific version flag if package lookup fails
 
 **Socket MCP tool not available:**
+
 - These scripts generate payloads; Socket evaluation is manual
 - Contact your MCP server administrator for Socket tool access
 - Alternatively, use Socket.dev web interface or CLI
@@ -218,6 +233,7 @@ As of the initial audit, BSI uses:
 ## Contributing
 
 When modifying these scripts:
+
 1. Follow BSI conventions (see `/CLAUDE.md`)
 2. Test with `node scripts/audit-deps.js`
 3. Validate output format matches Socket MCP requirements

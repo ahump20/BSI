@@ -16,6 +16,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ New "Real-Time Dashboard" tab appears
 - ✅ 6 cards display (Live Games, Standings, Quick Stats, AI, Performance, Status)
 - ✅ Cards expand on click
@@ -34,6 +35,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ "⚾ MLB Statcast" section below roster
 - ✅ Canvas spray chart renders
 - ✅ 4 stats show: xBA, Barrel Rate, Attack Angle, Exit Velo
@@ -51,6 +53,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ "🏈 NFL Next Gen Stats" section appears
 - ✅ Canvas field visualization renders
 - ✅ 5 play buttons at top
@@ -69,6 +72,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ "🤖 AI Predictions" section appears
 - ✅ Two toggle buttons: "Injury Risk" and "Performance Forecast"
 - ✅ Risk metrics display with color coding
@@ -88,6 +92,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ Visualization mode toggle appears
 - ✅ Plotly.js option available (if WebGPU supported)
 - ✅ Chart renders with interactive hover
@@ -106,6 +111,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ Visualization mode toggle appears
 - ✅ deck.gl option available (if WebGL2 supported)
 - ✅ GPU-accelerated rendering active
@@ -129,6 +135,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ All 6 features active simultaneously
 - ✅ No console errors
 - ✅ Page loads in <5s
@@ -136,6 +143,7 @@ location.reload();
 - ✅ Memory usage <200MB
 
 **Check Console**:
+
 ```
 📊 Enabled Features: 6 / 6
 ```
@@ -156,6 +164,7 @@ location.reload();
 ```
 
 **Expected**:
+
 - ✅ Back to baseline (existing features only)
 - ✅ Zero impact from testing
 
@@ -163,24 +172,26 @@ location.reload();
 
 ## 📊 Browser Compatibility Quick Check
 
-| Browser | WebGPU | WebGL2 | All Features |
-|---------|--------|--------|--------------|
-| Chrome 113+ | ✅ | ✅ | ✅ Full support |
-| Edge 113+ | ✅ | ✅ | ✅ Full support |
-| Firefox 115+ | ❌ | ✅ | ⚠️ No WebGPU (WebGL2 fallback) |
-| Safari 16+ | ⚠️ | ✅ | ⚠️ Limited WebGPU |
-| Mobile | ❌ | ✅ | ⚠️ Canvas 2D fallback |
+| Browser      | WebGPU | WebGL2 | All Features                   |
+| ------------ | ------ | ------ | ------------------------------ |
+| Chrome 113+  | ✅     | ✅     | ✅ Full support                |
+| Edge 113+    | ✅     | ✅     | ✅ Full support                |
+| Firefox 115+ | ❌     | ✅     | ⚠️ No WebGPU (WebGL2 fallback) |
+| Safari 16+   | ⚠️     | ✅     | ⚠️ Limited WebGPU              |
+| Mobile       | ❌     | ✅     | ⚠️ Canvas 2D fallback          |
 
 ---
 
 ## ⏱️ Performance Quick Check
 
 **Open DevTools > Performance**:
+
 1. Start recording
 2. Enable all features + reload
 3. Stop after page fully loaded
 
 **Targets**:
+
 - Load Time: <3s
 - Memory: <200MB
 - No layout shifts
@@ -191,6 +202,7 @@ location.reload();
 ## 🎯 Production Rollout (Copy-Paste)
 
 **Week 1, Day 1** (Real-Time Dashboard):
+
 ```bash
 # Edit analytics.html line 580
 # Change: realTimeDashboard: true
@@ -201,6 +213,7 @@ git commit -m "🚀 Enable Real-Time Dashboard"
 ```
 
 **Week 1, Day 2** (+ MLB Statcast):
+
 ```bash
 # Edit analytics.html line 581
 # Change: mlbStatcast: true
@@ -211,6 +224,7 @@ git commit -m "⚾ Enable MLB Statcast"
 ```
 
 **Week 1, Day 3** (+ NFL Next Gen Stats):
+
 ```bash
 # Edit analytics.html line 582
 # Change: nflNextGenStats: true
@@ -221,6 +235,7 @@ git commit -m "🏈 Enable NFL Next Gen Stats"
 ```
 
 **Week 2, Day 7** (+ AI Predictions):
+
 ```bash
 # Edit analytics.html line 583
 # Change: aiPredictions: true
@@ -231,6 +246,7 @@ git commit -m "🤖 Enable AI Predictions"
 ```
 
 **Week 3, Day 14** (+ Plotly WebGPU):
+
 ```bash
 # Edit analytics.html line 585
 # Change: plotlyWebGPU: true
@@ -241,6 +257,7 @@ git commit -m "⚡ Enable Plotly WebGPU"
 ```
 
 **Week 3, Day 16** (+ deck.gl - ALL FEATURES):
+
 ```bash
 # Edit analytics.html line 584
 # Change: deckGLVisualization: true

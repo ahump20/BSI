@@ -201,8 +201,7 @@ class SecondOpinionServer {
             },
             context: {
               type: 'string',
-              description:
-                'Optional background context about your project, constraints, or goals',
+              description: 'Optional background context about your project, constraints, or goals',
             },
             code: {
               type: 'string',
@@ -225,8 +224,7 @@ class SecondOpinionServer {
             },
             context: {
               type: 'string',
-              description:
-                'Optional background context about your project, constraints, or goals',
+              description: 'Optional background context about your project, constraints, or goals',
             },
             code: {
               type: 'string',
@@ -249,8 +247,7 @@ class SecondOpinionServer {
             },
             context: {
               type: 'string',
-              description:
-                'Optional background context about your project, constraints, or goals',
+              description: 'Optional background context about your project, constraints, or goals',
             },
             code: {
               type: 'string',
@@ -288,7 +285,9 @@ class SecondOpinionServer {
     });
   }
 
-  private async handleAskGpt(args: AskGptArgs): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async handleAskGpt(
+    args: AskGptArgs
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     if (!this.openaiClient || !this.openaiAvailable) {
       return {
         content: [
@@ -297,7 +296,8 @@ class SecondOpinionServer {
             text: JSON.stringify(
               {
                 error: 'OpenAI client not available',
-                message: 'OPENAI_API_KEY environment variable is not set. Please configure it to use GPT tools.',
+                message:
+                  'OPENAI_API_KEY environment variable is not set. Please configure it to use GPT tools.',
                 timestamp: formatChicagoTimestamp(),
               },
               null,
@@ -362,7 +362,9 @@ class SecondOpinionServer {
     }
   }
 
-  private async handleAskGemini(args: AskGeminiArgs): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async handleAskGemini(
+    args: AskGeminiArgs
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     if (!this.geminiClient || !this.geminiAvailable) {
       return {
         content: [
@@ -371,7 +373,8 @@ class SecondOpinionServer {
             text: JSON.stringify(
               {
                 error: 'Gemini client not available',
-                message: 'GOOGLE_AI_API_KEY environment variable is not set. Please configure it to use Gemini tools.',
+                message:
+                  'GOOGLE_AI_API_KEY environment variable is not set. Please configure it to use Gemini tools.',
                 timestamp: formatChicagoTimestamp(),
               },
               null,
@@ -430,7 +433,9 @@ class SecondOpinionServer {
     }
   }
 
-  private async handleCompareOpinions(args: CompareOpinionsArgs): Promise<{ content: Array<{ type: string; text: string }> }> {
+  private async handleCompareOpinions(
+    args: CompareOpinionsArgs
+  ): Promise<{ content: Array<{ type: string; text: string }> }> {
     const startTime = Date.now();
 
     // Run both requests in parallel for faster response

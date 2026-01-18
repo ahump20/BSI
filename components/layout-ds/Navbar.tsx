@@ -24,6 +24,8 @@ export interface NavbarProps {
   actions?: React.ReactNode;
   /** Fixed/sticky behavior */
   variant?: 'fixed' | 'sticky' | 'static';
+  /** Secondary navigation for sport-specific tabs */
+  secondaryNav?: NavItem[];
   /** Additional class names */
   className?: string;
 }
@@ -37,7 +39,14 @@ export interface NavbarProps {
  * - Mobile menu toggle
  * - Smooth show/hide on scroll
  */
-export function Navbar({ items, logo, actions, variant = 'sticky', className }: NavbarProps) {
+export function Navbar({
+  items,
+  logo,
+  actions,
+  variant = 'sticky',
+  secondaryNav,
+  className,
+}: NavbarProps) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,6 +143,19 @@ export function Navbar({ items, logo, actions, variant = 'sticky', className }: 
               </button>
             </div>
           </nav>
+
+          {/* Secondary Navigation - Sport-specific tabs */}
+          {secondaryNav && secondaryNav.length > 0 && (
+            <nav
+              className="flex items-center gap-1 border-t border-border-subtle pt-2 pb-1 -mx-4 px-4 overflow-x-auto scrollbar-none"
+              role="navigation"
+              aria-label="Section navigation"
+            >
+              {secondaryNav.map((item) => (
+                <SecondaryNavLink key={item.href} item={item} isActive={isActive(item.href)} />
+              ))}
+            </nav>
+          )}
         </Container>
       </header>
 
@@ -154,20 +176,55 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
     <Link
       href={item.href}
       className={cn(
-        'relative px-4 py-2 text-sm font-medium transition-colors',
+        'group relative px-4 py-2 text-sm font-medium transition-all duration-200',
         'hover:text-burnt-orange',
         isActive ? 'text-burnt-orange' : 'text-text-secondary'
       )}
     >
-      {item.label}
+      <span className="relative z-10">{item.label}</span>
       {item.badge && (
-        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-semibold rounded bg-burnt-orange/20 text-burnt-orange">
+        <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-semibold rounded bg-burnt-orange/20 text-burnt-orange transition-colors group-hover:bg-burnt-orange/30">
           {item.badge}
         </span>
       )}
-      {/* Active indicator */}
-      {isActive && (
-        <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-burnt-orange rounded-full" />
+      {/* Hover background effect */}
+      <span
+        className={cn(
+          'absolute inset-0 rounded-md bg-burnt-orange/0 transition-all duration-200',
+          'group-hover:bg-burnt-orange/10'
+        )}
+      />
+      {/* Active/Hover indicator */}
+      <span
+        className={cn(
+          'absolute bottom-0 left-4 right-4 h-0.5 bg-burnt-orange rounded-full transition-all duration-200',
+          isActive
+            ? 'opacity-100 scale-x-100'
+            : 'opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100'
+        )}
+      />
+    </Link>
+  );
+}
+
+// Secondary nav link component - smaller, pill-style
+function SecondaryNavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        'group shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200',
+        'hover:bg-white/10 hover:scale-105 active:scale-100',
+        isActive
+          ? 'bg-burnt-orange/20 text-burnt-orange border border-burnt-orange/30 shadow-[0_0_12px_rgba(191,87,0,0.2)]'
+          : 'text-text-secondary border border-transparent hover:border-burnt-orange/20 hover:text-burnt-orange'
+      )}
+    >
+      {item.label}
+      {item.badge && (
+        <span className="ml-1.5 px-1 py-0.5 text-[9px] font-semibold rounded bg-burnt-orange text-white transition-transform group-hover:scale-110">
+          {item.badge}
+        </span>
       )}
     </Link>
   );

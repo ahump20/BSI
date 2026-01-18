@@ -13,6 +13,7 @@ This document outlines the PR workflow for the BSI repository to maintain code q
 ```
 
 **Types:**
+
 - `feature/` - New features or enhancements
 - `fix/` - Bug fixes
 - `hotfix/` - Critical production fixes
@@ -22,6 +23,7 @@ This document outlines the PR workflow for the BSI repository to maintain code q
 - `chore/` - Maintenance tasks, dependency updates
 
 **Examples:**
+
 ```bash
 feature/platform-access-hub
 fix/team-navigation-activeview
@@ -68,6 +70,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
 **Commit Emoji Guide:**
+
 - ✨ `:sparkles:` - New feature
 - 🐛 `:bug:` - Bug fix
 - 🔥 `:fire:` - Remove code/files
@@ -126,6 +129,7 @@ EOF
 ### 6. Code Review Process
 
 **For Reviewers:**
+
 - Check code quality and style
 - Verify tests pass
 - Test functionality manually
@@ -133,6 +137,7 @@ EOF
 - Approve or request changes
 
 **For Authors:**
+
 - Address all review comments
 - Push additional commits to the same branch
 - Request re-review when ready
@@ -234,27 +239,32 @@ For critical production issues:
 ### What to Look For:
 
 **Code Quality:**
+
 - Clean, readable code
 - Proper error handling
 - No code duplication
 - Consistent style
 
 **Functionality:**
+
 - Does what it claims to do
 - No breaking changes (unless documented)
 - Edge cases handled
 
 **Performance:**
+
 - No obvious performance issues
 - Efficient algorithms
 - Proper caching where applicable
 
 **Security:**
+
 - No exposed secrets
 - Input validation
 - XSS/CSRF protection
 
 **Testing:**
+
 - Adequate test coverage
 - Tests actually test the feature
 - No flaky tests
@@ -340,30 +350,35 @@ gh pr list --search "is:open review-requested:@me"
 ## 🎓 Best Practices
 
 ### Keep PRs Small
+
 - Aim for < 400 lines of code
 - One feature/fix per PR
 - Easier to review and test
 - Faster to merge
 
 ### Write Descriptive Titles
+
 - ✨ Add platform access hub navigation
 - 🐛 Fix team navigation activeView default
 - ⚡ Optimize particle rendering performance
 - 📝 Update API integration documentation
 
 ### Provide Context
+
 - Explain WHY, not just WHAT
 - Link to related issues/discussions
 - Include screenshots for UI changes
 - Describe testing approach
 
 ### Be Responsive
+
 - Address review comments promptly
 - Ask questions if unclear
 - Thank reviewers
 - Request re-review when ready
 
 ### Keep Branches Updated
+
 ```bash
 # Rebase on main regularly
 git fetch origin

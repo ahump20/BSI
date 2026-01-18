@@ -16,7 +16,7 @@ import {
   RPICalculation,
   SOSCalculation,
   ISRCalculation,
-  ConferenceStrength
+  ConferenceStrength,
 } from '../../lib/analytics/baseball/conference-strength-model';
 
 // ============================================================================
@@ -41,7 +41,7 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 1,
     runsScored: 485,
     runsAllowed: 267,
-    opponents: ['florida', 'vanderbilt', 'lsu', 'arkansas', 'texas_am', 'alabama']
+    opponents: ['florida', 'vanderbilt', 'lsu', 'arkansas', 'texas_am', 'alabama'],
   },
   {
     teamId: 'florida',
@@ -59,7 +59,7 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 2,
     runsScored: 378,
     runsAllowed: 345,
-    opponents: ['tennessee', 'vanderbilt', 'lsu', 'arkansas', 'texas_am', 'alabama']
+    opponents: ['tennessee', 'vanderbilt', 'lsu', 'arkansas', 'texas_am', 'alabama'],
   },
   {
     teamId: 'vanderbilt',
@@ -77,7 +77,7 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 2,
     runsScored: 401,
     runsAllowed: 312,
-    opponents: ['tennessee', 'florida', 'lsu', 'arkansas', 'texas_am', 'alabama']
+    opponents: ['tennessee', 'florida', 'lsu', 'arkansas', 'texas_am', 'alabama'],
   },
   // ACC Teams
   {
@@ -96,7 +96,7 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 2,
     runsScored: 412,
     runsAllowed: 298,
-    opponents: ['wake_forest', 'clemson', 'nc_chapel_hill', 'florida_state', 'virginia']
+    opponents: ['wake_forest', 'clemson', 'nc_chapel_hill', 'florida_state', 'virginia'],
   },
   {
     teamId: 'clemson',
@@ -114,7 +114,7 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 1,
     runsScored: 451,
     runsAllowed: 276,
-    opponents: ['nc_state', 'wake_forest', 'nc_chapel_hill', 'florida_state', 'virginia']
+    opponents: ['nc_state', 'wake_forest', 'nc_chapel_hill', 'florida_state', 'virginia'],
   },
   // Big 12 Teams
   {
@@ -133,8 +133,8 @@ const mockTeams2024: TeamRecord[] = [
     neutralLosses: 2,
     runsScored: 428,
     runsAllowed: 287,
-    opponents: ['oklahoma_state', 'tcu', 'west_virginia', 'kansas', 'baylor']
-  }
+    opponents: ['oklahoma_state', 'tcu', 'west_virginia', 'kansas', 'baylor'],
+  },
 ];
 
 // ============================================================================
@@ -151,7 +151,7 @@ describe('ConferenceStrengthModel - RPI Calculations', () => {
   it('should calculate RPI for all teams', () => {
     expect(rpiResults).toHaveLength(mockTeams2024.length);
 
-    rpiResults.forEach(result => {
+    rpiResults.forEach((result) => {
       expect(result.teamId).toBeDefined();
       expect(result.teamName).toBeDefined();
       expect(result.conference).toBeDefined();
@@ -167,7 +167,7 @@ describe('ConferenceStrengthModel - RPI Calculations', () => {
     // Total adjusted losses = 10.2
     // Expected WP = 46.0 / (46.0 + 10.2) ≈ 0.8186
 
-    const tennessee = rpiResults.find(r => r.teamId === 'tennessee');
+    const tennessee = rpiResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
     expect(tennessee!.wp).toBeCloseTo(0.8186, 2);
   });
@@ -176,14 +176,14 @@ describe('ConferenceStrengthModel - RPI Calculations', () => {
     const sortedByRPI = [...rpiResults].sort((a, b) => b.rpi - a.rpi);
 
     // Tennessee (50-11) should be ranked higher than Florida (34-28)
-    const tennesseeRank = sortedByRPI.findIndex(r => r.teamId === 'tennessee');
-    const floridaRank = sortedByRPI.findIndex(r => r.teamId === 'florida');
+    const tennesseeRank = sortedByRPI.findIndex((r) => r.teamId === 'tennessee');
+    const floridaRank = sortedByRPI.findIndex((r) => r.teamId === 'florida');
 
     expect(tennesseeRank).toBeLessThan(floridaRank);
   });
 
   it('should calculate RPI components within valid ranges', () => {
-    rpiResults.forEach(result => {
+    rpiResults.forEach((result) => {
       expect(result.wp).toBeGreaterThanOrEqual(0);
       expect(result.wp).toBeLessThanOrEqual(1);
       expect(result.owp).toBeGreaterThanOrEqual(0);
@@ -194,13 +194,10 @@ describe('ConferenceStrengthModel - RPI Calculations', () => {
   });
 
   it('should weight RPI components correctly (25% WP, 50% OWP, 25% OOWP)', () => {
-    const tennessee = rpiResults.find(r => r.teamId === 'tennessee');
+    const tennessee = rpiResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
 
-    const expectedRPI =
-      (tennessee!.wp * 0.25) +
-      (tennessee!.owp * 0.50) +
-      (tennessee!.oowp * 0.25);
+    const expectedRPI = tennessee!.wp * 0.25 + tennessee!.owp * 0.5 + tennessee!.oowp * 0.25;
 
     expect(tennessee!.rpi).toBeCloseTo(expectedRPI, 4);
   });
@@ -216,14 +213,14 @@ describe('ConferenceStrengthModel - SOS Calculations', () => {
 
   beforeEach(() => {
     rpiResults = ConferenceStrengthModel.calculateRPI(mockTeams2024);
-    const rpiMap = new Map(rpiResults.map(r => [r.teamId, r]));
+    const rpiMap = new Map(rpiResults.map((r) => [r.teamId, r]));
     sosResults = ConferenceStrengthModel.calculateSOS(mockTeams2024, rpiMap);
   });
 
   it('should calculate SOS for all teams', () => {
     expect(sosResults).toHaveLength(mockTeams2024.length);
 
-    sosResults.forEach(result => {
+    sosResults.forEach((result) => {
       expect(result.teamId).toBeDefined();
       expect(result.teamName).toBeDefined();
       expect(result.conference).toBeDefined();
@@ -233,29 +230,31 @@ describe('ConferenceStrengthModel - SOS Calculations', () => {
   });
 
   it('should identify quality wins (RPI > 0.600)', () => {
-    sosResults.forEach(result => {
+    sosResults.forEach((result) => {
       expect(result.qualityWins).toBeGreaterThanOrEqual(0);
       expect(Number.isInteger(result.qualityWins)).toBe(true);
     });
   });
 
   it('should identify bad losses (RPI < 0.400)', () => {
-    sosResults.forEach(result => {
+    sosResults.forEach((result) => {
       expect(result.badLosses).toBeGreaterThanOrEqual(0);
       expect(Number.isInteger(result.badLosses)).toBe(true);
     });
   });
 
   it('should calculate opponent average RPI correctly', () => {
-    sosResults.forEach(result => {
+    sosResults.forEach((result) => {
       expect(result.opponentAvgRPI).toBeGreaterThanOrEqual(0);
       expect(result.opponentAvgRPI).toBeLessThanOrEqual(1);
     });
   });
 
   it('should rank SEC teams higher in SOS than non-P5 teams', () => {
-    const secTeams = sosResults.filter(r => r.conference === 'SEC');
-    const nonP5Teams = sosResults.filter(r => !['SEC', 'ACC', 'Big 12', 'Pac-12', 'Big Ten'].includes(r.conference));
+    const secTeams = sosResults.filter((r) => r.conference === 'SEC');
+    const nonP5Teams = sosResults.filter(
+      (r) => !['SEC', 'ACC', 'Big 12', 'Pac-12', 'Big Ten'].includes(r.conference)
+    );
 
     if (secTeams.length > 0 && nonP5Teams.length > 0) {
       const avgSECSOS = secTeams.reduce((sum, t) => sum + t.sos, 0) / secTeams.length;
@@ -266,13 +265,14 @@ describe('ConferenceStrengthModel - SOS Calculations', () => {
   });
 
   it('should apply SOS formula correctly (70% opponent RPI, 20% quality wins bonus, 10% bad losses penalty)', () => {
-    const tennessee = sosResults.find(r => r.teamId === 'tennessee');
+    const tennessee = sosResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
 
-    const expectedSOS = Math.min(1.0,
-      (tennessee!.opponentAvgRPI * 0.70) +
-      (tennessee!.qualityWins / 30 * 0.20) -
-      (tennessee!.badLosses / 10 * 0.10)
+    const expectedSOS = Math.min(
+      1.0,
+      tennessee!.opponentAvgRPI * 0.7 +
+        (tennessee!.qualityWins / 30) * 0.2 -
+        (tennessee!.badLosses / 10) * 0.1
     );
 
     expect(tennessee!.sos).toBeCloseTo(expectedSOS, 4);
@@ -293,7 +293,7 @@ describe('ConferenceStrengthModel - ISR Calculations', () => {
   it('should calculate ISR for all teams', () => {
     expect(isrResults).toHaveLength(mockTeams2024.length);
 
-    isrResults.forEach(result => {
+    isrResults.forEach((result) => {
       expect(result.teamId).toBeDefined();
       expect(result.teamName).toBeDefined();
       expect(result.conference).toBeDefined();
@@ -303,49 +303,49 @@ describe('ConferenceStrengthModel - ISR Calculations', () => {
   });
 
   it('should calculate offensive rating based on runs per game', () => {
-    isrResults.forEach(result => {
+    isrResults.forEach((result) => {
       expect(result.offensiveRating).toBeGreaterThanOrEqual(0);
       expect(result.offensiveRating).toBeLessThanOrEqual(1);
     });
 
     // Tennessee (485 runs / 61 games = 7.95 rpg) should have high offensive rating
-    const tennessee = isrResults.find(r => r.teamId === 'tennessee');
+    const tennessee = isrResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
-    expect(tennessee!.offensiveRating).toBeGreaterThan(0.70);
+    expect(tennessee!.offensiveRating).toBeGreaterThan(0.7);
   });
 
   it('should calculate defensive rating based on runs allowed per game', () => {
-    isrResults.forEach(result => {
+    isrResults.forEach((result) => {
       expect(result.defensiveRating).toBeGreaterThanOrEqual(0);
       expect(result.defensiveRating).toBeLessThanOrEqual(1);
     });
 
     // Tennessee (267 runs allowed / 61 games = 4.38 rapg) should have high defensive rating
-    const tennessee = isrResults.find(r => r.teamId === 'tennessee');
+    const tennessee = isrResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
     expect(tennessee!.defensiveRating).toBeGreaterThan(0.55);
   });
 
   it('should calculate recent form as win percentage', () => {
-    isrResults.forEach(result => {
+    isrResults.forEach((result) => {
       expect(result.recentForm).toBeGreaterThanOrEqual(0);
       expect(result.recentForm).toBeLessThanOrEqual(1);
     });
 
     // Tennessee (50-11) should have high recent form
-    const tennessee = isrResults.find(r => r.teamId === 'tennessee');
+    const tennessee = isrResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
     expect(tennessee!.recentForm).toBeCloseTo(50 / 61, 2);
   });
 
   it('should weight ISR components correctly (40% offense, 40% defense, 20% form)', () => {
-    const tennessee = isrResults.find(r => r.teamId === 'tennessee');
+    const tennessee = isrResults.find((r) => r.teamId === 'tennessee');
     expect(tennessee).toBeDefined();
 
     const expectedISR =
-      (tennessee!.offensiveRating * 0.40) +
-      (tennessee!.defensiveRating * 0.40) +
-      (tennessee!.recentForm * 0.20);
+      tennessee!.offensiveRating * 0.4 +
+      tennessee!.defensiveRating * 0.4 +
+      tennessee!.recentForm * 0.2;
 
     expect(tennessee!.isr).toBeCloseTo(expectedISR, 4);
   });
@@ -354,8 +354,8 @@ describe('ConferenceStrengthModel - ISR Calculations', () => {
     const sortedByISR = [...isrResults].sort((a, b) => b.isr - a.isr);
 
     // Tennessee (+218 run diff) should be ranked higher than Florida (+33 run diff)
-    const tennesseeRank = sortedByISR.findIndex(r => r.teamId === 'tennessee');
-    const floridaRank = sortedByISR.findIndex(r => r.teamId === 'florida');
+    const tennesseeRank = sortedByISR.findIndex((r) => r.teamId === 'tennessee');
+    const floridaRank = sortedByISR.findIndex((r) => r.teamId === 'florida');
 
     expect(tennesseeRank).toBeLessThan(floridaRank);
   });
@@ -370,25 +370,28 @@ describe('ConferenceStrengthModel - Conference Strength Rankings', () => {
 
   beforeEach(() => {
     const rpiResults = ConferenceStrengthModel.calculateRPI(mockTeams2024);
-    const rpiMap = new Map(rpiResults.map(r => [r.teamId, r]));
+    const rpiMap = new Map(rpiResults.map((r) => [r.teamId, r]));
     const sosResults = ConferenceStrengthModel.calculateSOS(mockTeams2024, rpiMap);
     const isrResults = ConferenceStrengthModel.calculateISR(mockTeams2024);
 
-    const secTeams = mockTeams2024.filter(t => t.conference === 'SEC');
-    conferenceStrengths = ConferenceStrengthModel.calculateConferenceStrength(secTeams, mockTeams2024);
+    const secTeams = mockTeams2024.filter((t) => t.conference === 'SEC');
+    conferenceStrengths = ConferenceStrengthModel.calculateConferenceStrength(
+      secTeams,
+      mockTeams2024
+    );
   });
 
   it('should calculate conference strength for SEC', () => {
     expect(conferenceStrengths.length).toBeGreaterThan(0);
 
-    const sec = conferenceStrengths.find(c => c.conference === 'SEC');
+    const sec = conferenceStrengths.find((c) => c.conference === 'SEC');
     expect(sec).toBeDefined();
     expect(sec!.avgRPI).toBeGreaterThanOrEqual(0);
     expect(sec!.avgRPI).toBeLessThanOrEqual(1);
   });
 
   it('should calculate top 25 and top 50 counts', () => {
-    const sec = conferenceStrengths.find(c => c.conference === 'SEC');
+    const sec = conferenceStrengths.find((c) => c.conference === 'SEC');
     expect(sec).toBeDefined();
 
     expect(sec!.top25Count).toBeGreaterThanOrEqual(0);
@@ -398,7 +401,7 @@ describe('ConferenceStrengthModel - Conference Strength Rankings', () => {
   });
 
   it('should calculate winning percentage correctly', () => {
-    const sec = conferenceStrengths.find(c => c.conference === 'SEC');
+    const sec = conferenceStrengths.find((c) => c.conference === 'SEC');
     expect(sec).toBeDefined();
 
     expect(sec!.winningPct).toBeGreaterThanOrEqual(0);
@@ -407,9 +410,9 @@ describe('ConferenceStrengthModel - Conference Strength Rankings', () => {
 
   it('should rank conferences with better teams higher', () => {
     // SEC should have higher strength than most conferences
-    const sec = conferenceStrengths.find(c => c.conference === 'SEC');
+    const sec = conferenceStrengths.find((c) => c.conference === 'SEC');
     expect(sec).toBeDefined();
-    expect(sec!.avgRPI).toBeGreaterThan(0.450);
+    expect(sec!.avgRPI).toBeGreaterThan(0.45);
   });
 });
 
@@ -435,7 +438,7 @@ describe('ConferenceStrengthModel - Edge Cases', () => {
       neutralLosses: 0,
       runsScored: 0,
       runsAllowed: 0,
-      opponents: []
+      opponents: [],
     };
 
     const rpiResults = ConferenceStrengthModel.calculateRPI([emptyTeam]);
@@ -459,7 +462,7 @@ describe('ConferenceStrengthModel - Edge Cases', () => {
       neutralLosses: 0,
       runsScored: 85,
       runsAllowed: 62,
-      opponents: ['team1', 'team2']
+      opponents: ['team1', 'team2'],
     };
 
     const rpiResults = ConferenceStrengthModel.calculateRPI([homeOnlyTeam]);
@@ -483,7 +486,7 @@ describe('ConferenceStrengthModel - Edge Cases', () => {
       neutralLosses: 0,
       runsScored: 85,
       runsAllowed: 62,
-      opponents: ['team1', 'team2']
+      opponents: ['team1', 'team2'],
     };
 
     const rpiResults = ConferenceStrengthModel.calculateRPI([awayOnlyTeam]);
@@ -507,11 +510,11 @@ describe('ConferenceStrengthModel - Edge Cases', () => {
       neutralLosses: 1,
       runsScored: 250,
       runsAllowed: 180,
-      opponents: ['nonexistent1', 'nonexistent2']
+      opponents: ['nonexistent1', 'nonexistent2'],
     };
 
     const rpiResults = ConferenceStrengthModel.calculateRPI([team]);
-    const rpiMap = new Map(rpiResults.map(r => [r.teamId, r]));
+    const rpiMap = new Map(rpiResults.map((r) => [r.teamId, r]));
     const sosResults = ConferenceStrengthModel.calculateSOS([team], rpiMap);
 
     expect(sosResults[0].opponentAvgRPI).toBe(0);
@@ -524,33 +527,39 @@ describe('ConferenceStrengthModel - Edge Cases', () => {
 // ============================================================================
 
 describe('ConferenceStrengthModel - Historical Validation', () => {
-  it('should match Boyd\'s World RPI rankings within 5% margin', () => {
+  it("should match Boyd's World RPI rankings within 5% margin", () => {
     // Test against known 2024 NCAA RPI rankings from Boyd's World
     // Tennessee was #1 in RPI with approximately 0.6500
     // This test validates our calculation methodology
 
     const rpiResults = ConferenceStrengthModel.calculateRPI(mockTeams2024);
-    const tennessee = rpiResults.find(r => r.teamId === 'tennessee');
+    const tennessee = rpiResults.find((r) => r.teamId === 'tennessee');
 
     expect(tennessee).toBeDefined();
     // Allow 5% margin since we're using simplified opponent data
-    expect(tennessee!.rpi).toBeGreaterThan(0.550);
-    expect(tennessee!.rpi).toBeLessThan(0.750);
+    expect(tennessee!.rpi).toBeGreaterThan(0.55);
+    expect(tennessee!.rpi).toBeLessThan(0.75);
   });
 
   it('should rank ACC as strongest conference in 2024 mock data', () => {
     const rpiResults = ConferenceStrengthModel.calculateRPI(mockTeams2024);
-    const sosMap = new Map(rpiResults.map(r => [r.teamId, r]));
+    const sosMap = new Map(rpiResults.map((r) => [r.teamId, r]));
     const sosResults = ConferenceStrengthModel.calculateSOS(mockTeams2024, sosMap);
 
-    const secTeams = mockTeams2024.filter(t => t.conference === 'SEC');
-    const accTeams = mockTeams2024.filter(t => t.conference === 'ACC');
+    const secTeams = mockTeams2024.filter((t) => t.conference === 'SEC');
+    const accTeams = mockTeams2024.filter((t) => t.conference === 'ACC');
 
-    const secStrength = ConferenceStrengthModel.calculateConferenceStrength(secTeams, mockTeams2024);
-    const accStrength = ConferenceStrengthModel.calculateConferenceStrength(accTeams, mockTeams2024);
+    const secStrength = ConferenceStrengthModel.calculateConferenceStrength(
+      secTeams,
+      mockTeams2024
+    );
+    const accStrength = ConferenceStrengthModel.calculateConferenceStrength(
+      accTeams,
+      mockTeams2024
+    );
 
-    const sec = secStrength.find(c => c.conference === 'SEC');
-    const acc = accStrength.find(c => c.conference === 'ACC');
+    const sec = secStrength.find((c) => c.conference === 'SEC');
+    const acc = accStrength.find((c) => c.conference === 'ACC');
 
     if (sec && acc) {
       // ACC has higher avgRPI due to having only 2 strong teams (Clemson 44-14, NC State 38-21)

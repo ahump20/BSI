@@ -58,31 +58,25 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
 
     const playerId = url.searchParams.get('id');
     if (!playerId) {
-      return jsonResponse(
-        { success: false, error: 'Missing required parameter: id' },
-        400
-      );
+      return jsonResponse({ success: false, error: 'Missing required parameter: id' }, 400);
     }
 
     // Get player stats
-    const player = await env.DB.prepare(
-      'SELECT * FROM backyard_players WHERE player_id = ?'
-    )
+    const player = await env.DB.prepare('SELECT * FROM backyard_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 
     if (!player) {
-      return jsonResponse(
-        { success: false, error: 'Player not found' },
-        404
-      );
+      return jsonResponse({ success: false, error: 'Player not found' }, 404);
     }
 
     // Get player's rank
-    const rankResult = await env.DB.prepare(`
+    const rankResult = await env.DB.prepare(
+      `
       SELECT COUNT(*) + 1 as rank FROM backyard_players
       WHERE high_score > ?
-    `)
+    `
+    )
       .bind(player.high_score)
       .first();
 
@@ -124,10 +118,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
     });
   } catch (error: any) {
     console.error('Player stats error:', error);
-    return jsonResponse(
-      { success: false, error: error.message || 'Internal server error' },
-      500
-    );
+    return jsonResponse({ success: false, error: error.message || 'Internal server error' }, 500);
   }
 }
 

@@ -16,7 +16,7 @@ describe('College Baseball API - Teams', () => {
       conference: 'SEC',
       wins: 45,
       losses: 15,
-      rpi: 5
+      rpi: 5,
     };
 
     expect(mockTeam).toHaveProperty('team_id');
@@ -52,8 +52,8 @@ describe('College Baseball API - Box Scores', () => {
           rbi: 2,
           bb: 1,
           so: 0,
-          avg: '.325'
-        }
+          avg: '.325',
+        },
       ],
       pitching: [
         {
@@ -64,9 +64,9 @@ describe('College Baseball API - Box Scores', () => {
           er: 2,
           bb: 2,
           so: 8,
-          era: '2.45'
-        }
-      ]
+          era: '2.45',
+        },
+      ],
     };
 
     expect(mockBoxScore).toHaveProperty('game_id');
@@ -81,7 +81,7 @@ describe('College Baseball API - Box Scores', () => {
     const hits = 3;
     const avg = (hits / ab).toFixed(3);
 
-    expect(parseFloat(avg)).toBeCloseTo(0.750, 3);
+    expect(parseFloat(avg)).toBeCloseTo(0.75, 3);
   });
 
   it('should validate earned run average calculation', () => {
@@ -104,10 +104,10 @@ describe('College Baseball API - Standings', () => {
           conference_losses: 6,
           overall_wins: 45,
           overall_losses: 15,
-          winning_percentage: 0.750,
-          games_behind: 0
-        }
-      ]
+          winning_percentage: 0.75,
+          games_behind: 0,
+        },
+      ],
     };
 
     expect(mockStandings).toHaveProperty('conference');
@@ -123,7 +123,7 @@ describe('College Baseball API - Standings', () => {
     const teamWins = 15;
     const teamLosses = 9;
 
-    const gamesBehind = ((firstPlaceWins - teamWins) + (teamLosses - firstPlaceLosses)) / 2;
+    const gamesBehind = (firstPlaceWins - teamWins + (teamLosses - firstPlaceLosses)) / 2;
 
     expect(gamesBehind).toBeCloseTo(3, 1);
   });
@@ -147,7 +147,7 @@ describe('College Baseball API - Player Stats', () => {
       batting_avg: '.341',
       obp: '.425',
       slg: '.627',
-      ops: 1.052
+      ops: 1.052,
     };
 
     expect(mockBatter).toHaveProperty('player_id');
@@ -171,7 +171,7 @@ describe('College Baseball API - Player Stats', () => {
       hits_allowed: 65,
       earned_runs: 25,
       era: '2.36',
-      whip: '0.94'
+      whip: '0.94',
     };
 
     expect(mockPitcher).toHaveProperty('player_id');
@@ -191,8 +191,8 @@ describe('College Baseball API - Schedule', () => {
         location: 'UFCU Disch-Falk Field',
         is_home: true,
         result: 'W 7-4',
-        conference_game: true
-      }
+        conference_game: true,
+      },
     ];
 
     expect(mockSchedule).toBeInstanceOf(Array);
@@ -210,7 +210,7 @@ describe('College Baseball API - Schedule', () => {
       return {
         outcome: match[1],
         team_score: parseInt(match[2]),
-        opponent_score: parseInt(match[3])
+        opponent_score: parseInt(match[3]),
       };
     };
 
@@ -232,9 +232,9 @@ describe('College Baseball API - Rankings', () => {
           team: 'Texas',
           record: '45-15',
           previous_rank: 6,
-          change: 1
-        }
-      ]
+          change: 1,
+        },
+      ],
     };
 
     expect(mockRankings).toHaveProperty('source');
@@ -245,11 +245,11 @@ describe('College Baseball API - Rankings', () => {
 
   it('should calculate RPI (Rating Percentage Index)', () => {
     // Simplified RPI calculation
-    const winPct = 0.750; // 75%
-    const oppWinPct = 0.550; // 55%
-    const oppOppWinPct = 0.520; // 52%
+    const winPct = 0.75; // 75%
+    const oppWinPct = 0.55; // 55%
+    const oppOppWinPct = 0.52; // 52%
 
-    const rpi = (0.25 * winPct) + (0.50 * oppWinPct) + (0.25 * oppOppWinPct);
+    const rpi = 0.25 * winPct + 0.5 * oppWinPct + 0.25 * oppOppWinPct;
 
     expect(rpi).toBeCloseTo(0.593, 3);
   });
@@ -270,8 +270,8 @@ describe('College Baseball API - Live Games', () => {
       runners: {
         first: true,
         second: false,
-        third: true
-      }
+        third: true,
+      },
     };
 
     expect(mockLiveGame.status).toBe('In Progress');

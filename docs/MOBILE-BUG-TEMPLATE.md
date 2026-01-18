@@ -43,13 +43,17 @@
 ## Visual Evidence
 
 ### Screenshots
+
 [Attach screenshots showing the issue]
 
 ### Screen Recording
+
 [Attach video if applicable - especially for animation/interaction bugs]
 
 ### Web Inspector Console
+
 [Include console errors/warnings if present]
+
 ```
 [Paste console output here]
 ```
@@ -57,22 +61,26 @@
 ## Additional Context
 
 ### Viewport Dimensions
+
 - **Width**: [e.g., 393px]
 - **Height**: [e.g., 852px]
 - **Orientation**: [ ] Portrait | [ ] Landscape
 
 ### Accessibility Settings
+
 - [ ] Reduce Motion enabled
-- [ ] Larger Text enabled (size: ___)
+- [ ] Larger Text enabled (size: \_\_\_)
 - [ ] VoiceOver enabled
-- [ ] Other: ___________
+- [ ] Other: \***\*\_\_\_\*\***
 
 ### Network Performance
+
 - **Connection Speed**: [e.g., 50 Mbps down, 10 Mbps up]
 - **Latency**: [e.g., 30ms]
 - **Load Time**: [e.g., First Contentful Paint: 2.3s]
 
 ### Related Issues
+
 - Related to: #[issue number]
 - Blocks: #[issue number]
 - Duplicate of: #[issue number]
@@ -88,14 +96,17 @@
 ## Technical Notes
 
 ### Browser DevTools Output
+
 ```
 [Network tab, Console errors, Performance profile, etc.]
 ```
 
 ### Suspected Root Cause
+
 [Your hypothesis about what's causing the issue]
 
 ### Potential Fix
+
 [If you have ideas for fixing it]
 
 ---
@@ -103,6 +114,7 @@
 ## For Developers
 
 ### Investigation Checklist
+
 - [ ] Reproduced locally on physical device
 - [ ] Reproduced in Xcode Simulator
 - [ ] Checked Safari Web Inspector console
@@ -111,6 +123,7 @@
 - [ ] Tested with different iOS versions
 
 ### Fix Implementation
+
 - [ ] Code change implemented
 - [ ] Unit tests added/updated
 - [ ] Manual testing completed on physical device
@@ -119,10 +132,11 @@
 - [ ] Accessibility regression check passed
 
 ### Related Files
+
 - [ ] Component: `src/components/[name].jsx`
 - [ ] Styles: `src/components/[name].css`
 - [ ] API: `functions/api/[route].js`
-- [ ] Other: ___________
+- [ ] Other: \***\*\_\_\_\*\***
 
 ---
 

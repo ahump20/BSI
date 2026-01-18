@@ -20,10 +20,10 @@ export interface BlitzTeam {
   helmetColor: string;
 
   // Team stats (affect AI behavior when playing against)
-  offense: number;  // 1-10: Affects QB accuracy, WR speed
-  defense: number;  // 1-10: Affects DB coverage, pass rush
-  speed: number;    // 1-10: Overall team speed
-  power: number;    // 1-10: Tackle strength, blocking
+  offense: number; // 1-10: Affects QB accuracy, WR speed
+  defense: number; // 1-10: Affects DB coverage, pass rush
+  speed: number; // 1-10: Overall team speed
+  power: number; // 1-10: Tackle strength, blocking
 
   // Special ability
   specialAbility: {
@@ -41,9 +41,9 @@ export const FIREBIRDS: BlitzTeam = {
   mascot: 'Phoenix',
   description: 'Rising from the flames with explosive offense and fiery determination.',
 
-  primaryColor: '#BF5700',    // Burnt orange
-  secondaryColor: '#FF6B35',  // Ember
-  accentColor: '#C9A227',     // Gold
+  primaryColor: '#BF5700', // Burnt orange
+  secondaryColor: '#FF6B35', // Ember
+  accentColor: '#C9A227', // Gold
   helmetColor: '#BF5700',
 
   offense: 8,
@@ -66,9 +66,9 @@ export const SHADOW_WOLVES: BlitzTeam = {
   mascot: 'Wolf',
   description: 'A relentless pack that hunts quarterbacks and terrorizes offenses.',
 
-  primaryColor: '#1A1A1A',    // Midnight
-  secondaryColor: '#4169E1',  // Royal blue
-  accentColor: '#C0C0C0',     // Silver
+  primaryColor: '#1A1A1A', // Midnight
+  secondaryColor: '#4169E1', // Royal blue
+  accentColor: '#C0C0C0', // Silver
   helmetColor: '#1A1A1A',
 
   offense: 6,
@@ -92,9 +92,9 @@ export const UNLOCKABLE_TEAMS: BlitzTeam[] = [
     mascot: 'Lightning Bolt',
     description: 'Electrifying speed that strikes before you can react.',
 
-    primaryColor: '#FFD700',    // Gold/Yellow
-    secondaryColor: '#000080',  // Navy
-    accentColor: '#FFFFFF',     // White
+    primaryColor: '#FFD700', // Gold/Yellow
+    secondaryColor: '#000080', // Navy
+    accentColor: '#FFFFFF', // White
     helmetColor: '#FFD700',
 
     offense: 9,
@@ -115,9 +115,9 @@ export const UNLOCKABLE_TEAMS: BlitzTeam[] = [
     mascot: 'Titan',
     description: 'An unstoppable ground game built on raw power.',
 
-    primaryColor: '#4A4A4A',    // Iron gray
-    secondaryColor: '#8B0000',  // Dark red
-    accentColor: '#C0C0C0',     // Silver
+    primaryColor: '#4A4A4A', // Iron gray
+    secondaryColor: '#8B0000', // Dark red
+    accentColor: '#C0C0C0', // Silver
     helmetColor: '#4A4A4A',
 
     offense: 7,
@@ -138,9 +138,9 @@ export const UNLOCKABLE_TEAMS: BlitzTeam[] = [
     mascot: 'Viper',
     description: 'Quick-strike offense that leaves opponents paralyzed.',
 
-    primaryColor: '#228B22',    // Forest green
-    secondaryColor: '#000000',  // Black
-    accentColor: '#FFD700',     // Gold fangs
+    primaryColor: '#228B22', // Forest green
+    secondaryColor: '#000000', // Black
+    accentColor: '#FFD700', // Gold fangs
     helmetColor: '#228B22',
 
     offense: 8,
@@ -182,16 +182,30 @@ export interface PlayerPosition {
   name: string;
   shortName: string;
   role: 'offense' | 'defense';
-  defaultX: number;  // Relative to ball/line of scrimmage
-  defaultZ: number;  // Relative to center of field
+  defaultX: number; // Relative to ball/line of scrimmage
+  defaultZ: number; // Relative to center of field
 }
 
 /** Offensive positions (7 players) */
 export const OFFENSIVE_POSITIONS: PlayerPosition[] = [
   { id: 'qb', name: 'Quarterback', shortName: 'QB', role: 'offense', defaultX: -5, defaultZ: 0 },
   { id: 'rb', name: 'Running Back', shortName: 'RB', role: 'offense', defaultX: -7, defaultZ: 0 },
-  { id: 'wr1', name: 'Wide Receiver 1', shortName: 'WR', role: 'offense', defaultX: 0, defaultZ: 20 },
-  { id: 'wr2', name: 'Wide Receiver 2', shortName: 'WR', role: 'offense', defaultX: 0, defaultZ: -20 },
+  {
+    id: 'wr1',
+    name: 'Wide Receiver 1',
+    shortName: 'WR',
+    role: 'offense',
+    defaultX: 0,
+    defaultZ: 20,
+  },
+  {
+    id: 'wr2',
+    name: 'Wide Receiver 2',
+    shortName: 'WR',
+    role: 'offense',
+    defaultX: 0,
+    defaultZ: -20,
+  },
   { id: 'wr3', name: 'Slot Receiver', shortName: 'SL', role: 'offense', defaultX: -1, defaultZ: 8 },
   { id: 'te', name: 'Tight End', shortName: 'TE', role: 'offense', defaultX: -1, defaultZ: -8 },
   { id: 'c', name: 'Center', shortName: 'C', role: 'offense', defaultX: 0, defaultZ: 0 },
@@ -199,8 +213,22 @@ export const OFFENSIVE_POSITIONS: PlayerPosition[] = [
 
 /** Defensive positions (7 players) */
 export const DEFENSIVE_POSITIONS: PlayerPosition[] = [
-  { id: 'dl1', name: 'Defensive Line 1', shortName: 'DL', role: 'defense', defaultX: 1, defaultZ: -3 },
-  { id: 'dl2', name: 'Defensive Line 2', shortName: 'DL', role: 'defense', defaultX: 1, defaultZ: 3 },
+  {
+    id: 'dl1',
+    name: 'Defensive Line 1',
+    shortName: 'DL',
+    role: 'defense',
+    defaultX: 1,
+    defaultZ: -3,
+  },
+  {
+    id: 'dl2',
+    name: 'Defensive Line 2',
+    shortName: 'DL',
+    role: 'defense',
+    defaultX: 1,
+    defaultZ: 3,
+  },
   { id: 'lb', name: 'Linebacker', shortName: 'LB', role: 'defense', defaultX: 4, defaultZ: 0 },
   { id: 'cb1', name: 'Cornerback 1', shortName: 'CB', role: 'defense', defaultX: 2, defaultZ: 18 },
   { id: 'cb2', name: 'Cornerback 2', shortName: 'CB', role: 'defense', defaultX: 2, defaultZ: -18 },

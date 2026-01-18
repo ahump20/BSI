@@ -7,15 +7,15 @@
 
 ## Current Stack
 
-| Component | Purpose | Status |
-|-----------|---------|--------|
-| **Cloudflare Logs** | Worker request/error logs | ✅ Enabled (all workers) |
-| **Sentry** | Error tracking & performance | ⚠️ Secrets needed |
-| **Datadog** | RUM, browser logs, runtime signals | ⚠️ Secrets needed |
-| **Applitools** | Visual regression testing | ⚠️ Secrets needed |
-| **Structured Logger** | JSON logs with correlation IDs | ✅ Implemented |
-| **Drift Monitoring** | Data drift detection | ✅ Configured |
-| **Slack Alerts** | Workflow failure notifications | ⚠️ Webhook needed |
+| Component             | Purpose                            | Status                   |
+| --------------------- | ---------------------------------- | ------------------------ |
+| **Cloudflare Logs**   | Worker request/error logs          | ✅ Enabled (all workers) |
+| **Sentry**            | Error tracking & performance       | ⚠️ Secrets needed        |
+| **Datadog**           | RUM, browser logs, runtime signals | ⚠️ Secrets needed        |
+| **Applitools**        | Visual regression testing          | ⚠️ Secrets needed        |
+| **Structured Logger** | JSON logs with correlation IDs     | ✅ Implemented           |
+| **Drift Monitoring**  | Data drift detection               | ✅ Configured            |
+| **Slack Alerts**      | Workflow failure notifications     | ⚠️ Webhook needed        |
 
 ---
 
@@ -23,28 +23,28 @@
 
 ### GitHub Actions Secrets (for CI/CD)
 
-| Secret | Required For | Status |
-|--------|--------------|--------|
-| `CLOUDFLARE_API_TOKEN` | All deployments | Verify |
-| `CLOUDFLARE_ACCOUNT_ID` | All deployments | Verify |
-| `CLOUDFLARE_ZONE_ID` | Cache purge | Verify |
-| `SENTRY_DSN` | Error tracking | Configure |
-| `SENTRY_AUTH_TOKEN` | Release uploads | Configure |
-| `SENTRY_ORG` | Release association | Configure |
-| `SENTRY_PROJECT` | Release association | Configure |
-| `SLACK_WEBHOOK_URL` | Failure alerts | Configure |
-| `APPLITOOLS_API_KEY` | Visual regression | Configure |
-| `SOCKET_API_KEY` | Dependency security | Configure |
+| Secret                  | Required For        | Status    |
+| ----------------------- | ------------------- | --------- |
+| `CLOUDFLARE_API_TOKEN`  | All deployments     | Verify    |
+| `CLOUDFLARE_ACCOUNT_ID` | All deployments     | Verify    |
+| `CLOUDFLARE_ZONE_ID`    | Cache purge         | Verify    |
+| `SENTRY_DSN`            | Error tracking      | Configure |
+| `SENTRY_AUTH_TOKEN`     | Release uploads     | Configure |
+| `SENTRY_ORG`            | Release association | Configure |
+| `SENTRY_PROJECT`        | Release association | Configure |
+| `SLACK_WEBHOOK_URL`     | Failure alerts      | Configure |
+| `APPLITOOLS_API_KEY`    | Visual regression   | Configure |
+| `SOCKET_API_KEY`        | Dependency security | Configure |
 
 ### Cloudflare Worker Secrets
 
-| Secret | Workers Using It | Purpose |
-|--------|-----------------|---------|
-| `SENTRY_DSN` | All workers | Error capture |
-| `DD_API_KEY` | All workers | Datadog logs |
-| `SPORTSDATAIO_API_KEY` | Prediction, Ingest | Sports data |
-| `COLLEGEFOOTBALLDATA_API_KEY` | CFB-AI | College football data |
-| `SESSION_SECRET` | bsi-home | Session signing |
+| Secret                        | Workers Using It   | Purpose               |
+| ----------------------------- | ------------------ | --------------------- |
+| `SENTRY_DSN`                  | All workers        | Error capture         |
+| `DD_API_KEY`                  | All workers        | Datadog logs          |
+| `SPORTSDATAIO_API_KEY`        | Prediction, Ingest | Sports data           |
+| `COLLEGEFOOTBALLDATA_API_KEY` | CFB-AI             | College football data |
+| `SESSION_SECRET`              | bsi-home           | Session signing       |
 
 ### Environment Variables
 
@@ -79,7 +79,9 @@ APPLITOOLS_API_KEY=xxx
 ## What's Already Working
 
 ### 1. Cloudflare Worker Logs
+
 All critical workers have `[observability.logs] enabled = true`:
+
 - bsi-home
 - bsi-prediction-api
 - bsi-cfb-ai
@@ -87,6 +89,7 @@ All critical workers have `[observability.logs] enabled = true`:
 - blazesports-ingest
 
 ### 2. Structured Logger (`lib/utils/logger.ts`)
+
 - JSON-formatted logs
 - Log levels (debug, info, warn, error, fatal)
 - Correlation IDs for request tracing
@@ -95,15 +98,18 @@ All critical workers have `[observability.logs] enabled = true`:
 - Auto-integration with Sentry/Datadog when env vars present
 
 ### 3. Drift Monitoring (`observability/drift/`)
+
 - Configured in `drift-config.yaml`
 - Monitors data freshness
 - Slack alerts on drift detection
 
 ### 4. GitHub Actions Alerts
+
 - `data-freshness.yml` → Slack on stale data
 - `api-tests.yml` → Slack on test failures
 
 ### 5. Production Runbook
+
 Complete incident response documentation at:
 `docs/RUNBOOK_PRODUCTION_INCIDENT.md`
 
@@ -186,25 +192,25 @@ gh workflow run data-freshness.yml
 
 ## Monitoring Dashboards
 
-| Platform | URL | Purpose |
-|----------|-----|---------|
-| Cloudflare Analytics | dash.cloudflare.com | Traffic, cache, errors |
-| Sentry | sentry.io/bsi | Errors, performance |
-| Datadog | app.datadoghq.com | RUM, logs, traces |
-| GitHub Actions | github.com/ahump20/BSI/actions | CI/CD status |
+| Platform             | URL                            | Purpose                |
+| -------------------- | ------------------------------ | ---------------------- |
+| Cloudflare Analytics | dash.cloudflare.com            | Traffic, cache, errors |
+| Sentry               | sentry.io/bsi                  | Errors, performance    |
+| Datadog              | app.datadoghq.com              | RUM, logs, traces      |
+| GitHub Actions       | github.com/ahump20/BSI/actions | CI/CD status           |
 
 ---
 
 ## Alert Thresholds (Recommended)
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| Error rate | > 1% | > 5% |
-| P95 response time | > 1s | > 3s |
-| Cache hit ratio | < 80% | < 60% |
-| Data staleness | > 1 hour | > 4 hours |
-| Worker CPU time | > 30ms avg | > 50ms avg |
+| Metric            | Warning    | Critical   |
+| ----------------- | ---------- | ---------- |
+| Error rate        | > 1%       | > 5%       |
+| P95 response time | > 1s       | > 3s       |
+| Cache hit ratio   | < 80%      | < 60%      |
+| Data staleness    | > 1 hour   | > 4 hours  |
+| Worker CPU time   | > 30ms avg | > 50ms avg |
 
 ---
 
-*Generated during Infrastructure Audit - January 7, 2026*
+_Generated during Infrastructure Audit - January 7, 2026_

@@ -124,11 +124,13 @@ git diff --name-only origin/main...HEAD | grep -E '\.html$|\.css$'
 ## Tips
 
 ### Small PRs
+
 - Keep PRs under 400 lines
 - One feature per PR
 - Easier to review = faster merge
 
 ### Good Commit Messages
+
 ```bash
 # Good
 git commit -m "✨ Add user authentication
@@ -143,6 +145,7 @@ git commit -m "fix stuff"
 ```
 
 ### Branch Naming
+
 ```bash
 # Good
 feature/user-authentication
@@ -203,6 +206,7 @@ Add these to your `~/.gitconfig`:
 ```
 
 Then use like:
+
 ```bash
 git co main
 git br -a

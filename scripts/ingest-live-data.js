@@ -20,10 +20,10 @@ const DATABASE_NAME = 'blazesports-db';
 
 // Current season years
 const CURRENT_SEASON = {
-  NFL: 2025,    // 2025 season (Sep 2025 - Feb 2026)
-  MLB: 2025,    // 2025 season (Apr - Oct 2025)
-  CFB: 2025,    // 2025 season (Aug - Jan 2026)
-  CBB: 2025     // 2025-2026 season (Nov 2025 - Apr 2026)
+  NFL: 2025, // 2025 season (Sep 2025 - Feb 2026)
+  MLB: 2025, // 2025 season (Apr - Oct 2025)
+  CFB: 2025, // 2025 season (Aug - Jan 2026)
+  CBB: 2025, // 2025-2026 season (Nov 2025 - Apr 2026)
 };
 
 // API Configuration
@@ -32,20 +32,20 @@ const API_ENDPOINTS = {
   NFL: {
     teams: `/nfl/scores/json/Teams`,
     schedule: `/nfl/scores/json/Schedules/${CURRENT_SEASON.NFL}`,
-    scores: `/nfl/scores/json/ScoresByWeek/${CURRENT_SEASON.NFL}/5` // Week 5
+    scores: `/nfl/scores/json/ScoresByWeek/${CURRENT_SEASON.NFL}/5`, // Week 5
   },
   MLB: {
     teams: `/mlb/scores/json/teams`,
-    games: `/mlb/scores/json/Games/${CURRENT_SEASON.MLB}` // Full season
+    games: `/mlb/scores/json/Games/${CURRENT_SEASON.MLB}`, // Full season
   },
   CFB: {
     teams: `/cfb/scores/json/Teams`,
-    games: `/cfb/scores/json/Games/${CURRENT_SEASON.CFB}`
+    games: `/cfb/scores/json/Games/${CURRENT_SEASON.CFB}`,
   },
   CBB: {
     teams: `/cbb/scores/json/Teams`,
-    games: `/cbb/scores/json/Games/${CURRENT_SEASON.CBB}`
-  }
+    games: `/cbb/scores/json/Games/${CURRENT_SEASON.CBB}`,
+  },
 };
 
 /**
@@ -100,8 +100,12 @@ function generateGameDescription(game, sport) {
     const margin = Math.abs(game.home_score - game.away_score);
     const winner = game.home_score > game.away_score ? game.home_team_name : game.away_team_name;
 
-    parts.push(`Final score: ${game.away_team_name} ${game.away_score}, ${game.home_team_name} ${game.home_score}`);
-    parts.push(`${winner} won by ${margin} ${sport === 'NFL' || sport === 'CFB' ? 'points' : 'runs'}`);
+    parts.push(
+      `Final score: ${game.away_team_name} ${game.away_score}, ${game.home_team_name} ${game.home_score}`
+    );
+    parts.push(
+      `${winner} won by ${margin} ${sport === 'NFL' || sport === 'CFB' ? 'points' : 'runs'}`
+    );
 
     // Categorize game
     if (margin <= 3 && (sport === 'NFL' || sport === 'CFB')) {
@@ -155,7 +159,13 @@ function normalizeNFLGame(game) {
     season_type: mapSeasonType(game.SeasonType),
     week: game.Week,
     game_date: game.Date || game.DateTime,
-    game_time: game.DateTime ? new Date(game.DateTime).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' }) : null,
+    game_time: game.DateTime
+      ? new Date(game.DateTime).toLocaleTimeString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : null,
     status: game.Status,
     home_team_id: game.HomeTeamID,
     home_team_key: game.HomeTeam,
@@ -166,7 +176,7 @@ function normalizeNFLGame(game) {
     away_team_name: game.AwayTeamName || `${game.AwayTeam}`,
     away_score: game.AwayScore,
     stadium_name: game.StadiumDetails?.Name || game.Stadium,
-    winning_team_id: game.HomeScore > game.AwayScore ? game.HomeTeamID : game.AwayTeamID
+    winning_team_id: game.HomeScore > game.AwayScore ? game.HomeTeamID : game.AwayTeamID,
   };
 }
 
@@ -181,7 +191,13 @@ function normalizeMLBGame(game) {
     season_type: mapSeasonType(game.SeasonType),
     week: null,
     game_date: game.Day || game.DateTime,
-    game_time: game.DateTime ? new Date(game.DateTime).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' }) : null,
+    game_time: game.DateTime
+      ? new Date(game.DateTime).toLocaleTimeString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : null,
     status: game.Status,
     home_team_id: game.HomeTeamID,
     home_team_key: game.HomeTeam,
@@ -192,7 +208,7 @@ function normalizeMLBGame(game) {
     away_team_name: game.AwayTeamName || `${game.AwayTeam}`,
     away_score: game.AwayTeamRuns,
     stadium_name: game.StadiumName || game.Stadium,
-    winning_team_id: game.HomeTeamRuns > game.AwayTeamRuns ? game.HomeTeamID : game.AwayTeamID
+    winning_team_id: game.HomeTeamRuns > game.AwayTeamRuns ? game.HomeTeamID : game.AwayTeamID,
   };
 }
 
@@ -207,7 +223,13 @@ function normalizeCFBGame(game) {
     season_type: mapSeasonType(game.SeasonType),
     week: game.Week,
     game_date: game.Day || game.DateTime,
-    game_time: game.DateTime ? new Date(game.DateTime).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' }) : null,
+    game_time: game.DateTime
+      ? new Date(game.DateTime).toLocaleTimeString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : null,
     status: game.Status,
     home_team_id: game.HomeTeamID,
     home_team_key: game.HomeTeam,
@@ -218,7 +240,7 @@ function normalizeCFBGame(game) {
     away_team_name: game.AwayTeamName || game.AwayTeam,
     away_score: game.AwayTeamScore,
     stadium_name: game.Stadium,
-    winning_team_id: game.HomeTeamScore > game.AwayTeamScore ? game.HomeTeamID : game.AwayTeamID
+    winning_team_id: game.HomeTeamScore > game.AwayTeamScore ? game.HomeTeamID : game.AwayTeamID,
   };
 }
 
@@ -233,7 +255,13 @@ function normalizeCBBGame(game) {
     season_type: mapSeasonType(game.SeasonType),
     week: null,
     game_date: game.Day || game.DateTime,
-    game_time: game.DateTime ? new Date(game.DateTime).toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit' }) : null,
+    game_time: game.DateTime
+      ? new Date(game.DateTime).toLocaleTimeString('en-US', {
+          timeZone: 'America/Chicago',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : null,
     status: game.Status,
     home_team_id: game.HomeTeamID,
     home_team_key: game.HomeTeam,
@@ -244,7 +272,7 @@ function normalizeCBBGame(game) {
     away_team_name: game.AwayTeamName || game.AwayTeam,
     away_score: game.AwayTeamScore,
     stadium_name: game.Stadium,
-    winning_team_id: game.HomeTeamScore > game.AwayTeamScore ? game.HomeTeamID : game.AwayTeamID
+    winning_team_id: game.HomeTeamScore > game.AwayTeamScore ? game.HomeTeamID : game.AwayTeamID,
   };
 }
 
@@ -277,15 +305,17 @@ async function insertGames(games) {
   for (let i = 0; i < games.length; i += BATCH_SIZE) {
     const batch = games.slice(i, i + BATCH_SIZE);
 
-    const values = batch.map(game => {
-      const description = generateGameDescription(game, game.sport);
+    const values = batch
+      .map((game) => {
+        const description = generateGameDescription(game, game.sport);
 
-      // Ensure stadium_name is a string before processing
-      const stadiumName = game.stadium_name && typeof game.stadium_name === 'string'
-        ? game.stadium_name.replace(/'/g, "''")
-        : null;
+        // Ensure stadium_name is a string before processing
+        const stadiumName =
+          game.stadium_name && typeof game.stadium_name === 'string'
+            ? game.stadium_name.replace(/'/g, "''")
+            : null;
 
-      return `(
+        return `(
         '${game.sport}',
         '${game.game_id}',
         ${game.season},
@@ -306,7 +336,8 @@ async function insertGames(games) {
         ${game.winning_team_id || 'NULL'},
         '${description.replace(/'/g, "''")}'
       )`;
-    }).join(',\n');
+      })
+      .join(',\n');
 
     const sql = `
       INSERT INTO games (
@@ -326,7 +357,6 @@ async function insertGames(games) {
  * Main ingestion workflow
  */
 async function ingestLiveData() {
-
   const allGames = [];
 
   try {
@@ -335,7 +365,7 @@ async function ingestLiveData() {
     // 2. Fetch and normalize NFL data (Week 5 games)
     const nflGames = await fetchAPI('NFL', API_ENDPOINTS.NFL.scores);
     const normalizedNFL = nflGames
-      .filter(game => game.Status === 'Final' || game.Status === 'InProgress')
+      .filter((game) => game.Status === 'Final' || game.Status === 'InProgress')
       .map(normalizeNFLGame);
 
     allGames.push(...normalizedNFL);
@@ -343,7 +373,7 @@ async function ingestLiveData() {
     // 3. Fetch and normalize MLB data (recent games)
     const mlbGames = await fetchAPI('MLB', API_ENDPOINTS.MLB.games);
     const normalizedMLB = mlbGames
-      .filter(game => game.Status === 'Final' && game.Day >= '2024-09-01') // September games
+      .filter((game) => game.Status === 'Final' && game.Day >= '2024-09-01') // September games
       .slice(0, 100) // Limit to 100 most recent
       .map(normalizeMLBGame);
 
@@ -353,7 +383,7 @@ async function ingestLiveData() {
     try {
       const cfbGames = await fetchAPI('CFB', API_ENDPOINTS.CFB.games);
       const normalizedCFB = cfbGames
-        .filter(game => game.Status === 'Final' && game.Week <= 7) // Up to Week 7
+        .filter((game) => game.Status === 'Final' && game.Week <= 7) // Up to Week 7
         .slice(0, 50) // Limit to 50 games
         .map(normalizeCFBGame);
 
@@ -366,20 +396,17 @@ async function ingestLiveData() {
     try {
       const cbbGames = await fetchAPI('CBB', API_ENDPOINTS.CBB.games);
       const normalizedCBB = cbbGames
-        .filter(game => game.Status === 'Final')
+        .filter((game) => game.Status === 'Final')
         .slice(0, 50) // Limit to 50 games
         .map(normalizeCBBGame);
 
       allGames.push(...normalizedCBB);
     } catch (error) {
-      console.warn('⚠️  CBB data unavailable (season hasn\'t started):', error.message);
+      console.warn("⚠️  CBB data unavailable (season hasn't started):", error.message);
     }
 
     // 6. Insert all games into database
     await insertGames(allGames);
-
-
-
   } catch (error) {
     console.error('❌ Ingestion failed:', error);
     throw error;
@@ -387,7 +414,7 @@ async function ingestLiveData() {
 }
 
 // Run if executed directly
-ingestLiveData().catch(error => {
+ingestLiveData().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

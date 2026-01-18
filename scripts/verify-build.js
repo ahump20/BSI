@@ -16,7 +16,7 @@ const REQUIRED_BUILDS = [
   'lib/adapters/mlb.js',
   'lib/adapters/nfl.js',
   'lib/utils/cache.js',
-  'lib/utils/errors.js'
+  'lib/utils/errors.js',
 ];
 
 const VALIDATION_RULES = {
@@ -25,7 +25,6 @@ const VALIDATION_RULES = {
 };
 
 async function verifyBuild() {
-
   const errors = [];
   const warnings = [];
 
@@ -54,10 +53,7 @@ async function verifyBuild() {
   }
 
   // Phase 3: Import Path Verification
-  const testFiles = [
-    'test-nfl-typescript.js',
-    'index.html'
-  ];
+  const testFiles = ['test-nfl-typescript.js', 'index.html'];
 
   for (const testFile of testFiles) {
     const fullPath = join(process.cwd(), testFile);
@@ -99,10 +95,9 @@ async function verifyBuild() {
   if (errors.length > 0) {
     process.exit(1);
   }
-
 }
 
-verifyBuild().catch(error => {
+verifyBuild().catch((error) => {
   console.error('🚨 Build verification failed:', error);
   process.exit(1);
 });

@@ -4,9 +4,17 @@
  *
  * Caching: 15 minutes (rankings don't change frequently)
  * Data source: D1 database (college_baseball_rankings + college_baseball_teams)
+ *
+ * Response Contract: Uses BSI standard APIResponse format
+ * - status: 'ok' | 'invalid' | 'unavailable'
+ * - data: payload or null
+ * - source: 'd1' | 'kv-cache'
  */
 
 import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
+// Minimum rankings required for valid response (D1 Baseball has 25 ranked teams)
+const MIN_RANKINGS_REQUIRED = 15;
 
 const CACHE_KEY_PREFIX = 'college-baseball:rankings';
 
@@ -31,16 +39,30 @@ export async function onRequest(context) {
 
     const cacheKey = `${CACHE_KEY_PREFIX}:${source}:${season}:${limit_param}`;
 
-    // Check cache
+    // Check cache first
     if (env.CACHE) {
       const cached = await env.CACHE.get(cacheKey);
       if (cached) {
         const data = JSON.parse(cached);
+        // Standard APIResponse format from cache
         return new Response(
           JSON.stringify({
-            success: true,
-            ...data,
-            cached: true,
+            data: data.rankings,
+            status: 'ok',
+            source: 'kv-cache',
+            lastUpdated: data.updatedAt,
+            reason: '',
+            meta: {
+              cache: { hit: true, ttlSeconds: 900 },
+              planTier: 'highlightly_pro',
+              quota: { remaining: 0, resetAt: '' },
+            },
+            // Legacy fields for backwards compatibility
+            rankings: data.rankings,
+            source_poll: data.source,
+            season: data.season,
+            week: data.week,
+            count: data.count,
           }),
           {
             status: 200,
@@ -48,6 +70,8 @@ export async function onRequest(context) {
               ...corsHeaders,
               'Content-Type': 'application/json',
               'Cache-Control': 'public, max-age=900, stale-while-revalidate=300',
+              'X-BSI-Status': 'ok',
+              'X-BSI-Source': 'kv-cache',
             },
           }
         );
@@ -105,13 +129,42 @@ export async function onRequest(context) {
       },
     }));
 
+    const updatedAt = result.results[0]?.updated_at || new Date().toISOString();
+
+    // SEMANTIC VALIDATION: Check minimum density before serving
+    if (rankings.length < MIN_RANKINGS_REQUIRED) {
+      return new Response(
+        JSON.stringify({
+          data: null,
+          status: 'invalid',
+          source: 'd1',
+          lastUpdated: updatedAt,
+          reason: `Insufficient rankings data: found ${rankings.length}, expected at least ${MIN_RANKINGS_REQUIRED}`,
+          meta: {
+            cache: { hit: false, ttlSeconds: 0 },
+            planTier: 'highlightly_pro',
+            quota: { remaining: 0, resetAt: '' },
+          },
+        }),
+        {
+          status: 200, // 200 with status:'invalid' per contract
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-BSI-Status': 'invalid',
+            'X-BSI-Source': 'd1',
+          },
+        }
+      );
+    }
+
     const responseData = {
       rankings,
       source,
       season: parseInt(season),
       week: result.results[0]?.week || 0,
       count: rankings.length,
-      updatedAt: result.results[0]?.updated_at || new Date().toISOString(),
+      updatedAt,
       dataStamp: {
         source: 'D1 Database (college_baseball_rankings)',
         fetchedAt: new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CT',
@@ -127,11 +180,25 @@ export async function onRequest(context) {
       );
     }
 
+    // Standard APIResponse format with legacy fields for backwards compatibility
     return new Response(
       JSON.stringify({
-        success: true,
-        ...responseData,
-        cached: false,
+        data: rankings,
+        status: 'ok',
+        source: 'd1',
+        lastUpdated: updatedAt,
+        reason: '',
+        meta: {
+          cache: { hit: false, ttlSeconds: 900 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+        // Legacy fields for backwards compatibility
+        rankings,
+        source_poll: source,
+        season: parseInt(season),
+        week: result.results[0]?.week || 0,
+        count: rankings.length,
       }),
       {
         status: 200,
@@ -139,19 +206,34 @@ export async function onRequest(context) {
           ...corsHeaders,
           'Content-Type': 'application/json',
           'Cache-Control': 'public, max-age=900, stale-while-revalidate=300',
+          'X-BSI-Status': 'ok',
+          'X-BSI-Source': 'd1',
         },
       }
     );
   } catch (error) {
+    // Standard APIResponse error format
     return new Response(
       JSON.stringify({
-        success: false,
-        error: 'Failed to fetch rankings',
-        message: error.message,
+        data: null,
+        status: 'unavailable',
+        source: 'd1',
+        lastUpdated: new Date().toISOString(),
+        reason: error.message || 'Failed to fetch rankings',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'unavailable',
+          'X-BSI-Source': 'd1',
+        },
       }
     );
   }

@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "Bayou Traditions",
     "lead_contact": "Brandon Naquin",
-    "contact_channels": [
-      "info@bayoutraditions.com",
-      "https://www.bayoutraditions.com/contact"
-    ],
+    "contact_channels": ["info@bayoutraditions.com", "https://www.bayoutraditions.com/contact"],
     "recent_initiatives": "Launched 'Box Club' premium experience for baseball donors with player meetups (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -60,9 +57,7 @@
   "front_office": {
     "athletic_director": "Scott Woodward",
     "baseball_admin": "Brandon Buteaux",
-    "financial_points_of_contact": [
-      "tickets@lsu.edu"
-    ]
+    "financial_points_of_contact": ["tickets@lsu.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 7,

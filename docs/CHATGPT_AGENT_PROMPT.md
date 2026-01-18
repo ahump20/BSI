@@ -28,14 +28,18 @@ Read and follow this complete testing plan:
 ## Quick Start Instructions
 
 ### Step 1: Open the Page
+
 Navigate to: **https://blazesportsintel.com/analytics**
 
 ### Step 2: Open Browser DevTools
+
 - Press `F12` (or `Ctrl+Shift+I` on Windows / `Cmd+Option+I` on Mac)
 - Click the **Console** tab
 
 ### Step 3: Verify Base State
+
 You should see in console:
+
 ```
 🚀 Blaze Sports Intel - Next-Gen Feature Flags: {...}
 📊 Enabled Features: 0 / 6
@@ -44,6 +48,7 @@ You should see in console:
 ### Step 4: Start Testing
 
 **Quick Test All Features**:
+
 ```javascript
 FEATURE_FLAGS.realTimeDashboard = true;
 FEATURE_FLAGS.mlbStatcast = true;
@@ -66,24 +71,28 @@ location.reload();
 ## What to Test For
 
 ### Visual Verification ✅
+
 - Do components render without visual glitches?
 - Are colors, fonts, and layouts professional?
 - Do animations run smoothly (200-400ms transitions)?
 - Are charts and visualizations crisp and clear?
 
 ### Interaction Testing 🖱️
+
 - Do buttons respond to clicks?
 - Do toggle switches work correctly?
 - Do cards expand/collapse smoothly?
 - Do hover effects display properly?
 
 ### Error Detection 🐛
+
 - Are there red errors in the console?
 - Does the page crash or freeze?
 - Are there "undefined" or "NaN" values displayed?
 - Do ErrorBoundary messages appear?
 
 ### Performance Check ⚡
+
 - Does page load in <5 seconds?
 - Is memory usage <200MB?
 - Are there layout shifts during load?
@@ -94,6 +103,7 @@ location.reload();
 When you're done testing, provide a report with:
 
 ### 1. Feature Status Table
+
 ```
 Feature               | Status | Notes
 ---------------------|--------|------------------
@@ -106,14 +116,17 @@ deck.gl Heatmaps     | ✅/❌  | [Brief findings]
 ```
 
 ### 2. Critical Issues
+
 List any blocking bugs that prevent features from working
 
 ### 3. Performance Metrics
+
 - Page load time: X seconds
 - Memory usage: X MB
 - Console errors: X errors
 
 ### 4. UX Observations
+
 - What works well?
 - What could be improved?
 - Does it feel production-ready?
@@ -121,6 +134,7 @@ List any blocking bugs that prevent features from working
 ### 5. Final Recommendation
 
 Choose one:
+
 - ✅ **Option 2: Ready for Gradual Rollout** - Features work, enable in production following Week 1-3 plan
 - ⚠️ **Option 3: Build Real APIs First** - Features work but sample data too fake, need real endpoints
 - ❌ **Fix Bugs First** - Found critical issues, must fix before any rollout
@@ -128,6 +142,7 @@ Choose one:
 ## Screenshots Needed
 
 Please capture:
+
 1. Real-Time Dashboard with 6 cards visible
 2. MLB Statcast section with spray chart
 3. NFL Next Gen Stats with field visualization
@@ -147,6 +162,7 @@ Please capture:
 ## Context: What Claude Code Built
 
 Over the past development session, Claude Code implemented:
+
 - **~2,400 lines** of production-ready React code
 - **7 git commits** with full documentation
 - **Zero breaking changes** to existing functionality
@@ -154,12 +170,14 @@ Over the past development session, Claude Code implemented:
 - **Comprehensive documentation**: 3 guides totaling ~1,500 lines
 
 The code is deployed to production but safely disabled. Your testing determines if we:
+
 1. Enable features for users (gradual 3-week rollout), or
 2. Build real API endpoints first (replace sample data)
 
 ## If Things Break
 
 Instant rollback command:
+
 ```javascript
 FEATURE_FLAGS.realTimeDashboard = false;
 FEATURE_FLAGS.mlbStatcast = false;
@@ -175,6 +193,7 @@ This disables everything and returns page to working state.
 ## Questions?
 
 If anything is unclear during testing:
+
 - Check the full testing plan in `CHATGPT_TESTING_PLAN.md`
 - Console log messages provide debugging context
 - ErrorBoundary will catch and display component errors

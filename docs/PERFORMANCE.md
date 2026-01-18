@@ -26,6 +26,7 @@ Maintainer: Austin Humphrey
 **Performance is a feature, not an afterthought.**
 
 For Blaze Sports Intel, performance directly impacts:
+
 - **User engagement**: Faster pages = more time on site
 - **Conversion rates**: 1 second delay = 7% reduction in conversions
 - **SEO rankings**: Core Web Vitals are ranking factors
@@ -46,44 +47,44 @@ For Blaze Sports Intel, performance directly impacts:
 
 ### JavaScript Bundle Sizes
 
-| Bundle | Size Limit | Current | Status |
-|--------|-----------|---------|--------|
-| Main bundle | 300 KB | TBD | 🟢 |
-| Vendor bundle | 150 KB | TBD | 🟢 |
-| Route chunks | 50 KB each | TBD | 🟢 |
-| Total JS | 500 KB | TBD | 🟢 |
+| Bundle        | Size Limit | Current | Status |
+| ------------- | ---------- | ------- | ------ |
+| Main bundle   | 300 KB     | TBD     | 🟢     |
+| Vendor bundle | 150 KB     | TBD     | 🟢     |
+| Route chunks  | 50 KB each | TBD     | 🟢     |
+| Total JS      | 500 KB     | TBD     | 🟢     |
 
 **Compressed sizes (gzip)**
 
 ### CSS Bundle Sizes
 
-| Bundle | Size Limit | Current | Status |
-|--------|-----------|---------|--------|
-| Main CSS | 50 KB | TBD | 🟢 |
-| Critical CSS | 15 KB | TBD | 🟢 |
-| Route CSS | 20 KB each | TBD | 🟢 |
-| Total CSS | 100 KB | TBD | 🟢 |
+| Bundle       | Size Limit | Current | Status |
+| ------------ | ---------- | ------- | ------ |
+| Main CSS     | 50 KB      | TBD     | 🟢     |
+| Critical CSS | 15 KB      | TBD     | 🟢     |
+| Route CSS    | 20 KB each | TBD     | 🟢     |
+| Total CSS    | 100 KB     | TBD     | 🟢     |
 
 **Compressed sizes (gzip)**
 
 ### Image Budgets
 
-| Type | Size Limit | Format | Notes |
-|------|-----------|--------|-------|
-| Hero images | 200 KB | WebP/AVIF | Lazy load |
-| Team logos | 20 KB | SVG preferred | Cache forever |
-| Player photos | 50 KB | WebP/AVIF | Lazy load |
-| Icons | 5 KB | SVG sprite | Inline or cache |
+| Type          | Size Limit | Format        | Notes           |
+| ------------- | ---------- | ------------- | --------------- |
+| Hero images   | 200 KB     | WebP/AVIF     | Lazy load       |
+| Team logos    | 20 KB      | SVG preferred | Cache forever   |
+| Player photos | 50 KB      | WebP/AVIF     | Lazy load       |
+| Icons         | 5 KB       | SVG sprite    | Inline or cache |
 
 ### Total Page Weight
 
-| Page Type | Size Limit | Target Load Time |
-|-----------|-----------|------------------|
-| Homepage | 2 MB | < 3 seconds |
-| Sport page | 1.5 MB | < 2.5 seconds |
-| Team page | 1.8 MB | < 3 seconds |
-| Live scores | 1 MB | < 2 seconds |
-| Analytics dashboard | 2.5 MB | < 4 seconds |
+| Page Type           | Size Limit | Target Load Time |
+| ------------------- | ---------- | ---------------- |
+| Homepage            | 2 MB       | < 3 seconds      |
+| Sport page          | 1.5 MB     | < 2.5 seconds    |
+| Team page           | 1.8 MB     | < 3 seconds      |
+| Live scores         | 1 MB       | < 2 seconds      |
+| Analytics dashboard | 2.5 MB     | < 4 seconds      |
 
 **All sizes on 3G connection (750 Kbps)**
 
@@ -101,8 +102,8 @@ For Blaze Sports Intel, performance directly impacts:
 
 ```html
 <!-- Preload critical resources -->
-<link rel="preload" as="image" href="/hero.webp">
-<link rel="preload" as="font" href="/inter-var.woff2" crossorigin>
+<link rel="preload" as="image" href="/hero.webp" />
+<link rel="preload" as="font" href="/inter-var.woff2" crossorigin />
 
 <!-- Optimize images -->
 <img
@@ -112,10 +113,11 @@ For Blaze Sports Intel, performance directly impacts:
   alt="Blaze Sports Intel"
   loading="eager"
   fetchpriority="high"
->
+/>
 ```
 
 **Strategies:**
+
 - Optimize server response time (TTFB < 600ms)
 - Preload critical resources
 - Optimize images (WebP/AVIF, responsive sizes)
@@ -148,13 +150,14 @@ async function processBulkData(items) {
 
     // Yield to main thread every 50ms
     if (i % 10 === 0) {
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
 }
 ```
 
 **Strategies:**
+
 - Minimize JavaScript execution time
 - Debounce/throttle event handlers
 - Use Web Workers for heavy computation
@@ -171,12 +174,7 @@ async function processBulkData(items) {
 
 ```html
 <!-- Reserve space for images -->
-<img
-  src="/player.webp"
-  width="400"
-  height="300"
-  alt="Player photo"
->
+<img src="/player.webp" width="400" height="300" alt="Player photo" />
 
 <!-- Reserve space for ads/embeds -->
 <div style="min-height: 250px;">
@@ -190,6 +188,7 @@ async function processBulkData(items) {
 ```
 
 **Strategies:**
+
 - Always include width/height on images
 - Reserve space for dynamic content
 - Use `font-display: swap` sparingly
@@ -198,12 +197,12 @@ async function processBulkData(items) {
 
 ### Performance Score Targets
 
-| Metric | Lighthouse Score | Target |
-|--------|-----------------|--------|
-| Performance | 90+ | 🎯 |
-| Accessibility | 95+ | 🎯 |
-| Best Practices | 90+ | 🎯 |
-| SEO | 95+ | 🎯 |
+| Metric         | Lighthouse Score | Target |
+| -------------- | ---------------- | ------ |
+| Performance    | 90+              | 🎯     |
+| Accessibility  | 95+              | 🎯     |
+| Best Practices | 90+              | 🎯     |
+| SEO            | 95+              | 🎯     |
 
 ---
 
@@ -233,7 +232,7 @@ module.exports = {
     collect: {
       numberOfRuns: 3,
       startServerCommand: 'npm run dev',
-      url: ['http://localhost:8788', 'http://localhost:8788/mlb']
+      url: ['http://localhost:8788', 'http://localhost:8788/mlb'],
     },
     assert: {
       assertions: {
@@ -241,13 +240,13 @@ module.exports = {
         'categories:accessibility': ['error', { minScore: 0.95 }],
         'first-contentful-paint': ['warn', { maxNumericValue: 2000 }],
         'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
-        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }]
-      }
+        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
+      },
     },
     upload: {
-      target: 'temporary-public-storage'
-    }
-  }
+      target: 'temporary-public-storage',
+    },
+  },
 };
 ```
 
@@ -320,8 +319,8 @@ function sendToAnalytics({ name, delta, value, id, rating }) {
       id,
       rating,
       timestamp: Date.now(),
-      url: window.location.pathname
-    })
+      url: window.location.pathname,
+    }),
   });
 }
 
@@ -369,7 +368,7 @@ const HeavyChart = lazy(() => import('./components/HeavyChart'));
 // Usage with Suspense
 <Suspense fallback={<Spinner />}>
   <HeavyChart data={chartData} />
-</Suspense>
+</Suspense>;
 ```
 
 #### Tree Shaking
@@ -394,10 +393,10 @@ export default {
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
-      }
-    }
-  }
+        drop_debugger: true,
+      },
+    },
+  },
 };
 ```
 
@@ -416,10 +415,10 @@ criticalCss.generate({
   src: 'index.html',
   target: {
     html: 'index-critical.html',
-    css: 'critical.css'
+    css: 'critical.css',
   },
   width: 1300,
-  height: 900
+  height: 900,
 });
 ```
 
@@ -432,7 +431,7 @@ import { PurgeCSS } from 'purgecss';
 const purgeCSSResults = await new PurgeCSS().purge({
   content: ['./src/**/*.html', './src/**/*.jsx'],
   css: ['./src/**/*.css'],
-  safelist: ['animate-', 'hover:', 'focus:']
+  safelist: ['animate-', 'hover:', 'focus:'],
 });
 ```
 
@@ -444,28 +443,19 @@ const purgeCSSResults = await new PurgeCSS().purge({
 <picture>
   <source
     type="image/avif"
-    srcset="/hero-400.avif 400w,
-            /hero-800.avif 800w,
-            /hero-1200.avif 1200w"
+    srcset="/hero-400.avif 400w, /hero-800.avif 800w, /hero-1200.avif 1200w"
     sizes="(max-width: 600px) 400px,
            (max-width: 1200px) 800px,
            1200px"
-  >
+  />
   <source
     type="image/webp"
-    srcset="/hero-400.webp 400w,
-            /hero-800.webp 800w,
-            /hero-1200.webp 1200w"
+    srcset="/hero-400.webp 400w, /hero-800.webp 800w, /hero-1200.webp 1200w"
     sizes="(max-width: 600px) 400px,
            (max-width: 1200px) 800px,
            1200px"
-  >
-  <img
-    src="/hero-800.jpg"
-    alt="Blaze Sports Intel"
-    loading="lazy"
-    decoding="async"
-  >
+  />
+  <img src="/hero-800.jpg" alt="Blaze Sports Intel" loading="lazy" decoding="async" />
 </picture>
 ```
 
@@ -485,9 +475,9 @@ export async function onRequest(context) {
           fit: 'scale-down',
           width: 800,
           quality: 85,
-          format: 'auto'
-        }
-      }
+          format: 'auto',
+        },
+      },
     });
 
     return fetch(imageRequest);
@@ -501,13 +491,7 @@ export async function onRequest(context) {
 
 ```html
 <!-- Preload critical fonts -->
-<link
-  rel="preload"
-  as="font"
-  href="/fonts/inter-var.woff2"
-  type="font/woff2"
-  crossorigin
->
+<link rel="preload" as="font" href="/fonts/inter-var.woff2" type="font/woff2" crossorigin />
 
 <!-- Use font-display: swap for web fonts -->
 <style>
@@ -538,13 +522,9 @@ export async function onRequest(context) {
 
     // Write to Analytics Engine
     env.ANALYTICS?.writeDataPoint({
-      blobs: [
-        request.url,
-        request.method,
-        response.status.toString()
-      ],
+      blobs: [request.url, request.method, response.status.toString()],
       doubles: [duration],
-      indexes: [new URL(request.url).pathname]
+      indexes: [new URL(request.url).pathname],
     });
 
     return response;
@@ -554,7 +534,7 @@ export async function onRequest(context) {
     env.ANALYTICS?.writeDataPoint({
       blobs: [request.url, request.method, 'error'],
       doubles: [duration],
-      indexes: [new URL(request.url).pathname]
+      indexes: [new URL(request.url).pathname],
     });
 
     throw error;
@@ -568,22 +548,22 @@ export async function onRequest(context) {
 // Performance alert thresholds
 const ALERTS = {
   // Core Web Vitals
-  LCP_THRESHOLD: 2500,          // 2.5 seconds
-  FID_THRESHOLD: 100,           // 100 milliseconds
-  INP_THRESHOLD: 200,           // 200 milliseconds
-  CLS_THRESHOLD: 0.1,           // 0.1 score
+  LCP_THRESHOLD: 2500, // 2.5 seconds
+  FID_THRESHOLD: 100, // 100 milliseconds
+  INP_THRESHOLD: 200, // 200 milliseconds
+  CLS_THRESHOLD: 0.1, // 0.1 score
 
   // API Performance
-  API_P95_THRESHOLD: 500,       // 500ms p95 latency
+  API_P95_THRESHOLD: 500, // 500ms p95 latency
   API_ERROR_RATE_THRESHOLD: 0.01, // 1% error rate
 
   // Resource Loading
-  TTFB_THRESHOLD: 600,          // 600ms time to first byte
-  FCP_THRESHOLD: 1800,          // 1.8 seconds first contentful paint
+  TTFB_THRESHOLD: 600, // 600ms time to first byte
+  FCP_THRESHOLD: 1800, // 1.8 seconds first contentful paint
 
   // Bundle Sizes
-  JS_BUNDLE_SIZE: 300 * 1024,   // 300 KB
-  CSS_BUNDLE_SIZE: 50 * 1024    // 50 KB
+  JS_BUNDLE_SIZE: 300 * 1024, // 300 KB
+  CSS_BUNDLE_SIZE: 50 * 1024, // 50 KB
 };
 ```
 
@@ -609,7 +589,7 @@ export async function onRequest({ env }) {
 
   return Response.json({
     metrics: results.results,
-    alerts: checkThresholds(results.results)
+    alerts: checkThresholds(results.results),
   });
 }
 
@@ -622,7 +602,7 @@ function checkThresholds(metrics) {
         severity: 'high',
         metric: 'LCP',
         value: metric.avg_lcp,
-        threshold: ALERTS.LCP_THRESHOLD
+        threshold: ALERTS.LCP_THRESHOLD,
       });
     }
 
@@ -631,7 +611,7 @@ function checkThresholds(metrics) {
         severity: 'high',
         metric: 'CLS',
         value: metric.avg_cls,
-        threshold: ALERTS.CLS_THRESHOLD
+        threshold: ALERTS.CLS_THRESHOLD,
       });
     }
   }
@@ -664,9 +644,9 @@ export default {
       filename: 'dist/stats.html',
       open: true,
       gzipSize: true,
-      brotliSize: true
-    })
-  ]
+      brotliSize: true,
+    }),
+  ],
 };
 ```
 
@@ -681,7 +661,7 @@ const DIST_DIR = './dist';
 const BUDGETS = {
   'main.js': 300 * 1024,
   'vendor.js': 150 * 1024,
-  'styles.css': 50 * 1024
+  'styles.css': 50 * 1024,
 };
 
 const files = readdirSync(DIST_DIR);
@@ -703,15 +683,17 @@ for (const file of files) {
       file,
       size,
       budget,
-      overage: size - budget
+      overage: size - budget,
     });
   }
 }
 
 if (violations.length > 0) {
   console.error('❌ Bundle size violations:');
-  violations.forEach(v => {
-    console.error(`  ${v.file}: ${(v.size / 1024).toFixed(2)} KB (budget: ${(v.budget / 1024).toFixed(2)} KB)`);
+  violations.forEach((v) => {
+    console.error(
+      `  ${v.file}: ${(v.size / 1024).toFixed(2)} KB (budget: ${(v.budget / 1024).toFixed(2)} KB)`
+    );
   });
   process.exit(1);
 }
@@ -757,13 +739,16 @@ export class D1ConnectionPool {
 
   async query(sql, params) {
     while (this.activeConnections >= this.maxConnections) {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
 
     this.activeConnections++;
 
     try {
-      return await this.db.prepare(sql).bind(...params).all();
+      return await this.db
+        .prepare(sql)
+        .bind(...params)
+        .all();
     } finally {
       this.activeConnections--;
     }
@@ -776,9 +761,9 @@ export class D1ConnectionPool {
 ```javascript
 // Cache frequently accessed data
 const CACHE_TTL = {
-  standings: 300,      // 5 minutes
-  live_scores: 30,     // 30 seconds
-  player_stats: 3600   // 1 hour
+  standings: 300, // 5 minutes
+  live_scores: 30, // 30 seconds
+  player_stats: 3600, // 1 hour
 };
 
 async function getStandings(sport, env) {
@@ -789,16 +774,12 @@ async function getStandings(sport, env) {
   if (cached) return cached;
 
   // Query database
-  const results = await env.DB.prepare(
-    'SELECT * FROM standings WHERE sport = ?'
-  ).bind(sport).all();
+  const results = await env.DB.prepare('SELECT * FROM standings WHERE sport = ?').bind(sport).all();
 
   // Store in cache
-  await env.CACHE.put(
-    cacheKey,
-    JSON.stringify(results.results),
-    { expirationTtl: CACHE_TTL.standings }
-  );
+  await env.CACHE.put(cacheKey, JSON.stringify(results.results), {
+    expirationTtl: CACHE_TTL.standings,
+  });
 
   return results.results;
 }
@@ -848,7 +829,7 @@ async function fetchWithSWR(url, ttl = 300) {
     }
 
     // If stale, revalidate in background
-    fetch(url).then(response => {
+    fetch(url).then((response) => {
       cache.put(cacheKey, response.clone());
     });
 
@@ -869,9 +850,9 @@ async function fetchWithSWR(url, ttl = 300) {
 // Purge cache on data update
 async function updateStandings(sport, data, env) {
   // Update database
-  await env.DB.prepare(
-    'UPDATE standings SET wins = ?, losses = ? WHERE team_id = ?'
-  ).bind(data.wins, data.losses, data.teamId).run();
+  await env.DB.prepare('UPDATE standings SET wins = ?, losses = ? WHERE team_id = ?')
+    .bind(data.wins, data.losses, data.teamId)
+    .run();
 
   // Invalidate cache
   await env.CACHE.delete(`standings:${sport}`);
@@ -887,12 +868,12 @@ async function purgeCloudflareCache(path) {
     {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${API_TOKEN}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${API_TOKEN}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        files: [`https://blazesportsintel.com${path}`]
-      })
+        files: [`https://blazesportsintel.com${path}`],
+      }),
     }
   );
 
@@ -1058,9 +1039,9 @@ webpagetest test https://blazesportsintel.com/ --location Dulles:Chrome
 // Monitor in production
 import { onCLS, onFID, onLCP } from 'web-vitals';
 
-onLCP(metric => console.log('LCP:', metric));
-onFID(metric => console.log('FID:', metric));
-onCLS(metric => console.log('CLS:', metric));
+onLCP((metric) => console.log('LCP:', metric));
+onFID((metric) => console.log('FID:', metric));
+onCLS((metric) => console.log('CLS:', metric));
 ```
 
 **Solutions:**
@@ -1118,6 +1099,7 @@ Austin Humphrey
 austin@blazesportsintel.com
 
 **Resources:**
+
 - [Web Vitals](https://web.dev/vitals/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [Cloudflare Performance](https://developers.cloudflare.com/pages/platform/performance)

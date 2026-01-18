@@ -12,6 +12,7 @@
 This document outlines the complete data architecture, integration pipeline, and modeling framework for integrating athlete wearables data (WHOOP v2) with NBA clutch performance analytics within the Blaze Sports Intel platform.
 
 **Key Goals:**
+
 1. Ingest real-time wearables data (HRV, HR, strain, recovery) from WHOOP v2 API
 2. Capture NBA clutch situations (last 5:00, margin ≤5) via NBA Stats API
 3. Time-align wearable signals with game events (UTC timestamp synchronization)
@@ -25,6 +26,7 @@ This document outlines the complete data architecture, integration pipeline, and
 ### 1.1 Wearables Tables
 
 #### `wearables_devices`
+
 Tracks registered wearable devices per athlete.
 
 ```sql
@@ -69,6 +71,7 @@ CREATE INDEX idx_wearables_devices_sync ON wearables_devices(last_sync_at) WHERE
 ```
 
 #### `wearables_readings`
+
 Raw time-series biometric data from wearables.
 
 ```sql
@@ -119,6 +122,7 @@ CREATE INDEX idx_wearables_readings_payload ON wearables_readings USING GIN(raw_
 ```
 
 #### `wearables_daily_summary`
+
 Pre-aggregated daily metrics for faster queries.
 
 ```sql
@@ -179,6 +183,7 @@ CREATE INDEX idx_wearables_daily_recovery ON wearables_daily_summary(recovery_sc
 ### 1.2 Clutch Performance Tables
 
 #### `clutch_situations`
+
 Define clutch game contexts for NBA basketball.
 
 ```sql
@@ -229,6 +234,7 @@ CREATE INDEX idx_clutch_situations_intensity ON clutch_situations(clutch_intensi
 ```
 
 #### `clutch_player_actions`
+
 Individual player actions during clutch situations.
 
 ```sql
@@ -272,6 +278,7 @@ CREATE INDEX idx_clutch_actions_type ON clutch_player_actions(action_type) WHERE
 ```
 
 #### `clutch_performance_scores`
+
 Aggregated clutch performance metrics with wearables context.
 
 ```sql
@@ -353,6 +360,7 @@ INSERT INTO ml_features (entity_id, entity_type, feature_name, feature_value, ca
 ```
 
 **New Feature Categories:**
+
 - **Wearables Base**: `hrv_rmssd_avg`, `resting_hr_avg`, `recovery_score_avg`
 - **Wearables Trends**: `hrv_trend_7d`, `recovery_trend_14d`, `sleep_quality_variance`
 - **Wearables + Performance**: `clutch_score_adjusted`, `fatigue_index`, `strain_recovery_ratio`
@@ -367,6 +375,7 @@ INSERT INTO ml_features (entity_id, entity_type, feature_name, feature_value, ca
 **File**: `lib/adapters/whoop-v2-adapter.ts`
 
 **Key Endpoints**:
+
 ```typescript
 // OAuth 2.0 Authorization
 POST https://api.whoop.com/oauth/token
@@ -408,6 +417,7 @@ Body: {
 ```
 
 **Response Normalization**:
+
 ```typescript
 interface WHOOPRecoveryResponse {
   cycle_id: number;
@@ -415,7 +425,7 @@ interface WHOOPRecoveryResponse {
   user_id: number;
   created_at: string; // ISO 8601
   updated_at: string;
-  score_state: "SCORED" | "PENDING_SCORE" | "UNSCORABLE";
+  score_state: 'SCORED' | 'PENDING_SCORE' | 'UNSCORABLE';
   score: {
     user_calibrating: boolean;
     recovery_score: number; // 0-100
@@ -430,18 +440,19 @@ interface WHOOPRecoveryResponse {
 interface NormalizedWearablesReading {
   player_id: string;
   reading_timestamp: Date;
-  metric_type: "heart_rate" | "hrv_rmssd" | "recovery_score" | "spo2" | "skin_temp";
+  metric_type: 'heart_rate' | 'hrv_rmssd' | 'recovery_score' | 'spo2' | 'skin_temp';
   metric_value: number;
-  metric_unit: "bpm" | "ms" | "score" | "%" | "celsius";
+  metric_unit: 'bpm' | 'ms' | 'score' | '%' | 'celsius';
   quality_score: number; // 0.0-1.0
-  activity_state: "resting" | "sleeping" | "active";
+  activity_state: 'resting' | 'sleeping' | 'active';
   source_session_id: string; // cycle_id
   raw_payload: object;
-  data_source: "whoop_v2";
+  data_source: 'whoop_v2';
 }
 ```
 
 **Error Handling & Retry Logic**:
+
 - **Rate Limits**: WHOOP v2 allows 100 requests/minute. Implement exponential backoff.
 - **Token Refresh**: Refresh tokens expire after 30 days. Auto-refresh before expiry.
 - **Data Gaps**: If `score_state === "UNSCORABLE"`, mark `quality_score = 0.0`.
@@ -454,6 +465,7 @@ interface NormalizedWearablesReading {
 **File**: `lib/adapters/nba-stats-clutch-adapter.ts`
 
 **Key Endpoints**:
+
 ```typescript
 // Clutch Player Stats
 GET https://stats.nba.com/stats/leaguedashplayerclutch
@@ -489,6 +501,7 @@ Params: {
 ```
 
 **Clutch Context Detection**:
+
 ```typescript
 function isClutchSituation(playByPlayEvent: NBAPlayByPlayEvent): boolean {
   const period = playByPlayEvent.PERIOD;
@@ -496,7 +509,7 @@ function isClutchSituation(playByPlayEvent: NBAPlayByPlayEvent): boolean {
   const scoreMargin = Math.abs(playByPlayEvent.SCOREMARGIN);
 
   // NBA standard: Last 5:00 of 4th quarter or OT, margin ≤5
-  const isLastFiveMinutes = (period >= 4) && (gameClock <= 300);
+  const isLastFiveMinutes = period >= 4 && gameClock <= 300;
   const isCloseGame = scoreMargin <= 5;
 
   return isLastFiveMinutes && isCloseGame;
@@ -504,6 +517,7 @@ function isClutchSituation(playByPlayEvent: NBAPlayByPlayEvent): boolean {
 ```
 
 **Data Synchronization**:
+
 - **Polling Frequency**: Every 5 minutes during live games
 - **Historical Backfill**: Batch process previous 2 seasons on initial setup
 - **Timezone**: NBA uses ET (America/New_York). Convert all to UTC for storage.
@@ -517,6 +531,7 @@ function isClutchSituation(playByPlayEvent: NBAPlayByPlayEvent): boolean {
 **Challenge**: Synchronize wearable readings (sampled every 1-60 minutes) with discrete game events (sub-second resolution).
 
 **Strategy**:
+
 1. **Pre-game Baseline**: Use wearables data from morning of game (6am-12pm local time)
 2. **Event Window Matching**: For each clutch action, find closest wearable reading within ±2 hours
 3. **Interpolation**: For missing data, linearly interpolate between adjacent readings
@@ -538,17 +553,20 @@ async function alignWearablesToClutchEvent(
   clutchEventTime: Date,
   lookbackHours: number = 2
 ): Promise<TimeAlignedData> {
-  const windowStart = new Date(clutchEventTime.getTime() - (lookbackHours * 3600000));
+  const windowStart = new Date(clutchEventTime.getTime() - lookbackHours * 3600000);
   const windowEnd = clutchEventTime;
 
-  const readings = await db.query(`
+  const readings = await db.query(
+    `
     SELECT * FROM wearables_readings
     WHERE player_id = $1
       AND reading_timestamp BETWEEN $2 AND $3
       AND metric_type IN ('hrv_rmssd', 'recovery_score', 'heart_rate')
     ORDER BY ABS(EXTRACT(EPOCH FROM (reading_timestamp - $4)))
     LIMIT 1
-  `, [playerId, windowStart, windowEnd, clutchEventTime]);
+  `,
+    [playerId, windowStart, windowEnd, clutchEventTime]
+  );
 
   if (readings.rows.length === 0) {
     return null; // No wearables data available
@@ -559,7 +577,7 @@ async function alignWearablesToClutchEvent(
     (clutchEventTime.getTime() - reading.reading_timestamp.getTime()) / 60000
   );
 
-  const qualityScore = timeDelta < 30 ? 1.0 : (timeDelta < 120 ? 0.7 : 0.4);
+  const qualityScore = timeDelta < 30 ? 1.0 : timeDelta < 120 ? 0.7 : 0.4;
 
   return {
     game_event_timestamp: clutchEventTime,
@@ -568,7 +586,7 @@ async function alignWearablesToClutchEvent(
     interpolated: false,
     quality_score: qualityScore,
     hrv_value: reading.metric_value,
-    recovery_score: null // Fetch separately if needed
+    recovery_score: null, // Fetch separately if needed
   };
 }
 ```
@@ -582,6 +600,7 @@ async function alignWearablesToClutchEvent(
 **File**: `workers/ingest/whoop-ingestion-worker.ts`
 
 **Architecture**: Cloudflare Worker triggered by:
+
 1. **Scheduled CRON**: Every 1 hour for batch sync
 2. **Webhook Events**: Real-time when WHOOP sends `recovery.updated`
 
@@ -605,13 +624,13 @@ export default {
 
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     // Handle webhook events
-    if (request.method === "POST" && new URL(request.url).pathname === "/webhooks/whoop") {
+    if (request.method === 'POST' && new URL(request.url).pathname === '/webhooks/whoop') {
       const event = await request.json();
       await handleWHOOPWebhook(event, env);
-      return new Response("OK", { status: 200 });
+      return new Response('OK', { status: 200 });
     }
-    return new Response("Not Found", { status: 404 });
-  }
+    return new Response('Not Found', { status: 404 });
+  },
 };
 
 async function syncWHOOPData(device: WearableDevice, env: Env) {
@@ -619,9 +638,12 @@ async function syncWHOOPData(device: WearableDevice, env: Env) {
   const lastSync = device.last_sync_at || new Date(Date.now() - 7 * 86400000); // 7 days ago
 
   // Fetch cycle data (combines recovery, sleep, strain)
-  const response = await fetch(`https://api.whoop.com/v2/cycle?start=${lastSync.toISOString()}&end=${new Date().toISOString()}`, {
-    headers: { "Authorization": `Bearer ${accessToken}` }
-  });
+  const response = await fetch(
+    `https://api.whoop.com/v2/cycle?start=${lastSync.toISOString()}&end=${new Date().toISOString()}`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }
+  );
 
   if (response.status === 401) {
     // Token expired, refresh
@@ -638,11 +660,14 @@ async function syncWHOOPData(device: WearableDevice, env: Env) {
   }
 
   // Update sync status
-  await db.query(`
+  await db.query(
+    `
     UPDATE wearables_devices
     SET last_sync_at = NOW(), sync_status = 'success'
     WHERE device_id = $1
-  `, [device.device_id]);
+  `,
+    [device.device_id]
+  );
 }
 ```
 
@@ -672,7 +697,7 @@ async function ingestNBAClutchData(gameId: string) {
         start_timestamp: event.timestamp,
         game_clock_start: event.game_clock,
         period: event.period,
-        score_margin: event.score_margin
+        score_margin: event.score_margin,
       };
     } else if (!isClutch && currentClutchWindow) {
       // End clutch window
@@ -684,22 +709,28 @@ async function ingestNBAClutchData(gameId: string) {
 
   // 3. Insert clutch situations
   for (const window of clutchWindows) {
-    const situationId = await db.query(`
+    const situationId = await db.query(
+      `
       INSERT INTO clutch_situations (game_id, situation_type, start_timestamp, end_timestamp, ...)
       VALUES ($1, 'clutch_time', $2, $3, ...)
       RETURNING situation_id
-    `, [gameId, window.start_timestamp, window.end_timestamp]);
+    `,
+      [gameId, window.start_timestamp, window.end_timestamp]
+    );
 
     // 4. Extract player actions within window
-    const actionsInWindow = pbp.events.filter(e =>
-      e.timestamp >= window.start_timestamp && e.timestamp <= window.end_timestamp
+    const actionsInWindow = pbp.events.filter(
+      (e) => e.timestamp >= window.start_timestamp && e.timestamp <= window.end_timestamp
     );
 
     for (const action of actionsInWindow) {
-      await db.query(`
+      await db.query(
+        `
         INSERT INTO clutch_player_actions (situation_id, player_id, action_type, is_successful, ...)
         VALUES ($1, $2, $3, $4, ...)
-      `, [situationId, action.player_id, action.action_type, action.is_successful]);
+      `,
+        [situationId, action.player_id, action.action_type, action.is_successful]
+      );
     }
   }
 }
@@ -714,6 +745,7 @@ async function ingestNBAClutchData(gameId: string) {
 **File**: `api/ml/clutch-performance-model.py`
 
 **Objective**: Estimate player-specific clutch ability accounting for:
+
 1. **Player-level random effects**: Some players are inherently "clutch"
 2. **Wearables covariates**: HRV, recovery, sleep quality
 3. **Situation covariates**: Score margin, playoff vs regular season
@@ -811,6 +843,7 @@ def predict_clutch_score(trace, new_data: pd.DataFrame) -> np.ndarray:
 ```
 
 **Model Training Pipeline**:
+
 1. **Data Preparation**: Join `clutch_performance_scores` + `wearables_daily_summary`
 2. **Train/Test Split**: 80/20, stratified by player
 3. **Fit Model**: Run MCMC sampling (2000 samples, 1000 tuning)
@@ -847,7 +880,7 @@ class ClutchPredictionService {
       sleep_performance: wearablesData.sleep_performance || 75,
       score_margin: gameContext.score_margin,
       is_playoff: gameContext.is_playoff ? 1 : 0,
-      days_since_last_game: gameContext.days_rest
+      days_since_last_game: gameContext.days_rest,
     };
 
     const prediction = await this.model.predict(features);
@@ -856,7 +889,7 @@ class ClutchPredictionService {
       predicted_clutch_score: prediction.mean,
       confidence_interval: [prediction.lower, prediction.upper],
       model_version: this.modelVersion,
-      has_wearables_data: !!wearablesData.recovery_score
+      has_wearables_data: !!wearablesData.recovery_score,
     };
   }
 }
@@ -889,12 +922,12 @@ export function ClutchPerformanceDashboard({ playerId, season }: ClutchDashboard
 
   React.useEffect(() => {
     fetch(`/api/players/${playerId}/clutch-performance?season=${season}`)
-      .then(res => res.json())
-      .then(data => setClutchData(data));
+      .then((res) => res.json())
+      .then((data) => setClutchData(data));
 
     fetch(`/api/players/${playerId}/wearables/summary?season=${season}`)
-      .then(res => res.json())
-      .then(data => setWearablesData(data));
+      .then((res) => res.json())
+      .then((data) => setWearablesData(data));
   }, [playerId, season]);
 
   if (!clutchData) return <div>Loading...</div>;
@@ -942,7 +975,7 @@ export function ClutchPerformanceDashboard({ playerId, season }: ClutchDashboard
           </tr>
         </thead>
         <tbody>
-          {clutchData.games.map(game => (
+          {clutchData.games.map((game) => (
             <tr key={game.game_id}>
               <td>{game.date}</td>
               <td>{game.opponent}</td>
@@ -983,7 +1016,10 @@ export default function WearablesConsentPage({ params }: { params: { id: string 
   return (
     <div className="consent-page">
       <h1>Connect Your WHOOP Device</h1>
-      <p>Allow Blaze Sports Intel to access your recovery, sleep, and strain data to improve clutch performance insights.</p>
+      <p>
+        Allow Blaze Sports Intel to access your recovery, sleep, and strain data to improve clutch
+        performance insights.
+      </p>
 
       <h2>Data We Collect:</h2>
       <ul>
@@ -1002,9 +1038,7 @@ export default function WearablesConsentPage({ params }: { params: { id: string 
         <li>Used only for performance analytics, never sold</li>
       </ul>
 
-      <button onClick={handleGrantConsent}>
-        Connect WHOOP
-      </button>
+      <button onClick={handleGrantConsent}>Connect WHOOP</button>
     </div>
   );
 }
@@ -1033,24 +1067,29 @@ export async function GET(request: NextRequest) {
       code,
       client_id: process.env.WHOOP_CLIENT_ID!,
       client_secret: process.env.WHOOP_CLIENT_SECRET!,
-      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/whoop/callback`
-    })
+      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/whoop/callback`,
+    }),
   });
 
   const tokens = await tokenResponse.json();
 
   // Store encrypted tokens
-  await db.query(`
+  await db.query(
+    `
     INSERT INTO wearables_devices (player_id, device_type, api_version, access_token_encrypted, refresh_token_encrypted, token_expires_at, consent_granted, consent_granted_at)
     VALUES ($1, 'whoop', 'v2', $2, $3, $4, TRUE, NOW())
-  `, [
-    state,
-    encrypt(tokens.access_token),
-    encrypt(tokens.refresh_token),
-    new Date(Date.now() + tokens.expires_in * 1000)
-  ]);
+  `,
+    [
+      state,
+      encrypt(tokens.access_token),
+      encrypt(tokens.refresh_token),
+      new Date(Date.now() + tokens.expires_in * 1000),
+    ]
+  );
 
-  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/players/${state}/wearables?success=true`);
+  return NextResponse.redirect(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/players/${state}/wearables?success=true`
+  );
 }
 ```
 
@@ -1098,30 +1137,35 @@ POST /api/analytics/clutch/predict
 ## 8. Implementation Roadmap
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 - [ ] Database schema migration
 - [ ] WHOOP v2 adapter implementation
 - [ ] OAuth consent flow
 - [ ] Basic data ingestion workers
 
 ### Phase 2: NBA Integration (Weeks 3-4)
+
 - [ ] NBA Stats clutch adapter
 - [ ] Clutch situation detection logic
 - [ ] Time alignment utilities
 - [ ] Historical data backfill (2 seasons)
 
 ### Phase 3: Modeling (Weeks 5-6)
+
 - [ ] Feature engineering pipeline
 - [ ] Hierarchical Bayesian model training
 - [ ] Model validation and tuning
 - [ ] Deployment to R2 + inference service
 
 ### Phase 4: Frontend (Weeks 7-8)
+
 - [ ] Clutch performance dashboard
 - [ ] Wearables data visualizations
 - [ ] 3D components integration
 - [ ] API endpoint implementation
 
 ### Phase 5: Production (Week 9)
+
 - [ ] Load testing
 - [ ] Security audit
 - [ ] Privacy compliance review
@@ -1131,26 +1175,28 @@ POST /api/analytics/clutch/predict
 
 ## 9. Risks & Mitigations
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Low athlete consent rate | High | Medium | Incentivize with exclusive insights; start with team buy-in |
-| WHOOP API rate limits | Medium | Low | Implement caching; batch requests; use webhooks |
-| Data sync latency | Medium | Medium | Prioritize pre-game data (6am-12pm); interpolate gaps |
-| Model overfitting | High | Medium | Cross-validation; regularization priors; holdout test set |
-| Privacy breach | Critical | Low | Encryption at rest/transit; audit logs; token rotation |
-| NBA API changes | Medium | Low | Version API responses; automated schema validation |
+| Risk                     | Impact   | Probability | Mitigation                                                  |
+| ------------------------ | -------- | ----------- | ----------------------------------------------------------- |
+| Low athlete consent rate | High     | Medium      | Incentivize with exclusive insights; start with team buy-in |
+| WHOOP API rate limits    | Medium   | Low         | Implement caching; batch requests; use webhooks             |
+| Data sync latency        | Medium   | Medium      | Prioritize pre-game data (6am-12pm); interpolate gaps       |
+| Model overfitting        | High     | Medium      | Cross-validation; regularization priors; holdout test set   |
+| Privacy breach           | Critical | Low         | Encryption at rest/transit; audit logs; token rotation      |
+| NBA API changes          | Medium   | Low         | Version API responses; automated schema validation          |
 
 ---
 
 ## 10. Success Metrics
 
 **Technical KPIs:**
+
 - Wearables data uptime: >95%
 - API sync latency: <5 minutes
 - Model prediction RMSE: <8 points (clutch score scale 0-100)
 - Dashboard load time: <2 seconds
 
 **Business KPIs:**
+
 - Athlete adoption: >50% of target cohort
 - Clutch prediction accuracy: >70% (POE sign prediction)
 - Coach engagement: >80% weekly dashboard views
@@ -1162,6 +1208,7 @@ POST /api/analytics/clutch/predict
 ### A. Sample Queries
 
 **Get player's clutch performance with wearables context:**
+
 ```sql
 SELECT
   cps.game_id,
@@ -1180,6 +1227,7 @@ ORDER BY g.game_date DESC;
 ```
 
 **Leaderboard: Top clutch performers with wearables:**
+
 ```sql
 SELECT
   p.full_name,

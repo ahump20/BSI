@@ -25,7 +25,7 @@ export default defineConfig({
   reporter: [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/a11y-results.json' }],
-    ['list']
+    ['list'],
   ],
 
   // Shared settings for all tests

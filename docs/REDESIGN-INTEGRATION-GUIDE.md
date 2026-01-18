@@ -22,13 +22,13 @@
 
 ### What Changed
 
-| **Before (#BF5700)** | **After (#D96200)** | **Impact** |
-|----------------------|---------------------|------------|
-| Standard burnt orange | Intensified championship orange | +18% vibrance |
-| ~4:1 text contrast | 21:1 text contrast | WCAG AAA compliance |
-| No skip navigation | Skip links + ARIA landmarks | Screen reader friendly |
-| Standard card hovers | Championship glow effects | Professional polish |
-| Basic accessibility | Comprehensive a11y suite | Industry-leading |
+| **Before (#BF5700)**  | **After (#D96200)**             | **Impact**             |
+| --------------------- | ------------------------------- | ---------------------- |
+| Standard burnt orange | Intensified championship orange | +18% vibrance          |
+| ~4:1 text contrast    | 21:1 text contrast              | WCAG AAA compliance    |
+| No skip navigation    | Skip links + ARIA landmarks     | Screen reader friendly |
+| Standard card hovers  | Championship glow effects       | Professional polish    |
+| Basic accessibility   | Comprehensive a11y suite        | Industry-leading       |
 
 ---
 
@@ -50,6 +50,7 @@ open https://blazesportsintel.com
 ```
 
 **Advantages**:
+
 - Instant championship-level UX
 - Zero downtime (all existing links work)
 - Immediate accessibility compliance
@@ -64,18 +65,19 @@ open https://blazesportsintel.com
 **Test the championship version with 10% of traffic:**
 
 1. **Configure Cloudflare Workers A/B split**:
+
    ```javascript
    // /functions/_middleware.js
    export async function onRequest(context) {
-       const { request } = context;
-       const url = new URL(request.url);
+     const { request } = context;
+     const url = new URL(request.url);
 
-       // 10% get championship version
-       if (Math.random() < 0.1 && url.pathname === '/') {
-           return fetch(new URL('/index-championship.html', url));
-       }
+     // 10% get championship version
+     if (Math.random() < 0.1 && url.pathname === '/') {
+       return fetch(new URL('/index-championship.html', url));
+     }
 
-       return context.next();
+     return context.next();
    }
    ```
 
@@ -118,14 +120,16 @@ open https://blazesportsintel.com
 ### 1. Color System Upgrade
 
 **Before (#BF5700)**:
+
 ```css
---blaze-burnt-orange: #BF5700;  /* Standard burnt orange */
+--blaze-burnt-orange: #bf5700; /* Standard burnt orange */
 ```
 
 **After (#D96200)**:
+
 ```css
---blaze-burnt-orange: #D96200;  /* Championship intensified orange */
---color-brand-primary: #D96200;
+--blaze-burnt-orange: #d96200; /* Championship intensified orange */
+--color-brand-primary: #d96200;
 --glow-soft: 0 0 30px rgba(217, 98, 0, 0.4);
 --glow-intense: 0 0 60px rgba(204, 102, 0, 0.6);
 ```
@@ -137,12 +141,14 @@ open https://blazesportsintel.com
 ### 2. Accessibility Enhancements
 
 #### Skip Navigation Link
+
 ```html
 <!-- NEW: Allows keyboard users to skip to main content -->
 <a href="#main-content" class="skip-link">Skip to main content</a>
 ```
 
 #### ARIA Live Regions
+
 ```html
 <!-- NEW: Screen reader announcements -->
 <div class="sr-only" aria-live="polite" id="status-announcer"></div>
@@ -150,22 +156,24 @@ open https://blazesportsintel.com
 ```
 
 #### Keyboard Navigation
+
 ```javascript
 // NEW: Logo keyboard accessibility
 document.querySelector('.logo').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-        window.location.href = '/';
-    }
+  if (e.key === 'Enter' || e.key === ' ') {
+    window.location.href = '/';
+  }
 });
 ```
 
 #### Focus Visible States
+
 ```css
 /* NEW: Championship-level focus indicators */
 *:focus-visible {
-    outline: 3px solid var(--color-brand-primary);
-    outline-offset: 2px;
-    border-radius: var(--radius-md);
+  outline: 3px solid var(--color-brand-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
 }
 ```
 
@@ -174,35 +182,47 @@ document.querySelector('.logo').addEventListener('keypress', (e) => {
 ### 3. Performance Optimizations
 
 #### Reduced Motion Support
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-    #particle-field { display: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  #particle-field {
+    display: none;
+  }
 }
 ```
 
 #### Print Styles
+
 ```css
 @media print {
-    #particle-field, .nav, .cta-btn {
-        display: none !important;
-    }
-    body { background: white; color: black; }
+  #particle-field,
+  .nav,
+  .cta-btn {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
 }
 ```
 
 #### High Contrast Mode
+
 ```css
 @media (prefers-contrast: high) {
-    .sport-card {
-        border: 2px solid var(--color-brand-primary);
-    }
-    .hero-title {
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
+  .sport-card {
+    border: 2px solid var(--color-brand-primary);
+  }
+  .hero-title {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
 }
 ```
 
@@ -211,36 +231,39 @@ document.querySelector('.logo').addEventListener('keypress', (e) => {
 ### 4. Championship Polish
 
 #### Enhanced Logo Glow
+
 ```css
 .logo {
-    background: linear-gradient(135deg, #D96200 0%, #CC6600 50%, #BF5700 100%);
-    filter: drop-shadow(0 0 20px rgba(217, 98, 0, 0.4));
+  background: linear-gradient(135deg, #d96200 0%, #cc6600 50%, #bf5700 100%);
+  filter: drop-shadow(0 0 20px rgba(217, 98, 0, 0.4));
 }
 
 .logo:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 30px rgba(217, 98, 0, 0.6));
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 30px rgba(217, 98, 0, 0.6));
 }
 ```
 
 #### Intensified CTA Buttons
+
 ```css
 .cta-btn-primary:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow:
-        0 0 60px rgba(204, 102, 0, 0.6),
-        0 0 100px rgba(217, 98, 0, 0.4),
-        0 0 140px rgba(255, 140, 66, 0.2);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow:
+    0 0 60px rgba(204, 102, 0, 0.6),
+    0 0 100px rgba(217, 98, 0, 0.4),
+    0 0 140px rgba(255, 140, 66, 0.2);
 }
 ```
 
 #### Championship Sport Cards
+
 ```css
 .sport-card:hover {
-    transform: translateY(-8px);
-    box-shadow:
-        0 20px 40px rgba(217, 98, 0, 0.4),
-        0 0 24px rgba(217, 98, 0, 0.3);
+  transform: translateY(-8px);
+  box-shadow:
+    0 20px 40px rgba(217, 98, 0, 0.4),
+    0 0 24px rgba(217, 98, 0, 0.3);
 }
 ```
 
@@ -261,12 +284,12 @@ document.querySelector('.logo').addEventListener('keypress', (e) => {
 
 ### Lighthouse Target Scores
 
-| Metric | Current | Target | Championship |
-|--------|---------|--------|--------------|
-| Performance | 85 | 90+ | ✅ 93 |
-| Accessibility | 78 | 95+ | ✅ 97 |
-| Best Practices | 90 | 95+ | ✅ 96 |
-| SEO | 95 | 98+ | ✅ 98 |
+| Metric         | Current | Target | Championship |
+| -------------- | ------- | ------ | ------------ |
+| Performance    | 85      | 90+    | ✅ 93        |
+| Accessibility  | 78      | 95+    | ✅ 97        |
+| Best Practices | 90      | 95+    | ✅ 96        |
+| SEO            | 95      | 98+    | ✅ 98        |
 
 ---
 
@@ -297,26 +320,27 @@ document.querySelector('.logo').addEventListener('keypress', (e) => {
 ```html
 <!-- Insert after hero section -->
 <section class="live-games-section" aria-label="Live Games">
-    <div class="live-games-container">
-        <h2 class="live-games-title">
-            <span class="live-badge live-badge--pulse">
-                <span class="live-dot"></span>
-                LIVE
-            </span>
-            3 Games In Progress
-        </h2>
-        <!-- Game cards here -->
-    </div>
+  <div class="live-games-container">
+    <h2 class="live-games-title">
+      <span class="live-badge live-badge--pulse">
+        <span class="live-dot"></span>
+        LIVE
+      </span>
+      3 Games In Progress
+    </h2>
+    <!-- Game cards here -->
+  </div>
 </section>
 ```
 
 **CSS** (already in `/public/css/blaze-components-enhanced.css`):
+
 ```css
 .live-games-section {
-    position: sticky;
-    top: 73px;
-    z-index: 90;
-    background: var(--color-slate-950);
+  position: sticky;
+  top: 73px;
+  z-index: 90;
+  background: var(--color-slate-950);
 }
 ```
 
@@ -331,14 +355,17 @@ document.querySelector('.logo').addEventListener('keypress', (e) => {
 ```javascript
 // /functions/api/live-games.js
 export async function onRequest({ env }) {
-    const response = await fetch('https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/2025-11-20', {
-        headers: { 'Ocp-Apim-Subscription-Key': env.SPORTSDATAIO_API_KEY }
-    });
+  const response = await fetch(
+    'https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/2025-11-20',
+    {
+      headers: { 'Ocp-Apim-Subscription-Key': env.SPORTSDATAIO_API_KEY },
+    }
+  );
 
-    const games = await response.json();
-    return new Response(JSON.stringify(games), {
-        headers: { 'Content-Type': 'application/json' }
-    });
+  const games = await response.json();
+  return new Response(JSON.stringify(games), {
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 ```
 
@@ -356,9 +383,12 @@ localStorage.setItem('bsi-color-mode', 'championship');
 localStorage.setItem('bsi-favorite-teams', JSON.stringify(['Cardinals', 'Longhorns']));
 
 // Custom dashboard layout
-localStorage.setItem('bsi-dashboard-layout', JSON.stringify({
-    widgets: ['live-scores', 'standings', 'analytics']
-}));
+localStorage.setItem(
+  'bsi-dashboard-layout',
+  JSON.stringify({
+    widgets: ['live-scores', 'standings', 'analytics'],
+  })
+);
 ```
 
 ---
@@ -367,13 +397,13 @@ localStorage.setItem('bsi-dashboard-layout', JSON.stringify({
 
 ### Key Performance Indicators (KPIs)
 
-| Metric | Baseline | Target (30 days) | Measurement |
-|--------|----------|------------------|-------------|
-| **Accessibility Score** | 78 | 95+ | Lighthouse |
-| **Time on Site** | 2:15 | 3:00+ | Google Analytics |
-| **Bounce Rate** | 42% | <35% | GA |
-| **Mobile Conversion** | 18% | 25%+ | Goal completions |
-| **AI Copilot Usage** | 150/day | 250+/day | Custom event tracking |
+| Metric                  | Baseline | Target (30 days) | Measurement           |
+| ----------------------- | -------- | ---------------- | --------------------- |
+| **Accessibility Score** | 78       | 95+              | Lighthouse            |
+| **Time on Site**        | 2:15     | 3:00+            | Google Analytics      |
+| **Bounce Rate**         | 42%      | <35%             | GA                    |
+| **Mobile Conversion**   | 18%      | 25%+             | Goal completions      |
+| **AI Copilot Usage**    | 150/day  | 250+/day         | Custom event tracking |
 
 ### Qualitative Goals
 
@@ -389,6 +419,7 @@ localStorage.setItem('bsi-dashboard-layout', JSON.stringify({
 ### If Issues Arise
 
 **Immediate rollback (< 1 minute)**:
+
 ```bash
 # Restore original
 cp /Users/AustinHumphrey/BSI/index-backup-YYYYMMDD.html /Users/AustinHumphrey/BSI/index.html
@@ -441,48 +472,48 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 
 ```css
 /* Championship Orange Spectrum */
---blaze-burnt-orange: #D96200;    /* Primary brand (intensified) */
---blaze-ember: #CC6600;           /* Rich glow */
---blaze-copper: #D97B38;          /* Accent */
---blaze-sunset: #E69551;          /* Warmth */
---blaze-amber: #FFBF00;           /* Highlight */
+--blaze-burnt-orange: #d96200; /* Primary brand (intensified) */
+--blaze-ember: #cc6600; /* Rich glow */
+--blaze-copper: #d97b38; /* Accent */
+--blaze-sunset: #e69551; /* Warmth */
+--blaze-amber: #ffbf00; /* Highlight */
 
 /* Background Layers */
---color-slate-950: #0B0E14;       /* Deep charcoal base */
---color-slate-900: #131820;       /* Secondary background */
---color-slate-800: #1F1F2E;       /* Elevated surfaces */
+--color-slate-950: #0b0e14; /* Deep charcoal base */
+--color-slate-900: #131820; /* Secondary background */
+--color-slate-800: #1f1f2e; /* Elevated surfaces */
 
 /* Semantic Colors */
---color-live-primary: #FF2D55;    /* Electric red for LIVE badges */
---color-win-high: #00FF88;        /* Neon green for 70%+ win probability */
---color-success: #2ECC71;         /* Confirmation states */
+--color-live-primary: #ff2d55; /* Electric red for LIVE badges */
+--color-win-high: #00ff88; /* Neon green for 70%+ win probability */
+--color-success: #2ecc71; /* Confirmation states */
 ```
 
 ### Typography Scale
 
 ```css
 /* Fluid sizing with clamp() */
---font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);     /* 12-14px */
---font-size-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);      /* 14-16px */
---font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);     /* 16-18px */
---font-size-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.375rem);  /* 18-22px */
---font-size-xl: clamp(1.375rem, 1.25rem + 0.5vw, 1.75rem);     /* 22-28px */
---font-size-2xl: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);         /* 28-40px */
---font-size-3xl: clamp(2.25rem, 2rem + 1vw, 3rem);             /* 36-48px */
---font-size-4xl: clamp(3rem, 2.5rem + 1.5vw, 4rem);            /* 48-64px */
---font-size-5xl: clamp(4rem, 3.5rem + 2vw, 6rem);              /* 64-96px */
+--font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem); /* 12-14px */
+--font-size-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem); /* 14-16px */
+--font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem); /* 16-18px */
+--font-size-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.375rem); /* 18-22px */
+--font-size-xl: clamp(1.375rem, 1.25rem + 0.5vw, 1.75rem); /* 22-28px */
+--font-size-2xl: clamp(1.75rem, 1.5rem + 1vw, 2.5rem); /* 28-40px */
+--font-size-3xl: clamp(2.25rem, 2rem + 1vw, 3rem); /* 36-48px */
+--font-size-4xl: clamp(3rem, 2.5rem + 1.5vw, 4rem); /* 48-64px */
+--font-size-5xl: clamp(4rem, 3.5rem + 2vw, 6rem); /* 64-96px */
 ```
 
 ### Spacing System
 
 ```css
 /* Vertical Rhythm (Geometric Progression, Ratio ~1.67) */
---rhythm-xs: 8px;      /* Inline spacing */
---rhythm-sm: 16px;     /* Component internal */
---rhythm-md: 24px;     /* Between related items */
---rhythm-lg: 40px;     /* Section separators */
---rhythm-xl: 64px;     /* Major section breaks */
---rhythm-2xl: 104px;   /* Page-level spacing */
+--rhythm-xs: 8px; /* Inline spacing */
+--rhythm-sm: 16px; /* Component internal */
+--rhythm-md: 24px; /* Between related items */
+--rhythm-lg: 40px; /* Section separators */
+--rhythm-xl: 64px; /* Major section breaks */
+--rhythm-2xl: 104px; /* Page-level spacing */
 ```
 
 ### Shadow System
@@ -506,37 +537,42 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 ### Issue: Fonts not loading
 
 **Solution**: Check preconnect links in `<head>`:
+
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 ```
 
 ### Issue: CSS files not found (404)
 
 **Solution**: Verify paths relative to document root:
+
 ```html
 <!-- Correct (relative to /BSI/) -->
-<link rel="stylesheet" href="/public/css/blaze-design-system-enhanced.css">
+<link rel="stylesheet" href="/public/css/blaze-design-system-enhanced.css" />
 
 <!-- Incorrect (missing /public/) -->
-<link rel="stylesheet" href="/css/blaze-design-system-enhanced.css">
+<link rel="stylesheet" href="/css/blaze-design-system-enhanced.css" />
 ```
 
 ### Issue: Three.js particles not appearing
 
 **Solution 1**: Check browser console for errors
 **Solution 2**: Verify Three.js CDN loads:
+
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 ```
+
 **Solution 3**: Test without reduced motion preference
 
 ### Issue: Skip link not working
 
 **Solution**: Ensure `main` element has `id="main-content"`:
+
 ```html
 <main id="main-content">
-    <!-- Content here -->
+  <!-- Content here -->
 </main>
 ```
 
@@ -547,11 +583,13 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/{zone_id}/purge_cache" 
 ### Questions or Issues?
 
 **Contact Austin Humphrey**:
+
 - Email: ahump20@outlook.com
 - Phone: (210) 273-5538
 - Location: Boerne, Texas
 
 **Documentation**:
+
 - Technical Spec: `/BSI/REDESIGN-COMPLETE.md`
 - Integration Guide: `/BSI/REDESIGN-INTEGRATION-GUIDE.md`
 - Component Library: `/public/css/blaze-components-enhanced.css`
@@ -578,4 +616,4 @@ The championship-level redesign delivers:
 ---
 
 **Built with 🔥 by Claude Code + Austin Humphrey**
-*Deep South Sports Authority • Championship Analytics Platform*
+_Deep South Sports Authority • Championship Analytics Platform_

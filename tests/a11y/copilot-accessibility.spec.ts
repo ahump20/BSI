@@ -42,18 +42,20 @@ test.describe('Copilot Page Accessibility', () => {
     // Check all buttons have accessible names
     const buttons = await page.locator('button').all();
     for (const button of buttons) {
-      const accessibleName = await button.getAttribute('aria-label') ||
-                            await button.textContent() ||
-                            await button.getAttribute('title');
+      const accessibleName =
+        (await button.getAttribute('aria-label')) ||
+        (await button.textContent()) ||
+        (await button.getAttribute('title'));
       expect(accessibleName).toBeTruthy();
     }
 
     // Check all links have accessible names
     const links = await page.locator('a').all();
     for (const link of links) {
-      const accessibleName = await link.getAttribute('aria-label') ||
-                            await link.textContent() ||
-                            await link.getAttribute('title');
+      const accessibleName =
+        (await link.getAttribute('aria-label')) ||
+        (await link.textContent()) ||
+        (await link.getAttribute('title'));
       expect(accessibleName).toBeTruthy();
     }
   });
@@ -80,9 +82,12 @@ test.describe('Copilot Page Accessibility', () => {
 
   test('should have proper focus indicators', async ({ page }) => {
     // Get all focusable elements
-    const focusableElements = await page.locator('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])').all();
+    const focusableElements = await page
+      .locator('a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])')
+      .all();
 
-    for (const element of focusableElements.slice(0, 5)) { // Test first 5 to save time
+    for (const element of focusableElements.slice(0, 5)) {
+      // Test first 5 to save time
       await element.focus();
 
       // Check that focused element has visible outline or custom focus styles
@@ -92,7 +97,7 @@ test.describe('Copilot Page Accessibility', () => {
           outline: computed.outline,
           outlineWidth: computed.outlineWidth,
           boxShadow: computed.boxShadow,
-          border: computed.border
+          border: computed.border,
         };
       });
 
@@ -138,7 +143,7 @@ test.describe('Copilot Page Accessibility', () => {
     // Check for skip navigation link (usually hidden until focused)
     const skipLink = page.locator('a[href="#main-content"], a[href="#main"]').first();
 
-    if (await skipLink.count() > 0) {
+    if ((await skipLink.count()) > 0) {
       await skipLink.focus();
       const isVisible = await skipLink.isVisible();
       expect(isVisible).toBeTruthy();
@@ -151,9 +156,13 @@ test.describe('Copilot Page - Motion Sensitivity', () => {
     await page.goto('/copilot');
 
     // Look for pause/stop button for animations or live updates
-    const pauseButton = page.locator('button:has-text("Pause"), button[aria-label*="pause" i], button[aria-label*="stop" i]').first();
+    const pauseButton = page
+      .locator(
+        'button:has-text("Pause"), button[aria-label*="pause" i], button[aria-label*="stop" i]'
+      )
+      .first();
 
-    if (await pauseButton.count() > 0) {
+    if ((await pauseButton.count()) > 0) {
       expect(await pauseButton.isVisible()).toBeTruthy();
 
       // Test that button is accessible
@@ -193,7 +202,9 @@ test.describe('Copilot Page - Motion Sensitivity', () => {
     await page.goto('/copilot');
 
     // Check that animations are disabled or reduced
-    const elementsWithAnimations = await page.locator('[class*="animate"], [style*="animation"]').all();
+    const elementsWithAnimations = await page
+      .locator('[class*="animate"], [style*="animation"]')
+      .all();
 
     for (const element of elementsWithAnimations) {
       const computedStyle = await element.evaluate((el) => {

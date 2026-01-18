@@ -8,9 +8,10 @@
 
 ## Problem
 
-When testing with `?allFeatures=true`, clicking team cards did not navigate to team detail pages. ChatGPT reported: *"Clicking or double-clicking any team card did not open a team page; the list simply refreshed."*
+When testing with `?allFeatures=true`, clicking team cards did not navigate to team detail pages. ChatGPT reported: _"Clicking or double-clicking any team card did not open a team page; the list simply refreshed."_
 
 This blocked access to:
+
 - ✗ MLB Statcast (Phase 3)
 - ✗ NFL Next Gen Stats (Phase 4)
 - ✗ AI Predictions (Phase 5)
@@ -32,14 +33,19 @@ const [activeView, setActiveView] = useState('monte-carlo'); // ❌ WRONG
    - Line 3261: `MonteCarloView` component state
 
 2. **View Hierarchy** (lines 3019-3025):
+
 ```javascript
-{activeView === 'real-time' && isFeatureEnabled('realTimeDashboard') ? (
+{
+  activeView === 'real-time' && isFeatureEnabled('realTimeDashboard') ? (
     <RealTimeDashboard />
-) : activeView === 'monte-carlo' ? (
-    <MonteCarloView />          // ← Rendered by default
-) : (
-    {/* Sport-specific data with teams grid */}
-)}
+  ) : activeView === 'monte-carlo' ? (
+    <MonteCarloView /> // ← Rendered by default
+  ) : (
+    {
+      /* Sport-specific data with teams grid */
+    }
+  );
+}
 ```
 
 3. **State Isolation**:
@@ -76,6 +82,7 @@ const [activeView, setActiveView] = useState('sport-data');
 ## Deployment
 
 **Git Commit**: `722c90c`
+
 ```bash
 git commit -m "🐛 FIX: Team navigation broken - change default activeView to 'sport-data'"
 ```
@@ -89,6 +96,7 @@ git commit -m "🐛 FIX: Team navigation broken - change default activeView to '
 ## Impact
 
 ### Before Fix (5 of 6 Features FAILED)
+
 - ❌ MLB Statcast: Blocked (requires team page)
 - ❌ NFL Next Gen Stats: Blocked (requires team page)
 - ❌ AI Predictions: Blocked (requires team page)
@@ -97,6 +105,7 @@ git commit -m "🐛 FIX: Team navigation broken - change default activeView to '
 - ⚠️ Real-Time Dashboard: Cards not interactive
 
 ### After Fix (Expected)
+
 - ✅ MLB Statcast: Accessible via team pages
 - ✅ NFL Next Gen Stats: Accessible via team pages
 - ✅ AI Predictions: Accessible via team pages
@@ -111,6 +120,7 @@ git commit -m "🐛 FIX: Team navigation broken - change default activeView to '
 **URL**: https://blazesportsintel.com/analytics?allFeatures=true
 
 **Steps**:
+
 1. Verify page loads with MLB/NFL/CFB/CBB tabs visible (not Monte Carlo view)
 2. Click "MLB" tab
 3. Scroll to "Teams" section
@@ -121,6 +131,7 @@ git commit -m "🐛 FIX: Team navigation broken - change default activeView to '
 8. Repeat for NFL tab
 
 **Expected Results**:
+
 - Team cards should navigate to team detail pages ✅
 - MLB Statcast should display spray charts ✅
 - NFL Next Gen Stats should show field visualization ✅
@@ -131,9 +142,11 @@ git commit -m "🐛 FIX: Team navigation broken - change default activeView to '
 ## Code References
 
 ### Key Lines Changed
+
 - **analytics.html:2778** - Fixed default `activeView` value
 
 ### Related Code (No Changes)
+
 - **analytics.html:2783** - `BlazeAnalytics` `selectedTeam` state
 - **analytics.html:2931** - `handleTeamClick` function
 - **analytics.html:3090** - Conditional rendering for team detail view

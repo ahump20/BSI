@@ -5,12 +5,7 @@
  */
 
 import { HoopsGameEngine, HoopsGameState, HoopsGameResult } from '@core/HoopsGameEngine';
-import {
-  getAllShooters,
-  isShooterUnlocked,
-  getDefaultShooter,
-  HoopsShooter,
-} from '@data/shooters';
+import { getAllShooters, isShooterUnlocked, getDefaultShooter, HoopsShooter } from '@data/shooters';
 
 /** Player ID management */
 function getPlayerId(): string {
@@ -211,30 +206,33 @@ function handleCopyLink(): void {
   const score = lastGameResult?.finalScore || 0;
   const shareUrl = `https://blaze-hoops-shootout.pages.dev?ref=share&score=${score}`;
 
-  navigator.clipboard.writeText(shareUrl).then(() => {
-    elements.copyLinkBtn.classList.add('copied');
-    elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+  navigator.clipboard
+    .writeText(shareUrl)
+    .then(() => {
+      elements.copyLinkBtn.classList.add('copied');
+      elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      elements.copyLinkBtn.classList.remove('copied');
-      elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  }).catch(() => {
-    const textArea = document.createElement('textarea');
-    textArea.value = shareUrl;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
+      setTimeout(() => {
+        elements.copyLinkBtn.classList.remove('copied');
+        elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    })
+    .catch(() => {
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-    elements.copyLinkBtn.classList.add('copied');
-    elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+      elements.copyLinkBtn.classList.add('copied');
+      elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      elements.copyLinkBtn.classList.remove('copied');
-      elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  });
+      setTimeout(() => {
+        elements.copyLinkBtn.classList.remove('copied');
+        elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    });
 }
 
 /** Start the game */
@@ -352,18 +350,25 @@ async function handleGameOver(result: HoopsGameResult): Promise<void> {
 async function fetchLeaderboard(): Promise<void> {
   try {
     const response = await fetch('/api/hoops/leaderboard?limit=5');
-    const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
+    const data = (await response.json()) as {
+      success: boolean;
+      entries?: Array<{ rank: number; playerName: string; score: number }>;
+    };
 
     if (data.success && data.entries) {
       elements.leaderboard.innerHTML = `
         <div class="leaderboard-title">Top Scores</div>
-        ${data.entries.map((entry) => `
+        ${data.entries
+          .map(
+            (entry) => `
           <div class="leaderboard-entry">
             <span class="rank">#${entry.rank}</span>
             <span class="player">${entry.playerName || 'Anonymous'}</span>
             <span class="lb-score">${entry.score.toLocaleString()}</span>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       `;
     }
   } catch (error) {

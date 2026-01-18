@@ -68,21 +68,24 @@ export class NewsTickerDO {
     // REST: Get all current items
     if (url.pathname === '/items' || url.pathname === '/') {
       const items = this.getSortedItems();
-      return new Response(JSON.stringify({ items, count: items.length, connected: this.sessions.size }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ items, count: items.length, connected: this.sessions.size }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // REST: Add a new item
     if (url.pathname === '/add' && request.method === 'POST') {
-      const item = await request.json() as TickerItem;
+      const item = (await request.json()) as TickerItem;
       await this.addItem(item);
       return new Response(JSON.stringify({ success: true, id: item.id }));
     }
 
     // REST: Remove an item
     if (url.pathname === '/remove' && request.method === 'POST') {
-      const { id } = await request.json() as { id: string };
+      const { id } = (await request.json()) as { id: string };
       this.tickerItems.delete(id);
       await this.persistState();
       this.broadcast({ type: 'remove', id });
@@ -106,11 +109,13 @@ export class NewsTickerDO {
 
     // Send current items immediately on connection
     const items = this.getSortedItems();
-    ws.send(JSON.stringify({
-      type: 'init',
-      items,
-      timestamp: Date.now()
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'init',
+        items,
+        timestamp: Date.now(),
+      })
+    );
 
     ws.addEventListener('message', async (event) => {
       try {
@@ -155,8 +160,9 @@ export class NewsTickerDO {
 
     // Keep only most recent 50 items to prevent unbounded growth
     if (this.tickerItems.size > 50) {
-      const sorted = Array.from(this.tickerItems.entries())
-        .sort((a, b) => b[1].timestamp - a[1].timestamp);
+      const sorted = Array.from(this.tickerItems.entries()).sort(
+        (a, b) => b[1].timestamp - a[1].timestamp
+      );
 
       // Remove oldest items beyond 50
       for (let i = 50; i < sorted.length; i++) {
@@ -181,7 +187,7 @@ export class NewsTickerDO {
 
     // Filter out expired items
     for (const item of this.tickerItems.values()) {
-      const expiresAt = item.timestamp + (item.ttl * 1000);
+      const expiresAt = item.timestamp + item.ttl * 1000;
       if (expiresAt > now) {
         items.push(item);
       }
@@ -232,7 +238,7 @@ export class NewsTickerDO {
 
     // Remove expired items
     for (const [id, item] of this.tickerItems) {
-      const expiresAt = item.timestamp + (item.ttl * 1000);
+      const expiresAt = item.timestamp + item.ttl * 1000;
       if (expiresAt <= now) {
         this.tickerItems.delete(id);
         changed = true;

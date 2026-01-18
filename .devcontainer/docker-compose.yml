@@ -25,12 +25,12 @@ services:
     networks:
       - bsi-network
     ports:
-      - "8000:8000"  # Python HTTP Server
-      - "8080:8080"  # Live Server
-      - "8787:8787"  # Wrangler Dev
-      - "3000:3000"  # Frontend Dev
-      - "5000:5000"  # Flask/FastAPI
-      - "8888:8888"  # Jupyter
+      - '8000:8000' # Python HTTP Server
+      - '8080:8080' # Live Server
+      - '8787:8787' # Wrangler Dev
+      - '3000:3000' # Frontend Dev
+      - '5000:5000' # Flask/FastAPI
+      - '8888:8888' # Jupyter
     depends_on:
       - redis
       - postgres
@@ -44,14 +44,14 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - bsi-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
@@ -66,11 +66,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - bsi-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bsi"]
+      test: ['CMD-SHELL', 'pg_isready -U bsi']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -78,8 +78,8 @@ services:
   minio:
     image: minio/minio:latest
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - minio_data:/data
     environment:
@@ -90,7 +90,7 @@ services:
     networks:
       - bsi-network
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ['CMD', 'mc', 'ready', 'local']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -101,7 +101,7 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     ports:
-      - "9090:9090"
+      - '9090:9090'
     networks:
       - bsi-network
     command:
@@ -114,7 +114,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3001:3000"
+      - '3001:3000'
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
@@ -132,8 +132,8 @@ services:
   mailhog:
     image: mailhog/mailhog
     ports:
-      - "1025:1025"  # SMTP
-      - "8025:8025"  # Web UI
+      - '1025:1025' # SMTP
+      - '8025:8025' # Web UI
     networks:
       - bsi-network
     environment:
@@ -144,7 +144,7 @@ services:
   sports-api-mock:
     image: mockserver/mockserver:latest
     ports:
-      - "1080:1080"
+      - '1080:1080'
     environment:
       MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
       MOCKSERVER_INITIALIZATION_JSON_PATH: /config/expectations.json

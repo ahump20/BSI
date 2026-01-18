@@ -38,10 +38,12 @@ https://ff479c53.blazesportsintel.pages.dev
 ### 2. Open Chrome DevTools
 
 **Method 1: Keyboard Shortcut**
+
 - **Mac**: `Cmd + Option + I`
 - **Windows/Linux**: `Ctrl + Shift + I`
 
 **Method 2: Menu**
+
 - Click the three-dot menu (⋮) in top-right
 - Select "More tools" → "Developer tools"
 
@@ -57,10 +59,12 @@ https://ff479c53.blazesportsintel.pages.dev
 ### 4. Configure Lighthouse Settings
 
 **Device:**
+
 - ✅ Select **"Mobile"** (not Desktop)
 - This simulates a mobile device viewport (375px width)
 
 **Categories:**
+
 - ✅ **Performance** (required)
 - ✅ **Accessibility** (required)
 - ⬜ Best Practices (optional)
@@ -68,9 +72,11 @@ https://ff479c53.blazesportsintel.pages.dev
 - ⬜ PWA (optional)
 
 **Mode:**
+
 - ✅ Select **"Navigation"** (default)
 
 **Throttling:**
+
 - ✅ **"Simulated throttling (default)"**
 - This simulates a 4G mobile connection with CPU throttling
 
@@ -99,14 +105,14 @@ Once the audit completes, you'll see a report with scores (0-100).
 
 Record the following metrics:
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| **Performance Score** | 90+ | ___ | ⬜ |
-| **First Contentful Paint (FCP)** | <1.8s | ___ | ⬜ |
-| **Largest Contentful Paint (LCP)** | <2.5s | ___ | ⬜ |
-| **Total Blocking Time (TBT)** | <200ms | ___ | ⬜ |
-| **Cumulative Layout Shift (CLS)** | <0.1 | ___ | ⬜ |
-| **Speed Index** | <3.4s | ___ | ⬜ |
+| Metric                             | Target | Actual | Status |
+| ---------------------------------- | ------ | ------ | ------ |
+| **Performance Score**              | 90+    | \_\_\_ | ⬜     |
+| **First Contentful Paint (FCP)**   | <1.8s  | \_\_\_ | ⬜     |
+| **Largest Contentful Paint (LCP)** | <2.5s  | \_\_\_ | ⬜     |
+| **Total Blocking Time (TBT)**      | <200ms | \_\_\_ | ⬜     |
+| **Cumulative Layout Shift (CLS)**  | <0.1   | \_\_\_ | ⬜     |
+| **Speed Index**                    | <3.4s  | \_\_\_ | ⬜     |
 
 #### Accessibility Score
 
@@ -114,13 +120,13 @@ Record the following metrics:
 
 Record the following:
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| **Accessibility Score** | 95+ | ___ | ⬜ |
-| **Contrast Ratio Issues** | 0 | ___ | ⬜ |
-| **Missing Alt Text** | 0 | ___ | ⬜ |
-| **Keyboard Navigation** | Pass | ___ | ⬜ |
-| **ARIA Labels** | Pass | ___ | ⬜ |
+| Metric                    | Target | Actual | Status |
+| ------------------------- | ------ | ------ | ------ |
+| **Accessibility Score**   | 95+    | \_\_\_ | ⬜     |
+| **Contrast Ratio Issues** | 0      | \_\_\_ | ⬜     |
+| **Missing Alt Text**      | 0      | \_\_\_ | ⬜     |
+| **Keyboard Navigation**   | Pass   | \_\_\_ | ⬜     |
+| **ARIA Labels**           | Pass   | \_\_\_ | ⬜     |
 
 ---
 
@@ -128,9 +134,9 @@ Record the following:
 
 Lighthouse provides specific suggestions for improvement. Record the top 3 opportunities:
 
-1. **Opportunity 1**: ____________________ (Estimated savings: ____ ms)
-2. **Opportunity 2**: ____________________ (Estimated savings: ____ ms)
-3. **Opportunity 3**: ____________________ (Estimated savings: ____ ms)
+1. **Opportunity 1**: **\*\*\*\***\_\_\_\_**\*\*\*\*** (Estimated savings: \_\_\_\_ ms)
+2. **Opportunity 2**: **\*\*\*\***\_\_\_\_**\*\*\*\*** (Estimated savings: \_\_\_\_ ms)
+3. **Opportunity 3**: **\*\*\*\***\_\_\_\_**\*\*\*\*** (Estimated savings: \_\_\_\_ ms)
 
 ---
 
@@ -148,21 +154,21 @@ To save the Lighthouse report for future reference:
 
 ### Performance Score Ranges
 
-| Score | Meaning | Action Required |
-|-------|---------|-----------------|
-| **90-100** | 🟢 Excellent | No immediate action |
-| **80-89** | 🟡 Good | Minor optimizations suggested |
-| **50-79** | 🟠 Needs improvement | Investigate largest opportunities |
-| **0-49** | 🔴 Poor | Immediate optimization required |
+| Score      | Meaning              | Action Required                   |
+| ---------- | -------------------- | --------------------------------- |
+| **90-100** | 🟢 Excellent         | No immediate action               |
+| **80-89**  | 🟡 Good              | Minor optimizations suggested     |
+| **50-79**  | 🟠 Needs improvement | Investigate largest opportunities |
+| **0-49**   | 🔴 Poor              | Immediate optimization required   |
 
 ### Accessibility Score Ranges
 
-| Score | Meaning | Action Required |
-|-------|---------|-----------------|
-| **95-100** | 🟢 Excellent | No immediate action |
-| **90-94** | 🟡 Good | Fix minor issues |
-| **80-89** | 🟠 Needs improvement | Address accessibility violations |
-| **0-79** | 🔴 Poor | Immediate fixes required (WCAG AA failure) |
+| Score      | Meaning              | Action Required                            |
+| ---------- | -------------------- | ------------------------------------------ |
+| **95-100** | 🟢 Excellent         | No immediate action                        |
+| **90-94**  | 🟡 Good              | Fix minor issues                           |
+| **80-89**  | 🟠 Needs improvement | Address accessibility violations           |
+| **0-79**   | 🔴 Poor              | Immediate fixes required (WCAG AA failure) |
 
 ---
 
@@ -171,12 +177,14 @@ To save the Lighthouse report for future reference:
 ### Issue 1: Performance Score Below 90
 
 **Likely Causes:**
+
 - Large JavaScript bundle (React vendor chunk = 96KB)
 - Unoptimized images
 - Render-blocking resources
 - Slow server response
 
 **Immediate Solutions:**
+
 - Implement lazy loading for React vendor chunk
 - Convert to Preact (~4KB vs 96KB)
 - Add CDN caching headers
@@ -187,12 +195,14 @@ To save the Lighthouse report for future reference:
 ### Issue 2: Accessibility Score Below 95
 
 **Likely Causes:**
+
 - Color contrast issues (dark theme with gray text)
 - Missing ARIA labels
 - Keyboard navigation problems
 - Missing alt text on images
 
 **Immediate Solutions:**
+
 - Increase text contrast (gray → white)
 - Add `aria-label` to interactive elements
 - Ensure tab navigation works
@@ -203,11 +213,13 @@ To save the Lighthouse report for future reference:
 ### Issue 3: Large Largest Contentful Paint (LCP > 2.5s)
 
 **Likely Causes:**
+
 - React vendor bundle loading before content
 - ESPN API response delay
 - No loading skeleton (shows spinner only)
 
 **Immediate Solutions:**
+
 - Implement critical CSS inlining
 - Show content skeleton before API response
 - Preload React vendor chunk
@@ -278,25 +290,25 @@ Copy this template to `docs/PHASE-1-PERFORMANCE-BASELINE.md` after testing:
 
 ### Performance
 
-- **Score**: __/100 ([Pass/Fail] - Target: 90+)
-- **First Contentful Paint**: __ s
-- **Largest Contentful Paint**: __ s
-- **Total Blocking Time**: __ ms
-- **Cumulative Layout Shift**: __
-- **Speed Index**: __ s
+- **Score**: \_\_/100 ([Pass/Fail] - Target: 90+)
+- **First Contentful Paint**: \_\_ s
+- **Largest Contentful Paint**: \_\_ s
+- **Total Blocking Time**: \_\_ ms
+- **Cumulative Layout Shift**: \_\_
+- **Speed Index**: \_\_ s
 
 ### Accessibility
 
-- **Score**: __/100 ([Pass/Fail] - Target: 95+)
+- **Score**: \_\_/100 ([Pass/Fail] - Target: 95+)
 - **Contrast Issues**: [Number of issues]
 - **ARIA Issues**: [Number of issues]
 - **Keyboard Navigation**: [Pass/Fail]
 
 ### Top Opportunities
 
-1. [Opportunity name] - Estimated savings: __ ms
-2. [Opportunity name] - Estimated savings: __ ms
-3. [Opportunity name] - Estimated savings: __ ms
+1. [Opportunity name] - Estimated savings: \_\_ ms
+2. [Opportunity name] - Estimated savings: \_\_ ms
+3. [Opportunity name] - Estimated savings: \_\_ ms
 
 ### Action Items
 
@@ -310,6 +322,7 @@ Copy this template to `docs/PHASE-1-PERFORMANCE-BASELINE.md` after testing:
 ## Questions?
 
 If you encounter issues or need clarification:
+
 1. Check Chrome DevTools Console for errors
 2. Verify the deployment is live (https://ff479c53.blazesportsintel.pages.dev should respond with HTTP 200)
 3. Try refreshing the page and running the audit again

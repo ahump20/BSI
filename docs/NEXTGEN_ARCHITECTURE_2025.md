@@ -1,4 +1,5 @@
 # Blaze Sports Intelligence: Next-Generation Analytics Engine
+
 ## Architecture & Implementation Plan (2025-2026)
 
 **Version**: 1.0.0
@@ -13,6 +14,7 @@
 This document outlines the architecture for Blaze Sports Intelligence's next-generation analytics engine, incorporating high-performance data processing, advanced sabermetrics, AI/ML integration, and WebGPU-accelerated visualization technologies. The system targets sub-200ms P95 latency for real-time insights while processing data from MLB Statcast, NFL Next Gen Stats, and other premier sports data sources.
 
 **Key Innovations**:
+
 - **Edge Computing Architecture**: Process data closer to source for <100ms latency target
 - **AI-Powered Predictions**: LSTM injury risk and XGBoost performance models (validation pending)
 - **WebGPU Rendering**: Visualize millions of data points in real-time
@@ -38,9 +40,11 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 ### 1. Current State of Sports Analytics (2025)
 
 #### MLB: Statcast & Advanced Sabermetrics
+
 **Data Source**: MLB Statcast (Doppler radar + high-speed cameras)
 
 **Tracked Metrics** (via research):
+
 - Exit velocity, launch angle, spin rate
 - Perceived velocity, hang time, projected landing point
 - **2025 Innovation**: Bat tracking attack angles (SABR Analytics Conference, March 15, 2025)
@@ -52,9 +56,11 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 ---
 
 #### NFL: Next Gen Stats & Coverage Analytics
+
 **Data Source**: NFL Next Gen Stats (Player tracking at 10Hz)
 
 **Tracked Metrics** (via research):
+
 - Location, speed, distance, acceleration (10 times per second, accurate to inches)
 - 200+ data points created on every play
 - **2025 Innovation**: Coverage Responsibility metric using AWS ML models
@@ -67,12 +73,15 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 ---
 
 #### AI/ML Integration Research
+
 **Most Effective Models** (2025):
+
 - **Random Forest & XGBoost**: Highest statistical performance for injury risk (60% of studies)
 - **LSTM**: 91.5% accuracy for athletic injury prediction (February 2025 study)
 - **Decision Tree Classifiers**: 80% injury prediction accuracy
 
 **Data Sources for ML**:
+
 - Wearable sensors, medical reports, performance logs
 - Key variables: Training load, previous injuries, biomechanics
 
@@ -84,13 +93,13 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 
 #### Framework Comparison (2025)
 
-| Framework | Best For | Performance | Learning Curve | Sports Use Case |
-|-----------|----------|-------------|----------------|-----------------|
-| **Plotly.js** | Quick dashboards, standard charts | Good for moderate datasets | Low | Dashboard KPIs, team statistics |
-| **D3.js** | Custom, artistic visualizations | Excellent with optimization | High | Custom play diagrams, unique metrics |
-| **deck.gl** | Geospatial, large-scale data | Excellent (WebGL/WebGPU) | Medium | Player tracking, stadium mapping |
-| **Three.js** | Simple 3D elements | Better than Babylon out-of-box | Medium | 3D replays, highlight visualization |
-| **Babylon.js** | Advanced 3D simulations | Stable with physics engine | Medium-High | Interactive formations, AR/VR |
+| Framework      | Best For                          | Performance                    | Learning Curve | Sports Use Case                      |
+| -------------- | --------------------------------- | ------------------------------ | -------------- | ------------------------------------ |
+| **Plotly.js**  | Quick dashboards, standard charts | Good for moderate datasets     | Low            | Dashboard KPIs, team statistics      |
+| **D3.js**      | Custom, artistic visualizations   | Excellent with optimization    | High           | Custom play diagrams, unique metrics |
+| **deck.gl**    | Geospatial, large-scale data      | Excellent (WebGL/WebGPU)       | Medium         | Player tracking, stadium mapping     |
+| **Three.js**   | Simple 3D elements                | Better than Babylon out-of-box | Medium         | 3D replays, highlight visualization  |
+| **Babylon.js** | Advanced 3D simulations           | Stable with physics engine     | Medium-High    | Interactive formations, AR/VR        |
 
 **Research Finding**: Plotly.js now supports WebGPU rendering for million-point scatter plots (2025)
 
@@ -101,16 +110,19 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 #### UX Best Practices (2025 Research)
 
 **Dashboard Design Principles**:
+
 - **5-6 cards maximum** in initial view for optimal UX
 - **Single screen** design to improve dashboard usability
 - **200-400ms transitions** communicate changes effectively
 - **Progressive disclosure** via hover states to hide secondary details
 
 **Color Psychology**:
+
 - **Red/Orange**: Critical alerts, negative trends (urgency)
 - **Blue/Green**: Positive/stable states (reassurance)
 
 **Real-Time Updates**:
+
 - 80% of companies using real-time data analytics saw revenue uplift
 - Smooth real-time visualization during games enhances tactical decisions and fan engagement
 
@@ -161,21 +173,25 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 ### Architecture Principles
 
 **1. Edge-First Processing**
+
 - Process data at edge for <100ms latency
 - Reduce bandwidth by 60-80% vs cloud-only
 - Critical for live game updates
 
 **2. Event-Driven Architecture**
+
 - Capture signals as they happen
 - Kafka-class pipelines for streaming
 - Stateful stream processing
 
 **3. Progressive Enhancement**
+
 - Start with real data, layer AI predictions
 - Graceful degradation if ML unavailable
 - Always show data source and confidence
 
 **4. Multi-Sport Unified Schema**
+
 - Common data model across MLB, NFL, NBA, CFB
 - Sport-specific extensions
 - Normalize tracking data formats
@@ -187,12 +203,13 @@ This document outlines the architecture for Blaze Sports Intelligence's next-gen
 ### Data Sources Integration
 
 #### Primary Sources
-| Source | Type | Update Frequency | Latency | Cost Structure |
-|--------|------|------------------|---------|----------------|
-| **SportsDataIO** | REST API | Real-time during games | <500ms | Per-call pricing |
-| **MLB Statcast** | REST API + WebSocket | 10Hz during games | <200ms | Free (public) |
-| **NFL Next Gen Stats** | REST API | 10Hz during games | <200ms | Partnership required |
-| **Perfect Game** | REST API | Daily updates | 24hr | Subscription |
+
+| Source                 | Type                 | Update Frequency       | Latency | Cost Structure       |
+| ---------------------- | -------------------- | ---------------------- | ------- | -------------------- |
+| **SportsDataIO**       | REST API             | Real-time during games | <500ms  | Per-call pricing     |
+| **MLB Statcast**       | REST API + WebSocket | 10Hz during games      | <200ms  | Free (public)        |
+| **NFL Next Gen Stats** | REST API             | 10Hz during games      | <200ms  | Partnership required |
+| **Perfect Game**       | REST API             | Daily updates          | 24hr    | Subscription         |
 
 #### Edge Ingestion Pipeline
 
@@ -331,8 +348,7 @@ export class BaseballSabermetrics {
    */
   calculatePythagorean(runsFor: number, runsAgainst: number): number {
     const exp = 1.83;
-    return Math.pow(runsFor, exp) /
-           (Math.pow(runsFor, exp) + Math.pow(runsAgainst, exp));
+    return Math.pow(runsFor, exp) / (Math.pow(runsFor, exp) + Math.pow(runsAgainst, exp));
   }
 }
 ```
@@ -354,16 +370,16 @@ export class FootballSabermetrics {
     const result = await this.mlModel.predict({
       defenderPosition: defender.position,
       defenderVelocity: defender.velocity,
-      receiverPositions: receivers.map(r => r.position),
+      receiverPositions: receivers.map((r) => r.position),
       ballLocation,
-      presnap: defender.formation
+      presnap: defender.formation,
     });
 
     return {
       primaryTarget: result.assignedReceiver,
       coverageType: result.coverageScheme, // man/zone/combo
       safetyHelp: result.safetyHelpProbability,
-      responsibility: result.responsibilityScore // 0-100
+      responsibility: result.responsibilityScore, // 0-100
     };
   }
 
@@ -382,9 +398,9 @@ export class FootballSabermetrics {
         separation: this.calculateSeparation(receiver, defenders),
         passDistance: this.distance(qb.position, receiver.position),
         timeToThrow: this.calculateTimeToThrow(qb),
-        defenderProximity: this.nearestDefender(receiver, defenders)
+        defenderProximity: this.nearestDefender(receiver, defenders),
       }),
-      factors: this.identifyKeyFactors()
+      factors: this.identifyKeyFactors(),
     };
   }
 
@@ -392,12 +408,7 @@ export class FootballSabermetrics {
    * Calculate Expected Points Added (EPA)
    * Industry standard metric
    */
-  calculateEPA(
-    down: number,
-    distance: number,
-    yardLine: number,
-    result: PlayResult
-  ): number {
+  calculateEPA(down: number, distance: number, yardLine: number, result: PlayResult): number {
     const priorEP = this.expectedPoints(down, distance, yardLine);
     const posteriorEP = this.expectedPoints(
       result.nextDown,
@@ -438,18 +449,18 @@ export class InjuryPredictionEngine {
       previousInjuries: player.injuryHistory,
       currentLoad: recentLoad[recentLoad.length - 1],
       biomechanics: biometrics,
-      position: player.position
+      position: player.position,
     });
 
     // Ensemble prediction
-    const combinedRisk = (temporalRisk * 0.6) + (featureRisk * 0.4);
+    const combinedRisk = temporalRisk * 0.6 + featureRisk * 0.4;
 
     return {
       riskScore: combinedRisk, // 0-100
       confidence: this.calculateConfidence(temporalRisk, featureRisk),
       timeframe: this.predictTimeframe(combinedRisk),
       recommendations: this.generateRecommendations(combinedRisk),
-      factors: this.explainPrediction(recentLoad, biometrics)
+      factors: this.explainPrediction(recentLoad, biometrics),
     };
   }
 
@@ -457,16 +468,13 @@ export class InjuryPredictionEngine {
    * Feature importance analysis
    * Research shows: training load, previous injuries, biomechanics most important
    */
-  private explainPrediction(
-    load: TrainingLoad[],
-    bio: BiometricData
-  ): PredictionFactors {
+  private explainPrediction(load: TrainingLoad[], bio: BiometricData): PredictionFactors {
     return {
       trainingLoad: { importance: 0.35, value: this.analyzeLoad(load) },
       previousInjuries: { importance: 0.25, value: bio.injuryHistory.length },
-      biomechanics: { importance: 0.20, value: this.biomechanicsScore(bio) },
-      age: { importance: 0.10, value: bio.age },
-      position: { importance: 0.10, value: bio.position }
+      biomechanics: { importance: 0.2, value: this.biomechanicsScore(bio) },
+      age: { importance: 0.1, value: bio.age },
+      position: { importance: 0.1, value: bio.position },
     };
   }
 }
@@ -488,12 +496,7 @@ export class PerformanceForecaster {
     opponent: Team,
     conditions: GameConditions
   ): Promise<PerformanceForecast> {
-    const features = this.extractFeatures(
-      player,
-      recentGames,
-      opponent,
-      conditions
-    );
+    const features = this.extractFeatures(player, recentGames, opponent, conditions);
 
     const prediction = await this.xgboostModel.predict(features);
 
@@ -502,10 +505,10 @@ export class PerformanceForecaster {
       confidence: prediction.confidence,
       confidenceInterval: {
         low: prediction.stats * 0.8,
-        high: prediction.stats * 1.2
+        high: prediction.stats * 1.2,
       },
       keyFactors: this.rankFactors(features),
-      historical: this.findSimilarGames(player, opponent, conditions)
+      historical: this.findSimilarGames(player, opponent, conditions),
     };
   }
 }
@@ -524,7 +527,7 @@ export const VisualizationStack = {
     framework: 'Plotly.js',
     reason: 'High-level, 40+ chart types, WebGPU support',
     useCase: ['Team standings', 'Player stats', 'Historical trends'],
-    performance: 'Good for moderate datasets (10K-100K points)'
+    performance: 'Good for moderate datasets (10K-100K points)',
   },
 
   // Custom Artistic Visualizations
@@ -532,7 +535,7 @@ export const VisualizationStack = {
     framework: 'D3.js',
     reason: 'Complete control, unique interactions',
     useCase: ['Play diagrams', 'Custom metrics', 'Story-driven viz'],
-    performance: 'Excellent with optimization'
+    performance: 'Excellent with optimization',
   },
 
   // Geospatial & Large-Scale Data
@@ -540,7 +543,7 @@ export const VisualizationStack = {
     framework: 'deck.gl',
     reason: 'WebGL/WebGPU, handles millions of points',
     useCase: ['Player tracking', 'Stadium mapping', 'Event location'],
-    performance: 'Excellent (GPU-accelerated, 64-bit precision)'
+    performance: 'Excellent (GPU-accelerated, 64-bit precision)',
   },
 
   // 3D Visualizations
@@ -548,8 +551,8 @@ export const VisualizationStack = {
     framework: 'Babylon.js',
     reason: 'Game engine features, physics, stable API',
     useCase: ['Interactive formations', 'AR/VR', 'Simulations'],
-    performance: 'Stable with built-in physics'
-  }
+    performance: 'Stable with built-in physics',
+  },
 };
 ```
 
@@ -597,7 +600,7 @@ export class RealTimeDashboard {
         title: metric.name,
         value: metric.value,
         trend: this.calculateTrend(metric),
-        color: this.selectColor(metric) // Red/orange=alert, blue/green=good
+        color: this.selectColor(metric), // Red/orange=alert, blue/green=good
       },
 
       // Secondary layer (hover reveal)
@@ -605,14 +608,14 @@ export class RealTimeDashboard {
         historicalContext: metric.historical,
         confidence: metric.confidence,
         factors: metric.keyFactors,
-        dataSource: metric.source
+        dataSource: metric.source,
       },
 
       // Smooth transitions
       animation: {
         duration: this.transitionDuration,
-        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-      }
+        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+      },
     };
   }
 
@@ -646,7 +649,7 @@ export class FootballFieldVisualization {
   async initialize(canvas: HTMLCanvasElement): Promise<void> {
     this.engine = new BABYLON.Engine(canvas, true, {
       preserveDrawingBuffer: true,
-      stencil: true
+      stencil: true,
     });
 
     this.scene = new BABYLON.Scene(this.engine);
@@ -675,7 +678,7 @@ export class FootballFieldVisualization {
   updateTracking(data: PlayerTracking[]): void {
     this.trackingData = data;
 
-    data.forEach(player => {
+    data.forEach((player) => {
       const marker = this.playerMarkers.get(player.id);
 
       // Smooth position interpolation
@@ -700,16 +703,13 @@ export class FootballFieldVisualization {
   /**
    * Visualize Coverage Responsibility (2025 Next Gen Stats)
    */
-  private visualizeCoverage(
-    defender: PlayerTracking,
-    coverage: CoverageResponsibility
-  ): void {
+  private visualizeCoverage(defender: PlayerTracking, coverage: CoverageResponsibility): void {
     // Draw line to assigned receiver
     const line = BABYLON.MeshBuilder.CreateLines('coverage', {
       points: [
         new BABYLON.Vector3(defender.x, 0, defender.y),
-        new BABYLON.Vector3(coverage.target.x, 0, coverage.target.y)
-      ]
+        new BABYLON.Vector3(coverage.target.x, 0, coverage.target.y),
+      ],
     });
 
     // Color based on coverage type
@@ -742,9 +742,9 @@ export class PlayerMovementHeatmap {
         longitude: 0,
         latitude: 0,
         zoom: 18,
-        pitch: 45
+        pitch: 45,
       },
-      controller: true
+      controller: true,
     });
   }
 
@@ -756,19 +756,19 @@ export class PlayerMovementHeatmap {
     const layer = new HeatmapLayer({
       id: 'player-heatmap',
       data: trackingData,
-      getPosition: d => [d.x, d.y],
-      getWeight: d => d.velocity, // Weight by speed
+      getPosition: (d) => [d.x, d.y],
+      getWeight: (d) => d.velocity, // Weight by speed
       radiusPixels: 30,
       intensity: 1,
       threshold: 0.03,
       colorRange: [
-        [0, 25, 255, 255],    // Blue (slow)
-        [0, 152, 255, 255],   // Light blue
-        [44, 255, 150, 255],  // Green
-        [255, 255, 0, 255],   // Yellow
-        [255, 121, 0, 255],   // Orange
-        [255, 0, 0, 255]      // Red (fast)
-      ]
+        [0, 25, 255, 255], // Blue (slow)
+        [0, 152, 255, 255], // Light blue
+        [44, 255, 150, 255], // Green
+        [255, 255, 0, 255], // Yellow
+        [255, 121, 0, 255], // Orange
+        [255, 0, 0, 255], // Red (fast)
+      ],
     });
 
     this.deckInstance.setProps({ layers: [layer] });
@@ -781,11 +781,11 @@ export class PlayerMovementHeatmap {
     const layer = new ArcLayer({
       id: 'pass-network',
       data: passes,
-      getSourcePosition: d => [d.from.x, d.from.y],
-      getTargetPosition: d => [d.to.x, d.to.y],
-      getSourceColor: d => d.complete ? [0, 255, 0] : [255, 0, 0],
-      getTargetColor: d => d.complete ? [0, 255, 0] : [255, 0, 0],
-      getWidth: 2
+      getSourcePosition: (d) => [d.from.x, d.from.y],
+      getTargetPosition: (d) => [d.to.x, d.to.y],
+      getSourceColor: (d) => (d.complete ? [0, 255, 0] : [255, 0, 0]),
+      getTargetColor: (d) => (d.complete ? [0, 255, 0] : [255, 0, 0]),
+      getWidth: 2,
     });
 
     this.deckInstance.setProps({ layers: [layer] });
@@ -800,6 +800,7 @@ export class PlayerMovementHeatmap {
 ### Phase 1: Foundation (Weeks 1-4)
 
 **Week 1-2: Data Infrastructure**
+
 - [ ] Setup Cloudflare edge ingestion pipeline
 - [ ] Integrate SportsDataIO API with caching
 - [ ] Create unified data schema
@@ -807,6 +808,7 @@ export class PlayerMovementHeatmap {
 - [ ] Setup KV cache for real-time data
 
 **Week 3-4: Basic Analytics**
+
 - [ ] Implement Pythagorean expectancy
 - [ ] Build Expected Points Added (EPA) calculator
 - [ ] Create win probability model
@@ -819,6 +821,7 @@ export class PlayerMovementHeatmap {
 ### Phase 2: Advanced Sabermetrics (Weeks 5-8)
 
 **Week 5-6: Baseball (Statcast Integration)**
+
 - [ ] Integrate MLB Statcast API
 - [ ] Calculate xBA, xSLG, barrel rate
 - [ ] Implement bat tracking attack angles (2025 innovation)
@@ -826,6 +829,7 @@ export class PlayerMovementHeatmap {
 - [ ] Create pitch movement visualizer
 
 **Week 7-8: Football (Next Gen Stats Integration)**
+
 - [ ] Integrate NFL Next Gen Stats API
 - [ ] Implement Coverage Responsibility (2025 AWS model)
 - [ ] Build Completion Probability calculator (2025 rebuilt model)
@@ -839,6 +843,7 @@ export class PlayerMovementHeatmap {
 ### Phase 3: AI/ML Engine (Weeks 9-12)
 
 **Week 9-10: Injury Prediction**
+
 - [ ] Train LSTM model on historical injury data
 - [ ] Implement Random Forest baseline (80% accuracy target)
 - [ ] Deploy XGBoost ensemble (91.5% accuracy target)
@@ -846,6 +851,7 @@ export class PlayerMovementHeatmap {
 - [ ] Create injury risk alerts
 
 **Week 11-12: Performance Forecasting**
+
 - [ ] Build XGBoost performance model
 - [ ] Implement confidence intervals
 - [ ] Add similar game finder
@@ -859,6 +865,7 @@ export class PlayerMovementHeatmap {
 ### Phase 4: Visualization Layer (Weeks 13-16)
 
 **Week 13: Dashboard Framework**
+
 - [ ] Implement Plotly.js with WebGPU
 - [ ] Build 5-6 card layout (per UX research)
 - [ ] Add 200-400ms smooth transitions
@@ -866,12 +873,14 @@ export class PlayerMovementHeatmap {
 - [ ] Setup color psychology (red/orange=alert, blue/green=good)
 
 **Week 14: Custom Visualizations**
+
 - [ ] Build D3.js play diagram generator
 - [ ] Create custom metric visualizers
 - [ ] Add interactive filters
 - [ ] Implement drill-down capabilities
 
 **Week 15: 3D Visualizations**
+
 - [ ] Setup Babylon.js football field
 - [ ] Add formation visualizer
 - [ ] Implement player tracking overlay
@@ -879,6 +888,7 @@ export class PlayerMovementHeatmap {
 - [ ] Add camera controls
 
 **Week 16: Geospatial Tracking**
+
 - [ ] Integrate deck.gl heatmaps
 - [ ] Build player movement visualizer
 - [ ] Add pass network arc layer
@@ -891,6 +901,7 @@ export class PlayerMovementHeatmap {
 ### Phase 5: Production Optimization (Weeks 17-20)
 
 **Week 17-18: Performance**
+
 - [ ] Optimize for <100ms edge latency
 - [ ] Implement aggressive caching strategy
 - [ ] Add WebSocket real-time streaming
@@ -898,6 +909,7 @@ export class PlayerMovementHeatmap {
 - [ ] Achieve Lighthouse score >95
 
 **Week 19-20: Testing & Launch**
+
 - [ ] Load testing (10K concurrent users)
 - [ ] Stress test ML models
 - [ ] Validate injury prediction model against 2024 historical data
@@ -912,22 +924,23 @@ export class PlayerMovementHeatmap {
 
 ### Performance Targets
 
-| Metric | Target | Current Industry Standard | Blaze Target |
-|--------|--------|---------------------------|--------------|
-| **Edge Latency** | <100ms | 200-500ms | **<100ms** ✓ |
-| **API Response** | <500ms | 1000-2000ms | **<500ms** ✓ |
-| **Dashboard Load** | <2s | 3-5s | **<2s** ✓ |
-| **Real-time Update** | 10 Hz | 1-5 Hz | **10 Hz** ✓ |
-| **Data Points** | 1M+ | 100K-500K | **1M+** ✓ |
-| **Lighthouse Score** | >95 | 70-85 | **>95** ✓ |
-| **Injury Prediction** | 91.5% | 70-80% | **91.5%** ✓ |
-| **Uptime** | 99.9% | 99.5% | **99.9%** ✓ |
+| Metric                | Target | Current Industry Standard | Blaze Target |
+| --------------------- | ------ | ------------------------- | ------------ |
+| **Edge Latency**      | <100ms | 200-500ms                 | **<100ms** ✓ |
+| **API Response**      | <500ms | 1000-2000ms               | **<500ms** ✓ |
+| **Dashboard Load**    | <2s    | 3-5s                      | **<2s** ✓    |
+| **Real-time Update**  | 10 Hz  | 1-5 Hz                    | **10 Hz** ✓  |
+| **Data Points**       | 1M+    | 100K-500K                 | **1M+** ✓    |
+| **Lighthouse Score**  | >95    | 70-85                     | **>95** ✓    |
+| **Injury Prediction** | 91.5%  | 70-80%                    | **91.5%** ✓  |
+| **Uptime**            | 99.9%  | 99.5%                     | **99.9%** ✓  |
 
 ---
 
 ### Technology Stack
 
 **Frontend**:
+
 - React 19 with TypeScript
 - Plotly.js (WebGPU enabled)
 - D3.js v7
@@ -936,6 +949,7 @@ export class PlayerMovementHeatmap {
 - TailwindCSS v4
 
 **Backend**:
+
 - Cloudflare Workers (edge computing)
 - Cloudflare D1 (SQL database)
 - Cloudflare KV (cache layer)
@@ -943,12 +957,14 @@ export class PlayerMovementHeatmap {
 - Cloudflare Durable Objects (stateful services)
 
 **AI/ML**:
+
 - TensorFlow.js (LSTM models)
 - XGBoost (via WASM)
 - Cloudflare Workers AI (inference)
 - Random Forest (scikit-learn → ONNX)
 
 **Data Sources**:
+
 - SportsDataIO API
 - MLB Statcast API
 - NFL Next Gen Stats API
@@ -960,12 +976,14 @@ export class PlayerMovementHeatmap {
 ### Security & Compliance
 
 **Data Protection**:
+
 - Zero PII storage (GDPR/CCPA compliant)
 - API keys in Cloudflare secrets
 - Rate limiting per source
 - Request signing for authentication
 
 **Privacy**:
+
 - No player location tracking beyond game context
 - Injury predictions only shared with authorized personnel
 - Historical data anonymized after 2 years
@@ -989,6 +1007,7 @@ This next-generation architecture positions Blaze Sports Intelligence as the ind
 ---
 
 **References**:
+
 - MLB Statcast Documentation (2025)
 - NFL Next Gen Stats API (2025)
 - SABR Analytics Conference Proceedings (March 15, 2025)

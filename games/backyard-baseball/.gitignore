@@ -1,0 +1,85 @@
+# Unity
+unity/Library/
+unity/Temp/
+unity/Obj/
+unity/Build/
+unity/Builds/
+unity/Logs/
+unity/UserSettings/
+unity/MemoryCaptures/
+unity/*.csproj
+unity/*.unityproj
+unity/*.sln
+unity/*.suo
+unity/*.tmp
+unity/*.user
+unity/*.userprefs
+unity/*.pidb
+unity/*.booproj
+unity/*.svd
+unity/*.pdb
+unity/*.mdb
+unity/*.opendb
+unity/*.VC.db
+
+# Unreal
+unreal/Binaries/
+unreal/DerivedDataCache/
+unreal/Intermediate/
+unreal/Saved/
+unreal/.vs/
+unreal/*.sln
+unreal/*.xcworkspace/
+
+# Web Build Output
+web/Build/
+web/*.data
+web/*.wasm
+web/*.js.gz
+web/*.wasm.gz
+web/*.data.gz
+web/*.br
+
+# Node
+node_modules/
+.npm
+.pnpm-store/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+infra/env/*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary
+*.tmp
+*.temp
+.cache/
+
+# Secrets
+*.pem
+*.key
+secrets.json
+
+# Assets (large binary files - use Git LFS)
+# *.blend
+# *.psd
+# *.fbx
+
+# Build artifacts
+dist/
+out/
+*.zip
+*.tar.gz

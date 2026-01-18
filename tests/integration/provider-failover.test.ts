@@ -60,7 +60,7 @@ class ProviderFailoverSimulator {
     this.providers = new Map();
 
     // Initialize provider status
-    config.forEach(provider => {
+    config.forEach((provider) => {
       this.providers.set(provider.name, {
         name: provider.name,
         available: true,
@@ -124,7 +124,7 @@ class ProviderFailoverSimulator {
     const status = this.providers.get(providerName);
     if (!status) return;
 
-    const config = this.config.find(p => p.name === providerName)!;
+    const config = this.config.find((p) => p.name === providerName)!;
 
     status.totalRequests++;
     status.failedRequests++;
@@ -155,7 +155,7 @@ class ProviderFailoverSimulator {
    * Reset all providers (for testing)
    */
   reset(): void {
-    this.config.forEach(provider => {
+    this.config.forEach((provider) => {
       this.providers.set(provider.name, {
         name: provider.name,
         available: true,
@@ -379,8 +379,8 @@ describe('Provider Failover Logic', () => {
 
       // Verify accumulated stats
       const stats = simulator.getStats();
-      expect(stats.find(s => s.name === 'SportsDataIO')!.failedRequests).toBe(3);
-      expect(stats.find(s => s.name === 'NCAA_API')!.failedRequests).toBe(3);
+      expect(stats.find((s) => s.name === 'SportsDataIO')!.failedRequests).toBe(3);
+      expect(stats.find((s) => s.name === 'NCAA_API')!.failedRequests).toBe(3);
     });
   });
 });

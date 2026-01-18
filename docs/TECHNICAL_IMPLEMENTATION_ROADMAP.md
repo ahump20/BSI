@@ -1,4 +1,5 @@
 # Technical Implementation Roadmap
+
 ## Blazesportsintel.com Site Upgrades
 
 **Version**: 1.0
@@ -14,6 +15,7 @@
 #### Worker Configuration: `workers/live-game-center/`
 
 **File Structure**:
+
 ```
 workers/live-game-center/
 ├── wrangler.toml
@@ -38,6 +40,7 @@ workers/live-game-center/
 ```
 
 **wrangler.toml**:
+
 ```toml
 name = "live-game-center"
 main = "index.ts"
@@ -83,6 +86,7 @@ SIMULATION_ITERATIONS = 1000
 **Key Implementation Files**:
 
 **`index.ts`** (Main handler):
+
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -106,7 +110,7 @@ export default {
   async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     // Run every 2 minutes to update live games
     await updateLiveGames(env);
-  }
+  },
 };
 
 async function handleLiveGames(env: Env): Promise<Response> {
@@ -114,7 +118,7 @@ async function handleLiveGames(env: Env): Promise<Response> {
   const cached = await env.LIVE_CACHE.get('live-games', 'json');
   if (cached) {
     return Response.json(cached, {
-      headers: { 'Cache-Control': 'public, max-age=30' }
+      headers: { 'Cache-Control': 'public, max-age=30' },
     });
   }
 
@@ -122,19 +126,19 @@ async function handleLiveGames(env: Env): Promise<Response> {
   const [mlbGames, nflGames, cfbGames] = await Promise.all([
     fetchMLBLiveGames(env),
     fetchNFLLiveGames(env),
-    fetchCFBLiveGames(env)
+    fetchCFBLiveGames(env),
   ]);
 
   const allGames = {
     mlb: mlbGames,
     nfl: nflGames,
     cfb: cfbGames,
-    updated: new Date().toISOString()
+    updated: new Date().toISOString(),
   };
 
   // Cache for 30 seconds
   await env.LIVE_CACHE.put('live-games', JSON.stringify(allGames), {
-    expirationTtl: 30
+    expirationTtl: 30,
   });
 
   return Response.json(allGames);
@@ -142,17 +146,18 @@ async function handleLiveGames(env: Env): Promise<Response> {
 ```
 
 **`src/simulations/monte-carlo.ts`**:
+
 ```typescript
 interface GameState {
   sport: 'mlb' | 'nfl' | 'cfb';
   homeScore: number;
   awayScore: number;
-  inning?: number;  // MLB
+  inning?: number; // MLB
   quarter?: number; // NFL/CFB
   timeRemaining?: number;
-  outs?: number;  // MLB
+  outs?: number; // MLB
   runners?: { first?: boolean; second?: boolean; third?: boolean };
-  down?: number;  // NFL/CFB
+  down?: number; // NFL/CFB
   distance?: number;
   ballPosition?: number;
 }
@@ -172,7 +177,7 @@ export async function runMonteCarloSimulation(
 
   return {
     homeWinProbability: homeWins / iterations,
-    awayWinProbability: (iterations - homeWins) / iterations
+    awayWinProbability: (iterations - homeWins) / iterations,
   };
 }
 
@@ -190,6 +195,7 @@ function simulateGameCompletion(state: GameState): { home: number; away: number 
 ```
 
 **Frontend: `apps/web/app/live/page.tsx`**:
+
 ```typescript
 'use client';
 
@@ -271,6 +277,7 @@ function GameCard({ game }: { game: LiveGame }) {
 #### Worker Configuration: `workers/betting-intelligence/`
 
 **wrangler.toml**:
+
 ```toml
 name = "betting-intelligence"
 main = "index.ts"
@@ -298,6 +305,7 @@ ODDS_CACHE_TTL = 60
 ```
 
 **`src/theodds-client.ts`**:
+
 ```typescript
 export class TheOddsAPIClient {
   private apiKey: string;
@@ -313,7 +321,7 @@ export class TheOddsAPIClient {
       apiKey: this.apiKey,
       regions: 'us',
       markets: 'h2h,spreads,totals',
-      oddsFormat: 'american'
+      oddsFormat: 'american',
     });
 
     const response = await fetch(`${url}?${params}`);
@@ -330,7 +338,7 @@ export class TheOddsAPIClient {
       apiKey: this.apiKey,
       regions: 'us',
       markets: 'h2h,spreads,totals',
-      oddsFormat: 'american'
+      oddsFormat: 'american',
     });
 
     const response = await fetch(`${url}?${params}`);
@@ -340,6 +348,7 @@ export class TheOddsAPIClient {
 ```
 
 **`src/value-bet-detector.ts`**:
+
 ```typescript
 export interface ValueBet {
   gameId: string;
@@ -347,8 +356,8 @@ export interface ValueBet {
   book: string;
   odds: number;
   fairOdds: number;
-  edge: number;  // Percentage edge
-  confidence: number;  // 0-1
+  edge: number; // Percentage edge
+  confidence: number; // 0-1
 }
 
 export async function detectValueBets(
@@ -372,7 +381,8 @@ export async function detectValueBets(
         const homeEdge = calculateEdge(homeOdds, fairHomeOdds);
         const awayEdge = calculateEdge(awayOdds, fairAwayOdds);
 
-        if (homeEdge > 5) {  // 5% edge threshold
+        if (homeEdge > 5) {
+          // 5% edge threshold
           valueBets.push({
             gameId: gameOdds.id,
             market: 'h2h',
@@ -380,7 +390,7 @@ export async function detectValueBets(
             odds: homeOdds,
             fairOdds: fairHomeOdds,
             edge: homeEdge,
-            confidence: calculateConfidence(homeEdge, winProbability.home)
+            confidence: calculateConfidence(homeEdge, winProbability.home),
           });
         }
       }
@@ -516,14 +526,12 @@ model WhoopWorkout {
 ```
 
 **API Route: `apps/web/app/api/players/[id]/wearables/timeline/route.ts`**:
+
 ```typescript
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/db';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const playerId = params.id;
   const { searchParams } = new URL(request.url);
   const days = parseInt(searchParams.get('days') || '30');
@@ -536,49 +544,49 @@ export async function GET(
     prisma.whoopRecovery.findMany({
       where: {
         user: { playerId },
-        recorded: { gte: startDate }
+        recorded: { gte: startDate },
       },
       orderBy: { recorded: 'asc' },
-      include: { cycle: true }
+      include: { cycle: true },
     }),
     prisma.whoopSleep.findMany({
       where: {
         user: { playerId },
-        start: { gte: startDate }
+        start: { gte: startDate },
       },
-      orderBy: { start: 'asc' }
+      orderBy: { start: 'asc' },
     }),
     prisma.whoopWorkout.findMany({
       where: {
         user: { playerId },
-        start: { gte: startDate }
+        start: { gte: startDate },
       },
-      orderBy: { start: 'asc' }
-    })
+      orderBy: { start: 'asc' },
+    }),
   ]);
 
   return Response.json({
-    recoveries: recoveries.map(r => ({
+    recoveries: recoveries.map((r) => ({
       date: r.recorded,
       score: r.recoveryScore,
       hrv: r.hrvRmssd,
       restingHR: r.restingHR,
-      strain: r.cycle.score
+      strain: r.cycle.score,
     })),
-    sleeps: sleeps.map(s => ({
+    sleeps: sleeps.map((s) => ({
       date: s.start,
       duration: s.duration,
       quality: s.quality,
       efficiency: s.efficiency,
-      stages: s.stages
+      stages: s.stages,
     })),
-    workouts: workouts.map(w => ({
+    workouts: workouts.map((w) => ({
       date: w.start,
       sport: w.sport,
       strain: w.strain,
       avgHR: w.avgHeartRate,
-      maxHR: w.maxHeartRate
-    }))
+      maxHR: w.maxHeartRate,
+    })),
   });
 }
 ```
@@ -666,6 +674,7 @@ npx prisma migrate deploy
 ## Testing Strategy
 
 ### Unit Tests
+
 ```bash
 # Run all tests
 npm test
@@ -678,6 +687,7 @@ npm test -- --coverage
 ```
 
 ### Integration Tests
+
 ```typescript
 // tests/integration/live-game-center.test.ts
 import { env, createExecutionContext } from 'cloudflare:test';
@@ -714,6 +724,7 @@ describe('Live Game Center Worker', () => {
 ```
 
 ### End-to-End Tests (Playwright)
+
 ```typescript
 // tests/e2e/live-game-center.spec.ts
 import { test, expect } from '@playwright/test';
@@ -760,10 +771,10 @@ test('Live Game Center updates every 30 seconds', async ({ page }) => {
 ```typescript
 // Multi-level caching
 interface CacheStrategy {
-  level1: 'Browser Cache';  // 30s for live data
+  level1: 'Browser Cache'; // 30s for live data
   level2: 'Cloudflare CDN'; // 60s for API responses
-  level3: 'KV Store';       // 2min for worker data
-  level4: 'PostgreSQL';     // Permanent storage
+  level3: 'KV Store'; // 2min for worker data
+  level4: 'PostgreSQL'; // Permanent storage
 }
 
 // Example: Aggressive caching for live games
@@ -778,12 +789,16 @@ export async function getCachedLiveGames(env: Env): Promise<any> {
   const freshData = await fetchLiveGamesFromAPIs(env);
 
   // 3. Update cache
-  await env.LIVE_CACHE.put('live-games', JSON.stringify({
-    ...freshData,
-    timestamp: Date.now()
-  }), {
-    expirationTtl: 30
-  });
+  await env.LIVE_CACHE.put(
+    'live-games',
+    JSON.stringify({
+      ...freshData,
+      timestamp: Date.now(),
+    }),
+    {
+      expirationTtl: 30,
+    }
+  );
 
   return freshData;
 }
@@ -827,6 +842,7 @@ const MLPredictionEngine = dynamic(
 ## Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] All tests passing
 - [ ] Lighthouse score > 90
 - [ ] Security audit completed
@@ -838,6 +854,7 @@ const MLPredictionEngine = dynamic(
 - [ ] Rate limiting tested
 
 ### Deployment
+
 - [ ] Deploy workers in order (dependencies first)
 - [ ] Deploy web app
 - [ ] Run database migrations
@@ -847,6 +864,7 @@ const MLPredictionEngine = dynamic(
 - [ ] Monitor error rates
 
 ### Post-Deployment
+
 - [ ] Verify all workers are running
 - [ ] Check cron schedules
 - [ ] Monitor API usage
@@ -889,8 +907,8 @@ Sentry.init({
 
   integrations: [
     new Sentry.Integrations.Postgres(),
-    new Sentry.Integrations.Http({ tracing: true })
-  ]
+    new Sentry.Integrations.Http({ tracing: true }),
+  ],
 });
 ```
 
@@ -903,7 +921,7 @@ import { datadogRum } from '@datadog/browser-rum';
 export function trackGameLoad(gameId: string, loadTime: number) {
   datadogRum.addAction('game_load', {
     game_id: gameId,
-    load_time_ms: loadTime
+    load_time_ms: loadTime,
   });
 }
 
@@ -913,14 +931,14 @@ export function trackPredictionAccuracy(gameId: string, predicted: string, actua
     game_id: gameId,
     correct,
     predicted_winner: predicted,
-    actual_winner: actual
+    actual_winner: actual,
   });
 }
 
 export function trackAPILatency(endpoint: string, latency: number) {
   datadogRum.addAction('api_latency', {
     endpoint,
-    latency_ms: latency
+    latency_ms: latency,
   });
 }
 ```
@@ -970,7 +988,7 @@ import { RateLimiter } from '@/lib/rate-limiter';
 
 const limiter = new RateLimiter({
   points: 100, // Number of requests
-  duration: 60 // Per 60 seconds
+  duration: 60, // Per 60 seconds
 });
 
 export async function rateLimit(req: Request): Promise<Response | null> {
@@ -985,8 +1003,8 @@ export async function rateLimit(req: Request): Promise<Response | null> {
       headers: {
         'Retry-After': '60',
         'X-RateLimit-Limit': '100',
-        'X-RateLimit-Remaining': '0'
-      }
+        'X-RateLimit-Remaining': '0',
+      },
     });
   }
 }
@@ -1005,7 +1023,7 @@ export async function logAnalytics(env: Env, eventType: string, metadata: any) {
     env.ANALYTICS.writeDataPoint({
       blobs: [eventType, metadata.sport, metadata.source],
       doubles: [metadata.latency || 0],
-      indexes: [eventType]
+      indexes: [eventType],
     });
   }
 }

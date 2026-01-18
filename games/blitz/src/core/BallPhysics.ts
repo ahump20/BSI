@@ -23,34 +23,34 @@ import {
 
 /** Ball state */
 export type BallState =
-  | 'held'        // Ball is being held by a player
-  | 'thrown'      // Ball is in the air (pass)
-  | 'loose'       // Fumble - anyone can grab it
-  | 'dead';       // Play is over
+  | 'held' // Ball is being held by a player
+  | 'thrown' // Ball is in the air (pass)
+  | 'loose' // Fumble - anyone can grab it
+  | 'dead'; // Play is over
 
 /** Pass type affects trajectory */
 export type PassType =
-  | 'bullet'      // Flat, fast trajectory
-  | 'touch'       // Normal arc
-  | 'lob';        // High arc for deep throws
+  | 'bullet' // Flat, fast trajectory
+  | 'touch' // Normal arc
+  | 'lob'; // High arc for deep throws
 
 /** Football physics configuration */
 export interface BallConfig {
-  catchRadius: number;      // Magnetic catch radius (yards)
-  fumbleChance: number;     // Base fumble chance on big hits (0-1)
-  bulletVelocity: number;   // Bullet pass velocity (yards/sec)
-  touchVelocity: number;    // Touch pass velocity
-  lobVelocity: number;      // Lob pass velocity
-  gravity: number;          // Gravity strength
+  catchRadius: number; // Magnetic catch radius (yards)
+  fumbleChance: number; // Base fumble chance on big hits (0-1)
+  bulletVelocity: number; // Bullet pass velocity (yards/sec)
+  touchVelocity: number; // Touch pass velocity
+  lobVelocity: number; // Lob pass velocity
+  gravity: number; // Gravity strength
 }
 
 const DEFAULT_CONFIG: BallConfig = {
-  catchRadius: 2.5,         // 2.5 yard catch radius
-  fumbleChance: 0.15,       // 15% base fumble on big hit
-  bulletVelocity: 45,       // Fast bullet pass
-  touchVelocity: 35,        // Normal pass
-  lobVelocity: 25,          // Slower lob
-  gravity: 15,              // Yards/sec^2
+  catchRadius: 2.5, // 2.5 yard catch radius
+  fumbleChance: 0.15, // 15% base fumble on big hit
+  bulletVelocity: 45, // Fast bullet pass
+  touchVelocity: 35, // Normal pass
+  lobVelocity: 25, // Slower lob
+  gravity: 15, // Yards/sec^2
 };
 
 /** Football physics manager */
@@ -65,7 +65,7 @@ export class FootballPhysics {
 
   // Ball state
   private state: BallState = 'dead';
-  private holder: string | null = null;  // Player ID holding the ball
+  private holder: string | null = null; // Player ID holding the ball
 
   // Trajectory tracking
   private velocity: Vector3 = Vector3.Zero();
@@ -117,14 +117,7 @@ export class FootballPhysics {
     if (!this.ball) return;
 
     // Ball trail when thrown
-    this.ballTrail = new TrailMesh(
-      'ballTrail',
-      this.ball,
-      this.scene,
-      0.15,
-      30,
-      true
-    );
+    this.ballTrail = new TrailMesh('ballTrail', this.ball, this.scene, 0.15, 30, true);
 
     const trailMat = new StandardMaterial('trailMat', this.scene);
     trailMat.emissiveColor = new Color3(1, 1, 1);
@@ -215,13 +208,11 @@ export class FootballPhysics {
 
     // Add vertical component for arc
     const peakHeight = distance * arcHeight;
-    const verticalVelocity = (peakHeight + 0.5 * this.config.gravity * Math.pow(this.maxFlightTime / 2, 2)) / (this.maxFlightTime / 2);
+    const verticalVelocity =
+      (peakHeight + 0.5 * this.config.gravity * Math.pow(this.maxFlightTime / 2, 2)) /
+      (this.maxFlightTime / 2);
 
-    this.velocity = new Vector3(
-      horizontalVelocity.x,
-      verticalVelocity,
-      horizontalVelocity.z
-    );
+    this.velocity = new Vector3(horizontalVelocity.x, verticalVelocity, horizontalVelocity.z);
 
     // Show trail
     if (this.ballTrail) {
@@ -321,11 +312,7 @@ export class FootballPhysics {
       if (this.ball) {
         // Ball pops out in random direction
         const randomAngle = Math.random() * Math.PI * 2;
-        this.velocity = new Vector3(
-          Math.cos(randomAngle) * 5,
-          3,
-          Math.sin(randomAngle) * 5
-        );
+        this.velocity = new Vector3(Math.cos(randomAngle) * 5, 3, Math.sin(randomAngle) * 5);
       }
 
       return true;
@@ -340,7 +327,8 @@ export class FootballPhysics {
 
     const distance = Vector3.Distance(this.ball.position, playerPosition);
 
-    if (distance <= 1.5) { // Must be close to pick up
+    if (distance <= 1.5) {
+      // Must be close to pick up
       this.giveTo(playerId, playerPosition);
       return true;
     }

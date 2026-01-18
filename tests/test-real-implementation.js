@@ -15,21 +15,15 @@ const __dirname = path.dirname(__filename);
 
 const API_BASE = 'http://localhost:3000';
 
-
 const tests = {
   passed: 0,
   failed: 0,
-  results: []
+  results: [],
 };
 
 // Test 1: Check for Math.random() in new files
 function testNoRandomNumbers() {
-
-  const files = [
-    'index-real.html',
-    'api/real-server.js',
-    'functions/api/sports-data-real.js'
-  ];
+  const files = ['index-real.html', 'api/real-server.js', 'functions/api/sports-data-real.js'];
 
   let found = false;
   for (const file of files) {
@@ -47,8 +41,7 @@ function testNoRandomNumbers() {
       if (codeOnly.includes('Math.random()')) {
         found = true;
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   if (!found) {
@@ -60,7 +53,6 @@ function testNoRandomNumbers() {
 
 // Test 2: Check API server is running
 async function testAPIServer() {
-
   try {
     const response = await fetch(`${API_BASE}/health`);
     const data = await response.json();
@@ -77,7 +69,6 @@ async function testAPIServer() {
 
 // Test 3: Check real MLB API data
 async function testMLBAPI() {
-
   try {
     const response = await fetch(`${API_BASE}/api/mlb/138`);
     const data = await response.json();
@@ -95,7 +86,6 @@ async function testMLBAPI() {
 
 // Test 4: Check real NFL API data
 async function testNFLAPI() {
-
   try {
     const response = await fetch(`${API_BASE}/api/nfl/10`);
     const data = await response.json();
@@ -113,7 +103,6 @@ async function testNFLAPI() {
 
 // Test 5: Check database connection
 async function testDatabase() {
-
   try {
     const response = await fetch(`${API_BASE}/api/teams`);
     const data = await response.json();
@@ -130,7 +119,6 @@ async function testDatabase() {
 
 // Test 6: Check for hardcoded data
 function testNoHardcodedData() {
-
   try {
     const content = readFileSync(path.join(__dirname, 'functions/api/sports-data-real.js'), 'utf8');
 
@@ -139,7 +127,7 @@ function testNoHardcodedData() {
       'pythagorean_wins: 81',
       'wins: 83, losses: 79',
       'offensive_rating: 110.2',
-      'rank: 1, name: "Jackson Arnold"'
+      'rank: 1, name: "Jackson Arnold"',
     ];
 
     let found = false;
@@ -156,13 +144,11 @@ function testNoHardcodedData() {
     } else {
       tests.failed++;
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // Test 7: Check for real calculations
 async function testRealCalculations() {
-
   try {
     const response = await fetch(`${API_BASE}/api/analytics/elo`, {
       method: 'POST',
@@ -172,8 +158,8 @@ async function testRealCalculations() {
         awayTeam: 'CHC',
         homeScore: 5,
         awayScore: 3,
-        sport: 'mlb'
-      })
+        sport: 'mlb',
+      }),
     });
 
     const data = await response.json();
@@ -183,8 +169,7 @@ async function testRealCalculations() {
     } else {
       tests.failed++;
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 // Run all tests

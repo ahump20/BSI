@@ -12,7 +12,7 @@
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:functions\"",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name blaze-blitz-football",
+    "deploy": "npm run build && npx wrangler deploy --config wrangler.jsonc",
     "db:migrate": "wrangler d1 execute bsi-game-db --local --file=schema.sql",
     "db:migrate:production": "wrangler d1 execute bsi-game-db --file=schema.sql",
     "typecheck": "tsc --noEmit",

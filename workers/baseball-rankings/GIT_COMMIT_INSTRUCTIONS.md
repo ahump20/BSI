@@ -64,6 +64,7 @@ git push origin main
 ## Files to be Committed
 
 ### New Files
+
 - `workers/baseball-rankings/index.ts` (505 lines)
 - `workers/baseball-rankings/wrangler.toml` (26 lines)
 - `workers/baseball-rankings/package.json`
@@ -78,16 +79,19 @@ git push origin main
 If permission issues persist, you may need to:
 
 1. **Check ownership of `.git` directory:**
+
    ```bash
    ls -la /Users/AustinHumphrey/BSI/.git/ | head -20
    ```
 
 2. **Fix permissions if needed:**
+
    ```bash
    sudo chown -R AustinHumphrey:staff /Users/AustinHumphrey/BSI/.git
    ```
 
 3. **Remove stale lock files if they exist:**
+
    ```bash
    rm -f /Users/AustinHumphrey/BSI/.git/index.lock
    ```

@@ -1,0 +1,143 @@
+name: Unity WebGL Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'unity/**'
+      - '.github/workflows/unity-build.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'unity/**'
+  workflow_dispatch:
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+jobs:
+  build:
+    name: Build WebGL
+    runs-on: ubuntu-latest
+    container:
+      image: unityci/editor:ubuntu-2022.3.20f1-webgl-3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: unity/Library
+          key: Library-unity-webgl-${{ hashFiles('unity/Assets/**', 'unity/Packages/**', 'unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-unity-webgl-
+
+      - name: Activate Unity License
+        run: |
+          echo "$UNITY_LICENSE" | base64 -d > /Unity.ulf
+          unity-editor -batchmode -nographics -quit \
+            -logFile /dev/stdout \
+            -manualLicenseFile /Unity.ulf || true
+
+      - name: Build WebGL
+        run: |
+          unity-editor -batchmode -nographics -quit \
+            -projectPath ./unity \
+            -executeMethod BuildScript.BuildWebGL \
+            -buildTarget WebGL \
+            -logFile -
+
+      - name: Compress Build
+        run: |
+          apt-get update && apt-get install -y brotli
+          cd web/Build
+          find . -name "*.wasm" ! -name "*.br" -exec brotli -9 -k {} \;
+          find . -name "*.js" -size +50k ! -name "*.br" -exec brotli -9 -k {} \;
+          find . -name "*.data" ! -name "*.br" -exec brotli -9 -k {} \;
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: webgl-build
+          path: web/Build/
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Report Build Size
+        run: |
+          echo "Build Size Report"
+          du -sh web/Build/
+          ls -lah web/Build/
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: staging
+      url: https://staging-game.blazesportsintel.com
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webgl-build
+          path: web/Build/
+
+      - name: Copy public files
+        run: |
+          cp -r web/public/* web/
+          cp web/_headers web/
+          cp web/_redirects web/ || true
+
+      - name: Deploy to Cloudflare Pages Staging
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy web --project-name=backyard-baseball-staging --commit-dirty=true
+
+  deploy-production:
+    name: Deploy to Production
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://game.blazesportsintel.com
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: webgl-build
+          path: web/Build/
+
+      - name: Copy public files
+        run: |
+          cp -r web/public/* web/
+          cp web/_headers web/
+          cp web/_redirects web/ || true
+
+      - name: Deploy to Cloudflare Pages Production
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages deploy web --project-name=backyard-baseball --branch=main --commit-dirty=true
+
+      - name: Deployment Complete
+        run: echo "Deployed to https://game.blazesportsintel.com"

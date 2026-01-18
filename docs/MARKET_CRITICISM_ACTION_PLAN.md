@@ -1,4 +1,5 @@
 # Market Criticism Action Plan
+
 **Blaze Sports Intel — October 2025**
 
 ## Executive Summary
@@ -13,9 +14,11 @@ This document outlines specific, actionable steps to address the four key market
 ---
 
 ## Criticism #1: Validation Uncertainty
+
 **Problem:** Diamond Certainty Engine's 8 dimensions are innovative but lack published peer-reviewed validation.
 
 ### ✅ Completed Actions
+
 1. **Created `/methodology.html`**
    - Full scientific methodology for all 8 dimensions
    - Data collection requirements (minimum sample sizes)
@@ -37,6 +40,7 @@ This document outlines specific, actionable steps to address the four key market
    - Body language coding (Hall et al., 2005; Carney et al., 2010)
 
 ### 🎯 Next Steps (0-6 Months)
+
 - [ ] **Pilot Validation Study** (January 2026)
   - Partner with 3 D1 programs to collect 6-month baseline data
   - Compare Diamond Certainty scores to traditional scouting ratings
@@ -54,6 +58,7 @@ This document outlines specific, actionable steps to address the four key market
   - Public release with university approval
 
 ### 📊 Success Metrics
+
 - 1 peer-reviewed publication accepted by Q3 2026
 - 3 pilot programs providing data for validation
 - Correlation coefficient r > 0.60 between Clutch Gene and high-leverage WPA
@@ -61,9 +66,11 @@ This document outlines specific, actionable steps to address the four key market
 ---
 
 ## Criticism #2: Brand Awareness & Market Differentiation
+
 **Problem:** Limited public presence vs. established players (Hudl, Catapult, KINEXON).
 
 ### ✅ Completed Actions
+
 1. **Created `/competitive-advantages.html`**
    - Head-to-head feature comparison table (Blaze vs. 3 competitors)
    - 14 competitive dimensions analyzed
@@ -77,6 +84,7 @@ This document outlines specific, actionable steps to address the four key market
    - Audit trail transparency (vs. proprietary black boxes)
 
 ### 🎯 Next Steps (0-6 Months)
+
 - [ ] **Conference Circuit** (December 2025 - March 2026)
   - Submit presentations to:
     - ABCA Convention (American Baseball Coaches Association) — Jan 2026
@@ -101,6 +109,7 @@ This document outlines specific, actionable steps to address the four key market
   - Twitter case studies with permission (#BlazeIntel)
 
 ### 📊 Success Metrics
+
 - 500 inbound demo requests by Q2 2026 (currently: ~50/quarter)
 - 3 conference speaking engagements confirmed
 - 5 media mentions in industry publications
@@ -109,9 +118,11 @@ This document outlines specific, actionable steps to address the four key market
 ---
 
 ## Criticism #3: Data Source Transparency
+
 **Problem:** Competitors with proprietary hardware (Hawk-Eye, TrackMan) may have data moat advantage.
 
 ### ✅ Completed Actions
+
 1. **Enhanced `/data-transparency.html`**
    - Already documents MLB Stats API, ESPN API, SportsDataIO sources
    - Game counts: 8,636 total games across 5 sports
@@ -124,6 +135,7 @@ This document outlines specific, actionable steps to address the four key market
    - Documents physiological telemetry sources (wearables, biometric sensors)
 
 ### 🎯 Next Steps (0-6 Months)
+
 - [ ] **Hardware Partnership** (February 2026)
   - Negotiate partnership with wearable vendor (Polar, WHOOP, Garmin)
   - Offer integration: athletes consent to share HRV data → Blaze analysis
@@ -144,6 +156,7 @@ This document outlines specific, actionable steps to address the four key market
   - Host on Kaggle/GitHub for academic scrutiny
 
 ### 📊 Success Metrics
+
 - 1 wearable partnership signed
 - Data quality dashboard live with 99.5%+ uptime
 - 50+ downloads of open dataset
@@ -152,9 +165,11 @@ This document outlines specific, actionable steps to address the four key market
 ---
 
 ## Criticism #4: ROI Demonstration & Market Traction
+
 **Problem:** Need client testimonials and measurable ROI to overcome "unproven platform" perception.
 
 ### ✅ Completed Actions
+
 1. **Created Case Study Template** (`/docs/case-study-template.md`)
    - Comprehensive ROI calculation framework:
      - Direct cost savings (injury prevention, recruiting efficiency, wasted scholarships)
@@ -173,6 +188,7 @@ This document outlines specific, actionable steps to address the four key market
      - Time to decision (recruiting)
 
 ### 🎯 Next Steps (0-6 Months)
+
 - [ ] **Pilot Client Recruitment** (December 2025)
   - Identify 5 target programs willing to beta test Diamond Pro tier
   - Offer: 50% discount Year 1 in exchange for case study permission
@@ -196,6 +212,7 @@ This document outlines specific, actionable steps to address the four key market
   - Press release + conference presentation
 
 ### 📊 Success Metrics
+
 - 5 pilot programs signed by January 2026
 - 1 published case study by December 2026 showing:
   - > 5% win percentage improvement
@@ -208,15 +225,18 @@ This document outlines specific, actionable steps to address the four key market
 ## Asset Inventory (What We Built)
 
 ### Public-Facing Pages
+
 1. ✅ `/methodology.html` — Diamond Certainty Engine validation framework
 2. ✅ `/competitive-advantages.html` — Platform comparison vs. Hudl/Catapult/KINEXON
 3. ✅ `/data-transparency.html` — (Enhanced existing page)
 
 ### Internal Documentation
+
 4. ✅ `/docs/case-study-template.md` — ROI measurement framework
 5. ✅ `/docs/MARKET_CRITICISM_ACTION_PLAN.md` — This document
 
 ### Updated Codebase Assets
+
 6. ✅ `/lib/analytics/diamond-certainty-engine.ts` — (Already existed, now publicly documented)
 7. ✅ `/tests/diamond-certainty-engine.test.ts` — (Already existed, demonstrates validation)
 
@@ -225,6 +245,7 @@ This document outlines specific, actionable steps to address the four key market
 ## Priority Action Timeline
 
 ### Immediate (Next 30 Days)
+
 1. **Link new pages to main site navigation**
    - Add "Methodology" link to footer/header
    - Add "Why Blaze?" comparison page to homepage CTA
@@ -237,18 +258,21 @@ This document outlines specific, actionable steps to address the four key market
    - Create "Early Access Program" application for testimonials
 
 ### Short-Term (31-90 Days)
+
 1. **Conference submissions** (deadline: mid-December for Jan conventions)
 2. **Pilot client recruitment** (goal: 5 signed by end of January)
 3. **Media kit creation** (press release templates, founder bio, platform screenshots)
 4. **Academic outreach** (contact 3 sports science departments for collaboration)
 
 ### Medium-Term (91-180 Days)
+
 1. **First case study draft** (6-month checkpoint data)
 2. **Validation study design finalized** (with academic partner)
 3. **Open dataset release** (Kaggle + GitHub)
 4. **Data quality dashboard** (public uptime/freshness monitoring)
 
 ### Long-Term (181-365 Days)
+
 1. **Peer-reviewed publication submission** (Q1 2026)
 2. **Full case study publication** (12-month data, December 2026)
 3. **Validation study results** (correlation analysis published)
@@ -259,15 +283,17 @@ This document outlines specific, actionable steps to address the four key market
 ## Investment Required
 
 ### Immediate Costs (Next 90 Days)
-| Item | Cost | Purpose |
-|------|------|---------|
-| Conference registrations (3) | $2,500 | ABCA, AFCA, NCAA convention booth/registration |
-| Content writer (freelance) | $3,000 | 10 blog posts for SEO/thought leadership |
-| Wearable vendor partnership | $0 | Revenue share model (negotiate no upfront cost) |
-| Pilot client discounts (50% Year 1) | $60,000 | 5 clients × $12k discount = $60k revenue forgone |
-| **Total** | **$65,500** | |
+
+| Item                                | Cost        | Purpose                                          |
+| ----------------------------------- | ----------- | ------------------------------------------------ |
+| Conference registrations (3)        | $2,500      | ABCA, AFCA, NCAA convention booth/registration   |
+| Content writer (freelance)          | $3,000      | 10 blog posts for SEO/thought leadership         |
+| Wearable vendor partnership         | $0          | Revenue share model (negotiate no upfront cost)  |
+| Pilot client discounts (50% Year 1) | $60,000     | 5 clients × $12k discount = $60k revenue forgone |
+| **Total**                           | **$65,500** |                                                  |
 
 ### Expected ROI from Investment
+
 - 5 case studies → 20+ inbound leads (estimated 30% close rate) → 6 new clients
 - 6 new clients × $18k average = $108k new ARR
 - Net gain Year 1: $42.5k ($108k - $65.5k investment)
@@ -278,19 +304,25 @@ This document outlines specific, actionable steps to address the four key market
 ## Risk Mitigation
 
 ### Risk 1: Pilot Programs Fail to Show ROI
+
 **Mitigation:**
+
 - Pre-qualify programs with baseline > .450 win % (room for improvement)
 - Focus on measurable quick wins (injury prevention, game prep time)
 - Overpromise on support: weekly check-ins, custom training
 
 ### Risk 2: Peer Review Rejection
+
 **Mitigation:**
+
 - Start with lower-tier journals (not top-5 initially)
 - Focus on methodology transparency rather than revolutionary claims
 - Use validation study as "working paper" even if not published (preprint on arXiv)
 
 ### Risk 3: Competitors Copy Approach
+
 **Mitigation:**
+
 - Patent pending on Diamond Certainty weighting algorithm
 - First-mover advantage: establish category leadership before copycats
 - Network effects: more data = better models = harder to replicate
@@ -301,15 +333,15 @@ This document outlines specific, actionable steps to address the four key market
 
 Track progress monthly on these KPIs:
 
-| Metric | Baseline (Oct 2025) | Target (June 2026) | Target (Dec 2026) |
-|--------|---------------------|--------------------|--------------------|
-| Inbound demo requests/month | 17 | 75 | 150 |
-| Paid clients | 2 | 10 | 25 |
-| Published case studies | 0 | 0 | 1 |
-| Media mentions | 0 | 3 | 8 |
-| Social media followers | 420 | 1,500 | 3,000 |
-| Peer-reviewed publications | 0 | 0 (submitted) | 1 (accepted) |
-| Conference presentations | 0 | 2 | 5 |
+| Metric                      | Baseline (Oct 2025) | Target (June 2026) | Target (Dec 2026) |
+| --------------------------- | ------------------- | ------------------ | ----------------- |
+| Inbound demo requests/month | 17                  | 75                 | 150               |
+| Paid clients                | 2                   | 10                 | 25                |
+| Published case studies      | 0                   | 0                  | 1                 |
+| Media mentions              | 0                   | 3                  | 8                 |
+| Social media followers      | 420                 | 1,500              | 3,000             |
+| Peer-reviewed publications  | 0                   | 0 (submitted)      | 1 (accepted)      |
+| Conference presentations    | 0                   | 2                  | 5                 |
 
 ---
 

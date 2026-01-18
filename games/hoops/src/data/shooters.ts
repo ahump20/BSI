@@ -9,10 +9,10 @@ export interface HoopsShooter {
   name: string;
   nickname: string;
   jerseyColor: string;
-  accuracy: number;      // Base accuracy (1-10)
-  release: number;       // Shot release speed (1-10, higher = faster meter)
-  range: number;         // Deep range bonus (1-10)
-  streakBonus: number;   // Streak multiplier bonus
+  accuracy: number; // Base accuracy (1-10)
+  release: number; // Shot release speed (1-10, higher = faster meter)
+  range: number; // Deep range bonus (1-10)
+  streakBonus: number; // Streak multiplier bonus
 }
 
 /** Starter shooters - available from the start */

@@ -1,4 +1,5 @@
 # BSI Infrastructure State
+
 > Generated: 2025-01-07 | Audit for 12-hour sprint
 
 ---
@@ -14,20 +15,21 @@
 
 ## Workers Inventory
 
-| Worker | Purpose | Bindings |
-|--------|---------|----------|
-| `college-baseball-tracker` | Main site (Pages) | KV, D1, R2, Vectorize |
-| `bsi-cache-warmer` | Preload cache | - |
-| `bsi-cfb-ai` | CFB AI analysis | D1, KV |
-| `bsi-chatgpt-app` | ChatGPT plugin | - |
-| `bsi-news-ticker` | Real-time ticker | Durable Objects |
-| `bsi-prediction-api` | Game predictions | D1, KV |
-| `bsi-baseball-rankings` | College rankings | KV |
-| `bsi-records-api` | Historical records | D1 |
-| `bsi-portal-agent` | Transfer portal AI | D1, KV |
-| `blazesports-ingest` | Data ingestion | R2 |
+| Worker                     | Purpose            | Bindings              |
+| -------------------------- | ------------------ | --------------------- |
+| `college-baseball-tracker` | Main site (Pages)  | KV, D1, R2, Vectorize |
+| `bsi-cache-warmer`         | Preload cache      | -                     |
+| `bsi-cfb-ai`               | CFB AI analysis    | D1, KV                |
+| `bsi-chatgpt-app`          | ChatGPT plugin     | -                     |
+| `bsi-news-ticker`          | Real-time ticker   | Durable Objects       |
+| `bsi-prediction-api`       | Game predictions   | D1, KV                |
+| `bsi-baseball-rankings`    | College rankings   | KV                    |
+| `bsi-records-api`          | Historical records | D1                    |
+| `bsi-portal-agent`         | Transfer portal AI | D1, KV                |
+| `blazesports-ingest`       | Data ingestion     | R2                    |
 
 **Games (Mini-apps):**
+
 - `blaze-backyard-baseball`
 - `blaze-blitz-football`
 - `blaze-hoops-shootout`
@@ -38,21 +40,25 @@
 ## Data Bindings
 
 ### KV Namespaces
+
 - `BSI_CACHE` (id: a53c3726fc3044be82e79d2d1e371d26)
 - `NIL_CACHE` (same ID, aliased)
 - Prefix pattern: `mlb:`, `nfl:`, `ncaa:`, etc.
 
 ### D1 Databases
+
 - `bsi-historical-db` (id: 9cecff0f-a3ab-433f-bf10-d2664d9542b0)
 - `bsi-game-db` (games)
 - `bsi-portal-db` (transfer portal)
 
 ### R2 Buckets
+
 - `blaze-sports-data-lake`
 - `blaze-nil-archive`
 - `blazesports-archives`
 
 ### Vectorize
+
 - `sports-scouting-index`
 
 ---
@@ -60,12 +66,14 @@
 ## Route Inventory (70 pages)
 
 ### Core Routes
+
 - `/` - Homepage with live scores hub
 - `/dashboard` - Command center with sport tabs
 - `/pricing` - Subscription tiers ($29 Pro, $199 Enterprise)
 - `/about`, `/contact`, `/privacy`, `/terms`
 
 ### MLB (13 routes)
+
 - `/mlb` - Hub
 - `/mlb/games`, `/mlb/scores`, `/mlb/standings`, `/mlb/stats`, `/mlb/news`
 - `/mlb/teams`, `/mlb/teams/[teamId]`
@@ -73,15 +81,18 @@
 - `/mlb/game/[gameId]` + box-score, play-by-play, recap, team-stats
 
 ### NFL (8 routes)
+
 - `/nfl` - Hub
 - `/nfl/games`, `/nfl/standings`, `/nfl/news`
 - `/nfl/teams`, `/nfl/teams/[teamId]`
 
 ### NBA (2 routes)
+
 - `/nba` - Hub
 - `/nba/standings`
 
 ### College Baseball (18 routes)
+
 - `/college-baseball` - Hub
 - `/college-baseball/games`, `/scores`, `/standings`, `/rankings`, `/news`
 - `/college-baseball/teams`, `/teams/[teamId]`
@@ -92,11 +103,13 @@
 - `/college-baseball/game/[gameId]` + box-score, play-by-play, recap, team-stats
 
 ### CFB (3 routes)
+
 - `/cfb` - Hub
 - `/cfb/transfer-portal`
 - `/cfb/articles/[slug]`
 
 ### Other
+
 - `/nil-valuation` + methodology, tools
 - `/arcade` - Mini-games
 - `/auth/login`, `/auth/signup`
@@ -109,9 +122,9 @@
 
 ## Missing Routes (404s)
 
-| Route | Status | Fix Required |
-|-------|--------|--------------|
-| `/analytics` | NO PAGE | Create app/analytics/page.tsx |
+| Route                        | Status        | Fix Required                         |
+| ---------------------------- | ------------- | ------------------------------------ |
+| `/analytics`                 | NO PAGE       | Create app/analytics/page.tsx        |
 | `www.blazesportsintel.com/*` | Subdomain 404 | Configure www redirect in Cloudflare |
 
 ---
@@ -119,18 +132,22 @@
 ## API Endpoints (functions/api/)
 
 ### MLB
+
 - `/api/mlb/standings` - Standings data
 - `/api/mlb/scores` - Live scores
 - `/api/mlb/teams/[[teamId]]` - Team details
 
 ### NFL
+
 - `/api/nfl/standings` - Standings
 - `/api/nfl/scores` - Scores
 
 ### NCAA
+
 - `/api/ncaa/baseball/*` - Rankings, scores, standings, teams
 
 ### Sports (unified)
+
 - `/api/sports/mlb`, `/api/sports/nfl`, `/api/sports/nba`
 - `/api/espn/*` - ESPN data proxy
 
@@ -138,14 +155,14 @@
 
 ## Data Adapters (lib/adapters/)
 
-| Adapter | Source | Usage |
-|---------|--------|-------|
-| `espn-unified-adapter.ts` | ESPN API | Primary for NFL, NBA |
-| `mlb-adapter.ts` | statsapi.mlb.com | MLB core data |
-| `mlb-teams-adapter.ts` | MLB API | Team rosters, stats |
-| `ncaa-baseball-adapter.ts` | NCAA | College baseball |
-| `nfl-production-adapter.ts` | ESPN | NFL live data |
-| `nba-production-adapter.ts` | ESPN | NBA live data |
+| Adapter                     | Source           | Usage                |
+| --------------------------- | ---------------- | -------------------- |
+| `espn-unified-adapter.ts`   | ESPN API         | Primary for NFL, NBA |
+| `mlb-adapter.ts`            | statsapi.mlb.com | MLB core data        |
+| `mlb-teams-adapter.ts`      | MLB API          | Team rosters, stats  |
+| `ncaa-baseball-adapter.ts`  | NCAA             | College baseball     |
+| `nfl-production-adapter.ts` | ESPN             | NFL live data        |
+| `nba-production-adapter.ts` | ESPN             | NBA live data        |
 
 ---
 
@@ -174,4 +191,4 @@
 
 ---
 
-*Last updated: 2025-01-07 21:30 CT*
+_Last updated: 2025-01-07 21:30 CT_

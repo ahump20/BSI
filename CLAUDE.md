@@ -21,12 +21,12 @@ Why: I've watched repos balloon from 10 files to 200 with the same functionality
 
 All BSI infrastructure runs on Cloudflare. No exceptions.
 
-| Resource | Pattern | Example |
-|----------|---------|---------|
-| Worker | `bsi-{domain}-{function}` | `bsi-scores-live` |
-| KV | `BSI_{DOMAIN}_{PURPOSE}` | `BSI_SCORES_CACHE` |
-| D1 | `bsi-{domain}-db` | `bsi-analytics-db` |
-| R2 | `bsi-{domain}-assets` | `bsi-media-assets` |
+| Resource | Pattern                   | Example            |
+| -------- | ------------------------- | ------------------ |
+| Worker   | `bsi-{domain}-{function}` | `bsi-scores-live`  |
+| KV       | `BSI_{DOMAIN}_{PURPOSE}`  | `BSI_SCORES_CACHE` |
+| D1       | `bsi-{domain}-db`         | `bsi-analytics-db` |
+| R2       | `bsi-{domain}-assets`     | `bsi-media-assets` |
 
 Why: Naming discipline prevents the "what does this binding do?" problem six months later.
 
@@ -34,7 +34,7 @@ Why: Naming discipline prevents the "what does this binding do?" problem six mon
 
 ```typescript
 // ✓ Explicit return types on exports
-export function parseScore(raw: string): GameScore { }
+export function parseScore(raw: string): GameScore {}
 
 // ✓ Early returns over nested conditionals
 if (!id) return null;
@@ -98,4 +98,4 @@ If I say "WHY FIRST" or "stop optimizing" — stop. Return to understanding what
 
 ---
 
-*Update this file with `#` when patterns emerge. This is living documentation.*
+_Update this file with `#` when patterns emerge. This is living documentation._

@@ -58,22 +58,26 @@ BSI/
 ## Core Features
 
 ### 1. FCS/Group-of-Five Priority Feed
+
 - Prioritizes smaller conferences (FCS, MAC, Sun Belt, C-USA, MWC, AAC)
 - Live game tracking with real-time score updates
 - Division-based sorting algorithm
 
 ### 2. Advanced Analytics
+
 - **EPA (Expected Points Added)**: Measures play-by-play value
 - **Success Rate**: Percentage of "successful" plays
 - **Historical Performance**: Season-long team statistics
 
 ### 3. Monte Carlo Upset Probability Engine
+
 - Pre-game upset probability calculations
 - Live probability updates during games
 - Upset alerts for high-probability scenarios (>30%)
 - Statistical simulation engine
 
 ### 4. Recruiting Impact Analysis
+
 - Correlates recruiting class rankings to on-field performance
 - Pearson correlation coefficient calculation
 - Cross-sport recruiting insights
@@ -119,33 +123,43 @@ curl https://blaze-cfb-intelligence.workers.dev/health
 ## API Endpoints
 
 ### Live Games
+
 ```bash
 GET /cfb/games/live
 ```
+
 Returns currently live games sorted by upset probability.
 
 ### Upset Alerts
+
 ```bash
 GET /cfb/games/upsets
 ```
+
 Returns games with >30% upset probability.
 
 ### Team Analytics
+
 ```bash
 GET /cfb/team/{teamId}
 ```
+
 Returns team stats and recent game history.
 
 ### Recruiting Impact
+
 ```bash
 GET /cfb/recruiting/impact
 ```
+
 Returns correlation analysis between recruiting and performance.
 
 ### Manual Ingest
+
 ```bash
 POST /cfb/ingest
 ```
+
 Manually trigger data ingestion (also runs via cron every 5 minutes).
 
 ## Frontend Integration
@@ -166,6 +180,7 @@ function Dashboard() {
 ```
 
 ### Component Features
+
 - Auto-refresh every 30 seconds
 - Upset alert highlighting
 - Real-time EPA and win probability display
@@ -175,6 +190,7 @@ function Dashboard() {
 ## Data Model
 
 ### Teams Table
+
 ```sql
 CREATE TABLE teams (
   id TEXT PRIMARY KEY,
@@ -186,6 +202,7 @@ CREATE TABLE teams (
 ```
 
 ### Games Table
+
 ```sql
 CREATE TABLE games (
   id TEXT PRIMARY KEY,
@@ -201,6 +218,7 @@ CREATE TABLE games (
 ```
 
 ### Game Analytics Table
+
 ```sql
 CREATE TABLE game_analytics (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -218,6 +236,7 @@ CREATE TABLE game_analytics (
 ## Cron Schedule
 
 The worker runs automatically:
+
 - **Every 5 minutes**: Live game updates during game days
 - Configurable in `wrangler.toml`
 
@@ -231,6 +250,7 @@ The worker runs automatically:
 ## Cost Estimation
 
 Cloudflare Workers (within free tier):
+
 - **Requests**: 100,000 free/day
 - **D1**: 5M reads free/day
 - **KV**: 100,000 reads free/day
@@ -242,6 +262,7 @@ Cloudflare Workers (within free tier):
 ## Data Sources (To Be Integrated)
 
 The system is architected to integrate with:
+
 1. NCAA Stats API
 2. ESPN API
 3. SportsRadar API
@@ -252,6 +273,7 @@ Update the `ingestGameData` function in `index.ts` to connect real data sources.
 ## Sample Data
 
 The schema includes sample data for testing:
+
 - **4 FCS teams**: NDSU, Montana, JMU, SDSU
 - **4 Group of Five teams**: Toledo, Coastal Carolina, UTSA, Boise State
 - **4 Power Five teams**: Alabama, Georgia, Ohio State, Michigan
@@ -260,6 +282,7 @@ The schema includes sample data for testing:
 ## Monitoring
 
 ### View Logs
+
 ```bash
 # Real-time tail
 wrangler tail
@@ -269,6 +292,7 @@ wrangler tail
 ```
 
 ### Analytics
+
 ```bash
 # Check D1 usage
 wrangler d1 info blaze-cfb
@@ -283,12 +307,14 @@ wrangler r2 bucket list
 ## Testing
 
 ### Local Development
+
 ```bash
 cd workers/cfb-intelligence
 wrangler dev
 ```
 
 ### Test Endpoints
+
 ```bash
 # Health check
 curl http://localhost:8787/health
@@ -316,24 +342,28 @@ curl http://localhost:8787/cfb/recruiting/impact
 ## Troubleshooting
 
 ### Worker not responding
+
 ```bash
 wrangler deployments list
 wrangler routes list
 ```
 
 ### D1 errors
+
 ```bash
 wrangler d1 list
 wrangler d1 execute blaze-cfb --command="SELECT * FROM teams LIMIT 5;"
 ```
 
 ### KV cache issues
+
 ```bash
 wrangler kv:namespace list
 wrangler kv:key list --binding=CFB_CACHE
 ```
 
 ### R2 bucket issues
+
 ```bash
 wrangler r2 bucket list
 wrangler r2 object list blaze-game-archives
@@ -342,6 +372,7 @@ wrangler r2 object list blaze-game-archives
 ## Next Steps
 
 1. **Deploy Infrastructure**
+
    ```bash
    cd workers/cfb-intelligence
    ./deploy.sh  # Or follow manual steps above
@@ -395,6 +426,7 @@ wrangler r2 object list blaze-game-archives
 ---
 
 **Deployment Checklist**:
+
 - [ ] D1 database created
 - [ ] Schema initialized
 - [ ] KV namespace created

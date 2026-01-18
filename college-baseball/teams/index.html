@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -502,8 +502,9 @@
         <div class="hero-badge">🏫 NCAA Baseball Teams</div>
         <h1 class="hero-title">Complete Team Directory</h1>
         <p class="hero-subtitle">
-          Team rosters, season schedules, game results, and statistical breakdowns for all NCAA Division I baseball
-          programs. From SEC powerhouses to mid-major contenders—every D1 team covered.
+          Team rosters, season schedules, game results, and statistical breakdowns for all NCAA
+          Division I baseball programs. From SEC powerhouses to mid-major contenders—every D1 team
+          covered.
         </p>
       </div>
     </section>
@@ -575,14 +576,14 @@
         duration: 800,
         easing: 'ease-in-out',
         once: true,
-        offset: 100
+        offset: 100,
       });
 
       // Initialize Blaze Particle System (respects prefers-reduced-motion)
       if (typeof BlazeParticles !== 'undefined') {
         BlazeParticles.init({
           particleCount: 150000,
-          quality: 'auto' // auto-scales based on device performance
+          quality: 'auto', // auto-scales based on device performance
         });
       }
 
@@ -602,7 +603,7 @@
         loadTeams();
       });
 
-      searchInput.addEventListener('keypress', e => {
+      searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           currentSearch = searchInput.value.trim();
           loadTeams();
@@ -643,7 +644,7 @@
           updateStats(data.teams);
 
           // Render teams grid
-          container.innerHTML = `<div class="teams-grid">${data.teams.map(team => createTeamCard(team)).join('')}</div>`;
+          container.innerHTML = `<div class="teams-grid">${data.teams.map((team) => createTeamCard(team)).join('')}</div>`;
 
           // Reinitialize AOS
           AOS.refresh();
@@ -663,21 +664,26 @@
       function updateStats(teams) {
         document.getElementById('total-teams').textContent = teams.length;
 
-        const conferences = new Set(teams.map(t => t.conference).filter(Boolean));
+        const conferences = new Set(teams.map((t) => t.conference).filter(Boolean));
         document.getElementById('total-conferences').textContent = conferences.size;
 
-        const power5Teams = teams.filter(t => POWER_5.some(p5 => t.conference && t.conference.includes(p5)));
+        const power5Teams = teams.filter((t) =>
+          POWER_5.some((p5) => t.conference && t.conference.includes(p5))
+        );
         document.getElementById('power5-teams').textContent = power5Teams.length;
 
-        const midMajorTeams = teams.filter(t => t.conference && !POWER_5.some(p5 => t.conference.includes(p5)));
+        const midMajorTeams = teams.filter(
+          (t) => t.conference && !POWER_5.some((p5) => t.conference.includes(p5))
+        );
         document.getElementById('mid-major-teams').textContent = midMajorTeams.length;
       }
 
       // Create team card HTML
       function createTeamCard(team) {
-        const location = team.location ? team.location.city && team.location.state
-          ? `${team.location.city}, ${team.location.state}`
-          : team.location.city || team.location.state || 'Location N/A'
+        const location = team.location
+          ? team.location.city && team.location.state
+            ? `${team.location.city}, ${team.location.state}`
+            : team.location.city || team.location.state || 'Location N/A'
           : 'Location N/A';
 
         return `

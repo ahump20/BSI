@@ -10,9 +10,9 @@ The NCAA Baseball Live Stream endpoint exposes the real-time feed that powers Di
 
 ## Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `gameId`  | string | ✅ | NCAA game identifier from the LiveStats reader. |
+| Parameter  | Type   | Required | Description                                                                                    |
+| ---------- | ------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `gameId`   | string | ✅       | NCAA game identifier from the LiveStats reader.                                                |
 | `sequence` | number | Optional | Last sequence number the client processed. Pass this to resume without replaying older frames. |
 
 ## Response Structure
@@ -94,4 +94,3 @@ The WebSocket broadcaster now exposes a dedicated channel named `ncaa-baseball`.
 ```
 
 to receive the same frames pushed in real time without polling.
-

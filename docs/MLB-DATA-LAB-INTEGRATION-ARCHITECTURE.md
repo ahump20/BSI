@@ -35,6 +35,7 @@ The mlb-data-lab repository provides:
    - Batch processing
 
 3. **API Clients**:
+
    ```python
    UnifiedDataClient  # Main facade
    ├── MlbStatsClient      # MLB Stats API wrapper
@@ -117,6 +118,7 @@ The mlb-data-lab repository provides:
 #### 1. **Frontend Layer** (React/Next.js on Cloudflare Pages)
 
 **Files**:
+
 - `/apps/web/app/mlb/players/[playerId]/page.tsx` - Player profile pages
 - `/apps/web/app/mlb/leaderboards/page.tsx` - League leaderboards
 - `/apps/web/app/mlb/statcast/page.tsx` - Statcast deep dives
@@ -124,6 +126,7 @@ The mlb-data-lab repository provides:
 - `/public/components/StatcastChart.tsx` - Interactive charts
 
 **Features**:
+
 - Advanced player profile pages with headshots
 - Real-time leaderboards (sortable tables)
 - Interactive Statcast visualizations (spray charts, pitch break plots)
@@ -133,6 +136,7 @@ The mlb-data-lab repository provides:
 #### 2. **API Layer** (Cloudflare Workers)
 
 **Structure**:
+
 ```
 /functions/api/mlb/
 ├── players/
@@ -154,34 +158,47 @@ The mlb-data-lab repository provides:
 ```
 
 **TypeScript Adapters** (port from Python):
+
 ```typescript
 // lib/adapters/mlb-adapter.ts
 export class MlbAdapter {
-  static async fetchPlayerInfo(playerId: number): Promise<PlayerInfo>
-  static async fetchPlayerStats(playerId: number, season: number): Promise<PlayerStats>
-  static async fetchPlayerSplits(playerId: number, season: number): Promise<Splits>
-  static async fetchTeamRoster(teamId: number, season: number): Promise<Roster>
-  static async fetchStandings(season: number, leagueId: string): Promise<Standings>
-  static async fetchLiveScores(date?: string): Promise<LiveGames>
+  static async fetchPlayerInfo(playerId: number): Promise<PlayerInfo>;
+  static async fetchPlayerStats(playerId: number, season: number): Promise<PlayerStats>;
+  static async fetchPlayerSplits(playerId: number, season: number): Promise<Splits>;
+  static async fetchTeamRoster(teamId: number, season: number): Promise<Roster>;
+  static async fetchStandings(season: number, leagueId: string): Promise<Standings>;
+  static async fetchLiveScores(date?: string): Promise<LiveGames>;
 }
 
 // lib/adapters/fangraphs-adapter.ts
 export class FangraphsAdapter {
-  static async fetchPlayerStats(fgId: number, season: number): Promise<FGStats>
-  static async fetchLeaderboards(season: number, statType: 'batting' | 'pitching'): Promise<Leaderboard>
-  static async fetchTeamPlayers(teamId: number, season: number): Promise<TeamPlayers>
+  static async fetchPlayerStats(fgId: number, season: number): Promise<FGStats>;
+  static async fetchLeaderboards(
+    season: number,
+    statType: 'batting' | 'pitching'
+  ): Promise<Leaderboard>;
+  static async fetchTeamPlayers(teamId: number, season: number): Promise<TeamPlayers>;
 }
 
 // lib/adapters/statcast-adapter.ts
 export class StatcastAdapter {
-  static async fetchBatterData(playerId: number, startDate: string, endDate: string): Promise<StatcastData>
-  static async fetchPitcherData(playerId: number, startDate: string, endDate: string): Promise<StatcastData>
+  static async fetchBatterData(
+    playerId: number,
+    startDate: string,
+    endDate: string
+  ): Promise<StatcastData>;
+  static async fetchPitcherData(
+    playerId: number,
+    startDate: string,
+    endDate: string
+  ): Promise<StatcastData>;
 }
 ```
 
 #### 3. **Data Storage**
 
 **Cloudflare R2** (Static Assets):
+
 ```
 blaze-mlb-assets/
 ├── player-cards/
@@ -208,6 +225,7 @@ blaze-mlb-assets/
 ```
 
 **Cloudflare D1** (SQL Database):
+
 ```sql
 -- Cached player stats (refreshed daily)
 CREATE TABLE player_stats (
@@ -248,6 +266,7 @@ CREATE TABLE player_id_map (
 ```
 
 **Cloudflare KV** (Short-term caching):
+
 ```
 Keys:
 - mlb:player:info:{playerId}           # 24-hour TTL
@@ -264,6 +283,7 @@ Keys:
 **Purpose**: Generate player summary sheets and run heavy analytics
 
 **Endpoints**:
+
 ```python
 # FastAPI service
 @app.post("/api/generate-player-card")
@@ -300,6 +320,7 @@ async def advanced_analytics(player_id: int, season: int) -> dict:
 #### 5. **Scheduled Workers** (Cron Triggers)
 
 **Daily Stats Refresh** (runs at 5:00 AM CT):
+
 ```typescript
 // functions/api/cron/daily-stats-refresh.ts
 export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
@@ -318,12 +339,13 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
   env.ANALYTICS.writeDataPoint({
     blobs: ['daily_stats_refresh_success'],
     doubles: [Date.now()],
-    indexes: ['mlb']
+    indexes: ['mlb'],
   });
 }
 ```
 
 **Weekly Card Generation** (runs Sundays at 2:00 AM CT):
+
 ```typescript
 // functions/api/cron/weekly-card-generation.ts
 export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
@@ -333,8 +355,11 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
   for (const player of topPlayers) {
     const response = await fetch(`${env.PYTHON_SERVICE_URL}/api/generate-player-card`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.PYTHON_API_KEY}` },
-      body: JSON.stringify({ player_id: player.id, season: 2025 })
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${env.PYTHON_API_KEY}`,
+      },
+      body: JSON.stringify({ player_id: player.id, season: 2025 }),
     });
 
     const { url } = await response.json();
@@ -352,6 +377,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: Set up infrastructure and basic player profiles
 
 **Tasks**:
+
 1. ✅ Clone mlb-data-lab repository
 2. Create TypeScript adapters for MLB Stats API
    - Port `MlbStatsClient` key methods to `lib/adapters/mlb-adapter.ts`
@@ -366,6 +392,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
    - Show player headshot and team logo
 
 **Deliverables**:
+
 - Working player profile pages with real MLB data
 - Caching infrastructure operational
 - API endpoints for player info and stats
@@ -377,6 +404,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: Integrate FanGraphs and Statcast data
 
 **Tasks**:
+
 1. Port FanGraphsClient to TypeScript
    - Implement `lib/adapters/fangraphs-adapter.ts`
    - Fetch advanced metrics (wOBA, wRC+, WAR, FIP)
@@ -392,6 +420,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 5. Create scheduled worker for daily stats refresh
 
 **Deliverables**:
+
 - Player profiles include FanGraphs advanced metrics
 - Statcast data integrated
 - Python service operational
@@ -404,6 +433,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: Interactive charts and Statcast analysis
 
 **Tasks**:
+
 1. Implement spray charts
    - Canvas-based hit distribution visualization
    - Color-coded by batted ball type (GB, FB, LD)
@@ -422,6 +452,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
    - Batted ball data tables
 
 **Deliverables**:
+
 - Interactive spray charts
 - Pitch break visualizations
 - Velocity distributions
@@ -435,6 +466,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: League-wide views and team tools
 
 **Tasks**:
+
 1. Implement leaderboards
    - `/mlb/leaderboards/batting` route
    - `/mlb/leaderboards/pitching` route
@@ -454,6 +486,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
    - Historical leaderboards (2015-2024)
 
 **Deliverables**:
+
 - Batting and pitching leaderboards
 - Team analysis pages
 - Player comparison tool
@@ -466,6 +499,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: Pre-generated summary sheets
 
 **Tasks**:
+
 1. Set up Python service endpoints
    - `/api/generate-player-card` endpoint
    - `/api/batch-generate-team` endpoint
@@ -483,6 +517,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
    - Season-end historical summaries
 
 **Deliverables**:
+
 - Python service generating PNG player cards
 - R2 storage working
 - Weekly scheduled generation
@@ -495,6 +530,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 **Goal**: Mobile-ready endpoints and custom charts
 
 **Tasks**:
+
 1. Create mobile-optimized API endpoints
    - `/api/v1/mobile/players/[playerId]` - Optimized payload size
    - `/api/v1/mobile/scores` - Live scores
@@ -513,6 +549,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
    - Team name search
 
 **Deliverables**:
+
 - Mobile API endpoints
 - Custom chart library
 - Export functionality
@@ -525,6 +562,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 ### GET /api/mlb/players/{playerId}
 
 **Response**:
+
 ```typescript
 {
   player: {
@@ -552,6 +590,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 ### GET /api/mlb/players/{playerId}/stats?season=2025
 
 **Response**:
+
 ```typescript
 {
   stats: {
@@ -591,6 +630,7 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 ### GET /api/mlb/players/{playerId}/statcast?startDate=2025-04-01&endDate=2025-10-31
 
 **Response**:
+
 ```typescript
 {
   statcast: {
@@ -643,11 +683,13 @@ export async function scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionC
 ### Cache Invalidation
 
 **Triggers**:
+
 - Scheduled workers (daily 5am CT)
 - Manual API call: `POST /api/mlb/cache/invalidate`
 - Player transaction (trade, signing): Webhook from MLB
 
 **Stale-While-Revalidate**:
+
 ```typescript
 // Serve stale content while fetching fresh data in background
 const cached = await env.KV.get(cacheKey, 'json');
@@ -665,30 +707,30 @@ if (cached) {
 
 ## Performance Targets
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Player profile page load | < 2 seconds | Lighthouse Performance Score > 90 |
-| API response time (cached) | < 100ms | Cloudflare Analytics |
-| API response time (live) | < 500ms | Cloudflare Analytics |
-| Player card generation | < 5 seconds | Python service logs |
-| Statcast query | < 1 second | API response time |
-| Leaderboard render | < 3 seconds | Frontend performance |
-| Mobile page load (3G) | < 3 seconds | Lighthouse Mobile |
+| Metric                     | Target      | Measurement                       |
+| -------------------------- | ----------- | --------------------------------- |
+| Player profile page load   | < 2 seconds | Lighthouse Performance Score > 90 |
+| API response time (cached) | < 100ms     | Cloudflare Analytics              |
+| API response time (live)   | < 500ms     | Cloudflare Analytics              |
+| Player card generation     | < 5 seconds | Python service logs               |
+| Statcast query             | < 1 second  | API response time                 |
+| Leaderboard render         | < 3 seconds | Frontend performance              |
+| Mobile page load (3G)      | < 3 seconds | Lighthouse Mobile                 |
 
 ---
 
 ## Cost Estimates (Monthly)
 
-| Service | Usage | Cost |
-|---------|-------|------|
-| Cloudflare Workers | 10M requests | $5 |
-| Cloudflare D1 | 100M rows read, 1M rows write | $5 |
-| Cloudflare R2 | 100GB storage, 10GB egress | $1 |
-| Cloudflare KV | 10M reads, 100K writes | $5 |
-| Python Service (Railway) | Hobby plan | $5 |
-| MLB Stats API | Free | $0 |
-| FanGraphs API | Free (rate-limited) | $0 |
-| **Total** | | **~$21/month** |
+| Service                  | Usage                         | Cost           |
+| ------------------------ | ----------------------------- | -------------- |
+| Cloudflare Workers       | 10M requests                  | $5             |
+| Cloudflare D1            | 100M rows read, 1M rows write | $5             |
+| Cloudflare R2            | 100GB storage, 10GB egress    | $1             |
+| Cloudflare KV            | 10M reads, 100K writes        | $5             |
+| Python Service (Railway) | Hobby plan                    | $5             |
+| MLB Stats API            | Free                          | $0             |
+| FanGraphs API            | Free (rate-limited)           | $0             |
+| **Total**                |                               | **~$21/month** |
 
 ---
 
@@ -712,7 +754,7 @@ export async function rateLimit(
   }
 
   await env.KV.put(`ratelimit:${key}`, (count + 1).toString(), {
-    expirationTtl: window
+    expirationTtl: window,
   });
 
   return { allowed: true, remaining: limit - count - 1 };
@@ -720,6 +762,7 @@ export async function rateLimit(
 ```
 
 **Limits**:
+
 - Player info: 100 requests/minute per IP
 - Live scores: 60 requests/minute per IP
 - Leaderboards: 30 requests/minute per IP
@@ -728,11 +771,13 @@ export async function rateLimit(
 ### Data Attribution
 
 **Required Citations**:
+
 - MLB Stats API: "Data provided by MLB Advanced Media"
 - FanGraphs: "Advanced metrics via FanGraphs"
 - Baseball Savant: "Statcast data courtesy of Baseball Savant"
 
 **Display Format**:
+
 ```html
 <footer class="data-attribution">
   <p>
@@ -759,26 +804,25 @@ export async function rateLimit(
 ### Cloudflare Analytics Engine
 
 **Data Points**:
+
 ```typescript
 env.ANALYTICS.writeDataPoint({
   blobs: [
-    'endpoint_type',      // 'player_info', 'leaderboard', etc.
-    'cache_status',       // 'hit', 'miss'
-    'data_source'         // 'mlb_api', 'fangraphs', 'statcast'
+    'endpoint_type', // 'player_info', 'leaderboard', etc.
+    'cache_status', // 'hit', 'miss'
+    'data_source', // 'mlb_api', 'fangraphs', 'statcast'
   ],
   doubles: [
-    Date.now(),           // Timestamp
-    responseTime,         // Milliseconds
-    payloadSize           // Bytes
+    Date.now(), // Timestamp
+    responseTime, // Milliseconds
+    payloadSize, // Bytes
   ],
-  indexes: [
-    'mlb',
-    playerId.toString()
-  ]
+  indexes: ['mlb', playerId.toString()],
 });
 ```
 
 **Dashboards**:
+
 - API request volume by endpoint
 - Cache hit rate
 - Average response time
@@ -788,12 +832,14 @@ env.ANALYTICS.writeDataPoint({
 ### Alerting
 
 **Thresholds**:
+
 - Error rate > 5% for 5 minutes → Alert
 - Response time > 2 seconds average → Warning
 - Cache hit rate < 80% → Warning
 - Python service down → Critical Alert
 
 **Notification Channels**:
+
 - Email: austin@blazesportsintel.com
 - Slack webhook (if configured)
 
@@ -843,6 +889,7 @@ env.ANALYTICS.writeDataPoint({
 ### Useful URLs
 
 **MLB Stats API**:
+
 - Base: `https://statsapi.mlb.com/api/v1/`
 - Player info: `/people/{personId}`
 - Player stats: `/people/{personId}/stats`
@@ -851,15 +898,18 @@ env.ANALYTICS.writeDataPoint({
 - Live scores: `/schedule`
 
 **FanGraphs**:
+
 - Base: `https://www.fangraphs.com/api/leaders/major-league/data`
 - Leaderboards: `?pos=all&stats=bat&lg=all&season=2025`
 - Player stats: `?players={fgId}`
 
 **Baseball Savant**:
+
 - Base: `https://baseballsavant.mlb.com/`
 - Statcast data: `/statcast_search`
 
 **MLB Static Assets**:
+
 - Player headshots: `https://img.mlbstatic.com/mlb-photos/image/upload/.../people/{playerId}/headshot/67/current`
 - Team logos: `https://www.mlbstatic.com/team-logos/team-cap-on-light/{teamId}.svg`
 

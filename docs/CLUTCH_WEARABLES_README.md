@@ -18,12 +18,14 @@ This feature integrates athlete wearables data (WHOOP v2 API) with NBA clutch pe
 ## What's New
 
 ### 🗄️ Database Schema
+
 - **6 new tables**: `wearables_devices`, `wearables_readings`, `wearables_daily_summary`, `clutch_situations`, `clutch_player_actions`, `clutch_performance_scores`
 - **2 new views**: `clutch_leaderboard`, `player_wearables_summary`
 - **Comprehensive indexes** for optimal query performance
 - **Privacy-first design**: Consent management, data retention policies, encrypted OAuth tokens
 
 ### 📊 Data Integration
+
 - **WHOOP v2 API Adapter** (`lib/adapters/whoop-v2-adapter.ts`)
   - OAuth 2.0 consent flow
   - Real-time webhook support
@@ -37,12 +39,14 @@ This feature integrates athlete wearables data (WHOOP v2 API) with NBA clutch pe
   - Expected points calculation
 
 ### ⏱️ Time Alignment Service (`lib/utils/time-alignment.ts`)
+
 - **Pre-game baseline extraction**: Morning wearables data (6am-12pm)
 - **Event-to-wearable synchronization**: Match game events to closest biometric reading
 - **Timezone normalization**: UTC conversion for distributed teams
 - **Quality scoring**: 0.0-1.0 confidence based on time delta + data completeness
 
 ### 📈 Analytics
+
 - **Clutch Score** (0-100): Composite metric combining success rate, points over expected, and volume
 - **Wearables Correlation**: HRV deviation, recovery score, sleep performance
 - **Hierarchical Bayesian Model** (future): Player-specific random effects + biometric covariates
@@ -263,21 +267,25 @@ Before merging:
 ## Rollout Plan
 
 ### Phase 1: Beta Cohort (Weeks 1-2)
+
 - Recruit 5-10 athletes from NCAA basketball program
 - Onboard athletes (consent flow)
 - Validate data sync (WHOOP + NBA)
 
 ### Phase 2: Model Training (Weeks 3-6)
+
 - Collect 1-2 months of data
 - Train hierarchical Bayesian model
 - Validate predictions (RMSE < 8 points)
 
 ### Phase 3: Dashboard Launch (Weeks 7-8)
+
 - Build React dashboard with 3D visualizations
 - Coach training sessions
 - Gather feedback
 
 ### Phase 4: Expand to Baseball (Weeks 9-12)
+
 - Adapt clutch detection for baseball (late innings, high-leverage)
 - Integrate Baseball Savant/Statcast
 - Launch for college baseball programs
@@ -286,25 +294,27 @@ Before merging:
 
 ## Risk Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Low athlete consent | High | Medium | Incentivize with exclusive insights; team buy-in |
-| WHOOP API rate limits | Medium | Low | Caching; batch requests; webhook real-time |
-| Data sync latency | Medium | Medium | Prioritize pre-game data; interpolate gaps |
-| Model overfitting | High | Medium | Cross-validation; regularization; holdout test |
-| Privacy breach | Critical | Low | Encryption; audit logs; token rotation |
+| Risk                  | Impact   | Probability | Mitigation                                       |
+| --------------------- | -------- | ----------- | ------------------------------------------------ |
+| Low athlete consent   | High     | Medium      | Incentivize with exclusive insights; team buy-in |
+| WHOOP API rate limits | Medium   | Low         | Caching; batch requests; webhook real-time       |
+| Data sync latency     | Medium   | Medium      | Prioritize pre-game data; interpolate gaps       |
+| Model overfitting     | High     | Medium      | Cross-validation; regularization; holdout test   |
+| Privacy breach        | Critical | Low         | Encryption; audit logs; token rotation           |
 
 ---
 
 ## Success Metrics
 
 **Technical KPIs**:
+
 - ✅ Wearables data uptime: >95%
 - ✅ API sync latency: <5 minutes
 - ⏳ Model RMSE: <8 points (clutch score 0-100)
 - ⏳ Dashboard load time: <2 seconds
 
 **Business KPIs**:
+
 - ⏳ Athlete adoption: >50% of target cohort
 - ⏳ Clutch prediction accuracy: >70% (POE sign)
 - ⏳ Coach engagement: >80% weekly dashboard views

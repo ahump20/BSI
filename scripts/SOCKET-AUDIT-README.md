@@ -46,13 +46,13 @@ node scripts/check-new-dep.js @tanstack/react-query
 
 Socket evaluates packages across 5 dimensions:
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| vulnerability | 35% | Known CVEs and security issues |
-| supplyChain | 25% | Typosquatting, hijacking, maintainer risk |
-| maintenance | 20% | Active development, release frequency |
-| quality | 15% | Code quality indicators |
-| license | 5% | OSS license compliance |
+| Dimension     | Weight | Description                               |
+| ------------- | ------ | ----------------------------------------- |
+| vulnerability | 35%    | Known CVEs and security issues            |
+| supplyChain   | 25%    | Typosquatting, hijacking, maintainer risk |
+| maintenance   | 20%    | Active development, release frequency     |
+| quality       | 15%    | Code quality indicators                   |
+| license       | 5%     | OSS license compliance                    |
 
 ## Thresholds
 

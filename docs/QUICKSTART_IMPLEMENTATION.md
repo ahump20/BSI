@@ -1,4 +1,5 @@
 # Blaze Sports Intelligence: Quick-Start Implementation Guide
+
 ## Immediate Actionable Steps with Code Examples
 
 **Version**: 1.0.0
@@ -17,158 +18,166 @@
 <!-- /Users/AustinHumphrey/BSI/components/realtime-dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blaze Real-Time Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
-        :root {
-            --alert-red: #ef4444;
-            --caution-orange: #f97316;
-            --positive-green: #10b981;
-            --stable-blue: #3b82f6;
-            --transition-duration: 300ms;
-        }
+      :root {
+        --alert-red: #ef4444;
+        --caution-orange: #f97316;
+        --positive-green: #10b981;
+        --stable-blue: #3b82f6;
+        --transition-duration: 300ms;
+      }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
-            max-width: 1400px; /* Single screen per UX research */
-            margin: 0 auto;
-        }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+        max-width: 1400px; /* Single screen per UX research */
+        margin: 0 auto;
+      }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all var(--transition-duration) cubic-bezier(0.4, 0.0, 0.2, 1);
-            border: 2px solid transparent;
-        }
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+      }
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-        }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+      }
 
-        .card.alert { border-color: var(--alert-red); }
-        .card.caution { border-color: var(--caution-orange); }
-        .card.positive { border-color: var(--positive-green); }
-        .card.stable { border-color: var(--stable-blue); }
+      .card.alert {
+        border-color: var(--alert-red);
+      }
+      .card.caution {
+        border-color: var(--caution-orange);
+      }
+      .card.positive {
+        border-color: var(--positive-green);
+      }
+      .card.stable {
+        border-color: var(--stable-blue);
+      }
 
-        /* Progressive disclosure - hidden details */
-        .card-details {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: all var(--transition-duration) ease-in-out;
-        }
+      /* Progressive disclosure - hidden details */
+      .card-details {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: all var(--transition-duration) ease-in-out;
+      }
 
-        .card:hover .card-details {
-            max-height: 500px;
-            opacity: 1;
-            margin-top: 1rem;
-        }
+      .card:hover .card-details {
+        max-height: 500px;
+        opacity: 1;
+        margin-top: 1rem;
+      }
 
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-        }
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0.5rem 0;
+      }
 
-        .trend-indicator {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
+      .trend-indicator {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
 
-        .data-source {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-        }
+      .data-source {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 0.5rem;
+      }
     </style>
-</head>
-<body style="background: #1a1a1a; color: white; font-family: Inter, system-ui, sans-serif;">
+  </head>
+  <body style="background: #1a1a1a; color: white; font-family: Inter, system-ui, sans-serif;">
     <div class="dashboard-grid" id="dashboard">
-        <!-- Cards will be injected here -->
+      <!-- Cards will be injected here -->
     </div>
 
     <script>
-        // Real-time dashboard following 2025 UX research
-        class RealtimeDashboard {
-            constructor() {
-                this.maxCards = 6; // UX research: 5-6 cards optimal
-                this.updateInterval = 5000; // 5 seconds for demo
-                this.transitionDuration = 300; // 200-400ms per research
-                this.ws = null;
-                this.metrics = [];
-            }
+      // Real-time dashboard following 2025 UX research
+      class RealtimeDashboard {
+        constructor() {
+          this.maxCards = 6; // UX research: 5-6 cards optimal
+          this.updateInterval = 5000; // 5 seconds for demo
+          this.transitionDuration = 300; // 200-400ms per research
+          this.ws = null;
+          this.metrics = [];
+        }
 
-            async initialize() {
-                // Connect to WebSocket for real-time updates
-                this.setupWebSocket();
+        async initialize() {
+          // Connect to WebSocket for real-time updates
+          this.setupWebSocket();
 
-                // Fetch initial data
-                await this.fetchMetrics();
+          // Fetch initial data
+          await this.fetchMetrics();
 
-                // Render dashboard
-                this.render();
+          // Render dashboard
+          this.render();
 
-                // Start real-time updates
-                this.startRealtimeUpdates();
-            }
+          // Start real-time updates
+          this.startRealtimeUpdates();
+        }
 
-            setupWebSocket() {
-                // Cloudflare Workers WebSocket for <100ms latency
-                this.ws = new WebSocket('wss://edge.blazesportsintel.com/stream');
+        setupWebSocket() {
+          // Cloudflare Workers WebSocket for <100ms latency
+          this.ws = new WebSocket('wss://edge.blazesportsintel.com/stream');
 
-                this.ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    this.updateMetric(data);
-                };
+          this.ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            this.updateMetric(data);
+          };
 
-                this.ws.onerror = () => {
-                    console.warn('WebSocket error, falling back to polling');
-                    this.ws = null;
-                };
-            }
+          this.ws.onerror = () => {
+            console.warn('WebSocket error, falling back to polling');
+            this.ws = null;
+          };
+        }
 
-            async fetchMetrics() {
-                // Fetch from edge API
-                const response = await fetch('/api/metrics/real-time');
-                const data = await response.json();
+        async fetchMetrics() {
+          // Fetch from edge API
+          const response = await fetch('/api/metrics/real-time');
+          const data = await response.json();
 
-                this.metrics = data.metrics.slice(0, this.maxCards);
-            }
+          this.metrics = data.metrics.slice(0, this.maxCards);
+        }
 
-            render() {
-                const container = document.getElementById('dashboard');
-                container.innerHTML = '';
+        render() {
+          const container = document.getElementById('dashboard');
+          container.innerHTML = '';
 
-                this.metrics.forEach(metric => {
-                    const card = this.createCard(metric);
-                    container.appendChild(card);
-                });
-            }
+          this.metrics.forEach((metric) => {
+            const card = this.createCard(metric);
+            container.appendChild(card);
+          });
+        }
 
-            createCard(metric) {
-                const card = document.createElement('div');
+        createCard(metric) {
+          const card = document.createElement('div');
 
-                // Color psychology per research
-                let statusClass = 'stable';
-                if (metric.isAlert) statusClass = 'alert';
-                else if (metric.isCaution) statusClass = 'caution';
-                else if (metric.isPositive) statusClass = 'positive';
+          // Color psychology per research
+          let statusClass = 'stable';
+          if (metric.isAlert) statusClass = 'alert';
+          else if (metric.isCaution) statusClass = 'caution';
+          else if (metric.isPositive) statusClass = 'positive';
 
-                card.className = `card ${statusClass}`;
-                card.innerHTML = `
+          card.className = `card ${statusClass}`;
+          card.innerHTML = `
                     <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">
                         ${metric.name}
                     </h3>
@@ -199,33 +208,33 @@
                     </div>
                 `;
 
-                return card;
-            }
-
-            updateMetric(data) {
-                // Smooth update with 300ms transition
-                const index = this.metrics.findIndex(m => m.id === data.id);
-                if (index !== -1) {
-                    this.metrics[index] = { ...this.metrics[index], ...data };
-                    this.render();
-                }
-            }
-
-            startRealtimeUpdates() {
-                // If WebSocket unavailable, poll every 5 seconds
-                if (!this.ws) {
-                    setInterval(() => {
-                        this.fetchMetrics().then(() => this.render());
-                    }, this.updateInterval);
-                }
-            }
+          return card;
         }
 
-        // Initialize dashboard
-        const dashboard = new RealtimeDashboard();
-        dashboard.initialize();
+        updateMetric(data) {
+          // Smooth update with 300ms transition
+          const index = this.metrics.findIndex((m) => m.id === data.id);
+          if (index !== -1) {
+            this.metrics[index] = { ...this.metrics[index], ...data };
+            this.render();
+          }
+        }
+
+        startRealtimeUpdates() {
+          // If WebSocket unavailable, poll every 5 seconds
+          if (!this.ws) {
+            setInterval(() => {
+              this.fetchMetrics().then(() => this.render());
+            }, this.updateInterval);
+          }
+        }
+      }
+
+      // Initialize dashboard
+      const dashboard = new RealtimeDashboard();
+      dashboard.initialize();
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -339,46 +348,47 @@ export class StatcastIntegration {
    */
   visualizePitchMovement(pitches: StatcastPitch[], elementId: string): void {
     const trace = {
-      x: pitches.map(p => p.releasePoint.x),
-      y: pitches.map(p => p.releasePoint.z), // Height
+      x: pitches.map((p) => p.releasePoint.x),
+      y: pitches.map((p) => p.releasePoint.z), // Height
       mode: 'markers',
       type: 'scatter',
       marker: {
-        color: pitches.map(p => p.velocity),
+        color: pitches.map((p) => p.velocity),
         colorscale: 'Viridis',
         showscale: true,
         size: 10,
         colorbar: {
           title: 'Velocity (mph)',
-          tickfont: { color: 'white' }
-        }
+          tickfont: { color: 'white' },
+        },
       },
-      text: pitches.map(p =>
-        `Velocity: ${p.velocity} mph<br>` +
-        `Spin Rate: ${p.spinRate} rpm<br>` +
-        `Break Angle: ${p.breakAngle}°`
+      text: pitches.map(
+        (p) =>
+          `Velocity: ${p.velocity} mph<br>` +
+          `Spin Rate: ${p.spinRate} rpm<br>` +
+          `Break Angle: ${p.breakAngle}°`
       ),
-      hoverinfo: 'text'
+      hoverinfo: 'text',
     };
 
     const layout = {
       title: {
         text: 'Pitch Release Points',
-        font: { color: 'white' }
+        font: { color: 'white' },
       },
       xaxis: {
         title: 'Horizontal Position (ft)',
         gridcolor: 'rgba(255,255,255,0.1)',
-        color: 'white'
+        color: 'white',
       },
       yaxis: {
         title: 'Height (ft)',
         gridcolor: 'rgba(255,255,255,0.1)',
-        color: 'white'
+        color: 'white',
       },
       paper_bgcolor: 'transparent',
       plot_bgcolor: 'rgba(26, 26, 26, 0.8)',
-      font: { color: 'white' }
+      font: { color: 'white' },
     };
 
     Plotly.newPlot(elementId, [trace], layout);
@@ -390,18 +400,14 @@ export class StatcastIntegration {
     // Real MLB model is much more complex
     return [
       // [exitVelo, launchAngle, xBA]
-      [90, 25, 0.500],
-      [95, 25, 0.650],
-      [100, 25, 0.800],
+      [90, 25, 0.5],
+      [95, 25, 0.65],
+      [100, 25, 0.8],
       // ... more data points
     ];
   }
 
-  private interpolate(
-    exitVelo: number,
-    launchAngle: number,
-    table: number[][]
-  ): number {
+  private interpolate(exitVelo: number, launchAngle: number, table: number[][]): number {
     // Linear interpolation for xBA
     // Real implementation would use 2D interpolation
     return 0.0; // Placeholder
@@ -477,13 +483,13 @@ export class NextGenStatsIntegration {
       defenderPosition: defender.position,
       defenderVelocity: defender.velocity,
       defenderOrientation: defender.orientation,
-      receiverPositions: receivers.map(r => ({
+      receiverPositions: receivers.map((r) => ({
         id: r.playerId,
         position: r.position,
-        velocity: r.velocity
+        velocity: r.velocity,
       })),
       ballLocation,
-      presnap: await this.getPresnapFormation(playId)
+      presnap: await this.getPresnapFormation(playId),
     };
 
     // AWS-trained model (simplified for demo)
@@ -497,8 +503,8 @@ export class NextGenStatsIntegration {
       responsibilityScore: result.score,
       separation: this.calculateSeparation(
         defender.position,
-        receivers.find(r => r.playerId === result.target)!.position
-      )
+        receivers.find((r) => r.playerId === result.target)!.position
+      ),
     };
   }
 
@@ -518,8 +524,7 @@ export class NextGenStatsIntegration {
     );
 
     const passDistance = Math.sqrt(
-      (receiver.position.x - qb.position.x) ** 2 +
-      (receiver.position.y - qb.position.y) ** 2
+      (receiver.position.x - qb.position.x) ** 2 + (receiver.position.y - qb.position.y) ** 2
     );
 
     const timeToThrow = passDistance / ballSpeed;
@@ -527,10 +532,7 @@ export class NextGenStatsIntegration {
 
     // Simplified logistic regression
     // Real model is much more complex
-    const logit = -2.5 +
-      0.3 * separation +
-      -0.05 * passDistance +
-      -0.1 * defenderProximity;
+    const logit = -2.5 + 0.3 * separation + -0.05 * passDistance + -0.1 * defenderProximity;
 
     const probability = 1 / (1 + Math.exp(-logit));
 
@@ -540,47 +542,42 @@ export class NextGenStatsIntegration {
         separation,
         passDistance,
         timeToThrow,
-        defenderProximity
-      }
+        defenderProximity,
+      },
     };
   }
 
   /**
    * Visualize Coverage Responsibility (deck.gl)
    */
-  visualizeCoverage(
-    coverage: CoverageResponsibility[],
-    tracking: PlayerTracking[]
-  ): void {
+  visualizeCoverage(coverage: CoverageResponsibility[], tracking: PlayerTracking[]): void {
     const layers = [
       // Player positions
       new ScatterplotLayer({
         id: 'players',
         data: tracking,
-        getPosition: d => [d.position.x, d.position.y],
+        getPosition: (d) => [d.position.x, d.position.y],
         getRadius: 1,
-        getFillColor: d =>
-          d.position === 'DB' ? [255, 0, 0] : [0, 0, 255],
-        pickable: true
+        getFillColor: (d) => (d.position === 'DB' ? [255, 0, 0] : [0, 0, 255]),
+        pickable: true,
       }),
 
       // Coverage assignments (arc layer)
       new ArcLayer({
         id: 'coverage',
         data: coverage,
-        getSourcePosition: d => {
-          const defender = tracking.find(t => t.playerId === d.defender);
+        getSourcePosition: (d) => {
+          const defender = tracking.find((t) => t.playerId === d.defender);
           return [defender!.position.x, defender!.position.y];
         },
-        getTargetPosition: d => {
-          const receiver = tracking.find(t => t.playerId === d.assignedReceiver);
+        getTargetPosition: (d) => {
+          const receiver = tracking.find((t) => t.playerId === d.assignedReceiver);
           return [receiver!.position.x, receiver!.position.y];
         },
-        getSourceColor: d =>
-          d.coverageType === 'man' ? [255, 0, 0] : [0, 255, 0],
+        getSourceColor: (d) => (d.coverageType === 'man' ? [255, 0, 0] : [0, 255, 0]),
         getTargetColor: [255, 255, 255],
-        getWidth: 2
-      })
+        getWidth: 2,
+      }),
     ];
 
     // Render with deck.gl
@@ -589,10 +586,10 @@ export class NextGenStatsIntegration {
         longitude: 0,
         latitude: 0,
         zoom: 18,
-        pitch: 45
+        pitch: 45,
       },
       controller: true,
-      layers
+      layers,
     });
   }
 
@@ -604,19 +601,10 @@ export class NextGenStatsIntegration {
     return Math.sqrt((pos2.x - pos1.x) ** 2 + (pos2.y - pos1.y) ** 2);
   }
 
-  private nearestDefender(
-    receiver: PlayerTracking,
-    defenders: PlayerTracking[]
-  ): PlayerTracking {
+  private nearestDefender(receiver: PlayerTracking, defenders: PlayerTracking[]): PlayerTracking {
     return defenders.reduce((nearest, current) => {
-      const currentDist = this.calculateSeparation(
-        receiver.position,
-        current.position
-      );
-      const nearestDist = this.calculateSeparation(
-        receiver.position,
-        nearest.position
-      );
+      const currentDist = this.calculateSeparation(receiver.position, current.position);
+      const nearestDist = this.calculateSeparation(receiver.position, nearest.position);
       return currentDist < nearestDist ? current : nearest;
     });
   }
@@ -632,7 +620,7 @@ export class NextGenStatsIntegration {
       target: 'WR1',
       scheme: 'man',
       safetyHelp: 0.3,
-      score: 85
+      score: 85,
     };
   }
 }
@@ -701,9 +689,7 @@ export class InjuryPredictionEngine {
    */
   async initialize(): Promise<void> {
     // Load LSTM model (trained separately)
-    this.lstmModel = await tf.loadLayersModel(
-      '/models/injury-lstm/model.json'
-    );
+    this.lstmModel = await tf.loadLayersModel('/models/injury-lstm/model.json');
 
     // Load Random Forest (via ONNX or similar)
     this.randomForest = await this.loadRandomForest();
@@ -730,7 +716,7 @@ export class InjuryPredictionEngine {
     const featureRisk = await this.randomForest.predict(features);
 
     // Ensemble: 60% LSTM, 40% Random Forest
-    const combinedRisk = (temporalRisk * 0.6) + (featureRisk * 0.4);
+    const combinedRisk = temporalRisk * 0.6 + featureRisk * 0.4;
 
     // Calculate confidence based on agreement
     const confidence = 1 - Math.abs(temporalRisk - featureRisk) / 100;
@@ -740,7 +726,7 @@ export class InjuryPredictionEngine {
       confidence: confidence,
       timeframe: this.predictTimeframe(combinedRisk),
       recommendations: this.generateRecommendations(combinedRisk, features),
-      factors: this.explainPrediction(features)
+      factors: this.explainPrediction(features),
     };
   }
 
@@ -750,13 +736,13 @@ export class InjuryPredictionEngine {
    */
   private prepareTemporalData(loads: TrainingLoad[]): number[][] {
     // Normalize each metric
-    const normalized = loads.map(load => [
+    const normalized = loads.map((load) => [
       load.duration / 120, // Max 2 hours
       load.intensity / 10,
       load.distance / 10000, // Max 10km
       load.highSpeedRunning / 2000, // Max 2km
       load.accelerations / 100,
-      load.decelerations / 100
+      load.decelerations / 100,
     ]);
 
     return normalized;
@@ -766,17 +752,14 @@ export class InjuryPredictionEngine {
    * Extract features for Random Forest
    * Research shows: training load (35%), previous injuries (25%), biomechanics (20%)
    */
-  private extractFeatures(
-    player: BiometricData,
-    recentLoad: TrainingLoad[]
-  ): number[] {
+  private extractFeatures(player: BiometricData, recentLoad: TrainingLoad[]): number[] {
     // Acute-to-chronic workload ratio
     const acute = this.calculateWorkload(recentLoad.slice(-7)); // Last 7 days
     const chronic = this.calculateWorkload(recentLoad.slice(-28)) / 4; // Last 28 days avg
     const acwr = chronic > 0 ? acute / chronic : 1;
 
     // Injury history score
-    const recentInjuries = player.injuryHistory.filter(inj => {
+    const recentInjuries = player.injuryHistory.filter((inj) => {
       const daysSince = (Date.now() - inj.date.getTime()) / (1000 * 60 * 60 * 24);
       return daysSince < 365;
     });
@@ -786,15 +769,9 @@ export class InjuryPredictionEngine {
     }, 0);
 
     // BMI as biomechanical proxy
-    const bmi = player.weight / ((player.height / 100) ** 2);
+    const bmi = player.weight / (player.height / 100) ** 2;
 
-    return [
-      acwr,
-      injuryScore,
-      bmi,
-      player.age,
-      recentLoad[recentLoad.length - 1].intensity
-    ];
+    return [acwr, injuryScore, bmi, player.age, recentLoad[recentLoad.length - 1].intensity];
   }
 
   /**
@@ -802,7 +779,7 @@ export class InjuryPredictionEngine {
    */
   private calculateWorkload(loads: TrainingLoad[]): number {
     return loads.reduce((sum, load) => {
-      return sum + (load.duration * load.intensity);
+      return sum + load.duration * load.intensity;
     }, 0);
   }
 
@@ -814,15 +791,15 @@ export class InjuryPredictionEngine {
     const importance = [
       { name: 'Training Load', weight: 0.35 },
       { name: 'Previous Injuries', weight: 0.25 },
-      { name: 'Biomechanics (BMI)', weight: 0.20 },
-      { name: 'Age', weight: 0.10 },
-      { name: 'Recent Intensity', weight: 0.10 }
+      { name: 'Biomechanics (BMI)', weight: 0.2 },
+      { name: 'Age', weight: 0.1 },
+      { name: 'Recent Intensity', weight: 0.1 },
     ];
 
     return importance.map((factor, i) => ({
       name: factor.name,
       importance: factor.weight,
-      value: features[i]
+      value: features[i],
     }));
   }
 
@@ -841,11 +818,13 @@ export class InjuryPredictionEngine {
   private generateRecommendations(risk: number, features: number[]): string[] {
     const recommendations: string[] = [];
 
-    if (features[0] > 1.5) { // High ACWR
+    if (features[0] > 1.5) {
+      // High ACWR
       recommendations.push('Reduce training load by 20-30% this week');
     }
 
-    if (features[1] > 3) { // Multiple recent injuries
+    if (features[1] > 3) {
+      // Multiple recent injuries
       recommendations.push('Consult medical staff for injury prevention program');
     }
 
@@ -862,7 +841,7 @@ export class InjuryPredictionEngine {
       predict: (features: number[]) => {
         // Simplified RF prediction
         return features[0] * 30 + features[1] * 20; // Placeholder
-      }
+      },
     };
   }
 }
@@ -873,6 +852,7 @@ export class InjuryPredictionEngine {
 ## Deployment Checklist
 
 ### Week 1: Foundation
+
 - [ ] Setup real-time dashboard with 5-6 cards
 - [ ] Implement 200-400ms transitions
 - [ ] Add progressive disclosure (hover details)
@@ -880,6 +860,7 @@ export class InjuryPredictionEngine {
 - [ ] Deploy to Cloudflare Pages
 
 ### Week 2: Advanced Metrics
+
 - [ ] Integrate MLB Statcast API
 - [ ] Calculate xBA, barrel rate
 - [ ] Add bat tracking attack angles (2025 innovation)
@@ -888,6 +869,7 @@ export class InjuryPredictionEngine {
 - [ ] Build Completion Probability calculator
 
 ### Week 3: AI/ML
+
 - [ ] Train LSTM injury prediction model (91.5% accuracy target)
 - [ ] Deploy Random Forest baseline
 - [ ] Create ensemble predictions
@@ -895,6 +877,7 @@ export class InjuryPredictionEngine {
 - [ ] Generate injury risk alerts
 
 ### Week 4: Polish & Launch
+
 - [ ] Optimize for <100ms edge latency
 - [ ] Add WebSocket real-time streaming
 - [ ] Achieve Lighthouse score >95
@@ -932,6 +915,7 @@ export class InjuryPredictionEngine {
 ## Resources
 
 **Documentation**:
+
 - [MLB Statcast Documentation](https://baseballsavant.mlb.com/csv-docs)
 - [NFL Next Gen Stats](https://nextgenstats.nfl.com/)
 - [Plotly.js WebGPU](https://plotly.com/javascript/webgl-vs-svg/)
@@ -939,6 +923,7 @@ export class InjuryPredictionEngine {
 - [TensorFlow.js LSTM](https://www.tensorflow.org/js/guide/models_and_layers)
 
 **Research Papers**:
+
 - "Diagnostic Applications of AI in Sports: Injury Risk Prediction" (2025)
 - "Machine Learning for Football Injury Prediction" (Sports Medicine - Open)
 - "SABR Analytics Conference Proceedings" (March 15, 2025)

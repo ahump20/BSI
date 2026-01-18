@@ -4,20 +4,22 @@ The Texas Longhorns MCP server ships a baseball-first data interface with footba
 
 ## Tooling Overview
 
-| Tool | Purpose | Notes |
-| --- | --- | --- |
-| `get_team_seasons` | Returns season summaries per sport in baseball → football → basketball → track & field order. | Optional `sport` filter. Rejects soccer. |
-| `get_season_schedule` | Retrieves a season schedule (or meet slate) for the chosen sport. | `program` parameter disambiguates basketball/track. |
-| `get_game_box_score` | Provides structured box score or meet result bundles. | Includes `meta.cache` status. |
-| `get_player_career` | Surfaces curated player career dossiers. | Looks across all approved sports, baseball first. |
-| `get_rankings_context` | Packages ranking and trend context per sport. | Honors mandated ordering. |
-| `search_archive` | Searches the vetted Blaze Sports Intel archive. | Automatically appends archive citation. |
+| Tool                   | Purpose                                                                                       | Notes                                               |
+| ---------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `get_team_seasons`     | Returns season summaries per sport in baseball → football → basketball → track & field order. | Optional `sport` filter. Rejects soccer.            |
+| `get_season_schedule`  | Retrieves a season schedule (or meet slate) for the chosen sport.                             | `program` parameter disambiguates basketball/track. |
+| `get_game_box_score`   | Provides structured box score or meet result bundles.                                         | Includes `meta.cache` status.                       |
+| `get_player_career`    | Surfaces curated player career dossiers.                                                      | Looks across all approved sports, baseball first.   |
+| `get_rankings_context` | Packages ranking and trend context per sport.                                                 | Honors mandated ordering.                           |
+| `search_archive`       | Searches the vetted Blaze Sports Intel archive.                                               | Automatically appends archive citation.             |
 
 All responses share the schema:
 
 ```json
 {
-  "result": { /* tool-specific payload */ },
+  "result": {
+    /* tool-specific payload */
+  },
   "citations": [
     {
       "id": "baseball-feed",
@@ -51,7 +53,7 @@ const response = await get_team_seasons();
 ```ts
 const response = await get_season_schedule({
   sport: 'football',
-  season: '2025'
+  season: '2025',
 });
 ```
 
@@ -59,7 +61,7 @@ const response = await get_season_schedule({
 
 ```ts
 const response = await get_player_career({
-  playerId: 'ivan-melendez'
+  playerId: 'ivan-melendez',
 });
 ```
 
@@ -68,7 +70,7 @@ const response = await get_player_career({
 ```ts
 const response = await search_archive({
   query: 'SEC title',
-  limit: 3
+  limit: 3,
 });
 ```
 
@@ -76,9 +78,9 @@ Each response includes `meta.cache.status` (`HIT` or `MISS`) and the canonical c
 
 ## Citation Format
 
-* Every citation records the source `path`, a human-readable `label`, and a timestamp formatted via `America/Chicago` with `CDT`/`CST` suffixes.
-* `search_archive` always prepends the archive feed citation before sport-specific sources.
-* Timestamps update even when served from cache so clients can display the retrieval clock without ambiguity.
+- Every citation records the source `path`, a human-readable `label`, and a timestamp formatted via `America/Chicago` with `CDT`/`CST` suffixes.
+- `search_archive` always prepends the archive feed citation before sport-specific sources.
+- Timestamps update even when served from cache so clients can display the retrieval clock without ambiguity.
 
 ## Caching Strategy
 
@@ -96,8 +98,8 @@ The `meta.cache.status` flag is derived after these layers are consulted. HIT me
 
 This module is designed to run inside a Cloudflare Worker or Node.js environment:
 
-* Pass the Worker `env` object to each handler via the optional `ToolContext` to activate KV/R2/D1/DO persistence.
-* Without an `env`, the server uses the shared in-memory cache (suitable for unit tests and local development).
+- Pass the Worker `env` object to each handler via the optional `ToolContext` to activate KV/R2/D1/DO persistence.
+- Without an `env`, the server uses the shared in-memory cache (suitable for unit tests and local development).
 
 ```ts
 import { get_team_seasons } from './server';
@@ -109,16 +111,16 @@ const response = await get_team_seasons({}, { env });
 
 Soccer content is out-of-scope for Blaze Sports Intel. Any attempt to:
 
-* Request `sport: 'soccer'`
-* Include "soccer" (or variants) in an archive query
+- Request `sport: 'soccer'`
+- Include "soccer" (or variants) in an archive query
 
 …will throw a `LonghornsError` with code `SOCCER_FORBIDDEN` and the message documented in `manifest.json`. Mobile clients should surface that string verbatim.
 
 ## Mobile Integration Notes
 
-* Responses are intentionally flat JSON with small objects to keep payloads light for mobile networks.
-* Cache keys expose enough entropy to build offline stores keyed by tool + arguments.
-* Timestamp formatting is stable for analytics logging and toast notifications.
-* Archive search sorts results by mandated sport order, then by recency, enabling predictable UI grouping.
+- Responses are intentionally flat JSON with small objects to keep payloads light for mobile networks.
+- Cache keys expose enough entropy to build offline stores keyed by tool + arguments.
+- Timestamp formatting is stable for analytics logging and toast notifications.
+- Archive search sorts results by mandated sport order, then by recency, enabling predictable UI grouping.
 
 Standard over vibes. Clarity beats noise. Box scores over buzzwords.

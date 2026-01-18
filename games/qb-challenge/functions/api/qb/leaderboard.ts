@@ -42,17 +42,11 @@ export async function onRequestOptions(): Promise<Response> {
   return new Response(null, { headers: corsHeaders });
 }
 
-export async function onRequestGet(context: {
-  request: Request;
-  env: Env;
-}): Promise<Response> {
+export async function onRequestGet(context: { request: Request; env: Env }): Promise<Response> {
   try {
     const { request, env } = context;
     const url = new URL(request.url);
-    const limit = Math.min(
-      parseInt(url.searchParams.get('limit') || '10', 10),
-      100
-    );
+    const limit = Math.min(parseInt(url.searchParams.get('limit') || '10', 10), 100);
     const period = url.searchParams.get('period') || 'alltime';
 
     const cacheKey = `qb:leaderboard:${period}`;
@@ -81,22 +75,18 @@ export async function onRequestGet(context: {
       .bind(limit)
       .all();
 
-    const entries: LeaderboardEntry[] = (result.results || []).map(
-      (row, index) => ({
-        rank: index + 1,
-        playerId: row.player_id as string,
-        playerName: (row.player_name as string) || 'Anonymous',
-        score: row.high_score as number,
-        qbId: row.favorite_qb_id as string,
-        gamesPlayed: row.games_played as number,
-        totalCompletions: row.total_completions as number,
-      })
-    );
+    const entries: LeaderboardEntry[] = (result.results || []).map((row, index) => ({
+      rank: index + 1,
+      playerId: row.player_id as string,
+      playerName: (row.player_name as string) || 'Anonymous',
+      score: row.high_score as number,
+      qbId: row.favorite_qb_id as string,
+      gamesPlayed: row.games_played as number,
+      totalCompletions: row.total_completions as number,
+    }));
 
     // Get total players
-    const countResult = await env.DB.prepare(
-      'SELECT COUNT(*) as count FROM qb_players'
-    ).first();
+    const countResult = await env.DB.prepare('SELECT COUNT(*) as count FROM qb_players').first();
 
     const response: ApiResponse = {
       success: true,
@@ -115,8 +105,7 @@ export async function onRequestGet(context: {
     return jsonResponse(response);
   } catch (error: unknown) {
     console.error('Leaderboard error:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Internal server error';
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return jsonResponse({ success: false, error: errorMessage }, 500);
   }
 }

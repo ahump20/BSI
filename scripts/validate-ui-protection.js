@@ -19,7 +19,7 @@ const PROTECTED_UI_FILES = [
   'public/css/blaze-revolutionary-command-center.css',
   'public/css/blaze-ultimate-aesthetics.css',
   'public/js/blaze-revolutionary-command-center.js',
-  'public/js/blaze-ultimate-visual-engine.js'
+  'public/js/blaze-ultimate-visual-engine.js',
 ];
 
 // Protected brand colors
@@ -28,7 +28,7 @@ const PROTECTED_COLORS = [
   '#ff6b00', // Secondary orange
   '#0066cc', // Accent blue
   '#2d2d2d', // Background gray
-  '#ffffff'  // Text white
+  '#ffffff', // Text white
 ];
 
 // Context7 tools directory
@@ -41,15 +41,15 @@ class UIProtectionValidator {
   }
 
   validateContext7Tools() {
-    
     if (!fs.existsSync(CONTEXT7_TOOLS_DIR)) {
       this.errors.push('Context7 tools directory not found');
       return;
     }
 
-    const toolFiles = fs.readdirSync(CONTEXT7_TOOLS_DIR)
-      .filter(file => file.endsWith('.ts'))
-      .map(file => path.join(CONTEXT7_TOOLS_DIR, file));
+    const toolFiles = fs
+      .readdirSync(CONTEXT7_TOOLS_DIR)
+      .filter((file) => file.endsWith('.ts'))
+      .map((file) => path.join(CONTEXT7_TOOLS_DIR, file));
 
     for (const toolFile of toolFiles) {
       this.validateToolFile(toolFile);
@@ -85,7 +85,7 @@ class UIProtectionValidator {
       /addEventListener/,
       /\bdocument\./,
       /\bwindow\./,
-      /\bDOM\b/
+      /\bDOM\b/,
     ];
 
     for (const pattern of uiPatterns) {
@@ -112,10 +112,9 @@ class UIProtectionValidator {
   }
 
   validateUIFiles() {
-
     for (const uiFile of PROTECTED_UI_FILES) {
       const filePath = path.join(projectRoot, uiFile);
-      
+
       if (!fs.existsSync(filePath)) {
         this.warnings.push(`UI file not found: ${uiFile}`);
         continue;
@@ -141,7 +140,7 @@ class UIProtectionValidator {
       if (!content.includes('<!DOCTYPE html>')) {
         this.errors.push(`${fileName}: Missing DOCTYPE declaration`);
       }
-      
+
       const htmlLangRegex = /<html[^>]*\blang\s*=\s*["'][^"']+["']/i;
       if (!htmlLangRegex.test(content)) {
         this.errors.push(`${fileName}: Missing lang attribute in <html> tag`);
@@ -157,7 +156,6 @@ class UIProtectionValidator {
   }
 
   validateContext7Integration() {
-
     const context7JsonPath = path.join(projectRoot, 'context7.json');
     if (!fs.existsSync(context7JsonPath)) {
       this.errors.push('context7.json not found');
@@ -168,8 +166,8 @@ class UIProtectionValidator {
 
     // Check for UI protection rules
     const rules = context7Config.rules || [];
-    const hasUIRules = rules.some(rule => rule.includes('UI PROTECTION'));
-    
+    const hasUIRules = rules.some((rule) => rule.includes('UI PROTECTION'));
+
     if (!hasUIRules) {
       this.errors.push('context7.json missing UI protection rules');
     }
@@ -181,21 +179,20 @@ class UIProtectionValidator {
   }
 
   validateBrandConsistency() {
-
     const brandColorCounts = {};
-    
+
     for (const color of PROTECTED_COLORS) {
       brandColorCounts[color] = 0;
     }
 
     // Count brand color usage across all files
     const allFiles = this.getAllProjectFiles();
-    
+
     for (const file of allFiles) {
       if (file.endsWith('.html') || file.endsWith('.css') || file.endsWith('.js')) {
         try {
           const content = fs.readFileSync(file, 'utf8');
-          
+
           for (const color of PROTECTED_COLORS) {
             // Escape the color code for regex
             const escapedColor = color.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -221,14 +218,14 @@ class UIProtectionValidator {
 
   getAllProjectFiles() {
     const files = [];
-    
+
     const scanDirectory = (dir) => {
       const items = fs.readdirSync(dir);
-      
+
       for (const item of items) {
         const fullPath = path.join(dir, item);
         const stat = fs.statSync(fullPath);
-        
+
         if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
           scanDirectory(fullPath);
         } else if (stat.isFile()) {
@@ -242,12 +239,10 @@ class UIProtectionValidator {
   }
 
   run() {
-
     this.validateContext7Tools();
     this.validateUIFiles();
     this.validateContext7Integration();
     this.validateBrandConsistency();
-
 
     if (this.errors.length > 0) {
     }

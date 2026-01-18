@@ -31,10 +31,7 @@ interface WarmResult {
   cached: boolean;
 }
 
-async function warmEndpoint(
-  url: string,
-  signal?: AbortSignal
-): Promise<WarmResult> {
+async function warmEndpoint(url: string, signal?: AbortSignal): Promise<WarmResult> {
   const start = Date.now();
   try {
     const response = await fetch(url, {
@@ -74,17 +71,13 @@ async function warmAllEndpoints(env: Env): Promise<WarmResult[]> {
     // Build all URLs to warm
     const urls: string[] = [
       // Live scores for all sports
-      ...SPORTS_TO_WARM.map(
-        (sport) => `${baseUrl}/api/live-scores?sport=${sport}`
-      ),
+      ...SPORTS_TO_WARM.map((sport) => `${baseUrl}/api/live-scores?sport=${sport}`),
       // Additional high-traffic endpoints
       ...ADDITIONAL_ENDPOINTS.map((path) => `${baseUrl}${path}`),
     ];
 
     // Fire all requests in parallel
-    const results = await Promise.all(
-      urls.map((url) => warmEndpoint(url, controller.signal))
-    );
+    const results = await Promise.all(urls.map((url) => warmEndpoint(url, controller.signal)));
 
     return results;
   } finally {
@@ -97,11 +90,7 @@ export default {
    * Scheduled handler - runs on cron trigger
    * Warms cache for all configured endpoints
    */
-  async scheduled(
-    event: ScheduledEvent,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<void> {
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     const startTime = Date.now();
 
     ctx.waitUntil(
@@ -140,11 +129,7 @@ export default {
   /**
    * Fetch handler - manual trigger and health check
    */
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: ExecutionContext
-  ): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     // Health check

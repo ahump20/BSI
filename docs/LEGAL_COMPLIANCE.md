@@ -125,11 +125,13 @@ BSI permits AI-generated assets under these conditions:
 ### Sample Acceptable Prompts
 
 **✓ Good Prompts:**
+
 - "Original cartoon baseball character, kid-friendly, generic style, primary colors"
 - "Simple baseball stadium background, 90s arcade game aesthetic, no specific team branding"
 - "Cheerful sound effect for hitting a ball, retro game style"
 
 **❌ Bad Prompts:**
+
 - "Character like Pablo Sanchez from Backyard Baseball"
 - "Yankee Stadium background"
 - "Music in the style of MLB The Show"
@@ -220,6 +222,7 @@ All BSI game developers must:
 - ✅ Document all asset sources thoroughly
 
 Violations may result in:
+
 - Code rejection and reversion
 - Removal from project
 - Legal liability if company is harmed
@@ -227,6 +230,7 @@ Violations may result in:
 ## Updates to This Document
 
 This document is reviewed and updated:
+
 - Quarterly (minimum)
 - Upon significant legal/regulatory changes
 - When new game projects launch

@@ -11,27 +11,32 @@ Phase 3 completes the MLB Data Lab integration by implementing comprehensive tea
 ### Key Features
 
 ✅ **Complete Team Information**
+
 - Team branding (colors, logos, venue)
 - League and division context
 - Season-specific data
 
 ✅ **40-Man Roster Management**
+
 - Full roster display grouped by position
 - Player details (height, weight, age, bats/throws)
 - Multiple roster types (40-man, active, full season)
 
 ✅ **Comprehensive Team Statistics**
+
 - Batting stats (AVG, OBP, SLG, OPS, HR, RBI)
 - Pitching stats (ERA, WHIP, K, BB, W-L)
 - Fielding stats (Fielding %, Assists, Putouts, Errors)
 
 ✅ **Complete Schedule**
+
 - All games with results
 - Home/Away records
 - Streak tracking
 - Last 10 games
 
 ✅ **Division Standings**
+
 - Complete division table
 - Games back calculations
 - Playoff positioning
@@ -64,14 +69,14 @@ User Request
 
 Different cache TTLs based on data volatility:
 
-| Data Type | Cache TTL | Rationale |
-|-----------|-----------|-----------|
-| Team Info | 24 hours | Rarely changes |
-| Roster | 1 hour | Transactions happen |
-| Team Stats | 30 minutes | Updated during games |
-| Schedule | 1 hour | Game results change |
-| Standings | 30 minutes | Multiple games affect standings |
-| Live Games | 30 seconds | Real-time data |
+| Data Type  | Cache TTL  | Rationale                       |
+| ---------- | ---------- | ------------------------------- |
+| Team Info  | 24 hours   | Rarely changes                  |
+| Roster     | 1 hour     | Transactions happen             |
+| Team Stats | 30 minutes | Updated during games            |
+| Schedule   | 1 hour     | Game results change             |
+| Standings  | 30 minutes | Multiple games affect standings |
+| Live Games | 30 seconds | Real-time data                  |
 
 ## 📁 Files Created
 
@@ -81,6 +86,7 @@ Different cache TTLs based on data volatility:
 **Purpose**: Comprehensive TypeScript adapter for all team-related data
 
 **Interfaces**:
+
 ```typescript
 export interface MLBTeam {
   id: number;
@@ -89,14 +95,14 @@ export interface MLBTeam {
   locationName: string;
   abbreviation: string;
 
-  league: { id: number; name: string; };
-  division: { id: number; name: string; };
+  league: { id: number; name: string };
+  division: { id: number; name: string };
 
   venue: {
     id: number;
     name: string;
-    location: { city: string; state: string; stateAbbrev: string; };
-    timeZone: { id: string; offset: number; tz: string; };
+    location: { city: string; state: string; stateAbbrev: string };
+    timeZone: { id: string; offset: number; tz: string };
   };
 
   season: number;
@@ -127,10 +133,10 @@ export interface MLBPlayer {
     abbreviation: string;
   };
 
-  batSide: { code: string; description: string; };
-  pitchHand?: { code: string; description: string; };
+  batSide: { code: string; description: string };
+  pitchHand?: { code: string; description: string };
 
-  status: { code: string; description: string; };
+  status: { code: string; description: string };
 }
 
 export interface MLBRoster {
@@ -203,18 +209,18 @@ export interface MLBSchedule {
 
 export interface MLBStandings {
   season: number;
-  league: { id: number; name: string; };
-  division: { id: number; name: string; };
+  league: { id: number; name: string };
+  division: { id: number; name: string };
 
   teamRecords: Array<{
-    team: { id: number; name: string; };
+    team: { id: number; name: string };
     wins: number;
     losses: number;
     winningPercentage: string;
     divisionGamesBack: string;
     divisionRank: string;
     divisionLeader: boolean;
-    streak: { streakType: string; streakNumber: number; streakCode: string; };
+    streak: { streakType: string; streakNumber: number; streakCode: string };
     runsScored: number;
     runsAllowed: number;
     // ... 20+ more fields
@@ -223,28 +229,40 @@ export interface MLBStandings {
 ```
 
 **Methods**:
+
 ```typescript
 class MLBTeamsAdapter {
   // Core data fetching
-  async fetchTeamInfo(teamId: number, season?: number): Promise<MLBTeam>
-  async fetchRoster(teamId: number, season?: number, rosterType?: string): Promise<MLBRoster>
-  async fetchTeamStats(teamId: number, season?: number): Promise<MLBTeamStats>
-  async fetchSchedule(teamId: number, season?: number, startDate?: string, endDate?: string): Promise<MLBSchedule>
-  async fetchStandings(teamId: number, season?: number): Promise<MLBStandings>
-  async fetchLiveGames(teamId: number): Promise<MLBGame[]>
-  async fetchAllTeams(season?: number): Promise<MLBTeam[]>
+  async fetchTeamInfo(teamId: number, season?: number): Promise<MLBTeam>;
+  async fetchRoster(teamId: number, season?: number, rosterType?: string): Promise<MLBRoster>;
+  async fetchTeamStats(teamId: number, season?: number): Promise<MLBTeamStats>;
+  async fetchSchedule(
+    teamId: number,
+    season?: number,
+    startDate?: string,
+    endDate?: string
+  ): Promise<MLBSchedule>;
+  async fetchStandings(teamId: number, season?: number): Promise<MLBStandings>;
+  async fetchLiveGames(teamId: number): Promise<MLBGame[]>;
+  async fetchAllTeams(season?: number): Promise<MLBTeam[]>;
 }
 ```
 
 **Utility Functions**:
+
 ```typescript
-export function formatRecord(wins: number, losses: number): string
-export function formatWinPct(wins: number, losses: number): string
-export function calculateGamesBack(teamWins: number, teamLosses: number, leaderWins: number, leaderLosses: number): string
-export function getPositionGroup(positionCode: string): string
-export function getPositionName(code: string): string
-export function parseHeight(height: string): number
-export function formatHeight(inches: number): string
+export function formatRecord(wins: number, losses: number): string;
+export function formatWinPct(wins: number, losses: number): string;
+export function calculateGamesBack(
+  teamWins: number,
+  teamLosses: number,
+  leaderWins: number,
+  leaderLosses: number
+): string;
+export function getPositionGroup(positionCode: string): string;
+export function getPositionName(code: string): string;
+export function parseHeight(height: string): number;
+export function formatHeight(inches: number): string;
 ```
 
 ### 2. Teams API Endpoint (`functions/api/mlb/teams/[[teamId]].ts`)
@@ -255,17 +273,19 @@ export function formatHeight(inches: number): string
 **Endpoint**: `GET /api/mlb/teams/:teamId`
 
 **Query Parameters**:
+
 ```typescript
 interface QueryParams {
-  season?: number;              // Default: current year
-  include?: string;             // Comma-separated: 'roster,stats,schedule,standings,live'
-  rosterType?: string;          // '40Man' | 'active' | 'fullSeason'
-  scheduleStart?: string;       // 'YYYY-MM-DD'
-  scheduleEnd?: string;         // 'YYYY-MM-DD'
+  season?: number; // Default: current year
+  include?: string; // Comma-separated: 'roster,stats,schedule,standings,live'
+  rosterType?: string; // '40Man' | 'active' | 'fullSeason'
+  scheduleStart?: string; // 'YYYY-MM-DD'
+  scheduleEnd?: string; // 'YYYY-MM-DD'
 }
 ```
 
 **Response Structure**:
+
 ```json
 {
   "team": {
@@ -282,20 +302,38 @@ interface QueryParams {
   "roster": {
     "teamId": 138,
     "rosterType": "40Man",
-    "roster": [ /* 40 players */ ],
-    "pitchers": [ /* 15-20 pitchers */ ],
-    "catchers": [ /* 2-3 catchers */ ],
-    "infielders": [ /* 8-10 infielders */ ],
-    "outfielders": [ /* 6-8 outfielders */ ]
+    "roster": [
+      /* 40 players */
+    ],
+    "pitchers": [
+      /* 15-20 pitchers */
+    ],
+    "catchers": [
+      /* 2-3 catchers */
+    ],
+    "infielders": [
+      /* 8-10 infielders */
+    ],
+    "outfielders": [
+      /* 6-8 outfielders */
+    ]
   },
   "stats": {
-    "batting": { /* team batting stats */ },
-    "pitching": { /* team pitching stats */ },
-    "fielding": { /* team fielding stats */ }
+    "batting": {
+      /* team batting stats */
+    },
+    "pitching": {
+      /* team pitching stats */
+    },
+    "fielding": {
+      /* team fielding stats */
+    }
   },
   "standings": {
     "division": { "name": "NL Central" },
-    "teamRecords": [ /* division standings */ ]
+    "teamRecords": [
+      /* division standings */
+    ]
   },
   "quickStats": {
     "record": "85-77",
@@ -314,9 +352,11 @@ interface QueryParams {
 ```
 
 **Special Routes**:
+
 - `GET /api/mlb/teams/all` - Returns all 30 MLB teams grouped by division
 
 **Performance**:
+
 - Parallel data fetching with `Promise.all()`
 - Response time: ~800ms (with 5 includes)
 - Cache headers: 5min client, 30min CDN
@@ -333,6 +373,7 @@ interface QueryParams {
    - Quick stats cards (record, win%, GB, streak, rank, run diff)
 
 2. **Multi-Tab Interface**
+
    ```
    Overview | Roster | Statistics | Schedule | Standings
    ```
@@ -371,6 +412,7 @@ interface QueryParams {
    - Current team highlighting
 
 **UI Features**:
+
 - Glassmorphism design
 - Responsive layout (mobile-first)
 - Loading states with spinners
@@ -411,6 +453,7 @@ curl "https://blazesportsintel.com/api/mlb/teams/all?season=2025"
 ```
 
 Response:
+
 ```json
 {
   "season": 2025,
@@ -418,7 +461,7 @@ Response:
   "byDivision": {
     "American League_East": [
       { "id": 110, "name": "Baltimore Orioles", "abbreviation": "BAL" },
-      { "id": 111, "name": "Boston Red Sox", "abbreviation": "BOS" },
+      { "id": 111, "name": "Boston Red Sox", "abbreviation": "BOS" }
       // ...
     ],
     "National League_Central": [
@@ -437,6 +480,7 @@ Response:
 ### American League
 
 **AL East**
+
 - 110: Baltimore Orioles
 - 111: Boston Red Sox
 - 147: New York Yankees
@@ -444,6 +488,7 @@ Response:
 - 141: Toronto Blue Jays
 
 **AL Central**
+
 - 145: Chicago White Sox
 - 114: Cleveland Guardians
 - 116: Detroit Tigers
@@ -451,6 +496,7 @@ Response:
 - 142: Minnesota Twins
 
 **AL West**
+
 - 117: Houston Astros
 - 108: Los Angeles Angels
 - 133: Oakland Athletics
@@ -460,6 +506,7 @@ Response:
 ### National League
 
 **NL East**
+
 - 144: Atlanta Braves
 - 146: Miami Marlins
 - 121: New York Mets
@@ -467,6 +514,7 @@ Response:
 - 120: Washington Nationals
 
 **NL Central**
+
 - 112: Chicago Cubs
 - 113: Cincinnati Reds
 - 158: Milwaukee Brewers
@@ -474,6 +522,7 @@ Response:
 - 138: St. Louis Cardinals
 
 **NL West**
+
 - 109: Arizona Diamondbacks
 - 115: Colorado Rockies
 - 119: Los Angeles Dodgers
@@ -485,28 +534,33 @@ Response:
 ### Manual Testing Checklist
 
 ✅ **Team Information**
+
 - [x] Loads team details correctly
 - [x] Displays venue information
 - [x] Shows league and division
 
 ✅ **Roster**
+
 - [x] All 40 players load
 - [x] Position groupings correct
 - [x] Player details accurate
 - [x] Jersey numbers display
 
 ✅ **Statistics**
+
 - [x] Batting stats match official MLB
 - [x] Pitching stats match official MLB
 - [x] Fielding stats match official MLB
 
 ✅ **Schedule**
+
 - [x] All 162 games load
 - [x] Scores accurate for completed games
 - [x] Home/Away correctly identified
 - [x] Record calculations correct
 
 ✅ **Standings**
+
 - [x] Division standings accurate
 - [x] Games back calculations correct
 - [x] Current team highlighted
@@ -531,14 +585,14 @@ curl "http://localhost:8788/api/mlb/teams/138?include=schedule" | jq '.schedule.
 
 ### API Response Times (with cache misses)
 
-| Endpoint | Cold Start | Cached |
-|----------|-----------|--------|
-| Team Info Only | ~300ms | ~50ms |
-| + Roster | ~600ms | ~80ms |
-| + Stats | ~800ms | ~100ms |
-| + Standings | ~1000ms | ~120ms |
-| + Schedule (162 games) | ~1500ms | ~150ms |
-| All Includes | ~1800ms | ~180ms |
+| Endpoint               | Cold Start | Cached |
+| ---------------------- | ---------- | ------ |
+| Team Info Only         | ~300ms     | ~50ms  |
+| + Roster               | ~600ms     | ~80ms  |
+| + Stats                | ~800ms     | ~100ms |
+| + Standings            | ~1000ms    | ~120ms |
+| + Schedule (162 games) | ~1500ms    | ~150ms |
+| All Includes           | ~1800ms    | ~180ms |
 
 ### Caching Effectiveness
 
@@ -562,6 +616,7 @@ curl "http://localhost:8788/api/mlb/teams/138?include=schedule" | jq '.schedule.
 **Environment Variables**: None (uses public MLB Stats API)
 
 **Build Settings**:
+
 ```toml
 # wrangler.toml
 [env.production]
@@ -683,13 +738,16 @@ const corsHeaders = {
 ### Challenges Overcome
 
 ⚠️ **Large Schedules**: 162-game schedules are heavy payloads (~100KB)
-   - Solution: Made schedule opt-in with `include=schedule`
+
+- Solution: Made schedule opt-in with `include=schedule`
 
 ⚠️ **Roster Type Confusion**: Multiple roster types (40-man, active, full season)
-   - Solution: Clear query parameter with default to 40-man
+
+- Solution: Clear query parameter with default to 40-man
 
 ⚠️ **Standings Complexity**: Many nested objects and split records
-   - Solution: Extracted key fields into `quickStats` object
+
+- Solution: Extracted key fields into `quickStats` object
 
 ### Future Improvements
 
@@ -706,6 +764,7 @@ const corsHeaders = {
 **Total Project**: 9,486 lines across 15 files (Phases 1-3)
 
 **Phase Breakdown**:
+
 - Phase 1 (Foundation): 2,528 lines
 - Phase 2 (Advanced Analytics): 4,730 lines
 - Phase 3 (Team Pages): 2,228 lines

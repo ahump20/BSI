@@ -49,6 +49,7 @@ npm run secret:set
 ### 2. Update wrangler.jsonc
 
 Replace placeholder IDs in `wrangler.jsonc`:
+
 - `BSI_TICKER_CACHE` KV namespace ID
 - `BSI_TICKER_DB` D1 database ID
 
@@ -65,6 +66,7 @@ npm run deploy
 Connect to receive real-time ticker updates.
 
 **Subscribe Message:**
+
 ```json
 {
   "type": "subscribe",
@@ -82,9 +84,11 @@ Connect to receive real-time ticker updates.
 Publish a new ticker item.
 
 **Headers:**
+
 - `X-API-Key: <API_SECRET>`
 
 **Body:**
+
 ```json
 {
   "type": "score",
@@ -103,6 +107,7 @@ Publish a new ticker item.
 Get current ticker items (cached).
 
 **Query Params:**
+
 - `leagues`: comma-separated (e.g., `MLB,NFL`)
 - `types`: comma-separated (e.g., `score,news`)
 - `priority`: max priority (1-3)
@@ -160,19 +165,19 @@ ticker.subscribe({ leagues: ['MLB'] });
 
 ## Message Types
 
-| Type | Priority | Description |
-|------|----------|-------------|
-| `score` | 1-3 | Game scores |
-| `news` | 1-3 | Breaking news |
-| `injury` | 1-2 | Injury reports |
-| `trade` | 1-2 | Trades/transactions |
-| `weather` | 2-3 | Weather delays |
+| Type      | Priority | Description         |
+| --------- | -------- | ------------------- |
+| `score`   | 1-3      | Game scores         |
+| `news`    | 1-3      | Breaking news       |
+| `injury`  | 1-2      | Injury reports      |
+| `trade`   | 1-2      | Trades/transactions |
+| `weather` | 2-3      | Weather delays      |
 
-| Priority | Meaning |
-|----------|---------|
-| 1 | 🔴 BREAKING |
-| 2 | Important |
-| 3 | Standard |
+| Priority | Meaning     |
+| -------- | ----------- |
+| 1        | 🔴 BREAKING |
+| 2        | Important   |
+| 3        | Standard    |
 
 ## Supported Leagues
 

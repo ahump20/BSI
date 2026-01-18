@@ -148,7 +148,7 @@
       "conference": "Big 12",
       "postseason": "College Football Playoff Semifinalist",
       "headlineWins": ["49-21 vs. Alabama (Tuscaloosa)", "34-30 vs. Oklahoma State"],
-      "finalRankings": {"ap": 5, "coaches": 5, "cfp": 4}
+      "finalRankings": { "ap": 5, "coaches": 5, "cfp": 4 }
     },
     {
       "year": 2022,
@@ -161,14 +161,14 @@
       "record": "13-1",
       "conference": "Big 12",
       "postseason": "BCS National Championship Game - L 21-37 vs Alabama",
-      "finalRankings": {"ap": 2, "coaches": 2}
+      "finalRankings": { "ap": 2, "coaches": 2 }
     },
     {
       "year": 2008,
       "record": "12-1",
       "conference": "Big 12",
       "postseason": "Fiesta Bowl - W 24-21 vs Ohio State",
-      "finalRankings": {"ap": 3, "coaches": 3}
+      "finalRankings": { "ap": 3, "coaches": 3 }
     },
     {
       "year": 2005,
@@ -176,7 +176,7 @@
       "conference": "Big 12",
       "postseason": "National Champions - Rose Bowl W 41-38 vs USC",
       "achievements": ["National Champions", "Perfect Season"],
-      "finalRankings": {"ap": 1, "coaches": 1, "bcs": 1}
+      "finalRankings": { "ap": 1, "coaches": 1, "bcs": 1 }
     },
     {
       "year": 1998,
@@ -189,7 +189,7 @@
       "record": "11-1",
       "conference": "Southwest",
       "postseason": "Cotton Bowl - W 38-10 vs Notre Dame",
-      "finalRankings": {"ap": 1, "coaches": 1}
+      "finalRankings": { "ap": 1, "coaches": 1 }
     },
     {
       "year": 1970,
@@ -197,7 +197,7 @@
       "conference": "Southwest",
       "postseason": "National Champions - Cotton Bowl W 17-13 vs Notre Dame",
       "achievements": ["National Champions"],
-      "finalRankings": {"ap": 1, "coaches": 1}
+      "finalRankings": { "ap": 1, "coaches": 1 }
     },
     {
       "year": 1969,
@@ -205,7 +205,7 @@
       "conference": "Southwest",
       "postseason": "National Champions - Cotton Bowl W 21-17 vs Notre Dame",
       "achievements": ["National Champions", "Perfect Season"],
-      "finalRankings": {"ap": 1, "coaches": 1}
+      "finalRankings": { "ap": 1, "coaches": 1 }
     },
     {
       "year": 1963,
@@ -213,7 +213,7 @@
       "conference": "Southwest",
       "postseason": "National Champions - Cotton Bowl W 28-6 vs Navy",
       "achievements": ["National Champions", "Perfect Season"],
-      "finalRankings": {"ap": 1, "coaches": 1}
+      "finalRankings": { "ap": 1, "coaches": 1 }
     }
   ],
   "legendaryPlayers": [
@@ -222,7 +222,12 @@
       "name": "Vince Young",
       "years": "2003-2005",
       "position": "QB",
-      "accolades": ["2005 National Champion", "2005 Rose Bowl MVP", "2004 & 2005 First-Team All-American", "Maxwell Award Winner"],
+      "accolades": [
+        "2005 National Champion",
+        "2005 Rose Bowl MVP",
+        "2004 & 2005 First-Team All-American",
+        "Maxwell Award Winner"
+      ],
       "career": {
         "passingYards": 6040,
         "passingTD": 44,
@@ -237,7 +242,12 @@
       "name": "Earl Campbell",
       "years": "1974-1977",
       "position": "RB",
-      "accolades": ["1977 Heisman Trophy", "3x First-Team All-American", "1977 Walter Camp Award", "Pro Football Hall of Fame"],
+      "accolades": [
+        "1977 Heisman Trophy",
+        "3x First-Team All-American",
+        "1977 Walter Camp Award",
+        "Pro Football Hall of Fame"
+      ],
       "career": {
         "rushingYards": 4443,
         "touchdowns": 40,
@@ -250,7 +260,12 @@
       "name": "Ricky Williams",
       "years": "1995-1998",
       "position": "RB",
-      "accolades": ["1998 Heisman Trophy", "2x First-Team All-American", "NCAA All-Time Rushing Leader (6,279 yards)", "Doak Walker Award"],
+      "accolades": [
+        "1998 Heisman Trophy",
+        "2x First-Team All-American",
+        "NCAA All-Time Rushing Leader (6,279 yards)",
+        "Doak Walker Award"
+      ],
       "career": {
         "rushingYards": 6279,
         "touchdowns": 75,
@@ -263,7 +278,12 @@
       "name": "Derrick Johnson",
       "years": "2001-2004",
       "position": "LB",
-      "accolades": ["2004 Nagurski Trophy", "2004 Butkus Award", "2x First-Team All-American", "Big 12 Defensive Player of the Year"],
+      "accolades": [
+        "2004 Nagurski Trophy",
+        "2004 Butkus Award",
+        "2x First-Team All-American",
+        "Big 12 Defensive Player of the Year"
+      ],
       "career": {
         "tackles": 518,
         "tacklesForLoss": 63,
@@ -276,7 +296,12 @@
       "name": "Tommy Nobis",
       "years": "1963-1965",
       "position": "LB",
-      "accolades": ["1965 Maxwell Award", "1965 Outland Trophy", "2x First-Team All-American", "College Football Hall of Fame"],
+      "accolades": [
+        "1965 Maxwell Award",
+        "1965 Outland Trophy",
+        "2x First-Team All-American",
+        "College Football Hall of Fame"
+      ],
       "career": {
         "tackles": 324,
         "teamCaptain": true
@@ -288,7 +313,11 @@
       "name": "Colt McCoy",
       "years": "2006-2009",
       "position": "QB",
-      "accolades": ["2008 Walter Camp Award", "3x First-Team All-Big 12", "NCAA Record 45 Wins as Starter"],
+      "accolades": [
+        "2008 Walter Camp Award",
+        "3x First-Team All-Big 12",
+        "NCAA Record 45 Wins as Starter"
+      ],
       "career": {
         "passingYards": 13253,
         "passingTD": 112,
@@ -305,7 +334,11 @@
       "record": "167-47-5",
       "winningPercentage": 0.779,
       "championships": 3,
-      "accolades": ["College Football Hall of Fame", "3x National Coach of the Year", "11 Conference Championships"]
+      "accolades": [
+        "College Football Hall of Fame",
+        "3x National Coach of the Year",
+        "11 Conference Championships"
+      ]
     },
     {
       "name": "Mack Brown",
@@ -313,7 +346,11 @@
       "record": "158-48",
       "winningPercentage": 0.767,
       "championships": 1,
-      "accolades": ["College Football Hall of Fame", "2005 National Coach of the Year", "2 Big 12 Championships"]
+      "accolades": [
+        "College Football Hall of Fame",
+        "2005 National Coach of the Year",
+        "2 Big 12 Championships"
+      ]
     },
     {
       "name": "Steve Sarkisian",

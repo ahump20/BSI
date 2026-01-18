@@ -7,6 +7,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import type { AgentState, Action, Unit } from '@data/replay-schema';
+import { IconLightning, IconGear } from './Icons';
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -115,12 +116,13 @@ const styles = {
 // Helpers
 // ─────────────────────────────────────────────────────────────
 
-function getEntryIcon(type: EventLogEntry['type']): string {
+function getEntryIcon(type: EventLogEntry['type']): React.ReactNode {
+  const color = getIconColor(type);
   switch (type) {
-    case 'action': return '⚡';
-    case 'decision': return '🧠';
-    case 'event': return '📢';
-    case 'system': return '⚙️';
+    case 'action': return <IconLightning size={10} color={color} />;
+    case 'decision': return <IconGear size={10} color={color} />;
+    case 'event': return <IconLightning size={10} color={color} />;
+    case 'system': return <IconGear size={10} color={color} />;
     default: return '•';
   }
 }
@@ -241,7 +243,7 @@ export function EventLog({
           displayEntries.map((entry) => (
             <div key={entry.id} style={styles.entry}>
               <span style={styles.timestamp}>{entry.timestamp}</span>
-              <span style={{ ...styles.icon, color: getIconColor(entry.type) }}>
+              <span style={styles.icon}>
                 {getEntryIcon(entry.type)}
               </span>
               <span style={styles.message}>{entry.message}</span>

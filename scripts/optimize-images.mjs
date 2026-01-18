@@ -190,7 +190,9 @@ async function main() {
     console.log(`   Original size: ${formatSize(totalOriginalSize)}`);
     console.log(`   Optimized size: ${formatSize(totalOptimizedSize)}`);
     const savings = ((totalOriginalSize - totalOptimizedSize) / totalOriginalSize) * 100;
-    console.log(`   Total savings: ${formatSize(totalOriginalSize - totalOptimizedSize)} (${savings.toFixed(0)}%)`);
+    console.log(
+      `   Total savings: ${formatSize(totalOriginalSize - totalOptimizedSize)} (${savings.toFixed(0)}%)`
+    );
   }
 }
 

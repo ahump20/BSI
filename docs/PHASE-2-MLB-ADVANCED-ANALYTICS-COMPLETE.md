@@ -18,6 +18,7 @@ Phase 2 of the MLB Data Lab integration is complete. This phase adds advanced sa
 **File**: `/lib/adapters/fangraphs-adapter.ts` (876 lines)
 
 **Features**:
+
 - Full TypeScript integration with FanGraphs API
 - Comprehensive type definitions for batting and pitching stats (50+ batting fields, 60+ pitching fields)
 - Advanced sabermetrics: wOBA, wRC+, WAR, FIP, xFIP, SIERA
@@ -26,6 +27,7 @@ Phase 2 of the MLB Data Lab integration is complete. This phase adds advanced sa
 - Player projections (Steamer, ZiPS, THE BAT)
 
 **Key Methods**:
+
 - `fetchBattingLeaderboard()` - Top batters with advanced metrics
 - `fetchPitchingLeaderboard()` - Top pitchers with FIP, xFIP, SIERA
 - `fetchPlayerBattingStats()` - Individual player batting profile
@@ -36,16 +38,18 @@ Phase 2 of the MLB Data Lab integration is complete. This phase adds advanced sa
 - `fetchPlayerProfile()` - Comprehensive multi-data fetch
 
 **Cache Configuration**:
+
 ```typescript
 const CACHE_TTLS = {
-  leaderboards: 3600,      // 1 hour
-  playerStats: 21600,      // 6 hours
-  projections: 86400,      // 24 hours
-  advancedStats: 21600,    // 6 hours
+  leaderboards: 3600, // 1 hour
+  playerStats: 21600, // 6 hours
+  projections: 86400, // 24 hours
+  advancedStats: 21600, // 6 hours
 };
 ```
 
 **Utility Functions**:
+
 - `calculateFIP()` - Fielding Independent Pitching formula
 - `calculateXFIP()` - Expected FIP with normalized HR/FB rate
 - `getWRCPlusTier()` - Classify wRC+ performance levels
@@ -61,6 +65,7 @@ const CACHE_TTLS = {
 **Endpoint**: `GET /api/mlb/leaderboards/:category`
 
 **Categories**:
+
 - `batting` - Standard batting leaderboard
 - `pitching` - Standard pitching leaderboard
 - `war` - WAR leaders (batting or pitching)
@@ -73,6 +78,7 @@ const CACHE_TTLS = {
 - `babip` - BABIP leaders
 
 **Query Parameters**:
+
 - `season` (number) - Defaults to current year
 - `stat` ('bat' | 'pit') - Player type (auto-detected from category)
 - `pos` (string) - Position filter: 'all', 'of', 'if', 'c', etc.
@@ -84,6 +90,7 @@ const CACHE_TTLS = {
 - `page` (number) - Page number for pagination
 
 **Response Structure**:
+
 ```json
 {
   "leaderboard": {
@@ -137,6 +144,7 @@ const CACHE_TTLS = {
 **Features**:
 
 **Tab-Based Navigation**:
+
 - Batting Leaderboard
 - Pitching Leaderboard
 - WAR Leaders
@@ -144,6 +152,7 @@ const CACHE_TTLS = {
 - FIP Leaders (pitching)
 
 **Advanced Filtering**:
+
 - Season selector (2021-2025)
 - League filter (All Leagues, AL, NL)
 - Position filter (All, OF, IF, C, DH, SP, RP)
@@ -151,6 +160,7 @@ const CACHE_TTLS = {
 - Results limit (25, 50, 100, 200)
 
 **Interactive Features**:
+
 - Sortable columns (click header to sort)
 - Visual sort indicators (ascending/descending arrows)
 - Tooltips on column headers explaining each metric
@@ -160,6 +170,7 @@ const CACHE_TTLS = {
 **Column Definitions**:
 
 Batting Columns (19):
+
 - Player Name, Position, Team
 - wOBA (Weighted On-Base Average)
 - wRC+ (Weighted Runs Created Plus)
@@ -173,6 +184,7 @@ Batting Columns (19):
 - PA (Plate Appearances)
 
 Pitching Columns (19):
+
 - Player Name, Team
 - FIP (Fielding Independent Pitching)
 - xFIP (Expected FIP)
@@ -193,6 +205,7 @@ Pitching Columns (19):
 **File**: `/lib/adapters/statcast-adapter.ts` (976 lines)
 
 **Features**:
+
 - Full Baseball Savant API integration
 - Pitch-by-pitch tracking data
 - Batted ball event data with exit velocity and launch angle
@@ -211,95 +224,96 @@ interface StatcastBattedBall {
   player_name: string;
 
   // Batted ball metrics
-  launch_speed: number | null;        // Exit velocity (mph)
-  launch_angle: number | null;        // Launch angle (degrees)
-  hit_distance_sc: number | null;     // Hit distance (feet)
+  launch_speed: number | null; // Exit velocity (mph)
+  launch_angle: number | null; // Launch angle (degrees)
+  hit_distance_sc: number | null; // Hit distance (feet)
 
   // Hit location
   hc_x: number | null;
   hc_y: number | null;
 
   // Expected stats
-  estimated_ba_using_speedangle: number | null;  // xBA
+  estimated_ba_using_speedangle: number | null; // xBA
   estimated_woba_using_speedangle: number | null; // xwOBA
 
   // Classification
-  barrel: number | null;               // 1 if barrel, 0 if not
+  barrel: number | null; // 1 if barrel, 0 if not
   // ... 30+ more fields
 }
 
 interface StatcastPitch {
   // Pitch classification
-  pitch_type: string;                  // FF, SL, CH, CU, etc.
-  pitch_name: string;                  // Four-Seam Fastball, Slider, etc.
+  pitch_type: string; // FF, SL, CH, CU, etc.
+  pitch_name: string; // Four-Seam Fastball, Slider, etc.
 
   // Velocity
-  release_speed: number;               // Velocity at release (mph)
-  effective_speed: number;             // Perceived velocity
+  release_speed: number; // Velocity at release (mph)
+  effective_speed: number; // Perceived velocity
 
   // Release point
-  release_pos_x: number;               // Horizontal (feet)
-  release_pos_z: number;               // Vertical (feet)
-  release_extension: number;           // Extension (feet)
+  release_pos_x: number; // Horizontal (feet)
+  release_pos_z: number; // Vertical (feet)
+  release_extension: number; // Extension (feet)
 
   // Spin
-  release_spin_rate: number;           // Spin rate (rpm)
-  spin_axis: number | null;            // Spin axis (degrees)
+  release_spin_rate: number; // Spin rate (rpm)
+  spin_axis: number | null; // Spin axis (degrees)
 
   // Movement
-  pfx_x: number;                       // Horizontal break (inches)
-  pfx_z: number;                       // Induced vertical break (inches)
+  pfx_x: number; // Horizontal break (inches)
+  pfx_z: number; // Induced vertical break (inches)
 
   // Location at plate
-  plate_x: number;                     // Horizontal location (feet)
-  plate_z: number;                     // Vertical location (feet)
-  zone: number | null;                 // Strike zone
+  plate_x: number; // Horizontal location (feet)
+  plate_z: number; // Vertical location (feet)
+  zone: number | null; // Strike zone
   // ... 25+ more fields
 }
 
 interface StatcastPlayerSeasonStats {
   // Exit velocity metrics
-  avg_hit_speed: number;               // Average exit velocity
-  max_hit_speed: number;               // Max exit velocity
+  avg_hit_speed: number; // Average exit velocity
+  max_hit_speed: number; // Max exit velocity
 
   // Barrel metrics
-  brl_percent: number;                 // Barrel percentage
-  brl_pa: number;                      // Barrels per plate appearance
+  brl_percent: number; // Barrel percentage
+  brl_pa: number; // Barrels per plate appearance
 
   // Expected stats
-  xba: number;                         // Expected batting average
-  xslg: number;                        // Expected slugging
-  xwoba: number;                       // Expected wOBA
-  xiso: number;                        // Expected isolated power
+  xba: number; // Expected batting average
+  xslg: number; // Expected slugging
+  xwoba: number; // Expected wOBA
+  xiso: number; // Expected isolated power
 
   // Actual vs Expected
-  ba: number;                          // Actual BA
-  slg: number;                         // Actual SLG
-  woba: number;                        // Actual wOBA
+  ba: number; // Actual BA
+  slg: number; // Actual SLG
+  woba: number; // Actual wOBA
 
   // Hard hit metrics
-  hard_hit_percent: number;            // Hard hit percentage (95+ mph)
-  sweet_spot_percent: number;          // 8-32 degree launch angle
+  hard_hit_percent: number; // Hard hit percentage (95+ mph)
+  sweet_spot_percent: number; // 8-32 degree launch angle
   // ... 25+ more fields
 }
 
 interface StatcastSprintSpeed {
-  sprint_speed: number;                // ft/sec, competitive runs only
-  competitive_runs: number;            // Number of competitive runs
-  hp_to_1b: number | null;            // Home to first time (LH)
-  hp_to_1b_righty: number | null;     // Home to first time (RH)
+  sprint_speed: number; // ft/sec, competitive runs only
+  competitive_runs: number; // Number of competitive runs
+  hp_to_1b: number | null; // Home to first time (LH)
+  hp_to_1b_righty: number | null; // Home to first time (RH)
 }
 
 interface StatcastOAA {
-  outs_above_average: number;          // Total OAA
-  success_rate: number;                // Success rate
-  attempts: number;                    // Total attempts
-  plays_made: number;                  // Plays made
-  primary_pos_formatted: string;       // Position
+  outs_above_average: number; // Total OAA
+  success_rate: number; // Success rate
+  attempts: number; // Total attempts
+  plays_made: number; // Plays made
+  primary_pos_formatted: string; // Position
 }
 ```
 
 **Key Methods**:
+
 - `fetchPlayerBattedBalls()` - All batted ball events for a player
 - `fetchPlayerSeasonStats()` - Season-long Statcast aggregates
 - `fetchExpectedStatsLeaderboard()` - xStats leaderboard
@@ -311,6 +325,7 @@ interface StatcastOAA {
 - `fetchOAALeaderboard()` - OAA leaderboard by position
 
 **Utility Functions**:
+
 - `isBarrel()` - Classify barrel based on exit velo + launch angle
 - `isHardHit()` - Classify hard-hit ball (95+ mph)
 - `getExitVeloTier()` - Exit velocity tier classification
@@ -328,6 +343,7 @@ interface StatcastOAA {
 **Endpoint**: `GET /api/mlb/statcast/:playerId`
 
 **Query Parameters**:
+
 - `season` (number) - Defaults to current year
 - `type` ('batter' | 'pitcher') - Player type
 - `includeBattedBalls` (boolean) - Include batted ball events (default: true)
@@ -337,6 +353,7 @@ interface StatcastOAA {
 - `minExitVelo` (number) - Filter batted balls by minimum exit velocity
 
 **Response Structure**:
+
 ```json
 {
   "player": {
@@ -395,6 +412,7 @@ interface StatcastOAA {
 **Features**:
 
 **Tab-Based Interface**:
+
 - Overview - Season statistics summary
 - Batted Balls - Exit velocity vs launch angle chart
 - Spray Chart - Visual representation of batted ball locations
@@ -442,6 +460,7 @@ interface StatcastOAA {
    - Primary position
 
 **Responsive Design**:
+
 - Mobile: Single column layout
 - Tablet: 2-column stats grid
 - Desktop: Multi-column layout with large visualizations
@@ -489,21 +508,25 @@ StatcastAdapter.fetchPlayerBattedBalls()
 ### Test Examples
 
 1. **FanGraphs Batting Leaderboard**:
+
    ```
    https://blazesportsintel.com/mlb/leaderboards/?category=batting&season=2025&sortby=wRC+
    ```
 
 2. **FanGraphs Pitching Leaderboard**:
+
    ```
    https://blazesportsintel.com/mlb/leaderboards/?category=pitching&season=2025&sortby=FIP
    ```
 
 3. **WAR Leaders**:
+
    ```
    https://blazesportsintel.com/mlb/leaderboards/?category=war&season=2025&limit=100
    ```
 
 4. **Statcast Batter Profile**:
+
    ```
    https://blazesportsintel.com/mlb/statcast/?id=660271&season=2025&type=batter
    ```
@@ -535,13 +558,13 @@ curl https://blazesportsintel.com/api/mlb/statcast/543037?season=2025&type=pitch
 
 ### Response Times (Target vs Actual)
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Leaderboards (Cached) | < 200ms | ~120ms | ✅ |
-| Leaderboards (Uncached) | < 1.5s | ~900ms | ✅ |
-| Statcast (Cached) | < 300ms | ~180ms | ✅ |
-| Statcast (Uncached) | < 2s | ~1.4s | ✅ |
-| KV Cache Hit Rate | > 80% | ~88% | ✅ |
+| Metric                  | Target  | Actual | Status |
+| ----------------------- | ------- | ------ | ------ |
+| Leaderboards (Cached)   | < 200ms | ~120ms | ✅     |
+| Leaderboards (Uncached) | < 1.5s  | ~900ms | ✅     |
+| Statcast (Cached)       | < 300ms | ~180ms | ✅     |
+| Statcast (Uncached)     | < 2s    | ~1.4s  | ✅     |
+| KV Cache Hit Rate       | > 80%   | ~88%   | ✅     |
 
 ### Cache Effectiveness
 
@@ -559,6 +582,7 @@ curl https://blazesportsintel.com/api/mlb/statcast/543037?season=2025&type=pitch
 ### Cloudflare Usage (Estimated Monthly)
 
 **Assumptions**:
+
 - 20,000 total page views/month across leaderboards and Statcast pages
 - 75% cache hit rate
 - Average 4 API calls per uncached request
@@ -584,6 +608,7 @@ curl https://blazesportsintel.com/api/mlb/statcast/543037?season=2025&type=pitch
 **Total Monthly Cost**: **$0.00** (within free tier)
 
 At 200,000 views/month:
+
 - Workers: ~250,000 requests → **$0.00** (within free tier)
 - KV: ~200,000 reads, 50,000 writes → **$0.50**
 - Total: **~$0.50/month**
@@ -700,6 +725,7 @@ At 200,000 views/month:
 ### Key Metrics Explained
 
 **FanGraphs Metrics**:
+
 - **wOBA**: Weighted On-Base Average - measures overall offensive value (scale: .000 to ~.500)
 - **wRC+**: Weighted Runs Created Plus - offensive production adjusted for park and league (100 = average)
 - **WAR**: Wins Above Replacement - total player value (8+ = MVP, 5+ = All-Star, 2+ = Starter)
@@ -708,6 +734,7 @@ At 200,000 views/month:
 - **SIERA**: Skill-Interactive ERA - another ERA estimator using batted ball data
 
 **Statcast Metrics**:
+
 - **Exit Velocity**: Speed of ball off bat (elite: 92+ mph average)
 - **Launch Angle**: Vertical angle of batted ball (sweet spot: 8-32 degrees)
 - **Barrel**: Ideal combination of exit velo + launch angle (6-10% is above average)

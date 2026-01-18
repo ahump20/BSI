@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "Arkansas Edge",
     "lead_contact": "Brooks Cockrell",
-    "contact_channels": [
-      "info@arkansasedge.com",
-      "https://arkansasedge.com/contact"
-    ],
+    "contact_channels": ["info@arkansasedge.com", "https://arkansasedge.com/contact"],
     "recent_initiatives": "Fall 2024 Diamond Hog experience packages bundled with basketball season-ticket renewals.",
     "intel_status": "needs_verification"
   },
@@ -60,9 +57,7 @@
   "front_office": {
     "athletic_director": "Hunter Yurachek",
     "baseball_admin": "Kevin Trainor",
-    "financial_points_of_contact": [
-      "tickets@uark.edu"
-    ]
+    "financial_points_of_contact": ["tickets@uark.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 0,

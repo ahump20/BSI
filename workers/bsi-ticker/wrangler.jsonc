@@ -10,34 +10,34 @@
     "bindings": [
       {
         "name": "TICKER_ROOM",
-        "class_name": "TickerRoom"
-      }
-    ]
+        "class_name": "TickerRoom",
+      },
+    ],
   },
 
   // Migration for Durable Object (required for first deploy)
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["TickerRoom"]
-    }
+      "new_classes": ["TickerRoom"],
+    },
   ],
 
   // KV namespace for ticker cache
   "kv_namespaces": [
     {
       "binding": "BSI_TICKER_CACHE",
-      "id": "REPLACE_WITH_KV_ID",
-      "preview_id": "REPLACE_WITH_PREVIEW_KV_ID"
+      "id": "5d01a9493aaa4b29866bf7a1f411a984",
+      "preview_id": "5d01a9493aaa4b29866bf7a1f411a984"
     }
   ],
 
-  // D1 database for ticker history
+  // D1 database for ticker history (using main game DB)
   "d1_databases": [
     {
       "binding": "BSI_TICKER_DB",
-      "database_name": "bsi-ticker-db",
-      "database_id": "REPLACE_WITH_D1_ID"
+      "database_name": "bsi-game-db",
+      "database_id": "88eb676f-af0f-470c-a46a-b9429f5b51f3"
     }
   ],
 
@@ -46,8 +46,8 @@
     "producers": [
       {
         "binding": "BSI_TICKER_QUEUE",
-        "queue": "bsi-ticker-events"
-      }
+        "queue": "bsi-ticker-events",
+      },
     ],
     "consumers": [
       {
@@ -55,14 +55,14 @@
         "max_batch_size": 10,
         "max_batch_timeout": 5,
         "max_retries": 3,
-        "dead_letter_queue": "bsi-ticker-dlq"
-      }
-    ]
+        "dead_letter_queue": "bsi-ticker-dlq",
+      },
+    ],
   },
 
   // Environment variables
   "vars": {
-    "ALLOWED_ORIGINS": "https://blazesportsintel.com,https://www.blazesportsintel.com,http://localhost:3000"
+    "ALLOWED_ORIGINS": "https://blazesportsintel.com,https://www.blazesportsintel.com,http://localhost:3000",
   },
 
   // Secrets (set via wrangler secret put API_SECRET)
@@ -70,19 +70,19 @@
 
   // Worker limits
   "limits": {
-    "cpu_ms": 50
+    "cpu_ms": 50,
   },
 
   // Observability
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
 
   // Routes (optional - can also use *.workers.dev)
   "routes": [
     {
       "pattern": "ticker.blazesportsintel.com/*",
-      "custom_domain": true
+      "zone_name": "blazesportsintel.com"
     }
-  ]
+  ],
 }

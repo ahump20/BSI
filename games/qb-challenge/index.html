@@ -1,575 +1,596 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Blaze QB Challenge | BlazeSportsIntel.com</title>
-  <meta name="description" content="Test your quarterback accuracy in this 60-second throwing challenge from Blaze Sports Intel.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Blaze QB Challenge | BlazeSportsIntel.com</title>
+    <meta
+      name="description"
+      content="Test your quarterback accuracy in this 60-second throwing challenge from Blaze Sports Intel."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Blaze QB Challenge" />
+    <meta
+      property="og:description"
+      content="Test your quarterback accuracy in this 60-second throwing challenge!"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://blaze-qb-challenge.pages.dev" />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+        color: white;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Loading Screen */
+      #loadingScreen {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+        z-index: 1000;
+      }
+
+      .loading-logo {
+        font-size: 4rem;
+        animation: bounce 1s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .loading-text {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        opacity: 0.8;
+      }
+
+      /* Menu Screen */
+      #menuScreen {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
+        z-index: 100;
+      }
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Blaze QB Challenge">
-  <meta property="og:description" content="Test your quarterback accuracy in this 60-second throwing challenge!">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://blaze-qb-challenge.pages.dev">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>">
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
-      color: white;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Loading Screen */
-    #loadingScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
-      z-index: 1000;
-    }
-
-    .loading-logo {
-      font-size: 4rem;
-      animation: bounce 1s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .loading-text {
-      margin-top: 1rem;
-      font-size: 1.2rem;
-      opacity: 0.8;
-    }
-
-    /* Menu Screen */
-    #menuScreen {
-      position: fixed;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 50%, #1a472a 100%);
-      z-index: 100;
-    }
-
-    .menu-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 0.5rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .menu-subtitle {
-      font-size: 1rem;
-      opacity: 0.8;
-      margin-bottom: 2rem;
-    }
-
-    .high-score-display {
-      background: rgba(255,255,255,0.1);
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .high-score-label {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      text-transform: uppercase;
-    }
-
-    .high-score-value {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #ffd700;
-    }
-
-    /* QB Selection */
-    .qb-select-title {
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      opacity: 0.9;
-    }
-
-    #qbSelect {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 2rem;
-      max-width: 600px;
-    }
-
-    .qb-card {
-      background: rgba(255,255,255,0.1);
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      width: 120px;
-      text-align: center;
-    }
-
-    .qb-card:hover {
-      background: rgba(255,255,255,0.2);
-      transform: translateY(-2px);
-    }
-
-    .qb-card.selected {
-      border-color: #ffd700;
-      background: rgba(255,215,0,0.2);
-    }
-
-    .qb-card.locked {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .qb-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin: 0 auto 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: white;
-    }
-
-    .qb-name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .qb-stats {
-      font-size: 0.7rem;
-      opacity: 0.7;
-    }
-
-    /* Play Button */
-    .play-button {
-      background: linear-gradient(135deg, #8b4513, #a0522d);
-      color: white;
-      border: none;
-      padding: 1rem 3rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      text-transform: uppercase;
-      box-shadow: 0 4px 15px rgba(139,69,19,0.4);
-      transition: all 0.2s;
-    }
-
-    .play-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(139,69,19,0.5);
-    }
-
-    /* Game Canvas */
-    #renderCanvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      touch-action: none;
-    }
-
-    /* Game UI Overlay */
-    #gameUI {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      display: none;
-      justify-content: space-between;
-      padding: 1rem;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .game-stat {
-      background: rgba(0,0,0,0.7);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      opacity: 0.7;
-      text-transform: uppercase;
-    }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-
-    #timer {
-      color: #4ade80;
-    }
-
-    #timer.timer-warning {
-      color: #ef4444;
-      animation: pulse 0.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    #score {
-      color: #ffd700;
-    }
-
-    /* Target Indicator */
-    #targetIndicator {
-      position: fixed;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      padding: 0.5rem 1.5rem;
-      border-radius: 20px;
-      display: none;
-      z-index: 10;
-    }
-
-    .target-label {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
-
-    .target-name {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #ffd700;
-    }
-
-    /* Game Over Screen */
-    #gameOverScreen {
-      position: fixed;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 2rem;
-      background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
-      z-index: 100;
-      overflow-y: auto;
-    }
-
-    .game-over-title {
-      font-size: 1.5rem;
-      opacity: 0.8;
-      margin-bottom: 0.5rem;
-    }
-
-    .final-score {
-      font-size: 4rem;
-      font-weight: 800;
-      color: #ffd700;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    .new-high-score {
-      background: linear-gradient(135deg, #ffd700, #ffed4a);
-      color: #1a472a;
-      padding: 0.25rem 1rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-
-    /* Stats Grid */
-    #gameStats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.5rem;
-      background: rgba(255,255,255,0.1);
-      border-radius: 6px;
-    }
-
-    /* Name Input */
-    .name-section {
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 1.5rem;
-    }
-
-    .name-input-row {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    #playerNameInput {
-      flex: 1;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      background: rgba(255,255,255,0.9);
-      color: #1a472a;
-    }
-
-    #saveNameBtn {
-      padding: 0.75rem 1.5rem;
-      background: #8b4513;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* Share Buttons */
-    .share-section {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .share-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    #shareXBtn {
-      background: #000;
-      color: white;
-    }
-
-    #copyLinkBtn {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    #copyLinkBtn.copied {
-      background: #22c55e;
-    }
-
-    /* Leaderboard */
-    #leaderboard {
-      width: 100%;
-      max-width: 400px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .leaderboard-title {
-      font-size: 1rem;
-      font-weight: bold;
-      margin-bottom: 0.75rem;
-      text-align: center;
-    }
-
-    .leaderboard-entry {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.5rem;
-      border-radius: 4px;
-    }
-
-    .leaderboard-entry:nth-child(odd) {
-      background: rgba(255,255,255,0.05);
-    }
-
-    .rank {
-      font-weight: bold;
-      color: #ffd700;
-      width: 30px;
-    }
-
-    .player {
-      flex: 1;
-    }
-
-    .lb-score {
-      font-weight: bold;
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .action-btn {
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    #playAgainButton {
-      background: linear-gradient(135deg, #8b4513, #a0522d);
-      color: white;
-    }
-
-    #menuButton {
-      background: rgba(255,255,255,0.2);
-      color: white;
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 480px) {
       .menu-title {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .menu-subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
+        margin-bottom: 2rem;
+      }
+
+      .high-score-display {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .high-score-label {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        text-transform: uppercase;
+      }
+
+      .high-score-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ffd700;
+      }
+
+      /* QB Selection */
+      .qb-select-title {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+      }
+
+      #qbSelect {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 2rem;
+        max-width: 600px;
       }
 
       .qb-card {
-        width: 100px;
-        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 120px;
+        text-align: center;
+      }
+
+      .qb-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .qb-card.selected {
+        border-color: #ffd700;
+        background: rgba(255, 215, 0, 0.2);
+      }
+
+      .qb-card.locked {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .qb-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin: 0 auto 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+      }
+
+      .qb-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .qb-stats {
+        font-size: 0.7rem;
+        opacity: 0.7;
+      }
+
+      /* Play Button */
+      .play-button {
+        background: linear-gradient(135deg, #8b4513, #a0522d);
+        color: white;
+        border: none;
+        padding: 1rem 3rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(139, 69, 19, 0.4);
+        transition: all 0.2s;
+      }
+
+      .play-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5);
+      }
+
+      /* Game Canvas */
+      #renderCanvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        touch-action: none;
+      }
+
+      /* Game UI Overlay */
+      #gameUI {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: none;
+        justify-content: space-between;
+        padding: 1rem;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .game-stat {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .stat-label {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      #timer {
+        color: #4ade80;
+      }
+
+      #timer.timer-warning {
+        color: #ef4444;
+        animation: pulse 0.5s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      #score {
+        color: #ffd700;
+      }
+
+      /* Target Indicator */
+      #targetIndicator {
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        padding: 0.5rem 1.5rem;
+        border-radius: 20px;
+        display: none;
+        z-index: 10;
+      }
+
+      .target-label {
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+
+      .target-name {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #ffd700;
+      }
+
+      /* Game Over Screen */
+      #gameOverScreen {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2rem;
+        background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+        z-index: 100;
+        overflow-y: auto;
+      }
+
+      .game-over-title {
+        font-size: 1.5rem;
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
       }
 
       .final-score {
-        font-size: 3rem;
+        font-size: 4rem;
+        font-weight: 800;
+        color: #ffd700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
 
+      .new-high-score {
+        background: linear-gradient(135deg, #ffd700, #ffed4a);
+        color: #1a472a;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      /* Stats Grid */
       #gameStats {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 1.5rem;
       }
-    }
-  </style>
-</head>
-<body>
-  <!-- Loading Screen -->
-  <div id="loadingScreen">
-    <div class="loading-logo">🏈</div>
-    <div class="loading-text">Loading QB Challenge...</div>
-  </div>
 
-  <!-- Menu Screen -->
-  <div id="menuScreen">
-    <h1 class="menu-title">🏈 QB Challenge</h1>
-    <p class="menu-subtitle">Test your accuracy in 60 seconds</p>
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+      }
 
-    <div class="high-score-display">
-      <div class="high-score-label">Your Best</div>
-      <div class="high-score-value" id="highScore">0</div>
+      /* Name Input */
+      .name-section {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 1.5rem;
+      }
+
+      .name-input-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      #playerNameInput {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        color: #1a472a;
+      }
+
+      #saveNameBtn {
+        padding: 0.75rem 1.5rem;
+        background: #8b4513;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      /* Share Buttons */
+      .share-section {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .share-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+
+      #shareXBtn {
+        background: #000;
+        color: white;
+      }
+
+      #copyLinkBtn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      #copyLinkBtn.copied {
+        background: #22c55e;
+      }
+
+      /* Leaderboard */
+      #leaderboard {
+        width: 100%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .leaderboard-title {
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 0.75rem;
+        text-align: center;
+      }
+
+      .leaderboard-entry {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+
+      .leaderboard-entry:nth-child(odd) {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .rank {
+        font-weight: bold;
+        color: #ffd700;
+        width: 30px;
+      }
+
+      .player {
+        flex: 1;
+      }
+
+      .lb-score {
+        font-weight: bold;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .action-btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      #playAgainButton {
+        background: linear-gradient(135deg, #8b4513, #a0522d);
+        color: white;
+      }
+
+      #menuButton {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      /* Mobile optimizations */
+      @media (max-width: 480px) {
+        .menu-title {
+          font-size: 1.8rem;
+        }
+
+        .qb-card {
+          width: 100px;
+          padding: 0.75rem;
+        }
+
+        .final-score {
+          font-size: 3rem;
+        }
+
+        #gameStats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+      <div class="loading-logo">🏈</div>
+      <div class="loading-text">Loading QB Challenge...</div>
     </div>
 
-    <div class="qb-select-title">Select Your QB</div>
-    <div id="qbSelect"></div>
+    <!-- Menu Screen -->
+    <div id="menuScreen">
+      <h1 class="menu-title">🏈 QB Challenge</h1>
+      <p class="menu-subtitle">Test your accuracy in 60 seconds</p>
 
-    <button class="play-button" id="playButton">Start Challenge</button>
-  </div>
+      <div class="high-score-display">
+        <div class="high-score-label">Your Best</div>
+        <div class="high-score-value" id="highScore">0</div>
+      </div>
 
-  <!-- Game Canvas -->
-  <canvas id="renderCanvas"></canvas>
+      <div class="qb-select-title">Select Your QB</div>
+      <div id="qbSelect"></div>
 
-  <!-- Game UI -->
-  <div id="gameUI">
-    <div class="game-stat">
-      <div class="stat-label">Time</div>
-      <div class="stat-value" id="timer">60</div>
+      <button class="play-button" id="playButton">Start Challenge</button>
     </div>
-    <div class="game-stat">
-      <div class="stat-label">Score</div>
-      <div class="stat-value" id="score">0</div>
-    </div>
-    <div class="game-stat">
-      <div class="stat-label">Completed</div>
-      <div class="stat-value" id="completed">0/0</div>
-    </div>
-    <div class="game-stat">
-      <div class="stat-label">Streak</div>
-      <div class="stat-value" id="streak">0</div>
-    </div>
-  </div>
 
-  <!-- Target Indicator -->
-  <div id="targetIndicator">
-    <span class="target-label">Target: </span>
-    <span class="target-name" id="targetName">Receiver</span>
-  </div>
+    <!-- Game Canvas -->
+    <canvas id="renderCanvas"></canvas>
 
-  <!-- Game Over Screen -->
-  <div id="gameOverScreen">
-    <div class="game-over-title">Challenge Complete!</div>
-    <div class="final-score" id="finalScore">0</div>
-
-    <div id="gameStats"></div>
-
-    <div class="name-section">
-      <div class="name-input-row">
-        <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20">
-        <button id="saveNameBtn">Save</button>
+    <!-- Game UI -->
+    <div id="gameUI">
+      <div class="game-stat">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="timer">60</div>
+      </div>
+      <div class="game-stat">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="game-stat">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completed">0/0</div>
+      </div>
+      <div class="game-stat">
+        <div class="stat-label">Streak</div>
+        <div class="stat-value" id="streak">0</div>
       </div>
     </div>
 
-    <div class="share-section">
-      <a id="shareXBtn" class="share-btn" target="_blank" rel="noopener">
-        <span>𝕏</span> Share
-      </a>
-      <button id="copyLinkBtn" class="share-btn">
-        <span>📋</span> Copy Link
-      </button>
+    <!-- Target Indicator -->
+    <div id="targetIndicator">
+      <span class="target-label">Target: </span>
+      <span class="target-name" id="targetName">Receiver</span>
     </div>
 
-    <div id="leaderboard">
-      <div class="leaderboard-title">Loading leaderboard...</div>
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen">
+      <div class="game-over-title">Challenge Complete!</div>
+      <div class="final-score" id="finalScore">0</div>
+
+      <div id="gameStats"></div>
+
+      <div class="name-section">
+        <div class="name-input-row">
+          <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="20" />
+          <button id="saveNameBtn">Save</button>
+        </div>
+      </div>
+
+      <div class="share-section">
+        <a id="shareXBtn" class="share-btn" target="_blank" rel="noopener">
+          <span>𝕏</span> Share
+        </a>
+        <button id="copyLinkBtn" class="share-btn"><span>📋</span> Copy Link</button>
+      </div>
+
+      <div id="leaderboard">
+        <div class="leaderboard-title">Loading leaderboard...</div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="action-btn" id="playAgainButton">Play Again</button>
+        <button class="action-btn" id="menuButton">Menu</button>
+      </div>
     </div>
 
-    <div class="action-buttons">
-      <button class="action-btn" id="playAgainButton">Play Again</button>
-      <button class="action-btn" id="menuButton">Menu</button>
-    </div>
-  </div>
-
-  <script type="module" src="/src/main.ts"></script>
-</body>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

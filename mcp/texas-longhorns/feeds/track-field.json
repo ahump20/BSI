@@ -21,15 +21,15 @@
         }
       },
       "ncaaChampionships": [
-        {"year": 2024, "type": "Outdoor", "points": 72, "coach": "Edrick Floréal"},
-        {"year": 2022, "type": "Outdoor", "points": 68, "coach": "Edrick Floréal"},
-        {"year": 2021, "type": "Outdoor", "points": 76, "coach": "Edrick Floréal"},
-        {"year": 2020, "type": "Indoor", "points": 58, "coach": "Edrick Floréal"},
-        {"year": 2019, "type": "Indoor", "points": 63, "coach": "Edrick Floréal"},
-        {"year": 2006, "type": "Outdoor", "points": 62, "coach": "Bev Kearney"},
-        {"year": 2005, "type": "Outdoor", "points": 64, "coach": "Bev Kearney"},
-        {"year": 1999, "type": "Outdoor", "points": 56, "coach": "Bev Kearney"},
-        {"year": 1998, "type": "Outdoor", "points": 69, "coach": "Bev Kearney"}
+        { "year": 2024, "type": "Outdoor", "points": 72, "coach": "Edrick Floréal" },
+        { "year": 2022, "type": "Outdoor", "points": 68, "coach": "Edrick Floréal" },
+        { "year": 2021, "type": "Outdoor", "points": 76, "coach": "Edrick Floréal" },
+        { "year": 2020, "type": "Indoor", "points": 58, "coach": "Edrick Floréal" },
+        { "year": 2019, "type": "Indoor", "points": 63, "coach": "Edrick Floréal" },
+        { "year": 2006, "type": "Outdoor", "points": 62, "coach": "Bev Kearney" },
+        { "year": 2005, "type": "Outdoor", "points": 64, "coach": "Bev Kearney" },
+        { "year": 1999, "type": "Outdoor", "points": 56, "coach": "Bev Kearney" },
+        { "year": 1998, "type": "Outdoor", "points": 69, "coach": "Bev Kearney" }
       ],
       "olympicAthletes": [
         {
@@ -75,20 +75,13 @@
           "year": "2024 Outdoor",
           "ncaaFinish": "National Champions",
           "points": 72,
-          "eventTitles": [
-            "4x100m relay (42.19)",
-            "100m hurdles (12.32)",
-            "Long jump (6.95m)"
-          ]
+          "eventTitles": ["4x100m relay (42.19)", "100m hurdles (12.32)", "Long jump (6.95m)"]
         },
         {
           "year": "2024 Indoor",
           "ncaaFinish": "Runner-up",
           "points": 59,
-          "eventTitles": [
-            "200m (22.32)",
-            "400m (50.82)"
-          ]
+          "eventTitles": ["200m (22.32)", "400m (50.82)"]
         }
       ],
       "schedule": {
@@ -166,16 +159,25 @@
           "name": "Sanya Richards-Ross",
           "years": "2000-2002",
           "event": "400m",
-          "accolades": ["5x Olympic medalist (4 Gold)", "9x NCAA Champion", "American record holder (48.70)"],
+          "accolades": [
+            "5x Olympic medalist (4 Gold)",
+            "9x NCAA Champion",
+            "American record holder (48.70)"
+          ],
           "personalBests": {
-            "400m": 48.70
+            "400m": 48.7
           }
         },
         {
           "name": "Julien Alfred",
           "years": "2021-2024",
           "event": "Sprints",
-          "accolades": ["2024 Olympic Gold 100m", "2024 Olympic Silver 200m", "NCAA Champion", "Bowerman Award Winner"],
+          "accolades": [
+            "2024 Olympic Gold 100m",
+            "2024 Olympic Silver 200m",
+            "NCAA Champion",
+            "Bowerman Award Winner"
+          ],
           "personalBests": {
             "100m": 10.72,
             "200m": 21.86
@@ -194,7 +196,10 @@
           "name": "Tori Bowie",
           "years": "2009-2011",
           "event": "Sprints/Long Jump",
-          "accolades": ["3x Olympic medalist (1 Gold, 1 Silver, 1 Bronze)", "2017 World Champion 100m"],
+          "accolades": [
+            "3x Olympic medalist (1 Gold, 1 Silver, 1 Bronze)",
+            "2017 World Champion 100m"
+          ],
           "personalBests": {
             "100m": 10.78,
             "200m": 21.77,
@@ -222,7 +227,11 @@
           "name": "Bev Kearney",
           "years": "1993-2012",
           "ncaaTeamTitles": 7,
-          "accolades": ["7x NCAA Team Championships", "Hall of Fame Coach", "Winningest coach in Texas history"]
+          "accolades": [
+            "7x NCAA Team Championships",
+            "Hall of Fame Coach",
+            "Winningest coach in Texas history"
+          ]
         }
       ]
     },
@@ -238,8 +247,8 @@
         "allAmericans": 423
       },
       "ncaaChampionships": [
-        {"year": 1982, "type": "Outdoor", "coach": "Cleburne Price"},
-        {"year": 1981, "type": "Outdoor", "coach": "Cleburne Price"}
+        { "year": 1982, "type": "Outdoor", "coach": "Cleburne Price" },
+        { "year": 1981, "type": "Outdoor", "coach": "Cleburne Price" }
       ],
       "olympicAthletes": [
         {
@@ -278,18 +287,13 @@
           "year": "2024 Outdoor",
           "ncaaFinish": "7th",
           "points": 32,
-          "eventTitles": [
-            "Pole vault (5.72m)",
-            "4x400m relay (2:58.88)"
-          ]
+          "eventTitles": ["Pole vault (5.72m)", "4x400m relay (2:58.88)"]
         },
         {
           "year": "2024 Indoor",
           "ncaaFinish": "5th",
           "points": 41,
-          "eventTitles": [
-            "60m (6.52)"
-          ]
+          "eventTitles": ["60m (6.52)"]
         }
       ],
       "schedule": {
@@ -326,9 +330,7 @@
           "location": "The Podium (Spokane, WA)",
           "teamFinish": 5,
           "points": 41,
-          "eventHighlights": [
-            "Michael Holland wins 800m (1:45.02)"
-          ]
+          "eventHighlights": ["Michael Holland wins 800m (1:45.02)"]
         }
       },
       "athletes": [
@@ -357,7 +359,11 @@
           "name": "Ryan Crouser",
           "years": "2012-2016",
           "event": "Shot Put",
-          "accolades": ["3x Olympic Gold medalist", "World record holder (23.56m)", "6x NCAA Champion"],
+          "accolades": [
+            "3x Olympic Gold medalist",
+            "World record holder (23.56m)",
+            "6x NCAA Champion"
+          ],
           "personalBests": {
             "shotPut": 23.56
           }

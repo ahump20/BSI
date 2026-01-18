@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "The Grove Collective",
     "lead_contact": "Walker Jones",
-    "contact_channels": [
-      "info@thegrovecollective.com",
-      "https://thegrovecollective.com/contact"
-    ],
+    "contact_channels": ["info@thegrovecollective.com", "https://thegrovecollective.com/contact"],
     "recent_initiatives": "Rolling out baseball mentorship dinners with Oxford business leaders (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Keith Carter",
     "baseball_admin": "Jamie Holder",
-    "financial_points_of_contact": [
-      "rebelticketoffice@olemiss.edu"
-    ]
+    "financial_points_of_contact": ["rebelticketoffice@olemiss.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 1,

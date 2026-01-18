@@ -36,12 +36,14 @@ BSI permits AI-generated assets from the following categories of tools:
 ### 1. Prompt Design for Originality
 
 **DO:**
+
 - ✅ Use generic, descriptive terms ("kid-friendly baseball character")
 - ✅ Specify style in broad terms ("90s arcade aesthetic", "cartoon style")
 - ✅ Request original content explicitly ("original design, not based on existing characters")
 - ✅ Describe functional elements ("character wearing blue uniform, holding bat")
 
 **DON'T:**
+
 - ❌ Name specific characters ("Pablo Sanchez", "Mickey Mouse")
 - ❌ Reference copyrighted franchises ("Backyard Baseball style", "Disney-like")
 - ❌ Request trademarked imagery ("Yankees logo", "MLB official")
@@ -121,6 +123,7 @@ medium intensity, loopable"
 ```
 
 **Avoid:**
+
 - ❌ Copyrighted music or jingles
 - ❌ Celebrity or announcer voices
 - ❌ Trademarked sound effects (e.g., specific TV show sounds)
@@ -250,6 +253,7 @@ If first generation isn't suitable:
 ### Prompt Refinement Strategies
 
 1. **More Specificity**: Add details to avoid ambiguity
+
    ```
    Before: "baseball player"
    After: "baseball player character, child, cartoon style, wearing solid blue uniform
@@ -257,12 +261,14 @@ If first generation isn't suitable:
    ```
 
 2. **Style Constraints**: Lock down style to prevent IP similarity
+
    ```
    Add: "geometric shapes only, no realistic features, limited color palette:
    red, blue, white, black"
    ```
 
 3. **Negative Prompts**: Explicitly exclude unwanted elements
+
    ```
    Add: "no resemblance to existing franchises, no copyrighted characters,
    no specific team branding, avoid realistic faces"
@@ -306,6 +312,7 @@ Before finalizing an AI-generated asset:
 ### Scenario: Need a pitcher character sprite
 
 **1. Planning**
+
 - Asset: Pitcher character for gameplay
 - Specs: 256x256px, transparent PNG, cartoon style
 - Style: Match existing batter character (simple, colorful)
@@ -320,11 +327,13 @@ transparent background, colorful, kid-friendly, no copyrighted references"
 ```
 
 **3. Generation**
+
 - Tool: Midjourney (Commercial plan)
 - Generated: 5 variations
 - Selected: Variation 2 (most generic, good pose)
 
 **4. Verification**
+
 - Manual review: ✅ No resemblance to known characters
 - Reverse image search: ✅ No matches
 - Team review: ✅ Approved by 2 developers
@@ -352,11 +361,12 @@ LICENSE TERMS: https://docs.midjourney.com/docs/terms-of-service
 
 Updated `assets/LICENSES.md`:
 
-| Asset | Type | Source | License | Attribution | Date Added |
-|-------|------|--------|---------|-------------|------------|
-| player_pitcher_01.png | 2D Sprite | AI-generated (Midjourney) | Commercial use permitted | N/A | 2025-11-20 |
+| Asset                 | Type      | Source                    | License                  | Attribution | Date Added |
+| --------------------- | --------- | ------------------------- | ------------------------ | ----------- | ---------- |
+| player_pitcher_01.png | 2D Sprite | AI-generated (Midjourney) | Commercial use permitted | N/A         | 2025-11-20 |
 
 **6. Integration**
+
 - File saved to `apps/games/phaser-bbp-web/assets/sprites/`
 - Loaded in BootScene.ts
 - Used in GameScene.ts

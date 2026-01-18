@@ -18,27 +18,27 @@ The BSI platform demonstrates **strong API performance** with all endpoints meet
 
 ### Response Time Summary
 
-| Endpoint | Measured | SLO | Status |
-|----------|----------|-----|--------|
-| `/v1/health` | 40ms | 500ms | ✅ Excellent |
-| `/v1/predict/game/:id` | 198ms | 2,000ms | ✅ Excellent |
-| `/v1/calibration/:sport` | 111ms | 1,000ms | ✅ Excellent |
-| `/v1/state/team/:id` | 81ms | 1,000ms | ✅ Excellent |
+| Endpoint                 | Measured | SLO     | Status       |
+| ------------------------ | -------- | ------- | ------------ |
+| `/v1/health`             | 40ms     | 500ms   | ✅ Excellent |
+| `/v1/predict/game/:id`   | 198ms    | 2,000ms | ✅ Excellent |
+| `/v1/calibration/:sport` | 111ms    | 1,000ms | ✅ Excellent |
+| `/v1/state/team/:id`     | 81ms     | 1,000ms | ✅ Excellent |
 
 ### Multi-Sport Performance
 
 | Sport | Response Time | Status |
-|-------|---------------|--------|
-| CFB | 191ms | ✅ |
-| NFL | 208ms | ✅ |
-| MLB | 273ms | ✅ |
+| ----- | ------------- | ------ |
+| CFB   | 191ms         | ✅     |
+| NFL   | 208ms         | ✅     |
+| MLB   | 273ms         | ✅     |
 
 ### Concurrent Load Testing
 
-| Test | Result | Status |
-|------|--------|--------|
-| 5 concurrent predictions | 317ms total | ✅ |
-| 10 concurrent health checks | 206ms total | ✅ |
+| Test                        | Result      | Status |
+| --------------------------- | ----------- | ------ |
+| 5 concurrent predictions    | 317ms total | ✅     |
+| 10 concurrent health checks | 206ms total | ✅     |
 
 ### Cache Effectiveness
 
@@ -52,15 +52,15 @@ The BSI platform demonstrates **strong API performance** with all endpoints meet
 
 ### Core Web Vitals
 
-| Metric | Value | Target | Status |
-|--------|-------|--------|--------|
-| **Performance Score** | 70 | 90+ | ⚠️ Needs work |
-| First Contentful Paint (FCP) | 1.0s | < 1.8s | ✅ Good |
-| Largest Contentful Paint (LCP) | 3.2s | < 2.5s | ⚠️ Needs work |
-| Total Blocking Time (TBT) | 50ms | < 200ms | ✅ Good |
-| Cumulative Layout Shift (CLS) | 0.682 | < 0.1 | ❌ Poor |
-| Speed Index | 1.7s | < 3.4s | ✅ Good |
-| Time to Interactive (TTI) | 11.3s | < 3.8s | ⚠️ Needs work |
+| Metric                         | Value | Target  | Status        |
+| ------------------------------ | ----- | ------- | ------------- |
+| **Performance Score**          | 70    | 90+     | ⚠️ Needs work |
+| First Contentful Paint (FCP)   | 1.0s  | < 1.8s  | ✅ Good       |
+| Largest Contentful Paint (LCP) | 3.2s  | < 2.5s  | ⚠️ Needs work |
+| Total Blocking Time (TBT)      | 50ms  | < 200ms | ✅ Good       |
+| Cumulative Layout Shift (CLS)  | 0.682 | < 0.1   | ❌ Poor       |
+| Speed Index                    | 1.7s  | < 3.4s  | ✅ Good       |
+| Time to Interactive (TTI)      | 11.3s | < 3.8s  | ⚠️ Needs work |
 
 ### Opportunities for Improvement
 
@@ -89,22 +89,26 @@ The BSI platform demonstrates **strong API performance** with all endpoints meet
 ## Test Suite Results
 
 ### Prediction API Tests
+
 - **Total:** 30 tests
 - **Passed:** 30 ✅
 - **Failed:** 0
 
 ### Performance Tests
+
 - **Total:** 14 tests
 - **Passed:** 14 ✅
 - **All SLOs met**
 
 ### Integration Tests
+
 - **Total:** 50 tests
 - **Passed:** 34 ✅
 - **Failed:** 13 ⚠️
 - **Skipped:** 3
 
 **Integration Test Failures (Non-Critical):**
+
 - MLB standings endpoints - data population issue
 - Cache warming tests - timing sensitivity
 - Circuit breaker tests - mock timing issues
@@ -152,28 +156,28 @@ These failures are in test infrastructure rather than production code. The actua
 
 Recommended performance budget for blazesportsintel.com:
 
-| Metric | Budget |
-|--------|--------|
-| Total page weight | < 1MB |
-| JavaScript bundle | < 300KB (gzipped) |
-| CSS bundle | < 50KB (gzipped) |
-| LCP | < 2.5s |
-| CLS | < 0.1 |
-| TTI | < 5s |
-| API response (p95) | < 500ms |
+| Metric             | Budget            |
+| ------------------ | ----------------- |
+| Total page weight  | < 1MB             |
+| JavaScript bundle  | < 300KB (gzipped) |
+| CSS bundle         | < 50KB (gzipped)  |
+| LCP                | < 2.5s            |
+| CLS                | < 0.1             |
+| TTI                | < 5s              |
+| API response (p95) | < 500ms           |
 
 ---
 
 ## Verified Performance Controls
 
-| Control | Status | Notes |
-|---------|--------|-------|
-| API Response Times | ✅ | All endpoints under SLO |
-| Cache Effectiveness | ✅ | 49% improvement warm vs cold |
-| Concurrent Load | ✅ | Handles 10+ concurrent requests |
-| Error Path Performance | ✅ | Fast failure responses |
-| Multi-Sport Coverage | ✅ | CFB, NFL, MLB all performant |
-| Off-Season Resilience | ✅ | Graceful degradation |
+| Control                | Status | Notes                           |
+| ---------------------- | ------ | ------------------------------- |
+| API Response Times     | ✅     | All endpoints under SLO         |
+| Cache Effectiveness    | ✅     | 49% improvement warm vs cold    |
+| Concurrent Load        | ✅     | Handles 10+ concurrent requests |
+| Error Path Performance | ✅     | Fast failure responses          |
+| Multi-Sport Coverage   | ✅     | CFB, NFL, MLB all performant    |
+| Off-Season Resilience  | ✅     | Graceful degradation            |
 
 ---
 
@@ -189,4 +193,4 @@ The foundation is solid. With the recommended optimizations, the site can achiev
 
 ---
 
-*Born to blaze the path less beaten—and load fast doing it.*
+_Born to blaze the path less beaten—and load fast doing it._

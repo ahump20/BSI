@@ -11,6 +11,7 @@
 **Location:** `/components/sports/ScoreCard.tsx`
 
 ESPN-style score card with:
+
 - Team logos/abbreviations with proper styling
 - Live game indicators with pulsing animation
 - Status bar showing game state (scheduled, live, final)
@@ -21,12 +22,13 @@ ESPN-style score card with:
 - Support for MLB, NFL, NBA, college baseball, and college football
 
 **Props:**
+
 ```typescript
 interface ScoreCardProps {
   gameId?: string | number;
   homeTeam: Team;
   awayTeam: Team;
-  status: GameStatus;  // 'scheduled' | 'live' | 'final' | 'delayed' | 'postponed'
+  status: GameStatus; // 'scheduled' | 'live' | 'final' | 'delayed' | 'postponed'
   gameTime?: string;
   venue?: string;
   inning?: string;
@@ -41,6 +43,7 @@ interface ScoreCardProps {
 ```
 
 **Usage:**
+
 ```tsx
 import { ScoreCard, ScoreCardGrid } from '@/components/sports';
 
@@ -54,7 +57,7 @@ import { ScoreCard, ScoreCardGrid } from '@/components/sports';
     href="/mlb/game/746812"
     linescore={gameData.linescore}
   />
-</ScoreCardGrid>
+</ScoreCardGrid>;
 ```
 
 ---
@@ -64,6 +67,7 @@ import { ScoreCard, ScoreCardGrid } from '@/components/sports';
 **Location:** `/components/box-score/BoxScoreTable.tsx`
 
 Full box score display with:
+
 - Linescore header showing runs by inning
 - Batting tables with AB, R, H, RBI, BB, SO, AVG
 - Pitching tables with IP, H, R, ER, BB, SO, ERA
@@ -74,6 +78,7 @@ Full box score display with:
 - Tab navigation between batting/pitching
 
 **Props:**
+
 ```typescript
 interface BoxScoreTableProps {
   linescore?: Linescore;
@@ -87,6 +92,7 @@ interface BoxScoreTableProps {
 ```
 
 **Usage:**
+
 ```tsx
 import { BoxScoreTable } from '@/components/box-score';
 
@@ -96,7 +102,7 @@ import { BoxScoreTable } from '@/components/box-score';
   awayTeam={{ name: 'Cardinals', abbreviation: 'STL', score: 5 }}
   homeTeam={{ name: 'Cubs', abbreviation: 'CHC', score: 3 }}
   variant="full"
-/>
+/>;
 ```
 
 ---
@@ -107,17 +113,18 @@ import { BoxScoreTable } from '@/components/box-score';
 
 ### Route Structure
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/mlb/game/[gameId]` | Summary | Game overview with key stats, batting leaders, pitching summary |
-| `/mlb/game/[gameId]/box-score` | BoxScorePage | Full batting and pitching statistics |
-| `/mlb/game/[gameId]/play-by-play` | PlayByPlayPage | All plays organized by inning with filters |
-| `/mlb/game/[gameId]/team-stats` | TeamStatsPage | Team comparison bars and game insights |
-| `/mlb/game/[gameId]/recap` | RecapPage | Narrative game summary with scoring plays |
+| Route                             | Component      | Description                                                     |
+| --------------------------------- | -------------- | --------------------------------------------------------------- |
+| `/mlb/game/[gameId]`              | Summary        | Game overview with key stats, batting leaders, pitching summary |
+| `/mlb/game/[gameId]/box-score`    | BoxScorePage   | Full batting and pitching statistics                            |
+| `/mlb/game/[gameId]/play-by-play` | PlayByPlayPage | All plays organized by inning with filters                      |
+| `/mlb/game/[gameId]/team-stats`   | TeamStatsPage  | Team comparison bars and game insights                          |
+| `/mlb/game/[gameId]/recap`        | RecapPage      | Narrative game summary with scoring plays                       |
 
 ### Shared Layout
 
 The layout (`layout.tsx`) provides:
+
 - Game data context via `useGameData()` hook
 - Shared scoreboard header with linescore
 - Tab navigation between sub-routes
@@ -126,6 +133,7 @@ The layout (`layout.tsx`) provides:
 - Data source attribution footer
 
 **Context Usage:**
+
 ```tsx
 import { useGameData } from './layout';
 
@@ -183,6 +191,7 @@ All components use the BSI design system tokens:
 ## Voice Preservation
 
 Empty states maintain Austin's voice:
+
 - "Box score data not available yet" / "Stats will appear once the game gets underway"
 - "Play-by-play data not available yet" / "Every pitch, every swing, every play."
 - "Game recap will be available after the final out"
@@ -225,4 +234,4 @@ interface APIResponse {
 
 ---
 
-*Last updated: 2025-12-15 | Blaze Sports Intel*
+_Last updated: 2025-12-15 | Blaze Sports Intel_

@@ -313,21 +313,40 @@ body {
     color: white;
     font-weight: 600;
     border-radius: 0.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
 
   .btn-primary:hover {
     background: var(--color-burnt-orange-600);
-    box-shadow: var(--shadow-glow-sm);
+    box-shadow: var(--shadow-glow-md);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary:hover::before {
+    opacity: 1;
   }
 
   .btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 
   .btn-primary:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-glow-sm);
     transition: transform 0.1s ease;
   }
 
@@ -342,21 +361,43 @@ body {
     color: var(--color-ember);
     font-weight: 600;
     border-radius: 0.5rem;
-    transition: all 0.3s ease;
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-secondary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-burnt-orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: -1;
   }
 
   .btn-secondary:hover {
     background: var(--color-burnt-orange);
     color: white;
+    border-color: var(--color-burnt-orange);
+    box-shadow: var(--shadow-glow-sm);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary:hover::before {
+    transform: scaleX(1);
   }
 
   .btn-secondary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 
   .btn-secondary:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
     transition: transform 0.1s ease;
   }
 
@@ -370,12 +411,29 @@ body {
     color: rgba(255, 255, 255, 0.8);
     font-weight: 500;
     border-radius: 0.5rem;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+  }
+
+  .btn-ghost::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--color-burnt-orange);
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(-50%);
   }
 
   .btn-ghost:hover {
     background: rgba(255, 255, 255, 0.1);
     color: white;
+  }
+
+  .btn-ghost:hover::after {
+    width: 80%;
   }
 
   .btn-ghost:active {

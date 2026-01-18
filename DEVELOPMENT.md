@@ -27,66 +27,66 @@ Development server runs at `http://localhost:3000`.
 
 ### Development
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start Next.js dev server |
+| Script             | Description                         |
+| ------------------ | ----------------------------------- |
+| `npm run dev`      | Start Next.js dev server            |
 | `npm run dev:vite` | Start Vite dev server (alternative) |
 
 ### Building
 
-| Script | Description |
-|--------|-------------|
-| `npm run build` | Production build (runs image optimization first) |
-| `npm run build:vite` | Vite production build |
-| `npm run build:lib` | Build TypeScript library files |
-| `npm run build:functions` | Build Cloudflare Functions |
+| Script                    | Description                                      |
+| ------------------------- | ------------------------------------------------ |
+| `npm run build`           | Production build (runs image optimization first) |
+| `npm run build:vite`      | Vite production build                            |
+| `npm run build:lib`       | Build TypeScript library files                   |
+| `npm run build:functions` | Build Cloudflare Functions                       |
 
 ### Testing
 
-| Script | Description |
-|--------|-------------|
-| `npm run test` | Run Vitest in watch mode |
-| `npm run test:ui` | Vitest with UI dashboard |
-| `npm run test:coverage` | Generate coverage report |
-| `npm run test:api` | API endpoint tests |
-| `npm run test:integration` | Integration tests |
-| `npm run test:validation` | Data validation tests |
-| `npm run test:all` | Run all test suites |
-| `npm run test:a11y` | Accessibility tests (Playwright) |
+| Script                     | Description                      |
+| -------------------------- | -------------------------------- |
+| `npm run test`             | Run Vitest in watch mode         |
+| `npm run test:ui`          | Vitest with UI dashboard         |
+| `npm run test:coverage`    | Generate coverage report         |
+| `npm run test:api`         | API endpoint tests               |
+| `npm run test:integration` | Integration tests                |
+| `npm run test:validation`  | Data validation tests            |
+| `npm run test:all`         | Run all test suites              |
+| `npm run test:a11y`        | Accessibility tests (Playwright) |
 
 ### Code Quality
 
-| Script | Description |
-|--------|-------------|
-| `npm run typecheck` | TypeScript type checking |
-| `npm run lint` | ESLint check |
-| `npm run lint:fix` | ESLint with auto-fix |
-| `npm run format` | Prettier check |
-| `npm run format:fix` | Prettier with auto-fix |
+| Script               | Description              |
+| -------------------- | ------------------------ |
+| `npm run typecheck`  | TypeScript type checking |
+| `npm run lint`       | ESLint check             |
+| `npm run lint:fix`   | ESLint with auto-fix     |
+| `npm run format`     | Prettier check           |
+| `npm run format:fix` | Prettier with auto-fix   |
 
 ### Deployment
 
-| Script | Description |
-|--------|-------------|
-| `npm run deploy` | Deploy to Cloudflare Pages (main branch) |
+| Script                      | Description                              |
+| --------------------------- | ---------------------------------------- |
+| `npm run deploy`            | Deploy to Cloudflare Pages (main branch) |
 | `npm run deploy:production` | Production deploy (allows dirty commits) |
-| `npm run deploy:preview` | Deploy to preview branch |
+| `npm run deploy:preview`    | Deploy to preview branch                 |
 
 ### Database
 
-| Script | Description |
-|--------|-------------|
+| Script                          | Description                     |
+| ------------------------------- | ------------------------------- |
 | `npm run db:migrate:production` | Run D1 migrations on production |
-| `npm run db:seed:production` | Seed production database |
+| `npm run db:seed:production`    | Seed production database        |
 
 ### Performance
 
-| Script | Description |
-|--------|-------------|
+| Script                    | Description                      |
+| ------------------------- | -------------------------------- |
 | `npm run images:optimize` | Optimize images in public/images |
-| `npm run perf:check` | Run performance checks |
-| `npm run data:freshness` | Check data freshness |
-| `npm run cache:warm` | Warm API caches |
+| `npm run perf:check`      | Run performance checks           |
+| `npm run data:freshness`  | Check data freshness             |
+| `npm run cache:warm`      | Warm API caches                  |
 
 ---
 
@@ -128,13 +128,10 @@ Heavy components like charts are lazy-loaded to reduce initial bundle:
 ```tsx
 import dynamic from 'next/dynamic';
 
-const HeavyComponent = dynamic(
-  () => import('@/components/HeavyComponent'),
-  {
-    ssr: false,
-    loading: () => <LoadingPlaceholder />
-  }
-);
+const HeavyComponent = dynamic(() => import('@/components/HeavyComponent'), {
+  ssr: false,
+  loading: () => <LoadingPlaceholder />,
+});
 ```
 
 Used for: recharts (dashboard), Three.js (hero), and other large dependencies.
@@ -182,15 +179,15 @@ Use Tailwind classes with BSI color tokens:
 
 ```tsx
 // Brand colors
-className="bg-burnt-orange text-white"      // Primary brand
-className="bg-charcoal text-cream"          // Dark theme
-className="text-ember"                      // Interactive accent
-className="border-texas-soil"               // Heritage accent
+className = 'bg-burnt-orange text-white'; // Primary brand
+className = 'bg-charcoal text-cream'; // Dark theme
+className = 'text-ember'; // Interactive accent
+className = 'border-texas-soil'; // Heritage accent
 
 // Semantic colors
-className="text-green-500"                  // Success/wins
-className="text-red-500"                    // Error/losses
-className="text-yellow-500"                 // Warning
+className = 'text-green-500'; // Success/wins
+className = 'text-red-500'; // Error/losses
+className = 'text-yellow-500'; // Warning
 ```
 
 ---
@@ -204,6 +201,7 @@ Images in `public/images` are auto-optimized on build:
 3. **Max dimension** resize to 2000px
 
 Manual optimization:
+
 ```bash
 # Basic optimization (creates WebP versions)
 npm run images:optimize
@@ -355,4 +353,4 @@ npm run typecheck
 
 ---
 
-*Last updated: January 2025*
+_Last updated: January 2025_

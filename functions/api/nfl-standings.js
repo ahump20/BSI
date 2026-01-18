@@ -1,10 +1,17 @@
 /**
- * NFL League-wide Standings API - Truth Enforced
- * Returns verified standings for all NFL teams
- * ENFORCED BY BLAZE REALITY: All data sources verified
+ * NFL League-wide Standings API
+ * Returns standings for all NFL teams from ESPN API
+ *
+ * Response Contract: Uses BSI standard APIResponse format
+ * - status: 'ok' | 'invalid' | 'unavailable'
+ * - data: payload or null
+ * - source: 'live'
  */
 
 import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
+
+// NFL has 32 teams across 8 divisions
+const MIN_DIVISIONS_REQUIRED = 6;
 
 export async function onRequest({ request, env }) {
   if (request.method === 'OPTIONS') {
@@ -26,87 +33,135 @@ export async function onRequest({ request, env }) {
   };
 
   try {
-    // ESPN standings API is restricted, fetch team data for AFC South teams
-    const afcSouthTeams = ['10', '11', '34', '30']; // TEN, IND, HOU, JAX
-    const teamPromises = afcSouthTeams.map(async (teamId) => {
-      try {
-        const teamUrl = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${teamId}`;
-        const teamResponse = await fetch(teamUrl, { headers });
-        if (!teamResponse.ok) return null;
+    // Fetch full NFL standings from ESPN
+    const standingsUrl = 'https://site.api.espn.com/apis/v2/sports/football/nfl/standings';
+    const response = await fetch(standingsUrl, { headers });
 
-        const teamData = await teamResponse.json();
-        const team = teamData.team;
+    if (!response.ok) {
+      throw new Error(`ESPN NFL standings API returned ${response.status}`);
+    }
 
-        if (!team || !team.record) return null;
+    const data = await response.json();
+    const lastUpdated = new Date().toISOString();
 
-        const overallRecord = team.record.overall || '0-0';
-        const [wins, losses] = overallRecord.split('-').map((n) => parseInt(n) || 0);
-        const winPct = wins + losses > 0 ? (wins / (wins + losses)).toFixed(3) : '0.000';
+    // Transform ESPN data to our format
+    const standings = [];
+    let totalDivisions = 0;
 
-        return {
-          teamId: team.id,
-          name: team.displayName,
-          abbreviation: team.abbreviation,
-          wins,
-          losses,
-          ties: 0, // Not typically provided by ESPN
-          winPercentage: winPct,
-          divisionRank: 0, // Would need standings API for actual rank
-          conferenceRank: 0,
-          playoffSeed: null,
-        };
-      } catch (error) {
-        return null;
+    for (const conference of data.children || []) {
+      for (const division of conference.children || []) {
+        totalDivisions++;
+        const teams = (division.standings?.entries || []).map((entry) => {
+          const team = entry.team;
+          const stats = entry.stats || [];
+
+          return {
+            teamId: team?.id,
+            name: team?.displayName,
+            abbreviation: team?.abbreviation,
+            logo: team?.logos?.[0]?.href,
+            wins: stats.find((s) => s.name === 'wins')?.value || 0,
+            losses: stats.find((s) => s.name === 'losses')?.value || 0,
+            ties: stats.find((s) => s.name === 'ties')?.value || 0,
+            winPercentage: stats.find((s) => s.name === 'winPercent')?.displayValue || '.000',
+            divisionRank: stats.find((s) => s.name === 'playoffSeed')?.value || 0,
+            pointsFor: stats.find((s) => s.name === 'pointsFor')?.value || 0,
+            pointsAgainst: stats.find((s) => s.name === 'pointsAgainst')?.value || 0,
+            streak: stats.find((s) => s.name === 'streak')?.displayValue || '',
+          };
+        });
+
+        standings.push({
+          conference: conference.name,
+          division: division.name,
+          teams,
+        });
       }
-    });
+    }
 
-    const teamResults = await Promise.all(teamPromises);
-    const validTeams = teamResults.filter((team) => team !== null);
-
-    // Sort by win percentage (descending) then by wins (descending)
-    validTeams.sort((a, b) => {
-      if (parseFloat(b.winPercentage) !== parseFloat(a.winPercentage)) {
-        return parseFloat(b.winPercentage) - parseFloat(a.winPercentage);
-      }
-      return b.wins - a.wins;
-    });
-
-    // Assign division ranks
-    validTeams.forEach((team, index) => {
-      team.divisionRank = index + 1;
-    });
-
-    // Format verified standings response
-    const verifiedStandings = {
-      season: new Date().getFullYear(),
-      lastUpdated: new Date().toISOString(),
-      standings: [
+    // Semantic validation: Check minimum density
+    if (totalDivisions < MIN_DIVISIONS_REQUIRED) {
+      return new Response(
+        JSON.stringify({
+          data: null,
+          status: 'invalid',
+          source: 'live',
+          lastUpdated,
+          reason: `Insufficient standings data: found ${totalDivisions} divisions, expected at least ${MIN_DIVISIONS_REQUIRED}`,
+          meta: {
+            cache: { hit: false, ttlSeconds: 0 },
+            planTier: 'highlightly_pro',
+            quota: { remaining: 0, resetAt: '' },
+          },
+        }),
         {
-          conference: 'AFC',
-          division: 'AFC South',
-          teams: validTeams,
-        },
-      ],
-      dataSource: 'ESPN NFL Team APIs',
-      truthLabel: 'LIVE DATA - ESPN TEAM RECORDS',
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-BSI-Status': 'invalid',
+            'X-BSI-Source': 'live',
+          },
+        }
+      );
+    }
+
+    const standingsData = {
+      season: data.season?.year || new Date().getFullYear(),
+      lastUpdated,
+      standings,
+      dataSource: 'ESPN NFL API',
     };
 
-    return new Response(JSON.stringify(verifiedStandings), {
-      headers: corsHeaders,
-      status: 200,
-    });
-  } catch (error) {
+    // Standard APIResponse format
     return new Response(
       JSON.stringify({
-        error: 'Failed to fetch NFL standings',
-        message: error.message,
-        truthLabel: 'ERROR STATE - NO FABRICATED DATA',
-        dataSource: 'N/A - Service Unavailable',
-        lastUpdated: new Date().toISOString(),
+        data: standingsData,
+        status: 'ok',
+        source: 'live',
+        lastUpdated,
+        reason: '',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+        // Legacy fields for backwards compatibility
+        ...standingsData,
       }),
       {
-        headers: corsHeaders,
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'ok',
+          'X-BSI-Source': 'live',
+        },
+      }
+    );
+  } catch (error) {
+    // Standard APIResponse error format
+    return new Response(
+      JSON.stringify({
+        data: null,
+        status: 'unavailable',
+        source: 'live',
+        lastUpdated: new Date().toISOString(),
+        reason: error.message || 'Failed to fetch NFL standings',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+      }),
+      {
         status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'unavailable',
+          'X-BSI-Source': 'live',
+        },
       }
     );
   }

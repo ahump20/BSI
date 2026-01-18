@@ -447,21 +447,50 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
               fontSize: '0.875rem',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '0.5rem 0',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
               <span style={{ color: 'rgba(255,255,255,0.6)' }}>Yards</span>
-              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>{gameResult.yardsGained}</span>
+              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>
+                {gameResult.yardsGained}
+              </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '0.5rem 0',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
               <span style={{ color: 'rgba(255,255,255,0.6)' }}>Touchdowns</span>
-              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>{gameResult.touchdowns}</span>
+              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>
+                {gameResult.touchdowns}
+              </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '0.5rem 0',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+              }}
+            >
               <span style={{ color: 'rgba(255,255,255,0.6)' }}>First Downs</span>
-              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>{gameResult.firstDowns}</span>
+              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>
+                {gameResult.firstDowns}
+              </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0' }}>
               <span style={{ color: 'rgba(255,255,255,0.6)' }}>Longest Play</span>
-              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>{gameResult.longestPlay} yds</span>
+              <span style={{ fontFamily: "'Russo One'", color: '#FFD700' }}>
+                {gameResult.longestPlay} yds
+              </span>
             </div>
           </div>
 

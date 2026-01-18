@@ -243,46 +243,58 @@ class MobileControls {
     if (!this.swingButton) return;
 
     // Touch start
-    this.swingButton.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      if (this.touchId !== null) return;
+    this.swingButton.addEventListener(
+      'touchstart',
+      (e) => {
+        e.preventDefault();
+        if (this.touchId !== null) return;
 
-      const touch = e.changedTouches[0];
-      this.touchId = touch.identifier;
-      this.isPressing = true;
-      this.swingButton!.classList.add('pressing');
+        const touch = e.changedTouches[0];
+        this.touchId = touch.identifier;
+        this.isPressing = true;
+        this.swingButton!.classList.add('pressing');
 
-      // Trigger haptic
-      this.triggerHaptic(HAPTIC.TAP);
+        // Trigger haptic
+        this.triggerHaptic(HAPTIC.TAP);
 
-      // Add ripple effect
-      this.addRipple(touch.clientX, touch.clientY);
+        // Add ripple effect
+        this.addRipple(touch.clientX, touch.clientY);
 
-      // Trigger swing
-      if (this.swingCallback) {
-        this.triggerHaptic(HAPTIC.SWING);
-        this.swingCallback();
-      }
-    }, { passive: false });
+        // Trigger swing
+        if (this.swingCallback) {
+          this.triggerHaptic(HAPTIC.SWING);
+          this.swingCallback();
+        }
+      },
+      { passive: false }
+    );
 
     // Touch end
-    this.swingButton.addEventListener('touchend', (e) => {
-      for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === this.touchId) {
-          this.touchId = null;
-          this.isPressing = false;
-          this.swingButton!.classList.remove('pressing');
-          break;
+    this.swingButton.addEventListener(
+      'touchend',
+      (e) => {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === this.touchId) {
+            this.touchId = null;
+            this.isPressing = false;
+            this.swingButton!.classList.remove('pressing');
+            break;
+          }
         }
-      }
-    }, { passive: false });
+      },
+      { passive: false }
+    );
 
     // Touch cancel
-    this.swingButton.addEventListener('touchcancel', () => {
-      this.touchId = null;
-      this.isPressing = false;
-      this.swingButton!.classList.remove('pressing');
-    }, { passive: false });
+    this.swingButton.addEventListener(
+      'touchcancel',
+      () => {
+        this.touchId = null;
+        this.isPressing = false;
+        this.swingButton!.classList.remove('pressing');
+      },
+      { passive: false }
+    );
 
     // Mouse support (for testing on desktop)
     this.swingButton.addEventListener('mousedown', (e) => {
@@ -518,8 +530,8 @@ export class BackyardGameEngine {
     this.camera = new ArcRotateCamera(
       'camera',
       -Math.PI / 2, // alpha - behind home plate
-      Math.PI / 4,  // beta - 45 degree angle down
-      30,           // radius
+      Math.PI / 4, // beta - 45 degree angle down
+      30, // radius
       new Vector3(0, 0, 5), // target - slightly in front of home plate
       this.scene
     );
@@ -537,11 +549,7 @@ export class BackyardGameEngine {
 
   private setupLighting(): void {
     // Warm afternoon sun
-    const sunLight = new DirectionalLight(
-      'sun',
-      new Vector3(-0.5, -1, 0.5),
-      this.scene
-    );
+    const sunLight = new DirectionalLight('sun', new Vector3(-0.5, -1, 0.5), this.scene);
     sunLight.intensity = 1.0;
     sunLight.diffuse = new Color3(1.0, 0.95, 0.85);
     sunLight.position = new Vector3(30, 50, -30);
@@ -552,11 +560,7 @@ export class BackyardGameEngine {
     this.shadowGenerator.blurScale = 2;
 
     // Ambient fill light
-    const ambientLight = new HemisphericLight(
-      'ambient',
-      new Vector3(0, 1, 0),
-      this.scene
-    );
+    const ambientLight = new HemisphericLight('ambient', new Vector3(0, 1, 0), this.scene);
     ambientLight.intensity = 0.4;
     ambientLight.diffuse = new Color3(0.9, 0.95, 1.0);
     ambientLight.groundColor = new Color3(0.4, 0.5, 0.3);
@@ -566,12 +570,7 @@ export class BackyardGameEngine {
   }
 
   private setupPostProcessing(): void {
-    const pipeline = new DefaultRenderingPipeline(
-      'pipeline',
-      true,
-      this.scene,
-      [this.camera]
-    );
+    const pipeline = new DefaultRenderingPipeline('pipeline', true, this.scene, [this.camera]);
 
     // Bloom for nice glow on hits
     pipeline.bloomEnabled = true;
@@ -601,11 +600,7 @@ export class BackyardGameEngine {
     const fieldConfig = this.config.fieldConfig;
 
     // Ground plane - backyard grass
-    const ground = MeshBuilder.CreateGround(
-      'ground',
-      { width: 100, height: 100 },
-      this.scene
-    );
+    const ground = MeshBuilder.CreateGround('ground', { width: 100, height: 100 }, this.scene);
     const grassMat = new PBRMaterial('grass', this.scene);
     grassMat.albedoColor = Color3.FromHexString(COLORS.baseball.green);
     grassMat.roughness = 0.9;
@@ -614,11 +609,7 @@ export class BackyardGameEngine {
     ground.receiveShadows = true;
 
     // Dirt infield
-    const infield = MeshBuilder.CreateDisc(
-      'infield',
-      { radius: 15 },
-      this.scene
-    );
+    const infield = MeshBuilder.CreateDisc('infield', { radius: 15 }, this.scene);
     infield.rotation.x = Math.PI / 2;
     infield.position.y = 0.01;
     const dirtMat = new PBRMaterial('dirt', this.scene);
@@ -678,7 +669,11 @@ export class BackyardGameEngine {
       { width: 0.1, height: 0.01, depth: foulLineLength },
       this.scene
     );
-    leftLine.position = new Vector3(-foulLineLength / 2 * 0.707, 0.02, foulLineLength / 2 * 0.707);
+    leftLine.position = new Vector3(
+      (-foulLineLength / 2) * 0.707,
+      0.02,
+      (foulLineLength / 2) * 0.707
+    );
     leftLine.rotation.y = Math.PI / 4;
     leftLine.material = lineMat;
 
@@ -687,7 +682,11 @@ export class BackyardGameEngine {
       { width: 0.1, height: 0.01, depth: foulLineLength },
       this.scene
     );
-    rightLine.position = new Vector3(foulLineLength / 2 * 0.707, 0.02, foulLineLength / 2 * 0.707);
+    rightLine.position = new Vector3(
+      (foulLineLength / 2) * 0.707,
+      0.02,
+      (foulLineLength / 2) * 0.707
+    );
     rightLine.rotation.y = -Math.PI / 4;
     rightLine.material = lineMat;
 
@@ -719,8 +718,10 @@ export class BackyardGameEngine {
     const segments = 20;
     for (let i = 0; i < segments; i++) {
       const angle = (Math.PI / 2) * (i / segments) - Math.PI / 4;
-      const distance = config.dimensions.centerField +
-        Math.sin(Math.abs(angle) * 2) * (config.dimensions.centerField - config.dimensions.leftField);
+      const distance =
+        config.dimensions.centerField +
+        Math.sin(Math.abs(angle) * 2) *
+          (config.dimensions.centerField - config.dimensions.leftField);
 
       const x = Math.sin(angle) * distance;
       const z = Math.cos(angle) * distance;
@@ -755,11 +756,7 @@ export class BackyardGameEngine {
       trunkMat.diffuseColor = new Color3(0.4, 0.25, 0.1);
       trunk.material = trunkMat;
 
-      const leaves = MeshBuilder.CreateSphere(
-        'treeLeaves',
-        { diameter: 6 },
-        this.scene
-      );
+      const leaves = MeshBuilder.CreateSphere('treeLeaves', { diameter: 6 }, this.scene);
       leaves.position = new Vector3(-25, 6, 35);
       const leavesMat = new StandardMaterial('leavesMat', this.scene);
       leavesMat.diffuseColor = new Color3(0.2, 0.6, 0.2);
@@ -788,11 +785,7 @@ export class BackyardGameEngine {
     const character = this.config.character;
 
     // Batter (stylized capsule for now - will be replaced with proper model)
-    this.batter = MeshBuilder.CreateCapsule(
-      'batter',
-      { radius: 0.4, height: 1.8 },
-      this.scene
-    );
+    this.batter = MeshBuilder.CreateCapsule('batter', { radius: 0.4, height: 1.8 }, this.scene);
     this.batter.position = new Vector3(-1, 0.9, -0.3);
     const batterMat = new StandardMaterial('batterMat', this.scene);
     batterMat.diffuseColor = Color3.FromHexString(character.uniformColor);
@@ -815,11 +808,7 @@ export class BackyardGameEngine {
     this.bat.material = batMat;
 
     // Pitcher (simplified)
-    this.pitcher = MeshBuilder.CreateCapsule(
-      'pitcher',
-      { radius: 0.4, height: 1.8 },
-      this.scene
-    );
+    this.pitcher = MeshBuilder.CreateCapsule('pitcher', { radius: 0.4, height: 1.8 }, this.scene);
     this.pitcher.position = new Vector3(0, 0.9, 18);
     const pitcherMat = new StandardMaterial('pitcherMat', this.scene);
     pitcherMat.diffuseColor = new Color3(0.3, 0.3, 0.7);
@@ -966,11 +955,7 @@ export class BackyardGameEngine {
       this.ballPhysics?.dispose();
     }
 
-    this.ball = MeshBuilder.CreateSphere(
-      'ball',
-      { diameter: 0.2 },
-      this.scene
-    );
+    this.ball = MeshBuilder.CreateSphere('ball', { diameter: 0.2 }, this.scene);
     this.ball.position = this.pitcher!.position.clone();
     this.ball.position.y = 1.5;
 
@@ -994,14 +979,7 @@ export class BackyardGameEngine {
     if (this.ballTrail) {
       this.ballTrail.dispose();
     }
-    this.ballTrail = new TrailMesh(
-      'ballTrail',
-      this.ball,
-      this.scene,
-      0.08,
-      20,
-      true
-    );
+    this.ballTrail = new TrailMesh('ballTrail', this.ball, this.scene, 0.08, 20, true);
     const trailMat = new StandardMaterial('trailMat', this.scene);
     trailMat.emissiveColor = Color3.White();
     trailMat.alpha = 0.4;
@@ -1113,7 +1091,7 @@ export class BackyardGameEngine {
     }
 
     // Calculate hit quality based on timing
-    const timingQuality = 1 - (absOffset / adjustedWindow);
+    const timingQuality = 1 - absOffset / adjustedWindow;
     const hitRoll = Math.random() * (1 + powerBonus);
 
     // Perfect timing + power = home run potential
@@ -1369,9 +1347,7 @@ export class BackyardGameEngine {
     // Finalize game result
     this.gameResult.finalScore = this.gameState.score;
     this.gameResult.longestStreak = this.longestStreak;
-    this.gameResult.durationSeconds = Math.floor(
-      (performance.now() - this.gameStartTime) / 1000
-    );
+    this.gameResult.durationSeconds = Math.floor((performance.now() - this.gameStartTime) / 1000);
 
     // Dispose ball
     this.disposeBall();

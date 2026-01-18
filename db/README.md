@@ -15,22 +15,27 @@ This directory contains the Cloudflare D1 database schema for storing historical
 ### Core Tables
 
 #### 1. Reference Tables
+
 - **`seasons`** - Track active college baseball seasons (2020-2025+)
 - **`conferences`** - NCAA conference metadata (SEC, ACC, Big 12, etc.)
 
 #### 2. Team Tables
+
 - **`teams`** - College baseball programs with conference affiliations
 - **`team_rosters`** - Player-team relationships by season
 
 #### 3. Player Tables
+
 - **`players`** - Individual player records with draft history
 - **`player_season_stats`** - Aggregated player stats per season
 
 #### 4. Game Tables
+
 - **`games`** - Individual game results with venue and broadcast info
 - **`box_scores`** - Game-level aggregated statistics
 
 #### 5. Performance Tables
+
 - **`batting_stats`** - Individual batting performances per game
 - **`pitching_stats`** - Individual pitching performances per game
 - **`team_season_stats`** - Aggregated team statistics per season
@@ -90,13 +95,17 @@ export async function onRequest({ env }) {
   const { DB } = env;
 
   // Get current season teams
-  const { results } = await DB.prepare(`
+  const { results } = await DB.prepare(
+    `
     SELECT * FROM v_active_teams
     WHERE conference_name = ?
-  `).bind('SEC').all();
+  `
+  )
+    .bind('SEC')
+    .all();
 
   return new Response(JSON.stringify(results), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 ```
@@ -104,6 +113,7 @@ export async function onRequest({ env }) {
 ### Common Queries
 
 #### Get Team Season Record
+
 ```sql
 SELECT * FROM v_team_records
 WHERE team_name = 'Texas Longhorns'
@@ -111,6 +121,7 @@ WHERE team_name = 'Texas Longhorns'
 ```
 
 #### Get Player Career Stats
+
 ```sql
 SELECT
     p.full_name,
@@ -129,6 +140,7 @@ ORDER BY s.year DESC;
 ```
 
 #### Get Conference Standings
+
 ```sql
 SELECT
     t.name AS team,
@@ -148,6 +160,7 @@ ORDER BY tss.conference_wins DESC, tss.wins DESC;
 ```
 
 #### Get Recent Games
+
 ```sql
 SELECT
     g.game_date,
@@ -165,6 +178,7 @@ ORDER BY g.game_date DESC;
 ```
 
 #### Get Box Score Data
+
 ```sql
 SELECT
     g.game_date,
@@ -203,12 +217,14 @@ export async function ingestGame(env, gameData) {
   // Start transaction
   await DB.batch([
     // Insert game
-    DB.prepare(`
+    DB.prepare(
+      `
       INSERT INTO games (
         espn_id, season_id, game_date, home_team_id,
         away_team_id, home_score, away_score, status
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
+    `
+    ).bind(
       gameData.id,
       gameData.seasonId,
       gameData.date,
@@ -220,12 +236,14 @@ export async function ingestGame(env, gameData) {
     ),
 
     // Insert box score
-    DB.prepare(`
+    DB.prepare(
+      `
       INSERT INTO box_scores (
         game_id, home_runs, home_hits, home_errors,
         away_runs, away_hits, away_errors
       ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(
+    `
+    ).bind(
       gameData.gameId,
       gameData.homeRuns,
       gameData.homeHits,
@@ -233,7 +251,7 @@ export async function ingestGame(env, gameData) {
       gameData.awayRuns,
       gameData.awayHits,
       gameData.awayErrors
-    )
+    ),
   ]);
 }
 ```
@@ -283,6 +301,7 @@ SET version = '1.1.0',
 ### Triggers
 
 Automatic timestamp updates on record modifications:
+
 - `update_seasons_timestamp`
 - `update_conferences_timestamp`
 - `update_teams_timestamp`
@@ -299,20 +318,28 @@ import { describe, it, expect } from 'vitest';
 
 describe('D1 Schema Tests', () => {
   it('should insert and retrieve a team', async () => {
-    const result = await DB.prepare(`
+    const result = await DB.prepare(
+      `
       INSERT INTO teams (name, school, abbreviation)
       VALUES (?, ?, ?)
       RETURNING *
-    `).bind('Longhorns', 'University of Texas', 'TEX').first();
+    `
+    )
+      .bind('Longhorns', 'University of Texas', 'TEX')
+      .first();
 
     expect(result.name).toBe('Longhorns');
   });
 
   it('should calculate team win percentage correctly', async () => {
-    const result = await DB.prepare(`
+    const result = await DB.prepare(
+      `
       SELECT * FROM v_team_records
       WHERE team_name = ?
-    `).bind('Texas Longhorns').first();
+    `
+    )
+      .bind('Texas Longhorns')
+      .first();
 
     expect(result.win_percentage).toBeGreaterThan(0);
   });
@@ -324,12 +351,14 @@ describe('D1 Schema Tests', () => {
 ### Common Issues
 
 **Q: Schema changes not applying**
+
 ```bash
 # Force re-apply the schema
 wrangler d1 execute blazesports-historical --file=db/schema.sql --force
 ```
 
 **Q: Foreign key constraint errors**
+
 ```sql
 -- Check orphaned records
 SELECT * FROM games
@@ -337,6 +366,7 @@ WHERE home_team_id NOT IN (SELECT team_id FROM teams);
 ```
 
 **Q: Performance issues with large queries**
+
 ```sql
 -- Use EXPLAIN to diagnose slow queries
 EXPLAIN QUERY PLAN
@@ -347,6 +377,7 @@ WHERE game_date > '2025-01-01';
 ## Support
 
 For questions or issues:
+
 - **GitHub Issues**: https://github.com/ahump20/BSI/issues
 - **Email**: austin@blazesportsintel.com
 - **Documentation**: https://blazesportsintel.com/docs

@@ -25,26 +25,26 @@ import { HoopsShooter } from '@data/shooters';
 
 /** Game configuration */
 const CONFIG = {
-  gameDuration: 60000,        // 60 seconds
-  ballsPerRack: 5,            // 5 balls per rack
-  totalRacks: 5,              // 5 racks total
-  moneyBallMultiplier: 2,     // Last ball worth double
-  basePoints: 100,            // Points per made shot
-  swishBonus: 50,             // Extra points for swish
-  streakMultiplierBase: 0.1,  // Multiplier increase per streak
-  maxStreakMultiplier: 2.0,   // Cap on streak multiplier
-  shotMeterSpeed: 2.0,        // Base meter speed
-  perfectZoneSize: 0.15,      // Size of green zone (15%)
-  goodZoneSize: 0.25,         // Size of yellow zone (25%)
+  gameDuration: 60000, // 60 seconds
+  ballsPerRack: 5, // 5 balls per rack
+  totalRacks: 5, // 5 racks total
+  moneyBallMultiplier: 2, // Last ball worth double
+  basePoints: 100, // Points per made shot
+  swishBonus: 50, // Extra points for swish
+  streakMultiplierBase: 0.1, // Multiplier increase per streak
+  maxStreakMultiplier: 2.0, // Cap on streak multiplier
+  shotMeterSpeed: 2.0, // Base meter speed
+  perfectZoneSize: 0.15, // Size of green zone (15%)
+  goodZoneSize: 0.25, // Size of yellow zone (25%)
 };
 
 /** Rack positions around the 3-point arc */
 const RACK_POSITIONS = [
-  { x: -6, z: 0, angle: 0 },        // Left corner
-  { x: -4, z: 3, angle: 30 },       // Left wing
-  { x: 0, z: 4.5, angle: 90 },      // Top of arc
-  { x: 4, z: 3, angle: 150 },       // Right wing
-  { x: 6, z: 0, angle: 180 },       // Right corner
+  { x: -6, z: 0, angle: 0 }, // Left corner
+  { x: -4, z: 3, angle: 30 }, // Left wing
+  { x: 0, z: 4.5, angle: 90 }, // Top of arc
+  { x: 4, z: 3, angle: 150 }, // Right wing
+  { x: 6, z: 0, angle: 180 }, // Right corner
 ];
 
 export interface HoopsGameState {
@@ -206,7 +206,11 @@ export class HoopsGameEngine {
 
   private createHoop(): void {
     // Backboard
-    const backboard = MeshBuilder.CreateBox('backboard', { width: 1.8, height: 1.2, depth: 0.1 }, this.scene);
+    const backboard = MeshBuilder.CreateBox(
+      'backboard',
+      { width: 1.8, height: 1.2, depth: 0.1 },
+      this.scene
+    );
     backboard.position = new Vector3(0, 3.5, 6);
     const bbMat = new StandardMaterial('bbMat', this.scene);
     bbMat.diffuseColor = new Color3(1, 1, 1);
@@ -214,7 +218,11 @@ export class HoopsGameEngine {
     backboard.material = bbMat;
 
     // Rim
-    const rim = MeshBuilder.CreateTorus('rim', { diameter: 0.46, thickness: 0.02, tessellation: 32 }, this.scene);
+    const rim = MeshBuilder.CreateTorus(
+      'rim',
+      { diameter: 0.46, thickness: 0.02, tessellation: 32 },
+      this.scene
+    );
     rim.position = new Vector3(0, 3.05, 5.6);
     rim.rotation.x = Math.PI / 2;
     const rimMat = new StandardMaterial('rimMat', this.scene);
@@ -241,7 +249,11 @@ export class HoopsGameEngine {
 
   private createShooter(): void {
     // Simple shooter representation
-    const body = MeshBuilder.CreateCylinder('shooterBody', { diameter: 0.6, height: 1.8 }, this.scene);
+    const body = MeshBuilder.CreateCylinder(
+      'shooterBody',
+      { diameter: 0.6, height: 1.8 },
+      this.scene
+    );
     const head = MeshBuilder.CreateSphere('shooterHead', { diameter: 0.3 }, this.scene);
     head.parent = body;
     head.position.y = 1.05;
@@ -292,7 +304,12 @@ export class HoopsGameEngine {
     this.scene.actionManager = new ActionManager(this.scene);
     this.scene.actionManager.registerAction(
       new ExecuteCodeAction(ActionManager.OnKeyDownTrigger, (evt) => {
-        if (evt.sourceEvent.key === ' ' && this.isPlaying && !this.isShooting && !this.shotMeterActive) {
+        if (
+          evt.sourceEvent.key === ' ' &&
+          this.isPlaying &&
+          !this.isShooting &&
+          !this.shotMeterActive
+        ) {
           this.startShotMeter();
         }
       })
@@ -356,16 +373,19 @@ export class HoopsGameEngine {
     const shooter = this.config.shooter;
     const accuracyBonus = (shooter.accuracy - 5) * 0.02; // ±4% based on accuracy
 
-    const perfectMin = 0.40 - accuracyBonus;
+    const perfectMin = 0.4 - accuracyBonus;
     const perfectMax = 0.55 + accuracyBonus;
-    const goodMin = 0.30 - accuracyBonus;
+    const goodMin = 0.3 - accuracyBonus;
     const goodMax = 0.65 + accuracyBonus;
-    const okayMin = 0.20;
+    const okayMin = 0.2;
     const okayMax = 0.75;
 
     if (meter >= perfectMin && meter <= perfectMax) {
       return ShotResult.SWISH;
-    } else if ((meter >= goodMin && meter < perfectMin) || (meter > perfectMax && meter <= goodMax)) {
+    } else if (
+      (meter >= goodMin && meter < perfectMin) ||
+      (meter > perfectMax && meter <= goodMax)
+    ) {
       return Math.random() < 0.85 ? ShotResult.GOOD : ShotResult.MISS;
     } else if ((meter >= okayMin && meter < goodMin) || (meter > goodMax && meter <= okayMax)) {
       return Math.random() < 0.5 ? ShotResult.OKAY : ShotResult.MISS;
@@ -380,11 +400,12 @@ export class HoopsGameEngine {
     if (!this.ball || !this.hoop) return;
 
     const startPos = this.ball.position.clone();
-    const endPos = result === ShotResult.AIRBALL
-      ? new Vector3(startPos.x + (Math.random() - 0.5) * 2, 1, 8)
-      : result === ShotResult.MISS
-        ? new Vector3(this.hoop.position.x + (Math.random() - 0.5) * 0.5, 1, 7)
-        : this.hoop.position.clone();
+    const endPos =
+      result === ShotResult.AIRBALL
+        ? new Vector3(startPos.x + (Math.random() - 0.5) * 2, 1, 8)
+        : result === ShotResult.MISS
+          ? new Vector3(this.hoop.position.x + (Math.random() - 0.5) * 0.5, 1, 7)
+          : this.hoop.position.clone();
 
     const peakHeight = 5 + Math.random();
 
@@ -392,7 +413,12 @@ export class HoopsGameEngine {
     const frameRate = 60;
     const totalFrames = 40;
 
-    const posAnim = new Animation('shotArc', 'position', frameRate, Animation.ANIMATIONTYPE_VECTOR3);
+    const posAnim = new Animation(
+      'shotArc',
+      'position',
+      frameRate,
+      Animation.ANIMATIONTYPE_VECTOR3
+    );
 
     const keys = [];
     for (let i = 0; i <= totalFrames; i++) {
@@ -437,7 +463,9 @@ export class HoopsGameEngine {
       }
 
       // Apply streak multiplier
-      const streakMult = 1 + (this.gameState.streak - 1) * CONFIG.streakMultiplierBase * this.config.shooter.streakBonus;
+      const streakMult =
+        1 +
+        (this.gameState.streak - 1) * CONFIG.streakMultiplierBase * this.config.shooter.streakBonus;
       this.gameState.multiplier = Math.min(streakMult, CONFIG.maxStreakMultiplier);
       points = Math.floor(points * this.gameState.multiplier);
 
@@ -558,9 +586,11 @@ export class HoopsGameEngine {
     }
 
     // Check game over
-    if (this.gameState.timeRemaining <= 0 ||
-        (this.gameState.currentRack >= CONFIG.totalRacks &&
-         this.gameState.currentBall > CONFIG.ballsPerRack)) {
+    if (
+      this.gameState.timeRemaining <= 0 ||
+      (this.gameState.currentRack >= CONFIG.totalRacks &&
+        this.gameState.currentBall > CONFIG.ballsPerRack)
+    ) {
       this.endGame();
     }
   }
@@ -575,9 +605,10 @@ export class HoopsGameEngine {
       finalScore: this.gameState.score,
       shotsMade: this.gameState.shotsMade,
       shotsAttempted: this.gameState.shotsAttempted,
-      shootingPercentage: this.gameState.shotsAttempted > 0
-        ? Math.round((this.gameState.shotsMade / this.gameState.shotsAttempted) * 100)
-        : 0,
+      shootingPercentage:
+        this.gameState.shotsAttempted > 0
+          ? Math.round((this.gameState.shotsMade / this.gameState.shotsAttempted) * 100)
+          : 0,
       longestStreak: this.gameState.longestStreak,
       swishes: this.gameState.swishes,
       moneyBallsMade: this.moneyBallsMade,

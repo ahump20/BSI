@@ -3,22 +3,13 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "types": [
-      "@cloudflare/workers-types",
-      "node"
-    ],
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "types": ["@cloudflare/workers-types", "node"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "outDir": "./dist",
     "rootDir": "./",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     "strict": false,
     "esModuleInterop": true,

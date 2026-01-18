@@ -7,6 +7,7 @@
 ## Overview
 
 Cloudflare Pages Functions require manual binding configuration in the dashboard for:
+
 - KV Namespaces (caching)
 - D1 Databases (historical data)
 - Analytics Engine (metrics)
@@ -101,18 +102,9 @@ wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_
 ```typescript
 // Log analytics event
 await env.ANALYTICS.writeDataPoint({
-  blobs: [
-    request.method,
-    request.url,
-    userAgent,
-  ],
-  doubles: [
-    responseTime,
-    responseSize,
-  ],
-  indexes: [
-    userId,
-  ],
+  blobs: [request.method, request.url, userAgent],
+  doubles: [responseTime, responseSize],
+  indexes: [userId],
 });
 ```
 
@@ -127,6 +119,7 @@ await env.ANALYTICS.writeDataPoint({
 #### Steps to Configure:
 
 1. Create R2 bucket first:
+
    ```bash
    wrangler r2 bucket create bsi-storage
    ```
@@ -199,6 +192,7 @@ After configuring all bindings, verify deployment:
 Navigate to: **Workers & Pages** → **college-baseball-tracker** → **Settings** → **Functions**
 
 Verify all bindings are present:
+
 - [x] KV Namespace: `CACHE`
 - [x] D1 Database: `DB`
 - [x] Analytics Engine: `ANALYTICS`
@@ -253,6 +247,7 @@ curl -I https://college-baseball-tracker.pages.dev/api/v1/teams/138
 **Cause**: KV namespace binding not configured
 
 **Fix**:
+
 1. Add KV binding in Cloudflare dashboard
 2. Redeploy: `wrangler pages deploy dist`
 
@@ -261,6 +256,7 @@ curl -I https://college-baseball-tracker.pages.dev/api/v1/teams/138
 **Cause**: D1 database binding not configured
 
 **Fix**:
+
 1. Add D1 binding in Cloudflare dashboard
 2. Ensure database exists: `wrangler d1 list`
 3. Redeploy
@@ -270,6 +266,7 @@ curl -I https://college-baseball-tracker.pages.dev/api/v1/teams/138
 **Cause**: Function timeout due to missing bindings or slow queries
 
 **Fix**:
+
 1. Check all bindings are configured
 2. Review function logs: `wrangler pages deployment tail`
 3. Optimize slow database queries
@@ -280,6 +277,7 @@ curl -I https://college-baseball-tracker.pages.dev/api/v1/teams/138
 **Cause**: Required secret not configured
 
 **Fix**:
+
 ```bash
 # Set the missing secret
 wrangler secret put SECRET_NAME --name college-baseball-tracker
@@ -349,15 +347,15 @@ echo "✅ Verification complete"
 
 ## Appendix: Resource ID Quick Reference
 
-| Resource Type | Name | ID |
-|---------------|------|-----|
-| KV | CACHE | `a53c3726fc3044be82e79d2d1e371d26` |
-| KV | PREDICTION_CACHE | `eebf04d329c0419e92eec884f39a636d` |
-| KV | SPORTS_CACHE | `c912d983175e4a1480225cfd57ed3434` |
-| KV | CFB_CACHE | `963541b67da84e36919914e914a1bb31` |
-| D1 | bsi-historical-db | `9cecff0f-a3ab-433f-bf10-d2664d9542b0` |
-| D1 | bsi-game-db | `88eb676f-af0f-470c-a46a-b9429f5b51f3` |
-| R2 | blazesports-assets | N/A (use bucket name) |
-| R2 | blaze-sports-data-lake | N/A (use bucket name) |
+| Resource Type | Name                   | ID                                     |
+| ------------- | ---------------------- | -------------------------------------- |
+| KV            | CACHE                  | `a53c3726fc3044be82e79d2d1e371d26`     |
+| KV            | PREDICTION_CACHE       | `eebf04d329c0419e92eec884f39a636d`     |
+| KV            | SPORTS_CACHE           | `c912d983175e4a1480225cfd57ed3434`     |
+| KV            | CFB_CACHE              | `963541b67da84e36919914e914a1bb31`     |
+| D1            | bsi-historical-db      | `9cecff0f-a3ab-433f-bf10-d2664d9542b0` |
+| D1            | bsi-game-db            | `88eb676f-af0f-470c-a46a-b9429f5b51f3` |
+| R2            | blazesports-assets     | N/A (use bucket name)                  |
+| R2            | blaze-sports-data-lake | N/A (use bucket name)                  |
 
 > See `docs/infrastructure/CLOUDFLARE-INFRASTRUCTURE-AUDIT-2025-01-07.md` for complete resource inventory.

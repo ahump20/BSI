@@ -17,7 +17,7 @@ const DB_NAME = 'blazesports-historical';
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
   Accept: 'application/json',
-  'Accept-Encoding': 'gzip, deflate'
+  'Accept-Encoding': 'gzip, deflate',
 };
 
 /**
@@ -31,7 +31,7 @@ function executeD1Command(sql) {
 
     execSync(cmd, {
       stdio: 'pipe',
-      encoding: 'utf-8'
+      encoding: 'utf-8',
     });
     return true;
   } catch (error) {
@@ -61,8 +61,8 @@ function buildGameInsertSQL(game, seasonYear) {
   const competition = game.competitions?.[0];
   if (!competition) return null;
 
-  const homeTeam = competition.competitors.find(c => c.homeAway === 'home');
-  const awayTeam = competition.competitors.find(c => c.homeAway === 'away');
+  const homeTeam = competition.competitors.find((c) => c.homeAway === 'home');
+  const awayTeam = competition.competitors.find((c) => c.homeAway === 'away');
 
   if (!homeTeam || !awayTeam) return null;
 
@@ -96,7 +96,9 @@ function buildGameInsertSQL(game, seasonYear) {
     WHERE
       (SELECT team_id FROM teams WHERE espn_id = '${homeTeam.id}') IS NOT NULL
       AND (SELECT team_id FROM teams WHERE espn_id = '${awayTeam.id}') IS NOT NULL
-  `.trim().replace(/\s+/g, ' ');
+  `
+    .trim()
+    .replace(/\s+/g, ' ');
 }
 
 /**
@@ -107,9 +109,8 @@ async function processTeam(teamId, season) {
 
   try {
     const scheduleData = await fetchTeamSchedule(teamId, season);
-    const games = scheduleData.events?.filter(e =>
-      e.competitions?.[0]?.status?.type?.completed
-    ) || [];
+    const games =
+      scheduleData.events?.filter((e) => e.competitions?.[0]?.status?.type?.completed) || [];
 
     console.log(`✓ Found ${games.length} completed games`);
 
@@ -132,12 +133,11 @@ async function processTeam(teamId, season) {
       }
 
       // Rate limiting - wait 100ms between requests
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     console.log(`\n✅ Team ${teamId} complete: ${inserted} inserted, ${skipped} skipped`);
     return { teamId, inserted, skipped, total: games.length };
-
   } catch (error) {
     console.error(`❌ Failed to process team ${teamId}:`, error.message);
     return { teamId, inserted: 0, skipped: 0, total: 0, error: error.message };
@@ -178,7 +178,7 @@ async function main() {
     process.exit(1);
   }
 
-  const teams = config.teams.split(',').map(t => t.trim());
+  const teams = config.teams.split(',').map((t) => t.trim());
   const season = parseInt(config.season);
 
   console.log(`Processing ${teams.length} teams for ${season} season:\n`);
@@ -221,7 +221,7 @@ async function main() {
 
 // Run if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error('❌ Fatal error:', error);
     process.exit(1);
   });

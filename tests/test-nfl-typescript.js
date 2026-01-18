@@ -8,7 +8,6 @@ import { getNflTeam, getNflStandings } from './lib/api/nfl.js';
 import { toTeamCardView, toStandingsView } from './lib/adapters/nfl.js';
 
 async function testNflImplementation() {
-
   try {
     // Test team endpoint with TypeScript types
     const teamData = await getNflTeam('10');
@@ -21,12 +20,9 @@ async function testNflImplementation() {
 
     // Test standings adapter
     const standingsViewModel = toStandingsView(standingsData);
-
-
   } catch (error) {
     console.error('❌ Test failed:', error.message);
   }
-
 }
 
 // Run the test

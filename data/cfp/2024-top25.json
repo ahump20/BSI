@@ -392,16 +392,70 @@
     ],
     "bubbleTeams": ["Florida State", "Ohio State", "Alabama", "Ole Miss"],
     "teams": [
-      { "team": "Georgia", "playoffOdds": 0.97, "avgSeed": 1.2, "topTwoOdds": 0.88, "medianSeed": 1 },
-      { "team": "Michigan", "playoffOdds": 0.94, "avgSeed": 1.5, "topTwoOdds": 0.81, "medianSeed": 2 },
-      { "team": "Oregon", "playoffOdds": 0.88, "avgSeed": 2.4, "topTwoOdds": 0.62, "medianSeed": 3 },
+      {
+        "team": "Georgia",
+        "playoffOdds": 0.97,
+        "avgSeed": 1.2,
+        "topTwoOdds": 0.88,
+        "medianSeed": 1
+      },
+      {
+        "team": "Michigan",
+        "playoffOdds": 0.94,
+        "avgSeed": 1.5,
+        "topTwoOdds": 0.81,
+        "medianSeed": 2
+      },
+      {
+        "team": "Oregon",
+        "playoffOdds": 0.88,
+        "avgSeed": 2.4,
+        "topTwoOdds": 0.62,
+        "medianSeed": 3
+      },
       { "team": "Texas", "playoffOdds": 0.79, "avgSeed": 3.1, "topTwoOdds": 0.48, "medianSeed": 3 },
-      { "team": "Florida State", "playoffOdds": 0.63, "avgSeed": 3.8, "topTwoOdds": 0.32, "medianSeed": 4 },
-      { "team": "Ohio State", "playoffOdds": 0.58, "avgSeed": 4.1, "topTwoOdds": 0.28, "medianSeed": 4 },
-      { "team": "Alabama", "playoffOdds": 0.54, "avgSeed": 4.4, "topTwoOdds": 0.25, "medianSeed": 4 },
-      { "team": "Ole Miss", "playoffOdds": 0.41, "avgSeed": 5.0, "topTwoOdds": 0.18, "medianSeed": 5 },
-      { "team": "Washington", "playoffOdds": 0.37, "avgSeed": 5.3, "topTwoOdds": 0.15, "medianSeed": 5 },
-      { "team": "Notre Dame", "playoffOdds": 0.33, "avgSeed": 5.7, "topTwoOdds": 0.14, "medianSeed": 6 }
+      {
+        "team": "Florida State",
+        "playoffOdds": 0.63,
+        "avgSeed": 3.8,
+        "topTwoOdds": 0.32,
+        "medianSeed": 4
+      },
+      {
+        "team": "Ohio State",
+        "playoffOdds": 0.58,
+        "avgSeed": 4.1,
+        "topTwoOdds": 0.28,
+        "medianSeed": 4
+      },
+      {
+        "team": "Alabama",
+        "playoffOdds": 0.54,
+        "avgSeed": 4.4,
+        "topTwoOdds": 0.25,
+        "medianSeed": 4
+      },
+      {
+        "team": "Ole Miss",
+        "playoffOdds": 0.41,
+        "avgSeed": 5.0,
+        "topTwoOdds": 0.18,
+        "medianSeed": 5
+      },
+      {
+        "team": "Washington",
+        "playoffOdds": 0.37,
+        "avgSeed": 5.3,
+        "topTwoOdds": 0.15,
+        "medianSeed": 5
+      },
+      {
+        "team": "Notre Dame",
+        "playoffOdds": 0.33,
+        "avgSeed": 5.7,
+        "topTwoOdds": 0.14,
+        "medianSeed": 6
+      }
     ],
     "notes": [
       "Georgia and Michigan control their path; both clinch with conference titles.",

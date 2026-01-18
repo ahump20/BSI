@@ -177,7 +177,7 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={250}>
               <div className="flex flex-wrap gap-4 justify-center">
-                <Link href="/college-baseball/games">
+                <Link href="/college-baseball/scores">
                   <Button variant="primary" size="lg">
                     View Live Games
                   </Button>
@@ -387,7 +387,7 @@ export default function CollegeBaseballPage() {
                   for all 300+ programs.
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
-                  <Link href="/college-baseball/games">
+                  <Link href="/college-baseball/scores">
                     <Button variant="primary" size="lg">
                       View Live Games
                     </Button>

@@ -130,18 +130,10 @@ export class QBGameEngine {
 
   private async initializeScene(): Promise<void> {
     // Lighting
-    const hemisphericLight = new HemisphericLight(
-      'hemiLight',
-      new Vector3(0, 1, 0),
-      this.scene
-    );
+    const hemisphericLight = new HemisphericLight('hemiLight', new Vector3(0, 1, 0), this.scene);
     hemisphericLight.intensity = 0.6;
 
-    const directionalLight = new DirectionalLight(
-      'dirLight',
-      new Vector3(-1, -2, -1),
-      this.scene
-    );
+    const directionalLight = new DirectionalLight('dirLight', new Vector3(-1, -2, -1), this.scene);
     directionalLight.position = new Vector3(20, 40, 20);
     directionalLight.intensity = 0.8;
 
@@ -175,11 +167,7 @@ export class QBGameEngine {
 
   private createField(): void {
     // Main field (grass)
-    const field = MeshBuilder.CreateGround(
-      'field',
-      { width: 60, height: 100 },
-      this.scene
-    );
+    const field = MeshBuilder.CreateGround('field', { width: 60, height: 100 }, this.scene);
     const fieldMat = new StandardMaterial('fieldMat', this.scene);
     fieldMat.diffuseColor = new Color3(0.2, 0.5, 0.2);
     fieldMat.specularColor = new Color3(0.1, 0.1, 0.1);
@@ -187,17 +175,8 @@ export class QBGameEngine {
     field.receiveShadows = true;
 
     // Field lines
-    const createLine = (
-      name: string,
-      z: number,
-      width: number = 60,
-      thickness: number = 0.3
-    ) => {
-      const line = MeshBuilder.CreatePlane(
-        name,
-        { width, height: thickness },
-        this.scene
-      );
+    const createLine = (name: string, z: number, width: number = 60, thickness: number = 0.3) => {
+      const line = MeshBuilder.CreatePlane(name, { width, height: thickness }, this.scene);
       line.rotation.x = Math.PI / 2;
       line.position.y = 0.01;
       line.position.z = z;
@@ -214,11 +193,7 @@ export class QBGameEngine {
     }
 
     // End zone
-    const endZone = MeshBuilder.CreateGround(
-      'endZone',
-      { width: 60, height: 10 },
-      this.scene
-    );
+    const endZone = MeshBuilder.CreateGround('endZone', { width: 60, height: 10 }, this.scene);
     endZone.position.z = -45;
     const endZoneMat = new StandardMaterial('endZoneMat', this.scene);
     endZoneMat.diffuseColor = new Color3(0.6, 0.3, 0.1);
@@ -283,14 +258,44 @@ export class QBGameEngine {
 
   private createTargets(): void {
     const targetPositions = [
-      { name: 'Slant Left', pos: new Vector3(-15, 2, 10), difficulty: 'easy' as const, points: 100 },
-      { name: 'Slant Right', pos: new Vector3(15, 2, 10), difficulty: 'easy' as const, points: 100 },
+      {
+        name: 'Slant Left',
+        pos: new Vector3(-15, 2, 10),
+        difficulty: 'easy' as const,
+        points: 100,
+      },
+      {
+        name: 'Slant Right',
+        pos: new Vector3(15, 2, 10),
+        difficulty: 'easy' as const,
+        points: 100,
+      },
       { name: 'Out Left', pos: new Vector3(-25, 2, 0), difficulty: 'medium' as const, points: 200 },
       { name: 'Out Right', pos: new Vector3(25, 2, 0), difficulty: 'medium' as const, points: 200 },
-      { name: 'Deep Post', pos: new Vector3(-5, 3, -20), difficulty: 'medium' as const, points: 250 },
-      { name: 'Deep Corner', pos: new Vector3(5, 3, -20), difficulty: 'medium' as const, points: 250 },
-      { name: 'Streak Left', pos: new Vector3(-10, 3, -35), difficulty: 'hard' as const, points: 400 },
-      { name: 'Streak Right', pos: new Vector3(10, 3, -35), difficulty: 'hard' as const, points: 400 },
+      {
+        name: 'Deep Post',
+        pos: new Vector3(-5, 3, -20),
+        difficulty: 'medium' as const,
+        points: 250,
+      },
+      {
+        name: 'Deep Corner',
+        pos: new Vector3(5, 3, -20),
+        difficulty: 'medium' as const,
+        points: 250,
+      },
+      {
+        name: 'Streak Left',
+        pos: new Vector3(-10, 3, -35),
+        difficulty: 'hard' as const,
+        points: 400,
+      },
+      {
+        name: 'Streak Right',
+        pos: new Vector3(10, 3, -35),
+        difficulty: 'hard' as const,
+        points: 400,
+      },
       { name: 'End Zone', pos: new Vector3(0, 3, -45), difficulty: 'hard' as const, points: 500 },
     ];
 
@@ -386,12 +391,15 @@ export class QBGameEngine {
 
     // Calculate throw success based on QB stats and timing
     const baseAccuracy = this.qb.accuracy / 10;
-    const throwAccuracy = (baseAccuracy * 0.6 + aimAccuracy * 0.4);
+    const throwAccuracy = baseAccuracy * 0.6 + aimAccuracy * 0.4;
 
     // Random factor based on difficulty
     const difficultyModifier =
-      this.activeTarget.difficulty === 'easy' ? 0.9 :
-      this.activeTarget.difficulty === 'medium' ? 0.75 : 0.6;
+      this.activeTarget.difficulty === 'easy'
+        ? 0.9
+        : this.activeTarget.difficulty === 'medium'
+          ? 0.75
+          : 0.6;
 
     const successRoll = Math.random();
     const isSuccess = successRoll < throwAccuracy * difficultyModifier;
@@ -640,14 +648,16 @@ export class QBGameEngine {
     let target: Target;
     if (progress > 0.7 && Math.random() > 0.4) {
       const hardTargets = availableTargets.filter((t) => t.difficulty === 'hard');
-      target = hardTargets.length > 0
-        ? hardTargets[Math.floor(Math.random() * hardTargets.length)]
-        : availableTargets[Math.floor(Math.random() * availableTargets.length)];
+      target =
+        hardTargets.length > 0
+          ? hardTargets[Math.floor(Math.random() * hardTargets.length)]
+          : availableTargets[Math.floor(Math.random() * availableTargets.length)];
     } else if (progress > 0.4 && Math.random() > 0.5) {
       const mediumTargets = availableTargets.filter((t) => t.difficulty !== 'easy');
-      target = mediumTargets.length > 0
-        ? mediumTargets[Math.floor(Math.random() * mediumTargets.length)]
-        : availableTargets[Math.floor(Math.random() * availableTargets.length)];
+      target =
+        mediumTargets.length > 0
+          ? mediumTargets[Math.floor(Math.random() * mediumTargets.length)]
+          : availableTargets[Math.floor(Math.random() * availableTargets.length)];
     } else {
       target = availableTargets[Math.floor(Math.random() * availableTargets.length)];
     }
@@ -658,10 +668,7 @@ export class QBGameEngine {
   }
 
   private updateGameState(): void {
-    const timeRemaining = Math.max(
-      0,
-      GAME_DURATION - (Date.now() - this.gameStartTime)
-    );
+    const timeRemaining = Math.max(0, GAME_DURATION - (Date.now() - this.gameStartTime));
 
     this.onGameStateChange({
       score: this.score,
@@ -737,9 +744,7 @@ export class QBGameEngine {
     this.activeTarget = null;
 
     const completionPercentage =
-      this.attempts > 0
-        ? Math.round((this.completions / this.attempts) * 100)
-        : 0;
+      this.attempts > 0 ? Math.round((this.completions / this.attempts) * 100) : 0;
 
     this.onGameOver({
       finalScore: this.score,

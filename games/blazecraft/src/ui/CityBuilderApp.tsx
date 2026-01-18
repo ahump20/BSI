@@ -24,13 +24,54 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { CityWorldRenderer, createCityWorldRenderer } from '@core/CityWorldRenderer';
 import { IsometricWorldRenderer, createIsometricWorldRenderer } from '@core/IsometricWorldRenderer';
 import { LiveBridge, createLiveBridge, ConnectionStatus, EventPayload, AgentState } from '@core/LiveBridge';
-import { CityState, BuildingKind, createInitialCityState, BUILDING_CONFIGS, getCityLevel, getTierProgress, getBuildingFromPath } from '@core/BuildingSystem';
+import { GameBridge, createGameBridge, ScoreState, ConnectionStatus as GameConnectionStatus, CityEventMapping } from '@core/GameBridge';
+import { AnyGameEvent, isGameUpdateEvent, isGameStartEvent, isGameFinalEvent, GameUpdatePayload } from '@core/GameEventContract';
+// SportsBridge retained for reference until migration verified
+// import { SportsBridge, createSportsBridge, SportsScore, SportsEvent } from '@core/SportsBridge';
+import { CityState, BuildingKind, createInitialCityState, BUILDING_CONFIGS, getCityLevel, getTierProgress, getBuildingFromPath, calculateBuildingModifiers, getUpgradeCost, BUILDING_FUNCTIONS } from '@core/BuildingSystem';
+import { ProgressionSystem, createProgressionSystem, getLevelTitle, Achievement } from '@core/ProgressionSystem';
+import { ResourceSystem, createResourceSystem, Resources, ResourceEvent as ResourceHistoryEvent } from '@core/ResourceSystem';
+import { TechTree, createTechTree, TechNodeId, ActiveEffects } from '@core/TechTree';
+import { AnalystSystem, createAnalystSystem, Analyst, Task, TaskProgress } from '@core/AnalystSystem';
+import { TutorialSystem, createTutorialSystem, TutorialStep } from '@core/TutorialSystem';
+import { calculateEventReward, shouldGenerateTask } from '@core/GameEventContract';
+import { ResourceBar } from './ResourceBar';
+import { TechTreePanel } from './TechTreePanel';
+import { AnalystManager } from './AnalystManager';
+import { TaskList } from './TaskList';
 import { FilmGrain } from './FilmGrain';
 import { CommandCard } from './CommandCard';
-import { IconCompleted, IconFailed, IconGear, IconFiles, IconWorkers, IconSword } from './Icons';
+import {
+  IconCompleted,
+  IconFailed,
+  IconGear,
+  IconFiles,
+  IconWorkers,
+  IconSword,
+  IconCastle,
+  IconAnvil,
+  IconMarket,
+  IconHorse,
+  IconBooks,
+  IconBuilding,
+  IconAgent,
+  IconGamepad,
+  IconFrame,
+  IconConstruction,
+  IconPin,
+  IconClipboard,
+  IconTarget,
+  IconHammer,
+  IconBook,
+  IconKeyboard,
+  IconTrophy,
+  IconCrossedSwords,
+} from './Icons';
 import { uiSfx, playClick, playComplete, playError, playNotify, initSound } from '@core/ui-sfx';
 import { PerformanceHUD } from './PerformanceHUD';
 import { TutorialOverlay } from './TutorialOverlay';
+import { AgentCard } from './AgentCard';
+import { SportsTicker } from './SportsTicker';
 import '@styles/wc3-theme.css';
 
 // ─────────────────────────────────────────────────────────────
@@ -50,6 +91,56 @@ interface GameEvent {
   agentName?: string;
   agentId?: string;
   data?: Record<string, unknown>;
+}
+
+// Phase 1.2: Toast notification types
+type ToastType = 'upgrade' | 'task' | 'error' | 'info';
+
+interface Toast {
+  id: string;
+  type: ToastType;
+  title: string;
+  subtitle?: string;
+  file?: string;
+  timestamp: number;
+}
+
+// Phase 1.4: Persistent state interface
+interface SavedCityState {
+  buildings: Record<string, { tier: number; completions: number }>;
+  totalCompletions: number;
+  lastSaved: number;
+  sessionCount: number;
+}
+
+const STORAGE_KEY = 'blazecraft_city_state';
+
+// Load saved state from localStorage
+function loadSavedState(): SavedCityState | null {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return null;
+    return JSON.parse(saved) as SavedCityState;
+  } catch {
+    return null;
+  }
+}
+
+// Save state to localStorage
+function saveState(state: CityState, sessionCount: number): void {
+  try {
+    const saved: SavedCityState = {
+      buildings: Object.fromEntries(
+        Object.entries(state.buildings).map(([id, b]) => [id, { tier: b.tier, completions: b.completions }])
+      ),
+      totalCompletions: state.totalCompletions,
+      lastSaved: Date.now(),
+      sessionCount,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  } catch {
+    // localStorage might be full or disabled
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -610,6 +701,79 @@ const styles = {
     animation: 'notificationProgress 2.5s linear',
   },
 
+  // Phase 1.2: Toast Queue
+  toastContainer: {
+    position: 'fixed' as const,
+    bottom: '140px',
+    right: '16px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+    zIndex: 1000,
+    maxHeight: '50vh',
+    overflow: 'hidden',
+  },
+  toast: {
+    padding: '0.75rem 1rem',
+    borderRadius: '8px',
+    border: '1px solid',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+    minWidth: '280px',
+    maxWidth: '340px',
+    animation: 'toastSlideIn 0.3s ease-out',
+    position: 'relative' as const,
+    overflow: 'hidden',
+  },
+  toastUpgrade: {
+    background: 'linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95))',
+    borderColor: 'rgba(46, 204, 113, 0.4)',
+  },
+  toastTask: {
+    background: 'linear-gradient(135deg, rgba(191, 87, 0, 0.95), rgba(255, 107, 53, 0.95))',
+    borderColor: 'rgba(191, 87, 0, 0.4)',
+  },
+  toastError: {
+    background: 'linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95))',
+    borderColor: 'rgba(231, 76, 60, 0.4)',
+  },
+  toastInfo: {
+    background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.95), rgba(41, 128, 185, 0.95))',
+    borderColor: 'rgba(52, 152, 219, 0.4)',
+  },
+  toastHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginBottom: '0.25rem',
+  },
+  toastTitle: {
+    fontSize: '0.9rem',
+    fontWeight: 700,
+    color: '#FFF',
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+  },
+  toastSubtitle: {
+    fontSize: '0.75rem',
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  toastFile: {
+    fontSize: '0.65rem',
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontFamily: 'monospace',
+    marginTop: '0.25rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
+  },
+  toastProgress: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    height: '3px',
+    background: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: '0 0 8px 8px',
+  },
+
   // Phase 2: Tooltip
   tooltip: {
     position: 'absolute' as const,
@@ -823,13 +987,13 @@ const styles = {
 // Building Icons
 // ─────────────────────────────────────────────────────────────
 
-const BUILDING_ICONS: Record<BuildingKind, string> = {
-  townhall: '🏰',
-  workshop: '⚒️',
-  market: '🏪',
-  barracks: '⚔️',
-  stables: '🐎',
-  library: '📚',
+const BUILDING_ICONS: Record<BuildingKind, React.ReactElement> = {
+  townhall: <IconCastle size={18} color="#FFD700" />,
+  workshop: <IconAnvil size={18} color="#BF5700" />,
+  market: <IconMarket size={18} color="#2ECC71" />,
+  barracks: <IconCrossedSwords size={18} color="#E74C3C" />,
+  stables: <IconHorse size={18} color="#3498DB" />,
+  library: <IconBooks size={18} color="#9B59B6" />,
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -841,7 +1005,14 @@ export function CityBuilderApp(): React.ReactElement {
   const viewportRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<CityRenderer | null>(null);
   const bridgeRef = useRef<LiveBridge | null>(null);
+  const gameBridgeRef = useRef<GameBridge | null>(null);
   const initRef = useRef(false);
+
+  // Gameplay system refs
+  const resourceSystemRef = useRef<ResourceSystem | null>(null);
+  const techTreeRef = useRef<TechTree | null>(null);
+  const analystSystemRef = useRef<AnalystSystem | null>(null);
+  const tutorialSystemRef = useRef<TutorialSystem | null>(null);
 
   // Render mode (determined once at mount)
   const [renderMode] = useState<RenderMode>(getRenderMode);
@@ -857,13 +1028,29 @@ export function CityBuilderApp(): React.ReactElement {
   const [isPaused, setIsPaused] = useState(false);
   const [notification, setNotification] = useState<{ title: string; subtitle: string } | null>(null);
   const [hoveredCard, setHoveredCard] = useState<BuildingKind | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [cameraState, setCameraState] = useState({ x: 0, y: 0, zoom: 1.0 });
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);  // D2: For command card
+
+  // Phase 4: Sports integration state (via GameBridge)
+  const [sportsScores, setSportsScores] = useState<ScoreState[]>([]);
+  const [sportsStatus, setSportsStatus] = useState<GameConnectionStatus>('disconnected');
+
+  // Gameplay systems state
+  const [resources, setResources] = useState<Resources>({ intel: 0, influence: 0, momentum: 0 });
+  const [resourceHistory, setResourceHistory] = useState<ResourceHistoryEvent[]>([]);
+  const [techEffects, setTechEffects] = useState<ActiveEffects | null>(null);
+  const [analysts, setAnalysts] = useState<Analyst[]>([]);
+  const [availableTasks, setAvailableTasks] = useState<Task[]>([]);
+  const [workingAnalysts, setWorkingAnalysts] = useState<TaskProgress[]>([]);
+  const [currentTutorialStep, setCurrentTutorialStep] = useState<TutorialStep | null>(null);
 
   // Modal states
   const [tasksModalOpen, setTasksModalOpen] = useState(false);
   const [agentsModalOpen, setAgentsModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [techTreeOpen, setTechTreeOpen] = useState(false);
+  const [analystManagerOpen, setAnalystManagerOpen] = useState(false);
 
   // Phase 2: UI enhancement states
   const [tooltipData, setTooltipData] = useState<{
@@ -886,6 +1073,8 @@ export function CityBuilderApp(): React.ReactElement {
     return !localStorage.getItem('blazecraft_tutorial_complete');
   });
   const [eventFilter, setEventFilter] = useState<'all' | 'tasks' | 'buildings' | 'agents' | 'system'>('all');
+  const [sessionCount, setSessionCount] = useState<number>(1);
+  const [hasShownWelcomeBack, setHasShownWelcomeBack] = useState(false);
 
   // Computed values
   const cityLevel = useMemo(() => getCityLevel(cityState), [cityState]);
@@ -960,7 +1149,11 @@ export function CityBuilderApp(): React.ReactElement {
             onBuildingPlaced: (kind, gridX, gridY) => {
               addEvent('building_placed', `Placed ${BUILDING_CONFIGS[kind].name} at (${gridX}, ${gridY})`);
               setPlacementMode(null);
-              playClick(); // Sound feedback
+              playClick();
+            },
+            onBuildingDeleted: (kind, gridX, gridY) => {
+              addEvent('building_placed', `Removed ${BUILDING_CONFIGS[kind].name} at (${gridX}, ${gridY})`);
+              playClick();
             },
             onCameraChange: (x, y, zoom) => {
               setCameraState({ x, y, zoom });
@@ -1040,7 +1233,15 @@ export function CityBuilderApp(): React.ReactElement {
           onBuildingUpgrade: (buildingKind) => {
             const config = BUILDING_CONFIGS[buildingKind as BuildingKind];
             const tier = bridgeRef.current?.getCityState()?.buildings[buildingKind as BuildingKind]?.tier ?? 0;
-            showNotification(`${config.name} Upgraded!`, `Now: ${config.tierNames[tier]}`);
+
+            // Phase 1.2: Add toast notification
+            addToast('upgrade', `${config.name} Upgraded!`, `Now: ${config.tierNames[tier]}`);
+
+            // Phase 1.1: Trigger flash effect on renderer
+            if (rendererRef.current && 'playTierUpgradeEffect' in rendererRef.current) {
+              (rendererRef.current as CityWorldRenderer).playTierUpgradeEffect(buildingKind as BuildingKind);
+            }
+
             addEvent('task_complete', `${config.name} upgraded to ${config.tierNames[tier]}`);
             playComplete(); // Victory chime for upgrade
           },
@@ -1050,32 +1251,95 @@ export function CityBuilderApp(): React.ReactElement {
           },
         }, {
           // E1: Production SSE URL configuration
+          // Hooks send to /api/blazecraft/events - match that path
           baseUrl: window.location.hostname.includes('localhost')
-            ? '/api/events'
-            : 'https://blazecraft.app/api/events',
+            ? '/api/blazecraft/events'
+            : 'https://blazecraft.app/api/blazecraft/events',
           sessionId: 'main',
         });
         bridgeRef.current = bridge;
 
-        // Mode is controlled by VITE_FORCE_DEMO env var (not hostname)
-        // Set VITE_FORCE_DEMO=true in Cloudflare Pages to force demo mode
-        // Set VITE_FORCE_DEMO=false (or omit) to try live first
+        // Production detection: default to demo mode immediately on blazecraft.app
+        // since there's no real SSE backend in production. Users were experiencing
+        // 30-second delays waiting for the activity timeout fallback.
+        const isProduction = window.location.hostname === 'blazecraft.app' || 
+                             window.location.hostname.endsWith('.pages.dev');
         const forceDemoMode = import.meta.env.VITE_FORCE_DEMO === 'true';
 
-        if (forceDemoMode) {
+        if (isProduction || forceDemoMode) {
+          // Immediate demo mode for production - no waiting for SSE timeout
           bridge.setDemoMode(true);
-          addEvent('status', 'Demo mode active (env)');
+          addEvent('status', isProduction ? 'Demo mode (production)' : 'Demo mode (env)');
         } else {
-          // Try to connect to live backend first
+          // Development: try live backend first, LiveBridge handles fallback
           bridge.connect();
+        }
 
-          // Fallback to demo mode after 5 seconds if not connected
-          setTimeout(() => {
-            if (bridgeRef.current && !bridgeRef.current.isDemoMode()) {
-              bridgeRef.current.setDemoMode(true);
-              addEvent('status', 'Demo mode activated (fallback)');
-            }
-          }, 5000);
+        // Initialize gameplay systems
+        const resourceSystem = createResourceSystem({
+          onResourceChange: (res, delta, source) => {
+            setResources({ ...res });
+            setResourceHistory((prev) => [
+              { type: delta.intel! < 0 ? 'spend' : 'gain', delta, source, timestamp: Date.now() },
+              ...prev.slice(0, 49),
+            ]);
+          },
+          onMilestone: (resource, milestone) => {
+            addToast('info', `${resource.charAt(0).toUpperCase() + resource.slice(1)} Milestone`, `Reached ${milestone} ${resource}!`);
+          },
+        });
+        resourceSystemRef.current = resourceSystem;
+        setResources(resourceSystem.getResources());
+        setResourceHistory(resourceSystem.getHistory());
+
+        const techTree = createTechTree({
+          onNodeUnlock: (node) => {
+            addToast('upgrade', 'Tech Unlocked', node.name);
+            playComplete();
+          },
+          onEffectApply: () => {
+            setTechEffects(techTree.getActiveEffects());
+          },
+        });
+        techTreeRef.current = techTree;
+        setTechEffects(techTree.getActiveEffects());
+
+        const analystSystem = createAnalystSystem({
+          onTaskComplete: (task, analyst, reward) => {
+            resourceSystem.addResources(reward, `task:${task.type}`);
+            addToast('task', 'Task Complete', `${analyst.name} finished ${task.title}`);
+            playComplete();
+            tutorialSystemRef.current?.notifyTaskCompleted();
+          },
+          onTaskExpired: (task) => {
+            addEvent('status', `Task expired: ${task.title}`);
+          },
+          onAnalystFatigued: (analyst) => {
+            addEvent('status', `${analyst.name} is resting`);
+          },
+          onNewTaskAvailable: () => {
+            setAvailableTasks(analystSystem.getAvailableTasks());
+          },
+        });
+        analystSystemRef.current = analystSystem;
+        setAnalysts(analystSystem.getAnalysts());
+        setAvailableTasks(analystSystem.getAvailableTasks());
+
+        // Update analyst system with building modifiers
+        analystSystem.updateBuildingEffects(cityState.buildings as Record<BuildingKind, { tier: 0 | 1 | 2 }>);
+
+        const tutorialSystem = createTutorialSystem({
+          onStepStart: (step) => setCurrentTutorialStep(step),
+          onStepComplete: () => setCurrentTutorialStep(null),
+          onTutorialComplete: () => {
+            localStorage.setItem('blazecraft_tutorial_complete', 'true');
+            setShowTutorial(false);
+            addToast('info', 'Tutorial Complete', 'You\'re ready to manage your HQ!');
+          },
+        });
+        tutorialSystemRef.current = tutorialSystem;
+        if (tutorialSystem.shouldAutoStart()) {
+          tutorialSystem.start();
         }
 
       } catch (error) {
@@ -1089,7 +1353,12 @@ export function CityBuilderApp(): React.ReactElement {
     return () => {
       rendererRef.current?.dispose();
       bridgeRef.current?.disconnect();
+      gameBridgeRef.current?.disconnect();
+      resourceSystemRef.current?.destroy();
+      analystSystemRef.current?.destroy();
     };
+    // Note: addToast is stable and defined later, but used in closure
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderMode, addEvent]);
 
   // ─────────────────────────────────────────────────────────────
@@ -1105,20 +1374,26 @@ export function CityBuilderApp(): React.ReactElement {
         case 'Escape':
           if (shortcutOverlayOpen) {
             setShortcutOverlayOpen(false);
+            playClick();
           } else if (settingsOpen) {
             setSettingsOpen(false);
+            playClick();
           } else if (contextMenu) {
             setContextMenu(null);
+            playClick();
           } else if (placementMode) {
             setPlacementMode(null);
             (rendererRef.current as CityWorldRenderer)?.setPlacementMode?.(null);
+            playClick();
           } else if (selectedDistrict) {
             setSelectedDistrict(null);
             setSelectedBuilding(null);
+            playClick();
           } else if (tasksModalOpen || agentsModalOpen || profileModalOpen) {
             setTasksModalOpen(false);
             setAgentsModalOpen(false);
             setProfileModalOpen(false);
+            playClick();
           }
           break;
         case '?':
@@ -1143,6 +1418,7 @@ export function CityBuilderApp(): React.ReactElement {
           const buildingKinds: BuildingKind[] = ['townhall', 'workshop', 'market', 'barracks', 'stables', 'library'];
           if (buildingIndex < buildingKinds.length) {
             handleBuildingCardClick(buildingKinds[buildingIndex]);
+            playClick();
           }
           break;
       }
@@ -1152,6 +1428,37 @@ export function CityBuilderApp(): React.ReactElement {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [placementMode, selectedDistrict, isPaused, tasksModalOpen, agentsModalOpen, profileModalOpen, shortcutOverlayOpen, settingsOpen, contextMenu, addEvent]);
 
+  // Periodic update for analyst task progress
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (analystSystemRef.current) {
+        setAnalysts(analystSystemRef.current.getAnalysts());
+        setWorkingAnalysts(analystSystemRef.current.getWorkingAnalysts());
+        setAvailableTasks(analystSystemRef.current.getAvailableTasks());
+      }
+      // Update tutorial with current resources
+      if (tutorialSystemRef.current && resourceSystemRef.current) {
+        tutorialSystemRef.current.notifyResources(resourceSystemRef.current.getResources());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Update building modifiers when city state changes
+  useEffect(() => {
+    if (analystSystemRef.current) {
+      analystSystemRef.current.updateBuildingEffects(
+        cityState.buildings as Record<BuildingKind, { tier: 0 | 1 | 2 }>
+      );
+    }
+    if (resourceSystemRef.current) {
+      resourceSystemRef.current.updateModifiers(
+        cityState.buildings as Record<BuildingKind, { tier: 0 | 1 | 2 }>
+      );
+    }
+  }, [cityState]);
+
   // ─────────────────────────────────────────────────────────────
   // Handlers
   // ─────────────────────────────────────────────────────────────
@@ -1160,6 +1467,221 @@ export function CityBuilderApp(): React.ReactElement {
     setNotification({ title, subtitle });
     setTimeout(() => setNotification(null), 2500);
   }, []);
+
+  // Phase 1.2: Toast queue management
+  const addToast = useCallback((type: ToastType, title: string, subtitle?: string, file?: string) => {
+    const toast: Toast = {
+      id: `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      type,
+      title,
+      subtitle,
+      file,
+      timestamp: Date.now(),
+    };
+
+    setToasts((prev) => [...prev.slice(-4), toast]); // Keep max 5 toasts
+
+    // Auto-dismiss after 4 seconds
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== toast.id));
+    }, 4000);
+  }, []);
+
+  // Gameplay action handlers
+  const handleAssignTask = useCallback((taskId: string, analystId: string) => {
+    if (!analystSystemRef.current) return;
+
+    const success = analystSystemRef.current.assignTask(analystId, taskId);
+    if (success) {
+      const analyst = analystSystemRef.current.getAnalysts().find((a) => a.id === analystId);
+      addToast('task', 'Task Assigned', `${analyst?.name ?? 'Analyst'} is now working`);
+      playClick();
+      setAvailableTasks(analystSystemRef.current.getAvailableTasks());
+      setAnalysts(analystSystemRef.current.getAnalysts());
+      tutorialSystemRef.current?.notifyTaskAssigned();
+    }
+  }, [addToast]);
+
+  const handleUnlockTech = useCallback((nodeId: TechNodeId) => {
+    if (!techTreeRef.current || !resourceSystemRef.current) return;
+
+    const cost = techTreeRef.current.unlock(nodeId, resourceSystemRef.current.getResources());
+    if (cost) {
+      resourceSystemRef.current.spend(cost);
+      setTechEffects(techTreeRef.current.getActiveEffects());
+      setResources(resourceSystemRef.current.getResources());
+      tutorialSystemRef.current?.notifyTechUnlocked(nodeId);
+    }
+  }, []);
+
+  const handleRecruitAnalyst = useCallback(() => {
+    if (!analystSystemRef.current) return;
+
+    const analyst = analystSystemRef.current.createAnalyst('general');
+    if (analyst) {
+      addToast('info', 'Analyst Recruited', analyst.name);
+      playComplete();
+      setAnalysts(analystSystemRef.current.getAnalysts());
+      tutorialSystemRef.current?.notifyAnalystCount(analystSystemRef.current.getAnalysts().length);
+    }
+  }, [addToast]);
+
+  const handleUnassignAnalyst = useCallback((analystId: string) => {
+    if (!analystSystemRef.current) return;
+
+    analystSystemRef.current.unassignAnalyst(analystId);
+    setAnalysts(analystSystemRef.current.getAnalysts());
+    setAvailableTasks(analystSystemRef.current.getAvailableTasks());
+  }, []);
+
+  // Phase 4: Initialize GameBridge for BSI live scores (proxied via backend)
+  // Separate useEffect because addToast must be defined first
+  useEffect(() => {
+    if (!isReady || gameBridgeRef.current) return;
+
+    const gameBridge = createGameBridge({
+      onScoreUpdate: (scores) => setSportsScores(scores),
+      onGameEvent: (event) => {
+        // Extract sport from payload for display
+        const payload = event.payload as { sport?: string; homeTeam?: string; awayTeam?: string; homeScore?: number; awayScore?: number; playType?: string };
+        const sport = payload.sport ?? 'game';
+        const sportIcon = sport === 'mlb' ? '⚾' : sport === 'nfl' ? '🏈' : sport === 'nba' ? '🏀' : '🎮';
+
+        // Build description based on event type
+        let description = '';
+        if (isGameStartEvent(event)) {
+          description = `${payload.awayTeam} @ ${payload.homeTeam} started`;
+        } else if (isGameFinalEvent(event)) {
+          description = `Final: ${payload.awayTeam} ${payload.awayScore} @ ${payload.homeTeam} ${payload.homeScore}`;
+        } else if (isGameUpdateEvent(event)) {
+          const updatePayload = event.payload as GameUpdatePayload;
+          description = updatePayload.playDescription ?? `${payload.homeTeam} ${payload.homeScore} - ${payload.awayTeam} ${payload.awayScore}`;
+        } else {
+          description = event.type;
+        }
+
+        addEvent('status', `${sportIcon} ${description}`);
+
+        // Add resources from game event
+        if (resourceSystemRef.current) {
+          const isFavorite = gameBridgeRef.current?.isFavoriteTeam(payload.homeTeam ?? '') ||
+                            gameBridgeRef.current?.isFavoriteTeam(payload.awayTeam ?? '');
+          const reward = calculateEventReward(event, isFavorite);
+          if (reward.intel > 0 || reward.influence > 0 || reward.momentum > 0) {
+            resourceSystemRef.current.addResources(reward, `game:${event.type}`);
+          }
+        }
+
+        // Generate task from game event
+        if (analystSystemRef.current && shouldGenerateTask(event) && payload.sport) {
+          const sportType = payload.sport as 'mlb' | 'nfl' | 'nba' | 'college-baseball' | 'college-football';
+          const gameId = (event.payload as { gameId?: string }).gameId ?? `game-${Date.now()}`;
+          analystSystemRef.current.createTaskFromGame(
+            'monitor_game',
+            gameId,
+            sportType,
+            `Monitor ${payload.homeTeam} vs ${payload.awayTeam}`
+          );
+          setAvailableTasks(analystSystemRef.current.getAvailableTasks());
+        }
+
+        // Notify tutorial
+        tutorialSystemRef.current?.notifyEvent(event.type);
+      },
+      onCityEffect: (effect, event) => {
+        // Trigger building flash effect
+        if (rendererRef.current && 'flashBuilding' in rendererRef.current) {
+          (rendererRef.current as CityWorldRenderer).flashBuilding(effect.buildingKind, effect.flashColor);
+        }
+        const payload = event.payload as { sport?: string };
+        const sport = payload.sport?.toUpperCase() ?? 'GAME';
+        addToast('task', `${sport}: Score update`, `+${effect.upgradePoints} progress`);
+      },
+      onStatusChange: setSportsStatus,
+    }, {
+      baseUrl: '/api/game/events',
+      enabledSports: ['mlb', 'nfl', 'nba'],
+      tier: null, // Free tier by default
+      demoFallbackTimeout: 30000,
+    });
+    gameBridge.connect();
+    gameBridgeRef.current = gameBridge;
+    addEvent('status', 'GameBridge initialized');
+  }, [isReady, addEvent, addToast]);
+
+  // Helper to get toast icon
+  const getToastIcon = (type: ToastType): React.ReactNode => {
+    switch (type) {
+      case 'upgrade':
+        return <IconTrophy size={16} color="#FFF" />;
+      case 'task':
+        return <IconCompleted size={16} color="#FFF" />;
+      case 'error':
+        return <IconFailed size={16} color="#FFF" />;
+      case 'info':
+        return <IconGear size={16} color="#FFF" />;
+    }
+  };
+
+  // Helper to get toast style
+  const getToastStyle = (type: ToastType): React.CSSProperties => {
+    switch (type) {
+      case 'upgrade':
+        return styles.toastUpgrade;
+      case 'task':
+        return styles.toastTask;
+      case 'error':
+        return styles.toastError;
+      case 'info':
+        return styles.toastInfo;
+    }
+  };
+
+  // Phase 1.4: Load saved state on mount
+  useEffect(() => {
+    const savedState = loadSavedState();
+    if (savedState && savedState.totalCompletions > 0) {
+      // Restore saved state
+      const restoredState = createInitialCityState();
+      for (const [id, saved] of Object.entries(savedState.buildings)) {
+        const building = restoredState.buildings[id as BuildingKind];
+        if (building) {
+          building.tier = saved.tier as 0 | 1 | 2;
+          building.completions = saved.completions;
+        }
+      }
+      restoredState.totalCompletions = savedState.totalCompletions;
+      setCityState(restoredState);
+
+      // Update session count
+      const newSessionCount = (savedState.sessionCount || 0) + 1;
+      setSessionCount(newSessionCount);
+
+      // Show welcome back notification (only once per session)
+      if (!hasShownWelcomeBack) {
+        setHasShownWelcomeBack(true);
+        setTimeout(() => {
+          const timeSince = Date.now() - savedState.lastSaved;
+          const hoursAgo = Math.floor(timeSince / (1000 * 60 * 60));
+          const timeStr = hoursAgo > 24
+            ? `${Math.floor(hoursAgo / 24)}d ago`
+            : hoursAgo > 0
+            ? `${hoursAgo}h ago`
+            : 'recently';
+
+          addToast('info', 'Welcome back!', `Session #${newSessionCount} • Last seen ${timeStr}`);
+          addEvent('status', `Restored city state: ${savedState.totalCompletions} total tasks`);
+        }, 500);
+      }
+    }
+  }, [hasShownWelcomeBack, addToast, addEvent]);
+
+  // Phase 1.4: Auto-save when city state changes
+  useEffect(() => {
+    if (cityState.totalCompletions > 0) {
+      saveState(cityState, sessionCount);
+    }
+  }, [cityState, sessionCount]);
 
   const handleBuildingCardClick = useCallback((buildingKind: BuildingKind) => {
     if (placementMode === buildingKind) {
@@ -1252,7 +1774,7 @@ export function CityBuilderApp(): React.ReactElement {
       {/* Header */}
       <header style={styles.header}>
         <div style={styles.logo}>
-          <div style={styles.logoIcon}>⚔️</div>
+          <div style={styles.logoIcon}><IconCrossedSwords size={20} color="#FFF" /></div>
           <div>
             <div style={styles.logoText}>BlazeCraft</div>
             <div style={styles.logoSubtext}>Agent City Builder</div>
@@ -1275,7 +1797,7 @@ export function CityBuilderApp(): React.ReactElement {
             title={`City Level ${cityLevel} - ${totalCompletions} XP total\nClick to view stats`}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={styles.statIcon}>🏰</span>
+              <span style={styles.statIcon}><IconCastle size={14} color="#FFD700" /></span>
               <div style={styles.statValue}>Lv.{cityLevel}</div>
             </div>
             <div style={{
@@ -1301,7 +1823,7 @@ export function CityBuilderApp(): React.ReactElement {
             style={styles.statCounter}
             title="Total building tiers"
           >
-            <span style={styles.statIcon}>🏛️</span>
+            <span style={styles.statIcon}><IconBuilding size={14} color="#C9A227" /></span>
             <div>
               <div style={styles.statValue}>
                 {Object.values(cityState.buildings).reduce((sum, b) => sum + b.tier, 0)}
@@ -1316,10 +1838,10 @@ export function CityBuilderApp(): React.ReactElement {
               ...styles.statCounter,
               ...(tasksModalOpen ? styles.statCounterHover : {}),
             }}
-            onClick={() => setTasksModalOpen(true)}
+            onClick={() => { setTasksModalOpen(true); playClick(); }}
             title="Click to view tasks"
           >
-            <span style={styles.statIcon}>✅</span>
+            <span style={styles.statIcon}><IconCompleted size={14} color="#48C774" /></span>
             <div>
               <div style={styles.statValue}>{totalCompletions}</div>
               <div style={styles.statLabel}>Tasks</div>
@@ -1332,10 +1854,10 @@ export function CityBuilderApp(): React.ReactElement {
               ...styles.statCounter,
               ...(agentsModalOpen ? styles.statCounterHover : {}),
             }}
-            onClick={() => setAgentsModalOpen(true)}
+            onClick={() => { setAgentsModalOpen(true); playClick(); }}
             title="Click to view agents"
           >
-            <span style={styles.statIcon}>🤖</span>
+            <span style={styles.statIcon}><IconAgent size={14} color="#9B59B6" /></span>
             <div>
               <div style={styles.statValue}>{activeAgentCount}</div>
               <div style={styles.statLabel}>Agents</div>
@@ -1351,7 +1873,7 @@ export function CityBuilderApp(): React.ReactElement {
               border: `1px solid ${renderMode === '3d' ? 'rgba(155, 89, 182, 0.4)' : 'rgba(52, 152, 219, 0.4)'}`,
             }}
           >
-            {renderMode === '3d' ? '🎮' : '🖼️'} {renderMode.toUpperCase()}
+            {renderMode === '3d' ? <IconGamepad size={12} /> : <IconFrame size={12} />} {renderMode.toUpperCase()}
           </div>
 
           {/* Connection Status / LIVE Button */}
@@ -1387,13 +1909,26 @@ export function CityBuilderApp(): React.ReactElement {
               cursor: 'pointer',
               fontSize: '1rem',
             }}
-            onClick={() => setSettingsOpen(!settingsOpen)}
+            onClick={() => { setSettingsOpen(!settingsOpen); playClick(); }}
             title="Settings (press ? for shortcuts)"
           >
-            ⚙️
+            <IconGear size={16} />
           </button>
         </div>
       </header>
+
+      {/* Resource Bar */}
+      <ResourceBar
+        resources={resources}
+        history={resourceHistory}
+        analystCount={{
+          idle: analysts.filter((a) => a.status === 'idle').length,
+          total: analysts.length,
+        }}
+        onResourceClick={(resource) => {
+          if (resource === 'intel') setTechTreeOpen(true);
+        }}
+      />
 
       {/* Main Content */}
       <main style={styles.main}>
@@ -1404,31 +1939,33 @@ export function CityBuilderApp(): React.ReactElement {
             onClick={() => setProfileModalOpen(true)}
             title="Click to view profile"
           >
-            <div style={styles.heroPortrait}>🏗️</div>
+            <div style={styles.heroPortrait}><IconConstruction size={64} color="#BF5700" /></div>
             <div style={styles.heroName}>Master Builder</div>
             <div style={styles.heroLevel}>Level {cityLevel}</div>
           </div>
 
           <div style={styles.agentList}>
             {Object.entries(agents).map(([id, agent]) => (
-              <div
+              <AgentCard
                 key={id}
-                style={styles.agentCard}
+                agent={agent}
+                isSelected={selectedAgent === id}
                 onClick={() => handleAgentClick(id, agent)}
-                title="Click to focus on agent"
-              >
-                <div style={styles.agentName}>{agent.name}</div>
-                <div style={styles.agentRegion}>📍 {agent.region}</div>
-                <div
-                  style={{
-                    ...styles.agentStatus,
-                    background: agent.status === 'working' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(243, 156, 18, 0.2)',
-                    color: agent.status === 'working' ? '#2ECC71' : '#F39C12',
-                  }}
-                >
-                  {agent.status}
-                </div>
-              </div>
+                onDoubleClick={() => {
+                  // Pan camera to agent's building on double-click
+                  const regionToBuilding: Record<string, BuildingKind> = {
+                    'workshop': 'workshop',
+                    'market': 'market',
+                    'barracks': 'barracks',
+                    'stables': 'stables',
+                    'library': 'library',
+                    'townhall': 'townhall',
+                  };
+                  const building = regionToBuilding[agent.region] || 'townhall';
+                  setSelectedDistrict(building);
+                  addEvent('status', `Focused on ${agent.name}'s location`);
+                }}
+              />
             ))}
             {Object.keys(agents).length === 0 && (
               <div style={{ textAlign: 'center', color: '#666', fontSize: '0.75rem', padding: '1rem' }}>
@@ -1446,7 +1983,7 @@ export function CityBuilderApp(): React.ReactElement {
           {/* Placement Mode Indicator */}
           {placementMode && (
             <div style={styles.placementModeIndicator}>
-              🏗️ Placing: {BUILDING_CONFIGS[placementMode].name} (ESC to cancel)
+              <IconConstruction size={14} color="#FFF" /> Placing: {BUILDING_CONFIGS[placementMode].name} (ESC to cancel)
             </div>
           )}
 
@@ -1528,13 +2065,61 @@ export function CityBuilderApp(): React.ReactElement {
           <CommandCard
             unit={selectedAgent ? { id: selectedAgent, type: 'worker', team: '0', position: { x: 0, y: 0 }, hp: 100, maxHp: 100 } : null}
             onCommand={(cmd) => {
-              // Handle command - could send to bridge in production
-              addEvent('status', `Command: ${cmd}${selectedAgent ? ` → ${agents[selectedAgent]?.name}` : ''}`);
-              if (cmd === 'terminate' && selectedAgent) {
-                setSelectedAgent(null);
+              // Phase 2.1: Wire commands to LiveBridge
+              const bridge = bridgeRef.current;
+              if (!bridge) return;
+
+              switch (cmd) {
+                case 'stop':
+                  bridge.stop();
+                  addToast('info', 'Events Stopped', 'Incoming events are being discarded');
+                  addEvent('status', 'Event processing stopped');
+                  break;
+
+                case 'hold':
+                  bridge.hold();
+                  addToast('info', 'Events Held', 'Events are being buffered');
+                  addEvent('status', 'Event processing held (buffering)');
+                  break;
+
+                case 'resume':
+                  const bufferedCount = bridge.getBufferedEventCount();
+                  bridge.resume();
+                  if (bufferedCount > 0) {
+                    addToast('task', 'Resumed', `Processing ${bufferedCount} buffered events`);
+                  } else {
+                    addToast('info', 'Resumed', 'Live event processing resumed');
+                  }
+                  addEvent('status', `Event processing resumed${bufferedCount > 0 ? ` (${bufferedCount} buffered)` : ''}`);
+                  break;
+
+                case 'inspect':
+                  // Show agent details
+                  if (selectedAgent && agents[selectedAgent]) {
+                    const agent = agents[selectedAgent];
+                    addToast('info', `Agent: ${agent.name}`, `Region: ${agent.region} | Status: ${agent.status}`);
+                  }
+                  addEvent('status', `Inspecting ${selectedAgent ? agents[selectedAgent]?.name : 'city state'}`);
+                  break;
+
+                case 'terminate':
+                  if (selectedAgent) {
+                    addToast('error', 'Agent Terminated', agents[selectedAgent]?.name ?? 'Unknown');
+                    addEvent('status', `Terminated agent ${agents[selectedAgent]?.name}`);
+                    setSelectedAgent(null);
+                  }
+                  break;
+
+                case 'assign':
+                  addToast('info', 'Assign Mode', 'Click a building to assign agent');
+                  addEvent('status', `Assign mode activated for ${selectedAgent ? agents[selectedAgent]?.name : 'agent'}`);
+                  break;
+
+                default:
+                  addEvent('status', `Command: ${cmd}${selectedAgent ? ` → ${agents[selectedAgent]?.name}` : ''}`);
               }
             }}
-            disabled={!selectedAgent}
+            disabled={false} // Enable all commands even without agent selected
           />
         </div>
 
@@ -1579,10 +2164,10 @@ export function CityBuilderApp(): React.ReactElement {
                 );
               })}
 
-              {/* Viewport rectangle */}
+              {/* Viewport rectangle - includes camera position */}
               <rect
-                x={50 - 15 / cameraState.zoom}
-                y={50 - 10 / cameraState.zoom}
+                x={50 + (cameraState.x / 400) * 50 - 15 / cameraState.zoom}
+                y={50 + (cameraState.y / 400) * 50 - 10 / cameraState.zoom}
                 width={30 / cameraState.zoom}
                 height={20 / cameraState.zoom}
                 fill="none"
@@ -1593,6 +2178,77 @@ export function CityBuilderApp(): React.ReactElement {
             </svg>
           </div>
         </div>
+
+        {/* Task List Section */}
+        <div style={{
+          width: '260px',
+          padding: '0.5rem',
+          borderRight: '1px solid #333',
+          overflow: 'auto',
+        }}>
+          <TaskList
+            tasks={availableTasks}
+            idleAnalysts={analysts.filter((a) => a.status === 'idle')}
+            onAssign={handleAssignTask}
+            maxVisible={3}
+          />
+          <div style={{
+            display: 'flex',
+            gap: '0.5rem',
+            marginTop: '0.5rem',
+            paddingTop: '0.5rem',
+            borderTop: '1px solid #333',
+          }}>
+            <button
+              id="tech-tree-button"
+              style={{
+                flex: 1,
+                padding: '0.4rem',
+                background: '#0D0D0D',
+                border: '1px solid #3498DB',
+                borderRadius: '4px',
+                color: '#3498DB',
+                fontSize: '0.65rem',
+                cursor: 'pointer',
+              }}
+              onClick={() => { setTechTreeOpen(true); playClick(); }}
+            >
+              Tech Tree
+            </button>
+            <button
+              style={{
+                flex: 1,
+                padding: '0.4rem',
+                background: '#0D0D0D',
+                border: '1px solid #9B59B6',
+                borderRadius: '4px',
+                color: '#9B59B6',
+                fontSize: '0.65rem',
+                cursor: 'pointer',
+              }}
+              onClick={() => { setAnalystManagerOpen(true); playClick(); }}
+            >
+              Analysts ({analysts.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Sports Ticker - Below Minimap */}
+        {sportsScores.length > 0 && (
+          <div style={{
+            width: '180px',
+            padding: '0.25rem',
+            borderRight: '1px solid #333',
+            overflow: 'hidden',
+          }}>
+            <SportsTicker
+              scores={sportsScores}
+              status={sportsStatus}
+              favoriteTeams={gameBridgeRef.current?.getFavoriteTeams()}
+              onTeamClick={(team) => gameBridgeRef.current?.addFavoriteTeam(team)}
+            />
+          </div>
+        )}
 
         {/* Building Cards */}
         <div style={styles.buildingGrid}>
@@ -1647,7 +2303,7 @@ export function CityBuilderApp(): React.ReactElement {
       {tasksModalOpen && (
         <div style={styles.modal} onClick={() => setTasksModalOpen(false)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalTitle}>📋 Tasks ({totalCompletions} completed)</div>
+            <div style={styles.modalTitle}><IconClipboard size={16} color="#C9A227" /> Tasks ({totalCompletions} completed)</div>
             <div style={styles.modalBody}>
               {totalCompletions === 0 ? (
                 <div>No tasks completed yet. Place buildings or wait for agent activity.</div>
@@ -1662,7 +2318,7 @@ export function CityBuilderApp(): React.ReactElement {
                 </div>
               )}
             </div>
-            <button style={styles.modalClose} onClick={() => setTasksModalOpen(false)}>
+            <button style={styles.modalClose} onClick={() => { setTasksModalOpen(false); playClick(); }}>
               Close
             </button>
           </div>
@@ -1673,7 +2329,7 @@ export function CityBuilderApp(): React.ReactElement {
       {agentsModalOpen && (
         <div style={styles.modal} onClick={() => setAgentsModalOpen(false)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalTitle}>🤖 Agents ({activeAgentCount} active)</div>
+            <div style={styles.modalTitle}><IconAgent size={16} color="#9B59B6" /> Agents ({activeAgentCount} active)</div>
             <div style={styles.modalBody}>
               {activeAgentCount === 0 ? (
                 <div>No active agents. Agents will appear when Claude Code is running.</div>
@@ -1689,7 +2345,7 @@ export function CityBuilderApp(): React.ReactElement {
                 ))
               )}
             </div>
-            <button style={styles.modalClose} onClick={() => setAgentsModalOpen(false)}>
+            <button style={styles.modalClose} onClick={() => { setAgentsModalOpen(false); playClick(); }}>
               Close
             </button>
           </div>
@@ -1697,10 +2353,33 @@ export function CityBuilderApp(): React.ReactElement {
       )}
 
       {/* Profile Modal */}
+      {/* Tech Tree Panel */}
+      {techTreeOpen && techTreeRef.current && (
+        <TechTreePanel
+          techTree={techTreeRef.current}
+          resources={resources}
+          onUnlock={handleUnlockTech}
+          onClose={() => setTechTreeOpen(false)}
+        />
+      )}
+
+      {/* Analyst Manager Panel */}
+      {analystManagerOpen && analystSystemRef.current && (
+        <AnalystManager
+          analysts={analysts}
+          workingAnalysts={workingAnalysts}
+          capacity={analystSystemRef.current.getCapacity()}
+          effects={analystSystemRef.current.getBuildingEffects()}
+          onRecruit={handleRecruitAnalyst}
+          onUnassign={handleUnassignAnalyst}
+          onClose={() => setAnalystManagerOpen(false)}
+        />
+      )}
+
       {profileModalOpen && (
         <div style={styles.modal} onClick={() => setProfileModalOpen(false)}>
           <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalTitle}>🏗️ Master Builder Profile</div>
+            <div style={styles.modalTitle}><IconConstruction size={16} color="#BF5700" /> Master Builder Profile</div>
             <div style={styles.modalBody}>
               <div style={{ marginBottom: '0.5rem' }}>
                 <strong>City Level:</strong> {cityLevel}
@@ -1721,7 +2400,7 @@ export function CityBuilderApp(): React.ReactElement {
                 ))}
               </div>
             </div>
-            <button style={styles.modalClose} onClick={() => setProfileModalOpen(false)}>
+            <button style={styles.modalClose} onClick={() => { setProfileModalOpen(false); playClick(); }}>
               Close
             </button>
           </div>
@@ -1773,7 +2452,7 @@ export function CityBuilderApp(): React.ReactElement {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#333')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            📋 View Details
+            <IconClipboard size={12} /> View Details
           </div>
           <div
             style={styles.contextMenuItem}
@@ -1784,19 +2463,22 @@ export function CityBuilderApp(): React.ReactElement {
             onMouseEnter={(e) => (e.currentTarget.style.background = '#333')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            🔨 Build More
+            <IconHammer size={12} /> Build More
           </div>
           <div style={styles.contextMenuDivider} />
           <div
             style={styles.contextMenuItem}
             onClick={() => {
-              addEvent('status', `Focused on ${BUILDING_CONFIGS[contextMenu.building!].name}`);
+              const building = contextMenu.building!;
+              (rendererRef.current as CityWorldRenderer)?.panToBuilding?.(building);
+              addEvent('status', `Focused on ${BUILDING_CONFIGS[building].name}`);
+              playClick();
               setContextMenu(null);
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = '#333')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
-            🎯 Focus Camera
+            <IconTarget size={12} /> Focus Camera
           </div>
         </div>
       )}
@@ -1807,7 +2489,7 @@ export function CityBuilderApp(): React.ReactElement {
           style={styles.settingsPanel}
           onClick={(e) => e.stopPropagation()}
         >
-          <div style={styles.settingsTitle}>⚙️ Settings</div>
+          <div style={styles.settingsTitle}><IconGear size={16} color="#BF5700" /> Settings</div>
           <div style={styles.settingsSection}>
             <div style={styles.settingsRow}>
               <span style={styles.settingsLabel}>Sound Effects</span>
@@ -1871,7 +2553,7 @@ export function CityBuilderApp(): React.ReactElement {
               playClick();
             }}
           >
-            📖 Replay Tutorial
+            <IconBook size={14} /> Replay Tutorial
           </button>
           <button
             style={{
@@ -1884,7 +2566,7 @@ export function CityBuilderApp(): React.ReactElement {
               marginTop: '0.5rem',
               width: '100%',
             }}
-            onClick={() => setSettingsOpen(false)}
+            onClick={() => { setSettingsOpen(false); playClick(); }}
           >
             Close
           </button>
@@ -1897,7 +2579,7 @@ export function CityBuilderApp(): React.ReactElement {
           style={styles.shortcutOverlay}
           onClick={() => setShortcutOverlayOpen(false)}
         >
-          <div style={styles.shortcutTitle}>⌨️ Keyboard Shortcuts</div>
+          <div style={styles.shortcutTitle}><IconKeyboard size={16} color="#BF5700" /> Keyboard Shortcuts</div>
           <div style={styles.shortcutGrid}>
             <div style={styles.shortcutItem}>
               <span style={styles.shortcutKey}>1-6</span>
@@ -1946,13 +2628,45 @@ export function CityBuilderApp(): React.ReactElement {
       {notification && (
         <div style={styles.notification}>
           <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-            <span style={styles.notificationIcon}>🏆</span>
+            <span style={styles.notificationIcon}><IconTrophy size={24} color="#FFD700" /></span>
             <div>
               <div style={styles.notificationTitle}>{notification.title}</div>
               <div style={styles.notificationSubtitle}>{notification.subtitle}</div>
             </div>
           </div>
           <div style={styles.notificationProgress} />
+        </div>
+      )}
+
+      {/* Phase 1.2: Toast Queue */}
+      {toasts.length > 0 && (
+        <div style={styles.toastContainer}>
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              style={{
+                ...styles.toast,
+                ...getToastStyle(toast.type),
+              }}
+            >
+              <div style={styles.toastHeader}>
+                {getToastIcon(toast.type)}
+                <span style={styles.toastTitle}>{toast.title}</span>
+              </div>
+              {toast.subtitle && (
+                <div style={styles.toastSubtitle}>{toast.subtitle}</div>
+              )}
+              {toast.file && (
+                <div style={styles.toastFile}>{toast.file}</div>
+              )}
+              <div
+                style={{
+                  ...styles.toastProgress,
+                  animation: 'toastProgress 4s linear',
+                }}
+              />
+            </div>
+          ))}
         </div>
       )}
 
@@ -1990,6 +2704,20 @@ export function CityBuilderApp(): React.ReactElement {
           }
         }
         @keyframes notificationProgress {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+        @keyframes toastSlideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes toastProgress {
           from { width: 100%; }
           to { width: 0%; }
         }

@@ -11,13 +11,13 @@
 
   // Environment variables
   "vars": {
-    "ENVIRONMENT": "production"
+    "ENVIRONMENT": "production",
   },
 
   // Observability - full sampling for debugging
   "observability": {
     "enabled": true,
-    "head_sampling_rate": 1
+    "head_sampling_rate": 1,
   },
 
   // D1 Database - Game data storage
@@ -25,23 +25,23 @@
     {
       "binding": "DB",
       "database_name": "bsi-game-db",
-      "database_id": "88eb676f-af0f-470c-a46a-b9429f5b51f3"
-    }
+      "database_id": "88eb676f-af0f-470c-a46a-b9429f5b51f3",
+    },
   ],
 
   // KV Namespace - Leaderboard caching and rate limiting
   "kv_namespaces": [
     {
       "binding": "CACHE",
-      "id": "a53c3726fc3044be82e79d2d1e371d26"
-    }
+      "id": "a53c3726fc3044be82e79d2d1e371d26",
+    },
   ],
 
   // R2 Bucket - Character sprites and stadium images
   "r2_buckets": [
     {
       "binding": "ASSETS",
-      "bucket_name": "bsi-game-assets"
-    }
-  ]
+      "bucket_name": "bsi-game-assets",
+    },
+  ],
 }

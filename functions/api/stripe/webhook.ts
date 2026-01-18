@@ -28,6 +28,8 @@ import {
 interface Env {
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
+  STRIPE_PRO_PRICE_ID: string;
+  STRIPE_ENTERPRISE_PRICE_ID: string;
   RESEND_API_KEY: string;
   DB: D1Database;
   KV: KVNamespace;
@@ -42,11 +44,17 @@ interface StripeEvent {
   created: number;
 }
 
-// Map Stripe price IDs to BSI tier names
-const PRICE_TO_TIER: Record<string, string> = {
-  price_1SX9voLvpRBk20R2pW0AjUIv: 'pro', // $29/month
-  price_1SX9w7LvpRBk20R2DJkKAH3y: 'enterprise', // $199/month
-};
+// Map Stripe price IDs to BSI tier names (built from env vars)
+function buildPriceToTierMap(env: Env): Record<string, string> {
+  const map: Record<string, string> = {};
+  if (env.STRIPE_PRO_PRICE_ID) {
+    map[env.STRIPE_PRO_PRICE_ID] = 'pro';
+  }
+  if (env.STRIPE_ENTERPRISE_PRICE_ID) {
+    map[env.STRIPE_ENTERPRISE_PRICE_ID] = 'enterprise';
+  }
+  return map;
+}
 
 const corsHeaders = {
   'Content-Type': 'application/json',
@@ -225,7 +233,8 @@ async function handleSubscriptionCreated(
   const status = subscription.status as string;
   const items = subscription.items as { data?: Array<{ price?: { id?: string } }> };
   const priceId = items?.data?.[0]?.price?.id || '';
-  const tier = PRICE_TO_TIER[priceId] || 'pro';
+  const priceToTier = buildPriceToTierMap(env);
+  const tier = priceToTier[priceId] || 'pro';
   const currentPeriodStart = subscription.current_period_start as number;
   const currentPeriodEnd = subscription.current_period_end as number;
 
@@ -297,7 +306,8 @@ async function handleSubscriptionUpdated(
   const cancelAtPeriodEnd = subscription.cancel_at_period_end as boolean;
   const items = subscription.items as { data?: Array<{ price?: { id?: string } }> };
   const priceId = items?.data?.[0]?.price?.id || '';
-  const tier = PRICE_TO_TIER[priceId] || 'pro';
+  const priceToTier = buildPriceToTierMap(env);
+  const tier = priceToTier[priceId] || 'pro';
   const currentPeriodEnd = subscription.current_period_end as number;
 
   console.log(`Subscription updated: ${stripeSubscriptionId}, status: ${status}, tier: ${tier}`);

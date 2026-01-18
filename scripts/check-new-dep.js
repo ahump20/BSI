@@ -2,10 +2,10 @@
 
 /**
  * BSI New Dependency Checker
- * 
+ *
  * Checks a single package before adding it to dependencies.
  * Use this script before running npm install for any new package.
- * 
+ *
  * Usage:
  *   node scripts/check-new-dep.js <package-name>
  *   node scripts/check-new-dep.js <package-name> <version>
@@ -64,7 +64,7 @@ function displayPackageInfo(packageName, version, packageInfo) {
   console.log(`Package: ${packageName}`);
   console.log(`Version: ${version}`);
   console.log('');
-  
+
   if (packageInfo) {
     console.log('Package Information:');
     console.log(`  Description: ${packageInfo.description || 'N/A'}`);
@@ -72,17 +72,19 @@ function displayPackageInfo(packageName, version, packageInfo) {
     console.log(`  Repository: ${packageInfo.repository?.url || 'N/A'}`);
     console.log(`  Homepage: ${packageInfo.homepage || 'N/A'}`);
     console.log(`  Author: ${packageInfo.author?.name || packageInfo.author || 'N/A'}`);
-    
+
     if (packageInfo.maintainers && packageInfo.maintainers.length > 0) {
       console.log(`  Maintainers: ${packageInfo.maintainers.length}`);
     }
-    
+
     if (packageInfo.keywords && packageInfo.keywords.length > 0) {
-      console.log(`  Keywords: ${packageInfo.keywords.slice(0, 5).join(', ')}${packageInfo.keywords.length > 5 ? '...' : ''}`);
+      console.log(
+        `  Keywords: ${packageInfo.keywords.slice(0, 5).join(', ')}${packageInfo.keywords.length > 5 ? '...' : ''}`
+      );
     }
     console.log('');
   }
-  
+
   console.log('─'.repeat(68));
   console.log('');
   console.log('Socket MCP Check:');
@@ -117,20 +119,20 @@ function displayPackageInfo(packageName, version, packageInfo) {
 
 async function main() {
   console.log('Checking package information...\n');
-  
+
   let version = specifiedVersion;
   let packageInfo = null;
-  
+
   if (!version) {
     version = await getLatestVersion(packageName);
   }
-  
+
   packageInfo = await getPackageInfo(packageName);
-  
+
   displayPackageInfo(packageName, version, packageInfo);
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('Unexpected error:', error);
   process.exit(1);
 });

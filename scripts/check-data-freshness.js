@@ -11,24 +11,10 @@ const BASE_URL = process.env.API_BASE_URL || 'https://blazesportsintel.com';
 const MAX_AGE_HOURS = 24;
 
 const endpoints = {
-  mlb: [
-    '/api/mlb/cardinals',
-    '/api/mlb/standings',
-    '/api/mlb/players?teamId=138',
-  ],
-  nfl: [
-    '/api/nfl/titans',
-    '/api/nfl/standings',
-    '/api/nfl/scores',
-  ],
-  nba: [
-    '/api/nba/teams',
-    '/api/nba/standings',
-  ],
-  'college-baseball': [
-    '/api/college-baseball/teams',
-    '/api/college-baseball/schedule',
-  ],
+  mlb: ['/api/mlb/cardinals', '/api/mlb/standings', '/api/mlb/players?teamId=138'],
+  nfl: ['/api/nfl/titans', '/api/nfl/standings', '/api/nfl/scores'],
+  nba: ['/api/nba/teams', '/api/nba/standings'],
+  'college-baseball': ['/api/college-baseball/teams', '/api/college-baseball/schedule'],
 };
 
 async function checkFreshness(endpoint) {
@@ -52,7 +38,9 @@ async function checkFreshness(endpoint) {
     const ageHours = (now - lastUpdated) / (1000 * 60 * 60);
 
     if (ageHours > MAX_AGE_HOURS) {
-      console.error(`  ❌ ${endpoint}: Data is ${ageHours.toFixed(1)} hours old (> ${MAX_AGE_HOURS} hours)`);
+      console.error(
+        `  ❌ ${endpoint}: Data is ${ageHours.toFixed(1)} hours old (> ${MAX_AGE_HOURS} hours)`
+      );
       return false;
     }
 

@@ -12,12 +12,12 @@ The BSI codebase contains a **complete Three.js ember particle system implementa
 
 ### Current State Assessment
 
-| Component | Status | Location |
-|-----------|--------|----------|
-| HeroEmbers.tsx | Implemented, not deployed | `/components/three/HeroEmbers.tsx` |
-| ThreeCanvas.tsx | Implemented, not deployed | `/components/three/ThreeCanvas.tsx` |
+| Component             | Status                    | Location                                  |
+| --------------------- | ------------------------- | ----------------------------------------- |
+| HeroEmbers.tsx        | Implemented, not deployed | `/components/three/HeroEmbers.tsx`        |
+| ThreeCanvas.tsx       | Implemented, not deployed | `/components/three/ThreeCanvas.tsx`       |
 | usePerformanceTier.ts | Implemented, not deployed | `/components/three/usePerformanceTier.ts` |
-| Production Site | CSS-only rendering | blazesportsintel.com |
+| Production Site       | CSS-only rendering        | blazesportsintel.com                      |
 
 ### Dependencies Installed
 
@@ -88,18 +88,21 @@ HeroSectionWrapper (Server Component)
 ## Tradeoffs Analysis
 
 ### Option A: Deploy As-Is with Minimal Changes
+
 - **Pros:** Fastest to market, code exists
 - **Cons:** Risk of memory leaks, no monitoring, no kill switch
 - **Risk Level:** HIGH
 - **Recommendation:** NOT recommended
 
 ### Option B: Add Safety Rails, Then Deploy
+
 - **Pros:** Balanced risk/reward, can ship in 1-2 sprints
 - **Cons:** Delays launch slightly
 - **Risk Level:** MEDIUM
 - **Recommendation:** RECOMMENDED
 
 ### Option C: Complete Rewrite with WebGPU Path
+
 - **Pros:** Future-proof, best performance
 - **Cons:** 4-6 week effort, browser support concerns
 - **Risk Level:** LOW (but high effort)

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -481,8 +481,9 @@
         <div class="hero-badge">📊 Conference Standings & RPI</div>
         <h1 class="hero-title">Conference Standings & Tournament Implications</h1>
         <p class="hero-subtitle">
-          All NCAA Division I baseball conferences with complete standings, win percentages, games back, and tournament
-          implications. RPI rankings and strength of schedule analysis included.
+          All NCAA Division I baseball conferences with complete standings, win percentages, games
+          back, and tournament implications. RPI rankings and strength of schedule analysis
+          included.
         </p>
       </div>
     </section>
@@ -493,15 +494,41 @@
       <section class="filters" data-aos="fade-up">
         <div class="filters-container">
           <span class="filter-label" id="conference-filter-label">Filter by Conference:</span>
-          <button class="filter-btn active" data-conference="all" aria-pressed="true" aria-labelledby="conference-filter-label">All Conferences</button>
-          <button class="filter-btn" data-conference="power5" aria-pressed="false" aria-labelledby="conference-filter-label">Power 5</button>
-          <button class="filter-btn" data-conference="mid-major" aria-pressed="false" aria-labelledby="conference-filter-label">Mid-Major</button>
+          <button
+            class="filter-btn active"
+            data-conference="all"
+            aria-pressed="true"
+            aria-labelledby="conference-filter-label"
+          >
+            All Conferences
+          </button>
+          <button
+            class="filter-btn"
+            data-conference="power5"
+            aria-pressed="false"
+            aria-labelledby="conference-filter-label"
+          >
+            Power 5
+          </button>
+          <button
+            class="filter-btn"
+            data-conference="mid-major"
+            aria-pressed="false"
+            aria-labelledby="conference-filter-label"
+          >
+            Mid-Major
+          </button>
         </div>
       </section>
 
       <!-- Standings Grid -->
       <div id="standings-container">
-        <div class="loading" role="status" aria-live="polite" aria-label="Loading conference standings">
+        <div
+          class="loading"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading conference standings"
+        >
           <i class="fas fa-circle-notch" aria-hidden="true"></i>
           <p>Loading conference standings...</p>
         </div>
@@ -524,7 +551,7 @@
         duration: 800,
         easing: 'ease-in-out',
         once: true,
-        offset: 100
+        offset: 100,
       });
 
       // Power 5 conferences
@@ -535,9 +562,9 @@
       let currentFilter = 'all';
 
       // Filter buttons
-      document.querySelectorAll('.filter-btn').forEach(btn => {
+      document.querySelectorAll('.filter-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.filter-btn').forEach(b => {
+          document.querySelectorAll('.filter-btn').forEach((b) => {
             b.classList.remove('active');
             b.setAttribute('aria-pressed', 'false');
           });
@@ -565,7 +592,9 @@
           if (!data.conferences || data.conferences.length === 0) {
             // Check if API indicates off-season
             const isOffSeason = data.offSeason === true;
-            const message = data.message || 'Conference standings data is not currently available. Please try again later.';
+            const message =
+              data.message ||
+              'Conference standings data is not currently available. Please try again later.';
 
             container.innerHTML = `
               <div class="empty-state" role="alert">
@@ -599,12 +628,12 @@
         let filteredConferences = allConferences;
 
         if (currentFilter === 'power5') {
-          filteredConferences = allConferences.filter(conf =>
-            POWER_5.some(p5 => conf.conference.name.includes(p5))
+          filteredConferences = allConferences.filter((conf) =>
+            POWER_5.some((p5) => conf.conference.name.includes(p5))
           );
         } else if (currentFilter === 'mid-major') {
           filteredConferences = allConferences.filter(
-            conf => !POWER_5.some(p5 => conf.conference.name.includes(p5))
+            (conf) => !POWER_5.some((p5) => conf.conference.name.includes(p5))
           );
         }
 
@@ -619,7 +648,9 @@
           return;
         }
 
-        container.innerHTML = filteredConferences.map(conf => createConferenceSection(conf)).join('');
+        container.innerHTML = filteredConferences
+          .map((conf) => createConferenceSection(conf))
+          .join('');
 
         // Reinitialize AOS
         AOS.refresh();
@@ -708,7 +739,7 @@
       if (typeof BlazeParticles !== 'undefined') {
         BlazeParticles.init({
           particleCount: 150000,
-          quality: 'auto' // auto-scales based on device performance
+          quality: 'auto', // auto-scales based on device performance
         });
       }
     </script>

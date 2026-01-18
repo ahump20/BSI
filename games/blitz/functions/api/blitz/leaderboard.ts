@@ -114,16 +114,18 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
       .all();
 
     // Transform results with ranks
-    const entries: LeaderboardEntry[] = (results.results || []).map((row: Record<string, unknown>, index: number) => ({
-      rank: offset + index + 1,
-      playerId: row.player_id as string,
-      playerName: (row.player_name as string) || 'Anonymous',
-      score: row.high_score as number,
-      teamId: row.favorite_team_id as string | null,
-      gamesPlayed: row.games_played as number,
-      totalTouchdowns: row.total_touchdowns as number,
-      totalYards: row.total_yards as number,
-    }));
+    const entries: LeaderboardEntry[] = (results.results || []).map(
+      (row: Record<string, unknown>, index: number) => ({
+        rank: offset + index + 1,
+        playerId: row.player_id as string,
+        playerName: (row.player_name as string) || 'Anonymous',
+        score: row.high_score as number,
+        teamId: row.favorite_team_id as string | null,
+        gamesPlayed: row.games_played as number,
+        totalTouchdowns: row.total_touchdowns as number,
+        totalYards: row.total_yards as number,
+      })
+    );
 
     // Get total player count
     const countQuery = `SELECT COUNT(*) as count FROM blitz_players WHERE high_score > 0 ${dateFilter} ${teamFilter}`;
@@ -151,10 +153,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
   } catch (error: unknown) {
     console.error('Leaderboard error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return jsonResponse(
-      { success: false, error: errorMessage },
-      500
-    );
+    return jsonResponse({ success: false, error: errorMessage }, 500);
   }
 }
 

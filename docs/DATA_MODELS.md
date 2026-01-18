@@ -57,6 +57,7 @@ CREATE INDEX idx_teams_division ON teams(division);
 ```
 
 **TypeScript Interface:**
+
 ```typescript
 interface Team {
   id: number;
@@ -130,6 +131,7 @@ CREATE INDEX idx_players_external_id ON players(external_id);
 ```
 
 **TypeScript Interface:**
+
 ```typescript
 interface Player {
   id: number;
@@ -204,7 +206,7 @@ CREATE TABLE games (
     metadata JSONB,  -- Additional game-specific data
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT check_different_teams CHECK (home_team_id != away_team_id)
 );
 
@@ -256,19 +258,20 @@ CREATE INDEX idx_pose_data_action_type ON pose_data(action_type);
 ```
 
 **Keypoints Schema:**
+
 ```typescript
 interface PoseKeypoints {
   format: 'mediapipe' | 'openpose' | 'custom';
   landmarks: Array<{
     id: number;
     name: string;
-    x: number;      // Normalized 0-1
-    y: number;      // Normalized 0-1  
-    z: number;      // Depth (meters)
-    visibility: number;  // 0-1 confidence
-    presence: number;    // 0-1 presence
+    x: number; // Normalized 0-1
+    y: number; // Normalized 0-1
+    z: number; // Depth (meters)
+    visibility: number; // 0-1 confidence
+    presence: number; // 0-1 presence
   }>;
-  connections: Array<[number, number]>;  // Connected landmark pairs
+  connections: Array<[number, number]>; // Connected landmark pairs
   metadata: {
     timestamp: number;
     frameNumber: number;
@@ -290,37 +293,37 @@ CREATE TABLE biomech_analysis (
     player_id INTEGER REFERENCES players(id) NOT NULL,
     analysis_version VARCHAR(20) NOT NULL,
     computed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Kinematic metrics
     joint_angles JSONB,
     angular_velocities JSONB,
     linear_velocities JSONB,
     accelerations JSONB,
-    
+
     -- Sport-specific metrics
     sport_metrics JSONB,  -- Hip-shoulder separation, etc.
-    
+
     -- Performance scores
     efficiency_score DECIMAL(4,2),
     power_score DECIMAL(4,2),
     technique_score DECIMAL(4,2),
     consistency_score DECIMAL(4,2),
-    
+
     -- Risk assessment
     injury_risk_score DECIMAL(4,2),
     risk_factors JSONB,
     risk_level VARCHAR(20) CHECK (risk_level IN ('low', 'moderate', 'high', 'extreme')),
-    
+
     -- Comparative analysis
     percentile_rank DECIMAL(4,1),
     peer_comparison JSONB,
-    
+
     -- Overall assessment
     overall_score DECIMAL(4,2),
     strengths TEXT[],
     weaknesses TEXT[],
     recommendations TEXT[],
-    
+
     metadata JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -349,7 +352,7 @@ CREATE TABLE ml_training_data (
     target JSONB NOT NULL,    -- Target values
     metadata JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(dataset_name, version, id)
 );
 ```
@@ -374,7 +377,7 @@ CREATE TABLE ml_models (
     status VARCHAR(20) DEFAULT 'training',
     deployed_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(name, version)
 );
 ```
@@ -402,7 +405,7 @@ CREATE TABLE predictions (
 );
 ```
 
-## 📈 Analytics Models  
+## 📈 Analytics Models
 
 ### Game Statistics
 
@@ -420,7 +423,7 @@ CREATE TABLE game_stats (
     position_played VARCHAR(50),
     performance_rating DECIMAL(4,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(game_id, player_id)
 );
 ```
@@ -444,7 +447,7 @@ CREATE TABLE season_stats (
     awards TEXT[],
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     UNIQUE(player_id, season)
 );
 ```
@@ -597,6 +600,7 @@ CREATE TABLE sessions (
 ### JSONB Schema Examples
 
 #### Biomechanics Sport Metrics
+
 ```json
 {
   "baseball": {
@@ -620,6 +624,7 @@ CREATE TABLE sessions (
 ```
 
 #### Weather Data
+
 ```json
 {
   "temperature": {
@@ -640,6 +645,7 @@ CREATE TABLE sessions (
 ## 🔍 Indexes & Performance
 
 ### Key Performance Indexes
+
 ```sql
 -- Composite indexes for common queries
 CREATE INDEX idx_games_team_season ON games(home_team_id, season);
@@ -660,6 +666,7 @@ CREATE INDEX idx_biomech_metrics ON biomech_analysis USING GIN (sport_metrics);
 ## 🚀 API Data Transfer Objects (DTOs)
 
 ### Player Profile DTO
+
 ```typescript
 interface PlayerProfileDTO {
   id: number;
@@ -690,6 +697,7 @@ interface PlayerProfileDTO {
 ```
 
 ### Game Summary DTO
+
 ```typescript
 interface GameSummaryDTO {
   id: number;
@@ -713,6 +721,7 @@ interface GameSummaryDTO {
 Data models are managed through migration scripts located in `/scripts/migrations/`. Each migration is versioned and can be applied incrementally.
 
 ### Migration Naming Convention
+
 - `001_initial_schema.sql` - Initial database setup
 - `002_add_biomech_analysis.sql` - Add biomechanics tables
 - `003_add_ml_models.sql` - Add ML model tracking
@@ -721,18 +730,21 @@ Data models are managed through migration scripts located in `/scripts/migration
 ## 📝 Best Practices
 
 ### Data Validation
+
 - Use CHECK constraints for enum-like values
 - Implement foreign key constraints for referential integrity
 - Use NOT NULL constraints judiciously
 - Validate JSONB data at application level
 
 ### Performance Optimization
+
 - Partition large tables by date/time
 - Use appropriate indexes for query patterns
 - Consider materialized views for complex aggregations
 - Implement proper connection pooling
 
 ### Data Privacy
+
 - Store sensitive data encrypted
 - Implement proper access controls
 - Log data access for audit trails
@@ -747,5 +759,5 @@ Data models are managed through migration scripts located in `/scripts/migration
 
 ---
 
-*Last updated: December 2024*
-*Version: 2.1.0*
+_Last updated: December 2024_
+_Version: 2.1.0_

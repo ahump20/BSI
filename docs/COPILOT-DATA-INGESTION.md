@@ -1,6 +1,7 @@
 # Scouting Intel Copilot - Data Ingestion Workflow
 
 ## Overview
+
 This document describes how to add new game data to the Scouting Intel Copilot semantic search system.
 
 ## System Architecture
@@ -50,6 +51,7 @@ VALUES
 ```
 
 **Important Notes:**
+
 - Use `INSERT OR REPLACE` to handle updates to existing games
 - Always include `PRAGMA foreign_keys = OFF;` at the start to avoid FK constraints
 - Include `PRAGMA foreign_keys = ON;` at the end to re-enable constraints
@@ -174,6 +176,7 @@ PRAGMA foreign_keys = ON;
 **Problem:** Search returns 0 results even after inserting data
 
 **Checklist:**
+
 1. ✅ Did you run the embed API after inserting games?
 2. ✅ Did the embed API return `"success": true`?
 3. ✅ Are the games actually in D1? Check with:
@@ -188,6 +191,7 @@ PRAGMA foreign_keys = ON;
 **Explanation:** This is normal for semantic search. The system uses cosine similarity on 768-dimensional embeddings, so even "weak" matches will appear if there are no strong matches.
 
 **Solutions:**
+
 - Add more diverse game data to improve matching
 - Use sport filters to narrow results: `{"query": "...", "sport": "MLB"}`
 - Lower the limit: `{"query": "...", "limit": 3}` to get only top matches
@@ -196,44 +200,45 @@ PRAGMA foreign_keys = ON;
 
 ### teams table
 
-| Column | Type | Required | Description |
-|--------|------|----------|-------------|
-| sport | TEXT | Yes | 'NFL', 'MLB', 'CFB', or 'CBB' |
-| team_id | INTEGER | Yes | Unique team identifier |
-| key | TEXT | No | Team abbreviation (e.g., 'KC', 'STL') |
-| name | TEXT | Yes | Full team name |
-| city | TEXT | No | City name |
-| conference | TEXT | No | Conference (AFC/NFC, AL/NL, SEC, etc.) |
-| division | TEXT | No | Division within conference |
+| Column     | Type    | Required | Description                            |
+| ---------- | ------- | -------- | -------------------------------------- |
+| sport      | TEXT    | Yes      | 'NFL', 'MLB', 'CFB', or 'CBB'          |
+| team_id    | INTEGER | Yes      | Unique team identifier                 |
+| key        | TEXT    | No       | Team abbreviation (e.g., 'KC', 'STL')  |
+| name       | TEXT    | Yes      | Full team name                         |
+| city       | TEXT    | No       | City name                              |
+| conference | TEXT    | No       | Conference (AFC/NFC, AL/NL, SEC, etc.) |
+| division   | TEXT    | No       | Division within conference             |
 
 ### games table
 
-| Column | Type | Required | Description |
-|--------|------|----------|-------------|
-| sport | TEXT | Yes | 'NFL', 'MLB', 'CFB', or 'CBB' |
-| game_id | INTEGER | Yes | Unique game identifier |
-| season | INTEGER | Yes | Year (e.g., 2025) |
-| season_type | TEXT | Yes | 'REG' or 'POST' |
-| week | INTEGER | No | Week number (NFL/CFB only) |
-| game_date | TEXT | Yes | Date in 'YYYY-MM-DD' format |
-| game_time | TEXT | No | Time in 'HH:MM' format |
-| status | TEXT | No | 'Scheduled', 'InProgress', 'Final', etc. |
-| home_team_id | INTEGER | Yes | References teams(team_id) |
-| home_team_key | TEXT | Yes | Home team abbreviation |
-| home_team_name | TEXT | Yes | Home team full name |
-| home_score | INTEGER | No | Home team final score |
-| away_team_id | INTEGER | Yes | References teams(team_id) |
-| away_team_key | TEXT | Yes | Away team abbreviation |
-| away_team_name | TEXT | Yes | Away team full name |
-| away_score | INTEGER | No | Away team final score |
-| stadium_name | TEXT | No | Venue name |
-| winning_team_id | INTEGER | No | Team ID of winner |
+| Column          | Type    | Required | Description                              |
+| --------------- | ------- | -------- | ---------------------------------------- |
+| sport           | TEXT    | Yes      | 'NFL', 'MLB', 'CFB', or 'CBB'            |
+| game_id         | INTEGER | Yes      | Unique game identifier                   |
+| season          | INTEGER | Yes      | Year (e.g., 2025)                        |
+| season_type     | TEXT    | Yes      | 'REG' or 'POST'                          |
+| week            | INTEGER | No       | Week number (NFL/CFB only)               |
+| game_date       | TEXT    | Yes      | Date in 'YYYY-MM-DD' format              |
+| game_time       | TEXT    | No       | Time in 'HH:MM' format                   |
+| status          | TEXT    | No       | 'Scheduled', 'InProgress', 'Final', etc. |
+| home_team_id    | INTEGER | Yes      | References teams(team_id)                |
+| home_team_key   | TEXT    | Yes      | Home team abbreviation                   |
+| home_team_name  | TEXT    | Yes      | Home team full name                      |
+| home_score      | INTEGER | No       | Home team final score                    |
+| away_team_id    | INTEGER | Yes      | References teams(team_id)                |
+| away_team_key   | TEXT    | Yes      | Away team abbreviation                   |
+| away_team_name  | TEXT    | Yes      | Away team full name                      |
+| away_score      | INTEGER | No       | Away team final score                    |
+| stadium_name    | TEXT    | No       | Venue name                               |
+| winning_team_id | INTEGER | No       | Team ID of winner                        |
 
 ## Embedding Process Details
 
 ### How Embeddings Work
 
 1. **Text Generation:** Each game is converted to a natural language description:
+
    ```
    "NFL game: Minnesota Vikings at Kansas City Chiefs on 2025-10-05. Score: 24-28. Status: Final. Stadium: Arrowhead Stadium."
    ```
@@ -347,16 +352,19 @@ This will regenerate embeddings for ALL games in the database.
 ## API Endpoints
 
 ### Health Check
+
 ```bash
 curl https://blazesportsintel.com/api/copilot/health
 ```
 
 ### Status
+
 ```bash
 curl https://blazesportsintel.com/api/copilot/status
 ```
 
 ### Embed Games
+
 ```bash
 curl -X POST https://blazesportsintel.com/api/copilot/embed \
   -H 'Content-Type: application/json' \
@@ -364,6 +372,7 @@ curl -X POST https://blazesportsintel.com/api/copilot/embed \
 ```
 
 ### Search
+
 ```bash
 curl -X POST https://blazesportsintel.com/api/copilot/search \
   -H 'Content-Type: application/json' \

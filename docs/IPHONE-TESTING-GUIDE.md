@@ -7,18 +7,21 @@ This guide provides comprehensive procedures for testing the Blaze Sports Intel 
 ## Test Devices
 
 ### Primary Test Devices
+
 - **iPhone 14 Pro** (iOS 17+) - 6.1" display, 393x852 points
 - **iPhone 13** (iOS 16+) - 6.1" display, 390x844 points
 - **iPhone 12 Mini** (iOS 15+) - 5.4" display, 360x780 points
 
 ### Screen Specifications
-| Device | Points | Pixels | Scale | Physical |
-|--------|--------|--------|-------|----------|
-| iPhone 14 Pro | 393×852 | 1179×2556 | 3x | 6.1" |
-| iPhone 13 | 390×844 | 1170×2532 | 3x | 6.1" |
-| iPhone 12 Mini | 360×780 | 1080×2340 | 3x | 5.4" |
+
+| Device         | Points  | Pixels    | Scale | Physical |
+| -------------- | ------- | --------- | ----- | -------- |
+| iPhone 14 Pro  | 393×852 | 1179×2556 | 3x    | 6.1"     |
+| iPhone 13      | 390×844 | 1170×2532 | 3x    | 6.1"     |
+| iPhone 12 Mini | 360×780 | 1080×2340 | 3x    | 5.4"     |
 
 ### iOS Versions
+
 - **Minimum supported**: iOS 15.0
 - **Target**: iOS 17.0+
 - **Test on**: Latest public release + one previous major version
@@ -26,6 +29,7 @@ This guide provides comprehensive procedures for testing the Blaze Sports Intel 
 ## Test URLs
 
 ### Production
+
 ```
 https://blazesportsintel.com/
 https://blazesportsintel.com/football
@@ -34,7 +38,9 @@ https://blazesportsintel.com/?sport=football
 ```
 
 ### Staging (Latest Deployment)
+
 Check Cloudflare Pages deployments:
+
 ```
 https://[deployment-id].blazesportsintel.pages.dev/
 ```
@@ -42,6 +48,7 @@ https://[deployment-id].blazesportsintel.pages.dev/
 ## Pre-Test Setup
 
 ### 1. Device Preparation
+
 ```
 □ Update iOS to target version
 □ Clear Safari cache and cookies
@@ -53,6 +60,7 @@ https://[deployment-id].blazesportsintel.pages.dev/
 ```
 
 ### 2. Safari Settings
+
 ```
 Settings → Safari:
 □ "Block Pop-ups" = OFF (for testing)
@@ -62,7 +70,9 @@ Settings → Safari:
 ```
 
 ### 3. Network Conditions
+
 Test under various conditions:
+
 - **WiFi** (high speed)
 - **5G** (typical mobile)
 - **4G LTE** (slower mobile)
@@ -73,6 +83,7 @@ Test under various conditions:
 ### A. Initial Load Performance
 
 #### Baseball Homepage (/)
+
 ```
 □ First Contentful Paint < 1.5s (WiFi)
 □ First Contentful Paint < 3.0s (4G)
@@ -85,6 +96,7 @@ Test under various conditions:
 ```
 
 #### Football Page (/football)
+
 ```
 □ First Contentful Paint < 1.5s (WiFi)
 □ Navigation from baseball → football < 1.0s
@@ -97,6 +109,7 @@ Test under various conditions:
 ### B. Viewport & Layout
 
 #### Portrait Mode (Primary)
+
 ```
 □ Content fits within viewport width (no horizontal scroll)
 □ All text readable without zooming (minimum 16px body)
@@ -108,6 +121,7 @@ Test under various conditions:
 ```
 
 #### Landscape Mode (Secondary)
+
 ```
 □ Layout adapts to landscape orientation
 □ Content remains readable
@@ -119,6 +133,7 @@ Test under various conditions:
 ### C. SportSwitcher FAB
 
 #### Positioning & Accessibility
+
 ```
 □ FAB visible in bottom-right corner
 □ FAB positioned in thumb-zone (24px from edges)
@@ -129,6 +144,7 @@ Test under various conditions:
 ```
 
 #### Interaction
+
 ```
 □ Single tap opens sport menu
 □ Menu slides up with smooth animation
@@ -141,6 +157,7 @@ Test under various conditions:
 ```
 
 #### Navigation
+
 ```
 □ Tap "Baseball" navigates to /
 □ Tap "Football" navigates to /football
@@ -153,6 +170,7 @@ Test under various conditions:
 ### D. Seasonal Routing
 
 #### Root Path Behavior (/)
+
 ```
 □ October visit redirects to /football (current month)
 □ Redirect happens before content loads (no flash)
@@ -161,6 +179,7 @@ Test under various conditions:
 ```
 
 #### Query Parameter Overrides
+
 ```
 □ /?sport=baseball stays on baseball page
 □ /?sport=football redirects to /football
@@ -171,6 +190,7 @@ Test under various conditions:
 ```
 
 #### Cookie Persistence
+
 ```
 □ Set ?sport=baseball → cookie stored
 □ Close Safari completely
@@ -182,6 +202,7 @@ Test under various conditions:
 ### E. Typography & Readability
 
 #### Font Rendering
+
 ```
 □ Body text minimum 16px (1rem)
 □ Headings properly sized (h1: 2rem+, h2: 1.5rem+)
@@ -192,6 +213,7 @@ Test under various conditions:
 ```
 
 #### Text Content
+
 ```
 □ All text readable without zoom
 □ No text overflow or cut-off
@@ -203,6 +225,7 @@ Test under various conditions:
 ### F. Touch Interactions
 
 #### Tap Targets
+
 ```
 □ All buttons minimum 48px × 48px
 □ Links have sufficient padding
@@ -213,6 +236,7 @@ Test under various conditions:
 ```
 
 #### Gestures
+
 ```
 □ Vertical scroll smooth and responsive
 □ Horizontal scroll disabled (no accidental swipes)
@@ -225,6 +249,7 @@ Test under various conditions:
 ### G. Forms & Inputs (If Applicable)
 
 #### Input Fields
+
 ```
 □ Input fields large enough to tap
 □ Keyboard opens without layout shift
@@ -236,6 +261,7 @@ Test under various conditions:
 ```
 
 #### Buttons & CTAs
+
 ```
 □ Primary buttons clearly distinguishable
 □ Loading states visible during submission
@@ -247,6 +273,7 @@ Test under various conditions:
 ### H. Images & Media
 
 #### Image Loading
+
 ```
 □ All images load within 2 seconds
 □ Lazy loading works correctly
@@ -258,6 +285,7 @@ Test under various conditions:
 ```
 
 #### Performance
+
 ```
 □ Images compressed (WebP with JPEG fallback)
 □ Total image payload < 1MB
@@ -268,6 +296,7 @@ Test under various conditions:
 ### I. Animation & Transitions
 
 #### Sport Switcher Animations
+
 ```
 □ FAB hover effect on tap (scale/shadow)
 □ Menu slide-up animation smooth (60fps)
@@ -277,6 +306,7 @@ Test under various conditions:
 ```
 
 #### Page Transitions
+
 ```
 □ Navigation transitions smooth
 □ No flash of unstyled content (FOUC)
@@ -285,6 +315,7 @@ Test under various conditions:
 ```
 
 #### Reduced Motion
+
 ```
 Enable Settings → Accessibility → Motion → Reduce Motion:
 □ Animations disabled or simplified
@@ -296,6 +327,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ### J. Network Resilience
 
 #### Offline Behavior
+
 ```
 □ Offline message displayed when no connection
 □ Cached content available offline
@@ -304,6 +336,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ```
 
 #### Slow Connection (4G/3G)
+
 ```
 □ Content progressively loads
 □ Critical content prioritized
@@ -313,6 +346,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ```
 
 #### Connection Interruption
+
 ```
 □ Resume loading when connection restored
 □ Retry failed requests automatically
@@ -323,6 +357,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ### K. Safari-Specific Features
 
 #### iOS Safari Features
+
 ```
 □ Add to Home Screen works
 □ App icon displays correctly (180px)
@@ -333,6 +368,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ```
 
 #### Share Menu
+
 ```
 □ Share button works (if present)
 □ Preview image loads (og:image)
@@ -343,6 +379,7 @@ Enable Settings → Accessibility → Motion → Reduce Motion:
 ### L. Accessibility
 
 #### VoiceOver Testing
+
 ```
 Enable Settings → Accessibility → VoiceOver:
 □ All interactive elements announced
@@ -356,6 +393,7 @@ Enable Settings → Accessibility → VoiceOver:
 ```
 
 #### Text Scaling
+
 ```
 Settings → Display & Brightness → Text Size → Larger Text:
 □ Text scales up to 200% without breaking layout
@@ -367,6 +405,7 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ### M. Cross-Page Consistency
 
 #### Navigation Between Sports
+
 ```
 □ Baseball → Football navigation smooth
 □ Football → Baseball navigation smooth
@@ -378,6 +417,7 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ```
 
 #### Shared Components
+
 ```
 □ Header consistent across pages
 □ Footer consistent across pages
@@ -390,6 +430,7 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ### N. Edge Cases
 
 #### Unusual Conditions
+
 ```
 □ Very slow connection (< 1 Mbps)
 □ Intermittent connection drops
@@ -402,6 +443,7 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ```
 
 #### Browser Quirks
+
 ```
 □ Private Browsing mode works
 □ Cookies blocked scenario
@@ -413,6 +455,7 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ## Performance Benchmarks
 
 ### Target Metrics (WiFi)
+
 - **First Contentful Paint**: < 1.5s
 - **Largest Contentful Paint**: < 2.5s
 - **Time to Interactive**: < 3.0s
@@ -420,11 +463,13 @@ Settings → Display & Brightness → Text Size → Larger Text:
 - **First Input Delay**: < 100ms
 
 ### Target Metrics (4G)
+
 - **First Contentful Paint**: < 3.0s
 - **Largest Contentful Paint**: < 4.0s
 - **Time to Interactive**: < 5.0s
 
 ### Bundle Size Targets
+
 - **Vendor bundle** (shared): < 100KB gzipped
 - **Baseball bundle**: < 10KB gzipped
 - **Football bundle**: < 10KB gzipped
@@ -433,18 +478,21 @@ Settings → Display & Brightness → Text Size → Larger Text:
 ## Testing Tools
 
 ### Safari Web Inspector
+
 ```
 iPhone → Settings → Safari → Advanced → Web Inspector → ON
 Mac → Safari → Develop → [iPhone] → [Page]
 ```
 
 **Use for**:
+
 - Console errors
 - Network timing
 - DOM inspection
 - JavaScript debugging
 
 ### Xcode Simulator (Backup)
+
 ```
 Xcode → Open Developer Tool → Simulator
 ```
@@ -452,6 +500,7 @@ Xcode → Open Developer Tool → Simulator
 **Note**: Simulator doesn't match real device performance. Always test on physical devices for final validation.
 
 ### Lighthouse CI (Desktop Testing)
+
 ```bash
 npm install -g @lhci/cli
 lhci autorun --collect.url=https://blazesportsintel.com/
@@ -462,10 +511,13 @@ lhci autorun --collect.url=https://blazesportsintel.com/
 ## Bug Reporting
 
 ### Issue Template
+
 See: `docs/MOBILE-BUG-TEMPLATE.md`
 
 ### Critical Issues
+
 Report immediately if:
+
 - Content completely inaccessible on mobile
 - Horizontal scrolling required
 - Touch targets < 44px
@@ -474,6 +526,7 @@ Report immediately if:
 - JavaScript errors block functionality
 
 ### Priority Levels
+
 1. **P0 (Blocker)**: Prevents core functionality
 2. **P1 (Critical)**: Major usability issue affecting >50% users
 3. **P2 (High)**: Significant issue affecting specific workflows
@@ -483,11 +536,13 @@ Report immediately if:
 ## Test Schedule
 
 ### Pre-Release Testing
+
 - **Every PR merge**: Spot check on one device
 - **Before production deploy**: Full test suite on all devices
 - **After production deploy**: Smoke test critical paths
 
 ### Regular Testing
+
 - **Weekly**: Regression test on primary device (iPhone 14 Pro)
 - **Monthly**: Full test suite on all devices
 - **After iOS updates**: Compatibility verification

@@ -44,24 +44,28 @@ The **Lightweight Ensemble Scouting System** is now live on blazesportsintel.com
 ### Component Models
 
 **1. Velocity Time-Series Model**
+
 - Analyzes pitch velocity trends over multiple games
 - Calculates consistency (inverse of std dev)
 - Detects fatigue risk (velocity drop in late innings)
 - **Output:** Consistency score (0-100), trend (increasing/stable/decreasing), fatigue risk %
 
 **2. Intangibles Rubric Model**
+
 - Processes scout ratings on 1-5 scale
 - Normalizes to 0-100 scale
 - Tracks: Leadership, Work Ethic, Composure, Coachability
 - **Output:** Overall intangibles score (0-100)
 
 **3. Scout Notes NLP**
+
 - Sentiment analysis on free-form text
 - Keyword extraction for positive/negative phrases
 - Concern flagging
 - **Output:** Sentiment score (-1 to 1), key phrases, concerns list
 
 **4. Champion Enigma Engine™** (Placeholder)
+
 - Proprietary cognitive assessment system
 - Integrates with Decision Velocity Model™
 - **Output:** Football IQ equivalent (0-100), confidence (0-1), cognitive traits
@@ -69,6 +73,7 @@ The **Lightweight Ensemble Scouting System** is now live on blazesportsintel.com
 ### Meta-Learner
 
 Weighted combination of all models:
+
 ```javascript
 weights = {
   velocity_consistency: 0.25,
@@ -81,6 +86,7 @@ draft_grade = Σ (component_score × weight)
 ```
 
 **Decision Logic:**
+
 - Grade > 80: "Strong recommend"
 - Grade 65-80: "Recommend with development plan"
 - Grade 50-65: "Monitor closely"
@@ -91,11 +97,13 @@ draft_grade = Σ (component_score × weight)
 ## 📊 Sample Output
 
 **Test Query:**
+
 ```bash
 curl "https://blazesportsintel.com/api/college-baseball/scouting?player_id=demo_player_001"
 ```
 
 **Response:**
+
 ```json
 {
   "player_id": "demo_player_001",
@@ -189,6 +197,7 @@ database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 ## 📚 Database Schema
 
 **Tables:**
+
 1. `player_history` - Game-by-game stats with velocity tracking
 2. `scout_notes` - Free-form observations + rubric ratings (1-5 scale)
 3. `scouting_reports` - Complete ensemble outputs (JSON storage)
@@ -197,10 +206,12 @@ database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 6. `team_roles` - Role definitions for scheme fit (future use)
 
 **Views:**
+
 - `latest_scouting_reports` - Most recent report per player
 - `player_velocity_trends` - Season aggregates
 
 **Sample Data Included:**
+
 - demo_player_001 (Texas pitcher with 2 games of history)
 - Full scout notes with rubric ratings
 - Enigma score: 87.5/100
@@ -210,24 +221,28 @@ database_id = "612f6f42-226d-4345-bb1c-f0367292f55e"
 ## 🚀 Next Steps: Roadmap
 
 ### Immediate (Week 1-2)
+
 - [ ] Integrate real ESPN API player data
 - [ ] Add more sample players to database
 - [ ] Create admin interface for scout note entry
 - [ ] Set up cron job for daily velocity trend updates
 
 ### Short-Term (Month 1-2)
+
 - [ ] Connect to live Texas Longhorns roster
 - [ ] A/B test ensemble weights with coaching staff
 - [ ] Add export functionality (PDF reports)
 - [ ] Mobile app integration (React Native)
 
 ### Medium-Term (Month 3-6)
+
 - [ ] Prototype GNN + Gradient Boosting (Architecture 2)
 - [ ] Build roster graph for Texas baseball team
 - [ ] Pre-compute embeddings for scheme fit analysis
 - [ ] Beta test with Texas coaching staff
 
 ### Long-Term (Month 6-12)
+
 - [ ] Research Multimodal Transformer (Architecture 3)
 - [ ] Collect 500+ annotated games (trait labels from coaches)
 - [ ] Train on Cloudflare Workers AI or external GPU cluster
@@ -300,6 +315,7 @@ INSERT INTO enigma_scores (
 ## 📖 Citations
 
 All code and architecture based on:
+
 - **Source Document:** "Prescriptive Scouting Engine: From Theory to Production" (2025-10-16)
 - **ESPN API:** `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball`
 - **Cloudflare Docs:** `developers.cloudflare.com`
@@ -310,11 +326,13 @@ All code and architecture based on:
 ## 🏆 Differentiators vs. ESPN
 
 **What ESPN Shows:**
+
 - Game score
 - Inning
 - Final box score (if lucky)
 
 **What Blaze Shows:**
+
 - Velocity consistency trends
 - Fatigue risk analysis
 - Intangibles ratings from scouts
@@ -355,4 +373,4 @@ This is the differentiation ESPN can't provide and won't build.
 
 **🔥 Blaze Sports Intel - Born to Blaze the Path Less Beaten**
 
-*College baseball scouting engine deployed: October 16, 2025, 19:23 CDT*
+_College baseball scouting engine deployed: October 16, 2025, 19:23 CDT_

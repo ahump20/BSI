@@ -11,15 +11,17 @@ This document defines the event taxonomy for Blaze Sports Intel. Events are sent
 **Event**: `route_render`
 
 **Properties**:
+
 - `route` (string): The page route (e.g., `/`, `/features`, `/copilot`)
 - `sport` (string, optional): Sport context (`baseball`, `football`, `basketball`, `multi`)
 - `timestamp` (ISO 8601): Event timestamp
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('route_render', {
   route: '/copilot',
-  sport: 'multi'
+  sport: 'multi',
 });
 ```
 
@@ -32,18 +34,20 @@ recordRuntimeEvent('route_render', {
 **Event**: `cta_click`
 
 **Properties**:
+
 - `cta_name` (string): CTA identifier (e.g., `view_analytics`, `launch_copilot`, `start_trial`)
 - `cta_location` (string): Location on page (`hero`, `pricing_card`, `footer`)
 - `route` (string): Current page route
 - `destination` (string): Target URL
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('cta_click', {
   cta_name: 'view_analytics',
   cta_location: 'hero',
   route: '/',
-  destination: '/features'
+  destination: '/features',
 });
 ```
 
@@ -52,6 +56,7 @@ recordRuntimeEvent('cta_click', {
 **Event**: `copilot_query`
 
 **Properties**:
+
 - `query_hash` (string): SHA-256 hash of query (for privacy)
 - `provider` (string): AI provider used (`auto`, `gemini`, `gpt5`, `claude`)
 - `response_latency_ms` (number): Response time in milliseconds
@@ -59,13 +64,14 @@ recordRuntimeEvent('cta_click', {
 - `query_length` (number): Character count of query
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('copilot_query', {
   query_hash: 'a1b2c3d4e5f6...',
   provider: 'gemini',
   response_latency_ms: 823,
   source_count: 3,
-  query_length: 45
+  query_length: 45,
 });
 ```
 
@@ -74,16 +80,18 @@ recordRuntimeEvent('copilot_query', {
 **Event**: `search`
 
 **Properties**:
+
 - `search_term_hash` (string): SHA-256 hash of search term
 - `search_location` (string): Where search initiated (`header`, `copilot`, `dashboard`)
 - `results_count` (number): Number of results returned
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('search', {
   search_term_hash: 'x7y8z9a0b1c2...',
   search_location: 'header',
-  results_count: 12
+  results_count: 12,
 });
 ```
 
@@ -96,6 +104,7 @@ recordRuntimeEvent('search', {
 **Event**: `error`
 
 **Properties**:
+
 - `error_type` (string): Error category (`api_error`, `render_error`, `validation_error`)
 - `error_message` (string): Error message (sanitized, no PII)
 - `route` (string): Page where error occurred
@@ -103,12 +112,13 @@ recordRuntimeEvent('search', {
 - `stack_trace` (string, optional): First 500 chars of stack trace
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('error', {
   error_type: 'api_error',
   error_message: 'Failed to fetch CFP rankings',
   route: '/CFP',
-  component: 'Top25Board'
+  component: 'Top25Board',
 });
 ```
 
@@ -117,18 +127,20 @@ recordRuntimeEvent('error', {
 **Event**: `data_source_error`
 
 **Properties**:
+
 - `source` (string): Data source identifier (e.g., `cfp_worker`, `statcast_api`, `d1_historical`)
 - `error_code` (string): HTTP status or error code
 - `latency_ms` (number): Time to failure
 - `fallback_used` (boolean): Whether fallback source was used
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('data_source_error', {
   source: 'statcast_api',
   error_code: '503',
   latency_ms: 5000,
-  fallback_used: true
+  fallback_used: true,
 });
 ```
 
@@ -141,6 +153,7 @@ recordRuntimeEvent('data_source_error', {
 **Event**: `web_vital`
 
 **Properties**:
+
 - `metric` (string): Metric name (`LCP`, `FID`, `CLS`, `FCP`, `TTFB`, `INP`)
 - `value` (number): Metric value
 - `rating` (string): Performance rating (`good`, `needs-improvement`, `poor`)
@@ -148,13 +161,14 @@ recordRuntimeEvent('data_source_error', {
 - `device_type` (string): Device category (`mobile`, `tablet`, `desktop`)
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('web_vital', {
   metric: 'LCP',
   value: 2234,
   rating: 'good',
   route: '/features',
-  device_type: 'mobile'
+  device_type: 'mobile',
 });
 ```
 
@@ -163,18 +177,20 @@ recordRuntimeEvent('web_vital', {
 **Event**: `data_source_latency`
 
 **Properties**:
+
 - `source` (string): Data source identifier
 - `latency_ms` (number): Response time in milliseconds
 - `cached` (boolean): Whether served from cache
 - `cache_age_seconds` (number, optional): Age of cached data
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('data_source_latency', {
   source: 'baseball_rankings_worker',
   latency_ms: 87,
   cached: true,
-  cache_age_seconds: 120
+  cache_age_seconds: 120,
 });
 ```
 
@@ -187,14 +203,16 @@ recordRuntimeEvent('data_source_latency', {
 **Event**: `signup_start` / `signup_complete`
 
 **Properties**:
+
 - `tier` (string, optional): Selected tier (`scout`, `coach`, `organization`)
 - `referral_source` (string, optional): Referral source (`organic`, `cta_home`, `cta_features`)
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('signup_complete', {
   tier: 'coach',
-  referral_source: 'cta_features'
+  referral_source: 'cta_features',
 });
 ```
 
@@ -203,15 +221,17 @@ recordRuntimeEvent('signup_complete', {
 **Event**: `subscription_upgrade` / `subscription_downgrade` / `subscription_cancel`
 
 **Properties**:
+
 - `from_tier` (string): Previous tier
 - `to_tier` (string): New tier
 - `reason` (string, optional): Reason for change
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('subscription_upgrade', {
   from_tier: 'scout',
-  to_tier: 'coach'
+  to_tier: 'coach',
 });
 ```
 
@@ -224,16 +244,18 @@ recordRuntimeEvent('subscription_upgrade', {
 **Event**: `dashboard_view`
 
 **Properties**:
+
 - `dashboard_name` (string): Dashboard identifier (e.g., `cfp_control_center`, `mlb_statcast`, `lei_clutch`)
 - `sport` (string): Sport category
 - `filters_applied` (number): Count of active filters
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('dashboard_view', {
   dashboard_name: 'cfp_control_center',
   sport: 'football',
-  filters_applied: 2
+  filters_applied: 2,
 });
 ```
 
@@ -242,18 +264,20 @@ recordRuntimeEvent('dashboard_view', {
 **Event**: `historical_query`
 
 **Properties**:
+
 - `sport` (string): Sport queried
 - `season` (string): Season/year
 - `results_found` (boolean): Whether data was available
 - `query_type` (string): Type of query (`game`, `player`, `team`, `comparison`)
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('historical_query', {
   sport: 'baseball',
   season: '2023',
   results_found: true,
-  query_type: 'game'
+  query_type: 'game',
 });
 ```
 
@@ -262,16 +286,18 @@ recordRuntimeEvent('historical_query', {
 **Event**: `report_export`
 
 **Properties**:
+
 - `format` (string): Export format (`pdf`, `csv`, `json`)
 - `report_type` (string): Report type (e.g., `scouting_packet`, `standings`, `player_profile`)
 - `size_kb` (number): File size in KB
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('report_export', {
   format: 'pdf',
   report_type: 'scouting_packet',
-  size_kb: 2048
+  size_kb: 2048,
 });
 ```
 
@@ -282,14 +308,16 @@ recordRuntimeEvent('report_export', {
 **Event**: `contact_form_submit`
 
 **Properties**:
+
 - `subject` (string): Form subject category
 - `tier` (string, optional): Tier of interest
 
 **Example**:
+
 ```typescript
 recordRuntimeEvent('contact_form_submit', {
   subject: 'api',
-  tier: 'organization'
+  tier: 'organization',
 });
 ```
 
@@ -311,7 +339,7 @@ import { recordRuntimeEvent } from '../lib/observability/datadog-runtime';
 
 recordRuntimeEvent('event_name', {
   property1: 'value1',
-  property2: 123
+  property2: 123,
 });
 ```
 
@@ -341,6 +369,7 @@ recordRuntimeEvent('event_name', {
 ## Example Dashboard Queries
 
 ### Daily Active Users by Sport
+
 ```sql
 SELECT count(DISTINCT user_id)
 FROM route_render
@@ -349,6 +378,7 @@ GROUP BY sport, date_trunc('day', timestamp)
 ```
 
 ### Copilot Performance by Provider
+
 ```sql
 SELECT provider,
        avg(response_latency_ms) as avg_latency,
@@ -360,6 +390,7 @@ GROUP BY provider
 ```
 
 ### Core Web Vitals Compliance
+
 ```sql
 SELECT route,
        device_type,

@@ -203,19 +203,22 @@ export async function GET(request: NextRequest) {
   const tokens = await whoopAdapter.exchangeCodeForTokens(code!);
 
   // Store encrypted tokens in database
-  await db.query(`
+  await db.query(
+    `
     INSERT INTO wearables_devices (
       player_id, device_type, api_version,
       access_token_encrypted, refresh_token_encrypted,
       token_expires_at, consent_granted, consent_granted_at
     )
     VALUES ($1, 'whoop', 'v2', $2, $3, $4, TRUE, NOW())
-  `, [
-    playerId,
-    encrypt(tokens.access_token),
-    encrypt(tokens.refresh_token),
-    new Date(Date.now() + tokens.expires_in * 1000)
-  ]);
+  `,
+    [
+      playerId,
+      encrypt(tokens.access_token),
+      encrypt(tokens.refresh_token),
+      new Date(Date.now() + tokens.expires_in * 1000),
+    ]
+  );
 
   return NextResponse.redirect(`/players/${playerId}/wearables?success=true`);
 }
@@ -243,18 +246,15 @@ export async function syncWHOOPData() {
     const lastSync = device.last_sync_at || new Date(Date.now() - 7 * 86400000);
 
     // Fetch cycle data (combines recovery, sleep, strain)
-    const cycleData = await whoopAdapter.getCycleData(
-      accessToken,
-      lastSync,
-      new Date()
-    );
+    const cycleData = await whoopAdapter.getCycleData(accessToken, lastSync, new Date());
 
     // Insert readings
     for (const cycle of cycleData) {
       const readings = whoopAdapter.normalizeRecoveryData(device.player_id, cycle);
 
       for (const reading of readings) {
-        await db.query(`
+        await db.query(
+          `
           INSERT INTO wearables_readings (
             device_id, player_id, reading_timestamp,
             metric_type, metric_value, metric_unit,
@@ -263,28 +263,33 @@ export async function syncWHOOPData() {
           )
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
           ON CONFLICT (device_id, metric_type, reading_timestamp) DO NOTHING
-        `, [
-          device.device_id,
-          reading.player_id,
-          reading.reading_timestamp,
-          reading.metric_type,
-          reading.metric_value,
-          reading.metric_unit,
-          reading.quality_score,
-          reading.activity_state,
-          reading.source_session_id,
-          JSON.stringify(reading.raw_payload),
-          reading.data_source
-        ]);
+        `,
+          [
+            device.device_id,
+            reading.player_id,
+            reading.reading_timestamp,
+            reading.metric_type,
+            reading.metric_value,
+            reading.metric_unit,
+            reading.quality_score,
+            reading.activity_state,
+            reading.source_session_id,
+            JSON.stringify(reading.raw_payload),
+            reading.data_source,
+          ]
+        );
       }
     }
 
     // Update sync status
-    await db.query(`
+    await db.query(
+      `
       UPDATE wearables_devices
       SET last_sync_at = NOW(), sync_status = 'success'
       WHERE device_id = $1
-    `, [device.device_id]);
+    `,
+      [device.device_id]
+    );
   }
 }
 
@@ -314,7 +319,8 @@ export async function ingestNBAClutchData(gameId: string) {
 
   // 3. Insert clutch situations
   for (const situation of clutchSituations) {
-    const result = await db.query(`
+    const result = await db.query(
+      `
       INSERT INTO clutch_situations (
         game_id, situation_type, start_timestamp, end_timestamp,
         game_clock_start, game_clock_end, period,
@@ -323,14 +329,26 @@ export async function ingestNBAClutchData(gameId: string) {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING situation_id
-    `, [
-      situation.game_id, situation.situation_type, situation.start_timestamp,
-      situation.end_timestamp, situation.game_clock_start, situation.game_clock_end,
-      situation.period, situation.score_margin, situation.score_margin_absolute,
-      situation.home_score, situation.away_score, situation.is_clutch_time,
-      situation.clutch_intensity, situation.playoff_game,
-      JSON.stringify(situation.raw_payload), situation.data_source
-    ]);
+    `,
+      [
+        situation.game_id,
+        situation.situation_type,
+        situation.start_timestamp,
+        situation.end_timestamp,
+        situation.game_clock_start,
+        situation.game_clock_end,
+        situation.period,
+        situation.score_margin,
+        situation.score_margin_absolute,
+        situation.home_score,
+        situation.away_score,
+        situation.is_clutch_time,
+        situation.clutch_intensity,
+        situation.playoff_game,
+        JSON.stringify(situation.raw_payload),
+        situation.data_source,
+      ]
+    );
 
     const situationId = result.rows[0].situation_id;
 
@@ -338,7 +356,8 @@ export async function ingestNBAClutchData(gameId: string) {
     const actions = nbaAdapter.extractClutchPlayerActions(playByPlay, [situation], gameId);
 
     for (const action of actions) {
-      await db.query(`
+      await db.query(
+        `
         INSERT INTO clutch_player_actions (
           situation_id, game_id, player_id, action_timestamp,
           action_type, action_subtype, is_successful, points_scored,
@@ -346,11 +365,20 @@ export async function ingestNBAClutchData(gameId: string) {
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         ON CONFLICT DO NOTHING
-      `, [
-        situationId, action.game_id, action.player_id, action.action_timestamp,
-        action.action_type, action.action_subtype, action.is_successful,
-        action.points_scored, JSON.stringify(action.raw_payload), action.data_source
-      ]);
+      `,
+        [
+          situationId,
+          action.game_id,
+          action.player_id,
+          action.action_timestamp,
+          action.action_type,
+          action.action_subtype,
+          action.is_successful,
+          action.points_scored,
+          JSON.stringify(action.raw_payload),
+          action.data_source,
+        ]
+      );
     }
   }
 }
@@ -375,14 +403,17 @@ export async function calculateClutchPerformanceScore(
   const timeAligner = createTimeAlignmentService();
 
   // 1. Get player actions in this clutch situation
-  const actions = await db.query(`
+  const actions = await db.query(
+    `
     SELECT * FROM clutch_player_actions
     WHERE situation_id = $1 AND player_id = $2
-  `, [situationId, playerId]);
+  `,
+    [situationId, playerId]
+  );
 
   // 2. Calculate performance metrics
   const totalActions = actions.rows.length;
-  const successfulActions = actions.rows.filter(a => a.is_successful).length;
+  const successfulActions = actions.rows.filter((a) => a.is_successful).length;
   const successRate = totalActions > 0 ? successfulActions / totalActions : 0;
 
   const pointsScored = actions.rows.reduce((sum, a) => sum + a.points_scored, 0);
@@ -393,23 +424,26 @@ export async function calculateClutchPerformanceScore(
   const game = await db.query(`SELECT game_date FROM games WHERE game_id = $1`, [gameId]);
   const gameDate = game.rows[0].game_date;
 
-  const wearablesData = await db.query(`
+  const wearablesData = await db.query(
+    `
     SELECT * FROM wearables_daily_summary
     WHERE player_id = $1 AND summary_date = $2
-  `, [playerId, gameDate]);
+  `,
+    [playerId, gameDate]
+  );
 
   const hasWearables = wearablesData.rows.length > 0;
   const wearables = wearablesData.rows[0] || {};
 
   // 4. Calculate clutch score (0-100)
-  const clutchScore = (
-    (successRate * 40) + // Success rate: 40%
-    (Math.min(pointsOverExpected + 5, 10) * 4) + // POE: 40% (normalized -5 to +5 → 0 to 10)
-    (totalActions * 2) // Volume: 20% (more actions = more clutch moments)
-  );
+  const clutchScore =
+    successRate * 40 + // Success rate: 40%
+    Math.min(pointsOverExpected + 5, 10) * 4 + // POE: 40% (normalized -5 to +5 → 0 to 10)
+    totalActions * 2; // Volume: 20% (more actions = more clutch moments)
 
   // 5. Insert clutch performance score
-  await db.query(`
+  await db.query(
+    `
     INSERT INTO clutch_performance_scores (
       player_id, game_id, situation_id,
       actions_total, actions_successful, success_rate,
@@ -425,16 +459,28 @@ export async function calculateClutchPerformanceScore(
     SET clutch_score = EXCLUDED.clutch_score,
         points_over_expected = EXCLUDED.points_over_expected,
         updated_at = NOW()
-  `, [
-    playerId, gameId, situationId,
-    totalActions, successfulActions, successRate,
-    pointsScored, expectedPoints, pointsOverExpected,
-    clutchScore,
-    wearables.hrv_rmssd_avg, wearables.hrv_baseline_deviation,
-    wearables.recovery_score, wearables.sleep_performance_score, wearables.day_strain,
-    hasWearables, wearables.data_completeness,
-    'hierarchical_bayesian_v1'
-  ]);
+  `,
+    [
+      playerId,
+      gameId,
+      situationId,
+      totalActions,
+      successfulActions,
+      successRate,
+      pointsScored,
+      expectedPoints,
+      pointsOverExpected,
+      clutchScore,
+      wearables.hrv_rmssd_avg,
+      wearables.hrv_baseline_deviation,
+      wearables.recovery_score,
+      wearables.sleep_performance_score,
+      wearables.day_strain,
+      hasWearables,
+      wearables.data_completeness,
+      'hierarchical_bayesian_v1',
+    ]
+  );
 
   return { clutchScore, pointsOverExpected, hasWearables };
 }
@@ -451,13 +497,11 @@ export async function calculateClutchPerformanceScore(
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/api/database/connection-service';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const season = request.nextUrl.searchParams.get('season') || '2024-25';
 
-  const result = await db.query(`
+  const result = await db.query(
+    `
     SELECT
       cps.*,
       g.game_date,
@@ -470,7 +514,9 @@ export async function GET(
     WHERE cps.player_id = $1
       AND g.season = $2
     ORDER BY g.game_date DESC
-  `, [params.id, season]);
+  `,
+    [params.id, season]
+  );
 
   return NextResponse.json({
     player_id: params.id,
@@ -492,12 +538,15 @@ export async function GET(request: NextRequest) {
   const season = request.nextUrl.searchParams.get('season') || '2024-25';
   const minGames = parseInt(request.nextUrl.searchParams.get('min_games') || '10', 10);
 
-  const result = await db.query(`
+  const result = await db.query(
+    `
     SELECT * FROM clutch_leaderboard
     WHERE total_clutch_games >= $1
     ORDER BY avg_clutch_score DESC
     LIMIT 50
-  `, [minGames]);
+  `,
+    [minGames]
+  );
 
   return NextResponse.json(result.rows);
 }
@@ -552,6 +601,7 @@ export default async function PlayerClutchPage({ params }: { params: { id: strin
 ## Support & Contact
 
 For questions or issues:
+
 - GitHub Issues: https://github.com/your-org/blaze-sports-intel/issues
 - Email: engineering@blazesportsintel.com
 - Slack: #clutch-wearables-integration

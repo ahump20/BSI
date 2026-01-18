@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "Florida Victorious",
     "lead_contact": "Jose Costa",
-    "contact_channels": [
-      "baseball@floridavictorious.com",
-      "https://floridavictorious.com/contact"
-    ],
+    "contact_channels": ["baseball@floridavictorious.com", "https://floridavictorious.com/contact"],
     "recent_initiatives": "Expanded baseball-specific membership tier with exclusive fall scrimmage streams (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -60,9 +57,7 @@
   "front_office": {
     "athletic_director": "Scott Stricklin",
     "baseball_admin": "Rachel Lawson",
-    "financial_points_of_contact": [
-      "ticketoffice@gators.ufl.edu"
-    ]
+    "financial_points_of_contact": ["ticketoffice@gators.ufl.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 1,

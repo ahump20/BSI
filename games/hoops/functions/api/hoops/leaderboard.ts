@@ -52,13 +52,14 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
     const cacheKey = `hoops:leaderboard:${period}`;
 
     // Check cache
-    const cached = await env.KV.get(cacheKey, 'json') as ApiResponse | null;
+    const cached = (await env.KV.get(cacheKey, 'json')) as ApiResponse | null;
     if (cached) {
       return jsonResponse({ ...cached, meta: { ...cached.meta!, cached: true } });
     }
 
     // Query database
-    const result = await env.DB.prepare(`
+    const result = await env.DB.prepare(
+      `
       SELECT
         player_id,
         player_name,
@@ -69,7 +70,8 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
       FROM hoops_players
       ORDER BY high_score DESC
       LIMIT ?
-    `)
+    `
+    )
       .bind(limit)
       .all();
 
@@ -84,9 +86,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
     }));
 
     // Get total players
-    const countResult = await env.DB.prepare(
-      'SELECT COUNT(*) as count FROM hoops_players'
-    ).first();
+    const countResult = await env.DB.prepare('SELECT COUNT(*) as count FROM hoops_players').first();
 
     const response: ApiResponse = {
       success: true,

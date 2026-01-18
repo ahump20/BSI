@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest';
 
 import {
   DiamondCertaintyEngine,
@@ -7,7 +7,7 @@ import {
   type BodyLanguageSnapshot,
   type PhysiologicalSample,
   type PerformancePlay,
-} from '../lib/analytics/diamond-certainty-engine'
+} from '../lib/analytics/diamond-certainty-engine';
 
 const buildMicroExpressions = (): MicroExpressionSnapshot[] => [
   {
@@ -50,7 +50,7 @@ const buildMicroExpressions = (): MicroExpressionSnapshot[] => [
     arousal: 0.82,
     situation: 'adversity',
   },
-]
+];
 
 const buildBodyLanguage = (): BodyLanguageSnapshot[] => [
   {
@@ -73,7 +73,7 @@ const buildBodyLanguage = (): BodyLanguageSnapshot[] => [
     energyLevel: 0.83,
     sidelineInfluence: 0.79,
   },
-]
+];
 
 const buildPhysiology = (): PhysiologicalSample[] => [
   {
@@ -106,7 +106,7 @@ const buildPhysiology = (): PhysiologicalSample[] => [
     skinConductance: 6.0,
     lactateLevel: 8.6,
   },
-]
+];
 
 const buildPerformance = (): PerformancePlay[] => [
   {
@@ -157,7 +157,7 @@ const buildPerformance = (): PerformancePlay[] => [
     impactScore: 92,
     recoveryTimeSec: 5,
   },
-]
+];
 
 describe('Diamond Certainty Engine', () => {
   const baseInput: DiamondCertaintyInput = {
@@ -181,13 +181,13 @@ describe('Diamond Certainty Engine', () => {
       fatigueIndex: 0.74,
       venueType: 'road',
     },
-  }
+  };
 
   it('returns scores for all eight champion dimensions with tiers and audit trail', () => {
-    const report = DiamondCertaintyEngine.evaluate(baseInput)
+    const report = DiamondCertaintyEngine.evaluate(baseInput);
 
-    expect(report.athleteId).toBe(baseInput.athleteId)
-    expect(Object.keys(report.dimensions)).toHaveLength(8)
+    expect(report.athleteId).toBe(baseInput.athleteId);
+    expect(Object.keys(report.dimensions)).toHaveLength(8);
 
     const championKeys = [
       'clutchGene',
@@ -198,25 +198,23 @@ describe('Diamond Certainty Engine', () => {
       'championAura',
       'winnerDNA',
       'beastMode',
-    ] as const
+    ] as const;
 
-    championKeys.forEach(key => {
-      const dimension = report.dimensions[key]
-      expect(dimension.score).toBeGreaterThan(0)
-      expect(dimension.score).toBeLessThanOrEqual(100)
-      expect(['generational', 'elite', 'ascendant', 'developing']).toContain(
-        dimension.tier
-      )
-      expect(dimension.contributions.length).toBeGreaterThan(0)
-      const weightTotal = dimension.contributions.reduce((acc, item) => acc + item.weight, 0)
-      expect(weightTotal).toBeGreaterThan(0.95)
-      expect(weightTotal).toBeLessThanOrEqual(1.05)
-    })
+    championKeys.forEach((key) => {
+      const dimension = report.dimensions[key];
+      expect(dimension.score).toBeGreaterThan(0);
+      expect(dimension.score).toBeLessThanOrEqual(100);
+      expect(['generational', 'elite', 'ascendant', 'developing']).toContain(dimension.tier);
+      expect(dimension.contributions.length).toBeGreaterThan(0);
+      const weightTotal = dimension.contributions.reduce((acc, item) => acc + item.weight, 0);
+      expect(weightTotal).toBeGreaterThan(0.95);
+      expect(weightTotal).toBeLessThanOrEqual(1.05);
+    });
 
-    expect(report.overallScore).toBeGreaterThan(0)
-    expect(report.overallScore).toBeLessThanOrEqual(100)
-    expect(report.auditTrail).toHaveLength(8)
-  })
+    expect(report.overallScore).toBeGreaterThan(0);
+    expect(report.overallScore).toBeLessThanOrEqual(100);
+    expect(report.auditTrail).toHaveLength(8);
+  });
 
   it('drops confidence when data is sparse', () => {
     const minimalInput: DiamondCertaintyInput = {
@@ -225,11 +223,11 @@ describe('Diamond Certainty Engine', () => {
       bodyLanguage: baseInput.bodyLanguage.slice(0, 1),
       physiological: baseInput.physiological.slice(0, 1),
       performance: baseInput.performance.slice(0, 1),
-    }
+    };
 
-    const full = DiamondCertaintyEngine.evaluate(baseInput)
-    const sparse = DiamondCertaintyEngine.evaluate(minimalInput)
+    const full = DiamondCertaintyEngine.evaluate(baseInput);
+    const sparse = DiamondCertaintyEngine.evaluate(minimalInput);
 
-    expect(sparse.confidence).toBeLessThan(full.confidence)
-  })
-})
+    expect(sparse.confidence).toBeLessThan(full.confidence);
+  });
+});

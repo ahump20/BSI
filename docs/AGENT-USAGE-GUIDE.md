@@ -23,6 +23,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ### 🚀 Deployment & Infrastructure
 
 #### @web-deployment-specialist
+
 **Use Case:** Primary deployment agent for blazesportsintel.com
 **Commands:** Cloudflare Pages deployment via wrangler
 **When to Use:** After code changes, feature updates, content modifications
@@ -35,6 +36,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @deployment-integration-specialist
+
 **Use Case:** Analyze and migrate features from legacy deployments
 **Platform:** Consolidates legacy deployments to Cloudflare Pages exclusively
 **When to Use:** When integrating features from other platforms
@@ -46,6 +48,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @cloudflare-domain-manager
+
 **Use Case:** Manage blazesportsintel.com domain and DNS
 **Platform:** Cloudflare DNS exclusive
 **When to Use:** Domain configuration, SSL issues, DNS changes
@@ -59,6 +62,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ### 🏈 Sports Intelligence Domain
 
 #### @sports-intelligence-analyst
+
 **Use Case:** Primary sports data analysis and strategy
 **Focus:** Cardinals, Titans, Longhorns, Grizzlies + Deep South athletics
 **When to Use:** Sports data analysis, performance insights, trend identification
@@ -71,6 +75,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @deep-south-sports-authority-copilot
+
 **Use Case:** Regional sports intelligence for Deep South athletics
 **Focus:** SEC, Texas HS football, Friday Night Lights, Perfect Game
 **When to Use:** Regional sports content, high school coverage, recruiting
@@ -83,6 +88,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @sports-feature-engineer
+
 **Use Case:** Create advanced sports analytics features
 **Platform:** Cloudflare Workers for real-time processing
 **When to Use:** Building new analytics features, data processing
@@ -95,6 +101,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @monte-carlo-sports-simulator
+
 **Use Case:** Statistical modeling and game simulation
 **Focus:** Championship probabilities, performance predictions
 **When to Use:** Probability analysis, playoff predictions, statistical modeling
@@ -109,6 +116,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ### 🏗️ Blaze Intelligence Platform
 
 #### @blaze-sports-intel-updater
+
 **Use Case:** Comprehensive website updates and feature integration
 **Domain:** blazesportsintel.com specific
 **When to Use:** Major site updates, feature consolidation, platform improvements
@@ -121,6 +129,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @blaze-implementation-executor
+
 **Use Case:** Execute complex Blaze Intelligence platform implementations
 **Platform:** Cloudflare Pages with Workers integration
 **When to Use:** Large feature implementations, system integrations
@@ -133,6 +142,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @blaze-graphics-engine-architect
+
 **Use Case:** 3D visualizations and advanced graphics for sports analytics
 **Technology:** Three.js, WebGL, advanced visualizations
 **When to Use:** Creating immersive sports experiences, 3D analytics
@@ -147,6 +157,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ### 🔍 Quality & Validation
 
 #### @project-veracity-auditor
+
 **Use Case:** Validate content accuracy and platform standards
 **Standards:** Blaze Intelligence brand compliance, factual accuracy
 **When to Use:** Pre-deployment validation, content review
@@ -159,6 +170,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @repo-memory-enforcer
+
 **Use Case:** Maintain BSI repository standards and consistency
 **Repository:** BSI-specific file organization and standards
 **When to Use:** Code organization, repository maintenance
@@ -171,6 +183,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @site-integrity-guardian
+
 **Use Case:** Monitor site health and performance
 **Platform:** Cloudflare Analytics integration
 **When to Use:** Performance monitoring, health checks
@@ -185,6 +198,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ### 🎨 Design & Brand
 
 #### @brand-consistency-enforcer
+
 **Use Case:** Ensure Blaze Intelligence brand compliance
 **Standards:** Texas heritage, Deep South athletics, executive athletic aesthetic
 **When to Use:** Brand review, design validation
@@ -197,6 +211,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ```
 
 #### @blaze-design-system-architect
+
 **Use Case:** Maintain and evolve the Blaze Intelligence design system
 **Focus:** Scalable, consistent UI/UX across all platforms
 **When to Use:** Design system updates, component standardization
@@ -277,6 +292,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ## Platform Standards
 
 ### ✅ Always Use
+
 - **Domain:** blazesportsintel.com
 - **Platform:** Cloudflare Pages exclusively
 - **Commands:** `wrangler pages deploy`
@@ -285,6 +301,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 - **Cache:** Cloudflare KV for sessions
 
 ### ❌ Never Use
+
 - Netlify deployments or commands
 - Vercel deployments or references
 - Replit for production deployment
@@ -292,6 +309,7 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 - Soccer/football references in content
 
 ### 🏈 Sports Focus
+
 - **Primary Teams:** Cardinals (MLB), Titans (NFL), Longhorns (NCAA), Grizzlies (NBA)
 - **Regional Focus:** Deep South, SEC, Texas athletics
 - **Coverage:** Youth leagues through professional
@@ -300,36 +318,43 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ## Brand Standards
 
 ### Company Name
+
 - ✅ "Blaze Intelligence" (always and only)
 - ❌ Never use legacy names or variations
 
 ### Savings Claims
+
 - ✅ 67-80% savings vs competitors (factual range only)
 - ❌ Never use other percentage ranges
 
 ### Performance Benchmarks
+
 - ✅ Include "Methods & Definitions" links for claims
 - ✅ Mark as benchmarks, not guarantees
 - ❌ Never make unsupported performance claims
 
 ### Competitive Language
+
 - ✅ "Transparent comparison", "pricing comparison"
 - ❌ "Against competitors", "vs competitors"
 
 ## Troubleshooting
 
 ### Deployment Issues
+
 1. Use @web-deployment-specialist for Cloudflare-specific help
 2. Check wrangler.toml configuration
 3. Verify environment variables in Cloudflare dashboard
 4. Review deployment logs for errors
 
 ### Agent Conflicts
+
 1. Use @agent-configuration-manager for inheritance issues
 2. Check agent descriptions for proper use cases
 3. Ensure agents are BSI repository appropriate
 
 ### Platform Confusion
+
 1. Always default to Cloudflare Pages
 2. Report any Netlify references as configuration errors
 3. Use this guide to verify proper agent selection
@@ -337,17 +362,20 @@ All agents in this guide are optimized for the BSI repository and blazesportsint
 ## Quick Reference
 
 ### Most Used Agents
+
 - @blaze-sports-intel-updater (site updates)
 - @web-deployment-specialist (deployments)
 - @sports-intelligence-analyst (sports analysis)
 - @project-veracity-auditor (quality checks)
 
 ### Emergency Agents
+
 - @site-integrity-guardian (site health issues)
 - @cloudflare-domain-manager (domain/DNS problems)
 - @deployment-integration-specialist (deployment recovery)
 
 ### Specialized Tasks
+
 - NIL Calculations: @sports-feature-engineer
 - Video Analysis: @game-tape-analyzer
 - 3D Visualizations: @blaze-graphics-engine-architect

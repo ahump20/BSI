@@ -11,7 +11,11 @@
  * @see https://developers.cloudflare.com/workers/
  */
 
-import { createWHOOPAdapter, NormalizedWearablesReading, NormalizedDailySummary } from '../../lib/adapters/whoop-adapter';
+import {
+  createWHOOPAdapter,
+  NormalizedWearablesReading,
+  NormalizedDailySummary,
+} from '../../lib/adapters/whoop-adapter';
 
 // ============================================================================
 // TYPES
@@ -149,13 +153,16 @@ async function syncAllDevices(env: Env): Promise<any> {
       });
 
       // Update device sync status
-      await db.query(`
+      await db.query(
+        `
         UPDATE wearables_devices
         SET sync_status = 'error',
             sync_error_message = $1,
             updated_at = NOW()
         WHERE device_id = $2
-      `, [error instanceof Error ? error.message : String(error), device.device_id]);
+      `,
+        [error instanceof Error ? error.message : String(error), device.device_id]
+      );
     }
   }
 
@@ -186,19 +193,22 @@ async function syncDevice(
       accessToken = newTokens.access_token;
 
       // Update tokens in database
-      await db.query(`
+      await db.query(
+        `
         UPDATE wearables_devices
         SET access_token_encrypted = $1,
             refresh_token_encrypted = $2,
             token_expires_at = $3,
             updated_at = NOW()
         WHERE device_id = $4
-      `, [
-        encrypt(newTokens.access_token, env.ENCRYPTION_KEY),
-        encrypt(newTokens.refresh_token, env.ENCRYPTION_KEY),
-        new Date(Date.now() + newTokens.expires_in * 1000),
-        device.device_id,
-      ]);
+      `,
+        [
+          encrypt(newTokens.access_token, env.ENCRYPTION_KEY),
+          encrypt(newTokens.refresh_token, env.ENCRYPTION_KEY),
+          new Date(Date.now() + newTokens.expires_in * 1000),
+          device.device_id,
+        ]
+      );
     } catch (error) {
       console.error(`[WHOOP Worker] Token refresh failed:`, error);
       throw error;
@@ -215,11 +225,14 @@ async function syncDevice(
 
   if (cycleData.length === 0) {
     console.log(`[WHOOP Worker] No new data for device ${device.device_id}`);
-    await db.query(`
+    await db.query(
+      `
       UPDATE wearables_devices
       SET last_sync_at = NOW(), sync_status = 'success'
       WHERE device_id = $1
-    `, [device.device_id]);
+    `,
+      [device.device_id]
+    );
     return;
   }
 
@@ -262,14 +275,17 @@ async function syncDevice(
   }
 
   // Update device sync status
-  await db.query(`
+  await db.query(
+    `
     UPDATE wearables_devices
     SET last_sync_at = NOW(),
         sync_status = 'success',
         sync_error_message = NULL,
         updated_at = NOW()
     WHERE device_id = $1
-  `, [device.device_id]);
+  `,
+    [device.device_id]
+  );
 
   console.log(`[WHOOP Worker] Successfully synced device ${device.device_id}`);
 }
@@ -285,7 +301,8 @@ async function insertReadings(
 ): Promise<void> {
   for (const reading of readings) {
     try {
-      await db.query(`
+      await db.query(
+        `
         INSERT INTO wearables_readings (
           device_id,
           player_id,
@@ -305,20 +322,22 @@ async function insertReadings(
         SET metric_value = EXCLUDED.metric_value,
             quality_score = EXCLUDED.quality_score,
             raw_payload = EXCLUDED.raw_payload
-      `, [
-        deviceId,
-        reading.player_id,
-        reading.reading_timestamp,
-        reading.timezone_offset,
-        reading.metric_type,
-        reading.metric_value,
-        reading.metric_unit,
-        reading.quality_score,
-        reading.activity_state,
-        reading.source_session_id,
-        JSON.stringify(reading.raw_payload),
-        reading.data_source,
-      ]);
+      `,
+        [
+          deviceId,
+          reading.player_id,
+          reading.reading_timestamp,
+          reading.timezone_offset,
+          reading.metric_type,
+          reading.metric_value,
+          reading.metric_unit,
+          reading.quality_score,
+          reading.activity_state,
+          reading.source_session_id,
+          JSON.stringify(reading.raw_payload),
+          reading.data_source,
+        ]
+      );
     } catch (error) {
       console.error(`[WHOOP Worker] Failed to insert reading:`, error);
       // Continue with other readings
@@ -334,7 +353,8 @@ async function upsertDailySummary(
   deviceId: string,
   db: any
 ): Promise<void> {
-  await db.query(`
+  await db.query(
+    `
     INSERT INTO wearables_daily_summary (
       device_id,
       player_id,
@@ -373,29 +393,31 @@ async function upsertDailySummary(
         data_completeness = EXCLUDED.data_completeness,
         raw_payload = EXCLUDED.raw_payload,
         updated_at = NOW()
-  `, [
-    deviceId,
-    summary.player_id,
-    summary.summary_date,
-    summary.hrv_rmssd_avg,
-    summary.hrv_rmssd_min,
-    summary.hrv_rmssd_max,
-    summary.hrv_baseline_deviation,
-    summary.resting_hr_avg,
-    summary.resting_hr_min,
-    summary.hr_variability_index,
-    summary.day_strain,
-    summary.recovery_score,
-    summary.sleep_performance_score,
-    summary.total_sleep_minutes,
-    summary.rem_sleep_minutes,
-    summary.deep_sleep_minutes,
-    summary.sleep_efficiency,
-    summary.respiratory_rate_avg,
-    summary.data_completeness,
-    JSON.stringify(summary.raw_payload),
-    summary.data_source,
-  ]);
+  `,
+    [
+      deviceId,
+      summary.player_id,
+      summary.summary_date,
+      summary.hrv_rmssd_avg,
+      summary.hrv_rmssd_min,
+      summary.hrv_rmssd_max,
+      summary.hrv_baseline_deviation,
+      summary.resting_hr_avg,
+      summary.resting_hr_min,
+      summary.hr_variability_index,
+      summary.day_strain,
+      summary.recovery_score,
+      summary.sleep_performance_score,
+      summary.total_sleep_minutes,
+      summary.rem_sleep_minutes,
+      summary.deep_sleep_minutes,
+      summary.sleep_efficiency,
+      summary.respiratory_rate_avg,
+      summary.data_completeness,
+      JSON.stringify(summary.raw_payload),
+      summary.data_source,
+    ]
+  );
 }
 
 /**
@@ -438,11 +460,7 @@ async function handleWHOOPWebhook(request: Request, env: Env): Promise<Response>
     redirectUri: env.WHOOP_REDIRECT_URI,
   });
 
-  const isValid = whoopAdapter.verifyWebhookSignature(
-    body,
-    signature,
-    env.WHOOP_WEBHOOK_SECRET
-  );
+  const isValid = whoopAdapter.verifyWebhookSignature(body, signature, env.WHOOP_WEBHOOK_SECRET);
 
   if (!isValid) {
     console.error('[WHOOP Webhook] Invalid signature');
@@ -470,12 +488,15 @@ async function handleWHOOPWebhook(request: Request, env: Env): Promise<Response>
  */
 async function processWebhookEvent(event: any, db: any, env: Env): Promise<void> {
   // Find device by user_id
-  const deviceResult = await db.query(`
+  const deviceResult = await db.query(
+    `
     SELECT device_id, player_id, access_token_encrypted
     FROM wearables_devices
     WHERE raw_payload->>'user_id' = $1
       AND is_active = TRUE
-  `, [event.user_id.toString()]);
+  `,
+    [event.user_id.toString()]
+  );
 
   if (deviceResult.rows.length === 0) {
     console.log(`[WHOOP Webhook] No device found for user ${event.user_id}`);

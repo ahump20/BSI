@@ -99,7 +99,9 @@ test.describe('Analytics Page - Live Tables Accessibility', () => {
   });
 
   test('should have proper row selection indicators', async ({ page }) => {
-    const selectableRows = await page.locator('tr[role="row"][aria-selected], tr[aria-selected]').all();
+    const selectableRows = await page
+      .locator('tr[role="row"][aria-selected], tr[aria-selected]')
+      .all();
 
     for (const row of selectableRows) {
       const ariaSelected = await row.getAttribute('aria-selected');
@@ -155,7 +157,12 @@ test.describe('Analytics Page - Live Tables Accessibility', () => {
         return el.parentElement ? window.getComputedStyle(el.parentElement).overflowX : null;
       });
 
-      expect(overflowX === 'auto' || overflowX === 'scroll' || parentOverflow === 'auto' || parentOverflow === 'scroll').toBeTruthy();
+      expect(
+        overflowX === 'auto' ||
+          overflowX === 'scroll' ||
+          parentOverflow === 'auto' ||
+          parentOverflow === 'scroll'
+      ).toBeTruthy();
     }
   });
 
@@ -188,15 +195,17 @@ test.describe('Analytics Page - Pause Live Updates Feature', () => {
     await page.goto('/analytics');
 
     // Look for pause/play toggle button
-    const pauseButton = page.locator('button:has-text("Pause"), button:has-text("Stop"), button[aria-label*="pause" i]').first();
+    const pauseButton = page
+      .locator('button:has-text("Pause"), button:has-text("Stop"), button[aria-label*="pause" i]')
+      .first();
 
-    if (await pauseButton.count() > 0) {
+    if ((await pauseButton.count()) > 0) {
       // Button should be visible
       expect(await pauseButton.isVisible()).toBeTruthy();
 
       // Button should have accessible name
-      const accessibleName = await pauseButton.getAttribute('aria-label') ||
-                            await pauseButton.textContent();
+      const accessibleName =
+        (await pauseButton.getAttribute('aria-label')) || (await pauseButton.textContent());
       expect(accessibleName).toBeTruthy();
 
       // Button should be keyboard accessible
@@ -209,17 +218,23 @@ test.describe('Analytics Page - Pause Live Updates Feature', () => {
       // Button text/state should change
       const newText = await pauseButton.textContent();
       const newAriaLabel = await pauseButton.getAttribute('aria-label');
-      expect(newText?.toLowerCase().includes('play') || newText?.toLowerCase().includes('resume') ||
-             newAriaLabel?.toLowerCase().includes('play') || newAriaLabel?.toLowerCase().includes('resume')).toBeTruthy();
+      expect(
+        newText?.toLowerCase().includes('play') ||
+          newText?.toLowerCase().includes('resume') ||
+          newAriaLabel?.toLowerCase().includes('play') ||
+          newAriaLabel?.toLowerCase().includes('resume')
+      ).toBeTruthy();
     }
   });
 
   test('should pause live data updates when button is clicked', async ({ page }) => {
     await page.goto('/analytics');
 
-    const pauseButton = page.locator('button:has-text("Pause"), button[aria-label*="pause" i]').first();
+    const pauseButton = page
+      .locator('button:has-text("Pause"), button[aria-label*="pause" i]')
+      .first();
 
-    if (await pauseButton.count() > 0) {
+    if ((await pauseButton.count()) > 0) {
       // Get initial table state
       const initialData = await page.locator('table tbody tr').first().textContent();
 
@@ -242,9 +257,11 @@ test.describe('Analytics Page - Pause Live Updates Feature', () => {
     await page.keyboard.press('Space');
 
     // Check if pause state changed
-    const pauseButton = page.locator('button:has-text("Pause"), button:has-text("Play"), button:has-text("Resume")').first();
+    const pauseButton = page
+      .locator('button:has-text("Pause"), button:has-text("Play"), button:has-text("Resume")')
+      .first();
 
-    if (await pauseButton.count() > 0) {
+    if ((await pauseButton.count()) > 0) {
       const buttonText = await pauseButton.textContent();
       expect(buttonText).toBeTruthy();
     }
@@ -271,7 +288,9 @@ test.describe('Analytics Page - Reduced Motion', () => {
     await page.goto('/analytics');
 
     // Check that transitions are disabled or very short
-    const animatedElements = await page.locator('[class*="transition"], [style*="transition"]').all();
+    const animatedElements = await page
+      .locator('[class*="transition"], [style*="transition"]')
+      .all();
 
     for (const element of animatedElements.slice(0, 5)) {
       const transitionDuration = await element.evaluate((el) => {

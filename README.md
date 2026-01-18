@@ -19,13 +19,13 @@ Blaze Sports Intel (BSI) is a sports intelligence platform providing real-time a
 
 ## Who It's For
 
-| User Type | Use Case |
-|-----------|----------|
+| User Type                 | Use Case                                                    |
+| ------------------------- | ----------------------------------------------------------- |
 | **College Baseball Fans** | Real-time scores, standings, and stats for every D1 program |
-| **High School Coaches** | Scouting tools and player comparisons |
-| **College Programs** | Advanced analytics and recruiting insights |
-| **Professional Scouts** | Prospect evaluation and NIL valuations |
-| **Media & Analysts** | API access for data-driven content |
+| **High School Coaches**   | Scouting tools and player comparisons                       |
+| **College Programs**      | Advanced analytics and recruiting insights                  |
+| **Professional Scouts**   | Prospect evaluation and NIL valuations                      |
+| **Media & Analysts**      | API access for data-driven content                          |
 
 ---
 
@@ -58,6 +58,7 @@ cp .env.example .env.local
 ```
 
 Required environment variables for full functionality:
+
 - `SPORTSDATA_API_KEY` - SportsDataIO for live scores
 - `CLOUDFLARE_API_TOKEN` - For Workers/D1/KV deployment
 
@@ -65,14 +66,14 @@ Required environment variables for full functionality:
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | React 19, Next.js 16, TypeScript, Tailwind CSS |
-| **Backend** | Cloudflare Workers, D1 (SQLite), KV, R2 |
-| **AI/ML** | Cloudflare Workers AI, Vectorize embeddings |
-| **Analytics** | Cloudflare Analytics Engine |
-| **Payments** | Stripe subscriptions |
-| **CI/CD** | GitHub Actions, Cloudflare Pages |
+| Layer         | Technology                                     |
+| ------------- | ---------------------------------------------- |
+| **Frontend**  | React 19, Next.js 16, TypeScript, Tailwind CSS |
+| **Backend**   | Cloudflare Workers, D1 (SQLite), KV, R2        |
+| **AI/ML**     | Cloudflare Workers AI, Vectorize embeddings    |
+| **Analytics** | Cloudflare Analytics Engine                    |
+| **Payments**  | Stripe subscriptions                           |
+| **CI/CD**     | GitHub Actions, Cloudflare Pages               |
 
 ---
 
@@ -102,14 +103,14 @@ API documentation is available at [/docs/api.html](https://blazesportsintel.com/
 
 ### Key Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/api/v1/college-baseball/rankings` | D1 Baseball rankings by poll |
-| `/api/v1/college-baseball/games` | Game schedules and results |
-| `/api/v1/college-baseball/box-score/{gameId}` | Complete box scores |
-| `/api/v1/nil/valuation/{playerId}` | NIL valuations |
-| `/api/v1/mlb/standings` | MLB standings |
-| `/api/v1/nfl/scores` | NFL scores |
+| Endpoint                                      | Description                  |
+| --------------------------------------------- | ---------------------------- |
+| `/api/v1/college-baseball/rankings`           | D1 Baseball rankings by poll |
+| `/api/v1/college-baseball/games`              | Game schedules and results   |
+| `/api/v1/college-baseball/box-score/{gameId}` | Complete box scores          |
+| `/api/v1/nil/valuation/{playerId}`            | NIL valuations               |
+| `/api/v1/mlb/standings`                       | MLB standings                |
+| `/api/v1/nfl/scores`                          | NFL scores                   |
 
 ---
 
@@ -135,13 +136,13 @@ BSI includes a Model Context Protocol (MCP) server for Texas Longhorns data serv
 
 ### MCP Tools
 
-| Tool | Description |
-|------|-------------|
-| `get_team_seasons` | Season summaries across sports |
-| `get_season_schedule` | Schedule for a given sport |
-| `get_game_box_score` | Box score for a specific game |
-| `get_player_career` | Player career search |
-| `get_rankings_context` | Poll rankings and trends |
+| Tool                   | Description                    |
+| ---------------------- | ------------------------------ |
+| `get_team_seasons`     | Season summaries across sports |
+| `get_season_schedule`  | Schedule for a given sport     |
+| `get_game_box_score`   | Box score for a specific game  |
+| `get_player_career`    | Player career search           |
+| `get_rankings_context` | Poll rankings and trends       |
 
 ---
 
@@ -204,4 +205,4 @@ Proprietary. All rights reserved. See [LICENSE](./LICENSE) for details.
 
 ---
 
-*Born in Memphis. Rooted in Texas soil. Covering college baseball like it matters—because it does.*
+_Born in Memphis. Rooted in Texas soil. Covering college baseball like it matters—because it does._

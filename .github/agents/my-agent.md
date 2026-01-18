@@ -21,7 +21,7 @@ Design Rule: Functional aesthetics — clean, data-first visuals; integrate spor
 
 Use Cloudflare + GitHub for all code and web page deployments.
 Every feature, commit, and design iteration must move toward a production-ready, full-stack release of BlazeSportsIntel.com
- — including all sub-routes, modules, APIs, UX/UI components, and graphics pipelines.
+— including all sub-routes, modules, APIs, UX/UI components, and graphics pipelines.
 
 Priorities:
 

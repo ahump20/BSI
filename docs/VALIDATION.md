@@ -60,14 +60,14 @@ import { validateEnv, checkEnvHealth } from './validation/env.schema.js';
 
 // Validate environment variables on startup
 try {
-    const validatedEnv = validateEnv(process.env);
-    console.log('✓ Environment validation passed');
+  const validatedEnv = validateEnv(process.env);
+  console.log('✓ Environment validation passed');
 } catch (error) {
-    console.error('✗ Environment validation failed:');
-    console.error(error.message);
-    if (process.env.NODE_ENV === 'production') {
-        process.exit(1); // Fail fast in production
-    }
+  console.error('✗ Environment validation failed:');
+  console.error(error.message);
+  if (process.env.NODE_ENV === 'production') {
+    process.exit(1); // Fail fast in production
+  }
 }
 ```
 
@@ -86,12 +86,12 @@ The environment schema validates:
 
 ```javascript
 const envSchema = z.object({
-    NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
-    PORT: z.coerce.number().int().positive().max(65535).default(3000),
-    DATABASE_URL: z.string().optional(), // Required in production
-    JWT_SECRET: z.string().min(32).optional(), // Required in production
-    LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
-    // ... 100+ more variables
+  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']).default('development'),
+  PORT: z.coerce.number().int().positive().max(65535).default(3000),
+  DATABASE_URL: z.string().optional(), // Required in production
+  JWT_SECRET: z.string().min(32).optional(), // Required in production
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  // ... 100+ more variables
 });
 ```
 
@@ -103,7 +103,7 @@ import { checkEnvHealth } from './validation/env.schema.js';
 const health = checkEnvHealth(process.env);
 
 if (!health.healthy) {
-    console.error('Critical environment issues:', health.criticalIssues);
+  console.error('Critical environment issues:', health.criticalIssues);
 }
 ```
 
@@ -122,9 +122,9 @@ import { validate } from './middleware/validation.js';
 import { predictGameSchema } from './validation/schemas/index.js';
 
 app.post('/api/predict/game', validate(predictGameSchema), async (req, res) => {
-    // req.body is now validated and type-safe
-    const { homeTeam, awayTeam, sport } = req.body;
-    // ...
+  // req.body is now validated and type-safe
+  const { homeTeam, awayTeam, sport } = req.body;
+  // ...
 });
 ```
 
@@ -132,13 +132,13 @@ app.post('/api/predict/game', validate(predictGameSchema), async (req, res) => {
 
 ```javascript
 const schemas = {
-    body: z.object({ data: z.string() }),
-    query: z.object({ page: z.coerce.number().positive() }),
-    params: z.object({ id: z.string() })
+  body: z.object({ data: z.string() }),
+  query: z.object({ page: z.coerce.number().positive() }),
+  params: z.object({ id: z.string() }),
 };
 
 app.post('/api/resource/:id', validate(schemas), async (req, res) => {
-    // All validated
+  // All validated
 });
 ```
 
@@ -153,14 +153,14 @@ import { validateQuery } from '@/lib/validation/nextjs-validation';
 import { baseballGamesQuerySchema } from '@/lib/validation/schemas/baseball.schema';
 
 export async function GET(request: NextRequest) {
-    // Validate query parameters
-    const validationResult = validateQuery(request, baseballGamesQuerySchema);
-    if (!validationResult.success) {
-        return validationResult.error; // Automatic 400 response
-    }
+  // Validate query parameters
+  const validationResult = validateQuery(request, baseballGamesQuerySchema);
+  if (!validationResult.success) {
+    return validationResult.error; // Automatic 400 response
+  }
 
-    const { league, date } = validationResult.data;
-    // Type-safe access to validated data
+  const { league, date } = validationResult.data;
+  // Type-safe access to validated data
 }
 ```
 
@@ -174,14 +174,14 @@ Reusable validation schemas for common patterns:
 
 ```javascript
 import {
-    sportSchema,           // Valid sports enum
-    leagueSchema,          // Valid leagues enum
-    dateStringSchema,      // YYYY-MM-DD format
-    teamKeySchema,         // Team ID validation
-    seasonSchema,          // Season year/range
-    limitSchema,           // Pagination limit (1-100)
-    offsetSchema,          // Pagination offset
-    booleanStringSchema    // 'true'/'false' strings
+  sportSchema, // Valid sports enum
+  leagueSchema, // Valid leagues enum
+  dateStringSchema, // YYYY-MM-DD format
+  teamKeySchema, // Team ID validation
+  seasonSchema, // Season year/range
+  limitSchema, // Pagination limit (1-100)
+  offsetSchema, // Pagination offset
+  booleanStringSchema, // 'true'/'false' strings
 } from './validation/utils.js';
 ```
 
@@ -191,17 +191,19 @@ import {
 
 ```javascript
 export const predictGameSchema = z.object({
-    body: z.object({
-        homeTeam: teamKeySchema,           // Required, alphanumeric + hyphens
-        awayTeam: teamKeySchema,           // Required, alphanumeric + hyphens
-        sport: sportSchema,                 // Required, valid sport enum
-        gameDate: dateStringSchema.optional(), // Optional, YYYY-MM-DD
-        venue: z.string().max(200).optional(),
-        weather: z.object({
-            temperature: z.number().optional(),
-            conditions: z.string().optional()
-        }).optional()
-    })
+  body: z.object({
+    homeTeam: teamKeySchema, // Required, alphanumeric + hyphens
+    awayTeam: teamKeySchema, // Required, alphanumeric + hyphens
+    sport: sportSchema, // Required, valid sport enum
+    gameDate: dateStringSchema.optional(), // Optional, YYYY-MM-DD
+    venue: z.string().max(200).optional(),
+    weather: z
+      .object({
+        temperature: z.number().optional(),
+        conditions: z.string().optional(),
+      })
+      .optional(),
+  }),
 });
 ```
 
@@ -211,15 +213,15 @@ export const predictGameSchema = z.object({
 
 ```javascript
 export const teamAnalyticsSchema = z.object({
-    params: z.object({
-        sport: sportSchema,
-        teamKey: teamKeySchema
-    }),
-    query: z.object({
-        season: seasonSchema.optional(),
-        metrics: z.string().optional(),
-        includeAdvanced: booleanStringSchema.optional()
-    })
+  params: z.object({
+    sport: sportSchema,
+    teamKey: teamKeySchema,
+  }),
+  query: z.object({
+    season: seasonSchema.optional(),
+    metrics: z.string().optional(),
+    includeAdvanced: booleanStringSchema.optional(),
+  }),
 });
 ```
 
@@ -233,21 +235,21 @@ import { z } from 'zod';
 import { validate } from './middleware/validation.js';
 
 const myEndpointSchema = {
-    body: z.object({
-        name: z.string().min(1).max(100),
-        email: z.string().email()
-    }),
-    query: z.object({
-        format: z.enum(['json', 'csv']).default('json')
-    })
+  body: z.object({
+    name: z.string().min(1).max(100),
+    email: z.string().email(),
+  }),
+  query: z.object({
+    format: z.enum(['json', 'csv']).default('json'),
+  }),
 };
 
 // 2. Apply validation middleware
 app.post('/api/my-endpoint', validate(myEndpointSchema), async (req, res) => {
-    // Request is now validated
-    const { name, email } = req.body;
-    const { format } = req.query;
-    // ...
+  // Request is now validated
+  const { name, email } = req.body;
+  const { format } = req.query;
+  // ...
 });
 ```
 
@@ -257,13 +259,14 @@ app.post('/api/my-endpoint', validate(myEndpointSchema), async (req, res) => {
 import { z } from 'zod';
 
 const customSchema = z.object({
-    body: z.object({
-        startDate: z.string(),
-        endDate: z.string()
-    }).refine(
-        (data) => new Date(data.startDate) < new Date(data.endDate),
-        { message: 'End date must be after start date' }
-    )
+  body: z
+    .object({
+      startDate: z.string(),
+      endDate: z.string(),
+    })
+    .refine((data) => new Date(data.startDate) < new Date(data.endDate), {
+      message: 'End date must be after start date',
+    }),
 });
 ```
 
@@ -271,16 +274,16 @@ const customSchema = z.object({
 
 ```javascript
 const nestedSchema = {
-    body: z.object({
-        user: z.object({
-            name: z.string(),
-            address: z.object({
-                street: z.string(),
-                city: z.string(),
-                zip: z.string().regex(/^\d{5}$/)
-            })
-        })
-    })
+  body: z.object({
+    user: z.object({
+      name: z.string(),
+      address: z.object({
+        street: z.string(),
+        city: z.string(),
+        zip: z.string().regex(/^\d{5}$/),
+      }),
+    }),
+  }),
 };
 ```
 
@@ -292,21 +295,21 @@ When validation fails, the API returns:
 
 ```json
 {
-    "success": false,
-    "error": "Validation Error",
-    "message": "Invalid request body",
-    "details": [
-        {
-            "field": "homeTeam",
-            "message": "Required",
-            "code": "invalid_type"
-        },
-        {
-            "field": "sport",
-            "message": "Invalid sport. Must be a valid sport code.",
-            "code": "invalid_enum_value"
-        }
-    ]
+  "success": false,
+  "error": "Validation Error",
+  "message": "Invalid request body",
+  "details": [
+    {
+      "field": "homeTeam",
+      "message": "Required",
+      "code": "invalid_type"
+    },
+    {
+      "field": "sport",
+      "message": "Invalid sport. Must be a valid sport code.",
+      "code": "invalid_enum_value"
+    }
+  ]
 }
 ```
 
@@ -332,6 +335,7 @@ The validation system includes comprehensive tests:
 - **Schema tests** - `tests/validation/schemas.test.js`
 
 **Test Statistics:**
+
 - 50+ test cases
 - 100% coverage of validation logic
 - Tests for success and failure scenarios
@@ -343,19 +347,19 @@ import { describe, it, expect } from 'vitest';
 import { predictGameSchema } from '../../api/validation/schemas/game.schemas.js';
 
 describe('predictGameSchema', () => {
-    it('should validate valid game prediction request', () => {
-        const validRequest = {
-            body: {
-                homeTeam: 'texas-longhorns',
-                awayTeam: 'oklahoma-sooners',
-                sport: 'football',
-                gameDate: '2024-10-12'
-            }
-        };
+  it('should validate valid game prediction request', () => {
+    const validRequest = {
+      body: {
+        homeTeam: 'texas-longhorns',
+        awayTeam: 'oklahoma-sooners',
+        sport: 'football',
+        gameDate: '2024-10-12',
+      },
+    };
 
-        const result = predictGameSchema.body.safeParse(validRequest.body);
-        expect(result.success).toBe(true);
-    });
+    const result = predictGameSchema.body.safeParse(validRequest.body);
+    expect(result.success).toBe(true);
+  });
 });
 ```
 
@@ -380,13 +384,13 @@ Define schemas close to their usage for better type safety:
 ```javascript
 // ✅ Good
 const schema = z.object({
-    name: z.string(),
-    age: z.number().int().positive()
+  name: z.string(),
+  age: z.number().int().positive(),
 });
 
 // ❌ Bad - Loose validation
 if (!req.body.name || typeof req.body.age !== 'number') {
-    // Manual validation is error-prone
+  // Manual validation is error-prone
 }
 ```
 
@@ -394,12 +398,12 @@ if (!req.body.name || typeof req.body.age !== 'number') {
 
 ```javascript
 // ✅ Good
-z.string().min(1, 'Name is required')
-z.number().positive('Age must be positive')
+z.string().min(1, 'Name is required');
+z.number().positive('Age must be positive');
 
 // ❌ Bad - Generic errors
-z.string()
-z.number()
+z.string();
+z.number();
 ```
 
 ### 4. Use Common Schemas
@@ -419,10 +423,10 @@ z.enum(['baseball', 'football', ...])
 ```javascript
 // ✅ Good - Fail fast
 try {
-    validateEnv(process.env);
+  validateEnv(process.env);
 } catch (error) {
-    console.error(error);
-    process.exit(1);
+  console.error(error);
+  process.exit(1);
 }
 
 // ❌ Bad - Fail at runtime

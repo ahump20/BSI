@@ -1,4 +1,5 @@
 # Diamond Sluggers - Mobile Baseball Game
+
 ## Complete Documentation & Deployment Guide
 
 **Version:** 1.0.0
@@ -52,6 +53,7 @@ All characters are 100% original creations with unique names, designs, and abili
 ### Starter Characters (Available from beginning)
 
 #### 1. Maya Thunder ⚡
+
 - **Age:** 11
 - **Hometown:** Boerne, TX
 - **Bio:** Lightning-fast outfielder with incredible instincts
@@ -59,6 +61,7 @@ All characters are 100% original creations with unique names, designs, and abili
 - **Special Ability:** "Thunder Steal" - Steals bases 75% faster with 90% success rate
 
 #### 2. Jackson "Rocket" Rodriguez 🚀
+
 - **Age:** 12
 - **Hometown:** San Antonio, TX
 - **Bio:** Power hitter who crushes homers over the fence
@@ -66,6 +69,7 @@ All characters are 100% original creations with unique names, designs, and abili
 - **Special Ability:** "Launch Pad" - Next home run goes 50% farther for bonus points
 
 #### 3. Emma "Glove" Chen 🧤
+
 - **Age:** 10
 - **Hometown:** Austin, TX
 - **Bio:** Defensive wizard who makes impossible catches look easy
@@ -101,6 +105,7 @@ Characters unlock based on total wins:
 All stadiums are original Texas-inspired backyard baseball fields with unique features.
 
 ### 1. Boerne Backyard (Starter)
+
 - **Location:** Boerne, TX
 - **Theme:** Hill Country backyard with oak trees
 - **Dimensions:** 180' - 220' - 180'
@@ -111,6 +116,7 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 - **Weather:** Sunny, 85°F, light right wind
 
 ### 2. San Antonio Sand Lot (Unlock: 8 wins)
+
 - **Location:** San Antonio, TX
 - **Theme:** Desert lot near the Alamo
 - **Dimensions:** 190' - 200' - 210' (asymmetric!)
@@ -121,6 +127,7 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 - **Weather:** Hot, 95°F, strong left wind
 
 ### 3. Austin Treehouse Field (Unlock: 15 wins)
+
 - **Location:** Austin, TX
 - **Theme:** Shaded field beneath massive treehouse
 - **Dimensions:** 185' - 230' - 185' (deep center!)
@@ -131,6 +138,7 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 - **Weather:** Partly cloudy, 78°F, slight updraft
 
 ### 4. Houston Bayou Diamond (Unlock: 25 wins)
+
 - **Location:** Houston, TX
 - **Theme:** Field next to bayou with unpredictable weather
 - **Dimensions:** 195' - 210' - 175' (short porch right!)
@@ -141,6 +149,7 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 - **Weather:** Humid, 92°F, swirling wind
 
 ### 5. Dallas Construction Site (Unlock: 40 wins)
+
 - **Location:** Dallas, TX
 - **Theme:** Urban lot with construction equipment
 - **Dimensions:** 170' - 240' - 170' (huge center!)
@@ -155,6 +164,7 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 ## Game Mechanics
 
 ### Pitching Phase
+
 1. AI pitcher winds up (800-1200ms variable timing)
 2. Ball travels toward plate (400-600ms flight time)
 3. Three pitch types:
@@ -163,14 +173,17 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
    - **Changeup** (15% chance) - Slow drop
 
 ### Batting Phase
+
 **Touch Control:** Single large SWING button at bottom
 
 **Timing Windows:**
+
 - **Perfect:** ±50ms of optimal contact = 1.5x power multiplier
 - **Good:** ±150ms = 1.0x power multiplier
 - **Late/Early:** >150ms = 0.5x power multiplier (weak contact)
 
 **Hit Outcomes:**
+
 - **Home Run:** Distance exceeds stadium fence
 - **Triple:** 85% of fence distance
 - **Double:** 50-85% of fence distance
@@ -178,13 +191,16 @@ All stadiums are original Texas-inspired backyard baseball fields with unique fe
 - **Infield Out:** Fielder catches before landing
 
 ### Ball Physics
+
 - Gravity: 9.8 m/s² (scaled for gameplay)
 - Wind Effect: Stadium-specific (affects X/Y velocity)
 - Launch Angle: 20-40° based on contact timing
 - Spin: Visual rotation based on velocity
 
 ### Special Abilities
+
 Each character has a unique ability with cooldown:
+
 - **Active Abilities:** Triggered by player (e.g., Iron Wall, Wind Sprint)
 - **Passive Abilities:** Always in effect (e.g., Clutch Mode, Ice Cold)
 - **Conditional Abilities:** Triggered by game state (e.g., Hot Streak, Lucky Bounce)
@@ -192,17 +208,20 @@ Each character has a unique ability with cooldown:
 ### Progression System
 
 **Experience Tracking:**
+
 - Wins, losses, total games played
 - Runs scored, hits, home runs
 - Strikeouts, batting average
 - Win streak (current and best)
 
 **Unlocking:**
+
 - Characters unlock based on total wins
 - Stadiums unlock based on total wins
 - Achievements unlock based on various milestones
 
 **Achievements:**
+
 - First Victory (1 win)
 - Home Run Hitter (10 HRs)
 - On Fire (5 game win streak)
@@ -216,6 +235,7 @@ Each character has a unique ability with cooldown:
 ## Technical Architecture
 
 ### File Structure
+
 ```
 /public/game/
 ├── index.html                 # Main HTML file
@@ -240,18 +260,21 @@ Each character has a unique ability with cooldown:
 ### Technology Stack
 
 **Frontend:**
+
 - Vanilla JavaScript (ES6 modules)
 - HTML5 Canvas for rendering
 - CSS3 for UI (with GPU acceleration)
 - Web Storage API for saves
 
 **PWA Features:**
+
 - Service Worker for offline caching
 - App Manifest for installation
 - Touch events with passive listeners
 - Viewport meta for mobile optimization
 
 **Performance Optimizations:**
+
 - Object pooling for game entities
 - RequestAnimationFrame for smooth 60 FPS
 - GPU-accelerated CSS transforms
@@ -261,6 +284,7 @@ Each character has a unique ability with cooldown:
 ### State Management
 
 Game state stored in single object:
+
 ```javascript
 {
   gamePhase: 'pitching' | 'batting' | 'ball-in-play' | 'baserunning' | 'game-over',
@@ -278,6 +302,7 @@ Game state stored in single object:
 ```
 
 Save data structure:
+
 ```javascript
 {
   version: number,
@@ -301,6 +326,7 @@ Save data structure:
 7. **Present Frame** - Single canvas draw call
 
 **Target Performance:**
+
 - 60 FPS on mid-range phones (iPhone 11, Pixel 4a)
 - < 100ms input latency
 - < 5% CPU usage when idle
@@ -311,6 +337,7 @@ Save data structure:
 ## Deployment Guide
 
 ### Prerequisites
+
 - Cloudflare account with Pages enabled
 - Wrangler CLI installed: `npm install -g wrangler`
 - Git repository connected to Cloudflare
@@ -373,6 +400,7 @@ curl -I https://blazesportsintel.com/game/
 ### Step 4: Configure DNS & SSL
 
 Ensure Cloudflare DNS points to your Pages deployment:
+
 - **Type:** CNAME
 - **Name:** blazesportsintel.com
 - **Target:** blazesportsintel.pages.dev
@@ -382,12 +410,14 @@ Ensure Cloudflare DNS points to your Pages deployment:
 ### Step 5: Test PWA Installation
 
 **iOS:**
+
 1. Open Safari
 2. Navigate to blazesportsintel.com/game
 3. Tap Share → Add to Home Screen
 4. Verify icon and splash screen
 
 **Android:**
+
 1. Open Chrome
 2. Navigate to blazesportsintel.com/game
 3. Tap menu → Install app
@@ -399,11 +429,15 @@ Add to `public/game/index.html` before `</body>`:
 
 ```html
 <!-- Cloudflare Web Analytics -->
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
-        data-cf-beacon='{"token": "YOUR_BEACON_TOKEN"}'></script>
+<script
+  defer
+  src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon='{"token": "YOUR_BEACON_TOKEN"}'
+></script>
 ```
 
 Track custom events:
+
 - Game starts
 - Character selections
 - Game completions (wins/losses)
@@ -417,6 +451,7 @@ Track custom events:
 ### Mobile-Specific Optimizations
 
 **1. Touch Performance**
+
 ```javascript
 // Use passive listeners for scroll performance
 document.addEventListener('touchstart', handler, { passive: true });
@@ -424,6 +459,7 @@ document.addEventListener('touchmove', handler, { passive: true });
 ```
 
 **2. Canvas Optimization**
+
 ```javascript
 // Use device pixel ratio for sharp graphics
 const dpr = window.devicePixelRatio || 1;
@@ -433,6 +469,7 @@ ctx.scale(dpr, dpr);
 ```
 
 **3. Battery Efficiency**
+
 ```javascript
 // Reduce frame rate when in background
 document.addEventListener('visibilitychange', () => {
@@ -445,6 +482,7 @@ document.addEventListener('visibilitychange', () => {
 ```
 
 **4. Memory Management**
+
 ```javascript
 // Object pooling for balls, particles, etc.
 class ObjectPool {
@@ -470,25 +508,29 @@ class ObjectPool {
 Place critical game styles in `<head>` to avoid render-blocking.
 
 **2. Defer Non-Critical Scripts**
+
 ```html
 <script src="analytics.js" defer></script>
 <script src="sound-manager.js" defer></script>
 ```
 
 **3. Preload Key Assets**
+
 ```html
-<link rel="preload" href="/game/js/main.js" as="script">
-<link rel="preload" href="/game/manifest.json" as="fetch" crossorigin>
+<link rel="preload" href="/game/js/main.js" as="script" />
+<link rel="preload" href="/game/manifest.json" as="fetch" crossorigin />
 ```
 
 **4. Service Worker Caching Strategy**
+
 ```javascript
 // Cache-first for static assets
 // Network-first for game state
 self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('/game/js/')) {
-    event.respondWith(caches.match(event.request)
-      .then(response => response || fetch(event.request)));
+    event.respondWith(
+      caches.match(event.request).then((response) => response || fetch(event.request))
+    );
   }
 });
 ```
@@ -496,6 +538,7 @@ self.addEventListener('fetch', (event) => {
 ### Testing Performance
 
 Use Lighthouse to verify:
+
 - **Performance Score:** > 90
 - **First Contentful Paint:** < 1.5s
 - **Time to Interactive:** < 3.0s
@@ -509,18 +552,21 @@ Use Lighthouse to verify:
 ### Copyright & Trademark
 
 ✅ **All Original Content:**
+
 - Character names: No resemblance to existing franchises
 - Character designs: Original emoji + color combinations
 - Stadium names: Original Texas-themed locations
 - Game mechanics: Inspired by genre, not copied code
 
 ✅ **No Infringement:**
+
 - Does not use "Backyard Baseball" trademark
 - Does not use "Pablo Sanchez" or any Humongous characters
 - Does not use Atari, Humongous, or any company logos
 - Does not use MLB team names without permission
 
 ✅ **Attribution:**
+
 - Open source libraries credited (if used)
 - Cloudflare Pages attribution (if required)
 - Blaze Sports Intel branding throughout
@@ -528,18 +574,21 @@ Use Lighthouse to verify:
 ### COPPA Compliance (Children's Privacy)
 
 ✅ **No Personal Data Collection:**
+
 - No account registration required
 - No email addresses collected
 - No names or locations collected
 - All data stored locally (device only)
 
 ✅ **Kid-Friendly Content:**
+
 - Age-appropriate language and themes
 - No violence or inappropriate content
 - No in-app purchases or monetization
 - No external links without warning
 
 ✅ **Parental Controls:**
+
 - Settings for sound/vibration
 - No social features or chat
 - No ads or third-party content
@@ -547,6 +596,7 @@ Use Lighthouse to verify:
 ### Terms of Service
 
 Include `/game/terms.html` with:
+
 - Game usage rules
 - Data storage explanation (local only)
 - Disclaimer of warranties
@@ -560,12 +610,14 @@ Include `/game/terms.html` with:
 ### Device Testing
 
 **iOS Devices:**
+
 - [ ] iPhone SE (small screen)
 - [ ] iPhone 12/13 (standard)
 - [ ] iPhone 14 Pro Max (large, notch)
 - [ ] iPad Mini (tablet portrait)
 
 **Android Devices:**
+
 - [ ] Pixel 4a (mid-range)
 - [ ] Samsung Galaxy S21 (high-end)
 - [ ] OnePlus Nord (budget)
@@ -581,6 +633,7 @@ Include `/game/terms.html` with:
 ### Functionality Testing
 
 **Core Gameplay:**
+
 - [ ] Pitching animations smooth
 - [ ] Swing timing responsive (< 50ms latency)
 - [ ] Ball physics realistic
@@ -589,24 +642,28 @@ Include `/game/terms.html` with:
 - [ ] Game over triggers properly
 
 **Character System:**
+
 - [ ] All characters load
 - [ ] Stats display correctly
 - [ ] Special abilities trigger
 - [ ] Unlocking works (test with modified save)
 
 **Stadium System:**
+
 - [ ] All stadiums load
 - [ ] Wind effects work
 - [ ] Special features trigger (tree, crane, etc.)
 - [ ] Dimensions affect gameplay
 
 **Progression:**
+
 - [ ] Save/load works
 - [ ] Stats track correctly
 - [ ] Achievements unlock
 - [ ] Unlockables progress
 
 **PWA Features:**
+
 - [ ] Installs on home screen
 - [ ] Offline mode works
 - [ ] Icon displays correctly
@@ -655,6 +712,7 @@ Include `/game/terms.html` with:
 ### Link to Real MLB Stats
 
 From game menu, add:
+
 - **"See Real MLB Stats"** button → links to blazesportsintel.com/mlb
 - **"Learn Baseball Analytics"** → links to blazesportsintel.com/analytics
 - **"Pro Player Comparisons"** → Compare character stats to real players
@@ -662,13 +720,14 @@ From game menu, add:
 ### Social Sharing
 
 After winning:
+
 ```javascript
 // Web Share API
 if (navigator.share) {
   navigator.share({
     title: 'Diamond Sluggers',
     text: `I just won a game ${score.home}-${score.away} in Diamond Sluggers!`,
-    url: 'https://blazesportsintel.com/game'
+    url: 'https://blazesportsintel.com/game',
   });
 }
 ```
@@ -684,6 +743,7 @@ if (navigator.share) {
 ## Future Enhancements (Post-Launch)
 
 ### Phase 2 Features
+
 - Multiplayer (pass-and-play)
 - Season mode with playoffs
 - Championship tournament
@@ -691,12 +751,14 @@ if (navigator.share) {
 - More stadiums and characters
 
 ### Phase 3 Features
+
 - Online leaderboards (Cloudflare KV)
 - Daily challenges
 - Special event games (holiday themes)
 - Coach mode (manage full team)
 
 ### Advanced Features
+
 - 3D graphics (WebGL with Three.js)
 - Motion controls (device tilt)
 - AR mode (place stadium in real world)

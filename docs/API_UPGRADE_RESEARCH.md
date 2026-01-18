@@ -9,6 +9,7 @@ This document consolidates research from multiple GitHub repositories, sports AP
 ## 1. Current Architecture Analysis
 
 ### Existing Strengths
+
 - **Multi-provider failover** with circuit breaker pattern (SportsDataIO → NCAA → ESPN)
 - **122+ API endpoints** across 27 categories
 - **Cloudflare Edge deployment** with KV caching and D1 database
@@ -16,15 +17,16 @@ This document consolidates research from multiple GitHub repositories, sports AP
 - **Real statistical models** (Pythagorean expectation, Elo ratings, sabermetrics)
 
 ### Current Adapters
-| Adapter | Status | Notes |
-|---------|--------|-------|
-| `espn-api.ts` | Tertiary | Limited to college baseball |
-| `ncaa-api.ts` | Backup | No team stats implementation |
-| `cfbd-adapter.ts` | Active | College football primary |
-| `mlb-adapter.ts` | Active | MLB Stats API integration |
-| `statcast-adapter.ts` | Active | Baseball Savant data |
-| `nba-production-adapter.ts` | Active | NBA stats with clutch data |
-| `nfl-production-adapter.ts` | Active | NFL game data |
+
+| Adapter                     | Status   | Notes                        |
+| --------------------------- | -------- | ---------------------------- |
+| `espn-api.ts`               | Tertiary | Limited to college baseball  |
+| `ncaa-api.ts`               | Backup   | No team stats implementation |
+| `cfbd-adapter.ts`           | Active   | College football primary     |
+| `mlb-adapter.ts`            | Active   | MLB Stats API integration    |
+| `statcast-adapter.ts`       | Active   | Baseball Savant data         |
+| `nba-production-adapter.ts` | Active   | NBA stats with clutch data   |
+| `nfl-production-adapter.ts` | Active   | NFL game data                |
 
 ---
 
@@ -33,6 +35,7 @@ This document consolidates research from multiple GitHub repositories, sports AP
 ### Free/Freemium Tier APIs
 
 #### BALLDONTLIE API
+
 **Coverage**: NBA, NFL, MLB, NHL, EPL, WNBA, NCAAF, NCAAB
 **Features**: 120+ endpoints, official SDKs (Python/JS), MCP server integration
 **Pricing**: Free tier available
@@ -40,16 +43,18 @@ This document consolidates research from multiple GitHub repositories, sports AP
 
 ```javascript
 // JavaScript SDK
-import { BalldontlieAPI } from "@balldontlie/sdk";
-const api = new BalldontlieAPI({ apiKey: "your-api-key" });
+import { BalldontlieAPI } from '@balldontlie/sdk';
+const api = new BalldontlieAPI({ apiKey: 'your-api-key' });
 
 // Get NCAAF games
 const games = await api.ncaaf.games.list({ season: 2024 });
 ```
 
 #### henrygd/ncaa-api (Free)
+
 **Coverage**: All NCAA sports, all divisions
 **Endpoints**:
+
 - `/scoreboard/{sport}/{division}/{date}` - Live scores
 - `/stats/{sport}/{division}/current/team/{id}` - Team stats
 - `/stats/{sport}/{division}/current/individual/{id}` - Player stats
@@ -62,6 +67,7 @@ const games = await api.ncaaf.games.list({ season: 2024 });
 **Source**: https://github.com/henrygd/ncaa-api
 
 #### MySportsFeeds
+
 **Coverage**: NFL, MLB, NBA, NHL
 **Features**: Real-time scores, play-by-play, injuries, odds
 **Pricing**: Free for non-commercial use
@@ -70,12 +76,14 @@ const games = await api.ncaaf.games.list({ season: 2024 });
 ### ESPN Hidden API Endpoints (Comprehensive)
 
 #### Base URLs
+
 - `site.api.espn.com/apis/site/v2/sports/` - General site data
 - `sports.core.api.espn.com/v2/` - Core sports data
 - `site.web.api.espn.com/apis/` - Web-specific APIs
 - `lm-api-reads.fantasy.espn.com/apis/v3/` - Fantasy data
 
 #### College Football Endpoints
+
 ```
 # Scoreboard (all FBS games)
 https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80
@@ -97,6 +105,7 @@ https://site.api.espn.com/apis/site/v2/sports/football/college-football/summary?
 ```
 
 #### College Basketball Endpoints
+
 ```
 # Men's scoreboard
 https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard
@@ -109,6 +118,7 @@ https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball
 ```
 
 #### NFL Endpoints
+
 ```
 # Scoreboard with week
 https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=1
@@ -124,6 +134,7 @@ https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/{athle
 ```
 
 #### MLB Endpoints
+
 ```
 # Scoreboard
 https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard
@@ -133,6 +144,7 @@ https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboa
 ```
 
 #### Key Query Parameters
+
 - `dates`: YYYYMMDD or YYYYMMDD-YYYYMMDD range
 - `groups`: Conference/division IDs (80=FBS, 8=SEC, etc.)
 - `week`: Week number for football
@@ -140,6 +152,7 @@ https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboa
 - `seasontype`: 1=preseason, 2=regular, 3=playoff, 4=offseason
 
 ### MLB Stats API (Official)
+
 **Documentation**: https://statsapi.mlb.com/ (requires login)
 **npm Package**: `mlb-stats-api`
 
@@ -156,6 +169,7 @@ const schedule = await mlbStats.getSchedule({ date: '2024-09-15' });
 ```
 
 ### College Football Data (CFBD) API v2
+
 **Documentation**: https://apinext.collegefootballdata.com/
 **Pricing**: Free tier = 1000 monthly calls
 **Features**: GraphQL API for Patreon Tier 3+
@@ -169,10 +183,12 @@ betting_lines = betting_api.get_lines(year=2024, week=13)
 ```
 
 ### Statcast / Baseball Savant
+
 **Documentation**: https://baseballsavant.mlb.com/csv-docs
 **Features**: Pitch tracking, swing tracking, exit velocity, spin rate
 
 Key fields available:
+
 - `pitch_type`, `release_speed`, `release_spin`
 - `spin_axis`, `release_pos_x`, `release_pos_z`
 - `launch_speed`, `launch_angle`, `hc_x`, `hc_y`
@@ -186,6 +202,7 @@ Key fields available:
 ### WebSocket Hibernation for Real-Time Scores
 
 The biggest opportunity is implementing **WebSocket Hibernation** with Durable Objects for live score streaming. This allows:
+
 - Persistent connections without compute charges during inactivity
 - Automatic wake-up when new data arrives
 - Global edge distribution for low latency
@@ -197,9 +214,12 @@ The biggest opportunity is implementing **WebSocket Hibernation** with Durable O
 export class LiveScoresDO implements DurableObject {
   private sessions: Map<WebSocket, { sport: string; teams: string[] }> = new Map();
 
-  constructor(private state: DurableObjectState, private env: Env) {
+  constructor(
+    private state: DurableObjectState,
+    private env: Env
+  ) {
     // Restore sessions from hibernation
-    this.state.getWebSockets().forEach(ws => {
+    this.state.getWebSockets().forEach((ws) => {
       const attachment = ws.deserializeAttachment() as { sport: string; teams: string[] };
       if (attachment) {
         this.sessions.set(ws, attachment);
@@ -207,20 +227,18 @@ export class LiveScoresDO implements DurableObject {
     });
 
     // Set up auto-response for ping/pong
-    this.state.setWebSocketAutoResponse(
-      new WebSocketRequestResponsePair("ping", "pong")
-    );
+    this.state.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
   }
 
   async fetch(request: Request): Promise<Response> {
-    const upgradeHeader = request.headers.get("Upgrade");
-    if (upgradeHeader !== "websocket") {
-      return new Response("Expected WebSocket", { status: 426 });
+    const upgradeHeader = request.headers.get('Upgrade');
+    if (upgradeHeader !== 'websocket') {
+      return new Response('Expected WebSocket', { status: 426 });
     }
 
     const url = new URL(request.url);
-    const sport = url.searchParams.get("sport") || "all";
-    const teams = url.searchParams.get("teams")?.split(",") || [];
+    const sport = url.searchParams.get('sport') || 'all';
+    const teams = url.searchParams.get('teams')?.split(',') || [];
 
     const [client, server] = Object.values(new WebSocketPair());
 
@@ -238,7 +256,7 @@ export class LiveScoresDO implements DurableObject {
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
     const data = JSON.parse(message as string);
 
-    if (data.type === "subscribe") {
+    if (data.type === 'subscribe') {
       const attachment = { sport: data.sport, teams: data.teams || [] };
       ws.serializeAttachment(attachment);
       this.sessions.set(ws, attachment);
@@ -249,10 +267,12 @@ export class LiveScoresDO implements DurableObject {
   async broadcastScoreUpdate(update: ScoreUpdate): Promise<void> {
     for (const [ws, session] of this.sessions) {
       // Filter by sport and team subscriptions
-      if (session.sport === "all" || session.sport === update.sport) {
-        if (session.teams.length === 0 ||
-            session.teams.includes(update.homeTeam) ||
-            session.teams.includes(update.awayTeam)) {
+      if (session.sport === 'all' || session.sport === update.sport) {
+        if (
+          session.teams.length === 0 ||
+          session.teams.includes(update.homeTeam) ||
+          session.teams.includes(update.awayTeam)
+        ) {
           ws.send(JSON.stringify(update));
         }
       }
@@ -277,13 +297,13 @@ export class TieredCache {
 
   // Sport-specific TTLs
   private readonly TTL_CONFIG = {
-    'live_scores': 15,        // 15 seconds for live games
-    'scheduled_games': 300,   // 5 minutes for upcoming
-    'final_scores': 3600,     // 1 hour for completed
-    'standings': 300,         // 5 minutes
-    'player_stats': 600,      // 10 minutes
-    'rankings': 1800,         // 30 minutes
-    'historical': 86400,      // 24 hours
+    live_scores: 15, // 15 seconds for live games
+    scheduled_games: 300, // 5 minutes for upcoming
+    final_scores: 3600, // 1 hour for completed
+    standings: 300, // 5 minutes
+    player_stats: 600, // 10 minutes
+    rankings: 1800, // 30 minutes
+    historical: 86400, // 24 hours
   };
 
   async get<T>(key: string, category: keyof typeof this.TTL_CONFIG): Promise<T | null> {
@@ -291,11 +311,7 @@ export class TieredCache {
     return cached as T | null;
   }
 
-  async set<T>(
-    key: string,
-    data: T,
-    category: keyof typeof this.TTL_CONFIG
-  ): Promise<void> {
+  async set<T>(key: string, data: T, category: keyof typeof this.TTL_CONFIG): Promise<void> {
     const ttl = this.TTL_CONFIG[category];
     await this.kv.put(key, JSON.stringify(data), { expirationTtl: ttl });
   }
@@ -342,7 +358,7 @@ export class TieredCache {
 
 ```typescript
 // lib/adapters/balldontlie-adapter.ts
-import { BalldontlieAPI } from "@balldontlie/sdk";
+import { BalldontlieAPI } from '@balldontlie/sdk';
 
 export class BalldontlieAdapter {
   private api: BalldontlieAPI;
@@ -402,11 +418,11 @@ export class BalldontlieAdapter {
 
   private mapStatus(status: string): ProviderGame['status'] {
     const statusMap: Record<string, ProviderGame['status']> = {
-      'scheduled': 'SCHEDULED',
-      'in_progress': 'LIVE',
-      'final': 'FINAL',
-      'postponed': 'POSTPONED',
-      'cancelled': 'CANCELLED',
+      scheduled: 'SCHEDULED',
+      in_progress: 'LIVE',
+      final: 'FINAL',
+      postponed: 'POSTPONED',
+      cancelled: 'CANCELLED',
     };
     return statusMap[status.toLowerCase()] || 'SCHEDULED';
   }
@@ -423,26 +439,26 @@ export class ESPNUnifiedAdapter {
 
   // Sport/League configuration
   private readonly SPORT_CONFIG = {
-    'ncaaf': { sport: 'football', league: 'college-football', groups: 80 },
-    'ncaab': { sport: 'basketball', league: 'mens-college-basketball' },
-    'wcbb': { sport: 'basketball', league: 'womens-college-basketball' },
-    'nfl': { sport: 'football', league: 'nfl' },
-    'nba': { sport: 'basketball', league: 'nba' },
-    'wnba': { sport: 'basketball', league: 'wnba' },
-    'mlb': { sport: 'baseball', league: 'mlb' },
-    'cbb': { sport: 'baseball', league: 'college-baseball' },
-    'nhl': { sport: 'hockey', league: 'nhl' },
+    ncaaf: { sport: 'football', league: 'college-football', groups: 80 },
+    ncaab: { sport: 'basketball', league: 'mens-college-basketball' },
+    wcbb: { sport: 'basketball', league: 'womens-college-basketball' },
+    nfl: { sport: 'football', league: 'nfl' },
+    nba: { sport: 'basketball', league: 'nba' },
+    wnba: { sport: 'basketball', league: 'wnba' },
+    mlb: { sport: 'baseball', league: 'mlb' },
+    cbb: { sport: 'baseball', league: 'college-baseball' },
+    nhl: { sport: 'hockey', league: 'nhl' },
   };
 
   // Conference IDs for CFB
   private readonly CFB_CONFERENCES = {
-    'SEC': 8,
+    SEC: 8,
     'Big Ten': 5,
     'Big 12': 4,
-    'ACC': 1,
+    ACC: 1,
     'Pac-12': 9,
-    'FBS': 80,
-    'FCS': 81,
+    FBS: 80,
+    FCS: 81,
   };
 
   async getScoreboard(
@@ -461,14 +477,20 @@ export class ESPNUnifiedAdapter {
     if (config.groups) {
       params.set('groups', config.groups.toString());
     }
-    if (options.conference && this.CFB_CONFERENCES[options.conference as keyof typeof this.CFB_CONFERENCES]) {
-      params.set('groups', this.CFB_CONFERENCES[options.conference as keyof typeof this.CFB_CONFERENCES].toString());
+    if (
+      options.conference &&
+      this.CFB_CONFERENCES[options.conference as keyof typeof this.CFB_CONFERENCES]
+    ) {
+      params.set(
+        'groups',
+        this.CFB_CONFERENCES[options.conference as keyof typeof this.CFB_CONFERENCES].toString()
+      );
     }
 
     const url = `${this.BASE_URL}/${config.sport}/${config.league}/scoreboard?${params}`;
     const response = await fetch(url, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'BlazeSportsIntel/2.0',
       },
     });
@@ -505,7 +527,11 @@ export class ESPNUnifiedAdapter {
     return response.json();
   }
 
-  async getAllEvents(sportKey: keyof typeof this.SPORT_CONFIG, season: number, seasonType: number = 2) {
+  async getAllEvents(
+    sportKey: keyof typeof this.SPORT_CONFIG,
+    season: number,
+    seasonType: number = 2
+  ) {
     const config = this.SPORT_CONFIG[sportKey];
     const url = `${this.CORE_URL}/${config.sport}/leagues/${config.league}/seasons/${season}/types/${seasonType}/events?limit=1000`;
 
@@ -608,12 +634,7 @@ export class NCAAEnhancedAdapter {
     return data.games.map(this.transformGame);
   }
 
-  async getTeamStats(params: {
-    sport: string;
-    division: string;
-    teamId: number;
-    season?: string;
-  }) {
+  async getTeamStats(params: { sport: string; division: string; teamId: number; season?: string }) {
     const season = params.season || 'current';
     const url = `${this.baseUrl}/stats/${params.sport}/${params.division}/${season}/team/${params.teamId}`;
 
@@ -747,7 +768,7 @@ export class EnhancedProviderManager {
     this.rateLimiters = new Map();
 
     // Initialize circuit breakers
-    this.providers.forEach(p => {
+    this.providers.forEach((p) => {
       this.circuitBreakers.set(p.name, { failures: 0, lastFailure: null, isOpen: false });
       this.rateLimiters.set(p.name, { count: 0, resetAt: Date.now() + p.rateLimit.window });
     });
@@ -756,7 +777,7 @@ export class EnhancedProviderManager {
   async getGames(sport: string, params: any): Promise<ProviderGame[]> {
     // Get providers for this sport, sorted by priority
     const sportProviders = this.providers
-      .filter(p => p.sports.includes(sport))
+      .filter((p) => p.sports.includes(sport))
       .sort((a, b) => a.priority - b.priority);
 
     for (const provider of sportProviders) {
@@ -856,22 +877,26 @@ blazesportsintel.com
 ## 7. Implementation Priorities
 
 ### Phase 1: Core API Expansion (Immediate)
+
 1. Implement `ESPNUnifiedAdapter` to support all sports from ESPN
 2. Add `BalldontlieAdapter` for NCAAF/NCAAB coverage
 3. Deploy `henrygd/ncaa-api` as a Cloudflare Worker
 4. Update `EnhancedProviderManager` with new adapters
 
 ### Phase 2: Real-Time Infrastructure
+
 1. Implement WebSocket Hibernation Durable Object for live scores
 2. Add subscription-based filtering (by sport, team, conference)
 3. Implement stale-while-revalidate caching pattern
 
 ### Phase 3: Analytics Enhancement
+
 1. Integrate Statcast data via pybaseball/baseballr patterns
 2. Add CFBD GraphQL integration for advanced CFB analytics
 3. Implement win probability models using CFBD's new 2025 calculator
 
 ### Phase 4: MCP Integration
+
 1. Configure BALLDONTLIE MCP server for AI agent access
 2. Create custom MCP tools for BlazeSportsIntel data
 3. Enable natural language queries via copilot endpoint
@@ -880,21 +905,22 @@ blazesportsintel.com
 
 ## 8. API Key Requirements
 
-| Provider | Key Required | Free Tier | Notes |
-|----------|-------------|-----------|-------|
-| ESPN | No | Unlimited* | Unofficial, no SLA |
-| BALLDONTLIE | Yes | Available | 120+ endpoints |
-| NCAA API (henrygd) | Optional | Self-host | Full coverage |
-| CFBD | Yes | 1000/month | GraphQL for Tier 3 |
-| MLB Stats API | No | Unlimited* | Official MLB data |
-| SportsDataIO | Yes | Trial | Enterprise tier |
-| MySportsFeeds | Yes | Non-commercial | All major sports |
+| Provider           | Key Required | Free Tier      | Notes              |
+| ------------------ | ------------ | -------------- | ------------------ |
+| ESPN               | No           | Unlimited\*    | Unofficial, no SLA |
+| BALLDONTLIE        | Yes          | Available      | 120+ endpoints     |
+| NCAA API (henrygd) | Optional     | Self-host      | Full coverage      |
+| CFBD               | Yes          | 1000/month     | GraphQL for Tier 3 |
+| MLB Stats API      | No           | Unlimited\*    | Official MLB data  |
+| SportsDataIO       | Yes          | Trial          | Enterprise tier    |
+| MySportsFeeds      | Yes          | Non-commercial | All major sports   |
 
 ---
 
 ## Sources
 
 ### Primary Research
+
 - [BALLDONTLIE API](https://www.balldontlie.io/)
 - [ESPN Hidden API Gist](https://gist.github.com/akeaswaran/b48b02f1c94f873c6655e7129910fc3b)
 - [NFL ESPN API Endpoints](https://gist.github.com/nntrn/ee26cb2a0716de0947a0a4e9a157bc1c)
@@ -903,16 +929,19 @@ blazesportsintel.com
 - [College Football Data API](https://api.collegefootballdata.com/)
 
 ### Cloudflare Platform
+
 - [WebSocket Hibernation Docs](https://developers.cloudflare.com/durable-objects/best-practices/websockets/)
 - [Durable Objects Examples](https://developers.cloudflare.com/durable-objects/examples/websocket-hibernation-server/)
 - [Real-Time Apps with Durable Objects](https://dzone.com/articles/serverless-websocket-real-time-apps)
 
 ### Baseball Data
+
 - [MLB-StatsAPI Python Wrapper](https://github.com/toddrob99/MLB-StatsAPI/wiki/Endpoints)
 - [Baseball Savant CSV Docs](https://baseballsavant.mlb.com/csv-docs)
 - [pybaseball](https://github.com/jldbc/pybaseball)
 
 ### Additional Sports APIs
+
 - [MySportsFeeds](https://www.mysportsfeeds.com/)
 - [SportsDataIO](https://sportsdata.io)
 - [Sportradar NFL Overview](https://developer.sportradar.com/football/reference/nfl-overview)

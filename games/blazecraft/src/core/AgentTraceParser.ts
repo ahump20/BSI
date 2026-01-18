@@ -53,14 +53,14 @@ const INTENT_DESCRIPTIONS: Record<IntentType, string> = {
 };
 
 const INTENT_ICONS: Record<IntentType, string> = {
-  rush: '⚔️',
-  tech: '🔧',
-  eco: '💰',
-  defend: '🛡️',
-  harass: '🎯',
-  scout: '👁️',
-  retreat: '🏃',
-  unknown: '❓',
+  rush: '[ATK]',
+  tech: '[TECH]',
+  eco: '[ECO]',
+  defend: '[DEF]',
+  harass: '[HRS]',
+  scout: '[SCT]',
+  retreat: '[RET]',
+  unknown: '[?]',
 };
 
 // ─────────────────────────────────────────────────────────────

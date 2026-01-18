@@ -1,11 +1,13 @@
 # Unity WebGL Integration for Blaze Sports Intel
 
 ## Overview
+
 This document outlines the integration strategy for Unity 6 WebGL builds with the Blaze Sports Intelligence platform, enabling immersive 3D player analytics and biomechanics visualization.
 
 ## Unity 6 WebGL Capabilities (2025)
 
 ### Key Features
+
 - **Mobile WebGL Support**: Official support for mobile browsers
 - **Universal Render Pipeline (URP)**: Optimized for web performance
 - **WebAssembly**: Fast loading and execution
@@ -13,6 +15,7 @@ This document outlines the integration strategy for Unity 6 WebGL builds with th
 - **Sub-2-second Load Times**: With proper optimization
 
 ### Performance Targets
+
 - 60 FPS on desktop (Chrome, Edge, Safari, Firefox)
 - 30-45 FPS on mobile devices
 - < 2 seconds initial load time
@@ -21,6 +24,7 @@ This document outlines the integration strategy for Unity 6 WebGL builds with th
 ## Integration Architecture
 
 ### 1. Unity Project Structure
+
 ```
 BlazeSportsIntelUnity/
 ├── Assets/
@@ -50,26 +54,25 @@ Unity and web page communicate via JavaScript:
 ```javascript
 // From Web Page → Unity
 function sendDataToUnity(playerData) {
-    const unityInstance = window.unityInstance;
-    if (unityInstance) {
-        unityInstance.SendMessage(
-            'GameManager',
-            'ReceivePlayerData',
-            JSON.stringify(playerData)
-        );
-    }
+  const unityInstance = window.unityInstance;
+  if (unityInstance) {
+    unityInstance.SendMessage('GameManager', 'ReceivePlayerData', JSON.stringify(playerData));
+  }
 }
 
 // From Unity → Web Page (implemented in Unity C#)
 // UnityWebGL.jslib file:
 mergeInto(LibraryManager.library, {
-    SendAnalyticsToWeb: function(dataPtr) {
-        const data = UTF8ToString(dataPtr);
-        window.parent.postMessage({
-            type: 'UNITY_ANALYTICS',
-            payload: JSON.parse(data)
-        }, '*');
-    }
+  SendAnalyticsToWeb: function (dataPtr) {
+    const data = UTF8ToString(dataPtr);
+    window.parent.postMessage(
+      {
+        type: 'UNITY_ANALYTICS',
+        payload: JSON.parse(data),
+      },
+      '*'
+    );
+  },
 });
 ```
 
@@ -158,6 +161,7 @@ public class BlazeAPIConnector : MonoBehaviour
 ### 4. WebGL Build Settings
 
 **Unity Build Configuration:**
+
 - **Compression Format**: Brotli (best for web)
 - **Code Optimization**: Master (size and speed)
 - **Strip Engine Code**: Enabled
@@ -166,6 +170,7 @@ public class BlazeAPIConnector : MonoBehaviour
 - **Data Caching**: Enabled
 
 **Build Command:**
+
 ```bash
 # Unity build command (CI/CD)
 unity-editor \
@@ -183,120 +188,126 @@ unity-editor \
 <!-- unity-player.html -->
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blaze Sports Intel - Unity Player Analytics</title>
     <style>
-        #unity-container {
-            width: 100%;
-            height: 600px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        #unity-canvas {
-            width: 100%;
-            height: 100%;
-        }
-        #unity-loading-bar {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .progress-bar {
-            width: 300px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b00, #ff8c00);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
+      #unity-container {
+        width: 100%;
+        height: 600px;
+        background: #1a1a1a;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+      }
+      #unity-loading-bar {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .progress-bar {
+        width: 300px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ff6b00, #ff8c00);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="unity-container">
-        <canvas id="unity-canvas"></canvas>
-        <div id="unity-loading-bar">
-            <div class="progress-bar">
-                <div class="progress-fill" id="unity-progress"></div>
-            </div>
-            <p style="color: white; text-align: center; margin-top: 10px;">
-                Loading Unity WebGL...
-            </p>
+      <canvas id="unity-canvas"></canvas>
+      <div id="unity-loading-bar">
+        <div class="progress-bar">
+          <div class="progress-fill" id="unity-progress"></div>
         </div>
+        <p style="color: white; text-align: center; margin-top: 10px;">Loading Unity WebGL...</p>
+      </div>
     </div>
 
     <script src="Build/BlazeSportsIntel.loader.js"></script>
     <script>
-        let unityInstance = null;
+      let unityInstance = null;
 
-        const loadingBar = document.getElementById('unity-loading-bar');
-        const progressFill = document.getElementById('unity-progress');
+      const loadingBar = document.getElementById('unity-loading-bar');
+      const progressFill = document.getElementById('unity-progress');
 
-        createUnityInstance(document.querySelector("#unity-canvas"), {
-            dataUrl: "Build/BlazeSportsIntel.data.br",
-            frameworkUrl: "Build/BlazeSportsIntel.framework.js.br",
-            codeUrl: "Build/BlazeSportsIntel.wasm.br",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "Blaze Intelligence",
-            productName: "Blaze Sports Intel",
-            productVersion: "3.0.0",
-        }, (progress) => {
-            // Update progress bar
-            progressFill.style.width = `${progress * 100}%`;
-        }).then((instance) => {
-            window.unityInstance = instance;
-            loadingBar.style.display = 'none';
-            console.log('✅ Unity WebGL loaded successfully');
+      createUnityInstance(
+        document.querySelector('#unity-canvas'),
+        {
+          dataUrl: 'Build/BlazeSportsIntel.data.br',
+          frameworkUrl: 'Build/BlazeSportsIntel.framework.js.br',
+          codeUrl: 'Build/BlazeSportsIntel.wasm.br',
+          streamingAssetsUrl: 'StreamingAssets',
+          companyName: 'Blaze Intelligence',
+          productName: 'Blaze Sports Intel',
+          productVersion: '3.0.0',
+        },
+        (progress) => {
+          // Update progress bar
+          progressFill.style.width = `${progress * 100}%`;
+        }
+      )
+        .then((instance) => {
+          window.unityInstance = instance;
+          loadingBar.style.display = 'none';
+          console.log('✅ Unity WebGL loaded successfully');
 
-            // Send initial data to Unity
-            initializeUnityWithData();
-        }).catch((error) => {
-            console.error('❌ Unity load error:', error);
-            alert('Failed to load Unity WebGL. Please check console.');
+          // Send initial data to Unity
+          initializeUnityWithData();
+        })
+        .catch((error) => {
+          console.error('❌ Unity load error:', error);
+          alert('Failed to load Unity WebGL. Please check console.');
         });
 
-        async function initializeUnityWithData() {
-            try {
-                // Fetch player data from Blaze API
-                const response = await fetch('/api/player/baseball/player-001');
-                const playerData = await response.json();
+      async function initializeUnityWithData() {
+        try {
+          // Fetch player data from Blaze API
+          const response = await fetch('/api/player/baseball/player-001');
+          const playerData = await response.json();
 
-                // Send to Unity
-                window.unityInstance.SendMessage(
-                    'GameManager',
-                    'ReceivePlayerData',
-                    JSON.stringify(playerData)
-                );
-            } catch (error) {
-                console.error('Failed to initialize Unity data:', error);
-            }
+          // Send to Unity
+          window.unityInstance.SendMessage(
+            'GameManager',
+            'ReceivePlayerData',
+            JSON.stringify(playerData)
+          );
+        } catch (error) {
+          console.error('Failed to initialize Unity data:', error);
         }
+      }
 
-        // Listen for messages from Unity
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'UNITY_ANALYTICS') {
-                console.log('Unity Analytics:', event.data.payload);
-                // Process Unity analytics data
-                updateWebDashboard(event.data.payload);
-            }
-        });
-
-        function updateWebDashboard(analyticsData) {
-            // Update main dashboard with Unity-calculated metrics
-            document.dispatchEvent(new CustomEvent('unityAnalytics', {
-                detail: analyticsData
-            }));
+      // Listen for messages from Unity
+      window.addEventListener('message', (event) => {
+        if (event.data.type === 'UNITY_ANALYTICS') {
+          console.log('Unity Analytics:', event.data.payload);
+          // Process Unity analytics data
+          updateWebDashboard(event.data.payload);
         }
+      });
+
+      function updateWebDashboard(analyticsData) {
+        // Update main dashboard with Unity-calculated metrics
+        document.dispatchEvent(
+          new CustomEvent('unityAnalytics', {
+            detail: analyticsData,
+          })
+        );
+      }
     </script>
-</body>
+  </body>
 </html>
 ```
 
@@ -370,36 +381,40 @@ COMPRESSION = "brotli"
 ### 3. Integration Points
 
 **Main Dashboard Integration:**
+
 ```html
 <!-- In blaze-3d-sports-dashboard.html -->
 <div class="unity-section" style="margin-top: 2rem;">
-    <h2>🎮 Immersive Player Analytics (Unity WebGL)</h2>
-    <iframe
-        src="/unity-player.html"
-        width="100%"
-        height="600px"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope"
-        style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);"
-    ></iframe>
+  <h2>🎮 Immersive Player Analytics (Unity WebGL)</h2>
+  <iframe
+    src="/unity-player.html"
+    width="100%"
+    height="600px"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope"
+    style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);"
+  ></iframe>
 </div>
 ```
 
 ## Performance Optimization
 
 ### 1. Asset Optimization
+
 - Use texture atlases
 - Compress meshes
 - LOD (Level of Detail) for player models
 - Occlusion culling
 
 ### 2. Code Optimization
+
 - Object pooling for frequently instantiated objects
 - Minimize GetComponent calls
 - Use coroutines for async operations
 - Cache references
 
 ### 3. WebGL-Specific
+
 - Disable audio for web (optional)
 - Reduce quality settings for mobile
 - Use URP with optimized settings
@@ -408,6 +423,7 @@ COMPRESSION = "brotli"
 ## Testing Strategy
 
 ### Cross-Browser Testing
+
 - ✅ Chrome 120+ (WebGPU support)
 - ✅ Edge 120+
 - ✅ Safari 17+ (macOS Tahoe 26)
@@ -416,12 +432,13 @@ COMPRESSION = "brotli"
 - ⚠️ Chrome Android (with reduced quality)
 
 ### Performance Benchmarks
-| Device | Target FPS | Load Time | Build Size |
-|--------|-----------|-----------|------------|
-| Desktop High-End | 60 | < 2s | 40 MB |
-| Desktop Mid-Range | 45 | < 3s | 40 MB |
-| Mobile High-End | 45 | < 4s | 30 MB |
-| Mobile Mid-Range | 30 | < 6s | 30 MB |
+
+| Device            | Target FPS | Load Time | Build Size |
+| ----------------- | ---------- | --------- | ---------- |
+| Desktop High-End  | 60         | < 2s      | 40 MB      |
+| Desktop Mid-Range | 45         | < 3s      | 40 MB      |
+| Mobile High-End   | 45         | < 4s      | 30 MB      |
+| Mobile Mid-Range  | 30         | < 6s      | 30 MB      |
 
 ## Next Steps
 

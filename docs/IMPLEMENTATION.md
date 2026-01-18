@@ -54,6 +54,7 @@
    - Less frequent when no live games
 
 2. **Worker Receives Request**
+
    ```javascript
    // Check cache first
    const cached = await env.KV.get('live-games', 'json');
@@ -63,14 +64,13 @@
    ```
 
 3. **Fetch from Multiple Sources**
+
    ```javascript
-   const [ncaaGames, d1Games] = await Promise.all([
-     scrapeNCAA(),
-     scrapeD1Baseball(),
-   ]);
+   const [ncaaGames, d1Games] = await Promise.all([scrapeNCAA(), scrapeD1Baseball()]);
    ```
 
 4. **Merge and Deduplicate**
+
    ```javascript
    const games = mergeGameData(ncaaGames, d1Games);
    ```
@@ -78,7 +78,7 @@
 5. **Cache and Return**
    ```javascript
    await env.KV.put('live-games', JSON.stringify(games), {
-     expirationTtl: 30 // 30 seconds
+     expirationTtl: 30, // 30 seconds
    });
    return games;
    ```
@@ -106,6 +106,7 @@
    - Frontend requests `/api/standings/{conference}`
 
 2. **Worker Aggregates Data**
+
    ```javascript
    const [confStandings, rpiData, leaders] = await Promise.all([
      scrapeConferenceStandings(conference),
@@ -123,12 +124,14 @@
 ### Why Mobile-First?
 
 **User Behavior Analysis:**
+
 - 85%+ of sports content consumed on mobile
 - Quick checks between innings
 - On-the-go score tracking
 - Twitter integration (mobile-heavy)
 
 **Mobile Design Principles:**
+
 - Bottom navigation (thumb-friendly)
 - Large tap targets (44x44px minimum)
 - Horizontal scrolling tables (inevitable on mobile)
@@ -138,16 +141,19 @@
 ### Why Cloudflare Workers?
 
 **Performance:**
+
 - Edge deployment = <100ms response times
 - KV cache is globally distributed
 - No cold starts (unlike Lambda)
 
 **Cost:**
+
 - Free tier: 100K requests/day
 - $5/month: 10M requests
 - No bandwidth charges
 
 **Developer Experience:**
+
 - Simple deployment (`wrangler deploy`)
 - Integrated stack (Workers + KV + D1 + Pages)
 - Good local dev environment
@@ -210,41 +216,42 @@ await env.KV.put(`player-${id}`, data, { expirationTtl: 3600 });
 ### Scraping Challenges
 
 **NCAA.com:**
+
 - JavaScript-rendered content
 - Need to find JSON endpoints
 - Rate limiting (be respectful)
 - HTML structure changes
 
 **Solution:**
+
 ```javascript
 // Find the actual data endpoint
 // Check browser Network tab during page load
 // Usually loads JSON that populates the page
 
-const response = await fetch(
-  'https://www.ncaa.com/api/gametracker/...',
-  {
-    headers: {
-      'User-Agent': 'Mozilla/5.0',
-      'Referer': 'https://www.ncaa.com',
-    }
-  }
-);
+const response = await fetch('https://www.ncaa.com/api/gametracker/...', {
+  headers: {
+    'User-Agent': 'Mozilla/5.0',
+    Referer: 'https://www.ncaa.com',
+  },
+});
 ```
 
 **D1Baseball:**
+
 - Clean HTML structure
 - Reliable selectors
 - Sometimes behind paywall for detailed stats
 
 **Solution:**
+
 ```javascript
 // Parse the free scoreboard page
 // Use consistent CSS selectors
 // Handle missing data gracefully
 
 const games = html.querySelectorAll('.game-card');
-games.forEach(game => {
+games.forEach((game) => {
   // Extract structured data
 });
 ```
@@ -252,6 +259,7 @@ games.forEach(game => {
 ## Implementation Roadmap
 
 ### Phase 1: MVP (Current)
+
 - [x] Mobile-first UI
 - [x] Live game list
 - [x] Box score view
@@ -260,6 +268,7 @@ games.forEach(game => {
 - [x] Cloudflare deployment setup
 
 ### Phase 2: Real Data Integration
+
 - [ ] Implement NCAA scraper
 - [ ] Implement D1Baseball scraper
 - [ ] Test data aggregation
@@ -267,6 +276,7 @@ games.forEach(game => {
 - [ ] Set up monitoring
 
 ### Phase 3: Enhanced Features
+
 - [ ] Push notifications for score updates
 - [ ] Favorite teams
 - [ ] Player profile pages
@@ -274,6 +284,7 @@ games.forEach(game => {
 - [ ] Advanced stats (launch angle, exit velo)
 
 ### Phase 4: Advanced Features
+
 - [ ] Live pitch tracking
 - [ ] Weather integration
 - [ ] Predictive analytics
@@ -299,6 +310,7 @@ if (duration > 500) {
 ```
 
 **Target Performance:**
+
 - P50 response time: < 100ms (cached)
 - P95 response time: < 500ms (uncached)
 - P99 response time: < 1000ms
@@ -314,16 +326,16 @@ try {
   return games;
 } catch (error) {
   console.error('Primary source failed:', error);
-  
+
   // Try backup source
   try {
     const fallbackGames = await fetchFromBackup();
     return fallbackGames;
   } catch (backupError) {
     console.error('Backup failed:', backupError);
-    
+
     // Return cached data even if stale
-    return await env.KV.get('live-games-stale', 'json') || [];
+    return (await env.KV.get('live-games-stale', 'json')) || [];
   }
 }
 ```
@@ -356,6 +368,7 @@ wrk -t12 -c400 -d30s http://your-worker.workers.dev/api/games/live
 ```
 
 **Expected Results:**
+
 - 95% requests < 100ms (with cache)
 - 99% requests < 500ms
 - 0% error rate
@@ -376,6 +389,7 @@ wrk -t12 -c400 -d30s http://your-worker.workers.dev/api/games/live
 ## Cost Estimates
 
 **Cloudflare (assuming 100K daily users during season):**
+
 - Workers: Free tier sufficient initially
 - KV: Free tier (1GB storage, 100K reads/day)
 - Pages: Free (unlimited requests)
@@ -384,6 +398,7 @@ wrk -t12 -c400 -d30s http://your-worker.workers.dev/api/games/live
 **Total: $0-5/month** to start
 
 **Scaling costs:**
+
 - 1M requests/day: ~$5/month
 - 10M requests/day: ~$50/month
 

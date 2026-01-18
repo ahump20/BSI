@@ -1,546 +1,739 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Accessibility Statement | Blaze Sports Intel</title>
-    <meta name="description" content="Accessibility commitment for Blaze Sports Intel - WCAG 2.1 AA compliance and inclusive design">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://blazesportsintel.com/legal/accessibility">
+    <meta
+      name="description"
+      content="Accessibility commitment for Blaze Sports Intel - WCAG 2.1 AA compliance and inclusive design"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://blazesportsintel.com/legal/accessibility" />
 
     <!-- Texas/US Compliance -->
-    <meta name="geo.region" content="US-TX">
-    <meta name="geo.placename" content="Boerne, Texas">
+    <meta name="geo.region" content="US-TX" />
+    <meta name="geo.placename" content="Boerne, Texas" />
 
     <!-- Security Headers -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        :root {
-            --primary-orange: #ff6b00;
-            --primary-blue: #0066cc;
-            --dark-bg: #0a0a0a;
-            --light-bg: #1a1a1a;
-            --text-white: #ffffff;
-            --text-gray: #b0b0b0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --success-bg: rgba(0, 255, 127, 0.1);
-            --success-border: rgba(0, 255, 127, 0.3);
-        }
+      :root {
+        --primary-orange: #ff6b00;
+        --primary-blue: #0066cc;
+        --dark-bg: #0a0a0a;
+        --light-bg: #1a1a1a;
+        --text-white: #ffffff;
+        --text-gray: #b0b0b0;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --success-bg: rgba(0, 255, 127, 0.1);
+        --success-border: rgba(0, 255, 127, 0.3);
+      }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
-            color: var(--text-white);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+      body {
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+        color: var(--text-white);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
 
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 3rem 2rem;
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+      }
+
+      .header h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .header-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .meta-item {
+        background: var(--light-bg);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        text-align: center;
+      }
+
+      .meta-label {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+      }
+
+      .meta-value {
+        font-weight: 600;
+        color: var(--text-white);
+      }
+
+      .content {
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        padding: 3rem;
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        color: var(--primary-orange);
+        margin: 3rem 0 1.5rem 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+      }
+
+      h3 {
+        color: var(--primary-blue);
+        margin: 2rem 0 1rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      h4 {
+        color: var(--text-white);
+        margin: 1.5rem 0 0.75rem 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      p {
+        margin-bottom: 1.25rem;
+        color: var(--text-gray);
+        line-height: 1.7;
+      }
+
+      ul,
+      ol {
+        margin: 1.25rem 0 1.25rem 2rem;
+        color: var(--text-gray);
+      }
+
+      li {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .highlight-box {
+        background: var(--light-bg);
+        border-left: 4px solid var(--primary-orange);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 0.75rem;
+      }
+
+      .success-box {
+        background: var(--success-bg);
+        border: 2px solid var(--success-border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .nav-link {
+        color: var(--primary-orange);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-blue);
+        text-decoration: underline;
+      }
+
+      .back-home {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        margin: 3rem 0;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .back-home:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);
+      }
+
+      .wcag-badge {
+        display: inline-block;
+        background: var(--success-bg);
+        border: 2px solid var(--success-border);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        color: #00ff7f;
+        margin: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 3rem 2rem;
-            background: var(--glass-bg);
-            border-radius: 1.5rem;
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+          padding: 1rem;
         }
 
         .header h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .header-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .meta-item {
-            background: var(--light-bg);
-            padding: 1rem;
-            border-radius: 0.75rem;
-            text-align: center;
-        }
-
-        .meta-label {
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        .meta-value {
-            font-weight: 600;
-            color: var(--text-white);
+          font-size: 2rem;
         }
 
         .content {
-            background: var(--glass-bg);
-            border-radius: 1.5rem;
-            border: 1px solid var(--glass-border);
-            padding: 3rem;
-            backdrop-filter: blur(10px);
+          padding: 1.5rem;
         }
 
-        h2 {
-            color: var(--primary-orange);
-            margin: 3rem 0 1.5rem 0;
-            font-size: 1.75rem;
-            font-weight: 600;
+        .header-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: black;
         }
 
-        h3 {
-            color: var(--primary-blue);
-            margin: 2rem 0 1rem 0;
-            font-size: 1.25rem;
-            font-weight: 600;
+        .header,
+        .content {
+          background: white;
+          border: 1px solid black;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+
+      @media (prefers-contrast: high) {
+        :root {
+          --text-white: #ffffff;
+          --text-gray: #e0e0e0;
+          --primary-orange: #ff8533;
+          --primary-blue: #3399ff;
         }
 
-        h4 {
-            color: var(--text-white);
-            margin: 1.5rem 0 0.75rem 0;
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        p {
-            margin-bottom: 1.25rem;
-            color: var(--text-gray);
-            line-height: 1.7;
-        }
-
-        ul, ol {
-            margin: 1.25rem 0 1.25rem 2rem;
-            color: var(--text-gray);
-        }
-
-        li {
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-        }
-
-        .highlight-box {
-            background: var(--light-bg);
-            border-left: 4px solid var(--primary-orange);
-            padding: 1.5rem;
-            margin: 2rem 0;
-            border-radius: 0.75rem;
-        }
-
+        .highlight-box,
         .success-box {
-            background: var(--success-bg);
-            border: 2px solid var(--success-border);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin: 2rem 0;
+          border-width: 3px;
         }
-
-        .nav-link {
-            color: var(--primary-orange);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-blue);
-            text-decoration: underline;
-        }
-
-        .back-home {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            text-decoration: none;
-            margin: 3rem 0;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .back-home:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.3);
-        }
-
-        .wcag-badge {
-            display: inline-block;
-            background: var(--success-bg);
-            border: 2px solid var(--success-border);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            color: #00ff7f;
-            margin: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .content {
-                padding: 1.5rem;
-            }
-
-            .header-meta {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media print {
-            body {
-                background: white;
-                color: black;
-            }
-
-            .header, .content {
-                background: white;
-                border: 1px solid black;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                transition: none !important;
-                animation: none !important;
-            }
-        }
-
-        @media (prefers-contrast: high) {
-            :root {
-                --text-white: #ffffff;
-                --text-gray: #e0e0e0;
-                --primary-orange: #ff8533;
-                --primary-blue: #3399ff;
-            }
-
-            .highlight-box, .success-box {
-                border-width: 3px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>♿ Accessibility Statement</h1>
+      <div class="header">
+        <h1>♿ Accessibility Statement</h1>
 
-            <div class="header-meta">
-                <div class="meta-item">
-                    <div class="meta-label">Last Updated</div>
-                    <div class="meta-value">October 16, 2025 (CDT)</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Standards</div>
-                    <div class="meta-value">WCAG 2.1 AA</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">Compliance</div>
-                    <div class="meta-value">ADA • Section 508</div>
-                </div>
-            </div>
+        <div class="header-meta">
+          <div class="meta-item">
+            <div class="meta-label">Last Updated</div>
+            <div class="meta-value">October 16, 2025 (CDT)</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Standards</div>
+            <div class="meta-value">WCAG 2.1 AA</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Compliance</div>
+            <div class="meta-value">ADA • Section 508</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="success-box">
+          <p>
+            <strong>Our Commitment:</strong> Blaze Sports Intel is committed to ensuring digital
+            accessibility for all users, including those with disabilities. We continuously improve
+            the user experience and apply relevant accessibility standards to ensure our sports
+            intelligence platform is usable by everyone.
+          </p>
         </div>
 
-        <div class="content">
-            <div class="success-box">
-                <p><strong>Our Commitment:</strong> Blaze Sports Intel is committed to ensuring digital accessibility for all users, including those with disabilities. We continuously improve the user experience and apply relevant accessibility standards to ensure our sports intelligence platform is usable by everyone.</p>
-            </div>
+        <h2>1. ACCESSIBILITY STANDARDS</h2>
 
-            <h2>1. ACCESSIBILITY STANDARDS</h2>
+        <p>
+          Blaze Sports Intel strives to conform to Level AA of the Web Content Accessibility
+          Guidelines (WCAG) 2.1, an internationally recognized standard developed by the World Wide
+          Web Consortium (W3C).
+        </p>
 
-            <p>Blaze Sports Intel strives to conform to Level AA of the Web Content Accessibility Guidelines (WCAG) 2.1, an internationally recognized standard developed by the World Wide Web Consortium (W3C).</p>
-
-            <div class="highlight-box">
-                <p><strong>Our Compliance Targets:</strong></p>
-                <span class="wcag-badge">WCAG 2.1 Level AA</span>
-                <span class="wcag-badge">Section 508</span>
-                <span class="wcag-badge">ADA Title III</span>
-                <span class="wcag-badge">Texas Accessibility Standards</span>
-            </div>
-
-            <h2>2. ACCESSIBILITY FEATURES</h2>
-
-            <h3>2.1 Perceivable Content</h3>
-            <ul>
-                <li><strong>Text Alternatives:</strong> All images, charts, and 3D visualizations include descriptive alt text</li>
-                <li><strong>Captions:</strong> Video content includes closed captions (when applicable)</li>
-                <li><strong>Color Contrast:</strong> Minimum 4.5:1 contrast ratio for normal text, 3:1 for large text (WCAG AA)</li>
-                <li><strong>Resizable Text:</strong> Text scales up to 200% without loss of functionality</li>
-                <li><strong>Adaptable Layout:</strong> Content structure preserved when CSS disabled</li>
-                <li><strong>Distinguishable Information:</strong> Color is not the sole means of conveying information</li>
-            </ul>
-
-            <h3>2.2 Operable Interface</h3>
-            <ul>
-                <li><strong>Keyboard Navigation:</strong> Full keyboard access without mouse (Tab, Shift+Tab, Enter, Space, Arrow keys)</li>
-                <li><strong>Skip Links:</strong> "Skip to main content" link for screen reader users</li>
-                <li><strong>Focus Indicators:</strong> Visible focus outlines on interactive elements</li>
-                <li><strong>No Keyboard Traps:</strong> Focus can move away from all components</li>
-                <li><strong>Timing Adjustable:</strong> Live score updates can be paused or customized</li>
-                <li><strong>Seizure Prevention:</strong> No flashing content exceeding 3 flashes per second</li>
-                <li><strong>Accessible Navigation:</strong> Consistent navigation across pages, breadcrumbs, landmarks</li>
-            </ul>
-
-            <h3>2.3 Understandable Content</h3>
-            <ul>
-                <li><strong>Readable Text:</strong> Minimum 16px font size, clear typography (Inter font family)</li>
-                <li><strong>Language Declaration:</strong> HTML lang attribute set to "en" (English)</li>
-                <li><strong>Predictable Behavior:</strong> Navigation and functionality consistent across site</li>
-                <li><strong>Input Assistance:</strong> Form labels, error messages, and validation clearly identified</li>
-                <li><strong>Error Prevention:</strong> Confirmation dialogs for critical actions (account deletion, data export)</li>
-                <li><strong>Plain Language:</strong> Sports terminology explained with tooltips/glossary</li>
-            </ul>
-
-            <h3>2.4 Robust Compatibility</h3>
-            <ul>
-                <li><strong>Valid HTML:</strong> Clean, semantic HTML5 markup</li>
-                <li><strong>ARIA Labels:</strong> Proper ARIA roles, states, and properties for dynamic content</li>
-                <li><strong>Screen Reader Support:</strong> Tested with JAWS, NVDA, VoiceOver, TalkBack</li>
-                <li><strong>Browser Compatibility:</strong> Chrome, Firefox, Safari, Edge (latest 2 versions)</li>
-                <li><strong>Mobile Accessibility:</strong> Responsive design, touch target size ≥44x44px</li>
-            </ul>
-
-            <h2>3. ASSISTIVE TECHNOLOGY SUPPORT</h2>
-
-            <h3>3.1 Screen Readers</h3>
-            <p>Blaze Sports Intel is compatible with the following screen readers:</p>
-            <ul>
-                <li><strong>JAWS</strong> (Windows) - Latest version</li>
-                <li><strong>NVDA</strong> (Windows) - Latest version</li>
-                <li><strong>VoiceOver</strong> (macOS, iOS) - Latest version</li>
-                <li><strong>TalkBack</strong> (Android) - Latest version</li>
-                <li><strong>Narrator</strong> (Windows) - Latest version</li>
-            </ul>
-
-            <h3>3.2 Browser Extensions & Tools</h3>
-            <ul>
-                <li><strong>Screen Magnifiers:</strong> ZoomText, MAGic (Windows), Zoom (macOS)</li>
-                <li><strong>Voice Control:</strong> Dragon NaturallySpeaking, Voice Control (macOS/iOS)</li>
-                <li><strong>High Contrast Mode:</strong> Windows High Contrast themes supported</li>
-                <li><strong>Browser Zoom:</strong> Up to 200% zoom without horizontal scrolling</li>
-            </ul>
-
-            <h2>4. MOBILE ACCESSIBILITY</h2>
-
-            <h3>4.1 Mobile-First Design</h3>
-            <p>Our platform is optimized for mobile devices, particularly iPhone portrait mode (375-428px width):</p>
-            <ul>
-                <li><strong>Touch Targets:</strong> Minimum 44x44px for buttons and links</li>
-                <li><strong>Gestures:</strong> Single-tap primary interactions (no multi-finger gestures required)</li>
-                <li><strong>Portrait Orientation:</strong> Full functionality in portrait mode (landscape optional)</li>
-                <li><strong>Screen Reader Compatibility:</strong> VoiceOver (iOS) and TalkBack (Android) tested</li>
-                <li><strong>Dark Mode:</strong> Supports iOS/Android system-level dark mode preferences</li>
-            </ul>
-
-            <h2>5. KNOWN LIMITATIONS</h2>
-
-            <div class="highlight-box">
-                <p><strong>Areas for Improvement:</strong></p>
-                <ul>
-                    <li><strong>3D Visualizations:</strong> Babylon.js stadium models have limited screen reader support (alternative text descriptions provided)</li>
-                    <li><strong>Live Data Tables:</strong> Rapidly updating sports scores may be difficult for screen readers (pause button available)</li>
-                    <li><strong>AI Copilot:</strong> Voice input not yet supported (planned for 2026)</li>
-                    <li><strong>Video Analysis:</strong> Auto-generated video highlights lack audio descriptions (manual descriptions added within 48 hours)</li>
-                    <li><strong>Historical Archives:</strong> Some older articles (pre-2024) may not meet current WCAG 2.1 AA standards (being retroactively updated)</li>
-                </ul>
-            </div>
-
-            <h2>6. ACCESSIBILITY TESTING</h2>
-
-            <h3>6.1 Testing Methods</h3>
-            <p>We employ multiple testing approaches to ensure accessibility:</p>
-            <ul>
-                <li><strong>Automated Testing:</strong> Lighthouse, axe DevTools, WAVE (monthly audits)</li>
-                <li><strong>Manual Testing:</strong> Keyboard-only navigation, screen reader testing (quarterly)</li>
-                <li><strong>User Testing:</strong> Feedback from users with disabilities (ongoing)</li>
-                <li><strong>Third-Party Audits:</strong> Annual WCAG 2.1 AA compliance audit by certified experts</li>
-            </ul>
-
-            <h3>6.2 Continuous Improvement</h3>
-            <p>We regularly test and improve accessibility:</p>
-            <ul>
-                <li><strong>Quarterly Reviews:</strong> Accessibility audit of new features</li>
-                <li><strong>User Feedback Loop:</strong> Dedicated accessibility feedback email</li>
-                <li><strong>Staff Training:</strong> Annual accessibility training for all developers and designers</li>
-                <li><strong>Accessibility Champions:</strong> Designated team members responsible for compliance</li>
-            </ul>
-
-            <h2>7. FEEDBACK & ASSISTANCE</h2>
-
-            <h3>7.1 Report Accessibility Issues</h3>
-            <div class="highlight-box">
-                <p><strong>If you encounter accessibility barriers on our website, please let us know:</strong></p>
-
-                <p><strong>Email:</strong> <a href="mailto:accessibility@blazesportsintel.com" class="nav-link">accessibility@blazesportsintel.com</a><br>
-                <strong>Subject Line:</strong> "Accessibility Issue - [Describe Problem]"<br>
-                <strong>Response Time:</strong> Within 2 business days<br>
-                <strong>Resolution Target:</strong> Critical issues fixed within 5 business days, non-critical within 30 days</p>
-
-                <p><strong>Phone:</strong> (210) 273-5538<br>
-                <strong>Contact:</strong> Austin Humphrey<br>
-                <strong>Location:</strong> Boerne, Texas</p>
-            </div>
-
-            <h3>7.2 Alternative Formats</h3>
-            <p>We provide content in alternative formats upon request:</p>
-            <ul>
-                <li><strong>Large Print:</strong> PDF documents with 18pt+ font</li>
-                <li><strong>Screen Reader Optimized:</strong> Text-only versions of data visualizations</li>
-                <li><strong>Audio Descriptions:</strong> For video content (within 48 hours of request)</li>
-                <li><strong>Simplified Language:</strong> Plain language versions of complex analytics</li>
-            </ul>
-
-            <p><strong>Request Alternative Format:</strong> <a href="mailto:accessibility@blazesportsintel.com" class="nav-link">accessibility@blazesportsintel.com</a></p>
-
-            <h2>8. THIRD-PARTY CONTENT</h2>
-
-            <p>Blaze Sports Intel integrates third-party services (Cloudflare, SportsDataIO, MLB Stats API). While we ensure our platform is accessible, we cannot guarantee accessibility of third-party content. If you encounter issues with third-party components, please contact us and we will work with providers to resolve accessibility barriers.</p>
-
-            <h3>8.1 Third-Party Accessibility Policies</h3>
-            <ul>
-                <li><strong>Cloudflare:</strong> <a href="https://www.cloudflare.com/accessibility/" class="nav-link">Cloudflare Accessibility Statement</a></li>
-                <li><strong>MLB:</strong> <a href="https://www.mlb.com/official-information/accessibility" class="nav-link">MLB Accessibility</a></li>
-            </ul>
-
-            <h2>9. COMPLIANCE & LEGAL</h2>
-
-            <h3>9.1 Americans with Disabilities Act (ADA)</h3>
-            <p>Blaze Sports Intel complies with Title III of the ADA, ensuring equal access to digital services for individuals with disabilities.</p>
-
-            <h3>9.2 Section 508 (Rehabilitation Act)</h3>
-            <p>Our platform meets Section 508 standards for federal agency accessibility, ensuring compatibility with assistive technologies.</p>
-
-            <h3>9.3 Texas Accessibility Standards</h3>
-            <p>As a Texas-based company, we comply with Texas Government Code Chapter 2054, Subchapter M, requiring state agency websites to meet accessibility standards.</p>
-
-            <h2>10. ACCESSIBILITY ROADMAP (2025-2026)</h2>
-
-            <h3>10.1 Planned Improvements</h3>
-            <ul>
-                <li><strong>Q4 2025:</strong> Voice navigation for AI Copilot</li>
-                <li><strong>Q1 2026:</strong> Enhanced 3D visualization accessibility (audio cues for field positions)</li>
-                <li><strong>Q2 2026:</strong> Live audio descriptions for real-time game updates</li>
-                <li><strong>Q3 2026:</strong> Customizable color themes for color blindness (deuteranopia, protanopia, tritanopia)</li>
-                <li><strong>Q4 2026:</strong> Sign language interpretation for video content</li>
-            </ul>
-
-            <h2>11. CONTACT INFORMATION</h2>
-
-            <div class="highlight-box">
-                <p><strong>Accessibility Coordinator:</strong><br>
-                Austin Humphrey<br>
-                Blaze Sports Intel<br>
-                Email: <a href="mailto:accessibility@blazesportsintel.com" class="nav-link">accessibility@blazesportsintel.com</a><br>
-                Phone: (210) 273-5538<br>
-                Address: Boerne, Texas 78006, United States</p>
-
-                <p><strong>General Support:</strong><br>
-                Email: <a href="mailto:support@blazesportsintel.com" class="nav-link">support@blazesportsintel.com</a><br>
-                Website: <a href="https://blazesportsintel.com" class="nav-link">blazesportsintel.com</a></p>
-            </div>
-
-            <h2>12. RELATED POLICIES</h2>
-
-            <ul>
-                <li><a href="/legal/privacy" class="nav-link">Privacy Policy</a> - Data protection for assistive technology users</li>
-                <li><a href="/legal/terms" class="nav-link">Terms of Service</a> - Usage terms</li>
-                <li><a href="/legal/ai-disclosure" class="nav-link">AI Disclosure</a> - AI accessibility features</li>
-                <li><a href="/legal/cookies" class="nav-link">Cookie Policy</a> - Cookie consent accessibility</li>
-            </ul>
-
-            <div class="success-box">
-                <p><strong>Our Promise:</strong> Blaze Sports Intel is dedicated to providing an inclusive sports intelligence platform for all users. We welcome feedback and are committed to continuous improvement. If you experience any accessibility barriers, please contact us immediately at <a href="mailto:accessibility@blazesportsintel.com" class="nav-link">accessibility@blazesportsintel.com</a>.</p>
-            </div>
-
-            <a href="/" class="back-home">← Return to Blaze Sports Intel</a>
+        <div class="highlight-box">
+          <p><strong>Our Compliance Targets:</strong></p>
+          <span class="wcag-badge">WCAG 2.1 Level AA</span>
+          <span class="wcag-badge">Section 508</span>
+          <span class="wcag-badge">ADA Title III</span>
+          <span class="wcag-badge">Texas Accessibility Standards</span>
         </div>
+
+        <h2>2. ACCESSIBILITY FEATURES</h2>
+
+        <h3>2.1 Perceivable Content</h3>
+        <ul>
+          <li>
+            <strong>Text Alternatives:</strong> All images, charts, and 3D visualizations include
+            descriptive alt text
+          </li>
+          <li>
+            <strong>Captions:</strong> Video content includes closed captions (when applicable)
+          </li>
+          <li>
+            <strong>Color Contrast:</strong> Minimum 4.5:1 contrast ratio for normal text, 3:1 for
+            large text (WCAG AA)
+          </li>
+          <li>
+            <strong>Resizable Text:</strong> Text scales up to 200% without loss of functionality
+          </li>
+          <li><strong>Adaptable Layout:</strong> Content structure preserved when CSS disabled</li>
+          <li>
+            <strong>Distinguishable Information:</strong> Color is not the sole means of conveying
+            information
+          </li>
+        </ul>
+
+        <h3>2.2 Operable Interface</h3>
+        <ul>
+          <li>
+            <strong>Keyboard Navigation:</strong> Full keyboard access without mouse (Tab,
+            Shift+Tab, Enter, Space, Arrow keys)
+          </li>
+          <li><strong>Skip Links:</strong> "Skip to main content" link for screen reader users</li>
+          <li><strong>Focus Indicators:</strong> Visible focus outlines on interactive elements</li>
+          <li><strong>No Keyboard Traps:</strong> Focus can move away from all components</li>
+          <li>
+            <strong>Timing Adjustable:</strong> Live score updates can be paused or customized
+          </li>
+          <li>
+            <strong>Seizure Prevention:</strong> No flashing content exceeding 3 flashes per second
+          </li>
+          <li>
+            <strong>Accessible Navigation:</strong> Consistent navigation across pages, breadcrumbs,
+            landmarks
+          </li>
+        </ul>
+
+        <h3>2.3 Understandable Content</h3>
+        <ul>
+          <li>
+            <strong>Readable Text:</strong> Minimum 16px font size, clear typography (Inter font
+            family)
+          </li>
+          <li><strong>Language Declaration:</strong> HTML lang attribute set to "en" (English)</li>
+          <li>
+            <strong>Predictable Behavior:</strong> Navigation and functionality consistent across
+            site
+          </li>
+          <li>
+            <strong>Input Assistance:</strong> Form labels, error messages, and validation clearly
+            identified
+          </li>
+          <li>
+            <strong>Error Prevention:</strong> Confirmation dialogs for critical actions (account
+            deletion, data export)
+          </li>
+          <li>
+            <strong>Plain Language:</strong> Sports terminology explained with tooltips/glossary
+          </li>
+        </ul>
+
+        <h3>2.4 Robust Compatibility</h3>
+        <ul>
+          <li><strong>Valid HTML:</strong> Clean, semantic HTML5 markup</li>
+          <li>
+            <strong>ARIA Labels:</strong> Proper ARIA roles, states, and properties for dynamic
+            content
+          </li>
+          <li>
+            <strong>Screen Reader Support:</strong> Tested with JAWS, NVDA, VoiceOver, TalkBack
+          </li>
+          <li>
+            <strong>Browser Compatibility:</strong> Chrome, Firefox, Safari, Edge (latest 2
+            versions)
+          </li>
+          <li>
+            <strong>Mobile Accessibility:</strong> Responsive design, touch target size ≥44x44px
+          </li>
+        </ul>
+
+        <h2>3. ASSISTIVE TECHNOLOGY SUPPORT</h2>
+
+        <h3>3.1 Screen Readers</h3>
+        <p>Blaze Sports Intel is compatible with the following screen readers:</p>
+        <ul>
+          <li><strong>JAWS</strong> (Windows) - Latest version</li>
+          <li><strong>NVDA</strong> (Windows) - Latest version</li>
+          <li><strong>VoiceOver</strong> (macOS, iOS) - Latest version</li>
+          <li><strong>TalkBack</strong> (Android) - Latest version</li>
+          <li><strong>Narrator</strong> (Windows) - Latest version</li>
+        </ul>
+
+        <h3>3.2 Browser Extensions & Tools</h3>
+        <ul>
+          <li><strong>Screen Magnifiers:</strong> ZoomText, MAGic (Windows), Zoom (macOS)</li>
+          <li>
+            <strong>Voice Control:</strong> Dragon NaturallySpeaking, Voice Control (macOS/iOS)
+          </li>
+          <li><strong>High Contrast Mode:</strong> Windows High Contrast themes supported</li>
+          <li><strong>Browser Zoom:</strong> Up to 200% zoom without horizontal scrolling</li>
+        </ul>
+
+        <h2>4. MOBILE ACCESSIBILITY</h2>
+
+        <h3>4.1 Mobile-First Design</h3>
+        <p>
+          Our platform is optimized for mobile devices, particularly iPhone portrait mode (375-428px
+          width):
+        </p>
+        <ul>
+          <li><strong>Touch Targets:</strong> Minimum 44x44px for buttons and links</li>
+          <li>
+            <strong>Gestures:</strong> Single-tap primary interactions (no multi-finger gestures
+            required)
+          </li>
+          <li>
+            <strong>Portrait Orientation:</strong> Full functionality in portrait mode (landscape
+            optional)
+          </li>
+          <li>
+            <strong>Screen Reader Compatibility:</strong> VoiceOver (iOS) and TalkBack (Android)
+            tested
+          </li>
+          <li>
+            <strong>Dark Mode:</strong> Supports iOS/Android system-level dark mode preferences
+          </li>
+        </ul>
+
+        <h2>5. KNOWN LIMITATIONS</h2>
+
+        <div class="highlight-box">
+          <p><strong>Areas for Improvement:</strong></p>
+          <ul>
+            <li>
+              <strong>3D Visualizations:</strong> Babylon.js stadium models have limited screen
+              reader support (alternative text descriptions provided)
+            </li>
+            <li>
+              <strong>Live Data Tables:</strong> Rapidly updating sports scores may be difficult for
+              screen readers (pause button available)
+            </li>
+            <li><strong>AI Copilot:</strong> Voice input not yet supported (planned for 2026)</li>
+            <li>
+              <strong>Video Analysis:</strong> Auto-generated video highlights lack audio
+              descriptions (manual descriptions added within 48 hours)
+            </li>
+            <li>
+              <strong>Historical Archives:</strong> Some older articles (pre-2024) may not meet
+              current WCAG 2.1 AA standards (being retroactively updated)
+            </li>
+          </ul>
+        </div>
+
+        <h2>6. ACCESSIBILITY TESTING</h2>
+
+        <h3>6.1 Testing Methods</h3>
+        <p>We employ multiple testing approaches to ensure accessibility:</p>
+        <ul>
+          <li>
+            <strong>Automated Testing:</strong> Lighthouse, axe DevTools, WAVE (monthly audits)
+          </li>
+          <li>
+            <strong>Manual Testing:</strong> Keyboard-only navigation, screen reader testing
+            (quarterly)
+          </li>
+          <li><strong>User Testing:</strong> Feedback from users with disabilities (ongoing)</li>
+          <li>
+            <strong>Third-Party Audits:</strong> Annual WCAG 2.1 AA compliance audit by certified
+            experts
+          </li>
+        </ul>
+
+        <h3>6.2 Continuous Improvement</h3>
+        <p>We regularly test and improve accessibility:</p>
+        <ul>
+          <li><strong>Quarterly Reviews:</strong> Accessibility audit of new features</li>
+          <li><strong>User Feedback Loop:</strong> Dedicated accessibility feedback email</li>
+          <li>
+            <strong>Staff Training:</strong> Annual accessibility training for all developers and
+            designers
+          </li>
+          <li>
+            <strong>Accessibility Champions:</strong> Designated team members responsible for
+            compliance
+          </li>
+        </ul>
+
+        <h2>7. FEEDBACK & ASSISTANCE</h2>
+
+        <h3>7.1 Report Accessibility Issues</h3>
+        <div class="highlight-box">
+          <p>
+            <strong
+              >If you encounter accessibility barriers on our website, please let us know:</strong
+            >
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            <a href="mailto:accessibility@blazesportsintel.com" class="nav-link"
+              >accessibility@blazesportsintel.com</a
+            ><br />
+            <strong>Subject Line:</strong> "Accessibility Issue - [Describe Problem]"<br />
+            <strong>Response Time:</strong> Within 2 business days<br />
+            <strong>Resolution Target:</strong> Critical issues fixed within 5 business days,
+            non-critical within 30 days
+          </p>
+
+          <p>
+            <strong>Phone:</strong> (210) 273-5538<br />
+            <strong>Contact:</strong> Austin Humphrey<br />
+            <strong>Location:</strong> Boerne, Texas
+          </p>
+        </div>
+
+        <h3>7.2 Alternative Formats</h3>
+        <p>We provide content in alternative formats upon request:</p>
+        <ul>
+          <li><strong>Large Print:</strong> PDF documents with 18pt+ font</li>
+          <li>
+            <strong>Screen Reader Optimized:</strong> Text-only versions of data visualizations
+          </li>
+          <li>
+            <strong>Audio Descriptions:</strong> For video content (within 48 hours of request)
+          </li>
+          <li>
+            <strong>Simplified Language:</strong> Plain language versions of complex analytics
+          </li>
+        </ul>
+
+        <p>
+          <strong>Request Alternative Format:</strong>
+          <a href="mailto:accessibility@blazesportsintel.com" class="nav-link"
+            >accessibility@blazesportsintel.com</a
+          >
+        </p>
+
+        <h2>8. THIRD-PARTY CONTENT</h2>
+
+        <p>
+          Blaze Sports Intel integrates third-party services (Cloudflare, SportsDataIO, MLB Stats
+          API). While we ensure our platform is accessible, we cannot guarantee accessibility of
+          third-party content. If you encounter issues with third-party components, please contact
+          us and we will work with providers to resolve accessibility barriers.
+        </p>
+
+        <h3>8.1 Third-Party Accessibility Policies</h3>
+        <ul>
+          <li>
+            <strong>Cloudflare:</strong>
+            <a href="https://www.cloudflare.com/accessibility/" class="nav-link"
+              >Cloudflare Accessibility Statement</a
+            >
+          </li>
+          <li>
+            <strong>MLB:</strong>
+            <a href="https://www.mlb.com/official-information/accessibility" class="nav-link"
+              >MLB Accessibility</a
+            >
+          </li>
+        </ul>
+
+        <h2>9. COMPLIANCE & LEGAL</h2>
+
+        <h3>9.1 Americans with Disabilities Act (ADA)</h3>
+        <p>
+          Blaze Sports Intel complies with Title III of the ADA, ensuring equal access to digital
+          services for individuals with disabilities.
+        </p>
+
+        <h3>9.2 Section 508 (Rehabilitation Act)</h3>
+        <p>
+          Our platform meets Section 508 standards for federal agency accessibility, ensuring
+          compatibility with assistive technologies.
+        </p>
+
+        <h3>9.3 Texas Accessibility Standards</h3>
+        <p>
+          As a Texas-based company, we comply with Texas Government Code Chapter 2054, Subchapter M,
+          requiring state agency websites to meet accessibility standards.
+        </p>
+
+        <h2>10. ACCESSIBILITY ROADMAP (2025-2026)</h2>
+
+        <h3>10.1 Planned Improvements</h3>
+        <ul>
+          <li><strong>Q4 2025:</strong> Voice navigation for AI Copilot</li>
+          <li>
+            <strong>Q1 2026:</strong> Enhanced 3D visualization accessibility (audio cues for field
+            positions)
+          </li>
+          <li><strong>Q2 2026:</strong> Live audio descriptions for real-time game updates</li>
+          <li>
+            <strong>Q3 2026:</strong> Customizable color themes for color blindness (deuteranopia,
+            protanopia, tritanopia)
+          </li>
+          <li><strong>Q4 2026:</strong> Sign language interpretation for video content</li>
+        </ul>
+
+        <h2>11. CONTACT INFORMATION</h2>
+
+        <div class="highlight-box">
+          <p>
+            <strong>Accessibility Coordinator:</strong><br />
+            Austin Humphrey<br />
+            Blaze Sports Intel<br />
+            Email:
+            <a href="mailto:accessibility@blazesportsintel.com" class="nav-link"
+              >accessibility@blazesportsintel.com</a
+            ><br />
+            Phone: (210) 273-5538<br />
+            Address: Boerne, Texas 78006, United States
+          </p>
+
+          <p>
+            <strong>General Support:</strong><br />
+            Email:
+            <a href="mailto:support@blazesportsintel.com" class="nav-link"
+              >support@blazesportsintel.com</a
+            ><br />
+            Website:
+            <a href="https://blazesportsintel.com" class="nav-link">blazesportsintel.com</a>
+          </p>
+        </div>
+
+        <h2>12. RELATED POLICIES</h2>
+
+        <ul>
+          <li>
+            <a href="/legal/privacy" class="nav-link">Privacy Policy</a> - Data protection for
+            assistive technology users
+          </li>
+          <li><a href="/legal/terms" class="nav-link">Terms of Service</a> - Usage terms</li>
+          <li>
+            <a href="/legal/ai-disclosure" class="nav-link">AI Disclosure</a> - AI accessibility
+            features
+          </li>
+          <li>
+            <a href="/legal/cookies" class="nav-link">Cookie Policy</a> - Cookie consent
+            accessibility
+          </li>
+        </ul>
+
+        <div class="success-box">
+          <p>
+            <strong>Our Promise:</strong> Blaze Sports Intel is dedicated to providing an inclusive
+            sports intelligence platform for all users. We welcome feedback and are committed to
+            continuous improvement. If you experience any accessibility barriers, please contact us
+            immediately at
+            <a href="mailto:accessibility@blazesportsintel.com" class="nav-link"
+              >accessibility@blazesportsintel.com</a
+            >.
+          </p>
+        </div>
+
+        <a href="/" class="back-home">← Return to Blaze Sports Intel</a>
+      </div>
     </div>
 
     <script>
-        // Accessibility: Announce page load for screen readers
-        window.addEventListener('load', function() {
-            const announcement = document.createElement('div');
-            announcement.setAttribute('aria-live', 'polite');
-            announcement.setAttribute('aria-atomic', 'true');
-            announcement.textContent = 'Accessibility Statement page loaded. This page outlines our commitment to WCAG 2.1 AA compliance and accessible design.';
-            announcement.style.position = 'absolute';
-            announcement.style.left = '-9999px';
-            document.body.appendChild(announcement);
+      // Accessibility: Announce page load for screen readers
+      window.addEventListener('load', function () {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.textContent =
+          'Accessibility Statement page loaded. This page outlines our commitment to WCAG 2.1 AA compliance and accessible design.';
+        announcement.style.position = 'absolute';
+        announcement.style.left = '-9999px';
+        document.body.appendChild(announcement);
 
-            setTimeout(() => {
-                document.body.removeChild(announcement);
-            }, 1000);
-        });
+        setTimeout(() => {
+          document.body.removeChild(announcement);
+        }, 1000);
+      });
 
-        // Smooth scrolling for internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+      // Smooth scrolling for internal links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
             });
+          }
         });
+      });
 
-        // High contrast mode detection
-        if (window.matchMedia('(prefers-contrast: high)').matches) {
-            document.body.classList.add('high-contrast');
-        }
+      // High contrast mode detection
+      if (window.matchMedia('(prefers-contrast: high)').matches) {
+        document.body.classList.add('high-contrast');
+      }
 
-        // Reduced motion detection
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.body.classList.add('reduced-motion');
-        }
+      // Reduced motion detection
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.body.classList.add('reduced-motion');
+      }
     </script>
-</body>
+  </body>
 </html>

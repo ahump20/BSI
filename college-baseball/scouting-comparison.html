@@ -1,425 +1,445 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Compare College Baseball Players Side-by-Side - MLB Draft Projections, Player Stats, Injury Risk, Development Plans">
-  <title>Player Comparison Tool | Blaze Sports Intel</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Compare College Baseball Players Side-by-Side - MLB Draft Projections, Player Stats, Injury Risk, Development Plans"
+    />
+    <title>Player Comparison Tool | Blaze Sports Intel</title>
 
-  <!-- Font Awesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-  <style>
-    :root {
-      --color-bg: #0a0a0a;
-      --color-surface: #1a1a1a;
-      --color-surface-elevated: #2a2a2a;
-      --color-primary: #BF5700;
-      --color-primary-dark: #9d4600;
-      --color-text: #e0e0e0;
-      --color-text-secondary: #a0a0a0;
-      --color-success: #10b981;
-      --color-warning: #f59e0b;
-      --color-error: #ef4444;
-      --spacing-unit: 8px;
-      --border-radius: 8px;
-    }
+    <style>
+      :root {
+        --color-bg: #0a0a0a;
+        --color-surface: #1a1a1a;
+        --color-surface-elevated: #2a2a2a;
+        --color-primary: #bf5700;
+        --color-primary-dark: #9d4600;
+        --color-text: #e0e0e0;
+        --color-text-secondary: #a0a0a0;
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --color-error: #ef4444;
+        --spacing-unit: 8px;
+        --border-radius: 8px;
+      }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: var(--color-bg);
-      color: var(--color-text);
-      line-height: 1.6;
-      padding: calc(var(--spacing-unit) * 2);
-    }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: var(--color-bg);
+        color: var(--color-text);
+        line-height: 1.6;
+        padding: calc(var(--spacing-unit) * 2);
+      }
 
-    .container {
-      max-width: 1600px;
-      margin: 0 auto;
-    }
+      .container {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
 
-    header {
-      background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%);
-      padding: calc(var(--spacing-unit) * 4);
-      border-radius: var(--border-radius);
-      margin-bottom: calc(var(--spacing-unit) * 4);
-      border: 1px solid var(--color-surface-elevated);
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: calc(var(--spacing-unit) * 2);
-      background: linear-gradient(135deg, var(--color-primary) 0%, #ff8c42 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .nav-links {
-      margin-top: calc(var(--spacing-unit) * 2);
-    }
-
-    .nav-links a {
-      color: var(--color-primary);
-      text-decoration: none;
-      margin: 0 calc(var(--spacing-unit) * 2);
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    .nav-links a:hover {
-      opacity: 0.8;
-    }
-
-    .player-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: calc(var(--spacing-unit) * 3);
-      margin-bottom: calc(var(--spacing-unit) * 4);
-    }
-
-    .selector-card {
-      background: var(--color-surface);
-      padding: calc(var(--spacing-unit) * 3);
-      border-radius: var(--border-radius);
-      border: 2px solid var(--color-surface-elevated);
-    }
-
-    .selector-card h3 {
-      color: var(--color-primary);
-      margin-bottom: calc(var(--spacing-unit) * 2);
-      font-size: 1.3rem;
-    }
-
-    .form-group {
-      margin-bottom: calc(var(--spacing-unit) * 2);
-    }
-
-    label {
-      display: block;
-      color: var(--color-text-secondary);
-      margin-bottom: calc(var(--spacing-unit) * 1);
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    input {
-      width: 100%;
-      padding: calc(var(--spacing-unit) * 1.5);
-      background: var(--color-surface-elevated);
-      border: 1px solid var(--color-surface-elevated);
-      border-radius: 6px;
-      color: var(--color-text);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--color-primary);
-    }
-
-    .compare-button {
-      width: 100%;
-      padding: calc(var(--spacing-unit) * 2);
-      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      margin-top: calc(var(--spacing-unit) * 2);
-    }
-
-    .compare-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(191, 87, 0, 0.4);
-    }
-
-    .compare-button:active {
-      transform: translateY(0);
-    }
-
-    .compare-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: calc(var(--spacing-unit) * 3);
-      margin-bottom: calc(var(--spacing-unit) * 4);
-    }
-
-    .player-column {
-      background: var(--color-surface);
-      border-radius: var(--border-radius);
-      padding: calc(var(--spacing-unit) * 3);
-      border: 2px solid var(--color-surface-elevated);
-    }
-
-    .player-column.winner {
-      border-color: var(--color-success);
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-    }
-
-    .player-header {
-      text-align: center;
-      padding-bottom: calc(var(--spacing-unit) * 2);
-      margin-bottom: calc(var(--spacing-unit) * 3);
-      border-bottom: 2px solid var(--color-surface-elevated);
-    }
-
-    .player-header h2 {
-      font-size: 1.8rem;
-      margin-bottom: calc(var(--spacing-unit) * 1);
-    }
-
-    .player-header .subtitle {
-      color: var(--color-text-secondary);
-      font-size: 0.95rem;
-    }
-
-    .metric-section {
-      margin-bottom: calc(var(--spacing-unit) * 3);
-    }
-
-    .metric-section h4 {
-      color: var(--color-primary);
-      margin-bottom: calc(var(--spacing-unit) * 1.5);
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: calc(var(--spacing-unit) * 1);
-    }
-
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: calc(var(--spacing-unit) * 1.5);
-      background: var(--color-surface-elevated);
-      border-radius: 6px;
-      margin-bottom: calc(var(--spacing-unit) * 1);
-    }
-
-    .metric-row.better {
-      background: rgba(16, 185, 129, 0.1);
-      border-left: 4px solid var(--color-success);
-    }
-
-    .metric-label {
-      color: var(--color-text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .metric-value {
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .grade-high { color: var(--color-success); }
-    .grade-medium { color: var(--color-warning); }
-    .grade-low { color: var(--color-error); }
-
-    .comparison-summary {
-      background: var(--color-surface);
-      padding: calc(var(--spacing-unit) * 4);
-      border-radius: var(--border-radius);
-      margin-bottom: calc(var(--spacing-unit) * 4);
-      border: 2px solid var(--color-primary);
-    }
-
-    .comparison-summary h3 {
-      color: var(--color-primary);
-      margin-bottom: calc(var(--spacing-unit) * 2);
-      font-size: 1.5rem;
-      text-align: center;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: calc(var(--spacing-unit) * 2);
-    }
-
-    .summary-card {
-      background: var(--color-surface-elevated);
-      padding: calc(var(--spacing-unit) * 2);
-      border-radius: 6px;
-      text-align: center;
-    }
-
-    .summary-card .label {
-      color: var(--color-text-secondary);
-      font-size: 0.9rem;
-      margin-bottom: calc(var(--spacing-unit) * 1);
-    }
-
-    .summary-card .value {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-
-    .loading {
-      text-align: center;
-      padding: calc(var(--spacing-unit) * 4);
-      color: var(--color-text-secondary);
-      font-size: 1.1rem;
-    }
-
-    .loading i {
-      animation: spin 1s linear infinite;
-      font-size: 2rem;
-      display: block;
-      margin-bottom: calc(var(--spacing-unit) * 2);
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .error {
-      background: rgba(239, 68, 68, 0.1);
-      border: 2px solid var(--color-error);
-      padding: calc(var(--spacing-unit) * 3);
-      border-radius: var(--border-radius);
-      margin-bottom: calc(var(--spacing-unit) * 3);
-    }
-
-    .error h3 {
-      color: var(--color-error);
-      margin-bottom: calc(var(--spacing-unit) * 1);
-    }
-
-    @media (max-width: 1024px) {
-      .comparison-grid,
-      .player-selector {
-        grid-template-columns: 1fr;
+      header {
+        background: linear-gradient(
+          135deg,
+          var(--color-surface) 0%,
+          var(--color-surface-elevated) 100%
+        );
+        padding: calc(var(--spacing-unit) * 4);
+        border-radius: var(--border-radius);
+        margin-bottom: calc(var(--spacing-unit) * 4);
+        border: 1px solid var(--color-surface-elevated);
+        text-align: center;
       }
 
       h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+        background: linear-gradient(135deg, var(--color-primary) 0%, #ff8c42 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>⚖️ Player Comparison Tool</h1>
-      <p style="color: var(--color-text-secondary); margin-top: 8px; font-size: 1.1rem;">
-        Side-by-Side Professional Scouting Analysis
-      </p>
-      <p style="color: var(--color-text-secondary); margin-top: 4px; font-size: 0.9rem;">
-        Compare Draft Projections • Player Stats • Injury Risk • Development Plans • Market Valuations
-      </p>
-      <div class="nav-links">
-        <a href="/college-baseball/scouting-report.html"><i class="fas fa-user"></i> Single Player Report</a>
-        <a href="/college-baseball/"><i class="fas fa-home"></i> College Baseball Home</a>
-      </div>
-    </header>
 
-    <div class="player-selector">
-      <div class="selector-card">
-        <h3><i class="fas fa-user"></i> Player 1</h3>
-        <div class="form-group">
-          <label for="player1Id">Player ID</label>
-          <input
-            type="text"
-            id="player1Id"
-            placeholder="Enter Player 1 ID (e.g., 12345)"
-            value="12345"
+      .nav-links {
+        margin-top: calc(var(--spacing-unit) * 2);
+      }
+
+      .nav-links a {
+        color: var(--color-primary);
+        text-decoration: none;
+        margin: 0 calc(var(--spacing-unit) * 2);
+        font-weight: 600;
+        transition: opacity 0.2s;
+      }
+
+      .nav-links a:hover {
+        opacity: 0.8;
+      }
+
+      .player-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--spacing-unit) * 3);
+        margin-bottom: calc(var(--spacing-unit) * 4);
+      }
+
+      .selector-card {
+        background: var(--color-surface);
+        padding: calc(var(--spacing-unit) * 3);
+        border-radius: var(--border-radius);
+        border: 2px solid var(--color-surface-elevated);
+      }
+
+      .selector-card h3 {
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 2);
+        font-size: 1.3rem;
+      }
+
+      .form-group {
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      label {
+        display: block;
+        color: var(--color-text-secondary);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      input {
+        width: 100%;
+        padding: calc(var(--spacing-unit) * 1.5);
+        background: var(--color-surface-elevated);
+        border: 1px solid var(--color-surface-elevated);
+        border-radius: 6px;
+        color: var(--color-text);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+      }
+
+      .compare-button {
+        width: 100%;
+        padding: calc(var(--spacing-unit) * 2);
+        background: linear-gradient(
+          135deg,
+          var(--color-primary) 0%,
+          var(--color-primary-dark) 100%
+        );
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        margin-top: calc(var(--spacing-unit) * 2);
+      }
+
+      .compare-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(191, 87, 0, 0.4);
+      }
+
+      .compare-button:active {
+        transform: translateY(0);
+      }
+
+      .compare-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--spacing-unit) * 3);
+        margin-bottom: calc(var(--spacing-unit) * 4);
+      }
+
+      .player-column {
+        background: var(--color-surface);
+        border-radius: var(--border-radius);
+        padding: calc(var(--spacing-unit) * 3);
+        border: 2px solid var(--color-surface-elevated);
+      }
+
+      .player-column.winner {
+        border-color: var(--color-success);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+      }
+
+      .player-header {
+        text-align: center;
+        padding-bottom: calc(var(--spacing-unit) * 2);
+        margin-bottom: calc(var(--spacing-unit) * 3);
+        border-bottom: 2px solid var(--color-surface-elevated);
+      }
+
+      .player-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .player-header .subtitle {
+        color: var(--color-text-secondary);
+        font-size: 0.95rem;
+      }
+
+      .metric-section {
+        margin-bottom: calc(var(--spacing-unit) * 3);
+      }
+
+      .metric-section h4 {
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 1.5);
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: calc(var(--spacing-unit) * 1);
+      }
+
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(var(--spacing-unit) * 1.5);
+        background: var(--color-surface-elevated);
+        border-radius: 6px;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .metric-row.better {
+        background: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid var(--color-success);
+      }
+
+      .metric-label {
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .metric-value {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      .grade-high {
+        color: var(--color-success);
+      }
+      .grade-medium {
+        color: var(--color-warning);
+      }
+      .grade-low {
+        color: var(--color-error);
+      }
+
+      .comparison-summary {
+        background: var(--color-surface);
+        padding: calc(var(--spacing-unit) * 4);
+        border-radius: var(--border-radius);
+        margin-bottom: calc(var(--spacing-unit) * 4);
+        border: 2px solid var(--color-primary);
+      }
+
+      .comparison-summary h3 {
+        color: var(--color-primary);
+        margin-bottom: calc(var(--spacing-unit) * 2);
+        font-size: 1.5rem;
+        text-align: center;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: calc(var(--spacing-unit) * 2);
+      }
+
+      .summary-card {
+        background: var(--color-surface-elevated);
+        padding: calc(var(--spacing-unit) * 2);
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .summary-card .label {
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      .summary-card .value {
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+
+      .loading {
+        text-align: center;
+        padding: calc(var(--spacing-unit) * 4);
+        color: var(--color-text-secondary);
+        font-size: 1.1rem;
+      }
+
+      .loading i {
+        animation: spin 1s linear infinite;
+        font-size: 2rem;
+        display: block;
+        margin-bottom: calc(var(--spacing-unit) * 2);
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid var(--color-error);
+        padding: calc(var(--spacing-unit) * 3);
+        border-radius: var(--border-radius);
+        margin-bottom: calc(var(--spacing-unit) * 3);
+      }
+
+      .error h3 {
+        color: var(--color-error);
+        margin-bottom: calc(var(--spacing-unit) * 1);
+      }
+
+      @media (max-width: 1024px) {
+        .comparison-grid,
+        .player-selector {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>⚖️ Player Comparison Tool</h1>
+        <p style="color: var(--color-text-secondary); margin-top: 8px; font-size: 1.1rem">
+          Side-by-Side Professional Scouting Analysis
+        </p>
+        <p style="color: var(--color-text-secondary); margin-top: 4px; font-size: 0.9rem">
+          Compare Draft Projections • Player Stats • Injury Risk • Development Plans • Market
+          Valuations
+        </p>
+        <div class="nav-links">
+          <a href="/college-baseball/scouting-report.html"
+            ><i class="fas fa-user"></i> Single Player Report</a
           >
+          <a href="/college-baseball/"><i class="fas fa-home"></i> College Baseball Home</a>
         </div>
-        <div class="form-group">
-          <label for="player1Name">Player Name (Optional)</label>
-          <input
-            type="text"
-            id="player1Name"
-            placeholder="e.g., John Smith"
-          >
+      </header>
+
+      <div class="player-selector">
+        <div class="selector-card">
+          <h3><i class="fas fa-user"></i> Player 1</h3>
+          <div class="form-group">
+            <label for="player1Id">Player ID</label>
+            <input
+              type="text"
+              id="player1Id"
+              placeholder="Enter Player 1 ID (e.g., 12345)"
+              value="12345"
+            />
+          </div>
+          <div class="form-group">
+            <label for="player1Name">Player Name (Optional)</label>
+            <input type="text" id="player1Name" placeholder="e.g., John Smith" />
+          </div>
+        </div>
+
+        <div class="selector-card">
+          <h3><i class="fas fa-user"></i> Player 2</h3>
+          <div class="form-group">
+            <label for="player2Id">Player ID</label>
+            <input
+              type="text"
+              id="player2Id"
+              placeholder="Enter Player 2 ID (e.g., 67890)"
+              value="67890"
+            />
+          </div>
+          <div class="form-group">
+            <label for="player2Name">Player Name (Optional)</label>
+            <input type="text" id="player2Name" placeholder="e.g., Mike Johnson" />
+          </div>
         </div>
       </div>
 
-      <div class="selector-card">
-        <h3><i class="fas fa-user"></i> Player 2</h3>
-        <div class="form-group">
-          <label for="player2Id">Player ID</label>
-          <input
-            type="text"
-            id="player2Id"
-            placeholder="Enter Player 2 ID (e.g., 67890)"
-            value="67890"
-          >
-        </div>
-        <div class="form-group">
-          <label for="player2Name">Player Name (Optional)</label>
-          <input
-            type="text"
-            id="player2Name"
-            placeholder="e.g., Mike Johnson"
-          >
-        </div>
-      </div>
+      <button class="compare-button" onclick="comparePlayers()">
+        <i class="fas fa-balance-scale"></i> Compare Players
+      </button>
+
+      <div id="comparisonContainer"></div>
     </div>
 
-    <button class="compare-button" onclick="comparePlayers()">
-      <i class="fas fa-balance-scale"></i> Compare Players
-    </button>
+    <script>
+      const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8788' : '';
 
-    <div id="comparisonContainer"></div>
-  </div>
+      async function comparePlayers() {
+        const player1Id = document.getElementById('player1Id').value.trim();
+        const player2Id = document.getElementById('player2Id').value.trim();
+        const player1Name = document.getElementById('player1Name').value.trim();
+        const player2Name = document.getElementById('player2Name').value.trim();
 
-  <script>
-    const API_BASE = window.location.hostname === 'localhost'
-      ? 'http://localhost:8788'
-      : '';
+        if (!player1Id || !player2Id) {
+          alert('Please enter both Player IDs');
+          return;
+        }
 
-    async function comparePlayers() {
-      const player1Id = document.getElementById('player1Id').value.trim();
-      const player2Id = document.getElementById('player2Id').value.trim();
-      const player1Name = document.getElementById('player1Name').value.trim();
-      const player2Name = document.getElementById('player2Name').value.trim();
-
-      if (!player1Id || !player2Id) {
-        alert('Please enter both Player IDs');
-        return;
-      }
-
-      const container = document.getElementById('comparisonContainer');
-      container.innerHTML = `
+        const container = document.getElementById('comparisonContainer');
+        container.innerHTML = `
         <div class="loading">
           <i class="fas fa-spinner"></i>
           <div>Loading scouting reports for both players...</div>
         </div>
       `;
 
-      try {
-        // Fetch both reports in parallel
-        const [report1, report2] = await Promise.all([
-          fetchScoutingReport(player1Id),
-          fetchScoutingReport(player2Id)
-        ]);
+        try {
+          // Fetch both reports in parallel
+          const [report1, report2] = await Promise.all([
+            fetchScoutingReport(player1Id),
+            fetchScoutingReport(player2Id),
+          ]);
 
-        // Use provided names or fallback to player IDs
-        const name1 = player1Name || `Player ${player1Id}`;
-        const name2 = player2Name || `Player ${player2Id}`;
+          // Use provided names or fallback to player IDs
+          const name1 = player1Name || `Player ${player1Id}`;
+          const name2 = player2Name || `Player ${player2Id}`;
 
-        renderComparison(report1, report2, name1, name2);
-      } catch (error) {
-        container.innerHTML = `
+          renderComparison(report1, report2, name1, name2);
+        } catch (error) {
+          container.innerHTML = `
           <div class="error">
             <h3><i class="fas fa-exclamation-triangle"></i> Error Loading Reports</h3>
             <p>${error.message}</p>
@@ -428,43 +448,52 @@
             </p>
           </div>
         `;
-      }
-    }
-
-    async function fetchScoutingReport(playerId) {
-      const url = new URL(`${API_BASE}/api/college-baseball/scouting-professional`);
-      url.searchParams.set('player_id', playerId);
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch report for Player ${playerId}: ${response.statusText}`);
+        }
       }
 
-      const data = await response.json();
-      return data;
-    }
+      async function fetchScoutingReport(playerId) {
+        const url = new URL(`${API_BASE}/api/college-baseball/scouting-professional`);
+        url.searchParams.set('player_id', playerId);
 
-    function renderComparison(report1, report2, name1, name2) {
-      const container = document.getElementById('comparisonContainer');
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch report for Player ${playerId}: ${response.statusText}`);
+        }
 
-      const final1 = report1.final_recommendation;
-      const final2 = report2.final_recommendation;
-      const draft1 = report1.draft_projection || {};
-      const draft2 = report2.draft_projection || {};
-      const comp1 = report1.component_scores;
-      const comp2 = report2.component_scores;
-      const injury1 = report1.injury_risk_assessment || {};
-      const injury2 = report2.injury_risk_assessment || {};
-      const val1 = report1.market_valuation || {};
-      const val2 = report2.market_valuation || {};
+        const data = await response.json();
+        return data;
+      }
 
-      // Determine winner for each category
-      const draftWinner = compareDraftGrade(final1.draft_grade, final2.draft_grade);
-      const velocityWinner = compareMetric(comp1.velocity_model.consistency, comp2.velocity_model.consistency);
-      const intangiblesWinner = compareMetric(comp1.intangibles_model.overall_intangibles, comp2.intangibles_model.overall_intangibles);
-      const valuationWinner = compareMetric(val1.total_projected_value || 0, val2.total_projected_value || 0);
+      function renderComparison(report1, report2, name1, name2) {
+        const container = document.getElementById('comparisonContainer');
 
-      const html = `
+        const final1 = report1.final_recommendation;
+        const final2 = report2.final_recommendation;
+        const draft1 = report1.draft_projection || {};
+        const draft2 = report2.draft_projection || {};
+        const comp1 = report1.component_scores;
+        const comp2 = report2.component_scores;
+        const injury1 = report1.injury_risk_assessment || {};
+        const injury2 = report2.injury_risk_assessment || {};
+        const val1 = report1.market_valuation || {};
+        const val2 = report2.market_valuation || {};
+
+        // Determine winner for each category
+        const draftWinner = compareDraftGrade(final1.draft_grade, final2.draft_grade);
+        const velocityWinner = compareMetric(
+          comp1.velocity_model.consistency,
+          comp2.velocity_model.consistency
+        );
+        const intangiblesWinner = compareMetric(
+          comp1.intangibles_model.overall_intangibles,
+          comp2.intangibles_model.overall_intangibles
+        );
+        const valuationWinner = compareMetric(
+          val1.total_projected_value || 0,
+          val2.total_projected_value || 0
+        );
+
+        const html = `
         <!-- Comparison Summary -->
         <div class="comparison-summary">
           <h3><i class="fas fa-chart-bar"></i> Comparison Summary</h3>
@@ -520,26 +549,30 @@
         </div>
       `;
 
-      container.innerHTML = html;
-    }
+        container.innerHTML = html;
+      }
 
-    function renderPlayerMetrics(report, playerName, otherReport) {
-      const final = report.final_recommendation;
-      const draft = report.draft_projection || {};
-      const comp = report.component_scores;
-      const injury = report.injury_risk_assessment || {};
-      const val = report.market_valuation || {};
-      const roadmap = report.development_roadmap || {};
+      function renderPlayerMetrics(report, playerName, otherReport) {
+        const final = report.final_recommendation;
+        const draft = report.draft_projection || {};
+        const comp = report.component_scores;
+        const injury = report.injury_risk_assessment || {};
+        const val = report.market_valuation || {};
+        const roadmap = report.development_roadmap || {};
 
-      const otherFinal = otherReport.final_recommendation;
-      const otherDraft = otherReport.draft_projection || {};
-      const otherComp = otherReport.component_scores;
-      const otherVal = otherReport.market_valuation || {};
+        const otherFinal = otherReport.final_recommendation;
+        const otherDraft = otherReport.draft_projection || {};
+        const otherComp = otherReport.component_scores;
+        const otherVal = otherReport.market_valuation || {};
 
-      const gradeClass = final.draft_grade >= 80 ? 'grade-high' :
-                         final.draft_grade >= 60 ? 'grade-medium' : 'grade-low';
+        const gradeClass =
+          final.draft_grade >= 80
+            ? 'grade-high'
+            : final.draft_grade >= 60
+              ? 'grade-medium'
+              : 'grade-low';
 
-      return `
+        return `
         <!-- Draft Grade -->
         <div class="metric-section">
           <h4><i class="fas fa-trophy"></i> Draft Grade</h4>
@@ -551,12 +584,16 @@
             <span class="metric-label">Recommendation</span>
             <span class="metric-value">${final.recommendation}</span>
           </div>
-          ${draft.projected_round ? `
+          ${
+            draft.projected_round
+              ? `
           <div class="metric-row ${compareDraftRound(draft.projected_round, otherDraft.projected_round) ? 'better' : ''}">
             <span class="metric-label">Projected Round</span>
             <span class="metric-value">${draft.projected_round}</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
         <!-- Velocity Model -->
@@ -598,77 +635,106 @@
         </div>
 
         <!-- Injury Risk -->
-        ${injury.overall_risk ? `
+        ${
+          injury.overall_risk
+            ? `
         <div class="metric-section">
           <h4><i class="fas fa-heartbeat"></i> Injury Risk</h4>
           <div class="metric-row">
             <span class="metric-label">Risk Level</span>
             <span class="metric-value">${injury.overall_risk}</span>
           </div>
-          ${injury.biomechanical_score !== undefined ? `
+          ${
+            injury.biomechanical_score !== undefined
+              ? `
           <div class="metric-row ${injury.biomechanical_score > (otherReport.injury_risk_assessment?.biomechanical_score || 0) ? 'better' : ''}">
             <span class="metric-label">Biomechanical Score</span>
             <span class="metric-value">${injury.biomechanical_score}/100</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <!-- Market Valuation -->
-        ${val.total_projected_value ? `
+        ${
+          val.total_projected_value
+            ? `
         <div class="metric-section">
           <h4><i class="fas fa-dollar-sign"></i> Market Valuation</h4>
           <div class="metric-row ${val.total_projected_value > (otherVal.total_projected_value || 0) ? 'better' : ''}">
             <span class="metric-label">Total Value</span>
             <span class="metric-value">$${val.total_projected_value.toLocaleString()}</span>
           </div>
-          ${val.scholarship_value ? `
+          ${
+            val.scholarship_value
+              ? `
           <div class="metric-row">
             <span class="metric-label">Scholarship Value</span>
             <span class="metric-value">$${val.scholarship_value.toLocaleString()}</span>
           </div>
-          ` : ''}
-          ${val.pro_contract_projection ? `
+          `
+              : ''
+          }
+          ${
+            val.pro_contract_projection
+              ? `
           <div class="metric-row">
             <span class="metric-label">Pro Contract</span>
             <span class="metric-value">$${val.pro_contract_projection.toLocaleString()}</span>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
-        ` : ''}
+        `
+            : ''
+        }
 
         <!-- Development Priority -->
-        ${roadmap.priority_areas ? `
+        ${
+          roadmap.priority_areas
+            ? `
         <div class="metric-section">
           <h4><i class="fas fa-bullseye"></i> Development Priority</h4>
-          ${roadmap.priority_areas.slice(0, 3).map(area => `
+          ${roadmap.priority_areas
+            .slice(0, 3)
+            .map(
+              (area) => `
             <div class="metric-row">
               <span class="metric-label">${area.area}</span>
               <span class="metric-value">${area.priority}</span>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
-        ` : ''}
+        `
+            : ''
+        }
       `;
-    }
+      }
 
-    function compareDraftGrade(grade1, grade2) {
-      if (grade1 > grade2) return 1;
-      if (grade2 > grade1) return 2;
-      return 0;
-    }
+      function compareDraftGrade(grade1, grade2) {
+        if (grade1 > grade2) return 1;
+        if (grade2 > grade1) return 2;
+        return 0;
+      }
 
-    function compareMetric(val1, val2) {
-      if (val1 > val2) return 1;
-      if (val2 > val1) return 2;
-      return 0;
-    }
+      function compareMetric(val1, val2) {
+        if (val1 > val2) return 1;
+        if (val2 > val1) return 2;
+        return 0;
+      }
 
-    function compareDraftRound(round1, round2) {
-      const r1 = parseInt(round1);
-      const r2 = parseInt(round2);
-      return r1 < r2; // Lower round is better
-    }
-  </script>
-</body>
+      function compareDraftRound(round1, round2) {
+        const r1 = parseInt(round1);
+        const r2 = parseInt(round2);
+        return r1 < r2; // Lower round is better
+      }
+    </script>
+  </body>
 </html>

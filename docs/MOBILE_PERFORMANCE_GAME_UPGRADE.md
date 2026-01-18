@@ -28,11 +28,13 @@ This PR implements a comprehensive mobile-first performance upgrade for Blaze Sp
 **Bundle Size**: ~341KB gzipped (15KB game code + 326KB Phaser library)
 
 **Routes**:
+
 - `/games` - Games landing page
 - `/games/bbp` - Baseball game (iframe embed)
 - `/games/bbp/legal` - Legal compliance and credits
 
 **Build Integration**:
+
 ```bash
 pnpm build:games  # Builds Phaser game and copies to public/games/bbp-web
 ```
@@ -59,6 +61,7 @@ pnpm build:games  # Builds Phaser game and copies to public/games/bbp-web
 - `LoadingSkeleton`, `ChartSkeleton`, `Visualization3DSkeleton` - Loading states
 
 **Usage Example**:
+
 ```typescript
 const Heavy3DComponent = createLazyComponent(
   () => import('./Heavy3DComponent'),
@@ -86,6 +89,7 @@ const Heavy3DComponent = createLazyComponent(
 - Responsive image sizes with `stale-while-revalidate`
 
 **Cache Strategy**:
+
 ```
 /_next/image/* → max-age=86400, stale-while-revalidate=604800
 ```
@@ -100,6 +104,7 @@ const Heavy3DComponent = createLazyComponent(
 - Analytics sent to `/api/analytics/web-vitals`
 
 **Thresholds** (mobile targets):
+
 - LCP ≤ 2.5s
 - CLS ≤ 0.1
 - INP ≤ 200ms
@@ -108,11 +113,13 @@ const Heavy3DComponent = createLazyComponent(
 #### 5. **Lighthouse CI**
 
 **New Files**:
+
 - `lighthouserc.json` - Desktop config
 - `lighthouserc-mobile.json` - Mobile config (4G throttling)
 - `.github/workflows/lighthouse-ci.yml` - Automated CI/CD
 
 **Mobile Thresholds** (enforced on PRs):
+
 ```json
 {
   "performance": ≥ 80,
@@ -127,6 +134,7 @@ const Heavy3DComponent = createLazyComponent(
 **New File**: `apps/web/public/_headers`
 
 **Cache Strategy**:
+
 - **Game assets** (hashed): `max-age=31536000, immutable` (1 year)
 - **Game HTML**: `max-age=3600, must-revalidate` (1 hour)
 - **Next.js static**: `max-age=31536000, immutable`
@@ -152,6 +160,7 @@ const Heavy3DComponent = createLazyComponent(
 #### 1. **LEGAL_COMPLIANCE.md** (Root)
 
 Comprehensive IP compliance guidelines covering:
+
 - Original content requirements
 - Prohibited content (Backyard Baseball, licensed sports games, etc.)
 - Asset addition process
@@ -161,6 +170,7 @@ Comprehensive IP compliance guidelines covering:
 #### 2. **assets/LICENSES.md**
 
 Asset manifest documenting:
+
 - All game assets (visual, audio, fonts, code libraries)
 - Source and license for each asset
 - Provenance verification checklist
@@ -171,6 +181,7 @@ Asset manifest documenting:
 #### 3. **docs/ai-assets/prompts-and-guidelines.md**
 
 Detailed guidelines for AI asset generation:
+
 - Approved AI tools (Midjourney, DALL-E, Stable Diffusion, etc.)
 - Prompt templates for characters, backgrounds, audio
 - Red flags and verification checklist
@@ -182,6 +193,7 @@ Detailed guidelines for AI asset generation:
 #### 4. **docs/GAME_README.md**
 
 Developer guide covering:
+
 - Game development workflow
 - Asset management and replacement
 - Build process and deployment
@@ -191,6 +203,7 @@ Developer guide covering:
 #### 5. **/games/bbp/legal** (Web Route)
 
 Public-facing legal page documenting:
+
 - IP compliance guarantee (no Backyard Baseball or other licensed content)
 - Asset attribution (all original)
 - Game license (UNLICENSED - proprietary)
@@ -201,15 +214,18 @@ Public-facing legal page documenting:
 #### Content Blocklist
 
 **New Files**:
+
 - `.github/content-blocklist.txt` - List of prohibited IP terms
 - `.github/workflows/content-blocklist.yml` - Automated enforcement
 
 **How It Works**:
+
 - Scans all game files on PR/push
 - Fails build if prohibited terms detected (e.g., "Pablo Sanchez", "Backyard Baseball")
 - Prevents accidental use of copyrighted names/content
 
 **Blocklist** includes:
+
 - Backyard Baseball character names
 - Franchise-specific terms
 - MLB team names (when used as team names in game)
@@ -224,7 +240,7 @@ Public-facing legal page documenting:
 ```yaml
 packages:
   - 'apps/*'
-  - 'apps/games/*'  # NEW
+  - 'apps/games/*' # NEW
   - 'packages/*'
   - 'infra'
 ```
@@ -232,6 +248,7 @@ packages:
 ### 2. **Root Package.json**
 
 **New Scripts**:
+
 ```json
 {
   "build:games": "cd apps/games/phaser-bbp-web && pnpm install && pnpm build && cd ../../.. && mkdir -p apps/web/public/games && cp -r apps/games/phaser-bbp-web/dist apps/web/public/games/bbp-web",
@@ -244,6 +261,7 @@ packages:
 ### 3. **Cloudflare Deployment**
 
 **Updated Process**:
+
 1. `pnpm install` - Install all workspaces (including games)
 2. `pnpm build:games` - Build Phaser game
 3. `pnpm -w build` - Build Next.js site (includes embedded game)
@@ -268,6 +286,7 @@ packages:
 - **Bundle**: ~500KB initial (3D libs load on interaction)
 
 **Game Performance**:
+
 - Load to interactive: < 3s on 4G mobile
 - Frame rate: 60fps on mid-range devices
 - Bundle: 341KB gzipped

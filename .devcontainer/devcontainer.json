@@ -170,13 +170,13 @@
   },
 
   "forwardPorts": [
-    8000,  // Python HTTP Server
-    8080,  // Live Server
-    8787,  // Wrangler Dev Server
-    6379,  // Redis
-    5432,  // PostgreSQL
-    9090,  // Prometheus
-    3000   // Grafana
+    8000, // Python HTTP Server
+    8080, // Live Server
+    8787, // Wrangler Dev Server
+    6379, // Redis
+    5432, // PostgreSQL
+    9090, // Prometheus
+    3000 // Grafana
   ],
 
   "postCreateCommand": "make setup",

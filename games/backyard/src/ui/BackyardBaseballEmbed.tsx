@@ -159,7 +159,12 @@ const DEFAULT_FIELDS: BackyardFieldConfig[] = [
     description: 'A classic Texas backyard diamond',
     theme: 'classic',
     dimensions: { leftField: 35, centerField: 45, rightField: 35, foulLineLength: 50 },
-    visuals: { grassColor: '#228B22', dirtColor: '#8B4513', skyColor: '#87CEEB', ambientIntensity: 0.5 },
+    visuals: {
+      grassColor: '#228B22',
+      dirtColor: '#8B4513',
+      skyColor: '#87CEEB',
+      ambientIntensity: 0.5,
+    },
     environmentalEffects: [{ name: 'Home Field', description: '+5% contact', effect: 'bonus' }],
   },
   {
@@ -168,8 +173,15 @@ const DEFAULT_FIELDS: BackyardFieldConfig[] = [
     description: 'Sandy basepaths along the coast',
     theme: 'beach',
     dimensions: { leftField: 32, centerField: 40, rightField: 32, foulLineLength: 45 },
-    visuals: { grassColor: '#90EE90', dirtColor: '#F4A460', skyColor: '#FF7F50', ambientIntensity: 0.6 },
-    environmentalEffects: [{ name: 'Ocean Breeze', description: 'Wind pushes fly balls', effect: 'bonus' }],
+    visuals: {
+      grassColor: '#90EE90',
+      dirtColor: '#F4A460',
+      skyColor: '#FF7F50',
+      ambientIntensity: 0.6,
+    },
+    environmentalEffects: [
+      { name: 'Ocean Breeze', description: 'Wind pushes fly balls', effect: 'bonus' },
+    ],
   },
 ];
 
@@ -384,7 +396,11 @@ export function BackyardBaseballEmbed({
   };
 
   return (
-    <div ref={containerRef} className={`backyard-baseball-embed ${className}`} style={containerStyle}>
+    <div
+      ref={containerRef}
+      className={`backyard-baseball-embed ${className}`}
+      style={containerStyle}
+    >
       {/* Game Canvas */}
       <canvas ref={canvasRef} style={canvasStyle} />
 
@@ -448,7 +464,9 @@ export function BackyardBaseballEmbed({
             <div style={{ fontSize: '0.875rem', color: '#BF5700', marginBottom: '0.5rem' }}>
               SELECT BATTER
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div
+              style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}
+            >
               {DEFAULT_CHARACTERS.map((char) => (
                 <button
                   key={char.id}
@@ -456,7 +474,9 @@ export function BackyardBaseballEmbed({
                   style={{
                     padding: '0.5rem 1rem',
                     backgroundColor:
-                      selectedCharacter.id === char.id ? 'rgba(191,87,0,0.3)' : 'rgba(255,255,255,0.05)',
+                      selectedCharacter.id === char.id
+                        ? 'rgba(191,87,0,0.3)'
+                        : 'rgba(255,255,255,0.05)',
                     border: `2px solid ${selectedCharacter.id === char.id ? '#BF5700' : 'rgba(255,255,255,0.1)'}`,
                     borderRadius: '8px',
                     color: 'white',
@@ -546,7 +566,9 @@ export function BackyardBaseballEmbed({
             }}
           >
             <div style={{ fontSize: '0.625rem', color: 'rgba(255,255,255,0.6)' }}>OUTS</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#FAF8F5' }}>{currentOuts}/3</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#FAF8F5' }}>
+              {currentOuts}/3
+            </div>
           </div>
           <div
             style={{
@@ -572,8 +594,12 @@ export function BackyardBaseballEmbed({
       {/* Game Over State */}
       {gameState === 'gameover' && gameResult && (
         <div style={overlayStyle}>
-          <h2 style={{ fontSize: '1.5rem', color: '#BF5700', marginBottom: '0.5rem' }}>GAME OVER</h2>
-          <div style={{ fontSize: '3rem', fontWeight: 900, color: '#C9A227', marginBottom: '1rem' }}>
+          <h2 style={{ fontSize: '1.5rem', color: '#BF5700', marginBottom: '0.5rem' }}>
+            GAME OVER
+          </h2>
+          <div
+            style={{ fontSize: '3rem', fontWeight: 900, color: '#C9A227', marginBottom: '1rem' }}
+          >
             {gameResult.finalScore.toLocaleString()}
           </div>
 
@@ -593,7 +619,9 @@ export function BackyardBaseballEmbed({
           {/* Leaderboard */}
           {showLeaderboard && leaderboard.length > 0 && (
             <div style={{ marginBottom: '1.5rem', width: '100%', maxWidth: '300px' }}>
-              <div style={{ fontWeight: 700, color: '#BF5700', marginBottom: '0.5rem' }}>TOP SCORES</div>
+              <div style={{ fontWeight: 700, color: '#BF5700', marginBottom: '0.5rem' }}>
+                TOP SCORES
+              </div>
               {leaderboard.slice(0, 5).map((entry, i) => (
                 <div
                   key={i}
@@ -603,11 +631,15 @@ export function BackyardBaseballEmbed({
                     padding: '0.25rem 0.5rem',
                     fontSize: '0.875rem',
                     backgroundColor:
-                      entry.playerId === resolvedPlayerId.current ? 'rgba(191,87,0,0.2)' : 'transparent',
+                      entry.playerId === resolvedPlayerId.current
+                        ? 'rgba(191,87,0,0.2)'
+                        : 'transparent',
                     borderRadius: '4px',
                   }}
                 >
-                  <span>#{i + 1} {entry.playerName || 'Anonymous'}</span>
+                  <span>
+                    #{i + 1} {entry.playerName || 'Anonymous'}
+                  </span>
                   <span style={{ color: '#C9A227' }}>{entry.score.toLocaleString()}</span>
                 </div>
               ))}

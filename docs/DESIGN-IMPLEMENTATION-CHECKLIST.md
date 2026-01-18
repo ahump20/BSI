@@ -17,6 +17,7 @@
 ```
 
 **Replace with:**
+
 ```css
 /* Static gradient background (0KB) */
 body {
@@ -28,6 +29,7 @@ body {
 ```
 
 **Expected Result:**
+
 - Bundle size: -500KB
 - FCP: -2s improvement
 - Mobile battery: +30min usage
@@ -67,12 +69,17 @@ body {
     </h2>
     <div id="live-games-container" style="display: flex; gap: 1rem; overflow-x: auto;">
       <!-- Populated via API -->
-      <div class="game-card-mini" style="min-width: 280px; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
+      <div
+        class="game-card-mini"
+        style="min-width: 280px; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;"
+      >
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span>Texas</span>
           <strong style="color: var(--brand-primary);">5</strong>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;"
+        >
           <span>TCU</span>
           <strong>3</strong>
         </div>
@@ -216,18 +223,33 @@ a:focus-visible,
 
 ```css
 /* Surface colors (80% of screen) */
-body { background: var(--dark-charcoal); }
-.card { background: var(--bg-secondary); }
-.section { background: var(--bg-tertiary); }
+body {
+  background: var(--dark-charcoal);
+}
+.card {
+  background: var(--bg-secondary);
+}
+.section {
+  background: var(--bg-tertiary);
+}
 
 /* Burnt orange accents (10% of screen) - ONLY for: */
-.cta-btn-primary { background: var(--gradient-primary); } /* Primary CTAs */
-.nav-btn-primary { background: var(--gradient-primary); } /* Active nav */
-.brand-highlight { color: var(--brand-text); }           /* Key metrics */
-.border-accent { border-left: 4px solid var(--brand-primary); } /* Visual emphasis */
+.cta-btn-primary {
+  background: var(--gradient-primary);
+} /* Primary CTAs */
+.nav-btn-primary {
+  background: var(--gradient-primary);
+} /* Active nav */
+.brand-highlight {
+  color: var(--brand-text);
+} /* Key metrics */
+.border-accent {
+  border-left: 4px solid var(--brand-primary);
+} /* Visual emphasis */
 ```
 
 **Remove burnt orange from:**
+
 - Card backgrounds (use dark gray)
 - Body text (use white/gray)
 - All borders (use subtle white/10% opacity)
@@ -246,8 +268,8 @@ import { useState } from 'react';
 
 interface BoxScoreProps {
   gameId: string;
-  homeTeam: { name: string; abbr: string; score: number; };
-  awayTeam: { name: string; abbr: string; score: number; };
+  homeTeam: { name: string; abbr: string; score: number };
+  awayTeam: { name: string; abbr: string; score: number };
   battingStats: Array<{
     player: string;
     ab: number;
@@ -274,7 +296,7 @@ export const BoxScore: React.FC<BoxScoreProps> = ({
   homeTeam,
   awayTeam,
   battingStats,
-  pitchingStats
+  pitchingStats,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -307,13 +329,27 @@ export const BoxScore: React.FC<BoxScoreProps> = ({
             <thead>
               <tr>
                 <th scope="col">Player</th>
-                <th scope="col" abbr="At Bats">AB</th>
-                <th scope="col" abbr="Runs">R</th>
-                <th scope="col" abbr="Hits">H</th>
-                <th scope="col" abbr="RBI">RBI</th>
-                <th scope="col" abbr="Walks">BB</th>
-                <th scope="col" abbr="Strikeouts">SO</th>
-                <th scope="col" abbr="Batting Average">AVG</th>
+                <th scope="col" abbr="At Bats">
+                  AB
+                </th>
+                <th scope="col" abbr="Runs">
+                  R
+                </th>
+                <th scope="col" abbr="Hits">
+                  H
+                </th>
+                <th scope="col" abbr="RBI">
+                  RBI
+                </th>
+                <th scope="col" abbr="Walks">
+                  BB
+                </th>
+                <th scope="col" abbr="Strikeouts">
+                  SO
+                </th>
+                <th scope="col" abbr="Batting Average">
+                  AVG
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -337,13 +373,27 @@ export const BoxScore: React.FC<BoxScoreProps> = ({
             <thead>
               <tr>
                 <th scope="col">Pitcher</th>
-                <th scope="col" abbr="Innings Pitched">IP</th>
-                <th scope="col" abbr="Hits">H</th>
-                <th scope="col" abbr="Runs">R</th>
-                <th scope="col" abbr="Earned Runs">ER</th>
-                <th scope="col" abbr="Walks">BB</th>
-                <th scope="col" abbr="Strikeouts">SO</th>
-                <th scope="col" abbr="ERA">ERA</th>
+                <th scope="col" abbr="Innings Pitched">
+                  IP
+                </th>
+                <th scope="col" abbr="Hits">
+                  H
+                </th>
+                <th scope="col" abbr="Runs">
+                  R
+                </th>
+                <th scope="col" abbr="Earned Runs">
+                  ER
+                </th>
+                <th scope="col" abbr="Walks">
+                  BB
+                </th>
+                <th scope="col" abbr="Strikeouts">
+                  SO
+                </th>
+                <th scope="col" abbr="ERA">
+                  ERA
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -454,7 +504,7 @@ export const BoxScore: React.FC<BoxScoreProps> = ({
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.box-score-details th[scope="col"] {
+.box-score-details th[scope='col'] {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -462,7 +512,7 @@ export const BoxScore: React.FC<BoxScoreProps> = ({
   font-weight: 600;
 }
 
-.box-score-details th[scope="row"] {
+.box-score-details th[scope='row'] {
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -515,10 +565,7 @@ interface StandingsTableProps {
 type SortKey = keyof Team;
 type SortDirection = 'asc' | 'desc';
 
-export const StandingsTable: React.FC<StandingsTableProps> = ({
-  conference,
-  teams
-}) => {
+export const StandingsTable: React.FC<StandingsTableProps> = ({ conference, teams }) => {
   const [sortKey, setSortKey] = useState<SortKey>('rank');
   const [sortDir, setSortDir] = useState<SortDirection>('asc');
 
@@ -564,9 +611,13 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
               <th scope="col" onClick={() => handleSort('pct')} className="sortable">
                 Pct {sortKey === 'pct' && (sortDir === 'asc' ? '↑' : '↓')}
               </th>
-              <th scope="col" abbr="Games Back">GB</th>
+              <th scope="col" abbr="Games Back">
+                GB
+              </th>
               <th scope="col">Strk</th>
-              <th scope="col" className="hide-mobile">Home</th>
+              <th scope="col" className="hide-mobile">
+                Home
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -581,7 +632,9 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
                 <td>{team.losses}</td>
                 <td>{team.pct}</td>
                 <td>{team.gb}</td>
-                <td className={`streak ${team.streak.startsWith('W') ? 'win-streak' : 'loss-streak'}`}>
+                <td
+                  className={`streak ${team.streak.startsWith('W') ? 'win-streak' : 'loss-streak'}`}
+                >
                   {team.streak}
                 </td>
                 <td className="hide-mobile">{team.home}</td>
@@ -695,12 +748,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 Run: `npx lighthouse https://blazesportsintel.com --view`
 
 **Before Changes:**
+
 - Performance: ~40 (poor)
 - Accessibility: ~75 (needs work)
 - Best Practices: ~85 (good)
 - SEO: ~95 (excellent)
 
 **After Changes (Target):**
+
 - Performance: ≥90
 - Accessibility: ≥95
 - Best Practices: ≥90
@@ -758,6 +813,7 @@ npx lighthouse https://blazesportsintel.com --output html --output-path ./lighth
 **User says:** "This is clearly better than ESPN for college baseball"
 
 **Measurable proof:**
+
 - [ ] Box score visible in <5 seconds from homepage
 - [ ] Mobile Lighthouse Performance ≥90
 - [ ] 0 WCAG AA violations

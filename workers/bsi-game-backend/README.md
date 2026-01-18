@@ -13,16 +13,16 @@ Cloudflare Worker backend for the Diamond Sluggers mobile backyard baseball game
 
 ## Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/game/save` | Save game progress |
-| `GET` | `/api/game/load/:userId` | Load saved game |
-| `GET` | `/api/leaderboard` | Get top scores |
-| `POST` | `/api/leaderboard/submit` | Submit high score |
-| `GET` | `/api/players` | Get available characters |
-| `GET` | `/api/stadiums` | Get unlocked stadiums |
-| `POST` | `/api/match/result` | Record match results |
-| `GET` | `/health` | Health check |
+| Method | Path                      | Description              |
+| ------ | ------------------------- | ------------------------ |
+| `POST` | `/api/game/save`          | Save game progress       |
+| `GET`  | `/api/game/load/:userId`  | Load saved game          |
+| `GET`  | `/api/leaderboard`        | Get top scores           |
+| `POST` | `/api/leaderboard/submit` | Submit high score        |
+| `GET`  | `/api/players`            | Get available characters |
+| `GET`  | `/api/stadiums`           | Get unlocked stadiums    |
+| `POST` | `/api/match/result`       | Record match results     |
+| `GET`  | `/health`                 | Health check             |
 
 ## Setup
 
@@ -177,35 +177,35 @@ Error responses:
 
 ## Cloudflare Bindings
 
-| Binding | Type | Purpose |
-|---------|------|---------|
-| `DB` | D1 | Game data, user progress, match history |
-| `CACHE` | KV | Leaderboard caching, rate limiting |
-| `ASSETS` | R2 | Character sprites, stadium images |
+| Binding  | Type | Purpose                                 |
+| -------- | ---- | --------------------------------------- |
+| `DB`     | D1   | Game data, user progress, match history |
+| `CACHE`  | KV   | Leaderboard caching, rate limiting      |
+| `ASSETS` | R2   | Character sprites, stadium images       |
 
 ## Characters
 
-| ID | Name | Unlock |
-|----|------|--------|
-| maya-thunder | Maya Thunder | Starter |
+| ID             | Name                       | Unlock  |
+| -------------- | -------------------------- | ------- |
+| maya-thunder   | Maya Thunder               | Starter |
 | jackson-rocket | Jackson "Rocket" Rodriguez | Starter |
-| emma-glove | Emma "Glove" Chen | Starter |
-| tyler-knuckle | Tyler "Knuckle" Williams | 5 wins |
-| sophia-spark | Sophia "Spark" Martinez | 10 wins |
-| marcus-dash | Marcus "Dash" Johnson | 15 wins |
-| olivia-cannon | Olivia "Cannon" Lee | 20 wins |
-| carlos-magic | Carlos "Magic" Garcia | 25 wins |
-| isabella-ice | Isabella "Ice" Nguyen | 30 wins |
-| ryan-wall | Ryan "The Wall" Brown | 35 wins |
-| lily-zoom | Lily "Zoom" Park | 40 wins |
-| diego-fire | Diego "Fire" Ramirez | 50 wins |
+| emma-glove     | Emma "Glove" Chen          | Starter |
+| tyler-knuckle  | Tyler "Knuckle" Williams   | 5 wins  |
+| sophia-spark   | Sophia "Spark" Martinez    | 10 wins |
+| marcus-dash    | Marcus "Dash" Johnson      | 15 wins |
+| olivia-cannon  | Olivia "Cannon" Lee        | 20 wins |
+| carlos-magic   | Carlos "Magic" Garcia      | 25 wins |
+| isabella-ice   | Isabella "Ice" Nguyen      | 30 wins |
+| ryan-wall      | Ryan "The Wall" Brown      | 35 wins |
+| lily-zoom      | Lily "Zoom" Park           | 40 wins |
+| diego-fire     | Diego "Fire" Ramirez       | 50 wins |
 
 ## Stadiums
 
-| ID | Name | Unlock |
-|----|------|--------|
-| boerne-backyard | Boerne Backyard | Starter |
-| san-antonio-lot | San Antonio Sand Lot | 8 wins |
-| austin-treehouse | Austin Treehouse Field | 15 wins |
-| houston-bayou | Houston Bayou Diamond | 25 wins |
+| ID                  | Name                     | Unlock  |
+| ------------------- | ------------------------ | ------- |
+| boerne-backyard     | Boerne Backyard          | Starter |
+| san-antonio-lot     | San Antonio Sand Lot     | 8 wins  |
+| austin-treehouse    | Austin Treehouse Field   | 15 wins |
+| houston-bayou       | Houston Bayou Diamond    | 25 wins |
 | dallas-construction | Dallas Construction Site | 40 wins |

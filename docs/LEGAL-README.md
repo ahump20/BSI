@@ -1,4 +1,5 @@
 # Legal Compliance Framework
+
 ## Blaze Sports Intel - blazesportsintel.com
 
 **Version:** 1.0
@@ -12,11 +13,13 @@
 ### 1. Add to All HTML Pages
 
 **In `<head>` section:**
+
 ```html
 <script src="/components/cookie-banner.js" defer></script>
 ```
 
 **Before `</body>` tag:**
+
 ```html
 <script src="/components/legal-footer.js"></script>
 <legal-footer></legal-footer>
@@ -36,6 +39,7 @@ wrangler pages deploy dist --project-name blazesportsintel --branch main
 ### 3. Verify Deployment
 
 Visit these URLs to confirm:
+
 - https://blazesportsintel.com/privacy
 - https://blazesportsintel.com/terms
 - https://blazesportsintel.com/cookies
@@ -46,16 +50,19 @@ Visit these URLs to confirm:
 ## What's Included
 
 ### Legal Documentation
+
 - **Privacy Policy** - GDPR, CCPA, COPPA compliant (4,500 words)
 - **Terms of Service** - Game-specific, Texas jurisdiction (6,000 words)
 - **Cookie Policy** - EU Cookie Law compliant (2,800 words)
 - **Accessibility Statement** - WCAG 2.1 AA (2,200 words)
 
 ### Interactive Components
+
 - **Cookie Consent Banner** - Auto-shows, GDPR/CCPA compliant
 - **Legal Footer** - Web component for consistent footer
 
 ### Backend Functions
+
 - **Consent API** - Stores cookie preferences in Cloudflare KV
 - **GDPR Export** - Exports all user data (JSON format)
 - **GDPR Delete** - Deletes all user data (right to be forgotten)
@@ -94,17 +101,17 @@ BSI/
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blaze Sports Intel</title>
 
     <!-- Cookie Consent (GDPR/CCPA) -->
     <script src="/components/cookie-banner.js" defer></script>
 
     <!-- Your other scripts -->
-</head>
-<body>
+  </head>
+  <body>
     <!-- Your content here -->
 
     <h1>Welcome to Blaze Sports Intel</h1>
@@ -113,7 +120,7 @@ BSI/
     <!-- Legal Footer -->
     <script src="/components/legal-footer.js"></script>
     <legal-footer></legal-footer>
-</body>
+  </body>
 </html>
 ```
 
@@ -122,14 +129,14 @@ BSI/
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Baseball Game | Blaze Sports Intel</title>
 
     <!-- Cookie Consent -->
     <script src="/components/cookie-banner.js" defer></script>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Game canvas -->
     <canvas id="gameCanvas"></canvas>
 
@@ -139,7 +146,7 @@ BSI/
 
     <!-- Game script -->
     <script src="/js/game.js"></script>
-</body>
+  </body>
 </html>
 ```
 
@@ -150,33 +157,36 @@ BSI/
 ### Cookie Consent API
 
 **Get user's consent preferences:**
+
 ```javascript
 const response = await fetch('/api/consent?userId=user123');
 const data = await response.json();
 
 if (data.preferences.analytics) {
-    // Enable analytics
+  // Enable analytics
 }
 ```
 
 **Save consent preferences:**
+
 ```javascript
 const response = await fetch('/api/consent', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        userId: 'user123',
-        preferences: {
-            essential: true,
-            analytics: true
-        }
-    })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    userId: 'user123',
+    preferences: {
+      essential: true,
+      analytics: true,
+    },
+  }),
 });
 ```
 
 ### GDPR Data Export
 
 **Export all user data:**
+
 ```javascript
 const response = await fetch('/api/privacy/export?userId=user123');
 const blob = await response.blob();
@@ -190,11 +200,11 @@ a.click();
 ```
 
 **Delete all user data:**
+
 ```javascript
-const response = await fetch(
-    '/api/privacy/export?userId=user123&confirm=DELETE_MY_DATA',
-    { method: 'DELETE' }
-);
+const response = await fetch('/api/privacy/export?userId=user123&confirm=DELETE_MY_DATA', {
+  method: 'DELETE',
+});
 
 const result = await response.json();
 console.log(result.message); // "All your personal data has been permanently deleted"
@@ -205,6 +215,7 @@ console.log(result.message); // "All your personal data has been permanently del
 ## Compliance Checklist
 
 ### GDPR (European Union) ✅
+
 - [x] Transparent data collection disclosure
 - [x] Lawful basis for processing (consent + legitimate interest)
 - [x] Right to access (export function)
@@ -217,6 +228,7 @@ console.log(result.message); // "All your personal data has been permanently del
 - [x] DPO contact information
 
 ### CCPA (California) ✅
+
 - [x] Notice at collection
 - [x] Right to know
 - [x] Right to delete
@@ -225,6 +237,7 @@ console.log(result.message); // "All your personal data has been permanently del
 - [x] Non-discrimination
 
 ### COPPA (Children) ✅
+
 - [x] Privacy policy for children
 - [x] Parental consent mechanism
 - [x] Limited data collection for <13
@@ -232,6 +245,7 @@ console.log(result.message); // "All your personal data has been permanently del
 - [x] Data security measures
 
 ### WCAG 2.1 AA (Accessibility) ✅
+
 - [x] Keyboard navigation
 - [x] Screen reader compatible
 - [x] Color contrast 4.5:1
@@ -274,6 +288,7 @@ curl -I https://blazesportsintel.com/accessibility
 ### Update Contact Email
 
 Search and replace `ahump20@outlook.com` with your email in:
+
 - `public/privacy.html`
 - `public/terms.html`
 - `public/cookies.html`
@@ -287,6 +302,7 @@ Search and replace "Blaze Sports Intel" in all files.
 ### Update Privacy Policy
 
 Edit `/public/privacy.html` and update:
+
 - Section 1.2: Add new data collection points
 - Section 3: Add new data usage purposes
 - Update "Last Updated" date
@@ -294,6 +310,7 @@ Edit `/public/privacy.html` and update:
 ### Add New Cookie Category
 
 Edit `/public/components/cookie-banner.js`:
+
 1. Add new checkbox in `showCustomizeModal()`
 2. Update `setConsent()` to include new category
 3. Update Cookie Policy to document new cookies
@@ -305,17 +322,20 @@ Edit `/public/components/cookie-banner.js`:
 ### Cookie Banner Not Showing
 
 1. **Check browser console for errors**
+
    ```javascript
    // Open DevTools (F12) and look for errors
    ```
 
 2. **Verify script loads**
+
    ```html
    <!-- Make sure this is in <head> -->
    <script src="/components/cookie-banner.js" defer></script>
    ```
 
 3. **Clear localStorage**
+
    ```javascript
    localStorage.removeItem('cookie_consent');
    location.reload();
@@ -328,11 +348,13 @@ Edit `/public/components/cookie-banner.js`:
 ### Legal Footer Not Displaying
 
 1. **Verify web component registration**
+
    ```javascript
    console.log(customElements.get('legal-footer')); // Should not be undefined
    ```
 
 2. **Check Shadow DOM support**
+
    ```javascript
    console.log('attachShadow' in Element.prototype); // Should be true
    ```
@@ -351,6 +373,7 @@ Edit `/public/components/cookie-banner.js`:
    - Create KV namespace: `wrangler kv:namespace create CACHE`
 
 2. **Verify function deployment**
+
    ```bash
    wrangler pages deployment list --project-name blazesportsintel
    ```
@@ -370,20 +393,24 @@ Edit `/public/components/cookie-banner.js`:
 ## Maintenance Schedule
 
 ### Weekly
+
 - [ ] Monitor consent banner analytics
 - [ ] Review error logs (Sentry)
 
 ### Monthly
+
 - [ ] Check for broken links in legal pages
 - [ ] Review analytics for privacy compliance
 - [ ] Test GDPR export function
 
 ### Quarterly
+
 - [ ] Run accessibility audit (Lighthouse)
 - [ ] Review and update legal pages if needed
 - [ ] Check third-party provider terms
 
 ### Annually
+
 - [ ] Full legal review (consider hiring attorney)
 - [ ] Update copyright year (auto-updated in footer)
 - [ ] Review GDPR/CCPA/COPPA for changes
@@ -394,16 +421,19 @@ Edit `/public/components/cookie-banner.js`:
 ## Support
 
 ### Documentation
+
 - **Full Implementation Guide:** `LEGAL-COMPLIANCE-IMPLEMENTATION.md`
 - **Executive Summary:** `LEGAL-COMPLIANCE-SUMMARY.md`
 - **This README:** Quick reference and troubleshooting
 
 ### Contact
+
 - **Email:** ahump20@outlook.com
 - **Subject Line:** "Legal Compliance - [Your Question]"
 - **Response Time:** 24-72 hours
 
 ### External Resources
+
 - [GDPR Official Text](https://gdpr-info.eu/)
 - [CCPA Official Text](https://oag.ca.gov/privacy/ccpa)
 - [COPPA Guide](https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions)
@@ -413,9 +443,9 @@ Edit `/public/components/cookie-banner.js`:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-11-09 | Initial release |
+| Version | Date       | Changes         |
+| ------- | ---------- | --------------- |
+| 1.0     | 2025-11-09 | Initial release |
 
 ---
 

@@ -41,10 +41,7 @@
   "nil_operations": {
     "primary_collective": "Texas One Fund",
     "lead_contact": "Neill Woelk",
-    "contact_channels": [
-      "support@texasonefund.org",
-      "https://texasonefund.org/contact"
-    ],
+    "contact_channels": ["support@texasonefund.org", "https://texasonefund.org/contact"],
     "recent_initiatives": "Launching SEC-era baseball donor tour across Texas (Oct 2024).",
     "intel_status": "needs_verification"
   },
@@ -58,9 +55,7 @@
   "front_office": {
     "athletic_director": "Chris Del Conte",
     "baseball_admin": "Drew Martin",
-    "financial_points_of_contact": [
-      "ticketquestions@utexas.edu"
-    ]
+    "financial_points_of_contact": ["ticketquestions@utexas.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 6,

@@ -50,11 +50,12 @@ export function isThreeJSEnabled(userId?: string): boolean {
 
   // Consistent bucketing based on user ID
   const hash = hashCode(userId);
-  return (hash % 100) < FEATURE_FLAGS.THREE_JS_PERCENTAGE;
+  return hash % 100 < FEATURE_FLAGS.THREE_JS_PERCENTAGE;
 }
 ```
 
 **Environment Variables:**
+
 ```env
 NEXT_PUBLIC_THREE_JS_ENABLED=false
 NEXT_PUBLIC_THREE_JS_PERCENTAGE=0
@@ -122,7 +123,7 @@ useEffect(() => {
       meshRef.current.geometry?.dispose();
       const material = meshRef.current.material;
       if (Array.isArray(material)) {
-        material.forEach(m => m.dispose());
+        material.forEach((m) => m.dispose());
       } else if (material) {
         material.dispose();
       }
@@ -170,7 +171,7 @@ export function usePerformanceMonitor(sampleWindow = 60) {
     metricsRef.current = {
       avgFps: frames.reduce((a, b) => a + b, 0) / frames.length,
       minFps: Math.min(...frames),
-      frameDrops: frames.filter(f => f < 30).length,
+      frameDrops: frames.filter((f) => f < 30).length,
       memoryUsage: (performance as any).memory?.usedJSHeapSize,
     };
 
@@ -209,13 +210,13 @@ function detectTier(): PerformanceTier {
 
 ### Phase 0 Tests
 
-| Test | Type | Pass Criteria |
-|------|------|---------------|
-| Feature flag toggles rendering | Unit | Flag false = no Three.js imports |
-| Error boundary catches WebGL errors | Unit | Fallback renders on error |
-| Memory stable after 100 mount/unmount cycles | E2E | Memory growth < 10MB |
-| SSR produces no hydration errors | E2E | No console errors |
-| CSS fallback visually acceptable | Visual | Screenshot comparison passes |
+| Test                                         | Type   | Pass Criteria                    |
+| -------------------------------------------- | ------ | -------------------------------- |
+| Feature flag toggles rendering               | Unit   | Flag false = no Three.js imports |
+| Error boundary catches WebGL errors          | Unit   | Fallback renders on error        |
+| Memory stable after 100 mount/unmount cycles | E2E    | Memory growth < 10MB             |
+| SSR produces no hydration errors             | E2E    | No console errors                |
+| CSS fallback visually acceptable             | Visual | Screenshot comparison passes     |
 
 ### Phase 0 GO/NO-GO Checklist
 
@@ -245,6 +246,7 @@ Only 5% of users (desktop only) see Three.js.
 ### Monitoring Dashboard
 
 Create Cloudflare Analytics dashboard with:
+
 - Three.js load rate
 - Error rate by component
 - FPS distribution
@@ -253,21 +255,21 @@ Create Cloudflare Analytics dashboard with:
 
 ### Alerting Thresholds
 
-| Metric | Warning | Critical | Action |
-|--------|---------|----------|--------|
-| Error Rate | > 0.5% | > 1% | Investigate / Disable |
-| Avg FPS | < 45 | < 30 | Reduce particles / Disable |
-| Memory Growth | > 50MB/min | > 100MB/min | Investigate memory leak |
-| LCP | > 2.5s | > 3.5s | Review bundle splitting |
+| Metric        | Warning    | Critical    | Action                     |
+| ------------- | ---------- | ----------- | -------------------------- |
+| Error Rate    | > 0.5%     | > 1%        | Investigate / Disable      |
+| Avg FPS       | < 45       | < 30        | Reduce particles / Disable |
+| Memory Growth | > 50MB/min | > 100MB/min | Investigate memory leak    |
+| LCP           | > 2.5s     | > 3.5s      | Review bundle splitting    |
 
 ### A/B Test Metrics
 
-| Metric | Control (CSS) | Experiment (Three.js) | Significance |
-|--------|---------------|----------------------|--------------|
-| Bounce Rate | Baseline | Measure | p < 0.05 |
-| Time on Page | Baseline | Measure | p < 0.05 |
-| Scroll Depth | Baseline | Measure | p < 0.05 |
-| CTA Click Rate | Baseline | Measure | p < 0.05 |
+| Metric         | Control (CSS) | Experiment (Three.js) | Significance |
+| -------------- | ------------- | --------------------- | ------------ |
+| Bounce Rate    | Baseline      | Measure               | p < 0.05     |
+| Time on Page   | Baseline      | Measure               | p < 0.05     |
+| Scroll Depth   | Baseline      | Measure               | p < 0.05     |
+| CTA Click Rate | Baseline      | Measure               | p < 0.05     |
 
 ### Phase 1 GO/NO-GO Checklist
 
@@ -287,22 +289,24 @@ Create Cloudflare Analytics dashboard with:
 
 ### Rollout Schedule
 
-| Day | Percentage | Criteria to Proceed |
-|-----|------------|---------------------|
-| 1-3 | 10% | Error rate < 0.5% |
-| 4-6 | 25% | Error rate < 0.5%, FPS > 45 |
-| 7-9 | 50% | All metrics stable |
-| 10-12 | 75% | All metrics stable |
-| 13-14 | 100% (desktop) | All metrics stable |
+| Day   | Percentage     | Criteria to Proceed         |
+| ----- | -------------- | --------------------------- |
+| 1-3   | 10%            | Error rate < 0.5%           |
+| 4-6   | 25%            | Error rate < 0.5%, FPS > 45 |
+| 7-9   | 50%            | All metrics stable          |
+| 10-12 | 75%            | All metrics stable          |
+| 13-14 | 100% (desktop) | All metrics stable          |
 
 ### Rollback Triggers
 
 **Immediate Rollback to 0%:**
+
 - Error rate > 2%
 - Any crash reports
 - Memory leak confirmed
 
 **Pause and Investigate:**
+
 - Error rate 1-2%
 - FPS drops below 40
 - User complaints
@@ -331,6 +335,7 @@ Create Cloudflare Analytics dashboard with:
 ### Mobile Evaluation Criteria
 
 Mobile Three.js will be considered when:
+
 - [ ] Desktop stable for 90+ days
 - [ ] WebGPU adoption > 50% on mobile
 - [ ] Battery-aware rendering implemented
@@ -339,11 +344,11 @@ Mobile Three.js will be considered when:
 
 ### Mobile Tiers (Future)
 
-| Device Tier | Criteria | Rendering |
-|-------------|----------|-----------|
-| Low | deviceMemory < 4GB, cores < 4 | CSS only |
-| Medium | deviceMemory 4-6GB, cores 4-6 | Three.js @ 50 particles, 30fps |
-| High | deviceMemory > 6GB, cores > 6 | Three.js @ 100 particles, 60fps |
+| Device Tier | Criteria                      | Rendering                       |
+| ----------- | ----------------------------- | ------------------------------- |
+| Low         | deviceMemory < 4GB, cores < 4 | CSS only                        |
+| Medium      | deviceMemory 4-6GB, cores 4-6 | Three.js @ 50 particles, 30fps  |
+| High        | deviceMemory > 6GB, cores > 6 | Three.js @ 100 particles, 60fps |
 
 ---
 
@@ -382,36 +387,36 @@ Mobile Three.js will be considered when:
 
 ### Unit Tests
 
-| Test | File | Coverage |
-|------|------|----------|
-| Performance tier detection | `usePerformanceTier.test.ts` | All tiers |
-| Feature flag logic | `feature-flags.test.ts` | All branches |
-| Error boundary | `ThreeErrorBoundary.test.tsx` | Error catching |
+| Test                       | File                          | Coverage       |
+| -------------------------- | ----------------------------- | -------------- |
+| Performance tier detection | `usePerformanceTier.test.ts`  | All tiers      |
+| Feature flag logic         | `feature-flags.test.ts`       | All branches   |
+| Error boundary             | `ThreeErrorBoundary.test.tsx` | Error catching |
 
 ### Integration Tests
 
-| Test | Tool | Coverage |
-|------|------|----------|
-| Three.js renders on desktop | Playwright | Chrome, Firefox, Safari |
-| CSS fallback on mobile | Playwright | iPhone, Android emulation |
-| Memory stability | Playwright + DevTools | 10-minute session |
+| Test                        | Tool                  | Coverage                  |
+| --------------------------- | --------------------- | ------------------------- |
+| Three.js renders on desktop | Playwright            | Chrome, Firefox, Safari   |
+| CSS fallback on mobile      | Playwright            | iPhone, Android emulation |
+| Memory stability            | Playwright + DevTools | 10-minute session         |
 
 ### Visual Regression Tests
 
-| Test | Tool | Coverage |
-|------|------|----------|
+| Test                       | Tool                   | Coverage          |
+| -------------------------- | ---------------------- | ----------------- |
 | Hero appearance (Three.js) | Playwright Screenshots | Desktop viewports |
-| Hero appearance (CSS) | Playwright Screenshots | Mobile viewports |
-| Reduced motion | Playwright Screenshots | Static fallback |
+| Hero appearance (CSS)      | Playwright Screenshots | Mobile viewports  |
+| Reduced motion             | Playwright Screenshots | Static fallback   |
 
 ### Performance Tests
 
-| Test | Tool | Threshold |
-|------|------|-----------|
-| LCP | Lighthouse CI | < 2.5s |
+| Test        | Tool                    | Threshold                |
+| ----------- | ----------------------- | ------------------------ |
+| LCP         | Lighthouse CI           | < 2.5s                   |
 | Bundle size | webpack-bundle-analyzer | < 180KB (Three.js chunk) |
-| FPS | Custom monitor | > 45fps avg |
-| Memory | Chrome DevTools | No growth over time |
+| FPS         | Custom monitor          | > 45fps avg              |
+| Memory      | Chrome DevTools         | No growth over time      |
 
 ---
 
@@ -419,35 +424,35 @@ Mobile Three.js will be considered when:
 
 ### New Files
 
-| File | Purpose |
-|------|---------|
-| `lib/feature-flags.ts` | Feature flag management |
-| `components/three/ThreeErrorBoundary.tsx` | Error handling |
-| `components/three/usePerformanceMonitor.ts` | FPS/memory tracking |
+| File                                        | Purpose                 |
+| ------------------------------------------- | ----------------------- |
+| `lib/feature-flags.ts`                      | Feature flag management |
+| `components/three/ThreeErrorBoundary.tsx`   | Error handling          |
+| `components/three/usePerformanceMonitor.ts` | FPS/memory tracking     |
 
 ### Modified Files
 
-| File | Changes |
-|------|---------|
-| `components/three/HeroEmbers.tsx` | Add cleanup, error boundary, feature flag |
-| `components/three/usePerformanceTier.ts` | Harden mobile detection |
-| `components/hero/HeroSection.tsx` | Wrap with error boundary |
-| `.env.production` | Add feature flag variables |
+| File                                     | Changes                                   |
+| ---------------------------------------- | ----------------------------------------- |
+| `components/three/HeroEmbers.tsx`        | Add cleanup, error boundary, feature flag |
+| `components/three/usePerformanceTier.ts` | Harden mobile detection                   |
+| `components/hero/HeroSection.tsx`        | Wrap with error boundary                  |
+| `.env.production`                        | Add feature flag variables                |
 
 ### No Changes Needed
 
-| File | Reason |
-|------|--------|
-| `components/three/ThreeCanvas.tsx` | Already has proper structure |
-| `components/three/index.ts` | Export organization correct |
-| `components/hero/HeroSectionWrapper.tsx` | SSR handling correct |
+| File                                     | Reason                       |
+| ---------------------------------------- | ---------------------------- |
+| `components/three/ThreeCanvas.tsx`       | Already has proper structure |
+| `components/three/index.ts`              | Export organization correct  |
+| `components/hero/HeroSectionWrapper.tsx` | SSR handling correct         |
 
 ---
 
 ## Sign-Off
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Engineering Lead | | | |
-| Frontend Lead | | | |
-| Product Owner | | | |
+| Role             | Name | Date | Signature |
+| ---------------- | ---- | ---- | --------- |
+| Engineering Lead |      |      |           |
+| Frontend Lead    |      |      |           |
+| Product Owner    |      |      |           |

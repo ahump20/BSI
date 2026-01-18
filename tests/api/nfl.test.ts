@@ -142,9 +142,8 @@ describe('NFL API Tests', () => {
       for (const division of data.standings) {
         for (const team of division.teams) {
           const totalGames = team.wins + team.losses + (team.ties || 0);
-          const expectedWinPct = totalGames > 0
-            ? (team.wins + (team.ties || 0) * 0.5) / totalGames
-            : 0;
+          const expectedWinPct =
+            totalGames > 0 ? (team.wins + (team.ties || 0) * 0.5) / totalGames : 0;
 
           expect(Math.abs(team.winPct - expectedWinPct)).toBeLessThan(0.001);
         }
@@ -370,7 +369,9 @@ describe('NFL API Tests', () => {
       // Get Titans data from standings endpoint
       const standingsResponse = await fetch(`${BASE_URL}/api/nfl/standings?division=AFC%20South`);
       const standingsData = await standingsResponse.json();
-      const titansStandings = standingsData.standings[0].teams.find((t: any) => t.abbreviation === 'TEN');
+      const titansStandings = standingsData.standings[0].teams.find(
+        (t: any) => t.abbreviation === 'TEN'
+      );
 
       // Win/loss records should match
       expect(teamData.team.wins).toBe(titansStandings.wins);
@@ -409,9 +410,7 @@ describe('NFL API Tests', () => {
     });
 
     it('should support multiple filters', async () => {
-      const response = await fetch(
-        `${BASE_URL}/api/nfl/standings?conference=AFC&season=2025`
-      );
+      const response = await fetch(`${BASE_URL}/api/nfl/standings?conference=AFC&season=2025`);
       expect(response.ok).toBe(true);
 
       const data = await response.json();

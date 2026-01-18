@@ -9,7 +9,7 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
-        
+
       - id: context7-validation
         name: Context7 Integration Validation
         entry: npm run context7:validate
@@ -18,7 +18,7 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
-        
+
       - id: brand-color-protection
         name: Brand Color Protection
         entry: node scripts/validate-ui-protection.js
@@ -27,7 +27,7 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
-        
+
       - id: drift-detection
         name: Data Drift Detection
         entry: python observability/drift/drift_detector.py --pre-commit

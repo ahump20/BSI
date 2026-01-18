@@ -41,9 +41,11 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ## Files Created
 
 ### 1. Detail Maximizer CSS
+
 **Path:** `/public/css/blaze-detail-maximizer.css` (27KB)
 
 **Features:**
+
 - Typography perfection (antialiasing, ligatures, kerning)
 - OKLCH color system for perceptually uniform gradients
 - 5-shadow photorealistic depth
@@ -55,15 +57,18 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 - Enhanced component variants
 
 **Usage:**
+
 ```html
 <!-- Add to <head> after blaze-design-system.css -->
-<link rel="stylesheet" href="/css/blaze-detail-maximizer.css">
+<link rel="stylesheet" href="/css/blaze-detail-maximizer.css" />
 ```
 
 ### 2. Particle System JS
+
 **Path:** `/public/js/blaze-particles.js` (18KB)
 
 **Features:**
+
 - 150,000 particles with GPU optimization
 - Mouse repulsion and parallax
 - Auto-quality scaling (Ultra → High → Medium → Low)
@@ -73,15 +78,18 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 - FPS monitoring and adaptive quality
 
 **Usage:**
+
 ```html
 <!-- Add before </body> -->
 <script src="/js/blaze-particles.js"></script>
 ```
 
 ### 3. Enhanced Chart Library
+
 **Path:** `/public/js/blaze-charts.js` (updated)
 
 **Enhancements:**
+
 - Glow effects on chart elements
 - Enhanced tooltips with shadows
 - Staggered animation delays
@@ -99,11 +107,11 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ```html
 <head>
   <!-- Existing design system -->
-  <link rel="stylesheet" href="/css/blaze-design-system.css">
-  <link rel="stylesheet" href="/css/blaze-components.css">
+  <link rel="stylesheet" href="/css/blaze-design-system.css" />
+  <link rel="stylesheet" href="/css/blaze-components.css" />
 
   <!-- NEW: Detail maximizer -->
-  <link rel="stylesheet" href="/css/blaze-detail-maximizer.css">
+  <link rel="stylesheet" href="/css/blaze-detail-maximizer.css" />
 </head>
 ```
 
@@ -139,9 +147,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
   <div class="card-header">
     <h3 class="card-title">Game Card</h3>
   </div>
-  <div class="card-body">
-    Content here
-  </div>
+  <div class="card-body">Content here</div>
 </div>
 
 <!-- AFTER -->
@@ -149,9 +155,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
   <div class="card-header">
     <h3 class="card-title text-depth">Game Card</h3>
   </div>
-  <div class="card-body">
-    Content here
-  </div>
+  <div class="card-body">Content here</div>
 </div>
 ```
 
@@ -159,14 +163,10 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 
 ```html
 <!-- BEFORE -->
-<button class="blaze-btn blaze-btn-primary">
-  Click Me
-</button>
+<button class="blaze-btn blaze-btn-primary">Click Me</button>
 
 <!-- AFTER -->
-<button class="blaze-btn-ultra interact-punch">
-  Click Me
-</button>
+<button class="blaze-btn-ultra interact-punch">Click Me</button>
 ```
 
 **Example: Enhance Live Game Cards**
@@ -187,17 +187,13 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 
 ```html
 <!-- Gradient text -->
-<h1 class="text-gradient-enhanced" data-text="Blaze Sports Intel">
-  Blaze Sports Intel
-</h1>
+<h1 class="text-gradient-enhanced" data-text="Blaze Sports Intel">Blaze Sports Intel</h1>
 
 <!-- Depth text -->
 <h2 class="text-depth">Conference Standings</h2>
 
 <!-- Crisp rendering -->
-<p class="text-crisp">
-  Real-time updates with laser-sharp clarity.
-</p>
+<p class="text-crisp">Real-time updates with laser-sharp clarity.</p>
 ```
 
 ### Step 5: Add Lighting Effects
@@ -223,9 +219,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 
 ```html
 <!-- Bloom effect (glow) -->
-<div class="stat-highlight effect-bloom">
-  98.5 ERA
-</div>
+<div class="stat-highlight effect-bloom">98.5 ERA</div>
 
 <!-- Film grain texture -->
 <div class="hero-section effect-grain effect-vignette">
@@ -233,9 +227,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 </div>
 
 <!-- Chromatic aberration (subtle RGB split) -->
-<div class="live-indicator effect-chromatic">
-  LIVE
-</div>
+<div class="live-indicator effect-chromatic">LIVE</div>
 ```
 
 ---
@@ -245,12 +237,14 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ### Typography Perfection
 
 **Applied automatically to all text:**
+
 - Font smoothing: antialiased
 - Ligatures: common + discretionary
 - Kerning: optical
 - Sub-pixel positioning
 
 **Explicit classes:**
+
 - `.text-depth` - Multi-layer text shadow for 3D effect
 - `.text-gradient-enhanced` - 5-stop gradient with glow
 - `.text-crisp` - GPU-accelerated sharp rendering
@@ -258,6 +252,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ### Shadow Systems
 
 **Photorealistic depth:**
+
 ```css
 .shadow-photorealistic {
   /* 5-shadow stack:
@@ -271,6 +266,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ```
 
 **Usage:**
+
 - `.shadow-photorealistic` - Ultimate depth
 - `.shadow-elevated-brand` - Floating with glow
 - `.shadow-float` - AAA game UI style
@@ -279,17 +275,15 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ### Materials (PBR-Style)
 
 **Metal:**
-```html
-<div class="material-metal">
-  Brushed aluminum look
-</div>
 
-<div class="material-metal-rough">
-  Rough metal with noise texture
-</div>
+```html
+<div class="material-metal">Brushed aluminum look</div>
+
+<div class="material-metal-rough">Rough metal with noise texture</div>
 ```
 
 **Glass:**
+
 ```html
 <!-- 3-layer refractive stack -->
 <div class="material-glass-advanced glass-ultra glass-ultra-highlights">
@@ -297,18 +291,18 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 </div>
 
 <!-- Frosted glass -->
-<div class="material-glass-frost">
-  Frosted texture with noise
-</div>
+<div class="material-glass-frost">Frosted texture with noise</div>
 ```
 
 **Other:**
+
 - `.material-subsurface` - Subsurface scattering (glowing from within)
 - `.material-fresnel` - Edge lighting based on viewing angle
 
 ### Lighting System
 
 **5-point setup:**
+
 ```html
 <div class="lit-cinematic">
   <!-- Applies all 5 lights:
@@ -322,6 +316,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ```
 
 **Individual lights:**
+
 - `.lit-key` - Top-left warm highlight
 - `.lit-fill` - Bottom-right cool shadow
 - `.lit-rim` - Edge glow (brand color)
@@ -331,83 +326,67 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 ### Post-Processing Effects
 
 **Bloom (glow):**
+
 ```html
-<div class="effect-bloom">
-  Bright areas glow and bleed
-</div>
+<div class="effect-bloom">Bright areas glow and bleed</div>
 ```
 
 **Chromatic aberration:**
+
 ```html
-<div class="effect-chromatic">
-  RGB channel separation at edges
-</div>
+<div class="effect-chromatic">RGB channel separation at edges</div>
 ```
 
 **Film grain:**
+
 ```html
-<div class="effect-grain">
-  Cinematic noise overlay
-</div>
+<div class="effect-grain">Cinematic noise overlay</div>
 ```
 
 **Vignette:**
+
 ```html
-<div class="effect-vignette">
-  Darkened corners for focus
-</div>
+<div class="effect-vignette">Darkened corners for focus</div>
 ```
 
 **Color grading:**
+
 ```html
-<div class="effect-color-grade">
-  Cinematic color correction
-</div>
+<div class="effect-color-grade">Cinematic color correction</div>
 ```
 
 ### Micro-Interactions
 
 **Hover effects:**
+
 ```html
 <!-- Enhanced hover (scale, glow, tilt) -->
-<div class="interact-hover">
-  Hovers with multiple effects
-</div>
+<div class="interact-hover">Hovers with multiple effects</div>
 
 <!-- 3D tilt on hover -->
-<div class="interact-tilt">
-  Tilts in 3D space
-</div>
+<div class="interact-tilt">Tilts in 3D space</div>
 
 <!-- Glow intensification -->
-<div class="interact-glow">
-  Glows on hover
-</div>
+<div class="interact-glow">Glows on hover</div>
 
 <!-- Color shift -->
-<div class="interact-color-shift">
-  Hue shifts on hover
-</div>
+<div class="interact-color-shift">Hue shifts on hover</div>
 ```
 
 **Click effects:**
+
 ```html
 <!-- Ripple on click -->
-<button class="interact-ripple">
-  Ripple effect
-</button>
+<button class="interact-ripple">Ripple effect</button>
 
 <!-- Punch (scale down then up) -->
-<button class="interact-punch">
-  Punch effect
-</button>
+<button class="interact-punch">Punch effect</button>
 ```
 
 **Focus states:**
+
 ```html
-<button class="interact-focus-pulse">
-  Pulsing focus outline
-</button>
+<button class="interact-focus-pulse">Pulsing focus outline</button>
 ```
 
 ### Particle System
@@ -415,6 +394,7 @@ This enhancement system elevates Blaze Sports Intel to AAA game-level visual qua
 **Auto-initialized on page load.**
 
 **Customization:**
+
 ```javascript
 // Access global instance
 const particles = window.blazeParticles;
@@ -437,21 +417,25 @@ particles.destroy();
 ```
 
 **Create particle bursts:**
+
 ```javascript
 // Burst at coordinates
 createParticleBurst(mouseX, mouseY, 50);
 ```
 
 **Toggle on/off:**
+
 ```javascript
 toggleParticles();
 ```
 
 **URL parameters:**
+
 - `?particles=false` - Disable particles entirely
 - `?debug=true` - Show FPS counter and stats
 
 **Automatic quality scaling:**
+
 - **Ultra:** 150K particles (desktop, high-end)
 - **High:** 75K particles (desktop, mid-range)
 - **Medium:** 30K particles (laptop, integrated GPU)
@@ -464,6 +448,7 @@ System automatically reduces quality if FPS drops below 50.
 **Already applied to all charts** in `blaze-charts.js`.
 
 **New features:**
+
 - Glow effect on data points
 - Enhanced tooltips with shadows
 - Staggered animation (cascade effect)
@@ -479,17 +464,20 @@ System automatically reduces quality if FPS drops below 50.
 ### Target Performance
 
 **Desktop (Modern):**
+
 - 60fps sustained with 150K particles
 - All effects enabled
 - Full shadow stacks
 - Post-processing active
 
 **Laptop (Integrated GPU):**
+
 - 60fps with 30K particles
 - Simplified shadows
 - Reduced blur intensity
 
 **Mobile:**
+
 - 30fps with 10K particles
 - Minimal shadows
 - No post-processing
@@ -498,34 +486,35 @@ System automatically reduces quality if FPS drops below 50.
 ### GPU Acceleration
 
 All animated elements use GPU-accelerated properties:
+
 - `transform` (translateZ, scale, rotate)
 - `opacity`
 - `filter` (blur, brightness)
 
 **Classes for GPU optimization:**
-```html
-<div class="gpu-accelerated">
-  Force GPU layer
-</div>
 
-<div class="optimize-60fps">
-  Optimize for 60fps
-</div>
+```html
+<div class="gpu-accelerated">Force GPU layer</div>
+
+<div class="optimize-60fps">Optimize for 60fps</div>
 ```
 
 ### Performance Monitoring
 
 **Particle system includes FPS counter:**
+
 ```
 ?debug=true
 ```
 
 Shows:
+
 - Current FPS
 - Particle count
 - Quality tier
 
 **Browser DevTools:**
+
 - **Chrome:** Rendering → Frame Rendering Stats
 - **Firefox:** Performance → Waterfall
 - **Safari:** Develop → Show Rendering
@@ -537,6 +526,7 @@ Shows:
 ### WCAG AA Compliance
 
 **Maintained:**
+
 - Color contrast ratios: 4.5:1 minimum
 - Focus indicators: 2px solid outline
 - Keyboard navigation: Full support
@@ -545,6 +535,7 @@ Shows:
 ### Reduced Motion Support
 
 **Automatic detection:**
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   /* All animations disabled */
@@ -554,6 +545,7 @@ Shows:
 ```
 
 **Manual override:**
+
 ```javascript
 // Respect user preference
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -564,11 +556,13 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 ### Keyboard Navigation
 
 **Enhanced focus states:**
+
 - Pulsing outline animation
 - High-contrast colors
 - Larger hit areas
 
 **Screen reader support:**
+
 - All visual enhancements are decorative
 - Content remains semantic
 - ARIA labels unchanged
@@ -600,6 +594,7 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 **Currently using Canvas 2D fallback** for particle system.
 
 **WebGPU compute shaders** (future enhancement):
+
 - Chrome 113+
 - Edge 113+
 - Firefox 125+ (behind flag)
@@ -611,17 +606,20 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 ### Low FPS / Laggy Performance
 
 **Check particle count:**
+
 ```javascript
 console.log(window.blazeParticles.particleCount);
 // Should auto-reduce if FPS drops
 ```
 
 **Manually reduce quality:**
+
 ```javascript
 window.blazeParticles.setParticleCount(10000);
 ```
 
 **Disable particles:**
+
 ```javascript
 window.blazeParticles.pause();
 window.blazeParticles.container.style.display = 'none';
@@ -630,6 +628,7 @@ window.blazeParticles.container.style.display = 'none';
 ### Shadows Not Showing
 
 **Check GPU acceleration:**
+
 ```css
 /* Ensure element has GPU layer */
 .my-element {
@@ -639,6 +638,7 @@ window.blazeParticles.container.style.display = 'none';
 ```
 
 **Check browser support:**
+
 ```javascript
 // Test for backdrop-filter support
 if (!CSS.supports('backdrop-filter', 'blur(10px)')) {
@@ -649,12 +649,14 @@ if (!CSS.supports('backdrop-filter', 'blur(10px)')) {
 ### Blur Effects Not Working
 
 **Safari requires `-webkit-` prefix:**
+
 ```css
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
 ```
 
 **Check GPU memory:**
+
 - Large blur radii require GPU memory
 - Reduce blur radius if glitchy:
   - `blur(24px)` → `blur(12px)`
@@ -662,6 +664,7 @@ backdrop-filter: blur(12px);
 ### Text Not Rendering Crisp
 
 **Check font smoothing:**
+
 ```css
 body {
   -webkit-font-smoothing: antialiased;
@@ -670,6 +673,7 @@ body {
 ```
 
 **Check DPI scaling:**
+
 ```javascript
 console.log(window.devicePixelRatio);
 // Should be 2 on Retina displays
@@ -678,18 +682,21 @@ console.log(window.devicePixelRatio);
 ### Particle System Not Loading
 
 **Check console for errors:**
+
 ```javascript
 // Open DevTools Console (F12)
 // Look for "[Blaze Particles]" messages
 ```
 
 **Check reduced motion:**
+
 ```javascript
 console.log(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 // If true, particles are disabled
 ```
 
 **Force enable particles:**
+
 ```javascript
 const particles = new BlazeParticleSystem();
 particles.reducedMotion = false;
@@ -703,6 +710,7 @@ await particles.init();
 ### Visual Quality
 
 **Before:**
+
 - Basic box-shadow (1 layer)
 - Simple rgba() colors
 - Standard font rendering
@@ -710,6 +718,7 @@ await particles.init();
 - Basic chart styling
 
 **After:**
+
 - 5-layer shadow stacks
 - OKLCH perceptual colors
 - Sub-pixel text rendering
@@ -720,11 +729,13 @@ await particles.init();
 ### Performance
 
 **Before:**
+
 - Static visuals (no GPU usage)
 - Simple CSS (5KB)
 - No animation overhead
 
 **After:**
+
 - GPU-accelerated animations
 - Enhanced CSS (27KB)
 - Adaptive particle system (18KB)
@@ -733,11 +744,13 @@ await particles.init();
 ### User Experience
 
 **Before:**
+
 - Functional but basic
 - Limited visual hierarchy
 - Standard interactions
 
 **After:**
+
 - Photorealistic depth
 - Clear visual hierarchy
 - Delightful micro-interactions
@@ -754,12 +767,9 @@ await particles.init();
   box-shadow:
     /* Contact */
     0 1px 2px rgba(0, 0, 0, 0.5),
-    /* Penumbra */
-    0 4px 8px rgba(0, 0, 0, 0.4),
-    /* Ambient */
-    0 12px 24px rgba(0, 0, 0, 0.3),
-    /* Glow */
-    0 0 40px rgba(191, 87, 0, 0.3);
+    /* Penumbra */ 0 4px 8px rgba(0, 0, 0, 0.4),
+    /* Ambient */ 0 12px 24px rgba(0, 0, 0, 0.3),
+    /* Glow */ 0 0 40px rgba(191, 87, 0, 0.3);
 }
 ```
 
@@ -770,7 +780,7 @@ await particles.init();
   background: linear-gradient(
     135deg,
     oklch(55% 0.18 40) 0%,
-    oklch(70% 0.20 40) 50%,
+    oklch(70% 0.2 40) 50%,
     oklch(80% 0.15 40) 100%
   );
 }
@@ -780,9 +790,9 @@ await particles.init();
 
 ```javascript
 window.blazeParticles.colors = [
-  { r: 255, g: 0, b: 0 },   // Red
-  { r: 0, g: 255, b: 0 },   // Green
-  { r: 0, g: 0, b: 255 },   // Blue
+  { r: 255, g: 0, b: 0 }, // Red
+  { r: 0, g: 255, b: 0 }, // Green
+  { r: 0, g: 0, b: 255 }, // Blue
 ];
 window.blazeParticles.initCanvas2D(); // Re-initialize
 ```
@@ -811,16 +821,19 @@ window.blazeParticles.initCanvas2D(); // Re-initialize
 ## Support & Resources
 
 **Documentation:**
+
 - [Blaze Design System](/css/blaze-design-system.css)
 - [Component Library](/css/blaze-components.css)
 - [Chart Library](/js/blaze-charts.js)
 
 **Performance Tools:**
+
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
 - [WebPageTest](https://www.webpagetest.org/)
 
 **Accessibility Tools:**
+
 - [axe DevTools](https://www.deque.com/axe/devtools/)
 - [WAVE](https://wave.webaim.org/)
 - [Color Contrast Checker](https://webaim.org/resources/contrastchecker/)

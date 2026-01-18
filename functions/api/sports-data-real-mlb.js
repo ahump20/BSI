@@ -1,16 +1,47 @@
 /**
  * MLB Data API Function for Cloudflare Pages
  * Fetches real data from MLB Stats API with query string support
+ *
+ * Response Contract: Uses BSI standard APIResponse format
+ * - status: 'ok' | 'invalid' | 'unavailable'
+ * - data: payload or null
+ * - source: 'live'
  */
 
 import { rateLimit, rateLimitError, corsHeaders } from './_utils.js';
 
 export async function onRequest({ request, env }) {
   const url = new URL(request.url);
-  const teamId = url.searchParams.get('teamId') || '138'; // Cardinals default
+  const teamId = url.searchParams.get('teamId');
+
+  // Require teamId parameter - no default team to avoid bias
+  if (!teamId) {
+    return new Response(
+      JSON.stringify({
+        data: null,
+        status: 'invalid',
+        source: 'live',
+        lastUpdated: new Date().toISOString(),
+        reason: 'Missing required parameter: teamId. Example: ?teamId=147 (Yankees)',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+      }),
+      {
+        status: 400,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'invalid',
+          'X-BSI-Source': 'live',
+        },
+      }
+    );
+  }
 
   // Dynamic year detection - defaults to current MLB season
-  // Allows historical queries with explicit ?season=2024 parameter
   const currentYear = new Date().getFullYear();
   const season = url.searchParams.get('season') || currentYear.toString();
 
@@ -26,19 +57,57 @@ export async function onRequest({ request, env }) {
 
   try {
     const data = await fetchRealMLB(teamId, season, currentYear);
-    return new Response(JSON.stringify(data), {
-      headers: corsHeaders,
-      status: 200,
-    });
-  } catch (error) {
+    const lastUpdated = new Date().toISOString();
+
+    // Standard APIResponse format
     return new Response(
       JSON.stringify({
-        error: 'Failed to fetch MLB data',
-        message: error.message,
+        data,
+        status: 'ok',
+        source: 'live',
+        lastUpdated,
+        reason: '',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+        // Legacy fields for backwards compatibility
+        ...data,
       }),
       {
-        headers: corsHeaders,
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'ok',
+          'X-BSI-Source': 'live',
+        },
+      }
+    );
+  } catch (error) {
+    // Standard APIResponse error format
+    return new Response(
+      JSON.stringify({
+        data: null,
+        status: 'unavailable',
+        source: 'live',
+        lastUpdated: new Date().toISOString(),
+        reason: error.message || 'Failed to fetch MLB data',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+      }),
+      {
         status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-BSI-Status': 'unavailable',
+          'X-BSI-Source': 'live',
+        },
       }
     );
   }

@@ -32,12 +32,14 @@ The Blaze Sports Intel API provides programmatic access to:
 - Scouting reports and player projections
 
 **Supported Sports:**
+
 - ⚾ MLB (Major League Baseball)
 - 🏈 NFL (National Football League)
 - 🏀 NBA (National Basketball Association)
 - ⚾ College Baseball (NCAA Division I)
 
 **Data Sources:**
+
 - SportsDataIO (primary)
 - MLB Stats API (baseball)
 - ESPN API (supplementary)
@@ -56,6 +58,7 @@ Authorization: Bearer YOUR_API_KEY
 ```
 
 **Obtaining an API Key:**
+
 1. Create account at [blazesportsintel.com/signup](https://blazesportsintel.com/signup)
 2. Navigate to Dashboard > API Keys
 3. Generate new API key
@@ -64,6 +67,7 @@ Authorization: Bearer YOUR_API_KEY
 ### Public Endpoints
 
 These endpoints do not require authentication:
+
 - `GET /health`
 - `GET /mlb/standings`
 - `GET /nfl/standings`
@@ -74,6 +78,7 @@ These endpoints do not require authentication:
 ### Premium Endpoints
 
 These endpoints require API key:
+
 - `POST /copilot/*` (AI insights)
 - `GET /v1/predictive/*` (player projections)
 - `GET /v1/predictions/*` (game predictions)
@@ -90,12 +95,12 @@ These endpoints require API key:
 
 Limits vary by plan:
 
-| Plan | Requests/Minute | Requests/Day | Burst Limit |
-|------|----------------|--------------|-------------|
-| Free | 10 | 1,000 | 20 |
-| Basic | 60 | 50,000 | 100 |
-| Pro | 300 | 500,000 | 500 |
-| Enterprise | Custom | Custom | Custom |
+| Plan       | Requests/Minute | Requests/Day | Burst Limit |
+| ---------- | --------------- | ------------ | ----------- |
+| Free       | 10              | 1,000        | 20          |
+| Basic      | 60              | 50,000       | 100         |
+| Pro        | 300             | 500,000      | 500         |
+| Enterprise | Custom          | Custom       | Custom      |
 
 ### Rate Limit Headers
 
@@ -161,10 +166,10 @@ Returns current standings for all MLB teams.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `season` | integer | No | Season year (default: current season) |
-| `division` | string | No | Filter by division (e.g., "AL East") |
+| Parameter  | Type    | Required | Description                           |
+| ---------- | ------- | -------- | ------------------------------------- |
+| `season`   | integer | No       | Season year (default: current season) |
+| `division` | string  | No       | Filter by division (e.g., "AL East")  |
 
 **Response:**
 
@@ -207,10 +212,10 @@ Returns live and completed game scores.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `date` | string | No | Date in YYYY-MM-DD format (default: today) |
-| `teamId` | integer | No | Filter by team ID |
+| Parameter | Type    | Required | Description                                |
+| --------- | ------- | -------- | ------------------------------------------ |
+| `date`    | string  | No       | Date in YYYY-MM-DD format (default: today) |
+| `teamId`  | integer | No       | Filter by team ID                          |
 
 **Response:**
 
@@ -252,10 +257,10 @@ Returns current standings for all NFL teams.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `season` | integer | No | Season year (default: current season) |
-| `conference` | string | No | Filter by conference ("AFC" or "NFC") |
+| Parameter    | Type    | Required | Description                           |
+| ------------ | ------- | -------- | ------------------------------------- |
+| `season`     | integer | No       | Season year (default: current season) |
+| `conference` | string  | No       | Filter by conference ("AFC" or "NFC") |
 
 **Response:**
 
@@ -298,10 +303,10 @@ Returns live and completed game scores.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `week` | integer | No | Week number (default: current week) |
-| `season` | integer | No | Season year (default: current season) |
+| Parameter | Type    | Required | Description                           |
+| --------- | ------- | -------- | ------------------------------------- |
+| `week`    | integer | No       | Week number (default: current week)   |
+| `season`  | integer | No       | Season year (default: current season) |
 
 **Response:**
 
@@ -340,10 +345,10 @@ Returns current standings for all NBA teams.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `season` | integer | No | Season year (default: current season) |
-| `conference` | string | No | Filter by conference ("Eastern" or "Western") |
+| Parameter    | Type    | Required | Description                                   |
+| ------------ | ------- | -------- | --------------------------------------------- |
+| `season`     | integer | No       | Season year (default: current season)         |
+| `conference` | string  | No       | Filter by conference ("Eastern" or "Western") |
 
 **Response:**
 
@@ -382,9 +387,9 @@ Returns live and completed game scores.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `date` | string | No | Date in YYYY-MM-DD format (default: today) |
+| Parameter | Type   | Required | Description                                |
+| --------- | ------ | -------- | ------------------------------------------ |
+| `date`    | string | No       | Date in YYYY-MM-DD format (default: today) |
 
 **Response:**
 
@@ -420,10 +425,10 @@ Returns standings for NCAA Division I college baseball teams.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `conference` | string | No | Filter by conference (e.g., "SEC", "Big 12") |
-| `season` | integer | No | Season year (default: current season) |
+| Parameter    | Type    | Required | Description                                  |
+| ------------ | ------- | -------- | -------------------------------------------- |
+| `conference` | string  | No       | Filter by conference (e.g., "SEC", "Big 12") |
+| `season`     | integer | No       | Season year (default: current season)        |
 
 **Response:**
 
@@ -439,7 +444,7 @@ Returns standings for NCAA Division I college baseball teams.
         "schoolName": "Texas Longhorns",
         "overallRecord": "45-15",
         "conferenceRecord": "22-8",
-        "winPercentage": 0.750,
+        "winPercentage": 0.75,
         "runsScored": 432,
         "runsAllowed": 298,
         "homeRecord": "28-5",
@@ -458,10 +463,10 @@ Returns game schedules and scores.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `date` | string | No | Date in YYYY-MM-DD format (default: today) |
-| `teamId` | integer | No | Filter by team ID |
+| Parameter | Type    | Required | Description                                |
+| --------- | ------- | -------- | ------------------------------------------ |
+| `date`    | string  | No       | Date in YYYY-MM-DD format (default: today) |
+| `teamId`  | integer | No       | Filter by team ID                          |
 
 **Response:**
 
@@ -495,10 +500,10 @@ Returns game schedules and scores.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `playerId` | integer | Yes | Player ID |
-| `season` | integer | No | Season year (default: current season) |
+| Parameter  | Type    | Required | Description                           |
+| ---------- | ------- | -------- | ------------------------------------- |
+| `playerId` | integer | Yes      | Player ID                             |
+| `season`   | integer | No       | Season year (default: current season) |
 
 **Authentication:** Required
 
@@ -583,7 +588,7 @@ Search sports data using natural language queries.
       "playerId": 543243,
       "playerName": "Jordan Montgomery",
       "position": "SP",
-      "era": 3.20,
+      "era": 3.2,
       "wins": 10,
       "losses": 5,
       "strikeouts": 135,
@@ -672,10 +677,10 @@ Get real-time win probability for active games.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `gameId` | string | Yes | Game identifier |
-| `sport` | string | Yes | Sport (mlb, nfl, nba) |
+| Parameter | Type   | Required | Description           |
+| --------- | ------ | -------- | --------------------- |
+| `gameId`  | string | Yes      | Game identifier       |
+| `sport`   | string | Yes      | Sport (mlb, nfl, nba) |
 
 **Authentication:** Required
 
@@ -694,11 +699,11 @@ Get real-time win probability for active games.
     "winProbability": 0.32
   },
   "factors": {
-    "score": 0.40,
+    "score": 0.4,
     "inning": 0.15,
-    "baserunners": 0.20,
+    "baserunners": 0.2,
     "momentum": 0.15,
-    "bullpenStrength": 0.10
+    "bullpenStrength": 0.1
   },
   "confidence": 0.87,
   "lastUpdated": "2025-11-06T20:45:30Z"
@@ -713,9 +718,9 @@ Get statistical projections for individual players.
 
 **Path Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `id` | integer | Yes | Player identifier |
+| Parameter | Type    | Required | Description       |
+| --------- | ------- | -------- | ----------------- |
+| `id`      | integer | Yes      | Player identifier |
 
 **Authentication:** Required
 
@@ -761,7 +766,7 @@ Assess injury risk for players.
     "overall": "medium",
     "probability": 0.35,
     "factors": {
-      "workload": 0.60,
+      "workload": 0.6,
       "age": 0.25,
       "injuryHistory": 0.15
     }
@@ -809,11 +814,11 @@ Get data coverage information for historical data.
 
 **Query Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `sport` | string | No | Filter by sport |
-| `startYear` | integer | No | Start year for range |
-| `endYear` | integer | No | End year for range |
+| Parameter   | Type    | Required | Description          |
+| ----------- | ------- | -------- | -------------------- |
+| `sport`     | string  | No       | Filter by sport      |
+| `startYear` | integer | No       | Start year for range |
+| `endYear`   | integer | No       | End year for range   |
 
 **Response:**
 
@@ -917,6 +922,7 @@ Test individual external API providers to verify connectivity.
 **Endpoint:** `GET /admin/api-tests/:provider`
 
 **Available Providers:**
+
 - `mlb` - Test MLB Stats API
 - `espn` - Test ESPN APIs (NFL, NBA, NCAA)
 - `sportsdataio` - Test SportsDataIO (requires API key)
@@ -1023,10 +1029,10 @@ components:
           example: 138
         teamName:
           type: string
-          example: "St. Louis Cardinals"
+          example: 'St. Louis Cardinals'
         abbreviation:
           type: string
-          example: "STL"
+          example: 'STL'
         wins:
           type: integer
           example: 82
@@ -1048,11 +1054,11 @@ components:
       properties:
         gameId:
           type: string
-          example: "717623"
+          example: '717623'
         status:
           type: string
           enum: [Scheduled, In Progress, Final, Postponed]
-          example: "Final"
+          example: 'Final'
         homeTeam:
           $ref: '#/components/schemas/TeamScore'
         awayTeam:
@@ -1080,13 +1086,13 @@ components:
       properties:
         error:
           type: string
-          example: "ValidationError"
+          example: 'ValidationError'
         message:
           type: string
-          example: "Invalid sport parameter"
+          example: 'Invalid sport parameter'
         code:
           type: string
-          example: "INVALID_PARAMETER"
+          example: 'INVALID_PARAMETER'
         details:
           type: object
 
@@ -1106,7 +1112,7 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: "healthy"
+                    example: 'healthy'
                   timestamp:
                     type: string
                     format: date-time
@@ -1126,7 +1132,7 @@ paths:
           in: query
           schema:
             type: string
-            example: "AL East"
+            example: 'AL East'
       responses:
         '200':
           description: Successful response
@@ -1160,7 +1166,7 @@ paths:
               properties:
                 query:
                   type: string
-                  example: "Show me Cardinals pitchers with ERA under 3.50"
+                  example: 'Show me Cardinals pitchers with ERA under 3.50'
                 sport:
                   type: string
                   enum: [mlb, nfl, nba, college-baseball]

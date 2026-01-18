@@ -130,12 +130,12 @@ export interface TeamStanding {
   conferenceRank?: number;
 
   // Recent performance
-  streak: string;        // Always normalized to "W3", "L2", "-"
-  last10?: string;       // "7-3" format
+  streak: string; // Always normalized to "W3", "L2", "-"
+  last10?: string; // "7-3" format
 
   // Optional detailed stats
-  runDiff?: number;      // MLB: runs scored - runs allowed
-  pointDiff?: number;    // NFL/NBA: points scored - points allowed
+  runDiff?: number; // MLB: runs scored - runs allowed
+  pointDiff?: number; // NFL/NBA: points scored - points allowed
 
   // Metadata
   division?: string;
@@ -160,14 +160,14 @@ export interface Game {
   status: GameStatus;
 
   // Period info (sport-specific but normalized)
-  period?: string;       // "Top 7th", "Q3", "2nd Half"
-  clock?: string;        // "3:45", "Final"
+  period?: string; // "Top 7th", "Q3", "2nd Half"
+  clock?: string; // "3:45", "Final"
 
   // Venue
   venue?: string;
 
   // Timing
-  startTime?: string;    // ISO 8601
+  startTime?: string; // ISO 8601
 
   // Sport
   sport: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'cfb';
@@ -178,8 +178,8 @@ export interface TeamInfo {
   name: string;
   abbreviation: string;
   score: number;
-  record?: string;       // "10-5"
-  seed?: number;         // Playoff seed
+  record?: string; // "10-5"
+  seed?: number; // Playoff seed
   logoUrl?: string;
 }
 
@@ -228,9 +228,9 @@ type MLBStandingRaw = z.infer<typeof MLBStandingRawSchema>;
 
 // Abbreviation lookup
 const MLB_ABBREVIATIONS: Record<string, string> = {
-  'Cardinals': 'STL',
-  'Cubs': 'CHC',
-  'Dodgers': 'LAD',
+  Cardinals: 'STL',
+  Cubs: 'CHC',
+  Dodgers: 'LAD',
   // ... complete list
 };
 
@@ -303,7 +303,6 @@ export async function fetchMLBStandings(): Promise<TeamStanding[]> {
 
     // Normalize to canonical shape
     return parseResult.data.standings.map(normalizeMLBStanding);
-
   } catch (error) {
     console.error('MLB API fetch failed:', error);
     return getMLBFallbackData();
@@ -335,24 +334,28 @@ function getMLBFallbackData(): TeamStanding[] {
 ## Migration Strategy
 
 ### Phase 1: Create Foundation (Week 1)
+
 1. Add `zod` dependency
 2. Create `lib/types/sports.ts` with canonical interfaces
 3. Create `lib/adapters/` directory structure
 4. Implement MLB adapter as proof of concept
 
 ### Phase 2: Migrate Standings (Week 2)
+
 1. Update `StandingsTable.tsx` to use adapter
 2. Update `StandingsChart3D.tsx` to use adapter
 3. Update `app/mlb/standings/page.tsx`
 4. Remove inline parsing logic
 
 ### Phase 3: Extend to Other Sports (Weeks 3-4)
+
 1. Implement NFL adapter
 2. Implement NBA adapter
 3. Implement NCAA/College adapter
 4. Update all consuming components
 
 ### Phase 4: Cleanup (Week 5)
+
 1. Remove deprecated inline interfaces
 2. Enable `strictNullChecks` in tsconfig
 3. Add unit tests for adapters
@@ -400,12 +403,12 @@ BSI/
 
 ## Estimated Impact
 
-| Metric | Current | After Implementation |
-|--------|---------|---------------------|
-| Type coercion bugs/month | ~2 | ~0 |
-| Lines of parsing code | ~1500 (duplicated) | ~500 (centralized) |
-| Interface definitions | 5+ duplicates | 1 canonical |
-| API change adaptation time | Hours per component | Minutes (one file) |
+| Metric                     | Current             | After Implementation |
+| -------------------------- | ------------------- | -------------------- |
+| Type coercion bugs/month   | ~2                  | ~0                   |
+| Lines of parsing code      | ~1500 (duplicated)  | ~500 (centralized)   |
+| Interface definitions      | 5+ duplicates       | 1 canonical          |
+| API change adaptation time | Hours per component | Minutes (one file)   |
 
 ---
 
@@ -423,14 +426,14 @@ BSI/
 
 ## Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Breaking existing components | Medium | High | Gradual migration, feature flags |
-| Performance overhead from validation | Low | Low | Validate only at boundary |
-| Zod bundle size increase | Low | Medium | Tree-shake unused schemas |
-| Team learning curve | Medium | Low | Documentation, pair programming |
+| Risk                                 | Likelihood | Impact | Mitigation                       |
+| ------------------------------------ | ---------- | ------ | -------------------------------- |
+| Breaking existing components         | Medium     | High   | Gradual migration, feature flags |
+| Performance overhead from validation | Low        | Low    | Validate only at boundary        |
+| Zod bundle size increase             | Low        | Medium | Tree-shake unused schemas        |
+| Team learning curve                  | Medium     | Low    | Documentation, pair programming  |
 
 ---
 
-*Proposal created: 2025-12-25*
-*Confidence Level: 90%*
+_Proposal created: 2025-12-25_
+_Confidence Level: 90%_

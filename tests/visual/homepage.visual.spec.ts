@@ -28,8 +28,9 @@ test.describe('Homepage Visual Tests', () => {
 
     // Hide dynamic timestamps
     await page.evaluate(() => {
-      document.querySelectorAll('[data-timestamp], .last-updated, .generated-at')
-        .forEach(el => (el as HTMLElement).style.visibility = 'hidden');
+      document
+        .querySelectorAll('[data-timestamp], .last-updated, .generated-at')
+        .forEach((el) => ((el as HTMLElement).style.visibility = 'hidden'));
     });
   });
 

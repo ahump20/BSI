@@ -536,24 +536,28 @@ situ:officials:{game_id}                   TTL: 24h
 ## Implementation Phases
 
 ### Phase 1: Database & Core API (Week 1)
+
 - Create all D1 tables
 - Build unified API routing layer
 - Implement authentication & authorization
 - Set up KV caching infrastructure
 
 ### Phase 2: Predictive Intelligence (Week 2-3)
+
 - Implement player projection models
 - Build injury risk scoring system
 - Create draft projection engine
 - Develop live win probability tracker
 
 ### Phase 3: Personalization & Community (Week 4-5)
+
 - User preference learning system
 - Smart notification engine
 - Prediction contests platform
 - Community discussion forums
 
 ### Phase 4: Historical Research (Week 6-7)
+
 - Historical data ETL pipeline
 - Natural language query parser
 - Matchup analysis engine
@@ -561,12 +565,14 @@ situ:officials:{game_id}                   TTL: 24h
 - Umpire scorecard generator
 
 ### Phase 5: Situational Awareness (Week 8-9)
+
 - Weather API integration
 - Lineup change detection
 - Injury report aggregation
 - Officiating crew database
 
 ### Phase 6: Integration & Testing (Week 10-12)
+
 - Cross-engine data flows
 - Frontend dashboard
 - Performance optimization

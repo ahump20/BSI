@@ -44,10 +44,12 @@ This directory contains real-world performance benchmark data for the Blaze Grap
 Open the benchmark tool: https://blazesportsintel.com/performance-benchmark.html
 
 **Critical Validation (Phase 1 - 30 minutes)**:
+
 1. Desktop High-End: 150K particles, 60 seconds, 3 runs
 2. Mobile High-End: 100K particles, 60 seconds, 3 runs
 
 **Comprehensive Testing (Phase 2 - 2 hours)**:
+
 - Test all 5 device classes
 - Test multiple particle counts per device
 - Export JSON after each test
@@ -55,6 +57,7 @@ Open the benchmark tool: https://blazesportsintel.com/performance-benchmark.html
 ### 2. Save Results
 
 After each benchmark:
+
 1. Click "Export Results as JSON"
 2. Save file to appropriate device directory:
    - Filename format: `benchmark-{device-class}-{particle-count}K-{YYYYMMDD}.json`
@@ -66,6 +69,7 @@ After each benchmark:
 ### 3. Update Documentation
 
 After collecting benchmarks:
+
 1. Open `SUMMARY.md`
 2. Fill in device specifications from JSON exports
 3. Populate performance tables with actual results
@@ -75,22 +79,26 @@ After collecting benchmarks:
 ## Testing Protocol
 
 See detailed instructions in:
+
 - **PERFORMANCE-BENCHMARK-GUIDE.md**: Comprehensive methodology and expectations
 - **PERFORMANCE-TESTING-CHECKLIST.md**: Step-by-step testing procedure
 
 ## Validation Criteria
 
 ### Desktop High-End (Critical)
+
 - **Pass**: 150K particles @ ≥60 FPS avg, ≥30 FPS 1% low, <300 MB memory
 - **Action if Fail**: Reduce marketing claim from 150K to 100K particles
 
 ### Mobile High-End (Critical)
+
 - **Pass**: 100K particles @ ≥45 FPS avg, ≥25 FPS 1% low, <150 MB memory
 - **Action if Fail**: Recommend 50K particles for mobile devices
 
 ## Data Format
 
 Each JSON export contains:
+
 ```json
 {
   "timestamp": "2025-10-12T14:30:00.000Z",

@@ -5,6 +5,7 @@ This document provides instructions for deploying the Sports Data QC system to p
 ## Overview
 
 The QC system consists of:
+
 1. **QC Skill Library** - Core validation logic (`lib/skills/sports-data-qc/`)
 2. **Ingest Worker** - Integrated QC into data ingestion pipeline (`workers/ingest/`)
 3. **QC Worker** - Standalone QC API service (`workers/qc/`)
@@ -94,6 +95,7 @@ curl https://qc.blazesportsintel.com/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -150,6 +152,7 @@ curl -X POST https://qc.blazesportsintel.com/qc/validate \
 ```
 
 Expected response:
+
 ```json
 {
   "success": true,
@@ -301,11 +304,13 @@ wrangler tail --name bsi-ingest-worker
 ### High QC Failure Rate
 
 If you see errors like:
+
 ```
 [Ingest] QC failure rate too high: 25.0%
 ```
 
 **Actions:**
+
 1. Retrieve QC report: `curl https://qc.blazesportsintel.com/qc/report/REPORT_ID`
 2. Check `recommendations` array for specific issues
 3. Review validation failures by type
@@ -338,6 +343,7 @@ wrangler rollback
 ### QC Pipeline Performance
 
 Current benchmarks:
+
 - Small batches (<100 records): ~10-50ms
 - Medium batches (100-1000): ~50-200ms
 - Large batches (>1000): Use batch processing
@@ -384,6 +390,7 @@ wrangler secret put QC_API_SECRET
 ### Estimated Monthly Costs
 
 Assuming 1 million validation requests/month:
+
 - Workers: ~$0.50
 - KV: ~$1.00
 - R2: ~$0.10
@@ -408,6 +415,7 @@ wrangler deploy
 ## Support
 
 For issues or questions:
+
 1. Check logs: `wrangler tail`
 2. Review QC reports for validation details
 3. Check Analytics Engine for trends

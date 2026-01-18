@@ -12,6 +12,7 @@ Minimal requirements to get started:
 - **VS Code** with Dev Containers extension (recommended)
 
 Optional but recommended:
+
 - Python 3.11+
 - Node.js 20+
 - Cloudflare account (free tier works)
@@ -33,6 +34,7 @@ make dev
 ```
 
 That's it! BSI is now running at:
+
 - **Main App**: http://localhost:8000
 - **Cloudflare Dev**: http://localhost:8787
 - **API Docs**: http://localhost:8000/docs
@@ -175,6 +177,7 @@ cp .env.example .env
 ```
 
 Key variables:
+
 - `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
 - `SPORTSDATAIO_API_KEY` - Sports data API key
 - `DATABASE_URL` - PostgreSQL connection string
@@ -238,22 +241,26 @@ wrangler pages deploy . --verbose
 ### Technology Stack
 
 **Backend:**
+
 - Python 3.11 with FastAPI
 - PostgreSQL for data persistence
 - Redis for caching and queues
 - MinIO for object storage
 
 **Frontend:**
+
 - Vanilla JavaScript with Three.js
 - Cloudflare Pages for hosting
 - WebGL for 3D visualizations
 
 **Computer Vision:**
+
 - MediaPipe for pose detection
 - OpenCV for image processing
 - PyTorch for ML models
 
 **Infrastructure:**
+
 - Docker for containerization
 - Cloudflare Workers for edge computing
 - GitHub Actions for CI/CD
@@ -269,11 +276,13 @@ wrangler pages deploy . --verbose
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [API Documentation](http://localhost:8000/docs)
 - [Cloudflare Docs](https://developers.cloudflare.com/pages)
 - [MediaPipe Guide](https://mediapipe.dev)
 
 ### Getting Help
+
 - GitHub Issues: [github.com/ahump20/BSI/issues](https://github.com/ahump20/BSI/issues)
 - Email: austin@blazesportsintel.com
 - Website: [blazesportsintel.com](https://blazesportsintel.com)
@@ -281,21 +290,25 @@ wrangler pages deploy . --verbose
 ## 🎓 Best Practices
 
 ### Code Style
+
 - Python: Black formatter, 100 char line length
 - JavaScript: Prettier, 2-space indentation
 - Commit messages: Conventional commits
 
 ### Testing
+
 - Write tests for new features
 - Maintain >80% code coverage
 - Run tests before committing
 
 ### Security
+
 - Never commit secrets
 - Use environment variables
 - Run security scans regularly
 
 ### Performance
+
 - Profile before optimizing
 - Use caching strategically
 - Monitor resource usage

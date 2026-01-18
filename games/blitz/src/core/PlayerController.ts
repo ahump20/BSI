@@ -12,39 +12,39 @@ import { Vector3 } from '@babylonjs/core';
 
 /** Input state */
 export interface InputState {
-  moveX: number;       // -1 to 1 (A/D or left/right)
-  moveZ: number;       // -1 to 1 (W/S or up/down)
-  turbo: boolean;      // Shift held
-  action: boolean;     // Space pressed
+  moveX: number; // -1 to 1 (A/D or left/right)
+  moveZ: number; // -1 to 1 (W/S or up/down)
+  turbo: boolean; // Shift held
+  action: boolean; // Space pressed
   actionHoldTime: number; // How long action button held
   selectReceiver: number | null; // Which receiver to target (0-4)
-  mouseX: number;      // Mouse position for aiming
+  mouseX: number; // Mouse position for aiming
   mouseZ: number;
 }
 
 /** Player movement configuration */
 export interface PlayerControlConfig {
-  baseSpeed: number;         // Normal movement speed (yards/sec)
-  turboMultiplier: number;   // Speed boost when turbo active
-  accelerationTime: number;  // Time to reach max speed (seconds)
-  maxStamina: number;        // Total stamina pool
-  staminaDrainRate: number;  // Stamina drain per second when turbo
-  staminaRegenRate: number;  // Stamina regen per second when not turbo
-  tackleRadius: number;      // How close to tackle
-  tackleImpulse: number;     // Knockback force on tackle
-  lateHitWindow: number;     // Seconds after whistle tackles still work
+  baseSpeed: number; // Normal movement speed (yards/sec)
+  turboMultiplier: number; // Speed boost when turbo active
+  accelerationTime: number; // Time to reach max speed (seconds)
+  maxStamina: number; // Total stamina pool
+  staminaDrainRate: number; // Stamina drain per second when turbo
+  staminaRegenRate: number; // Stamina regen per second when not turbo
+  tackleRadius: number; // How close to tackle
+  tackleImpulse: number; // Knockback force on tackle
+  lateHitWindow: number; // Seconds after whistle tackles still work
 }
 
 const DEFAULT_CONFIG: PlayerControlConfig = {
-  baseSpeed: 15,            // 15 yards/sec (fast arcade feel)
-  turboMultiplier: 1.5,     // 50% speed boost
-  accelerationTime: 0.2,    // Nearly instant acceleration
+  baseSpeed: 15, // 15 yards/sec (fast arcade feel)
+  turboMultiplier: 1.5, // 50% speed boost
+  accelerationTime: 0.2, // Nearly instant acceleration
   maxStamina: 100,
-  staminaDrainRate: 25,     // 4 seconds of full turbo
-  staminaRegenRate: 15,     // Slower regen
-  tackleRadius: 1.5,        // 1.5 yard tackle range
-  tackleImpulse: 8,         // Knockback force
-  lateHitWindow: 1.5,       // 1.5 seconds of late-hit drama
+  staminaDrainRate: 25, // 4 seconds of full turbo
+  staminaRegenRate: 15, // Slower regen
+  tackleRadius: 1.5, // 1.5 yard tackle range
+  tackleImpulse: 8, // Knockback force
+  lateHitWindow: 1.5, // 1.5 seconds of late-hit drama
 };
 
 /** Player controller class */
@@ -205,11 +205,7 @@ export class PlayerController {
   /** Update player movement based on input */
   private updateMovement(deltaTime: number): void {
     // Get movement input
-    const inputDir = new Vector3(
-      this.inputState.moveX,
-      0,
-      this.inputState.moveZ
-    );
+    const inputDir = new Vector3(this.inputState.moveX, 0, this.inputState.moveZ);
 
     // Normalize if moving diagonally
     if (inputDir.length() > 0) {
@@ -506,23 +502,45 @@ export class TouchController {
 
   private setupTouchHandlers(): void {
     // Joystick touch handlers
-    this.joystickOuter?.addEventListener('touchstart', this.handleJoystickStart.bind(this), { passive: false });
-    this.joystickOuter?.addEventListener('touchmove', this.handleJoystickMove.bind(this), { passive: false });
-    this.joystickOuter?.addEventListener('touchend', this.handleJoystickEnd.bind(this), { passive: false });
-    this.joystickOuter?.addEventListener('touchcancel', this.handleJoystickEnd.bind(this), { passive: false });
+    this.joystickOuter?.addEventListener('touchstart', this.handleJoystickStart.bind(this), {
+      passive: false,
+    });
+    this.joystickOuter?.addEventListener('touchmove', this.handleJoystickMove.bind(this), {
+      passive: false,
+    });
+    this.joystickOuter?.addEventListener('touchend', this.handleJoystickEnd.bind(this), {
+      passive: false,
+    });
+    this.joystickOuter?.addEventListener('touchcancel', this.handleJoystickEnd.bind(this), {
+      passive: false,
+    });
 
     // Action button handlers
-    this.actionButton?.addEventListener('touchstart', this.handleActionStart.bind(this), { passive: false });
-    this.actionButton?.addEventListener('touchend', this.handleActionEnd.bind(this), { passive: false });
-    this.actionButton?.addEventListener('touchcancel', this.handleActionEnd.bind(this), { passive: false });
+    this.actionButton?.addEventListener('touchstart', this.handleActionStart.bind(this), {
+      passive: false,
+    });
+    this.actionButton?.addEventListener('touchend', this.handleActionEnd.bind(this), {
+      passive: false,
+    });
+    this.actionButton?.addEventListener('touchcancel', this.handleActionEnd.bind(this), {
+      passive: false,
+    });
 
     // Turbo button handlers
-    this.turboButton?.addEventListener('touchstart', this.handleTurboStart.bind(this), { passive: false });
-    this.turboButton?.addEventListener('touchend', this.handleTurboEnd.bind(this), { passive: false });
-    this.turboButton?.addEventListener('touchcancel', this.handleTurboEnd.bind(this), { passive: false });
+    this.turboButton?.addEventListener('touchstart', this.handleTurboStart.bind(this), {
+      passive: false,
+    });
+    this.turboButton?.addEventListener('touchend', this.handleTurboEnd.bind(this), {
+      passive: false,
+    });
+    this.turboButton?.addEventListener('touchcancel', this.handleTurboEnd.bind(this), {
+      passive: false,
+    });
 
     // Fallback: Canvas touch for areas without visual controls
-    this.canvas.addEventListener('touchstart', this.handleCanvasTouch.bind(this), { passive: false });
+    this.canvas.addEventListener('touchstart', this.handleCanvasTouch.bind(this), {
+      passive: false,
+    });
   }
 
   private handleJoystickStart(e: TouchEvent): void {
@@ -564,7 +582,8 @@ export class TouchController {
         const maxRadius = this.JOYSTICK_SIZE / 2 - this.JOYSTICK_INNER_SIZE / 2;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance > 8) { // Dead zone
+        if (distance > 8) {
+          // Dead zone
           const clampedDist = Math.min(distance, maxRadius);
           this.moveX = (dx / maxRadius) * Math.min(1, clampedDist / maxRadius);
           this.moveZ = (-dy / maxRadius) * Math.min(1, clampedDist / maxRadius); // Invert Y

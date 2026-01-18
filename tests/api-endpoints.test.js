@@ -18,7 +18,6 @@ class APITester {
   }
 
   async runAllTests() {
-
     await this.testHealthEndpoint();
     await this.testTeamsEndpoints();
     await this.testPlayersEndpoints();
@@ -56,7 +55,6 @@ class APITester {
   }
 
   async testHealthEndpoint() {
-    
     await this.test('Health endpoint responds', async () => {
       const health = await this.apiCall('/health');
       return health.status === 'healthy' && health.database === 'connected';
@@ -64,7 +62,6 @@ class APITester {
   }
 
   async testTeamsEndpoints() {
-    
     await this.test('Teams list endpoint', async () => {
       const teams = await this.apiCall('/api/teams');
       return teams.success && Array.isArray(teams.teams) && teams.teams.length > 0;
@@ -72,7 +69,7 @@ class APITester {
 
     await this.test('Teams filtering by sport', async () => {
       const mlbTeams = await this.apiCall('/api/teams?sport=MLB');
-      return mlbTeams.success && mlbTeams.teams.every(team => team.sport === 'MLB');
+      return mlbTeams.success && mlbTeams.teams.every((team) => team.sport === 'MLB');
     });
 
     await this.test('Individual team by ID', async () => {
@@ -87,7 +84,6 @@ class APITester {
   }
 
   async testPlayersEndpoints() {
-    
     await this.test('Players list endpoint', async () => {
       const players = await this.apiCall('/api/players');
       return players.success && Array.isArray(players.players) && players.players.length > 0;
@@ -95,12 +91,12 @@ class APITester {
 
     await this.test('Players filtering by sport', async () => {
       const mlbPlayers = await this.apiCall('/api/players?sport=MLB');
-      return mlbPlayers.success && mlbPlayers.players.every(player => player.sport === 'MLB');
+      return mlbPlayers.success && mlbPlayers.players.every((player) => player.sport === 'MLB');
     });
 
     await this.test('Players filtering by position', async () => {
       const qbs = await this.apiCall('/api/players?position=QB');
-      return qbs.success && qbs.players.every(player => player.position === 'QB');
+      return qbs.success && qbs.players.every((player) => player.position === 'QB');
     });
 
     await this.test('Player has required fields', async () => {
@@ -111,7 +107,6 @@ class APITester {
   }
 
   async testGamesEndpoints() {
-    
     await this.test('Games list endpoint', async () => {
       const games = await this.apiCall('/api/games');
       return games.success && Array.isArray(games.games);
@@ -119,8 +114,10 @@ class APITester {
 
     await this.test('Games filtering by sport', async () => {
       const mlbGames = await this.apiCall('/api/games?sport=MLB');
-      return mlbGames.success && 
-        (mlbGames.games.length === 0 || mlbGames.games.every(game => game.sport === 'MLB'));
+      return (
+        mlbGames.success &&
+        (mlbGames.games.length === 0 || mlbGames.games.every((game) => game.sport === 'MLB'))
+      );
     });
 
     await this.test('Games include team names', async () => {
@@ -132,7 +129,6 @@ class APITester {
   }
 
   async testStandingsEndpoints() {
-    
     await this.test('MLB standings endpoint', async () => {
       const standings = await this.apiCall('/api/standings/MLB');
       return standings.success && standings.sport === 'MLB' && Array.isArray(standings.standings);
@@ -152,7 +148,6 @@ class APITester {
   }
 
   async testAnalyticsEndpoints() {
-    
     await this.test('Team analytics by ID', async () => {
       const analytics = await this.apiCall('/api/analytics/team/1');
       // May return null team if no data, which is acceptable
@@ -166,7 +161,6 @@ class APITester {
   }
 
   async testFallbackLogic() {
-    
     await this.test('MLB endpoint handles external API failure', async () => {
       const mlb = await this.apiCall('/api/mlb/138');
       // Should succeed with fallback data and stale warning
@@ -186,16 +180,10 @@ class APITester {
   }
 
   printSummary() {
-    
-
     if (this.failedTests > 0) {
-      TEST_RESULTS
-        .filter(result => result.status === 'FAIL')
-        .forEach(result => {
-        });
+      TEST_RESULTS.filter((result) => result.status === 'FAIL').forEach((result) => {});
     }
 
-    
     // Exit with appropriate code
     process.exit(this.failedTests === 0 ? 0 : 1);
   }
@@ -204,13 +192,13 @@ class APITester {
 // Run tests if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   const tester = new APITester();
-  
+
   // Check if server is running
   fetch(`${API_BASE}/health`)
     .then(() => {
       tester.runAllTests();
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('❌ API server is not running!');
       console.error('Please start the server first: node api/enhanced-server.js');
       process.exit(1);

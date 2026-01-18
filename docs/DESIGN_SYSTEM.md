@@ -18,7 +18,7 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 
 ## Brand Philosophy
 
-**Tagline:** *Born to Blaze the Path Less Beaten*
+**Tagline:** _Born to Blaze the Path Less Beaten_
 
 **Core Belief:** Texas isn't just a place—it's how you choose to treat the best and worst of us. A covenant to never let each other stop dreaming, regardless of birth soil.
 
@@ -29,35 +29,39 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 ## Color Palette
 
 ### Primary Colors
+
 ```css
---bsi-burnt-orange: #BF5700;      /* UT Official - Heritage, passion */
---bsi-texas-soil: #8B4513;        /* West Columbia earth - Roots */
---bsi-charcoal: #1A1A1A;          /* Deep black - Premium, editorial */
---bsi-midnight: #0D0D0D;          /* True dark - Backgrounds */
+--bsi-burnt-orange: #bf5700; /* UT Official - Heritage, passion */
+--bsi-texas-soil: #8b4513; /* West Columbia earth - Roots */
+--bsi-charcoal: #1a1a1a; /* Deep black - Premium, editorial */
+--bsi-midnight: #0d0d0d; /* True dark - Backgrounds */
 ```
 
 ### Secondary Colors
+
 ```css
---bsi-cream: #FAF8F5;             /* Warm white - Newspaper aesthetic */
---bsi-warm-white: #FAFAFA;        /* Clean white - Text */
---bsi-ember: #FF6B35;             /* Accent orange - Interactive elements */
---bsi-titan-blue: #4B92DB;        /* Memphis heritage - Accents */
---bsi-cardinal-red: #C41E3A;      /* Cardinals heritage - Accents */
+--bsi-cream: #faf8f5; /* Warm white - Newspaper aesthetic */
+--bsi-warm-white: #fafafa; /* Clean white - Text */
+--bsi-ember: #ff6b35; /* Accent orange - Interactive elements */
+--bsi-titan-blue: #4b92db; /* Memphis heritage - Accents */
+--bsi-cardinal-red: #c41e3a; /* Cardinals heritage - Accents */
 ```
 
 ### Semantic Colors
+
 ```css
---bsi-success: #2E7D32;           /* Winning, positive stats */
---bsi-warning: #F9A825;           /* Caution, watch stats */
---bsi-danger: #C62828;            /* Losing, negative stats */
---bsi-info: #1976D2;              /* Informational, neutral */
+--bsi-success: #2e7d32; /* Winning, positive stats */
+--bsi-warning: #f9a825; /* Caution, watch stats */
+--bsi-danger: #c62828; /* Losing, negative stats */
+--bsi-info: #1976d2; /* Informational, neutral */
 ```
 
 ### Gradients
+
 ```css
---bsi-hero-gradient: linear-gradient(135deg, #1A1A1A 0%, #BF5700 100%);
---bsi-soil-gradient: linear-gradient(180deg, #8B4513 0%, #5D3A1F 100%);
---bsi-ember-glow: radial-gradient(circle at 50% 50%, #FF6B35 0%, transparent 70%);
+--bsi-hero-gradient: linear-gradient(135deg, #1a1a1a 0%, #bf5700 100%);
+--bsi-soil-gradient: linear-gradient(180deg, #8b4513 0%, #5d3a1f 100%);
+--bsi-ember-glow: radial-gradient(circle at 50% 50%, #ff6b35 0%, transparent 70%);
 ```
 
 ---
@@ -65,6 +69,7 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 ## Typography
 
 ### Font Stack
+
 ```css
 /* Display/Headlines - Bold, memorable, Texas character */
 --font-display: 'Playfair Display', 'Georgia', serif;
@@ -80,27 +85,29 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 ```
 
 ### Type Scale
+
 ```css
---text-xs: 0.75rem;      /* 12px - Fine print, timestamps */
---text-sm: 0.875rem;     /* 14px - Captions, secondary */
---text-base: 1rem;       /* 16px - Body text */
---text-lg: 1.125rem;     /* 18px - Lead paragraphs */
---text-xl: 1.25rem;      /* 20px - Subheadings */
---text-2xl: 1.5rem;      /* 24px - Section headers */
---text-3xl: 1.875rem;    /* 30px - Page titles */
---text-4xl: 2.25rem;     /* 36px - Hero secondary */
---text-5xl: 3rem;        /* 48px - Hero primary */
---text-6xl: 3.75rem;     /* 60px - Display */
---text-7xl: 4.5rem;      /* 72px - Statement */
+--text-xs: 0.75rem; /* 12px - Fine print, timestamps */
+--text-sm: 0.875rem; /* 14px - Captions, secondary */
+--text-base: 1rem; /* 16px - Body text */
+--text-lg: 1.125rem; /* 18px - Lead paragraphs */
+--text-xl: 1.25rem; /* 20px - Subheadings */
+--text-2xl: 1.5rem; /* 24px - Section headers */
+--text-3xl: 1.875rem; /* 30px - Page titles */
+--text-4xl: 2.25rem; /* 36px - Hero secondary */
+--text-5xl: 3rem; /* 48px - Hero primary */
+--text-6xl: 3.75rem; /* 60px - Display */
+--text-7xl: 4.5rem; /* 72px - Statement */
 ```
 
 ### Line Heights
+
 ```css
---leading-tight: 1.1;    /* Headlines */
---leading-snug: 1.25;    /* Subheadings */
---leading-normal: 1.5;   /* Body text */
+--leading-tight: 1.1; /* Headlines */
+--leading-snug: 1.25; /* Subheadings */
+--leading-normal: 1.5; /* Body text */
 --leading-relaxed: 1.625; /* Long-form */
---leading-loose: 2;      /* Spacious blocks */
+--leading-loose: 2; /* Spacious blocks */
 ```
 
 ---
@@ -108,19 +115,19 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 ## Spacing System
 
 ```css
---space-1: 0.25rem;   /* 4px */
---space-2: 0.5rem;    /* 8px */
---space-3: 0.75rem;   /* 12px */
---space-4: 1rem;      /* 16px */
---space-5: 1.25rem;   /* 20px */
---space-6: 1.5rem;    /* 24px */
---space-8: 2rem;      /* 32px */
---space-10: 2.5rem;   /* 40px */
---space-12: 3rem;     /* 48px */
---space-16: 4rem;     /* 64px */
---space-20: 5rem;     /* 80px */
---space-24: 6rem;     /* 96px */
---space-32: 8rem;     /* 128px */
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-5: 1.25rem; /* 20px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+--space-10: 2.5rem; /* 40px */
+--space-12: 3rem; /* 48px */
+--space-16: 4rem; /* 64px */
+--space-20: 5rem; /* 80px */
+--space-24: 6rem; /* 96px */
+--space-32: 8rem; /* 128px */
 ```
 
 ---
@@ -128,21 +135,27 @@ The company name "Blaze Sports Intel" comes from Austin's childhood dachshund, B
 ## Component Patterns
 
 ### Storytelling Blocks
+
 Origin story elements use a newspaper-inspired aesthetic:
+
 - Cream backgrounds with subtle paper texture
 - Sepia-toned image overlays for historical photos
 - Pull quotes in Playfair Display italic
 - Newspaper clipping frames with torn edges
 
 ### Data Cards
+
 Stats and analytics use a modern sports aesthetic:
+
 - Dark charcoal backgrounds
 - Burnt orange accents for key metrics
 - IBM Plex Mono for numbers
 - Subtle grid lines reminiscent of baseball scorecards
 
 ### Hero Sections
+
 Large visual impact with the origin story:
+
 - Full-bleed images with gradient overlays
 - Statement typography
 - Asymmetric layouts
@@ -153,18 +166,21 @@ Large visual impact with the origin story:
 ## Image Treatment
 
 ### Historical Photos
+
 - Sepia overlay: `filter: sepia(30%) contrast(1.1);`
 - Subtle vignette
 - Grain texture overlay
 - Worn edge effects
 
 ### Current Photos
+
 - High contrast
 - Slight warm color grade
 - Sharp focus
 - No filters unless intentional mood
 
 ### Logo Usage
+
 - Primary: Full lockup on dark backgrounds
 - Secondary: Mark only for small applications
 - Minimum clear space: Height of the "B" on all sides
@@ -175,12 +191,12 @@ Large visual impact with the origin story:
 ## Responsive Breakpoints
 
 ```css
---bp-mobile: 320px;     /* Small mobile */
---bp-mobile-lg: 425px;  /* Large mobile */
---bp-tablet: 768px;     /* Tablet portrait */
---bp-laptop: 1024px;    /* Small laptop */
---bp-desktop: 1280px;   /* Desktop */
---bp-wide: 1536px;      /* Wide screens */
+--bp-mobile: 320px; /* Small mobile */
+--bp-mobile-lg: 425px; /* Large mobile */
+--bp-tablet: 768px; /* Tablet portrait */
+--bp-laptop: 1024px; /* Small laptop */
+--bp-desktop: 1280px; /* Desktop */
+--bp-wide: 1536px; /* Wide screens */
 ```
 
 Mobile-first approach: Base styles for mobile, enhance up.
@@ -190,19 +206,21 @@ Mobile-first approach: Base styles for mobile, enhance up.
 ## Animation Principles
 
 ### Timing
+
 ```css
 --duration-fast: 150ms;
 --duration-normal: 300ms;
 --duration-slow: 500ms;
 --duration-slower: 800ms;
 
---ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
---ease-in: cubic-bezier(0.4, 0.0, 1, 1);
---ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+--ease-out: cubic-bezier(0, 0, 0.2, 1);
+--ease-in: cubic-bezier(0.4, 0, 1, 1);
+--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 ```
 
 ### Motion Philosophy
+
 - Purposeful, not decorative
 - Reveals content hierarchy through staggered animations
 - Ember glow effects for interactive elements
@@ -214,6 +232,7 @@ Mobile-first approach: Base styles for mobile, enhance up.
 ## Voice & Tone
 
 ### Writing Style
+
 - Direct, no corporate fluff
 - Lead with answers
 - Show the work, don't explain it
@@ -222,12 +241,14 @@ Mobile-first approach: Base styles for mobile, enhance up.
 - Respectful of all sports equally (except soccer—that's explicitly out of scope)
 
 ### Headlines
+
 - Active voice
 - Specific, not vague
 - Data when relevant
 - Questions that provoke thought
 
 ### Body Copy
+
 - Short paragraphs
 - No jargon without explanation
 - Statistics with context
@@ -285,4 +306,4 @@ Mobile-first approach: Base styles for mobile, enhance up.
 
 ---
 
-*Born in Memphis. Rooted in Texas soil. Blazing the path less beaten.*
+_Born in Memphis. Rooted in Texas soil. Blazing the path less beaten._

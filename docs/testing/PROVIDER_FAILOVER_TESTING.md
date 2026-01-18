@@ -44,11 +44,13 @@ Request → Success → Reset consecutive failures counter
 **Location**: `tests/integration/provider-failover.test.ts`
 
 **Run**:
+
 ```bash
 npm run test:integration:failover
 ```
 
 **Coverage**:
+
 - ✅ Basic failover (primary → secondary → tertiary)
 - ✅ Circuit breaker trip/reset logic
 - ✅ Success recovery behavior
@@ -57,6 +59,7 @@ npm run test:integration:failover
 - ✅ Production scenarios (rate limits, maintenance windows)
 
 **Expected Results**:
+
 - All 22 tests passing
 - ~95% code coverage of failover logic
 
@@ -65,6 +68,7 @@ npm run test:integration:failover
 #### 2.1 Normal Operation Validation
 
 **Prerequisites**:
+
 ```bash
 # Deploy ingest worker to staging
 cd workers/ingest
@@ -72,17 +76,21 @@ wrangler deploy --env staging
 ```
 
 **Test Steps**:
+
 1. Trigger scheduled cron job manually:
+
    ```bash
    wrangler cron trigger --env staging "*/15 * * * *"
    ```
 
 2. Monitor logs:
+
    ```bash
    wrangler tail --env staging --format pretty
    ```
 
 3. Expected output:
+
    ```
    [Ingest] Starting scheduled game sync...
    [Provider] Using SportsDataIO (primary)
@@ -91,6 +99,7 @@ wrangler deploy --env staging
    ```
 
 4. Verify Analytics Engine:
+
    ```bash
    npm run monitor:providers
    ```
@@ -103,6 +112,7 @@ wrangler deploy --env staging
 #### 2.2 Primary Failure Simulation
 
 **Simulate API Key Revocation**:
+
 ```bash
 # Temporarily corrupt SportsDataIO key
 wrangler secret put SPORTSDATA_API_KEY --env staging
@@ -110,11 +120,13 @@ wrangler secret put SPORTSDATA_API_KEY --env staging
 ```
 
 **Trigger sync**:
+
 ```bash
 wrangler cron trigger --env staging "*/15 * * * *"
 ```
 
 **Expected logs**:
+
 ```
 [Provider] Using SportsDataIO (primary)
 [SportsDataIO] Error: 401 Unauthorized
@@ -131,11 +143,13 @@ wrangler cron trigger --env staging "*/15 * * * *"
 ```
 
 **Validation**:
+
 ```bash
 npm run monitor:providers
 ```
 
 Expected:
+
 - SportsDataIO: 3 failed requests, circuit breaker tripped
 - NCAA_API: 1 successful request, 100% success rate
 - ESPN: 0 requests
@@ -143,6 +157,7 @@ Expected:
 #### 2.3 Secondary Failure Simulation
 
 **Simulate dual failure**:
+
 ```bash
 # Corrupt both SportsDataIO and NCAA_API keys
 wrangler secret put SPORTSDATA_API_KEY --env staging
@@ -153,6 +168,7 @@ wrangler secret put NCAA_API_KEY --env staging
 ```
 
 **Expected logs**:
+
 ```
 [Provider] SportsDataIO circuit breaker tripped (cooldown: 57s)
 [Provider] Trying NCAA_API (secondary)
@@ -166,6 +182,7 @@ wrangler secret put NCAA_API_KEY --env staging
 ```
 
 **Validation**:
+
 - SportsDataIO: Circuit breaker active
 - NCAA_API: Circuit breaker active
 - ESPN: 100% success rate
@@ -173,6 +190,7 @@ wrangler secret put NCAA_API_KEY --env staging
 #### 2.4 Circuit Breaker Reset
 
 **Wait for cooldown period**:
+
 ```bash
 # Wait 61 seconds (SportsDataIO 60s cooldown + buffer)
 sleep 61
@@ -186,6 +204,7 @@ wrangler cron trigger --env staging "*/15 * * * *"
 ```
 
 **Expected logs**:
+
 ```
 [Provider] SportsDataIO circuit breaker reset (60s elapsed)
 [Provider] Using SportsDataIO (primary)
@@ -194,12 +213,14 @@ wrangler cron trigger --env staging "*/15 * * * *"
 ```
 
 **Validation**:
+
 - SportsDataIO: Circuit breaker reset, serving traffic again
 - Consecutive failures counter: 0
 
 #### 2.5 Total Failure Scenario
 
 **Simulate all providers down**:
+
 ```bash
 # Corrupt all three API keys
 wrangler secret put SPORTSDATA_API_KEY --env staging
@@ -208,6 +229,7 @@ wrangler secret put ESPN_API_KEY --env staging
 ```
 
 **Expected logs**:
+
 ```
 [Provider] All providers exhausted after circuit breaker trips
 [Error] Failed to fetch games: No available providers
@@ -215,6 +237,7 @@ wrangler secret put ESPN_API_KEY --env staging
 ```
 
 **Validation**:
+
 - All providers: Circuit breakers tripped
 - No data ingested (expected behavior)
 - Cron will retry on next schedule
@@ -224,6 +247,7 @@ wrangler secret put ESPN_API_KEY --env staging
 #### 3.1 Continuous Health Monitoring
 
 **Setup Grafana Dashboard**:
+
 ```bash
 # Import dashboard template
 curl -X POST https://grafana.yourdomain.com/api/dashboards/db \
@@ -232,6 +256,7 @@ curl -X POST https://grafana.yourdomain.com/api/dashboards/db \
 ```
 
 **Key Metrics to Track**:
+
 1. **Success Rate**: Should be >99% aggregate across all providers
 2. **Circuit Breaker Trips**: Should be <1 per day
 3. **Response Time**: Should be <2000ms p95
@@ -240,11 +265,13 @@ curl -X POST https://grafana.yourdomain.com/api/dashboards/db \
 #### 3.2 Automated Monitoring
 
 **Run live monitoring**:
+
 ```bash
 npm run monitor:providers -- --live
 ```
 
 **Output**:
+
 ```
 🔴 Live Monitoring Mode - Last Update: 3:45:23 PM
 
@@ -280,6 +307,7 @@ npm run monitor:providers -- --live
 #### 3.3 Alert Configuration
 
 **Cloudflare Workers Analytics + PagerDuty**:
+
 ```typescript
 // Add to workers/ingest/index.ts
 if (env.ANALYTICS) {
@@ -291,7 +319,7 @@ if (env.ANALYTICS) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Token token=${env.PAGERDUTY_TOKEN}`
+        Authorization: `Token token=${env.PAGERDUTY_TOKEN}`,
       },
       body: JSON.stringify({
         routing_key: env.PAGERDUTY_ROUTING_KEY,
@@ -302,10 +330,10 @@ if (env.ANALYTICS) {
           source: 'ingest-worker',
           custom_details: {
             successRate,
-            failedProviders: getFailedProviders()
-          }
-        }
-      })
+            failedProviders: getFailedProviders(),
+          },
+        },
+      }),
     });
   }
 }
@@ -335,7 +363,7 @@ if (env.ANALYTICS) {
 
 1. **Elevated Failure Rate**
    - Success rate <95%
-   - >3 circuit breaker trips per day
+   - > 3 circuit breaker trips per day
 
 2. **Persistent Failover**
    - Secondary/tertiary providers handling >10% of requests
@@ -360,11 +388,13 @@ if (env.ANALYTICS) {
 ### Issue: Primary provider keeps failing
 
 **Check**:
+
 1. API key validity: `curl -H "Authorization: Bearer $KEY" https://api.sportsdata.io/health`
 2. Rate limit status: Check dashboard for 429 responses
 3. Account status: Verify subscription is active
 
 **Resolution**:
+
 - If rate limited: Increase cooldown period or reduce cron frequency
 - If key invalid: Rotate API key via `wrangler secret put`
 - If account issue: Contact provider support
@@ -372,6 +402,7 @@ if (env.ANALYTICS) {
 ### Issue: Circuit breaker not resetting
 
 **Check**:
+
 ```bash
 # View current circuit breaker state
 npm run monitor:providers
@@ -381,6 +412,7 @@ wrangler tail --search "circuit breaker reset"
 ```
 
 **Resolution**:
+
 - Verify cooldown period configuration
 - Check system clock synchronization
 - Manually reset via admin endpoint (if implemented)
@@ -388,11 +420,13 @@ wrangler tail --search "circuit breaker reset"
 ### Issue: Secondary provider has higher success rate
 
 **Check**:
+
 - Compare data quality between providers
 - Check if primary is experiencing degraded performance
 - Review recent provider status pages
 
 **Resolution**:
+
 - Temporarily swap provider priorities if SportsDataIO has ongoing issues
 - Add data quality checks to prefer higher-quality responses
 
@@ -415,16 +449,19 @@ Before marking provider failover as production-ready:
 ## Maintenance
 
 ### Weekly Tasks:
+
 - Review provider health metrics
 - Check for any degraded performance trends
 - Verify alert thresholds are appropriate
 
 ### Monthly Tasks:
+
 - Analyze failover patterns
 - Update provider priorities if needed
 - Review and optimize cooldown periods
 
 ### Quarterly Tasks:
+
 - Load test all providers
 - Verify failover under high traffic
 - Update provider contact information

@@ -31,7 +31,7 @@ function generateGameContent(game) {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 
   return `College Baseball 2024. ${game.away_team} at ${game.home_team}. Final score ${game.home_team} ${game.home_score} ${game.away_team} ${game.away_score}. ${winner} defeats ${loser} ${winScore}-${loseScore}. ${gameType}. ${dateStr}`;
@@ -66,7 +66,7 @@ async function ingestBatch(items) {
       failed++;
     }
     // Small delay between requests
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   return { succeeded, failed };
@@ -105,7 +105,7 @@ async function main() {
       console.log(`📦 Processing batch ${batchNum}/${totalBatches} (${batch.length} games)...`);
 
       // Prepare items for ingestion
-      const items = batch.map(game => ({
+      const items = batch.map((game) => ({
         id: `game-${game.game_id}`,
         title: `${game.away_team} at ${game.home_team}`,
         content: generateGameContent(game),
@@ -134,7 +134,7 @@ async function main() {
 
       // Small delay between batches to avoid rate limiting
       if (i + batchSize < toIndex.length) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
 
@@ -142,7 +142,6 @@ async function main() {
     console.log(`   Total Succeeded: ${totalSucceeded}`);
     console.log(`   Total Failed: ${totalFailed}`);
     console.log(`\n✅ Batch embedding complete!`);
-
   } catch (error) {
     console.error('❌ Error:', error.message);
     process.exit(1);

@@ -2,10 +2,10 @@
 
 /**
  * BSI Dependency Audit Script
- * 
+ *
  * Collects all dependencies from package.json and outputs them in a format
  * suitable for Socket.dev analysis via the Socket MCP tool.
- * 
+ *
  * Usage:
  *   node scripts/audit-deps.js
  *   node scripts/audit-deps.js --ci (for CI environments)
@@ -36,7 +36,7 @@ function loadPackageJson() {
 
 function collectDependencies(packageJson) {
   const allDeps = new Map();
-  
+
   // Collect production dependencies
   if (packageJson.dependencies) {
     for (const [name, version] of Object.entries(packageJson.dependencies)) {
@@ -44,11 +44,11 @@ function collectDependencies(packageJson) {
         depname: name,
         ecosystem: 'npm',
         version: version.replace(/^[\^~]/, ''), // Remove semver prefixes
-        type: 'production'
+        type: 'production',
       });
     }
   }
-  
+
   // Collect dev dependencies
   if (packageJson.devDependencies) {
     for (const [name, version] of Object.entries(packageJson.devDependencies)) {
@@ -56,11 +56,11 @@ function collectDependencies(packageJson) {
         depname: name,
         ecosystem: 'npm',
         version: version.replace(/^[\^~]/, ''),
-        type: 'development'
+        type: 'development',
       });
     }
   }
-  
+
   // Collect optional dependencies
   if (packageJson.optionalDependencies) {
     for (const [name, version] of Object.entries(packageJson.optionalDependencies)) {
@@ -68,19 +68,19 @@ function collectDependencies(packageJson) {
         depname: name,
         ecosystem: 'npm',
         version: version.replace(/^[\^~]/, ''),
-        type: 'optional'
+        type: 'optional',
       });
     }
   }
-  
+
   return Array.from(allDeps.values());
 }
 
 function formatForSocket(dependencies) {
-  return dependencies.map(dep => ({
+  return dependencies.map((dep) => ({
     depname: dep.depname,
     ecosystem: dep.ecosystem,
-    version: dep.version
+    version: dep.version,
   }));
 }
 
@@ -89,7 +89,7 @@ function displayResults(dependencies, packageJson) {
     console.log(JSON.stringify(formatForSocket(dependencies), null, 2));
     return;
   }
-  
+
   console.log('╔════════════════════════════════════════════════════════════════╗');
   console.log('║         BSI Dependency Audit - Socket.dev Integration         ║');
   console.log('╚════════════════════════════════════════════════════════════════╝');
@@ -97,60 +97,62 @@ function displayResults(dependencies, packageJson) {
   console.log(`Project: ${packageJson.name} v${packageJson.version}`);
   console.log(`Total Dependencies: ${dependencies.length}`);
   console.log('');
-  
-  const prodDeps = dependencies.filter(d => d.type === 'production');
-  const devDeps = dependencies.filter(d => d.type === 'development');
-  const optDeps = dependencies.filter(d => d.type === 'optional');
-  
+
+  const prodDeps = dependencies.filter((d) => d.type === 'production');
+  const devDeps = dependencies.filter((d) => d.type === 'development');
+  const optDeps = dependencies.filter((d) => d.type === 'optional');
+
   console.log(`Production:  ${prodDeps.length}`);
   console.log(`Development: ${devDeps.length}`);
   console.log(`Optional:    ${optDeps.length}`);
   console.log('');
   console.log('─'.repeat(68));
   console.log('');
-  
+
   if (!isCI) {
     console.log('Dependencies by Type:');
     console.log('');
-    
+
     if (prodDeps.length > 0) {
       console.log('Production Dependencies:');
-      prodDeps.forEach(dep => {
+      prodDeps.forEach((dep) => {
         console.log(`  • ${dep.depname}@${dep.version}`);
       });
       console.log('');
     }
-    
+
     if (devDeps.length > 0) {
       console.log('Development Dependencies:');
-      devDeps.forEach(dep => {
+      devDeps.forEach((dep) => {
         console.log(`  • ${dep.depname}@${dep.version}`);
       });
       console.log('');
     }
-    
+
     if (optDeps.length > 0) {
       console.log('Optional Dependencies:');
-      optDeps.forEach(dep => {
+      optDeps.forEach((dep) => {
         console.log(`  • ${dep.depname}@${dep.version}`);
       });
       console.log('');
     }
   }
-  
+
   console.log('─'.repeat(68));
   console.log('');
   console.log('Socket MCP Payload:');
   console.log('');
   console.log('Socket:depscore({');
   console.log('  packages: [');
-  
+
   const socketFormat = formatForSocket(dependencies);
   socketFormat.forEach((dep, index) => {
     const comma = index < socketFormat.length - 1 ? ',' : '';
-    console.log(`    { depname: "${dep.depname}", ecosystem: "${dep.ecosystem}", version: "${dep.version}" }${comma}`);
+    console.log(
+      `    { depname: "${dep.depname}", ecosystem: "${dep.ecosystem}", version: "${dep.version}" }${comma}`
+    );
   });
-  
+
   console.log('  ]');
   console.log('})');
   console.log('');
@@ -172,9 +174,9 @@ function displayResults(dependencies, packageJson) {
 function main() {
   const packageJson = loadPackageJson();
   const dependencies = collectDependencies(packageJson);
-  
+
   displayResults(dependencies, packageJson);
-  
+
   if (isCI) {
     console.log('\nCI Mode: Audit data collected successfully.');
     console.log('Run Socket.dev check to validate dependency security.');

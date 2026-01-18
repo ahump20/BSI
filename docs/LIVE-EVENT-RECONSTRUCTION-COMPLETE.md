@@ -32,6 +32,7 @@ The Live Event Reconstruction System is now **production-ready** with complete i
 **Data Source:** ESPN API (`site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard`)
 
 #### Key Features
+
 - **Polling Method:** `pollNFLGame()` with 15-second interval
 - **API Client:** `fetchNFLGame()` with ESPN API integration
 - **Significance Threshold:** 40 points minimum
@@ -39,18 +40,20 @@ The Live Event Reconstruction System is now **production-ready** with complete i
 - **Win Probability:** 0-0.40 range with quarter-based scaling
 
 #### Event Detection (9 types)
-| Event Type | Base Score | Context Bonuses |
-|-----------|-----------|-----------------|
-| Touchdowns | 50pts | Two-minute drill: +25pts |
-| Turnovers | 45pts | Red zone: +15pts |
-| 40+ yard plays | 40pts | Overtime: +30pts |
-| 30-39 yard plays | 30pts | Fourth down conversions: +35pts |
-| 20-29 yard plays | 25pts | - |
-| Sacks | 35pts | - |
-| Interceptions | 45pts | - |
-| Fumble recoveries | 45pts | - |
+
+| Event Type        | Base Score | Context Bonuses                 |
+| ----------------- | ---------- | ------------------------------- |
+| Touchdowns        | 50pts      | Two-minute drill: +25pts        |
+| Turnovers         | 45pts      | Red zone: +15pts                |
+| 40+ yard plays    | 40pts      | Overtime: +30pts                |
+| 30-39 yard plays  | 30pts      | Fourth down conversions: +35pts |
+| 20-29 yard plays  | 25pts      | -                               |
+| Sacks             | 35pts      | -                               |
+| Interceptions     | 45pts      | -                               |
+| Fumble recoveries | 45pts      | -                               |
 
 #### Test Script
+
 ```bash
 ./scripts/test-live-monitoring.sh
 ```
@@ -64,6 +67,7 @@ The Live Event Reconstruction System is now **production-ready** with complete i
 **Data Source:** NBA Stats API (`stats.nba.com/stats/playbyplayv3`)
 
 #### Key Features
+
 - **Polling Method:** `pollNBAGame()` with 15-second interval
 - **API Client:** `fetchNBAGame()` with playbyplayv3 endpoint
 - **Required Headers:** Origin, Referer, Accept-Language
@@ -73,23 +77,25 @@ The Live Event Reconstruction System is now **production-ready** with complete i
 - **Win Probability:** 0-0.50 range with period-specific multipliers
 
 #### Event Detection (13+ types)
-| Event Type | Base Score | Context Bonuses |
-|-----------|-----------|-----------------|
-| Three-pointers | 35pts | Clutch time (Q4/OT <2min): +40pts |
-| Dunks/layups | 30pts | Late-game (Q4 <5min): +20pts |
-| Regular field goals | 20pts | Buzzer-beaters (≤2sec): +50pts |
-| Blocks | 35pts | Assists: +10pts |
-| Steals | 30pts | - |
-| Turnovers | 25pts | - |
-| Offensive rebounds | 15pts | - |
-| Defensive rebounds | 5pts | - |
-| Flagrant fouls | 35pts | - |
-| Technical fouls | 35pts | - |
-| Late-game tactical fouls | 20pts | - |
+
+| Event Type               | Base Score | Context Bonuses                   |
+| ------------------------ | ---------- | --------------------------------- |
+| Three-pointers           | 35pts      | Clutch time (Q4/OT <2min): +40pts |
+| Dunks/layups             | 30pts      | Late-game (Q4 <5min): +20pts      |
+| Regular field goals      | 20pts      | Buzzer-beaters (≤2sec): +50pts    |
+| Blocks                   | 35pts      | Assists: +10pts                   |
+| Steals                   | 30pts      | -                                 |
+| Turnovers                | 25pts      | -                                 |
+| Offensive rebounds       | 15pts      | -                                 |
+| Defensive rebounds       | 5pts       | -                                 |
+| Flagrant fouls           | 35pts      | -                                 |
+| Technical fouls          | 35pts      | -                                 |
+| Late-game tactical fouls | 20pts      | -                                 |
 
 #### Advanced Analytics
 
 **Leverage Index Calculation** (0-5.0 scale):
+
 ```
 Base leverage = 0.4 + (period / 8)
   Q1: 0.525 (0.4 + 1/8)
@@ -113,6 +119,7 @@ Maximum cap: 5.0
 ```
 
 **Win Probability Delta** (0-0.50 range):
+
 ```
 Base values:
   Three-pointers: 6%
@@ -141,6 +148,7 @@ Maximum cap: 0.50
 ```
 
 #### Test Script
+
 ```bash
 ./scripts/test-nba-monitoring.sh
 ```
@@ -154,6 +162,7 @@ Maximum cap: 0.50
 **Data Source:** MLB Stats API (`statsapi.mlb.com`)
 
 #### Key Features
+
 - **Polling Method:** `pollMLBGame()` with 15-second interval
 - **API Client:** MLB Stats API integration
 - **Significance Threshold:** Sport-specific baseball scoring
@@ -161,6 +170,7 @@ Maximum cap: 0.50
 - **Win Probability:** Baseball-specific modeling
 
 #### Test Script
+
 ```bash
 ./scripts/test-live-monitoring.sh
 ```
@@ -197,11 +207,13 @@ Maximum cap: 0.50
    - Foreign Key: `reconstruction_id` → `reconstructions(id)` CASCADE DELETE
 
 **3 Automatic Triggers:**
+
 - `update_live_games_timestamp`
 - `update_reconstructions_timestamp`
 - `update_content_queue_timestamp`
 
 **3 Analytics Views:**
+
 - `v_active_monitoring` - Real-time monitoring dashboard
 - `v_daily_highlights` - Daily highlight aggregation
 - `v_model_accuracy` - Prediction model performance
@@ -209,6 +221,7 @@ Maximum cap: 0.50
 ### Cloudflare KV Storage
 
 **Caching Strategy:**
+
 - **Processed plays:** 24-hour TTL per game
 - **Event deduplication:** Prevents duplicate storage
 - **Key format:** `{sport}_processed_plays_{gameId}`
@@ -223,6 +236,7 @@ Maximum cap: 0.50
 Start monitoring a live game.
 
 Request:
+
 ```json
 {
   "sport": "nba",
@@ -235,6 +249,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -250,6 +265,7 @@ Response:
 List active monitors.
 
 Response:
+
 ```json
 {
   "monitors": [
@@ -271,6 +287,7 @@ Response:
 Stop monitoring a game.
 
 Response:
+
 ```json
 {
   "success": true,
@@ -286,6 +303,7 @@ Response:
 List reconstructions with filters.
 
 Query Parameters:
+
 - `gameId` (optional) - Filter by game
 - `eventId` (optional) - Filter by event
 - `sport` (optional) - Filter by sport (mlb, nfl, nba)
@@ -294,6 +312,7 @@ Query Parameters:
 - `offset` (optional) - Pagination offset (default: 0)
 
 Response:
+
 ```json
 {
   "reconstructions": [
@@ -320,6 +339,7 @@ Response:
 Get single reconstruction with full details.
 
 Response:
+
 ```json
 {
   "id": "uuid-v4",
@@ -350,12 +370,14 @@ Response:
 ### Test Scripts
 
 **All Sports:**
+
 ```bash
 ./scripts/test-live-monitoring.sh
 # Tests: Health check, NFL monitoring, reconstructions API
 ```
 
 **NBA-Specific:**
+
 ```bash
 ./scripts/test-nba-monitoring.sh
 # Tests: Health check, NBA monitoring, NBA-specific features
@@ -377,18 +399,21 @@ Response:
 ## Performance Characteristics
 
 ### Response Times
+
 - **API Health Check:** <100ms
 - **Start Monitoring:** <200ms
 - **Reconstruction Retrieval:** <300ms
 - **Poll Interval:** 15 seconds (all sports)
 
 ### Scalability
+
 - **Concurrent Games:** Unlimited (Cloudflare Workers auto-scaling)
 - **Database Size:** 688KB schema + event data
 - **Cache TTL:** 24 hours (KV storage)
 - **Storage:** Cloudflare R2 for media assets
 
 ### Reliability
+
 - **Database:** D1 with ACID guarantees
 - **Caching:** KV with automatic expiration
 - **Error Handling:** Comprehensive try-catch with logging
@@ -399,6 +424,7 @@ Response:
 ## Production Deployment
 
 ### Current Status
+
 ✅ **Development:** Complete
 ✅ **Testing:** Complete
 ✅ **Documentation:** Complete
@@ -407,17 +433,20 @@ Response:
 ### Deployment Checklist
 
 1. **Database Verification**
+
    ```bash
    wrangler d1 execute blazesports-historical --remote \
      --command="SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
    ```
 
 2. **API Endpoint Testing**
+
    ```bash
    curl -s https://19d8cdbb.college-baseball-tracker.pages.dev/api/health | jq '.'
    ```
 
 3. **Monitor Test Run**
+
    ```bash
    ./scripts/test-nba-monitoring.sh
    ```
@@ -428,6 +457,7 @@ Response:
    ```
 
 ### Environment Variables
+
 ```bash
 # Required for production
 CLOUDFLARE_API_TOKEN=<your-token>
@@ -435,6 +465,7 @@ CLOUDFLARE_ACCOUNT_ID=<your-account-id>
 ```
 
 ### Database Bindings
+
 ```toml
 # wrangler.toml
 [[d1_databases]]
@@ -452,12 +483,14 @@ id = "<your-kv-namespace-id>"
 ## Next Steps
 
 ### Immediate Actions
+
 1. ✅ Deploy to production environment (COMPLETE - October 31, 2025)
 2. 🔄 Monitor first live games (MLB, NFL, NBA)
 3. 🔄 Validate event detection accuracy
 4. 🔄 Collect performance metrics
 
 ### Phase 2 Enhancements
+
 - [ ] 3D reconstruction rendering pipeline
 - [ ] WebGPU physics simulation
 - [ ] Highlight generation automation
@@ -466,6 +499,7 @@ id = "<your-kv-namespace-id>"
 - [ ] Mobile app API endpoints
 
 ### Phase 3 Advanced Features
+
 - [ ] Machine learning prediction models
 - [ ] Computer vision integration (Roboflow)
 - [ ] Multi-angle camera reconstruction
@@ -478,6 +512,7 @@ id = "<your-kv-namespace-id>"
 ## Technical Architecture
 
 ### Data Flow
+
 ```
 Live Game API (ESPN/NBA Stats/MLB)
     ↓
@@ -499,6 +534,7 @@ API Endpoint (GET /api/live-events/reconstructions)
 ```
 
 ### Technology Stack
+
 - **Runtime:** Cloudflare Workers (Edge computing)
 - **Database:** Cloudflare D1 (SQLite)
 - **Cache:** Cloudflare KV (Key-value store)
@@ -512,18 +548,21 @@ API Endpoint (GET /api/live-events/reconstructions)
 ## Maintenance & Support
 
 ### Monitoring
+
 - System health: `/api/health`
 - Active monitors: `v_active_monitoring` view
 - Daily highlights: `v_daily_highlights` view
 - Model accuracy: `v_model_accuracy` view
 
 ### Logging
+
 - Console logs for all major operations
 - Error tracking with try-catch blocks
 - Event detection logging with significance scores
 - KV cache hit/miss tracking
 
 ### Database Maintenance
+
 - Automatic timestamp updates (triggers)
 - Foreign key cascades (data integrity)
 - Optimized indexes (query performance)
@@ -534,6 +573,7 @@ API Endpoint (GET /api/live-events/reconstructions)
 ## Documentation
 
 ### Key Files
+
 - **Implementation:** `/lib/reconstruction/live-monitor.ts`
 - **API Endpoints:** `/functions/api/live-events/monitor.ts`, `reconstructions.ts`
 - **Database Schema:** `/schema/004_live_event_reconstruction.sql`
@@ -542,6 +582,7 @@ API Endpoint (GET /api/live-events/reconstructions)
 - **This Document:** `/docs/LIVE-EVENT-RECONSTRUCTION-COMPLETE.md`
 
 ### Related Documentation
+
 - TypeScript types: `/lib/reconstruction/types.ts`
 - API specification: (see API Endpoints section above)
 - Database schema: (see Database Infrastructure section above)
@@ -558,6 +599,7 @@ API Endpoint (GET /api/live-events/reconstructions)
 ## Changelog
 
 **Version 1.0.0** - October 31, 2025
+
 - ✅ Complete NFL event monitoring (ESPN API)
 - ✅ Complete NBA event monitoring (NBA Stats API)
 - ✅ Complete MLB event monitoring (MLB Stats API)

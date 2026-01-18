@@ -26,13 +26,13 @@
 
 ### Blaze vs. ESPN
 
-| **ESPN's Approach** | **Blaze's Advantage** |
-|---------------------|----------------------|
-| Mobile app = news feed with scores buried | **Data-first:** Box scores in 2 taps max |
-| College baseball = score + inning only | **Complete intelligence:** Full batting/pitching lines |
-| Generic national coverage | **Regional authority:** Deep South + Texas focus |
-| Ad-cluttered experience | **Clean, focused:** Pay-per-value, no ads |
-| Desktop-optimized web | **Mobile-native:** iPhone portrait primary |
+| **ESPN's Approach**                       | **Blaze's Advantage**                                  |
+| ----------------------------------------- | ------------------------------------------------------ |
+| Mobile app = news feed with scores buried | **Data-first:** Box scores in 2 taps max               |
+| College baseball = score + inning only    | **Complete intelligence:** Full batting/pitching lines |
+| Generic national coverage                 | **Regional authority:** Deep South + Texas focus       |
+| Ad-cluttered experience                   | **Clean, focused:** Pay-per-value, no ads              |
+| Desktop-optimized web                     | **Mobile-native:** iPhone portrait primary             |
 
 ### Core Design Principles
 
@@ -61,6 +61,7 @@
 ## 2. Visual Hierarchy: Information Prioritization
 
 ### Current Problem
+
 - Hero takes 100vh → user scrolls to see data
 - Cards have equal visual weight → nothing stands out
 - Particle background competes with content
@@ -97,6 +98,7 @@
 ```
 
 **Visual Weight Distribution:**
+
 - 50% → Data tables (box scores, standings)
 - 25% → Navigation and quick access
 - 15% → Hero/branding
@@ -112,29 +114,29 @@
 
 ```css
 /* Backgrounds (80% of screen) */
---bg-primary: #0d0d12;      /* Deep charcoal */
---bg-secondary: #161620;    /* Elevated surfaces */
---bg-tertiary: #1f1f2e;     /* Cards, modals */
+--bg-primary: #0d0d12; /* Deep charcoal */
+--bg-secondary: #161620; /* Elevated surfaces */
+--bg-tertiary: #1f1f2e; /* Cards, modals */
 
 /* Text (Clear hierarchy) */
---text-primary: #ffffff;    /* Headings, critical data */
---text-secondary: #e0e0e0;  /* Body copy */
---text-tertiary: #a0a0a0;   /* Labels, meta */
+--text-primary: #ffffff; /* Headings, critical data */
+--text-secondary: #e0e0e0; /* Body copy */
+--text-tertiary: #a0a0a0; /* Labels, meta */
 
 /* Brand Accents (10% of screen) */
---brand-primary: #bf5700;   /* CTAs, active states */
---brand-hover: #cc6600;     /* Hover effects */
---brand-subtle: #d97b38;    /* Borders, highlights */
+--brand-primary: #bf5700; /* CTAs, active states */
+--brand-hover: #cc6600; /* Hover effects */
+--brand-subtle: #d97b38; /* Borders, highlights */
 ```
 
 #### Semantic Colors
 
 ```css
 /* Status indicators */
---success: #10b981;  /* Win, live, positive */
---warning: #f59e0b;  /* Injury, delay */
---error: #ef4444;    /* Loss, error */
---info: #3b82f6;     /* Neutral info */
+--success: #10b981; /* Win, live, positive */
+--warning: #f59e0b; /* Injury, delay */
+--error: #ef4444; /* Loss, error */
+--info: #3b82f6; /* Neutral info */
 ```
 
 ### Typography Scale
@@ -142,22 +144,22 @@
 #### Font Families
 
 ```css
---font-display: 'Bebas Neue', Impact, sans-serif;  /* Headings only */
---font-body: 'Inter', system-ui, sans-serif;       /* Everything else */
---font-mono: 'SF Mono', 'Courier New', monospace;  /* Stats tables */
+--font-display: 'Bebas Neue', Impact, sans-serif; /* Headings only */
+--font-body: 'Inter', system-ui, sans-serif; /* Everything else */
+--font-mono: 'SF Mono', 'Courier New', monospace; /* Stats tables */
 ```
 
 #### Type Scale (Fluid, Mobile-Optimized)
 
 ```css
 /* Mobile-first sizes */
---text-xs: 0.75rem;   /* 12px - Labels */
---text-sm: 0.875rem;  /* 14px - Captions */
---text-base: 1rem;    /* 16px - Body (min for mobile) */
---text-lg: 1.125rem;  /* 18px - Subheads */
---text-xl: 1.25rem;   /* 20px - Section titles */
---text-2xl: 1.5rem;   /* 24px - Page titles */
---text-3xl: 2rem;     /* 32px - Hero (mobile) */
+--text-xs: 0.75rem; /* 12px - Labels */
+--text-sm: 0.875rem; /* 14px - Captions */
+--text-base: 1rem; /* 16px - Body (min for mobile) */
+--text-lg: 1.125rem; /* 18px - Subheads */
+--text-xl: 1.25rem; /* 20px - Section titles */
+--text-2xl: 1.5rem; /* 24px - Page titles */
+--text-3xl: 2rem; /* 32px - Hero (mobile) */
 ```
 
 **Critical Rule:** Body text ≥16px on mobile (prevents iOS zoom on focus)
@@ -165,13 +167,13 @@
 ### Spacing System (8px Grid)
 
 ```css
---space-1: 0.25rem;  /* 4px  - Tight spacing */
---space-2: 0.5rem;   /* 8px  - Base unit */
---space-3: 0.75rem;  /* 12px - Small gaps */
---space-4: 1rem;     /* 16px - Standard gaps */
---space-6: 1.5rem;   /* 24px - Section spacing */
---space-8: 2rem;     /* 32px - Major sections */
---space-12: 3rem;    /* 48px - Page sections */
+--space-1: 0.25rem; /* 4px  - Tight spacing */
+--space-2: 0.5rem; /* 8px  - Base unit */
+--space-3: 0.75rem; /* 12px - Small gaps */
+--space-4: 1rem; /* 16px - Standard gaps */
+--space-6: 1.5rem; /* 24px - Section spacing */
+--space-8: 2rem; /* 32px - Major sections */
+--space-12: 3rem; /* 48px - Page sections */
 ```
 
 ---
@@ -183,8 +185,8 @@
 ```css
 /* Mobile-first approach */
 :root {
-  --breakpoint-sm: 375px;  /* iPhone SE (minimum) */
-  --breakpoint-md: 768px;  /* iPad portrait */
+  --breakpoint-sm: 375px; /* iPhone SE (minimum) */
+  --breakpoint-md: 768px; /* iPad portrait */
   --breakpoint-lg: 1024px; /* iPad landscape, small laptops */
   --breakpoint-xl: 1280px; /* Desktop */
 }
@@ -193,7 +195,9 @@
 ### Touch Target Standards (Apple HIG)
 
 ```css
-.btn, .nav-link, .card-clickable {
+.btn,
+.nav-link,
+.card-clickable {
   min-height: 44px;
   min-width: 44px;
   padding: 12px 16px; /* Ensures 44px height with text */
@@ -229,17 +233,18 @@
 
 ### Critical Metrics (Mobile)
 
-| Metric | Target | Current | Priority |
-|--------|--------|---------|----------|
-| **First Contentful Paint (FCP)** | <1.8s | ~4s | 🔴 Critical |
-| **Largest Contentful Paint (LCP)** | <2.5s | ~5s | 🔴 Critical |
-| **Time to Interactive (TTI)** | <3.5s | ~7s | 🔴 Critical |
-| **Cumulative Layout Shift (CLS)** | <0.1 | ~0.25 | 🟡 Important |
-| **Total Blocking Time (TBT)** | <300ms | ~800ms | 🔴 Critical |
+| Metric                             | Target | Current | Priority     |
+| ---------------------------------- | ------ | ------- | ------------ |
+| **First Contentful Paint (FCP)**   | <1.8s  | ~4s     | 🔴 Critical  |
+| **Largest Contentful Paint (LCP)** | <2.5s  | ~5s     | 🔴 Critical  |
+| **Time to Interactive (TTI)**      | <3.5s  | ~7s     | 🔴 Critical  |
+| **Cumulative Layout Shift (CLS)**  | <0.1   | ~0.25   | 🟡 Important |
+| **Total Blocking Time (TBT)**      | <300ms | ~800ms  | 🔴 Critical  |
 
 ### Particle System: Kill or Simplify
 
 **Current Problem:**
+
 - Three.js + postprocessing = ~500KB bundle
 - 60fps particle animation on mobile = battery drain
 - Competes with content for visual attention
@@ -266,7 +271,7 @@ const material = new THREE.PointsMaterial({
   color: 0xbf5700,
   transparent: true,
   opacity: 0.3,
-  blending: THREE.AdditiveBlending
+  blending: THREE.AdditiveBlending,
 });
 // Remove: EffectComposer, UnrealBloomPass, etc.
 ```
@@ -290,12 +295,13 @@ Total CSS: <15KB gzipped
 ```html
 <!-- Responsive images with WebP -->
 <picture>
-  <source srcset="/icons/baseball.webp" type="image/webp">
-  <img src="/icons/baseball.png" alt="Baseball" width="32" height="32" loading="lazy">
+  <source srcset="/icons/baseball.webp" type="image/webp" />
+  <img src="/icons/baseball.png" alt="Baseball" width="32" height="32" loading="lazy" />
 </picture>
 ```
 
 **Icon Strategy:**
+
 - Replace Font Awesome with inline SVGs (save ~80KB)
 - Use SVG sprites for repeated icons
 - Compress with SVGO
@@ -361,6 +367,7 @@ Total CSS: <15KB gzipped
 #### Design Requirements
 
 1. **At-a-Glance Summary (Collapsed State)**
+
    ```
    ┌─────────────────────────────────────────┐
    │ Texas 5, TCU 3 • Final                  │
@@ -371,6 +378,7 @@ Total CSS: <15KB gzipped
    ```
 
 2. **Full Box Score (Expanded State)**
+
    ```
    ┌─────────────────────────────────────────┐
    │ BATTING                                  │
@@ -461,6 +469,7 @@ export const BoxScore: React.FC<BoxScoreProps> = ({ ... }) => {
 ```
 
 **Features:**
+
 - Click column headers to sort
 - Sticky header on scroll
 - Team logos (16×16px) inline with names
@@ -491,14 +500,14 @@ export const BoxScore: React.FC<BoxScoreProps> = ({ ... }) => {
 
 ```css
 /* Pass: 7:1 ratio */
---text-primary: #ffffff;     /* on #0d0d12 */
---text-secondary: #e0e0e0;   /* on #0d0d12 */
+--text-primary: #ffffff; /* on #0d0d12 */
+--text-secondary: #e0e0e0; /* on #0d0d12 */
 
 /* Pass: 4.8:1 ratio */
---brand-on-dark: #d97b38;    /* Lighter burnt orange for text */
+--brand-on-dark: #d97b38; /* Lighter burnt orange for text */
 
 /* Fail: 3.2:1 → Must not use for text */
---brand-primary: #bf5700;    /* Backgrounds/borders only */
+--brand-primary: #bf5700; /* Backgrounds/borders only */
 ```
 
 **Tool for verification:** [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
@@ -565,6 +574,7 @@ export const BoxScore: React.FC<BoxScoreProps> = ({ ... }) => {
 ### Cloudflare Pages + Functions (Current Setup)
 
 **Advantages:**
+
 - Edge CDN (sub-50ms global latency)
 - Serverless functions (no server maintenance)
 - D1 database (SQL at the edge)
@@ -603,7 +613,9 @@ export async function onRequest({ request, env }) {
   if (response) return response;
 
   // Fetch from ESPN API
-  const data = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard');
+  const data = await fetch(
+    'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard'
+  );
   const json = await data.json();
 
   // Transform to our schema
@@ -614,8 +626,8 @@ export async function onRequest({ request, env }) {
     headers: {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=30',
-      'CDN-Cache-Control': 'public, max-age=30'
-    }
+      'CDN-Cache-Control': 'public, max-age=30',
+    },
   });
 
   await cache.put(cacheKey, response.clone());
@@ -629,14 +641,14 @@ export async function onRequest({ request, env }) {
 
 ### Comparative Analysis
 
-| Feature | ESPN | D1Baseball | Baseball America | **Blaze** |
-|---------|------|------------|------------------|-----------|
-| **Mobile Box Scores** | ❌ Score only | ✅ Full | ⚠️ Paywall | ✅ Free, complete |
-| **Conference Standings** | ⚠️ Generic | ✅ Detailed | ✅ With RPI | ✅ + Projections |
-| **Player Stats** | ❌ None | ✅ Basic | ✅ Advanced | ✅ + Draft tracking |
-| **Design Quality** | 6/10 | 4/10 | 5/10 | **Target: 9/10** |
-| **Mobile Performance** | 7/10 | 5/10 | 4/10 | **Target: 9/10** |
-| **Data Transparency** | ❌ None | ⚠️ Limited | ⚠️ Limited | ✅ Full sources |
+| Feature                  | ESPN          | D1Baseball  | Baseball America | **Blaze**           |
+| ------------------------ | ------------- | ----------- | ---------------- | ------------------- |
+| **Mobile Box Scores**    | ❌ Score only | ✅ Full     | ⚠️ Paywall       | ✅ Free, complete   |
+| **Conference Standings** | ⚠️ Generic    | ✅ Detailed | ✅ With RPI      | ✅ + Projections    |
+| **Player Stats**         | ❌ None       | ✅ Basic    | ✅ Advanced      | ✅ + Draft tracking |
+| **Design Quality**       | 6/10          | 4/10        | 5/10             | **Target: 9/10**    |
+| **Mobile Performance**   | 7/10          | 5/10        | 4/10             | **Target: 9/10**    |
+| **Data Transparency**    | ❌ None       | ⚠️ Limited  | ⚠️ Limited       | ✅ Full sources     |
 
 ### Visual Differentiation Strategy
 
@@ -673,6 +685,7 @@ export async function onRequest({ request, env }) {
 - [ ] Move live scores ticker to top (above fold)
 
 **Target Metrics:**
+
 - FCP: <1.8s (from ~4s)
 - LCP: <2.5s (from ~5s)
 - Bundle size: <150KB (from ~1MB)
@@ -688,6 +701,7 @@ export async function onRequest({ request, env }) {
 - [ ] Implement responsive breakpoints (mobile-first)
 
 **Target Metrics:**
+
 - Box score visible in <2 taps from homepage
 - Standings table scrollable with sticky headers
 - All interactive elements ≥44px touch targets
@@ -703,6 +717,7 @@ export async function onRequest({ request, env }) {
 - [ ] Test with VoiceOver (iOS) and TalkBack (Android)
 
 **Target Metrics:**
+
 - 0 WCAG AA violations (Lighthouse audit)
 - 100% keyboard navigable
 - Screen reader compatible
@@ -717,6 +732,7 @@ export async function onRequest({ request, env }) {
 - [ ] AI Copilot integration (natural language search)
 
 **Target Metrics:**
+
 - User engagement: avg 3+ pages per session
 - Return visitor rate: >40%
 
@@ -791,6 +807,7 @@ export async function onRequest({ request, env }) {
 - Fan-focused: built by someone who cares about the same teams you do
 
 **When users say "9/10," they mean:**
+
 - "I found what I needed in seconds"
 - "The design didn't get in the way"
 - "This is clearly better than ESPN for college baseball"

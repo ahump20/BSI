@@ -6,10 +6,10 @@ Blaze Sports Intel implements **intelligent seasonal routing** to automatically 
 
 ## Season Calendar
 
-| Sport | Active Season | Months | Route |
-|-------|--------------|---------|-------|
-| ⚾ **Baseball** | Spring | March 1 - June 30 | `/` (root) |
-| 🏈 **Football** | Fall | August 1 - December 31 | `/football` |
+| Sport           | Active Season | Months                 | Route       |
+| --------------- | ------------- | ---------------------- | ----------- |
+| ⚾ **Baseball** | Spring        | March 1 - June 30      | `/` (root)  |
+| 🏈 **Football** | Fall          | August 1 - December 31 | `/football` |
 
 ### Off-Season Behavior
 
@@ -36,6 +36,7 @@ This sets a **30-day cookie** (`preferred_sport`) to remember the preference.
 ### Cookie Storage
 
 The preference is stored as:
+
 ```
 preferred_sport=baseball  (or football)
 Path=/
@@ -46,6 +47,7 @@ SameSite=Lax
 ### Clearing Preference
 
 To return to automatic seasonal routing:
+
 1. Clear browser cookies for blazesportsintel.com, OR
 2. Wait 30 days for cookie expiration
 
@@ -83,18 +85,21 @@ The middleware **only affects the root path** (`/`). All other routes pass throu
 ### Manual Testing
 
 **Test current season**:
+
 ```bash
 curl -I https://blazesportsintel.com/
 # Should redirect to active sport based on current month
 ```
 
 **Test baseball preference**:
+
 ```bash
 curl -I https://blazesportsintel.com/?sport=baseball
 # Should stay on root, set preferred_sport=baseball cookie
 ```
 
 **Test football preference**:
+
 ```bash
 curl -I https://blazesportsintel.com/?sport=football
 # Should redirect to /football, set preferred_sport=football cookie
@@ -106,19 +111,19 @@ Create test cases with mocked dates:
 
 ```javascript
 // Test March (baseball season)
-const marchDate = new Date(2025, 2, 15) // March 15, 2025
+const marchDate = new Date(2025, 2, 15); // March 15, 2025
 // Expected: Route to /
 
 // Test September (football season)
-const septDate = new Date(2025, 8, 15) // September 15, 2025
+const septDate = new Date(2025, 8, 15); // September 15, 2025
 // Expected: Redirect to /football
 
 // Test January (off-season)
-const janDate = new Date(2025, 0, 15) // January 15, 2025
+const janDate = new Date(2025, 0, 15); // January 15, 2025
 // Expected: Redirect to /football (most recent season)
 
 // Test July (off-season)
-const julyDate = new Date(2025, 6, 15) // July 15, 2025
+const julyDate = new Date(2025, 6, 15); // July 15, 2025
 // Expected: Route to / (baseball most recent)
 ```
 

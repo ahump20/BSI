@@ -68,7 +68,9 @@ function generateGameDescription(game: GameRecord): string {
     const winScore = Math.max(game.home_score, game.away_score);
     const loseScore = Math.min(game.home_score, game.away_score);
 
-    parts.push(`Final score ${game.home_team_key} ${game.home_score} ${game.away_team_key} ${game.away_score}`);
+    parts.push(
+      `Final score ${game.home_team_key} ${game.home_score} ${game.away_team_key} ${game.away_score}`
+    );
     parts.push(`${winner} defeats ${loser} ${winScore}-${loseScore}`);
 
     // Describe game closeness
@@ -94,12 +96,14 @@ function generateGameDescription(game: GameRecord): string {
 
   // Date
   const gameDate = new Date(game.game_date);
-  parts.push(gameDate.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }));
+  parts.push(
+    gameDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  );
 
   return parts.join('. ');
 }
@@ -126,7 +130,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Fetch all games from D1
     const fetchStart = Date.now();
-    const { results: games } = await env.DB.prepare('SELECT * FROM games ORDER BY game_date DESC').all();
+    const { results: games } = await env.DB.prepare(
+      'SELECT * FROM games ORDER BY game_date DESC'
+    ).all();
     const fetchTime = Date.now() - fetchStart;
 
     console.log(`Fetched ${games.length} games from D1 in ${fetchTime}ms`);
@@ -147,7 +153,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         // Generate embedding
         const embedStart = Date.now();
         const embedResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
-          text: description
+          text: description,
         });
 
         const embedding = embedResponse.data?.[0];
@@ -161,33 +167,34 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         // Store in Vectorize
         const vectorId = `game-${game.id}`;
 
-        await env.VECTOR_INDEX.upsert([{
-          id: vectorId,
-          values: embedding,
-          metadata: {
-            game_id: game.id,
-            sport: game.sport,
-            season: game.season,
-            week: game.week,
-            home_team: game.home_team_name,
-            away_team: game.away_team_name,
-            status: game.status,
-            description: description.substring(0, 500), // Truncate for metadata size limits
-            game_date: game.game_date
-          }
-        }]);
+        await env.VECTOR_INDEX.upsert([
+          {
+            id: vectorId,
+            values: embedding,
+            metadata: {
+              game_id: game.id,
+              sport: game.sport,
+              season: game.season,
+              week: game.week,
+              home_team: game.home_team_name,
+              away_team: game.away_team_name,
+              status: game.status,
+              description: description.substring(0, 500), // Truncate for metadata size limits
+              game_date: game.game_date,
+            },
+          },
+        ]);
 
         successful.push(vectorId);
         console.log(`✓ Game ${game.id} embedded and stored in ${embedTime}ms`);
 
         // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
-
+        await new Promise((resolve) => setTimeout(resolve, 100));
       } catch (error) {
         console.error(`✗ Failed to process game ${game.id}:`, error);
         failed.push({
           game_id: game.id,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         });
       }
     }
@@ -200,16 +207,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         totalGames: games.length,
         successfulEmbeddings: successful.length,
         failedEmbeddings: failed.length,
-        successRate: `${Math.round((successful.length / games.length) * 100)}%`
+        successRate: `${Math.round((successful.length / games.length) * 100)}%`,
       },
       successful,
       failed,
       performance: {
         databaseFetchTime: `${fetchTime}ms`,
         totalProcessingTime: `${totalTime}ms`,
-        averageTimePerGame: `${Math.round(totalTime / games.length)}ms`
+        averageTimePerGame: `${Math.round(totalTime / games.length)}ms`,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return new Response(JSON.stringify(response, null, 2), {
@@ -217,23 +224,29 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       headers: {
         'Content-Type': 'application/json',
         ...corsHeaders,
-      }
+      },
     });
-
   } catch (error) {
     console.error('Embedding generation error:', error);
 
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Embedding generation failed',
-      message: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString()
-    }, null, 2), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...corsHeaders,
+    return new Response(
+      JSON.stringify(
+        {
+          success: false,
+          error: 'Embedding generation failed',
+          message: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        },
+        null,
+        2
+      ),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders,
+        },
       }
-    });
+    );
   }
 };

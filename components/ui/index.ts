@@ -14,7 +14,11 @@ export type { ButtonProps } from './Button';
 
 // Card components
 export { Card, CardHeader, CardTitle, CardContent, StatCard } from './Card';
-export type { CardProps, StatCardProps } from './Card';
+export type { CardProps, StatCardProps, CardVariant, SportAccent } from './Card';
+
+// Empty state
+export { EmptyState } from './EmptyState';
+export type { EmptyStateProps, EmptyStateIcon } from './EmptyState';
 
 // Layout
 export { Container } from './Container';
@@ -43,6 +47,14 @@ export { Marquee } from './Marquee';
 
 // Quote Block
 export { QuoteBlock } from './QuoteBlock';
+
+// StatCard (animated stats)
+export { StatCard as AnimatedStatCard } from './StatCard';
+export type { StatCardProps as AnimatedStatCardProps } from './StatCard';
+
+// Team-themed components
+export { TeamThemedCard, TeamBadge, TeamAccentText, TeamDivider } from './TeamThemedCard';
+export type { TeamThemedCardProps } from './TeamThemedCard';
 
 // Live ticker (re-exported from dedicated module)
 export { LiveTicker } from '../live-ticker/LiveTicker';

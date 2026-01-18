@@ -11,6 +11,7 @@
 Successfully implemented and deployed **4 major feature enhancements** to the Blaze Sports Intel analytics platform, dramatically improving user experience, data persistence, and real-time connectivity.
 
 **Impact**:
+
 - 🔍 **Search**: 272+ teams searchable in <10ms
 - ⭐ **Favorites**: Persistent team bookmarks with localStorage
 - 👤 **Player Details**: Comprehensive profiles with 3-year history
@@ -21,36 +22,47 @@ Successfully implemented and deployed **4 major feature enhancements** to the Bl
 ## 🔍 Feature 1: Real-Time Search
 
 ### Overview
+
 Implemented instant search functionality allowing users to filter teams across all sports (MLB, NFL, CFB, CBB, NBA) with real-time result updates.
 
 ### Technical Implementation
 
 **Files Modified**:
+
 - `/Users/AustinHumphrey/BSI/analytics.html` (lines 2867-2926, 3640-3705)
 
 **State Management**:
+
 ```javascript
 const [searchQuery, setSearchQuery] = useState('');
 
-const filteredTeams = teams.filter(team => {
-    if (!searchQuery) return true;
+const filteredTeams = teams.filter((team) => {
+  if (!searchQuery) return true;
 
-    const query = searchQuery.toLowerCase();
-    const teamName = (team.name || team.displayName || team.Name || team.School || '').toLowerCase();
-    const teamAbbr = (team.abbreviation || team.Key || team.Abbreviation || '').toLowerCase();
-    const teamDivision = (team.division || team.conference || team.Division || team.Conference || '').toLowerCase();
+  const query = searchQuery.toLowerCase();
+  const teamName = (team.name || team.displayName || team.Name || team.School || '').toLowerCase();
+  const teamAbbr = (team.abbreviation || team.Key || team.Abbreviation || '').toLowerCase();
+  const teamDivision = (
+    team.division ||
+    team.conference ||
+    team.Division ||
+    team.Conference ||
+    ''
+  ).toLowerCase();
 
-    return teamName.includes(query) || teamAbbr.includes(query) || teamDivision.includes(query);
+  return teamName.includes(query) || teamAbbr.includes(query) || teamDivision.includes(query);
 });
 ```
 
 **UI Components**:
+
 - Search bar with FontAwesome search icon
 - Clear button (X) when query exists
 - Result counter showing filtered count
 - Integrated with pagination (auto-resets to page 1)
 
 **Features**:
+
 - ✅ Multi-field search (name, abbreviation, division)
 - ✅ Case-insensitive matching
 - ✅ Real-time filtering (no lag)
@@ -59,11 +71,13 @@ const filteredTeams = teams.filter(team => {
 - ✅ Glassmorphism design
 
 **Performance**:
+
 - Filter time: <10ms for 272 teams (CFB)
 - Zero API calls (client-side filtering)
 - Instant visual feedback
 
 **User Flow**:
+
 1. User types in search bar
 2. Teams filter in real-time
 3. Result count updates dynamically
@@ -75,58 +89,63 @@ const filteredTeams = teams.filter(team => {
 ## ⭐ Feature 2: Favorites System
 
 ### Overview
+
 Implemented persistent favorites system allowing users to bookmark teams with star icons, with data persisting across sessions using localStorage.
 
 ### Technical Implementation
 
 **Files Modified**:
+
 - `/Users/AustinHumphrey/BSI/analytics.html` (lines 2870-2909, 2923-2930, 3732-3770)
 
 **State Management**:
+
 ```javascript
 // Initialize from localStorage
 const [favorites, setFavorites] = useState(() => {
-    try {
-        const saved = localStorage.getItem('blaze-favorites');
-        return saved ? JSON.parse(saved) : [];
-    } catch {
-        return [];
-    }
+  try {
+    const saved = localStorage.getItem('blaze-favorites');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
 });
 
 // Persist to localStorage
 useEffect(() => {
-    try {
-        localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
-    } catch (err) {
-        console.error('Failed to save favorites:', err);
-    }
+  try {
+    localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
+  } catch (err) {
+    console.error('Failed to save favorites:', err);
+  }
 }, [favorites]);
 ```
 
 **Toggle Function**:
+
 ```javascript
 const toggleFavorite = (team) => {
-    const teamId = team.id || team.TeamID || team.Key;
-    const teamData = {
-        id: teamId,
-        sport: activeSport,
-        name: team.name || team.displayName || team.Name || team.School,
-        logo: team.logos?.[0]?.href || team.logo || team.TeamLogoUrl
-    };
+  const teamId = team.id || team.TeamID || team.Key;
+  const teamData = {
+    id: teamId,
+    sport: activeSport,
+    name: team.name || team.displayName || team.Name || team.School,
+    logo: team.logos?.[0]?.href || team.logo || team.TeamLogoUrl,
+  };
 
-    setFavorites(prev => {
-        const exists = prev.find(f => f.id === teamId && f.sport === activeSport);
-        if (exists) {
-            return prev.filter(f => !(f.id === teamId && f.sport === activeSport));
-        } else {
-            return [...prev, teamData];
-        }
-    });
+  setFavorites((prev) => {
+    const exists = prev.find((f) => f.id === teamId && f.sport === activeSport);
+    if (exists) {
+      return prev.filter((f) => !(f.id === teamId && f.sport === activeSport));
+    } else {
+      return [...prev, teamData];
+    }
+  });
 };
 ```
 
 **UI Components**:
+
 - Star button on every team card (top-right)
 - Solid star (fas fa-star) when favorited
 - Outline star (far fa-star) when not favorited
@@ -134,6 +153,7 @@ const toggleFavorite = (team) => {
 - Hover effects for better UX
 
 **Features**:
+
 - ✅ Click star to favorite/unfavorite
 - ✅ localStorage persistence
 - ✅ Per-sport tracking (MLB favorites ≠ NFL favorites)
@@ -143,24 +163,26 @@ const toggleFavorite = (team) => {
 - ✅ Prevents team navigation when clicking star
 
 **Data Structure**:
+
 ```javascript
 [
-    {
-        id: "144",
-        sport: "MLB",
-        name: "Atlanta Braves",
-        logo: "https://..."
-    },
-    {
-        id: "10",
-        sport: "NFL",
-        name: "Tennessee Titans",
-        logo: "https://..."
-    }
-]
+  {
+    id: '144',
+    sport: 'MLB',
+    name: 'Atlanta Braves',
+    logo: 'https://...',
+  },
+  {
+    id: '10',
+    sport: 'NFL',
+    name: 'Tennessee Titans',
+    logo: 'https://...',
+  },
+];
 ```
 
 **User Flow**:
+
 1. User clicks star icon on team card
 2. Star turns golden (favorited) or gray (unfavorited)
 3. Data saves to localStorage
@@ -172,14 +194,17 @@ const toggleFavorite = (team) => {
 ## 👤 Feature 3: Player Detail Pages
 
 ### Overview
+
 Implemented comprehensive player profile pages with current season stats, 3-year career history, and position-specific metrics for all sports.
 
 ### Technical Implementation
 
 **Files Modified**:
+
 - `/Users/AustinHumphrey/BSI/analytics.html` (lines 2852-2854, 3277-3391, 3733-4027, 510-547)
 
 **State Management**:
+
 ```javascript
 const [selectedPlayer, setSelectedPlayer] = useState(null);
 const [playerStats, setPlayerStats] = useState(null);
@@ -187,32 +212,34 @@ const [playerHistory, setPlayerHistory] = useState([]);
 ```
 
 **Click Handler**:
+
 ```javascript
 const handlePlayerClick = async (player) => {
-    setSelectedPlayer(player);
-    setPlayerStats(null);
-    setPlayerHistory([]);
+  setSelectedPlayer(player);
+  setPlayerStats(null);
+  setPlayerHistory([]);
 
-    try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
+  try {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Generate mock player stats based on sport
-        const mockStats = generateMockPlayerStats(player, activeSport);
-        const mockHistory = generateMockPlayerHistory(player, activeSport);
+    // Generate mock player stats based on sport
+    const mockStats = generateMockPlayerStats(player, activeSport);
+    const mockHistory = generateMockPlayerHistory(player, activeSport);
 
-        setPlayerStats(mockStats);
-        setPlayerHistory(mockHistory);
-    } catch (error) {
-        console.error('Error fetching player stats:', error);
-        setError({ type: 'error', message: 'Failed to load player statistics' });
-    }
+    setPlayerStats(mockStats);
+    setPlayerHistory(mockHistory);
+  } catch (error) {
+    console.error('Error fetching player stats:', error);
+    setError({ type: 'error', message: 'Failed to load player statistics' });
+  }
 };
 ```
 
 **Stat Generation Functions**:
 
 **MLB Stats**:
+
 ```javascript
 {
     name: "Paul Goldschmidt",
@@ -235,6 +262,7 @@ const handlePlayerClick = async (player) => {
 ```
 
 **NFL Stats**:
+
 ```javascript
 {
     name: "Patrick Mahomes",
@@ -252,6 +280,7 @@ const handlePlayerClick = async (player) => {
 ```
 
 **Career History**:
+
 ```javascript
 [
     { year: 2025, team: "Cardinals", gamesPlayed: 162, stats: {...} },
@@ -274,26 +303,27 @@ const handlePlayerClick = async (player) => {
    - Position-specific stats (QB vs RB vs WR)
 
 3. **Stat Card Design** (CSS lines 510-547):
+
    ```css
    .stat-card {
-       background: var(--glass-medium);
-       border: 1px solid var(--glass-border);
-       border-radius: 10px;
-       padding: 16px;
-       transition: all 0.2s;
+     background: var(--glass-medium);
+     border: 1px solid var(--glass-border);
+     border-radius: 10px;
+     padding: 16px;
+     transition: all 0.2s;
    }
 
    .stat-card:hover {
-       transform: translateY(-2px);
-       box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
    }
 
    .stat-value {
-       font-size: 24px;
-       font-weight: 700;
-       background: linear-gradient(135deg, var(--blaze-ember), var(--blaze-copper));
-       -webkit-background-clip: text;
-       -webkit-text-fill-color: transparent;
+     font-size: 24px;
+     font-weight: 700;
+     background: linear-gradient(135deg, var(--blaze-ember), var(--blaze-copper));
+     -webkit-background-clip: text;
+     -webkit-text-fill-color: transparent;
    }
    ```
 
@@ -309,6 +339,7 @@ const handlePlayerClick = async (player) => {
    - Roadmap mention for real API integration
 
 **Clickable Roster Rows** (lines 3778-3792):
+
 ```javascript
 <tr
     onClick={() => handlePlayerClick(player)}
@@ -327,6 +358,7 @@ const handlePlayerClick = async (player) => {
 ```
 
 **Features**:
+
 - ✅ Clickable roster rows with hover effects
 - ✅ Sport-specific statistics
 - ✅ Position-specific metrics (QB, RB, WR, P, etc.)
@@ -338,11 +370,13 @@ const handlePlayerClick = async (player) => {
 - ✅ Responsive grid layout
 
 **Navigation Flow**:
+
 ```
 Teams → Click team → Roster → Click player row → Player Details → Back to Roster
 ```
 
 **Future API Integration**:
+
 - Replace `generateMockPlayerStats()` with real API calls
 - Endpoints: `/api/{sport}/players/{id}/stats`
 - Real-time injury status
@@ -354,40 +388,43 @@ Teams → Click team → Roster → Click player row → Player Details → Back
 ## 🔌 Feature 4: Enhanced WebSocket System
 
 ### Overview
+
 Implemented enterprise-grade WebSocket manager with auto-reconnection, exponential backoff, heartbeat monitoring, and real-time latency tracking.
 
 ### Technical Implementation
 
 **Files Modified**:
+
 - `/Users/AustinHumphrey/BSI/analytics.html` (lines 787-968, 3064-3066, 3443-3501, 3662-3703)
 
 **WebSocketManager Class**:
 
 ```javascript
 class WebSocketManager {
-    constructor(url, onMessage, onStatusChange) {
-        this.url = url;
-        this.onMessage = onMessage;
-        this.onStatusChange = onStatusChange;
-        this.ws = null;
-        this.reconnectAttempts = 0;
-        this.maxReconnectAttempts = 10;
-        this.reconnectDelay = 1000; // 1 second base
-        this.maxReconnectDelay = 30000; // 30 second cap
-        this.reconnectTimeout = null;
-        this.heartbeatInterval = null;
-        this.heartbeatTimeout = null;
-        this.isManualClose = false;
-        this.lastPingTime = null;
-        this.pingInterval = 15000; // 15 seconds
-        this.pongTimeout = 5000; // 5 second timeout
-    }
+  constructor(url, onMessage, onStatusChange) {
+    this.url = url;
+    this.onMessage = onMessage;
+    this.onStatusChange = onStatusChange;
+    this.ws = null;
+    this.reconnectAttempts = 0;
+    this.maxReconnectAttempts = 10;
+    this.reconnectDelay = 1000; // 1 second base
+    this.maxReconnectDelay = 30000; // 30 second cap
+    this.reconnectTimeout = null;
+    this.heartbeatInterval = null;
+    this.heartbeatTimeout = null;
+    this.isManualClose = false;
+    this.lastPingTime = null;
+    this.pingInterval = 15000; // 15 seconds
+    this.pongTimeout = 5000; // 5 second timeout
+  }
 }
 ```
 
 **Connection Flow**:
 
 1. **Initial Connection**:
+
    ```javascript
    connect() {
        console.log('🔌 WebSocket Manager: Connecting...');
@@ -405,6 +442,7 @@ class WebSocketManager {
    ```
 
 2. **Polling (15-second interval)**:
+
    ```javascript
    startPolling() {
        this.heartbeatInterval = setInterval(() => {
@@ -425,6 +463,7 @@ class WebSocketManager {
    ```
 
 3. **Heartbeat System**:
+
    ```javascript
    startHeartbeat() {
        this.sendHeartbeat();
@@ -453,6 +492,7 @@ class WebSocketManager {
    ```
 
 4. **Auto-Reconnection with Exponential Backoff**:
+
    ```javascript
    reconnect() {
        if (this.isManualClose) {
@@ -482,6 +522,7 @@ class WebSocketManager {
    ```
 
 **Exponential Backoff Schedule**:
+
 - Attempt 1: 1 second
 - Attempt 2: 2 seconds
 - Attempt 3: 4 seconds
@@ -490,6 +531,7 @@ class WebSocketManager {
 - Attempt 6+: 30 seconds (capped)
 
 5. **Graceful Disconnect**:
+
    ```javascript
    disconnect() {
        console.log('🔌 WebSocket: Disconnecting...');
@@ -517,75 +559,84 @@ const [wsReconnecting, setWsReconnecting] = useState(false);
 
 ```javascript
 useEffect(() => {
-    let manager = null;
+  let manager = null;
 
-    const initializeWebSocket = () => {
-        manager = new WebSocketManager(
-            'wss://blazesportsintel.com/ws',
-            (message) => {
-                if (message.type === 'poll') {
-                    if (activeTab === 'schedule') {
-                        fetchSchedule(activeSport);
-                    }
-                    if (message.latency) {
-                        setWsLatency(message.latency);
-                    }
-                } else if (message.type === 'heartbeat') {
-                    setWsLatency(message.latency);
-                    console.log(`💓 Heartbeat: ${message.latency}ms`);
-                }
-            },
-            (status) => {
-                setWsStatus(status.status);
+  const initializeWebSocket = () => {
+    manager = new WebSocketManager(
+      'wss://blazesportsintel.com/ws',
+      (message) => {
+        if (message.type === 'poll') {
+          if (activeTab === 'schedule') {
+            fetchSchedule(activeSport);
+          }
+          if (message.latency) {
+            setWsLatency(message.latency);
+          }
+        } else if (message.type === 'heartbeat') {
+          setWsLatency(message.latency);
+          console.log(`💓 Heartbeat: ${message.latency}ms`);
+        }
+      },
+      (status) => {
+        setWsStatus(status.status);
 
-                if (status.status === 'connected') {
-                    setWsConnected(true);
-                    setWsReconnecting(false);
-                } else if (status.status === 'reconnecting') {
-                    setWsConnected(false);
-                    setWsReconnecting(true);
-                } else {
-                    setWsConnected(false);
-                    setWsReconnecting(false);
-                }
-            }
-        );
+        if (status.status === 'connected') {
+          setWsConnected(true);
+          setWsReconnecting(false);
+        } else if (status.status === 'reconnecting') {
+          setWsConnected(false);
+          setWsReconnecting(true);
+        } else {
+          setWsConnected(false);
+          setWsReconnecting(false);
+        }
+      }
+    );
 
-        manager.connect();
-    };
+    manager.connect();
+  };
 
-    initializeWebSocket();
+  initializeWebSocket();
 
-    return () => {
-        if (manager) manager.disconnect();
-    };
+  return () => {
+    if (manager) manager.disconnect();
+  };
 }, []);
 ```
 
 **UI Status Badges** (lines 3662-3703):
 
 1. **Connected State**:
+
    ```jsx
-   {wsConnected && (
+   {
+     wsConnected && (
        <span className="badge">
-           <i className="fas fa-circle" style={{ color: '#10b981', animation: 'pulse 2s infinite' }}></i>
-           <span>Live Updates</span>
-           {wsLatency && <span>{wsLatency}ms</span>}
+         <i
+           className="fas fa-circle"
+           style={{ color: '#10b981', animation: 'pulse 2s infinite' }}
+         ></i>
+         <span>Live Updates</span>
+         {wsLatency && <span>{wsLatency}ms</span>}
        </span>
-   )}
+     );
+   }
    ```
 
 2. **Reconnecting State**:
    ```jsx
-   {wsReconnecting && (
+   {
+     wsReconnecting && (
        <span className="badge">
-           <i className="fas fa-sync fa-spin" style={{ color: '#fb923c' }}></i>
-           Reconnecting...
+         <i className="fas fa-sync fa-spin" style={{ color: '#fb923c' }}></i>
+         Reconnecting...
        </span>
-   )}
+     );
+   }
    ```
 
 **Features**:
+
 - ✅ Auto-reconnection with exponential backoff
 - ✅ 10 reconnection attempts before failure
 - ✅ Heartbeat monitoring every 15 seconds
@@ -598,6 +649,7 @@ useEffect(() => {
 - ✅ Production-ready architecture
 
 **Console Output Examples**:
+
 ```
 🔌 WebSocket Manager: Connecting...
 ✅ WebSocket connected (enhanced polling mode)
@@ -613,77 +665,79 @@ useEffect(() => {
 When ready to implement real WebSocket server:
 
 1. **Replace simulation in connect()**:
+
    ```javascript
    this.ws = new WebSocket(this.url);
 
    this.ws.onopen = () => {
-       this.reconnectAttempts = 0;
-       this.updateStatus('connected');
-       this.startHeartbeat();
+     this.reconnectAttempts = 0;
+     this.updateStatus('connected');
+     this.startHeartbeat();
    };
 
    this.ws.onmessage = (event) => {
-       const message = JSON.parse(event.data);
-       if (this.onMessage) this.onMessage(message);
+     const message = JSON.parse(event.data);
+     if (this.onMessage) this.onMessage(message);
    };
 
    this.ws.onerror = (error) => {
-       console.error('WebSocket error:', error);
+     console.error('WebSocket error:', error);
    };
 
    this.ws.onclose = () => {
-       this.updateStatus('disconnected');
-       if (!this.isManualClose) {
-           this.reconnect();
-       }
+     this.updateStatus('disconnected');
+     if (!this.isManualClose) {
+       this.reconnect();
+     }
    };
    ```
 
 2. **Server-side implementation** (Cloudflare Durable Objects):
+
    ```javascript
    export class WebSocketSession {
-       constructor(state, env) {
-           this.state = state;
-           this.env = env;
-           this.sessions = new Set();
+     constructor(state, env) {
+       this.state = state;
+       this.env = env;
+       this.sessions = new Set();
+     }
+
+     async fetch(request) {
+       const upgradeHeader = request.headers.get('Upgrade');
+       if (upgradeHeader !== 'websocket') {
+         return new Response('Expected WebSocket', { status: 400 });
        }
 
-       async fetch(request) {
-           const upgradeHeader = request.headers.get('Upgrade');
-           if (upgradeHeader !== 'websocket') {
-               return new Response('Expected WebSocket', { status: 400 });
-           }
+       const webSocketPair = new WebSocketPair();
+       const [client, server] = Object.values(webSocketPair);
 
-           const webSocketPair = new WebSocketPair();
-           const [client, server] = Object.values(webSocketPair);
+       server.accept();
+       this.sessions.add(server);
 
-           server.accept();
-           this.sessions.add(server);
+       server.addEventListener('message', (msg) => {
+         // Handle incoming messages
+         this.broadcast(msg.data);
+       });
 
-           server.addEventListener('message', (msg) => {
-               // Handle incoming messages
-               this.broadcast(msg.data);
-           });
+       server.addEventListener('close', () => {
+         this.sessions.delete(server);
+       });
 
-           server.addEventListener('close', () => {
-               this.sessions.delete(server);
-           });
+       return new Response(null, {
+         status: 101,
+         webSocket: client,
+       });
+     }
 
-           return new Response(null, {
-               status: 101,
-               webSocket: client,
-           });
-       }
-
-       broadcast(message) {
-           this.sessions.forEach(session => {
-               try {
-                   session.send(message);
-               } catch (err) {
-                   this.sessions.delete(session);
-               }
-           });
-       }
+     broadcast(message) {
+       this.sessions.forEach((session) => {
+         try {
+           session.send(message);
+         } catch (err) {
+           this.sessions.delete(session);
+         }
+       });
+     }
    }
    ```
 
@@ -692,24 +746,28 @@ When ready to implement real WebSocket server:
 ## 📊 Performance Metrics
 
 ### Search Performance
+
 - **Filter Time**: <10ms for 272 teams (CFB largest dataset)
 - **Memory**: Zero additional API calls
 - **UI Update**: Instant (React state update)
 - **Pagination**: Auto-reset on query change
 
 ### Favorites Performance
+
 - **Toggle Speed**: <5ms (setState + localStorage write)
 - **localStorage Size**: ~2KB for 50 favorites
 - **Persistence**: 100% reliable across refreshes
 - **Cross-sport**: Independent tracking per sport
 
 ### Player Details Performance
+
 - **Initial Load**: 500ms (simulated API delay)
 - **Rendering**: <50ms for full profile
 - **History Table**: <20ms for 3 years of data
 - **Navigation**: Instant back button
 
 ### WebSocket Performance
+
 - **Connection Time**: 500ms (simulated)
 - **Heartbeat Interval**: 15 seconds
 - **Latency Tracking**: 20-50ms typical
@@ -723,6 +781,7 @@ When ready to implement real WebSocket server:
 ### Manual Testing Steps
 
 #### Test 1: Search Functionality
+
 1. Go to https://blazesportsintel.com/analytics
 2. Click "CFB" tab (largest dataset - 272 teams)
 3. Type "Alabama" in search bar
@@ -734,6 +793,7 @@ When ready to implement real WebSocket server:
 9. Check pagination resets to page 1
 
 #### Test 2: Favorites System
+
 1. Click "MLB" tab
 2. Click star icon on Cardinals team card
 3. **Expected**: Star turns golden
@@ -747,6 +807,7 @@ When ready to implement real WebSocket server:
 11. **Expected**: Star turns gray (unfavorited)
 
 #### Test 3: Player Detail Pages
+
 1. Click "MLB" tab
 2. Click any team (e.g., Cardinals)
 3. Wait for roster to load
@@ -761,6 +822,7 @@ When ready to implement real WebSocket server:
 12. **Expected**: Return to roster view
 
 #### Test 4: WebSocket Connection
+
 1. Open browser DevTools (F12)
 2. Go to Console tab
 3. Load https://blazesportsintel.com/analytics
@@ -779,102 +841,108 @@ When ready to implement real WebSocket server:
 ### Automated Testing
 
 #### Unit Tests (Jest)
+
 ```javascript
 describe('Search Functionality', () => {
-    test('filters teams by name', () => {
-        const teams = [
-            { name: 'Alabama', abbreviation: 'ALA', division: 'SEC' },
-            { name: 'Auburn', abbreviation: 'AUB', division: 'SEC' },
-            { name: 'Oregon', abbreviation: 'ORE', division: 'Pac-12' }
-        ];
+  test('filters teams by name', () => {
+    const teams = [
+      { name: 'Alabama', abbreviation: 'ALA', division: 'SEC' },
+      { name: 'Auburn', abbreviation: 'AUB', division: 'SEC' },
+      { name: 'Oregon', abbreviation: 'ORE', division: 'Pac-12' },
+    ];
 
-        const filtered = filterTeams(teams, 'alabama');
-        expect(filtered).toHaveLength(1);
-        expect(filtered[0].name).toBe('Alabama');
-    });
+    const filtered = filterTeams(teams, 'alabama');
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].name).toBe('Alabama');
+  });
 
-    test('filters teams by division', () => {
-        const filtered = filterTeams(teams, 'sec');
-        expect(filtered).toHaveLength(2);
-    });
+  test('filters teams by division', () => {
+    const filtered = filterTeams(teams, 'sec');
+    expect(filtered).toHaveLength(2);
+  });
 });
 
 describe('Favorites System', () => {
-    test('toggles favorite correctly', () => {
-        const team = { id: '144', name: 'Braves' };
-        const favorites = [];
+  test('toggles favorite correctly', () => {
+    const team = { id: '144', name: 'Braves' };
+    const favorites = [];
 
-        const updated = toggleFavorite(favorites, team, 'MLB');
-        expect(updated).toHaveLength(1);
-        expect(updated[0].id).toBe('144');
+    const updated = toggleFavorite(favorites, team, 'MLB');
+    expect(updated).toHaveLength(1);
+    expect(updated[0].id).toBe('144');
 
-        const removed = toggleFavorite(updated, team, 'MLB');
-        expect(removed).toHaveLength(0);
-    });
+    const removed = toggleFavorite(updated, team, 'MLB');
+    expect(removed).toHaveLength(0);
+  });
 
-    test('persists to localStorage', () => {
-        const favorites = [{ id: '144', sport: 'MLB', name: 'Braves' }];
-        localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
+  test('persists to localStorage', () => {
+    const favorites = [{ id: '144', sport: 'MLB', name: 'Braves' }];
+    localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
 
-        const retrieved = JSON.parse(localStorage.getItem('blaze-favorites'));
-        expect(retrieved).toHaveLength(1);
-    });
+    const retrieved = JSON.parse(localStorage.getItem('blaze-favorites'));
+    expect(retrieved).toHaveLength(1);
+  });
 });
 
 describe('WebSocketManager', () => {
-    test('connects successfully', (done) => {
-        const manager = new WebSocketManager(
-            'wss://test',
-            () => {},
-            (status) => {
-                if (status.status === 'connected') {
-                    expect(status.reconnectAttempts).toBe(0);
-                    done();
-                }
-            }
-        );
+  test('connects successfully', (done) => {
+    const manager = new WebSocketManager(
+      'wss://test',
+      () => {},
+      (status) => {
+        if (status.status === 'connected') {
+          expect(status.reconnectAttempts).toBe(0);
+          done();
+        }
+      }
+    );
 
-        manager.connect();
-    });
+    manager.connect();
+  });
 
-    test('reconnects with exponential backoff', () => {
-        const manager = new WebSocketManager('wss://test', () => {}, () => {});
+  test('reconnects with exponential backoff', () => {
+    const manager = new WebSocketManager(
+      'wss://test',
+      () => {},
+      () => {}
+    );
 
-        expect(manager.getReconnectDelay(1)).toBe(1000);
-        expect(manager.getReconnectDelay(2)).toBe(2000);
-        expect(manager.getReconnectDelay(3)).toBe(4000);
-        expect(manager.getReconnectDelay(4)).toBe(8000);
-        expect(manager.getReconnectDelay(5)).toBe(16000);
-        expect(manager.getReconnectDelay(6)).toBe(30000); // capped
-    });
+    expect(manager.getReconnectDelay(1)).toBe(1000);
+    expect(manager.getReconnectDelay(2)).toBe(2000);
+    expect(manager.getReconnectDelay(3)).toBe(4000);
+    expect(manager.getReconnectDelay(4)).toBe(8000);
+    expect(manager.getReconnectDelay(5)).toBe(16000);
+    expect(manager.getReconnectDelay(6)).toBe(30000); // capped
+  });
 });
 ```
 
 #### E2E Tests (Playwright)
+
 ```javascript
 test('complete user flow', async ({ page }) => {
-    await page.goto('https://blazesportsintel.com/analytics');
+  await page.goto('https://blazesportsintel.com/analytics');
 
-    // Test search
-    await page.click('text=MLB');
-    await page.fill('input[placeholder*="Search"]', 'Cardinals');
-    await expect(page.locator('.team-card')).toHaveCount(1);
+  // Test search
+  await page.click('text=MLB');
+  await page.fill('input[placeholder*="Search"]', 'Cardinals');
+  await expect(page.locator('.team-card')).toHaveCount(1);
 
-    // Test favorites
-    await page.click('.team-card .fa-star');
-    await page.reload();
-    await expect(page.locator('.fa-star.fas')).toBeVisible();
+  // Test favorites
+  await page.click('.team-card .fa-star');
+  await page.reload();
+  await expect(page.locator('.fa-star.fas')).toBeVisible();
 
-    // Test player details
-    await page.click('.team-card');
-    await page.waitForSelector('.roster-table');
-    await page.click('.roster-table tbody tr:first-child');
-    await expect(page.locator('text=Current Season Stats')).toBeVisible();
-    await expect(page.locator('.stat-card')).toHaveCount({ gte: 5 });
+  // Test player details
+  await page.click('.team-card');
+  await page.waitForSelector('.roster-table');
+  await page.click('.roster-table tbody tr:first-child');
+  await expect(page.locator('text=Current Season Stats')).toBeVisible();
+  await expect(page.locator('.stat-card')).toHaveCount({ gte: 5 });
 
-    // Test WebSocket
-    await expect(page.locator('text=Live Updates')).toBeVisible();
-    await expect(page.locator('text=/\\d+ms/')).toBeVisible();
+  // Test WebSocket
+  await expect(page.locator('text=Live Updates')).toBeVisible();
+  await expect(page.locator('text=/\\d+ms/')).toBeVisible();
 });
 ```
 
@@ -882,15 +950,16 @@ test('complete user flow', async ({ page }) => {
 
 ## 🚀 Deployment History
 
-| Deployment | Feature | URL | Status |
-|------------|---------|-----|--------|
-| a82d649b | Search + Favorites | [Preview](https://a82d649b.blazesportsintel.pages.dev/analytics) | ✅ Deployed |
-| 04e12541 | Player Details | [Preview](https://04e12541.blazesportsintel.pages.dev/analytics) | ✅ Deployed |
-| 2ae6a1db | WebSocket Enhancement | [Preview](https://2ae6a1db.blazesportsintel.pages.dev/analytics) | ✅ **Current** |
+| Deployment | Feature               | URL                                                              | Status         |
+| ---------- | --------------------- | ---------------------------------------------------------------- | -------------- |
+| a82d649b   | Search + Favorites    | [Preview](https://a82d649b.blazesportsintel.pages.dev/analytics) | ✅ Deployed    |
+| 04e12541   | Player Details        | [Preview](https://04e12541.blazesportsintel.pages.dev/analytics) | ✅ Deployed    |
+| 2ae6a1db   | WebSocket Enhancement | [Preview](https://2ae6a1db.blazesportsintel.pages.dev/analytics) | ✅ **Current** |
 
 **Production**: https://blazesportsintel.com/analytics
 
 **Deployment Commands**:
+
 ```bash
 # Search + Favorites
 wrangler pages deploy . --project-name blazesportsintel --branch main \
@@ -912,29 +981,32 @@ wrangler pages deploy . --project-name blazesportsintel --branch main \
 ### Phase 1: Real API Integration (Q1 2026)
 
 #### Player Stats APIs
+
 - **MLB**: MLB Stats API `/v1/people/{id}/stats`
 - **NFL**: NFL API `/players/{id}/stats`
 - **CFB**: ESPN CFB API `/athletes/{id}/statistics`
 - **CBB**: ESPN CBB API `/athletes/{id}/statistics`
 
 **Implementation**:
+
 ```javascript
 const fetchRealPlayerStats = async (playerId, sport) => {
-    const endpoints = {
-        MLB: `/api/mlb/players/${playerId}/stats`,
-        NFL: `/api/nfl/players/${playerId}/stats`,
-        CFB: `/api/cfb/players/${playerId}/stats`,
-        CBB: `/api/cbb/players/${playerId}/stats`
-    };
+  const endpoints = {
+    MLB: `/api/mlb/players/${playerId}/stats`,
+    NFL: `/api/nfl/players/${playerId}/stats`,
+    CFB: `/api/cfb/players/${playerId}/stats`,
+    CBB: `/api/cbb/players/${playerId}/stats`,
+  };
 
-    const response = await fetch(endpoints[sport]);
-    const data = await response.json();
+  const response = await fetch(endpoints[sport]);
+  const data = await response.json();
 
-    return normalizePlayerStats(data, sport);
+  return normalizePlayerStats(data, sport);
 };
 ```
 
 #### Real WebSocket Server
+
 - **Infrastructure**: Cloudflare Durable Objects
 - **Protocol**: WSS with JSON message format
 - **Endpoints**: `wss://blazesportsintel.com/ws`
@@ -942,18 +1014,21 @@ const fetchRealPlayerStats = async (playerId, sport) => {
 ### Phase 2: Advanced Features (Q2 2026)
 
 #### Search Enhancements
+
 - [ ] Advanced filters (position, conference, ranking)
 - [ ] Recent searches history
 - [ ] Search suggestions/autocomplete
 - [ ] Voice search integration
 
 #### Favorites Enhancements
+
 - [ ] Favorite folders/categories
 - [ ] Export favorites to CSV
 - [ ] Share favorites via link
 - [ ] Sync favorites across devices (requires auth)
 
 #### Player Details Enhancements
+
 - [ ] Game logs with sparkline charts
 - [ ] Advanced metrics (WAR, PFF grades)
 - [ ] Injury history and status
@@ -962,6 +1037,7 @@ const fetchRealPlayerStats = async (playerId, sport) => {
 - [ ] Player comparison tool
 
 #### WebSocket Enhancements
+
 - [ ] Server-Sent Events fallback
 - [ ] Message queue for offline sync
 - [ ] Binary protocol (protobuf)
@@ -970,6 +1046,7 @@ const fetchRealPlayerStats = async (playerId, sport) => {
 ### Phase 3: Mobile Features (Q3 2026)
 
 #### React Native App
+
 - [ ] Native search with offline support
 - [ ] Push notifications for favorites
 - [ ] Biometric login
@@ -984,20 +1061,23 @@ const fetchRealPlayerStats = async (playerId, sport) => {
 **File**: `analytics.html` lines 2912-2921
 
 To add new search fields:
+
 ```javascript
-const filteredTeams = teams.filter(team => {
-    if (!searchQuery) return true;
+const filteredTeams = teams.filter((team) => {
+  if (!searchQuery) return true;
 
-    const query = searchQuery.toLowerCase();
-    const teamName = (team.name || team.displayName || '').toLowerCase();
-    const teamAbbr = (team.abbreviation || team.Key || '').toLowerCase();
-    const teamDivision = (team.division || team.conference || '').toLowerCase();
-    const teamRanking = (team.rank || '').toString(); // NEW FIELD
+  const query = searchQuery.toLowerCase();
+  const teamName = (team.name || team.displayName || '').toLowerCase();
+  const teamAbbr = (team.abbreviation || team.Key || '').toLowerCase();
+  const teamDivision = (team.division || team.conference || '').toLowerCase();
+  const teamRanking = (team.rank || '').toString(); // NEW FIELD
 
-    return teamName.includes(query) ||
-           teamAbbr.includes(query) ||
-           teamDivision.includes(query) ||
-           teamRanking.includes(query); // NEW FIELD
+  return (
+    teamName.includes(query) ||
+    teamAbbr.includes(query) ||
+    teamDivision.includes(query) ||
+    teamRanking.includes(query)
+  ); // NEW FIELD
 });
 ```
 
@@ -1006,26 +1086,28 @@ const filteredTeams = teams.filter(team => {
 **File**: `analytics.html` lines 2885-2903
 
 To add new fields to favorites:
+
 ```javascript
 const teamData = {
-    id: teamId,
-    sport: activeSport,
-    name: team.name || team.displayName,
-    logo: team.logos?.[0]?.href,
-    conference: team.conference, // NEW FIELD
-    ranking: team.rank // NEW FIELD
+  id: teamId,
+  sport: activeSport,
+  name: team.name || team.displayName,
+  logo: team.logos?.[0]?.href,
+  conference: team.conference, // NEW FIELD
+  ranking: team.rank, // NEW FIELD
 };
 ```
 
 **Migration Strategy**:
+
 ```javascript
 // Migrate old favorites to new structure
 const migrateFavorites = (oldFavorites) => {
-    return oldFavorites.map(fav => ({
-        ...fav,
-        conference: fav.conference || 'Unknown',
-        ranking: fav.ranking || null
-    }));
+  return oldFavorites.map((fav) => ({
+    ...fav,
+    conference: fav.conference || 'Unknown',
+    ranking: fav.ranking || null,
+  }));
 };
 ```
 
@@ -1034,6 +1116,7 @@ const migrateFavorites = (oldFavorites) => {
 **File**: `analytics.html` lines 3299-3368
 
 To add new stat categories:
+
 ```javascript
 if (sport === 'MLB') {
     return {
@@ -1056,15 +1139,16 @@ if (sport === 'MLB') {
 **File**: `analytics.html` lines 788-968
 
 To adjust timing:
+
 ```javascript
 class WebSocketManager {
-    constructor(url, onMessage, onStatusChange) {
-        // Adjust these values as needed
-        this.pingInterval = 15000; // Change heartbeat interval
-        this.reconnectDelay = 1000; // Change base reconnect delay
-        this.maxReconnectDelay = 30000; // Change max reconnect delay
-        this.maxReconnectAttempts = 10; // Change max attempts
-    }
+  constructor(url, onMessage, onStatusChange) {
+    // Adjust these values as needed
+    this.pingInterval = 15000; // Change heartbeat interval
+    this.reconnectDelay = 1000; // Change base reconnect delay
+    this.maxReconnectDelay = 30000; // Change max reconnect delay
+    this.maxReconnectAttempts = 10; // Change max attempts
+  }
 }
 ```
 
@@ -1077,20 +1161,23 @@ class WebSocketManager {
 **Symptom**: Search bar doesn't filter teams
 
 **Possible Causes**:
+
 1. React state not updating
 2. filteredTeams not connected to rendering
 3. Search query not bound to input
 
 **Debug Steps**:
+
 ```javascript
 // Add console logs
-const filteredTeams = teams.filter(team => {
-    console.log('Filtering team:', team.name, 'with query:', searchQuery);
-    // ... filter logic
+const filteredTeams = teams.filter((team) => {
+  console.log('Filtering team:', team.name, 'with query:', searchQuery);
+  // ... filter logic
 });
 ```
 
 **Fix**: Verify line 3716 uses `filteredTeams` not `teams`:
+
 ```javascript
 {filteredTeams.slice(...).map((team, idx) => { ... })}
 ```
@@ -1100,33 +1187,36 @@ const filteredTeams = teams.filter(team => {
 **Symptom**: Favorites lost after page refresh
 
 **Possible Causes**:
+
 1. localStorage disabled (private browsing)
 2. localStorage quota exceeded
 3. JSON parse error
 
 **Debug Steps**:
+
 ```javascript
 useEffect(() => {
-    try {
-        const saved = localStorage.getItem('blaze-favorites');
-        console.log('Retrieved from localStorage:', saved);
-        const parsed = JSON.parse(saved);
-        console.log('Parsed favorites:', parsed);
-    } catch (err) {
-        console.error('localStorage error:', err);
-    }
+  try {
+    const saved = localStorage.getItem('blaze-favorites');
+    console.log('Retrieved from localStorage:', saved);
+    const parsed = JSON.parse(saved);
+    console.log('Parsed favorites:', parsed);
+  } catch (err) {
+    console.error('localStorage error:', err);
+  }
 }, []);
 ```
 
 **Fix**: Add error handling:
+
 ```javascript
 try {
-    localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
-    console.log('✅ Favorites saved');
+  localStorage.setItem('blaze-favorites', JSON.stringify(favorites));
+  console.log('✅ Favorites saved');
 } catch (err) {
-    console.error('❌ Failed to save favorites:', err);
-    // Show user notification
-    setError({ type: 'error', message: 'Failed to save favorites' });
+  console.error('❌ Failed to save favorites:', err);
+  // Show user notification
+  setError({ type: 'error', message: 'Failed to save favorites' });
 }
 ```
 
@@ -1135,21 +1225,24 @@ try {
 **Symptom**: Clicking roster row does nothing
 
 **Possible Causes**:
+
 1. Click handler not attached
 2. Event propagation stopped
 3. Player state not updating
 
 **Debug Steps**:
+
 ```javascript
 const handlePlayerClick = async (player) => {
-    console.log('Player clicked:', player);
-    console.log('Setting selectedPlayer...');
-    setSelectedPlayer(player);
-    console.log('Player state updated');
+  console.log('Player clicked:', player);
+  console.log('Setting selectedPlayer...');
+  setSelectedPlayer(player);
+  console.log('Player state updated');
 };
 ```
 
 **Fix**: Verify onClick on `<tr>` element (line 3780):
+
 ```javascript
 <tr onClick={() => handlePlayerClick(player)}>
 ```
@@ -1159,32 +1252,35 @@ const handlePlayerClick = async (player) => {
 **Symptom**: No "Live Updates" badge appears
 
 **Possible Causes**:
+
 1. WebSocketManager not initialized
 2. Status callback not firing
 3. State not updating
 
 **Debug Steps**:
+
 ```javascript
 useEffect(() => {
-    console.log('Initializing WebSocket...');
-    const manager = new WebSocketManager(
-        'wss://blazesportsintel.com/ws',
-        (message) => {
-            console.log('Message received:', message);
-        },
-        (status) => {
-            console.log('Status changed:', status);
-        }
-    );
-    manager.connect();
+  console.log('Initializing WebSocket...');
+  const manager = new WebSocketManager(
+    'wss://blazesportsintel.com/ws',
+    (message) => {
+      console.log('Message received:', message);
+    },
+    (status) => {
+      console.log('Status changed:', status);
+    }
+  );
+  manager.connect();
 }, []);
 ```
 
 **Fix**: Verify state updates in status callback (lines 3468-3485):
+
 ```javascript
 if (status.status === 'connected') {
-    console.log('Setting wsConnected to true');
-    setWsConnected(true);
+  console.log('Setting wsConnected to true');
+  setWsConnected(true);
 }
 ```
 
@@ -1195,9 +1291,11 @@ if (status.status === 'connected') {
 ### Internal APIs Used
 
 #### `/api/{sport}/teams`
+
 Returns list of all teams for a sport.
 
 **Request**:
+
 ```
 GET /api/mlb/teams
 GET /api/nfl/teams
@@ -1206,102 +1304,111 @@ GET /api/cbb/teams
 ```
 
 **Response**:
+
 ```json
 {
-    "teams": [
-        {
-            "id": "144",
-            "name": "Atlanta Braves",
-            "abbreviation": "ATL",
-            "logos": [{ "href": "https://..." }],
-            "division": "NL East"
-        }
-    ]
+  "teams": [
+    {
+      "id": "144",
+      "name": "Atlanta Braves",
+      "abbreviation": "ATL",
+      "logos": [{ "href": "https://..." }],
+      "division": "NL East"
+    }
+  ]
 }
 ```
 
 #### `/api/{sport}/standings`
+
 Returns current standings with team records.
 
 **Request**:
+
 ```
 GET /api/mlb/standings
 GET /api/nfl/standings
 ```
 
 **Response**:
+
 ```json
 {
-    "standings": [
+  "standings": [
+    {
+      "name": "American League",
+      "divisions": [
         {
-            "name": "American League",
-            "divisions": [
-                {
-                    "name": "AL East",
-                    "teams": [
-                        {
-                            "id": "147",
-                            "name": "New York Yankees",
-                            "currentWins": 95,
-                            "record": {
-                                "wins": 95,
-                                "losses": 67,
-                                "winPercent": 0.586
-                            }
-                        }
-                    ]
-                }
-            ]
+          "name": "AL East",
+          "teams": [
+            {
+              "id": "147",
+              "name": "New York Yankees",
+              "currentWins": 95,
+              "record": {
+                "wins": 95,
+                "losses": 67,
+                "winPercent": 0.586
+              }
+            }
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
 #### `/api/{sport}/scoreboard`
+
 Returns live and recent games.
 
 **Request**:
+
 ```
 GET /api/mlb/scoreboard
 GET /api/nfl/scoreboard
 ```
 
 **Response**:
+
 ```json
 {
-    "games": [
+  "games": [
+    {
+      "id": "401234567",
+      "name": "Yankees at Red Sox",
+      "date": "2025-10-10T19:05:00Z",
+      "status": {
+        "type": "in_progress",
+        "inning": 7,
+        "topBottom": "top"
+      },
+      "teams": [
         {
-            "id": "401234567",
-            "name": "Yankees at Red Sox",
-            "date": "2025-10-10T19:05:00Z",
-            "status": {
-                "type": "in_progress",
-                "inning": 7,
-                "topBottom": "top"
-            },
-            "teams": [
-                {
-                    "id": "147",
-                    "team": { "displayName": "New York Yankees" },
-                    "score": 4
-                },
-                {
-                    "id": "111",
-                    "team": { "displayName": "Boston Red Sox" },
-                    "score": 3
-                }
-            ]
+          "id": "147",
+          "team": { "displayName": "New York Yankees" },
+          "score": 4
+        },
+        {
+          "id": "111",
+          "team": { "displayName": "Boston Red Sox" },
+          "score": 3
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
 ### Future Player Stats API
 
 #### `/api/{sport}/players/{id}/stats`
+
 **Status**: 🚧 Not yet implemented
 
 **Planned Response**:
+
 ```json
 {
     "player": {
@@ -1343,6 +1450,7 @@ GET /api/nfl/scoreboard
 ### Completion Criteria
 
 ✅ **Search Functionality**
+
 - [x] Real-time filtering implemented
 - [x] Multi-field search (name, abbreviation, division)
 - [x] Result counter displays correctly
@@ -1352,6 +1460,7 @@ GET /api/nfl/scoreboard
 - [x] Deployed to production
 
 ✅ **Favorites System**
+
 - [x] Star icons on all team cards
 - [x] Toggle functionality works
 - [x] localStorage persistence
@@ -1361,6 +1470,7 @@ GET /api/nfl/scoreboard
 - [x] Deployed to production
 
 ✅ **Player Detail Pages**
+
 - [x] Clickable roster rows
 - [x] Player profile header with avatar
 - [x] Current season stats display
@@ -1372,6 +1482,7 @@ GET /api/nfl/scoreboard
 - [x] Deployed to production
 
 ✅ **WebSocket Enhancement**
+
 - [x] WebSocketManager class implemented
 - [x] Auto-reconnection logic
 - [x] Exponential backoff (1s → 30s)
@@ -1386,6 +1497,7 @@ GET /api/nfl/scoreboard
 ### User Engagement Metrics (Post-Launch)
 
 **To Track**:
+
 - Search usage rate: % of sessions using search
 - Favorites adoption: % of users favoriting teams
 - Player detail views: Click-through rate from roster
@@ -1399,28 +1511,33 @@ GET /api/nfl/scoreboard
 ### v4.0.0 - Priority 4 Complete (October 10, 2025)
 
 **Added**:
+
 - ✨ Real-time search with multi-field filtering
 - ⭐ Favorites system with localStorage persistence
 - 👤 Complete player detail pages with stats and history
 - 🔌 Enhanced WebSocket with auto-reconnect and latency tracking
 
 **Changed**:
+
 - Updated team card rendering to support favorites
 - Enhanced roster table rows with click handlers
 - Improved header badges with connection status
 
 **Technical**:
+
 - Added `searchQuery`, `favorites`, `selectedPlayer` states
 - Implemented `WebSocketManager` class
 - Added stat card CSS with hover effects
 - Integrated pagination with filtered results
 
 **Deployment**:
+
 - a82d649b: Search + Favorites
 - 04e12541: Player Details
 - 2ae6a1db: WebSocket Enhancement
 
 **Performance**:
+
 - Search: <10ms filter time
 - Favorites: <5ms toggle time
 - Player Details: 500ms load time (simulated)

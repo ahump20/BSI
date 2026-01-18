@@ -18,12 +18,11 @@ class DatabaseMigrator {
       port: process.env.DB_PORT || 5432,
       database: process.env.DB_NAME || 'blazesportsintel',
       user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres'
+      password: process.env.DB_PASSWORD || 'postgres',
     };
   }
 
   async run() {
-
     const client = new Client(this.config);
 
     try {
@@ -31,20 +30,18 @@ class DatabaseMigrator {
 
       // Migration 1: Add players table
       await this.addPlayersTable(client);
-      
+
       // Migration 2: Add game_stats table
       await this.addGameStatsTable(client);
-      
+
       // Migration 3: Enhance existing tables
       await this.enhanceExistingTables(client);
-      
+
       // Migration 4: Add indexes
       await this.addIndexes(client);
-      
+
       // Migration 5: Seed sample data
       await this.seedSampleData(client);
-
-
     } catch (error) {
       console.error('❌ Migration failed:', error.message);
       process.exit(1);
@@ -54,7 +51,6 @@ class DatabaseMigrator {
   }
 
   async addPlayersTable(client) {
-    
     await client.query(`
       CREATE TABLE IF NOT EXISTS players (
         id SERIAL PRIMARY KEY,
@@ -73,11 +69,9 @@ class DatabaseMigrator {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
   }
 
   async addGameStatsTable(client) {
-    
     await client.query(`
       CREATE TABLE IF NOT EXISTS game_stats (
         id SERIAL PRIMARY KEY,
@@ -91,11 +85,9 @@ class DatabaseMigrator {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
   }
 
   async enhanceExistingTables(client) {
-    
     // Add columns to games table if they don't exist
     try {
       await client.query(`
@@ -105,8 +97,7 @@ class DatabaseMigrator {
         ADD COLUMN IF NOT EXISTS weather JSONB,
         ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'
       `);
-    } catch (error) {
-    }
+    } catch (error) {}
 
     // Add columns to analytics table for advanced metrics
     try {
@@ -117,32 +108,27 @@ class DatabaseMigrator {
         ADD COLUMN IF NOT EXISTS predicted_wins DECIMAL(5,2),
         ADD COLUMN IF NOT EXISTS playoff_probability DECIMAL(5,4)
       `);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   async addIndexes(client) {
-    
     const indexes = [
       'CREATE INDEX IF NOT EXISTS idx_players_team_sport ON players(team_id, sport)',
       'CREATE INDEX IF NOT EXISTS idx_players_external_id ON players(external_id)',
       'CREATE INDEX IF NOT EXISTS idx_game_stats_game_team ON game_stats(game_id, team_id)',
       'CREATE INDEX IF NOT EXISTS idx_game_stats_player ON game_stats(player_id)',
       'CREATE INDEX IF NOT EXISTS idx_games_status ON games(status)',
-      'CREATE INDEX IF NOT EXISTS idx_games_venue ON games(venue)'
+      'CREATE INDEX IF NOT EXISTS idx_games_venue ON games(venue)',
     ];
 
     for (const indexQuery of indexes) {
       try {
         await client.query(indexQuery);
-      } catch (error) {
-      }
+      } catch (error) {}
     }
-    
   }
 
   async seedSampleData(client) {
-
     // Add sample players for each team
     const teamsResult = await client.query('SELECT id, external_id, name, sport FROM teams');
     const teams = teamsResult.rows;
@@ -160,7 +146,6 @@ class DatabaseMigrator {
 
     // Add sample games
     await this.addSampleGames(client, teams);
-
   }
 
   async addMLBPlayers(client, team) {
@@ -169,24 +154,27 @@ class DatabaseMigrator {
       { name: 'Mike Johnson', position: 'P', jersey: 45 },
       { name: 'David Wilson', position: 'C', jersey: 7 },
       { name: 'Chris Brown', position: 'SS', jersey: 12 },
-      { name: 'Matt Davis', position: '1B', jersey: 34 }
+      { name: 'Matt Davis', position: '1B', jersey: 34 },
     ];
 
     for (const player of players) {
       const [firstName, lastName] = player.name.split(' ');
-      await client.query(`
+      await client.query(
+        `
         INSERT INTO players (external_id, team_id, first_name, last_name, position, jersey_number, sport)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (external_id) DO NOTHING
-      `, [
-        `${team.external_id}-${player.jersey}`,
-        team.id,
-        firstName,
-        lastName,
-        player.position,
-        player.jersey,
-        'MLB'
-      ]);
+      `,
+        [
+          `${team.external_id}-${player.jersey}`,
+          team.id,
+          firstName,
+          lastName,
+          player.position,
+          player.jersey,
+          'MLB',
+        ]
+      );
     }
   }
 
@@ -196,24 +184,27 @@ class DatabaseMigrator {
       { name: 'Alex Anderson', position: 'RB', jersey: 28 },
       { name: 'Ryan Taylor', position: 'WR', jersey: 81 },
       { name: 'Mark Thompson', position: 'LB', jersey: 55 },
-      { name: 'Steve Martinez', position: 'DE', jersey: 98 }
+      { name: 'Steve Martinez', position: 'DE', jersey: 98 },
     ];
 
     for (const player of players) {
       const [firstName, lastName] = player.name.split(' ');
-      await client.query(`
+      await client.query(
+        `
         INSERT INTO players (external_id, team_id, first_name, last_name, position, jersey_number, sport)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (external_id) DO NOTHING
-      `, [
-        `${team.external_id}-${player.jersey}`,
-        team.id,
-        firstName,
-        lastName,
-        player.position,
-        player.jersey,
-        'NFL'
-      ]);
+      `,
+        [
+          `${team.external_id}-${player.jersey}`,
+          team.id,
+          firstName,
+          lastName,
+          player.position,
+          player.jersey,
+          'NFL',
+        ]
+      );
     }
   }
 
@@ -223,64 +214,73 @@ class DatabaseMigrator {
       { name: 'Kevin Lee', position: 'SG', jersey: 23 },
       { name: 'James Robinson', position: 'SF', jersey: 33 },
       { name: 'Michael Clark', position: 'PF', jersey: 44 },
-      { name: 'Anthony Lewis', position: 'C', jersey: 50 }
+      { name: 'Anthony Lewis', position: 'C', jersey: 50 },
     ];
 
     for (const player of players) {
       const [firstName, lastName] = player.name.split(' ');
-      await client.query(`
+      await client.query(
+        `
         INSERT INTO players (external_id, team_id, first_name, last_name, position, jersey_number, sport)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (external_id) DO NOTHING
-      `, [
-        `${team.external_id}-${player.jersey}`,
-        team.id,
-        firstName,
-        lastName,
-        player.position,
-        player.jersey,
-        'NBA'
-      ]);
+      `,
+        [
+          `${team.external_id}-${player.jersey}`,
+          team.id,
+          firstName,
+          lastName,
+          player.position,
+          player.jersey,
+          'NBA',
+        ]
+      );
     }
   }
 
   async addSampleGames(client, teams) {
     // Add sample games between teams of the same sport
-    const mlbTeams = teams.filter(t => t.sport === 'MLB');
-    const nflTeams = teams.filter(t => t.sport === 'NFL');
+    const mlbTeams = teams.filter((t) => t.sport === 'MLB');
+    const nflTeams = teams.filter((t) => t.sport === 'NFL');
 
     if (mlbTeams.length >= 1) {
-      await client.query(`
+      await client.query(
+        `
         INSERT INTO games (external_game_id, home_team_id, away_team_id, game_date, sport, status, home_score, away_score)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (external_game_id) DO NOTHING
-      `, [
-        'mlb-2024-001',
-        mlbTeams[0].id,
-        mlbTeams[0].id, // Same team for demo
-        '2024-09-15 19:30:00',
-        'MLB',
-        'completed',
-        7,
-        4
-      ]);
+      `,
+        [
+          'mlb-2024-001',
+          mlbTeams[0].id,
+          mlbTeams[0].id, // Same team for demo
+          '2024-09-15 19:30:00',
+          'MLB',
+          'completed',
+          7,
+          4,
+        ]
+      );
     }
 
     if (nflTeams.length >= 1) {
-      await client.query(`
+      await client.query(
+        `
         INSERT INTO games (external_game_id, home_team_id, away_team_id, game_date, sport, status, home_score, away_score)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (external_game_id) DO NOTHING
-      `, [
-        'nfl-2024-001',
-        nflTeams[0].id,
-        nflTeams[0].id, // Same team for demo
-        '2024-09-22 13:00:00',
-        'NFL',
-        'completed',
-        24,
-        17
-      ]);
+      `,
+        [
+          'nfl-2024-001',
+          nflTeams[0].id,
+          nflTeams[0].id, // Same team for demo
+          '2024-09-22 13:00:00',
+          'NFL',
+          'completed',
+          24,
+          17,
+        ]
+      );
     }
   }
 }

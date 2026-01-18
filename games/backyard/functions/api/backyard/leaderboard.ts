@@ -147,10 +147,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
     return jsonResponse(response);
   } catch (error: any) {
     console.error('Leaderboard error:', error);
-    return jsonResponse(
-      { success: false, error: error.message || 'Internal server error' },
-      500
-    );
+    return jsonResponse({ success: false, error: error.message || 'Internal server error' }, 500);
   }
 }
 

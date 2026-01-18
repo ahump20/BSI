@@ -27,9 +27,9 @@ Related to #
 
 <!-- List the key changes made in this PR -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 
@@ -51,6 +51,7 @@ Related to #
 - [ ] No infrastructure changes required
 
 **New Environment Variables (if any):**
+
 <!-- List any new environment variables that need to be set -->
 
 - `VARIABLE_NAME`: Description of the variable

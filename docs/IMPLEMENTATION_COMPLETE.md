@@ -12,6 +12,7 @@
 This is a **complete, production-ready system** for integrating athlete wearables data (WHOOP v2) with NBA clutch performance analytics. All components are implemented, tested, and ready for deployment.
 
 ### Commit 1: Foundation (e4f3c2b)
+
 - ✅ Database schema (6 tables, 2 views, comprehensive indexes)
 - ✅ WHOOP v2 API adapter (OAuth, webhooks, normalization)
 - ✅ NBA Stats clutch adapter (play-by-play, clutch detection)
@@ -19,6 +20,7 @@ This is a **complete, production-ready system** for integrating athlete wearable
 - ✅ Comprehensive documentation (50+ pages)
 
 ### Commit 2: Complete System (3674252)
+
 - ✅ Data ingestion workers (WHOOP + NBA, Cloudflare Workers)
 - ✅ Clutch performance calculator (composite scoring with wearables)
 - ✅ REST API endpoints (5 routes for clutch + wearables data)
@@ -94,6 +96,7 @@ This is a **complete, production-ready system** for integrating athlete wearable
 ## 🗂️ File Inventory (20 files, 7,485+ lines)
 
 ### Core Infrastructure
+
 ```
 api/database/migrations/
 └── 2025-11-01-clutch-wearables-schema.sql        620 lines
@@ -107,6 +110,7 @@ lib/utils/
 ```
 
 ### Data Ingestion
+
 ```
 workers/ingest/
 ├── whoop-ingestion-worker.ts                     450 lines
@@ -114,6 +118,7 @@ workers/ingest/
 ```
 
 ### Analytics & ML
+
 ```
 api/services/
 └── clutch-performance-calculator.ts              380 lines
@@ -123,6 +128,7 @@ api/ml/
 ```
 
 ### API Endpoints
+
 ```
 apps/web/app/api/
 ├── players/[id]/clutch-performance/route.ts       90 lines
@@ -133,6 +139,7 @@ apps/web/app/api/
 ```
 
 ### Frontend
+
 ```
 apps/web/components/clutch/
 └── ClutchPerformanceDashboard.tsx                350 lines
@@ -142,6 +149,7 @@ apps/web/app/players/[id]/clutch/
 ```
 
 ### Testing & Scripts
+
 ```
 scripts/
 ├── generate-test-data.ts                         250 lines
@@ -149,6 +157,7 @@ scripts/
 ```
 
 ### Documentation
+
 ```
 docs/
 ├── clutch-wearables-integration-schema.md      1,400 lines
@@ -300,6 +309,7 @@ python api/ml/clutch-bayesian-model.py
 ## 🔑 Key Metrics & Formulas
 
 ### Clutch Score (0-100)
+
 ```
 clutch_score = (success_rate * 40) +
                (POE_normalized * 40) +
@@ -312,6 +322,7 @@ Where:
 ```
 
 ### Optional Wearables Adjustment
+
 ```
 IF hrv_baseline_deviation < -20%:
     clutch_score *= 0.95  # 5% penalty for stress
@@ -321,6 +332,7 @@ IF recovery_score < 50:
 ```
 
 ### Percentile Calculation
+
 ```
 percentile = (count of scores < player_score) / (total scores) * 100
 ```
@@ -330,6 +342,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 🚀 Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] Review all code in PR
 - [ ] Run database migration on staging
 - [ ] Test with synthetic data
@@ -338,6 +351,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 - [ ] Configure environment variables
 
 ### Deployment
+
 - [ ] Deploy database migration to production
 - [ ] Deploy Cloudflare Workers (WHOOP + NBA)
 - [ ] Set up CRON triggers
@@ -346,6 +360,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 - [ ] Test OAuth flow end-to-end
 
 ### Post-Deployment
+
 - [ ] Monitor worker logs for errors
 - [ ] Check data sync latency (<5 min target)
 - [ ] Verify wearables data quality (>90% completeness)
@@ -358,6 +373,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 📊 Expected Performance
 
 ### Data Volume (per season)
+
 - **Players**: 50-100 NCAA basketball athletes
 - **Games**: 30-40 per player
 - **Clutch situations**: 1-3 per game → 1,500-12,000 situations
@@ -365,11 +381,13 @@ percentile = (count of scores < player_score) / (total scores) * 100
 - **Daily summaries**: 1 per player per day → 18K-36K summaries
 
 ### Query Performance
+
 - **Clutch leaderboard**: <500ms (pre-computed view)
 - **Player timeline**: <200ms (indexed on player_id + date)
 - **Wearables latest**: <100ms (indexed on player_id + timestamp DESC)
 
 ### Sync Latency
+
 - **WHOOP data**: <5 minutes (hourly sync + webhooks)
 - **NBA data**: <5 minutes (real-time during games)
 - **Score calculation**: <1 minute (post-game batch)
@@ -379,6 +397,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 🔒 Security & Privacy
 
 ### Data Protection
+
 - ✅ OAuth tokens encrypted at rest (AES-256-GCM)
 - ✅ HTTPS only for all API requests
 - ✅ Webhook signature verification (HMAC-SHA256)
@@ -386,6 +405,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 - ✅ Audit trail in R2 (raw data backup)
 
 ### Privacy Controls
+
 - ✅ Explicit athlete consent required (OAuth flow)
 - ✅ Consent revocation → automatic data deletion
 - ✅ Data retention policies (default 365 days)
@@ -397,6 +417,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 🎯 Success Criteria
 
 ### Technical KPIs
+
 - ✅ Database migration: Clean (0 errors)
 - ⏳ Wearables data uptime: >95%
 - ⏳ API sync latency: <5 minutes
@@ -404,6 +425,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 - ⏳ Model RMSE: <8 points (0-100 scale)
 
 ### Business KPIs
+
 - ⏳ Athlete adoption: >50% of target cohort
 - ⏳ Clutch prediction accuracy: >70% (POE sign)
 - ⏳ Coach engagement: >80% weekly dashboard views
@@ -414,6 +436,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 🐛 Known Limitations & Future Work
 
 ### Current Limitations
+
 1. **WHOOP Rate Limits**: 100 req/min (mitigated with caching + webhooks)
 2. **NBA API Stability**: Unofficial API may change (mitigated with retry logic)
 3. **Clutch Definition**: Fixed 5:00/margin≤5 (could be dynamic)
@@ -421,6 +444,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 5. **Baseball Support**: Not yet implemented (planned for Phase 4)
 
 ### Future Enhancements
+
 1. **Real-time Alerts**: Push notifications for high/low recovery + upcoming clutch game
 2. **Advanced Models**: Hidden Markov Models for momentum detection
 3. **Survival Analysis**: Time-to-next-clutch-situation prediction
@@ -433,11 +457,13 @@ percentile = (count of scores < player_score) / (total scores) * 100
 ## 📞 Support & Contact
 
 ### Documentation
+
 - **Schema Specification**: `docs/clutch-wearables-integration-schema.md`
 - **Implementation Guide**: `docs/clutch-wearables-implementation-guide.md`
 - **Quick Start**: `CLUTCH_WEARABLES_README.md`
 
 ### Getting Help
+
 - **GitHub Issues**: https://github.com/ahump20/BSI/issues
 - **Email**: engineering@blazesportsintel.com
 - **Slack**: #clutch-wearables-integration
@@ -453,6 +479,7 @@ percentile = (count of scores < player_score) / (total scores) * 100
 **Confidence**: **92%**
 
 **Primary Risks**:
+
 - Athlete adoption (mitigated: start with team buy-in)
 - WHOOP API limits (mitigated: caching + webhooks)
 - Model convergence (mitigated: tunable priors, diagnostics)

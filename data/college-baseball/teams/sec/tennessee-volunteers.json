@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "Spyre Sports Group",
     "lead_contact": "Hunter Baddour",
-    "contact_channels": [
-      "info@spyresports.com",
-      "https://www.spyresports.com/contact"
-    ],
+    "contact_channels": ["info@spyresports.com", "https://www.spyresports.com/contact"],
     "recent_initiatives": "Expanding baseball-specific 'BaseVols Club' experiences with player Q&As (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Danny White",
     "baseball_admin": "Adam Gotsis",
-    "financial_points_of_contact": [
-      "volstix@utk.edu"
-    ]
+    "financial_points_of_contact": ["volstix@utk.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 1,

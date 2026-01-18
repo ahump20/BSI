@@ -10,17 +10,17 @@ monitoring:
 datasets:
   # MLB Real-time Feeds
   mlb_stats:
-    name: "MLB Cardinals Analytics"
-    source: "api/cardinals-readiness"
+    name: 'MLB Cardinals Analytics'
+    source: 'api/cardinals-readiness'
     type: streaming
-    schema_version: "2.1.0"
+    schema_version: '2.1.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
       data_quality: true
     drift_thresholds:
-      ks_statistic: 0.1  # Warning
-      ks_critical: 0.2   # Critical
+      ks_statistic: 0.1 # Warning
+      ks_critical: 0.2 # Critical
       psi_warning: 0.1
       psi_critical: 0.25
       missing_rate_threshold: 0.05
@@ -45,10 +45,10 @@ datasets:
 
   # NFL Titans Performance
   nfl_titans:
-    name: "NFL Titans Analytics"
-    source: "data/nfl/titans"
+    name: 'NFL Titans Analytics'
+    source: 'data/nfl/titans'
     type: batch
-    schema_version: "1.5.0"
+    schema_version: '1.5.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -72,10 +72,10 @@ datasets:
 
   # NBA Grizzlies Metrics
   nba_grizzlies:
-    name: "NBA Grizzlies Analytics"
-    source: "data/nba/grizzlies"
+    name: 'NBA Grizzlies Analytics'
+    source: 'data/nba/grizzlies'
     type: batch
-    schema_version: "1.3.0"
+    schema_version: '1.3.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -92,10 +92,10 @@ datasets:
 
   # NCAA Longhorns Football
   ncaa_longhorns:
-    name: "Texas Longhorns Football"
-    source: "data/ncaa/texas-football"
+    name: 'Texas Longhorns Football'
+    source: 'data/ncaa/texas-football'
     type: batch
-    schema_version: "2.0.0"
+    schema_version: '2.0.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -117,10 +117,10 @@ datasets:
 
   # Perfect Game Youth Baseball
   perfect_game:
-    name: "Perfect Game Youth Baseball"
-    source: "data/youth/perfect-game"
+    name: 'Perfect Game Youth Baseball'
+    source: 'data/youth/perfect-game'
     type: batch
-    schema_version: "1.8.0"
+    schema_version: '1.8.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -148,9 +148,9 @@ datasets:
   # Texas HS Football
   texas_hs_football:
     name: "Texas High School Football (Dave Campbell's Model)"
-    source: "data/texas-hs/football"
+    source: 'data/texas-hs/football'
     type: batch
-    schema_version: "3.1.0"
+    schema_version: '3.1.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -172,23 +172,23 @@ datasets:
       - name: classification
         type: categorical
         drift_method: psi
-        categories: ["6A", "5A-DI", "5A-DII", "4A-DI", "4A-DII", "3A-DI", "3A-DII"]
+        categories: ['6A', '5A-DI', '5A-DII', '4A-DI', '4A-DII', '3A-DI', '3A-DII']
 
   # Biomechanics Vision AI
   biomechanics:
-    name: "Biomechanics & Character Assessment"
-    source: "api/vision-ai/biomechanics"
+    name: 'Biomechanics & Character Assessment'
+    source: 'api/vision-ai/biomechanics'
     type: streaming
-    schema_version: "1.2.0"
+    schema_version: '1.2.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
       data_quality: true
     drift_thresholds:
-      ks_statistic: 0.08  # Tighter for sensor data
+      ks_statistic: 0.08 # Tighter for sensor data
       psi_warning: 0.05
       psi_critical: 0.15
-      latency_ms: 100  # Sub-100ms requirement
+      latency_ms: 100 # Sub-100ms requirement
     columns:
       - name: hip_shoulder_separation_deg
         type: float
@@ -209,10 +209,10 @@ datasets:
 
   # Championship Probability Models
   championship_models:
-    name: "Championship Probability Engine"
-    source: "models/championship-probability"
+    name: 'Championship Probability Engine'
+    source: 'models/championship-probability'
     type: batch
-    schema_version: "2.5.0"
+    schema_version: '2.5.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -236,10 +236,10 @@ datasets:
 
   # NIL Valuation
   nil_valuation:
-    name: "NIL Valuation Calculator"
-    source: "api/nil-calculator"
+    name: 'NIL Valuation Calculator'
+    source: 'api/nil-calculator'
     type: batch
-    schema_version: "1.4.0"
+    schema_version: '1.4.0'
     monitoring:
       schema_drift: true
       statistical_drift: true
@@ -267,30 +267,30 @@ alerting:
   channels:
     - type: github
       enabled: true
-      repository: "BlazeIntelligence/blazesportsintel"
-      labels: ["drift-detection", "data-quality"]
-      assignees: ["ahump20"]
+      repository: 'BlazeIntelligence/blazesportsintel'
+      labels: ['drift-detection', 'data-quality']
+      assignees: ['ahump20']
     - type: email
       enabled: true
-      recipients: ["ahump20@outlook.com"]
-      smtp_host: "${SMTP_HOST}"
+      recipients: ['ahump20@outlook.com']
+      smtp_host: '${SMTP_HOST}'
       smtp_port: 587
     - type: slack
       enabled: false
-      webhook_url: "${SLACK_WEBHOOK_URL}"
-      channel: "#data-alerts"
+      webhook_url: '${SLACK_WEBHOOK_URL}'
+      channel: '#data-alerts'
     - type: cloudflare_analytics
       enabled: true
-      account_id: "${CLOUDFLARE_ACCOUNT_ID}"
-      api_token: "${CLOUDFLARE_API_TOKEN}"
+      account_id: '${CLOUDFLARE_ACCOUNT_ID}'
+      api_token: '${CLOUDFLARE_API_TOKEN}'
 
 reporting:
-  schedule: "0 2 * * *"  # 2 AM CT daily
-  output_dir: "/observability/drift/reports"
-  format: "html"
+  schedule: '0 2 * * *' # 2 AM CT daily
+  output_dir: '/observability/drift/reports'
+  format: 'html'
   include_visualizations: true
   sparkline_days: 30
-  comparison_baseline: "30d_rolling"
+  comparison_baseline: '30d_rolling'
 
   sections:
     - executive_summary
@@ -322,7 +322,7 @@ ci_integration:
 performance:
   sampling:
     enabled: true
-    strategy: "stratified"
+    strategy: 'stratified'
     sample_size: 100000
     confidence_level: 0.95
   parallelization:
@@ -331,7 +331,7 @@ performance:
   caching:
     enabled: true
     ttl_seconds: 3600
-    backend: "redis"
+    backend: 'redis'
 
 baseline_management:
   auto_update: false
@@ -340,11 +340,11 @@ baseline_management:
   versioning: true
 
   triggers:
-    - type: "manual"
-      description: "Manual baseline update with approval"
-    - type: "scheduled"
-      schedule: "0 0 1 * *"  # Monthly
+    - type: 'manual'
+      description: 'Manual baseline update with approval'
+    - type: 'scheduled'
+      schedule: '0 0 1 * *' # Monthly
       auto_approve: false
-    - type: "drift_recovery"
+    - type: 'drift_recovery'
       threshold_days: 7
-      description: "Update after drift stabilizes"
+      description: 'Update after drift stabilizes'

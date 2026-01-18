@@ -13,26 +13,31 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ### 1. Site Inventory & Information Architecture
 
 ✅ **Complete site inventory** (`docs/site-inventory.csv`)
+
 - 70+ routes catalogued with purpose, CTAs, dependencies, and status
 - Identified 8 missing critical pages
 - Documented 23 duplicate/legacy routes
 
 ✅ **Redirects mapping** (`docs/redirects.csv`)
+
 - 23 canonical redirects defined (High/Medium/Low priority)
 - Legal page consolidation strategy
 - Legacy route migration paths
 
 ✅ **IA Sitemap** (`docs/ia-sitemap.mmd`)
+
 - Complete information architecture in Mermaid format
 - Visual hierarchy of all site sections
 - Navigation structure documented
 
 ✅ **Production sitemap.xml**
+
 - 60+ URLs included
 - Proper priority and changefreq settings
 - Deployed to `/apps/web/public/sitemap.xml`
 
 ✅ **robots.txt**
+
 - Proper crawling rules
 - Account/auth pages blocked
 - Sitemap reference included
@@ -42,6 +47,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ### 2. Redirects & Canonicalization
 
 ✅ **Next.js middleware** (`apps/web/middleware.ts`)
+
 - 23 301 redirects implemented:
   - `/legal/*` → canonical root-level pages
   - `/college-baseball/*` → `/baseball/ncaab/*`
@@ -51,6 +57,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - Efficient redirect map
 
 ✅ **Canonical enforcement**
+
 - All legal pages now have single canonical URL
 - Legacy routes permanently redirected
 - No duplicate content for SEO
@@ -59,13 +66,15 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 
 ### 3. Performance & Security
 
-✅ **Enhanced _headers** (`apps/web/public/_headers`)
+✅ **Enhanced \_headers** (`apps/web/public/_headers`)
+
 - **HSTS** with preload (2-year max-age)
 - **Stale-while-revalidate** for HTML (10min + 24hr)
 - Security headers (X-Frame-Options, CSP prep)
 - Asset caching optimized (immutable for static, edge for images)
 
 ✅ **Lighthouse CI** (`lighthouserc.json`)
+
 - Performance budget **≥90** (increased from 85)
 - Accessibility budget **≥95** (increased from 90)
 - Core Web Vitals enforced:
@@ -84,6 +93,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 **After**: Multi-sport championship analytics platform
 
 **Key Changes**:
+
 - ✅ Dual-CTA hero (View Analytics + Launch Copilot)
 - ✅ Sport hubs section (Baseball, Football, Basketball)
 - ✅ Horizontal product tiles scroller (8 products)
@@ -94,6 +104,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - ✅ Accessibility (ARIA labels, semantic HTML)
 
 **Schema Markup**:
+
 - `Organization` schema with logo and description
 - `WebSite` schema with `SearchAction` pointing to Copilot
 
@@ -104,6 +115,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 #### ✅ Features Page (`/features`)
 
 **Highlights**:
+
 - Feature comparison table (BSI vs. status quo)
 - 6-row comparison showing competitive advantages
 - Complete feature set by category:
@@ -115,6 +127,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - CTAs to Copilot and Command Center
 
 **Pricing**:
+
 - **Scout**: Free (10 queries/day, basic access)
 - **Coach**: $49/mo (unlimited, full features)
 - **Organization**: Custom (API, teams, SLA)
@@ -124,6 +137,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 #### ✅ AI Copilot Page (`/copilot`)
 
 **Highlights**:
+
 - **Multi-provider selector**: Auto, Gemini, GPT-5, Claude
 - Interactive chat interface with message history
 - Source cards displayed under AI responses
@@ -135,6 +149,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
   - `HowTo` for "Ask Great Questions" section
 
 **UX Features**:
+
 - Real-time provider switching
 - Source attribution on every answer
 - Latency display (e.g., "Gemini 2.0 • 823ms")
@@ -146,6 +161,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 #### ✅ Contact Page (`/contact`)
 
 **Highlights**:
+
 - Contact form with subject categorization:
   - General, Support, Subscription, API, Partnership, Press
 - Tier selection dropdown (Scout/Coach/Organization)
@@ -160,6 +176,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ### 6. Design System Documentation
 
 ✅ **Design Tokens** (`apps/web/styles/tokens.json`)
+
 - Colors (background, text, accent, semantic)
 - Typography (font families, sizes, weights, line heights)
 - Spacing (micro to 3xl scale)
@@ -169,6 +186,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - Follows Design Tokens Community Group spec
 
 ✅ **Design System Guide** (`docs/design-system.md`)
+
 - Complete documentation of "Diamond Insights" theme
 - Component class reference (`.di-*` prefix)
 - Color system with contrast ratios
@@ -179,6 +197,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - Future enhancements roadmap
 
 **Existing System**:
+
 - BEM-like CSS modules (no Tailwind)
 - Mobile-first responsive design
 - Dark mode native
@@ -192,6 +211,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ✅ **Event Taxonomy** (`docs/analytics-events.md`)
 
 **7 Event Categories**:
+
 1. **Page Views** (`route_render`)
 2. **User Interactions** (CTAs, Copilot, Search)
 3. **Errors & Quality** (client errors, data source errors)
@@ -201,18 +221,21 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 7. **Contact & Support** (form submissions)
 
 **Privacy**:
+
 - No PII logging (no emails, names, IPs)
 - SHA-256 hashing for queries and searches
 - GDPR compliant
 - User deletion via `/data-request`
 
 **Monitoring**:
+
 - Performance alerts (LCP >2.5s, INP >200ms, API >1s)
 - Business alerts (signup drops, copilot errors)
 - Data source downtime alerts
 - Retention: 30 days raw, 13 months aggregated
 
 **Example Queries**:
+
 - Daily active users by sport
 - Copilot performance by provider
 - Core Web Vitals compliance
@@ -221,16 +244,16 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 
 ## 📊 Impact Summary
 
-| Metric | Before | After |
-|--------|--------|-------|
-| **Pages Documented** | 0 | 70+ |
-| **Canonical URLs** | Mixed | Enforced |
-| **Missing Critical Pages** | 3 | 0 |
-| **Performance Budget** | 85 | 90 |
-| **Accessibility Budget** | 90 | 95 |
-| **Schema Markup** | None | 5 pages |
-| **Redirects Implemented** | 0 | 23 |
-| **Design Tokens Documented** | No | Yes |
+| Metric                       | Before | After            |
+| ---------------------------- | ------ | ---------------- |
+| **Pages Documented**         | 0      | 70+              |
+| **Canonical URLs**           | Mixed  | Enforced         |
+| **Missing Critical Pages**   | 3      | 0                |
+| **Performance Budget**       | 85     | 90               |
+| **Accessibility Budget**     | 90     | 95               |
+| **Schema Markup**            | None   | 5 pages          |
+| **Redirects Implemented**    | 0      | 23               |
+| **Design Tokens Documented** | No     | Yes              |
 | **Analytics Events Defined** | Ad-hoc | 20+ standardized |
 
 ---
@@ -238,24 +261,28 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ## 🎯 Quality Gates Established
 
 ### Performance
+
 - ✅ Lighthouse CI enforces ≥90 performance score
 - ✅ LCP ≤2.5s on all tested pages
 - ✅ CLS ≤0.1 (no layout shifts)
 - ✅ Stale-while-revalidate caching strategy
 
 ### Accessibility
+
 - ✅ Lighthouse CI enforces ≥95 accessibility score
 - ✅ WCAG 2.2 AA compliance targets
 - ✅ ARIA labels on all interactive elements
 - ✅ Keyboard navigation support
 
 ### SEO
+
 - ✅ Unique titles and meta descriptions
 - ✅ JSON-LD schema on key pages
 - ✅ Canonical tags enforced via middleware
 - ✅ Sitemap.xml + robots.txt deployed
 
 ### Code Quality
+
 - ✅ TypeScript strict mode
 - ✅ Consistent event taxonomy
 - ✅ Design system documented
@@ -266,6 +293,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ## 🚀 Deployment Checklist
 
 ### Pre-Deploy
+
 - [x] All tests passing (Lighthouse CI)
 - [x] No TypeScript errors
 - [x] Sitemap validated
@@ -274,6 +302,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - [ ] Test middleware redirects in preview deploy
 
 ### Post-Deploy
+
 - [ ] Verify homepage loads correctly
 - [ ] Test all 3 new pages (/features, /copilot, /contact)
 - [ ] Confirm redirects work (test 5 redirect rules)
@@ -286,6 +315,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ## 📝 Future Work (Phase 2+)
 
 ### Immediate Next Steps (High Priority)
+
 1. **Copilot API Integration**
    - Wire up actual Gemini/GPT/Claude APIs
    - Implement streaming responses
@@ -310,6 +340,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
    - Add `BreadcrumbList` and `SportsEvent` schema
 
 ### Medium Priority
+
 5. **Historical Comparisons Filterable UI**
    - Add sport/season/team filters
    - Sortable comparison table
@@ -334,6 +365,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
    - Link to booking/contact
 
 ### Lower Priority
+
 9. **E2E Tests**
    - Playwright tests for critical flows:
      - Homepage → Features → Sign Up
@@ -358,6 +390,7 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 ## 🔗 Links & Resources
 
 ### Documentation
+
 - **Site Inventory**: `/docs/site-inventory.csv`
 - **Redirects Map**: `/docs/redirects.csv`
 - **IA Diagram**: `/docs/ia-sitemap.mmd`
@@ -365,12 +398,14 @@ Phase 1 of the comprehensive site consolidation plan has been completed, impleme
 - **Analytics Events**: `/docs/analytics-events.md`
 
 ### New Pages
+
 - Homepage: `https://blazesportsintel.com/`
 - Features: `https://blazesportsintel.com/features`
 - Copilot: `https://blazesportsintel.com/copilot`
 - Contact: `https://blazesportsintel.com/contact`
 
 ### Quality Gates
+
 - Lighthouse CI: `/lighthouserc.json`
 - Headers Config: `/apps/web/public/_headers`
 - Middleware: `/apps/web/middleware.ts`
@@ -389,6 +424,7 @@ If you encounter any issues with the consolidation work, please:
 4. Reference the analytics events doc for tracking
 
 For technical support:
+
 - Open an issue in the GitHub repo
 - Tag with `consolidation` label
 - Include affected route and expected behavior

@@ -9,9 +9,11 @@ import { describe, it, expect } from 'vitest';
 
 describe('Pythagorean Expectation - Baseball', () => {
   const calculatePythagoreanExpectation = (runsScored, runsAllowed, exponent = 1.83) => {
-    if (runsScored === 0 && runsAllowed === 0) return 0.500;
-    return Math.pow(runsScored, exponent) /
-           (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent));
+    if (runsScored === 0 && runsAllowed === 0) return 0.5;
+    return (
+      Math.pow(runsScored, exponent) /
+      (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent))
+    );
   };
 
   it('should calculate expected win percentage for dominant offense', () => {
@@ -34,7 +36,7 @@ describe('Pythagorean Expectation - Baseball', () => {
 
   it('should handle edge case of zero runs', () => {
     const expected = calculatePythagoreanExpectation(0, 0);
-    expect(expected).toBe(0.500);
+    expect(expected).toBe(0.5);
   });
 
   it('should calculate expected wins for 162-game season', () => {
@@ -51,9 +53,11 @@ describe('Pythagorean Expectation - Baseball', () => {
 
 describe('Pythagorean Expectation - Football', () => {
   const calculatePythagoreanExpectation = (pointsScored, pointsAllowed, exponent = 2.37) => {
-    if (pointsScored === 0 && pointsAllowed === 0) return 0.500;
-    return Math.pow(pointsScored, exponent) /
-           (Math.pow(pointsScored, exponent) + Math.pow(pointsAllowed, exponent));
+    if (pointsScored === 0 && pointsAllowed === 0) return 0.5;
+    return (
+      Math.pow(pointsScored, exponent) /
+      (Math.pow(pointsScored, exponent) + Math.pow(pointsAllowed, exponent))
+    );
   };
 
   it('should calculate expected win percentage for strong defense', () => {
@@ -63,7 +67,7 @@ describe('Pythagorean Expectation - Football', () => {
 
     expect(expected).toBeGreaterThan(0.7);
     // 350^2.37 / (350^2.37 + 200^2.37) ≈ 0.7902
-    expect(expected).toBeCloseTo(0.790, 2);
+    expect(expected).toBeCloseTo(0.79, 2);
   });
 
   it('should calculate expected wins for 12-game season', () => {

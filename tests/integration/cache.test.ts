@@ -180,9 +180,9 @@ describe('Cache Integration Tests', () => {
 
     it('should handle concurrent requests efficiently', async () => {
       // Make multiple concurrent requests
-      const requests = Array(10).fill(null).map(() =>
-        fetch(`${BASE_URL}/api/mlb/cardinals`)
-      );
+      const requests = Array(10)
+        .fill(null)
+        .map(() => fetch(`${BASE_URL}/api/mlb/cardinals`));
 
       const start = Date.now();
       const responses = await Promise.all(requests);

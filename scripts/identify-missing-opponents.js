@@ -7,7 +7,7 @@ const ESPN_API_BASE = 'https://site.api.espn.com/apis/site/v2/sports/baseball/co
 
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
-  Accept: 'application/json'
+  Accept: 'application/json',
 };
 
 async function fetchTeamSchedule(teamId, season) {
@@ -25,14 +25,17 @@ async function main() {
   const targetTeams = [
     { id: '126', name: 'Texas Longhorns' },
     { id: '85', name: 'LSU Tigers' },
-    { id: '120', name: 'Vanderbilt Commodores' }
+    { id: '120', name: 'Vanderbilt Commodores' },
   ];
 
   // Parse seasons from command line
   const args = process.argv.slice(2);
-  const seasonsArg = args.find(arg => arg.startsWith('--seasons'));
+  const seasonsArg = args.find((arg) => arg.startsWith('--seasons'));
   const seasons = seasonsArg
-    ? seasonsArg.split('=')[1].split(',').map(s => parseInt(s.trim()))
+    ? seasonsArg
+        .split('=')[1]
+        .split(',')
+        .map((s) => parseInt(s.trim()))
     : [2023, 2025];
 
   const allOpponents = new Map();
@@ -55,7 +58,7 @@ async function main() {
 
           for (const competitor of competitors) {
             // Skip our target teams
-            if (targetTeams.some(t => t.id === competitor.id)) continue;
+            if (targetTeams.some((t) => t.id === competitor.id)) continue;
 
             const oppId = competitor.id;
             const oppTeam = competitor.team;
@@ -67,7 +70,7 @@ async function main() {
                 abbreviation: oppTeam.abbreviation,
                 location: oppTeam.location,
                 seasons: new Set(),
-                count: 0
+                count: 0,
               });
             }
 
@@ -80,7 +83,7 @@ async function main() {
         console.log(`    ✓ Found ${games.length} games`);
 
         // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (error) {
         console.error(`    ❌ Error fetching ${team.name}: ${error.message}`);
       }
@@ -88,8 +91,7 @@ async function main() {
   }
 
   // Sort by frequency (most common opponents first)
-  const opponents = Array.from(allOpponents.values())
-    .sort((a, b) => b.count - a.count);
+  const opponents = Array.from(allOpponents.values()).sort((a, b) => b.count - a.count);
 
   console.log('\n' + '='.repeat(70));
   console.log('📊 Opponent Teams Summary');
@@ -100,19 +102,22 @@ async function main() {
   console.log('Top 25 Most Common Opponents:\n');
   opponents.slice(0, 25).forEach((opp, i) => {
     const seasonsList = Array.from(opp.seasons).sort().join(',');
-    console.log(`${String(i + 1).padStart(2)}. ${opp.name.padEnd(35)} (ID: ${opp.id.padEnd(4)}) - ${opp.count} games (${seasonsList})`);
+    console.log(
+      `${String(i + 1).padStart(2)}. ${opp.name.padEnd(35)} (ID: ${opp.id.padEnd(4)}) - ${opp.count} games (${seasonsList})`
+    );
   });
 
   console.log('\n' + '='.repeat(70));
   console.log('\n💡 To ingest ALL teams, run:');
-  console.log('   node scripts/batch-ingest-teams.js --teams ' +
-    opponents.map(o => o.id).join(','));
+  console.log(
+    '   node scripts/batch-ingest-teams.js --teams ' + opponents.map((o) => o.id).join(',')
+  );
 
   console.log('\n📋 All opponent team IDs:');
-  console.log(opponents.map(o => o.id).join(','));
+  console.log(opponents.map((o) => o.id).join(','));
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('❌ Error:', error.message);
   process.exit(1);
 });

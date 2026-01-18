@@ -29,11 +29,11 @@ npm run test
 
 ## Essential Reading
 
-| Document | Purpose |
-|----------|---------|
+| Document                  | Purpose                                      |
+| ------------------------- | -------------------------------------------- |
 | [CLAUDE.md](../CLAUDE.md) | **Project rules and conventions—read first** |
-| [README.md](../README.md) | Project overview and structure |
-| [docs/API.md](./API.md) | Complete API documentation |
+| [README.md](../README.md) | Project overview and structure               |
+| [docs/API.md](./API.md)   | Complete API documentation                   |
 
 ---
 
@@ -51,21 +51,21 @@ BSI runs entirely on Cloudflare:
 
 ### Cloudflare Resources
 
-| Type | Naming Convention | Example |
-|------|-------------------|---------|
+| Type    | Naming Convention         | Example              |
+| ------- | ------------------------- | -------------------- |
 | Workers | `bsi-{domain}-{function}` | `bsi-prediction-api` |
-| KV | `BSI_{DOMAIN}_{PURPOSE}` | `BSI_SPORTS_CACHE` |
-| D1 | `bsi-{domain}-db` | `bsi-prediction-db` |
-| R2 | `bsi-{domain}-{asset}` | `bsi-media-videos` |
+| KV      | `BSI_{DOMAIN}_{PURPOSE}`  | `BSI_SPORTS_CACHE`   |
+| D1      | `bsi-{domain}-db`         | `bsi-prediction-db`  |
+| R2      | `bsi-{domain}-{asset}`    | `bsi-media-videos`   |
 
 ### Key Workers
 
-| Worker | Purpose | Routes |
-|--------|---------|--------|
-| `blaze-sports-api` | Primary REST API | `/api/*` |
-| `bsi-prediction-api` | Game predictions | `api.blazesportsintel.com/v1/*` |
-| `espn-data-cache` | ESPN data layer | Internal |
-| `bsi-baseball-ingest` | Data ingestion | Scheduled |
+| Worker                | Purpose          | Routes                          |
+| --------------------- | ---------------- | ------------------------------- |
+| `blaze-sports-api`    | Primary REST API | `/api/*`                        |
+| `bsi-prediction-api`  | Game predictions | `api.blazesportsintel.com/v1/*` |
+| `espn-data-cache`     | ESPN data layer  | Internal                        |
+| `bsi-baseball-ingest` | Data ingestion   | Scheduled                       |
 
 ---
 
@@ -134,26 +134,26 @@ npx wrangler deploy --config workers/prediction/wrangler.toml
 
 ### Operations & Infrastructure
 
-| Document | Description |
-|----------|-------------|
-| [OBSERVABILITY-CHECKLIST.md](./OBSERVABILITY-CHECKLIST.md) | Monitoring and alerting setup |
-| [SECURITY-AUDIT-2025-01.md](./SECURITY-AUDIT-2025-01.md) | Security findings and recommendations |
-| [BINDING-CONFIGURATION.md](./BINDING-CONFIGURATION.md) | Cloudflare bindings reference |
+| Document                                                   | Description                           |
+| ---------------------------------------------------------- | ------------------------------------- |
+| [OBSERVABILITY-CHECKLIST.md](./OBSERVABILITY-CHECKLIST.md) | Monitoring and alerting setup         |
+| [SECURITY-AUDIT-2025-01.md](./SECURITY-AUDIT-2025-01.md)   | Security findings and recommendations |
+| [BINDING-CONFIGURATION.md](./BINDING-CONFIGURATION.md)     | Cloudflare bindings reference         |
 
 ### API & Integration
 
-| Document | Description |
-|----------|-------------|
-| [API.md](./API.md) | Complete API reference |
-| [COLLEGE-BASEBALL-API.md](./COLLEGE-BASEBALL-API.md) | College baseball endpoints |
-| [CONTEXT7_INTEGRATION_GUIDE.md](./CONTEXT7_INTEGRATION_GUIDE.md) | Library documentation MCP |
+| Document                                                         | Description                |
+| ---------------------------------------------------------------- | -------------------------- |
+| [API.md](./API.md)                                               | Complete API reference     |
+| [COLLEGE-BASEBALL-API.md](./COLLEGE-BASEBALL-API.md)             | College baseball endpoints |
+| [CONTEXT7_INTEGRATION_GUIDE.md](./CONTEXT7_INTEGRATION_GUIDE.md) | Library documentation MCP  |
 
 ### Business & Product
 
-| Document | Description |
-|----------|-------------|
+| Document                                           | Description                    |
+| -------------------------------------------------- | ------------------------------ |
 | [BSI-FINANCIAL-MODEL.md](./BSI-FINANCIAL-MODEL.md) | Subscription tiers and pricing |
-| [BRAND_STORY.md](./BRAND_STORY.md) | Brand voice and messaging |
+| [BRAND_STORY.md](./BRAND_STORY.md)                 | Brand voice and messaging      |
 
 ---
 
@@ -279,4 +279,4 @@ npx wrangler d1 execute bsi-prediction-db --command "SELECT * FROM team_psycholo
 
 ---
 
-*Born to blaze the path less beaten.*
+_Born to blaze the path less beaten._

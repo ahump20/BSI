@@ -108,8 +108,9 @@ export class CacheChain implements CacheChainInterface {
   private async tryD1Get(key: string): Promise<string | undefined> {
     if (!this.env?.LONGHORNS_D1) return undefined;
     try {
-      const row = await this.env.LONGHORNS_D1
-        .prepare('SELECT payload FROM longhorns_cache WHERE cache_key = ? LIMIT 1;')
+      const row = await this.env.LONGHORNS_D1.prepare(
+        'SELECT payload FROM longhorns_cache WHERE cache_key = ? LIMIT 1;'
+      )
         .bind(key)
         .first<{ payload: string }>();
       return row?.payload;
@@ -122,10 +123,9 @@ export class CacheChain implements CacheChainInterface {
   private async tryD1Put(key: string, value: string): Promise<void> {
     if (!this.env?.LONGHORNS_D1) return;
     try {
-      await this.env.LONGHORNS_D1
-        .prepare(
-          'INSERT OR REPLACE INTO longhorns_cache (cache_key, payload, updated_at) VALUES (?, ?, ?);'
-        )
+      await this.env.LONGHORNS_D1.prepare(
+        'INSERT OR REPLACE INTO longhorns_cache (cache_key, payload, updated_at) VALUES (?, ?, ?);'
+      )
         .bind(key, value, new Date().toISOString())
         .run();
     } catch (error) {
@@ -138,10 +138,9 @@ export class CacheChain implements CacheChainInterface {
     try {
       const id = this.env.LONGHORNS_DO.idFromName('longhorns-cache');
       const stub = this.env.LONGHORNS_DO.get(id);
-      const response = await stub.fetch(
-        `https://longhorns/cache?key=${encodeURIComponent(key)}`,
-        { method: 'GET' }
-      );
+      const response = await stub.fetch(`https://longhorns/cache?key=${encodeURIComponent(key)}`, {
+        method: 'GET',
+      });
       if (!response.ok) return undefined;
       return response.text();
     } catch (error) {
@@ -330,9 +329,7 @@ export async function executeWithCache<TInput, TOutput>(
  * Sort results by sport priority (baseball first)
  */
 export function sortBySportOrder<T extends { sport: Sport }>(items: T[]): T[] {
-  return [...items].sort(
-    (a, b) => SPORT_ORDER.indexOf(a.sport) - SPORT_ORDER.indexOf(b.sport)
-  );
+  return [...items].sort((a, b) => SPORT_ORDER.indexOf(a.sport) - SPORT_ORDER.indexOf(b.sport));
 }
 
 /**

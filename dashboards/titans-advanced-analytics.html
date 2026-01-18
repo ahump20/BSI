@@ -1,670 +1,700 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tennessee Titans Advanced Analytics | Blaze Intelligence</title>
-  <meta name="description" content="Real-time NFL analytics for the Tennessee Titans featuring Pythagorean win expectancy, Elo ratings, QB metrics, and playoff probabilities.">
-
-  <style>
-    /* === DESIGN SYSTEM === */
-    :root {
-      /* Blaze Intelligence Brand Colors */
-      --blaze-orange: #ff6b00;
-      --blaze-orange-light: #ff8533;
-      --blaze-orange-dark: #cc5500;
-
-      /* Titans Brand Colors */
-      --titans-navy: #0C2340;
-      --titans-light-blue: #4B92DB;
-      --titans-red: #C8102E;
-      --titans-silver: #8A8D8F;
-
-      /* UI Colors */
-      --dark-bg: #0a0a0a;
-      --card-bg: rgba(12, 35, 64, 0.95);
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --border-color: rgba(75, 146, 219, 0.2);
-      --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.7);
-      --success: #28a745;
-      --warning: #ffc107;
-      --danger: #dc3545;
-
-      /* Spacing */
-      --spacing-xs: 8px;
-      --spacing-sm: 16px;
-      --spacing-md: 24px;
-      --spacing-lg: 40px;
-      --spacing-xl: 64px;
-
-      /* Typography */
-      --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
-    }
-
-    /* === GLOBAL STYLES === */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: var(--font-primary);
-      background: linear-gradient(135deg, var(--dark-bg) 0%, var(--titans-navy) 100%);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* === ANIMATED BACKGROUND === */
-    .background-gradient {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 20% 50%, rgba(75, 146, 219, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 80% 80%, rgba(255, 107, 0, 0.1) 0%, transparent 50%);
-      z-index: -1;
-      animation: gradientShift 15s ease-in-out infinite;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    /* === HEADER === */
-    .header {
-      padding: var(--spacing-lg) var(--spacing-md);
-      text-align: center;
-      background: linear-gradient(180deg, rgba(12, 35, 64, 0.9) 0%, transparent 100%);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .team-logo {
-      font-size: 4rem;
-      margin-bottom: var(--spacing-sm);
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--titans-light-blue), var(--blaze-orange));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: var(--spacing-xs);
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      font-weight: 400;
-    }
-
-    .header-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: var(--spacing-md);
-      margin-top: var(--spacing-lg);
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .header-stat {
-      background: var(--glass-bg);
-      padding: var(--spacing-sm);
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
-    }
-
-    .header-stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
-    }
-
-    .header-stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--titans-light-blue);
-    }
-
-    /* === MAIN CONTENT === */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: var(--spacing-lg) var(--spacing-md);
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: var(--spacing-lg);
-      margin-bottom: var(--spacing-xl);
-    }
-
-    /* === ANALYTICS CARDS === */
-    .analytics-card {
-      position: relative;
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: var(--spacing-lg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-color);
-      transition: all 0.3s ease;
-      overflow: hidden;
-    }
-
-    .analytics-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .analytics-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(75, 146, 219, 0.3);
-      border-color: var(--titans-light-blue);
-    }
-
-    .analytics-card:hover::before {
-      opacity: 1;
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--spacing-md);
-      padding-bottom: var(--spacing-sm);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .card-badge {
-      font-size: 0.75rem;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .badge-live {
-      background: linear-gradient(135deg, var(--success), #20c997);
-      color: white;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    .badge-projected {
-      background: rgba(255, 193, 7, 0.2);
-      color: var(--warning);
-      border: 1px solid var(--warning);
-    }
-
-    .card-content {
-      color: var(--text-secondary);
-      line-height: 1.8;
-    }
-
-    /* === METRIC DISPLAYS === */
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--spacing-sm) 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .metric-row:last-child {
-      border-bottom: none;
-    }
-
-    .metric-label {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-
-    .metric-value {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-    }
-
-    .metric-value.positive {
-      color: var(--success);
-    }
-
-    .metric-value.negative {
-      color: var(--danger);
-    }
-
-    /* === LUCK INDICATOR === */
-    .luck-indicator {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-      margin-top: var(--spacing-md);
-      padding: var(--spacing-sm);
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-
-    .luck-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .luck-dot.lucky {
-      background: var(--success);
-      box-shadow: 0 0 10px var(--success);
-    }
-
-    .luck-dot.neutral {
-      background: var(--warning);
-      box-shadow: 0 0 10px var(--warning);
-    }
-
-    .luck-dot.unlucky {
-      background: var(--danger);
-      box-shadow: 0 0 10px var(--danger);
-    }
-
-    /* === CONFIDENCE RANGE === */
-    .confidence-range {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: var(--spacing-md) 0;
-      padding: var(--spacing-md);
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 12px;
-    }
-
-    .confidence-point {
-      text-align: center;
-      flex: 1;
-    }
-
-    .confidence-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-
-    .confidence-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--titans-light-blue);
-      font-family: var(--font-mono);
-    }
-
-    .confidence-connector {
-      width: 60px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
-      margin: 0 var(--spacing-sm);
-    }
-
-    /* === ELO RATING CARD === */
-    .elo-rating-large {
-      text-align: center;
-      margin: var(--spacing-md) 0;
-    }
-
-    .elo-value {
-      font-size: 4rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--titans-light-blue), var(--blaze-orange));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-family: var(--font-mono);
-    }
-
-    .elo-tier {
-      font-size: 1.25rem;
-      color: var(--titans-light-blue);
-      margin-top: var(--spacing-xs);
-      font-weight: 600;
-    }
-
-    .elo-rank {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-top: var(--spacing-xs);
-    }
-
-    /* === QB STATS GRID === */
-    .qb-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--spacing-md);
-      margin-top: var(--spacing-md);
-    }
-
-    .qb-stat-box {
-      background: rgba(255, 255, 255, 0.03);
-      padding: var(--spacing-sm);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-    }
-
-    .qb-stat-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .qb-stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      font-family: var(--font-mono);
-    }
-
-    .qb-rating-grade {
-      font-size: 0.85rem;
-      color: var(--titans-light-blue);
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    /* === PLAYOFF PROBABILITY BAR === */
-    .probability-bar {
-      position: relative;
-      height: 60px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 30px;
-      overflow: hidden;
-      margin: var(--spacing-md) 0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .probability-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: white;
-      transition: width 1s ease-in-out;
-      animation: fillAnimation 1.5s ease-out;
-    }
-
-    @keyframes fillAnimation {
-      from { width: 0%; }
-    }
-
-    /* === FOOTER === */
-    .footer {
-      text-align: center;
-      padding: var(--spacing-lg);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      border-top: 1px solid var(--border-color);
-      margin-top: var(--spacing-xl);
-    }
-
-    .data-source {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin: var(--spacing-sm) 0;
-    }
-
-    .source-badge {
-      padding: 4px 12px;
-      background: rgba(255, 107, 0, 0.1);
-      border: 1px solid var(--blaze-orange);
-      border-radius: 16px;
-      font-size: 0.75rem;
-      color: var(--blaze-orange);
-      font-weight: 600;
-    }
-
-    /* === RESPONSIVE DESIGN === */
-    @media (max-width: 768px) {
-      .header h1 {
-        font-size: 1.75rem;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tennessee Titans Advanced Analytics | Blaze Intelligence</title>
+    <meta
+      name="description"
+      content="Real-time NFL analytics for the Tennessee Titans featuring Pythagorean win expectancy, Elo ratings, QB metrics, and playoff probabilities."
+    />
+
+    <style>
+      /* === DESIGN SYSTEM === */
+      :root {
+        /* Blaze Intelligence Brand Colors */
+        --blaze-orange: #ff6b00;
+        --blaze-orange-light: #ff8533;
+        --blaze-orange-dark: #cc5500;
+
+        /* Titans Brand Colors */
+        --titans-navy: #0c2340;
+        --titans-light-blue: #4b92db;
+        --titans-red: #c8102e;
+        --titans-silver: #8a8d8f;
+
+        /* UI Colors */
+        --dark-bg: #0a0a0a;
+        --card-bg: rgba(12, 35, 64, 0.95);
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --border-color: rgba(75, 146, 219, 0.2);
+        --text-primary: #ffffff;
+        --text-secondary: rgba(255, 255, 255, 0.7);
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+
+        /* Spacing */
+        --spacing-xs: 8px;
+        --spacing-sm: 16px;
+        --spacing-md: 24px;
+        --spacing-lg: 40px;
+        --spacing-xl: 64px;
+
+        /* Typography */
+        --font-primary:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+          'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
       }
 
-      .dashboard-grid {
-        grid-template-columns: 1fr;
+      /* === GLOBAL STYLES === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background: linear-gradient(135deg, var(--dark-bg) 0%, var(--titans-navy) 100%);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* === ANIMATED BACKGROUND === */
+      .background-gradient {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(circle at 20% 50%, rgba(75, 146, 219, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(255, 107, 0, 0.1) 0%, transparent 50%);
+        z-index: -1;
+        animation: gradientShift 15s ease-in-out infinite;
+      }
+
+      @keyframes gradientShift {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* === HEADER === */
+      .header {
+        padding: var(--spacing-lg) var(--spacing-md);
+        text-align: center;
+        background: linear-gradient(180deg, rgba(12, 35, 64, 0.9) 0%, transparent 100%);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .team-logo {
+        font-size: 4rem;
+        margin-bottom: var(--spacing-sm);
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--titans-light-blue), var(--blaze-orange));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 400;
       }
 
       .header-stats {
-        grid-template-columns: repeat(2, 1fr);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
-      .qb-stats-grid {
-        grid-template-columns: 1fr;
+      .header-stat {
+        background: var(--glass-bg);
+        padding: var(--spacing-sm);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(10px);
+      }
+
+      .header-stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+      .header-stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--titans-light-blue);
+      }
+
+      /* === MAIN CONTENT === */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+      }
+
+      /* === ANALYTICS CARDS === */
+      .analytics-card {
+        position: relative;
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: var(--spacing-lg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .analytics-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .analytics-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(75, 146, 219, 0.3);
+        border-color: var(--titans-light-blue);
+      }
+
+      .analytics-card:hover::before {
+        opacity: 1;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .card-badge {
+        font-size: 0.75rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-live {
+        background: linear-gradient(135deg, var(--success), #20c997);
+        color: white;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      .badge-projected {
+        background: rgba(255, 193, 7, 0.2);
+        color: var(--warning);
+        border: 1px solid var(--warning);
+      }
+
+      .card-content {
+        color: var(--text-secondary);
+        line-height: 1.8;
+      }
+
+      /* === METRIC DISPLAYS === */
+      .metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm) 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .metric-row:last-child {
+        border-bottom: none;
+      }
+
+      .metric-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .metric-value {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+      }
+
+      .metric-value.positive {
+        color: var(--success);
+      }
+
+      .metric-value.negative {
+        color: var(--danger);
+      }
+
+      /* === LUCK INDICATOR === */
+      .luck-indicator {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-sm);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+
+      .luck-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .luck-dot.lucky {
+        background: var(--success);
+        box-shadow: 0 0 10px var(--success);
+      }
+
+      .luck-dot.neutral {
+        background: var(--warning);
+        box-shadow: 0 0 10px var(--warning);
+      }
+
+      .luck-dot.unlucky {
+        background: var(--danger);
+        box-shadow: 0 0 10px var(--danger);
+      }
+
+      /* === CONFIDENCE RANGE === */
+      .confidence-range {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: var(--spacing-md) 0;
+        padding: var(--spacing-md);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+      }
+
+      .confidence-point {
+        text-align: center;
+        flex: 1;
+      }
+
+      .confidence-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .confidence-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--titans-light-blue);
+        font-family: var(--font-mono);
+      }
+
+      .confidence-connector {
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
+        margin: 0 var(--spacing-sm);
+      }
+
+      /* === ELO RATING CARD === */
+      .elo-rating-large {
+        text-align: center;
+        margin: var(--spacing-md) 0;
       }
 
       .elo-value {
-        font-size: 3rem;
+        font-size: 4rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--titans-light-blue), var(--blaze-orange));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-family: var(--font-mono);
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="background-gradient"></div>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-content">
-      <div class="team-logo">🏈⚡</div>
-      <h1>Tennessee Titans</h1>
-      <p class="subtitle">Advanced Analytics Dashboard - Powered by Blaze Intelligence</p>
+      .elo-tier {
+        font-size: 1.25rem;
+        color: var(--titans-light-blue);
+        margin-top: var(--spacing-xs);
+        font-weight: 600;
+      }
 
-      <div class="header-stats">
-        <div class="header-stat">
-          <div class="header-stat-label">Current Record</div>
-          <div class="header-stat-value" id="currentRecord">...</div>
-        </div>
-        <div class="header-stat">
-          <div class="header-stat-label">Division Rank</div>
-          <div class="header-stat-value" id="divisionRank">...</div>
-        </div>
-        <div class="header-stat">
-          <div class="header-stat-label">Point Differential</div>
-          <div class="header-stat-value" id="pointDiff">...</div>
-        </div>
-        <div class="header-stat">
-          <div class="header-stat-label">Playoff Odds</div>
-          <div class="header-stat-value" id="playoffOdds">...</div>
+      .elo-rank {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-top: var(--spacing-xs);
+      }
+
+      /* === QB STATS GRID === */
+      .qb-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-md);
+      }
+
+      .qb-stat-box {
+        background: rgba(255, 255, 255, 0.03);
+        padding: var(--spacing-sm);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+      }
+
+      .qb-stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+
+      .qb-stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+      }
+
+      .qb-rating-grade {
+        font-size: 0.85rem;
+        color: var(--titans-light-blue);
+        margin-top: 4px;
+        font-weight: 600;
+      }
+
+      /* === PLAYOFF PROBABILITY BAR === */
+      .probability-bar {
+        position: relative;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 30px;
+        overflow: hidden;
+        margin: var(--spacing-md) 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .probability-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--titans-light-blue), var(--blaze-orange));
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        transition: width 1s ease-in-out;
+        animation: fillAnimation 1.5s ease-out;
+      }
+
+      @keyframes fillAnimation {
+        from {
+          width: 0%;
+        }
+      }
+
+      /* === FOOTER === */
+      .footer {
+        text-align: center;
+        padding: var(--spacing-lg);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: var(--spacing-xl);
+      }
+
+      .data-source {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: var(--spacing-sm) 0;
+      }
+
+      .source-badge {
+        padding: 4px 12px;
+        background: rgba(255, 107, 0, 0.1);
+        border: 1px solid var(--blaze-orange);
+        border-radius: 16px;
+        font-size: 0.75rem;
+        color: var(--blaze-orange);
+        font-weight: 600;
+      }
+
+      /* === RESPONSIVE DESIGN === */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.75rem;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .qb-stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .elo-value {
+          font-size: 3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-gradient"></div>
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-content">
+        <div class="team-logo">🏈⚡</div>
+        <h1>Tennessee Titans</h1>
+        <p class="subtitle">Advanced Analytics Dashboard - Powered by Blaze Intelligence</p>
+
+        <div class="header-stats">
+          <div class="header-stat">
+            <div class="header-stat-label">Current Record</div>
+            <div class="header-stat-value" id="currentRecord">...</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-label">Division Rank</div>
+            <div class="header-stat-value" id="divisionRank">...</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-label">Point Differential</div>
+            <div class="header-stat-value" id="pointDiff">...</div>
+          </div>
+          <div class="header-stat">
+            <div class="header-stat-label">Playoff Odds</div>
+            <div class="header-stat-value" id="playoffOdds">...</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN CONTENT -->
-  <div class="container">
-    <div class="dashboard-grid">
+    <!-- MAIN CONTENT -->
+    <div class="container">
+      <div class="dashboard-grid">
+        <!-- CARD 1: PYTHAGOREAN WIN EXPECTANCY -->
+        <div class="analytics-card">
+          <div class="card-header">
+            <h2 class="card-title">Pythagorean Win Expectancy</h2>
+            <span class="card-badge badge-live">LIVE</span>
+          </div>
+          <div class="card-content" id="pythagoreanContent">Loading Pythagorean analysis...</div>
+        </div>
 
-      <!-- CARD 1: PYTHAGOREAN WIN EXPECTANCY -->
-      <div class="analytics-card">
-        <div class="card-header">
-          <h2 class="card-title">Pythagorean Win Expectancy</h2>
-          <span class="card-badge badge-live">LIVE</span>
-        </div>
-        <div class="card-content" id="pythagoreanContent">
-          Loading Pythagorean analysis...
-        </div>
-      </div>
-
-      <!-- CARD 2: SEASON PROJECTION -->
-      <div class="analytics-card">
-        <div class="card-header">
-          <h2 class="card-title">Season Projection</h2>
-          <span class="card-badge badge-projected">PROJECTED</span>
-        </div>
-        <div class="card-content">
-          <div id="seasonProjection">
-            Loading season projection...
+        <!-- CARD 2: SEASON PROJECTION -->
+        <div class="analytics-card">
+          <div class="card-header">
+            <h2 class="card-title">Season Projection</h2>
+            <span class="card-badge badge-projected">PROJECTED</span>
+          </div>
+          <div class="card-content">
+            <div id="seasonProjection">Loading season projection...</div>
           </div>
         </div>
-      </div>
 
-      <!-- CARD 3: ELO POWER RANKING -->
-      <div class="analytics-card">
-        <div class="card-header">
-          <h2 class="card-title">Elo Power Ranking</h2>
-          <span class="card-badge badge-live">LIVE</span>
-        </div>
-        <div class="card-content">
-          <div class="elo-rating-large" id="eloRating">
-            <div class="elo-value">...</div>
-            <div class="elo-tier">...</div>
-            <div class="elo-rank">...</div>
+        <!-- CARD 3: ELO POWER RANKING -->
+        <div class="analytics-card">
+          <div class="card-header">
+            <h2 class="card-title">Elo Power Ranking</h2>
+            <span class="card-badge badge-live">LIVE</span>
           </div>
-          <div id="eloDetails"></div>
-        </div>
-      </div>
-
-      <!-- CARD 4: QB ANALYTICS -->
-      <div class="analytics-card">
-        <div class="card-header">
-          <h2 class="card-title">QB Performance</h2>
-          <span class="card-badge badge-live">LIVE</span>
-        </div>
-        <div class="card-content">
-          <div id="qbName" style="text-align: center; font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: var(--titans-light-blue);">...</div>
-          <div class="qb-stats-grid" id="qbStats">
-            Loading QB statistics...
+          <div class="card-content">
+            <div class="elo-rating-large" id="eloRating">
+              <div class="elo-value">...</div>
+              <div class="elo-tier">...</div>
+              <div class="elo-rank">...</div>
+            </div>
+            <div id="eloDetails"></div>
           </div>
         </div>
-      </div>
 
-      <!-- CARD 5: PLAYOFF PROBABILITY (FULL WIDTH) -->
-      <div class="analytics-card" style="grid-column: 1 / -1;">
-        <div class="card-header">
-          <h2 class="card-title">Playoff Probability (Monte Carlo Simulation)</h2>
-          <span class="card-badge badge-projected">10,000 SIMS</span>
+        <!-- CARD 4: QB ANALYTICS -->
+        <div class="analytics-card">
+          <div class="card-header">
+            <h2 class="card-title">QB Performance</h2>
+            <span class="card-badge badge-live">LIVE</span>
+          </div>
+          <div class="card-content">
+            <div
+              id="qbName"
+              style="
+                text-align: center;
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 16px;
+                color: var(--titans-light-blue);
+              "
+            >
+              ...
+            </div>
+            <div class="qb-stats-grid" id="qbStats">Loading QB statistics...</div>
+          </div>
         </div>
-        <div class="card-content">
-          <div class="probability-bar">
-            <div class="probability-fill" id="playoffProbFill">
-              ...%
+
+        <!-- CARD 5: PLAYOFF PROBABILITY (FULL WIDTH) -->
+        <div class="analytics-card" style="grid-column: 1 / -1">
+          <div class="card-header">
+            <h2 class="card-title">Playoff Probability (Monte Carlo Simulation)</h2>
+            <span class="card-badge badge-projected">10,000 SIMS</span>
+          </div>
+          <div class="card-content">
+            <div class="probability-bar">
+              <div class="probability-fill" id="playoffProbFill">...%</div>
+            </div>
+            <div class="dashboard-grid" id="monteCarloResults">
+              Loading Monte Carlo simulation results...
             </div>
           </div>
-          <div class="dashboard-grid" id="monteCarloResults">
-            Loading Monte Carlo simulation results...
-          </div>
         </div>
       </div>
-
     </div>
-  </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="data-source">
-      <span>Data Sources:</span>
-      <span class="source-badge">SportsDataIO NFL API</span>
-      <span class="source-badge">Blaze Intelligence Analytics</span>
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="data-source">
+        <span>Data Sources:</span>
+        <span class="source-badge">SportsDataIO NFL API</span>
+        <span class="source-badge">Blaze Intelligence Analytics</span>
+      </div>
+      <p style="margin-top: 16px">
+        All statistics updated in real-time. Pythagorean expectancy (exponent 2.37), Elo ratings
+        (FiveThirtyEight methodology), and Monte Carlo simulations validated against historical NFL
+        data.
+      </p>
+      <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.6">
+        © 2025 Blaze Intelligence | blazesportsintel.com | Built with precision analytics
+      </p>
     </div>
-    <p style="margin-top: 16px;">
-      All statistics updated in real-time. Pythagorean expectancy (exponent 2.37), Elo ratings (FiveThirtyEight methodology), and Monte Carlo simulations validated against historical NFL data.
-    </p>
-    <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.6;">
-      © 2025 Blaze Intelligence | blazesportsintel.com | Built with precision analytics
-    </p>
-  </div>
 
-  <script>
-    // === DATA LOADING FUNCTIONS ===
+    <script>
+      // === DATA LOADING FUNCTIONS ===
 
-    // Load header stats
-    function loadHeaderStats() {
-      // In production, this would call the MCP server via mcp__blaze-intelligence__getTitansStats()
-      // For demo purposes, using realistic 2025 mid-season data
+      // Load header stats
+      function loadHeaderStats() {
+        // In production, this would call the MCP server via mcp__blaze-intelligence__getTitansStats()
+        // For demo purposes, using realistic 2025 mid-season data
 
-      const titans = {
-        wins: 7,
-        losses: 3,
-        divisionRank: 1,
-        pointsFor: 280,
-        pointsAgainst: 245,
-        playoffOdds: 67.3
-      };
+        const titans = {
+          wins: 7,
+          losses: 3,
+          divisionRank: 1,
+          pointsFor: 280,
+          pointsAgainst: 245,
+          playoffOdds: 67.3,
+        };
 
-      document.getElementById('currentRecord').textContent = `${titans.wins}-${titans.losses}`;
-      document.getElementById('divisionRank').textContent = `#${titans.divisionRank} AFC South`;
+        document.getElementById('currentRecord').textContent = `${titans.wins}-${titans.losses}`;
+        document.getElementById('divisionRank').textContent = `#${titans.divisionRank} AFC South`;
 
-      const pointDiff = titans.pointsFor - titans.pointsAgainst;
-      const pointDiffEl = document.getElementById('pointDiff');
-      pointDiffEl.textContent = pointDiff > 0 ? `+${pointDiff}` : pointDiff;
-      pointDiffEl.style.color = pointDiff > 0 ? 'var(--success)' : 'var(--danger)';
+        const pointDiff = titans.pointsFor - titans.pointsAgainst;
+        const pointDiffEl = document.getElementById('pointDiff');
+        pointDiffEl.textContent = pointDiff > 0 ? `+${pointDiff}` : pointDiff;
+        pointDiffEl.style.color = pointDiff > 0 ? 'var(--success)' : 'var(--danger)';
 
-      document.getElementById('playoffOdds').textContent = `${titans.playoffOdds}%`;
-    }
+        document.getElementById('playoffOdds').textContent = `${titans.playoffOdds}%`;
+      }
 
-    // Load Pythagorean Win Expectancy
-    function loadPythagoreanAnalysis() {
-      // In production: mcp__blaze-intelligence__getAdvancedFootballAnalytics({ teamKey: 'TEN' })
+      // Load Pythagorean Win Expectancy
+      function loadPythagoreanAnalysis() {
+        // In production: mcp__blaze-intelligence__getAdvancedFootballAnalytics({ teamKey: 'TEN' })
 
-      const pythagorean = {
-        expectedWins: 7.2,
-        actualWins: 7,
-        luckFactor: -0.2,
-        confidence: 68.2,
-        interpretation: 'Record matches expectations - team performance is stable'
-      };
+        const pythagorean = {
+          expectedWins: 7.2,
+          actualWins: 7,
+          luckFactor: -0.2,
+          confidence: 68.2,
+          interpretation: 'Record matches expectations - team performance is stable',
+        };
 
-      const luckClass = pythagorean.luckFactor > 1 ? 'lucky' :
-                       pythagorean.luckFactor < -1 ? 'unlucky' : 'neutral';
+        const luckClass =
+          pythagorean.luckFactor > 1
+            ? 'lucky'
+            : pythagorean.luckFactor < -1
+              ? 'unlucky'
+              : 'neutral';
 
-      document.getElementById('pythagoreanContent').innerHTML = `
+        document.getElementById('pythagoreanContent').innerHTML = `
         <div class="metric-row">
           <span class="metric-label">Actual Wins</span>
           <span class="metric-value">${pythagorean.actualWins}</span>
@@ -686,21 +716,21 @@
           <span>${pythagorean.interpretation}</span>
         </div>
       `;
-    }
+      }
 
-    // Load Season Projection
-    function loadSeasonProjection() {
-      const projection = {
-        projectedRecord: '12-5',
-        confidenceInterval90: {
-          low: '10-7',
-          high: '13-4'
-        },
-        remainingGames: 7,
-        playoffLikelihood: 'Strong playoff contender'
-      };
+      // Load Season Projection
+      function loadSeasonProjection() {
+        const projection = {
+          projectedRecord: '12-5',
+          confidenceInterval90: {
+            low: '10-7',
+            high: '13-4',
+          },
+          remainingGames: 7,
+          playoffLikelihood: 'Strong playoff contender',
+        };
 
-      document.getElementById('seasonProjection').innerHTML = `
+        document.getElementById('seasonProjection').innerHTML = `
         <div style="text-align: center; margin-bottom: 24px;">
           <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">Projected Final Record</div>
           <div style="font-size: 3rem; font-weight: 700; color: var(--titans-light-blue); font-family: var(--font-mono);">${projection.projectedRecord}</div>
@@ -727,25 +757,25 @@
           <span class="metric-value" style="font-size: 1rem;">${projection.playoffLikelihood}</span>
         </div>
       `;
-    }
+      }
 
-    // Load Elo Rating
-    function loadEloRating() {
-      const elo = {
-        rating: 1580,
-        tier: 'Good',
-        rank: 8,
-        peakElo: 1612,
-        change: '+24'
-      };
+      // Load Elo Rating
+      function loadEloRating() {
+        const elo = {
+          rating: 1580,
+          tier: 'Good',
+          rank: 8,
+          peakElo: 1612,
+          change: '+24',
+        };
 
-      document.getElementById('eloRating').innerHTML = `
+        document.getElementById('eloRating').innerHTML = `
         <div class="elo-value">${elo.rating}</div>
         <div class="elo-tier">${elo.tier} Tier</div>
         <div class="elo-rank">#${elo.rank} in NFL Power Rankings</div>
       `;
 
-      document.getElementById('eloDetails').innerHTML = `
+        document.getElementById('eloDetails').innerHTML = `
         <div class="metric-row">
           <span class="metric-label">Peak Elo (Season)</span>
           <span class="metric-value">${elo.peakElo}</span>
@@ -755,26 +785,26 @@
           <span class="metric-value positive">${elo.change}</span>
         </div>
       `;
-    }
+      }
 
-    // Load QB Analytics
-    function loadQBAnalytics() {
-      // Ryan Tannehill or current Titans QB
-      const qb = {
-        name: 'Ryan Tannehill',
-        passerRating: 98.7,
-        grade: 'Good',
-        completionPct: 66.7,
-        yardsPerAttempt: 7.8,
-        touchdownPct: 6.2,
-        interceptionPct: 2.7,
-        adjustedYPA: 8.2,
-        efficiencyRating: 92.4
-      };
+      // Load QB Analytics
+      function loadQBAnalytics() {
+        // Ryan Tannehill or current Titans QB
+        const qb = {
+          name: 'Ryan Tannehill',
+          passerRating: 98.7,
+          grade: 'Good',
+          completionPct: 66.7,
+          yardsPerAttempt: 7.8,
+          touchdownPct: 6.2,
+          interceptionPct: 2.7,
+          adjustedYPA: 8.2,
+          efficiencyRating: 92.4,
+        };
 
-      document.getElementById('qbName').textContent = qb.name;
+        document.getElementById('qbName').textContent = qb.name;
 
-      document.getElementById('qbStats').innerHTML = `
+        document.getElementById('qbStats').innerHTML = `
         <div class="qb-stat-box">
           <div class="qb-stat-label">Passer Rating</div>
           <div class="qb-stat-value">${qb.passerRating}</div>
@@ -807,25 +837,25 @@
           <div class="qb-rating-grade">Elite: 8.5+</div>
         </div>
       `;
-    }
+      }
 
-    // Load Monte Carlo Simulation
-    function loadMonteCarloSimulation() {
-      const simulation = {
-        probabilities: {
-          playoffs: 67.3,
-          divisionWin: 45.2,
-          wildCard: 22.1,
-          bye: 8.7
-        }
-      };
+      // Load Monte Carlo Simulation
+      function loadMonteCarloSimulation() {
+        const simulation = {
+          probabilities: {
+            playoffs: 67.3,
+            divisionWin: 45.2,
+            wildCard: 22.1,
+            bye: 8.7,
+          },
+        };
 
-      // Animate playoff probability fill
-      const fillEl = document.getElementById('playoffProbFill');
-      fillEl.style.width = `${simulation.probabilities.playoffs}%`;
-      fillEl.textContent = `${simulation.probabilities.playoffs}%`;
+        // Animate playoff probability fill
+        const fillEl = document.getElementById('playoffProbFill');
+        fillEl.style.width = `${simulation.probabilities.playoffs}%`;
+        fillEl.textContent = `${simulation.probabilities.playoffs}%`;
 
-      document.getElementById('monteCarloResults').innerHTML = `
+        document.getElementById('monteCarloResults').innerHTML = `
         <div style="text-align: center; padding: 24px; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
           <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">Division Win</div>
           <div style="font-size: 2rem; font-weight: 700; color: var(--titans-light-blue);">${simulation.probabilities.divisionWin}%</div>
@@ -839,20 +869,20 @@
           <div style="font-size: 2rem; font-weight: 700; color: var(--warning);">${simulation.probabilities.bye}%</div>
         </div>
       `;
-    }
+      }
 
-    // Initialize dashboard
-    window.addEventListener('DOMContentLoaded', () => {
-      loadHeaderStats();
-      loadPythagoreanAnalysis();
-      loadSeasonProjection();
-      loadEloRating();
-      loadQBAnalytics();
-      loadMonteCarloSimulation();
+      // Initialize dashboard
+      window.addEventListener('DOMContentLoaded', () => {
+        loadHeaderStats();
+        loadPythagoreanAnalysis();
+        loadSeasonProjection();
+        loadEloRating();
+        loadQBAnalytics();
+        loadMonteCarloSimulation();
 
-      // In production, this would refresh data every 30 seconds
-      // setInterval(() => { /* refresh live data */ }, 30000);
-    });
-  </script>
-</body>
+        // In production, this would refresh data every 30 seconds
+        // setInterval(() => { /* refresh live data */ }, 30000);
+      });
+    </script>
+  </body>
 </html>

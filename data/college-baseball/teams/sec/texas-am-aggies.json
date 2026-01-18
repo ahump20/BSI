@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "12th Man+ Fund",
     "lead_contact": "Travis Dabney",
-    "contact_channels": [
-      "info@12thmanplus.com",
-      "https://12thmanplus.com/contact"
-    ],
+    "contact_channels": ["info@12thmanplus.com", "https://12thmanplus.com/contact"],
     "recent_initiatives": "Introducing baseball locker sponsorship program for 2025 season.",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Trev Alberts",
     "baseball_admin": "Austin Berry",
-    "financial_points_of_contact": [
-      "12thmantickets@athletics.tamu.edu"
-    ]
+    "financial_points_of_contact": ["12thmantickets@athletics.tamu.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 0,

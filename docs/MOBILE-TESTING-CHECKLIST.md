@@ -1,17 +1,19 @@
 # Mobile Testing Quick Checklist
 
-**Date**: _______________
-**Tester**: _______________
-**Device**: _______________
-**iOS**: _______________
+**Date**: **\*\***\_\_\_**\*\***
+**Tester**: **\*\***\_\_\_**\*\***
+**Device**: **\*\***\_\_\_**\*\***
+**iOS**: **\*\***\_\_\_**\*\***
 
 ## Pre-Test Setup
+
 - [ ] Safari cache cleared
 - [ ] Cookies cleared
 - [ ] Content blockers disabled
 - [ ] "Request Desktop Website" OFF
 
 ## Test URLs
+
 ```
 Production:
 □ https://blazesportsintel.com/
@@ -26,12 +28,14 @@ Staging:
 ## Critical Path Testing
 
 ### 1. Initial Load (Baseball Homepage)
+
 - [ ] Loads within 3 seconds (4G)
 - [ ] No console errors
 - [ ] All content visible without horizontal scroll
 - [ ] Text readable without zooming
 
 ### 2. SportSwitcher FAB
+
 - [ ] FAB visible in bottom-right corner
 - [ ] FAB size adequate (48px minimum)
 - [ ] Single tap opens menu
@@ -41,6 +45,7 @@ Staging:
 - [ ] Tap outside closes menu
 
 ### 3. Navigation (Baseball → Football)
+
 - [ ] Tap "Football" in FAB menu
 - [ ] Navigates to /football
 - [ ] Page loads within 1 second
@@ -48,6 +53,7 @@ Staging:
 - [ ] All content renders correctly
 
 ### 4. Navigation (Football → Baseball)
+
 - [ ] Tap "Baseball" in FAB menu
 - [ ] Navigates to /
 - [ ] Page loads within 1 second
@@ -55,13 +61,15 @@ Staging:
 - [ ] All content renders correctly
 
 ### 5. Browser Back Button
+
 - [ ] Back button works after navigation
 - [ ] Returns to previous sport
 - [ ] Page state preserved
 - [ ] No errors
 
 ### 6. Seasonal Routing
-**Current Month**: _______________
+
+**Current Month**: **\*\***\_\_\_**\*\***
 
 - [ ] Root (/) redirects correctly based on season
   - Oct-Dec → Football ✓
@@ -74,6 +82,7 @@ Staging:
 - [ ] Cookie persists after closing Safari
 
 ### 7. Viewport & Layout (Portrait)
+
 - [ ] No horizontal scrolling
 - [ ] Safe area respected (notch/Dynamic Island)
 - [ ] Header visible and aligned
@@ -82,12 +91,14 @@ Staging:
 - [ ] No overlapping content
 
 ### 8. Viewport & Layout (Landscape)
+
 - [ ] Layout adapts correctly
 - [ ] Content remains readable
 - [ ] Navigation accessible
 - [ ] No overlapping elements
 
 ### 9. Touch Interactions
+
 - [ ] All buttons tappable (48px min)
 - [ ] No accidental adjacent taps
 - [ ] Active states visible
@@ -95,6 +106,7 @@ Staging:
 - [ ] No accidental horizontal swipes
 
 ### 10. Typography
+
 - [ ] Body text 16px minimum
 - [ ] Headings properly sized
 - [ ] Line height sufficient
@@ -102,18 +114,21 @@ Staging:
 - [ ] Font rendering clear
 
 ### 11. Performance (WiFi)
+
 - [ ] First Contentful Paint < 1.5s
 - [ ] Time to Interactive < 3.0s
 - [ ] No layout shift (CLS < 0.1)
 - [ ] Bundle size reasonable
 
 ### 12. Performance (4G)
+
 - [ ] First Contentful Paint < 3.0s
 - [ ] Progressive loading works
 - [ ] Loading indicators shown
 - [ ] No timeout errors
 
 ### 13. Accessibility
+
 - [ ] VoiceOver announces all interactive elements
 - [ ] Proper heading hierarchy
 - [ ] Form labels associated
@@ -121,6 +136,7 @@ Staging:
 - [ ] Focus order logical
 
 ### 14. Edge Cases
+
 - [ ] Private Browsing mode works
 - [ ] Slow connection (< 1 Mbps) handled
 - [ ] Connection interruption handled
@@ -129,35 +145,35 @@ Staging:
 
 ## Issues Found
 
-| # | Priority | Description | Screenshot |
-|---|----------|-------------|------------|
-| 1 | P__ | | [ ] |
-| 2 | P__ | | [ ] |
-| 3 | P__ | | [ ] |
-| 4 | P__ | | [ ] |
-| 5 | P__ | | [ ] |
+| #   | Priority | Description | Screenshot |
+| --- | -------- | ----------- | ---------- |
+| 1   | P\_\_    |             | [ ]        |
+| 2   | P\_\_    |             | [ ]        |
+| 3   | P\_\_    |             | [ ]        |
+| 4   | P\_\_    |             | [ ]        |
+| 5   | P\_\_    |             | [ ]        |
 
 ## Performance Metrics
 
-| Metric | Target | Actual | Pass/Fail |
-|--------|--------|--------|-----------|
-| FCP (WiFi) | < 1.5s | _____ | [ ] |
-| LCP (WiFi) | < 2.5s | _____ | [ ] |
-| TTI (WiFi) | < 3.0s | _____ | [ ] |
-| FCP (4G) | < 3.0s | _____ | [ ] |
-| LCP (4G) | < 4.0s | _____ | [ ] |
-| TTI (4G) | < 5.0s | _____ | [ ] |
-| CLS | < 0.1 | _____ | [ ] |
-| FID | < 100ms | _____ | [ ] |
+| Metric     | Target  | Actual | Pass/Fail |
+| ---------- | ------- | ------ | --------- |
+| FCP (WiFi) | < 1.5s  | **\_** | [ ]       |
+| LCP (WiFi) | < 2.5s  | **\_** | [ ]       |
+| TTI (WiFi) | < 3.0s  | **\_** | [ ]       |
+| FCP (4G)   | < 3.0s  | **\_** | [ ]       |
+| LCP (4G)   | < 4.0s  | **\_** | [ ]       |
+| TTI (4G)   | < 5.0s  | **\_** | [ ]       |
+| CLS        | < 0.1   | **\_** | [ ]       |
+| FID        | < 100ms | **\_** | [ ]       |
 
 ## Bundle Sizes
 
-| Bundle | Target | Actual | Pass/Fail |
-|--------|--------|--------|-----------|
-| Vendor (shared) | < 100KB | _____ | [ ] |
-| Baseball | < 10KB | _____ | [ ] |
-| Football | < 10KB | _____ | [ ] |
-| Total First Load | < 120KB | _____ | [ ] |
+| Bundle           | Target  | Actual | Pass/Fail |
+| ---------------- | ------- | ------ | --------- |
+| Vendor (shared)  | < 100KB | **\_** | [ ]       |
+| Baseball         | < 10KB  | **\_** | [ ]       |
+| Football         | < 10KB  | **\_** | [ ]       |
+| Total First Load | < 120KB | **\_** | [ ]       |
 
 ## Sign-Off
 
@@ -167,8 +183,8 @@ Staging:
 - [ ] Accessibility verified
 - [ ] Screenshots captured
 
-**Tester Signature**: _______________
-**Date Completed**: _______________
+**Tester Signature**: **\*\***\_\_\_**\*\***
+**Date Completed**: **\*\***\_\_\_**\*\***
 
 ---
 

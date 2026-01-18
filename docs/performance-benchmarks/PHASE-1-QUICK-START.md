@@ -22,6 +22,7 @@ Browser: Chrome or Safari (latest version)
 ### Step 2: Verify Device Detection
 
 You should see at top of page:
+
 - **Device Class**: Desktop High-End
 - **CPU Cores**: 12 (or similar)
 - **Memory**: 32GB (or similar)
@@ -32,6 +33,7 @@ You should see at top of page:
 ### Step 3: Configure Test
 
 Set these parameters:
+
 - **Particle Count**: `150000` (150K)
 - **Test Duration**: `60 seconds`
 - **Interaction Mode**: `Simulated Movement`
@@ -65,10 +67,12 @@ PASS CRITERIA:
 ### Step 6: Interpret Results
 
 **If ALL pass criteria met**:
+
 - ✅ "150K particles" claim is VALIDATED
 - ✅ Proceed to mobile test
 
 **If ANY criteria FAIL**:
+
 - ❌ Marketing claim is INCORRECT
 - ❌ Must reduce claim to "100K particles"
 - ❌ Document failure reason in SUMMARY.md
@@ -89,6 +93,7 @@ Browser: Safari (iOS) or Chrome (Android)
 ```
 
 ⚠️ **Important**: Ensure device is:
+
 - Fully charged or plugged in
 - Not in low-power mode
 - All other apps closed
@@ -96,6 +101,7 @@ Browser: Safari (iOS) or Chrome (Android)
 ### Step 2: Verify Device Detection
 
 You should see:
+
 - **Device Class**: Mobile High-End
 - **CPU Cores**: 6 or more
 - **Memory**: 4GB or more
@@ -105,6 +111,7 @@ You should see:
 ### Step 3: Configure Test
 
 Set these parameters:
+
 - **Particle Count**: `100000` (100K)
 - **Test Duration**: `60 seconds`
 - **Interaction Mode**: `Simulated Movement`
@@ -138,10 +145,12 @@ PASS CRITERIA:
 ### Step 6: Interpret Results
 
 **If ALL pass criteria met**:
+
 - ✅ Mobile performance claim is VALIDATED
 - ✅ Can advertise "100K particles on mobile flagships"
 
 **If ANY criteria FAIL**:
+
 - ❌ Must recommend "50K particles for mobile"
 - ❌ Document failure reason in SUMMARY.md
 
@@ -164,8 +173,10 @@ code SUMMARY.md  # or vim/nano
 Extract from JSON exports:
 
 **Desktop High-End Section**:
+
 ```markdown
 **Device Specifications**:
+
 - CPU: [Copy from JSON: device.cores + " cores"]
 - Memory: [Copy from JSON: device.memory + "GB"]
 - GPU: [Copy from JSON: device.gpu]
@@ -182,6 +193,7 @@ From your JSON results file, extract:
 ```
 
 Example:
+
 ```markdown
 | 150K | 60.00 | 58.50 | 58.00 | 16.67 | 17.24 | 142.56 | ✅ Excellent |
 ```
@@ -192,6 +204,7 @@ Replace `❓` with `✅` or `❌`:
 
 ```markdown
 **Target Validation**:
+
 - ✅ 150K particles: ≥ 60 FPS average → PASS (60.00 FPS)
 - ✅ 150K particles: ≥ 30 FPS (1% low) → PASS (58.50 FPS)
 - ✅ Memory usage: < 300 MB → PASS (142.56 MB)
@@ -202,8 +215,10 @@ Replace `❓` with `✅` or `❌`:
 Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 
 **If ALL tests passed**:
+
 ```markdown
 ### AFTER (Verified - October 12, 2025)
+
 > "Advanced particle system with 150,000 particles on high-end desktops
 > (sustained 60 FPS on M3 Max), 100,000 particles on mobile flagships
 > (52 FPS on iPhone 15 Pro), and adaptive scaling for optimal performance
@@ -213,8 +228,10 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 ```
 
 **If Desktop test FAILED**:
+
 ```markdown
 ### AFTER (Verified - October 12, 2025)
+
 > "WebGL2 rendering engine with up to 100,000 particles on high-end
 > desktops and 50,000 particles on mobile devices, ensuring smooth
 > 60 FPS performance across all supported platforms."
@@ -227,12 +244,12 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 
 ## Critical Decision Matrix
 
-| Test Results | Marketing Claim | Action Required |
-|--------------|----------------|-----------------|
-| Desktop ✅ + Mobile ✅ | "150K desktop, 100K mobile" | ✅ Deploy verified claims |
-| Desktop ✅ + Mobile ❌ | "150K desktop, 50K mobile" | ⚠️ Update mobile recommendations |
-| Desktop ❌ + Mobile ✅ | "100K desktop, 100K mobile" | ⚠️ Reduce desktop claim |
-| Desktop ❌ + Mobile ❌ | "100K desktop, 50K mobile" | ❌ Full claim revision required |
+| Test Results           | Marketing Claim             | Action Required                  |
+| ---------------------- | --------------------------- | -------------------------------- |
+| Desktop ✅ + Mobile ✅ | "150K desktop, 100K mobile" | ✅ Deploy verified claims        |
+| Desktop ✅ + Mobile ❌ | "150K desktop, 50K mobile"  | ⚠️ Update mobile recommendations |
+| Desktop ❌ + Mobile ✅ | "100K desktop, 100K mobile" | ⚠️ Reduce desktop claim          |
+| Desktop ❌ + Mobile ❌ | "100K desktop, 50K mobile"  | ❌ Full claim revision required  |
 
 ---
 
@@ -241,14 +258,18 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 ### If Tests PASS ✅
 
 1. **Update Homepage** (index.html):
+
    ```html
    <!-- Replace line ~67 -->
-   <p>Advanced particle system with 150,000 particles on high-end desktops
-   (sustained 60 FPS), adaptive scaling for all devices.</p>
+   <p>
+     Advanced particle system with 150,000 particles on high-end desktops (sustained 60 FPS),
+     adaptive scaling for all devices.
+   </p>
    <a href="/docs/performance-benchmarks/SUMMARY.md">See Benchmarks →</a>
    ```
 
 2. **Update Analytics Page** (analytics.html):
+
    ```html
    <!-- Add device recommendations section -->
    <div class="performance-recommendations">
@@ -262,6 +283,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
    ```
 
 3. **Commit Changes**:
+
    ```bash
    git add docs/performance-benchmarks/
    git commit -m "📊 EVIDENCE: Add verified performance benchmarks (150K @ 60 FPS validated)"
@@ -301,6 +323,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 **Problem**: Click "Start Benchmark" but nothing happens
 
 **Solutions**:
+
 1. Check browser console for errors (F12 → Console tab)
 2. Verify Three.js CDN loaded (look for "THREE is not defined" error)
 3. Try different browser (Chrome/Safari/Firefox)
@@ -311,6 +334,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 **Problem**: Getting 30 FPS instead of 60 FPS on M3 Max
 
 **Solutions**:
+
 1. Check power settings (disable battery saver mode)
 2. Close all other applications
 3. Let device cool down if warm
@@ -322,6 +346,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 **Problem**: Memory usage climbs above 500 MB during test
 
 **Solutions**:
+
 1. This indicates a memory leak - document in SUMMARY.md
 2. Check for orphaned event listeners in code
 3. Verify Three.js geometry/material disposal
@@ -332,6 +357,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 **Problem**: Export button doesn't download file
 
 **Solutions**:
+
 1. Check browser download settings
 2. Allow pop-ups for blazesportsintel.com
 3. Try right-click → "Save Link As"
@@ -342,6 +368,7 @@ Replace `[PENDING BENCHMARK VALIDATION]` with verified claim:
 ## Checklist
 
 Before starting tests:
+
 - [ ] Benchmark tool accessible at https://blazesportsintel.com/performance-benchmark.html
 - [ ] Desktop device ready (high-end Mac/PC)
 - [ ] Mobile device ready (flagship phone)
@@ -349,6 +376,7 @@ Before starting tests:
 - [ ] File organization folders created
 
 During tests:
+
 - [ ] Device detection verified
 - [ ] Test configuration set correctly
 - [ ] No interruptions during 3-minute test run
@@ -356,6 +384,7 @@ During tests:
 - [ ] JSON exports saved with correct filenames
 
 After tests:
+
 - [ ] SUMMARY.md updated with real data
 - [ ] Target validations checked (✅/❌)
 - [ ] Marketing claims updated

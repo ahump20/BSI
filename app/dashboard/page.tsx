@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
+import { useAuth } from '@/lib/hooks';
 
 // Lazy-load chart components to split recharts from main bundle
 const StandingsBarChart = dynamic(
@@ -153,6 +154,16 @@ function getDashboardSources(sport: Sport, lastUpdated: string): DataSource[] {
 // ============================================================================
 
 export default function DashboardPage() {
+  // Authentication - redirects to login if not authenticated
+  const {
+    user: _user,
+    isLoading: authLoading,
+    isAuthenticated,
+  } = useAuth({
+    required: true,
+    redirectReason: 'Please sign in to access your dashboard',
+  });
+
   const [activeSport, setActiveSport] = useState<Sport>('mlb');
   const [stats, setStats] = useState<DashboardStats>({
     liveGames: 0,
@@ -166,29 +177,14 @@ export default function DashboardPage() {
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
 
-  // Format timestamp
-  const _displayTimestamp = (isoString?: string): string => {
-    const date = isoString ? new Date(isoString) : new Date();
-    if (timezoneLoaded) {
-      return formatDateTime(date);
-    }
-    return (
-      date.toLocaleString('en-US', {
-        timeZone: 'America/Chicago',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      }) + ' CT'
-    );
-  };
-
   // ========================================================================
-  // Fetch Dashboard Data
+  // Fetch Dashboard Data (must be before early returns per React hooks rules)
   // ========================================================================
 
   useEffect(() => {
+    // Skip fetch if not authenticated yet
+    if (authLoading || !isAuthenticated) return;
+
     async function fetchDashboardData() {
       setIsLoading(true);
 
@@ -294,7 +290,42 @@ export default function DashboardPage() {
     // Refresh every 60 seconds
     const interval = setInterval(fetchDashboardData, 60000);
     return () => clearInterval(interval);
-  }, [activeSport]);
+  }, [activeSport, authLoading, isAuthenticated]);
+
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-midnight">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+          <p className="text-text-tertiary text-sm">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // If not authenticated after loading, useAuth will redirect (but just in case)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Format timestamp
+  const _displayTimestamp = (isoString?: string): string => {
+    const date = isoString ? new Date(isoString) : new Date();
+    if (timezoneLoaded) {
+      return formatDateTime(date);
+    }
+    return (
+      date.toLocaleString('en-US', {
+        timeZone: 'America/Chicago',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }) + ' CT'
+    );
+  };
 
   // ========================================================================
   // Chart Data Preparation

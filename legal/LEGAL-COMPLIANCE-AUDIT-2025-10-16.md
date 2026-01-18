@@ -1,4 +1,5 @@
 # Blaze Sports Intel Legal Compliance Audit
+
 **Date**: October 16, 2025
 **Platform**: blazesportsintel.com
 **Auditor**: Legal Compliance Architect
@@ -13,6 +14,7 @@
 Blaze Sports Intel has foundational legal infrastructure in place but requires critical updates to achieve full GDPR/CCPA/COPPA compliance before wider public launch. The platform displays sports data from multiple third-party APIs and must establish proper attribution, disclaimers, and user data practices.
 
 **Critical Findings**:
+
 1. ✅ Privacy Policy exists but needs significant updates for current platform state
 2. ✅ Terms of Service exists but lacks proper data provider attribution requirements
 3. ✅ Cookie Policy exists with functional consent management
@@ -28,7 +30,9 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 ## Platform Context Analysis
 
 ### Current Data Collection
+
 **REALITY CHECK**: Platform is READ-ONLY with minimal data collection
+
 - ✅ No user account system (no PII storage)
 - ✅ No payment processing
 - ✅ No personal data collection beyond analytics
@@ -36,7 +40,9 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 - ✅ Cookie consent banner operational
 
 ### Data Display Sources
+
 **Third-Party API Dependencies**:
+
 1. **SportsDataIO** - Primary sports data provider (MLB, NFL, NCAA Football, NCAA Basketball)
 2. **MLB Stats API** - Official MLB statistics
 3. **ESPN API** - Live scores and game data
@@ -44,7 +50,9 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 5. **Perfect Game** - Youth baseball tournament data
 
 ### AI/ML Processing
+
 **Workers AI Usage** (NEW - Not in current legal docs):
+
 - Semantic search: @cf/baai/bge-base-en-v1.5 embeddings
 - RAG insights: @cf/meta/llama-3.1-8b-instruct
 - Natural language query processing
@@ -52,7 +60,9 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 - Conversation history retention: 90 days
 
 ### Accessibility Compliance
+
 **Recent Improvements** (October 2025):
+
 - WCAG AA compliance implemented across college baseball pages
 - Skip links, ARIA attributes, semantic HTML
 - Keyboard navigation support
@@ -64,9 +74,11 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 ## Detailed Gap Analysis
 
 ### 1. Privacy Policy (`/legal/privacy/index.html`)
+
 **Status**: ✅ EXISTS - Needs Updates
 
 **Current Strengths**:
+
 - Comprehensive GDPR/CCPA framework
 - Clear contact information
 - Data retention tables
@@ -74,12 +86,14 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 - Well-structured and accessible
 
 **Required Updates**:
+
 1. **Remove Account System References**: Platform has NO user accounts
    - Section 2.1 "Account Data" - DELETE ENTIRELY
    - Section 2.2 "Profile Information" - DELETE
    - Section 2.3 "Communications" - SIMPLIFY (contact form only)
 
 2. **Update Data Collection Reality**:
+
    ```
    CURRENT: Lists account data, profile info, API usage tracking
    REALITY: Only collects:
@@ -105,16 +119,20 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 ---
 
 ### 2. Terms of Service (`/legal/terms/index.html`)
+
 **Status**: ✅ EXISTS - Needs Critical Updates
 
 **Current Strengths**:
+
 - Texas law jurisdiction
 - Binding arbitration clauses
 - Clear liability limitations
 - Well-structured legal framework
 
 **Required Updates**:
+
 1. **Add Data Provider Attribution Section**:
+
    ```
    NEW SECTION 3.4: "Third-Party Data Attribution"
 
@@ -162,15 +180,18 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 ---
 
 ### 3. Cookie Policy (`/legal/cookies/index.html`)
+
 **Status**: ✅ EXISTS - Minor Updates Only
 
 **Current Strengths**:
+
 - Functional cookie consent management
 - Clear cookie categories
 - Interactive consent controls
 - GDPR/CCPA compliant structure
 
 **Required Updates**:
+
 1. **Update Section 3.2 "Analytics Cookies"**:
    - REMOVE Google Analytics (if not implemented)
    - CLARIFY Cloudflare Analytics Engine usage
@@ -191,9 +212,11 @@ Blaze Sports Intel has foundational legal infrastructure in place but requires c
 ---
 
 ### 4. AI Disclosure Page
+
 **Status**: ❌ MISSING - Must Create
 
 **Required Content**:
+
 ```
 /legal/ai-disclosure/index.html
 
@@ -233,9 +256,11 @@ Section 5: Responsible AI Practices
 ---
 
 ### 5. Accessibility Statement
+
 **Status**: ❌ MISSING - Must Create
 
 **Required Content**:
+
 ```
 /legal/accessibility/index.html
 
@@ -283,9 +308,11 @@ Section 6: Third-Party Content
 ---
 
 ### 6. Copyright/DMCA Policy
+
 **Status**: ❌ MISSING - Must Create
 
 **Required Content**:
+
 ```
 /legal/copyright/index.html
 
@@ -350,9 +377,11 @@ Platform content used for:
 ---
 
 ### 7. Data Attribution & Sources Policy
+
 **Status**: ❌ MISSING - Must Create
 
 **Required Content**:
+
 ```
 /legal/data-sources/index.html
 
@@ -413,13 +442,16 @@ When data providers are unavailable:
 ## Footer Legal Links Analysis
 
 ### Current Footer (from index.html)
+
 **Status**: ⚠️ INCOMPLETE
 
 **What Exists**:
+
 - Basic footer with social links
 - No visible legal policy links in HTML sample provided
 
 **Required Links**:
+
 ```html
 <div class="footer-section">
   <h3>Legal & Privacy</h3>
@@ -437,12 +469,36 @@ When data providers are unavailable:
 <div class="footer-section">
   <h3>Contact</h3>
   <ul class="footer-links">
-    <li><a href="mailto:austin@blazesportsintel.com" class="footer-link">General: austin@blazesportsintel.com</a></li>
-    <li><a href="mailto:privacy@blazesportsintel.com" class="footer-link">Privacy: privacy@blazesportsintel.com</a></li>
-    <li><a href="mailto:legal@blazesportsintel.com" class="footer-link">Legal: legal@blazesportsintel.com</a></li>
-    <li><a href="mailto:accessibility@blazesportsintel.com" class="footer-link">Accessibility: accessibility@blazesportsintel.com</a></li>
-    <li><a href="mailto:dmca@blazesportsintel.com" class="footer-link">DMCA: dmca@blazesportsintel.com</a></li>
-    <li><a href="mailto:data@blazesportsintel.com" class="footer-link">Data Issues: data@blazesportsintel.com</a></li>
+    <li>
+      <a href="mailto:austin@blazesportsintel.com" class="footer-link"
+        >General: austin@blazesportsintel.com</a
+      >
+    </li>
+    <li>
+      <a href="mailto:privacy@blazesportsintel.com" class="footer-link"
+        >Privacy: privacy@blazesportsintel.com</a
+      >
+    </li>
+    <li>
+      <a href="mailto:legal@blazesportsintel.com" class="footer-link"
+        >Legal: legal@blazesportsintel.com</a
+      >
+    </li>
+    <li>
+      <a href="mailto:accessibility@blazesportsintel.com" class="footer-link"
+        >Accessibility: accessibility@blazesportsintel.com</a
+      >
+    </li>
+    <li>
+      <a href="mailto:dmca@blazesportsintel.com" class="footer-link"
+        >DMCA: dmca@blazesportsintel.com</a
+      >
+    </li>
+    <li>
+      <a href="mailto:data@blazesportsintel.com" class="footer-link"
+        >Data Issues: data@blazesportsintel.com</a
+      >
+    </li>
   </ul>
 </div>
 ```
@@ -452,10 +508,13 @@ When data providers are unavailable:
 ## Email Routing Configuration
 
 ### Required Email Addresses
+
 **Primary Contact**:
+
 - `austin@blazesportsintel.com` ✅ Already exists
 
 **Legal & Compliance**:
+
 - `privacy@blazesportsintel.com` - Privacy rights requests (GDPR/CCPA)
 - `legal@blazesportsintel.com` - General legal inquiries
 - `dpo@blazesportsintel.com` - Data Protection Officer (GDPR requirement)
@@ -464,11 +523,15 @@ When data providers are unavailable:
 - `data@blazesportsintel.com` - Data accuracy reports
 
 ### Recommended Setup
+
 **Option 1: Email Forwarding (Simplest)**
+
 ```
 All legal emails → austin@blazesportsintel.com
 ```
+
 Cloudflare Email Routing:
+
 1. Navigate to Cloudflare Dashboard → Email → Email Routing
 2. Add destination: austin@blazesportsintel.com (verify)
 3. Create custom addresses:
@@ -479,11 +542,13 @@ Cloudflare Email Routing:
    - data@blazesportsintel.com → austin@blazesportsintel.com
 
 **Option 2: Auto-Tagging (Recommended)**
+
 ```
 Use Cloudflare Workers to add [PRIVACY], [LEGAL], [DMCA] tags to subject lines
 ```
 
 **Option 3: Separate Mailbox (Future)**
+
 ```
 Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ```
@@ -493,9 +558,11 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Cookie Consent Banner Verification
 
 ### Current Implementation (`/cookies.html`)
+
 **Status**: ✅ FUNCTIONAL
 
 **Features Confirmed**:
+
 - Interactive consent controls
 - Accept All / Decline Non-Essential / Customize options
 - Cookie preference persistence
@@ -503,13 +570,16 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 - GDPR/CCPA compliant structure
 
 **Required Integration**:
+
 1. **Add banner to all pages**:
+
    ```html
    <!-- Add to bottom of <body> in index.html and all pages -->
    <script src="/js/cookie-consent.js" defer></script>
    ```
 
 2. **Banner Display Logic**:
+
    ```javascript
    // Only show if no consent cookie exists
    if (!getCookie('cookie_consent')) {
@@ -519,13 +589,26 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 
 3. **Banner HTML** (to be added):
    ```html
-   <div id="cookie-consent-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie Consent">
+   <div
+     id="cookie-consent-banner"
+     class="cookie-banner"
+     role="dialog"
+     aria-live="polite"
+     aria-label="Cookie Consent"
+   >
      <div class="cookie-banner-content">
        <h3>We Value Your Privacy</h3>
-       <p>We use cookies to enhance your experience and analyze site usage. Only essential cookies are required for functionality.</p>
+       <p>
+         We use cookies to enhance your experience and analyze site usage. Only essential cookies
+         are required for functionality.
+       </p>
        <div class="cookie-banner-buttons">
-         <button onclick="acceptAllCookies()" class="cookie-btn cookie-btn-accept">Accept All</button>
-         <button onclick="declineNonEssential()" class="cookie-btn cookie-btn-decline">Essential Only</button>
+         <button onclick="acceptAllCookies()" class="cookie-btn cookie-btn-accept">
+           Accept All
+         </button>
+         <button onclick="declineNonEssential()" class="cookie-btn cookie-btn-decline">
+           Essential Only
+         </button>
          <a href="/legal/cookies" class="cookie-btn cookie-btn-settings">Manage Preferences</a>
        </div>
      </div>
@@ -540,6 +623,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Compliance Checklist
 
 ### Immediate Actions (Week 1)
+
 - [ ] Update Privacy Policy (remove account system references)
 - [ ] Update Terms of Service (add data provider attribution)
 - [ ] Create AI Disclosure page
@@ -549,6 +633,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 - [ ] Configure Cloudflare Email Routing for legal addresses
 
 ### Short-Term Actions (Month 1)
+
 - [ ] Create Copyright/DMCA Policy
 - [ ] Create Data Sources & Attribution Policy
 - [ ] Test all email routing
@@ -557,6 +642,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 - [ ] Create legal document version control system
 
 ### Ongoing Maintenance
+
 - [ ] Quarterly legal document review
 - [ ] Annual WCAG accessibility audit
 - [ ] Monthly data provider terms compliance check
@@ -568,6 +654,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Risk Assessment
 
 ### High Risk (Immediate Attention)
+
 1. **Data Provider Attribution** - SportsDataIO terms likely require clear attribution
    - Risk: API access termination
    - Mitigation: Add attribution section to Terms + Data Sources page
@@ -581,6 +668,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
    - Mitigation: Update to reflect actual data collection
 
 ### Medium Risk (Address Soon)
+
 1. **Accessibility Documentation** - WCAG AA compliance implemented but not documented
    - Risk: Perception of non-compliance despite actual compliance
    - Mitigation: Create Accessibility Statement
@@ -590,6 +678,7 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
    - Mitigation: Configure Cloudflare Email Routing immediately
 
 ### Low Risk (Monitor)
+
 1. **Cookie Policy** - Mostly accurate, minor updates needed
    - Risk: Minimal - cookie consent functional
    - Mitigation: Routine quarterly review
@@ -603,7 +692,9 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Cost-Benefit Analysis
 
 ### Compliance Investment
+
 **Time Investment**: ~20 hours total
+
 - Privacy Policy updates: 2 hours
 - Terms of Service updates: 3 hours
 - Cookie Policy updates: 1 hour
@@ -619,7 +710,9 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 **Financial Investment**: $0 (no external legal fees for standard policies)
 
 ### Risk Mitigation Value
+
 **Avoided Risks**:
+
 - GDPR fines: Up to €20 million or 4% of global revenue
 - CCPA penalties: $7,500 per intentional violation
 - API access termination: Loss of all sports data (business-critical)
@@ -632,17 +725,20 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Technical Implementation Priority
 
 ### Phase 1: Critical (Complete by October 23, 2025)
+
 1. Update Privacy Policy
 2. Update Terms of Service
 3. Configure email routing
 4. Add cookie consent banner to all pages
 
 ### Phase 2: Important (Complete by November 1, 2025)
+
 1. Create AI Disclosure page
 2. Create Accessibility Statement
 3. Update footer with all legal links
 
 ### Phase 3: Recommended (Complete by November 15, 2025)
+
 1. Create Copyright/DMCA Policy
 2. Create Data Sources Policy
 3. Internal legal review
@@ -653,18 +749,21 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Monitoring & Maintenance Procedures
 
 ### Monthly
+
 - Review cookie consent analytics (acceptance rates)
 - Monitor email routing functionality
 - Check for new third-party data providers
 - Verify all legal page links functional
 
 ### Quarterly
+
 - Update Privacy Policy last-modified date if any changes
 - Conduct cookie audit (Ghostery or similar tool)
 - Review data provider terms for changes
 - Test privacy rights request workflow
 
 ### Annually
+
 - External WCAG accessibility audit
 - Comprehensive legal document review
 - Data provider agreement renewals
@@ -675,11 +774,13 @@ Create dedicated legal@blazesportsintel.com mailbox when volume increases
 ## Contact Information
 
 **For Legal Compliance Questions**:
+
 - Austin Humphrey - austin@blazesportsintel.com
 - Privacy Officer - privacy@blazesportsintel.com (to be configured)
 - Legal Department - legal@blazesportsintel.com (to be configured)
 
 **External Resources**:
+
 - Texas Attorney General Privacy: https://www.texasattorneygeneral.gov/consumer-protection
 - California AG Privacy: https://oag.ca.gov/privacy
 - GDPR Compliance: https://gdpr.eu/compliance
@@ -702,6 +803,7 @@ Blaze Sports Intel has a **solid foundation** for legal compliance but requires 
 **Recommended Start Date**: Immediately (October 16, 2025)
 
 **Next Steps**:
+
 1. Review this audit with Austin Humphrey
 2. Prioritize Phase 1 critical updates
 3. Begin Privacy Policy revisions

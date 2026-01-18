@@ -21,7 +21,7 @@ describe('Football API - Live Scores', () => {
       away_score: 24,
       status: 'Final',
       quarter: 4,
-      time_remaining: '0:00'
+      time_remaining: '0:00',
     };
 
     expect(mockScore).toHaveProperty('game_id');
@@ -34,7 +34,7 @@ describe('Football API - Live Scores', () => {
     const liveGame = {
       status: 'Live',
       quarter: 2,
-      time_remaining: '10:45'
+      time_remaining: '10:45',
     };
 
     expect(liveGame.status).toBe('Live');
@@ -53,9 +53,9 @@ describe('Football API - Standings', () => {
           wins: 8,
           losses: 1,
           conference_wins: 5,
-          conference_losses: 0
-        }
-      ]
+          conference_losses: 0,
+        },
+      ],
     };
 
     expect(mockStandings).toHaveProperty('conference');
@@ -83,8 +83,8 @@ describe('Football API - Team Data', () => {
       division: 'West',
       colors: {
         primary: '#BF5700',
-        secondary: '#FFFFFF'
-      }
+        secondary: '#FFFFFF',
+      },
     };
 
     expect(mockTeam).toHaveProperty('team_id');
@@ -101,7 +101,7 @@ describe('Football API - Team Data', () => {
       number: 3,
       year: 'Junior',
       height: '6-2',
-      weight: 206
+      weight: 206,
     };
 
     expect(mockPlayer).toHaveProperty('player_id');

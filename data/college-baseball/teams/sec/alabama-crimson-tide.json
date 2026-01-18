@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "Yea Alabama",
     "lead_contact": "Gideon M. Smith (baseball liaison)",
-    "contact_channels": [
-      "operations@yeaalabama.com",
-      "https://www.yeaalabama.com/contact"
-    ],
+    "contact_channels": ["operations@yeaalabama.com", "https://www.yeaalabama.com/contact"],
     "recent_initiatives": "Launched summer 2024 meet-and-greet series with Diamond Dolls alumni to support pitching lab fundraising.",
     "intel_status": "needs_verification"
   },
@@ -91,9 +88,7 @@
   "front_office": {
     "athletic_director": "Greg Byrne",
     "baseball_admin": "Alex Thompson",
-    "financial_points_of_contact": [
-      "baseballtickets@ia.ua.edu"
-    ]
+    "financial_points_of_contact": ["baseballtickets@ia.ua.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 0,

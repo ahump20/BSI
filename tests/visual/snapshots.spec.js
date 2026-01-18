@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
       * {
         font-family: system-ui, -apple-system, sans-serif !important;
       }
-    `
+    `,
   });
 });
 
@@ -30,14 +30,14 @@ test.describe('Homepage Visual Tests', () => {
 
     // Hide dynamic content
     await page.evaluate(() => {
-      document.querySelectorAll('[data-timestamp]').forEach(el => {
+      document.querySelectorAll('[data-timestamp]').forEach((el) => {
         el.style.visibility = 'hidden';
       });
     });
 
     await expect(page).toHaveScreenshot('homepage-desktop.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -48,7 +48,7 @@ test.describe('Homepage Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('homepage-mobile.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -58,7 +58,7 @@ test.describe('Sport Hub Visual Tests', () => {
     { name: 'MLB', path: '/mlb' },
     { name: 'NFL', path: '/nfl' },
     { name: 'NBA', path: '/nba' },
-    { name: 'College Baseball', path: '/college-baseball' }
+    { name: 'College Baseball', path: '/college-baseball' },
   ];
 
   for (const sport of sports) {
@@ -71,7 +71,7 @@ test.describe('Sport Hub Visual Tests', () => {
 
       await expect(page).toHaveScreenshot(`${sport.name.toLowerCase().replace(' ', '-')}-hub.png`, {
         fullPage: true,
-        animations: 'disabled'
+        animations: 'disabled',
       });
     });
   }
@@ -87,14 +87,14 @@ test.describe('Analytics Dashboard Visual Tests', () => {
 
     // Hide live indicators
     await page.evaluate(() => {
-      document.querySelectorAll('.live-indicator').forEach(el => {
+      document.querySelectorAll('.live-indicator').forEach((el) => {
         el.style.display = 'none';
       });
     });
 
     await expect(page).toHaveScreenshot('analytics-dashboard.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -105,7 +105,7 @@ test.describe('Analytics Dashboard Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('analytics-dashboard-mobile.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -120,7 +120,7 @@ test.describe('AI Copilot Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('copilot-interface.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -134,7 +134,7 @@ test.describe('AI Copilot Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('copilot-with-query.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -149,7 +149,7 @@ test.describe('Historical Data Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('historical-data.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -159,7 +159,7 @@ test.describe('Legal Pages Visual Tests', () => {
     { name: 'Privacy Policy', path: '/legal/privacy' },
     { name: 'Terms of Service', path: '/legal/terms' },
     { name: 'Cookie Policy', path: '/legal/cookie-policy' },
-    { name: 'AI Disclosure', path: '/legal/ai-disclosure' }
+    { name: 'AI Disclosure', path: '/legal/ai-disclosure' },
   ];
 
   for (const page of legalPages) {
@@ -171,7 +171,7 @@ test.describe('Legal Pages Visual Tests', () => {
         `${page.name.toLowerCase().replace(/\s+/g, '-')}.png`,
         {
           fullPage: true,
-          animations: 'disabled'
+          animations: 'disabled',
         }
       );
     });
@@ -187,7 +187,7 @@ test.describe('Component Visual Tests', () => {
     const buttonSection = page.locator('[data-component="button"]');
 
     await expect(buttonSection).toHaveScreenshot('buttons-component.png', {
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -198,7 +198,7 @@ test.describe('Component Visual Tests', () => {
     const cardSection = page.locator('[data-component="card"]');
 
     await expect(cardSection).toHaveScreenshot('cards-component.png', {
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -209,7 +209,7 @@ test.describe('Component Visual Tests', () => {
     const tableSection = page.locator('[data-component="table"]');
 
     await expect(tableSection).toHaveScreenshot('tables-component.png', {
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -222,7 +222,7 @@ test.describe('Component Visual Tests', () => {
     await page.waitForSelector('[role="dialog"]', { state: 'visible' });
 
     await expect(page).toHaveScreenshot('modal-component.png', {
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });
@@ -232,14 +232,14 @@ test.describe('Responsive Visual Tests', () => {
     { name: 'iPhone SE', width: 375, height: 667 },
     { name: 'iPad', width: 768, height: 1024 },
     { name: 'Desktop', width: 1280, height: 720 },
-    { name: 'Large Desktop', width: 1920, height: 1080 }
+    { name: 'Large Desktop', width: 1920, height: 1080 },
   ];
 
   for (const viewport of viewports) {
     test(`@visual homepage at ${viewport.name}`, async ({ page }) => {
       await page.setViewportSize({
         width: viewport.width,
-        height: viewport.height
+        height: viewport.height,
       });
 
       await page.goto(BASE_URL);
@@ -249,7 +249,7 @@ test.describe('Responsive Visual Tests', () => {
         `homepage-${viewport.name.toLowerCase().replace(/\s+/g, '-')}.png`,
         {
           fullPage: true,
-          animations: 'disabled'
+          animations: 'disabled',
         }
       );
     });
@@ -268,7 +268,7 @@ test.describe('Dark Mode Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('homepage-dark.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 
@@ -282,7 +282,7 @@ test.describe('Dark Mode Visual Tests', () => {
 
     await expect(page).toHaveScreenshot('analytics-dark.png', {
       fullPage: true,
-      animations: 'disabled'
+      animations: 'disabled',
     });
   });
 });

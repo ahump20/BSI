@@ -57,9 +57,7 @@ describe('Web Vitals Analytics API', () => {
         now - 1000, // Valid (1 second ago)
       ];
 
-      const recentRequests = existingRequests.filter(
-        (timestamp) => now - timestamp < window
-      );
+      const recentRequests = existingRequests.filter((timestamp) => now - timestamp < window);
 
       expect(recentRequests).toHaveLength(2);
     });
@@ -236,9 +234,7 @@ describe('Web Vitals Analytics API', () => {
     });
 
     it('should continue even if Analytics Engine fails', async () => {
-      mockEnv.ANALYTICS.writeDataPoint.mockRejectedValue(
-        new Error('Analytics error')
-      );
+      mockEnv.ANALYTICS.writeDataPoint.mockRejectedValue(new Error('Analytics error'));
 
       try {
         await mockEnv.ANALYTICS.writeDataPoint({});
@@ -340,21 +336,15 @@ describe('Web Vitals Analytics API', () => {
         ['X-Forwarded-For', '10.0.0.1'],
       ]);
 
-      const ip = headers.get('CF-Connecting-IP') ||
-                headers.get('X-Forwarded-For') ||
-                'unknown';
+      const ip = headers.get('CF-Connecting-IP') || headers.get('X-Forwarded-For') || 'unknown';
 
       expect(ip).toBe('192.168.1.1');
     });
 
     it('should fallback to X-Forwarded-For if CF header missing', () => {
-      const headers = new Map([
-        ['X-Forwarded-For', '10.0.0.1'],
-      ]);
+      const headers = new Map([['X-Forwarded-For', '10.0.0.1']]);
 
-      const ip = headers.get('CF-Connecting-IP') ||
-                headers.get('X-Forwarded-For') ||
-                'unknown';
+      const ip = headers.get('CF-Connecting-IP') || headers.get('X-Forwarded-For') || 'unknown';
 
       expect(ip).toBe('10.0.0.1');
     });
@@ -362,9 +352,7 @@ describe('Web Vitals Analytics API', () => {
     it('should use "unknown" if no IP headers present', () => {
       const headers = new Map();
 
-      const ip = headers.get('CF-Connecting-IP') ||
-                headers.get('X-Forwarded-For') ||
-                'unknown';
+      const ip = headers.get('CF-Connecting-IP') || headers.get('X-Forwarded-For') || 'unknown';
 
       expect(ip).toBe('unknown');
     });

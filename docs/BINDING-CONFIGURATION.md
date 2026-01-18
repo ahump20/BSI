@@ -35,6 +35,7 @@ Open: [College Baseball Tracker Project Settings](https://dash.cloudflare.com/a1
 **Type**: KV Namespace
 
 **Configuration**:
+
 - **Variable name**: `KV`
 - **KV namespace**: Select the namespace with ID `a53c3726fc3044be82e79d2d1e371d26`
   - If you need to create a new namespace, use: `npx wrangler kv namespace create "CACHE"`
@@ -46,6 +47,7 @@ Click **Save**
 **Type**: D1 Database
 
 **Configuration**:
+
 - **Variable name**: `DB`
 - **D1 database**: Select `blazesports-historical` (ID: `612f6f42-226d-4345-bb1c-f0367292f55e`)
   - If the database doesn't exist, create it with: `npx wrangler d1 create blazesports-historical`
@@ -57,6 +59,7 @@ Click **Save**
 **Type**: Analytics Engine
 
 **Configuration**:
+
 - **Variable name**: `ANALYTICS`
 - **Dataset**: Use the default or create a new dataset
 
@@ -91,6 +94,7 @@ chmod +x scripts/deploy-after-bindings.sh
 ```
 
 This will:
+
 1. Restore the optimization Function
 2. Deploy to production
 3. Test both the simple and optimization endpoints
@@ -127,6 +131,7 @@ This means the binding is missing or named incorrectly. Double-check the variabl
 ### How to Verify Bindings Are Active?
 
 Check the deployment logs in the dashboard:
+
 1. Go to **Deployments** tab
 2. Click on the latest deployment
 3. Check the **Functions** section for any binding errors

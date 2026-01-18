@@ -20,12 +20,13 @@ The BSI platform has a **solid security foundation** with well-implemented rate 
 
 **Status:** ⚠️ Inconsistent
 
-| Location | Configuration | Risk |
-|----------|---------------|------|
-| `functions/api/_utils.js` | `https://blazesportsintel.com` only | ✅ Secure |
-| `workers/prediction/index.ts` | `*` (all origins) | ⚠️ Too permissive |
+| Location                      | Configuration                       | Risk              |
+| ----------------------------- | ----------------------------------- | ----------------- |
+| `functions/api/_utils.js`     | `https://blazesportsintel.com` only | ✅ Secure         |
+| `workers/prediction/index.ts` | `*` (all origins)                   | ⚠️ Too permissive |
 
 **Recommendation:** Update the prediction worker to use restrictive CORS:
+
 ```typescript
 // workers/prediction/index.ts line 59-64
 const corsHeaders = {
@@ -60,6 +61,7 @@ const corsHeaders = {
 **Status:** ✅ Implemented, ⚠️ Inconsistently Applied
 
 **Implementation Details:**
+
 - **Location:** `functions/api/_utils.js`
 - **Algorithm:** Time-windowed counter via KV storage
 - **Default:** 100 requests/minute per IP
@@ -67,21 +69,22 @@ const corsHeaders = {
 
 **Coverage Audit:**
 
-| Endpoint | Rate Limited | Limit |
-|----------|-------------|-------|
-| `/api/v1/predictions/win-probability` | ✅ Yes | 100/min |
-| `/api/v1/predict/game/:id` | ❌ No | - |
-| `/api/v1/predict/batch` | ❌ No | - |
-| `/api/v1/calibration/:sport` | ❌ No | - |
-| `/api/v1/explain/:id` | ❌ No | - |
-| `/api/v1/webhook/game-complete` | ❌ No | - |
+| Endpoint                              | Rate Limited | Limit   |
+| ------------------------------------- | ------------ | ------- |
+| `/api/v1/predictions/win-probability` | ✅ Yes       | 100/min |
+| `/api/v1/predict/game/:id`            | ❌ No        | -       |
+| `/api/v1/predict/batch`               | ❌ No        | -       |
+| `/api/v1/calibration/:sport`          | ❌ No        | -       |
+| `/api/v1/explain/:id`                 | ❌ No        | -       |
+| `/api/v1/webhook/game-complete`       | ❌ No        | -       |
 
 **Recommendation:** Add rate limiting to the prediction worker:
+
 ```typescript
 // Add to workers/prediction/index.ts
 const checkRateLimit = async (env: CloudflareEnv, ip: string): Promise<boolean> => {
   const key = `ratelimit:pred:${ip}:${Math.floor(Date.now() / 60000)}`;
-  const count = parseInt(await env.CACHE?.get(key) ?? '0');
+  const count = parseInt((await env.CACHE?.get(key)) ?? '0');
   if (count >= 100) return false;
   await env.CACHE?.put(key, String(count + 1), { expirationTtl: 120 });
   return true;
@@ -97,6 +100,7 @@ const checkRateLimit = async (env: CloudflareEnv, ip: string): Promise<boolean> 
 **Location:** `lib/validation/input-validator.ts`
 
 **Features:**
+
 - Zod-based schema validation
 - XSS prevention via `sanitizeString()`
 - SQL injection prevention via `sanitizeSqlInput()`
@@ -104,6 +108,7 @@ const checkRateLimit = async (env: CloudflareEnv, ip: string): Promise<boolean> 
 - File upload validation (MIME type + extension matching)
 
 **Schemas Available:**
+
 - User registration/login
 - API key creation
 - Sports data queries (team, game, player, season)
@@ -122,6 +127,7 @@ const checkRateLimit = async (env: CloudflareEnv, ip: string): Promise<boolean> 
 **Location:** `lib/security/secrets.ts`, `lib/config/env-validator.ts`
 
 **Features:**
+
 - Zod schema validation for all secrets
 - Multi-source loading (env vars, KV, Cloudflare secrets)
 - Audit logging for all secret access
@@ -139,6 +145,7 @@ const checkRateLimit = async (env: CloudflareEnv, ip: string): Promise<boolean> 
 CSP headers are mentioned in documentation (`docs/LEGAL-COMPLIANCE-IMPLEMENTATION.md`) but not present in the middleware.
 
 **Recommendation:** Add CSP headers to `_utils.js`:
+
 ```javascript
 'Content-Security-Policy': [
   "default-src 'self'",
@@ -159,11 +166,13 @@ CSP headers are mentioned in documentation (`docs/LEGAL-COMPLIANCE-IMPLEMENTATIO
 **Status:** ✅ Properly Handled
 
 **Methods:**
+
 1. Parameterized queries throughout (D1 `.bind()` method)
 2. `sanitizeSqlInput()` utility function available
 3. Zod schemas prevent type-based injection
 
 **Example from prediction worker:**
+
 ```typescript
 const query = `
   SELECT * FROM team_psychological_state
@@ -179,11 +188,13 @@ const result = await env.DB.prepare(query).bind(teamId, sport).first();
 **Status:** ⚠️ Basic Implementation
 
 **Current:**
+
 - Tier extraction from Authorization header (basic string matching)
 - No JWT validation
 - No API key verification
 
 **Concerns:**
+
 ```typescript
 // workers/prediction/index.ts line 562-572
 function extractTier(request: Request): SubscriptionTier {
@@ -204,15 +215,18 @@ function extractTier(request: Request): SubscriptionTier {
 ## Priority Action Items
 
 ### High Priority (Before Production)
+
 1. **Fix tier extraction** - Implement JWT validation or API key lookup
 2. **Add rate limiting to prediction worker** - Currently no limits
 3. **Add security headers to prediction worker** - Missing X-Frame-Options, etc.
 
 ### Medium Priority (Within 30 Days)
+
 4. **Implement CSP headers** - Add Content-Security-Policy
 5. **Standardize CORS** - Decide if prediction API is public and document
 
 ### Low Priority (Ongoing)
+
 6. **Security audit logging** - Already implemented, ensure it's monitored
 7. **Dependency scanning** - Run `npm audit` in CI/CD
 
@@ -220,17 +234,17 @@ function extractTier(request: Request): SubscriptionTier {
 
 ## Verified Security Controls
 
-| Control | Status | Implementation |
-|---------|--------|----------------|
-| HTTPS Enforcement | ✅ | Cloudflare automatic |
-| Input Validation | ✅ | Zod schemas |
-| SQL Injection | ✅ | Parameterized queries |
-| XSS Prevention | ✅ | sanitizeString() + headers |
-| CSRF | ⚠️ | Partial (CORS only) |
-| Rate Limiting | ⚠️ | Some endpoints |
-| Secrets Management | ✅ | Encrypted env vars |
-| Error Handling | ✅ | No stack traces exposed |
-| Audit Logging | ✅ | Secrets access logged |
+| Control            | Status | Implementation             |
+| ------------------ | ------ | -------------------------- |
+| HTTPS Enforcement  | ✅     | Cloudflare automatic       |
+| Input Validation   | ✅     | Zod schemas                |
+| SQL Injection      | ✅     | Parameterized queries      |
+| XSS Prevention     | ✅     | sanitizeString() + headers |
+| CSRF               | ⚠️     | Partial (CORS only)        |
+| Rate Limiting      | ⚠️     | Some endpoints             |
+| Secrets Management | ✅     | Encrypted env vars         |
+| Error Handling     | ✅     | No stack traces exposed    |
+| Audit Logging      | ✅     | Secrets access logged      |
 
 ---
 
@@ -261,4 +275,4 @@ These are addressable issues. The foundation is solid.
 
 ---
 
-*Born to blaze the path less beaten—securely.*
+_Born to blaze the path less beaten—securely._

@@ -7,15 +7,13 @@
 
 import fetch from 'node-fetch';
 
-
 const results = {
   passed: [],
-  failed: []
+  failed: [],
 };
 
 // Test 1: MLB Stats API
 async function testMLBAPI() {
-
   try {
     const teamId = 138; // Cardinals
     const baseUrl = 'https://statsapi.mlb.com/api/v1';
@@ -39,7 +37,6 @@ async function testMLBAPI() {
     } else {
       throw new Error('No standings data');
     }
-
   } catch (error) {
     results.failed.push(`MLB: ${error.message}`);
   }
@@ -47,13 +44,12 @@ async function testMLBAPI() {
 
 // Test 2: ESPN NFL API with headers
 async function testESPNNFLAPI() {
-
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -73,7 +69,6 @@ async function testESPNNFLAPI() {
     } else {
       throw new Error(`ESPN returned ${teamResponse.status} ${teamResponse.statusText}`);
     }
-
   } catch (error) {
     results.failed.push(`ESPN NFL: ${error.message}`);
   }
@@ -81,13 +76,12 @@ async function testESPNNFLAPI() {
 
 // Test 3: ESPN NBA API
 async function testESPNNBAAPI() {
-
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -106,7 +100,6 @@ async function testESPNNBAAPI() {
     } else {
       throw new Error(`ESPN returned ${teamResponse.status}`);
     }
-
   } catch (error) {
     results.failed.push(`ESPN NBA: ${error.message}`);
   }
@@ -114,13 +107,12 @@ async function testESPNNBAAPI() {
 
 // Test 4: ESPN NCAA API
 async function testESPNCFBAPI() {
-
   const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     Accept: 'application/json',
     'Accept-Language': 'en-US,en;q=0.9',
     Referer: 'https://www.espn.com/',
-    Origin: 'https://www.espn.com'
+    Origin: 'https://www.espn.com',
   };
 
   try {
@@ -139,7 +131,6 @@ async function testESPNCFBAPI() {
     } else {
       throw new Error(`ESPN returned ${teamResponse.status}`);
     }
-
   } catch (error) {
     results.failed.push(`ESPN NCAA: ${error.message}`);
   }
@@ -147,19 +138,20 @@ async function testESPNCFBAPI() {
 
 // Test 5: Verify Pythagorean calculation works
 async function testPythagoreanCalculation() {
-
   try {
     const baseUrl = 'https://statsapi.mlb.com/api/v1';
     const teamId = 138;
 
-    const statsResponse = await fetch(`${baseUrl}/teams/${teamId}/stats?season=2024&group=hitting,pitching`);
+    const statsResponse = await fetch(
+      `${baseUrl}/teams/${teamId}/stats?season=2024&group=hitting,pitching`
+    );
     const statsData = await statsResponse.json();
 
     let runsScored, runsAllowed;
 
     if (statsData.stats && statsData.stats.length > 0) {
-      const hitting = statsData.stats.find(s => s.group?.displayName === 'hitting');
-      const pitching = statsData.stats.find(s => s.group?.displayName === 'pitching');
+      const hitting = statsData.stats.find((s) => s.group?.displayName === 'hitting');
+      const pitching = statsData.stats.find((s) => s.group?.displayName === 'pitching');
 
       runsScored = hitting?.splits?.[0]?.stat?.runs;
       runsAllowed = pitching?.splits?.[0]?.stat?.runs;
@@ -171,12 +163,12 @@ async function testPythagoreanCalculation() {
 
     const exponent = 1.83;
     const pythagoreanWins = Math.round(
-      162 * (Math.pow(runsScored, exponent) /
-      (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
+      162 *
+        (Math.pow(runsScored, exponent) /
+          (Math.pow(runsScored, exponent) + Math.pow(runsAllowed, exponent)))
     );
 
     results.passed.push('Pythagorean calculation');
-
   } catch (error) {
     results.failed.push(`Pythagorean: ${error.message}`);
   }
@@ -189,7 +181,6 @@ async function runTests() {
   await testESPNNBAAPI();
   await testESPNCFBAPI();
   await testPythagoreanCalculation();
-
 
   if (results.failed.length > 0) {
   }

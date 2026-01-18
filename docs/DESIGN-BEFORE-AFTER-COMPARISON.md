@@ -36,6 +36,7 @@
 ```
 
 **Problems:**
+
 1. User must scroll >1 screen to see ANY data
 2. Particle animation distracts from content
 3. Hero takes 100% of viewport = nothing actionable visible
@@ -79,6 +80,7 @@
 ```
 
 **Improvements:**
+
 1. Data visible IMMEDIATELY (no scroll required for live scores)
 2. Static gradient = 0KB, no battery drain
 3. Hero compressed to 200px = more content visible
@@ -95,6 +97,7 @@
 **Problem:** Box scores don't exist in current codebase
 
 ESPN mobile app shows:
+
 ```
 ┌─────────────────────────┐
 │ Texas vs TCU            │
@@ -109,6 +112,7 @@ ESPN mobile app shows:
 ```
 
 **What ESPN mobile DOESN'T show:**
+
 - Batting lines (AB, R, H, RBI, BB, SO, AVG)
 - Pitching lines (IP, H, R, ER, BB, SO, ERA)
 - Play-by-play
@@ -153,6 +157,7 @@ ESPN mobile app shows:
 ```
 
 **Blaze Advantages:**
+
 1. Complete box score (ESPN doesn't provide this on mobile)
 2. Expandable = summary visible, details on demand
 3. Horizontal scroll for wide tables (mobile-optimized)
@@ -166,6 +171,7 @@ ESPN mobile app shows:
 ### BEFORE (3/10) - Generic Implementation
 
 ESPN mobile shows standings, but:
+
 - Cluttered with ads
 - Small touch targets
 - No sort functionality
@@ -200,6 +206,7 @@ ESPN mobile shows standings, but:
 ```
 
 **Blaze Advantages:**
+
 1. Conference selector = quick navigation (ESPN buries this)
 2. Sortable columns = user control (ESPN static)
 3. Color-coded streaks = visual scanning (ESPN text only)
@@ -238,6 +245,7 @@ Accents:     🟠⬛⬛⬛⬛ (5% burnt orange - highlights)
 **Result:** Clean, readable, premium feel
 
 **Burnt orange reserved for:**
+
 - Primary CTA buttons ("View Games", "Launch Analytics")
 - Active navigation states
 - Key data highlights (winning team, live indicator)
@@ -273,6 +281,7 @@ Data Tables:      14px (monospace for alignment)
 ```
 
 **Weight Scale:**
+
 - Display: 900 (hero only)
 - Headings: 700
 - Subheads: 600
@@ -330,6 +339,7 @@ Load Time: ~1.8s on 4G
 ```
 
 **Improvement:**
+
 - Bundle size: -94% (1MB → 65KB)
 - Load time: -65% (5.2s → 1.8s)
 - Performance score: +142% (38 → 92)
@@ -407,6 +417,7 @@ Benefits:
 ```
 
 **Problem:** User doesn't know if data is:
+
 - Real-time or delayed
 - From official source or made up
 - Accurate or estimated
@@ -427,6 +438,7 @@ Benefits:
 ```
 
 **Blaze Standard:**
+
 - Every stat shows source
 - Timestamps in America/Chicago timezone
 - Confidence level (Verified, Estimated, Projected)
@@ -437,30 +449,35 @@ Benefits:
 ## Summary: What Changed
 
 ### Visual Design
+
 - Burnt orange: 50% → 10% (accent only)
 - Hero height: 100vh → 300px (compressed)
 - Particle system: REMOVED (0KB)
 - Typography scale: Tightened for mobile
 
 ### Information Architecture
+
 - Data: Below fold → Above fold
 - Navigation: Hamburger → Bottom tabs
 - Box scores: Absent → Present (ESPN gap filled)
 - Standings: Generic → Sortable + conference selector
 
 ### Performance
+
 - Bundle: 1MB → 65KB (-94%)
 - Load time: 5.2s → 1.8s (-65%)
 - Lighthouse: 38 → 92 (+142%)
 - Battery drain: High → Negligible
 
 ### Accessibility
+
 - Contrast ratios: 3.2:1 → 7:1 (pass WCAG AA)
 - Touch targets: 32px → 44px (Apple HIG)
 - Focus indicators: Invisible → Visible
 - Screen reader: Partial → Complete
 
 ### Brand Positioning
+
 - Generic → Distinct (visual differentiation)
 - Cluttered → Clean (premium feel)
 - Desktop-first → Mobile-native

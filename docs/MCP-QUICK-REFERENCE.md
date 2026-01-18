@@ -3,6 +3,7 @@
 ## 🎯 One-Line Command Examples
 
 ### Cloudflare ☁️
+
 ```
 "Show all Workers in my Cloudflare account"
 "Deploy to blazesportsintel.com"
@@ -12,6 +13,7 @@
 ```
 
 ### GitHub 🐙
+
 ```
 "Create PR for basketball feature"
 "Search BSI repo for 'Monte Carlo'"
@@ -21,7 +23,9 @@
 ```
 
 ### Brave Search 🔍
-*Requires API key - see MCP-SERVERS-SETUP.md*
+
+_Requires API key - see MCP-SERVERS-SETUP.md_
+
 ```
 "Search for MLB playoff schedule 2025"
 "Find college baseball rankings"
@@ -29,6 +33,7 @@
 ```
 
 ### Filesystem 📁
+
 ```
 "List all files in src/"
 "Search for 'SportSwitcher' in BSI"
@@ -38,6 +43,7 @@
 ```
 
 ### SQLite 🗄️
+
 ```
 "Show tables in dev.db"
 "Query all records from mcp_test"
@@ -47,7 +53,9 @@
 ```
 
 ### PostgreSQL 🐘
-*Requires local PostgreSQL installation*
+
+_Requires local PostgreSQL installation_
+
 ```
 "Connect to blazesports database"
 "Show all tables"
@@ -84,6 +92,7 @@ After restarting Claude Code, test each server:
 ## ⚡ Sports-Specific Examples
 
 ### Deployment
+
 ```
 "Deploy latest build to Cloudflare"
 "Check deployment status for blazesportsintel"
@@ -91,6 +100,7 @@ After restarting Claude Code, test each server:
 ```
 
 ### Development
+
 ```
 "Create basketball component based on football pattern"
 "Search for all API endpoint definitions"
@@ -98,6 +108,7 @@ After restarting Claude Code, test each server:
 ```
 
 ### Data Analysis
+
 ```
 "Query games from October 2025"
 "Calculate average football scores"
@@ -105,6 +116,7 @@ After restarting Claude Code, test each server:
 ```
 
 ### Research
+
 ```
 "Search for React Three Fiber best practices"
 "Find ESPN API documentation"

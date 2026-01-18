@@ -11,7 +11,7 @@
 
 This document outlines the complete rollback procedure for the Diamond Insights platform migration. All personnel involved in deployment must be familiar with these procedures.
 
-**Principle**: *Any production deployment must be reversible within 5 minutes with zero data loss.*
+**Principle**: _Any production deployment must be reversible within 5 minutes with zero data loss._
 
 ---
 
@@ -20,6 +20,7 @@ This document outlines the complete rollback procedure for the Diamond Insights 
 Execute rollback immediately if any of the following conditions occur:
 
 ### Critical (Automatic Rollback)
+
 - **Error rate > 5%** for 3 consecutive minutes
 - **API failure rate > 10%** for 2 consecutive minutes
 - **LCP > 5s** on mobile for 5 minutes
@@ -27,12 +28,14 @@ Execute rollback immediately if any of the following conditions occur:
 - **Security incident detected** (unauthorized access, data breach)
 
 ### Warning (Manual Decision)
+
 - **Error rate 1-5%** sustained for 10 minutes
 - **API p99 > 500ms** for 10 minutes
 - **User reports** of critical functionality broken (payment, auth)
 - **Data integrity issues** (incorrect scores, missing games)
 
 ### Observation (Monitor Closely)
+
 - **Bounce rate > 60%** (baseline: 40%)
 - **Session duration < 1.5min** (baseline: 3min)
 - **Mobile traffic < 50%** (expected: 70%+)
@@ -84,17 +87,20 @@ Execute rollback immediately if any of the following conditions occur:
 **Steps**:
 
 1. **Identify previous deployment**:
+
    ```bash
    vercel ls --prod
    # Output shows previous production deployment URL
    ```
 
 2. **Promote previous deployment**:
+
    ```bash
    vercel promote <previous-deployment-url> --prod
    ```
 
 3. **Verify rollback**:
+
    ```bash
    curl -I https://blazesportsintel.com
    # Check x-vercel-id header matches previous deployment
@@ -106,12 +112,14 @@ Execute rollback immediately if any of the following conditions occur:
    - Confirm user sessions stabilize
 
 **Automated Rollback** (if enabled):
+
 ```bash
 # Triggered by monitoring alert
 vercel promote <previous-deployment-url> --prod --yes
 ```
 
 **Verification Checklist**:
+
 - [ ] Home page loads successfully
 - [ ] Game Center functional (if live games active)
 - [ ] Team Hub navigable
@@ -126,16 +134,19 @@ vercel promote <previous-deployment-url> --prod --yes
 **Steps**:
 
 1. **List deployments**:
+
    ```bash
    wrangler deployments list --name bsi-ingest-worker
    ```
 
 2. **Rollback to previous version**:
+
    ```bash
    wrangler rollback --name bsi-ingest-worker --message "Rollback due to [reason]"
    ```
 
 3. **Verify worker health**:
+
    ```bash
    curl https://api.blazesportsintel.com/api/v1/health
    ```
@@ -146,11 +157,13 @@ vercel promote <previous-deployment-url> --prod --yes
    ```
 
 **Post-Rollback**:
+
 - Monitor ingest lag (should be < 60s)
 - Verify game scores updating
 - Check feed precision badges accurate
 
 **Verification Checklist**:
+
 - [ ] Ingest worker processing events
 - [ ] KV cache populating correctly
 - [ ] API returning live game data
@@ -165,6 +178,7 @@ vercel promote <previous-deployment-url> --prod --yes
 **⚠️ CRITICAL**: Database rollbacks require downtime. Coordinate with team.
 
 **Pre-Migration Requirements**:
+
 - Full database backup created
 - Rollback SQL script tested in staging
 - Maintenance mode page prepared
@@ -172,17 +186,20 @@ vercel promote <previous-deployment-url> --prod --yes
 **Steps**:
 
 1. **Enable maintenance mode**:
+
    ```bash
    # Set maintenance mode flag in KV
    wrangler kv:key put --namespace-id=<KV_ID> "maintenance_mode" "true" --remote
    ```
 
 2. **Stop ingest worker**:
+
    ```bash
    wrangler deployments pause --name bsi-ingest-worker
    ```
 
 3. **Execute rollback migration**:
+
    ```bash
    # Connect to database
    psql $DATABASE_URL
@@ -196,16 +213,19 @@ vercel promote <previous-deployment-url> --prod --yes
    ```
 
 4. **Restore data from backup** (if needed):
+
    ```bash
    pg_restore -d $DATABASE_URL --clean --if-exists backups/pre_migration_YYYYMMDD.dump
    ```
 
 5. **Re-enable ingest worker**:
+
    ```bash
    wrangler deployments resume --name bsi-ingest-worker
    ```
 
 6. **Disable maintenance mode**:
+
    ```bash
    wrangler kv:key put --namespace-id=<KV_ID> "maintenance_mode" "false" --remote
    ```
@@ -218,6 +238,7 @@ vercel promote <previous-deployment-url> --prod --yes
    ```
 
 **Verification Checklist**:
+
 - [ ] All tables present and populated
 - [ ] Foreign key constraints intact
 - [ ] Indexes functional
@@ -239,6 +260,7 @@ vercel promote <previous-deployment-url> --prod --yes
    - Navigate to: blazesportsintel.com → DNS
 
 2. **Update A/CNAME records**:
+
    ```
    Before:
    A     @     76.76.21.21 (Vercel)
@@ -256,6 +278,7 @@ vercel promote <previous-deployment-url> --prod --yes
    ```
 
 **Backup Server Requirements**:
+
 - Static HTML "maintenance" page
 - Basic /api/v1/health endpoint
 - Contact information for users
@@ -269,6 +292,7 @@ vercel promote <previous-deployment-url> --prod --yes
 **Slack Channel**: `#blaze-production-alerts`
 
 **Rollback Announcement Template**:
+
 ```
 🚨 PRODUCTION ROLLBACK INITIATED 🚨
 
@@ -296,6 +320,7 @@ Post-mortem scheduled: [Date/Time]
 **Twitter**: @BlazeSportsIntel (if downtime > 5min)
 
 **Email** (for Pro subscribers):
+
 ```
 Subject: Diamond Insights - Brief Service Interruption
 
@@ -397,19 +422,23 @@ If you have any questions, please contact support@blazesportsintel.com.
 ### Scenario 1: UI Performance Regression
 
 **Symptoms**:
+
 - LCP > 4s on mobile
 - User reports slow loading
 
 **Diagnosis**:
+
 - Lighthouse audit shows large bundle size
 - Webpack analysis reveals unoptimized images
 
 **Rollback**:
+
 - Execute Procedure 1 (Vercel Frontend)
 - Time: < 1min
 - Downtime: 0min (atomic deployment swap)
 
 **Fix**:
+
 - Optimize images (next/image)
 - Code-split heavy components
 - Redeploy after QA
@@ -419,14 +448,17 @@ If you have any questions, please contact support@blazesportsintel.com.
 ### Scenario 2: Ingest Worker Data Corruption
 
 **Symptoms**:
+
 - API returning incorrect scores
 - Feed precision badges showing "EVENT" instead of "PITCH"
 
 **Diagnosis**:
+
 - Worker code bug in event parsing
 - KV cache populated with bad data
 
 **Rollback**:
+
 1. Execute Procedure 2 (Workers)
 2. Flush KV cache:
    ```bash
@@ -435,6 +467,7 @@ If you have any questions, please contact support@blazesportsintel.com.
 3. Re-ingest last hour of data
 
 **Fix**:
+
 - Fix parser logic
 - Add validation step
 - Increase test coverage
@@ -444,14 +477,17 @@ If you have any questions, please contact support@blazesportsintel.com.
 ### Scenario 3: Database Migration Failure
 
 **Symptoms**:
+
 - API returning 500 errors
 - Database connection timeouts
 
 **Diagnosis**:
+
 - Migration script syntax error
 - Foreign key constraint violated
 
 **Rollback**:
+
 1. Enable maintenance mode
 2. Execute Procedure 3 (Database)
 3. Restore from backup
@@ -460,6 +496,7 @@ If you have any questions, please contact support@blazesportsintel.com.
 **Downtime**: 5min
 
 **Fix**:
+
 - Test migration script in staging (multiple times)
 - Add pre-flight checks
 - Review schema changes with team
@@ -469,21 +506,25 @@ If you have any questions, please contact support@blazesportsintel.com.
 ## Contacts & Escalation
 
 ### Primary On-Call
+
 - **Austin Humphrey**
 - Phone: (210) 273-5538
 - Email: austin@blazesportsintel.com
 - Slack: @ahump20
 
 ### Backup On-Call
+
 - TBD
 
 ### Vendor Support
+
 - **Vercel**: support@vercel.com (Enterprise support if needed)
 - **Cloudflare**: https://dash.cloudflare.com/support
 - **Supabase**: support@supabase.com
 - **Stripe**: https://support.stripe.com
 
 ### Escalation Path
+
 1. Primary On-Call (Austin)
 2. Backup On-Call (TBD)
 3. Vendor Support (if infrastructure issue)
@@ -495,31 +536,34 @@ If you have any questions, please contact support@blazesportsintel.com.
 ### Metrics to Track
 
 **Real-time (Grafana)**:
+
 - Request error rate (target: < 0.5%)
 - API p99 latency (target: < 200ms)
 - Ingest lag (target: < 60s)
 - Database connection pool (target: < 80% utilization)
 
 **User Experience (RUM)**:
+
 - LCP (target: < 2.5s)
 - CLS (target: < 0.1)
 - FID (target: < 100ms)
 
 **Business (Mixpanel)**:
+
 - Active users (baseline: TBD)
 - Conversion rate (baseline: TBD)
 - Session duration (baseline: 3min)
 
 ### Alert Thresholds
 
-| Metric                | Warning     | Critical    | Action                |
-|-----------------------|-------------|-------------|-----------------------|
-| Error rate            | 1%          | 5%          | Rollback              |
-| API p99 latency       | 300ms       | 500ms       | Investigate           |
-| Ingest lag            | 120s        | 300s        | Restart worker        |
-| LCP (mobile)          | 3s          | 5s          | Rollback frontend     |
-| Database CPU          | 70%         | 90%         | Scale up              |
-| Stripe webhook fails  | 5 in 10min  | 20 in 10min | Check integration     |
+| Metric               | Warning    | Critical    | Action            |
+| -------------------- | ---------- | ----------- | ----------------- |
+| Error rate           | 1%         | 5%          | Rollback          |
+| API p99 latency      | 300ms      | 500ms       | Investigate       |
+| Ingest lag           | 120s       | 300s        | Restart worker    |
+| LCP (mobile)         | 3s         | 5s          | Rollback frontend |
+| Database CPU         | 70%        | 90%         | Scale up          |
+| Stripe webhook fails | 5 in 10min | 20 in 10min | Check integration |
 
 ---
 
@@ -548,6 +592,7 @@ tar -czf backups/build_$(date +%Y%m%d_%H%M%S).tar.gz .next/
 ```
 
 **Backup Retention**:
+
 - Daily backups: 7 days
 - Weekly backups: 4 weeks
 - Monthly backups: 12 months

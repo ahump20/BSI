@@ -30,9 +30,7 @@ function corsHeaders(env: Env, origin?: string | null): HeadersInit {
   ];
 
   const requestOrigin = origin || '';
-  const allowOrigin = allowedOrigins.includes(requestOrigin)
-    ? requestOrigin
-    : allowedOrigins[0];
+  const allowOrigin = allowedOrigins.includes(requestOrigin) ? requestOrigin : allowedOrigins[0];
 
   return {
     'Access-Control-Allow-Origin': allowOrigin,
@@ -44,7 +42,9 @@ function corsHeaders(env: Env, origin?: string | null): HeadersInit {
 
 // Authentication check for publish endpoint
 function isAuthenticated(request: Request, env: Env): boolean {
-  const apiKey = request.headers.get('X-API-Key') || request.headers.get('Authorization')?.replace('Bearer ', '');
+  const apiKey =
+    request.headers.get('X-API-Key') ||
+    request.headers.get('Authorization')?.replace('Bearer ', '');
   return apiKey === env.API_SECRET;
 }
 
@@ -146,7 +146,9 @@ export default {
           .run();
 
         // Update KV cache
-        const currentItems = await tickerRoom.fetch('https://ticker/items').then((r) => r.json()) as ItemsResponse;
+        const currentItems = (await tickerRoom
+          .fetch('https://ticker/items')
+          .then((r) => r.json())) as ItemsResponse;
         await env.BSI_TICKER_CACHE.put('current_items', JSON.stringify(currentItems.items), {
           expirationTtl: 300, // 5 min TTL
         });
@@ -181,10 +183,10 @@ async function handlePublish(
 
   // Authenticate
   if (!isAuthenticated(request, env)) {
-    return Response.json(
-      { success: false, error: 'Unauthorized' } as PublishResponse,
-      { status: 401, headers }
-    );
+    return Response.json({ success: false, error: 'Unauthorized' } as PublishResponse, {
+      status: 401,
+      headers,
+    });
   }
 
   // Parse request
@@ -192,32 +194,38 @@ async function handlePublish(
   try {
     body = await request.json();
   } catch {
-    return Response.json(
-      { success: false, error: 'Invalid JSON' } as PublishResponse,
-      { status: 400, headers }
-    );
+    return Response.json({ success: false, error: 'Invalid JSON' } as PublishResponse, {
+      status: 400,
+      headers,
+    });
   }
 
   // Validate
   if (!body.type || !VALID_TYPES.includes(body.type)) {
     return Response.json(
-      { success: false, error: `Invalid type. Must be one of: ${VALID_TYPES.join(', ')}` } as PublishResponse,
+      {
+        success: false,
+        error: `Invalid type. Must be one of: ${VALID_TYPES.join(', ')}`,
+      } as PublishResponse,
       { status: 400, headers }
     );
   }
 
   if (!body.league || !VALID_LEAGUES.includes(body.league)) {
     return Response.json(
-      { success: false, error: `Invalid league. Must be one of: ${VALID_LEAGUES.join(', ')}` } as PublishResponse,
+      {
+        success: false,
+        error: `Invalid league. Must be one of: ${VALID_LEAGUES.join(', ')}`,
+      } as PublishResponse,
       { status: 400, headers }
     );
   }
 
   if (!body.headline || body.headline.trim().length === 0) {
-    return Response.json(
-      { success: false, error: 'Headline is required' } as PublishResponse,
-      { status: 400, headers }
-    );
+    return Response.json({ success: false, error: 'Headline is required' } as PublishResponse, {
+      status: 400,
+      headers,
+    });
   }
 
   // Create item
@@ -242,10 +250,7 @@ async function handlePublish(
     source: 'api',
   });
 
-  return Response.json(
-    { success: true, item } as PublishResponse,
-    { status: 201, headers }
-  );
+  return Response.json({ success: true, item } as PublishResponse, { status: 201, headers });
 }
 
 // Get current ticker items
@@ -279,7 +284,7 @@ async function handleGetItems(
   // Fall back to Durable Object
   const tickerRoom = getTickerRoom(env);
   const response = await tickerRoom.fetch('https://ticker/items');
-  const data = await response.json() as ItemsResponse;
+  const data = (await response.json()) as ItemsResponse;
 
   // Apply filters
   const filteredItems = filterItems(data.items, url.searchParams);

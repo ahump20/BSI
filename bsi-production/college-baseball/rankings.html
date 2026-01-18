@@ -491,11 +491,13 @@
             <button class="poll-btn active" data-poll="d1baseball">D1Baseball Top 25</button>
             <button class="poll-btn" data-poll="coaches">Coaches Poll</button>
           </div>
+          <div id="truthBadge" style="display: inline-block;"></div>
           <span class="source-badge" id="sourceBadge">
             <span class="status-dot"></span>
             <span id="sourceLabel">Loading</span>
           </span>
         </div>
+        <div id="truthBannerContainer"></div>
 
         <div id="rankingsContainer">
           <div class="loading">
@@ -514,9 +516,11 @@
     <p class="tagline">Born to Blaze the Path Less Beaten.</p>
   </footer>
 
+  <script src="/src/js/truth-state.js"></script>
   <script>
     var currentPoll = 'd1baseball';
     var rankingsData = null;
+    var truthController = null;
 
     // Show loading state safely
     function showLoading(container) {
@@ -641,10 +645,9 @@
       var badge = document.getElementById('sourceBadge');
       var label = document.getElementById('sourceLabel');
       if (!badge || !label) return;
-      
-      var dot = badge.querySelector('.status-dot');
+
       badge.className = 'source-badge';
-      
+
       var sourceMap = {
         'highlightly': { name: 'Highlightly', class: 'highlightly' },
         'd1baseball': { name: 'D1Baseball', class: 'd1baseball' },
@@ -653,10 +656,52 @@
         'bsi-database': { name: 'Cached', class: 'database' },
         'error': { name: 'Error', class: 'error' }
       };
-      
+
       var mapped = sourceMap[source] || { name: source || 'Unknown', class: '' };
       label.textContent = mapped.name;
       if (mapped.class) badge.classList.add(mapped.class);
+    }
+
+    // Update truth state indicator
+    function updateTruthState(validation) {
+      if (!window.BSITruthState) return;
+
+      var badgeContainer = document.getElementById('truthBadge');
+      var bannerContainer = document.getElementById('truthBannerContainer');
+
+      // Clear existing banner
+      if (bannerContainer) {
+        while (bannerContainer.firstChild) {
+          bannerContainer.removeChild(bannerContainer.firstChild);
+        }
+      }
+
+      if (!validation) {
+        if (badgeContainer) {
+          BSITruthState.render({
+            container: badgeContainer,
+            status: 'unavailable',
+            reason: 'Validation status unknown'
+          });
+        }
+        return;
+      }
+
+      var status = validation.status || 'unavailable';
+      var options = {
+        status: status,
+        recordCount: validation.recordCount,
+        expectedMin: validation.expectedMin,
+        reason: validation.reason
+      };
+
+      if (badgeContainer) {
+        truthController = BSITruthState.render(Object.assign({ container: badgeContainer }, options));
+      }
+
+      if (bannerContainer && (status === 'invalid' || status === 'unavailable')) {
+        BSITruthState.renderBanner(Object.assign({ container: bannerContainer }, options));
+      }
     }
 
     // Load rankings
@@ -672,10 +717,26 @@
         var rankings = data.data || data.rankings;
         var dataSource = data.source || data.poll || 'd1baseball';
         var timestamp = data.lastUpdated || data.timestamp || new Date().toISOString();
-        
+
         // Update source badge
         updateSourceBadge(dataSource, data.status || 'ok');
-        
+
+        // Update truth state from validation info
+        if (data.validation) {
+          updateTruthState(data.validation);
+        } else {
+          // Infer status from data presence
+          var teamCount = rankings ? rankings.length : 0;
+          updateTruthState({
+            status: teamCount >= 25 ? 'valid' : teamCount > 0 ? 'unavailable' : 'invalid',
+            recordCount: teamCount,
+            expectedMin: 25,
+            reason: teamCount >= 25 ? 'Valid: ' + teamCount + ' teams'
+                  : teamCount > 0 ? 'Partial data: ' + teamCount + ' teams (expected 25)'
+                  : 'No ranking data received'
+          });
+        }
+
         if (rankings && rankings.length > 0) {
           // Transform to rendering format
           var teams = rankings.map(function(r) {
@@ -707,14 +768,20 @@
       } catch (error) {
         console.error('Failed to load rankings:', error);
         updateSourceBadge('error', 'error');
+
+        // Show INVALID truth state - this is a data failure
+        updateTruthState({
+          status: 'invalid',
+          recordCount: 0,
+          expectedMin: 25,
+          reason: 'API request failed: ' + (error.message || 'Unknown error')
+        });
+
         container.replaceChildren();
         var empty = document.createElement('div');
         empty.className = 'empty-state';
-        var h3 = document.createElement('h3');
-        h3.textContent = 'Unable to Load Rankings';
-        empty.appendChild(h3);
         var p = document.createElement('p');
-        p.textContent = 'Please try again later.';
+        p.textContent = 'Unable to load rankings data. See error details above.';
         empty.appendChild(p);
         container.appendChild(empty);
       }

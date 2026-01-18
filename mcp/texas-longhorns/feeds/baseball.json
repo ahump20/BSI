@@ -142,7 +142,13 @@
       "name": "Roger Clemens",
       "years": "1981-1983",
       "position": "RHP",
-      "accolades": ["2x College World Series Champion (1982, 1983)", "1983 NCAA Tournament MOP", "11x MLB All-Star", "7x Cy Young Award", "2x World Series Champion"],
+      "accolades": [
+        "2x College World Series Champion (1982, 1983)",
+        "1983 NCAA Tournament MOP",
+        "11x MLB All-Star",
+        "7x Cy Young Award",
+        "2x World Series Champion"
+      ],
       "career": {
         "record": "25-9",
         "era": 3.04,
@@ -156,7 +162,12 @@
       "name": "Huston Street",
       "years": "2001-2004",
       "position": "RHP",
-      "accolades": ["2002 National Champion", "2x First-Team All-American", "2004 Dick Howser Trophy", "2004 Golden Spikes Award"],
+      "accolades": [
+        "2002 National Champion",
+        "2x First-Team All-American",
+        "2004 Dick Howser Trophy",
+        "2004 Golden Spikes Award"
+      ],
       "career": {
         "saves": 52,
         "era": 1.85,
@@ -170,10 +181,14 @@
       "name": "Brooks Kieschnick",
       "years": "1991-1993",
       "position": "OF/P",
-      "accolades": ["2x First-Team All-American", "1993 Dick Howser Trophy", "1993 Golden Spikes Award"],
+      "accolades": [
+        "2x First-Team All-American",
+        "1993 Dick Howser Trophy",
+        "1993 Golden Spikes Award"
+      ],
       "career": {
         "batting": {
-          "avg": 0.360,
+          "avg": 0.36,
           "homeRuns": 47,
           "rbi": 230
         },
@@ -190,7 +205,11 @@
       "name": "Burt Hooton",
       "years": "1969-1971",
       "position": "RHP",
-      "accolades": ["1970 College World Series No-Hitter", "1969 College World Series Champion", "4x MLB All-Star"],
+      "accolades": [
+        "1970 College World Series No-Hitter",
+        "1969 College World Series Champion",
+        "4x MLB All-Star"
+      ],
       "career": {
         "record": "35-7",
         "era": 1.14,
@@ -204,7 +223,10 @@
       "name": "Calvin Schiraldi",
       "years": "1981-1983",
       "position": "RHP",
-      "accolades": ["2x College World Series Champion (1982, 1983)", "1983 First-Team All-American"],
+      "accolades": [
+        "2x College World Series Champion (1982, 1983)",
+        "1983 First-Team All-American"
+      ],
       "career": {
         "record": "23-8",
         "era": 2.72,
@@ -218,7 +240,11 @@
       "name": "Taylor Jungmann",
       "years": "2008-2011",
       "position": "RHP",
-      "accolades": ["2x First-Team All-American", "2011 Dick Howser Trophy", "2011 Golden Spikes Award Finalist"],
+      "accolades": [
+        "2x First-Team All-American",
+        "2011 Dick Howser Trophy",
+        "2011 Golden Spikes Award Finalist"
+      ],
       "career": {
         "record": "33-16",
         "era": 3.21,
@@ -300,7 +326,10 @@
       "record": "824-428",
       "championships": 2,
       "cwsAppearances": 7,
-      "accolades": ["College Baseball Hall of Fame", "Most Wins in College Baseball History (1,975)"]
+      "accolades": [
+        "College Baseball Hall of Fame",
+        "Most Wins in College Baseball History (1,975)"
+      ]
     },
     {
       "name": "Cliff Gustafson",
@@ -375,10 +404,7 @@
         "hits": 7,
         "errors": 2
       },
-      "keyPlays": [
-        "Melendez 2-run HR in 5th",
-        "Campbell RBI double in 7th"
-      ]
+      "keyPlays": ["Melendez 2-run HR in 5th", "Campbell RBI double in 7th"]
     }
   }
 }

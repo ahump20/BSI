@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "Garnet Trust",
     "lead_contact": "Jeremy Smith",
-    "contact_channels": [
-      "hello@garnettrust.com",
-      "https://garnettrust.com/contact"
-    ],
+    "contact_channels": ["hello@garnettrust.com", "https://garnettrust.com/contact"],
     "recent_initiatives": "Hosting fall baseball fantasy camp for donors (Oct 2024).",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Ray Tanner",
     "baseball_admin": "Drew Marbut",
-    "financial_points_of_contact": [
-      "gamecocktickets@sc.edu"
-    ]
+    "financial_points_of_contact": ["gamecocktickets@sc.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 2,

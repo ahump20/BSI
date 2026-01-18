@@ -22,13 +22,13 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         football: resolve(__dirname, 'football.html'),
         basketball: resolve(__dirname, 'basketball.html'),
-        tools: resolve(__dirname, 'tools.html')
+        tools: resolve(__dirname, 'tools.html'),
       },
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom']
-        }
-      }
-    }
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
   },
 });

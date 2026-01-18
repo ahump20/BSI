@@ -225,8 +225,10 @@ describe('MLB API Tests', () => {
 
       // Baseball uses exponent of 1.83
       const expectedExponent = 1.83;
-      const calculatedWinPct = Math.pow(data.runsScored, expectedExponent) /
-        (Math.pow(data.runsScored, expectedExponent) + Math.pow(data.runsAllowed, expectedExponent));
+      const calculatedWinPct =
+        Math.pow(data.runsScored, expectedExponent) /
+        (Math.pow(data.runsScored, expectedExponent) +
+          Math.pow(data.runsAllowed, expectedExponent));
 
       const expectedWinPct = data.expectedWins / (data.expectedWins + data.expectedLosses);
 
@@ -287,9 +289,9 @@ describe('MLB API Tests', () => {
 
     it('should handle rate limiting gracefully', async () => {
       // Make multiple rapid requests
-      const requests = Array(10).fill(null).map(() =>
-        fetch(`${BASE_URL}/api/mlb/cardinals`)
-      );
+      const requests = Array(10)
+        .fill(null)
+        .map(() => fetch(`${BASE_URL}/api/mlb/cardinals`));
 
       const responses = await Promise.all(requests);
 
@@ -359,7 +361,9 @@ describe('MLB API Tests', () => {
       // Get Cardinals data from standings endpoint
       const standingsResponse = await fetch(`${BASE_URL}/api/mlb/standings?division=NL%20Central`);
       const standingsData = await standingsResponse.json();
-      const cardinalsStandings = standingsData.standings[0].teams.find((t: any) => t.abbreviation === 'STL');
+      const cardinalsStandings = standingsData.standings[0].teams.find(
+        (t: any) => t.abbreviation === 'STL'
+      );
 
       // Win/loss records should match
       expect(teamData.team.wins).toBe(cardinalsStandings.wins);

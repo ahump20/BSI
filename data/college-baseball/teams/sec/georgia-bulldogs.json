@@ -60,9 +60,7 @@
   "front_office": {
     "athletic_director": "Josh Brooks",
     "baseball_admin": "Mike White",
-    "financial_points_of_contact": [
-      "ugabtix@sports.uga.edu"
-    ]
+    "financial_points_of_contact": ["ugabtix@sports.uga.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 1,

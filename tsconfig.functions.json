@@ -20,13 +20,6 @@
     "noEmit": false,
     "types": ["@cloudflare/workers-types"]
   },
-  "include": [
-    "functions/api/scheduling/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.spec.ts",
-    "**/*.test.ts"
-  ]
+  "include": ["functions/api/scheduling/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

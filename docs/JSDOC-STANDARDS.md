@@ -100,11 +100,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
  * //   turningPoint: {...}
  * // }
  */
-async function generateGameRecap(
-  game: any,
-  boxscore: any,
-  env: Env
-): Promise<NCAAGameRecap> {
+async function generateGameRecap(game: any, boxscore: any, env: Env): Promise<NCAAGameRecap> {
   // Implementation
 }
 ```
@@ -387,21 +383,27 @@ Enable JSDoc linting in `.eslintrc.json`:
   "plugins": ["jsdoc"],
   "extends": ["plugin:jsdoc/recommended"],
   "rules": {
-    "jsdoc/require-jsdoc": ["error", {
-      "require": {
-        "FunctionDeclaration": true,
-        "MethodDefinition": true,
-        "ClassDeclaration": true,
-        "ArrowFunctionExpression": true,
-        "FunctionExpression": true
+    "jsdoc/require-jsdoc": [
+      "error",
+      {
+        "require": {
+          "FunctionDeclaration": true,
+          "MethodDefinition": true,
+          "ClassDeclaration": true,
+          "ArrowFunctionExpression": true,
+          "FunctionExpression": true
+        }
       }
-    }],
+    ],
     "jsdoc/require-description": "error",
     "jsdoc/require-param-description": "error",
     "jsdoc/require-returns-description": "error",
-    "jsdoc/require-example": ["warn", {
-      "exemptedBy": ["private", "abstract"]
-    }]
+    "jsdoc/require-example": [
+      "warn",
+      {
+        "exemptedBy": ["private", "abstract"]
+      }
+    ]
   }
 }
 ```

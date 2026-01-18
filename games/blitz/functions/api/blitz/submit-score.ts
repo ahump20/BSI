@@ -69,30 +69,23 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
 
     // Validate score is reasonable (anti-cheat basic check)
     if (body.score < 0 || body.score > 100000) {
-      return jsonResponse(
-        { success: false, error: 'Invalid score value' },
-        400
-      );
+      return jsonResponse({ success: false, error: 'Invalid score value' }, 400);
     }
 
     const { playerId, playerName, score, teamId, stats } = body;
 
     // 1. Upsert player record
-    const existingPlayer = await env.DB.prepare(
-      'SELECT * FROM blitz_players WHERE player_id = ?'
-    )
+    const existingPlayer = await env.DB.prepare('SELECT * FROM blitz_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 
     if (existingPlayer) {
       // Update existing player
       const newHighScore = Math.max(existingPlayer.high_score as number, score);
-      const newLongestPlay = Math.max(
-        existingPlayer.longest_play as number,
-        stats.longestPlay
-      );
+      const newLongestPlay = Math.max(existingPlayer.longest_play as number, stats.longestPlay);
 
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         UPDATE blitz_players SET
           player_name = COALESCE(?, player_name),
           high_score = ?,
@@ -113,7 +106,8 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
           END,
           updated_at = CURRENT_TIMESTAMP
         WHERE player_id = ?
-      `)
+      `
+      )
         .bind(
           playerName || null,
           newHighScore,
@@ -134,14 +128,16 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         .run();
     } else {
       // Insert new player
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         INSERT INTO blitz_players (
           player_id, player_name, high_score, games_played,
           total_touchdowns, total_yards, total_first_downs, total_big_plays,
           total_turnovers, total_tackles, total_stiff_arms, total_jukes,
           longest_play, total_play_time_seconds, favorite_team_id
         ) VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `)
+      `
+      )
         .bind(
           playerId,
           playerName || null,
@@ -162,13 +158,15 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     }
 
     // 2. Insert individual game score record
-    await env.DB.prepare(`
+    await env.DB.prepare(
+      `
       INSERT INTO blitz_scores (
         player_id, score, team_id, yards_gained, touchdowns, first_downs,
         big_plays, turnovers, tackles_made, stiff_arms, jukes,
         longest_play, turbo_yards, duration_seconds, result
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `)
+    `
+    )
       .bind(
         playerId,
         score,
@@ -196,35 +194,35 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: [
-          'game_play',         // event type
-          'blitz_football',    // game name
-          teamId,              // team used
-          stats.result,        // game result (touchdown, turnover, timeout)
+          'game_play', // event type
+          'blitz_football', // game name
+          teamId, // team used
+          stats.result, // game result (touchdown, turnover, timeout)
           stats.touchdowns > 0 ? 'scored_td' : 'no_td',
         ],
         doubles: [
-          score,                   // final score
-          stats.yardsGained,       // yards
-          stats.touchdowns,        // touchdowns
-          stats.longestPlay,       // longest play
-          stats.durationSeconds,   // play time
+          score, // final score
+          stats.yardsGained, // yards
+          stats.touchdowns, // touchdowns
+          stats.longestPlay, // longest play
+          stats.durationSeconds, // play time
         ],
         indexes: [playerId],
       });
     }
 
     // 5. Get player's current rank
-    const rankResult = await env.DB.prepare(`
+    const rankResult = await env.DB.prepare(
+      `
       SELECT COUNT(*) + 1 as rank FROM blitz_players
       WHERE high_score > ?
-    `)
+    `
+    )
       .bind(existingPlayer ? Math.max(existingPlayer.high_score as number, score) : score)
       .first();
 
     // 5. Get updated player stats
-    const updatedPlayer = await env.DB.prepare(
-      'SELECT * FROM blitz_players WHERE player_id = ?'
-    )
+    const updatedPlayer = await env.DB.prepare('SELECT * FROM blitz_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 
@@ -245,10 +243,7 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
   } catch (error: unknown) {
     console.error('Submit score error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return jsonResponse(
-      { success: false, error: errorMessage },
-      500
-    );
+    return jsonResponse({ success: false, error: errorMessage }, 500);
   }
 }
 

@@ -42,10 +42,7 @@
   "nil_operations": {
     "primary_collective": "1Oklahoma Collective",
     "lead_contact": "Jason Siegel",
-    "contact_channels": [
-      "info@1okcollective.com",
-      "https://1oklahoma.com/contact"
-    ],
+    "contact_channels": ["info@1okcollective.com", "https://1oklahoma.com/contact"],
     "recent_initiatives": "Launched baseball-specific membership tier tied to SEC move marketing (Sept 2024).",
     "intel_status": "needs_verification"
   },
@@ -59,9 +56,7 @@
   "front_office": {
     "athletic_director": "Joe Castiglione",
     "baseball_admin": "Eddie Radosevich",
-    "financial_points_of_contact": [
-      "soonerstickets@ou.edu"
-    ]
+    "financial_points_of_contact": ["soonerstickets@ou.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 2,

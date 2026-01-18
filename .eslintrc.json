@@ -95,7 +95,15 @@
       }
     },
     {
-      "files": ["**/examples/**", "**/scripts/**", "**/*test*", "**/*.test.*", "**/*.spec.*", "*test*.js", "*test*.ts"],
+      "files": [
+        "**/examples/**",
+        "**/scripts/**",
+        "**/*test*",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "*test*.js",
+        "*test*.ts"
+      ],
       "rules": {
         "no-console": "off",
         "no-restricted-syntax": "off",

@@ -51,26 +51,18 @@ export async function onRequestOptions(): Promise<Response> {
   return new Response(null, { headers: corsHeaders });
 }
 
-export async function onRequestPost(context: {
-  request: Request;
-  env: Env;
-}): Promise<Response> {
+export async function onRequestPost(context: { request: Request; env: Env }): Promise<Response> {
   try {
     const { request, env } = context;
     const body = (await request.json()) as ScoreSubmission;
 
     // Validate required fields
     if (!body.playerId || typeof body.score !== 'number' || !body.qbId) {
-      return jsonResponse(
-        { success: false, error: 'Missing required fields' },
-        400
-      );
+      return jsonResponse({ success: false, error: 'Missing required fields' }, 400);
     }
 
     // Get existing player record
-    const existingPlayer = await env.DB.prepare(
-      'SELECT * FROM qb_players WHERE player_id = ?'
-    )
+    const existingPlayer = await env.DB.prepare('SELECT * FROM qb_players WHERE player_id = ?')
       .bind(body.playerId)
       .first();
 
@@ -171,12 +163,7 @@ export async function onRequestPost(context: {
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
         blobs: [body.playerId, body.qbId, 'qb_challenge'],
-        doubles: [
-          body.score,
-          body.stats.completions,
-          body.stats.attempts,
-          body.stats.touchdowns,
-        ],
+        doubles: [body.score, body.stats.completions, body.stats.attempts, body.stats.touchdowns],
         indexes: ['game_score'],
       });
     }
@@ -198,8 +185,7 @@ export async function onRequestPost(context: {
     });
   } catch (error: unknown) {
     console.error('Submit score error:', error);
-    const errorMessage =
-      error instanceof Error ? error.message : 'Internal server error';
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return jsonResponse({ success: false, error: errorMessage }, 500);
   }
 }

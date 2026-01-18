@@ -12,13 +12,13 @@ This audit documents all Cloudflare resources across the BSI platform, identifie
 
 ### Key Findings
 
-| Category | Count | Issues |
-|----------|-------|--------|
-| Workers (defined) | 12 | All issues FIXED |
-| D1 Databases | 7 | 2 non-BSI databases |
-| KV Namespaces | 14 | Inconsistent naming |
-| R2 Buckets | 11 | All required buckets exist |
-| Sprawl Folders | 2 | Violate single-repo rule |
+| Category          | Count | Issues                     |
+| ----------------- | ----- | -------------------------- |
+| Workers (defined) | 12    | All issues FIXED           |
+| D1 Databases      | 7     | 2 non-BSI databases        |
+| KV Namespaces     | 14    | Inconsistent naming        |
+| R2 Buckets        | 11    | All required buckets exist |
+| Sprawl Folders    | 2     | Violate single-repo rule   |
 
 ### Fixes Applied During Audit
 
@@ -37,30 +37,30 @@ This audit documents all Cloudflare resources across the BSI platform, identifie
 
 ### Primary Production Workers
 
-| Worker Name | Location | Routes | Status |
-|-------------|----------|--------|--------|
-| `college-baseball-tracker` | `wrangler.toml` (root) | Pages deployment | Active |
-| `bsi-home` | `bsi-production/` | `blazesportsintel.com/*` | Active |
-| `bsi-prediction-api` | `workers/prediction/` | `api.blazesportsintel.com/v1/*` | Active |
-| `bsi-baseball-rankings` | `workers/baseball-rankings/` | `blazesportsintel.com/baseball/rankings` | Active |
+| Worker Name                | Location                     | Routes                                   | Status |
+| -------------------------- | ---------------------------- | ---------------------------------------- | ------ |
+| `college-baseball-tracker` | `wrangler.toml` (root)       | Pages deployment                         | Active |
+| `bsi-home`                 | `bsi-production/`            | `blazesportsintel.com/*`                 | Active |
+| `bsi-prediction-api`       | `workers/prediction/`        | `api.blazesportsintel.com/v1/*`          | Active |
+| `bsi-baseball-rankings`    | `workers/baseball-rankings/` | `blazesportsintel.com/baseball/rankings` | Active |
 
 ### Data Ingestion Workers
 
-| Worker Name | Location | Cron | Status |
-|-------------|----------|------|--------|
-| `blazesports-ingest` | `workers/ingest/` | `*/5 * * * *`, `0 * * * *`, `0 2 * * *` | Active |
-| `bsi-cfb-ai` | `workers/bsi-cfb-ai/` | `0 6 * * *`, `0 */4 * * *` | **FIXED** (KV ID updated) |
-| `bsi-cache-warmer` | `workers/bsi-cache-warmer/` | `*/5 * * * *` | Active |
-| `bsi-news-ticker` | `workers/bsi-news-ticker/` | `*/5 * * * *` | Active |
+| Worker Name          | Location                    | Cron                                    | Status                    |
+| -------------------- | --------------------------- | --------------------------------------- | ------------------------- |
+| `blazesports-ingest` | `workers/ingest/`           | `*/5 * * * *`, `0 * * * *`, `0 2 * * *` | Active                    |
+| `bsi-cfb-ai`         | `workers/bsi-cfb-ai/`       | `0 6 * * *`, `0 */4 * * *`              | **FIXED** (KV ID updated) |
+| `bsi-cache-warmer`   | `workers/bsi-cache-warmer/` | `*/5 * * * *`                           | Active                    |
+| `bsi-news-ticker`    | `workers/bsi-news-ticker/`  | `*/5 * * * *`                           | Active                    |
 
 ### Support Workers
 
-| Worker Name | Location | Purpose | Status |
-|-------------|----------|---------|--------|
-| `blaze-data-layer` | `app/` | Durable Objects | Active |
-| `bsi-chatgpt-app` | `workers/bsi-chatgpt-app/` | ChatGPT integration | Active |
-| `bsi-portal-agent` | `src/agents/bsi-agent/` | NCAA Portal tracking | Active |
-| `blaze-blitz-football` | `games/blitz/` | Game | Active |
+| Worker Name            | Location                   | Purpose              | Status |
+| ---------------------- | -------------------------- | -------------------- | ------ |
+| `blaze-data-layer`     | `app/`                     | Durable Objects      | Active |
+| `bsi-chatgpt-app`      | `workers/bsi-chatgpt-app/` | ChatGPT integration  | Active |
+| `bsi-portal-agent`     | `src/agents/bsi-agent/`    | NCAA Portal tracking | Active |
+| `blaze-blitz-football` | `games/blitz/`             | Game                 | Active |
 
 ---
 
@@ -68,20 +68,20 @@ This audit documents all Cloudflare resources across the BSI platform, identifie
 
 ### Active BSI Databases
 
-| Database Name | UUID | Size | Used By |
-|---------------|------|------|---------|
+| Database Name       | UUID                                   | Size   | Used By                  |
+| ------------------- | -------------------------------------- | ------ | ------------------------ |
 | `bsi-historical-db` | `9cecff0f-a3ab-433f-bf10-d2664d9542b0` | 3.0 MB | Root, Prediction, CFB-AI |
-| `bsi-game-db` | `88eb676f-af0f-470c-a46a-b9429f5b51f3` | 311 KB | bsi-home, blitz game |
-| `bsi-portal-db` | `d48fd89c-f2de-415b-935b-429f5e1fd60e` | 78 KB | Portal agent |
-| `bsi-models-db` | `57601862-355e-4f41-8b81-bcb28de08425` | 438 KB | Model storage |
-| `bsi-mmr-db` | `4405c459-830a-4b20-8b0c-1b8cb5a83587` | 74 KB | MMR calculations |
+| `bsi-game-db`       | `88eb676f-af0f-470c-a46a-b9429f5b51f3` | 311 KB | bsi-home, blitz game     |
+| `bsi-portal-db`     | `d48fd89c-f2de-415b-935b-429f5e1fd60e` | 78 KB  | Portal agent             |
+| `bsi-models-db`     | `57601862-355e-4f41-8b81-bcb28de08425` | 438 KB | Model storage            |
+| `bsi-mmr-db`        | `4405c459-830a-4b20-8b0c-1b8cb5a83587` | 74 KB  | MMR calculations         |
 
 ### Non-BSI Databases (Consider Cleanup)
 
-| Database Name | UUID | Size | Notes |
-|---------------|------|------|-------|
-| `satx-nightlife-db` | `c9a487b0-7ccc-4c16-9895-74fd86038fb9` | 147 KB | Side project? |
-| `blaze-reading-compass` | `7216a5d0-b7b7-49c9-b4ab-8aa3af22d714` | 49 KB | Side project? |
+| Database Name           | UUID                                   | Size   | Notes         |
+| ----------------------- | -------------------------------------- | ------ | ------------- |
+| `satx-nightlife-db`     | `c9a487b0-7ccc-4c16-9895-74fd86038fb9` | 147 KB | Side project? |
+| `blaze-reading-compass` | `7216a5d0-b7b7-49c9-b4ab-8aa3af22d714` | 49 KB  | Side project? |
 
 ---
 
@@ -89,43 +89,43 @@ This audit documents all Cloudflare resources across the BSI platform, identifie
 
 ### Actively Used
 
-| Title | ID | Used By |
-|-------|-----|---------|
-| `CACHE` | `a53c3726fc3044be82e79d2d1e371d26` | Root, Ingest, Rankings |
-| `PREDICTION_CACHE` | `eebf04d329c0419e92eec884f39a636d` | Prediction API |
-| `SPORTS_CACHE` | `c912d983175e4a1480225cfd57ed3434` | Prediction API |
-| `blazesports-cache` | `b03e0651b4a34078a3e031bc5bc14ad7` | bsi-home (SESSIONS) |
-| `BSI_CHATGPT_CACHE` | `9752bd76e948431f93b6df097b1f2bed` | ChatGPT App |
-| `bsi-ticker-cache` | `5d01a9493aaa4b29866bf7a1f411a984` | News Ticker |
-| `blaze-backyard-baseball-BLITZ_CACHE` | `49ef22a75f8f42789cb6507a2cbe16f5` | Blitz game |
-| `BSI_PORTAL_CACHE` | `edab31e13ebf4e12902f8e8bb5f74f07` | Portal Agent |
+| Title                                 | ID                                 | Used By                |
+| ------------------------------------- | ---------------------------------- | ---------------------- |
+| `CACHE`                               | `a53c3726fc3044be82e79d2d1e371d26` | Root, Ingest, Rankings |
+| `PREDICTION_CACHE`                    | `eebf04d329c0419e92eec884f39a636d` | Prediction API         |
+| `SPORTS_CACHE`                        | `c912d983175e4a1480225cfd57ed3434` | Prediction API         |
+| `blazesports-cache`                   | `b03e0651b4a34078a3e031bc5bc14ad7` | bsi-home (SESSIONS)    |
+| `BSI_CHATGPT_CACHE`                   | `9752bd76e948431f93b6df097b1f2bed` | ChatGPT App            |
+| `bsi-ticker-cache`                    | `5d01a9493aaa4b29866bf7a1f411a984` | News Ticker            |
+| `blaze-backyard-baseball-BLITZ_CACHE` | `49ef22a75f8f42789cb6507a2cbe16f5` | Blitz game             |
+| `BSI_PORTAL_CACHE`                    | `edab31e13ebf4e12902f8e8bb5f74f07` | Portal Agent           |
 
 ### Supporting/Unused
 
-| Title | ID | Notes |
-|-------|-----|-------|
-| `BLAZE_KV` | `1b4e56b25c1442029c5eb3215f9ff636` | Legacy? |
-| `BSI_PREVIEW_CACHE` | `3815c8cc886a45d28b3783de26501db7` | Preview env |
+| Title                   | ID                                 | Notes        |
+| ----------------------- | ---------------------------------- | ------------ |
+| `BLAZE_KV`              | `1b4e56b25c1442029c5eb3215f9ff636` | Legacy?      |
+| `BSI_PREVIEW_CACHE`     | `3815c8cc886a45d28b3783de26501db7` | Preview env  |
 | `READING_COMPASS_CACHE` | `84c09267475740c3a068860d31111f89` | Side project |
-| `satx-nightlife-cache` | `bb9c6f58b7e045ac81260b22f1fb755c` | Side project |
-| `worker-BACKYARD_CACHE` | `6c2af9a742e241149eb64f618e373aae` | Game cache |
+| `satx-nightlife-cache`  | `bb9c6f58b7e045ac81260b22f1fb755c` | Side project |
+| `worker-BACKYARD_CACHE` | `6c2af9a742e241149eb64f618e373aae` | Game cache   |
 
 ---
 
 ## 4. R2 Buckets
 
-| Bucket Name | Created | Purpose |
-|-------------|---------|---------|
-| `blaze-sports-data-lake` | 2025-08-20 | Main sports data |
-| `blazesports-assets` | 2025-10-11 | Static assets |
-| `blaze-nil-archive` | 2025-12-27 | NIL data archive |
-| `bsi-embeddings` | 2025-10-10 | Vector embeddings |
-| `blaze-intelligence` | 2025-08-18 | General storage |
-| `blaze-intelligence-videos` | 2025-08-20 | Video content |
-| `blaze-vision-clips` | 2025-08-24 | Vision clips |
-| `blaze-vision-videos` | 2025-08-28 | Vision videos |
-| `blaze-youth-data` | 2025-08-24 | Youth baseball data |
-| `podcasts` | 2025-10-18 | Podcast storage |
+| Bucket Name                 | Created    | Purpose             |
+| --------------------------- | ---------- | ------------------- |
+| `blaze-sports-data-lake`    | 2025-08-20 | Main sports data    |
+| `blazesports-assets`        | 2025-10-11 | Static assets       |
+| `blaze-nil-archive`         | 2025-12-27 | NIL data archive    |
+| `bsi-embeddings`            | 2025-10-10 | Vector embeddings   |
+| `blaze-intelligence`        | 2025-08-18 | General storage     |
+| `blaze-intelligence-videos` | 2025-08-20 | Video content       |
+| `blaze-vision-clips`        | 2025-08-24 | Vision clips        |
+| `blaze-vision-videos`       | 2025-08-28 | Vision videos       |
+| `blaze-youth-data`          | 2025-08-24 | Youth baseball data |
+| `podcasts`                  | 2025-10-18 | Podcast storage     |
 
 ---
 
@@ -144,6 +144,7 @@ id = "8a7b3c4d5e6f7890abcdef1234567890"  # PLACEHOLDER - NOT A REAL ID
 **Impact:** Worker will fail to deploy or function correctly.
 
 **Fix:**
+
 ```bash
 # Create the namespace
 wrangler kv:namespace create "CFB_CACHE"
@@ -153,6 +154,7 @@ wrangler kv:namespace create "CFB_CACHE"
 ### Issue 2: Sprawl Folders
 
 **Locations:**
+
 - `/BSI/Claude Code Agents Tailored/agitated-cohen/` (full duplicate)
 - `/BSI/wonderful-elion/` (referenced in glob, may exist)
 - `~/.github/workflows/deploy-bsi.yml` (sprawl outside BSI repo)
@@ -160,12 +162,14 @@ wrangler kv:namespace create "CFB_CACHE"
 **Impact:** Violates single-repo rule, creates maintenance burden.
 
 **Fix:**
+
 - Delete BSI sprawl folders after confirming no unique content
 - Review `~/.github/workflows/deploy-bsi.yml` - merge useful parts into BSI workflows or delete
 
 ### Issue 3: Inconsistent Naming
 
 **Problem:** KV namespaces use multiple conventions:
+
 - `CACHE` (uppercase, generic)
 - `BSI_CHATGPT_CACHE` (prefixed)
 - `blazesports-cache` (lowercase, hyphenated)
@@ -293,4 +297,4 @@ BSI/games/qb-challenge/wrangler.toml                 # (not reviewed)
 
 ---
 
-*Generated by Cloudflare Infrastructure Audit - January 7, 2026*
+_Generated by Cloudflare Infrastructure Audit - January 7, 2026_

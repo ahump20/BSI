@@ -12,16 +12,16 @@ This document outlines all art assets required for the Diamond Sluggers mobile b
 
 Each character needs the following sprite sheets:
 
-| Animation | Frame Count | Frame Size | Notes |
-|-----------|-------------|------------|-------|
-| Idle | 4 frames | 64x64 | Looping, 6 FPS |
-| Batting Stance | 4 frames | 64x64 | Looping, 6 FPS |
-| Swing | 8 frames | 96x96 | One-shot, 24 FPS |
-| Pitch Wind-up | 12 frames | 96x96 | One-shot, 18 FPS |
-| Running | 8 frames | 64x64 | Looping, 12 FPS |
-| Fielding | 6 frames | 64x64 | One-shot, 15 FPS |
-| Celebration | 6 frames | 64x64 | Looping, 10 FPS |
-| Portrait | 1 frame | 256x256 | High-res for UI |
+| Animation      | Frame Count | Frame Size | Notes            |
+| -------------- | ----------- | ---------- | ---------------- |
+| Idle           | 4 frames    | 64x64      | Looping, 6 FPS   |
+| Batting Stance | 4 frames    | 64x64      | Looping, 6 FPS   |
+| Swing          | 8 frames    | 96x96      | One-shot, 24 FPS |
+| Pitch Wind-up  | 12 frames   | 96x96      | One-shot, 18 FPS |
+| Running        | 8 frames    | 64x64      | Looping, 12 FPS  |
+| Fielding       | 6 frames    | 64x64      | One-shot, 15 FPS |
+| Celebration    | 6 frames    | 64x64      | Looping, 10 FPS  |
+| Portrait       | 1 frame     | 256x256    | High-res for UI  |
 
 ### Character List
 
@@ -56,12 +56,12 @@ Each character needs the following sprite sheets:
 
 ### Requirements per Stadium
 
-| Asset | Size | Format | Notes |
-|-------|------|--------|-------|
-| Background | 1920x1080 | PNG | Layered for parallax |
-| Field Overlay | 1920x1080 | PNG | Grass, dirt, bases |
-| Unique Features | Varies | PNG | Interactive elements |
-| Weather Variants | 1920x1080 | PNG | Time of day/weather |
+| Asset            | Size      | Format | Notes                |
+| ---------------- | --------- | ------ | -------------------- |
+| Background       | 1920x1080 | PNG    | Layered for parallax |
+| Field Overlay    | 1920x1080 | PNG    | Grass, dirt, bases   |
+| Unique Features  | Varies    | PNG    | Interactive elements |
+| Weather Variants | 1920x1080 | PNG    | Time of day/weather  |
 
 ### Stadium List
 
@@ -119,41 +119,41 @@ Each character needs the following sprite sheets:
 
 ### Main Menu
 
-| Asset | Size | Notes |
-|-------|------|-------|
-| Logo | 512x256 | "Diamond Sluggers" text with baseball |
-| Play Button | 160x160 | Circular, animated glow |
-| Menu Button | 200x60 | Rounded rectangle |
-| Coin Icon | 32x32 | Gold coin with star |
-| XP Bar | 300x20 | Progress bar with fill |
+| Asset       | Size    | Notes                                 |
+| ----------- | ------- | ------------------------------------- |
+| Logo        | 512x256 | "Diamond Sluggers" text with baseball |
+| Play Button | 160x160 | Circular, animated glow               |
+| Menu Button | 200x60  | Rounded rectangle                     |
+| Coin Icon   | 32x32   | Gold coin with star                   |
+| XP Bar      | 300x20  | Progress bar with fill                |
 
 ### Game HUD
 
-| Asset | Size | Notes |
-|-------|------|-------|
-| Scoreboard | 400x100 | Transparent background |
-| Base Indicator | 100x100 | Diamond shape with bases |
-| Count Display | 150x80 | B/S/O indicators |
-| Power-up Slots | 60x60 each | 3 slots, circular |
-| Pause Button | 48x48 | ||/▶ icons |
+| Asset          | Size       | Notes                    |
+| -------------- | ---------- | ------------------------ | --- | --------- |
+| Scoreboard     | 400x100    | Transparent background   |
+| Base Indicator | 100x100    | Diamond shape with bases |
+| Count Display  | 150x80     | B/S/O indicators         |
+| Power-up Slots | 60x60 each | 3 slots, circular        |
+| Pause Button   | 48x48      |                          |     | /▶ icons |
 
 ### Character Select
 
-| Asset | Size | Notes |
-|-------|------|-------|
-| Character Card | 180x240 | With stats preview |
-| Lock Overlay | 180x240 | Padlock icon |
-| Stat Radar | 200x200 | Hexagonal chart |
-| Team Slot | 80x80 | Empty and filled states |
+| Asset          | Size    | Notes                   |
+| -------------- | ------- | ----------------------- |
+| Character Card | 180x240 | With stats preview      |
+| Lock Overlay   | 180x240 | Padlock icon            |
+| Stat Radar     | 200x200 | Hexagonal chart         |
+| Team Slot      | 80x80   | Empty and filled states |
 
 ### Results Screen
 
-| Asset | Size | Notes |
-|-------|------|-------|
+| Asset          | Size    | Notes             |
+| -------------- | ------- | ----------------- |
 | Victory Banner | 600x200 | Gold, celebratory |
-| Defeat Banner | 600x200 | Muted colors |
-| Stats Panel | 500x200 | Dark background |
-| Confetti | 20x20 | Multiple colors |
+| Defeat Banner  | 600x200 | Muted colors      |
+| Stats Panel    | 500x200 | Dark background   |
+| Confetti       | 20x20   | Multiple colors   |
 
 ---
 
@@ -161,38 +161,38 @@ Each character needs the following sprite sheets:
 
 ### Baseball
 
-| State | Size | Notes |
-|-------|------|-------|
-| Normal | 32x32 | White with red stitching |
-| In Flight | 32x32 | Motion blur effect |
+| State      | Size    | Notes                     |
+| ---------- | ------- | ------------------------- |
+| Normal     | 32x32   | White with red stitching  |
+| In Flight  | 32x32   | Motion blur effect        |
 | Hit Effect | 128x128 | Spark/impact sprite sheet |
 
 ### Bat
 
-| State | Size | Notes |
-|-------|------|-------|
-| Normal | 128x32 | Wooden texture |
+| State    | Size   | Notes           |
+| -------- | ------ | --------------- |
+| Normal   | 128x32 | Wooden texture  |
 | Power-up | 128x32 | Glowing variant |
 
 ### Bases
 
-| Asset | Size | Notes |
-|-------|------|-------|
-| Base (empty) | 48x48 | White square, diamond angle |
-| Base (occupied) | 48x48 | Highlighted glow |
-| Home Plate | 48x48 | Pentagon shape |
+| Asset           | Size  | Notes                       |
+| --------------- | ----- | --------------------------- |
+| Base (empty)    | 48x48 | White square, diamond angle |
+| Base (occupied) | 48x48 | Highlighted glow            |
+| Home Plate      | 48x48 | Pentagon shape              |
 
 ---
 
 ## Effects & Particles
 
-| Effect | Size | Frames | Notes |
-|--------|------|--------|-------|
-| Hit Spark | 128x128 | 6 | Impact on contact |
-| Dust Cloud | 64x64 | 8 | Running, sliding |
-| Home Run Trail | 64x64 | 10 | Ball flight |
-| Power-up Aura | 96x96 | 8 | Character glow |
-| Strikeout | 256x128 | 1 | "K" text effect |
+| Effect         | Size    | Frames | Notes             |
+| -------------- | ------- | ------ | ----------------- |
+| Hit Spark      | 128x128 | 6      | Impact on contact |
+| Dust Cloud     | 64x64   | 8      | Running, sliding  |
+| Home Run Trail | 64x64   | 10     | Ball flight       |
+| Power-up Aura  | 96x96   | 8      | Character glow    |
+| Strikeout      | 256x128 | 1      | "K" text effect   |
 
 ---
 
@@ -245,14 +245,14 @@ effects/
 
 ## Budget Estimate
 
-| Category | Count | Est. Cost | Total |
-|----------|-------|-----------|-------|
-| Character Sprites | 16 chars × 7 anims | $150/char | $2,400 |
-| Character Portraits | 16 | $50/each | $800 |
-| Stadium Backgrounds | 8 × 4 variants | $200/stadium | $1,600 |
-| UI Elements | ~50 assets | $20/each | $1,000 |
-| Effects/Particles | ~20 assets | $30/each | $600 |
-| **Total Estimated** | | | **$6,400** |
+| Category            | Count              | Est. Cost    | Total      |
+| ------------------- | ------------------ | ------------ | ---------- |
+| Character Sprites   | 16 chars × 7 anims | $150/char    | $2,400     |
+| Character Portraits | 16                 | $50/each     | $800       |
+| Stadium Backgrounds | 8 × 4 variants     | $200/stadium | $1,600     |
+| UI Elements         | ~50 assets         | $20/each     | $1,000     |
+| Effects/Particles   | ~20 assets         | $30/each     | $600       |
+| **Total Estimated** |                    |              | **$6,400** |
 
 ---
 
@@ -266,6 +266,6 @@ effects/
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: November 2025*
-*Project: Diamond Sluggers by Blaze Sports Intel*
+_Document Version: 1.0_
+_Last Updated: November 2025_
+_Project: Diamond Sluggers by Blaze Sports Intel_

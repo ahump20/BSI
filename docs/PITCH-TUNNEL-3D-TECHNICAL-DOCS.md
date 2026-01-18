@@ -46,6 +46,7 @@ Professional-grade 3D baseball pitch visualization system with photorealistic re
 ### 1. Photorealistic Baseball Rendering
 
 **PBR Material System**:
+
 - **Albedo**: Cream leather base color (0.95, 0.93, 0.88)
 - **Metallic**: 0.0 (non-metallic leather)
 - **Roughness**: 0.6 (slightly rough surface)
@@ -54,6 +55,7 @@ Professional-grade 3D baseball pitch visualization system with photorealistic re
 - **Environment Reflections**: HDR cube map with intensity 0.5
 
 **Detail Features**:
+
 - 64-segment sphere for smooth surface
 - Procedural noise for leather grain texture
 - Red stitching pattern via custom shader
@@ -61,12 +63,17 @@ Professional-grade 3D baseball pitch visualization system with photorealistic re
 - Dynamic shadows with 2048x2048 shadow maps
 
 **Code Reference**:
+
 ```javascript
 // Baseball creation with PBR materials
-this.baseball = BABYLON.MeshBuilder.CreateSphere('baseball', {
+this.baseball = BABYLON.MeshBuilder.CreateSphere(
+  'baseball',
+  {
     diameter: 0.242, // Regulation 2.9 inches
-    segments: 64
-}, this.scene);
+    segments: 64,
+  },
+  this.scene
+);
 
 const baseballMat = new BABYLON.PBRMaterial('baseballMat', this.scene);
 baseballMat.albedoColor = new BABYLON.Color3(0.95, 0.93, 0.88);
@@ -80,6 +87,7 @@ baseballMat.environmentIntensity = 0.5;
 ### 2. Physics-Based Trajectory Simulation
 
 **Aerodynamic Model**:
+
 - **Drag Force**: `Fd = 0.5 × ρ × v² × A × Cd`
 - **Magnus Force**: `Fm = 0.5 × ρ × v × ω × A × Cl × efficiency`
 - **Gravity**: Standard 32.2 ft/s² downward acceleration
@@ -95,6 +103,7 @@ baseballMat.environmentIntensity = 0.5;
 | Cross-sectional Area | A | ft² | 0.0460 |
 
 **Code Reference**:
+
 ```javascript
 calculatePitchTrajectory() {
     const v0 = this.currentPitch.velocity * 1.467; // mph to ft/s
@@ -114,6 +123,7 @@ calculatePitchTrajectory() {
 ```
 
 **Accuracy**:
+
 - Validated against MLB Statcast data
 - Typical error: < 2 inches at plate
 - Accounts for spin axis tilt and direction
@@ -123,6 +133,7 @@ calculatePitchTrajectory() {
 ### 3. Strike Zone Visualization
 
 **Glass Material with Refraction**:
+
 ```javascript
 const glassmat = new BABYLON.PBRMaterial('strikeZoneGlass', this.scene);
 glassmat.alpha = 0.3;
@@ -134,11 +145,13 @@ glassmat.emissiveColor = new BABYLON.Color3(0.0, 0.4, 0.8);
 ```
 
 **Dimensions**:
+
 - Width: 17 inches (1.417 feet) - MLB regulation
 - Height: ~2.0 feet (varies by batter)
 - Position: 1.42 feet from origin (home plate)
 
 **Visual Features**:
+
 - Semi-transparent glass plane
 - Cyan edge glow for visibility
 - Real-time refraction of background
@@ -157,23 +170,29 @@ glassmat.emissiveColor = new BABYLON.Color3(0.0, 0.4, 0.8);
 | 80-85 mph | Green | (0.0, 1.0, 0.2) |
 
 **Rendering Technique**:
+
 ```javascript
-const trajectory = BABYLON.MeshBuilder.CreateTube('trajectory', {
+const trajectory = BABYLON.MeshBuilder.CreateTube(
+  'trajectory',
+  {
     path: this.pitchTrajectory,
     radius: 0.05,
     tessellation: 32,
-    cap: BABYLON.Mesh.CAP_ALL
-}, this.scene);
+    cap: BABYLON.Mesh.CAP_ALL,
+  },
+  this.scene
+);
 
 // Apply per-vertex colors for smooth gradient
 const velocityColors = this.pitchTrajectory.map((point, i) => {
-    const progress = i / this.pitchTrajectory.length;
-    const velocity = this.currentPitch.velocity * (1 - progress * 0.15);
-    return getVelocityColor(velocity);
+  const progress = i / this.pitchTrajectory.length;
+  const velocity = this.currentPitch.velocity * (1 - progress * 0.15);
+  return getVelocityColor(velocity);
 });
 ```
 
 **Features**:
+
 - Smooth tube geometry following pitch path
 - Per-vertex color interpolation
 - Fresnel edge glow effect
@@ -186,27 +205,31 @@ const velocityColors = this.pitchTrajectory.map((point, i) => {
 **Stadium Light Configuration**:
 
 **Primary Directional Light**:
+
 - Direction: (-1, -2, -1) normalized
 - Intensity: 1.2
 - Shadow Map: 2048×2048 resolution
 - Shadow Type: Exponential blur with 64-pixel kernel
 
 **Fill Lights**:
+
 - Hemispheric ambient: Intensity 0.4
 - Point light: Position (-10, 15, 30), Intensity 0.6
 - Color temperature: Warm white (1.0, 0.98, 0.95)
 
 **HDR Environment**:
+
 - Studio environment texture
 - Intensity: 0.8
 - Used for reflections and image-based lighting
 
 **Code Reference**:
+
 ```javascript
 const stadiumLight = new BABYLON.DirectionalLight(
-    'stadiumLight1',
-    new BABYLON.Vector3(-1, -2, -1),
-    this.scene
+  'stadiumLight1',
+  new BABYLON.Vector3(-1, -2, -1),
+  this.scene
 );
 stadiumLight.intensity = 1.2;
 
@@ -221,33 +244,37 @@ shadowGenerator.darkness = 0.3;
 ### 6. Post-Processing Effects
 
 **Bloom Configuration**:
+
 ```javascript
 pipeline.bloomEnabled = true;
-pipeline.bloomThreshold = 0.8;  // Only bright objects glow
-pipeline.bloomWeight = 0.3;     // Subtle bloom
-pipeline.bloomKernel = 64;      // High-quality blur
-pipeline.bloomScale = 0.5;      // Moderate spread
+pipeline.bloomThreshold = 0.8; // Only bright objects glow
+pipeline.bloomWeight = 0.3; // Subtle bloom
+pipeline.bloomKernel = 64; // High-quality blur
+pipeline.bloomScale = 0.5; // Moderate spread
 ```
 
 **SSAO (Screen Space Ambient Occlusion)**:
+
 ```javascript
 const ssao = new BABYLON.SSAO2RenderingPipeline('ssao', this.scene, {
-    ssaoRatio: 1.0,
-    blurRatio: 1.0
+  ssaoRatio: 1.0,
+  blurRatio: 1.0,
 });
 ssao.radius = 1.5;
 ssao.totalStrength = 1.3;
-ssao.samples = 32;              // High sample count
-ssao.expensiveBlur = true;      // Quality blur
+ssao.samples = 32; // High sample count
+ssao.expensiveBlur = true; // Quality blur
 ```
 
 **Tone Mapping**:
+
 - Type: ACES Filmic
 - Exposure: 1.0
 - Contrast: 1.1
 - Purpose: Compress HDR to displayable range while preserving detail
 
 **Full Pipeline**:
+
 1. Scene render (HDR)
 2. SSAO pass (32 samples)
 3. Bloom extraction and blur
@@ -265,13 +292,14 @@ ssao.expensiveBlur = true;      // Quality blur
 
 **Three Preset Views**:
 
-| View | Alpha | Beta | Radius | Target | Use Case |
-|------|-------|------|--------|--------|----------|
-| Catcher | π | π/2.2 | 25 ft | (0,3,0) | Default view, behind home plate |
-| Side | π/2 | π/2.5 | 35 ft | (0,3,25) | Lateral view for break analysis |
-| Overhead | 0 | 0.3 | 40 ft | (0,3,25) | Bird's eye for pitch location |
+| View     | Alpha | Beta  | Radius | Target   | Use Case                        |
+| -------- | ----- | ----- | ------ | -------- | ------------------------------- |
+| Catcher  | π     | π/2.2 | 25 ft  | (0,3,0)  | Default view, behind home plate |
+| Side     | π/2   | π/2.5 | 35 ft  | (0,3,25) | Lateral view for break analysis |
+| Overhead | 0     | 0.3   | 40 ft  | (0,3,25) | Bird's eye for pitch location   |
 
 **Smooth Transitions**:
+
 ```javascript
 switchCamera(preset) {
     const target = this.cameraPresets[preset];
@@ -292,12 +320,14 @@ switchCamera(preset) {
 ```
 
 **Interactive Controls**:
+
 - Mouse drag: Orbit rotation
 - Mouse wheel: Zoom in/out
 - Touch: Two-finger pinch and drag
 - Keyboard: Arrow keys for fine adjustment
 
 **Limits**:
+
 - Radius: 10 ft (close-up) to 60 ft (wide)
 - Beta: 0.1 to π/2 (prevent camera inversion)
 
@@ -308,17 +338,19 @@ switchCamera(preset) {
 **Default Parameters**:
 
 | Pitch Type | Velocity | Spin Rate | Spin Axis (Tilt/Direction) | Efficiency |
-|------------|----------|-----------|---------------------------|------------|
-| 4-Seam FB | 95 mph | 2400 rpm | 12° / 180° | 98% |
-| Slider | 85 mph | 2600 rpm | 30° / 225° | 85% |
-| Curveball | 78 mph | 2800 rpm | 60° / 180° | 90% |
-| Changeup | 82 mph | 1700 rpm | 20° / 200° | 75% |
+| ---------- | -------- | --------- | -------------------------- | ---------- |
+| 4-Seam FB  | 95 mph   | 2400 rpm  | 12° / 180°                 | 98%        |
+| Slider     | 85 mph   | 2600 rpm  | 30° / 225°                 | 85%        |
+| Curveball  | 78 mph   | 2800 rpm  | 60° / 180°                 | 90%        |
+| Changeup   | 82 mph   | 1700 rpm  | 20° / 200°                 | 75%        |
 
 **Spin Axis Convention**:
+
 - **Tilt**: 0° = horizontal, 90° = vertical
 - **Direction**: 0° = toward 3B, 180° = toward 1B (RHP perspective)
 
 **Code Reference**:
+
 ```javascript
 setPitchType(type) {
     const pitchDefaults = {
@@ -342,6 +374,7 @@ setPitchType(type) {
 ### 9. Performance Optimization
 
 **Target Metrics**:
+
 - Desktop: 120 FPS @ 1080p, 60 FPS @ 4K
 - Mobile: 60 FPS @ 720p
 - Draw calls: < 50 per frame
@@ -350,43 +383,45 @@ setPitchType(type) {
 **Optimization Techniques**:
 
 **LOD (Level of Detail)**:
+
 ```javascript
 // Reduce baseball segments at distance
 const cameraDistance = BABYLON.Vector3.Distance(camera.position, baseball.position);
 if (cameraDistance > 30) {
-    baseball.setLOD(this.baseballLOD1); // 32 segments
+  baseball.setLOD(this.baseballLOD1); // 32 segments
 } else {
-    baseball.setLOD(this.baseballLOD0); // 64 segments
+  baseball.setLOD(this.baseballLOD0); // 64 segments
 }
 ```
 
 **Frustum Culling**:
+
 - Automatic by Babylon.js
 - Only renders objects in camera view
 - Reduces GPU load by 40-60% in wide scenes
 
 **Texture Compression**:
+
 ```javascript
 // Use compressed textures for environment maps
-const hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
-    'environment.env',
-    this.scene
-);
+const hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData('environment.env', this.scene);
 // .env format is pre-compressed and mipmapped
 ```
 
 **Instanced Rendering** (for reference markers):
+
 ```javascript
 const markerInstances = [];
 for (let i = 0; i < 100; i++) {
-    const instance = markerMesh.createInstance('marker' + i);
-    instance.position = calculateMarkerPosition(i);
-    markerInstances.push(instance);
+  const instance = markerMesh.createInstance('marker' + i);
+  instance.position = calculateMarkerPosition(i);
+  markerInstances.push(instance);
 }
 // Single draw call for all instances
 ```
 
 **GPU Profiling**:
+
 ```javascript
 // Enable GPU timer queries (WebGPU)
 const gpuTimer = this.engine.createQuery();
@@ -442,15 +477,21 @@ console.log('GPU frame time:', gpuTime, 'ms');
    - Circle of confusion calculation
 
 **Shader Integration**:
+
 ```javascript
 // Apply custom shader material
-const customMat = new BABYLON.ShaderMaterial('customShader', this.scene, {
+const customMat = new BABYLON.ShaderMaterial(
+  'customShader',
+  this.scene,
+  {
     vertex: 'trajectoryVertex',
-    fragment: 'trajectoryFragment'
-}, {
+    fragment: 'trajectoryFragment',
+  },
+  {
     attributes: ['position', 'normal', 'uv', 'color'],
-    uniforms: ['worldViewProjection', 'world', 'cameraPosition', 'time']
-});
+    uniforms: ['worldViewProjection', 'world', 'cameraPosition', 'time'],
+  }
+);
 
 customMat.setVector3('cameraPosition', camera.position);
 customMat.setFloat('time', performance.now() / 1000);
@@ -461,6 +502,7 @@ customMat.setFloat('time', performance.now() / 1000);
 ### 11. Animation System
 
 **Pitch Animation Loop**:
+
 ```javascript
 animatePitch() {
     const totalFrames = this.pitchTrajectory.length;
@@ -488,6 +530,7 @@ animatePitch() {
 ```
 
 **Features**:
+
 - Smooth 60 FPS animation
 - Real-time spin rotation
 - Path following
@@ -500,18 +543,21 @@ animatePitch() {
 **Calculated Statistics**:
 
 **Pythagorean Break**:
+
 ```
 VerticalBreak = PlateY - (ReleaseY - ΔY_straight)
 HorizontalBreak = PlateX - ReleaseX
 ```
 
 **Spin Efficiency**:
+
 ```
 Efficiency = ActualMovement / TheoreticalMovement
 Theoretical = f(SpinRate, Velocity, SpinAxis)
 ```
 
 **Tunnel Effectiveness** (multi-pitch):
+
 ```
 TunnelScore = 1 - min(distance(P1, P2)) / threshold
 where P1, P2 are pitch trajectories
@@ -519,6 +565,7 @@ threshold = 1 foot (typical)
 ```
 
 **Display Format**:
+
 ```javascript
 updateStatsDisplay() {
     document.getElementById('statVelocity').textContent =
@@ -536,6 +583,7 @@ updateStatsDisplay() {
 ### 13. User Interface
 
 **Control Panel**:
+
 - Camera angle selection (3 presets)
 - Pitch type selection (4 types)
 - Velocity slider (70-105 mph)
@@ -545,26 +593,29 @@ updateStatsDisplay() {
 - Animate button (Space key shortcut)
 
 **Stats Panel**:
+
 - Live pitch data
 - Break measurements
 - Plate location
 - Tunnel effectiveness (when comparing)
 
 **Visual Feedback**:
+
 - Active button highlighting
 - Real-time slider values
 - FPS counter
 - Loading overlay with progress
 
 **Responsive Design**:
+
 ```css
 @media (max-width: 768px) {
-    .controls-panel {
-        width: calc(100% - 40px);
-        bottom: 20px;
-        max-height: 50vh;
-        overflow-y: auto;
-    }
+  .controls-panel {
+    width: calc(100% - 40px);
+    bottom: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
 }
 ```
 
@@ -581,18 +632,20 @@ updateStatsDisplay() {
 | Firefox 120+ | Coming | ✓ | Good |
 
 **Fallback Strategy**:
+
 ```javascript
 const webGPUSupported = await BABYLON.WebGPUEngine.IsSupportedAsync;
 
 if (webGPUSupported) {
-    this.engine = new BABYLON.WebGPUEngine(canvas, options);
-    await this.engine.initAsync();
+  this.engine = new BABYLON.WebGPUEngine(canvas, options);
+  await this.engine.initAsync();
 } else {
-    this.engine = new BABYLON.Engine(canvas, true, options);
+  this.engine = new BABYLON.Engine(canvas, true, options);
 }
 ```
 
 **Feature Detection**:
+
 - WebGPU compute shaders: Optional (physics falls back to CPU)
 - HDR rendering: Required (graceful degradation to SDR)
 - Shadow maps: Optional (can disable for performance)
@@ -602,6 +655,7 @@ if (webGPUSupported) {
 ### 15. Deployment
 
 **File Structure**:
+
 ```
 /public/
   pitch-tunnel-3d.html         (Main HTML)
@@ -616,6 +670,7 @@ if (webGPUSupported) {
 ```
 
 **CDN Dependencies**:
+
 - Babylon.js Core: ~150KB (gzipped)
 - Babylon.js Loaders: ~30KB
 - Babylon.js Materials Library: ~40KB
@@ -625,11 +680,13 @@ if (webGPUSupported) {
 **Initial Load Time**: ~1.5s (3G), ~0.5s (WiFi)
 
 **Caching Strategy**:
+
 ```
 Cache-Control: public, max-age=31536000, immutable
 ```
 
 **Build Command** (if using bundler):
+
 ```bash
 npm run build:pitch-tunnel
 # Outputs minified and optimized files
@@ -640,23 +697,25 @@ npm run build:pitch-tunnel
 ### 16. Testing
 
 **Unit Tests**:
+
 ```javascript
 describe('PitchTunnelSimulator', () => {
-    it('calculates trajectory correctly', () => {
-        const sim = new PitchTunnelSimulator();
-        sim.currentPitch.velocity = 95;
-        sim.currentPitch.spinRate = 2400;
+  it('calculates trajectory correctly', () => {
+    const sim = new PitchTunnelSimulator();
+    sim.currentPitch.velocity = 95;
+    sim.currentPitch.spinRate = 2400;
 
-        const trajectory = sim.calculatePitchTrajectory();
+    const trajectory = sim.calculatePitchTrajectory();
 
-        expect(trajectory.length).toBeGreaterThan(40);
-        expect(trajectory[0].z).toBeCloseTo(55, 1); // Release point
-        expect(trajectory[trajectory.length - 1].z).toBeCloseTo(1.42, 0.1); // Plate
-    });
+    expect(trajectory.length).toBeGreaterThan(40);
+    expect(trajectory[0].z).toBeCloseTo(55, 1); // Release point
+    expect(trajectory[trajectory.length - 1].z).toBeCloseTo(1.42, 0.1); // Plate
+  });
 });
 ```
 
 **Visual Regression Tests**:
+
 ```javascript
 // Using Percy or similar
 await page.goto('https://blazesportsintel.com/pitch-tunnel-3d');
@@ -665,13 +724,14 @@ await percySnapshot(page, 'Pitch Tunnel - Default View');
 ```
 
 **Performance Tests**:
+
 ```javascript
 const fpsReadings = [];
 for (let i = 0; i < 300; i++) {
-    const fps = await page.evaluate(() => {
-        return window.simulator.fps;
-    });
-    fpsReadings.push(fps);
+  const fps = await page.evaluate(() => {
+    return window.simulator.fps;
+  });
+  fpsReadings.push(fps);
 }
 
 const avgFPS = fpsReadings.reduce((a, b) => a + b) / fpsReadings.length;
@@ -683,6 +743,7 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 ### 17. Future Enhancements
 
 **Planned Features**:
+
 1. **Multi-Pitch Comparison**
    - Overlay 2-4 pitch types simultaneously
    - Tunnel effectiveness heatmap
@@ -718,6 +779,7 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 ### 18. Known Limitations
 
 **Current Constraints**:
+
 - Single pitch animation at a time
 - No wind effects modeled
 - Simplified air resistance (constant Cd/Cl)
@@ -726,6 +788,7 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 - No ball-bat collision simulation
 
 **Workarounds**:
+
 - Wind: Can manually adjust horizontal movement
 - Multiple pitches: Toggle rapidly between types
 - LHP: Mirror x-coordinates and spin directions
@@ -735,15 +798,18 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 ### 19. Support & Contact
 
 **Documentation**:
+
 - Technical Docs: This file
 - User Guide: `/docs/pitch-tunnel-user-guide.md`
 - API Reference: `/docs/pitch-tunnel-api.md`
 
 **Issues & Bugs**:
+
 - GitHub: `github.com/ahump20/BSI/issues`
 - Email: support@blazesportsintel.com
 
 **Contributing**:
+
 - See `CONTRIBUTING.md` for guidelines
 - Code style: Prettier + ESLint
 - Pull requests welcome
@@ -756,12 +822,14 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 **Copyright**: © 2025 Blaze Sports Intel
 
 **Credits**:
+
 - Physics model: Based on Alan Nathan's baseball aerodynamics research
 - Rendering: Babylon.js team
 - Shader techniques: GPU Gems series
 - Baseball data: MLB Statcast
 
 **Third-Party Libraries**:
+
 - Babylon.js: Apache 2.0 License
 - GLSL noise functions: MIT License (Stefan Gustavson)
 
@@ -770,6 +838,7 @@ expect(avgFPS).toBeGreaterThan(55); // Target 60 FPS
 ## Appendix A: Physics Equations
 
 ### Drag Force
+
 ```
 F_drag = -0.5 × ρ × v² × A × C_d × (v / |v|)
 
@@ -781,6 +850,7 @@ where:
 ```
 
 ### Magnus Force
+
 ```
 F_magnus = 0.5 × ρ × v × ω × A × C_l × η × (ω × v) / |ω × v|
 
@@ -791,6 +861,7 @@ where:
 ```
 
 ### Trajectory Integration (Euler Method)
+
 ```
 v(t+Δt) = v(t) + a(t) × Δt
 x(t+Δt) = x(t) + v(t) × Δt
@@ -810,6 +881,7 @@ where:
 **Z-axis**: Positive toward pitcher (away from catcher)
 
 **Key Positions**:
+
 - Home plate: (0, 0, 1.42)
 - Pitcher's rubber: (0, 0.5, 60.5)
 - Strike zone center: (0, 2.5, 1.42)
@@ -822,14 +894,15 @@ where:
 
 **Measured on Reference Hardware**:
 
-| Hardware | Resolution | WebGPU FPS | WebGL2 FPS | GPU Memory |
-|----------|-----------|------------|------------|------------|
-| M2 Pro | 1440p | 120 | 90 | 380 MB |
-| RTX 3080 | 4K | 144+ | 105 | 420 MB |
-| iPhone 14 Pro | 1080p | 60 | 55 | 290 MB |
-| Pixel 7 | 720p | 60 | 50 | 250 MB |
+| Hardware      | Resolution | WebGPU FPS | WebGL2 FPS | GPU Memory |
+| ------------- | ---------- | ---------- | ---------- | ---------- |
+| M2 Pro        | 1440p      | 120        | 90         | 380 MB     |
+| RTX 3080      | 4K         | 144+       | 105        | 420 MB     |
+| iPhone 14 Pro | 1080p      | 60         | 55         | 290 MB     |
+| Pixel 7       | 720p       | 60         | 50         | 250 MB     |
 
 **Bottlenecks**:
+
 - GPU fragment shader (post-processing): 60%
 - Physics calculation (CPU): 15%
 - Draw calls: 10%
@@ -840,6 +913,7 @@ where:
 ## Appendix D: Color Science
 
 **sRGB Gamma Correction**:
+
 ```glsl
 vec3 linearToSRGB(vec3 linear) {
     return pow(linear, vec3(1.0 / 2.2));
@@ -851,6 +925,7 @@ vec3 sRGBToLinear(vec3 srgb) {
 ```
 
 **ACES Tone Mapping**:
+
 ```glsl
 vec3 acesFilmic(vec3 x) {
     float a = 2.51;
@@ -863,12 +938,13 @@ vec3 acesFilmic(vec3 x) {
 ```
 
 **Velocity Color Mapping**:
+
 ```javascript
 function getVelocityColor(velocity) {
-    if (velocity >= 95) return new Color(1.0, 0.2, 0.2); // Red
-    if (velocity >= 90) return new Color(1.0, 0.5, 0.0); // Orange
-    if (velocity >= 85) return new Color(1.0, 1.0, 0.0); // Yellow
-    return new Color(0.0, 1.0, 0.2); // Green
+  if (velocity >= 95) return new Color(1.0, 0.2, 0.2); // Red
+  if (velocity >= 90) return new Color(1.0, 0.5, 0.0); // Orange
+  if (velocity >= 85) return new Color(1.0, 1.0, 0.0); // Yellow
+  return new Color(0.0, 1.0, 0.2); // Green
 }
 ```
 

@@ -1,20 +1,20 @@
 # Blaze Sports Intel NIL Pipeline configuration
 project:
-  name: "Blaze Sports Intel NIL Valuation"
-  disclaimer: "Estimated value, not contractual."
+  name: 'Blaze Sports Intel NIL Valuation'
+  disclaimer: 'Estimated value, not contractual.'
 
 logging:
-  level: "INFO"
+  level: 'INFO'
 
 database:
-  url: "sqlite+pysqlite:///storage/blaze_nil.db"
+  url: 'sqlite+pysqlite:///storage/blaze_nil.db'
   echo: false
 
 storage:
-  raw_path: "storage/raw"
+  raw_path: 'storage/raw'
 
 redis:
-  host: "localhost"
+  host: 'localhost'
   port: 6379
   ttl_seconds: 900
 
@@ -33,7 +33,7 @@ features:
     Baseball: 1.05
     Football: 1.15
     Basketball: 1.10
-    "Track & Field": 0.95
+    'Track & Field': 0.95
 
 modeling:
   stage_a_params:

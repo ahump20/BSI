@@ -9,18 +9,21 @@ This document describes the comprehensive MLB Analytics Platform integration for
 ### Backend (Python/FastAPI)
 
 #### MLB Data Client (`api/mlb/client.py`)
+
 - Wraps the `UnifiedDataClient` from mlb-data-lab
 - Provides high-level methods for data access
 - Implements caching and error handling
 - Singleton pattern for efficient resource usage
 
 #### API Routes (`api/mlb/routes.py`)
+
 - RESTful endpoints for MLB data
 - Pydantic schemas for request/response validation
 - Integrated with main FastAPI application
 - Full API documentation via OpenAPI/Swagger
 
 #### Data Sources
+
 1. **MLB Stats API** - Official MLB statistics and game data
 2. **FanGraphs** - Advanced sabermetrics (wOBA, wRC+, FIP, etc.)
 3. **Statcast** - Player tracking data (exit velocity, launch angle, etc.)
@@ -29,6 +32,7 @@ This document describes the comprehensive MLB Analytics Platform integration for
 ### Frontend (Next.js/React)
 
 #### Pages Structure
+
 ```
 /baseball/mlb/
 ├── page.tsx                          # Landing page
@@ -45,9 +49,11 @@ This document describes the comprehensive MLB Analytics Platform integration for
 ## Features Implemented
 
 ### 1. Advanced Player Profile Pages
+
 ✅ **Implemented**
 
 **Features:**
+
 - Comprehensive player bio (height, weight, position, bat/throw)
 - Season statistics with advanced metrics
 - Team logos and player headshots
@@ -59,6 +65,7 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Page:** `/baseball/mlb/players/[playerId]`
 
 **Advanced Metrics Included:**
+
 - wOBA (Weighted On-Base Average)
 - wRC+ (Weighted Runs Created Plus)
 - WAR (Wins Above Replacement)
@@ -67,9 +74,11 @@ This document describes the comprehensive MLB Analytics Platform integration for
 - K%, BB%, K-BB%
 
 ### 2. Real-Time Statistics Dashboard
+
 ✅ **Implemented**
 
 **Features:**
+
 - Live game scores updated every 60 seconds
 - Games filtered by status (Live, Final, Scheduled)
 - Quick stats summary
@@ -81,9 +90,11 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Page:** `/baseball/mlb/dashboard`
 
 ### 3. Statcast Deep Dives
+
 ✅ **Implemented**
 
 **Features:**
+
 - Exit velocity tracking and distribution
 - Launch angle analysis
 - Hard-hit rate calculation
@@ -97,6 +108,7 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Page:** `/baseball/mlb/players/[playerId]/statcast`
 
 **Statcast Metrics:**
+
 - Exit Velocity (average, max, distribution)
 - Launch Angle (average, optimal zones)
 - Hit Distance
@@ -105,9 +117,11 @@ This document describes the comprehensive MLB Analytics Platform integration for
 - Sweet Spot % (8-32° launch angle)
 
 ### 4. Leaderboards
+
 ✅ **Implemented**
 
 **Features:**
+
 - Batting and pitching leaderboards
 - Season selector (last 5 years)
 - Sortable by multiple stats
@@ -116,6 +130,7 @@ This document describes the comprehensive MLB Analytics Platform integration for
 - Stats legend/guide
 
 **API Endpoints:**
+
 - `GET /mlb/leaderboards/batting`
 - `GET /mlb/leaderboards/pitching`
 
@@ -126,9 +141,11 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Pitching Stats:** W, L, ERA, IP, SO, WHIP, FIP, K%, BB%, WAR
 
 ### 5. Player Search
+
 ✅ **Implemented**
 
 **Features:**
+
 - Search by first name and/or last name
 - Fuzzy matching option for misspellings
 - Results show player bio and team
@@ -140,26 +157,32 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Page:** `/baseball/mlb/players`
 
 ### 6. Team Analysis Tools
+
 ⚠️ **Partial** (Backend ready, frontend pages pending)
 
 **Backend Ready:**
+
 - Team roster retrieval
 - Team stats aggregation
 - Schedule and record tracking
 
 **API Endpoints:**
+
 - `GET /mlb/teams/{team_id}/roster`
 - `GET /mlb/standings`
 
 **Pending Frontend:**
+
 - Team profile pages
 - Team comparison tools
 - Roster depth charts
 
 ### 7. API & Data Services
+
 ✅ **Implemented**
 
 **Features:**
+
 - RESTful API with FastAPI
 - OpenAPI/Swagger documentation
 - JSON response format
@@ -172,15 +195,18 @@ This document describes the comprehensive MLB Analytics Platform integration for
 **Health Check:** `GET /mlb/health`
 
 ### 8. Custom Visualizations
+
 ⚠️ **Partial**
 
 **Implemented:**
+
 - Statcast data tables
 - Stats grids and cards
 - Game score displays
 - Leaderboard tables
 
 **Planned:**
+
 - Spray charts (hit location visualization)
 - Pitch break plots
 - Velocity distribution histograms
@@ -259,6 +285,7 @@ pip install -r requirements.txt
 ```
 
 New dependencies added:
+
 - `pybaseball==2.2.7` - FanGraphs and Baseball Reference data
 - `MLB-StatsAPI==1.9.0` - Official MLB Stats API
 - `mplcursors==0.5.3` - Interactive matplotlib cursors
@@ -301,24 +328,28 @@ Navigate to: `http://localhost:3000/baseball/mlb`
 ## Data Sources & Attribution
 
 ### MLB Stats API
+
 - Official MLB statistics
 - Real-time game data
 - Player biographical information
 - **Attribution:** Required per MLB terms
 
 ### FanGraphs
+
 - Advanced sabermetrics
 - wOBA, wRC+, FIP calculations
 - League-adjusted metrics
 - **Attribution:** Required per FanGraphs terms
 
 ### Statcast
+
 - Batted ball tracking
 - Pitch movement data
 - Sprint speed and defense
 - **Attribution:** MLB Statcast technology
 
 ### Chadwick Register
+
 - Player ID mapping
 - Cross-platform identification
 - Historical player data
@@ -365,18 +396,21 @@ Navigate to: `http://localhost:3000/baseball/mlb`
 ## Performance Considerations
 
 ### Caching Strategy
+
 - Player profiles: 1 hour TTL
 - Leaderboards: 6 hours TTL
 - Live game data: 1 minute TTL
 - Statcast data: 24 hours TTL
 
 ### Data Loading
+
 - Skeleton screens for loading states
 - Error boundaries for API failures
 - Retry mechanisms for network errors
 - Progressive data loading
 
 ### API Rate Limiting
+
 - FanGraphs: ~100 requests/hour recommended
 - MLB Stats API: No published limits, use responsibly
 - Statcast: Large data sets, cache aggressively
@@ -435,6 +469,7 @@ tail -f api/logs/api.log
 ### Data Loading Errors
 
 Common issues:
+
 1. **Player not found** - Verify player ID is correct
 2. **No stats available** - Player may not have data for selected season
 3. **Rate limit exceeded** - Wait before making more requests
@@ -494,6 +529,7 @@ pnpm test
 ## Contributing
 
 When adding features:
+
 1. Update this documentation
 2. Add API endpoint documentation
 3. Include example usage
@@ -512,6 +548,7 @@ When adding features:
 ## Support
 
 For issues or questions:
+
 1. Check this documentation
 2. Review API documentation at `/docs`
 3. Check mlb-data-lab documentation
@@ -520,6 +557,7 @@ For issues or questions:
 ## Version History
 
 ### v1.0.0 (Current)
+
 - Initial MLB Analytics Platform integration
 - Player profiles with advanced metrics
 - Statcast deep dives
@@ -531,6 +569,7 @@ For issues or questions:
 ## Credits
 
 Built using:
+
 - [mlb-data-lab](https://github.com/ahump20/mlb-data-lab) by ahump20
 - [pybaseball](https://github.com/jldbc/pybaseball)
 - [MLB-StatsAPI](https://github.com/toddrob99/MLB-StatsAPI)

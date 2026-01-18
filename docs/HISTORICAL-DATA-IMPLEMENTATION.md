@@ -51,6 +51,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 ### Phase 1 Patterns (Original)
 
 ### 1. Team Matchups
+
 **Pattern**: "When has [Team A] beaten [Team B] at the [Tournament]?"
 
 **Example**: "When has Texas beaten LSU at the College World Series?"
@@ -58,6 +59,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **Returns**: Game date, score, venue, tournament round, lead changes
 
 ### 2. Player Statistics
+
 **Pattern**: "What is [Player]'s [Stat] in [Year]?"
 
 **Example**: "What is Kumar Rocker's ERA in 2021?"
@@ -65,6 +67,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **Returns**: Player name, team, season, stat value, games played, position
 
 ### 3. Coaching Decisions
+
 **Pattern**: "Compare Coach [Name]'s [Decision Type] to [League] average"
 
 **Example**: "Compare Coach Saban's 4th down decisions to FBS average"
@@ -72,6 +75,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **Returns**: Coach stats, league average, comparison metrics
 
 ### 4. Umpire Scorecards
+
 **Pattern**: "What is umpire [Name]'s [Metric]?"
 
 **Example**: "What is umpire Ted Barrett's strike call accuracy?"
@@ -79,6 +83,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **Returns**: Umpire name, metric, average value, games worked, handedness splits
 
 ### 5. Elimination Games
+
 **Pattern**: "Show me [Team]'s elimination game wins at the [Tournament]"
 
 **Example**: "Show me Vanderbilt's elimination game wins at the CWS"
@@ -88,11 +93,13 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 ### Phase 2 Patterns (Advanced Analytics)
 
 ### 6. Comparative Season Analysis
+
 **Pattern**: "How does [Team]'s [Year] [Attribute] compare to their [Year] team?"
 
 **Example**: "How does Texas's 2024 offense compare to their 2009 CWS team?"
 
 **Returns**:
+
 - Season 1 stats (games played, runs scored, runs per game)
 - Season 2 stats (games played, runs scored, runs per game)
 - Comparison metrics (runs difference, RPG difference, better season indicator)
@@ -101,11 +108,13 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **SQL Logic**: Aggregates `home_score` and `away_score` from `historical_games` for both seasons
 
 ### 7. All-Time Tournament Records
+
 **Pattern**: "What's [Team]'s all-time [Tournament] record?" or "What's our all-time [Tournament] record?"
 
 **Example**: "What's Texas's all-time CWS record?"
 
 **Returns**:
+
 - Win-loss record (e.g., "15-12")
 - Win percentage (e.g., 0.556)
 - Total games played
@@ -116,11 +125,13 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **SQL Logic**: Counts wins/losses from `historical_games` WHERE `tournament_round LIKE '%College World Series%'`
 
 ### 8. FCS Championship Lookup
+
 **Pattern**: "Who won the FCS championship in [Year]?"
 
 **Example**: "Who won the FCS championship in 2024?"
 
 **Returns**:
+
 - Champion name and conference
 - Champion record (e.g., "15-1")
 - Runner-up name and conference
@@ -133,25 +144,30 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 **SQL Source**: `fcs_champions` table (2010-2024 data)
 
 ### 9. FCS Playoff History
+
 **Pattern**: "Show me FCS playoff history for [Team]"
 
 **Example**: "Show me FCS playoff history for North Dakota State"
 
 **Returns**:
+
 - **Championships**: Years won, runner-up years, total championship games
 - **All Playoff Games**: Date, opponent, result, round, score, venue
 - Confidence score based on data completeness
 
 **SQL Sources**:
+
 - `fcs_champions` for championship appearances
 - `fcs_playoff_games` for all playoff game results
 
 ### 10. Elimination Pressure Tracking
+
 **Pattern**: "How many times has [Player] faced elimination pressure?"
 
 **Example**: "How many times has Kumar Rocker faced elimination pressure?"
 
 **Returns**:
+
 - Total elimination games player's team participated in
 - List of specific elimination games with:
   - Date, teams, scores, tournament round, venue
@@ -160,6 +176,7 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 - Confidence score
 
 **SQL Logic**:
+
 1. Find player's team affiliations from `player_stats`
 2. Cross-reference with `historical_games` WHERE `tournament_round` contains "elimination" keywords
 3. Filter by player's active seasons
@@ -169,21 +186,27 @@ User Query → Cloudflare Pages Function → D1 Query → Format Results → KV 
 ### Phase 1 Data
 
 ### Historical Games
+
 - Texas vs LSU, 2009 College World Series Finals (5-6 loss)
 
 ### Player Stats
+
 - Kumar Rocker, Vanderbilt 2021: ERA 2.73 (14 games)
 
 ### Coaching Decisions
+
 - Nick Saban, Alabama 2022: 4th down conversions (18 attempts, 11 successes, 61.1%)
 
 ### Umpire Scorecards
+
 - Ted Barrett: Strike accuracy 94% vs right-handed batters
 
 ### Phase 2 Data Expansion
 
 ### College World Series Champions (2000-2024)
+
 Complete championship data for 25 years including:
+
 - **2024**: Tennessee over Texas A&M (6-5)
 - **2023**: LSU over Florida (18-4)
 - **2022**: Ole Miss over Oklahoma (4-2)
@@ -213,12 +236,14 @@ Complete championship data for 25 years including:
 **Venue History**: Rosenblatt Stadium (2000-2010), Charles Schwab Field Omaha (2011-present)
 
 ### FCS Football Playoff Data (2010-2024)
+
 **15 Championships Loaded**:
+
 - **2024**: Montana State over South Dakota State (31-17)
 - **2023**: South Dakota State over Montana (23-3)
 - **2022**: South Dakota State over Montana State (23-3)
 - **2021**: North Dakota State over Montana State (38-10)
-- **2020**: Sam Houston over South Dakota State (23-21) *COVID-limited attendance
+- **2020**: Sam Houston over South Dakota State (23-21) \*COVID-limited attendance
 - **2019**: North Dakota State over James Madison (28-20)
 - **2018**: North Dakota State over Eastern Washington (38-24)
 - **2017**: North Dakota State over James Madison (17-13)
@@ -235,10 +260,13 @@ Complete championship data for 25 years including:
 ## Claude API Integration (Phase 2)
 
 ### Overview
+
 Optional natural language summarization powered by Anthropic's Claude Sonnet 4.5 model. When enabled, enhances query results with human-readable summaries and contextual insights.
 
 ### Configuration
+
 **Environment Variable**: `ANTHROPIC_API_KEY`
+
 - **Required**: No (graceful degradation when absent)
 - **Location**: Cloudflare Pages Environment Variables
 - **Model**: `claude-sonnet-4-5-20250929`
@@ -247,20 +275,25 @@ Optional natural language summarization powered by Anthropic's Claude Sonnet 4.5
 ### Features
 
 #### 1. Context-Aware Summaries
+
 Claude receives:
+
 - User's original natural language query
 - Structured data results from D1 queries
 - Data sources and citations
 - Sport context (baseball or football)
 
 Claude generates:
+
 - 2-3 paragraph summary directly answering the query
 - Contextual insights not obvious from raw data
 - Professional, neutral tone
 - America/Chicago timezone for all dates
 
 #### 2. Structured Insights Extraction
+
 Responses include 3-5 key insights in bullet format:
+
 ```json
 {
   "summary": "Texas has faced LSU 5 times at the College World Series...",
@@ -275,7 +308,9 @@ Responses include 3-5 key insights in bullet format:
 ```
 
 #### 3. Confidence Scoring
+
 Algorithmic confidence calculation based on:
+
 - **Data Count**: More results = higher confidence
   - 10+ results: +0.2
   - 5-9 results: +0.1
@@ -286,7 +321,9 @@ Algorithmic confidence calculation based on:
 - **Maximum**: 0.95 (never claims 100% certainty)
 
 #### 4. Fallback System
+
 When Claude API is unavailable or errors occur:
+
 ```typescript
 {
   "summary": "Found 5 records matching 'Texas vs LSU CWS'. Data sourced from NCAA records, Blaze tracking.",
@@ -301,6 +338,7 @@ When Claude API is unavailable or errors occur:
 ```
 
 ### Sport Detection
+
 Automatic classification based on query keywords:
 
 **Baseball Keywords**: baseball, cws, college world series, pitcher, batter, era, home run, rbi, innings, strikeout
@@ -310,34 +348,39 @@ Automatic classification based on query keywords:
 **Default**: Baseball (primary sport focus)
 
 ### API Request Format
+
 ```typescript
 const response = await fetch('https://api.anthropic.com/v1/messages', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
     'x-api-key': env.ANTHROPIC_API_KEY,
-    'anthropic-version': '2023-06-01'
+    'anthropic-version': '2023-06-01',
   },
   body: JSON.stringify({
     model: 'claude-sonnet-4-5-20250929',
     max_tokens: 1024,
     temperature: 0.7,
-    messages: [{
-      role: 'user',
-      content: `You are a professional sports analyst for Blaze Sports Intel...
+    messages: [
+      {
+        role: 'user',
+        content: `You are a professional sports analyst for Blaze Sports Intel...
 
 User Query: "How does Texas's 2024 offense compare to their 2009 CWS team?"
 
 Data Retrieved: [structured JSON data]
 
-Task: Provide a concise, insightful 2-3 paragraph summary...`
-    }]
-  })
+Task: Provide a concise, insightful 2-3 paragraph summary...`,
+      },
+    ],
+  }),
 });
 ```
 
 ### Usage in Query Response
+
 Enhanced responses include optional `claude_summary` field:
+
 ```json
 {
   "query": "How does Texas's 2024 offense compare to their 2009 CWS team?",
@@ -359,12 +402,14 @@ Enhanced responses include optional `claude_summary` field:
 ```
 
 ### Cost Considerations
+
 - **Model**: Claude Sonnet 4.5 (mid-tier pricing)
 - **Max Tokens**: 1024 per request (~$0.003 per summary at current rates)
 - **Trigger**: Only when `ANTHROPIC_API_KEY` is set AND query returns data
 - **No cost without API key**: System works perfectly with fallback summaries
 
 ### Setup Instructions
+
 ```bash
 # Add to Cloudflare Pages Environment Variables
 wrangler pages secret put ANTHROPIC_API_KEY --project-name blazesportsintel
@@ -383,17 +428,20 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 ## Technical Features
 
 ### Performance
+
 - **Query Latency**: Sub-100ms with D1 indexes
 - **Cache Hit Rate**: ~75% for popular queries (6-hour TTL)
 - **Graceful Degradation**: KV failures don't break queries
 - **America/Chicago Timezone**: All timestamps in Central Time
 
 ### Data Quality
+
 - **Confidence Scoring**: 0.90-1.00 (High), 0.70-0.89 (Medium), 0.00-0.69 (Low)
 - **Missing Data Indicators**: Explicit warnings when data is incomplete
 - **Source Citations**: NCAA records, conference databases, Blaze tracking
 
 ### Security & Reliability
+
 - CORS headers for cross-origin requests
 - Input validation
 - Error handling with user-friendly messages
@@ -403,11 +451,13 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 ## Integration Points
 
 ### Navigation
+
 - Added "Historical Data" link to main navigation menu
 - Back link on Historical Data page to main site
 - Consistent Blaze branding across pages
 
 ### Data Sources (Future Expansion)
+
 - NCAA Stats API (when available)
 - Conference websites (scraping where APIs don't exist)
 - Blaze's own game scorers for FCS/Group-of-Five coverage
@@ -416,6 +466,7 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 ## Implementation Progress
 
 ### ✅ Phase 1: Initial Release (COMPLETE)
+
 - ✅ Basic query patterns (team matchups, player stats, coaching decisions, umpire scorecards, elimination games)
 - ✅ D1 database schema with 4 tables
 - ✅ Frontend interface at blazesportsintel.com/HistoricalData
@@ -423,6 +474,7 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 - ✅ Sample data loaded for all query types
 
 ### ✅ Phase 2: Data Expansion & Advanced Analytics (COMPLETE)
+
 - ✅ Add 2000-2024 College World Series complete championship logs
 - ✅ Add FCS playoff games (2010-2024) with 4 new tables
 - ✅ "How does Texas's 2024 offense compare to their 2009 CWS team?" ✅ IMPLEMENTED
@@ -435,6 +487,7 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 - ✅ Sport detection (baseball vs football)
 
 ### 🔄 Phase 3: Data Ingestion Automation (PLANNED)
+
 - [ ] Run CWS ingestion script: `node scripts/ingest-cws-historical.js`
 - [ ] Add Top 25 college baseball historical rankings
 - [ ] Add Group of Five bowl game history
@@ -442,18 +495,21 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 - [ ] Add data quality monitoring and validation
 
 ### 🔄 Phase 4: Multi-Media Integration (PLANNED)
+
 - [ ] Link R2 archives to specific plays mentioned in queries
 - [ ] Video clips for historical moments
 - [ ] Play-by-play reconstruction
 - [ ] Image galleries for championship teams
 
 ### 🔄 Phase 5: Extended Sports Coverage (PLANNED)
+
 - [ ] Track & Field meets and records
 - [ ] Wrestling NCAA championships
 - [ ] Softball College World Series
 - [ ] Other neglected college sports
 
 ### 🔄 Phase 6: Advanced AI Features (PLANNED)
+
 - [ ] Voice interface for spoken queries
 - [ ] Predictive intelligence using historical features
 - [ ] Multi-turn conversational queries
@@ -466,6 +522,7 @@ ESPN provides minimal statistical coverage for college baseball despite it gener
 **Blaze Sports Intel owns this gap** by building the historical record everyone else ignores.
 
 When a scout asks:
+
 - "How many times has this pitcher faced elimination pressure?"
 - "What's our all-time CWS record?"
 - "How does Coach X's decision-making compare to the field?"
@@ -548,21 +605,25 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 ## Files Modified/Created
 
 ### Phase 1: New Files
+
 - `HistoricalData/index.html` - Frontend interface
 - `functions/api/historical/query.ts` - API endpoint
 - `scripts/init-historical-tables.sql` - Database schema
 
 ### Phase 1: Modified Files
+
 - `index.html` - Added navigation link
 - `wrangler.toml` - Added QUERY_CACHE KV binding
 
 ### Phase 2: New Files
+
 - `scripts/ingest-cws-historical.js` - CWS data ingestion script (2000-2024)
 - `scripts/init-fcs-playoff-tables.sql` - FCS playoff schema (4 tables)
 - `functions/api/historical/claude-summarizer.ts` - Claude API integration
 - `HISTORICAL-DATA-IMPLEMENTATION.md` - This comprehensive documentation
 
 ### Phase 2: Modified Files
+
 - `functions/api/historical/query.ts` - Added 5 new query patterns + Claude integration
   - Comparative season analysis
   - All-time tournament records
@@ -651,4 +712,4 @@ curl -X POST "https://blazesportsintel.com/api/historical/query" \
 
 ---
 
-*This implementation fills the coverage gap ESPN leaves for college baseball and football, providing sub-100ms query responses with comprehensive historical data and citations.*
+_This implementation fills the coverage gap ESPN leaves for college baseball and football, providing sub-100ms query responses with comprehensive historical data and citations._

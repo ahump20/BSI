@@ -1,4 +1,5 @@
 # Cloudflare Workers Compatibility Refactor Strategy
+
 ## Permanent Fix for process.env Issues
 
 **Date**: November 20, 2025
@@ -18,23 +19,14 @@ Refactor existing lib/ files to use Cloudflare Workers `env` bindings instead of
 ### Files Using `process` API (13 total)
 
 **Critical (Blocks Deployment)**:
+
 1. `lib/config/env-validator.ts` - Uses `process.env`, `process.exit()`
 2. `lib/utils/logger.ts` - Uses `process.env.LOG_LEVEL`, `NODE_ENV`, etc.
 3. `lib/api/sports-data-client.ts` - Uses `process.env.SPORTSDATAIO_API_KEY`
 
-**Medium Priority**:
-4. `lib/security/secrets.ts` - Fallback to `process.env` (already mostly compatible!)
-5. `lib/adapters/sportsdataio.ts` - Uses `process.env.SPORTSDATAIO_API_KEY`
-6. `lib/adapters/whoop-v2-adapter.ts` - Uses `process.env`
+**Medium Priority**: 4. `lib/security/secrets.ts` - Fallback to `process.env` (already mostly compatible!) 5. `lib/adapters/sportsdataio.ts` - Uses `process.env.SPORTSDATAIO_API_KEY` 6. `lib/adapters/whoop-v2-adapter.ts` - Uses `process.env`
 
-**Low Priority (Not Used in Production Functions)**:
-7. `lib/mermaid-charts.js` - Development tool
-8. `lib/stackoverflow-integration.js` - Development tool
-9. `lib/college-baseball/push-notifications.ts` - Future feature
-10. `lib/neon-database.js` - Database (not used yet)
-11. `lib/db/prisma.ts` - Database (not used yet)
-12. `lib/api/real-sports-data-integration.ts` - Superseded by Phase 3
-13. `lib/skills/sports-data-qc/examples/example_usage.ts` - Example only
+**Low Priority (Not Used in Production Functions)**: 7. `lib/mermaid-charts.js` - Development tool 8. `lib/stackoverflow-integration.js` - Development tool 9. `lib/college-baseball/push-notifications.ts` - Future feature 10. `lib/neon-database.js` - Database (not used yet) 11. `lib/db/prisma.ts` - Database (not used yet) 12. `lib/api/real-sports-data-integration.ts` - Superseded by Phase 3 13. `lib/skills/sports-data-qc/examples/example_usage.ts` - Example only
 
 ---
 
@@ -45,6 +37,7 @@ Refactor existing lib/ files to use Cloudflare Workers `env` bindings instead of
 Create code that works in **both** Node.js (local development) **and** Cloudflare Workers (production).
 
 **Pattern**:
+
 ```typescript
 // ❌ Old: Node.js only
 const apiKey = process.env.SPORTSDATAIO_API_KEY;
@@ -72,6 +65,7 @@ function getApiKey(env?: Env): string {
 ### 1. lib/config/env-validator.ts
 
 **Current Issues**:
+
 - `process.env` access (lines 45, 78, 106)
 - `process.exit(1)` calls (lines 134, 149)
 - `process.env.NODE_ENV` check (line 140)
@@ -130,6 +124,7 @@ export function validateEnvironmentOnStartup(): void {
 ### 2. lib/security/secrets.ts
 
 **Current Issues**:
+
 - Line 113: `process.env[name]` fallback
 - Line 282: `process.env.NODE_ENV` default
 
@@ -152,7 +147,10 @@ if (!value && typeof process !== 'undefined') {
 const environment = env || (process.env.NODE_ENV as Environment) || 'development';
 
 // NEW:
-const environment = env || (typeof process !== 'undefined' ? process.env.NODE_ENV as Environment : null) || 'development';
+const environment =
+  env ||
+  (typeof process !== 'undefined' ? (process.env.NODE_ENV as Environment) : null) ||
+  'development';
 ```
 
 **Impact**: Minimal - Code already accepts `cfEnv` parameter
@@ -162,6 +160,7 @@ const environment = env || (typeof process !== 'undefined' ? process.env.NODE_EN
 ### 3. lib/utils/logger.ts
 
 **Current Issues**:
+
 - Lines 77-84: DEFAULT_CONFIG uses `process.env.*`
 - Line 349: `process.env.DD_API_KEY`
 
@@ -220,6 +219,7 @@ private async sendToDatadog(entry: LogEntry, env?: Env): Promise<void> {
 ### 4. lib/api/sports-data-client.ts
 
 **Current Issues**:
+
 - Line 86: `process.env.SPORTSDATAIO_API_KEY`
 - Line 124: `process.env.COLLEGEFOOTBALLDATA_API_KEY`
 
@@ -232,12 +232,14 @@ export class SportsDataClient {
 
   constructor(config?: Partial<SportsDataConfig>, env?: Env) {
     const apiKeys = {
-      sportsDataIO: env?.SPORTSDATAIO_API_KEY ||
-                    (typeof process !== 'undefined' ? process.env.SPORTSDATAIO_API_KEY : null) ||
-                    '',
-      collegeFB: env?.COLLEGEFOOTBALLDATA_API_KEY ||
-                 (typeof process !== 'undefined' ? process.env.COLLEGEFOOTBALLDATA_API_KEY : null) ||
-                 '',
+      sportsDataIO:
+        env?.SPORTSDATAIO_API_KEY ||
+        (typeof process !== 'undefined' ? process.env.SPORTSDATAIO_API_KEY : null) ||
+        '',
+      collegeFB:
+        env?.COLLEGEFOOTBALLDATA_API_KEY ||
+        (typeof process !== 'undefined' ? process.env.COLLEGEFOOTBALLDATA_API_KEY : null) ||
+        '',
     };
 
     this.config = {
@@ -257,14 +259,18 @@ export class SportsDataClient {
 }
 
 // NEW: Factory function for Workers
-export function createSportsDataClient(env: Env, config?: Partial<SportsDataConfig>): SportsDataClient {
+export function createSportsDataClient(
+  env: Env,
+  config?: Partial<SportsDataConfig>
+): SportsDataClient {
   return new SportsDataClient(config, env);
 }
 
 // KEEP: Global instance for Node.js
-export const sportsDataClient = typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
-  ? new SportsDataClient()
-  : null; // Will be null in Workers - must use createSportsDataClient(env)
+export const sportsDataClient =
+  typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
+    ? new SportsDataClient()
+    : null; // Will be null in Workers - must use createSportsDataClient(env)
 ```
 
 **Impact**: High - Requires updating all Functions that import `sportsDataClient`
@@ -274,6 +280,7 @@ export const sportsDataClient = typeof process !== 'undefined' && process.env?.S
 ### 5. lib/adapters/sportsdataio.ts
 
 **Current Issues**:
+
 - Lines 596-597: Global instance using `process.env.SPORTSDATAIO_API_KEY`
 
 **Refactor Approach**: Already has conditional - just document usage
@@ -298,9 +305,10 @@ export const sportsDataClient = typeof process !== 'undefined' && process.env?.S
  *   const teams = await adapter.getMLBTeams();
  * }
  */
-export const sportsDataIO = typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
-  ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY)
-  : null; // null in Workers - use createSportsDataIOAdapter(env)
+export const sportsDataIO =
+  typeof process !== 'undefined' && process.env?.SPORTSDATAIO_API_KEY
+    ? new SportsDataIOAdapter(process.env.SPORTSDATAIO_API_KEY)
+    : null; // null in Workers - use createSportsDataIOAdapter(env)
 
 // ADD: Factory function for Workers
 export function createSportsDataIOAdapter(env: Env): SportsDataIOAdapter {
@@ -352,6 +360,7 @@ export async function onRequest({ request, env }) {
 ```
 
 **Affected Functions** (estimate: 15-20 files):
+
 - `functions/api/mlb/*.js` (8 files)
 - `functions/api/nfl/*.js` (6 files)
 - `functions/api/nba/*.js` (6 files)
@@ -375,12 +384,12 @@ export async function onRequest({ request, env }) {
 
 ## 📈 Estimated Timeline
 
-| Phase | Tasks | Time | Risk |
-|-------|-------|------|------|
-| Phase 1 | Add dual-compatible code to 5 lib/ files | 2 hours | Low |
-| Phase 2 | Update 15-20 Functions to use env bindings | 2 hours | Medium |
-| Phase 3 | Test, deploy, monitor | 30 min | Low |
-| **Total** | **Complete refactor** | **4.5 hours** | **Medium** |
+| Phase     | Tasks                                      | Time          | Risk       |
+| --------- | ------------------------------------------ | ------------- | ---------- |
+| Phase 1   | Add dual-compatible code to 5 lib/ files   | 2 hours       | Low        |
+| Phase 2   | Update 15-20 Functions to use env bindings | 2 hours       | Medium     |
+| Phase 3   | Test, deploy, monitor                      | 30 min        | Low        |
+| **Total** | **Complete refactor**                      | **4.5 hours** | **Medium** |
 
 ---
 
@@ -408,6 +417,7 @@ function getValue(env?: Env): string {
 ```
 
 This allows:
+
 - ✅ Local development with `.env` files
 - ✅ Production deployment to Workers
 - ✅ Testing in both environments
@@ -416,11 +426,13 @@ This allows:
 **2. Factory Functions vs Global Instances**
 
 **Global instances** (Node.js pattern):
+
 ```typescript
 export const logger = new Logger(); // Created at module load
 ```
 
 **Factory functions** (Workers pattern):
+
 ```typescript
 export function createLogger(env: Env): Logger {
   return new Logger({ apiKey: env.API_KEY });
@@ -428,6 +440,7 @@ export function createLogger(env: Env): Logger {
 ```
 
 Workers prefer factory functions because:
+
 - Env bindings aren't available at module load time
 - Each request gets isolated context
 - Prevents state leakage between requests
@@ -466,12 +479,14 @@ This provides autocomplete and type checking in Functions.
 ### Should We Do This Refactor Now?
 
 **Arguments FOR**:
+
 - ✅ Eliminates surgical deployment workaround
 - ✅ Makes future deployments clean and reproducible
 - ✅ Improves code quality and Workers best practices
 - ✅ Estimated time: 4.5 hours (manageable)
 
 **Arguments AGAINST**:
+
 - ⚠️ Phase 3 already deployed and working
 - ⚠️ Surgical workaround is documented and repeatable
 - ⚠️ Could wait until more Functions need deployment
@@ -480,6 +495,7 @@ This provides autocomplete and type checking in Functions.
 **Recommendation**: **Proceed with refactor**
 
 Rationale:
+
 - Technical debt compounds over time
 - Current workaround is fragile (easy to forget steps)
 - Next feature (Phase 4 WebSockets) will hit same issue
@@ -503,6 +519,6 @@ Rationale:
 
 ---
 
-*Created: November 20, 2025 13:15 CT*
-*Author: Claude Code (Sonnet 4.5)*
-*Related: PHASE-3-DEPLOYMENT-BLOCKER.md, PHASE-3-DEPLOYMENT-SUCCESS.md*
+_Created: November 20, 2025 13:15 CT_
+_Author: Claude Code (Sonnet 4.5)_
+_Related: PHASE-3-DEPLOYMENT-BLOCKER.md, PHASE-3-DEPLOYMENT-SUCCESS.md_

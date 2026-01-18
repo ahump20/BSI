@@ -111,16 +111,18 @@ function getChicagoTimestamp(): string {
 }
 
 function getChicagoISO(): string {
-  return new Date().toLocaleString('en-CA', {
-    timeZone: 'America/Chicago',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).replace(', ', 'T');
+  return new Date()
+    .toLocaleString('en-CA', {
+      timeZone: 'America/Chicago',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    })
+    .replace(', ', 'T');
 }
 
 // Generate URL-safe slug from title
@@ -173,9 +175,11 @@ async function fetchCodedContent(env: Env): Promise<SportsDataIOArticle[]> {
 
 // Store article in D1
 async function storeArticle(env: Env, article: Partial<CodedContentArticle>): Promise<void> {
-  const slug = article.slug || generateSlug(article.title || 'untitled', article.game_id?.toString());
+  const slug =
+    article.slug || generateSlug(article.title || 'untitled', article.game_id?.toString());
 
-  await env.BSI_HISTORICAL_DB.prepare(`
+  await env.BSI_HISTORICAL_DB.prepare(
+    `
     INSERT INTO coded_content_articles (
       article_type, game_id, title, slug, summary, content,
       home_team_id, home_team_name, away_team_id, away_team_name,
@@ -186,7 +190,8 @@ async function storeArticle(env: Env, article: Partial<CodedContentArticle>): Pr
       content = excluded.content,
       summary = excluded.summary,
       updated_at = datetime('now')
-  `)
+  `
+  )
     .bind(
       article.article_type || 'analysis',
       article.game_id || null,
@@ -238,7 +243,9 @@ async function getArticles(
   query += ' ORDER BY published_at DESC LIMIT ? OFFSET ?';
   params.push(limit, offset);
 
-  const result = await env.BSI_HISTORICAL_DB.prepare(query).bind(...params).all<CodedContentArticle>();
+  const result = await env.BSI_HISTORICAL_DB.prepare(query)
+    .bind(...params)
+    .all<CodedContentArticle>();
   return result.results || [];
 }
 
@@ -666,7 +673,7 @@ export default {
 
       // 6 AM: Pre-generate AI content for today's games
       if (cronName === '0 6 * * *') {
-        console.log('Pre-generating AI content for today\'s games...');
+        console.log("Pre-generating AI content for today's games...");
 
         const today = getChicagoTimestamp().replace(/-/g, '');
         const games = await fetchGames(today);
@@ -696,7 +703,10 @@ export default {
               home_team_name: homeTeam?.team.displayName,
               away_team_name: awayTeam?.team.displayName,
               game_date: game.date,
-              metadata: JSON.stringify({ source: 'Workers AI', model: '@cf/meta/llama-3-8b-instruct' }),
+              metadata: JSON.stringify({
+                source: 'Workers AI',
+                model: '@cf/meta/llama-3-8b-instruct',
+              }),
             });
 
             console.log(`Generated ${contentType} for game ${game.id}`);

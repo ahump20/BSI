@@ -19,19 +19,23 @@ All design tokens are documented in `/apps/web/styles/tokens.json` and implement
 ### Color System
 
 **Background**
+
 - `--di-bg`: #0b1120 (Deep navy primary background)
 - `--di-surface`: #111827 (Card backgrounds)
 - `--di-surface-muted`: #1f2937 (Secondary surfaces)
 
 **Text**
+
 - `--di-text`: #e2e8f0 (Primary text)
 - `--di-text-muted`: #94a3b8 (Secondary text)
 
 **Accent**
+
 - `--di-accent`: #fbbf24 (Amber/gold primary)
 - `--di-accent-strong`: #dc2626 (Red for emphasis)
 
 **Semantic**
+
 - Success: #22c55e (Green)
 - Error: #f87171 (Red)
 - Warning: #f59e0b (Orange)
@@ -39,11 +43,13 @@ All design tokens are documented in `/apps/web/styles/tokens.json` and implement
 ### Typography Scale
 
 **Font Families**
+
 - Heading (desktop): 'Source Serif Pro', serif
 - Heading (mobile): System sans-serif stack
 - Body: 'Inter', system sans-serif stack
 
 **Fluid Scale**
+
 - Hero: `clamp(2.2rem, 7vw, 3.4rem)`
 - Page Title: `clamp(1.5rem, 5vw, 2.3rem)`
 - Card Heading: 1.35rem
@@ -66,11 +72,13 @@ Uses a consistent 0.25rem base scale (micro, xs, sm, md, lg, xl, 2xl, 3xl).
 All component classes use the `di-*` (Diamond Insights) prefix:
 
 ### Layout
+
 - `.di-shell` - Page wrapper with gradient background
 - `.di-container` - Max-width content container
 - `.di-section` - Content section with gap
 
 ### Typography
+
 - `.di-title` - Hero title (fluid)
 - `.di-page-title` - Page section title
 - `.di-subtitle` - Hero subtitle
@@ -79,6 +87,7 @@ All component classes use the `di-*` (Diamond Insights) prefix:
 - `.di-microcopy` - Small uppercase text
 
 ### Components
+
 - `.di-card` - Card container
 - `.di-card-grid` - Responsive card grid
 - `.di-nav-card` - Navigation card
@@ -88,7 +97,9 @@ All component classes use the `di-*` (Diamond Insights) prefix:
 - `.di-inline-link` - Inline link with arrow
 
 ### CFP Components
+
 Special components for College Football Playoff pages with `cfp-*` prefix:
+
 - `.cfp-board` - Top 25 board container
 - `.cfp-table` - Rankings table
 - `.cfp-metric` - KPI card
@@ -98,17 +109,21 @@ Special components for College Football Playoff pages with `cfp-*` prefix:
 ## Accessibility
 
 ### Focus States
+
 All interactive elements have visible focus states with 2px solid accent outline and 4px offset.
 
 ### Color Contrast
+
 All text meets WCAG 2.2 AA standards (4.5:1 for body, 3:1 for large text).
 
 ### Keyboard Navigation
+
 - Logical tab order
 - No keyboard traps
 - Skip links where appropriate
 
 ### ARIA
+
 - Landmarks (`main`, `nav`, `section`)
 - Labels (`aria-labelledby`, `aria-describedby`)
 - Live regions for dynamic content
@@ -116,16 +131,19 @@ All text meets WCAG 2.2 AA standards (4.5:1 for body, 3:1 for large text).
 ## Performance
 
 ### Font Loading
+
 - Preload critical fonts
 - Fallback to system fonts on mobile (<768px)
 - `font-display: swap` for custom fonts
 
 ### Image Optimization
+
 - `fetchpriority="high"` for hero images
 - Lazy loading for below-fold content
 - AVIF/WebP with fallbacks
 
 ### CSS
+
 - Critical CSS inlined
 - Component styles scoped with CSS Modules
 - Global styles minimized

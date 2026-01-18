@@ -135,6 +135,7 @@ START WITH: The scoreboard component and /mlb/scores route.
 **Goal:** Build the daily scoreboard - it's the landing page for each sport.
 
 **Files to create:**
+
 ```
 app/mlb/scores/page.tsx
 components/scoreboard/Scoreboard.tsx
@@ -145,6 +146,7 @@ workers/bsi-mlb-api/index.ts
 ```
 
 **Prompt:**
+
 ```
 Build the MLB scoreboard page for blazesportsintel.com.
 
@@ -176,6 +178,7 @@ Use design tokens:
 **Goal:** Full standings page with conference/division views.
 
 **Files:**
+
 ```
 app/mlb/standings/page.tsx
 components/standings/StandingsPage.tsx
@@ -184,6 +187,7 @@ components/standings/ConferenceSelector.tsx
 ```
 
 **Prompt:**
+
 ```
 Build the MLB standings page for blazesportsintel.com.
 
@@ -208,6 +212,7 @@ Cache: 5 minutes
 **Goal:** Complete box score for finished games.
 
 **Files:**
+
 ```
 app/mlb/game/[gameId]/boxscore/page.tsx
 components/boxscore/BoxScorePage.tsx
@@ -217,6 +222,7 @@ components/boxscore/PitchingTable.tsx
 ```
 
 **Prompt:**
+
 ```
 Build the MLB box score page for blazesportsintel.com.
 
@@ -246,6 +252,7 @@ API: /api/mlb/game/{gameId}/boxscore
 **Goal:** Pitch-by-pitch or play-by-play feed.
 
 **Files:**
+
 ```
 app/mlb/game/[gameId]/playbyplay/page.tsx
 components/playbyplay/PlayByPlayPage.tsx
@@ -255,6 +262,7 @@ components/playbyplay/InningHeader.tsx
 ```
 
 **Prompt:**
+
 ```
 Build the MLB play-by-play page for blazesportsintel.com.
 
@@ -284,6 +292,7 @@ API: /api/mlb/game/{gameId}/plays?inning=5&scoring_only=true
 **Goal:** Complete team hub with all sub-routes.
 
 **Files:**
+
 ```
 app/mlb/teams/[teamSlug]/page.tsx
 app/mlb/teams/[teamSlug]/roster/page.tsx
@@ -297,6 +306,7 @@ components/depthchart/DepthChartPage.tsx
 ```
 
 **Prompt:**
+
 ```
 Build the MLB team pages for blazesportsintel.com.
 
@@ -329,6 +339,7 @@ Schedule:
 **Goal:** League-wide stat leaders with categories.
 
 **Files:**
+
 ```
 app/mlb/stats/page.tsx
 components/stats/StatsLeadersPage.tsx
@@ -337,6 +348,7 @@ components/stats/CategoryTabs.tsx
 ```
 
 **Prompt:**
+
 ```
 Build the MLB stats leaders page for blazesportsintel.com.
 
@@ -362,6 +374,7 @@ API: /api/mlb/stats/leaders?category=batting_avg&limit=25
 **Goal:** Content feeds for articles and video highlights.
 
 **Files:**
+
 ```
 app/mlb/news/page.tsx
 components/news/NewsFeed.tsx
@@ -373,6 +386,7 @@ components/videos/VideoPlayer.tsx
 ```
 
 **Prompt:**
+
 ```
 Build news and video components for blazesportsintel.com.
 
@@ -417,15 +431,21 @@ type Bindings = {
 const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS for blazesportsintel.com
-app.use('*', cors({
-  origin: ['https://blazesportsintel.com', 'http://localhost:3000'],
-}));
+app.use(
+  '*',
+  cors({
+    origin: ['https://blazesportsintel.com', 'http://localhost:3000'],
+  })
+);
 
 // Cache middleware
-app.use('/api/*', cache({
-  cacheName: 'bsi-api-cache',
-  cacheControl: 'max-age=60',
-}));
+app.use(
+  '/api/*',
+  cache({
+    cacheName: 'bsi-api-cache',
+    cacheControl: 'max-age=60',
+  })
+);
 
 // Health check
 app.get('/api/health', (c) => c.json({ status: 'healthy', timestamp: new Date().toISOString() }));
@@ -446,7 +466,7 @@ app.get('/api/:sport/scoreboard', async (c) => {
   const games = await fetchGames(sport, date);
 
   // Cache for 30s (live games) or 5min (no live)
-  const hasLive = games.some(g => g.status === 'live');
+  const hasLive = games.some((g) => g.status === 'live');
   await c.env.CACHE.put(cacheKey, JSON.stringify(games), {
     expirationTtl: hasLive ? 30 : 300,
   });
@@ -483,11 +503,21 @@ app.get('/api/:sport/standings', async (c) => {
 });
 
 // Team endpoints
-app.get('/api/:sport/team/:teamId', async (c) => { /* ... */ });
-app.get('/api/:sport/team/:teamId/roster', async (c) => { /* ... */ });
-app.get('/api/:sport/team/:teamId/stats', async (c) => { /* ... */ });
-app.get('/api/:sport/team/:teamId/schedule', async (c) => { /* ... */ });
-app.get('/api/:sport/team/:teamId/depth-chart', async (c) => { /* ... */ });
+app.get('/api/:sport/team/:teamId', async (c) => {
+  /* ... */
+});
+app.get('/api/:sport/team/:teamId/roster', async (c) => {
+  /* ... */
+});
+app.get('/api/:sport/team/:teamId/stats', async (c) => {
+  /* ... */
+});
+app.get('/api/:sport/team/:teamId/schedule', async (c) => {
+  /* ... */
+});
+app.get('/api/:sport/team/:teamId/depth-chart', async (c) => {
+  /* ... */
+});
 
 // Stats leaders
 app.get('/api/:sport/stats/leaders', async (c) => {
@@ -533,9 +563,7 @@ export function ComponentName({ prop1, prop2 }: ComponentNameProps) {
 
   if (error) {
     return (
-      <div className="p-4 text-center text-white/50">
-        Unable to load data. Please try again.
-      </div>
+      <div className="p-4 text-center text-white/50">Unable to load data. Please try again.</div>
     );
   }
 
@@ -584,10 +612,11 @@ Before deploying each phase:
 ## File to Copy
 
 Copy these from the downloaded archives:
+
 1. `bsi-uiux-architecture.md` → `docs/`
 2. `bsi-component-prompts.md` → `docs/`
 3. `bsi-cloudflare-platform.skill` → `.claude/skills/`
 
 ---
 
-*Generated: December 2025*
+_Generated: December 2025_

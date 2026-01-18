@@ -42,6 +42,7 @@ wrangler kv:namespace create "KV"
 ```
 
 **Edit `worker/wrangler.toml`:**
+
 ```toml
 kv_namespaces = [
   { binding = "KV", id = "abc123..." }  # <-- Your actual ID here
@@ -51,12 +52,14 @@ kv_namespaces = [
 ## Step 4: Start Local Development (1 min)
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd worker
 wrangler dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 cd college-baseball-tracker
 npm run dev
@@ -67,12 +70,14 @@ Open http://localhost:3000 on your phone or browser.
 ## Step 5: Test on Your Phone (2 min)
 
 **Option A - Same WiFi:**
+
 1. Find your computer's IP address:
    - Mac: `ifconfig | grep inet`
    - Windows: `ipconfig`
 2. Open `http://YOUR_IP:3000` on your phone
 
 **Option B - Use ngrok:**
+
 ```bash
 # Install ngrok
 npm install -g ngrok
@@ -118,6 +123,7 @@ wrangler pages deploy dist --project-name=college-baseball-tracker
 ## Next: Connect Real Data
 
 **See `worker/scrapers.js` for templates to integrate:**
+
 - NCAA.com for official game data
 - D1Baseball for real-time scores
 - Warren Nolan for RPI rankings
@@ -134,11 +140,11 @@ async function fetchLiveGames(env) {
 
   const scraper = new D1BaseballScraper();
   const games = await scraper.getLiveScores();
-  
+
   await env.KV.put('live-games', JSON.stringify(games), {
-    expirationTtl: 30
+    expirationTtl: 30,
   });
-  
+
   return games;
 }
 ```
@@ -146,6 +152,7 @@ async function fetchLiveGames(env) {
 ## Troubleshooting
 
 **Port 3000 already in use?**
+
 ```bash
 # Kill the process
 lsof -ti:3000 | xargs kill -9
@@ -154,6 +161,7 @@ lsof -ti:3000 | xargs kill -9
 ```
 
 **Worker won't deploy?**
+
 ```bash
 # Check you're logged in
 wrangler whoami
@@ -162,6 +170,7 @@ wrangler whoami
 ```
 
 **Frontend can't reach API?**
+
 ```bash
 # Check worker is running on port 8787
 curl http://localhost:8787/api/games/live
@@ -170,6 +179,7 @@ curl http://localhost:8787/api/games/live
 ```
 
 **CSS not loading?**
+
 ```bash
 # Check all .css files are imported
 # Check browser console for errors

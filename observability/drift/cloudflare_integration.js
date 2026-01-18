@@ -19,25 +19,21 @@ export default {
         doubles: [
           driftData.ks_statistic || 0,
           driftData.psi_value || 0,
-          driftData.quality_score || 0
+          driftData.quality_score || 0,
         ],
-        blobs: [
-          driftData.column,
-          driftData.severity,
-          driftData.test_type
-        ]
+        blobs: [driftData.column, driftData.severity, driftData.test_type],
       });
 
       // Store critical drifts in KV
       if (driftData.severity === 'CRITICAL') {
         const key = `drift:${driftData.dataset}:${driftData.column}:${Date.now()}`;
         await env.DRIFT_KV.put(key, JSON.stringify(driftData), {
-          expirationTtl: 2592000 // 30 days
+          expirationTtl: 2592000, // 30 days
         });
       }
 
       return new Response(JSON.stringify({ success: true }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
@@ -68,8 +64,8 @@ export default {
       return new Response(JSON.stringify(results), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'max-age=60'
-        }
+          'Cache-Control': 'max-age=60',
+        },
       });
     }
 
@@ -212,8 +208,8 @@ export default {
       return new Response(html, {
         headers: {
           'Content-Type': 'text/html',
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+        },
       });
     }
 
@@ -232,13 +228,13 @@ export default {
               method: 'POST',
               headers: {
                 Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 title: `[DRIFT] Critical drift in ${alert.dataset}`,
                 body: `Detected critical drift: ${JSON.stringify(alert, null, 2)}`,
-                labels: ['drift-alert', 'automated']
-              })
+                labels: ['drift-alert', 'automated'],
+              }),
             })
           );
         }
@@ -252,12 +248,12 @@ export default {
       }
 
       return new Response(JSON.stringify({ notified: true }), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
     return new Response('Blaze Intelligence Drift Monitoring API', {
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
   },
 
@@ -271,7 +267,7 @@ export default {
         await checkRealtimeDrift(env);
         break;
     }
-  }
+  },
 };
 
 async function runNightlyDriftReport(env) {
@@ -279,8 +275,8 @@ async function runNightlyDriftReport(env) {
   const response = await fetch('https://blazesportsintel.com/api/drift/run-nightly', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.INTERNAL_API_KEY}`
-    }
+      Authorization: `Bearer ${env.INTERNAL_API_KEY}`,
+    },
   });
 
   if (!response.ok) {

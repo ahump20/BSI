@@ -115,9 +115,7 @@ describe('API Failure Fallback - Error Formatting', () => {
 
 describe('API Failure Fallback - Rate Limiting', () => {
   it('should handle rapid requests gracefully', async () => {
-    const promises = Array.from({ length: 20 }, () =>
-      fetch(`${API_BASE}/v1/health`)
-    );
+    const promises = Array.from({ length: 20 }, () => fetch(`${API_BASE}/v1/health`));
 
     const responses = await Promise.all(promises);
 
@@ -149,11 +147,7 @@ describe('API Failure Fallback - Network Errors', () => {
 
 describe('API Failure Fallback - Data Integrity', () => {
   it('should maintain response format consistency', async () => {
-    const endpoints = [
-      '/v1/health',
-      '/v1/calibration/cfb',
-      '/v1/state/team/texas?sport=cfb',
-    ];
+    const endpoints = ['/v1/health', '/v1/calibration/cfb', '/v1/state/team/texas?sport=cfb'];
 
     for (const endpoint of endpoints) {
       const response = await fetch(`${API_BASE}${endpoint}`);

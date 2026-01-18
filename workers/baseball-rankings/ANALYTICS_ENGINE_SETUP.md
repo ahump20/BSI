@@ -43,6 +43,7 @@ CLOUDFLARE_API_TOKEN=r-2jlIcjxuS-INveZJAaJS-IzwtJeh6HvH9qi9Fi \
 After successful deployment:
 
 1. **Test the page**:
+
    ```bash
    curl -I https://blazesportsintel.com/baseball/rankings
    ```
@@ -62,11 +63,13 @@ After successful deployment:
 The Worker collects the following metrics:
 
 ### Page Views
+
 - **Blobs**: `['rankings_view', cacheStatus, dataSource]`
 - **Doubles**: `[responseTime]`
 - **Indexes**: `['baseball-rankings']`
 
 **Example Data Point**:
+
 ```typescript
 {
   blobs: ['rankings_view', 'hit', 'live_scrape'],
@@ -76,11 +79,13 @@ The Worker collects the following metrics:
 ```
 
 ### Errors
+
 - **Blobs**: `['rankings_error', errorMessage]`
 - **Doubles**: `[responseTime]`
 - **Indexes**: `['baseball-rankings']`
 
 **Example Data Point**:
+
 ```typescript
 {
   blobs: ['rankings_error', 'D1Baseball fetch failed with status 503'],
@@ -98,17 +103,11 @@ query {
   viewer {
     accounts(filter: { accountTag: "a12cb329d84130460eed99b816e4d0d3" }) {
       analyticsEngineDataset(name: "baseball_rankings_analytics") {
-        metrics(
-          filter: {
-            index1: "baseball-rankings"
-          }
-          limit: 100
-          orderBy: [timestamp_DESC]
-        ) {
-          blob1  # Event type: 'rankings_view' or 'rankings_error'
-          blob2  # Cache status: 'hit' or 'miss'
-          blob3  # Data source: 'live_scrape' or 'fallback'
-          double1  # Response time in ms
+        metrics(filter: { index1: "baseball-rankings" }, limit: 100, orderBy: [timestamp_DESC]) {
+          blob1 # Event type: 'rankings_view' or 'rankings_error'
+          blob2 # Cache status: 'hit' or 'miss'
+          blob3 # Data source: 'live_scrape' or 'fallback'
+          double1 # Response time in ms
           timestamp
         }
       }
@@ -122,16 +121,19 @@ query {
 Once Analytics Engine is enabled and data is flowing:
 
 1. **Cache Hit Rate**:
+
    ```
    (count where blob2='hit') / (total count) * 100
    ```
 
 2. **Average Response Time**:
+
    ```
    avg(double1)
    ```
 
 3. **Error Rate**:
+
    ```
    (count where blob1='rankings_error') / (total count) * 100
    ```
@@ -144,16 +146,19 @@ Once Analytics Engine is enabled and data is flowing:
 ## Troubleshooting
 
 ### Deployment still fails after enabling
+
 - Verify you're using the correct account ID in the dashboard URL
 - Check that your API token has Analytics Engine permissions
 - Try logging out and back in to Cloudflare Dashboard
 
 ### No data appearing in Analytics Engine
+
 - Verify deployment succeeded with `wrangler deployments list`
 - Check Worker logs with `wrangler tail` to see if writeDataPoint is being called
 - Ensure at least one request has been made to the Worker since deployment
 
 ### Response headers missing
+
 - Clear browser cache
 - Use `curl -I` instead of browser to verify headers
 - Check if you're hitting the correct route (not a cached CDN response)

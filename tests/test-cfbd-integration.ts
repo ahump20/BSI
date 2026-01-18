@@ -17,8 +17,8 @@ async function cfbdFetch(endpoint: string) {
   try {
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${API_KEY}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${API_KEY}`,
+        Accept: 'application/json',
         'User-Agent': 'BlazeSportsIntel/1.0',
       },
     });
@@ -61,7 +61,9 @@ async function testCFBDIntegration() {
       console.log(`   Sample game: ${game.away_team} @ ${game.home_team}`);
       console.log(`   Date: ${game.start_date}, Venue: ${game.venue}`);
       if (game.home_points !== null && game.away_points !== null) {
-        console.log(`   Score: ${game.away_team} ${game.away_points} - ${game.home_team} ${game.home_points}`);
+        console.log(
+          `   Score: ${game.away_team} ${game.away_points} - ${game.home_team} ${game.home_points}`
+        );
       }
     }
     console.log();
@@ -73,7 +75,9 @@ async function testCFBDIntegration() {
     if (big12Teams.length > 0) {
       const team = big12Teams.find((t: any) => t.school === 'Texas') || big12Teams[0];
       console.log(`   Sample team: ${team.school} ${team.mascot}`);
-      console.log(`   Colors: ${team.color}, Location: ${team.location?.city}, ${team.location?.state}`);
+      console.log(
+        `   Colors: ${team.color}, Location: ${team.location?.city}, ${team.location?.state}`
+      );
     }
     console.log();
 
@@ -84,7 +88,9 @@ async function testCFBDIntegration() {
     if (teamStats.length > 0) {
       const stats = teamStats[0];
       console.log(`   Team: ${stats.team} (${stats.games} games)`);
-      const statKeys = Object.keys(stats).filter(k => !['team', 'conference', 'games'].includes(k));
+      const statKeys = Object.keys(stats).filter(
+        (k) => !['team', 'conference', 'games'].includes(k)
+      );
       console.log(`   Stats categories: ${statKeys.length} different metrics tracked`);
       if (statKeys.length > 0) {
         console.log(`   Sample stats: ${statKeys.slice(0, 3).join(', ')}`);
@@ -94,7 +100,9 @@ async function testCFBDIntegration() {
 
     // Test 5: Fetch player stats
     console.log('👤 Test 5: Fetching player stats (passing)...');
-    const playerStats = await cfbdFetch('/stats/player/season?year=2024&conference=Big%2012&category=passing');
+    const playerStats = await cfbdFetch(
+      '/stats/player/season?year=2024&conference=Big%2012&category=passing'
+    );
     console.log(`✅ Found ${playerStats.length} player stat records`);
     if (playerStats.length > 0) {
       const player = playerStats[0];
@@ -123,7 +131,9 @@ async function testCFBDIntegration() {
         if (plays.length > 0) {
           const play = plays[0];
           console.log(`   Sample play: Period ${play.period}, ${play.play_text}`);
-          console.log(`   Down: ${play.down}, Distance: ${play.distance}, Yard line: ${play.yard_line}`);
+          console.log(
+            `   Down: ${play.down}, Distance: ${play.distance}, Yard line: ${play.yard_line}`
+          );
         }
       } catch (err) {
         console.log(`⚠️  Play-by-play not available for this game`);
@@ -142,7 +152,9 @@ async function testCFBDIntegration() {
     console.log();
 
     console.log('✅ All CFBD integration tests completed successfully!\n');
-    console.log('🎉 The CollegeFootballData API is now fully integrated with BlazeSportsIntel.com!\n');
+    console.log(
+      '🎉 The CollegeFootballData API is now fully integrated with BlazeSportsIntel.com!\n'
+    );
     console.log('📝 Integration Summary:');
     console.log('   - Rankings API: ✅ Working');
     console.log('   - Games API: ✅ Working');
@@ -152,7 +164,6 @@ async function testCFBDIntegration() {
     console.log('   - Records API: ✅ Working');
     console.log('   - Play-by-Play API: ✅ Working');
     console.log('   - Conferences API: ✅ Working\n');
-
   } catch (error: any) {
     console.error('❌ Test failed:', error.message);
     if (error.stack) {

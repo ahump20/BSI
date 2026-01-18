@@ -9,6 +9,7 @@ This game contains no NFL trademarks, player likenesses, team logos, or city nam
 ## Features
 
 ### Gameplay
+
 - **7-on-7 Format**: Simplified football with focus on offense
 - **60-Second Challenge**: Score as many points as possible in one drive
 - **Arcade Physics**: Instant acceleration, turbo boost, exaggerated tackles
@@ -16,46 +17,50 @@ This game contains no NFL trademarks, player likenesses, team logos, or city nam
 
 ### Controls
 
-| Input | Action |
-|-------|--------|
-| W/A/S/D | Move player |
-| Shift | Turbo boost (drains stamina) |
-| Space | Snap ball / Throw / Tackle |
-| 1-5 | Select receiver target |
-| Click | Select receiver (mouse) |
+| Input   | Action                       |
+| ------- | ---------------------------- |
+| W/A/S/D | Move player                  |
+| Shift   | Turbo boost (drains stamina) |
+| Space   | Snap ball / Throw / Tackle   |
+| 1-5     | Select receiver target       |
+| Click   | Select receiver (mouse)      |
 
 ### Scoring
 
-| Action | Points |
-|--------|--------|
-| Yards gained | +10 per yard |
-| Turbo yards | +15 per yard |
-| First down | +100 bonus |
-| Big play (20+ yds) | +200 bonus |
-| Touchdown | +700 bonus |
-| Stiff-arm | +50 bonus |
-| Juke | +75 bonus |
+| Action             | Points       |
+| ------------------ | ------------ |
+| Yards gained       | +10 per yard |
+| Turbo yards        | +15 per yard |
+| First down         | +100 bonus   |
+| Big play (20+ yds) | +200 bonus   |
+| Touchdown          | +700 bonus   |
+| Stiff-arm          | +50 bonus    |
+| Juke               | +75 bonus    |
 
 ## Teams
 
 ### Playable Teams
 
 **Blaze Firebirds** (Default)
+
 - Colors: Burnt Orange / Ember / Gold
 - Stats: OFF 8 | DEF 6 | SPD 8 | PWR 7
 - Special: Phoenix Rising (Turbo regenerates 50% faster when behind)
 
 **Storm Thunder**
+
 - Colors: Gold / Navy / White
 - Stats: OFF 9 | DEF 5 | SPD 10 | PWR 5
 - Special: Lightning Strike (Big plays give 2x bonus points)
 
 **Iron Titans**
+
 - Colors: Iron Gray / Dark Red / Silver
 - Stats: OFF 7 | DEF 7 | SPD 5 | PWR 10
 - Special: Iron Will (Cannot be tackled for loss on first contact)
 
 **Venom Vipers**
+
 - Colors: Forest Green / Black / Gold
 - Stats: OFF 8 | DEF 8 | SPD 9 | PWR 6
 - Special: Venom Strike (Stiff-arms have 100% success rate)
@@ -63,6 +68,7 @@ This game contains no NFL trademarks, player likenesses, team logos, or city nam
 ### AI Opponent
 
 **Shadow Wolves**
+
 - Colors: Midnight / Royal Blue / Silver
 - Stats: OFF 6 | DEF 9 | SPD 7 | PWR 8
 - Special: Pack Hunter (Defenders converge 25% faster)
@@ -70,6 +76,7 @@ This game contains no NFL trademarks, player likenesses, team logos, or city nam
 ## Technical Architecture
 
 ### Tech Stack
+
 - **Engine**: Babylon.js 7.x
 - **Physics**: Havok Physics (via @babylonjs/havok)
 - **Build**: Vite + TypeScript
@@ -107,18 +114,21 @@ blitz/
 ## Physics System
 
 ### Player Movement
+
 - **Acceleration**: 0.2 seconds to max speed (snappy arcade feel)
 - **Base Speed**: 15 yards/second
 - **Turbo Boost**: 1.5x speed multiplier
 - **Stamina**: 100 points, drains at 25/sec during turbo, regens at 15/sec
 
 ### Ball Physics
+
 - **Bullet Pass**: Hold throw button for flattened arc, higher velocity
 - **Touch Pass**: Normal arc for timing routes
 - **Lob Pass**: High arc for deep throws
 - **Catch Radius**: 2.5 yard magnetic snap zone
 
 ### Tackle System
+
 - **Tackle Radius**: 1.5 yards (sphere overlap check)
 - **Late Hit Window**: 1.5 seconds after whistle
 - **Knockback Impulse**: 8 units
@@ -128,18 +138,22 @@ blitz/
 ### Steering Behaviors (Yuka.js-inspired)
 
 **Pursuit**: Predicts ball carrier position and intercepts
+
 - Look-ahead time: 0.5 seconds
 - Adjusts based on distance and speed
 
 **Interpose**: Positions between ball and receiver
+
 - Used for coverage assignments
 - Configurable ratio (default: 0.6 toward receiver)
 
 **Separation**: Prevents defender clustering
+
 - Minimum separation: 3 yards
 - Weighted by inverse distance
 
 **Arrival**: Slows down when approaching target
+
 - Prevents overshooting
 - Smooth deceleration radius: 5 yards
 
@@ -177,6 +191,7 @@ Submit a game score.
 Fetch leaderboard entries.
 
 Query params:
+
 - `limit` (default: 10, max: 100)
 - `offset` (default: 0)
 - `period` (alltime, daily, weekly, monthly)
@@ -205,21 +220,22 @@ function App() {
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| width | string/number | "100%" | Container width |
-| height | string/number | "600px" | Container height |
-| playerId | string | auto-generated | Player ID for leaderboard |
-| playerName | string | undefined | Display name |
-| defaultTeamId | string | "team_firebirds" | Initial team selection |
-| autoStart | boolean | false | Start game immediately |
-| apiEndpoint | string | "/api/blitz" | API base URL |
-| onGameOver | function | undefined | Callback on game end |
-| onGameStateChange | function | undefined | Callback on state updates |
+| Prop              | Type          | Default          | Description               |
+| ----------------- | ------------- | ---------------- | ------------------------- |
+| width             | string/number | "100%"           | Container width           |
+| height            | string/number | "600px"          | Container height          |
+| playerId          | string        | auto-generated   | Player ID for leaderboard |
+| playerName        | string        | undefined        | Display name              |
+| defaultTeamId     | string        | "team_firebirds" | Initial team selection    |
+| autoStart         | boolean       | false            | Start game immediately    |
+| apiEndpoint       | string        | "/api/blitz"     | API base URL              |
+| onGameOver        | function      | undefined        | Callback on game end      |
+| onGameStateChange | function      | undefined        | Callback on state updates |
 
 ## Development
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or pnpm
 
@@ -263,12 +279,14 @@ npm run db:migrate:production
 ## Visual Style
 
 ### 90s Arcade Aesthetic
+
 - Skewed UI elements (`transform: skewX(-10deg)`)
 - Neon glow effects
 - CRT scanline overlay
 - Heavy sans-serif typography (Russo One)
 
 ### Color Palette
+
 - Neon Green: #39FF14
 - Hot Pink: #FF6EC7
 - Construction Yellow: #FFD700
@@ -276,6 +294,7 @@ npm run db:migrate:production
 - Purple: #9D00FF
 
 ### Brand Colors
+
 - Burnt Orange: #BF5700
 - Ember: #FF6B35
 - Gold: #C9A227
@@ -286,14 +305,15 @@ npm run db:migrate:production
 
 ### Safe Terminology
 
-| Avoid | Use Instead |
-|-------|-------------|
-| Super Bowl | The Big Game, Championship |
-| NFL | Pro League, Gridiron League |
+| Avoid             | Use Instead                           |
+| ----------------- | ------------------------------------- |
+| Super Bowl        | The Big Game, Championship            |
+| NFL               | Pro League, Gridiron League           |
 | Real player names | Position names (Quarterback, Blitzer) |
-| City names | Generic team names |
+| City names        | Generic team names                    |
 
 ### No Trademarked Content
+
 - No NFL team colors or logos
 - No real player likenesses
 - No stadium names
@@ -312,4 +332,4 @@ UNLICENSED - Proprietary software of Blaze Sports Intel.
 
 ---
 
-*Built with love in Boerne, Texas. Born to Blaze the Path Less Beaten.*
+_Built with love in Boerne, Texas. Born to Blaze the Path Less Beaten._

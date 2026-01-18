@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "The 15 Club",
     "lead_contact": "T.J. Beisner",
-    "contact_channels": [
-      "info@the15club.com",
-      "https://www.the15club.com/contact"
-    ],
+    "contact_channels": ["info@the15club.com", "https://www.the15club.com/contact"],
     "recent_initiatives": "Rolling out diamond club events with bourbon partners ahead of 2025 season.",
     "intel_status": "needs_verification"
   },
@@ -60,9 +57,7 @@
   "front_office": {
     "athletic_director": "Mitch Barnhart",
     "baseball_admin": "Sandy Bell",
-    "financial_points_of_contact": [
-      "ukathletics@uky.edu"
-    ]
+    "financial_points_of_contact": ["ukathletics@uky.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 0,

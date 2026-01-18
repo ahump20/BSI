@@ -32,6 +32,9 @@ import { FootballPhysics, PassType } from './BallPhysics';
 import { PlayerController, TouchController } from './PlayerController';
 import { SteeringBehaviors, DefenderAI, SteeringAgent } from './SteeringAI';
 import { AudioManager } from './AudioManager';
+import { Stadium } from './Stadium';
+import { VisualEffects } from './VisualEffects';
+import { PlayerModelFactory, createFootballMesh } from './PlayerModels';
 import type { BlitzTeam, PlayerPosition } from '@data/teams';
 import { FIREBIRDS, SHADOW_WOLVES, OFFENSIVE_POSITIONS, DEFENSIVE_POSITIONS } from '@data/teams';
 import type { OffensivePlay, DefensivePlay } from '@data/plays';
@@ -39,10 +42,10 @@ import { getAllOffensivePlays, getSmartDefensivePlay } from '@data/plays';
 
 /** Game phase */
 export type GamePhase =
-  | 'pre_snap'      // Selecting play, setting up
-  | 'play_active'   // Ball is live
-  | 'post_play'     // After whistle, before next play
-  | 'game_over';    // Drive finished
+  | 'pre_snap' // Selecting play, setting up
+  | 'play_active' // Ball is live
+  | 'post_play' // After whistle, before next play
+  | 'game_over'; // Drive finished
 
 /** Game state */
 export interface BlitzGameState {
@@ -50,18 +53,18 @@ export interface BlitzGameState {
   yardsGained: number;
   touchdowns: number;
   firstDowns: number;
-  bigPlays: number;       // 20+ yard plays
+  bigPlays: number; // 20+ yard plays
   turnovers: number;
-  turboYards: number;     // Yards gained while using turbo
+  turboYards: number; // Yards gained while using turbo
   stiffArms: number;
   jukes: number;
   tacklesMade: number;
 
   // Current drive info
-  down: number;           // 1-4
+  down: number; // 1-4
   yardsToGo: number;
   lineOfScrimmage: number; // Yard line (0-100)
-  timeRemaining: number;  // Milliseconds
+  timeRemaining: number; // Milliseconds
 
   // Current play
   phase: GamePhase;
@@ -89,13 +92,13 @@ export interface BlitzGameResult {
 
 /** Scoring configuration */
 const SCORING = {
-  yardsGained: 10,        // Per yard
-  turboYards: 15,         // Per yard while turbo
-  firstDown: 100,         // Bonus per first down
-  bigPlay: 200,           // 20+ yard plays
-  touchdown: 700,         // Touchdown bonus
-  stiffArm: 50,           // Per successful stiff-arm
-  juke: 75,               // Per successful juke
+  yardsGained: 10, // Per yard
+  turboYards: 15, // Per yard while turbo
+  firstDown: 100, // Bonus per first down
+  bigPlay: 200, // 20+ yard plays
+  touchdown: 700, // Touchdown bonus
+  stiffArm: 50, // Per successful stiff-arm
+  juke: 75, // Per successful juke
 } as const;
 
 /** Game configuration */
@@ -137,12 +140,18 @@ export class BlitzGameEngine {
   private touchController: TouchController | null = null;
   private defenderAIs: DefenderAI[] = [];
 
+  // Enhanced systems
+  private stadium: Stadium | null = null;
+  private visualEffects: VisualEffects | null = null;
+  private playerModelFactory: PlayerModelFactory | null = null;
+
   // Player meshes
   private offensivePlayers: Map<string, Mesh> = new Map();
   private defensivePlayers: Map<string, Mesh> = new Map();
   private qbMesh: Mesh | null = null;
+  private footballMesh: Mesh | null = null;
 
-  // Visual effects
+  // Visual effects (legacy - now using VisualEffects class)
   private tackleParticles: ParticleSystem | null = null;
   private touchdownParticles: ParticleSystem | null = null;
 
@@ -209,7 +218,9 @@ export class BlitzGameEngine {
     this.setupLighting();
     this.setupPostProcessing();
     this.createField();
-    this.createPlayers();
+    this.buildStadium();
+    this.initializeVisualEffects();
+    this.createEnhancedPlayers();
     this.setupBall();
     this.setupControls();
     this.createVisualEffects();
@@ -223,6 +234,32 @@ export class BlitzGameEngine {
 
     // Handle resize
     window.addEventListener('resize', () => this.engine.resize());
+  }
+
+  /** Build enhanced stadium environment */
+  private buildStadium(): void {
+    this.stadium = new Stadium(this.scene);
+    this.stadium.build();
+  }
+
+  /** Initialize visual effects system */
+  private initializeVisualEffects(): void {
+    this.visualEffects = new VisualEffects(this.scene);
+    this.visualEffects.setCamera(this.camera);
+  }
+
+  /** Create enhanced player models */
+  private createEnhancedPlayers(): void {
+    this.playerModelFactory = new PlayerModelFactory(this.scene);
+
+    // Create football mesh
+    this.footballMesh = this.playerModelFactory.createFootball();
+    this.footballMesh.isVisible = false; // Hide until snap
+
+    // Add to shadow caster
+    if (this.shadowGenerator && this.footballMesh) {
+      this.shadowGenerator.addShadowCaster(this.footballMesh);
+    }
   }
 
   /** Setup procedural audio */
@@ -243,11 +280,7 @@ export class BlitzGameEngine {
 
   private setupCamera(): void {
     // Follow camera that tracks the ball carrier
-    this.camera = new FollowCamera(
-      'camera',
-      new Vector3(0, 20, -15),
-      this.scene
-    );
+    this.camera = new FollowCamera('camera', new Vector3(0, 20, -15), this.scene);
 
     this.camera.heightOffset = 25;
     this.camera.radius = 35;
@@ -264,11 +297,7 @@ export class BlitzGameEngine {
 
   private setupLighting(): void {
     // Stadium lights (bright)
-    const mainLight = new DirectionalLight(
-      'mainLight',
-      new Vector3(-0.5, -1, 0.5),
-      this.scene
-    );
+    const mainLight = new DirectionalLight('mainLight', new Vector3(-0.5, -1, 0.5), this.scene);
     mainLight.intensity = 1.2;
     mainLight.diffuse = Color3.White();
     mainLight.position = new Vector3(50, 80, -50);
@@ -279,11 +308,7 @@ export class BlitzGameEngine {
     this.shadowGenerator.blurScale = 2;
 
     // Ambient fill
-    const ambientLight = new HemisphericLight(
-      'ambient',
-      new Vector3(0, 1, 0),
-      this.scene
-    );
+    const ambientLight = new HemisphericLight('ambient', new Vector3(0, 1, 0), this.scene);
     ambientLight.intensity = 0.5;
     ambientLight.diffuse = new Color3(0.9, 0.9, 1.0);
     ambientLight.groundColor = new Color3(0.2, 0.4, 0.2);
@@ -293,12 +318,7 @@ export class BlitzGameEngine {
   }
 
   private setupPostProcessing(): void {
-    const pipeline = new DefaultRenderingPipeline(
-      'pipeline',
-      true,
-      this.scene,
-      [this.camera]
-    );
+    const pipeline = new DefaultRenderingPipeline('pipeline', true, this.scene, [this.camera]);
 
     // Bloom for arcade glow
     pipeline.bloomEnabled = true;
@@ -316,11 +336,7 @@ export class BlitzGameEngine {
   }
 
   private createField(): void {
-    this.field = new FootballField(
-      this.scene,
-      this.config.homeTeam,
-      this.config.awayTeam
-    );
+    this.field = new FootballField(this.scene, this.config.homeTeam, this.config.awayTeam);
     this.field.build();
   }
 
@@ -363,17 +379,9 @@ export class BlitzGameEngine {
     });
   }
 
-  private createPlayerMesh(
-    id: string,
-    team: BlitzTeam,
-    isOffense: boolean
-  ): Mesh {
+  private createPlayerMesh(id: string, team: BlitzTeam, isOffense: boolean): Mesh {
     // Capsule body (blocky/low-poly style)
-    const body = MeshBuilder.CreateCapsule(
-      `player_${id}`,
-      { radius: 0.5, height: 2 },
-      this.scene
-    );
+    const body = MeshBuilder.CreateCapsule(`player_${id}`, { radius: 0.5, height: 2 }, this.scene);
 
     // Team color material
     const mat = new StandardMaterial(`playerMat_${id}`, this.scene);
@@ -382,11 +390,7 @@ export class BlitzGameEngine {
     body.material = mat;
 
     // Helmet (sphere on top)
-    const helmet = MeshBuilder.CreateSphere(
-      `helmet_${id}`,
-      { diameter: 0.6 },
-      this.scene
-    );
+    const helmet = MeshBuilder.CreateSphere(`helmet_${id}`, { diameter: 0.6 }, this.scene);
     helmet.position.y = 1.1;
     helmet.parent = body;
 
@@ -451,7 +455,9 @@ export class BlitzGameEngine {
     this.tackleParticles.direction1 = new Vector3(-3, 2, -3);
     this.tackleParticles.direction2 = new Vector3(3, 5, 3);
     this.tackleParticles.color1 = Color3.FromHexString(COLORS.arcade.neonGreen).toColor4(1);
-    this.tackleParticles.color2 = Color3.FromHexString(COLORS.arcade.constructionYellow).toColor4(1);
+    this.tackleParticles.color2 = Color3.FromHexString(COLORS.arcade.constructionYellow).toColor4(
+      1
+    );
     this.tackleParticles.colorDead = new Color4(0, 1, 0, 0);
 
     // Touchdown celebration particles
@@ -520,10 +526,7 @@ export class BlitzGameEngine {
     this.gameState.currentPlay = this.selectedPlay;
 
     // AI selects defensive play
-    this.defensivePlay = getSmartDefensivePlay(
-      this.gameState.down,
-      this.gameState.yardsToGo
-    );
+    this.defensivePlay = getSmartDefensivePlay(this.gameState.down, this.gameState.yardsToGo);
 
     // Position players
     this.positionPlayersForPlay();
@@ -687,13 +690,32 @@ export class BlitzGameEngine {
         (this.camera.lockedTarget as Mesh).position = pos;
       }
 
-      // Track turbo yards
+      // Add ball carrier highlight if not already added
+      if (this.visualEffects && this.qbMesh) {
+        this.visualEffects.addBallCarrierHighlight(this.qbMesh);
+      }
+
+      // Track turbo yards and add speed trail
       if (this.playerController.isTurboOn()) {
         const velocity = this.playerController.getVelocity();
         const yardsThisFrame = velocity.length() * deltaTime;
-        if (velocity.z > 0) { // Moving forward
+        if (velocity.z > 0) {
+          // Moving forward
           this.gameState.turboYards += yardsThisFrame;
         }
+
+        // Add speed trail during turbo
+        if (this.visualEffects) {
+          this.visualEffects.addSpeedTrail(
+            this.qbMesh,
+            Color3.FromHexString(this.config.homeTeam.accentColor),
+            'qb_trail'
+          );
+          this.visualEffects.updateTrailForSpeed('qb_trail', velocity.length(), 12);
+        }
+      } else {
+        // Remove trail when not using turbo
+        this.visualEffects?.removeSpeedTrail('qb_trail');
       }
     }
 
@@ -813,6 +835,13 @@ export class BlitzGameEngine {
           this.ballCarrierId = targetId;
           // Play catch sound
           this.audioManager?.playSFX('catch');
+
+          // Add catch visual effect
+          if (this.visualEffects) {
+            this.visualEffects.createCatchEffect(targetMesh.position);
+            this.visualEffects.addBallCarrierHighlight(targetMesh);
+          }
+
           // Switch camera to follow receiver
           if (this.camera.lockedTarget) {
             (this.camera.lockedTarget as Mesh).position = targetMesh.position;
@@ -831,20 +860,32 @@ export class BlitzGameEngine {
 
     // Play tackle sound (big tackle if high velocity collision)
     const carrierVelocity = this.playerController?.getVelocity()?.length() || 0;
-    if (carrierVelocity > 10) {
+    const isBigHit = carrierVelocity > 10;
+
+    if (isBigHit) {
       this.audioManager?.playSFX('tackle_big');
     } else {
       this.audioManager?.playSFX('tackle');
     }
 
-    // Tackle particles
-    if (this.tackleParticles && this.ballCarrierId) {
-      const carrierPos = this.getBallCarrierPosition();
-      if (carrierPos) {
-        this.tackleParticles.emitter = carrierPos;
-        this.tackleParticles.start();
-        setTimeout(() => this.tackleParticles?.stop(), 300);
+    // Enhanced tackle impact effect
+    const carrierPos = this.getBallCarrierPosition();
+    if (carrierPos && this.visualEffects) {
+      // Determine impact intensity based on collision speed
+      const intensity = isBigHit ? 'heavy' : 'medium';
+      this.visualEffects.createTackleImpact(carrierPos, intensity);
+
+      // Trigger crowd reaction for big hits
+      if (isBigHit && this.stadium) {
+        this.stadium.triggerCrowdCheer();
       }
+    }
+
+    // Legacy tackle particles (fallback)
+    if (this.tackleParticles && this.ballCarrierId && carrierPos) {
+      this.tackleParticles.emitter = carrierPos;
+      this.tackleParticles.start();
+      setTimeout(() => this.tackleParticles?.stop(), 300);
     }
 
     this.gameState.tacklesMade++;
@@ -858,8 +899,20 @@ export class BlitzGameEngine {
     // Play touchdown fanfare
     this.audioManager?.playSFX('touchdown');
 
-    // Touchdown particles
+    // Touchdown position
     const tdPos = this.getBallCarrierPosition() || new Vector3(0, 0, 100);
+
+    // Enhanced touchdown celebration
+    if (this.visualEffects) {
+      this.visualEffects.triggerTouchdown(tdPos);
+    }
+
+    // Stadium celebration (fireworks, crowd roar)
+    if (this.stadium) {
+      this.stadium.triggerTouchdownCelebration(tdPos);
+    }
+
+    // Legacy touchdown particles (fallback)
     if (this.touchdownParticles) {
       this.touchdownParticles.emitter = tdPos;
       this.touchdownParticles.start();
@@ -874,21 +927,33 @@ export class BlitzGameEngine {
     this.playerController?.blowWhistle();
     this.ball?.markDead();
 
+    // Remove ball carrier highlight
+    this.visualEffects?.removeBallCarrierHighlight();
+
     // Play whistle sound
     this.audioManager?.playSFX('whistle');
 
     // Calculate yards gained
     const endYardLine = this.getBallCarrierPosition()?.z || this.gameState.lineOfScrimmage;
     const yardsThisPlay = endYardLine - this.playStartYardLine;
+    const endPosition = this.getBallCarrierPosition() || new Vector3(0, 0, endYardLine);
 
     if (yardsThisPlay > 0 && !isIncomplete) {
       this.gameState.yardsGained += yardsThisPlay;
       this.gameState.score += Math.floor(yardsThisPlay * SCORING.yardsGained);
 
-      // Big play bonus
+      // Big play bonus with enhanced effects
       if (yardsThisPlay >= 20) {
         this.gameState.bigPlays++;
         this.gameState.score += SCORING.bigPlay;
+
+        // Trigger big play celebration
+        if (this.visualEffects) {
+          this.visualEffects.triggerBigPlay(endPosition, yardsThisPlay);
+        }
+        if (this.stadium) {
+          this.stadium.triggerCrowdCheer();
+        }
       }
 
       // Update longest play
@@ -905,8 +970,12 @@ export class BlitzGameEngine {
         this.gameState.score += SCORING.firstDown;
         this.gameState.down = 1;
         this.gameState.yardsToGo = 10;
-        // Play first down sound
+
+        // Play first down sound and visual effect
         this.audioManager?.playSFX('first_down');
+        if (this.visualEffects) {
+          this.visualEffects.createFirstDownEffect(this.gameState.lineOfScrimmage + 10);
+        }
       } else {
         this.gameState.down++;
         this.gameState.yardsToGo -= yardsThisPlay;
@@ -983,12 +1052,23 @@ export class BlitzGameEngine {
   /** Dispose resources */
   public dispose(): void {
     this.isGameOver = true;
+
+    // Dispose enhanced systems
+    this.visualEffects?.dispose();
+    this.stadium?.dispose();
+    this.footballMesh?.dispose();
+
+    // Dispose core systems
     this.audioManager?.dispose();
     this.field?.dispose();
     this.ball?.dispose();
     this.playerController?.dispose();
+
+    // Dispose legacy effects
     this.tackleParticles?.dispose();
     this.touchdownParticles?.dispose();
+
+    // Dispose scene and engine
     this.scene.dispose();
     this.engine.dispose();
   }

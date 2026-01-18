@@ -7,12 +7,14 @@ Successfully linked the NCAA Baseball Top 25 Rankings page to the Game Center wi
 ### Deployment Status
 
 **Rankings Worker**:
+
 - Version: `36cb3ab4-48da-460b-a96c-eef760f2ff92`
 - Deployed: November 5, 2025
 - URL: https://blazesportsintel.com/baseball/rankings
 - Status: ✅ Live and functional
 
 **Game Center Page**:
+
 - Deployment: `f4b6ff7d.blazesportsintel.pages.dev`
 - Deployed: November 5, 2025
 - URL: https://blazesportsintel.com/college-baseball/games/
@@ -79,9 +81,7 @@ Added "Top 25 Teams Only" checkbox filter:
 <div class="filter-group">
   <label class="filter-checkbox">
     <input type="checkbox" id="ranked-filter" aria-label="Show only Top 25 ranked teams" />
-    <span class="checkbox-label">
-      <i class="fas fa-trophy"></i> Top 25 Teams Only
-    </span>
+    <span class="checkbox-label"> <i class="fas fa-trophy"></i> Top 25 Teams Only </span>
   </label>
 </div>
 ```
@@ -100,7 +100,7 @@ let currentFilters = {
   date: today,
   conference: '',
   status: '',
-  ranked: rankedFromURL  // NEW: ranked filter state
+  ranked: rankedFromURL, // NEW: ranked filter state
 };
 
 // Set ranked checkbox based on URL parameter
@@ -115,7 +115,7 @@ if (rankedFromURL) {
 Added change handler for ranked checkbox:
 
 ```javascript
-rankedCheckbox.addEventListener('change', e => {
+rankedCheckbox.addEventListener('change', (e) => {
   currentFilters.ranked = e.target.checked;
   loadGames();
 });
@@ -130,7 +130,7 @@ const params = new URLSearchParams();
 if (currentFilters.date) params.append('date', currentFilters.date);
 if (currentFilters.conference) params.append('conference', currentFilters.conference);
 if (currentFilters.status) params.append('status', currentFilters.status);
-if (currentFilters.ranked) params.append('ranked', 'true');  // NEW
+if (currentFilters.ranked) params.append('ranked', 'true'); // NEW
 
 const response = await fetch(`/api/college-baseball/scoreboard?${params}`);
 ```
@@ -157,7 +157,7 @@ Added comprehensive checkbox filter styling:
   border-color: rgba(255, 107, 0, 0.3);
 }
 
-.filter-checkbox input[type="checkbox"] {
+.filter-checkbox input[type='checkbox'] {
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;

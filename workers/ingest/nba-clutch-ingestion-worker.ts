@@ -11,7 +11,11 @@
  * @see https://developers.cloudflare.com/workers/
  */
 
-import { createNBAStatsClutchAdapter, ClutchSituation, ClutchPlayerAction } from '../../lib/adapters/nba-stats-clutch-adapter';
+import {
+  createNBAStatsClutchAdapter,
+  ClutchSituation,
+  ClutchPlayerAction,
+} from '../../lib/adapters/nba-stats-clutch-adapter';
 
 // ============================================================================
 // TYPES
@@ -89,7 +93,7 @@ export default {
 
     // Batch ingestion for date range
     if (url.pathname === '/ingest-range' && request.method === 'POST') {
-      const body = await request.json() as { startDate: string; endDate: string };
+      const body = (await request.json()) as { startDate: string; endDate: string };
       const results = await ingestDateRange(body.startDate, body.endDate, env);
       return new Response(JSON.stringify(results), {
         headers: { 'Content-Type': 'application/json' },
@@ -119,7 +123,8 @@ async function ingestTodaysGames(env: Env): Promise<any> {
   const today = new Date().toISOString().split('T')[0];
 
   // Get games scheduled for today
-  const gamesResult = await db.query(`
+  const gamesResult = await db.query(
+    `
     SELECT
       game_id,
       game_date,
@@ -132,7 +137,9 @@ async function ingestTodaysGames(env: Env): Promise<any> {
       AND sport = 'basketball'
       AND status IN ('in_progress', 'final')
     ORDER BY game_date DESC
-  `, [today]);
+  `,
+    [today]
+  );
 
   const games: GameToProcess[] = gamesResult.rows;
   console.log(`[NBA Clutch Worker] Found ${games.length} games to process`);
@@ -214,7 +221,8 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
   for (const situation of clutchSituations) {
     situation.playoff_game = isPlayoff;
 
-    const result = await db.query(`
+    const result = await db.query(
+      `
       INSERT INTO clutch_situations (
         game_id,
         situation_type,
@@ -240,25 +248,27 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
           playoff_game = EXCLUDED.playoff_game,
           updated_at = NOW()
       RETURNING situation_id
-    `, [
-      situation.game_id,
-      situation.situation_type,
-      situation.start_timestamp,
-      situation.end_timestamp,
-      situation.game_clock_start,
-      situation.game_clock_end,
-      situation.period,
-      situation.score_margin,
-      situation.score_margin_absolute,
-      situation.home_score,
-      situation.away_score,
-      situation.is_clutch_time,
-      situation.clutch_intensity,
-      situation.playoff_game,
-      situation.elimination_game,
-      JSON.stringify(situation.raw_payload),
-      situation.data_source,
-    ]);
+    `,
+      [
+        situation.game_id,
+        situation.situation_type,
+        situation.start_timestamp,
+        situation.end_timestamp,
+        situation.game_clock_start,
+        situation.game_clock_end,
+        situation.period,
+        situation.score_margin,
+        situation.score_margin_absolute,
+        situation.home_score,
+        situation.away_score,
+        situation.is_clutch_time,
+        situation.clutch_intensity,
+        situation.playoff_game,
+        situation.elimination_game,
+        JSON.stringify(situation.raw_payload),
+        situation.data_source,
+      ]
+    );
 
     situationIds.push(result.rows[0].situation_id);
   }
@@ -274,7 +284,8 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
     const situationId = situationIds[Math.floor(i / (allActions.length / situationIds.length))]; // Map actions to situations
 
     try {
-      await db.query(`
+      await db.query(
+        `
         INSERT INTO clutch_player_actions (
           situation_id,
           game_id,
@@ -296,25 +307,27 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
         ON CONFLICT DO NOTHING
-      `, [
-        situationId,
-        action.game_id,
-        action.player_id,
-        action.action_timestamp,
-        action.action_type,
-        action.action_subtype,
-        action.is_successful,
-        action.points_scored,
-        action.shot_distance,
-        action.shot_location_x,
-        action.shot_location_y,
-        action.defender_distance,
-        action.touch_time,
-        action.expected_points,
-        action.points_over_expected,
-        JSON.stringify(action.raw_payload),
-        action.data_source,
-      ]);
+      `,
+        [
+          situationId,
+          action.game_id,
+          action.player_id,
+          action.action_timestamp,
+          action.action_type,
+          action.action_subtype,
+          action.is_successful,
+          action.points_scored,
+          action.shot_distance,
+          action.shot_location_x,
+          action.shot_location_y,
+          action.defender_distance,
+          action.touch_time,
+          action.expected_points,
+          action.points_over_expected,
+          JSON.stringify(action.raw_payload),
+          action.data_source,
+        ]
+      );
 
       actionsInserted++;
     } catch (error) {
@@ -323,7 +336,9 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
     }
   }
 
-  console.log(`[NBA Clutch Worker] Successfully processed game ${gameId}: ${clutchSituations.length} situations, ${actionsInserted} actions`);
+  console.log(
+    `[NBA Clutch Worker] Successfully processed game ${gameId}: ${clutchSituations.length} situations, ${actionsInserted} actions`
+  );
 
   return {
     gameId,
@@ -338,17 +353,22 @@ async function ingestGame(gameId: string, env: Env): Promise<any> {
 async function ingestDateRange(startDate: string, endDate: string, env: Env): Promise<any> {
   const db = await connectDatabase(env.DATABASE_URL);
 
-  const gamesResult = await db.query(`
+  const gamesResult = await db.query(
+    `
     SELECT game_id
     FROM games
     WHERE game_date::date BETWEEN $1 AND $2
       AND sport = 'basketball'
       AND status = 'final'
     ORDER BY game_date ASC
-  `, [startDate, endDate]);
+  `,
+    [startDate, endDate]
+  );
 
   const gameIds: string[] = gamesResult.rows.map((r: any) => r.game_id);
-  console.log(`[NBA Clutch Worker] Found ${gameIds.length} games in range ${startDate} to ${endDate}`);
+  console.log(
+    `[NBA Clutch Worker] Found ${gameIds.length} games in range ${startDate} to ${endDate}`
+  );
 
   const results = {
     total: gameIds.length,
@@ -414,5 +434,5 @@ async function connectDatabase(databaseUrl: string): Promise<any> {
  * Sleep utility
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

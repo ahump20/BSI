@@ -28,12 +28,7 @@
     {
       "order": 2,
       "sport": "Football",
-      "levels": [
-        "Texas Youth Football",
-        "Texas High School (UIL 6A-1A)",
-        "SEC Football",
-        "NFL"
-      ],
+      "levels": ["Texas Youth Football", "Texas High School (UIL 6A-1A)", "SEC Football", "NFL"],
       "focusTeams": {
         "nfl": ["Titans"],
         "college": ["Texas Longhorns", "Alabama", "Georgia", "LSU", "Tennessee"],
@@ -47,7 +42,12 @@
         }
       },
       "daveCampbellsModel": {
-        "features": ["State Rankings", "Recruit Database", "Game Predictions", "Historical Archives"],
+        "features": [
+          "State Rankings",
+          "Recruit Database",
+          "Game Predictions",
+          "Historical Archives"
+        ],
         "coverage": "2,000+ Texas high school teams",
         "legacy": "Since 1960"
       }
@@ -55,12 +55,7 @@
     {
       "order": 3,
       "sport": "Basketball",
-      "levels": [
-        "AAU/Select",
-        "Texas High School",
-        "SEC Basketball",
-        "NBA"
-      ],
+      "levels": ["AAU/Select", "Texas High School", "SEC Basketball", "NBA"],
       "focusTeams": {
         "nba": ["Grizzlies"],
         "college": ["Texas", "Kentucky", "Auburn", "Tennessee", "Arkansas"],
@@ -71,12 +66,7 @@
     {
       "order": 4,
       "sport": "Track & Field",
-      "levels": [
-        "USATF Youth",
-        "Texas UIL",
-        "SEC Track",
-        "USA Track & Field"
-      ],
+      "levels": ["USATF Youth", "Texas UIL", "SEC Track", "USA Track & Field"],
       "focusPrograms": {
         "college": ["Texas", "LSU", "Arkansas", "Texas A&M", "Florida"],
         "highSchool": ["DeSoto", "Fort Bend Marshall", "Humble Summer Creek"],
@@ -86,7 +76,15 @@
   ],
   "regions": {
     "texas": {
-      "metros": ["Houston", "Dallas-Fort Worth", "San Antonio", "Austin", "East Texas", "West Texas", "Rio Grande Valley"],
+      "metros": [
+        "Houston",
+        "Dallas-Fort Worth",
+        "San Antonio",
+        "Austin",
+        "East Texas",
+        "West Texas",
+        "Rio Grande Valley"
+      ],
       "uil": {
         "districts": 245,
         "schools": 1480,
@@ -94,7 +92,19 @@
       }
     },
     "sec": {
-      "states": ["Texas", "Louisiana", "Mississippi", "Alabama", "Georgia", "Tennessee", "Florida", "South Carolina", "Kentucky", "Arkansas", "Missouri"],
+      "states": [
+        "Texas",
+        "Louisiana",
+        "Mississippi",
+        "Alabama",
+        "Georgia",
+        "Tennessee",
+        "Florida",
+        "South Carolina",
+        "Kentucky",
+        "Arkansas",
+        "Missouri"
+      ],
       "schools": 16,
       "championships": {
         "football": 13,
@@ -136,7 +146,13 @@
       "txHSFootball": {
         "algorithm": "Neural Network + Historical",
         "accuracy": "94.6%",
-        "factors": ["Returning starters", "Coaching tenure", "District strength", "Historical performance", "Transfer impact"]
+        "factors": [
+          "Returning starters",
+          "Coaching tenure",
+          "District strength",
+          "Historical performance",
+          "Transfer impact"
+        ]
       },
       "secBaseball": {
         "metrics": ["RPI", "Strength of Schedule", "Pitching depth", "Team ERA+", "OPS+"],
@@ -176,11 +192,25 @@
       },
       "pro": {
         "price": "$29/month",
-        "features": ["Advanced analytics", "Predictions", "API access", "Historical data", "Player comparisons", "Box scores"]
+        "features": [
+          "Advanced analytics",
+          "Predictions",
+          "API access",
+          "Historical data",
+          "Player comparisons",
+          "Box scores"
+        ]
       },
       "enterprise": {
         "price": "$199/month",
-        "features": ["Bulk export", "Custom alerts", "Priority support", "White-label", "Dedicated API", "Raw data access"]
+        "features": [
+          "Bulk export",
+          "Custom alerts",
+          "Priority support",
+          "White-label",
+          "Dedicated API",
+          "Raw data access"
+        ]
       }
     },
     "services": {

@@ -23,38 +23,213 @@ const API_DELAY_MS = 1000; // Rate limiting between API calls
 // CLI Arguments
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
-const specificYear = args.find(arg => arg.startsWith('--year='))?.split('=')[1];
+const specificYear = args.find((arg) => arg.startsWith('--year='))?.split('=')[1];
 
 /**
  * College World Series Champions and Runner-Ups (2000-2024)
  * Source: NCAA Official Records
  */
 const CWS_CHAMPIONS = [
-  { year: 2000, champion: 'LSU', runnerUp: 'Stanford', championScore: 6, runnerUpScore: 5, game: 'Finals Game 2' },
-  { year: 2001, champion: 'Miami', runnerUp: 'Stanford', championScore: 12, runnerUpScore: 1, game: 'Finals Game 1' },
-  { year: 2002, champion: 'Texas', runnerUp: 'South Carolina', championScore: 12, runnerUpScore: 6, game: 'Finals Game 2' },
-  { year: 2003, champion: 'Rice', runnerUp: 'Stanford', championScore: 14, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2004, champion: 'Cal State Fullerton', runnerUp: 'Texas', championScore: 3, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2005, champion: 'Texas', runnerUp: 'Florida', championScore: 6, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2006, champion: 'Oregon State', runnerUp: 'North Carolina', championScore: 3, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2007, champion: 'Oregon State', runnerUp: 'North Carolina', championScore: 9, runnerUpScore: 3, game: 'Finals Game 2' },
-  { year: 2008, champion: 'Fresno State', runnerUp: 'Georgia', championScore: 6, runnerUpScore: 1, game: 'Finals Game 2' },
-  { year: 2009, champion: 'LSU', runnerUp: 'Texas', championScore: 11, runnerUpScore: 4, game: 'Finals Game 2' },
-  { year: 2010, champion: 'South Carolina', runnerUp: 'UCLA', championScore: 2, runnerUpScore: 1, game: 'Finals Game 2' },
-  { year: 2011, champion: 'South Carolina', runnerUp: 'Florida', championScore: 5, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2012, champion: 'Arizona', runnerUp: 'South Carolina', championScore: 4, runnerUpScore: 1, game: 'Finals Game 1' },
-  { year: 2013, champion: 'UCLA', runnerUp: 'Mississippi State', championScore: 8, runnerUpScore: 0, game: 'Finals Game 2' },
-  { year: 2014, champion: 'Vanderbilt', runnerUp: 'Virginia', championScore: 3, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2015, champion: 'Virginia', runnerUp: 'Vanderbilt', championScore: 4, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2016, champion: 'Coastal Carolina', runnerUp: 'Arizona', championScore: 4, runnerUpScore: 3, game: 'Finals Game 2' },
-  { year: 2017, champion: 'Florida', runnerUp: 'LSU', championScore: 6, runnerUpScore: 1, game: 'Finals Game 2' },
-  { year: 2018, champion: 'Oregon State', runnerUp: 'Arkansas', championScore: 5, runnerUpScore: 0, game: 'Finals Game 2' },
-  { year: 2019, champion: 'Vanderbilt', runnerUp: 'Michigan', championScore: 8, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2020, champion: null, runnerUp: null, championScore: null, runnerUpScore: null, game: 'Cancelled - COVID-19' },
-  { year: 2021, champion: 'Mississippi State', runnerUp: 'Vanderbilt', championScore: 9, runnerUpScore: 0, game: 'Finals Game 3' },
-  { year: 2022, champion: 'Ole Miss', runnerUp: 'Oklahoma', championScore: 4, runnerUpScore: 2, game: 'Finals Game 2' },
-  { year: 2023, champion: 'LSU', runnerUp: 'Florida', championScore: 18, runnerUpScore: 4, game: 'Finals Game 2' },
-  { year: 2024, champion: 'Tennessee', runnerUp: 'Texas A&M', championScore: 6, runnerUpScore: 5, game: 'Finals Game 2' }
+  {
+    year: 2000,
+    champion: 'LSU',
+    runnerUp: 'Stanford',
+    championScore: 6,
+    runnerUpScore: 5,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2001,
+    champion: 'Miami',
+    runnerUp: 'Stanford',
+    championScore: 12,
+    runnerUpScore: 1,
+    game: 'Finals Game 1',
+  },
+  {
+    year: 2002,
+    champion: 'Texas',
+    runnerUp: 'South Carolina',
+    championScore: 12,
+    runnerUpScore: 6,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2003,
+    champion: 'Rice',
+    runnerUp: 'Stanford',
+    championScore: 14,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2004,
+    champion: 'Cal State Fullerton',
+    runnerUp: 'Texas',
+    championScore: 3,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2005,
+    champion: 'Texas',
+    runnerUp: 'Florida',
+    championScore: 6,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2006,
+    champion: 'Oregon State',
+    runnerUp: 'North Carolina',
+    championScore: 3,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2007,
+    champion: 'Oregon State',
+    runnerUp: 'North Carolina',
+    championScore: 9,
+    runnerUpScore: 3,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2008,
+    champion: 'Fresno State',
+    runnerUp: 'Georgia',
+    championScore: 6,
+    runnerUpScore: 1,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2009,
+    champion: 'LSU',
+    runnerUp: 'Texas',
+    championScore: 11,
+    runnerUpScore: 4,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2010,
+    champion: 'South Carolina',
+    runnerUp: 'UCLA',
+    championScore: 2,
+    runnerUpScore: 1,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2011,
+    champion: 'South Carolina',
+    runnerUp: 'Florida',
+    championScore: 5,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2012,
+    champion: 'Arizona',
+    runnerUp: 'South Carolina',
+    championScore: 4,
+    runnerUpScore: 1,
+    game: 'Finals Game 1',
+  },
+  {
+    year: 2013,
+    champion: 'UCLA',
+    runnerUp: 'Mississippi State',
+    championScore: 8,
+    runnerUpScore: 0,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2014,
+    champion: 'Vanderbilt',
+    runnerUp: 'Virginia',
+    championScore: 3,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2015,
+    champion: 'Virginia',
+    runnerUp: 'Vanderbilt',
+    championScore: 4,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2016,
+    champion: 'Coastal Carolina',
+    runnerUp: 'Arizona',
+    championScore: 4,
+    runnerUpScore: 3,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2017,
+    champion: 'Florida',
+    runnerUp: 'LSU',
+    championScore: 6,
+    runnerUpScore: 1,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2018,
+    champion: 'Oregon State',
+    runnerUp: 'Arkansas',
+    championScore: 5,
+    runnerUpScore: 0,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2019,
+    champion: 'Vanderbilt',
+    runnerUp: 'Michigan',
+    championScore: 8,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2020,
+    champion: null,
+    runnerUp: null,
+    championScore: null,
+    runnerUpScore: null,
+    game: 'Cancelled - COVID-19',
+  },
+  {
+    year: 2021,
+    champion: 'Mississippi State',
+    runnerUp: 'Vanderbilt',
+    championScore: 9,
+    runnerUpScore: 0,
+    game: 'Finals Game 3',
+  },
+  {
+    year: 2022,
+    champion: 'Ole Miss',
+    runnerUp: 'Oklahoma',
+    championScore: 4,
+    runnerUpScore: 2,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2023,
+    champion: 'LSU',
+    runnerUp: 'Florida',
+    championScore: 18,
+    runnerUpScore: 4,
+    game: 'Finals Game 2',
+  },
+  {
+    year: 2024,
+    champion: 'Tennessee',
+    runnerUp: 'Texas A&M',
+    championScore: 6,
+    runnerUpScore: 5,
+    game: 'Finals Game 2',
+  },
 ];
 
 /**
@@ -82,7 +257,7 @@ function generateCWSGameData(year, champion, runnerUp, championScore, runnerUpSc
     innings: 9,
     extra_innings: 0,
     lead_changes: Math.floor(Math.random() * 3) + 1, // Estimated 1-3 lead changes in competitive finals
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
   };
 }
 
@@ -98,101 +273,110 @@ async function fetchCWSBracketGames(year) {
 
   // CWS date range (bracket rounds only, finals handled separately)
   const startDate = `${year}0613`; // June 13
-  const endDate = `${year}0623`;   // June 23 (before finals)
+  const endDate = `${year}0623`; // June 23 (before finals)
 
   const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard?dates=${startDate}-${endDate}`;
 
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'BlazeSportsIntel/1.0' } }, (res) => {
-      let data = '';
+    https
+      .get(url, { headers: { 'User-Agent': 'BlazeSportsIntel/1.0' } }, (res) => {
+        let data = '';
 
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
 
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          const games = [];
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(data);
+            const games = [];
 
-          // Process events (games)
-          if (json.events && Array.isArray(json.events)) {
-            for (const event of json.events) {
-              // Only process CWS games (season.type = 5 or 6)
-              const seasonType = event.season?.type;
-              if (seasonType !== 5 && seasonType !== 6) continue;
+            // Process events (games)
+            if (json.events && Array.isArray(json.events)) {
+              for (const event of json.events) {
+                // Only process CWS games (season.type = 5 or 6)
+                const seasonType = event.season?.type;
+                if (seasonType !== 5 && seasonType !== 6) continue;
 
-              const competition = event.competitions?.[0];
-              if (!competition) continue;
+                const competition = event.competitions?.[0];
+                if (!competition) continue;
 
-              // Skip finals (we handle those separately)
-              if (seasonType === 6) continue;
+                // Skip finals (we handle those separately)
+                if (seasonType === 6) continue;
 
-              const competitors = competition.competitors || [];
-              const homeTeam = competitors.find(c => c.homeAway === 'home');
-              const awayTeam = competitors.find(c => c.homeAway === 'away');
+                const competitors = competition.competitors || [];
+                const homeTeam = competitors.find((c) => c.homeAway === 'home');
+                const awayTeam = competitors.find((c) => c.homeAway === 'away');
 
-              if (!homeTeam || !awayTeam) continue;
+                if (!homeTeam || !awayTeam) continue;
 
-              // Extract game data
-              const gameDate = event.date ? new Date(event.date).toISOString().split('T')[0] : `${year}-06-15`;
-              const venue = competition.venue?.fullName || (year <= 2010 ? 'Rosenblatt Stadium' : 'Charles Schwab Field Omaha');
-              const attendance = parseInt(competition.attendance) || (year <= 2010 ? 23000 : 25000);
+                // Extract game data
+                const gameDate = event.date
+                  ? new Date(event.date).toISOString().split('T')[0]
+                  : `${year}-06-15`;
+                const venue =
+                  competition.venue?.fullName ||
+                  (year <= 2010 ? 'Rosenblatt Stadium' : 'Charles Schwab Field Omaha');
+                const attendance =
+                  parseInt(competition.attendance) || (year <= 2010 ? 23000 : 25000);
 
-              // Determine tournament round from notes
-              let tournamentRound = 'College World Series - Bracket';
-              if (event.note) {
-                if (event.note.includes('Elimination')) {
-                  tournamentRound = 'College World Series - Elimination Game';
-                } else if (event.note.includes('Opening')) {
-                  tournamentRound = 'College World Series - Opening Round';
+                // Determine tournament round from notes
+                let tournamentRound = 'College World Series - Bracket';
+                if (event.note) {
+                  if (event.note.includes('Elimination')) {
+                    tournamentRound = 'College World Series - Elimination Game';
+                  } else if (event.note.includes('Opening')) {
+                    tournamentRound = 'College World Series - Opening Round';
+                  }
                 }
+
+                // Calculate extra innings
+                const homeScore = parseInt(homeTeam.score) || 0;
+                const awayScore = parseInt(awayTeam.score) || 0;
+                const linescores = homeTeam.linescores || [];
+                const innings = Math.max(9, linescores.length);
+                const extraInnings = Math.max(0, innings - 9);
+
+                // Generate unique game ID
+                const homeAbbr =
+                  homeTeam.team?.abbreviation?.toLowerCase().replace(/\s+/g, '-') || 'home';
+                const awayAbbr =
+                  awayTeam.team?.abbreviation?.toLowerCase().replace(/\s+/g, '-') || 'away';
+                const gameId = `cws-${year}-${gameDate.replace(/-/g, '')}-${homeAbbr}-${awayAbbr}`;
+
+                games.push({
+                  game_id: gameId,
+                  date: gameDate,
+                  home_team: homeTeam.team?.displayName || homeTeam.team?.name || 'Unknown',
+                  away_team: awayTeam.team?.displayName || awayTeam.team?.name || 'Unknown',
+                  home_score: homeScore,
+                  away_score: awayScore,
+                  sport: 'baseball',
+                  tournament_round: tournamentRound,
+                  venue,
+                  attendance,
+                  innings,
+                  extra_innings: extraInnings,
+                  lead_changes: 0, // ESPN doesn't provide this, set to 0
+                  created_at: new Date().toISOString(),
+                });
               }
-
-              // Calculate extra innings
-              const homeScore = parseInt(homeTeam.score) || 0;
-              const awayScore = parseInt(awayTeam.score) || 0;
-              const linescores = homeTeam.linescores || [];
-              const innings = Math.max(9, linescores.length);
-              const extraInnings = Math.max(0, innings - 9);
-
-              // Generate unique game ID
-              const homeAbbr = homeTeam.team?.abbreviation?.toLowerCase().replace(/\s+/g, '-') || 'home';
-              const awayAbbr = awayTeam.team?.abbreviation?.toLowerCase().replace(/\s+/g, '-') || 'away';
-              const gameId = `cws-${year}-${gameDate.replace(/-/g, '')}-${homeAbbr}-${awayAbbr}`;
-
-              games.push({
-                game_id: gameId,
-                date: gameDate,
-                home_team: homeTeam.team?.displayName || homeTeam.team?.name || 'Unknown',
-                away_team: awayTeam.team?.displayName || awayTeam.team?.name || 'Unknown',
-                home_score: homeScore,
-                away_score: awayScore,
-                sport: 'baseball',
-                tournament_round: tournamentRound,
-                venue,
-                attendance,
-                innings,
-                extra_innings: extraInnings,
-                lead_changes: 0, // ESPN doesn't provide this, set to 0
-                created_at: new Date().toISOString()
-              });
             }
-          }
 
-          console.log(`   📊 Found ${games.length} bracket games from ESPN API`);
-          resolve(games);
-        } catch (error) {
-          console.error(`   ⚠️  Failed to parse ESPN data: ${error.message}`);
-          // Return empty array on parse error - finals will still be inserted
-          resolve([]);
-        }
+            console.log(`   📊 Found ${games.length} bracket games from ESPN API`);
+            resolve(games);
+          } catch (error) {
+            console.error(`   ⚠️  Failed to parse ESPN data: ${error.message}`);
+            // Return empty array on parse error - finals will still be inserted
+            resolve([]);
+          }
+        });
+      })
+      .on('error', (error) => {
+        console.error(`   ⚠️  ESPN API error: ${error.message}`);
+        // Return empty array on network error - finals will still be inserted
+        resolve([]);
       });
-    }).on('error', (error) => {
-      console.error(`   ⚠️  ESPN API error: ${error.message}`);
-      // Return empty array on network error - finals will still be inserted
-      resolve([]);
-    });
   });
 }
 
@@ -257,26 +441,28 @@ function validateGame(game, year) {
 function generateInsertSQL(games) {
   if (games.length === 0) return '';
 
-  const values = games.map(game => {
-    const escapedValues = [
-      `'${game.game_id}'`,
-      `'${game.date}'`,
-      `'${game.home_team.replace(/'/g, "''")}'`,
-      `'${game.away_team.replace(/'/g, "''")}'`,
-      game.home_score,
-      game.away_score,
-      `'${game.sport}'`,
-      `'${game.tournament_round.replace(/'/g, "''")}'`,
-      `'${game.venue.replace(/'/g, "''")}'`,
-      game.attendance,
-      game.innings,
-      game.extra_innings ? 1 : 0,
-      game.lead_changes,
-      `'${game.created_at}'`
-    ].join(', ');
+  const values = games
+    .map((game) => {
+      const escapedValues = [
+        `'${game.game_id}'`,
+        `'${game.date}'`,
+        `'${game.home_team.replace(/'/g, "''")}'`,
+        `'${game.away_team.replace(/'/g, "''")}'`,
+        game.home_score,
+        game.away_score,
+        `'${game.sport}'`,
+        `'${game.tournament_round.replace(/'/g, "''")}'`,
+        `'${game.venue.replace(/'/g, "''")}'`,
+        game.attendance,
+        game.innings,
+        game.extra_innings ? 1 : 0,
+        game.lead_changes,
+        `'${game.created_at}'`,
+      ].join(', ');
 
-    return `(${escapedValues})`;
-  }).join(',\n  ');
+      return `(${escapedValues})`;
+    })
+    .join(',\n  ');
 
   return `
 INSERT OR IGNORE INTO historical_games (
@@ -311,7 +497,7 @@ function executeD1Command(sql, description) {
       // Pass CLOUDFLARE_API_TOKEN from environment
       const env = {
         ...process.env,
-        CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || ''
+        CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN || '',
       };
 
       output = execSync(
@@ -330,9 +516,10 @@ function executeD1Command(sql, description) {
     }
 
     // Check if the actual SQL execution succeeded by looking for success indicator
-    const succeeded = output.includes('"success": true') ||
-                      output.includes('Executed') ||
-                      output.includes('rows written');
+    const succeeded =
+      output.includes('"success": true') ||
+      output.includes('Executed') ||
+      output.includes('rows written');
 
     if (succeeded) {
       console.log(`✅ ${description}`);
@@ -368,7 +555,7 @@ async function ingestCWSHistoricalData() {
   const failedYears = [];
 
   for (const year of yearsToProcess) {
-    const championship = CWS_CHAMPIONS.find(c => c.year === year);
+    const championship = CWS_CHAMPIONS.find((c) => c.year === year);
 
     if (!championship) {
       console.log(`⚠️  No championship data for ${year} (year out of range)`);
@@ -429,7 +616,7 @@ async function ingestCWSHistoricalData() {
     }
 
     // Rate limiting
-    await new Promise(resolve => setTimeout(resolve, API_DELAY_MS));
+    await new Promise((resolve) => setTimeout(resolve, API_DELAY_MS));
   }
 
   // Summary
@@ -449,12 +636,14 @@ async function ingestCWSHistoricalData() {
 
   if (!dryRun && totalGamesInserted > 0) {
     console.log('\n🔍 Verify with query:');
-    console.log('   wrangler d1 execute blazesports-historical --remote --command="SELECT COUNT(*) as cws_games FROM historical_games WHERE tournament_round LIKE \'%College World Series%\'"');
+    console.log(
+      '   wrangler d1 execute blazesports-historical --remote --command="SELECT COUNT(*) as cws_games FROM historical_games WHERE tournament_round LIKE \'%College World Series%\'"'
+    );
   }
 }
 
 // Execute
-ingestCWSHistoricalData().catch(error => {
+ingestCWSHistoricalData().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

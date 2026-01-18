@@ -5,7 +5,12 @@
  * 100% Original IP - No Humongous Entertainment content
  */
 
-import { BackyardGameEngine, type GameResult, type BackyardGameState, HitType } from '@core/BackyardGameEngine';
+import {
+  BackyardGameEngine,
+  type GameResult,
+  type BackyardGameState,
+  HitType,
+} from '@core/BackyardGameEngine';
 import {
   STARTER_CHARACTERS,
   UNLOCKABLE_CHARACTERS,
@@ -396,10 +401,7 @@ function checkNewUnlocks(): string[] {
 
   // Check fields
   getAllFields().forEach((field) => {
-    if (
-      !playerStats.unlockedFields.includes(field.id) &&
-      isFieldUnlocked(field, playerStats)
-    ) {
+    if (!playerStats.unlockedFields.includes(field.id) && isFieldUnlocked(field, playerStats)) {
       playerStats.unlockedFields.push(field.id);
       newUnlocks.push(`Field: ${field.name}`);
     }
@@ -579,31 +581,34 @@ function handleCopyLink(): void {
   const score = lastGameResult?.finalScore || 0;
   const shareUrl = `https://blaze-backyard-baseball.pages.dev?ref=share&score=${score}`;
 
-  navigator.clipboard.writeText(shareUrl).then(() => {
-    copyLinkBtn.classList.add('copied');
-    copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+  navigator.clipboard
+    .writeText(shareUrl)
+    .then(() => {
+      copyLinkBtn.classList.add('copied');
+      copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      copyLinkBtn.classList.remove('copied');
-      copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  }).catch(() => {
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = shareUrl;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
+      setTimeout(() => {
+        copyLinkBtn.classList.remove('copied');
+        copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    })
+    .catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-    copyLinkBtn.classList.add('copied');
-    copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+      copyLinkBtn.classList.add('copied');
+      copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      copyLinkBtn.classList.remove('copied');
-      copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  });
+      setTimeout(() => {
+        copyLinkBtn.classList.remove('copied');
+        copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    });
 }
 
 /** Fetch and display leaderboard */
@@ -615,7 +620,9 @@ async function fetchLeaderboard(): Promise<void> {
     const response = await fetch('/api/backyard/leaderboard?limit=10');
     if (!response.ok) throw new Error('Failed to fetch leaderboard');
 
-    const data = (await response.json()) as { entries?: Array<{ playerId: string; playerName: string; score: number }> };
+    const data = (await response.json()) as {
+      entries?: Array<{ playerId: string; playerName: string; score: number }>;
+    };
     const entries = data.entries || [];
 
     leaderboardEl.innerHTML = `

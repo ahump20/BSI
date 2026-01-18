@@ -276,23 +276,26 @@ interface APIResponse<T> {
 // =============================================================================
 
 function formatTimestamp(): string {
-  return new Date().toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    new Date().toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 function corsHeaders(): HeadersInit {
   return {
     'Access-Control-Allow-Origin': 'https://chat.openai.com',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, openai-conversation-id, openai-ephemeral-user-id',
+    'Access-Control-Allow-Headers':
+      'Content-Type, Authorization, openai-conversation-id, openai-ephemeral-user-id',
     'Access-Control-Max-Age': '86400',
     'Content-Type': 'application/json',
   };
@@ -364,7 +367,7 @@ async function fetchMLBLive(env: Env): Promise<MLBLiveResponse> {
     throw new Error(`MLB API error: ${response.status}`);
   }
 
-  const rawGames = await response.json() as Array<{
+  const rawGames = (await response.json()) as Array<{
     GameID: number;
     Status: string;
     Inning: number | null;
@@ -433,32 +436,72 @@ function normalizeGameStatus(status: string): MLBGame['status'] {
 
 function getMLBTeamName(abbr: string): string {
   const teams: Record<string, string> = {
-    ARI: 'Arizona Diamondbacks', ATL: 'Atlanta Braves', BAL: 'Baltimore Orioles',
-    BOS: 'Boston Red Sox', CHC: 'Chicago Cubs', CWS: 'Chicago White Sox',
-    CIN: 'Cincinnati Reds', CLE: 'Cleveland Guardians', COL: 'Colorado Rockies',
-    DET: 'Detroit Tigers', HOU: 'Houston Astros', KC: 'Kansas City Royals',
-    LAA: 'Los Angeles Angels', LAD: 'Los Angeles Dodgers', MIA: 'Miami Marlins',
-    MIL: 'Milwaukee Brewers', MIN: 'Minnesota Twins', NYM: 'New York Mets',
-    NYY: 'New York Yankees', OAK: 'Oakland Athletics', PHI: 'Philadelphia Phillies',
-    PIT: 'Pittsburgh Pirates', SD: 'San Diego Padres', SF: 'San Francisco Giants',
-    SEA: 'Seattle Mariners', STL: 'St. Louis Cardinals', TB: 'Tampa Bay Rays',
-    TEX: 'Texas Rangers', TOR: 'Toronto Blue Jays', WAS: 'Washington Nationals',
+    ARI: 'Arizona Diamondbacks',
+    ATL: 'Atlanta Braves',
+    BAL: 'Baltimore Orioles',
+    BOS: 'Boston Red Sox',
+    CHC: 'Chicago Cubs',
+    CWS: 'Chicago White Sox',
+    CIN: 'Cincinnati Reds',
+    CLE: 'Cleveland Guardians',
+    COL: 'Colorado Rockies',
+    DET: 'Detroit Tigers',
+    HOU: 'Houston Astros',
+    KC: 'Kansas City Royals',
+    LAA: 'Los Angeles Angels',
+    LAD: 'Los Angeles Dodgers',
+    MIA: 'Miami Marlins',
+    MIL: 'Milwaukee Brewers',
+    MIN: 'Minnesota Twins',
+    NYM: 'New York Mets',
+    NYY: 'New York Yankees',
+    OAK: 'Oakland Athletics',
+    PHI: 'Philadelphia Phillies',
+    PIT: 'Pittsburgh Pirates',
+    SD: 'San Diego Padres',
+    SF: 'San Francisco Giants',
+    SEA: 'Seattle Mariners',
+    STL: 'St. Louis Cardinals',
+    TB: 'Tampa Bay Rays',
+    TEX: 'Texas Rangers',
+    TOR: 'Toronto Blue Jays',
+    WAS: 'Washington Nationals',
   };
   return teams[abbr] || abbr;
 }
 
 function getVenueName(stadiumId: number): string {
   const venues: Record<number, string> = {
-    1: 'Chase Field', 2: 'Truist Park', 3: 'Oriole Park', 4: 'Fenway Park',
-    5: 'Wrigley Field', 6: 'Guaranteed Rate Field', 7: 'Great American Ball Park',
-    8: 'Progressive Field', 9: 'Coors Field', 10: 'Comerica Park',
-    11: 'Minute Maid Park', 12: 'Kauffman Stadium', 13: 'Angel Stadium',
-    14: 'Dodger Stadium', 15: 'loanDepot park', 16: 'American Family Field',
-    17: 'Target Field', 18: 'Citi Field', 19: 'Yankee Stadium',
-    20: 'Oakland Coliseum', 21: 'Citizens Bank Park', 22: 'PNC Park',
-    23: 'Petco Park', 24: 'Oracle Park', 25: 'T-Mobile Park',
-    26: 'Busch Stadium', 27: 'Tropicana Field', 28: 'Globe Life Field',
-    29: 'Rogers Centre', 30: 'Nationals Park',
+    1: 'Chase Field',
+    2: 'Truist Park',
+    3: 'Oriole Park',
+    4: 'Fenway Park',
+    5: 'Wrigley Field',
+    6: 'Guaranteed Rate Field',
+    7: 'Great American Ball Park',
+    8: 'Progressive Field',
+    9: 'Coors Field',
+    10: 'Comerica Park',
+    11: 'Minute Maid Park',
+    12: 'Kauffman Stadium',
+    13: 'Angel Stadium',
+    14: 'Dodger Stadium',
+    15: 'loanDepot park',
+    16: 'American Family Field',
+    17: 'Target Field',
+    18: 'Citi Field',
+    19: 'Yankee Stadium',
+    20: 'Oakland Coliseum',
+    21: 'Citizens Bank Park',
+    22: 'PNC Park',
+    23: 'Petco Park',
+    24: 'Oracle Park',
+    25: 'T-Mobile Park',
+    26: 'Busch Stadium',
+    27: 'Tropicana Field',
+    28: 'Globe Life Field',
+    29: 'Rogers Centre',
+    30: 'Nationals Park',
   };
   return venues[stadiumId] || 'Unknown Venue';
 }
@@ -476,7 +519,7 @@ async function fetchNFLLive(env: Env): Promise<NFLLiveResponse> {
     throw new Error(`NFL API error: ${response.status}`);
   }
 
-  const rawGames = await response.json() as Array<{
+  const rawGames = (await response.json()) as Array<{
     GameKey: string;
     Status: string;
     Quarter: string | null;
@@ -543,17 +586,38 @@ function normalizeNFLStatus(status: string): NFLGame['status'] {
 
 function getNFLTeamName(abbr: string): string {
   const teams: Record<string, string> = {
-    ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens',
-    BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears',
-    CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys',
-    DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers',
-    HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars',
-    KC: 'Kansas City Chiefs', LV: 'Las Vegas Raiders', LAC: 'Los Angeles Chargers',
-    LAR: 'Los Angeles Rams', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings',
-    NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants',
-    NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers',
-    SF: 'San Francisco 49ers', SEA: 'Seattle Seahawks', TB: 'Tampa Bay Buccaneers',
-    TEN: 'Tennessee Titans', WAS: 'Washington Commanders',
+    ARI: 'Arizona Cardinals',
+    ATL: 'Atlanta Falcons',
+    BAL: 'Baltimore Ravens',
+    BUF: 'Buffalo Bills',
+    CAR: 'Carolina Panthers',
+    CHI: 'Chicago Bears',
+    CIN: 'Cincinnati Bengals',
+    CLE: 'Cleveland Browns',
+    DAL: 'Dallas Cowboys',
+    DEN: 'Denver Broncos',
+    DET: 'Detroit Lions',
+    GB: 'Green Bay Packers',
+    HOU: 'Houston Texans',
+    IND: 'Indianapolis Colts',
+    JAX: 'Jacksonville Jaguars',
+    KC: 'Kansas City Chiefs',
+    LV: 'Las Vegas Raiders',
+    LAC: 'Los Angeles Chargers',
+    LAR: 'Los Angeles Rams',
+    MIA: 'Miami Dolphins',
+    MIN: 'Minnesota Vikings',
+    NE: 'New England Patriots',
+    NO: 'New Orleans Saints',
+    NYG: 'New York Giants',
+    NYJ: 'New York Jets',
+    PHI: 'Philadelphia Eagles',
+    PIT: 'Pittsburgh Steelers',
+    SF: 'San Francisco 49ers',
+    SEA: 'Seattle Seahawks',
+    TB: 'Tampa Bay Buccaneers',
+    TEN: 'Tennessee Titans',
+    WAS: 'Washington Commanders',
   };
   return teams[abbr] || abbr;
 }
@@ -571,7 +635,7 @@ async function fetchNBAStandings(env: Env): Promise<NBAStandingsResponse> {
     throw new Error(`NBA API error: ${response.status}`);
   }
 
-  const rawStandings = await response.json() as Array<{
+  const rawStandings = (await response.json()) as Array<{
     TeamID: number;
     Name: string;
     Key: string;
@@ -640,7 +704,7 @@ async function fetchCFBAnalytics(env: Env): Promise<CFBAnalyticsResponse> {
     throw new Error(`CFB API error: ${response.status}`);
   }
 
-  const rawStats = await response.json() as Array<{
+  const rawStats = (await response.json()) as Array<{
     TeamID: number;
     Team: string;
     Conference: string;
@@ -692,7 +756,9 @@ async function fetchCFBAnalytics(env: Env): Promise<CFBAnalyticsResponse> {
 function getCurrentCFBWeek(): number {
   const now = new Date();
   const seasonStart = new Date(now.getFullYear(), 7, 24);
-  const weeksPassed = Math.floor((now.getTime() - seasonStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
+  const weeksPassed = Math.floor(
+    (now.getTime() - seasonStart.getTime()) / (7 * 24 * 60 * 60 * 1000)
+  );
   return Math.max(1, Math.min(weeksPassed + 1, 15));
 }
 
@@ -781,8 +847,14 @@ function generateMockBoxScores(teamId: string, teamName: string): CollegeBasebal
         inningsPitched: 9,
       },
       topPerformers: {
-        hitter: { name: 'J. Smith', stats: `${Math.floor(Math.random() * 2) + 2}-4, ${homeRuns > 0 ? '1 HR, ' : ''}2 RBI` },
-        pitcher: { name: 'M. Johnson', stats: `7.0 IP, ${Math.floor(Math.random() * 3) + 1} ER, ${Math.floor(Math.random() * 5) + 5} K` },
+        hitter: {
+          name: 'J. Smith',
+          stats: `${Math.floor(Math.random() * 2) + 2}-4, ${homeRuns > 0 ? '1 HR, ' : ''}2 RBI`,
+        },
+        pitcher: {
+          name: 'M. Johnson',
+          stats: `7.0 IP, ${Math.floor(Math.random() * 3) + 1} ER, ${Math.floor(Math.random() * 5) + 5} K`,
+        },
       },
     };
   });
@@ -792,10 +864,7 @@ function generateMockBoxScores(teamId: string, teamName: string): CollegeBasebal
 // DATA FETCHERS - NIL VALUATION
 // =============================================================================
 
-async function fetchNILValuation(
-  env: Env,
-  athleteId: string
-): Promise<NILValuationResponse> {
+async function fetchNILValuation(env: Env, athleteId: string): Promise<NILValuationResponse> {
   const athletes: Record<string, NILValuation> = {
     'arch-manning': {
       athleteId: 'arch-manning',
@@ -882,10 +951,7 @@ async function fetchNILValuation(
 // DATA FETCHERS - TRANSFER PORTAL
 // =============================================================================
 
-async function fetchTransferPortal(
-  env: Env,
-  sport?: string
-): Promise<TransferPortalResponse> {
+async function fetchTransferPortal(env: Env, sport?: string): Promise<TransferPortalResponse> {
   const entries: TransferPortalEntry[] = [
     {
       entryId: 'tp-001',
@@ -949,9 +1015,7 @@ async function fetchTransferPortal(
     },
   ];
 
-  const filteredEntries = sport
-    ? entries.filter((e) => e.sport === sport.toLowerCase())
-    : entries;
+  const filteredEntries = sport ? entries.filter((e) => e.sport === sport.toLowerCase()) : entries;
 
   const available = filteredEntries.filter((e) => e.status === 'available');
   const committed = filteredEntries.filter((e) => e.status === 'committed');
@@ -1038,10 +1102,7 @@ async function handleCFBAnalytics(env: Env): Promise<Response> {
   }
 }
 
-async function handleCollegeBaseballBoxScore(
-  env: Env,
-  teamId: string
-): Promise<Response> {
+async function handleCollegeBaseballBoxScore(env: Env, teamId: string): Promise<Response> {
   try {
     const { data, cached } = await withCache(
       env.BSI_CACHE,
@@ -1059,10 +1120,7 @@ async function handleCollegeBaseballBoxScore(
   }
 }
 
-async function handleNILValuation(
-  env: Env,
-  athleteId: string
-): Promise<Response> {
+async function handleNILValuation(env: Env, athleteId: string): Promise<Response> {
   try {
     const { data, cached } = await withCache(
       env.BSI_CACHE,
@@ -1080,10 +1138,7 @@ async function handleNILValuation(
   }
 }
 
-async function handleTransferPortal(
-  env: Env,
-  sport?: string
-): Promise<Response> {
+async function handleTransferPortal(env: Env, sport?: string): Promise<Response> {
   try {
     const cacheKey = sport ? `transfer-portal:${sport}` : 'transfer-portal:all';
     const { data, cached } = await withCache(
@@ -1108,8 +1163,10 @@ function handlePluginManifest(): Response {
     schema_version: 'v1',
     name_for_human: 'Blaze Sports Intel',
     name_for_model: 'blaze_sports_intel',
-    description_for_human: 'Real-time multi-sport analytics for MLB, NFL, NBA, NCAA Football, and D1 College Baseball. Live scores, advanced stats, NIL valuations, and transfer portal intel.',
-    description_for_model: 'Blaze Sports Intel provides real-time sports data and analytics across five major sports: MLB, NFL, NBA, NCAA Football, and Division I College Baseball. Use this plugin to get live scores, standings, advanced analytics, NIL (Name, Image, Likeness) valuations for college athletes, and transfer portal updates. All data is sourced from official league APIs with 30-second cache intervals for optimal performance. The service covers every game equally with zero regional bias.',
+    description_for_human:
+      'Real-time multi-sport analytics for MLB, NFL, NBA, NCAA Football, and D1 College Baseball. Live scores, advanced stats, NIL valuations, and transfer portal intel.',
+    description_for_model:
+      'Blaze Sports Intel provides real-time sports data and analytics across five major sports: MLB, NFL, NBA, NCAA Football, and Division I College Baseball. Use this plugin to get live scores, standings, advanced analytics, NIL (Name, Image, Likeness) valuations for college athletes, and transfer portal updates. All data is sourced from official league APIs with 30-second cache intervals for optimal performance. The service covers every game equally with zero regional bias.',
     auth: {
       type: 'none',
     },

@@ -9,6 +9,7 @@
 ## Executive Summary
 
 Transform blazesportsintel.com into a premium sports intelligence platform with:
+
 - **Game Pages**: Recap, Box Score, Play-by-Play, Videos tabs
 - **Team Pages**: News, Standings, Stats, Roster, Depth Chart, Schedule
 - **League Pages**: Scores, Standings, Stats Leaders, News, Schedule
@@ -141,7 +142,7 @@ type TeamTab = 'home' | 'roster' | 'stats' | 'schedule' | 'depth-chart' | 'news'
 // components/scoreboard/Scoreboard.tsx
 interface ScoreboardProps {
   sport: Sport;
-  date?: string;           // YYYY-MM-DD format
+  date?: string; // YYYY-MM-DD format
   showFilters?: boolean;
   variant?: 'compact' | 'full';
 }
@@ -393,14 +394,14 @@ interface Game {
   id: string;
   sport: Sport;
   status: 'scheduled' | 'in_progress' | 'final' | 'postponed' | 'cancelled';
-  startTime: string;          // ISO 8601
+  startTime: string; // ISO 8601
   venue: Venue;
   homeTeam: TeamInfo;
   awayTeam: TeamInfo;
   homeScore: number;
   awayScore: number;
-  period: string;             // "Top 7th", "Q3 4:32", etc.
-  situation?: GameSituation;  // Baseball: runners, outs, count
+  period: string; // "Top 7th", "Q3 4:32", etc.
+  situation?: GameSituation; // Baseball: runners, outs, count
   broadcasts: Broadcast[];
   odds?: GameOdds;
 }
@@ -548,6 +549,7 @@ const typography = {
 ### Component Patterns
 
 #### Score Card Pattern
+
 ```
 ┌─────────────────────────────────────────┐
 │ LIVE • TOP 7TH                     ESPN │
@@ -562,6 +564,7 @@ const typography = {
 ```
 
 #### Standings Row Pattern
+
 ```
 ┌────┬─────────────────┬────┬────┬──────┬─────┬──────┐
 │ #  │ TEAM            │ W  │ L  │ PCT  │ GB  │ STRK │
@@ -572,6 +575,7 @@ const typography = {
 ```
 
 #### Tab Navigation Pattern
+
 ```
 ┌──────────┬──────────┬─────────────┬────────────┬────────┐
 │ GAMECAST │ RECAP    │ BOX SCORE   │ PLAY-BY-PLAY│ VIDEOS │
@@ -584,6 +588,7 @@ const typography = {
 ## Implementation Phases
 
 ### Phase 1: Foundation (Week 1)
+
 - [ ] Create route structure for MLB and NFL
 - [ ] Build SportPageShell and TeamPageLayout components
 - [ ] Implement enhanced StandingsPage
@@ -591,6 +596,7 @@ const typography = {
 - [ ] Set up API routes for standings and scores
 
 ### Phase 2: Game Detail (Week 2)
+
 - [ ] Build GamePageLayout with tab navigation
 - [ ] Implement BoxScorePage for MLB and NFL
 - [ ] Implement PlayByPlayPage with filters
@@ -598,6 +604,7 @@ const typography = {
 - [ ] Add TeamStatsPage comparison view
 
 ### Phase 3: Team Pages (Week 3)
+
 - [ ] Build RosterPage with position filters
 - [ ] Create DepthChartPage for both sports
 - [ ] Implement TeamStatsPage
@@ -605,6 +612,7 @@ const typography = {
 - [ ] Create team NewsFeed
 
 ### Phase 4: Stats & News (Week 4)
+
 - [ ] Build StatsLeadersPage with categories
 - [ ] Create PlayerProfilePage
 - [ ] Implement league-wide NewsFeed
@@ -612,6 +620,7 @@ const typography = {
 - [ ] Build notification system for live games
 
 ### Phase 5: Polish & Performance (Week 5)
+
 - [ ] Optimize for mobile (touch gestures, swipe navigation)
 - [ ] Add loading skeletons for all components
 - [ ] Implement error boundaries
@@ -624,26 +633,26 @@ const typography = {
 
 ### Data Sources
 
-| Sport | Primary API | Secondary | Fallback |
-|-------|------------|-----------|----------|
-| MLB | MLB Stats API | ESPN | Baseball-Reference |
-| NFL | ESPN API | NFL.com | Pro-Football-Reference |
-| NCAA Baseball | NCAA API | D1Baseball | Stats LLC |
-| NCAA Football | ESPN | NCAA | CFBStats |
+| Sport         | Primary API   | Secondary  | Fallback               |
+| ------------- | ------------- | ---------- | ---------------------- |
+| MLB           | MLB Stats API | ESPN       | Baseball-Reference     |
+| NFL           | ESPN API      | NFL.com    | Pro-Football-Reference |
+| NCAA Baseball | NCAA API      | D1Baseball | Stats LLC              |
+| NCAA Football | ESPN          | NCAA       | CFBStats               |
 
 ### Caching Strategy
 
 ```typescript
 // KV Cache TTLs
 const CACHE_TTL = {
-  liveGame: 15,          // 15 seconds during live games
-  scores: 60,            // 1 minute for scoreboard
-  standings: 300,        // 5 minutes
-  boxScore: 60,          // 1 minute (live), 3600 (final)
-  roster: 86400,         // 24 hours
-  depthChart: 43200,     // 12 hours
-  stats: 3600,           // 1 hour
-  news: 300,             // 5 minutes
+  liveGame: 15, // 15 seconds during live games
+  scores: 60, // 1 minute for scoreboard
+  standings: 300, // 5 minutes
+  boxScore: 60, // 1 minute (live), 3600 (final)
+  roster: 86400, // 24 hours
+  depthChart: 43200, // 12 hours
+  stats: 3600, // 1 hour
+  news: 300, // 5 minutes
 };
 ```
 
@@ -667,10 +676,10 @@ interface LiveGameUpdate {
 
 ```typescript
 const breakpoints = {
-  sm: '640px',   // Phone landscape
-  md: '768px',   // Tablet portrait
-  lg: '1024px',  // Tablet landscape / small laptop
-  xl: '1280px',  // Desktop
+  sm: '640px', // Phone landscape
+  md: '768px', // Tablet portrait
+  lg: '1024px', // Tablet landscape / small laptop
+  xl: '1280px', // Desktop
   '2xl': '1536px', // Large desktop
 };
 ```
@@ -684,12 +693,12 @@ const breakpoints = {
 
 ### Performance Targets
 
-| Metric | Target | Mobile Target |
-|--------|--------|---------------|
-| LCP | < 2.5s | < 3.0s |
-| FID | < 100ms | < 100ms |
-| CLS | < 0.1 | < 0.1 |
-| TTI | < 3.5s | < 5.0s |
+| Metric | Target  | Mobile Target |
+| ------ | ------- | ------------- |
+| LCP    | < 2.5s  | < 3.0s        |
+| FID    | < 100ms | < 100ms       |
+| CLS    | < 0.1   | < 0.1         |
+| TTI    | < 3.5s  | < 5.0s        |
 
 ---
 
@@ -834,16 +843,16 @@ BSI/
 
 ## Success Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Page Load | < 3s | Lighthouse |
-| API Response | < 200ms | Cloudflare Analytics |
-| Bounce Rate | < 40% | Analytics |
-| Pages/Session | > 3 | Analytics |
-| Mobile Traffic | > 60% | Analytics |
-| Return Visitors | > 30% | Analytics |
+| Metric          | Target  | Measurement          |
+| --------------- | ------- | -------------------- |
+| Page Load       | < 3s    | Lighthouse           |
+| API Response    | < 200ms | Cloudflare Analytics |
+| Bounce Rate     | < 40%   | Analytics            |
+| Pages/Session   | > 3     | Analytics            |
+| Mobile Traffic  | > 60%   | Analytics            |
+| Return Visitors | > 30%   | Analytics            |
 
 ---
 
-*Last Updated: December 2025*
-*Author: Claude Code (Staff Engineer)*
+_Last Updated: December 2025_
+_Author: Claude Code (Staff Engineer)_

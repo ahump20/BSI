@@ -18,12 +18,12 @@ import type { BlitzTeam } from '@data/teams';
 
 /** Field dimensions in game units (1 unit = 1 yard) */
 export const FIELD_CONFIG = {
-  length: 100,        // 100 yards
-  width: 53.33,       // 53 1/3 yards (160 feet)
-  endZoneDepth: 10,   // 10 yards each end zone
-  hashWidth: 18.5,    // Distance between hash marks
+  length: 100, // 100 yards
+  width: 53.33, // 53 1/3 yards (160 feet)
+  endZoneDepth: 10, // 10 yards each end zone
+  hashWidth: 18.5, // Distance between hash marks
   yardLineInterval: 5, // Yard lines every 5 yards
-  numberInterval: 10,  // Numbers every 10 yards
+  numberInterval: 10, // Numbers every 10 yards
 } as const;
 
 /** Colors for field elements */
@@ -160,7 +160,11 @@ export class FootballField {
 
     // Add team name text to end zones
     this.createEndZoneText(this.homeTeam, -FIELD_CONFIG.endZoneDepth / 2, false);
-    this.createEndZoneText(this.awayTeam, FIELD_CONFIG.length + FIELD_CONFIG.endZoneDepth / 2, true);
+    this.createEndZoneText(
+      this.awayTeam,
+      FIELD_CONFIG.length + FIELD_CONFIG.endZoneDepth / 2,
+      true
+    );
   }
 
   /** Create end zone team text */
@@ -329,12 +333,7 @@ export class FootballField {
   }
 
   /** Create a single field number */
-  private createFieldNumber(
-    num: number,
-    xPos: number,
-    zPos: number,
-    flip: boolean
-  ): void {
+  private createFieldNumber(num: number, xPos: number, zPos: number, flip: boolean): void {
     const numberPlane = MeshBuilder.CreatePlane(
       `fieldNumber_${num}_${xPos > 0 ? 'R' : 'L'}_${zPos}`,
       { width: 4, height: 6 },

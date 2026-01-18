@@ -1,4 +1,5 @@
 # Blaze Sports Intel — Championship Regression & Predictive Architecture v2.0
+
 **"ESPN shows you the score. We show you why it happened and what happens next."**
 
 **Sport Priority:** College Baseball (hero) → MLB → College Football → NFL → College Basketball → Track & Field
@@ -19,23 +20,27 @@ While ESPN gives you box scores with zero context, **Blaze Sports Intel** delive
 5. **Injury Risk Forecasting** — Workload + biomechanics + weather → probability distributions for UCL tears, hamstring pulls, concussion risk.
 6. **Youth-to-Pro Trajectory Models** — Perfect Game showcase stats → college performance → draft projection with confidence intervals.
 
-**Bottom line:** We turn intuition into auditable, deployable edge functions that run globally in <50ms and explain *why* the model said what it said.
+**Bottom line:** We turn intuition into auditable, deployable edge functions that run globally in <50ms and explain _why_ the model said what it said.
 
 ---
 
 ## 🏆 Unique Differentiators (Why We Win)
 
 ### 1. College Baseball as Hero Sport
-**The Gap:** ESPN literally shows *only* the score and inning for college baseball. No box score. No player stats. No preview. No recap.
+
+**The Gap:** ESPN literally shows _only_ the score and inning for college baseball. No box score. No player stats. No preview. No recap.
 
 **Our Answer:**
+
 - **Complete Box Scores** with play-by-play, pitch sequences, and spray charts.
 - **Conference-Normalized WAR** — Compare a Texas hitter to an LSU hitter on equal footing.
 - **CWS Championship Pressure Metrics** — Who elevates in Omaha? Regress performance vs. seeding, opponent strength, and elimination game context.
 - **Transfer Portal Impact Models** — Predict team performance delta from incoming/outgoing players using Ridge regression on historical portal moves.
 
 ### 2. Mobile-First Video Intelligence
+
 **Implementation:**
+
 - **Tap-to-Explain:** User taps a play on mobile → sees:
   - Predicted outcome (e.g., "72% swing-and-miss probability")
   - Top 3 contributing features with visual overlays on video
@@ -45,12 +50,15 @@ While ESPN gives you box scores with zero context, **Blaze Sports Intel** delive
 - **Adaptive Bitrate Video** from R2 with Cloudflare Stream integration.
 
 ### 3. Cross-Sport Biomechanical Transfer Learning
+
 **Novel Approach:**
+
 - Train **shared latent space** for throwing mechanics (baseball pitcher ↔ football QB ↔ javelin thrower).
 - Use **domain adaptation** (e.g., gradient reversal layers) to transfer learned features across sports.
 - **Example:** A QB prospect's high school baseball stats (velo, spin, release consistency) inform draft projections.
 
 **Implementation:**
+
 ```python
 # Pseudo-code for cross-sport transfer
 class BiomechEncoder(nn.Module):
@@ -70,14 +78,17 @@ class BiomechEncoder(nn.Module):
 Export to ONNX → serve via Workers AI with <100ms inference.
 
 ### 4. Real-Time Momentum Shift Detection
+
 **The Gap:** Broadcasters talk about "momentum" but can't quantify it.
 
 **Our Solution:**
+
 - **Rolling Win Probability (WP) Delta** — Track WP change per play; flag inflection points.
 - **Micro-Expression Shift Detector** — Computer vision on dugout/sideline reactions (via Workers AI vision models).
 - **Biometric Stress Indicators** — HRV, skin conductance, pupil dilation (when available) regressed into "tilt state" probability.
 
 **Mobile UX:**
+
 ```
 📊 Momentum Alert: +18% WP swing in last 3 plays
 🔥 Cardinals bench energy: 94th percentile
@@ -85,12 +96,15 @@ Export to ONNX → serve via Workers AI with <100ms inference.
 ```
 
 ### 5. Injury Risk Prediction (Legal, Defensible)
+
 **Regulatory Compliance:**
+
 - **Disclaimer:** "Educational tool; not medical advice. Consult team physicians."
 - **Aggregate-Only Public Display** — Individual player risk shown only to authenticated team staff.
 - **Auditable Features** — No protected health info; only public workload data + biomechanics.
 
 **Model:**
+
 ```python
 # Logistic regression for UCL tear risk (pitchers)
 features = [
@@ -110,6 +124,7 @@ target = 'ucl_tear_next_30d'  # binary
 ```
 
 **Dashboard (Team Access Only):**
+
 ```
 🚨 High Risk (next 30 days):
   - Player #17: 23% UCL tear probability
@@ -119,20 +134,22 @@ target = 'ucl_tear_next_30d'  # binary
 ```
 
 ### 6. Championship Pressure Index™ (8-Dimensional Model)
+
 **Beyond Traditional "Clutch":**
 
-| Dimension | Features | Target Variable |
-|-----------|----------|----------------|
-| **Clutch Gene** | Leverage index, deficit size, elimination game flag | Performance delta vs. expected |
-| **Killer Instinct** | Late-inning aggression, risk-taking frequency | Win probability added in final 2 innings |
-| **Flow State** | Reaction time consistency, biomech smoothness | Performance variance (lower = better) |
-| **Mental Fortress** | Error recovery speed, tilt resistance | Next-play performance after failure |
-| **Predator Mindset** | First-pitch aggression, early-count dominance | Damage on hitter's counts |
-| **Champion Aura** | Team WP lift when player enters, leadership proxies | Team performance delta with/without |
-| **Winner DNA** | Career elimination game record, postseason splits | Historical clutch performance |
-| **Beast Mode** | Max effort plays, hustle metrics | Physical intensity in high-leverage spots |
+| Dimension            | Features                                            | Target Variable                           |
+| -------------------- | --------------------------------------------------- | ----------------------------------------- |
+| **Clutch Gene**      | Leverage index, deficit size, elimination game flag | Performance delta vs. expected            |
+| **Killer Instinct**  | Late-inning aggression, risk-taking frequency       | Win probability added in final 2 innings  |
+| **Flow State**       | Reaction time consistency, biomech smoothness       | Performance variance (lower = better)     |
+| **Mental Fortress**  | Error recovery speed, tilt resistance               | Next-play performance after failure       |
+| **Predator Mindset** | First-pitch aggression, early-count dominance       | Damage on hitter's counts                 |
+| **Champion Aura**    | Team WP lift when player enters, leadership proxies | Team performance delta with/without       |
+| **Winner DNA**       | Career elimination game record, postseason splits   | Historical clutch performance             |
+| **Beast Mode**       | Max effort plays, hustle metrics                    | Physical intensity in high-leverage spots |
 
 **Regression Setup:**
+
 ```python
 # Multi-task learning: 8 outputs from shared features
 import torch.nn as nn
@@ -161,6 +178,7 @@ class ChampionEnigmaModel(nn.Module):
 ```
 
 **Mobile Visualization:**
+
 ```
 🏆 Championship Pressure Index
 Player: John Smith, Texas Longhorns
@@ -183,6 +201,7 @@ Player: John Smith, Texas Longhorns
 ## 📊 Data Architecture (Immutable, Auditable, Fast)
 
 ### Entity Model (Canonical IDs)
+
 ```
 sport:league:season:entity_type:entity_id
 
@@ -364,6 +383,7 @@ CREATE INDEX idx_pred_log_timestamp ON prediction_log(timestamp);
 ```
 
 ### R2 Layout (Immutable Artifacts)
+
 ```
 r2://bsi-models/
   baseball/
@@ -398,6 +418,7 @@ r2://bsi-raw-data/
 ```
 
 ### KV Namespace Layout (Hot Paths)
+
 ```
 alias:xwoba_batball_v1 → "r2://bsi-models/.../artifact.json"
 alias:injury_ucl_v1 → "r2://bsi-models/.../artifact.json"
@@ -418,6 +439,7 @@ health:model:xwoba_batball_v1 → {last_check, auc_7d, ece_7d}
 ### College Baseball (Priority 1)
 
 #### Batted Ball Features
+
 ```python
 features_batted_ball = [
     # Contact Quality
@@ -481,6 +503,7 @@ targets = {
 ```
 
 #### Conference Normalization
+
 ```python
 def normalize_by_conference(player_stat, player_conference, league='ncaa_baseball'):
     """
@@ -509,6 +532,7 @@ adjusted_ba = normalize_by_conference(texas_hitter_ba, 'SEC', 'ncaa_baseball')
 ```
 
 ### MLB Features (Similar but add MLB Statcast)
+
 ```python
 features_mlb = features_batted_ball + [
     'xba',              # Statcast expected BA
@@ -520,6 +544,7 @@ features_mlb = features_batted_ball + [
 ```
 
 ### Football Features (College + NFL)
+
 ```python
 features_football = [
     # Pre-Snap
@@ -557,6 +582,7 @@ features_football = [
 ```
 
 ### Basketball Features
+
 ```python
 features_basketball = [
     # Shot Quality
@@ -584,6 +610,7 @@ features_basketball = [
 ### Base Models (Regularized Linear/Logistic)
 
 #### 1. Logistic Regression (Binary Outcomes)
+
 ```python
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
@@ -630,6 +657,7 @@ artifact = {
 ```
 
 #### 2. Ridge Regression (Continuous Targets)
+
 ```python
 from sklearn.linear_model import Ridge
 
@@ -648,6 +676,7 @@ ridge.fit(X_scaled, y_train)
 ```
 
 #### 3. Lasso Regression (Feature Selection)
+
 ```python
 from sklearn.linear_model import Lasso
 
@@ -669,6 +698,7 @@ non_zero_features = [
 ```
 
 #### 4. Elastic Net (Best of Both)
+
 ```python
 from sklearn.linear_model import ElasticNet
 
@@ -683,6 +713,7 @@ elastic.fit(X_scaled, y_train)
 ```
 
 ### Multi-Task Learning (Champion Enigma)
+
 ```python
 import torch
 import torch.nn as nn
@@ -768,6 +799,7 @@ torch.onnx.export(
 ```
 
 ### Cross-Sport Transfer Learning
+
 ```python
 class BiomechTransferModel(nn.Module):
     """
@@ -831,6 +863,7 @@ class GradientReversal(nn.Module):
 ## ⚡ Edge Inference (Cloudflare Workers)
 
 ### Artifact Schema (R2 JSON)
+
 ```json
 {
   "schema_version": "2.0",
@@ -848,9 +881,9 @@ class GradientReversal(nn.Module):
     "calibration_slope": 1.02
   },
   "features": [
-    {"name": "bat_speed", "mean": 68.3, "std": 5.1, "unit": "mph"},
-    {"name": "attack_angle", "mean": 14.2, "std": 6.3, "unit": "degrees"},
-    {"name": "leverage_index", "mean": 1.05, "std": 0.8, "unit": "dimensionless"}
+    { "name": "bat_speed", "mean": 68.3, "std": 5.1, "unit": "mph" },
+    { "name": "attack_angle", "mean": 14.2, "std": 6.3, "unit": "degrees" },
+    { "name": "leverage_index", "mean": 1.05, "std": 0.8, "unit": "dimensionless" }
   ],
   "coefficients": {
     "bat_speed": 0.094,
@@ -877,6 +910,7 @@ class GradientReversal(nn.Module):
 ```
 
 ### Workers Inference (TypeScript)
+
 ```typescript
 // /functions/api/v1/predict/[[model]].ts
 
@@ -984,20 +1018,21 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, params }
       {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-store',  // Predictions should not be cached
+          'Cache-Control': 'no-store', // Predictions should not be cached
         },
       }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: (error as Error).message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 };
 ```
 
 ### Mobile API Request
+
 ```javascript
 // Example: Predict HR probability for college baseball swing
 
@@ -1009,7 +1044,7 @@ const features = {
   zone_x: 0.3,
   zone_y: 2.1,
   leverage_index: 1.8,
-  opponent_conference_strength: 1520,  // SEC Elo
+  opponent_conference_strength: 1520, // SEC Elo
   micro_expr_agency: 0.84,
   micro_expr_focus: 0.91,
 };
@@ -1018,7 +1053,7 @@ const response = await fetch('https://blazesportsintel.com/api/v1/predict/xwoba_
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${userToken}`,
+    Authorization: `Bearer ${userToken}`,
   },
   body: JSON.stringify({ features }),
 });
@@ -1053,6 +1088,7 @@ const result = await response.json();
 ## 📱 Mobile-First UX (The Differentiator)
 
 ### Tap-to-Explain Interaction
+
 ```javascript
 // React Native / PWA Component
 
@@ -1086,9 +1122,7 @@ function PlayPrediction({ playId }) {
             <span className="prob-badge">
               {(prediction.prediction * 100).toFixed(1)}% HR Probability
             </span>
-            <span className="confidence">
-              Confidence: {prediction.confidence}
-            </span>
+            <span className="confidence">Confidence: {prediction.confidence}</span>
           </div>
 
           <div className="top-contributors">
@@ -1103,15 +1137,14 @@ function PlayPrediction({ playId }) {
                   />
                 </div>
                 <span className="contrib-value">
-                  {c.contribution > 0 ? '+' : ''}{c.contribution.toFixed(2)}
+                  {c.contribution > 0 ? '+' : ''}
+                  {c.contribution.toFixed(2)}
                 </span>
               </div>
             ))}
           </div>
 
-          <button onClick={() => fetchSimilarPlays(playId)}>
-            See Similar Plays
-          </button>
+          <button onClick={() => fetchSimilarPlays(playId)}>See Similar Plays</button>
         </div>
       )}
     </div>
@@ -1120,6 +1153,7 @@ function PlayPrediction({ playId }) {
 ```
 
 ### Progressive Web App (PWA) Config
+
 ```json
 {
   "name": "Blaze Sports Intel",
@@ -1148,6 +1182,7 @@ function PlayPrediction({ playId }) {
 ```
 
 ### Service Worker (Offline Model Caching)
+
 ```javascript
 // service-worker.js
 
@@ -1185,6 +1220,7 @@ self.addEventListener('fetch', (event) => {
 ## 🔬 Training Pipeline (Batch Jobs)
 
 ### Data Assembly (Parquet from R2)
+
 ```python
 import pyarrow.parquet as pq
 import pandas as pd
@@ -1243,6 +1279,7 @@ def time_split(df, val_frac=0.2, test_frac=0.1):
 ```
 
 ### Hyperparameter Search (Time-Series CV)
+
 ```python
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.metrics import roc_auc_score, mean_squared_error
@@ -1302,6 +1339,7 @@ print(f"Best params: {best_params}, Best AUC: {best_auc:.4f}")
 ```
 
 ### Calibration (Platt Scaling)
+
 ```python
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
 import matplotlib.pyplot as plt
@@ -1339,6 +1377,7 @@ plot_calibration_curve(y_test, y_pred_cal)
 ```
 
 ### Evaluation Metrics
+
 ```python
 from sklearn.metrics import (
     roc_auc_score, average_precision_score, brier_score_loss,
@@ -1389,6 +1428,7 @@ print(f"ECE: {metrics['ece']:.4f}")
 ```
 
 ### Artifact Export
+
 ```python
 import json
 from datetime import datetime, timezone
@@ -1450,6 +1490,7 @@ print(f"✅ Artifact exported to r2://bsi-models/{artifact_key}")
 ## 📈 Monitoring & Drift Detection
 
 ### Population Stability Index (PSI)
+
 ```python
 import numpy as np
 
@@ -1490,6 +1531,7 @@ else:
 ```
 
 ### Online Performance Monitoring (Cloudflare Worker)
+
 ```typescript
 // Scheduled worker (runs every hour)
 
@@ -1516,15 +1558,15 @@ export const scheduled: ExportedHandler<Env>['scheduled'] = async (event, env, c
     await env.KV.put(
       `health:model:${modelId}:24h`,
       JSON.stringify(metrics),
-      { expirationTtl: 86400 }  // 24 hours
+      { expirationTtl: 86400 } // 24 hours
     );
 
     // Alert if metrics degrade
-    if (metrics.auc < 0.75 || metrics.ece > 0.10) {
+    if (metrics.auc < 0.75 || metrics.ece > 0.1) {
       await sendSlackAlert(
         `🚨 Model ${modelId} performance degradation detected!\n` +
-        `AUC: ${metrics.auc.toFixed(3)}\n` +
-        `ECE: ${metrics.ece.toFixed(3)}`
+          `AUC: ${metrics.auc.toFixed(3)}\n` +
+          `ECE: ${metrics.ece.toFixed(3)}`
       );
     }
   }
@@ -1543,8 +1585,8 @@ function calculateMetrics(predictions: any[]) {
   const metrics: Record<string, any> = {};
 
   for (const [modelId, preds] of Object.entries(byModel)) {
-    const y_true = preds.map(p => p.actual_outcome);
-    const y_pred = preds.map(p => p.prediction_proba);
+    const y_true = preds.map((p) => p.actual_outcome);
+    const y_pred = preds.map((p) => p.prediction_proba);
 
     metrics[modelId] = {
       auc: calculateAUC(y_true, y_pred),
@@ -1563,6 +1605,7 @@ function calculateMetrics(predictions: any[]) {
 ## 🚀 Deployment Pipeline
 
 ### Champion/Challenger Framework
+
 ```python
 # deploy_model.py
 
@@ -1629,6 +1672,7 @@ def rollback_model(model_key):
 ```
 
 ### CI/CD Integration (GitHub Actions)
+
 ```yaml
 # .github/workflows/train-and-deploy-models.yml
 
@@ -1636,7 +1680,7 @@ name: Train and Deploy Models
 
 on:
   schedule:
-    - cron: '0 3 * * 0'  # Weekly on Sunday at 3 AM
+    - cron: '0 3 * * 0' # Weekly on Sunday at 3 AM
   workflow_dispatch:
 
 jobs:
@@ -1696,10 +1740,12 @@ jobs:
 ## 📊 Dashboards & Visualization
 
 ### Model Card (Internal)
+
 ```markdown
 # Model Card: xwOBA Batted Ball (NCAA Baseball) v1
 
 ## Model Details
+
 - **Model ID**: `xwoba_batball_ncaa_v1-20251019-143000`
 - **Created**: 2025-10-19 14:30:00 CDT
 - **Algorithm**: Logistic Regression with L2 regularization
@@ -1708,45 +1754,53 @@ jobs:
 - **Test Data**: 5,728 plate appearances (2025 holdout)
 
 ## Intended Use
+
 Predict home run probability for NCAA baseball batted balls based on:
+
 - Contact quality (bat speed, attack angle, on-plane time)
 - Pitch characteristics (velocity, spin, location)
 - Situational context (leverage, base-out state)
 - Conference-adjusted opponent strength
 
 ## Performance Metrics
-| Metric | Value | Interpretation |
-|--------|-------|----------------|
-| AUC-ROC | 0.847 | Excellent discrimination |
-| AUC-PR | 0.412 | Good precision/recall balance |
+
+| Metric      | Value | Interpretation                |
+| ----------- | ----- | ----------------------------- |
+| AUC-ROC     | 0.847 | Excellent discrimination      |
+| AUC-PR      | 0.412 | Good precision/recall balance |
 | Brier Score | 0.068 | Well-calibrated probabilities |
-| ECE | 0.023 | Minimal calibration error |
+| ECE         | 0.023 | Minimal calibration error     |
 
 ## Feature Importance
-| Feature | Coefficient | Interpretation |
-|---------|-------------|----------------|
-| `bat_speed` | +0.094 | Most important positive factor |
-| `micro_expr_focus` | +0.082 | Mental state matters |
-| `attack_angle` | +0.037 | Launch angle critical |
-| `pitch_velo` | +0.021 | Harder pitches = more power |
-| `opponent_conf_strength` | -0.032 | SEC pitching is tougher |
+
+| Feature                  | Coefficient | Interpretation                 |
+| ------------------------ | ----------- | ------------------------------ |
+| `bat_speed`              | +0.094      | Most important positive factor |
+| `micro_expr_focus`       | +0.082      | Mental state matters           |
+| `attack_angle`           | +0.037      | Launch angle critical          |
+| `pitch_velo`             | +0.021      | Harder pitches = more power    |
+| `opponent_conf_strength` | -0.032      | SEC pitching is tougher        |
 
 ## Calibration Plot
+
 ![Calibration Curve](calibration_plot.png)
 
 ## Limitations
+
 - **Data bias**: Overrepresents Power 5 conferences
 - **Missing data**: No video features for 15% of plays
 - **Conference imbalance**: SEC (35%), ACC (22%), Big 12 (18%), Pac-12 (15%), Big Ten (10%)
 - **Temporal drift**: Model trained on 2020-2025 data; may degrade for 2026+ without retraining
 
 ## Ethical Considerations
+
 - **No player profiling**: Model does not use demographic data
 - **Conference adjustment**: Ensures fair comparison across different competition levels
 - **Uncertainty quantification**: Confidence intervals provided for all predictions
 - **Transparency**: All features and coefficients publicly documented
 
 ## Maintenance
+
 - **Retraining cadence**: Weekly during season, monthly off-season
 - **Drift monitoring**: PSI checks on all features every 24 hours
 - **Performance tracking**: AUC/ECE monitored hourly in production
@@ -1754,6 +1808,7 @@ Predict home run probability for NCAA baseball batted balls based on:
 ```
 
 ### Player Scouting Dashboard (Mobile)
+
 ```javascript
 // React component for mobile scouting view
 
@@ -1765,8 +1820,8 @@ function PlayerScoutingCard({ playerId }) {
 
   React.useEffect(() => {
     fetch(`/api/v1/players/${playerId}/champion-enigma`)
-      .then(res => res.json())
-      .then(data => setEnigma(data));
+      .then((res) => res.json())
+      .then((data) => setEnigma(data));
   }, [playerId]);
 
   if (!enigma) return <div>Loading...</div>;
@@ -1785,7 +1840,9 @@ function PlayerScoutingCard({ playerId }) {
   return (
     <div className="scouting-card">
       <h2>{enigma.player_name}</h2>
-      <p className="position">{enigma.position} • {enigma.team}</p>
+      <p className="position">
+        {enigma.position} • {enigma.team}
+      </p>
 
       <div className="enigma-radar">
         <RadarChart width={300} height={300} data={radarData}>
@@ -1811,7 +1868,8 @@ function PlayerScoutingCard({ playerId }) {
             .slice(0, 3)
             .map(([dimension, value]) => (
               <li key={dimension}>
-                <strong>{formatDimension(dimension)}</strong>: {(value * 100).toFixed(0)}th percentile
+                <strong>{formatDimension(dimension)}</strong>: {(value * 100).toFixed(0)}th
+                percentile
               </li>
             ))}
         </ul>
@@ -1819,10 +1877,16 @@ function PlayerScoutingCard({ playerId }) {
         <h3>Championship Projection</h3>
         <p>
           {enigma.cws_performance_delta > 0 ? '📈' : '📉'}
-          Predicted CWS performance: <strong>{enigma.cws_performance_delta >= 0 ? '+' : ''}{(enigma.cws_performance_delta * 1000).toFixed(0)} OPS points</strong> vs. regular season
+          Predicted CWS performance:{' '}
+          <strong>
+            {enigma.cws_performance_delta >= 0 ? '+' : ''}
+            {(enigma.cws_performance_delta * 1000).toFixed(0)} OPS points
+          </strong>{' '}
+          vs. regular season
         </p>
         <p className="confidence">
-          Confidence: {(enigma.confidence * 100).toFixed(0)}% (n={enigma.sample_size} high-leverage PAs)
+          Confidence: {(enigma.confidence * 100).toFixed(0)}% (n={enigma.sample_size} high-leverage
+          PAs)
         </p>
       </div>
     </div>
@@ -1835,6 +1899,7 @@ function PlayerScoutingCard({ playerId }) {
 ## 🎓 Implementation Roadmap (90 Days)
 
 ### Phase 1: Foundation (Weeks 1-3)
+
 **Goal**: Ship first production model with full inference pipeline
 
 - [ ] **Week 1: Data Infrastructure**
@@ -1861,6 +1926,7 @@ function PlayerScoutingCard({ playerId }) {
 **Deliverable**: Working API endpoint for HR probability predictions with <100ms p95 latency
 
 ### Phase 2: Scale & Multi-Task (Weeks 4-7)
+
 **Goal**: Add continuous targets and multi-sport coverage
 
 - [ ] **Week 4: Regression Models**
@@ -1888,6 +1954,7 @@ function PlayerScoutingCard({ playerId }) {
 **Deliverable**: 5+ production models covering 3 sports with full explainability
 
 ### Phase 3: Mobile & UX (Weeks 8-10)
+
 **Goal**: Ship mobile-first experience with video integration
 
 - [ ] **Week 8: PWA Foundation**
@@ -1911,6 +1978,7 @@ function PlayerScoutingCard({ playerId }) {
 **Deliverable**: Production PWA with <2s play prediction load time
 
 ### Phase 4: Advanced Features (Weeks 11-12)
+
 **Goal**: Differentiation through novel capabilities
 
 - [ ] **Week 11: Cross-Sport Transfer**
@@ -1930,6 +1998,7 @@ function PlayerScoutingCard({ playerId }) {
 ## 🔐 Security & Compliance
 
 ### Privacy Controls
+
 ```python
 # Individual player risk shown ONLY to authenticated team staff
 
@@ -1964,14 +2033,16 @@ def get_team_injury_summary(team_id):
 ```
 
 ### Legal Disclaimers
+
 ```html
 <!-- Injury risk dashboard -->
 <div class="legal-disclaimer">
   <h4>⚠️ Important Legal Notice</h4>
   <p>
-    This injury risk assessment tool is for <strong>educational and informational purposes only</strong>.
-    It is not medical advice and should not be used as a substitute for professional medical evaluation.
-    Consult team physicians and certified athletic trainers for all medical decisions.
+    This injury risk assessment tool is for
+    <strong>educational and informational purposes only</strong>. It is not medical advice and
+    should not be used as a substitute for professional medical evaluation. Consult team physicians
+    and certified athletic trainers for all medical decisions.
   </p>
   <p>
     Risk scores are probabilistic estimates based on public data (workload, biomechanics) and do not
@@ -1985,6 +2056,7 @@ def get_team_injury_summary(team_id):
 ## 📚 Appendices
 
 ### A. Conference Strength Methodology
+
 ```python
 def calculate_conference_elo(league='ncaa_baseball', season=2025):
     """
@@ -2027,6 +2099,7 @@ def calculate_conference_elo(league='ncaa_baseball', season=2025):
 ```
 
 ### B. Video Feature Extraction (Workers AI)
+
 ```typescript
 // Extract biomech features from video using Workers AI
 
@@ -2053,6 +2126,7 @@ async function extractBiomechFeatures(videoUrl: string, env: Env): Promise<Biome
 ```
 
 ### C. Similar Plays Search (Vectorize)
+
 ```typescript
 // Find similar plays using vector embeddings
 
@@ -2073,7 +2147,7 @@ async function findSimilarPlays(playId: string, env: Env, limit: number = 5) {
 
   // Hydrate with full play data
   const similarPlays = await Promise.all(
-    results.matches.map(match =>
+    results.matches.map((match) =>
       env.DB.prepare('SELECT * FROM plays WHERE play_id = ?').bind(match.id).first()
     )
   );
@@ -2087,6 +2161,7 @@ async function findSimilarPlays(playId: string, env: Env, limit: number = 5) {
 ## 🎯 Success Metrics
 
 ### Technical Metrics
+
 - **Inference Latency**: p95 <100ms, p99 <200ms
 - **Model AUC**: >0.80 for binary classifiers
 - **Calibration ECE**: <0.05
@@ -2094,12 +2169,14 @@ async function findSimilarPlays(playId: string, env: Env, limit: number = 5) {
 - **Drift Detection**: PSI checks every 24h, alert if >0.2
 
 ### Business Metrics
+
 - **Mobile Engagement**: Avg session >5min (vs ESPN ~2min)
 - **Prediction Accuracy**: Public leaderboard vs actual outcomes
 - **College Baseball Coverage**: 100% of D1 teams with full box scores
 - **User Trust**: Transparency score >90% (all predictions explainable)
 
 ### Differentiation Metrics
+
 - **Features ESPN Doesn't Have**: Conference-adjusted WAR, Championship Pressure Index, Injury Forecasting, Cross-Sport Transfer Insights
 - **Data Freshness**: <60s for live games (vs ESPN's variable latency)
 - **Mobile Performance**: Lighthouse score >90
@@ -2124,4 +2201,4 @@ This architecture transforms Blaze Sports Intel from "another sports site" into 
 
 ---
 
-*End Architecture v2.0 — Ready for production deployment.*
+_End Architecture v2.0 — Ready for production deployment._

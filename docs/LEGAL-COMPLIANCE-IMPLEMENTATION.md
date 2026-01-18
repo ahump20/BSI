@@ -1,4 +1,5 @@
 # Legal Compliance Implementation Guide
+
 ## Blaze Sports Intel - blazesportsintel.com
 
 **Last Updated:** November 9, 2025
@@ -79,17 +80,17 @@ Add this script tag before `</body>` on every page:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Blaze Sports Intel</title>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Your page content -->
 
     <!-- Legal Footer (add before closing body tag) -->
     <script src="/components/legal-footer.js"></script>
     <legal-footer></legal-footer>
-</body>
+  </body>
 </html>
 ```
 
@@ -108,18 +109,19 @@ Add this script tag in the `<head>` section of all pages:
 
 ```html
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blaze Sports Intel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blaze Sports Intel</title>
 
-    <!-- Cookie Consent (must load early) -->
-    <script src="/components/cookie-banner.js" defer></script>
+  <!-- Cookie Consent (must load early) -->
+  <script src="/components/cookie-banner.js" defer></script>
 
-    <!-- Other scripts -->
+  <!-- Other scripts -->
 </head>
 ```
 
 **Behavior:**
+
 - Auto-displays on first visit
 - Respects Do Not Track (DNT) signals
 - Stores preferences in localStorage + Cloudflare KV
@@ -136,23 +138,23 @@ Edit `/public/index.html` or your main template:
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blaze Sports Intel - Sports Analytics & Predictions</title>
 
     <!-- Cookie Consent -->
     <script src="/components/cookie-banner.js" defer></script>
 
     <!-- Existing scripts -->
-</head>
-<body>
+  </head>
+  <body>
     <!-- Existing content -->
 
     <!-- Legal Footer -->
     <script src="/components/legal-footer.js"></script>
     <legal-footer></legal-footer>
-</body>
+  </body>
 </html>
 ```
 
@@ -166,7 +168,9 @@ For the mobile baseball game, add age gate if collecting data from children:
   function checkAge() {
     const age = prompt('To play, please enter your age:');
     if (age < 13) {
-      alert('Players under 13 need parental consent. Please have a parent email ahump20@outlook.com');
+      alert(
+        'Players under 13 need parental consent. Please have a parent email ahump20@outlook.com'
+      );
       return false;
     }
     return true;
@@ -347,6 +351,7 @@ npm run deploy:production
 - [ ] ARIA labels are present on interactive elements
 
 **Testing Tools:**
+
 - Chrome Lighthouse (Accessibility score)
 - WAVE Browser Extension
 - axe DevTools
@@ -404,6 +409,7 @@ Test on:
 - [ ] Images are optimized (if any)
 
 **Tools:**
+
 - Chrome DevTools (Network tab)
 - Lighthouse Performance score
 - WebPageTest.org
@@ -414,42 +420,42 @@ Test on:
 
 ### GDPR Checklist
 
-| Requirement | Status | Evidence |
-|-------------|--------|----------|
-| Lawful basis for processing | ✅ | Consent + Legitimate Interest documented in Privacy Policy |
-| Transparent data collection | ✅ | Privacy Policy lists all data collected |
-| Right to access | ✅ | `/api/privacy/export` endpoint |
-| Right to erasure | ✅ | DELETE endpoint |
-| Right to portability | ✅ | JSON export format |
-| Right to object | ✅ | Cookie opt-out mechanism |
-| Data protection by design | ✅ | Privacy-preserving analytics, IP anonymization |
-| Data breach notification | ✅ | Procedure documented in Privacy Policy |
-| DPO contact | ✅ | ahump20@outlook.com |
+| Requirement                 | Status | Evidence                                                   |
+| --------------------------- | ------ | ---------------------------------------------------------- |
+| Lawful basis for processing | ✅     | Consent + Legitimate Interest documented in Privacy Policy |
+| Transparent data collection | ✅     | Privacy Policy lists all data collected                    |
+| Right to access             | ✅     | `/api/privacy/export` endpoint                             |
+| Right to erasure            | ✅     | DELETE endpoint                                            |
+| Right to portability        | ✅     | JSON export format                                         |
+| Right to object             | ✅     | Cookie opt-out mechanism                                   |
+| Data protection by design   | ✅     | Privacy-preserving analytics, IP anonymization             |
+| Data breach notification    | ✅     | Procedure documented in Privacy Policy                     |
+| DPO contact                 | ✅     | ahump20@outlook.com                                        |
 
 ---
 
 ### CCPA Checklist
 
-| Requirement | Status | Evidence |
-|-------------|--------|----------|
-| Notice at collection | ✅ | Privacy Policy disclosed at signup |
-| Right to know | ✅ | Privacy Policy + data export |
-| Right to delete | ✅ | DELETE endpoint |
-| Right to opt-out | ✅ | Cookie banner |
-| No sale of data | ✅ | Explicitly stated in Privacy Policy |
-| Non-discrimination | ✅ | Service functions same regardless of choices |
+| Requirement          | Status | Evidence                                     |
+| -------------------- | ------ | -------------------------------------------- |
+| Notice at collection | ✅     | Privacy Policy disclosed at signup           |
+| Right to know        | ✅     | Privacy Policy + data export                 |
+| Right to delete      | ✅     | DELETE endpoint                              |
+| Right to opt-out     | ✅     | Cookie banner                                |
+| No sale of data      | ✅     | Explicitly stated in Privacy Policy          |
+| Non-discrimination   | ✅     | Service functions same regardless of choices |
 
 ---
 
 ### COPPA Checklist
 
-| Requirement | Status | Evidence |
-|-------------|--------|----------|
-| Privacy policy for children | ✅ | Section 2 of Privacy Policy |
-| Parental consent for <13 | ✅ | Email-based consent mechanism |
-| Limited data collection | ✅ | No personal data for children |
-| Parental access/deletion | ✅ | Contact email provided |
-| Data security | ✅ | HTTPS, Cloudflare security |
+| Requirement                 | Status | Evidence                      |
+| --------------------------- | ------ | ----------------------------- |
+| Privacy policy for children | ✅     | Section 2 of Privacy Policy   |
+| Parental consent for <13    | ✅     | Email-based consent mechanism |
+| Limited data collection     | ✅     | No personal data for children |
+| Parental access/deletion    | ✅     | Contact email provided        |
+| Data security               | ✅     | HTTPS, Cloudflare security    |
 
 ---
 
@@ -521,6 +527,7 @@ If a data breach occurs:
 - FTC COPPA: [https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa](https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa)
 
 **Subscribe to:**
+
 - Cloudflare Blog (compliance updates)
 - IAPP (International Association of Privacy Professionals)
 
@@ -539,25 +546,31 @@ If a data breach occurs:
 ### External Resources
 
 **GDPR:**
+
 - Official Text: [https://gdpr-info.eu/](https://gdpr-info.eu/)
 - ICO Guide: [https://ico.org.uk/for-organisations/guide-to-data-protection/](https://ico.org.uk/for-organisations/guide-to-data-protection/)
 
 **CCPA:**
+
 - Official Text: [https://oag.ca.gov/privacy/ccpa](https://oag.ca.gov/privacy/ccpa)
 - CCPA vs GDPR: [https://www.osano.com/articles/ccpa-vs-gdpr](https://www.osano.com/articles/ccpa-vs-gdpr)
 
 **COPPA:**
+
 - FTC Compliance Guide: [https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions](https://www.ftc.gov/business-guidance/resources/complying-coppa-frequently-asked-questions)
 
 **Cookies:**
+
 - EU Cookie Law: [https://gdpr.eu/cookies/](https://gdpr.eu/cookies/)
 - IAB Europe: [https://iabeurope.eu/transparency-consent-framework/](https://iabeurope.eu/transparency-consent-framework/)
 
 **Accessibility:**
+
 - WCAG 2.1: [https://www.w3.org/WAI/WCAG21/quickref/](https://www.w3.org/WAI/WCAG21/quickref/)
 - WebAIM: [https://webaim.org/](https://webaim.org/)
 
 **Cloudflare:**
+
 - Privacy Documentation: [https://www.cloudflare.com/trust-hub/gdpr/](https://www.cloudflare.com/trust-hub/gdpr/)
 - KV Documentation: [https://developers.cloudflare.com/kv/](https://developers.cloudflare.com/kv/)
 
@@ -681,9 +694,9 @@ openssl s_client -connect blazesportsintel.com:443 -servername blazesportsintel.
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-11-09 | Initial implementation |
+| Version | Date       | Changes                |
+| ------- | ---------- | ---------------------- |
+| 1.0     | 2025-11-09 | Initial implementation |
 
 ---
 

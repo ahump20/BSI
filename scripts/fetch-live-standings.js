@@ -13,10 +13,11 @@ import fs from 'fs';
 const ESPN_API = {
   NFL_TEAMS: 'http://site.api.espn.com/apis/site/v2/sports/football/nfl/teams',
   NCAA_TEAMS: 'http://site.api.espn.com/apis/site/v2/sports/football/college-football/teams',
-  NCAA_SCOREBOARD: 'http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard',
+  NCAA_SCOREBOARD:
+    'http://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard',
   MLB_TEAMS: 'http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams',
   NFL_SCOREBOARD: 'http://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard',
-  MLB_SCOREBOARD: 'http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard'
+  MLB_SCOREBOARD: 'http://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard',
 };
 
 // Fetch data from URL
@@ -29,8 +30,8 @@ function fetchData(url) {
       method: 'GET',
       headers: {
         'User-Agent': 'BlazeSportsIntel/1.0',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     };
 
     const req = https.request(options, (res) => {
@@ -59,26 +60,25 @@ function fetchData(url) {
 
 // Fetch NFL Standings (All 32 Teams)
 async function fetchNFLStandings() {
-
   try {
     const teamsData = await fetchData(ESPN_API.NFL_TEAMS);
     const teams = teamsData.sports?.[0]?.leagues?.[0]?.teams || [];
 
-    const standings = teams.map(teamWrapper => {
+    const standings = teams.map((teamWrapper) => {
       const team = teamWrapper.team;
-      const record = team.record?.items?.find(r => r.type === 'total') || {};
+      const record = team.record?.items?.find((r) => r.type === 'total') || {};
 
       return {
         name: team.displayName,
         abbreviation: team.abbreviation,
         division: team.groups?.conferenceStanding?.name || 'Unknown',
-        wins: record.stats?.find(s => s.name === 'wins')?.value || 0,
-        losses: record.stats?.find(s => s.name === 'losses')?.value || 0,
-        ties: record.stats?.find(s => s.name === 'ties')?.value || 0,
-        winPct: record.stats?.find(s => s.name === 'winPercent')?.value || 0,
-        pointsFor: record.stats?.find(s => s.name === 'pointsFor')?.value || 0,
-        pointsAgainst: record.stats?.find(s => s.name === 'pointsAgainst')?.value || 0,
-        streak: record.stats?.find(s => s.name === 'streak')?.displayValue || '-'
+        wins: record.stats?.find((s) => s.name === 'wins')?.value || 0,
+        losses: record.stats?.find((s) => s.name === 'losses')?.value || 0,
+        ties: record.stats?.find((s) => s.name === 'ties')?.value || 0,
+        winPct: record.stats?.find((s) => s.name === 'winPercent')?.value || 0,
+        pointsFor: record.stats?.find((s) => s.name === 'pointsFor')?.value || 0,
+        pointsAgainst: record.stats?.find((s) => s.name === 'pointsAgainst')?.value || 0,
+        streak: record.stats?.find((s) => s.name === 'streak')?.displayValue || '-',
       };
     });
 
@@ -89,7 +89,8 @@ async function fetchNFLStandings() {
     });
 
     standings.forEach((team, index) => {
-      const record = team.ties > 0 ? `${team.wins}-${team.losses}-${team.ties}` : `${team.wins}-${team.losses}`;
+      const record =
+        team.ties > 0 ? `${team.wins}-${team.losses}-${team.ties}` : `${team.wins}-${team.losses}`;
     });
 
     return standings;
@@ -101,7 +102,6 @@ async function fetchNFLStandings() {
 
 // Fetch SEC Football Standings (All 16 Teams)
 async function fetchSECStandings() {
-
   try {
     // Fetch with SEC group filter (group 8 = SEC)
     const url = `${ESPN_API.NCAA_SCOREBOARD}?groups=8&limit=100`;
@@ -111,21 +111,24 @@ async function fetchSECStandings() {
     const teamMap = new Map();
 
     if (scoreboardData.events) {
-      scoreboardData.events.forEach(event => {
-        event.competitions?.[0]?.competitors?.forEach(competitor => {
+      scoreboardData.events.forEach((event) => {
+        event.competitions?.[0]?.competitors?.forEach((competitor) => {
           const team = competitor.team;
-          if (team && team.conferenceId === '8') { // SEC conference ID
+          if (team && team.conferenceId === '8') {
+            // SEC conference ID
             if (!teamMap.has(team.id)) {
               teamMap.set(team.id, {
                 id: team.id,
                 name: team.displayName,
                 abbreviation: team.abbreviation,
-                overall: competitor.records?.find(r => r.type === 'total')?.summary || '0-0',
-                conference: competitor.records?.find(r => r.type === 'vsconf')?.summary || '0-0',
-                wins: parseInt(competitor.records?.find(r => r.type === 'total')?.wins || 0),
-                losses: parseInt(competitor.records?.find(r => r.type === 'total')?.losses || 0),
-                confWins: parseInt(competitor.records?.find(r => r.type === 'vsconf')?.wins || 0),
-                confLosses: parseInt(competitor.records?.find(r => r.type === 'vsconf')?.losses || 0)
+                overall: competitor.records?.find((r) => r.type === 'total')?.summary || '0-0',
+                conference: competitor.records?.find((r) => r.type === 'vsconf')?.summary || '0-0',
+                wins: parseInt(competitor.records?.find((r) => r.type === 'total')?.wins || 0),
+                losses: parseInt(competitor.records?.find((r) => r.type === 'total')?.losses || 0),
+                confWins: parseInt(competitor.records?.find((r) => r.type === 'vsconf')?.wins || 0),
+                confLosses: parseInt(
+                  competitor.records?.find((r) => r.type === 'vsconf')?.losses || 0
+                ),
               });
             }
           }
@@ -141,8 +144,7 @@ async function fetchSECStandings() {
       return b.wins - a.wins;
     });
 
-    standings.forEach((team, index) => {
-    });
+    standings.forEach((team, index) => {});
 
     return standings;
   } catch (error) {
@@ -153,25 +155,24 @@ async function fetchSECStandings() {
 
 // Fetch MLB Standings (All 30 Teams)
 async function fetchMLBStandings() {
-
   try {
     const teamsData = await fetchData(ESPN_API.MLB_TEAMS);
     const teams = teamsData.sports?.[0]?.leagues?.[0]?.teams || [];
 
-    const standings = teams.map(teamWrapper => {
+    const standings = teams.map((teamWrapper) => {
       const team = teamWrapper.team;
-      const record = team.record?.items?.find(r => r.type === 'total') || {};
+      const record = team.record?.items?.find((r) => r.type === 'total') || {};
 
       return {
         name: team.displayName,
         abbreviation: team.abbreviation,
         division: team.groups?.divisionStanding?.name || 'Unknown',
-        wins: record.stats?.find(s => s.name === 'wins')?.value || 0,
-        losses: record.stats?.find(s => s.name === 'losses')?.value || 0,
-        winPct: record.stats?.find(s => s.name === 'winPercent')?.value || 0,
-        gamesBack: record.stats?.find(s => s.name === 'gamesBehind')?.displayValue || '0.0',
-        streak: record.stats?.find(s => s.name === 'streak')?.displayValue || '-',
-        runDiff: record.stats?.find(s => s.name === 'differential')?.value || 0
+        wins: record.stats?.find((s) => s.name === 'wins')?.value || 0,
+        losses: record.stats?.find((s) => s.name === 'losses')?.value || 0,
+        winPct: record.stats?.find((s) => s.name === 'winPercent')?.value || 0,
+        gamesBack: record.stats?.find((s) => s.name === 'gamesBehind')?.displayValue || '0.0',
+        streak: record.stats?.find((s) => s.name === 'streak')?.displayValue || '-',
+        runDiff: record.stats?.find((s) => s.name === 'differential')?.value || 0,
       };
     });
 
@@ -194,26 +195,23 @@ async function fetchMLBStandings() {
 
 // Main execution
 async function main() {
-
   const results = {
     nfl: await fetchNFLStandings(),
     sec: await fetchSECStandings(),
     mlb: await fetchMLBStandings(),
     timestamp: new Date().toISOString(),
-    timezone: 'America/Chicago'
+    timezone: 'America/Chicago',
   };
-
 
   // Write to JSON file for integration
   fs.writeFileSync(
     '/Users/AustinHumphrey/BSI/data/live-standings-2025-10-01.json',
     JSON.stringify(results, null, 2)
   );
-
 }
 
 // Run the script
-main().catch(error => {
+main().catch((error) => {
   console.error('\n❌ Fatal error:', error);
   process.exit(1);
 });

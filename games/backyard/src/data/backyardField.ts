@@ -7,12 +7,12 @@
 
 /** Field theme types */
 export type FieldTheme =
-  | 'classic'    // Traditional backyard
-  | 'beach'      // Sandy beach field
-  | 'treehouse'  // Elevated treehouse platform
-  | 'junkyard'   // Industrial junkyard
-  | 'rooftop'    // City rooftop
-  | 'farm';      // Rural farm field
+  | 'classic' // Traditional backyard
+  | 'beach' // Sandy beach field
+  | 'treehouse' // Elevated treehouse platform
+  | 'junkyard' // Industrial junkyard
+  | 'rooftop' // City rooftop
+  | 'farm'; // Rural farm field
 
 /** Field configuration interface */
 export interface BackyardFieldConfig {
@@ -120,7 +120,8 @@ export const UNLOCKABLE_FIELDS: BackyardFieldConfig[] = [
   {
     id: 'field_blaze_003',
     name: 'Treehouse Heights',
-    description: 'An elevated platform among giant oaks. Balls that fall off the edge are home runs!',
+    description:
+      'An elevated platform among giant oaks. Balls that fall off the edge are home runs!',
     theme: 'treehouse',
     dimensions: {
       leftField: 28,
@@ -152,7 +153,7 @@ export const UNLOCKABLE_FIELDS: BackyardFieldConfig[] = [
   },
   {
     id: 'field_blaze_004',
-    name: 'Rusty\'s Junkyard',
+    name: "Rusty's Junkyard",
     description: 'A diamond carved out between car stacks. Hit the bonus targets for extra points!',
     theme: 'junkyard',
     dimensions: {
@@ -186,7 +187,7 @@ export const UNLOCKABLE_FIELDS: BackyardFieldConfig[] = [
   {
     id: 'field_blaze_005',
     name: 'Downtown Rooftop',
-    description: 'A converted rooftop with city skyline views. Don\'t hit it into the street!',
+    description: "A converted rooftop with city skyline views. Don't hit it into the street!",
     theme: 'rooftop',
     dimensions: {
       leftField: 30,
@@ -218,7 +219,7 @@ export const UNLOCKABLE_FIELDS: BackyardFieldConfig[] = [
   },
   {
     id: 'field_blaze_006',
-    name: 'Old MacDonald\'s Farm',
+    name: "Old MacDonald's Farm",
     description: 'A rural farm field with a corn maze outfield. Hit it into the corn for doubles!',
     theme: 'farm',
     dimensions: {

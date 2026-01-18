@@ -11,6 +11,7 @@
 ## Executive Summary
 
 **Key Findings**:
+
 - Desktop High-End: [PENDING BENCHMARKS]
 - Mobile High-End: [PENDING BENCHMARKS]
 - Recommended particle counts per device class documented below
@@ -24,21 +25,23 @@
 ### Desktop High-End (MacBook Pro M3 Max)
 
 **Device Specifications**:
+
 - CPU: [TO BE DETECTED]
 - Memory: [TO BE DETECTED]
 - GPU: [TO BE DETECTED]
 - Screen: [TO BE DETECTED]
 - Browser: [TO BE DETECTED]
 
-| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Avg Frame Time (ms) | P99 Frame Time (ms) | Memory (MB) | Verdict |
-|---------------|---------|------------|--------------|---------------------|---------------------|-------------|---------|
-| 25K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 50K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 100K          | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 150K          | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 200K          | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Avg Frame Time (ms) | P99 Frame Time (ms) | Memory (MB) | Verdict   |
+| -------------- | ------- | ---------- | ------------ | ------------------- | ------------------- | ----------- | --------- |
+| 25K            | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 50K            | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 100K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 150K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 200K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
 
 **Target Validation**:
+
 - ❓ 150K particles: ≥ 60 FPS average → [PENDING]
 - ❓ 150K particles: ≥ 30 FPS (1% low) → [PENDING]
 - ❓ 200K particles: ≥ 50 FPS average → [PENDING]
@@ -51,20 +54,22 @@
 ### Mobile High-End (iPhone 15 Pro / Galaxy S24+)
 
 **Device Specifications**:
+
 - Device: [TO BE DETECTED]
 - CPU: [TO BE DETECTED]
 - Memory: [TO BE DETECTED]
 - Screen: [TO BE DETECTED]
 - Browser: [TO BE DETECTED]
 
-| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Avg Frame Time (ms) | P99 Frame Time (ms) | Memory (MB) | Verdict |
-|---------------|---------|------------|--------------|---------------------|---------------------|-------------|---------|
-| 25K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 50K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 100K          | -       | -          | -            | -                   | -                   | -           | [PENDING] |
-| 150K          | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Avg Frame Time (ms) | P99 Frame Time (ms) | Memory (MB) | Verdict   |
+| -------------- | ------- | ---------- | ------------ | ------------------- | ------------------- | ----------- | --------- |
+| 25K            | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 50K            | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 100K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
+| 150K           | -       | -          | -            | -                   | -                   | -           | [PENDING] |
 
 **Target Validation**:
+
 - ❓ 100K particles: ≥ 45 FPS average → [PENDING]
 - ❓ 50K particles: ≥ 55 FPS average → [PENDING]
 - ❓ Memory usage: < 150 MB → [PENDING]
@@ -77,12 +82,12 @@
 
 **Status**: [NOT YET TESTED]
 
-| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict |
-|---------------|---------|------------|--------------|-------------|---------|
-| 25K           | -       | -          | -            | -           | [PENDING] |
-| 50K           | -       | -          | -            | -           | [PENDING] |
-| 100K          | -       | -          | -            | -           | [PENDING] |
-| 150K          | -       | -          | -            | -           | [PENDING] |
+| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict   |
+| -------------- | ------- | ---------- | ------------ | ----------- | --------- |
+| 25K            | -       | -          | -            | -           | [PENDING] |
+| 50K            | -       | -          | -            | -           | [PENDING] |
+| 100K           | -       | -          | -            | -           | [PENDING] |
+| 150K           | -       | -          | -            | -           | [PENDING] |
 
 ---
 
@@ -90,11 +95,11 @@
 
 **Status**: [NOT YET TESTED]
 
-| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict |
-|---------------|---------|------------|--------------|-------------|---------|
-| 25K           | -       | -          | -            | -           | [PENDING] |
-| 50K           | -       | -          | -            | -           | [PENDING] |
-| 100K          | -       | -          | -            | -           | [PENDING] |
+| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict   |
+| -------------- | ------- | ---------- | ------------ | ----------- | --------- |
+| 25K            | -       | -          | -            | -           | [PENDING] |
+| 50K            | -       | -          | -            | -           | [PENDING] |
+| 100K           | -       | -          | -            | -           | [PENDING] |
 
 ---
 
@@ -102,21 +107,23 @@
 
 **Status**: [NOT YET TESTED]
 
-| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict |
-|---------------|---------|------------|--------------|-------------|---------|
-| 25K           | -       | -          | -            | -           | [PENDING] |
-| 50K           | -       | -          | -            | -           | [PENDING] |
-| 100K          | -       | -          | -            | -           | [PENDING] |
-| 150K          | -       | -          | -            | -           | [PENDING] |
+| Particle Count | Avg FPS | 1% Low FPS | 0.1% Low FPS | Memory (MB) | Verdict   |
+| -------------- | ------- | ---------- | ------------ | ----------- | --------- |
+| 25K            | -       | -          | -            | -           | [PENDING] |
+| 50K            | -       | -          | -            | -           | [PENDING] |
+| 100K           | -       | -          | -            | -           | [PENDING] |
+| 150K           | -       | -          | -            | -           | [PENDING] |
 
 ---
 
 ## Updated Marketing Claims
 
 ### BEFORE (Unverified)
+
 > "150,000 particles with 10x visual fidelity"
 
 ### AFTER (To Be Updated After Testing)
+
 > [PENDING BENCHMARK VALIDATION]
 
 **Status**: Awaiting real benchmark data to provide evidence-based performance claims.
@@ -126,20 +133,24 @@
 ## Performance Guarantees (To Be Validated)
 
 **Desktop (High-End)**:
+
 - Target: 150K particles @ 60 FPS
 - Actual: [PENDING VALIDATION]
 
 **Desktop (Mid-Range)**:
+
 - Target: 100K particles @ 60 FPS
 - Actual: [PENDING VALIDATION]
 
 **Mobile (Flagship)**:
+
 - Target: 100K particles @ 50 FPS
 - Actual: [PENDING VALIDATION]
 - Target: 50K particles @ 60 FPS
 - Actual: [PENDING VALIDATION]
 
 **Mobile (Mainstream)**:
+
 - Target: 50K particles @ 45 FPS
 - Actual: [PENDING VALIDATION]
 
@@ -170,12 +181,14 @@
 ### Validation Criteria
 
 **Pass Criteria**:
+
 - Desktop High-End: 150K particles @ ≥60 FPS avg, ≥30 FPS 1% low
 - Mobile High-End: 100K particles @ ≥45 FPS avg, ≥25 FPS 1% low
 - Memory usage: < 500 MB across all tests
 - Frame time variance: < 50ms for smooth experience
 
 **Fail Scenarios**:
+
 - If Desktop High-End < 60 FPS at 150K → Reduce marketing claim to 100K
 - If Mobile High-End < 45 FPS at 100K → Recommend 50K for mobile
 - If Memory > 500 MB → Investigate memory leaks
@@ -185,6 +198,7 @@
 ## Data Files
 
 All raw benchmark data stored in:
+
 - Desktop High-End: `/docs/performance-benchmarks/desktop-high/`
 - Mobile High-End: `/docs/performance-benchmarks/mobile-high/`
 - Desktop Mid-Range: `/docs/performance-benchmarks/desktop-mid/`
@@ -192,6 +206,7 @@ All raw benchmark data stored in:
 - Tablet: `/docs/performance-benchmarks/tablet/`
 
 **File Format**: JSON exports with complete metadata
+
 - Device specifications
 - Test configuration
 - Raw FPS samples
@@ -204,12 +219,14 @@ All raw benchmark data stored in:
 ## Testing Status
 
 ### Phase 1: Critical Validation (REQUIRED) ⏸️
+
 - [ ] Desktop High-End: 150K particle test
 - [ ] Mobile High-End: 100K particle test
 - [ ] Export JSON results
 - [ ] Update marketing claims with verified data
 
 ### Phase 2: Comprehensive Testing (RECOMMENDED) ⏸️
+
 - [ ] Desktop High-End: All particle counts (25K, 50K, 100K, 150K, 200K)
 - [ ] Mobile High-End: All particle counts (25K, 50K, 100K, 150K)
 - [ ] Desktop Mid-Range: 4 particle counts
@@ -219,6 +236,7 @@ All raw benchmark data stored in:
 - [ ] Generate performance recommendation matrix
 
 ### Phase 3: Documentation & Deployment ⏸️
+
 - [ ] Replace homepage claims with verified data
 - [ ] Add "[See Benchmarks →]" link
 - [ ] Update analytics page device recommendations

@@ -19,11 +19,11 @@ const MAIN_API = process.env.BSI_API_URL ?? 'https://blazesportsintel.com';
 // Performance SLOs (in milliseconds)
 // Slightly relaxed for network variability
 const SLO = {
-  health: 500,          // Relaxed from 200ms for network variance
+  health: 500, // Relaxed from 200ms for network variance
   singlePrediction: 2000,
   batchPrediction: 5000,
   calibration: 1000,
-  teamState: 1000,      // Relaxed - endpoint may not be fully optimized
+  teamState: 1000, // Relaxed - endpoint may not be fully optimized
   staticPage: 1000,
 } as const;
 
@@ -102,9 +102,7 @@ describe('API Response Times - Prediction API', () => {
       season: '2025',
     });
 
-    const { duration, status } = await measureRequest(
-      `${API_BASE}/v1/state/team/texas?${params}`
-    );
+    const { duration, status } = await measureRequest(`${API_BASE}/v1/state/team/texas?${params}`);
 
     // Endpoint may return success or error depending on implementation
     // We only care about response time here
@@ -115,7 +113,7 @@ describe('API Response Times - Prediction API', () => {
 
 describe('API Response Times - Multi-Sport Coverage', () => {
   const sports = ['cfb', 'nfl', 'mlb'] as const;
-  const teams: Record<typeof sports[number], [string, string]> = {
+  const teams: Record<(typeof sports)[number], [string, string]> = {
     cfb: ['texas', 'georgia'],
     nfl: ['titans', 'cowboys'],
     mlb: ['cardinals', 'dodgers'],
@@ -166,9 +164,7 @@ describe('API Response Times - Concurrent Load', () => {
   });
 
   it('should handle 10 concurrent health checks', async () => {
-    const requests = Array.from({ length: 10 }, () =>
-      measureRequest(`${API_BASE}/v1/health`)
-    );
+    const requests = Array.from({ length: 10 }, () => measureRequest(`${API_BASE}/v1/health`));
 
     const start = performance.now();
     const results = await Promise.all(requests);
@@ -193,14 +189,10 @@ describe('API Response Times - Cold vs Warm', () => {
     });
 
     // First request (potentially cold)
-    const first = await measureRequest(
-      `${API_BASE}/v1/predict/game/cache-test-1?${params}`
-    );
+    const first = await measureRequest(`${API_BASE}/v1/predict/game/cache-test-1?${params}`);
 
     // Second request (should hit warm cache)
-    const second = await measureRequest(
-      `${API_BASE}/v1/predict/game/cache-test-1?${params}`
-    );
+    const second = await measureRequest(`${API_BASE}/v1/predict/game/cache-test-1?${params}`);
 
     expect(first.status).toBe(200);
     expect(second.status).toBe(200);
@@ -217,9 +209,7 @@ describe('API Response Times - Cold vs Warm', () => {
 
 describe('API Response Times - Error Paths', () => {
   it('error responses should be fast', async () => {
-    const { duration, status } = await measureRequest(
-      `${API_BASE}/v1/nonexistent/endpoint`
-    );
+    const { duration, status } = await measureRequest(`${API_BASE}/v1/nonexistent/endpoint`);
 
     // Error responses should be fast (404 or 5xx are both acceptable)
     expect(status).toBeGreaterThanOrEqual(400);
@@ -257,9 +247,7 @@ describe('API Response Times - Summary Report', () => {
       homeTeamId: 'texas',
       awayTeamId: 'georgia',
     });
-    const single = await measureRequest(
-      `${API_BASE}/v1/predict/game/summary-test?${params}`
-    );
+    const single = await measureRequest(`${API_BASE}/v1/predict/game/summary-test?${params}`);
     results.push({
       endpoint: '/v1/predict/game/:id',
       duration: single.duration,
@@ -279,9 +267,7 @@ describe('API Response Times - Summary Report', () => {
     });
 
     // Team state
-    const teamState = await measureRequest(
-      `${API_BASE}/v1/state/team/texas?sport=cfb`
-    );
+    const teamState = await measureRequest(`${API_BASE}/v1/state/team/texas?sport=cfb`);
     results.push({
       endpoint: '/v1/state/team/:id',
       duration: teamState.duration,
@@ -296,9 +282,7 @@ describe('API Response Times - Summary Report', () => {
     console.log('|----------|----------|-----|--------|');
     for (const r of results) {
       const status = r.passed ? '✅' : '❌';
-      console.log(
-        `| ${r.endpoint} | ${r.duration.toFixed(0)}ms | ${r.slo}ms | ${status} |`
-      );
+      console.log(`| ${r.endpoint} | ${r.duration.toFixed(0)}ms | ${r.slo}ms | ${status} |`);
     }
 
     // All endpoints should pass

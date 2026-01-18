@@ -10,7 +10,9 @@ const targetDir = path.join(repoRoot, 'apps/web/public/games/bbp-web');
 
 function ensureSourceExists() {
   if (!fs.existsSync(sourceDir)) {
-    console.error(`⚠️  Phaser build output not found at ${sourceDir}. Run "pnpm --filter @bsi/phaser-bbp-web build" first.`);
+    console.error(
+      `⚠️  Phaser build output not found at ${sourceDir}. Run "pnpm --filter @bsi/phaser-bbp-web build" first.`
+    );
     process.exit(1);
   }
 }

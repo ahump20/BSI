@@ -56,6 +56,7 @@ wrangler d1 create blazesports-db
 ```
 
 **Action**: Copy the `database_id` from output and update `wrangler.toml` line 13:
+
 ```toml
 database_id = "abc123def456"  # Replace with your actual ID
 ```
@@ -88,6 +89,7 @@ wrangler kv:namespace create CACHE --preview
 ```
 
 **Action**: Update `wrangler.toml` with both IDs:
+
 ```toml
 # Line 21
 id = "xyz789abc123"  # Production namespace
@@ -109,6 +111,7 @@ wrangler pages secret put ANTHROPIC_API_KEY --project-name blazesportsintel
 ```
 
 **Verify secrets were set**:
+
 ```bash
 wrangler pages secret list --project-name blazesportsintel
 
@@ -135,6 +138,7 @@ wrangler pages deploy . --project-name blazesportsintel --branch main --commit-d
 Test each sport's API endpoints:
 
 ### NFL Endpoints
+
 ```bash
 # Get NFL standings
 curl https://blazesportsintel.com/api/nfl/standings?season=2025 | jq
@@ -147,6 +151,7 @@ curl https://blazesportsintel.com/api/nfl/games?season=2025 | jq
 ```
 
 ### MLB Endpoints
+
 ```bash
 # Get MLB standings
 curl https://blazesportsintel.com/api/mlb/standings?season=2025 | jq
@@ -159,6 +164,7 @@ curl https://blazesportsintel.com/api/mlb/games?season=2025 | jq
 ```
 
 ### CFB (SEC) Endpoints
+
 ```bash
 # Get SEC standings
 curl https://blazesportsintel.com/api/cfb/standings?season=2025&conference=SEC | jq
@@ -171,6 +177,7 @@ curl https://blazesportsintel.com/api/cfb/games?season=2025&week=5 | jq
 ```
 
 ### CBB (SEC) Endpoints
+
 ```bash
 # Get SEC basketball standings
 curl https://blazesportsintel.com/api/cbb/standings?season=2026&conference=SEC | jq
@@ -192,6 +199,7 @@ Cron jobs run automatically based on schedules in `wrangler.toml`:
 - **CBB**: Every 20 minutes (Nov-Mar)
 
 **Check cron job execution logs**:
+
 ```bash
 wrangler tail --project-name blazesportsintel --format pretty
 
@@ -224,27 +232,27 @@ Update your analytics.html to use the new API endpoints:
 ```javascript
 // Replace hardcoded data with API calls
 async function fetchNFLStandings() {
-    const response = await fetch('/api/nfl/standings?season=2025');
-    const { data, meta } = await response.json();
+  const response = await fetch('/api/nfl/standings?season=2025');
+  const { data, meta } = await response.json();
 
-    console.log(`Loaded ${data.length} NFL teams (cached: ${meta.cached})`);
-    return data;
+  console.log(`Loaded ${data.length} NFL teams (cached: ${meta.cached})`);
+  return data;
 }
 
 async function fetchMLBStandings() {
-    const response = await fetch('/api/mlb/standings?season=2025');
-    const { data, meta } = await response.json();
+  const response = await fetch('/api/mlb/standings?season=2025');
+  const { data, meta } = await response.json();
 
-    console.log(`Loaded ${data.length} MLB teams (cached: ${meta.cached})`);
-    return data;
+  console.log(`Loaded ${data.length} MLB teams (cached: ${meta.cached})`);
+  return data;
 }
 
 async function fetchSECFootball() {
-    const response = await fetch('/api/cfb/standings?season=2025&conference=SEC');
-    const { data, meta } = await response.json();
+  const response = await fetch('/api/cfb/standings?season=2025&conference=SEC');
+  const { data, meta } = await response.json();
 
-    console.log(`Loaded ${data.length} SEC teams (cached: ${meta.cached})`);
-    return data;
+  console.log(`Loaded ${data.length} SEC teams (cached: ${meta.cached})`);
+  return data;
 }
 ```
 
@@ -253,6 +261,7 @@ async function fetchSECFootball() {
 ### Issue: API returns 500 errors
 
 **Check**:
+
 1. Verify secrets are set: `wrangler pages secret list --project-name blazesportsintel`
 2. Check D1 database exists: `wrangler d1 list`
 3. View error logs: `wrangler tail --project-name blazesportsintel`
@@ -260,6 +269,7 @@ async function fetchSECFootball() {
 ### Issue: Cron jobs not running
 
 **Check**:
+
 1. Verify cron triggers in wrangler.toml
 2. Ensure you're in the correct season (cron jobs are seasonal)
 3. Check logs: `wrangler tail --project-name blazesportsintel --format pretty`
@@ -267,6 +277,7 @@ async function fetchSECFootball() {
 ### Issue: Database queries failing
 
 **Check**:
+
 1. Verify migration ran successfully
 2. Check database binding in wrangler.toml (should be `binding = "DB"`)
 3. Test with: `wrangler d1 execute blazesports-db --command "SELECT * FROM teams LIMIT 1;" --remote`
@@ -274,6 +285,7 @@ async function fetchSECFootball() {
 ### Issue: KV cache not working
 
 **Check**:
+
 1. Verify KV namespace IDs in wrangler.toml
 2. Check binding name is `CACHE`
 3. List namespaces: `wrangler kv:namespace list`
@@ -281,6 +293,7 @@ async function fetchSECFootball() {
 ## Monitoring & Maintenance
 
 ### View Real-Time Logs
+
 ```bash
 # All function logs
 wrangler tail --project-name blazesportsintel --format pretty
@@ -290,6 +303,7 @@ wrangler tail --project-name blazesportsintel --format pretty | grep "NFL"
 ```
 
 ### Check API Sync Status
+
 ```bash
 # Last 20 sync operations
 wrangler d1 execute blazesports-db --command "
@@ -301,6 +315,7 @@ wrangler d1 execute blazesports-db --command "
 ```
 
 ### Clear Cache (Force Refresh)
+
 ```bash
 # List all KV keys
 wrangler kv:key list --namespace-id="your-kv-namespace-id"
@@ -310,6 +325,7 @@ wrangler kv:key delete "sportsdata:nfl:/scores/json/Standings/2025:{}" --namespa
 ```
 
 ### Database Maintenance
+
 ```bash
 # Backup D1 database
 wrangler d1 export blazesports-db --output=backup.sql --remote
@@ -341,12 +357,14 @@ Before going live:
 ## API Rate Limits
 
 SportsDataIO free tier limits:
+
 - **NFL**: 1,000 requests/month
 - **MLB**: 1,000 requests/month
 - **CFB**: 1,000 requests/month
 - **CBB**: 1,000 requests/month
 
 With current cron schedule and KV caching:
+
 - **NFL**: ~8,640 requests/month (5 min intervals × 6 months)
 - **MLB**: ~4,320 requests/month (10 min intervals × 8 months)
 - **CFB**: ~2,880 requests/month (15 min intervals × 6 months)
@@ -357,6 +375,7 @@ With current cron schedule and KV caching:
 ## Support
 
 If issues persist:
+
 1. Check Cloudflare Pages dashboard: https://dash.cloudflare.com/
 2. Review D1 database console
 3. Check function logs in real-time: `wrangler tail`
@@ -376,6 +395,7 @@ If issues persist:
 **Deployment Complete! 🎉**
 
 Your BlazeSportsIntel platform now has:
+
 - ✅ Real-time sports data from SportsDataIO
 - ✅ Persistent storage in D1 database
 - ✅ High-performance KV caching

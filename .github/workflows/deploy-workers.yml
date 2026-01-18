@@ -27,7 +27,9 @@ on:
           - bsi-home
           - bsi-chatgpt-app
           - bsi-portal-agent
-          - blaze-blitz-football
+          - blaze-blitz
+          - blaze-hotdog-dash
+          - sandlot-sluggers
       environment:
         description: 'Deployment environment'
         required: true
@@ -100,7 +102,13 @@ jobs:
               WORKERS=$(echo "$WORKERS" | jq -c '. + ["bsi-portal-agent"]')
             fi
             if echo "$CHANGED_FILES" | grep -q "games/blitz/"; then
-              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-blitz-football"]')
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-blitz"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "games/hotdog-dash/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["blaze-hotdog-dash"]')
+            fi
+            if echo "$CHANGED_FILES" | grep -q "games/sandlot-sluggers/"; then
+              WORKERS=$(echo "$WORKERS" | jq -c '. + ["sandlot-sluggers"]')
             fi
           fi
 
@@ -217,9 +225,17 @@ jobs:
               echo "path=src/agents/bsi-agent/wrangler.toml" >> $GITHUB_OUTPUT
               echo "health_url=" >> $GITHUB_OUTPUT
               ;;
-            "blaze-blitz-football")
-              echo "path=games/blitz/wrangler.toml" >> $GITHUB_OUTPUT
+            "blaze-blitz")
+              echo "path=games/blitz/wrangler.jsonc" >> $GITHUB_OUTPUT
+              echo "health_url=https://blazesportsintel.com/games/blitz/" >> $GITHUB_OUTPUT
+              ;;
+            "blaze-hotdog-dash")
+              echo "path=games/hotdog-dash/wrangler.toml" >> $GITHUB_OUTPUT
               echo "health_url=" >> $GITHUB_OUTPUT
+              ;;
+            "sandlot-sluggers")
+              echo "path=games/sandlot-sluggers/wrangler.jsonc" >> $GITHUB_OUTPUT
+              echo "health_url=https://sandlot.blazesportsintel.com/" >> $GITHUB_OUTPUT
               ;;
             *)
               echo "Unknown worker: $WORKER_NAME"

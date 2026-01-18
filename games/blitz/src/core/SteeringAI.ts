@@ -16,9 +16,9 @@ export interface SteeringAgent {
   position: Vector3;
   velocity: Vector3;
   maxSpeed: number;
-  maxForce: number;   // Max steering force
+  maxForce: number; // Max steering force
   mass: number;
-  rotation: number;   // Facing angle (radians)
+  rotation: number; // Facing angle (radians)
 }
 
 /** Target for steering behaviors */
@@ -33,8 +33,8 @@ export interface SteeringWeights {
   interpose: number;
   seek: number;
   flee: number;
-  separation: number;  // Avoid clustering with teammates
-  arrival: number;     // Slow down when approaching target
+  separation: number; // Avoid clustering with teammates
+  arrival: number; // Slow down when approaching target
 }
 
 const DEFAULT_WEIGHTS: SteeringWeights = {
@@ -48,11 +48,11 @@ const DEFAULT_WEIGHTS: SteeringWeights = {
 
 /** Football-specific AI configuration */
 export interface DefenderAIConfig {
-  pursuitLookAhead: number;     // How far ahead to predict (seconds)
-  interposeRatio: number;       // Position between ball and receiver (0-1)
-  separationRadius: number;     // Min distance from teammates
-  arrivalRadius: number;        // Start slowing when this close
-  reactionTime: number;         // Delay before reacting (seconds)
+  pursuitLookAhead: number; // How far ahead to predict (seconds)
+  interposeRatio: number; // Position between ball and receiver (0-1)
+  separationRadius: number; // Min distance from teammates
+  arrivalRadius: number; // Start slowing when this close
+  reactionTime: number; // Delay before reacting (seconds)
   coverageAggressiveness: number; // How tight to cover (0-1)
 }
 
@@ -70,10 +70,7 @@ export class SteeringBehaviors {
   private config: DefenderAIConfig;
   private weights: SteeringWeights;
 
-  constructor(
-    config: Partial<DefenderAIConfig> = {},
-    weights: Partial<SteeringWeights> = {}
-  ) {
+  constructor(config: Partial<DefenderAIConfig> = {}, weights: Partial<SteeringWeights> = {}) {
     this.config = { ...DEFAULT_AI_CONFIG, ...config };
     this.weights = { ...DEFAULT_WEIGHTS, ...weights };
   }
@@ -108,9 +105,10 @@ export class SteeringBehaviors {
 
     // Determine look-ahead time based on distance
     const speed = agent.velocity.length();
-    const lookAhead = speed > 0
-      ? Math.min(distance / speed, this.config.pursuitLookAhead * 2)
-      : this.config.pursuitLookAhead;
+    const lookAhead =
+      speed > 0
+        ? Math.min(distance / speed, this.config.pursuitLookAhead * 2)
+        : this.config.pursuitLookAhead;
 
     // Predict future position
     const futurePos = target.position.clone();
@@ -129,10 +127,11 @@ export class SteeringBehaviors {
   public interpose(
     agent: SteeringAgent,
     targetA: SteeringTarget, // Ball/QB
-    targetB: SteeringTarget  // Receiver
+    targetB: SteeringTarget // Receiver
   ): Vector3 {
     // Calculate midpoint weighted by interpose ratio
-    const midpoint = targetA.position.scale(1 - this.config.interposeRatio)
+    const midpoint = targetA.position
+      .scale(1 - this.config.interposeRatio)
       .add(targetB.position.scale(this.config.interposeRatio));
 
     // Seek the interpose point
@@ -212,11 +211,7 @@ export class SteeringBehaviors {
     // If we have a coverage assignment (man or zone), cover them
     else if (assignment && ballPosition) {
       // Interpose between ball and receiver
-      const interposeForce = this.interpose(
-        agent,
-        { position: ballPosition },
-        assignment
-      );
+      const interposeForce = this.interpose(agent, { position: ballPosition }, assignment);
       steering.addInPlace(interposeForce.scale(this.weights.interpose));
     }
     // Default: return to zone position
@@ -235,11 +230,7 @@ export class SteeringBehaviors {
   /**
    * Apply steering force to agent and update position
    */
-  public applySteeringForce(
-    agent: SteeringAgent,
-    force: Vector3,
-    deltaTime: number
-  ): void {
+  public applySteeringForce(agent: SteeringAgent, force: Vector3, deltaTime: number): void {
     // F = ma, so a = F/m
     const acceleration = force.scale(1 / agent.mass);
 

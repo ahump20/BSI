@@ -17,7 +17,7 @@ const WRANGLER_D1_DB = 'blazesports-historical';
 // API Headers
 const headers = {
   'User-Agent': 'BlazeSportsIntel/1.0',
-  Accept: 'application/json'
+  Accept: 'application/json',
 };
 
 /**
@@ -35,10 +35,9 @@ async function fetchTeamFromESPN(espnTeamId) {
  * Fetch games for a team and season
  */
 async function fetchTeamGames(espnTeamId, season) {
-  const response = await fetch(
-    `${ESPN_API_BASE}/teams/${espnTeamId}/schedule?season=${season}`,
-    { headers }
-  );
+  const response = await fetch(`${ESPN_API_BASE}/teams/${espnTeamId}/schedule?season=${season}`, {
+    headers,
+  });
   if (!response.ok) {
     throw new Error(`ESPN API error: ${response.status}`);
   }
@@ -86,8 +85,8 @@ function buildTeamInsertSQL(teamData) {
       team.venue?.fullName,
       team.color,
       team.alternateColor,
-      team.logos?.[0]?.href
-    ]
+      team.logos?.[0]?.href,
+    ],
   };
 }
 
@@ -96,8 +95,8 @@ function buildTeamInsertSQL(teamData) {
  */
 function buildGameInsertSQL(gameData, seasonId) {
   const competition = gameData.competitions?.[0];
-  const homeTeam = competition.competitors.find(c => c.homeAway === 'home');
-  const awayTeam = competition.competitors.find(c => c.homeAway === 'away');
+  const homeTeam = competition.competitors.find((c) => c.homeAway === 'home');
+  const awayTeam = competition.competitors.find((c) => c.homeAway === 'away');
 
   return {
     sql: `
@@ -131,8 +130,8 @@ function buildGameInsertSQL(gameData, seasonId) {
       competition.venue?.state,
       competition.attendance,
       competition.broadcasts?.[0]?.names?.[0],
-      gameData.id // for the WHERE NOT EXISTS check
-    ]
+      gameData.id, // for the WHERE NOT EXISTS check
+    ],
   };
 }
 
@@ -164,14 +163,14 @@ function buildBoxScoreInsertSQL(boxScoreData, gameId) {
     `,
     params: [
       gameId,
-      homeTeam.statistics?.find(s => s.name === 'runs')?.displayValue || 0,
-      homeTeam.statistics?.find(s => s.name === 'hits')?.displayValue || 0,
-      homeTeam.statistics?.find(s => s.name === 'errors')?.displayValue || 0,
-      awayTeam.statistics?.find(s => s.name === 'runs')?.displayValue || 0,
-      awayTeam.statistics?.find(s => s.name === 'hits')?.displayValue || 0,
-      awayTeam.statistics?.find(s => s.name === 'errors')?.displayValue || 0,
-      gameId
-    ]
+      homeTeam.statistics?.find((s) => s.name === 'runs')?.displayValue || 0,
+      homeTeam.statistics?.find((s) => s.name === 'hits')?.displayValue || 0,
+      homeTeam.statistics?.find((s) => s.name === 'errors')?.displayValue || 0,
+      awayTeam.statistics?.find((s) => s.name === 'runs')?.displayValue || 0,
+      awayTeam.statistics?.find((s) => s.name === 'hits')?.displayValue || 0,
+      awayTeam.statistics?.find((s) => s.name === 'errors')?.displayValue || 0,
+      gameId,
+    ],
   };
 }
 
@@ -185,9 +184,12 @@ function generateD1ExecuteCommand(sql, params) {
   // Build parameterized query string
   let parameterizedSQL = escapedSQL;
   params.forEach((param, index) => {
-    const value = param === null || param === undefined ? 'NULL' :
-                  typeof param === 'string' ? `'${param.replace(/'/g, "''")}'` :
-                  param;
+    const value =
+      param === null || param === undefined
+        ? 'NULL'
+        : typeof param === 'string'
+          ? `'${param.replace(/'/g, "''")}'`
+          : param;
     parameterizedSQL = parameterizedSQL.replace('?', value);
   });
 
@@ -243,15 +245,16 @@ async function ingestTeamSeason(espnTeamId, season) {
         processedGames++;
 
         // Rate limiting - wait 500ms between requests
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
 
     console.log(`\n✅ Ingestion complete! Processed ${processedGames} games.`);
     console.log('\n💡 To execute these commands, copy and paste them into your terminal.');
-    console.log('   Or pipe this script\'s output to bash:\n');
-    console.log('   node scripts/ingest-historical-data.js --team 251 --season 2025 | grep "wrangler d1" | bash\n');
-
+    console.log("   Or pipe this script's output to bash:\n");
+    console.log(
+      '   node scripts/ingest-historical-data.js --team 251 --season 2025 | grep "wrangler d1" | bash\n'
+    );
   } catch (error) {
     console.error('❌ Ingestion failed:', error.message);
     process.exit(1);
@@ -281,7 +284,9 @@ async function main() {
   const config = parseArgs();
 
   if (!config.team || !config.season) {
-    console.error('Usage: node scripts/ingest-historical-data.js --team <espn_team_id> --season <year>');
+    console.error(
+      'Usage: node scripts/ingest-historical-data.js --team <espn_team_id> --season <year>'
+    );
     console.error('\nExample: node scripts/ingest-historical-data.js --team 251 --season 2025');
     console.error('\nCommon team IDs:');
     console.error('  251  - Texas Longhorns');

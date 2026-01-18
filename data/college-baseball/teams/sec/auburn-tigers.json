@@ -43,10 +43,7 @@
   "nil_operations": {
     "primary_collective": "On To Victory",
     "lead_contact": "Brett Whiteside",
-    "contact_channels": [
-      "hello@ontovictory.com",
-      "https://ontovictory.com/contact"
-    ],
+    "contact_channels": ["hello@ontovictory.com", "https://ontovictory.com/contact"],
     "recent_initiatives": "Piloting diamond club hospitality tied to baseball-only giving levels (announced August 2024).",
     "intel_status": "needs_verification"
   },
@@ -60,9 +57,7 @@
   "front_office": {
     "athletic_director": "John Cohen",
     "baseball_admin": "Ben Mims",
-    "financial_points_of_contact": [
-      "tix@auburn.edu"
-    ]
+    "financial_points_of_contact": ["tix@auburn.edu"]
   },
   "historical_context": {
     "college_world_series_titles": 0,

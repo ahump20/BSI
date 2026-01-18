@@ -31,9 +31,7 @@ interface AnalyticsQuery {
 /**
  * Fetch provider metrics from Cloudflare Analytics Engine
  */
-async function fetchProviderMetrics(
-  query: AnalyticsQuery
-): Promise<ProviderMetrics[]> {
+async function fetchProviderMetrics(query: AnalyticsQuery): Promise<ProviderMetrics[]> {
   // In production, this would query the Analytics Engine API
   // For now, this is a template showing the expected structure
 
@@ -70,25 +68,22 @@ async function fetchProviderMetrics(
   `;
 
   try {
-    const response = await fetch(
-      `https://api.cloudflare.com/client/v4/graphql`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiToken}`,
-          'Content-Type': 'application/json',
+    const response = await fetch(`https://api.cloudflare.com/client/v4/graphql`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: graphqlQuery,
+        variables: {
+          accountTag: accountId,
+          datasetName,
+          startTime: query.startTime.toISOString(),
+          endTime: query.endTime.toISOString(),
         },
-        body: JSON.stringify({
-          query: graphqlQuery,
-          variables: {
-            accountTag: accountId,
-            datasetName,
-            startTime: query.startTime.toISOString(),
-            endTime: query.endTime.toISOString(),
-          },
-        }),
-      }
-    );
+      }),
+    });
 
     if (!response.ok) {
       throw new Error(`Analytics API error: ${response.status} ${response.statusText}`);
@@ -110,7 +105,7 @@ async function fetchProviderMetrics(
 function processDataPoints(dataPoints: any[]): ProviderMetrics[] {
   const metricsMap = new Map<string, ProviderMetrics>();
 
-  dataPoints.forEach(point => {
+  dataPoints.forEach((point) => {
     const provider = point.blob1; // provider name
     const eventType = point.blob2; // event type
     const responseTime = point.double1; // response time
@@ -147,15 +142,12 @@ function processDataPoints(dataPoints: any[]): ProviderMetrics[] {
   });
 
   // Calculate success rates
-  metricsMap.forEach(metrics => {
-    metrics.successRate = metrics.totalRequests > 0
-      ? metrics.successfulRequests / metrics.totalRequests
-      : 0;
+  metricsMap.forEach((metrics) => {
+    metrics.successRate =
+      metrics.totalRequests > 0 ? metrics.successfulRequests / metrics.totalRequests : 0;
   });
 
-  return Array.from(metricsMap.values()).sort((a, b) =>
-    b.totalRequests - a.totalRequests
-  );
+  return Array.from(metricsMap.values()).sort((a, b) => b.totalRequests - a.totalRequests);
 }
 
 /**
@@ -163,31 +155,41 @@ function processDataPoints(dataPoints: any[]): ProviderMetrics[] {
  */
 function displayMetrics(metrics: ProviderMetrics[]): void {
   console.log('\n📊 Provider Health Metrics\n');
-  console.log('┌─────────────────┬──────────┬─────────┬────────┬────────────┬────────────┬───────────────┐');
-  console.log('│ Provider        │ Requests │ Success │ Failed │ CB Trips   │ Avg RT (ms)│ Success Rate  │');
-  console.log('├─────────────────┼──────────┼─────────┼────────┼────────────┼────────────┼───────────────┤');
+  console.log(
+    '┌─────────────────┬──────────┬─────────┬────────┬────────────┬────────────┬───────────────┐'
+  );
+  console.log(
+    '│ Provider        │ Requests │ Success │ Failed │ CB Trips   │ Avg RT (ms)│ Success Rate  │'
+  );
+  console.log(
+    '├─────────────────┼──────────┼─────────┼────────┼────────────┼────────────┼───────────────┤'
+  );
 
-  metrics.forEach(m => {
+  metrics.forEach((m) => {
     const successRateColor = m.successRate >= 0.99 ? '🟢' : m.successRate >= 0.95 ? '🟡' : '🔴';
     const successRateStr = `${successRateColor} ${(m.successRate * 100).toFixed(2)}%`;
 
     console.log(
       `│ ${m.provider.padEnd(15)} │ ${String(m.totalRequests).padStart(8)} │ ` +
-      `${String(m.successfulRequests).padStart(7)} │ ${String(m.failedRequests).padStart(6)} │ ` +
-      `${String(m.circuitBreakerTrips).padStart(10)} │ ${m.avgResponseTime.toFixed(0).padStart(10)} │ ` +
-      `${successRateStr.padEnd(13)} │`
+        `${String(m.successfulRequests).padStart(7)} │ ${String(m.failedRequests).padStart(6)} │ ` +
+        `${String(m.circuitBreakerTrips).padStart(10)} │ ${m.avgResponseTime.toFixed(0).padStart(10)} │ ` +
+        `${successRateStr.padEnd(13)} │`
     );
   });
 
-  console.log('└─────────────────┴──────────┴─────────┴────────┴────────────┴────────────┴───────────────┘\n');
+  console.log(
+    '└─────────────────┴──────────┴─────────┴────────┴────────────┴────────────┴───────────────┘\n'
+  );
 
   // Display last failure times
   console.log('⏱️  Last Failure Times:\n');
-  metrics.forEach(m => {
+  metrics.forEach((m) => {
     if (m.lastFailureTime) {
       const timeSince = Date.now() - m.lastFailureTime.getTime();
       const minutesAgo = Math.floor(timeSince / 60000);
-      console.log(`   ${m.provider}: ${minutesAgo} minutes ago (${m.lastFailureTime.toISOString()})`);
+      console.log(
+        `   ${m.provider}: ${minutesAgo} minutes ago (${m.lastFailureTime.toISOString()})`
+      );
     } else {
       console.log(`   ${m.provider}: No failures recorded ✅`);
     }
@@ -201,7 +203,7 @@ function displayMetrics(metrics: ProviderMetrics[]): void {
 function detectAnomalies(metrics: ProviderMetrics[]): void {
   const alerts: string[] = [];
 
-  metrics.forEach(m => {
+  metrics.forEach((m) => {
     // Alert: Success rate below 95%
     if (m.successRate < 0.95 && m.totalRequests > 10) {
       alerts.push(`⚠️  ${m.provider}: Low success rate (${(m.successRate * 100).toFixed(2)}%)`);
@@ -220,7 +222,8 @@ function detectAnomalies(metrics: ProviderMetrics[]): void {
     // Alert: Recent failures
     if (m.lastFailureTime) {
       const timeSince = Date.now() - m.lastFailureTime.getTime();
-      if (timeSince < 300000) { // Within last 5 minutes
+      if (timeSince < 300000) {
+        // Within last 5 minutes
         alerts.push(`🚨 ${m.provider}: Recent failure (${Math.floor(timeSince / 60000)}min ago)`);
       }
     }
@@ -228,7 +231,7 @@ function detectAnomalies(metrics: ProviderMetrics[]): void {
 
   if (alerts.length > 0) {
     console.log('🚨 ALERTS:\n');
-    alerts.forEach(alert => console.log(`   ${alert}`));
+    alerts.forEach((alert) => console.log(`   ${alert}`));
     console.log();
   } else {
     console.log('✅ No anomalies detected - all providers healthy\n');
@@ -248,11 +251,18 @@ function generateSummary(metrics: ProviderMetrics[]): void {
 
   console.log('📈 Overall Summary:\n');
   console.log(`   Total Requests: ${totalRequests.toLocaleString()}`);
-  console.log(`   Successful: ${totalSuccessful.toLocaleString()} (${(overallSuccessRate * 100).toFixed(2)}%)`);
+  console.log(
+    `   Successful: ${totalSuccessful.toLocaleString()} (${(overallSuccessRate * 100).toFixed(2)}%)`
+  );
   console.log(`   Failed: ${totalFailed.toLocaleString()}`);
   console.log(`   Circuit Breaker Trips: ${totalCBTrips}`);
-  console.log(`   Primary Provider (SportsDataIO): ${metrics.find(m => m.provider === 'SportsDataIO')?.successRate ?
-    (metrics.find(m => m.provider === 'SportsDataIO')!.successRate * 100).toFixed(2) + '%' : 'N/A'}`);
+  console.log(
+    `   Primary Provider (SportsDataIO): ${
+      metrics.find((m) => m.provider === 'SportsDataIO')?.successRate
+        ? (metrics.find((m) => m.provider === 'SportsDataIO')!.successRate * 100).toFixed(2) + '%'
+        : 'N/A'
+    }`
+  );
   console.log();
 }
 
@@ -275,7 +285,9 @@ async function liveMonitoring(): Promise<void> {
 
       // Clear console
       console.clear();
-      console.log('🔴 Live Monitoring Mode - Last Update: ' + new Date().toLocaleTimeString() + '\n');
+      console.log(
+        '🔴 Live Monitoring Mode - Last Update: ' + new Date().toLocaleTimeString() + '\n'
+      );
 
       displayMetrics(metrics);
       detectAnomalies(metrics);
@@ -300,7 +312,7 @@ async function liveMonitoring(): Promise<void> {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const liveMode = args.includes('--live');
-  const hoursArg = args.find(arg => arg.startsWith('--hours='));
+  const hoursArg = args.find((arg) => arg.startsWith('--hours='));
   const hours = hoursArg ? parseInt(hoursArg.split('=')[1]) : 1;
 
   if (liveMode) {
@@ -332,7 +344,7 @@ async function main(): Promise<void> {
 
 // Run if called directly
 if (require.main === module) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
   });

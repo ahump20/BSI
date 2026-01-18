@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,7 +22,12 @@
     />
 
     <!-- AOS Animation Library -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" integrity="sha384-WP8puImHqpZUMpDs0I6SqAcMZcOXFJQEqGj5xmzO6KOqSqYLJvswPEbOu/6AJQO7" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+      integrity="sha384-WP8puImHqpZUMpDs0I6SqAcMZcOXFJQEqGj5xmzO6KOqSqYLJvswPEbOu/6AJQO7"
+      crossorigin="anonymous"
+    />
 
     <!-- Blaze Design System -->
     <link rel="stylesheet" href="/public/css/blaze-design-system.css" />
@@ -253,7 +258,7 @@
         border-color: rgba(255, 107, 0, 0.3);
       }
 
-      .filter-checkbox input[type="checkbox"] {
+      .filter-checkbox input[type='checkbox'] {
         width: 1.25rem;
         height: 1.25rem;
         cursor: pointer;
@@ -630,8 +635,12 @@
       }
 
       @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       /* Box Score Error State */
@@ -763,8 +772,9 @@
         <div class="hero-badge">⚾ Live Games & Box Scores</div>
         <h1 class="hero-title">Live Games & Complete Box Scores</h1>
         <p class="hero-subtitle">
-          Full batting lines (AB, R, H, RBI, BB, SO, AVG) and pitching lines (IP, H, R, ER, BB, SO, ERA) for every
-          NCAA Division I baseball game. Live updates, detailed statistics, and player-level performance data.
+          Full batting lines (AB, R, H, RBI, BB, SO, AVG) and pitching lines (IP, H, R, ER, BB, SO,
+          ERA) for every NCAA Division I baseball game. Live updates, detailed statistics, and
+          player-level performance data.
         </p>
       </div>
     </section>
@@ -824,9 +834,7 @@
         <div class="filter-group">
           <label class="filter-checkbox">
             <input type="checkbox" id="ranked-filter" aria-label="Show only Top 25 ranked teams" />
-            <span class="checkbox-label">
-              <i class="fas fa-trophy"></i> Top 25 Teams Only
-            </span>
+            <span class="checkbox-label"> <i class="fas fa-trophy"></i> Top 25 Teams Only </span>
           </label>
         </div>
       </div>
@@ -844,7 +852,11 @@
     </section>
 
     <!-- AOS Animation Library -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" integrity="sha384-DDqlMEcNYfzPKTZ7Qf+lSJFRqMZhYdCIvQHR6qcFyOLKtME3P3K5S0m0dQ5kaE6n" crossorigin="anonymous"></script>
+    <script
+      src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+      integrity="sha384-DDqlMEcNYfzPKTZ7Qf+lSJFRqMZhYdCIvQHR6qcFyOLKtME3P3K5S0m0dQ5kaE6n"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Chart.js for Data Visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -859,14 +871,14 @@
         duration: 800,
         easing: 'ease-in-out',
         once: true,
-        offset: 100
+        offset: 100,
       });
 
       // Initialize Blaze Particle System (respects prefers-reduced-motion)
       if (typeof BlazeParticles !== 'undefined') {
         BlazeParticles.init({
           particleCount: 150000,
-          quality: 'auto' // auto-scales based on device performance
+          quality: 'auto', // auto-scales based on device performance
         });
       }
 
@@ -884,7 +896,7 @@
         date: today,
         conference: '',
         status: '',
-        ranked: rankedFromURL
+        ranked: rankedFromURL,
       };
 
       // Set ranked checkbox based on URL parameter
@@ -894,22 +906,22 @@
       }
 
       // Event Listeners
-      dateInput.addEventListener('change', e => {
+      dateInput.addEventListener('change', (e) => {
         currentFilters.date = e.target.value;
         loadGames();
       });
 
-      document.getElementById('conference-filter').addEventListener('change', e => {
+      document.getElementById('conference-filter').addEventListener('change', (e) => {
         currentFilters.conference = e.target.value;
         loadGames();
       });
 
-      document.getElementById('status-filter').addEventListener('change', e => {
+      document.getElementById('status-filter').addEventListener('change', (e) => {
         currentFilters.status = e.target.value;
         loadGames();
       });
 
-      rankedCheckbox.addEventListener('change', e => {
+      rankedCheckbox.addEventListener('change', (e) => {
         currentFilters.ranked = e.target.checked;
         loadGames();
       });
@@ -955,7 +967,7 @@
             return;
           }
 
-          gamesGrid.innerHTML = data.games.map(game => createGameCard(game)).join('');
+          gamesGrid.innerHTML = data.games.map((game) => createGameCard(game)).join('');
 
           // Reinitialize AOS for new elements
           AOS.refresh();
@@ -990,7 +1002,7 @@
         const gameDate = new Date(game.gameDate).toLocaleDateString('en-US', {
           weekday: 'short',
           month: 'short',
-          day: 'numeric'
+          day: 'numeric',
         });
 
         return `
@@ -1066,16 +1078,21 @@
           9
         );
 
-        const inningHeaders = Array.from({ length: maxInnings }, (_, i) => `
+        const inningHeaders = Array.from(
+          { length: maxInnings },
+          (_, i) => `
           <th scope="col" abbr="Inning ${i + 1}">${i + 1}</th>
-        `).join('');
+        `
+        ).join('');
 
-        const awayInnings = Array.from({ length: maxInnings }, (_, i) =>
-          lineScore.away.innings[i] || '-'
+        const awayInnings = Array.from(
+          { length: maxInnings },
+          (_, i) => lineScore.away.innings[i] || '-'
         ).join('</td><td>');
 
-        const homeInnings = Array.from({ length: maxInnings }, (_, i) =>
-          lineScore.home.innings[i] || '-'
+        const homeInnings = Array.from(
+          { length: maxInnings },
+          (_, i) => lineScore.home.innings[i] || '-'
         ).join('</td><td>');
 
         return `
@@ -1144,7 +1161,9 @@
           `;
         }
 
-        const playerRows = team.batting.players.map(p => `
+        const playerRows = team.batting.players
+          .map(
+            (p) => `
           <tr>
             <td>
               ${p.starter ? '★ ' : ''}${p.shortName}
@@ -1158,7 +1177,9 @@
             <td>${p.so}</td>
             <td>${p.avg}</td>
           </tr>
-        `).join('');
+        `
+          )
+          .join('');
 
         return `
           <div class="box-score-section">
@@ -1209,7 +1230,9 @@
           `;
         }
 
-        const playerRows = team.pitching.players.map(p => `
+        const playerRows = team.pitching.players
+          .map(
+            (p) => `
           <tr>
             <td>
               ${p.starter ? '★ ' : ''}${p.shortName}
@@ -1223,7 +1246,9 @@
             <td>${p.so}</td>
             <td>${p.era}</td>
           </tr>
-        `).join('');
+        `
+          )
+          .join('');
 
         return `
           <div class="box-score-section">
@@ -1258,7 +1283,7 @@
         const isActive = content.classList.contains('active');
 
         // Close all other box scores
-        document.querySelectorAll('.box-score-content.active').forEach(el => {
+        document.querySelectorAll('.box-score-content.active').forEach((el) => {
           el.classList.remove('active');
         });
 
@@ -1305,15 +1330,15 @@
       // Retry loading box score
       function retryBoxScore(gameId) {
         const content = document.getElementById(`box-score-${gameId}`);
-        content.dataset.loaded = '';  // Reset loaded flag
-        toggleBoxScore(gameId);  // Try again
+        content.dataset.loaded = ''; // Reset loaded flag
+        toggleBoxScore(gameId); // Try again
       }
 
       // Initialize table sorting for box score tables
       function initializeTableSorting(container) {
         const sortableTables = container.querySelectorAll('.sortable-table');
 
-        sortableTables.forEach(table => {
+        sortableTables.forEach((table) => {
           const headers = table.querySelectorAll('th.sortable');
 
           headers.forEach((header, index) => {
@@ -1330,17 +1355,18 @@
         const rows = Array.from(tbody.querySelectorAll('tr'));
 
         // Get current sort direction
-        const currentDirection = header.classList.contains('sorted-asc') ? 'asc' :
-                                 header.classList.contains('sorted-desc') ? 'desc' :
-                                 'none';
+        const currentDirection = header.classList.contains('sorted-asc')
+          ? 'asc'
+          : header.classList.contains('sorted-desc')
+            ? 'desc'
+            : 'none';
 
         // Determine new sort direction
-        const newDirection = currentDirection === 'none' ? 'asc' :
-                            currentDirection === 'asc' ? 'desc' :
-                            'asc';
+        const newDirection =
+          currentDirection === 'none' ? 'asc' : currentDirection === 'asc' ? 'desc' : 'asc';
 
         // Clear all sort indicators in this table
-        table.querySelectorAll('th.sortable').forEach(th => {
+        table.querySelectorAll('th.sortable').forEach((th) => {
           th.classList.remove('sorted-asc', 'sorted-desc');
         });
 
@@ -1374,7 +1400,7 @@
         });
 
         // Reorder DOM elements
-        rows.forEach(row => tbody.appendChild(row));
+        rows.forEach((row) => tbody.appendChild(row));
       }
 
       // Extract and parse cell value for sorting
@@ -1382,8 +1408,7 @@
         const text = cell.textContent.trim();
 
         // Remove starter indicator and tags
-        let cleanText = text.replace(/^★\s*/, '')
-                            .replace(/<[^>]*>/g, '');
+        let cleanText = text.replace(/^★\s*/, '').replace(/<[^>]*>/g, '');
 
         // Extract just the player name if there are tags
         if (columnName === 'player') {
@@ -1400,7 +1425,7 @@
           if (parts.length === 2) {
             const innings = parseFloat(parts[0]) || 0;
             const thirds = parseFloat(parts[1]) || 0;
-            return innings + (thirds / 3);
+            return innings + thirds / 3;
           }
           return parseFloat(cleanText) || 0;
         }

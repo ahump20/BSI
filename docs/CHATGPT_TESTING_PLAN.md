@@ -26,6 +26,7 @@ You are testing **6 next-generation sports analytics features** that were implem
 ## 📊 What We Built (Context)
 
 ### Implementation Summary
+
 - **Total Code**: ~2,400 lines of production React components
 - **Deployment**: Live on Cloudflare Pages at blazesportsintel.com/analytics
 - **Safety Mechanism**: All features wrapped in ErrorBoundary + feature flags
@@ -34,14 +35,14 @@ You are testing **6 next-generation sports analytics features** that were implem
 
 ### The 6 Features
 
-| Phase | Feature | What It Does | Sample/Real Data |
-|-------|---------|--------------|------------------|
-| **2** | Real-Time Dashboard | 6-card grid with live games, standings, quick stats, auto-refresh | Sample |
-| **3** | MLB Statcast | xBA, barrel rate, attack angles, spray charts | Sample |
-| **4** | NFL Next Gen Stats | 10Hz tracking, completion probability, coverage responsibility | Sample |
-| **5** | AI Predictions | LSTM injury risk + XGBoost performance forecasting | Sample |
-| **6a** | Plotly WebGPU | Million-point dataset visualization with GPU acceleration | Sample |
-| **6b** | deck.gl Heatmaps | GPU-accelerated geospatial visualizations | Sample |
+| Phase  | Feature             | What It Does                                                      | Sample/Real Data |
+| ------ | ------------------- | ----------------------------------------------------------------- | ---------------- |
+| **2**  | Real-Time Dashboard | 6-card grid with live games, standings, quick stats, auto-refresh | Sample           |
+| **3**  | MLB Statcast        | xBA, barrel rate, attack angles, spray charts                     | Sample           |
+| **4**  | NFL Next Gen Stats  | 10Hz tracking, completion probability, coverage responsibility    | Sample           |
+| **5**  | AI Predictions      | LSTM injury risk + XGBoost performance forecasting                | Sample           |
+| **6a** | Plotly WebGPU       | Million-point dataset visualization with GPU acceleration         | Sample           |
+| **6b** | deck.gl Heatmaps    | GPU-accelerated geospatial visualizations                         | Sample           |
 
 **Note**: All features currently use **sample data**. We're testing the UI/UX, not data accuracy.
 
@@ -50,17 +51,22 @@ You are testing **6 next-generation sports analytics features** that were implem
 ## 🔧 Pre-Test Setup
 
 ### Step 1: Open the Page
+
 Navigate to: **https://blazesportsintel.com/analytics**
 
 ### Step 2: Open Browser DevTools
+
 - **Chrome/Edge**: Press `F12` or `Ctrl+Shift+I` (Windows) / `Cmd+Option+I` (Mac)
 - **Firefox**: Press `F12` or `Ctrl+Shift+K` (Windows) / `Cmd+Option+K` (Mac)
 
 ### Step 3: Go to Console Tab
+
 Click the **Console** tab in DevTools
 
 ### Step 4: Verify Feature Flags Exist
+
 You should see console output like:
+
 ```
 🚀 Blaze Sports Intel - Next-Gen Feature Flags: {realTimeDashboard: false, mlbStatcast: false, ...}
 📊 Enabled Features: 0 / 6
@@ -75,12 +81,14 @@ If you see this, you're ready to test!
 ### Test 1: Real-Time Dashboard (~2 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.realTimeDashboard = true;
 location.reload();
 ```
 
 #### Visual Checks
+
 - [ ] **New tab appears**: Look for "Real-Time Dashboard" in main navigation tabs
 - [ ] **Click the tab**: Should show 6 cards in a grid layout
 - [ ] **Card titles**:
@@ -95,15 +103,18 @@ location.reload();
 - [ ] **Color coding**: Cards should use appropriate colors (red for live, green for status)
 
 #### Interaction Tests
+
 - [ ] Click each card to expand/collapse
 - [ ] Verify smooth animations (no janky transitions)
 - [ ] Check responsive layout (resize browser window)
 
 #### Console Checks
+
 - [ ] No red error messages
 - [ ] Should see: `📊 Enabled Features: 1 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of the Real-Time Dashboard tab with 6 cards visible
 
 ---
@@ -111,17 +122,20 @@ location.reload();
 ### Test 2: MLB Statcast (~2 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.mlbStatcast = true;
 location.reload();
 ```
 
 #### Navigation Path
+
 1. Click **"MLB"** tab in main navigation
 2. Scroll to **"Teams"** section
 3. Click **any team** (e.g., Cardinals, Dodgers, Yankees)
 
 #### Visual Checks
+
 - [ ] **New section appears**: Look for "⚾ MLB Statcast" section below team roster
 - [ ] **Canvas spray chart**: Should see a baseball field with hit location dots
 - [ ] **4 metrics displayed**:
@@ -133,15 +147,18 @@ location.reload();
 - [ ] **Professional styling**: Section should match existing design (glassmorphism, dark theme)
 
 #### Interaction Tests
+
 - [ ] Canvas should render without flicker
 - [ ] Metrics should display actual numbers (not "NaN" or "undefined")
 - [ ] Try different teams - section should appear for all
 
 #### Console Checks
+
 - [ ] No canvas rendering errors
 - [ ] Should see: `📊 Enabled Features: 2 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of MLB Statcast section with spray chart visible
 
 ---
@@ -149,17 +166,20 @@ location.reload();
 ### Test 3: NFL Next Gen Stats (~2 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.nflNextGenStats = true;
 location.reload();
 ```
 
 #### Navigation Path
+
 1. Click **"NFL"** tab in main navigation
 2. Scroll to **"Teams"** section
 3. Click **any team** (e.g., Chiefs, 49ers, Eagles)
 
 #### Visual Checks
+
 - [ ] **New section appears**: Look for "🏈 NFL Next Gen Stats" section
 - [ ] **Canvas field visualization**: Should see a football field with player positions
 - [ ] **5 play buttons**: At top of section (Play 1, Play 2, Play 3, Play 4, Play 5)
@@ -171,15 +191,18 @@ location.reload();
 - [ ] **Field zones**: Should show yard lines, hash marks
 
 #### Interaction Tests
+
 - [ ] Click each of the 5 play buttons - field should update
 - [ ] Player positions should change when switching plays
 - [ ] Stats should update with each play selection
 
 #### Console Checks
+
 - [ ] No canvas errors
 - [ ] Should see: `📊 Enabled Features: 3 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of NFL Next Gen Stats section with field visible
 
 ---
@@ -187,17 +210,20 @@ location.reload();
 ### Test 4: AI Predictions (~3 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.aiPredictions = true;
 location.reload();
 ```
 
 #### Navigation Path
+
 1. Click **any sport tab** (MLB, NFL, NBA, CFB, CBB)
 2. Scroll to **"Teams"** section
 3. Click **any team**
 
 #### Visual Checks
+
 - [ ] **New section appears**: Look for "🤖 AI Predictions" section
 - [ ] **Two toggle buttons** at top:
   - "Injury Risk" button
@@ -212,16 +238,19 @@ location.reload();
 - [ ] **Disclaimers at bottom**: Medical/statistical disclaimers present
 
 #### Interaction Tests
+
 - [ ] Toggle between "Injury Risk" and "Performance Forecast" views
 - [ ] View should switch with smooth transition
 - [ ] Canvas chart should redraw when switching
 - [ ] Risk colors should be appropriate (green = low risk, red = high risk)
 
 #### Console Checks
+
 - [ ] No ML model errors
 - [ ] Should see: `📊 Enabled Features: 4 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of AI Predictions section showing both views (injury risk and performance)
 
 ---
@@ -229,15 +258,18 @@ location.reload();
 ### Test 5: Plotly WebGPU (~2 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.plotlyWebGPU = true;
 location.reload();
 ```
 
 #### Navigation Path
+
 1. Scroll to **"Playoff Probability Trends"** chart (should be near top of analytics page)
 
 #### Visual Checks
+
 - [ ] **Visualization toggle appears**: Above the chart
 - [ ] **Two mode options**:
   - "Chart.js" (default)
@@ -247,20 +279,24 @@ location.reload();
 - [ ] **Smooth rendering**: Chart should render without lag
 
 #### Interaction Tests
+
 - [ ] Click to switch between Chart.js and Plotly modes
 - [ ] Chart should redraw when switching
 - [ ] Hover over data points - tooltips should appear
 - [ ] Zoom/pan if available (Plotly feature)
 
 #### Browser Compatibility
+
 - [ ] If your browser doesn't support WebGPU, should show fallback message
 - [ ] Chart.js mode should always work
 
 #### Console Checks
+
 - [ ] No Plotly errors
 - [ ] Should see: `📊 Enabled Features: 5 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of Plotly chart with mode toggle visible
 
 ---
@@ -268,15 +304,18 @@ location.reload();
 ### Test 6: deck.gl Heatmaps (~2 minutes)
 
 #### Enable Feature
+
 ```javascript
 FEATURE_FLAGS.deckGLVisualization = true;
 location.reload();
 ```
 
 #### Navigation Path
+
 1. Scroll to **"Performance Heatmaps"** section (should be in analytics area)
 
 #### Visual Checks
+
 - [ ] **Visualization toggle appears**: Above heatmap
 - [ ] **Two mode options**:
   - "Canvas 2D" (default)
@@ -286,20 +325,24 @@ location.reload();
 - [ ] **Color gradients**: Red = hot zones, blue = cold zones
 
 #### Interaction Tests
+
 - [ ] Switch between Canvas 2D and deck.gl modes
 - [ ] Heatmap should update when switching
 - [ ] GPU mode should feel smoother (if supported)
 - [ ] Color intensity should vary across the map
 
 #### Browser Compatibility
+
 - [ ] If WebGL2 not supported, should fall back to Canvas 2D
 - [ ] Canvas 2D mode should always work
 
 #### Console Checks
+
 - [ ] No deck.gl errors
 - [ ] Should see: `📊 Enabled Features: 6 / 6`
 
 #### Screenshot
+
 📸 Take screenshot of deck.gl heatmap with mode toggle visible
 
 ---
@@ -322,6 +365,7 @@ location.reload();
 ### System-Level Checks
 
 #### Performance
+
 - [ ] **Page load time**: Should load in <5 seconds
 - [ ] **Memory usage**: Open DevTools > Performance > Memory
   - Should be <200MB total
@@ -330,25 +374,31 @@ location.reload();
 - [ ] **Smooth scrolling**: No jank when scrolling through features
 
 #### Error Handling
+
 - [ ] **Console clean**: No red error messages
 - [ ] **ErrorBoundary**: If any component fails, should show error message instead of crashing page
 - [ ] **Fallback behavior**: Features should degrade gracefully on older browsers
 
 #### Browser Compatibility
+
 Test in multiple browsers if possible:
+
 - [ ] Chrome 113+ (full WebGPU support)
 - [ ] Firefox 115+ (WebGL2 only, no WebGPU)
 - [ ] Safari 16+ (limited WebGPU)
 - [ ] Edge 113+ (full WebGPU support)
 
 #### Console Output
+
 Should see:
+
 ```
 🚀 Blaze Sports Intel - Next-Gen Feature Flags: {realTimeDashboard: true, mlbStatcast: true, ...}
 📊 Enabled Features: 6 / 6
 ```
 
 #### Screenshot
+
 📸 Take full-page screenshot showing multiple features active
 
 ---
@@ -370,31 +420,37 @@ Should see:
 ## ✅ Working Features
 
 ### Real-Time Dashboard
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
 
 ### MLB Statcast
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
 
 ### NFL Next Gen Stats
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
 
 ### AI Predictions
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
 
 ### Plotly WebGPU
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
 
 ### deck.gl Heatmaps
+
 - Status: ✅ PASS / ❌ FAIL
 - Notes: [What worked/didn't work]
 - Screenshot: [Link or embedded image]
@@ -427,10 +483,12 @@ Should see:
 ## 💡 UX Observations
 
 ### What Works Well
+
 - [List positive UX elements]
 - [Professional design, smooth animations, etc.]
 
 ### What Could Be Improved
+
 - [List UX issues]
 - [Confusing interactions, unclear labels, etc.]
 
@@ -471,6 +529,7 @@ Based on testing, I recommend:
 ## 🚨 Critical Issues to Watch For
 
 ### Blocking Issues (Report Immediately)
+
 - ❌ Page crashes or becomes unresponsive
 - ❌ Console flooded with errors (>10 errors)
 - ❌ Features don't appear even after enabling flags
@@ -478,6 +537,7 @@ Based on testing, I recommend:
 - ❌ ErrorBoundary displays error messages
 
 ### Major Issues (Should Fix Before Rollout)
+
 - ⚠️ Visualizations don't render (blank canvas)
 - ⚠️ Buttons don't respond to clicks
 - ⚠️ Data shows as "NaN" or "undefined"
@@ -485,6 +545,7 @@ Based on testing, I recommend:
 - ⚠️ Significant performance lag (>5s load time)
 
 ### Minor Issues (Can Fix During Rollout)
+
 - 🔸 Slight animation jank
 - 🔸 Minor styling inconsistencies
 - 🔸 Unclear labels or tooltips
@@ -525,6 +586,7 @@ If you need more context:
 ## 🤝 What Claude Code Needs From You
 
 Claude Code (Sonnet 4.5) cannot:
+
 - ❌ Open browsers or navigate websites
 - ❌ See visual elements (colors, layouts, animations)
 - ❌ Click buttons or interact with UI
@@ -532,6 +594,7 @@ Claude Code (Sonnet 4.5) cannot:
 - ❌ Verify user experience flows
 
 You (ChatGPT Agent Mode) can:
+
 - ✅ Browse to the URL and interact with the page
 - ✅ Visually verify rendering and design
 - ✅ Test all interactive elements

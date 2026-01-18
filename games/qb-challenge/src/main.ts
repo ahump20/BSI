@@ -49,8 +49,7 @@ function getPlayerStats(): {
 }
 
 function updatePlayerStats(completions: number): void {
-  const gamesPlayed =
-    parseInt(localStorage.getItem('qb_games_played') || '0', 10) + 1;
+  const gamesPlayed = parseInt(localStorage.getItem('qb_games_played') || '0', 10) + 1;
   const totalCompletions =
     parseInt(localStorage.getItem('qb_total_completions') || '0', 10) + completions;
   localStorage.setItem('qb_games_played', gamesPlayed.toString());

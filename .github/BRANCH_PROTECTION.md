@@ -5,6 +5,7 @@ This guide explains how to enable branch protection rules on the `main` branch t
 ## Overview
 
 Branch protection rules help maintain code quality by:
+
 - Requiring pull request reviews before merging
 - Ensuring status checks pass before merging
 - Preventing force pushes and deletions
@@ -21,6 +22,7 @@ Branch protection rules help maintain code quality by:
 ### Install GitHub CLI
 
 If you haven't installed the GitHub CLI:
+
 - **macOS:** `brew install gh`
 - **Linux:** See https://github.com/cli/cli/blob/trunk/docs/install_linux.md
 - **Windows:** See https://github.com/cli/cli#windows
@@ -109,22 +111,26 @@ gh api \
 ## Branch Protection Rules Explained
 
 ### Required Pull Request Reviews
+
 - **Required approving review count: 1**
   - At least one team member must approve the PR before it can be merged
   - Ensures code is reviewed by another developer
 
 ### Required Status Checks
+
 - **Status check: build-and-deploy**
   - The GitHub Actions workflow must complete successfully
   - Ensures the code builds and deploys without errors
   - Prevents broken code from being merged
 
 ### No Force Pushes
+
 - Prevents rewriting git history on the `main` branch
 - Maintains a clean, linear history
 - Protects against accidental data loss
 
 ### Require Conversation Resolution
+
 - All PR comments must be resolved before merging
 - Ensures all feedback is addressed
 - Promotes thorough code review
@@ -134,11 +140,13 @@ gh api \
 With branch protection enabled, the typical workflow is:
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make changes and commit**
+
    ```bash
    git add .
    git commit -m "Add your feature"
@@ -167,6 +175,7 @@ With branch protection enabled, the typical workflow is:
 ### Status Check Not Appearing
 
 If the `build-and-deploy` status check doesn't appear:
+
 - Push a commit to trigger the workflow
 - Wait for the workflow to run at least once
 - Then add it to required status checks
@@ -174,6 +183,7 @@ If the `build-and-deploy` status check doesn't appear:
 ### Can't Merge Despite Approval
 
 Check:
+
 - All status checks are passing (green checkmarks)
 - All conversations are resolved
 - Branch is up to date with `main` (if strict mode enabled)
@@ -181,6 +191,7 @@ Check:
 ### Admin Override Needed
 
 If admins need to bypass protection rules:
+
 - Temporarily disable "Do not allow bypassing the above settings"
 - Make the necessary changes
 - Re-enable the setting
@@ -190,6 +201,7 @@ If admins need to bypass protection rules:
 To modify existing rules:
 
 ### Using GitHub CLI
+
 ```bash
 # First, remove the existing protection
 gh api \
@@ -203,6 +215,7 @@ gh api \
 ```
 
 ### Using Web Interface
+
 1. Go to **Settings** → **Branches**
 2. Find the `main` branch rule
 3. Click **Edit**

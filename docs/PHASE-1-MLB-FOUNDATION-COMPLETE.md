@@ -17,6 +17,7 @@ Phase 1 of the MLB Data Lab integration is complete. This foundation includes Ty
 **File**: `/lib/adapters/mlb-adapter.ts` (800+ lines)
 
 **Features**:
+
 - Full TypeScript port of `mlb-data-lab`'s `MlbStatsClient`
 - Comprehensive type definitions for all MLB entities
 - KV caching layer with configurable TTLs
@@ -24,6 +25,7 @@ Phase 1 of the MLB Data Lab integration is complete. This foundation includes Ty
 - Error handling and timeout management
 
 **Key Methods**:
+
 - `fetchPlayerInfo(playerId)` - Player biographical data
 - `fetchPlayerStats(playerId, season, group)` - Season statistics
 - `fetchBatterStatSplits(playerId, season, sitCodes)` - Situational splits
@@ -37,20 +39,22 @@ Phase 1 of the MLB Data Lab integration is complete. This foundation includes Ty
 - `fetchPlayerHeroImageUrl(playerId)` - Player hero image URL
 
 **Cache Configuration**:
+
 ```typescript
 const CACHE_TTLS = {
-  playerInfo: 86400,      // 24 hours
-  seasonStats: 3600,      // 1 hour
-  statSplits: 21600,      // 6 hours
-  teamInfo: 86400,        // 24 hours
-  roster: 43200,          // 12 hours
-  standings: 1800,        // 30 minutes
-  schedule: 900,          // 15 minutes
-  gameLog: 3600,          // 1 hour
+  playerInfo: 86400, // 24 hours
+  seasonStats: 3600, // 1 hour
+  statSplits: 21600, // 6 hours
+  teamInfo: 86400, // 24 hours
+  roster: 43200, // 12 hours
+  standings: 1800, // 30 minutes
+  schedule: 900, // 15 minutes
+  gameLog: 3600, // 1 hour
 };
 ```
 
 **Utility Functions**:
+
 - `calculateAdvancedBattingStats(stats)` - ISO, BABIP, BB%, K%
 - `calculateAdvancedPitchingStats(stats)` - K/9, BB/9, K/BB, H/9, HR/9
 - `formatInningsPitched(ip)` - Display formatting
@@ -65,11 +69,13 @@ const CACHE_TTLS = {
 **Endpoint**: `GET /api/mlb/players/:playerId`
 
 **Query Parameters**:
+
 - `season` (number) - Defaults to current year
 - `includeGameLog` (boolean) - Defaults to false
 - `includeSplits` (boolean) - Defaults to true
 
 **Response Structure**:
+
 ```json
 {
   "player": {
@@ -109,6 +115,7 @@ const CACHE_TTLS = {
 ```
 
 **Features**:
+
 - Automatic player type detection (batter vs pitcher)
 - KV caching via adapter
 - Analytics Engine tracking
@@ -125,6 +132,7 @@ const CACHE_TTLS = {
 **URL Format**: `/mlb/players/?id=PLAYER_ID&season=2025`
 
 **Features**:
+
 - **Player Header**:
   - 200x200px player headshot
   - Team logo overlay (60x60px)
@@ -153,12 +161,14 @@ const CACHE_TTLS = {
   - Real-time data indicators
 
 **Responsive Design**:
+
 - Desktop: 3-column stats grid
 - Tablet: 2-column
 - Mobile: Single column
 - Optimized image sizes for all viewports
 
 **Loading States**:
+
 - Spinner animation during data fetch
 - Error messages with troubleshooting
 - Graceful degradation
@@ -191,21 +201,25 @@ MlbAdapter.fetchPlayerInfo()
 ### Test Examples
 
 1. **Kyle Tucker (Astros OF)**:
+
    ```
    https://blazesportsintel.com/mlb/players/?id=663656&season=2025
    ```
 
 2. **Shohei Ohtani (Dodgers DH/P)**:
+
    ```
    https://blazesportsintel.com/mlb/players/?id=660271&season=2025
    ```
 
 3. **Aaron Judge (Yankees OF)**:
+
    ```
    https://blazesportsintel.com/mlb/players/?id=592450&season=2025
    ```
 
 4. **Gerrit Cole (Yankees P)**:
+
    ```
    https://blazesportsintel.com/mlb/players/?id=543037&season=2025
    ```
@@ -234,13 +248,13 @@ curl https://blazesportsintel.com/api/mlb/players/663656?season=2024
 
 ### Response Times (Target vs Actual)
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Page Load (Cached) | < 500ms | ~350ms | ✅ |
-| Page Load (Uncached) | < 2s | ~1.2s | ✅ |
-| API Response (Cached) | < 100ms | ~80ms | ✅ |
-| API Response (Uncached) | < 1s | ~650ms | ✅ |
-| KV Cache Hit Rate | > 80% | ~85% | ✅ |
+| Metric                  | Target  | Actual | Status |
+| ----------------------- | ------- | ------ | ------ |
+| Page Load (Cached)      | < 500ms | ~350ms | ✅     |
+| Page Load (Uncached)    | < 2s    | ~1.2s  | ✅     |
+| API Response (Cached)   | < 100ms | ~80ms  | ✅     |
+| API Response (Uncached) | < 1s    | ~650ms | ✅     |
+| KV Cache Hit Rate       | > 80%   | ~85%   | ✅     |
 
 ### Cache Effectiveness
 
@@ -256,11 +270,13 @@ curl https://blazesportsintel.com/api/mlb/players/663656?season=2024
 ### Cloudflare Usage (Estimated Monthly)
 
 **Assumptions**:
+
 - 10,000 player profile views/month
 - 70% cache hit rate
 - Average 3 API calls per uncached request
 
 **Breakdown**:
+
 - Workers Requests: 10,000 × 1.3 (retries) = 13,000 requests
   - Free tier: 100,000/day
   - Cost: **$0.00**
@@ -280,11 +296,13 @@ curl https://blazesportsintel.com/api/mlb/players/663656?season=2024
 **Total Monthly Cost**: **$0.00** (within free tier)
 
 At 100,000 views/month:
+
 - Workers: ~130,000 requests → **$0.00** (still within free tier)
 - KV: ~100,000 reads, 30,000 writes → **$0.00**
 - Total: **$0.00**
 
 At 1,000,000 views/month:
+
 - Workers: ~1.3M requests → **$0.50**
 - KV: ~1M reads → **$0.50**
 - KV: ~300K writes → **$1.50**
@@ -357,10 +375,10 @@ interface SeasonStats {
   stolenBases: number;
   baseOnBalls: number;
   strikeOuts: number;
-  avg: string;  // ".324"
-  obp: string;  // ".412"
-  slg: string;  // ".589"
-  ops: string;  // "1.001"
+  avg: string; // ".324"
+  obp: string; // ".412"
+  slg: string; // ".589"
+  ops: string; // "1.001"
 }
 ```
 
@@ -370,14 +388,14 @@ interface SeasonStats {
 interface PitchingStats {
   gamesPlayed: number;
   gamesStarted: number;
-  inningsPitched: string;  // "192.1"
+  inningsPitched: string; // "192.1"
   wins: number;
   losses: number;
   saves: number;
   strikeOuts: number;
   baseOnBalls: number;
-  era: string;  // "2.84"
-  whip: string;  // "1.12"
+  era: string; // "2.84"
+  whip: string; // "1.12"
   battersFaced: number;
   // ... 30+ more fields
 }

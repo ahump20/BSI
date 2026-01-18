@@ -62,9 +62,7 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     const { playerId, playerName, score, shooterId, stats } = body;
 
     // Upsert player record
-    const existingPlayer = await env.DB.prepare(
-      'SELECT * FROM hoops_players WHERE player_id = ?'
-    )
+    const existingPlayer = await env.DB.prepare('SELECT * FROM hoops_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 
@@ -75,7 +73,8 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         stats.longestStreak
       );
 
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         UPDATE hoops_players SET
           player_name = COALESCE(?, player_name),
           high_score = ?,
@@ -92,7 +91,8 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
           END,
           updated_at = CURRENT_TIMESTAMP
         WHERE player_id = ?
-      `)
+      `
+      )
         .bind(
           playerName || null,
           newHighScore,
@@ -108,14 +108,16 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
         )
         .run();
     } else {
-      await env.DB.prepare(`
+      await env.DB.prepare(
+        `
         INSERT INTO hoops_players (
           player_id, player_name, high_score, games_played,
           total_shots_made, total_shots_attempted, total_swishes,
           total_money_balls, longest_streak, total_play_time_seconds,
           favorite_shooter_id
         ) VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)
-      `)
+      `
+      )
         .bind(
           playerId,
           playerName || null,
@@ -132,13 +134,15 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     }
 
     // Insert game record
-    await env.DB.prepare(`
+    await env.DB.prepare(
+      `
       INSERT INTO hoops_scores (
         player_id, score, shooter_id, shots_made, shots_attempted,
         shooting_percentage, longest_streak, swishes, money_balls_made,
         duration_seconds
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `)
+    `
+    )
       .bind(
         playerId,
         score,
@@ -179,16 +183,16 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
     }
 
     // Get rank
-    const rankResult = await env.DB.prepare(`
+    const rankResult = await env.DB.prepare(
+      `
       SELECT COUNT(*) + 1 as rank FROM hoops_players
       WHERE high_score > ?
-    `)
+    `
+    )
       .bind(existingPlayer ? Math.max(existingPlayer.high_score as number, score) : score)
       .first();
 
-    const updatedPlayer = await env.DB.prepare(
-      'SELECT * FROM hoops_players WHERE player_id = ?'
-    )
+    const updatedPlayer = await env.DB.prepare('SELECT * FROM hoops_players WHERE player_id = ?')
       .bind(playerId)
       .first();
 

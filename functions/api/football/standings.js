@@ -4,9 +4,17 @@
  *
  * Fetches college football conference standings from ESPN API
  * with 5-minute cache for efficiency
+ *
+ * Response Contract: Uses BSI standard APIResponse format
+ * - status: 'ok' | 'invalid' | 'unavailable'
+ * - data: payload or null
+ * - source: 'kv-cache' | 'live'
  */
 
 import { rateLimit, rateLimitError, corsHeaders } from '../_utils.js';
+
+// Minimum conferences expected for valid FBS standings
+const MIN_CONFERENCES_REQUIRED = 5;
 
 export async function onRequest({ request, env, ctx }) {
   const url = new URL(request.url);
@@ -33,19 +41,39 @@ export async function onRequest({ request, env, ctx }) {
 
     // Check KV cache
     const cacheKey = `football:standings:${conference}:${division}`;
+    const ttl = 300;
 
     if (env.KV) {
       const cached = await env.KV.get(cacheKey, 'json');
       if (cached && cached.expires > Date.now()) {
-        return new Response(JSON.stringify(cached.data), {
-          status: 200,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=300',
-            'X-Cache': 'HIT',
-          },
-        });
+        // Standard APIResponse format from cache
+        return new Response(
+          JSON.stringify({
+            data: cached.data,
+            status: 'ok',
+            source: 'kv-cache',
+            lastUpdated: cached.data?.meta?.lastUpdated || new Date().toISOString(),
+            reason: '',
+            meta: {
+              cache: { hit: true, ttlSeconds: ttl },
+              planTier: 'highlightly_pro',
+              quota: { remaining: 0, resetAt: '' },
+            },
+            // Legacy fields for backwards compatibility
+            ...cached.data,
+          }),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=300',
+              'X-Cache': 'HIT',
+              'X-BSI-Status': 'ok',
+              'X-BSI-Source': 'kv-cache',
+            },
+          }
+        );
       }
     }
 
@@ -62,6 +90,35 @@ export async function onRequest({ request, env, ctx }) {
     }
 
     const data = await response.json();
+    const lastUpdated = new Date().toISOString();
+
+    // Semantic validation: Check minimum conference density
+    const conferenceCount = (data.children || []).length;
+    if (conference === 'all' && conferenceCount < MIN_CONFERENCES_REQUIRED) {
+      return new Response(
+        JSON.stringify({
+          data: null,
+          status: 'invalid',
+          source: 'live',
+          lastUpdated,
+          reason: `Insufficient standings data: found ${conferenceCount} conferences, expected at least ${MIN_CONFERENCES_REQUIRED}`,
+          meta: {
+            cache: { hit: false, ttlSeconds: 0 },
+            planTier: 'highlightly_pro',
+            quota: { remaining: 0, resetAt: '' },
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-BSI-Status': 'invalid',
+            'X-BSI-Source': 'live',
+          },
+        }
+      );
+    }
 
     // Transform ESPN standings data
     const transformedData = {
@@ -114,7 +171,7 @@ export async function onRequest({ request, env, ctx }) {
       })),
       meta: {
         dataSource: 'ESPN College Football API',
-        lastUpdated: new Date().toISOString(),
+        lastUpdated,
         lastUpdatedCDT: new Date().toLocaleString('en-US', {
           timeZone: 'America/Chicago',
           dateStyle: 'medium',
@@ -125,8 +182,6 @@ export async function onRequest({ request, env, ctx }) {
     };
 
     // Cache for 5 minutes
-    const ttl = 300;
-
     if (env.KV) {
       await env.KV.put(
         cacheKey,
@@ -140,29 +195,56 @@ export async function onRequest({ request, env, ctx }) {
       );
     }
 
-    return new Response(JSON.stringify(transformedData), {
-      status: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-        'Cache-Control': `public, max-age=${ttl}`,
-        'X-Cache': 'MISS',
-      },
-    });
-  } catch (error) {
-    console.error('Football standings API error:', error);
-
+    // Standard APIResponse format
     return new Response(
       JSON.stringify({
-        error: 'Failed to fetch college football standings',
-        message: error.message,
-        timestamp: new Date().toISOString(),
+        data: transformedData,
+        status: 'ok',
+        source: 'live',
+        lastUpdated,
+        reason: '',
+        meta: {
+          cache: { hit: false, ttlSeconds: ttl },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
+        // Legacy fields for backwards compatibility
+        ...transformedData,
+      }),
+      {
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${ttl}`,
+          'X-Cache': 'MISS',
+          'X-BSI-Status': 'ok',
+          'X-BSI-Source': 'live',
+        },
+      }
+    );
+  } catch (error) {
+    // Standard APIResponse error format
+    return new Response(
+      JSON.stringify({
+        data: null,
+        status: 'unavailable',
+        source: 'live',
+        lastUpdated: new Date().toISOString(),
+        reason: error.message || 'Failed to fetch college football standings',
+        meta: {
+          cache: { hit: false, ttlSeconds: 0 },
+          planTier: 'highlightly_pro',
+          quota: { remaining: 0, resetAt: '' },
+        },
       }),
       {
         status: 500,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
+          'X-BSI-Status': 'unavailable',
+          'X-BSI-Source': 'live',
         },
       }
     );

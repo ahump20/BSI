@@ -107,17 +107,20 @@ To update the rankings:
 ### KV Namespace ID
 
 The Worker uses the existing `CACHE` KV namespace from the main project:
+
 - **ID**: `a53c3726fc3044be82e79d2d1e371d26`
 - **Binding**: `BSI_KV`
 
 ### Monitoring
 
 View Worker metrics in Cloudflare Dashboard:
+
 - https://dash.cloudflare.com → Workers & Pages → bsi-baseball-rankings
 
 ### Troubleshooting
 
 **Worker not deploying:**
+
 ```bash
 # Verify authentication
 wrangler whoami
@@ -127,6 +130,7 @@ wrangler dev
 ```
 
 **Rankings not updating:**
+
 ```bash
 # Check KV cache
 wrangler kv:key get --binding=BSI_KV "baseball-rankings"
@@ -136,6 +140,7 @@ wrangler kv:key delete --binding=BSI_KV "baseball-rankings"
 ```
 
 **Route not working:**
+
 ```bash
 # Verify route is configured
 wrangler deployments list

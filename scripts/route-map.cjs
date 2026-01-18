@@ -26,20 +26,12 @@ const CLASSIFICATION = {
     '/legal/copyright',
     '/legal/ai-disclosure',
   ],
-  PORT: [
-    '/analytics',
-    '/copilot',
-  ],
-  REFACTOR: [
-    '/mlb',
-    '/nfl',
-    '/cfb',
-    '/cbb',
-  ],
+  PORT: ['/analytics', '/copilot'],
+  REFACTOR: ['/mlb', '/nfl', '/cfb', '/cbb'],
   DELETE: [
-    '/nba',  // Removed per API issues
-    '/features',  // Moved to /features-config
-  ]
+    '/nba', // Removed per API issues
+    '/features', // Moved to /features-config
+  ],
 };
 
 function scanDirectory(dir, baseUrl = '', routes = []) {
@@ -69,7 +61,7 @@ function scanDirectory(dir, baseUrl = '', routes = []) {
         path: route,
         file: relativePath,
         type: 'static',
-        classification: classifyRoute(route)
+        classification: classifyRoute(route),
       });
     }
   }
@@ -97,7 +89,11 @@ function scanFunctions() {
         // Handle [[route]] dynamic segments
         if (entry.name.startsWith('[[') && entry.name.includes(']]')) {
           route += '/*';
-        } else if (entry.name !== 'index.js' && entry.name !== '_middleware.js' && entry.name !== '_utils.js') {
+        } else if (
+          entry.name !== 'index.js' &&
+          entry.name !== '_middleware.js' &&
+          entry.name !== '_utils.js'
+        ) {
           route += '/' + entry.name.replace('.js', '');
         }
 
@@ -105,7 +101,7 @@ function scanFunctions() {
           path: route,
           file: path.relative(ROOT_DIR, fullPath),
           type: 'api',
-          classification: classifyRoute(route)
+          classification: classifyRoute(route),
         });
       }
     }
@@ -137,7 +133,7 @@ function classifyRoute(route) {
   // Sports pages need refactor for college baseball focus
   if (route.match(/\/(mlb|nfl|cfb|cbb)/)) return 'REFACTOR';
 
-  return 'REFACTOR';  // Default to refactor for safety
+  return 'REFACTOR'; // Default to refactor for safety
 }
 
 function generateSummary(routes) {
@@ -145,12 +141,13 @@ function generateSummary(routes) {
     total: routes.length,
     byType: {},
     byClassification: {},
-    routes: routes
+    routes: routes,
   };
 
-  routes.forEach(r => {
+  routes.forEach((r) => {
     summary.byType[r.type] = (summary.byType[r.type] || 0) + 1;
-    summary.byClassification[r.classification] = (summary.byClassification[r.classification] || 0) + 1;
+    summary.byClassification[r.classification] =
+      (summary.byClassification[r.classification] || 0) + 1;
   });
 
   return summary;
@@ -188,22 +185,38 @@ Generated: ${new Date().toISOString()}
 Total Routes: ${summary.total}
 
 By Type:
-${Object.entries(summary.byType).map(([type, count]) => `  ${type}: ${count}`).join('\n')}
+${Object.entries(summary.byType)
+  .map(([type, count]) => `  ${type}: ${count}`)
+  .join('\n')}
 
 By Classification:
-${Object.entries(summary.byClassification).map(([cls, count]) => `  ${cls}: ${count}`).join('\n')}
+${Object.entries(summary.byClassification)
+  .map(([cls, count]) => `  ${cls}: ${count}`)
+  .join('\n')}
 
 KEEP (${summary.byClassification.KEEP || 0}):
-${allRoutes.filter(r => r.classification === 'KEEP').map(r => `  ${r.path}`).join('\n')}
+${allRoutes
+  .filter((r) => r.classification === 'KEEP')
+  .map((r) => `  ${r.path}`)
+  .join('\n')}
 
 PORT (${summary.byClassification.PORT || 0}):
-${allRoutes.filter(r => r.classification === 'PORT').map(r => `  ${r.path}`).join('\n')}
+${allRoutes
+  .filter((r) => r.classification === 'PORT')
+  .map((r) => `  ${r.path}`)
+  .join('\n')}
 
 REFACTOR (${summary.byClassification.REFACTOR || 0}):
-${allRoutes.filter(r => r.classification === 'REFACTOR').map(r => `  ${r.path}`).join('\n')}
+${allRoutes
+  .filter((r) => r.classification === 'REFACTOR')
+  .map((r) => `  ${r.path}`)
+  .join('\n')}
 
 DELETE (${summary.byClassification.DELETE || 0}):
-${allRoutes.filter(r => r.classification === 'DELETE').map(r => `  ${r.path}`).join('\n')}
+${allRoutes
+  .filter((r) => r.classification === 'DELETE')
+  .map((r) => `  ${r.path}`)
+  .join('\n')}
 `;
 
   const summaryPath = path.join(OUTPUT_DIR, 'route-summary.txt');

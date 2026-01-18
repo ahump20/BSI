@@ -9,27 +9,27 @@ import type { PlayerPosition } from './teams';
 
 /** Route type for receivers */
 export type RouteType =
-  | 'streak'      // Straight deep
-  | 'slant'       // Quick diagonal inside
-  | 'out'         // Run then cut outside
-  | 'in'          // Run then cut inside (dig)
-  | 'corner'      // Run deep then cut to corner
-  | 'post'        // Run deep then cut to middle
-  | 'curl'        // Run then turn back toward QB
-  | 'flat'        // Quick out to flat
-  | 'drag'        // Shallow cross
-  | 'wheel'       // RB/TE out then up
-  | 'block'       // Stay and block
-  | 'checkdown';  // Short safety valve
+  | 'streak' // Straight deep
+  | 'slant' // Quick diagonal inside
+  | 'out' // Run then cut outside
+  | 'in' // Run then cut inside (dig)
+  | 'corner' // Run deep then cut to corner
+  | 'post' // Run deep then cut to middle
+  | 'curl' // Run then turn back toward QB
+  | 'flat' // Quick out to flat
+  | 'drag' // Shallow cross
+  | 'wheel' // RB/TE out then up
+  | 'block' // Stay and block
+  | 'checkdown'; // Short safety valve
 
 /** Individual player route in a play */
 export interface PlayerRoute {
   positionId: string;
   routeType: RouteType;
-  routeDepth: number;     // How far downfield (yards)
-  routeWidth: number;     // How far to side (yards, positive = right)
-  breakDelay: number;     // Time before route break (0-1, percentage of route)
-  isPrimary: boolean;     // Is this the main target
+  routeDepth: number; // How far downfield (yards)
+  routeWidth: number; // How far to side (yards, positive = right)
+  breakDelay: number; // Time before route break (0-1, percentage of route)
+  isPrimary: boolean; // Is this the main target
 }
 
 /** Offensive play definition */
@@ -39,7 +39,7 @@ export interface OffensivePlay {
   category: 'short' | 'medium' | 'deep' | 'run';
   description: string;
   routes: PlayerRoute[];
-  difficulty: 1 | 2 | 3;  // 1 = easy, 3 = hard to execute
+  difficulty: 1 | 2 | 3; // 1 = easy, 3 = hard to execute
   unlockRequirement?: {
     type: 'games' | 'touchdowns' | 'yards' | 'score';
     value: number;
@@ -52,7 +52,7 @@ export interface DefensivePlay {
   name: string;
   type: 'man' | 'zone' | 'blitz';
   description: string;
-  blitzers: string[];           // Position IDs that will rush
+  blitzers: string[]; // Position IDs that will rush
   coverageDepths: Record<string, number>; // Position ID to coverage depth
 }
 
@@ -66,12 +66,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Fast-breaking slant routes for quick gains',
     difficulty: 1,
     routes: [
-      { positionId: 'wr1', routeType: 'slant', routeDepth: 8, routeWidth: -5, breakDelay: 0.2, isPrimary: true },
-      { positionId: 'wr2', routeType: 'slant', routeDepth: 8, routeWidth: 5, breakDelay: 0.2, isPrimary: false },
-      { positionId: 'wr3', routeType: 'flat', routeDepth: 2, routeWidth: 10, breakDelay: 0.1, isPrimary: false },
-      { positionId: 'te', routeType: 'drag', routeDepth: 5, routeWidth: 12, breakDelay: 0.3, isPrimary: false },
-      { positionId: 'rb', routeType: 'checkdown', routeDepth: 3, routeWidth: -5, breakDelay: 0, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'slant',
+        routeDepth: 8,
+        routeWidth: -5,
+        breakDelay: 0.2,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'slant',
+        routeDepth: 8,
+        routeWidth: 5,
+        breakDelay: 0.2,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'flat',
+        routeDepth: 2,
+        routeWidth: 10,
+        breakDelay: 0.1,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'drag',
+        routeDepth: 5,
+        routeWidth: 12,
+        breakDelay: 0.3,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'checkdown',
+        routeDepth: 3,
+        routeWidth: -5,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
   },
   {
@@ -81,12 +123,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Dump it to the RB and let blockers lead the way',
     difficulty: 2,
     routes: [
-      { positionId: 'rb', routeType: 'flat', routeDepth: -2, routeWidth: 12, breakDelay: 0.4, isPrimary: true },
-      { positionId: 'wr1', routeType: 'streak', routeDepth: 20, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'wr2', routeType: 'streak', routeDepth: 20, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'wr3', routeType: 'block', routeDepth: 5, routeWidth: 8, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'te', routeType: 'block', routeDepth: 5, routeWidth: 5, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 3, routeWidth: 10, breakDelay: 0.3, isPrimary: false },
+      {
+        positionId: 'rb',
+        routeType: 'flat',
+        routeDepth: -2,
+        routeWidth: 12,
+        breakDelay: 0.4,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr1',
+        routeType: 'streak',
+        routeDepth: 20,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'streak',
+        routeDepth: 20,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'block',
+        routeDepth: 5,
+        routeWidth: 8,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'block',
+        routeDepth: 5,
+        routeWidth: 5,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 3,
+        routeWidth: 10,
+        breakDelay: 0.3,
+        isPrimary: false,
+      },
     ],
   },
 
@@ -98,12 +182,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Receivers run and turn back for the ball',
     difficulty: 1,
     routes: [
-      { positionId: 'wr1', routeType: 'curl', routeDepth: 12, routeWidth: 0, breakDelay: 0.7, isPrimary: true },
-      { positionId: 'wr2', routeType: 'curl', routeDepth: 12, routeWidth: 0, breakDelay: 0.7, isPrimary: false },
-      { positionId: 'wr3', routeType: 'out', routeDepth: 8, routeWidth: 8, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'te', routeType: 'in', routeDepth: 10, routeWidth: -10, breakDelay: 0.6, isPrimary: false },
-      { positionId: 'rb', routeType: 'checkdown', routeDepth: 5, routeWidth: 5, breakDelay: 0, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'curl',
+        routeDepth: 12,
+        routeWidth: 0,
+        breakDelay: 0.7,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'curl',
+        routeDepth: 12,
+        routeWidth: 0,
+        breakDelay: 0.7,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'out',
+        routeDepth: 8,
+        routeWidth: 8,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'in',
+        routeDepth: 10,
+        routeWidth: -10,
+        breakDelay: 0.6,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'checkdown',
+        routeDepth: 5,
+        routeWidth: 5,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
   },
   {
@@ -113,12 +239,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Crossing routes to create traffic for defenders',
     difficulty: 2,
     routes: [
-      { positionId: 'wr1', routeType: 'drag', routeDepth: 8, routeWidth: -25, breakDelay: 0.3, isPrimary: true },
-      { positionId: 'wr2', routeType: 'drag', routeDepth: 6, routeWidth: 25, breakDelay: 0.2, isPrimary: false },
-      { positionId: 'wr3', routeType: 'post', routeDepth: 15, routeWidth: -8, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'te', routeType: 'corner', routeDepth: 12, routeWidth: 12, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'rb', routeType: 'wheel', routeDepth: 10, routeWidth: 15, breakDelay: 0.4, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'drag',
+        routeDepth: 8,
+        routeWidth: -25,
+        breakDelay: 0.3,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'drag',
+        routeDepth: 6,
+        routeWidth: 25,
+        breakDelay: 0.2,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'post',
+        routeDepth: 15,
+        routeWidth: -8,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'corner',
+        routeDepth: 12,
+        routeWidth: 12,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'wheel',
+        routeDepth: 10,
+        routeWidth: 15,
+        breakDelay: 0.4,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
   },
 
@@ -130,12 +298,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Stretch the defense deep with four go routes',
     difficulty: 3,
     routes: [
-      { positionId: 'wr1', routeType: 'streak', routeDepth: 30, routeWidth: 0, breakDelay: 0, isPrimary: true },
-      { positionId: 'wr2', routeType: 'streak', routeDepth: 30, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'wr3', routeType: 'streak', routeDepth: 25, routeWidth: 5, breakDelay: 0, isPrimary: false },
-      { positionId: 'te', routeType: 'streak', routeDepth: 20, routeWidth: -5, breakDelay: 0, isPrimary: false },
-      { positionId: 'rb', routeType: 'checkdown', routeDepth: 5, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'streak',
+        routeDepth: 30,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'streak',
+        routeDepth: 30,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'streak',
+        routeDepth: 25,
+        routeWidth: 5,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'streak',
+        routeDepth: 20,
+        routeWidth: -5,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'checkdown',
+        routeDepth: 5,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
   },
   {
@@ -145,12 +355,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'All receivers go deep - throw it up and pray',
     difficulty: 3,
     routes: [
-      { positionId: 'wr1', routeType: 'post', routeDepth: 35, routeWidth: -10, breakDelay: 0.6, isPrimary: true },
-      { positionId: 'wr2', routeType: 'corner', routeDepth: 30, routeWidth: 15, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'wr3', routeType: 'streak', routeDepth: 35, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'te', routeType: 'post', routeDepth: 25, routeWidth: -5, breakDelay: 0.4, isPrimary: false },
-      { positionId: 'rb', routeType: 'streak', routeDepth: 20, routeWidth: 8, breakDelay: 0.3, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'post',
+        routeDepth: 35,
+        routeWidth: -10,
+        breakDelay: 0.6,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'corner',
+        routeDepth: 30,
+        routeWidth: 15,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'streak',
+        routeDepth: 35,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'post',
+        routeDepth: 25,
+        routeWidth: -5,
+        breakDelay: 0.4,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'streak',
+        routeDepth: 20,
+        routeWidth: 8,
+        breakDelay: 0.3,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
     unlockRequirement: { type: 'touchdowns', value: 5 },
   },
@@ -163,12 +415,54 @@ export const OFFENSIVE_PLAYS: OffensivePlay[] = [
     description: 'Hand off then get the ball back - big play potential',
     difficulty: 3,
     routes: [
-      { positionId: 'wr1', routeType: 'streak', routeDepth: 35, routeWidth: 0, breakDelay: 0, isPrimary: true },
-      { positionId: 'wr2', routeType: 'post', routeDepth: 30, routeWidth: -12, breakDelay: 0.6, isPrimary: false },
-      { positionId: 'wr3', routeType: 'corner', routeDepth: 25, routeWidth: 15, breakDelay: 0.5, isPrimary: false },
-      { positionId: 'te', routeType: 'streak', routeDepth: 20, routeWidth: 0, breakDelay: 0, isPrimary: false },
-      { positionId: 'rb', routeType: 'block', routeDepth: 2, routeWidth: 0, breakDelay: 0.8, isPrimary: false },
-      { positionId: 'c', routeType: 'block', routeDepth: 0, routeWidth: 0, breakDelay: 0, isPrimary: false },
+      {
+        positionId: 'wr1',
+        routeType: 'streak',
+        routeDepth: 35,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: true,
+      },
+      {
+        positionId: 'wr2',
+        routeType: 'post',
+        routeDepth: 30,
+        routeWidth: -12,
+        breakDelay: 0.6,
+        isPrimary: false,
+      },
+      {
+        positionId: 'wr3',
+        routeType: 'corner',
+        routeDepth: 25,
+        routeWidth: 15,
+        breakDelay: 0.5,
+        isPrimary: false,
+      },
+      {
+        positionId: 'te',
+        routeType: 'streak',
+        routeDepth: 20,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
+      {
+        positionId: 'rb',
+        routeType: 'block',
+        routeDepth: 2,
+        routeWidth: 0,
+        breakDelay: 0.8,
+        isPrimary: false,
+      },
+      {
+        positionId: 'c',
+        routeType: 'block',
+        routeDepth: 0,
+        routeWidth: 0,
+        breakDelay: 0,
+        isPrimary: false,
+      },
     ],
     unlockRequirement: { type: 'score', value: 2000 },
   },
@@ -218,7 +512,7 @@ export const DEFENSIVE_PLAYS: DefensivePlay[] = [
       dl1: 2,
       dl2: 2,
       lb: 5,
-      cb1: 0,  // Man coverage - follows WR
+      cb1: 0, // Man coverage - follows WR
       cb2: 0,
       ss: 0,
       fs: 15,
@@ -231,10 +525,10 @@ export const DEFENSIVE_PLAYS: DefensivePlay[] = [
     description: 'Bring the heat - 5 rushers',
     blitzers: ['dl1', 'dl2', 'lb', 'ss', 'cb2'],
     coverageDepths: {
-      dl1: 0,  // Rush
+      dl1: 0, // Rush
       dl2: 0,
       lb: 0,
-      cb1: 0,  // Man
+      cb1: 0, // Man
       cb2: 0,
       ss: 0,
       fs: 20,

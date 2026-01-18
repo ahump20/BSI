@@ -87,7 +87,10 @@ export interface ToolContext {
 }
 
 class LonghornsError extends Error {
-  constructor(message: string, public readonly code: string = 'BAD_REQUEST') {
+  constructor(
+    message: string,
+    public readonly code: string = 'BAD_REQUEST'
+  ) {
     super(message);
     this.name = 'LonghornsError';
   }
@@ -159,7 +162,7 @@ class CacheChain {
     if (!this.env?.LONGHORNS_R2) return;
     try {
       await this.env.LONGHORNS_R2.put(key, value, {
-        httpMetadata: { contentType: 'application/json', cacheControl: 'max-age=300' }
+        httpMetadata: { contentType: 'application/json', cacheControl: 'max-age=300' },
       });
     } catch (error) {
       console.warn('R2 put failed', error);
@@ -199,10 +202,9 @@ class CacheChain {
     try {
       const id = this.env.LONGHORNS_DO.idFromName('longhorns-cache');
       const stub = this.env.LONGHORNS_DO.get(id);
-      const response = await stub.fetch(
-        `https://longhorns/cache?key=${encodeURIComponent(key)}`,
-        { method: 'GET' }
-      );
+      const response = await stub.fetch(`https://longhorns/cache?key=${encodeURIComponent(key)}`, {
+        method: 'GET',
+      });
       if (!response.ok) return undefined;
       return response.text();
     } catch (error) {
@@ -219,7 +221,7 @@ class CacheChain {
       await stub.fetch('https://longhorns/cache', {
         method: 'PUT',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ key, value, ttl: 300 })
+        body: JSON.stringify({ key, value, ttl: 300 }),
       });
     } catch (error) {
       console.warn('Durable Object put failed', error);
@@ -245,7 +247,7 @@ function formatChicagoTimestamp(date: Date = new Date()): string {
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
-    timeZoneName: 'short'
+    timeZoneName: 'short',
   });
   const parts = formatter.formatToParts(date);
   const lookup = Object.fromEntries(parts.map((part) => [part.type, part.value]));
@@ -257,7 +259,7 @@ function createCitation(id: string, path: string, label: string): Citation {
     id,
     path,
     label,
-    timestamp: formatChicagoTimestamp()
+    timestamp: formatChicagoTimestamp(),
   };
 }
 
@@ -321,7 +323,7 @@ async function withCache<T>(
     const payload = JSON.parse(cached) as ToolPayload<T>;
     return {
       ...payload,
-      meta: { cache: { key, status: 'HIT' } }
+      meta: { cache: { key, status: 'HIT' } },
     };
   }
 
@@ -329,12 +331,12 @@ async function withCache<T>(
   const generatedAt = formatChicagoTimestamp();
   const payload: ToolPayload<T> = {
     ...freshPayload,
-    generatedAt
+    generatedAt,
   };
   await cache.put(key, JSON.stringify(payload));
   return {
     ...payload,
-    meta: { cache: { key, status: 'MISS' } }
+    meta: { cache: { key, status: 'MISS' } },
   };
 }
 
@@ -347,18 +349,38 @@ const texasBaseballDoc: TexasBaseballTeamDoc = texasBaseballTeamJson;
 
 const CITATION_SOURCES: Record<Sport, Citation[]> = {
   baseball: [
-    createCitation('baseball-feed', 'mcp/texas-longhorns/feeds/baseball.json', 'Texas baseball feed'),
-    createCitation('baseball-dossier', 'data/college-baseball/teams/texas-longhorns.json', 'Texas baseball dossier')
+    createCitation(
+      'baseball-feed',
+      'mcp/texas-longhorns/feeds/baseball.json',
+      'Texas baseball feed'
+    ),
+    createCitation(
+      'baseball-dossier',
+      'data/college-baseball/teams/texas-longhorns.json',
+      'Texas baseball dossier'
+    ),
   ],
   football: [
-    createCitation('football-feed', 'mcp/texas-longhorns/feeds/football.json', 'Texas football feed')
+    createCitation(
+      'football-feed',
+      'mcp/texas-longhorns/feeds/football.json',
+      'Texas football feed'
+    ),
   ],
   basketball: [
-    createCitation('basketball-feed', 'mcp/texas-longhorns/feeds/basketball.json', 'Texas basketball feed')
+    createCitation(
+      'basketball-feed',
+      'mcp/texas-longhorns/feeds/basketball.json',
+      'Texas basketball feed'
+    ),
   ],
   track_field: [
-    createCitation('track-feed', 'mcp/texas-longhorns/feeds/track-field.json', 'Texas track & field feed')
-  ]
+    createCitation(
+      'track-feed',
+      'mcp/texas-longhorns/feeds/track-field.json',
+      'Texas track & field feed'
+    ),
+  ],
 };
 
 const ARCHIVE_CITATION = createCitation(
@@ -399,7 +421,8 @@ function buildBaseballSeasons(): Array<Record<string, unknown>> {
     conferenceRecord: season.conferenceRecord,
     postseason: season.postseason,
     achievements: season.achievements ?? [],
-    seasonSummary: season.year === texasBaseballDoc.season ? texasBaseballDoc.seasonSummary : undefined
+    seasonSummary:
+      season.year === texasBaseballDoc.season ? texasBaseballDoc.seasonSummary : undefined,
   }));
 }
 
@@ -410,21 +433,21 @@ function buildFootballSeasons(): Array<Record<string, unknown>> {
     conference: season.conference,
     postseason: season.postseason,
     headlineWins: season.headlineWins,
-    finalRankings: season.finalRankings
+    finalRankings: season.finalRankings,
   }));
 }
 
 function buildBasketballSeasons(): Array<Record<string, unknown>> {
   return basketballFeed.programs.map((program) => ({
     program: program.program,
-    seasons: program.seasons
+    seasons: program.seasons,
   }));
 }
 
 function buildTrackSeasons(): Array<Record<string, unknown>> {
   return trackFieldFeed.programs.map((program) => ({
     program: program.program,
-    seasons: program.seasons
+    seasons: program.seasons,
   }));
 }
 
@@ -460,10 +483,10 @@ export async function get_team_seasons(
       team: TEAM_NAME,
       sports: sportsToReturn.map((sportKey) => ({
         sport: sportKey,
-        seasons: seasonsBySport(sportKey)
-      }))
+        seasons: seasonsBySport(sportKey),
+      })),
     },
-    citations: collectCitations(sportsToReturn)
+    citations: collectCitations(sportsToReturn),
   }));
 }
 
@@ -501,7 +524,7 @@ function getBaseballSchedule(season: string): ScheduleEntry[] {
       date: game.date,
       opponent: game.opponent,
       location: game.location,
-      note: game.note
+      note: game.note,
     }));
 }
 
@@ -517,7 +540,7 @@ function getFootballSchedule(season: string): ScheduleEntry[] {
       opponent: game.opponent,
       location: game.location,
       network: game.network,
-      result: game.result
+      result: game.result,
     }));
 }
 
@@ -534,7 +557,7 @@ function getBasketballSchedule(season: string, program?: string): ScheduleEntry[
         opponent: game.opponent,
         location: game.location,
         result: game.result,
-        note: prog.program
+        note: prog.program,
       }))
     );
   }
@@ -553,7 +576,7 @@ function getTrackSchedule(season: string, program?: string): ScheduleEntry[] {
         date: meet.date,
         location: meet.location,
         note: meet.focus,
-        opponent: meet.meet
+        opponent: meet.meet,
       }))
     );
   }
@@ -585,9 +608,9 @@ export async function get_season_schedule(
     result: {
       sport: args.sport,
       season: args.season,
-      schedule
+      schedule,
     },
-    citations: collectCitations([args.sport])
+    citations: collectCitations([args.sport]),
   }));
 }
 
@@ -611,7 +634,10 @@ function findFootballBoxScore(gameId: string): Record<string, unknown> | undefin
   return footballFeed.boxScores[gameId as keyof typeof footballFeed.boxScores];
 }
 
-function findBasketballBoxScore(gameId: string, program?: string): Record<string, unknown> | undefined {
+function findBasketballBoxScore(
+  gameId: string,
+  program?: string
+): Record<string, unknown> | undefined {
   const entry = basketballFeed.boxScores[gameId as keyof typeof basketballFeed.boxScores];
   if (!entry) return undefined;
   if (program && entry.program.toLowerCase() !== program.toLowerCase()) return undefined;
@@ -658,9 +684,9 @@ export async function get_game_box_score(
     result: {
       sport: args.sport,
       gameId: args.gameId,
-      data
+      data,
     },
-    citations: collectCitations([args.sport])
+    citations: collectCitations([args.sport]),
   }));
 }
 
@@ -679,7 +705,9 @@ function normalizeId(value: string): string {
   return value.toLowerCase();
 }
 
-function findPlayer(args: GetPlayerCareerArgs): { sport: Sport; profile: Record<string, unknown> } | undefined {
+function findPlayer(
+  args: GetPlayerCareerArgs
+): { sport: Sport; profile: Record<string, unknown> } | undefined {
   const requestedSport = args.sport;
 
   const searchSports = requestedSport ? [requestedSport] : SPORT_ORDER;
@@ -687,7 +715,9 @@ function findPlayer(args: GetPlayerCareerArgs): { sport: Sport; profile: Record<
   for (const sport of searchSports) {
     switch (sport) {
       case 'baseball': {
-        const match = baseballFeed.players.find((player) => normalizeId(player.id) === normalizeId(args.playerId));
+        const match = baseballFeed.players.find(
+          (player) => normalizeId(player.id) === normalizeId(args.playerId)
+        );
         if (match) {
           return { sport, profile: match };
         }
@@ -746,9 +776,9 @@ export async function get_player_career(
     result: {
       playerId: args.playerId,
       sport: player.sport,
-      profile: player.profile
+      profile: player.profile,
     },
-    citations: collectCitations([player.sport])
+    citations: collectCitations([player.sport]),
   }));
 }
 
@@ -771,24 +801,24 @@ function buildRankingsContext(sport: Sport, season?: string): Record<string, unk
         latest: baseballFeed.seasons[0]?.achievements,
         d1baseballRanking: '#5',
         rpiRanking: '#6',
-        dossierTimestamp: texasBaseballDoc.lastUpdated
+        dossierTimestamp: texasBaseballDoc.lastUpdated,
       };
     case 'football':
       return {
         rankings: footballFeed.rankings,
-        season: season ?? '2025Preseason'
+        season: season ?? '2025Preseason',
       };
     case 'basketball':
       return {
         men: basketballFeed.programs.find((program) => program.program === 'Men')?.rankings,
         women: basketballFeed.programs.find((program) => program.program === 'Women')?.rankings,
-        season: season ?? '2025Preseason'
+        season: season ?? '2025Preseason',
       };
     case 'track_field':
       return {
         women: trackFieldFeed.programs.find((program) => program.program === 'Women')?.seasons,
         men: trackFieldFeed.programs.find((program) => program.program === 'Men')?.seasons,
-        lastUpdated: trackFieldFeed.lastUpdated
+        lastUpdated: trackFieldFeed.lastUpdated,
       };
     default:
       return {};
@@ -807,10 +837,10 @@ export async function get_rankings_context(
     result: {
       sports: sportsToReturn.map((sportKey) => ({
         sport: sportKey,
-        context: buildRankingsContext(sportKey, args.season)
-      }))
+        context: buildRankingsContext(sportKey, args.season),
+      })),
     },
-    citations: collectCitations(sportsToReturn)
+    citations: collectCitations(sportsToReturn),
   }));
 }
 
@@ -836,7 +866,7 @@ interface SearchArchiveResponse {
 function aggregateArchiveEntries(): ArchiveEntry[] {
   const combined: ArchiveEntry[] = archiveFeed.entries.map((entry) => ({
     ...entry,
-    sport: entry.sport as Sport
+    sport: entry.sport as Sport,
   }));
 
   if (Array.isArray(trackFieldFeed.archive)) {
@@ -847,7 +877,7 @@ function aggregateArchiveEntries(): ArchiveEntry[] {
         date: entry.date,
         headline: entry.title,
         summary: entry.summary,
-        source: 'Track & Field Archive'
+        source: 'Track & Field Archive',
       }))
     );
   }
@@ -864,9 +894,10 @@ export async function search_archive(
   enforceQueryPolicy(args.query);
 
   const limit = Math.min(Math.max(args.limit ?? 5, 1), 20);
-  const results = ARCHIVE_ENTRIES.filter((entry) =>
-    entry.headline.toLowerCase().includes(args.query.toLowerCase()) ||
-    entry.summary.toLowerCase().includes(args.query.toLowerCase())
+  const results = ARCHIVE_ENTRIES.filter(
+    (entry) =>
+      entry.headline.toLowerCase().includes(args.query.toLowerCase()) ||
+      entry.summary.toLowerCase().includes(args.query.toLowerCase())
   )
     .sort((a, b) => {
       const sportRank = SPORT_ORDER.indexOf(a.sport) - SPORT_ORDER.indexOf(b.sport);
@@ -878,19 +909,13 @@ export async function search_archive(
   return withCache('search_archive', args, context, async () => ({
     result: {
       query: args.query,
-      results
+      results,
     },
     citations: [
       { ...ARCHIVE_CITATION, timestamp: formatChicagoTimestamp() },
-      ...collectCitations(Array.from(new Set(results.map((entry) => entry.sport))))
-    ]
+      ...collectCitations(Array.from(new Set(results.map((entry) => entry.sport)))),
+    ],
   }));
 }
 
-export {
-  CacheChain,
-  LonghornsError,
-  buildCacheKey,
-  collectCitations,
-  formatChicagoTimestamp
-};
+export { CacheChain, LonghornsError, buildCacheKey, collectCitations, formatChicagoTimestamp };

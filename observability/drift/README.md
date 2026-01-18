@@ -7,16 +7,19 @@ This comprehensive data drift monitoring system ensures the highest quality anal
 ## 📊 Monitored Data Sources
 
 ### Professional Sports
+
 - **MLB Cardinals Analytics** - Real-time batting averages, ERA, OPS+, leverage index, readiness scores
 - **NFL Titans Performance** - QB pressure rates, hidden yardage metrics, defensive efficiency
 - **NBA Grizzlies Metrics** - True shooting percentage, defensive rating, pace-adjusted efficiency
 
 ### College & Youth Sports
+
 - **Texas Longhorns Football** - Recruiting composites, SP+ ratings, FEI rankings
 - **Perfect Game Baseball** - Exit velocity, 60-yard dash, PG grades, commitment status
 - **Texas HS Football** - Dave Campbell's model rankings, offensive/defensive stats
 
 ### Advanced Analytics
+
 - **Biomechanics Vision AI** - Hip-shoulder separation, release point consistency, kinetic chain efficiency
 - **Character Assessment** - Micro-expression confidence, trait stability scores
 - **Championship Models** - Win/playoff/championship probability predictions
@@ -25,6 +28,7 @@ This comprehensive data drift monitoring system ensures the highest quality anal
 ## 🚀 Quick Start
 
 ### Installation
+
 ```bash
 # Install Python dependencies
 pip install -r observability/drift/requirements.txt
@@ -37,6 +41,7 @@ python observability/drift/drift_detector.py
 ```
 
 ### CI/CD Integration
+
 ```bash
 # Run drift gate in CI pipeline
 ./observability/drift/ci_drift_gate.sh
@@ -50,6 +55,7 @@ DRIFT_OVERRIDE=true DRIFT_OVERRIDE_REASON="Expected schema change" ./observabili
 ### Statistical Tests
 
 #### Kolmogorov-Smirnov Test (Continuous Variables)
+
 - **Used For**: Batting averages, ERA, ratings, velocities
 - **Thresholds**:
   - Warning: KS statistic ≥ 0.1
@@ -57,6 +63,7 @@ DRIFT_OVERRIDE=true DRIFT_OVERRIDE_REASON="Expected schema change" ./observabili
 - **Example**: Cardinals batting average drift detection
 
 #### Population Stability Index (Categorical/Binned)
+
 - **Used For**: Perfect Game grades, Texas HS classifications, NIL brackets
 - **Thresholds**:
   - No drift: PSI < 0.1
@@ -67,13 +74,17 @@ DRIFT_OVERRIDE=true DRIFT_OVERRIDE_REASON="Expected schema change" ./observabili
 ### Custom Drift Detectors
 
 #### Cardinals Readiness Drift
+
 Composite metric combining:
+
 - OPS+ (30% weight)
 - Inverse ERA (30% weight)
 - Leverage Index (40% weight)
 
 #### Character Assessment Drift
+
 Monitors biomechanical character indicators:
+
 - Micro-expression detection confidence
 - Character trait score variance
 - Combined drift score threshold: 0.15
@@ -81,6 +92,7 @@ Monitors biomechanical character indicators:
 ## 📝 Configuration
 
 ### drift-config.yaml Structure
+
 ```yaml
 monitoring:
   enabled: true
@@ -89,7 +101,7 @@ monitoring:
 
 datasets:
   dataset_name:
-    source: "api/endpoint"
+    source: 'api/endpoint'
     drift_thresholds:
       ks_statistic: 0.1
       psi_warning: 0.1
@@ -101,18 +113,20 @@ datasets:
 
 ### Key Configuration Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `baseline_window` | Historical period for baseline | 30d |
-| `sampling.strategy` | Data sampling method | stratified |
-| `ci_integration.fail_on_critical` | Block CI on critical drift | true |
-| `reporting.schedule` | Cron for nightly reports | 0 2 * * * |
-| `alerting.channels` | Notification methods | github, email |
+| Option                            | Description                    | Default       |
+| --------------------------------- | ------------------------------ | ------------- |
+| `baseline_window`                 | Historical period for baseline | 30d           |
+| `sampling.strategy`               | Data sampling method           | stratified    |
+| `ci_integration.fail_on_critical` | Block CI on critical drift     | true          |
+| `reporting.schedule`              | Cron for nightly reports       | 0 2 \* \* \*  |
+| `alerting.channels`               | Notification methods           | github, email |
 
 ## 📊 Reporting
 
 ### Nightly Reports (2 AM CT)
+
 Generated HTML reports include:
+
 - Executive summary with drift score dashboard
 - 30-day sparkline visualizations per column
 - Statistical test results tables
@@ -120,6 +134,7 @@ Generated HTML reports include:
 - Baseline distribution comparisons
 
 ### Report Sections
+
 1. **Executive Summary** - High-level metrics and scores
 2. **Drift Dashboard** - Visual KS/PSI charts
 3. **Schema Changes** - New/missing/changed columns
@@ -131,11 +146,13 @@ Generated HTML reports include:
 ## 🚨 Alerting
 
 ### Severity Levels
+
 - **INFO**: Metrics within normal bounds
 - **WARNING**: Approaching threshold limits
 - **CRITICAL**: Threshold breached, intervention required
 
 ### Alert Channels
+
 1. **GitHub Issues** - Auto-created for critical drifts
 2. **Email** - Sent to configured recipients
 3. **Cloudflare Analytics** - Real-time metric streaming
@@ -144,15 +161,17 @@ Generated HTML reports include:
 ## 🔄 CI/CD Integration
 
 ### GitHub Actions Workflow
+
 ```yaml
 on:
   schedule:
-    - cron: '0 8 * * *'  # 2 AM CT
+    - cron: '0 8 * * *' # 2 AM CT
   push:
     paths: ['data/**', 'api/**', 'models/**']
 ```
 
 ### CI Gate Logic
+
 1. Cache baselines for performance
 2. Run schema drift detection
 3. Run statistical drift detection
@@ -185,16 +204,19 @@ on:
 ## 🏆 Performance Optimization
 
 ### Sampling Strategies
+
 - **Stratified Sampling**: Maintains class distribution
 - **Sample Size**: 100,000 records default
 - **Confidence Level**: 95%
 
 ### Parallelization
+
 - **Max Workers**: 8 concurrent processes
 - **Column-level**: Parallel drift calculations
 - **Dataset-level**: Concurrent dataset processing
 
 ### Caching
+
 - **Redis Backend**: Sub-second baseline retrieval
 - **TTL**: 3600 seconds (1 hour)
 - **Baseline Versioning**: Git-like baseline management
@@ -204,17 +226,20 @@ on:
 ### Common Issues
 
 #### High False Positive Rate
+
 - Review and adjust thresholds in config
 - Increase baseline window period
 - Consider seasonal patterns
 
 #### Missing Baseline Data
+
 ```bash
 # Rebuild baselines
 python observability/drift/drift_detector.py --rebuild-baselines
 ```
 
 #### CI Gate Failures
+
 ```bash
 # Debug with verbose output
 VERBOSE=true ./observability/drift/ci_drift_gate.sh
@@ -234,6 +259,7 @@ cat observability/drift/ci/ci_gate.json
 ## 📚 API Reference
 
 ### Python API
+
 ```python
 from drift_detector import BlazeIntelligenceDriftDetector
 
@@ -242,6 +268,7 @@ drift_results, schema_changes = await detector.run_monitoring_pipeline()
 ```
 
 ### REST API Endpoints
+
 - `POST /api/drift/ingest` - Ingest drift metrics
 - `GET /api/drift/query` - Query historical drift data
 - `GET /api/drift/dashboard` - View real-time dashboard
@@ -263,4 +290,4 @@ drift_results, schema_changes = await detector.run_monitoring_pipeline()
 
 ---
 
-*Championship-caliber data quality monitoring for the Deep South's premier sports intelligence platform*
+_Championship-caliber data quality monitoring for the Deep South's premier sports intelligence platform_

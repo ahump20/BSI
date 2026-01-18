@@ -2,32 +2,13 @@
 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { StatusBadge, type PortalStatus } from './StatusBadge';
+import { StatusBadge } from './StatusBadge';
 import { StarRating, EliteBadge } from './StarRating';
 import { PositionIconContainer, type Sport } from './PositionIcon';
+import type { PortalEntry } from '@/lib/portal/types';
 
-export interface PortalEntry {
-  id: string;
-  player_name: string;
-  school_from: string;
-  school_to: string | null;
-  position: string;
-  conference: string;
-  class_year: string;
-  status: PortalStatus;
-  portal_date: string;
-  engagement_score?: number;
-  stars?: number;
-  stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    era?: number;
-    wins?: number;
-    losses?: number;
-    strikeouts?: number;
-  };
-}
+// Re-export PortalEntry for backwards compatibility
+export type { PortalEntry } from '@/lib/portal/types';
 
 export interface PortalCardProps {
   entry: PortalEntry;
@@ -179,34 +160,35 @@ export function PortalCard({
           </div>
 
           {/* Stats (baseball only, when enabled) */}
-          {showStats && sport === 'baseball' && entry.stats && variant !== 'compact' && (
+          {showStats && sport === 'baseball' && entry.baseball_stats && variant !== 'compact' && (
             <div className="mt-3 pt-3 border-t border-border-subtle">
               <div className="flex gap-4 text-xs">
                 {isPitcher ? (
                   <>
-                    {entry.stats.era !== undefined && (
-                      <StatDisplay label="ERA" value={entry.stats.era.toFixed(2)} />
+                    {entry.baseball_stats.era !== undefined && (
+                      <StatDisplay label="ERA" value={entry.baseball_stats.era.toFixed(2)} />
                     )}
-                    {entry.stats.wins !== undefined && entry.stats.losses !== undefined && (
-                      <StatDisplay
-                        label="W-L"
-                        value={`${entry.stats.wins}-${entry.stats.losses}`}
-                      />
-                    )}
-                    {entry.stats.strikeouts !== undefined && (
-                      <StatDisplay label="K" value={entry.stats.strikeouts} />
+                    {entry.baseball_stats.wins !== undefined &&
+                      entry.baseball_stats.losses !== undefined && (
+                        <StatDisplay
+                          label="W-L"
+                          value={`${entry.baseball_stats.wins}-${entry.baseball_stats.losses}`}
+                        />
+                      )}
+                    {entry.baseball_stats.strikeouts !== undefined && (
+                      <StatDisplay label="K" value={entry.baseball_stats.strikeouts} />
                     )}
                   </>
                 ) : (
                   <>
-                    {entry.stats.avg !== undefined && (
-                      <StatDisplay label="AVG" value={entry.stats.avg.toFixed(3)} />
+                    {entry.baseball_stats.avg !== undefined && (
+                      <StatDisplay label="AVG" value={entry.baseball_stats.avg.toFixed(3)} />
                     )}
-                    {entry.stats.hr !== undefined && (
-                      <StatDisplay label="HR" value={entry.stats.hr} />
+                    {entry.baseball_stats.hr !== undefined && (
+                      <StatDisplay label="HR" value={entry.baseball_stats.hr} />
                     )}
-                    {entry.stats.rbi !== undefined && (
-                      <StatDisplay label="RBI" value={entry.stats.rbi} />
+                    {entry.baseball_stats.rbi !== undefined && (
+                      <StatDisplay label="RBI" value={entry.baseball_stats.rbi} />
                     )}
                   </>
                 )}

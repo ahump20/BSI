@@ -15,6 +15,7 @@ This document outlines the comprehensive graphics engine overhaul for Blaze Spor
 **"Complete Box Scores. Every Game. Every Player."**
 
 The visual design must communicate:
+
 - **Authority**: Professional, trustworthy data presentation
 - **Completeness**: Every stat, every player, full coverage
 - **Immediacy**: Real-time updates, live tracking
@@ -29,6 +30,7 @@ The visual design must communicate:
 **File**: `/public/css/blaze-design-system.css` (✅ Completed)
 
 **Contents**:
+
 - **Design Tokens**: 200+ CSS custom properties for consistent theming
 - **Typography Scale**: Fluid typography using `clamp()` for perfect scaling
 - **Spacing System**: 8px base grid with 32 spacing tokens
@@ -36,6 +38,7 @@ The visual design must communicate:
 - **Accessibility**: WCAG AA compliant focus states, skip links, screen reader utilities
 
 **Key Features**:
+
 - Zero runtime JavaScript (pure CSS)
 - 15KB gzipped
 - Dark mode optimized
@@ -45,12 +48,12 @@ The visual design must communicate:
 ### 1.2 Typography System
 
 ```css
---font-family-sans: 'Inter' (body text, UI elements)
---font-family-display: 'Bebas Neue' (headlines, scores)
---font-family-mono: 'SF Mono' (statistics, data tables)
+--font-family-sans: 'Inter' (body text, UI elements) --font-family-display: 'Bebas Neue'
+  (headlines, scores) --font-family-mono: 'SF Mono' (statistics, data tables);
 ```
 
 **Fluid Scaling**:
+
 - Uses `clamp()` for responsive sizing without media queries
 - Maintains optimal 60-75 character line lengths
 - Tabular numbers for data tables
@@ -58,17 +61,20 @@ The visual design must communicate:
 ### 1.3 Color System
 
 **Brand Identity**:
+
 - Primary: `#BF5700` (Burnt Orange - burnt orange #5700)
 - Secondary: `#9C4500` (Darker variant)
 - Tertiary: `#D66D1A` (Lighter highlight)
 
 **Semantic Colors**:
+
 - Success: `#10B981` (live games, wins)
 - Error: `#EF4444` (losses, errors)
 - Warning: `#F59E0B` (alerts)
 - Info: `#3B82F6` (neutral information)
 
 **Contrast Ratios**:
+
 - All text meets WCAG AA (4.5:1 minimum)
 - Interactive elements meet WCAG AAA (7:1 minimum)
 
@@ -188,6 +194,7 @@ const blazeChartConfig = {
 ### 3.2 Performance Optimization
 
 **Techniques**:
+
 - GPU acceleration (`transform`, `opacity` only)
 - `will-change` hints for frequent animations
 - RequestAnimationFrame for scroll-based effects
@@ -199,7 +206,9 @@ const blazeChartConfig = {
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
@@ -213,6 +222,7 @@ const blazeChartConfig = {
 ### 4.1 Features
 
 **Current Implementation** (college-baseball/standings):
+
 - Basic table with glassmorphism
 - Hover states
 - Sticky first column
@@ -275,6 +285,7 @@ const blazeChartConfig = {
 **Library**: Three.js (or Babylon.js for WebGPU support)
 
 **Implementation**:
+
 - Canvas-based rendering
 - Low-poly models for performance
 - LOD (Level of Detail) system
@@ -293,27 +304,26 @@ const blazeChartConfig = {
 ### 6.1 Core Components
 
 #### **Card Component**
+
 ```html
 <div class="blaze-card">
   <div class="card-header">
     <h3 class="card-title">Title</h3>
     <span class="card-badge">Badge</span>
   </div>
-  <div class="card-body">
-    Content
-  </div>
-  <div class="card-footer">
-    Actions
-  </div>
+  <div class="card-body">Content</div>
+  <div class="card-footer">Actions</div>
 </div>
 ```
 
 **Variants**:
+
 - `.card-elevated` - Raised shadow
 - `.card-interactive` - Hover effects
 - `.card-glass` - Glassmorphism background
 
 #### **Button Component**
+
 ```html
 <button class="blaze-btn blaze-btn-primary">
   <i class="icon"></i>
@@ -322,12 +332,14 @@ const blazeChartConfig = {
 ```
 
 **Variants**:
+
 - `.blaze-btn-primary` - Brand gradient
 - `.blaze-btn-secondary` - Glass style
 - `.blaze-btn-ghost` - Transparent
 - `.blaze-btn-danger` - Red error state
 
 #### **Badge/Tag Component**
+
 ```html
 <span class="blaze-badge blaze-badge-success">
   <i class="fas fa-check"></i>
@@ -336,11 +348,13 @@ const blazeChartConfig = {
 ```
 
 **Use Cases**:
+
 - Game status indicators
 - Conference tags
 - Win/loss streaks
 
 #### **Skeleton Loader**
+
 ```html
 <div class="skeleton-container">
   <div class="skeleton-line"></div>
@@ -354,12 +368,14 @@ const blazeChartConfig = {
 **Library**: Custom implementation (no dependencies)
 
 **Features**:
+
 - Auto-dismiss after 5 seconds
 - Swipe to dismiss on mobile
 - Screen reader announcements
 - Queue management
 
 **Types**:
+
 - Success (green)
 - Error (red)
 - Warning (yellow)
@@ -374,6 +390,7 @@ const blazeChartConfig = {
 **Current State**: Particle background, hero section, access cards
 
 **Enhancements**:
+
 1. **Hero Section**
    - Animated statistics ticker (live data)
    - Floating sports icons with parallax
@@ -394,6 +411,7 @@ const blazeChartConfig = {
 **Current State**: Game cards with basic box score toggle
 
 **Enhancements**:
+
 1. **Game Cards**
    - Live pulse animation for in-progress games
    - Score change animation (flash + grow)
@@ -414,6 +432,7 @@ const blazeChartConfig = {
 **Current State**: Conference tables with basic styling
 
 **Enhancements**:
+
 1. **Standings Tables**
    - Inline sparkline charts (win/loss trends)
    - Color-coded streaks (green/red)
@@ -434,6 +453,7 @@ const blazeChartConfig = {
 **Current State**: Needs implementation
 
 **Proposed Architecture**:
+
 1. **Dashboard Layout**
    - Grid system (12-column)
    - Draggable/resizable widgets
@@ -455,6 +475,7 @@ const blazeChartConfig = {
 **Current State**: Needs implementation
 
 **Proposed UX**:
+
 1. **Chat Interface**
    - Message bubbles (user vs. AI)
    - Typing indicators
@@ -477,32 +498,32 @@ const blazeChartConfig = {
 
 ### 8.1 Lighthouse Targets
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Performance | 95+ | TBD | 🟡 |
-| Accessibility | 100 | TBD | 🟡 |
-| Best Practices | 95+ | TBD | 🟡 |
-| SEO | 100 | TBD | 🟡 |
+| Metric         | Target | Current | Status |
+| -------------- | ------ | ------- | ------ |
+| Performance    | 95+    | TBD     | 🟡     |
+| Accessibility  | 100    | TBD     | 🟡     |
+| Best Practices | 95+    | TBD     | 🟡     |
+| SEO            | 100    | TBD     | 🟡     |
 
 ### 8.2 Core Web Vitals
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| LCP (Largest Contentful Paint) | < 2.5s | TBD | 🟡 |
-| FID (First Input Delay) | < 100ms | TBD | 🟡 |
-| CLS (Cumulative Layout Shift) | < 0.1 | TBD | 🟡 |
-| FCP (First Contentful Paint) | < 1.5s | TBD | 🟡 |
-| TTI (Time to Interactive) | < 3.0s | TBD | 🟡 |
+| Metric                         | Target  | Current | Status |
+| ------------------------------ | ------- | ------- | ------ |
+| LCP (Largest Contentful Paint) | < 2.5s  | TBD     | 🟡     |
+| FID (First Input Delay)        | < 100ms | TBD     | 🟡     |
+| CLS (Cumulative Layout Shift)  | < 0.1   | TBD     | 🟡     |
+| FCP (First Contentful Paint)   | < 1.5s  | TBD     | 🟡     |
+| TTI (Time to Interactive)      | < 3.0s  | TBD     | 🟡     |
 
 ### 8.3 Bundle Size Budget
 
-| Asset Type | Budget | Strategy |
-|------------|--------|----------|
-| CSS | < 50KB | Critical CSS inline, rest deferred |
-| JavaScript | < 200KB | Code splitting, dynamic imports |
-| Fonts | < 100KB | Subset fonts, WOFF2 format |
-| Images | N/A | WebP format, lazy loading, CDN |
-| Charts | < 60KB | Chart.js tree-shaken |
+| Asset Type | Budget  | Strategy                           |
+| ---------- | ------- | ---------------------------------- |
+| CSS        | < 50KB  | Critical CSS inline, rest deferred |
+| JavaScript | < 200KB | Code splitting, dynamic imports    |
+| Fonts      | < 100KB | Subset fonts, WOFF2 format         |
+| Images     | N/A     | WebP format, lazy loading, CDN     |
+| Charts     | < 60KB  | Chart.js tree-shaken               |
 
 ---
 
@@ -511,6 +532,7 @@ const blazeChartConfig = {
 ### 9.1 WCAG 2.1 AA Requirements
 
 **✅ Implemented**:
+
 - Color contrast ratios (4.5:1 minimum)
 - Focus indicators on all interactive elements
 - Keyboard navigation support
@@ -520,6 +542,7 @@ const blazeChartConfig = {
 - Semantic HTML structure
 
 **🟡 Needs Testing**:
+
 - Screen reader compatibility (NVDA, JAWS, VoiceOver)
 - Keyboard-only navigation flow
 - Voice control (Dragon NaturallySpeaking)
@@ -546,30 +569,35 @@ const blazeChartConfig = {
 ## 10. Implementation Roadmap
 
 ### Phase 1: Foundation (Week 1)
+
 - [x] Design system CSS tokens
 - [ ] Component library implementation
 - [ ] Enhanced data tables
 - [ ] Loading skeletons
 
 ### Phase 2: Interactive Features (Week 2)
+
 - [ ] Chart.js integration
 - [ ] Standings progression charts
 - [ ] Player performance sparklines
 - [ ] Advanced animation system
 
 ### Phase 3: Page Enhancements (Week 3)
+
 - [ ] Homepage visual upgrades
 - [ ] College baseball games enhancements
 - [ ] Standings page charts
 - [ ] Responsive optimizations
 
 ### Phase 4: Advanced Features (Week 4)
+
 - [ ] 3D field visualizations (optional)
 - [ ] AI Copilot UI
 - [ ] Analytics dashboard
 - [ ] Real-time WebSocket updates
 
 ### Phase 5: Polish & Testing (Week 5)
+
 - [ ] Performance optimization
 - [ ] Accessibility audit
 - [ ] Cross-browser testing
@@ -580,15 +608,15 @@ const blazeChartConfig = {
 
 ## 11. Technical Stack Summary
 
-| Layer | Technology | Version | Purpose |
-|-------|-----------|---------|---------|
-| **Design System** | Custom CSS | 2.0.0 | Design tokens, utilities |
-| **Charts** | Chart.js | 4.x | 2D data visualization |
-| **3D Graphics** | Three.js | r160 | Optional field layouts |
-| **Animations** | AOS + Custom | 2.3.1 | Scroll animations, transitions |
-| **Icons** | Font Awesome | 6.5.1 | UI icons |
-| **Fonts** | Inter + Bebas Neue | Latest | Typography |
-| **Build** | Cloudflare Pages | N/A | Deployment platform |
+| Layer             | Technology         | Version | Purpose                        |
+| ----------------- | ------------------ | ------- | ------------------------------ |
+| **Design System** | Custom CSS         | 2.0.0   | Design tokens, utilities       |
+| **Charts**        | Chart.js           | 4.x     | 2D data visualization          |
+| **3D Graphics**   | Three.js           | r160    | Optional field layouts         |
+| **Animations**    | AOS + Custom       | 2.3.1   | Scroll animations, transitions |
+| **Icons**         | Font Awesome       | 6.5.1   | UI icons                       |
+| **Fonts**         | Inter + Bebas Neue | Latest  | Typography                     |
+| **Build**         | Cloudflare Pages   | N/A     | Deployment platform            |
 
 ---
 
@@ -630,6 +658,7 @@ BSI/
 ### 13.1 Visual Hierarchy
 
 **Order of Importance**:
+
 1. **Live Game Data** - Scores, status, time
 2. **Team Identities** - Names, logos, records
 3. **Statistics** - Box scores, player stats
@@ -651,6 +680,7 @@ BSI/
 - **Monospace** (SF Mono): Statistics, data tables, code
 
 **Optimal Line Lengths**:
+
 - Body text: 60-75 characters
 - Captions: 40-50 characters
 - Headlines: 10-15 words
@@ -660,17 +690,20 @@ BSI/
 ## 14. Success Metrics
 
 ### 14.1 User Engagement
+
 - **Time on Page**: +30% increase (baseline: 2:15 → target: 3:00)
 - **Bounce Rate**: -20% decrease (baseline: 45% → target: 36%)
 - **Pages per Session**: +40% increase (baseline: 2.5 → target: 3.5)
 
 ### 14.2 Performance
+
 - **Mobile Load Time**: < 3 seconds on 4G
 - **Desktop Load Time**: < 1.5 seconds
 - **Time to Interactive**: < 2 seconds
 - **First Contentful Paint**: < 1 second
 
 ### 14.3 Accessibility
+
 - **WCAG AA Compliance**: 100%
 - **Keyboard Navigation**: All interactive elements accessible
 - **Screen Reader Compatibility**: NVDA, JAWS, VoiceOver tested
@@ -681,6 +714,7 @@ BSI/
 ## 15. Next Steps
 
 ### Immediate Actions
+
 1. **Implement Component Library** (`/public/css/blaze-components.css`)
 2. **Add Chart.js Integration** (`/public/js/blaze-charts.js`)
 3. **Enhance College Baseball Pages** (games, standings, teams, players)
@@ -688,6 +722,7 @@ BSI/
 5. **Accessibility Testing** (Screen readers, keyboard navigation)
 
 ### Long-term Goals
+
 1. **Analytics Dashboard** - Customizable widget-based interface
 2. **AI Copilot** - Natural language query system
 3. **3D Visualizations** - Field layouts, player tracking
@@ -701,6 +736,7 @@ BSI/
 This graphics engine overhaul transforms Blaze Sports Intel from a functional college baseball data platform into a visually stunning, production-grade sports intelligence hub that rivals ESPN, Fox Sports, and The Athletic.
 
 **Key Differentiators**:
+
 - **Complete Box Scores** - What ESPN refuses to provide
 - **Professional Design** - Authority and trust through visual excellence
 - **Accessible by Default** - WCAG AA compliance from day one

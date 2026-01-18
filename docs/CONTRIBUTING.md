@@ -70,28 +70,33 @@ Install these extensions for the best development experience:
    - Click "Fork" in the top-right corner
 
 2. **Clone your fork locally**
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/BSI.git
    cd BSI
    ```
 
 3. **Add upstream remote**
+
    ```bash
    git remote add upstream https://github.com/ahump20/BSI.git
    ```
 
 4. **Install dependencies**
+
    ```bash
    npm ci
    ```
 
 5. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your API keys (see README.md for details)
    ```
 
 6. **Install pre-commit hooks**
+
    ```bash
    npm run prepare
    ```
@@ -129,6 +134,7 @@ main (production)
 ### Starting New Work
 
 1. **Sync with upstream**
+
    ```bash
    git checkout main
    git fetch upstream
@@ -137,6 +143,7 @@ main (production)
    ```
 
 2. **Create feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -147,6 +154,7 @@ main (production)
    - Update documentation
 
 4. **Run quality checks**
+
    ```bash
    npm run lint:fix
    npm run format:fix
@@ -155,12 +163,14 @@ main (production)
    ```
 
 5. **Commit your changes** (see [Commit Message Guidelines](#commit-message-guidelines))
+
    ```bash
    git add .
    git commit -m "feat: add MLB standings API endpoint"
    ```
 
 6. **Push to your fork**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -237,6 +247,7 @@ We use **Prettier** for consistent formatting:
 - Trailing commas (ES5)
 
 Run before committing:
+
 ```bash
 npm run format:fix
 ```
@@ -252,6 +263,7 @@ We use **ESLint** with TypeScript and React plugins:
 - Object shorthand required
 
 Run before committing:
+
 ```bash
 npm run lint:fix
 ```
@@ -314,21 +326,27 @@ import { calculatePythagoreanWins } from './pythagorean';
 
 describe('calculatePythagoreanWins', () => {
   it('calculates expected wins for MLB team', () => {
-    const result = calculatePythagoreanWins({
-      runsScored: 800,
-      runsAllowed: 700,
-      gamesPlayed: 162
-    }, 'baseball');
+    const result = calculatePythagoreanWins(
+      {
+        runsScored: 800,
+        runsAllowed: 700,
+        gamesPlayed: 162,
+      },
+      'baseball'
+    );
 
     expect(result).toBeCloseTo(90.5, 1);
   });
 
   it('handles zero runs edge case', () => {
-    const result = calculatePythagoreanWins({
-      runsScored: 0,
-      runsAllowed: 0,
-      gamesPlayed: 10
-    }, 'baseball');
+    const result = calculatePythagoreanWins(
+      {
+        runsScored: 0,
+        runsAllowed: 0,
+        gamesPlayed: 10,
+      },
+      'baseball'
+    );
 
     expect(result).toBe(0);
   });
@@ -336,6 +354,7 @@ describe('calculatePythagoreanWins', () => {
 ```
 
 Run tests:
+
 ```bash
 npm run test              # Run all tests
 npm run test:watch        # Watch mode
@@ -380,6 +399,7 @@ test('homepage has no accessibility violations', async ({ page }) => {
 ```
 
 Run accessibility tests:
+
 ```bash
 npm run test:accessibility
 ```
@@ -438,6 +458,7 @@ Optional. Indicates what part of codebase is affected:
 ### Examples
 
 **Feature:**
+
 ```
 feat(api): add MLB standings endpoint
 
@@ -448,6 +469,7 @@ Closes #123
 ```
 
 **Bug Fix:**
+
 ```
 fix(ui): correct team logo alignment on mobile
 
@@ -458,6 +480,7 @@ Fixes #456
 ```
 
 **Documentation:**
+
 ```
 docs(contributing): add accessibility testing guidelines
 
@@ -466,6 +489,7 @@ Includes examples and coverage requirements.
 ```
 
 **Chore:**
+
 ```
 chore(deps): update eslint to v8.57.0
 
@@ -502,6 +526,7 @@ Migration guide: docs/api-migration.md
 ### Creating the PR
 
 1. **Push your branch** to your fork
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -512,17 +537,22 @@ Migration guide: docs/api-migration.md
    - Fill out PR template (see below)
 
 3. **PR Title Format**
+
    ```
    feat(api): add MLB standings endpoint
    ```
+
    Follow same conventions as commit messages.
 
 4. **PR Description Template**
+
    ```markdown
    ## Description
+
    Brief description of changes and motivation.
 
    ## Type of Change
+
    - [ ] Bug fix (non-breaking change which fixes an issue)
    - [ ] New feature (non-breaking change which adds functionality)
    - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
@@ -531,15 +561,18 @@ Migration guide: docs/api-migration.md
    - [ ] Code refactoring
 
    ## Testing
+
    - [ ] Unit tests added/updated
    - [ ] Integration tests added/updated
    - [ ] Accessibility tests pass
    - [ ] Manual testing completed
 
    ## Screenshots (if applicable)
+
    Add screenshots for UI changes
 
    ## Checklist
+
    - [ ] Code follows project style guidelines
    - [ ] Self-review completed
    - [ ] Documentation updated
@@ -548,6 +581,7 @@ Migration guide: docs/api-migration.md
    - [ ] All pre-commit hooks pass
 
    ## Related Issues
+
    Closes #123
    Related to #456
    ```
@@ -575,12 +609,14 @@ Migration guide: docs/api-migration.md
 ### For Authors
 
 **Before requesting review:**
+
 - Self-review your PR on GitHub
 - Check for typos, debugging code, commented-out code
 - Verify all CI checks pass
 - Add helpful comments for complex logic
 
 **During review:**
+
 - Be receptive to feedback
 - Ask questions if feedback is unclear
 - Explain your reasoning when disagreeing
@@ -699,6 +735,7 @@ Use GitHub Issues with this template:
 Clear description of what the bug is.
 
 **Steps to Reproduce**
+
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
@@ -714,6 +751,7 @@ What actually happened.
 If applicable, add screenshots.
 
 **Environment**
+
 - OS: [e.g., macOS 13.0]
 - Browser: [e.g., Chrome 120]
 - Node.js: [e.g., v20.10.0]

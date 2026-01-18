@@ -63,7 +63,7 @@ export default {
 
       // Route: Push a ticker item manually (admin endpoint)
       if (url.pathname === '/ticker/push' && request.method === 'POST') {
-        const item = await request.json() as Partial<TickerItem>;
+        const item = (await request.json()) as Partial<TickerItem>;
 
         // Validate required fields
         if (!item.headline || !item.sport || !item.type) {
@@ -88,7 +88,10 @@ export default {
       }
 
       // Route: Trigger manual news refresh
-      if (url.pathname === '/ticker/refresh' && (request.method === 'GET' || request.method === 'POST')) {
+      if (
+        url.pathname === '/ticker/refresh' &&
+        (request.method === 'GET' || request.method === 'POST')
+      ) {
         const results = await fetchAllNews(env);
         return jsonResponse({
           success: true,
@@ -122,7 +125,6 @@ export default {
       }
 
       return jsonResponse({ error: 'Not found' }, 404);
-
     } catch (error) {
       console.error('Worker error:', error);
       return jsonResponse({ error: 'Internal server error' }, 500);
@@ -136,11 +138,13 @@ export default {
 
     for (const message of batch.messages) {
       try {
-        await stub.fetch(new Request('http://internal/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(message.body),
-        }));
+        await stub.fetch(
+          new Request('http://internal/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(message.body),
+          })
+        );
         message.ack();
       } catch (e) {
         console.error('Queue processing error:', e);
@@ -206,11 +210,13 @@ async function fetchMLBScores(env: Env): Promise<TickerItem[]> {
 
   try {
     const today = new Date().toISOString().split('T')[0];
-    const res = await fetch(`${env.MLB_API_BASE}/schedule?sportId=1&date=${today}&hydrate=linescore`);
+    const res = await fetch(
+      `${env.MLB_API_BASE}/schedule?sportId=1&date=${today}&hydrate=linescore`
+    );
 
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const date of data.dates || []) {
       for (const game of date.games || []) {
@@ -266,7 +272,7 @@ async function fetchMLBNews(env: Env): Promise<TickerItem[]> {
     const res = await fetch(`${env.ESPN_API_BASE}/baseball/mlb/news?limit=5`);
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const article of data.articles?.slice(0, 5) || []) {
       items.push({
@@ -296,13 +302,14 @@ async function fetchNFLNews(env: Env): Promise<TickerItem[]> {
     const res = await fetch(`${env.ESPN_API_BASE}/football/nfl/news?limit=5`);
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const article of data.articles?.slice(0, 5) || []) {
       // Check if it's breaking/important news
-      const isBreaking = article.headline?.toLowerCase().includes('breaking') ||
-                         article.headline?.toLowerCase().includes('trade') ||
-                         article.headline?.toLowerCase().includes('injury');
+      const isBreaking =
+        article.headline?.toLowerCase().includes('breaking') ||
+        article.headline?.toLowerCase().includes('trade') ||
+        article.headline?.toLowerCase().includes('injury');
 
       items.push({
         id: `espn-nfl-${article.dataSourceIdentifier || Date.now()}`,
@@ -331,7 +338,7 @@ async function fetchNBANews(env: Env): Promise<TickerItem[]> {
     const res = await fetch(`${env.ESPN_API_BASE}/basketball/nba/news?limit=3`);
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const article of data.articles?.slice(0, 3) || []) {
       items.push({
@@ -361,7 +368,7 @@ async function fetchCollegeBaseballNews(env: Env): Promise<TickerItem[]> {
     const res = await fetch(`${env.ESPN_API_BASE}/baseball/college-baseball/news?limit=5`);
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const article of data.articles?.slice(0, 5) || []) {
       items.push({
@@ -391,7 +398,7 @@ async function fetchCollegeFootballNews(env: Env): Promise<TickerItem[]> {
     const res = await fetch(`${env.ESPN_API_BASE}/football/college-football/news?limit=3`);
     if (!res.ok) return items;
 
-    const data = await res.json() as any;
+    const data = (await res.json()) as any;
 
     for (const article of data.articles?.slice(0, 3) || []) {
       items.push({

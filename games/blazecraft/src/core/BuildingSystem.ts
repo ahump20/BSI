@@ -48,6 +48,29 @@ export interface BuildingConfig {
   color: string;
 }
 
+/**
+ * Building gameplay function configuration
+ */
+export interface BuildingFunction {
+  kind: BuildingKind;
+  passiveEffect: string;
+  activeEffect: string;
+  tierBonuses: [string, string, string];
+  upgradeCost: [number, number, number]; // Intel cost per tier
+}
+
+/**
+ * Building modifiers that affect gameplay systems
+ */
+export interface BuildingModifiers {
+  passiveIntelPerMin: number;      // Town Hall
+  taskDurationMultiplier: number;  // Workshop (lower = faster)
+  momentumBonus: number;           // Market
+  analystCapacity: number;         // Barracks
+  refreshRateBonus: number;        // Stables (seconds)
+  influenceMultiplier: number;     // Library
+}
+
 // ─────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────
@@ -156,6 +179,97 @@ export const TIER_THRESHOLDS = {
   TIER_1: 3,
   TIER_2: 8,
 };
+
+/**
+ * Building gameplay functions
+ */
+export const BUILDING_FUNCTIONS: Record<BuildingKind, BuildingFunction> = {
+  townhall: {
+    kind: 'townhall',
+    passiveEffect: 'Generates Intel passively',
+    activeEffect: 'Unlocks dashboard slots',
+    tierBonuses: ['+1 Intel/min', '+2 Intel/min', '+3 Intel/min'],
+    upgradeCost: [25, 75, 150],
+  },
+  workshop: {
+    kind: 'workshop',
+    passiveEffect: 'Reduces task duration',
+    activeEffect: 'Analytics lab boosts research',
+    tierBonuses: ['-10% task time', '-20% task time', '-30% task time'],
+    upgradeCost: [30, 100, 200],
+  },
+  market: {
+    kind: 'market',
+    passiveEffect: 'Boosts Momentum from odds',
+    activeEffect: 'Trade hub for predictions',
+    tierBonuses: ['+20% Momentum', '+40% Momentum', '+60% Momentum'],
+    upgradeCost: [20, 60, 120],
+  },
+  barracks: {
+    kind: 'barracks',
+    passiveEffect: 'Increases analyst capacity',
+    activeEffect: 'Operations center',
+    tierBonuses: ['+1 analyst', '+2 analysts', '+3 analysts'],
+    upgradeCost: [35, 100, 200],
+  },
+  stables: {
+    kind: 'stables',
+    passiveEffect: 'Faster data refresh',
+    activeEffect: 'Scout network for alerts',
+    tierBonuses: ['-5s refresh', '-10s refresh', '-15s refresh'],
+    upgradeCost: [25, 75, 150],
+  },
+  library: {
+    kind: 'library',
+    passiveEffect: 'Boosts Influence generation',
+    activeEffect: 'Research archive for unlocks',
+    tierBonuses: ['+10% Influence', '+20% Influence', '+30% Influence'],
+    upgradeCost: [30, 90, 180],
+  },
+};
+
+/**
+ * Calculate building modifiers from current city state
+ */
+export function calculateBuildingModifiers(state: CityState): BuildingModifiers {
+  const buildings = state.buildings;
+
+  return {
+    // Town Hall: +1/+2/+3 Intel per minute
+    passiveIntelPerMin: buildings.townhall.tier,
+
+    // Workshop: 1.0 / 0.9 / 0.8 / 0.7 multiplier
+    taskDurationMultiplier: 1 - buildings.workshop.tier * 0.1,
+
+    // Market: 0% / 20% / 40% / 60% bonus
+    momentumBonus: buildings.market.tier * 0.2,
+
+    // Barracks: 2 + tier
+    analystCapacity: 2 + buildings.barracks.tier,
+
+    // Stables: 0 / 5 / 10 / 15 seconds faster
+    refreshRateBonus: buildings.stables.tier * 5,
+
+    // Library: 1.0 / 1.1 / 1.2 / 1.3 multiplier
+    influenceMultiplier: 1 + buildings.library.tier * 0.1,
+  };
+}
+
+/**
+ * Get upgrade cost for a building at its current tier
+ */
+export function getUpgradeCost(kind: BuildingKind, currentTier: Tier): number | null {
+  if (currentTier >= 2) return null; // Max tier
+  return BUILDING_FUNCTIONS[kind].upgradeCost[currentTier];
+}
+
+/**
+ * Get the bonus description for a tier
+ */
+export function getTierBonusDescription(kind: BuildingKind, tier: Tier): string {
+  if (tier === 0) return 'No bonus yet';
+  return BUILDING_FUNCTIONS[kind].tierBonuses[tier - 1];
+}
 
 // ─────────────────────────────────────────────────────────────
 // Functions

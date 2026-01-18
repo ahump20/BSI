@@ -205,7 +205,10 @@ async function handleSaveName(): Promise<void> {
 
     // Refresh leaderboard to show updated name
     const response = await fetch('/api/blitz/leaderboard?limit=5');
-    const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
+    const data = (await response.json()) as {
+      success: boolean;
+      entries?: Array<{ rank: number; playerName: string; score: number }>;
+    };
 
     if (data.success && data.entries) {
       elements.leaderboard.innerHTML = `
@@ -239,31 +242,34 @@ function handleCopyLink(): void {
   const score = lastGameResult?.finalScore || 0;
   const shareUrl = `https://blaze-blitz-football.pages.dev?ref=share&score=${score}`;
 
-  navigator.clipboard.writeText(shareUrl).then(() => {
-    elements.copyLinkBtn.classList.add('copied');
-    elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+  navigator.clipboard
+    .writeText(shareUrl)
+    .then(() => {
+      elements.copyLinkBtn.classList.add('copied');
+      elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      elements.copyLinkBtn.classList.remove('copied');
-      elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  }).catch(() => {
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = shareUrl;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
+      setTimeout(() => {
+        elements.copyLinkBtn.classList.remove('copied');
+        elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    })
+    .catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
 
-    elements.copyLinkBtn.classList.add('copied');
-    elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
+      elements.copyLinkBtn.classList.add('copied');
+      elements.copyLinkBtn.innerHTML = '<span>✓</span> Copied!';
 
-    setTimeout(() => {
-      elements.copyLinkBtn.classList.remove('copied');
-      elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
-    }, 2000);
-  });
+      setTimeout(() => {
+        elements.copyLinkBtn.classList.remove('copied');
+        elements.copyLinkBtn.innerHTML = '<span>📋</span> Copy Link';
+      }, 2000);
+    });
 }
 
 /** Start the game */
@@ -445,7 +451,10 @@ async function handleGameOver(result: BlitzGameResult): Promise<void> {
   // Fetch leaderboard
   try {
     const response = await fetch('/api/blitz/leaderboard?limit=5');
-    const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
+    const data = (await response.json()) as {
+      success: boolean;
+      entries?: Array<{ rank: number; playerName: string; score: number }>;
+    };
 
     if (data.success && data.entries) {
       elements.leaderboard.innerHTML = `

@@ -77,6 +77,7 @@ node setup-real-database.js
 ```
 
 This creates:
+
 - `blazesportsintel` database
 - `teams`, `games`, `analytics`, `api_cache` tables
 - Sample data for Cardinals, Titans, Grizzlies, Longhorns
@@ -91,6 +92,7 @@ node api/real-server.js
 ```
 
 You should see:
+
 ```
 ✅ Database connected
 
@@ -305,16 +307,16 @@ PORT=3001 npm run real:api
 
 ## 📝 KEY DIFFERENCES FROM FAKE VERSION
 
-| Feature | Old (Fake) | New (Real) |
-|---------|------------|------------|
-| MLB Data | `pythagorean_wins: 81` (hardcoded) | Calculated from actual runs scored/allowed |
-| NFL Data | Static standings | Live ESPN API data |
-| Live Scores | Fake game objects | Real ESPN scoreboard API |
-| Database | None (pretended to have one) | Real PostgreSQL with 4 tables |
-| Random Numbers | Math.random() everywhere | ZERO - all real calculations |
-| API Calls | `return true` placeholders | Real fetch() to external APIs |
-| Caching | Fake KV mentions | Real database cache table |
-| Elo Ratings | Never calculated | Real Elo formula with K-factor |
+| Feature        | Old (Fake)                         | New (Real)                                 |
+| -------------- | ---------------------------------- | ------------------------------------------ |
+| MLB Data       | `pythagorean_wins: 81` (hardcoded) | Calculated from actual runs scored/allowed |
+| NFL Data       | Static standings                   | Live ESPN API data                         |
+| Live Scores    | Fake game objects                  | Real ESPN scoreboard API                   |
+| Database       | None (pretended to have one)       | Real PostgreSQL with 4 tables              |
+| Random Numbers | Math.random() everywhere           | ZERO - all real calculations               |
+| API Calls      | `return true` placeholders         | Real fetch() to external APIs              |
+| Caching        | Fake KV mentions                   | Real database cache table                  |
+| Elo Ratings    | Never calculated                   | Real Elo formula with K-factor             |
 
 ---
 

@@ -10,6 +10,7 @@
 ## Vision
 
 **Diamond Insights** is the definitive college baseball intelligence platform, delivering:
+
 - Live game tracking with pitch-by-pitch precision
 - Win Probability Added (WPA) analytics
 - Auto-generated previews and recaps
@@ -102,6 +103,7 @@ blazesportsintel.com/
 ## Navigation Structure
 
 ### Primary Navigation (Desktop & Mobile)
+
 ```
 [Logo] Diamond Insights
 
@@ -118,6 +120,7 @@ Utility:
 ```
 
 ### Mobile Navigation (Hamburger Menu)
+
 ```
 ☰ Menu
 
@@ -139,6 +142,7 @@ Utility:
 ```
 
 ### Breadcrumbs (Dynamic)
+
 ```
 Home > Baseball > D1 Baseball > [Team Name] > Schedule
 Home > Baseball > D1 Baseball > Game Center > [Team A] vs [Team B]
@@ -154,6 +158,7 @@ Home > News > [Article Title]
 **Purpose**: Entry point showcasing live college baseball action
 
 **Sections**:
+
 1. **Hero**: Today's featured game (if live) or top matchup
 2. **Live Scoreboard**: All games in progress
 3. **Upcoming Games**: Next 24 hours
@@ -162,6 +167,7 @@ Home > News > [Article Title]
 6. **Featured Team**: Rotating spotlight
 
 **Mobile Optimizations**:
+
 - Collapsible scoreboard sections
 - Swipeable game cards
 - Sticky "View All Games" CTA
@@ -173,12 +179,14 @@ Home > News > [Article Title]
 **Purpose**: Comprehensive scoreboard with filters
 
 **Filters**:
+
 - Date picker (default: today)
 - Conference selector (All, SEC, ACC, Big 12, etc.)
 - Rank filter (Top 25 only)
 - Status filter (Live, Scheduled, Final)
 
 **Game Cards**:
+
 ```
 ┌─────────────────────────────────────────┐
 │ [LIVE] 🔴 Top 7th                       │
@@ -194,6 +202,7 @@ Home > News > [Article Title]
 ```
 
 **Data Requirements**:
+
 - Real-time scores (60s refresh)
 - Win probability (if game live)
 - Feed precision badge
@@ -208,6 +217,7 @@ Home > News > [Article Title]
 **Layout** (Desktop 2-column, Mobile stacked):
 
 **Left Column**:
+
 1. **Header**: Teams, score, inning, outs
 2. **Diamond Visualization**:
    - Animated runners on base
@@ -217,6 +227,7 @@ Home > News > [Article Title]
 4. **Plays Feed**: Scrollable event-by-event log
 
 **Right Column**:
+
 1. **Box Score Tabs**:
    - Batting (sortable by AB, R, H, RBI)
    - Pitching (sortable by IP, H, ER, SO)
@@ -227,11 +238,13 @@ Home > News > [Article Title]
    - Duration
 
 **Mobile Stacked**:
+
 - Header (fixed)
 - Diamond viz (collapsible)
 - Tabs: Plays | WPA | Box Score
 
 **Data Requirements**:
+
 - WebSocket or SSE for live updates
 - Pitch-by-pitch events (if precision: PITCH)
 - WPA calculations per event
@@ -244,6 +257,7 @@ Home > News > [Article Title]
 **Purpose**: Comprehensive team profile
 
 **Tabs**:
+
 1. **Overview**:
    - Current record (overall, conference, home, away)
    - Next game
@@ -270,6 +284,7 @@ Home > News > [Article Title]
    - Notable alumni
 
 **Data Requirements**:
+
 - Team aggregate stats (season)
 - Player roster with stats
 - Full schedule with results
@@ -282,6 +297,7 @@ Home > News > [Article Title]
 **Purpose**: Individual player showcase
 
 **Sections**:
+
 1. **Header**:
    - Photo (if available)
    - Name, #, Position, Year
@@ -302,6 +318,7 @@ Home > News > [Article Title]
    - ERA progression (pitchers)
 
 **Data Requirements**:
+
 - Player bio and stats
 - Game-by-game logs
 - Season trends
@@ -313,15 +330,18 @@ Home > News > [Article Title]
 **Purpose**: Conference standings with RPI integration
 
 **Sections**:
+
 1. **Conference Filter**: Dropdown (All, SEC, ACC, etc.)
 2. **Standings Table** (per conference):
    - Rank, Team, Conf Record, Overall Record, Win %, GB, RPI
 
 **Sorting**:
+
 - Default: Conf Win %
 - Allow sort by any column
 
 **Data Requirements**:
+
 - Real-time standings (4hr refresh)
 - RPI rankings
 - Conference records
@@ -333,6 +353,7 @@ Home > News > [Article Title]
 **Purpose**: Aggregate poll tracker
 
 **Tabs**:
+
 1. **D1Baseball Top 25**
 2. **Baseball America Top 25**
 3. **Collegiate Baseball Top 30**
@@ -340,9 +361,11 @@ Home > News > [Article Title]
 5. **Strength of Schedule**
 
 **Display**:
+
 - Rank, Team (link to Team Hub), Record, Points, Trend (↑↓)
 
 **Data Requirements**:
+
 - Weekly poll updates
 - Historical rankings (to show trend)
 
@@ -353,12 +376,14 @@ Home > News > [Article Title]
 **Purpose**: Content hub for previews/recaps
 
 **Filters**:
+
 - Date range
 - Conference
 - Team
 - Article type (Preview | Recap)
 
 **Article Cards**:
+
 ```
 ┌─────────────────────────────────────────┐
 │ [RECAP]                                 │
@@ -372,6 +397,7 @@ Home > News > [Article Title]
 ```
 
 **Data Requirements**:
+
 - Article metadata (type, date, teams)
 - Auto-generated content
 - Fact-fencing validation
@@ -380,28 +406,29 @@ Home > News > [Article Title]
 
 ## URL Patterns
 
-| Path                                      | Description                     |
-|-------------------------------------------|---------------------------------|
-| `/`                                       | Home                            |
-| `/baseball/ncaab`                         | D1 Baseball Hub                 |
-| `/baseball/ncaab/game/{gameId}`           | Game Center                     |
-| `/baseball/ncaab/team/{slug}`             | Team Hub                        |
-| `/baseball/ncaab/team/{slug}/roster`      | Team Roster                     |
-| `/baseball/ncaab/team/{slug}/schedule`    | Team Schedule                   |
-| `/baseball/ncaab/team/{slug}/stats`       | Team Stats                      |
-| `/baseball/ncaab/player/{playerId}`       | Player Profile                  |
-| `/baseball/ncaab/standings`               | Conference Standings            |
-| `/baseball/ncaab/rankings`                | Polls & Rankings                |
-| `/baseball/ncaab/bracketology`            | Tournament Projections          |
-| `/news`                                   | News Hub                        |
-| `/news/{slug}`                            | Article Detail                  |
-| `/about`                                  | About Page                      |
-| `/methodology`                            | Methodology & Transparency      |
-| `/legal/privacy`                          | Privacy Policy                  |
-| `/legal/terms`                            | Terms of Service                |
-| `/legal/accessibility`                    | Accessibility Statement         |
+| Path                                   | Description                |
+| -------------------------------------- | -------------------------- |
+| `/`                                    | Home                       |
+| `/baseball/ncaab`                      | D1 Baseball Hub            |
+| `/baseball/ncaab/game/{gameId}`        | Game Center                |
+| `/baseball/ncaab/team/{slug}`          | Team Hub                   |
+| `/baseball/ncaab/team/{slug}/roster`   | Team Roster                |
+| `/baseball/ncaab/team/{slug}/schedule` | Team Schedule              |
+| `/baseball/ncaab/team/{slug}/stats`    | Team Stats                 |
+| `/baseball/ncaab/player/{playerId}`    | Player Profile             |
+| `/baseball/ncaab/standings`            | Conference Standings       |
+| `/baseball/ncaab/rankings`             | Polls & Rankings           |
+| `/baseball/ncaab/bracketology`         | Tournament Projections     |
+| `/news`                                | News Hub                   |
+| `/news/{slug}`                         | Article Detail             |
+| `/about`                               | About Page                 |
+| `/methodology`                         | Methodology & Transparency |
+| `/legal/privacy`                       | Privacy Policy             |
+| `/legal/terms`                         | Terms of Service           |
+| `/legal/accessibility`                 | Accessibility Statement    |
 
 **API Routes** (`/api/v1`):
+
 - `GET /api/v1/games` - List games (filter: date, status, conference)
 - `GET /api/v1/games/{id}` - Game detail + events + box
 - `GET /api/v1/teams` - List teams
@@ -416,10 +443,12 @@ Home > News > [Article Title]
 ## Content Strategy
 
 ### Auto-Generated Previews
+
 **Trigger**: 6 hours before scheduled game
 **Update**: 1 hour before if lineups change
 
 **Structure**:
+
 - Headline: "[Team A] vs [Team B]: Preview"
 - Intro: Matchup context (records, rankings, conference standings)
 - Key Players: Probable starting pitchers, hot hitters
@@ -428,14 +457,17 @@ Home > News > [Article Title]
 - Logistics: Time, venue, broadcast
 
 **Fact-Fencing**:
+
 - All stats cross-referenced with structured data
 - No speculation beyond model predictions
 - Source citations for all claims
 
 ### Auto-Generated Recaps
+
 **Trigger**: 15 minutes after game status = FINAL
 
 **Structure**:
+
 - Headline: "[Winner] Defeats [Loser], [Score]"
 - Lede: Game summary (location, key moment)
 - Turning Point: Highest WPA swing event
@@ -444,6 +476,7 @@ Home > News > [Article Title]
 - Next Up: Both teams' next games
 
 **Quality Control**:
+
 - Manual review for championship games
 - Automated fact-checking vs. box score
 - No generative errors published
@@ -455,6 +488,7 @@ Home > News > [Article Title]
 **Standard**: WCAG 2.2 AA
 
 **Critical Features**:
+
 - Keyboard navigation for all interactive elements
 - Screen reader labels for WPA charts, diamond viz
 - Color contrast ≥ 4.5:1 for text
@@ -464,6 +498,7 @@ Home > News > [Article Title]
 - Semantic HTML (proper heading hierarchy)
 
 **Testing**:
+
 - Automated: axe DevTools, Lighthouse
 - Manual: NVDA, VoiceOver, JAWS
 
@@ -471,16 +506,17 @@ Home > News > [Article Title]
 
 ## Performance Budgets
 
-| Metric         | Target        | Critical Routes                  |
-|----------------|---------------|----------------------------------|
-| LCP            | ≤ 2.5s        | Home, Hub, Game Center           |
-| CLS            | < 0.1         | All pages                        |
-| TBT            | ≤ 200ms       | Game Center (live updates)       |
-| FID            | ≤ 100ms       | All interactive pages            |
-| API p99        | ≤ 200ms       | /api/v1/games, /api/v1/teams     |
-| Ingest→UI p99  | < 3s          | Event → WPA → Broadcast → Render |
+| Metric        | Target  | Critical Routes                  |
+| ------------- | ------- | -------------------------------- |
+| LCP           | ≤ 2.5s  | Home, Hub, Game Center           |
+| CLS           | < 0.1   | All pages                        |
+| TBT           | ≤ 200ms | Game Center (live updates)       |
+| FID           | ≤ 100ms | All interactive pages            |
+| API p99       | ≤ 200ms | /api/v1/games, /api/v1/teams     |
+| Ingest→UI p99 | < 3s    | Event → WPA → Broadcast → Render |
 
 **Test Conditions**:
+
 - Device: Moto G Power (mobile)
 - Network: 4G (Fast 3G throttled)
 - Browser: Chrome mobile
@@ -501,15 +537,18 @@ Home > News > [Article Title]
 ## Off-Season Content Strategy
 
 **Recruiting** (feature flag):
+
 - Commit tracker (top 100 recruits)
 - Transfer portal monitoring
 - Class rankings
 
 **Draft** (feature flag):
+
 - MLB Draft prospect lists
 - Pro signings tracker
 
 **Historical Browser** (Pro tier):
+
 - Access past seasons (2015-2024)
 - Legacy box scores
 - Record books
@@ -519,12 +558,14 @@ Home > News > [Article Title]
 ## Monetization (Soft Paywall)
 
 **Free Tier**:
+
 - Home, Hub, Team Hub, Player Profile (basic)
 - Standings, Rankings
 - News (previews/recaps)
 - Final scores and box scores
 
 **Pro Tier** ($9.99/month):
+
 - Live Game Center (pitch-by-pitch + WPA)
 - Advanced stats (exit velo, spin rate, if available)
 - Historical seasons browser
@@ -532,6 +573,7 @@ Home > News > [Article Title]
 - Early access to bracketology
 
 **Stripe Integration**:
+
 - Checkout session: `/api/stripe/checkout`
 - Customer portal: `/api/stripe/portal`
 - Webhook: `/api/stripe/webhook`
@@ -541,6 +583,7 @@ Home > News > [Article Title]
 ## Analytics & Observability
 
 **Track**:
+
 - Page views (GA4)
 - User flows (conversion to Pro)
 - API performance (Honeycomb)
@@ -548,6 +591,7 @@ Home > News > [Article Title]
 - Real-time game viewers (WebSocket connections)
 
 **Dashboards**:
+
 - Grafana: API latency, cache hit rates
 - Cloudflare Analytics: CDN performance
 - Mixpanel: User engagement, retention

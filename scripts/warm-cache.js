@@ -11,20 +11,52 @@ const BASE_URL = process.env.API_BASE_URL || 'https://blazesportsintel.com';
 
 const popularTeams = {
   mlb: [
-    'cardinals', 'dodgers', 'yankees', 'red-sox', 'cubs', 'giants',
-    'braves', 'astros', 'mets', 'phillies',
+    'cardinals',
+    'dodgers',
+    'yankees',
+    'red-sox',
+    'cubs',
+    'giants',
+    'braves',
+    'astros',
+    'mets',
+    'phillies',
   ],
   nfl: [
-    'titans', 'chiefs', 'cowboys', 'patriots', '49ers', 'packers',
-    'eagles', 'bills', 'bengals', 'rams',
+    'titans',
+    'chiefs',
+    'cowboys',
+    'patriots',
+    '49ers',
+    'packers',
+    'eagles',
+    'bills',
+    'bengals',
+    'rams',
   ],
   nba: [
-    'lakers', 'warriors', 'celtics', 'nets', 'bucks', 'heat',
-    'mavericks', 'suns', 'nuggets', 'clippers',
+    'lakers',
+    'warriors',
+    'celtics',
+    'nets',
+    'bucks',
+    'heat',
+    'mavericks',
+    'suns',
+    'nuggets',
+    'clippers',
   ],
   'college-baseball': [
-    'texas', 'lsu', 'vanderbilt', 'tennessee', 'arkansas', 'florida',
-    'mississippi-state', 'ole-miss', 'stanford', 'oregon-state',
+    'texas',
+    'lsu',
+    'vanderbilt',
+    'tennessee',
+    'arkansas',
+    'florida',
+    'mississippi-state',
+    'ole-miss',
+    'stanford',
+    'oregon-state',
   ],
 };
 
@@ -60,15 +92,11 @@ async function warmSport(sport) {
 
   // Warm popular teams
   console.log('Popular teams:');
-  const teamResults = await Promise.all(
-    teams.map((team) => warmEndpoint(`/api/${sport}/${team}`))
-  );
+  const teamResults = await Promise.all(teams.map((team) => warmEndpoint(`/api/${sport}/${team}`)));
 
   // Warm common endpoints
   console.log('\nCommon endpoints:');
-  const endpointResults = await Promise.all(
-    endpoints.map(warmEndpoint)
-  );
+  const endpointResults = await Promise.all(endpoints.map(warmEndpoint));
 
   const totalWarmed = teamResults.filter(Boolean).length + endpointResults.filter(Boolean).length;
   const totalAttempted = teams.length + endpoints.length;

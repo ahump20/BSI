@@ -275,7 +275,6 @@ export class BSITickerClient {
 export function useTickerClient(url: string, options?: TickerClientOptions) {
   // This would need React imports - included as reference
   // In actual implementation, import { useState, useEffect, useRef, useCallback } from 'react';
-
   /*
   const clientRef = useRef<BSITickerClient | null>(null);
   const [items, setItems] = useState<TickerItem[]>([]);
