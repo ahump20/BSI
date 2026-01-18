@@ -64,11 +64,14 @@ jobs:
           path: apps/inferno-sprint/dist
 
       - name: Deploy to Cloudflare Pages (Preview)
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=bsi-inferno-sprint --branch=${{ github.head_ref }}
+          projectName: bsi-inferno-sprint
+          directory: dist
+          branch: ${{ github.head_ref }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           workingDirectory: apps/inferno-sprint
 
   deploy-production:
@@ -92,11 +95,14 @@ jobs:
           path: apps/inferno-sprint/dist
 
       - name: Deploy to Cloudflare Pages (Production)
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=bsi-inferno-sprint --branch=main
+          projectName: bsi-inferno-sprint
+          directory: dist
+          branch: main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           workingDirectory: apps/inferno-sprint
 
       - name: Deploy Worker
