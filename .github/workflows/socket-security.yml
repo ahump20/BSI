@@ -159,7 +159,7 @@ jobs:
           cat security-summary.md
 
       - name: Upload security report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: security-audit-report
           path: security-summary.md
