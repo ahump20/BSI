@@ -19,7 +19,7 @@
     "@types/three": "^0.160.0",
     "terser": "^5.27.0",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^7.3.1"
   },
   "engines": {
     "node": ">=18.0.0"
