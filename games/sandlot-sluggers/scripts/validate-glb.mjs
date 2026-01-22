@@ -31,9 +31,9 @@ const OPTIONAL_NODES = [
   'SYB_Anchor_2B_F',
   'SYB_Anchor_SS_F',
   'SYB_Anchor_3B_F',
-  'SYB_Anchor_LF_F',
-  'SYB_Anchor_CF_F',
-  'SYB_Anchor_RF_F',
+  'SYB_Anchor_LF',
+  'SYB_Anchor_CF',
+  'SYB_Anchor_RF',
   'SYB_Aim_Mound',
 ];
 
