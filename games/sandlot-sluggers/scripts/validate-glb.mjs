@@ -29,11 +29,12 @@ const REQUIRED_NODES = {
     'SYB_Anchor_RF',
   ],
   cameras: ['SYB_Cam_BehindBatter', 'SYB_Cam_StrikeZoneHigh', 'SYB_Cam_Isometric'],
-  aimTargets: ['SYB_Aim_StrikeZone', 'SYB_Aim_Mound'],
+  aimTargets: ['SYB_Aim_StrikeZone'],
 };
 
 // Optional but recommended nodes
 const OPTIONAL_NODES = [
+  'SYB_Aim_Mound', // Optional: pitch.ts falls back to SYB_Anchor_Mound if missing
 ];
 
 // Parse GLB file and extract node names
