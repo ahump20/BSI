@@ -11,6 +11,22 @@ This document tracks all assets used in Sandlot Sluggers and their origins for I
 - **License**: Proprietary
 - **Notes**: Youth 60ft field dimensions, Z-up axis convention
 
+### Character Models (Players + Crowd)
+
+- **Status**: Not yet added to the repository.
+- **Requirements before deployment**:
+  - Record asset name, source URL, author, and license.
+  - Confirm commercial-use rights in writing.
+  - Verify no MLB/NCAA logos, wordmarks, or real player likenesses.
+
+### Environment HDRI + Textures
+
+- **Status**: Not yet added to the repository.
+- **Approved source**: Polyhaven (CC0)
+- **Requirements before deployment**:
+  - Record asset name and source URL.
+  - Confirm CC0 license on the asset page.
+
 ### Ball Mesh
 
 - **Source**: Procedurally generated (Three.js SphereGeometry)
