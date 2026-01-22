@@ -5,7 +5,7 @@
  */
 
 interface Env {
-  BLAZECRAFT_DB: D1Database;
+  DB: D1Database;
   BLAZECRAFT_REPLAYS: R2Bucket;
   BLAZECRAFT_CACHE: KVNamespace;
   BLAZECRAFT_ANALYTICS: AnalyticsEngineDataset;
@@ -91,7 +91,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Insert metadata into D1
     const now = new Date().toISOString();
 
-    await env.BLAZECRAFT_DB.prepare(`
+    await env.DB.prepare(`
       INSERT INTO replays (id, title, map, agents, duration, uploaded_at, file_key, file_size, metadata, tags, is_public)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(

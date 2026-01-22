@@ -70,6 +70,18 @@ const SEQ_KEY = 'BSI_GLOBAL_SEQ';
 // Premium event types
 const PREMIUM_EVENTS = new Set<GameEventType>(['LINEUP_POSTED', 'ODDS_SHIFT', 'HIGHLIGHT_CLIP']);
 
+/**
+ * Check if request is authorized via Bearer token or X-API-Key header
+ */
+function isAuthorized(request: Request, env: Env): boolean {
+  const required = env.BSI_API_KEY;
+  if (!required) return true; // no key configured = allow (dev mode)
+  const auth = request.headers.get('Authorization') || '';
+  const bearer = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  const xKey = (request.headers.get('X-API-Key') || '').trim();
+  return bearer === required || xKey === required;
+}
+
 // Sports to poll
 const ENABLED_SPORTS: SportType[] = ['mlb', 'nfl', 'nba'];
 
@@ -336,7 +348,7 @@ async function handleSSE(request: Request, env: Env): Promise<Response> {
       'Connection': 'keep-alive',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key',
     },
   });
 }
@@ -345,6 +357,16 @@ async function handleSSE(request: Request, env: Env): Promise<Response> {
  * POST - Write event (internal or from agent)
  */
 async function handlePost(request: Request, env: Env): Promise<Response> {
+  if (!isAuthorized(request, env)) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  }
+
   try {
     const body = await request.json() as Partial<GameEvent>;
 
@@ -394,7 +416,7 @@ function handleOptions(): Response {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key',
       'Access-Control-Max-Age': '86400',
     },
   });

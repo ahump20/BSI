@@ -6,7 +6,7 @@
  */
 
 interface Env {
-  BLAZECRAFT_DB: D1Database;
+  DB: D1Database;
   BLAZECRAFT_REPLAYS: R2Bucket;
   BLAZECRAFT_CACHE: KVNamespace;
 }
@@ -63,7 +63,7 @@ async function getReplayById(env: Env, id: string): Promise<Response> {
     }
 
     // Get metadata from D1
-    const result = await env.BLAZECRAFT_DB.prepare(
+    const result = await env.DB.prepare(
       'SELECT * FROM replays WHERE id = ?'
     ).bind(id).first<ReplayRow>();
 
@@ -86,7 +86,7 @@ async function getReplayById(env: Env, id: string): Promise<Response> {
     const replayData = await file.json();
 
     // Increment view count (fire and forget)
-    env.BLAZECRAFT_DB.prepare(
+    env.DB.prepare(
       'UPDATE replays SET view_count = view_count + 1 WHERE id = ?'
     ).bind(id).run();
 
@@ -158,7 +158,7 @@ async function listReplays(
     query += ` ORDER BY ${sortColumn} DESC LIMIT ? OFFSET ?`;
     bindings.push(limit, offset);
 
-    const results = await env.BLAZECRAFT_DB.prepare(query)
+    const results = await env.DB.prepare(query)
       .bind(...bindings)
       .all<ReplayRow>();
 
@@ -167,7 +167,7 @@ async function listReplays(
     if (map) {
       countQuery += ' AND map = ?';
     }
-    const countResult = await env.BLAZECRAFT_DB.prepare(countQuery)
+    const countResult = await env.DB.prepare(countQuery)
       .bind(...(map ? [map] : []))
       .first<{ count: number }>();
 
