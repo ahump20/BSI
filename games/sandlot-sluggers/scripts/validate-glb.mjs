@@ -19,22 +19,21 @@ const REQUIRED_NODES = {
     'SYB_Anchor_3B',
     'SYB_Anchor_Mound',
     'SYB_Anchor_Batter',
+    'SYB_Anchor_Catcher',
+    'SYB_Anchor_1B_F',
+    'SYB_Anchor_2B_F',
+    'SYB_Anchor_SS_F',
+    'SYB_Anchor_3B_F',
+    'SYB_Anchor_LF',
+    'SYB_Anchor_CF',
+    'SYB_Anchor_RF',
   ],
   cameras: ['SYB_Cam_BehindBatter', 'SYB_Cam_StrikeZoneHigh', 'SYB_Cam_Isometric'],
-  aimTargets: ['SYB_Aim_StrikeZone'],
+  aimTargets: ['SYB_Aim_StrikeZone', 'SYB_Aim_Mound'],
 };
 
 // Optional but recommended nodes
 const OPTIONAL_NODES = [
-  'SYB_Anchor_Catcher',
-  'SYB_Anchor_1B_F',
-  'SYB_Anchor_2B_F',
-  'SYB_Anchor_SS_F',
-  'SYB_Anchor_3B_F',
-  'SYB_Anchor_LF_F',
-  'SYB_Anchor_CF_F',
-  'SYB_Anchor_RF_F',
-  'SYB_Aim_Mound',
 ];
 
 // Parse GLB file and extract node names
