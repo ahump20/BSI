@@ -1,0 +1,14 @@
+name = "bsi-college-data-sync"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+
+[triggers]
+crons = ["*/5 * * * *"]  # Every 5 minutes
+
+[[kv_namespaces]]
+binding = "BSI_CACHE"
+id = "429e580ad8aa4a189af2513490d8790d"
+preview_id = "f2dc8c57c641403481809db1a4962822"
+
+[vars]
+# Set CFB_API_KEY via wrangler secret put
