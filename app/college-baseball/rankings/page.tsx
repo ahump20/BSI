@@ -7,16 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Rankings', href: '/college-baseball/rankings' },
-  { label: 'Games', href: '/college-baseball/games' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 interface RankedTeam {
   rank: number;
@@ -62,7 +52,7 @@ export default function CollegeBaseballRankingsPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       setRankings(data.poll || data);
     } catch (err) {
       console.error('Error loading rankings:', err);
@@ -92,9 +82,7 @@ export default function CollegeBaseballRankingsPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24">
           <Container>
             {/* Breadcrumb & Header */}
@@ -375,17 +363,17 @@ export default function CollegeBaseballRankingsPage() {
 
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
-              <p>Rankings sourced from official polls and D1Baseball. Updated weekly during season.</p>
+              <p>
+                Rankings sourced from official polls and D1Baseball. Updated weekly during season.
+              </p>
               <p className="mt-1">
-                Last updated:{' '}
-                {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

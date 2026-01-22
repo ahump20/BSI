@@ -2,20 +2,11 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'About', href: '/about' },
-];
 
 export default function NotFound() {
   return (
     <>
-      <Navbar items={navItems} />
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24 min-h-[70vh] flex items-center">
           <Container center>
             <div className="max-w-lg mx-auto text-center">
@@ -24,7 +15,8 @@ export default function NotFound() {
                 Page Not <span className="text-gradient-blaze">Found</span>
               </h2>
               <p className="text-text-secondary mb-8">
-                Looks like this play got called back. The page you are looking for does not exist or has been moved.
+                Looks like this play got called back. The page you are looking for does not exist or
+                has been moved.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/">
@@ -42,7 +34,6 @@ export default function NotFound() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

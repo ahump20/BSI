@@ -7,15 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Contact', href: '/contact' },
-];
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -28,15 +19,19 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const subject = formData.subject || 'Contact from BlazeSportsIntel.com';
-    const body = 'Name: ' + formData.name + '\nEmail: ' + formData.email + '\n\n' + formData.message;
-    const mailtoLink = 'mailto:ahump20@outlook.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    const body =
+      'Name: ' + formData.name + '\nEmail: ' + formData.email + '\n\n' + formData.message;
+    const mailtoLink =
+      'mailto:ahump20@outlook.com?subject=' +
+      encodeURIComponent(subject) +
+      '&body=' +
+      encodeURIComponent(body);
     window.location.href = mailtoLink;
   };
 
   return (
     <>
-      <Navbar items={navItems} />
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
@@ -55,7 +50,10 @@ export default function ContactPage() {
               <Card padding="lg" className="max-w-xl mx-auto">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Name
                     </label>
                     <Input
@@ -68,7 +66,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Email
                     </label>
                     <Input
@@ -81,7 +82,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="subject"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Subject
                     </label>
                     <Input
@@ -93,7 +97,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-text-secondary mb-2">
+                    <label
+                      htmlFor="message"
+                      className="block text-sm font-medium text-text-secondary mb-2"
+                    >
                       Message
                     </label>
                     <textarea
@@ -129,7 +136,6 @@ export default function ContactPage() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

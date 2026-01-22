@@ -46,7 +46,7 @@ import type { DiamondCertaintyInput } from '../analytics/diamond-certainty-engin
 const DEFAULT_CONFIG: PredictionEngineConfig = {
   simulationCount: 10000,
   psychologyWeight: 0.15,
-  mlWeight: 0.50,
+  mlWeight: 0.5,
   monteCarloWeight: 0.35,
   sport: 'cfb',
   modelVersion: '1.0.0',
@@ -54,7 +54,7 @@ const DEFAULT_CONFIG: PredictionEngineConfig = {
 
 const CACHE_TTL = {
   prediction: 3600, // 1 hour
-  teamState: 300,   // 5 minutes
+  teamState: 300, // 5 minutes
   calibration: 86400, // 24 hours
 };
 
@@ -70,10 +70,7 @@ export class BsiPredictionEngine {
   private readonly diamondIntegration: DiamondIntegration;
   private readonly config: PredictionEngineConfig;
 
-  constructor(
-    env: CloudflareEnv,
-    config?: Partial<PredictionEngineConfig>
-  ) {
+  constructor(env: CloudflareEnv, config?: Partial<PredictionEngineConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.simulationCore = new SimulationCore(this.config.simulationCount);
     this.mlPredictor = new MLPredictor();
@@ -201,7 +198,11 @@ export class BsiPredictionEngine {
 
     // Calculate spread and total using enhanced team data
     const predictedSpread = this.mlPredictor.predictSpread(homeWinProb, context.sport);
-    const predictedTotal = this.mlPredictor.predictTotal(enhancedHomeTeam, enhancedAwayTeam, context);
+    const predictedTotal = this.mlPredictor.predictTotal(
+      enhancedHomeTeam,
+      enhancedAwayTeam,
+      context
+    );
 
     // Generate explanation
     const explanation = this.generateExplanation(features, tier);
@@ -261,14 +262,8 @@ export class BsiPredictionEngine {
   /**
    * Blend Monte Carlo, ML, and psychology predictions.
    */
-  private blendPredictions(
-    mcProb: number,
-    mlProb: number,
-    psychAdjustment: number
-  ): number {
-    const baseProb =
-      this.config.monteCarloWeight * mcProb +
-      this.config.mlWeight * mlProb;
+  private blendPredictions(mcProb: number, mlProb: number, psychAdjustment: number): number {
+    const baseProb = this.config.monteCarloWeight * mcProb + this.config.mlWeight * mlProb;
 
     const adjustedProb = baseProb + this.config.psychologyWeight * psychAdjustment;
 
@@ -298,7 +293,7 @@ export class BsiPredictionEngine {
     // Calculate win distribution
     const winDistribution = this.calculateWinDistribution(
       seasonSim.winsPerSim,
-      team.wins + team.losses + schedule.filter(g => !g.completed).length
+      team.wins + team.losses + schedule.filter((g) => !g.completed).length
     );
 
     // Calculate confidence interval
@@ -323,7 +318,7 @@ export class BsiPredictionEngine {
         median: sortedWins[Math.floor(n * 0.5)],
         upper: sortedWins[Math.floor(n * 0.95)],
       },
-      remainingGames: schedule.filter(g => !g.completed).length,
+      remainingGames: schedule.filter((g) => !g.completed).length,
       strengthOfRemainingSchedule: this.calculateSOS(schedule, opponents),
       simulationCount: this.config.simulationCount,
       modelVersion: this.config.modelVersion,
@@ -346,11 +341,7 @@ export class BsiPredictionEngine {
     for (const season of seasons) {
       const schedule = schedules.get(season) ?? [];
 
-      const projection = await this.projectSeason(
-        { ...currentTeam, season },
-        schedule,
-        opponents
-      );
+      const projection = await this.projectSeason({ ...currentTeam, season }, schedule, opponents);
 
       seasonProjections.push(projection);
 
@@ -363,10 +354,8 @@ export class BsiPredictionEngine {
     // Aggregate multi-season metrics
     const totalWins = seasonProjections.reduce((sum, p) => sum + p.projectedWins, 0);
     const playoffApps = seasonProjections.reduce((sum, p) => sum + p.playoffProbability, 0);
-    const anyChampionship = 1 - seasonProjections.reduce(
-      (prod, p) => prod * (1 - p.championshipProbability),
-      1
-    );
+    const anyChampionship =
+      1 - seasonProjections.reduce((prod, p) => prod * (1 - p.championshipProbability), 1);
 
     return {
       teamId: team.teamId,
@@ -404,12 +393,9 @@ export class BsiPredictionEngine {
     const predictions: GamePrediction[] = [];
 
     for (const game of games) {
-      const prediction = await this.predictGame(
-        game.homeTeam,
-        game.awayTeam,
-        game.context,
-        { tier }
-      );
+      const prediction = await this.predictGame(game.homeTeam, game.awayTeam, game.context, {
+        tier,
+      });
       predictions.push(prediction);
     }
 
@@ -473,22 +459,16 @@ export class BsiPredictionEngine {
     const newPsych = this.psychologyModel.updateState(currentPsych, gameOutcome);
 
     // Save the updated state
-    await this.stateTracker.updateTeamStateAfterGame(
-      teamId,
-      sport,
-      season,
-      outcome.gameNumber,
-      {
-        confidence: newPsych.confidence,
-        focus: newPsych.focus,
-        cohesion: newPsych.cohesion,
-        leadershipInfluence: newPsych.leadershipInfluence,
-        opponentId: outcome.opponentId,
-        result: outcome.result,
-        expectationGap: outcome.margin - outcome.expectedMargin,
-        winProbabilityPre: outcome.winProbabilityPre,
-      }
-    );
+    await this.stateTracker.updateTeamStateAfterGame(teamId, sport, season, outcome.gameNumber, {
+      confidence: newPsych.confidence,
+      focus: newPsych.focus,
+      cohesion: newPsych.cohesion,
+      leadershipInfluence: newPsych.leadershipInfluence,
+      opponentId: outcome.opponentId,
+      result: outcome.result,
+      expectationGap: outcome.margin - outcome.expectedMargin,
+      winProbabilityPre: outcome.winProbabilityPre,
+    });
   }
 
   /**
@@ -509,10 +489,7 @@ export class BsiPredictionEngine {
   /**
    * Generate explanation for a prediction.
    */
-  private generateExplanation(
-    features: MLFeatures,
-    tier: SubscriptionTier
-  ): PredictionExplanation {
+  private generateExplanation(features: MLFeatures, tier: SubscriptionTier): PredictionExplanation {
     const shapValues = this.mlPredictor.calculateShapValues(features);
     const topFactors = shapValues.slice(0, 5);
 
@@ -538,10 +515,7 @@ export class BsiPredictionEngine {
   /**
    * Generate human-readable summary from SHAP values.
    */
-  private generateHumanSummary(
-    topFactors: ShapValue[],
-    features: MLFeatures
-  ): string {
+  private generateHumanSummary(topFactors: ShapValue[], features: MLFeatures): string {
     if (topFactors.length === 0) {
       return 'Unable to generate explanation.';
     }
@@ -551,21 +525,25 @@ export class BsiPredictionEngine {
     // Primary factor
     const primary = topFactors[0];
     if (primary.direction === 'positive') {
-      parts.push(`The home team's ${primary.displayName.toLowerCase()} is the biggest factor favoring them.`);
+      parts.push(
+        `The home team's ${primary.displayName.toLowerCase()} is the biggest factor favoring them.`
+      );
     } else {
       parts.push(`The away team benefits most from their ${primary.displayName.toLowerCase()}.`);
     }
 
     // Secondary factors
-    const positiveFactors = topFactors.filter(f => f.direction === 'positive').slice(0, 2);
-    const negativeFactors = topFactors.filter(f => f.direction === 'negative').slice(0, 2);
+    const positiveFactors = topFactors.filter((f) => f.direction === 'positive').slice(0, 2);
+    const negativeFactors = topFactors.filter((f) => f.direction === 'negative').slice(0, 2);
 
     if (positiveFactors.length > 1) {
       parts.push(`Home advantages also include ${positiveFactors[1].displayName.toLowerCase()}.`);
     }
 
     if (negativeFactors.length > 0) {
-      parts.push(`However, the away team has ${negativeFactors[0].displayName.toLowerCase()} working in their favor.`);
+      parts.push(
+        `However, the away team has ${negativeFactors[0].displayName.toLowerCase()} working in their favor.`
+      );
     }
 
     return parts.join(' ');
@@ -631,10 +609,7 @@ export class BsiPredictionEngine {
   /**
    * Calculate win distribution from simulation results.
    */
-  private calculateWinDistribution(
-    winsPerSim: number[],
-    totalGames: number
-  ): number[] {
+  private calculateWinDistribution(winsPerSim: number[], totalGames: number): number[] {
     const distribution = new Array(totalGames + 1).fill(0);
     const n = winsPerSim.length;
 
@@ -643,17 +618,14 @@ export class BsiPredictionEngine {
       distribution[idx]++;
     }
 
-    return distribution.map(count => count / n);
+    return distribution.map((count) => count / n);
   }
 
   /**
    * Calculate strength of schedule.
    */
-  private calculateSOS(
-    schedule: ScheduledGame[],
-    opponents: Map<string, TeamState>
-  ): number {
-    const remaining = schedule.filter(g => !g.completed);
+  private calculateSOS(schedule: ScheduledGame[], opponents: Map<string, TeamState>): number {
+    const remaining = schedule.filter((g) => !g.completed);
     if (remaining.length === 0) return 0.5;
 
     let totalStrength = 0;
@@ -704,16 +676,13 @@ export class BsiPredictionEngine {
   private isCacheValid(timestamp: string, ttlSeconds: number): boolean {
     const cacheTime = new Date(timestamp).getTime();
     const now = Date.now();
-    return (now - cacheTime) < ttlSeconds * 1000;
+    return now - cacheTime < ttlSeconds * 1000;
   }
 
   /**
    * Format cached prediction with tier-appropriate data.
    */
-  private formatCachedPrediction(
-    cached: GamePrediction,
-    tier: SubscriptionTier
-  ): GamePrediction {
+  private formatCachedPrediction(cached: GamePrediction, tier: SubscriptionTier): GamePrediction {
     if (tier === 'free') {
       return {
         ...cached,

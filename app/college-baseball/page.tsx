@@ -6,8 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'College Baseball Intelligence | Blaze Sports Intel',
@@ -28,14 +26,6 @@ export const metadata: Metadata = {
       'Complete NCAA Division I college baseball coverage. Real-time scores, complete box scores, advanced analytics for 300+ D1 programs.',
   },
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
 
 const features = [
   {
@@ -150,9 +140,7 @@ const conferences = [
 export default function CollegeBaseballPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">
           {/* Background gradient */}
@@ -168,8 +156,7 @@ export default function CollegeBaseballPage() {
 
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
-                Complete Analytics for{' '}
-                <span className="text-gradient-blaze">D1 Baseball</span>
+                Complete Analytics for <span className="text-gradient-blaze">D1 Baseball</span>
               </h1>
             </ScrollReveal>
 
@@ -241,8 +228,7 @@ export default function CollegeBaseballPage() {
               <div className="text-center mb-12">
                 <span className="kicker">NCAA Division I Coverage</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Complete College Baseball{' '}
-                  <span className="text-gradient-blaze">Coverage</span>
+                  Complete College Baseball <span className="text-gradient-blaze">Coverage</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
                   Full box scores, conference standings, team rosters, player statistics, and MLB
@@ -255,11 +241,7 @@ export default function CollegeBaseballPage() {
               {features.map((feature, index) => (
                 <ScrollReveal key={feature.title} delay={index * 100}>
                   <Link href={feature.href} className="block group">
-                    <Card
-                      variant="hover"
-                      padding="lg"
-                      className="h-full relative overflow-hidden"
-                    >
+                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       {/* Top accent line on hover */}
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -315,7 +297,13 @@ export default function CollegeBaseballPage() {
                   className="text-burnt-orange text-sm font-semibold flex items-center gap-2 hover:gap-3 transition-all"
                 >
                   Full Rankings
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -325,7 +313,12 @@ export default function CollegeBaseballPage() {
             <ScrollReveal delay={100}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 {top5Rankings.map((team) => (
-                  <Card key={team.rank} variant="hover" padding="md" className="flex items-center gap-4">
+                  <Card
+                    key={team.rank}
+                    variant="hover"
+                    padding="md"
+                    className="flex items-center gap-4"
+                  >
                     <div className="font-display text-2xl font-bold text-burnt-orange min-w-[36px]">
                       {team.rank}
                     </div>
@@ -359,14 +352,12 @@ export default function CollegeBaseballPage() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {conferences.map((conf) => (
                   <Link key={conf.name} href={conf.href}>
-                    <Card
-                      variant="hover"
-                      padding="md"
-                      className="text-center h-full"
-                    >
+                    <Card variant="hover" padding="md" className="text-center h-full">
                       <div className="font-semibold text-white">{conf.name}</div>
                       <div className="text-xs text-text-tertiary mt-1">
-                        {conf.name === 'All Conferences' ? `View All ${conf.teams}` : `${conf.teams} Teams`}
+                        {conf.name === 'All Conferences'
+                          ? `View All ${conf.teams}`
+                          : `${conf.teams} Teams`}
                       </div>
                     </Card>
                   </Link>
@@ -377,7 +368,10 @@ export default function CollegeBaseballPage() {
         </Section>
 
         {/* CTA Section */}
-        <Section padding="lg" className="bg-gradient-to-b from-midnight via-charcoal to-midnight relative overflow-hidden">
+        <Section
+          padding="lg"
+          className="bg-gradient-to-b from-midnight via-charcoal to-midnight relative overflow-hidden"
+        >
           {/* Radial glow */}
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
 
@@ -385,8 +379,7 @@ export default function CollegeBaseballPage() {
             <ScrollReveal>
               <div className="max-w-xl mx-auto text-center relative z-10">
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
-                  Ready for Real{' '}
-                  <span className="text-gradient-blaze">Baseball Intelligence</span>?
+                  Ready for Real <span className="text-gradient-blaze">Baseball Intelligence</span>?
                 </h2>
                 <p className="text-text-secondary mb-8">
                   Complete coverage for the sport that deserves it. Real-time scores, full box
@@ -409,8 +402,6 @@ export default function CollegeBaseballPage() {
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

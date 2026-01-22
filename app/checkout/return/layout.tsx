@@ -6,10 +6,6 @@ export const metadata: Metadata = {
   robots: 'noindex',
 };
 
-export default function CheckoutReturnLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CheckoutReturnLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

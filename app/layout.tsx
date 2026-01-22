@@ -3,7 +3,8 @@ import { Inter, Oswald, Playfair_Display, Bebas_Neue, JetBrains_Mono } from 'nex
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
-import { NoiseOverlay, CustomCursor } from '../components/cinematic';
+import { Navbar, type NavItem, Footer } from '@/components/layout';
+import { NoiseOverlay, CustomCursor } from '@/components/cinematic';
 
 // Optimized font loading - eliminates render-blocking
 const inter = Inter({
@@ -95,6 +96,15 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+const NAV_ITEMS: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'MLB', href: '/mlb' },
+  { label: 'NFL', href: '/nfl' },
+  { label: 'Pricing', href: '/pricing' },
+];
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -109,7 +119,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to main content
           </a>
           <KonamiCodeWrapper />
-          {children}
+          <div className="relative min-h-screen bg-background-primary text-text-primary">
+            <Navbar items={NAV_ITEMS} />
+            <main id="main-content" className="flex min-h-[80vh] flex-col pt-20 md:pt-24">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

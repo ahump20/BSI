@@ -9,26 +9,13 @@ import { LiveBadge } from '@/components/ui/Badge';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { ScrollReveal } from '../../components/cinematic/ScrollReveal';
-import { Navbar } from '../../components/layout-ds/Navbar';
-import { Footer } from '../../components/layout-ds/Footer';
-
-const dashboardNavItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball/' },
-  { label: 'MLB', href: '/mlb/' },
-  { label: 'NFL', href: '/nfl/' },
-  { label: 'Pricing', href: '/pricing.html' },
-];
+import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 
 export default function DashboardPage() {
   const [activeSport, setActiveSport] = useState<Sport>('nfl');
 
   return (
-    <main id="main-content" className="min-h-screen">
-      {/* Navbar */}
-      <Navbar items={dashboardNavItems} />
-
+    <main className="min-h-screen">
       {/* Dashboard Content */}
       <Section padding="lg" className="pt-24">
         <Container size="wide">
@@ -36,7 +23,9 @@ export default function DashboardPage() {
           <ScrollReveal direction="up">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h1 className="text-3xl md:text-4xl font-display text-white mb-2">COMMAND CENTER</h1>
+                <h1 className="text-3xl md:text-4xl font-display text-white mb-2">
+                  COMMAND CENTER
+                </h1>
                 <p className="text-white/60">
                   Real-time scores, standings, and analytics across all leagues
                 </p>
@@ -103,9 +92,6 @@ export default function DashboardPage() {
           </div>
         </Container>
       </Section>
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }

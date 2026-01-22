@@ -26,7 +26,7 @@ import type {
 // Default parameters for state updates
 const DEFAULT_PARAMS: StateUpdateParams = {
   alpha: 0.75, // Persistence factor
-  beta: 0.20, // Outcome sensitivity
+  beta: 0.2, // Outcome sensitivity
   epsilon: 0.03, // Random noise amplitude
 };
 
@@ -90,18 +90,8 @@ export class PsychologyModel {
         noise.confidence,
         p
       ),
-      focus: this.boundedUpdate(
-        currentState.focus,
-        impact.focus,
-        noise.focus,
-        p
-      ),
-      cohesion: this.boundedUpdate(
-        currentState.cohesion,
-        impact.cohesion,
-        noise.cohesion,
-        p
-      ),
+      focus: this.boundedUpdate(currentState.focus, impact.focus, noise.focus, p),
+      cohesion: this.boundedUpdate(currentState.cohesion, impact.cohesion, noise.cohesion, p),
       leadershipInfluence: this.boundedUpdate(
         currentState.leadershipInfluence,
         impact.leadershipInfluence,
@@ -124,10 +114,7 @@ export class PsychologyModel {
     noise: number,
     params: StateUpdateParams
   ): number {
-    const newValue =
-      params.alpha * current +
-      params.beta * impact +
-      noise;
+    const newValue = params.alpha * current + params.beta * impact + noise;
 
     // Clamp to [0, 1] range
     return Math.max(0, Math.min(1, newValue));
@@ -157,7 +144,8 @@ export class PsychologyModel {
     const direction = outcome.result === 'W' ? 1 : outcome.result === 'L' ? -1 : 0;
 
     return {
-      confidence: baseImpact + direction * multiplier * (0.15 + marginFactor * 0.1) + gapImpact * 0.1,
+      confidence:
+        baseImpact + direction * multiplier * (0.15 + marginFactor * 0.1) + gapImpact * 0.1,
       focus: baseImpact + direction * multiplier * 0.08,
       cohesion: baseImpact + direction * multiplier * 0.05,
       leadershipInfluence: baseImpact + direction * multiplier * (outcome.isPlayoff ? 0.1 : 0.05),
@@ -220,7 +208,7 @@ export class PsychologyModel {
     adjustment += leadershipDiff * 0.05;
 
     // Clamp adjustment to ±10%
-    return Math.max(-0.10, Math.min(0.10, adjustment));
+    return Math.max(-0.1, Math.min(0.1, adjustment));
   }
 
   /**
@@ -230,8 +218,8 @@ export class PsychologyModel {
     return (
       state.confidence * 0.35 +
       state.focus * 0.25 +
-      state.cohesion * 0.20 +
-      state.leadershipInfluence * 0.20
+      state.cohesion * 0.2 +
+      state.leadershipInfluence * 0.2
     );
   }
 
@@ -305,11 +293,7 @@ export class PsychologyModel {
         dimensionContributions.confidence * normFactor,
         weight
       ),
-      focus: this.blend(
-        currentState.focus,
-        dimensionContributions.focus * normFactor,
-        weight
-      ),
+      focus: this.blend(currentState.focus, dimensionContributions.focus * normFactor, weight),
       cohesion: this.blend(
         currentState.cohesion,
         dimensionContributions.cohesion * normFactor,
@@ -326,9 +310,7 @@ export class PsychologyModel {
   /**
    * Map specific Diamond dimensions to prediction adjustments.
    */
-  getDimensionAdjustments(
-    diamondScores: TeamDiamondScores
-  ): Record<string, number> {
+  getDimensionAdjustments(diamondScores: TeamDiamondScores): Record<string, number> {
     const dims = diamondScores.dimensions;
 
     return {
@@ -384,11 +366,7 @@ export class PsychologyModel {
     const baseCohesion = transition.coachingChange ? 0.4 : 0.5;
 
     return {
-      confidence: this.blend(
-        previousState.confidence,
-        baseConfidence,
-        1 - carryover
-      ),
+      confidence: this.blend(previousState.confidence, baseConfidence, 1 - carryover),
       focus: 0.5, // Reset to neutral
       cohesion: this.blend(
         previousState.cohesion * cohesionMultiplier,
@@ -420,9 +398,10 @@ export class PsychologyModel {
     // New leadership takes time to emerge
     const emergentLeadership = 0.4 + Math.random() * 0.2;
 
-    return Math.max(0.2, Math.min(0.8,
-      carryover * (1 - departurePenalty) + emergentLeadership * rosterTurnover
-    ));
+    return Math.max(
+      0.2,
+      Math.min(0.8, carryover * (1 - departurePenalty) + emergentLeadership * rosterTurnover)
+    );
   }
 
   // ============================================================================
@@ -432,11 +411,14 @@ export class PsychologyModel {
   /**
    * Initialize state for a new team (no prior data).
    */
-  initializeState(sport: SupportedSport, context?: {
-    recruiting?: number; // 0-100 percentile
-    returningStarters?: number; // Count
-    preseasonRanking?: number; // Rank (lower = better)
-  }): PsychologicalState {
+  initializeState(
+    sport: SupportedSport,
+    context?: {
+      recruiting?: number; // 0-100 percentile
+      returningStarters?: number; // Count
+      preseasonRanking?: number; // Rank (lower = better)
+    }
+  ): PsychologicalState {
     // Default neutral state
     let confidence = 0.5;
     let cohesion = 0.5;
@@ -517,7 +499,8 @@ export class PsychologyModel {
     // High strain reduces confidence slightly
     if (biometrics.strainLevel !== undefined && biometrics.strainLevel > 0.7) {
       const strainPenalty = (biometrics.strainLevel - 0.7) * 0.15;
-      adjustments.confidence = (adjustments.confidence ?? currentState.confidence) - strainPenalty * weight;
+      adjustments.confidence =
+        (adjustments.confidence ?? currentState.confidence) - strainPenalty * weight;
     }
 
     return {

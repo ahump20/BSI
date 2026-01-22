@@ -24,11 +24,7 @@ import type {
   GameResult,
 } from './types';
 
-import {
-  PYTHAGOREAN_EXPONENTS,
-  HOME_ADVANTAGE,
-  PSYCHOLOGY_PARAMS,
-} from './types';
+import { PYTHAGOREAN_EXPONENTS, HOME_ADVANTAGE, PSYCHOLOGY_PARAMS } from './types';
 
 import { PsychologyModel } from './psychology-model';
 
@@ -42,29 +38,29 @@ const CHUNK_SIZE = 1000; // Process 1,000 sims at a time for CPU limits
 
 // Playoff win thresholds by sport (as fraction of total games)
 const PLAYOFF_THRESHOLDS: Record<SupportedSport, number> = {
-  cfb: 0.75,  // ~9 wins in 12-game season
-  cbb: 0.65,  // ~20 wins in 30+ games
-  nfl: 0.53,  // ~9 wins in 17-game season
-  nba: 0.52,  // ~42 wins in 82-game season
-  mlb: 0.52,  // ~84 wins in 162-game season
+  cfb: 0.75, // ~9 wins in 12-game season
+  cbb: 0.65, // ~20 wins in 30+ games
+  nfl: 0.53, // ~9 wins in 17-game season
+  nba: 0.52, // ~42 wins in 82-game season
+  mlb: 0.52, // ~84 wins in 162-game season
 };
 
 // Division win thresholds
 const DIVISION_THRESHOLDS: Record<SupportedSport, number> = {
-  cfb: 0.80,
+  cfb: 0.8,
   cbb: 0.72,
   nfl: 0.65,
-  nba: 0.60,
+  nba: 0.6,
   mlb: 0.56,
 };
 
 // Championship probability thresholds
 const CHAMPIONSHIP_THRESHOLDS: Record<SupportedSport, number> = {
-  cfb: 0.90,  // Undefeated/1-loss typical
+  cfb: 0.9, // Undefeated/1-loss typical
   cbb: 0.75,
-  nfl: 0.75,  // ~13 wins
-  nba: 0.67,  // ~55 wins
-  mlb: 0.60,  // ~97 wins
+  nfl: 0.75, // ~13 wins
+  nba: 0.67, // ~55 wins
+  mlb: 0.6, // ~97 wins
 };
 
 // ============================================================================
@@ -89,11 +85,7 @@ export class SimulationCore {
    *
    * P = PF^exp / (PF^exp + PA^exp)
    */
-  calculatePythagorean(
-    pointsFor: number,
-    pointsAgainst: number,
-    sport: SupportedSport
-  ): number {
+  calculatePythagorean(pointsFor: number, pointsAgainst: number, sport: SupportedSport): number {
     if (pointsFor === 0 && pointsAgainst === 0) return 0.5;
 
     const exponent = PYTHAGOREAN_EXPONENTS[sport];
@@ -127,8 +119,8 @@ export class SimulationCore {
     const awayPyth = awayTeam.pythagorean;
 
     // Log5 method for head-to-head probability
-    const log5Prob = (homePyth * (1 - awayPyth)) /
-      (homePyth * (1 - awayPyth) + awayPyth * (1 - homePyth));
+    const log5Prob =
+      (homePyth * (1 - awayPyth)) / (homePyth * (1 - awayPyth) + awayPyth * (1 - homePyth));
 
     let winProb = log5Prob;
 
@@ -190,7 +182,7 @@ export class SimulationCore {
     const winPct = record > 0 ? team.wins / record : 0.5;
 
     // Convert win percentage to form factor
-    return 0.85 + winPct * 0.30;
+    return 0.85 + winPct * 0.3;
   }
 
   // ============================================================================
@@ -212,12 +204,7 @@ export class SimulationCore {
     const homeWins = random < winProb;
 
     // Generate scores based on team strength and sport
-    const { homeScore, awayScore } = this.generateScores(
-      homeTeam,
-      awayTeam,
-      homeWins,
-      context
-    );
+    const { homeScore, awayScore } = this.generateScores(homeTeam, awayTeam, homeWins, context);
 
     const margin = homeScore - awayScore;
     const expectedMargin = (winProb - 0.5) * this.getTypicalMargin(homeTeam.sport);
@@ -355,7 +342,7 @@ export class SimulationCore {
 
       // Yield to event loop between chunks (for Workers)
       if (chunk < chunks - 1) {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
 
@@ -366,9 +353,10 @@ export class SimulationCore {
     const avgTotal = avgHomeScore + avgAwayScore;
 
     // Standard deviation of spread
-    const spreadVariance = spreads.reduce((sum, s) => {
-      return sum + Math.pow(s - avgSpread, 2);
-    }, 0) / simulations;
+    const spreadVariance =
+      spreads.reduce((sum, s) => {
+        return sum + Math.pow(s - avgSpread, 2);
+      }, 0) / simulations;
     const spreadStdDev = Math.sqrt(spreadVariance);
 
     // Sort spreads for confidence interval
@@ -423,7 +411,7 @@ export class SimulationCore {
     let wonConference = 0;
     let wonChampionship = 0;
 
-    const remainingGames = schedule.filter(g => !g.completed);
+    const remainingGames = schedule.filter((g) => !g.completed);
     const totalGames = team.wins + team.losses + remainingGames.length;
 
     // Thresholds for this sport
@@ -449,9 +437,7 @@ export class SimulationCore {
 
         // Simulate each remaining game
         for (const game of remainingGames) {
-          const opponentId = game.homeTeamId === team.teamId
-            ? game.awayTeamId
-            : game.homeTeamId;
+          const opponentId = game.homeTeamId === team.teamId ? game.awayTeamId : game.homeTeamId;
 
           const opponent = opponents.get(opponentId);
           if (!opponent) continue;
@@ -459,10 +445,7 @@ export class SimulationCore {
           const isHome = game.homeTeamId === team.teamId;
 
           // Create sim states with current psychological state
-          const teamSim = this.teamStateToSimState(
-            { ...team, ...currentPsych },
-            isHome
-          );
+          const teamSim = this.teamStateToSimState({ ...team, ...currentPsych }, isHome);
           const oppSim = this.teamStateToSimState(opponent, !isHome);
 
           // Create game context
@@ -487,8 +470,9 @@ export class SimulationCore {
           );
 
           // Determine if team won
-          const teamWon = (isHome && result.homeScore > result.awayScore) ||
-                         (!isHome && result.awayScore > result.homeScore);
+          const teamWon =
+            (isHome && result.homeScore > result.awayScore) ||
+            (!isHome && result.awayScore > result.homeScore);
 
           if (teamWon) {
             wins++;
@@ -535,7 +519,7 @@ export class SimulationCore {
 
       // Yield between chunks
       if (chunk < chunks - 1) {
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
 
@@ -634,9 +618,9 @@ export class SimulationCore {
     const p = winProbability;
     const n = simulations;
 
-    const denominator = 1 + z * z / n;
-    const center = (p + z * z / (2 * n)) / denominator;
-    const spread = (z / denominator) * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n));
+    const denominator = 1 + (z * z) / n;
+    const center = (p + (z * z) / (2 * n)) / denominator;
+    const spread = (z / denominator) * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
 
     return {
       lower: Math.max(0, Math.round((center - spread) * 1000) / 1000),

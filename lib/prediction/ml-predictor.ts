@@ -18,10 +18,7 @@ import type {
   TeamDiamondScores,
 } from './types';
 
-import {
-  PYTHAGOREAN_EXPONENTS,
-  HOME_ADVANTAGE,
-} from './types';
+import { PYTHAGOREAN_EXPONENTS, HOME_ADVANTAGE } from './types';
 
 // ============================================================================
 // Model Weights
@@ -35,8 +32,8 @@ import {
  */
 const MODEL_WEIGHTS: Record<string, number> = {
   // Core team strength
-  ratingDiff: 0.012,           // Per rating point difference
-  pythagoreanDiff: 2.5,        // Pythagorean expectation difference
+  ratingDiff: 0.012, // Per rating point difference
+  pythagoreanDiff: 2.5, // Pythagorean expectation difference
 
   // Recent form
   homeRecentWinPct: 0.8,
@@ -45,11 +42,11 @@ const MODEL_WEIGHTS: Record<string, number> = {
   awayMomentum: -0.15,
 
   // Context
-  homeFieldAdvantage: 0.25,    // Location multiplier
-  restDaysDiff: 0.02,          // Per day advantage
-  travelDistance: -0.0001,     // Per mile (away team travel)
-  rivalryMultiplier: -0.1,     // Rivalries are more unpredictable
-  playoffMultiplier: 0.05,     // Slight boost for higher-rated team
+  homeFieldAdvantage: 0.25, // Location multiplier
+  restDaysDiff: 0.02, // Per day advantage
+  travelDistance: -0.0001, // Per mile (away team travel)
+  rivalryMultiplier: -0.1, // Rivalries are more unpredictable
+  playoffMultiplier: 0.05, // Slight boost for higher-rated team
 
   // Psychological factors
   confidenceDiff: 0.6,
@@ -129,8 +126,8 @@ export class MLPredictor {
     const awayMomentum = this.calculateMomentum(awayTeam);
 
     // Context
-    const homeFieldAdvantage = context.location === 'home' ? 1 :
-                               context.location === 'away' ? 0 : 0.5;
+    const homeFieldAdvantage =
+      context.location === 'home' ? 1 : context.location === 'away' ? 0 : 0.5;
     const restDaysDiff = context.restDays.home - context.restDays.away;
     const travelDistance = context.travelDistance ?? 0;
     const rivalryMultiplier = context.isRivalry ? 1 : 0;
@@ -152,11 +149,7 @@ export class MLPredictor {
     const awayMentalFortress = awayDiamond?.dimensions.mentalFortress ?? 50;
 
     // Sport-specific features
-    const sportSpecific = this.extractSportSpecificFeatures(
-      homeTeam,
-      awayTeam,
-      context
-    );
+    const sportSpecific = this.extractSportSpecificFeatures(homeTeam, awayTeam, context);
 
     return {
       homeRating,
@@ -194,8 +187,8 @@ export class MLPredictor {
   private calculateRecentWinPct(recentForm: Array<'W' | 'L' | 'T'>): number {
     if (recentForm.length === 0) return 0.5;
 
-    const wins = recentForm.filter(r => r === 'W').length;
-    const ties = recentForm.filter(r => r === 'T').length;
+    const wins = recentForm.filter((r) => r === 'W').length;
+    const ties = recentForm.filter((r) => r === 'T').length;
 
     return (wins + ties * 0.5) / recentForm.length;
   }
@@ -255,8 +248,10 @@ export class MLPredictor {
 
       case 'mlb':
         // MLB specific
-        features.runDifferential = homeTeam.pointsFor - homeTeam.pointsAgainst -
-                                   (awayTeam.pointsFor - awayTeam.pointsAgainst);
+        features.runDifferential =
+          homeTeam.pointsFor -
+          homeTeam.pointsAgainst -
+          (awayTeam.pointsFor - awayTeam.pointsAgainst);
         features.startingPitcherEdge = 0;
         features.bullpenAdvantage = 0;
         break;
@@ -278,7 +273,8 @@ export class MLPredictor {
 
     // Rating and efficiency
     linearSum += features.ratingDiff * this.weights.ratingDiff;
-    linearSum += (features.homePythagorean - features.awayPythagorean) * this.weights.pythagoreanDiff;
+    linearSum +=
+      (features.homePythagorean - features.awayPythagorean) * this.weights.pythagoreanDiff;
 
     // Recent form
     linearSum += features.homeRecentWinPct * this.weights.homeRecentWinPct;
@@ -314,9 +310,11 @@ export class MLPredictor {
   /**
    * Predict with confidence interval.
    */
-  predictWithConfidence(
-    features: MLFeatures
-  ): { probability: number; lower: number; upper: number } {
+  predictWithConfidence(features: MLFeatures): {
+    probability: number;
+    lower: number;
+    upper: number;
+  } {
     const probability = this.predict(features);
 
     // Uncertainty based on feature extremity
@@ -380,9 +378,7 @@ export class MLPredictor {
   /**
    * Calculate individual feature contributions.
    */
-  private calculateFeatureContributions(
-    features: MLFeatures
-  ): Record<string, number> {
+  private calculateFeatureContributions(features: MLFeatures): Record<string, number> {
     const contributions: Record<string, number> = {};
 
     // Rating contribution
@@ -404,10 +400,8 @@ export class MLPredictor {
     contributions.homeFieldAdvantage =
       (features.homeFieldAdvantage - 0.5) * this.weights.homeFieldAdvantage * 2;
     contributions.restDaysDiff = features.restDaysDiff * this.weights.restDaysDiff;
-    contributions.rivalryMultiplier =
-      features.rivalryMultiplier * this.weights.rivalryMultiplier;
-    contributions.playoffMultiplier =
-      features.playoffMultiplier * this.weights.playoffMultiplier;
+    contributions.rivalryMultiplier = features.rivalryMultiplier * this.weights.rivalryMultiplier;
+    contributions.playoffMultiplier = features.playoffMultiplier * this.weights.playoffMultiplier;
 
     // Psychological contributions
     contributions.confidenceDiff = features.confidenceDiff * this.weights.confidenceDiff;
@@ -513,19 +507,16 @@ export class MLPredictor {
    *
    * Uses sport-specific conversion factors.
    */
-  predictSpread(
-    winProbability: number,
-    sport: SupportedSport
-  ): number {
+  predictSpread(winProbability: number, sport: SupportedSport): number {
     // Convert probability to point spread
     // Based on historical relationship between moneyline and spread
 
     const spreadFactors: Record<SupportedSport, number> = {
-      cfb: 14,   // 50% = 0, 60% ≈ +7
-      cbb: 8,    // 50% = 0, 60% ≈ +4
-      nfl: 10,   // 50% = 0, 60% ≈ +5
-      nba: 8,    // 50% = 0, 60% ≈ +4
-      mlb: 3,    // 50% = 0, 60% ≈ +1.5
+      cfb: 14, // 50% = 0, 60% ≈ +7
+      cbb: 8, // 50% = 0, 60% ≈ +4
+      nfl: 10, // 50% = 0, 60% ≈ +5
+      nba: 8, // 50% = 0, 60% ≈ +4
+      mlb: 3, // 50% = 0, 60% ≈ +1.5
     };
 
     const factor = spreadFactors[sport];
@@ -537,11 +528,7 @@ export class MLPredictor {
   /**
    * Predict total score.
    */
-  predictTotal(
-    homeTeam: TeamState,
-    awayTeam: TeamState,
-    context: GameContext
-  ): number {
+  predictTotal(homeTeam: TeamState, awayTeam: TeamState, context: GameContext): number {
     const sport = homeTeam.sport;
 
     // Average totals by sport

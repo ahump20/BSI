@@ -5,21 +5,12 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'D1 Baseball Top 25 Rankings | Blaze Sports Intel',
   description:
     'Official D1Baseball Top 25 college baseball rankings. Complete 1-25 with conference affiliations, record, and movement. Updated every Monday during the season.',
 };
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Rankings', href: '/baseball/rankings' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 // 2026 Preseason Top 25 - D1Baseball
 const top25Rankings = [
@@ -53,9 +44,7 @@ const top25Rankings = [
 export default function BaseballRankingsPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24">
           <Container>
             <ScrollReveal direction="up">
@@ -75,9 +64,7 @@ export default function BaseballRankingsPage() {
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display">
                     D1Baseball <span className="text-gradient-blaze">Top 25</span>
                   </h1>
-                  <p className="text-text-secondary mt-2">
-                    2026 Preseason Rankings
-                  </p>
+                  <p className="text-text-secondary mt-2">2026 Preseason Rankings</p>
                 </div>
                 <Badge variant="primary">Updated Weekly</Badge>
               </div>
@@ -198,14 +185,13 @@ export default function BaseballRankingsPage() {
             <div className="mt-8 text-center text-xs text-text-tertiary">
               <p>Rankings from D1Baseball. Updated every Monday during the season.</p>
               <p className="mt-1">
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

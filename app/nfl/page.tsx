@@ -6,17 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
 
 interface StandingsTeam {
   TeamID: number;
@@ -103,15 +93,17 @@ type TabType = 'standings' | 'teams' | 'players' | 'schedule';
  */
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 export default function NFLPage() {
@@ -187,7 +179,13 @@ export default function NFLPage() {
       id: 'standings',
       label: 'Standings',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
         </svg>
       ),
@@ -196,7 +194,13 @@ export default function NFLPage() {
       id: 'teams',
       label: 'Teams',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       ),
@@ -205,7 +209,13 @@ export default function NFLPage() {
       id: 'players',
       label: 'Players',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
         </svg>
       ),
@@ -214,7 +224,13 @@ export default function NFLPage() {
       id: 'schedule',
       label: 'Schedule',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
           <line x1="8" y1="2" x2="8" y2="6" />
@@ -226,9 +242,7 @@ export default function NFLPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
@@ -293,9 +307,16 @@ export default function NFLPage() {
                             <table className="w-full">
                               <thead>
                                 <tr className="border-b-2 border-burnt-orange">
-                                  {['Team', 'W', 'L', 'T', 'PCT', 'PF', 'PA', 'DIFF', 'STRK'].map((h) => (
-                                    <th key={h} className="text-left p-3 text-copper font-semibold">{h}</th>
-                                  ))}
+                                  {['Team', 'W', 'L', 'T', 'PCT', 'PF', 'PA', 'DIFF', 'STRK'].map(
+                                    (h) => (
+                                      <th
+                                        key={h}
+                                        className="text-left p-3 text-copper font-semibold"
+                                      >
+                                        {h}
+                                      </th>
+                                    )
+                                  )}
                                 </tr>
                               </thead>
                               <tbody>
@@ -371,15 +392,33 @@ export default function NFLPage() {
                                     <table className="w-full">
                                       <thead>
                                         <tr className="border-b border-burnt-orange/50">
-                                          <th className="text-left p-2 text-copper font-semibold text-sm">Team</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">W</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">L</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">T</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PCT</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PF</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PA</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">DIFF</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">STRK</th>
+                                          <th className="text-left p-2 text-copper font-semibold text-sm">
+                                            Team
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            W
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            L
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            T
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PCT
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PF
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PA
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            DIFF
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            STRK
+                                          </th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -389,22 +428,45 @@ export default function NFLPage() {
                                             className="border-b border-border-subtle hover:bg-white/5 transition-colors"
                                           >
                                             <td className="p-2">
-                                              <span className="text-burnt-orange font-bold mr-2">{idx + 1}</span>
-                                              <span className="font-semibold text-white">{team.Name}</span>
+                                              <span className="text-burnt-orange font-bold mr-2">
+                                                {idx + 1}
+                                              </span>
+                                              <span className="font-semibold text-white">
+                                                {team.Name}
+                                              </span>
                                             </td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Wins}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Losses}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Ties}</td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Wins}
+                                            </td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Losses}
+                                            </td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Ties}
+                                            </td>
                                             <td className="text-center p-2 text-text-secondary">
                                               {team.Percentage.toFixed(3).replace('0.', '.')}
                                             </td>
-                                            <td className="text-center p-2 text-text-secondary">{team.PointsFor}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.PointsAgainst}</td>
-                                            <td className={`text-center p-2 ${team.NetPoints > 0 ? 'text-success' : team.NetPoints < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                                              {team.NetPoints > 0 ? '+' : ''}{team.NetPoints}
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.PointsFor}
                                             </td>
-                                            <td className={`text-center p-2 ${team.Streak > 0 ? 'text-success' : team.Streak < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                                              {team.Streak > 0 ? `W${team.Streak}` : team.Streak < 0 ? `L${Math.abs(team.Streak)}` : '-'}
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.PointsAgainst}
+                                            </td>
+                                            <td
+                                              className={`text-center p-2 ${team.NetPoints > 0 ? 'text-success' : team.NetPoints < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                            >
+                                              {team.NetPoints > 0 ? '+' : ''}
+                                              {team.NetPoints}
+                                            </td>
+                                            <td
+                                              className={`text-center p-2 ${team.Streak > 0 ? 'text-success' : team.Streak < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                            >
+                                              {team.Streak > 0
+                                                ? `W${team.Streak}`
+                                                : team.Streak < 0
+                                                  ? `L${Math.abs(team.Streak)}`
+                                                  : '-'}
                                             </td>
                                           </tr>
                                         ))}
@@ -449,15 +511,33 @@ export default function NFLPage() {
                                     <table className="w-full">
                                       <thead>
                                         <tr className="border-b border-burnt-orange/50">
-                                          <th className="text-left p-2 text-copper font-semibold text-sm">Team</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">W</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">L</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">T</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PCT</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PF</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">PA</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">DIFF</th>
-                                          <th className="text-center p-2 text-copper font-semibold text-sm">STRK</th>
+                                          <th className="text-left p-2 text-copper font-semibold text-sm">
+                                            Team
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            W
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            L
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            T
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PCT
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PF
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            PA
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            DIFF
+                                          </th>
+                                          <th className="text-center p-2 text-copper font-semibold text-sm">
+                                            STRK
+                                          </th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -467,22 +547,45 @@ export default function NFLPage() {
                                             className="border-b border-border-subtle hover:bg-white/5 transition-colors"
                                           >
                                             <td className="p-2">
-                                              <span className="text-burnt-orange font-bold mr-2">{idx + 1}</span>
-                                              <span className="font-semibold text-white">{team.Name}</span>
+                                              <span className="text-burnt-orange font-bold mr-2">
+                                                {idx + 1}
+                                              </span>
+                                              <span className="font-semibold text-white">
+                                                {team.Name}
+                                              </span>
                                             </td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Wins}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Losses}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.Ties}</td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Wins}
+                                            </td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Losses}
+                                            </td>
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.Ties}
+                                            </td>
                                             <td className="text-center p-2 text-text-secondary">
                                               {team.Percentage.toFixed(3).replace('0.', '.')}
                                             </td>
-                                            <td className="text-center p-2 text-text-secondary">{team.PointsFor}</td>
-                                            <td className="text-center p-2 text-text-secondary">{team.PointsAgainst}</td>
-                                            <td className={`text-center p-2 ${team.NetPoints > 0 ? 'text-success' : team.NetPoints < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                                              {team.NetPoints > 0 ? '+' : ''}{team.NetPoints}
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.PointsFor}
                                             </td>
-                                            <td className={`text-center p-2 ${team.Streak > 0 ? 'text-success' : team.Streak < 0 ? 'text-error' : 'text-text-secondary'}`}>
-                                              {team.Streak > 0 ? `W${team.Streak}` : team.Streak < 0 ? `L${Math.abs(team.Streak)}` : '-'}
+                                            <td className="text-center p-2 text-text-secondary">
+                                              {team.PointsAgainst}
+                                            </td>
+                                            <td
+                                              className={`text-center p-2 ${team.NetPoints > 0 ? 'text-success' : team.NetPoints < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                            >
+                                              {team.NetPoints > 0 ? '+' : ''}
+                                              {team.NetPoints}
+                                            </td>
+                                            <td
+                                              className={`text-center p-2 ${team.Streak > 0 ? 'text-success' : team.Streak < 0 ? 'text-error' : 'text-text-secondary'}`}
+                                            >
+                                              {team.Streak > 0
+                                                ? `W${team.Streak}`
+                                                : team.Streak < 0
+                                                  ? `L${Math.abs(team.Streak)}`
+                                                  : '-'}
                                             </td>
                                           </tr>
                                         ))}
@@ -666,13 +769,17 @@ export default function NFLPage() {
                                 >
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                      <span className="font-semibold text-white">{game.AwayTeam}</span>
+                                      <span className="font-semibold text-white">
+                                        {game.AwayTeam}
+                                      </span>
                                       <span className="ml-auto text-burnt-orange font-bold text-lg">
                                         {game.AwayScore ?? 0}
                                       </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <span className="font-semibold text-white">{game.HomeTeam}</span>
+                                      <span className="font-semibold text-white">
+                                        {game.HomeTeam}
+                                      </span>
                                       <span className="ml-auto text-burnt-orange font-bold text-lg">
                                         {game.HomeScore ?? 0}
                                       </span>
@@ -683,7 +790,9 @@ export default function NFLPage() {
                                       {game.Quarter} {game.TimeRemaining}
                                     </div>
                                     {game.Channel && (
-                                      <div className="text-xs text-text-tertiary mt-1">{game.Channel}</div>
+                                      <div className="text-xs text-text-tertiary mt-1">
+                                        {game.Channel}
+                                      </div>
                                     )}
                                   </div>
                                 </div>
@@ -707,34 +816,52 @@ export default function NFLPage() {
                                   >
                                     <div className="flex-1">
                                       <div className="flex items-center gap-2 mb-2">
-                                        <span className={`font-semibold ${awayWins ? 'text-white' : 'text-text-secondary'}`}>
+                                        <span
+                                          className={`font-semibold ${awayWins ? 'text-white' : 'text-text-secondary'}`}
+                                        >
                                           {game.AwayTeam}
                                         </span>
                                         {awayWins && (
-                                          <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                                          <svg
+                                            viewBox="0 0 24 24"
+                                            className="w-4 h-4 text-success"
+                                            fill="currentColor"
+                                          >
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                           </svg>
                                         )}
-                                        <span className={`ml-auto font-bold text-lg ${awayWins ? 'text-burnt-orange' : 'text-text-secondary'}`}>
+                                        <span
+                                          className={`ml-auto font-bold text-lg ${awayWins ? 'text-burnt-orange' : 'text-text-secondary'}`}
+                                        >
                                           {game.AwayScore ?? 0}
                                         </span>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className={`font-semibold ${homeWins ? 'text-white' : 'text-text-secondary'}`}>
+                                        <span
+                                          className={`font-semibold ${homeWins ? 'text-white' : 'text-text-secondary'}`}
+                                        >
                                           {game.HomeTeam}
                                         </span>
                                         {homeWins && (
-                                          <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                                          <svg
+                                            viewBox="0 0 24 24"
+                                            className="w-4 h-4 text-success"
+                                            fill="currentColor"
+                                          >
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                           </svg>
                                         )}
-                                        <span className={`ml-auto font-bold text-lg ${homeWins ? 'text-burnt-orange' : 'text-text-secondary'}`}>
+                                        <span
+                                          className={`ml-auto font-bold text-lg ${homeWins ? 'text-burnt-orange' : 'text-text-secondary'}`}
+                                        >
                                           {game.HomeScore ?? 0}
                                         </span>
                                       </div>
                                     </div>
                                     <div className="ml-6 text-right min-w-[60px]">
-                                      <div className="text-text-tertiary font-semibold text-sm">Final</div>
+                                      <div className="text-text-tertiary font-semibold text-sm">
+                                        Final
+                                      </div>
                                     </div>
                                   </div>
                                 );
@@ -755,11 +882,15 @@ export default function NFLPage() {
                                 >
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                      <span className="font-semibold text-white">{game.AwayTeam}</span>
+                                      <span className="font-semibold text-white">
+                                        {game.AwayTeam}
+                                      </span>
                                       <span className="ml-auto text-text-secondary">-</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <span className="font-semibold text-white">{game.HomeTeam}</span>
+                                      <span className="font-semibold text-white">
+                                        {game.HomeTeam}
+                                      </span>
                                       <span className="ml-auto text-text-secondary">-</span>
                                     </div>
                                   </div>
@@ -771,10 +902,13 @@ export default function NFLPage() {
                                         minute: '2-digit',
                                         hour12: true,
                                         timeZone: 'America/Chicago',
-                                      })} CT
+                                      })}{' '}
+                                      CT
                                     </div>
                                     {game.Channel && (
-                                      <div className="text-xs text-text-tertiary mt-1">{game.Channel}</div>
+                                      <div className="text-xs text-text-tertiary mt-1">
+                                        {game.Channel}
+                                      </div>
                                     )}
                                   </div>
                                 </div>
@@ -803,8 +937,6 @@ export default function NFLPage() {
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

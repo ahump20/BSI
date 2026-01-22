@@ -3,21 +3,17 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ScrollReveal } from '../components/cinematic/ScrollReveal';
-import { IntelTicker } from '../components/cinematic/IntelTicker';
-import { Navbar } from '../components/layout-ds/Navbar';
-import { Footer } from '../components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'College Baseball', href: '/college-baseball/' },
-  { label: 'MLB', href: '/mlb/' },
-  { label: 'NFL', href: '/nfl/' },
-  { label: 'Pricing', href: '/pricing.html' },
-];
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
+import { IntelTicker } from '@/components/cinematic/IntelTicker';
 
 const sportsData = [
-  { name: 'College Baseball', icon: '🎓', href: '/college-baseball/', desc: 'The coverage this sport deserves' },
+  {
+    name: 'College Baseball',
+    icon: '🎓',
+    href: '/college-baseball/',
+    desc: 'The coverage this sport deserves',
+  },
   { name: 'MLB', icon: '⚾', href: '/mlb/', desc: 'Live scores, standings & Statcast' },
   { name: 'NFL', icon: '🏈', href: '/nfl/', desc: 'Live scores & standings' },
   { name: 'CFB', icon: '🏟️', href: '/cfb/', desc: 'College football analytics' },
@@ -27,7 +23,8 @@ const features = [
   {
     icon: '📊',
     title: 'Real-Time Data',
-    description: 'Live scores updated every 30 seconds. Never miss a play with instant notifications.',
+    description:
+      'Live scores updated every 30 seconds. Never miss a play with instant notifications.',
   },
   {
     icon: '🎯',
@@ -42,21 +39,26 @@ const features = [
 ];
 
 const tickerItems = [
-  { id: '1', content: 'College Baseball: Full 2025 season coverage now live', type: 'default' as const },
+  {
+    id: '1',
+    content: 'College Baseball: Full 2025 season coverage now live',
+    type: 'default' as const,
+  },
   { id: '2', content: 'MLB: Spring Training data pipeline active', type: 'default' as const },
   { id: '3', content: 'NFL: 2024-25 playoff predictions available', type: 'live' as const },
   { id: '4', content: 'New: Monte Carlo simulation engine deployed', type: 'alert' as const },
-  { id: '5', content: 'College Baseball: D1 standings updated in real-time', type: 'default' as const },
+  {
+    id: '5',
+    content: 'College Baseball: D1 standings updated in real-time',
+    type: 'default' as const,
+  },
 ];
 
 export default function HomePage() {
   return (
-    <main id="main-content" className="min-h-screen">
-      {/* Navbar */}
-      <Navbar items={navItems} />
-
+    <main className="min-h-screen">
       {/* Intel Ticker */}
-      <div className="pt-16">
+      <div className="pt-6 md:pt-10">
         <IntelTicker items={tickerItems} speed={40} variant="accent" pauseOnHover />
       </div>
 
@@ -74,25 +76,23 @@ export default function HomePage() {
                 Real-Time Sports Intelligence
               </Badge>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display text-white mb-6 tracking-tight">
-                QUANTIFYING
-                <br />
-                <span className="text-gradient-brand">INSTINCT</span>
-              </h1>
-
-              <p className="lead max-w-2xl mx-auto mb-10">
-                Professional sports analytics platform delivering real-time MLB, NFL, NBA, and NCAA
-                data. Live scores, predictions, and insights powered by advanced statistics.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link href="/dashboard" className="btn-primary px-8 py-4 text-lg">
-                  Launch Dashboard
-                </Link>
-                <Link href="/pricing" className="btn-secondary px-8 py-4 text-lg">
-                  View Pricing
-                </Link>
-              </div>
+              <PageHeader
+                title="Quantifying Instinct"
+                subtitle="Professional sports analytics with real-time MLB, NFL, NBA, and NCAA data. Live scores, predictions, and insights powered by verified sources."
+                align="center"
+                size="lg"
+                gradient
+                actions={
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <Link href="/dashboard" className="btn-primary px-8 py-4 text-lg">
+                      Launch Dashboard
+                    </Link>
+                    <Link href="/pricing" className="btn-secondary px-8 py-4 text-lg">
+                      View Pricing
+                    </Link>
+                  </div>
+                }
+              />
 
               {/* Live indicator */}
               <div className="mt-12 flex items-center justify-center gap-4">
@@ -152,9 +152,6 @@ export default function HomePage() {
           </div>
         </Container>
       </Section>
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }

@@ -6,17 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'Dashboard', href: '/dashboard' },
-];
 
 interface Team {
   teamName: string;
@@ -76,15 +66,17 @@ type TabType = 'standings' | 'teams' | 'players' | 'schedule';
  */
 function formatTimestamp(isoString?: string): string {
   const date = isoString ? new Date(isoString) : new Date();
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }) + ' CT';
+  return (
+    date.toLocaleString('en-US', {
+      timeZone: 'America/Chicago',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }) + ' CT'
+  );
 }
 
 export default function MLBPage() {
@@ -102,7 +94,7 @@ export default function MLBPage() {
     try {
       const res = await fetch('/api/mlb/standings');
       if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json();
+      const data: any = await res.json();
 
       if (data.standings) {
         setStandings(data.standings);
@@ -125,7 +117,7 @@ export default function MLBPage() {
       // Fetch today's games
       const res = await fetch('/api/mlb/scores');
       if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json();
+      const data: any = await res.json();
 
       if (data.games) {
         setSchedule(data.games);
@@ -179,7 +171,13 @@ export default function MLBPage() {
       id: 'standings',
       label: 'Standings',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
         </svg>
       ),
@@ -188,7 +186,13 @@ export default function MLBPage() {
       id: 'teams',
       label: 'Teams',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       ),
@@ -197,7 +201,13 @@ export default function MLBPage() {
       id: 'players',
       label: 'Players',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
         </svg>
       ),
@@ -206,7 +216,13 @@ export default function MLBPage() {
       id: 'schedule',
       label: 'Schedule',
       icon: (
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
           <line x1="8" y1="2" x2="8" y2="6" />
@@ -218,9 +234,7 @@ export default function MLBPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
@@ -289,9 +303,16 @@ export default function MLBPage() {
                             <table className="w-full">
                               <thead>
                                 <tr className="border-b-2 border-burnt-orange">
-                                  {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map((h) => (
-                                    <th key={h} className="text-left p-3 text-copper font-semibold">{h}</th>
-                                  ))}
+                                  {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map(
+                                    (h) => (
+                                      <th
+                                        key={h}
+                                        className="text-left p-3 text-copper font-semibold"
+                                      >
+                                        {h}
+                                      </th>
+                                    )
+                                  )}
                                 </tr>
                               </thead>
                               <tbody>
@@ -348,15 +369,21 @@ export default function MLBPage() {
                               <table className="w-full">
                                 <thead>
                                   <tr className="border-b-2 border-burnt-orange">
-                                    <th className="text-left p-3 text-copper font-semibold">Rank</th>
-                                    <th className="text-left p-3 text-copper font-semibold">Team</th>
+                                    <th className="text-left p-3 text-copper font-semibold">
+                                      Rank
+                                    </th>
+                                    <th className="text-left p-3 text-copper font-semibold">
+                                      Team
+                                    </th>
                                     <th className="text-left p-3 text-copper font-semibold">W</th>
                                     <th className="text-left p-3 text-copper font-semibold">L</th>
                                     <th className="text-left p-3 text-copper font-semibold">PCT</th>
                                     <th className="text-left p-3 text-copper font-semibold">GB</th>
                                     <th className="text-left p-3 text-copper font-semibold">RS</th>
                                     <th className="text-left p-3 text-copper font-semibold">RA</th>
-                                    <th className="text-left p-3 text-copper font-semibold">STRK</th>
+                                    <th className="text-left p-3 text-copper font-semibold">
+                                      STRK
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -366,7 +393,9 @@ export default function MLBPage() {
                                       className="border-b border-border-subtle hover:bg-white/5 transition-colors"
                                     >
                                       <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                      <td className="p-3 font-semibold text-white">{team.teamName}</td>
+                                      <td className="p-3 font-semibold text-white">
+                                        {team.teamName}
+                                      </td>
                                       <td className="p-3 text-text-secondary">{team.wins}</td>
                                       <td className="p-3 text-text-secondary">{team.losses}</td>
                                       <td className="p-3 text-text-secondary">
@@ -376,7 +405,9 @@ export default function MLBPage() {
                                         {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
                                       </td>
                                       <td className="p-3 text-text-secondary">{team.runsScored}</td>
-                                      <td className="p-3 text-text-secondary">{team.runsAllowed}</td>
+                                      <td className="p-3 text-text-secondary">
+                                        {team.runsAllowed}
+                                      </td>
                                       <td className="p-3 text-text-secondary">{team.streakCode}</td>
                                     </tr>
                                   ))}
@@ -597,8 +628,8 @@ export default function MLBPage() {
                                   </div>
                                   {(isComplete || isLive) && (
                                     <div className="text-xs text-text-tertiary mt-1">
-                                      H: {game.teams.away.hits}-{game.teams.home.hits} |
-                                      E: {game.teams.away.errors}-{game.teams.home.errors}
+                                      H: {game.teams.away.hits}-{game.teams.home.hits} | E:{' '}
+                                      {game.teams.away.errors}-{game.teams.home.errors}
                                     </div>
                                   )}
                                 </div>
@@ -626,8 +657,6 @@ export default function MLBPage() {
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

@@ -7,14 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Teams', href: '/college-baseball/teams' },
-];
 
 interface Team {
   id: string;
@@ -108,7 +100,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data: any = await response.json();
         setTeam(data.team || data);
       } catch (err) {
         console.error('Error loading team:', err);
@@ -126,7 +118,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (loading) {
     return (
       <>
-        <Navbar items={navItems} />
         <main className="min-h-screen pt-24">
           <Container>
             <div className="text-center py-16">
@@ -135,7 +126,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </div>
           </Container>
         </main>
-        <Footer />
       </>
     );
   }
@@ -143,7 +133,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (error || !team) {
     return (
       <>
-        <Navbar items={navItems} />
         <main className="min-h-screen pt-24">
           <Container>
             <Card padding="lg" className="text-center">
@@ -161,7 +150,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </Card>
           </Container>
         </main>
-        <Footer />
       </>
     );
   }
@@ -171,9 +159,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero Section */}
         <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-midnight">
           <Container>
@@ -259,8 +245,18 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm flex items-center gap-1"
                         >
                           Official Website
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
                           </svg>
                         </a>
                       )}
@@ -301,9 +297,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       <div className="font-display text-3xl md:text-4xl font-bold text-success">
                         #{team.stats.rpi}
                       </div>
-                      <div className="text-text-tertiary text-xs uppercase tracking-wider">
-                        RPI
-                      </div>
+                      <div className="text-text-tertiary text-xs uppercase tracking-wider">RPI</div>
                     </div>
                   </div>
                 )}
@@ -313,7 +307,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
 
         {/* Tabs Navigation */}
-        <Section padding="none" className="bg-charcoal border-b border-border-subtle sticky top-16 z-30">
+        <Section
+          padding="none"
+          className="bg-charcoal border-b border-border-subtle sticky top-16 z-30"
+        >
           <Container>
             <div className="flex gap-1">
               {(['overview', 'roster', 'schedule'] as const).map((tab) => (
@@ -551,15 +548,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>Team data sourced from official NCAA statistics.</p>
               <p className="mt-1">
-                Last updated:{' '}
-                {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

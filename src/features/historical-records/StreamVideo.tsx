@@ -1,7 +1,7 @@
 /**
  * BSI Stream Video Components
  * Cloudflare Stream integration for BlazeSportsIntel.com
- * 
+ *
  * Brand Colors:
  * - Burnt Orange: #BF5700
  * - Texas Soil: #8B4513

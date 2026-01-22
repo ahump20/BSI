@@ -16,7 +16,7 @@ const COLORS = {
   midnight: colors.background.midnight,
   ember: colors.brand.ember,
   mustard: '#FFD700',
-  ketchup: colors.sports.cardinals,
+  ketchup: '#C41E3A',
   grass: '#228B22',
   sky: '#87CEEB',
   dirt: '#8B7355',
@@ -36,10 +36,10 @@ class SeededRandom {
 
   // Mulberry32 algorithm - fast, good distribution
   next(): number {
-    let t = this.seed += 0x6D2B79F5;
-    t = Math.imul(t ^ t >>> 15, t | 1);
-    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    let t = (this.seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   }
 
   // Get random int in range [min, max]
@@ -60,7 +60,7 @@ const getDailySeed = (): number => {
   let hash = 0;
   for (let i = 0; i < dateString.length; i++) {
     const char = dateString.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return Math.abs(hash);
@@ -68,7 +68,11 @@ const getDailySeed = (): number => {
 
 // Get today's date string for display
 const getDailyDateString = (): string => {
-  return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 };
 
 // Daily challenge storage key
@@ -422,59 +426,338 @@ const DEFAULT_PROGRESS: PlayerProgress = {
 
 const ACHIEVEMENTS: Achievement[] = [
   // Hot Dog Dash achievements
-  { id: 'hotdog-rookie', name: 'Pup Start', description: 'Score 100+ in Hot Dog Dash', icon: '🌭', game: 'hotdog', requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 100 },
-  { id: 'hotdog-pro', name: 'Hot Dog Hero', description: 'Score 200+ in Hot Dog Dash', icon: '🏆', game: 'hotdog', requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 200 },
-  { id: 'hotdog-master', name: 'Weiner Champion', description: 'Score 400+ in Hot Dog Dash', icon: '👑', game: 'hotdog', requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 400 },
-  { id: 'hotdog-combo5', name: 'Combo Starter', description: 'Get a 5× combo', icon: '🔥', game: 'hotdog', requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 5 },
-  { id: 'hotdog-combo10', name: 'Combo Master', description: 'Get a 10× combo', icon: '⚡', game: 'hotdog', requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 10 },
-  { id: 'hotdog-combo15', name: 'Combo Legend', description: 'Get a 15× combo', icon: '🌟', game: 'hotdog', requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 15 },
-  { id: 'hotdog-golden5', name: 'Gold Rush', description: 'Catch 5 golden hot dogs in one game', icon: '✨', game: 'hotdog', requirement: (s) => 'goldenCatches' in s && (s as HotDogStats).goldenCatches >= 5 },
+  {
+    id: 'hotdog-rookie',
+    name: 'Pup Start',
+    description: 'Score 100+ in Hot Dog Dash',
+    icon: '🌭',
+    game: 'hotdog',
+    requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 100,
+  },
+  {
+    id: 'hotdog-pro',
+    name: 'Hot Dog Hero',
+    description: 'Score 200+ in Hot Dog Dash',
+    icon: '🏆',
+    game: 'hotdog',
+    requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 200,
+  },
+  {
+    id: 'hotdog-master',
+    name: 'Weiner Champion',
+    description: 'Score 400+ in Hot Dog Dash',
+    icon: '👑',
+    game: 'hotdog',
+    requirement: (s) => 'finalScore' in s && 'totalCatches' in s && s.finalScore >= 400,
+  },
+  {
+    id: 'hotdog-combo5',
+    name: 'Combo Starter',
+    description: 'Get a 5× combo',
+    icon: '🔥',
+    game: 'hotdog',
+    requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 5,
+  },
+  {
+    id: 'hotdog-combo10',
+    name: 'Combo Master',
+    description: 'Get a 10× combo',
+    icon: '⚡',
+    game: 'hotdog',
+    requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 10,
+  },
+  {
+    id: 'hotdog-combo15',
+    name: 'Combo Legend',
+    description: 'Get a 15× combo',
+    icon: '🌟',
+    game: 'hotdog',
+    requirement: (s) => 'maxCombo' in s && (s as HotDogStats).maxCombo >= 15,
+  },
+  {
+    id: 'hotdog-golden5',
+    name: 'Gold Rush',
+    description: 'Catch 5 golden hot dogs in one game',
+    icon: '✨',
+    game: 'hotdog',
+    requirement: (s) => 'goldenCatches' in s && (s as HotDogStats).goldenCatches >= 5,
+  },
 
   // Sandlot Slugger achievements
-  { id: 'slugger-rookie', name: 'Rookie Slugger', description: 'Score 500+ in Sandlot Slugger', icon: '⚾', game: 'slugger', requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 500 },
-  { id: 'slugger-pro', name: 'Power Hitter', description: 'Score 1000+ in Sandlot Slugger', icon: '💪', game: 'slugger', requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 1000 },
-  { id: 'slugger-master', name: 'Sultan of Swat', description: 'Score 2000+ in Sandlot Slugger', icon: '👑', game: 'slugger', requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 2000 },
-  { id: 'slugger-hr3', name: 'Three True Outcomes', description: 'Hit 3 home runs in one game', icon: '🏠', game: 'slugger', requirement: (s) => 'homeRuns' in s && (s as SluggerStats).homeRuns >= 3 },
-  { id: 'slugger-hr5', name: 'Homer Happy', description: 'Hit 5 home runs in one game', icon: '🔥', game: 'slugger', requirement: (s) => 'homeRuns' in s && (s as SluggerStats).homeRuns >= 5 },
-  { id: 'slugger-perfect', name: 'Perfect Contact', description: 'Hit 10 times without striking out', icon: '🎯', game: 'slugger', requirement: (s) => 'hits' in s && 'strikeouts' in s && (s as SluggerStats).hits >= 10 && (s as SluggerStats).strikeouts === 0 },
+  {
+    id: 'slugger-rookie',
+    name: 'Rookie Slugger',
+    description: 'Score 500+ in Sandlot Slugger',
+    icon: '⚾',
+    game: 'slugger',
+    requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 500,
+  },
+  {
+    id: 'slugger-pro',
+    name: 'Power Hitter',
+    description: 'Score 1000+ in Sandlot Slugger',
+    icon: '💪',
+    game: 'slugger',
+    requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 1000,
+  },
+  {
+    id: 'slugger-master',
+    name: 'Sultan of Swat',
+    description: 'Score 2000+ in Sandlot Slugger',
+    icon: '👑',
+    game: 'slugger',
+    requirement: (s) => 'finalScore' in s && 'hits' in s && s.finalScore >= 2000,
+  },
+  {
+    id: 'slugger-hr3',
+    name: 'Three True Outcomes',
+    description: 'Hit 3 home runs in one game',
+    icon: '🏠',
+    game: 'slugger',
+    requirement: (s) => 'homeRuns' in s && (s as SluggerStats).homeRuns >= 3,
+  },
+  {
+    id: 'slugger-hr5',
+    name: 'Homer Happy',
+    description: 'Hit 5 home runs in one game',
+    icon: '🔥',
+    game: 'slugger',
+    requirement: (s) => 'homeRuns' in s && (s as SluggerStats).homeRuns >= 5,
+  },
+  {
+    id: 'slugger-perfect',
+    name: 'Perfect Contact',
+    description: 'Hit 10 times without striking out',
+    icon: '🎯',
+    game: 'slugger',
+    requirement: (s) =>
+      'hits' in s &&
+      'strikeouts' in s &&
+      (s as SluggerStats).hits >= 10 &&
+      (s as SluggerStats).strikeouts === 0,
+  },
 
   // Gridiron Blitz achievements
-  { id: 'football-rookie', name: 'Rookie QB', description: 'Score 14+ points in a game', icon: '🏈', game: 'football', requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 14 },
-  { id: 'football-pro', name: 'All-Pro', description: 'Score 28+ points in a game', icon: '🏆', game: 'football', requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 28 },
-  { id: 'football-master', name: 'MVP', description: 'Score 42+ points in a game', icon: '👑', game: 'football', requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 42 },
-  { id: 'football-blowout', name: 'Blowout', description: 'Win by 21+ points', icon: '💥', game: 'football', requirement: (s) => 'finalScore' in s && 'opponentScore' in s && (s as FootballStats).finalScore - (s as FootballStats).opponentScore >= 21 },
-  { id: 'football-shutout', name: 'Shutout', description: 'Win without allowing any points', icon: '🛡️', game: 'football', requirement: (s) => 'opponentScore' in s && (s as FootballStats).opponentScore === 0 && (s as FootballStats).finalScore > 0 },
-  { id: 'football-allteams', name: 'League Champion', description: 'Defeat all 4 teams', icon: '🏅', game: 'football', requirement: (s) => 'teamsDefeated' in s && (s as PlayerProgress).teamsDefeated.length >= 4 },
+  {
+    id: 'football-rookie',
+    name: 'Rookie QB',
+    description: 'Score 14+ points in a game',
+    icon: '🏈',
+    game: 'football',
+    requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 14,
+  },
+  {
+    id: 'football-pro',
+    name: 'All-Pro',
+    description: 'Score 28+ points in a game',
+    icon: '🏆',
+    game: 'football',
+    requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 28,
+  },
+  {
+    id: 'football-master',
+    name: 'MVP',
+    description: 'Score 42+ points in a game',
+    icon: '👑',
+    game: 'football',
+    requirement: (s) => 'finalScore' in s && 'touchdowns' in s && s.finalScore >= 42,
+  },
+  {
+    id: 'football-blowout',
+    name: 'Blowout',
+    description: 'Win by 21+ points',
+    icon: '💥',
+    game: 'football',
+    requirement: (s) =>
+      'finalScore' in s &&
+      'opponentScore' in s &&
+      (s as FootballStats).finalScore - (s as FootballStats).opponentScore >= 21,
+  },
+  {
+    id: 'football-shutout',
+    name: 'Shutout',
+    description: 'Win without allowing any points',
+    icon: '🛡️',
+    game: 'football',
+    requirement: (s) =>
+      'opponentScore' in s &&
+      (s as FootballStats).opponentScore === 0 &&
+      (s as FootballStats).finalScore > 0,
+  },
+  {
+    id: 'football-allteams',
+    name: 'League Champion',
+    description: 'Defeat all 4 teams',
+    icon: '🏅',
+    game: 'football',
+    requirement: (s) => 'teamsDefeated' in s && (s as PlayerProgress).teamsDefeated.length >= 4,
+  },
 
   // Global achievements
-  { id: 'global-dedicated', name: 'Arcade Regular', description: 'Play 10 total games', icon: '🎮', game: 'global', requirement: (s) => 'gamesPlayed' in s && Object.values((s as PlayerProgress).gamesPlayed).reduce((a, b) => a + b, 0) >= 10 },
-  { id: 'global-master', name: 'Arcade Master', description: 'Play 50 total games', icon: '🌟', game: 'global', requirement: (s) => 'gamesPlayed' in s && Object.values((s as PlayerProgress).gamesPlayed).reduce((a, b) => a + b, 0) >= 50 },
-  { id: 'global-streak3', name: 'Hot Streak', description: 'Play 3 days in a row', icon: '🔥', game: 'global', requirement: (s) => 'currentStreak' in s && (s as PlayerProgress).currentStreak >= 3 },
-  { id: 'global-streak7', name: 'Week Warrior', description: 'Play 7 days in a row', icon: '💪', game: 'global', requirement: (s) => 'currentStreak' in s && (s as PlayerProgress).currentStreak >= 7 },
-  { id: 'global-daily1', name: 'Daily Champion', description: 'Complete all 3 daily challenges', icon: '📅', game: 'global', requirement: (s) => 'dailyChallengesCompleted' in s && (s as PlayerProgress).dailyChallengesCompleted >= 1 },
-  { id: 'global-daily5', name: 'Daily Devotee', description: 'Complete all daily challenges 5 times', icon: '🗓️', game: 'global', requirement: (s) => 'dailyChallengesCompleted' in s && (s as PlayerProgress).dailyChallengesCompleted >= 5 },
+  {
+    id: 'global-dedicated',
+    name: 'Arcade Regular',
+    description: 'Play 10 total games',
+    icon: '🎮',
+    game: 'global',
+    requirement: (s) =>
+      'gamesPlayed' in s &&
+      Object.values((s as PlayerProgress).gamesPlayed).reduce((a, b) => a + b, 0) >= 10,
+  },
+  {
+    id: 'global-master',
+    name: 'Arcade Master',
+    description: 'Play 50 total games',
+    icon: '🌟',
+    game: 'global',
+    requirement: (s) =>
+      'gamesPlayed' in s &&
+      Object.values((s as PlayerProgress).gamesPlayed).reduce((a, b) => a + b, 0) >= 50,
+  },
+  {
+    id: 'global-streak3',
+    name: 'Hot Streak',
+    description: 'Play 3 days in a row',
+    icon: '🔥',
+    game: 'global',
+    requirement: (s) => 'currentStreak' in s && (s as PlayerProgress).currentStreak >= 3,
+  },
+  {
+    id: 'global-streak7',
+    name: 'Week Warrior',
+    description: 'Play 7 days in a row',
+    icon: '💪',
+    game: 'global',
+    requirement: (s) => 'currentStreak' in s && (s as PlayerProgress).currentStreak >= 7,
+  },
+  {
+    id: 'global-daily1',
+    name: 'Daily Champion',
+    description: 'Complete all 3 daily challenges',
+    icon: '📅',
+    game: 'global',
+    requirement: (s) =>
+      'dailyChallengesCompleted' in s && (s as PlayerProgress).dailyChallengesCompleted >= 1,
+  },
+  {
+    id: 'global-daily5',
+    name: 'Daily Devotee',
+    description: 'Complete all daily challenges 5 times',
+    icon: '🗓️',
+    game: 'global',
+    requirement: (s) =>
+      'dailyChallengesCompleted' in s && (s as PlayerProgress).dailyChallengesCompleted >= 5,
+  },
 ];
 
 const COSMETICS: Cosmetic[] = [
   // Hot Dog Dash skins
-  { id: 'default-dog', name: 'Blaze', type: 'skin', game: 'hotdog', emoji: '🐕', unlockRequirement: 'default' },
-  { id: 'corgi-dog', name: 'Corgi', type: 'skin', game: 'hotdog', emoji: '🐶', unlockRequirement: 'hotdog-pro' },
-  { id: 'shiba-dog', name: 'Shiba', type: 'skin', game: 'hotdog', emoji: '🦊', unlockRequirement: 'hotdog-master' },
-  { id: 'dachshund-dog', name: 'Dachshund', type: 'skin', game: 'hotdog', emoji: '🌭', unlockRequirement: 'hotdog-combo15' },
+  {
+    id: 'default-dog',
+    name: 'Blaze',
+    type: 'skin',
+    game: 'hotdog',
+    emoji: '🐕',
+    unlockRequirement: 'default',
+  },
+  {
+    id: 'corgi-dog',
+    name: 'Corgi',
+    type: 'skin',
+    game: 'hotdog',
+    emoji: '🐶',
+    unlockRequirement: 'hotdog-pro',
+  },
+  {
+    id: 'shiba-dog',
+    name: 'Shiba',
+    type: 'skin',
+    game: 'hotdog',
+    emoji: '🦊',
+    unlockRequirement: 'hotdog-master',
+  },
+  {
+    id: 'dachshund-dog',
+    name: 'Dachshund',
+    type: 'skin',
+    game: 'hotdog',
+    emoji: '🌭',
+    unlockRequirement: 'hotdog-combo15',
+  },
   // Hot Dog Dash trails
-  { id: 'golden-trail', name: 'Golden Trail', type: 'trail', game: 'hotdog', color: '#FFD700', unlockRequirement: 'hotdog-combo10' },
-  { id: 'rainbow-trail', name: 'Rainbow Trail', type: 'trail', game: 'hotdog', color: 'rainbow', unlockRequirement: 'hotdog-golden5' },
+  {
+    id: 'golden-trail',
+    name: 'Golden Trail',
+    type: 'trail',
+    game: 'hotdog',
+    color: '#FFD700',
+    unlockRequirement: 'hotdog-combo10',
+  },
+  {
+    id: 'rainbow-trail',
+    name: 'Rainbow Trail',
+    type: 'trail',
+    game: 'hotdog',
+    color: 'rainbow',
+    unlockRequirement: 'hotdog-golden5',
+  },
 
   // Sandlot Slugger cosmetics
-  { id: 'default-bat', name: 'Classic Bat', type: 'skin', game: 'slugger', emoji: '🏏', unlockRequirement: 'default' },
-  { id: 'gold-bat', name: 'Gold Bat', type: 'skin', game: 'slugger', emoji: '✨', unlockRequirement: 'slugger-pro' },
-  { id: 'night-stadium', name: 'Night Game', type: 'background', game: 'slugger', unlockRequirement: 'slugger-hr5' },
-  { id: 'fireworks-hit', name: 'Fireworks', type: 'effect', game: 'slugger', unlockRequirement: 'slugger-master' },
+  {
+    id: 'default-bat',
+    name: 'Classic Bat',
+    type: 'skin',
+    game: 'slugger',
+    emoji: '🏏',
+    unlockRequirement: 'default',
+  },
+  {
+    id: 'gold-bat',
+    name: 'Gold Bat',
+    type: 'skin',
+    game: 'slugger',
+    emoji: '✨',
+    unlockRequirement: 'slugger-pro',
+  },
+  {
+    id: 'night-stadium',
+    name: 'Night Game',
+    type: 'background',
+    game: 'slugger',
+    unlockRequirement: 'slugger-hr5',
+  },
+  {
+    id: 'fireworks-hit',
+    name: 'Fireworks',
+    type: 'effect',
+    game: 'slugger',
+    unlockRequirement: 'slugger-master',
+  },
 
   // Gridiron Blitz cosmetics
-  { id: 'default-team', name: 'Blaze Hounds', type: 'skin', game: 'football', emoji: '🐕', unlockRequirement: 'default' },
-  { id: 'victory-dance', name: 'Victory Dance', type: 'effect', game: 'football', unlockRequirement: 'football-blowout' },
-  { id: 'allstar-team', name: 'All-Stars', type: 'skin', game: 'football', emoji: '⭐', unlockRequirement: 'football-allteams' },
+  {
+    id: 'default-team',
+    name: 'Blaze Hounds',
+    type: 'skin',
+    game: 'football',
+    emoji: '🐕',
+    unlockRequirement: 'default',
+  },
+  {
+    id: 'victory-dance',
+    name: 'Victory Dance',
+    type: 'effect',
+    game: 'football',
+    unlockRequirement: 'football-blowout',
+  },
+  {
+    id: 'allstar-team',
+    name: 'All-Stars',
+    type: 'skin',
+    game: 'football',
+    emoji: '⭐',
+    unlockRequirement: 'football-allteams',
+  },
 ];
 
 // Progression hook for localStorage persistence
@@ -496,14 +779,16 @@ const useProgression = () => {
     }
     // Update streak
     const today = new Date().toISOString().split('T')[0];
-    setProgress(prev => {
+    setProgress((prev) => {
       const lastPlay = prev.lastPlayDate;
       let newStreak = prev.currentStreak;
 
       if (lastPlay) {
         const lastDate = new Date(lastPlay);
         const todayDate = new Date(today);
-        const diffDays = Math.floor((todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.floor(
+          (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         if (diffDays === 1) {
           newStreak = prev.currentStreak + 1;
@@ -524,7 +809,7 @@ const useProgression = () => {
   }, [progress]);
 
   const recordGamePlayed = useCallback((gameId: string, score: number) => {
-    setProgress(prev => {
+    setProgress((prev) => {
       const newGamesPlayed = { ...prev.gamesPlayed, [gameId]: (prev.gamesPlayed[gameId] || 0) + 1 };
       const newHighScores = { ...prev.highScores };
       if (score > (newHighScores[gameId] || 0)) {
@@ -543,19 +828,22 @@ const useProgression = () => {
     const newlyUnlocked: Achievement[] = [];
     const newCosmeticsUnlocked: Cosmetic[] = [];
 
-    setProgress(prev => {
+    setProgress((prev) => {
       const unlockedIds = [...prev.achievements];
       const unlockedCosmeticIds = [...prev.unlockedCosmetics];
 
       // Check game-specific achievements
-      ACHIEVEMENTS.forEach(achievement => {
+      ACHIEVEMENTS.forEach((achievement) => {
         if (!unlockedIds.includes(achievement.id) && achievement.requirement(stats)) {
           unlockedIds.push(achievement.id);
           newlyUnlocked.push(achievement);
 
           // Check if this achievement unlocks a cosmetic
-          COSMETICS.forEach(cosmetic => {
-            if (cosmetic.unlockRequirement === achievement.id && !unlockedCosmeticIds.includes(cosmetic.id)) {
+          COSMETICS.forEach((cosmetic) => {
+            if (
+              cosmetic.unlockRequirement === achievement.id &&
+              !unlockedCosmeticIds.includes(cosmetic.id)
+            ) {
               unlockedCosmeticIds.push(cosmetic.id);
               newCosmeticsUnlocked.push(cosmetic);
             }
@@ -564,7 +852,7 @@ const useProgression = () => {
       });
 
       // Check global achievements against progress
-      ACHIEVEMENTS.filter(a => a.game === 'global').forEach(achievement => {
+      ACHIEVEMENTS.filter((a) => a.game === 'global').forEach((achievement) => {
         if (!unlockedIds.includes(achievement.id) && achievement.requirement(prev)) {
           unlockedIds.push(achievement.id);
           newlyUnlocked.push(achievement);
@@ -583,14 +871,14 @@ const useProgression = () => {
   }, []);
 
   const recordTeamDefeated = useCallback((teamName: string) => {
-    setProgress(prev => {
+    setProgress((prev) => {
       if (prev.teamsDefeated.includes(teamName)) return prev;
       return { ...prev, teamsDefeated: [...prev.teamsDefeated, teamName] };
     });
   }, []);
 
   const selectCosmetic = useCallback((game: string, cosmeticId: string) => {
-    setProgress(prev => ({
+    setProgress((prev) => ({
       ...prev,
       selectedCosmetics: { ...prev.selectedCosmetics, [game]: cosmeticId },
     }));
@@ -601,24 +889,33 @@ const useProgression = () => {
     setNewCosmetics([]);
   }, []);
 
-  const getUnlockedCosmetics = useCallback((game: 'hotdog' | 'slugger' | 'football') => {
-    return COSMETICS.filter(c => c.game === game && progress.unlockedCosmetics.includes(c.id));
-  }, [progress.unlockedCosmetics]);
+  const getUnlockedCosmetics = useCallback(
+    (game: 'hotdog' | 'slugger' | 'football') => {
+      return COSMETICS.filter((c) => c.game === game && progress.unlockedCosmetics.includes(c.id));
+    },
+    [progress.unlockedCosmetics]
+  );
 
-  const getSelectedCosmetic = useCallback((game: 'hotdog' | 'slugger' | 'football') => {
-    const selectedId = progress.selectedCosmetics[game];
-    return COSMETICS.find(c => c.id === selectedId) || COSMETICS.find(c => c.game === game && c.unlockRequirement === 'default');
-  }, [progress.selectedCosmetics]);
+  const getSelectedCosmetic = useCallback(
+    (game: 'hotdog' | 'slugger' | 'football') => {
+      const selectedId = progress.selectedCosmetics[game];
+      return (
+        COSMETICS.find((c) => c.id === selectedId) ||
+        COSMETICS.find((c) => c.game === game && c.unlockRequirement === 'default')
+      );
+    },
+    [progress.selectedCosmetics]
+  );
 
   const recordDailyComplete = useCallback(() => {
-    setProgress(prev => {
+    setProgress((prev) => {
       const updated = { ...prev, dailyChallengesCompleted: prev.dailyChallengesCompleted + 1 };
 
       // Check daily challenge achievements
       const newlyUnlocked: Achievement[] = [];
       const unlockedIds = [...updated.achievements];
 
-      ACHIEVEMENTS.filter(a => a.id.startsWith('global-daily')).forEach(achievement => {
+      ACHIEVEMENTS.filter((a) => a.id.startsWith('global-daily')).forEach((achievement) => {
         if (!unlockedIds.includes(achievement.id) && achievement.requirement(updated)) {
           unlockedIds.push(achievement.id);
           newlyUnlocked.push(achievement);
@@ -699,16 +996,31 @@ const FOOTBALL_DIFFICULTIES: Record<DifficultyLevel, FootballDifficulty> = {
 
 // Difficulty selector component
 interface DifficultySelectorProps {
-  selected: DifficultyLevel;
+  selected?: DifficultyLevel;
   onSelect: (d: DifficultyLevel) => void;
   difficulties: Record<DifficultyLevel, { name: string; color: string }>;
+  game?: string;
+  difficulty?: DifficultyLevel;
 }
 
-const DifficultySelector: React.FC<DifficultySelectorProps> = ({ selected, onSelect, difficulties }) => (
-  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
-    {(Object.keys(difficulties) as DifficultyLevel[]).map(level => {
+const DifficultySelector: React.FC<DifficultySelectorProps> = ({
+  selected = 'normal',
+  difficulty,
+  onSelect,
+  difficulties,
+}) => (
+  <div
+    style={{
+      display: 'flex',
+      gap: '8px',
+      justifyContent: 'center',
+      marginBottom: '16px',
+      flexWrap: 'wrap',
+    }}
+  >
+    {(Object.keys(difficulties) as DifficultyLevel[]).map((level) => {
       const diff = difficulties[level];
-      const isSelected = selected === level;
+      const isSelected = (difficulty ?? selected) === level;
       return (
         <button
           key={level}
@@ -795,12 +1107,7 @@ const createParticleBurst = (
   return Array.from({ length: count }, () => createParticle(x, y, type, velocityScale));
 };
 
-const createFloatingText = (
-  x: number,
-  y: number,
-  text: string,
-  color: string
-): FloatingText => ({
+const createFloatingText = (x: number, y: number, text: string, color: string): FloatingText => ({
   id: ++floatingTextIdCounter,
   x,
   y,
@@ -812,7 +1119,7 @@ const createFloatingText = (
 
 const updateParticles = (particles: Particle[], deltaTime = 1): Particle[] => {
   return particles
-    .map(p => ({
+    .map((p) => ({
       ...p,
       x: p.x + p.vx * deltaTime,
       y: p.y + p.vy * deltaTime,
@@ -821,18 +1128,18 @@ const updateParticles = (particles: Particle[], deltaTime = 1): Particle[] => {
       rotation: p.rotation + p.rotationSpeed,
       life: p.life - 0.02 * deltaTime,
     }))
-    .filter(p => p.life > 0)
+    .filter((p) => p.life > 0)
     .slice(-30); // Performance cap
 };
 
 const updateFloatingTexts = (texts: FloatingText[], deltaTime = 1): FloatingText[] => {
   return texts
-    .map(t => ({
+    .map((t) => ({
       ...t,
       y: t.y - 1.5 * deltaTime, // Float upward
       life: t.life - 0.025 * deltaTime,
     }))
-    .filter(t => t.life > 0)
+    .filter((t) => t.life > 0)
     .slice(-10); // Performance cap
 };
 
@@ -852,7 +1159,11 @@ const calculateScreenShake = (shake: ScreenShake | null): { x: number; y: number
   };
 };
 
-const springInterp = (current: number, target: number, velocity: number): { value: number; velocity: number } => {
+const springInterp = (
+  current: number,
+  target: number,
+  velocity: number
+): { value: number; velocity: number } => {
   const force = (target - current) * PHYSICS.springStiffness;
   const newVelocity = (velocity + force) * PHYSICS.springDamping;
   return {
@@ -900,101 +1211,101 @@ const useGameAudio = () => {
   }, []);
 
   // Basic tone generator
-  const playTone = useCallback((
-    freq: number,
-    duration: number,
-    type: OscillatorType = 'sine',
-    volume = 0.3
-  ) => {
-    if (isMutedRef.current) return;
-    const ctx = getContext();
-    if (!ctx) return;
+  const playTone = useCallback(
+    (freq: number, duration: number, type: OscillatorType = 'sine', volume = 0.3) => {
+      if (isMutedRef.current) return;
+      const ctx = getContext();
+      if (!ctx) return;
 
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  }, [getContext]);
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    },
+    [getContext]
+  );
 
   // Frequency sweep (for powerups, celebrations)
-  const playSweep = useCallback((
-    startFreq: number,
-    endFreq: number,
-    duration: number,
-    type: OscillatorType = 'sine',
-    volume = 0.3
-  ) => {
-    if (isMutedRef.current) return;
-    const ctx = getContext();
-    if (!ctx) return;
+  const playSweep = useCallback(
+    (
+      startFreq: number,
+      endFreq: number,
+      duration: number,
+      type: OscillatorType = 'sine',
+      volume = 0.3
+    ) => {
+      if (isMutedRef.current) return;
+      const ctx = getContext();
+      if (!ctx) return;
 
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = type;
-    osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + duration);
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-    osc.start();
-    osc.stop(ctx.currentTime + duration);
-  }, [getContext]);
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(startFreq, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(endFreq, ctx.currentTime + duration);
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    },
+    [getContext]
+  );
 
   // Chord (multiple tones for celebrations)
-  const playChord = useCallback((
-    frequencies: number[],
-    duration: number,
-    type: OscillatorType = 'sine',
-    volume = 0.2
-  ) => {
-    if (isMutedRef.current) return;
-    frequencies.forEach(freq => playTone(freq, duration, type, volume / frequencies.length));
-  }, [playTone]);
+  const playChord = useCallback(
+    (frequencies: number[], duration: number, type: OscillatorType = 'sine', volume = 0.2) => {
+      if (isMutedRef.current) return;
+      frequencies.forEach((freq) => playTone(freq, duration, type, volume / frequencies.length));
+    },
+    [playTone]
+  );
 
   // White noise burst (for hits, whooshes)
-  const playNoise = useCallback((duration: number, volume = 0.2) => {
-    if (isMutedRef.current) return;
-    const ctx = getContext();
-    if (!ctx) return;
+  const playNoise = useCallback(
+    (duration: number, volume = 0.2) => {
+      if (isMutedRef.current) return;
+      const ctx = getContext();
+      if (!ctx) return;
 
-    const bufferSize = ctx.sampleRate * duration;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize); // Fade out
-    }
+      const bufferSize = ctx.sampleRate * duration;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize); // Fade out
+      }
 
-    const source = ctx.createBufferSource();
-    const gain = ctx.createGain();
-    source.buffer = buffer;
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(volume, ctx.currentTime);
-    source.start();
-  }, [getContext]);
+      const source = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      source.buffer = buffer;
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      source.start();
+    },
+    [getContext]
+  );
 
   // Beep sequence (for countdowns)
-  const playBeepSequence = useCallback((
-    count: number,
-    interval: number,
-    freq: number,
-    finalFreq?: number
-  ) => {
-    if (isMutedRef.current) return;
-    for (let i = 0; i < count; i++) {
-      setTimeout(() => {
-        const isLast = i === count - 1;
-        playTone(isLast && finalFreq ? finalFreq : freq, 0.1, 'square', 0.25);
-      }, i * interval);
-    }
-  }, [playTone]);
+  const playBeepSequence = useCallback(
+    (count: number, interval: number, freq: number, finalFreq?: number) => {
+      if (isMutedRef.current) return;
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const isLast = i === count - 1;
+          playTone(isLast && finalFreq ? finalFreq : freq, 0.1, 'square', 0.25);
+        }, i * interval);
+      }
+    },
+    [playTone]
+  );
 
   // ===== GAME-SPECIFIC SOUND EFFECTS =====
 
@@ -1055,10 +1366,10 @@ const useGameAudio = () => {
 const ParticleRenderer: React.FC<{ particles: Particle[]; offsetX?: number; offsetY?: number }> = ({
   particles,
   offsetX = 0,
-  offsetY = 0
+  offsetY = 0,
 }) => (
   <>
-    {particles.map(p => (
+    {particles.map((p) => (
       <div
         key={p.id}
         style={{
@@ -1078,13 +1389,13 @@ const ParticleRenderer: React.FC<{ particles: Particle[]; offsetX?: number; offs
   </>
 );
 
-const FloatingTextRenderer: React.FC<{ texts: FloatingText[]; offsetX?: number; offsetY?: number }> = ({
-  texts,
-  offsetX = 0,
-  offsetY = 0
-}) => (
+const FloatingTextRenderer: React.FC<{
+  texts: FloatingText[];
+  offsetX?: number;
+  offsetY?: number;
+}> = ({ texts, offsetX = 0, offsetY = 0 }) => (
   <>
-    {texts.map(t => (
+    {texts.map((t) => (
       <div
         key={t.id}
         style={{
@@ -1112,32 +1423,71 @@ const FloatingTextRenderer: React.FC<{ texts: FloatingText[]; offsetX?: number; 
 // SHARED COMPONENTS
 // ============================================================================
 
-const ArcadeHeader: React.FC<ArcadeHeaderProps> = ({ title, onBack, onClose, showBack = false }) => (
-  <div style={{
-    background: `linear-gradient(180deg, ${COLORS.midnight} 0%, rgba(13,13,13,0.95) 100%)`,
-    padding: '12px 20px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: `3px solid ${COLORS.burntOrange}`,
-    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-  }}>
+const ArcadeHeader: React.FC<ArcadeHeaderProps> = ({
+  title,
+  onBack,
+  onClose,
+  showBack = false,
+}) => (
+  <div
+    style={{
+      background: `linear-gradient(180deg, ${COLORS.midnight} 0%, rgba(13,13,13,0.95) 100%)`,
+      padding: '12px 20px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottom: `3px solid ${COLORS.burntOrange}`,
+      boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+    }}
+  >
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {showBack && onBack && (
-        <button onClick={onBack} style={{
-          background: 'rgba(255,255,255,0.1)', border: 'none', color: COLORS.burntOrange,
-          fontSize: '18px', cursor: 'pointer', width: '32px', height: '32px', borderRadius: '8px',
-        }}>←</button>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none',
+            color: COLORS.burntOrange,
+            fontSize: '18px',
+            cursor: 'pointer',
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+          }}
+        >
+          ←
+        </button>
       )}
-      <div style={{ color: COLORS.burntOrange, fontWeight: 'bold', fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '24px' }}>🕹️</span>{title}
+      <div
+        style={{
+          color: COLORS.burntOrange,
+          fontWeight: 'bold',
+          fontSize: '18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        }}
+      >
+        <span style={{ fontSize: '24px' }}>🕹️</span>
+        {title}
       </div>
     </div>
     {onClose && (
-      <button onClick={onClose} style={{
-        background: 'rgba(255,255,255,0.1)', border: 'none', color: '#888',
-        fontSize: '20px', cursor: 'pointer', width: '32px', height: '32px', borderRadius: '8px',
-      }}>×</button>
+      <button
+        onClick={onClose}
+        style={{
+          background: 'rgba(255,255,255,0.1)',
+          border: 'none',
+          color: '#888',
+          fontSize: '20px',
+          cursor: 'pointer',
+          width: '32px',
+          height: '32px',
+          borderRadius: '8px',
+        }}
+      >
+        ×
+      </button>
     )}
   </div>
 );
@@ -1148,17 +1498,37 @@ const GameCard: React.FC<GameCardProps> = ({ game, highScore, onSelect }) => (
     style={{
       background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
       border: `2px solid ${COLORS.texasSoil}`,
-      borderRadius: '16px', padding: '20px', cursor: 'pointer',
-      textAlign: 'center', transition: 'all 0.2s ease', width: '100%', maxWidth: '280px',
+      borderRadius: '16px',
+      padding: '20px',
+      cursor: 'pointer',
+      textAlign: 'center',
+      transition: 'all 0.2s ease',
+      width: '100%',
+      maxWidth: '280px',
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.burntOrange; e.currentTarget.style.transform = 'scale(1.03)'; }}
-    onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.texasSoil; e.currentTarget.style.transform = 'scale(1)'; }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.borderColor = COLORS.burntOrange;
+      e.currentTarget.style.transform = 'scale(1.03)';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.borderColor = COLORS.texasSoil;
+      e.currentTarget.style.transform = 'scale(1)';
+    }}
   >
     <div style={{ fontSize: '48px', marginBottom: '12px' }}>{game.icon}</div>
-    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', marginBottom: '6px' }}>{game.title}</div>
+    <div style={{ color: 'white', fontSize: '18px', fontWeight: 'bold', marginBottom: '6px' }}>
+      {game.title}
+    </div>
     <div style={{ color: '#888', fontSize: '13px', marginBottom: '12px' }}>{game.description}</div>
     {highScore > 0 && (
-      <div style={{ background: 'rgba(255,215,0,0.1)', borderRadius: '8px', padding: '6px 12px', display: 'inline-block' }}>
+      <div
+        style={{
+          background: 'rgba(255,215,0,0.1)',
+          borderRadius: '8px',
+          padding: '6px 12px',
+          display: 'inline-block',
+        }}
+      >
         <span style={{ color: COLORS.mustard, fontSize: '12px' }}>🏆 Best: {highScore}</span>
       </div>
     )}
@@ -1166,11 +1536,21 @@ const GameCard: React.FC<GameCardProps> = ({ game, highScore, onSelect }) => (
 );
 
 const ScoreBar: React.FC<{ items: ScoreBarItem[] }> = ({ items }) => (
-  <div style={{ background: 'rgba(0,0,0,0.7)', padding: '10px 15px', display: 'flex', justifyContent: 'space-around', color: 'white' }}>
+  <div
+    style={{
+      background: 'rgba(0,0,0,0.7)',
+      padding: '10px 15px',
+      display: 'flex',
+      justifyContent: 'space-around',
+      color: 'white',
+    }}
+  >
     {items.map((item, i) => (
       <div key={i} style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '10px', color: '#888' }}>{item.label}</div>
-        <div style={{ fontSize: '20px', fontWeight: 'bold', color: item.color || 'white' }}>{item.value}</div>
+        <div style={{ fontSize: '20px', fontWeight: 'bold', color: item.color || 'white' }}>
+          {item.value}
+        </div>
       </div>
     ))}
   </div>
@@ -1179,21 +1559,47 @@ const ScoreBar: React.FC<{ items: ScoreBarItem[] }> = ({ items }) => (
 const GameOverlay: React.FC<GameOverlayProps> = ({ children, visible }) => {
   if (!visible) return null;
   return (
-    <div style={{
-      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.92)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      color: 'white', padding: '20px', zIndex: 100,
-    }}>{children}</div>
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(0,0,0,0.92)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        padding: '20px',
+        zIndex: 100,
+      }}
+    >
+      {children}
+    </div>
   );
 };
 
-const ActionButton: React.FC<ActionButtonProps> = ({ children, onClick, color = COLORS.burntOrange, small = false }) => (
-  <button onClick={onClick} style={{
-    background: `linear-gradient(180deg, ${color} 0%, ${color}cc 100%)`,
-    color: 'white', border: 'none', padding: small ? '8px 20px' : '14px 44px',
-    fontSize: small ? '14px' : '18px', fontWeight: 'bold',
-    borderRadius: '10px', cursor: 'pointer', boxShadow: `0 4px 20px ${color}66`,
-  }}>{children}</button>
+const ActionButton: React.FC<ActionButtonProps> = ({
+  children,
+  onClick,
+  color = COLORS.burntOrange,
+  small = false,
+}) => (
+  <button
+    onClick={onClick}
+    style={{
+      background: `linear-gradient(180deg, ${color} 0%, ${color}cc 100%)`,
+      color: 'white',
+      border: 'none',
+      padding: small ? '8px 20px' : '14px 44px',
+      fontSize: small ? '14px' : '18px',
+      fontWeight: 'bold',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      boxShadow: `0 4px 20px ${color}66`,
+    }}
+  >
+    {children}
+  </button>
 );
 
 // ============================================================================
@@ -1217,7 +1623,7 @@ const Countdown: React.FC<CountdownProps> = ({ onComplete, sounds }) => {
       setScale(1.5);
       setTimeout(() => setScale(1), 200);
       // Countdown
-      const timer = setTimeout(() => setCount(c => c - 1), 800);
+      const timer = setTimeout(() => setCount((c) => c - 1), 800);
       return () => clearTimeout(timer);
     } else if (count === 0) {
       // GO!
@@ -1230,27 +1636,38 @@ const Countdown: React.FC<CountdownProps> = ({ onComplete, sounds }) => {
   }, [count, sounds, onComplete]);
 
   return (
-    <div style={{
-      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      zIndex: 200,
-    }}>
-      <div style={{
-        fontSize: count === 0 ? '80px' : '120px',
-        fontWeight: 'bold',
-        color: count === 0 ? COLORS.mustard : 'white',
-        textShadow: `0 0 40px ${count === 0 ? COLORS.mustard : COLORS.burntOrange}`,
-        transform: `scale(${scale})`,
-        transition: 'transform 0.2s ease-out',
-      }}>
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(0,0,0,0.85)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 200,
+      }}
+    >
+      <div
+        style={{
+          fontSize: count === 0 ? '80px' : '120px',
+          fontWeight: 'bold',
+          color: count === 0 ? COLORS.mustard : 'white',
+          textShadow: `0 0 40px ${count === 0 ? COLORS.mustard : COLORS.burntOrange}`,
+          transform: `scale(${scale})`,
+          transition: 'transform 0.2s ease-out',
+        }}
+      >
         {count === 0 ? 'GO!' : count}
       </div>
-      <div style={{
-        fontSize: '18px',
-        color: '#888',
-        marginTop: '20px',
-        opacity: count > 0 ? 1 : 0,
-      }}>
+      <div
+        style={{
+          fontSize: '18px',
+          color: '#888',
+          marginTop: '20px',
+          opacity: count > 0 ? 1 : 0,
+        }}
+      >
         Get Ready...
       </div>
     </div>
@@ -1268,7 +1685,12 @@ interface AchievementPopupProps {
   sounds: GameSounds;
 }
 
-const AchievementPopup: React.FC<AchievementPopupProps> = ({ achievements, cosmetics, onClose, sounds }) => {
+const AchievementPopup: React.FC<AchievementPopupProps> = ({
+  achievements,
+  cosmetics,
+  onClose,
+  sounds,
+}) => {
   useEffect(() => {
     // Play achievement sound for each unlocked
     achievements.forEach((_, i) => {
@@ -1279,44 +1701,57 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({ achievements, cosme
   if (achievements.length === 0 && cosmetics.length === 0) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0,0,0,0.85)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      animation: 'fadeIn 0.3s ease-out',
-    }}>
-      <div style={{
-        background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
-        borderRadius: '16px',
-        padding: '24px',
-        maxWidth: '400px',
-        width: '90%',
-        textAlign: 'center',
-        border: `2px solid ${COLORS.mustard}`,
-        animation: 'popIn 0.4s ease-out',
-      }}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.85)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        animation: 'fadeIn 0.3s ease-out',
+      }}
+    >
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
+          borderRadius: '16px',
+          padding: '24px',
+          maxWidth: '400px',
+          width: '90%',
+          textAlign: 'center',
+          border: `2px solid ${COLORS.mustard}`,
+          animation: 'popIn 0.4s ease-out',
+        }}
+      >
         <div style={{ fontSize: '48px', marginBottom: '12px' }}>🏆</div>
         <h2 style={{ color: COLORS.mustard, marginBottom: '16px' }}>
-          {achievements.length === 1 ? 'Achievement Unlocked!' : `${achievements.length} Achievements Unlocked!`}
+          {achievements.length === 1
+            ? 'Achievement Unlocked!'
+            : `${achievements.length} Achievements Unlocked!`}
         </h2>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-          {achievements.map(achievement => (
-            <div key={achievement.id} style={{
-              background: 'rgba(255,255,255,0.05)',
-              borderRadius: '12px',
-              padding: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}
+        >
+          {achievements.map((achievement) => (
+            <div
+              key={achievement.id}
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                borderRadius: '12px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
               <span style={{ fontSize: '32px' }}>{achievement.icon}</span>
               <div style={{ textAlign: 'left' }}>
-                <div style={{ color: 'white', fontWeight: 'bold', fontSize: '16px' }}>{achievement.name}</div>
+                <div style={{ color: 'white', fontWeight: 'bold', fontSize: '16px' }}>
+                  {achievement.name}
+                </div>
                 <div style={{ color: '#888', fontSize: '12px' }}>{achievement.description}</div>
               </div>
             </div>
@@ -1328,16 +1763,27 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({ achievements, cosme
             <div style={{ color: COLORS.ember, fontSize: '14px', marginBottom: '12px' }}>
               New unlocks available!
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-              {cosmetics.map(cosmetic => (
-                <div key={cosmetic.id} style={{
-                  background: 'rgba(255,107,53,0.2)',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '8px',
+                marginBottom: '16px',
+                flexWrap: 'wrap',
+              }}
+            >
+              {cosmetics.map((cosmetic) => (
+                <div
+                  key={cosmetic.id}
+                  style={{
+                    background: 'rgba(255,107,53,0.2)',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
                   {cosmetic.emoji && <span>{cosmetic.emoji}</span>}
                   <span style={{ color: 'white', fontSize: '12px' }}>{cosmetic.name}</span>
                 </div>
@@ -1346,7 +1792,9 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({ achievements, cosme
           </>
         )}
 
-        <ActionButton onClick={onClose} color={COLORS.mustard}>Awesome!</ActionButton>
+        <ActionButton onClick={onClose} color={COLORS.mustard}>
+          Awesome!
+        </ActionButton>
       </div>
 
       <style>{`
@@ -1370,81 +1818,128 @@ const AchievementsDisplay: React.FC<AchievementsDisplayProps> = ({ progress, onC
   const totalCount = ACHIEVEMENTS.length;
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0,0,0,0.9)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: '20px',
-    }}>
-      <div style={{
-        background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
-        borderRadius: '16px',
-        padding: '24px',
-        maxWidth: '500px',
-        width: '100%',
-        maxHeight: '80vh',
-        overflow: 'auto',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.9)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        padding: '20px',
+      }}
+    >
+      <div
+        style={{
+          background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
+          borderRadius: '16px',
+          padding: '24px',
+          maxWidth: '500px',
+          width: '100%',
+          maxHeight: '80vh',
+          overflow: 'auto',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+          }}
+        >
           <h2 style={{ color: COLORS.burntOrange, margin: 0 }}>Achievements</h2>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' }}
-          >×</button>
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'white',
+              fontSize: '24px',
+              cursor: 'pointer',
+            }}
+          >
+            ×
+          </button>
         </div>
 
         <div style={{ marginBottom: '16px', color: '#888', fontSize: '14px' }}>
           {unlockedCount} / {totalCount} unlocked
         </div>
 
-        <div style={{
-          background: 'rgba(255,255,255,0.1)',
-          borderRadius: '8px',
-          height: '8px',
-          marginBottom: '20px',
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            height: '100%',
-            width: `${(unlockedCount / totalCount) * 100}%`,
-            background: `linear-gradient(90deg, ${COLORS.ember}, ${COLORS.mustard})`,
-            transition: 'width 0.5s',
-          }} />
+        <div
+          style={{
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '8px',
+            height: '8px',
+            marginBottom: '20px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: `${(unlockedCount / totalCount) * 100}%`,
+              background: `linear-gradient(90deg, ${COLORS.ember}, ${COLORS.mustard})`,
+              transition: 'width 0.5s',
+            }}
+          />
         </div>
 
-        {['hotdog', 'slugger', 'football', 'global'].map(game => {
-          const gameAchievements = ACHIEVEMENTS.filter(a => a.game === game);
-          const gameName = game === 'hotdog' ? 'Hot Dog Dash' : game === 'slugger' ? 'Sandlot Slugger' : game === 'football' ? 'Gridiron Blitz' : 'Global';
+        {['hotdog', 'slugger', 'football', 'global'].map((game) => {
+          const gameAchievements = ACHIEVEMENTS.filter((a) => a.game === game);
+          const gameName =
+            game === 'hotdog'
+              ? 'Hot Dog Dash'
+              : game === 'slugger'
+                ? 'Sandlot Slugger'
+                : game === 'football'
+                  ? 'Gridiron Blitz'
+                  : 'Global';
           return (
             <div key={game} style={{ marginBottom: '20px' }}>
-              <h3 style={{ color: COLORS.ember, fontSize: '14px', marginBottom: '10px' }}>{gameName}</h3>
+              <h3 style={{ color: COLORS.ember, fontSize: '14px', marginBottom: '10px' }}>
+                {gameName}
+              </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {gameAchievements.map(achievement => {
+                {gameAchievements.map((achievement) => {
                   const isUnlocked = progress.achievements.includes(achievement.id);
                   return (
-                    <div key={achievement.id} style={{
-                      background: isUnlocked ? 'rgba(255,215,0,0.1)' : 'rgba(255,255,255,0.03)',
-                      borderRadius: '8px',
-                      padding: '10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      opacity: isUnlocked ? 1 : 0.5,
-                    }}>
-                      <span style={{ fontSize: '24px', filter: isUnlocked ? 'none' : 'grayscale(1)' }}>
+                    <div
+                      key={achievement.id}
+                      style={{
+                        background: isUnlocked ? 'rgba(255,215,0,0.1)' : 'rgba(255,255,255,0.03)',
+                        borderRadius: '8px',
+                        padding: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        opacity: isUnlocked ? 1 : 0.5,
+                      }}
+                    >
+                      <span
+                        style={{ fontSize: '24px', filter: isUnlocked ? 'none' : 'grayscale(1)' }}
+                      >
                         {achievement.icon}
                       </span>
                       <div>
-                        <div style={{ color: isUnlocked ? 'white' : '#666', fontWeight: 'bold', fontSize: '14px' }}>
+                        <div
+                          style={{
+                            color: isUnlocked ? 'white' : '#666',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
                           {achievement.name}
                         </div>
-                        <div style={{ color: '#666', fontSize: '11px' }}>{achievement.description}</div>
+                        <div style={{ color: '#666', fontSize: '11px' }}>
+                          {achievement.description}
+                        </div>
                       </div>
-                      {isUnlocked && <span style={{ marginLeft: 'auto', color: COLORS.mustard }}>✓</span>}
+                      {isUnlocked && (
+                        <span style={{ marginLeft: 'auto', color: COLORS.mustard }}>✓</span>
+                      )}
                     </div>
                   );
                 })}
@@ -1466,25 +1961,40 @@ interface StatsScreenProps {
   isDailyChallenge?: boolean;
 }
 
-const StatsScreen: React.FC<StatsScreenProps> = ({ gameType, stats, onPlayAgain, onBack, sounds, isDailyChallenge }) => {
+const StatsScreen: React.FC<StatsScreenProps> = ({
+  gameType,
+  stats,
+  onPlayAgain,
+  onBack,
+  sounds,
+  isDailyChallenge,
+}) => {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [copied, setCopied] = useState(false);
 
   const getGameName = () => {
     switch (gameType) {
-      case 'hotdog': return 'Hot Dog Dash';
-      case 'slugger': return 'Sandlot Slugger';
-      case 'football': return 'Gridiron Blitz';
-      default: return 'Blaze Arcade';
+      case 'hotdog':
+        return 'Hot Dog Dash';
+      case 'slugger':
+        return 'Sandlot Slugger';
+      case 'football':
+        return 'Gridiron Blitz';
+      default:
+        return 'Blaze Arcade';
     }
   };
 
   const getGameEmoji = () => {
     switch (gameType) {
-      case 'hotdog': return '🌭';
-      case 'slugger': return '⚾';
-      case 'football': return '🏈';
-      default: return '🎮';
+      case 'hotdog':
+        return '🌭';
+      case 'slugger':
+        return '⚾';
+      case 'football':
+        return '🏈';
+      default:
+        return '🎮';
     }
   };
 
@@ -1558,44 +2068,74 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ gameType, stats, onPlayAgain,
 
   const renderFootballStats = (s: FootballStats) => (
     <>
-      <StatRow label="Final Score" value={`${s.finalScore} - ${s.opponentScore}`} highlight={s.finalScore > s.opponentScore} />
+      <StatRow
+        label="Final Score"
+        value={`${s.finalScore} - ${s.opponentScore}`}
+        highlight={s.finalScore > s.opponentScore}
+      />
       <StatRow label="Touchdowns" value={s.touchdowns} highlight />
       <StatRow label="Field Goals" value={s.fieldGoals} />
       <StatRow label="Big Plays" value={s.bigPlays} highlight={s.bigPlays >= 3} />
-      <StatRow label="Turnovers Forced" value={s.turnoversForced} highlight={s.turnoversForced > 0} />
+      <StatRow
+        label="Turnovers Forced"
+        value={s.turnoversForced}
+        highlight={s.turnoversForced > 0}
+      />
       <StatRow label="Turnovers Lost" value={s.turnoversLost} bad={s.turnoversLost > 0} />
     </>
   );
 
   return (
-    <div style={{
-      position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.95)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      zIndex: 200, padding: '20px',
-    }}>
+    <div
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(0,0,0,0.95)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 200,
+        padding: '20px',
+      }}
+    >
       {stats.isNewHighScore && (
-        <div style={{
-          fontSize: '24px', color: COLORS.mustard, fontWeight: 'bold',
-          textShadow: `0 0 20px ${COLORS.mustard}`, marginBottom: '10px',
-          animation: 'pulse 1s infinite',
-        }}>
+        <div
+          style={{
+            fontSize: '24px',
+            color: COLORS.mustard,
+            fontWeight: 'bold',
+            textShadow: `0 0 20px ${COLORS.mustard}`,
+            marginBottom: '10px',
+            animation: 'pulse 1s infinite',
+          }}
+        >
           🏆 NEW HIGH SCORE! 🏆
         </div>
       )}
       <div style={{ fontSize: '18px', color: '#888', marginBottom: '5px' }}>FINAL SCORE</div>
-      <div style={{
-        fontSize: '64px', fontWeight: 'bold', color: 'white',
-        textShadow: `0 0 30px ${COLORS.burntOrange}`,
-      }}>
+      <div
+        style={{
+          fontSize: '64px',
+          fontWeight: 'bold',
+          color: 'white',
+          textShadow: `0 0 30px ${COLORS.burntOrange}`,
+        }}
+      >
         {animatedScore.toLocaleString()}
       </div>
       <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
         Personal Best: {stats.highScore.toLocaleString()}
       </div>
-      <div style={{
-        background: 'rgba(255,255,255,0.05)', borderRadius: '12px', padding: '15px 25px',
-        marginBottom: '25px', minWidth: '280px',
-      }}>
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '12px',
+          padding: '15px 25px',
+          marginBottom: '25px',
+          minWidth: '280px',
+        }}
+      >
         {gameType === 'hotdog' && renderHotDogStats(stats as HotDogStats)}
         {gameType === 'slugger' && renderSluggerStats(stats as SluggerStats)}
         {gameType === 'football' && renderFootballStats(stats as FootballStats)}
@@ -1639,8 +2179,23 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ gameType, stats, onPlayAgain,
         </button>
       </div>
       <div style={{ display: 'flex', gap: '15px' }}>
-        <ActionButton onClick={() => { sounds.menuSelect(); onPlayAgain(); }}>Play Again</ActionButton>
-        <ActionButton onClick={() => { sounds.menuBack(); onBack(); }} color="#666">Menu</ActionButton>
+        <ActionButton
+          onClick={() => {
+            sounds.menuSelect();
+            onPlayAgain();
+          }}
+        >
+          Play Again
+        </ActionButton>
+        <ActionButton
+          onClick={() => {
+            sounds.menuBack();
+            onBack();
+          }}
+          color="#666"
+        >
+          Menu
+        </ActionButton>
       </div>
       <style>{`
         @keyframes pulse {
@@ -1652,16 +2207,29 @@ const StatsScreen: React.FC<StatsScreenProps> = ({ gameType, stats, onPlayAgain,
   );
 };
 
-const StatRow: React.FC<{ label: string; value: string | number; highlight?: boolean; bad?: boolean }> = ({ label, value, highlight, bad }) => (
-  <div style={{
-    display: 'flex', justifyContent: 'space-between', padding: '8px 0',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
-  }}>
+const StatRow: React.FC<{
+  label: string;
+  value: string | number;
+  highlight?: boolean;
+  bad?: boolean;
+}> = ({ label, value, highlight, bad }) => (
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding: '8px 0',
+      borderBottom: '1px solid rgba(255,255,255,0.1)',
+    }}
+  >
     <span style={{ color: '#aaa' }}>{label}</span>
-    <span style={{
-      fontWeight: 'bold',
-      color: bad ? COLORS.ketchup : highlight ? COLORS.mustard : 'white',
-    }}>{value}</span>
+    <span
+      style={{
+        fontWeight: 'bold',
+        color: bad ? COLORS.ketchup : highlight ? COLORS.mustard : 'white',
+      }}
+    >
+      {value}
+    </span>
   </div>
 );
 
@@ -1673,21 +2241,51 @@ interface PauseMenuProps {
 }
 
 const PauseMenu: React.FC<PauseMenuProps> = ({ onResume, onRestart, onQuit, sounds }) => (
-  <div style={{
-    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)',
-    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-    zIndex: 300,
-  }}>
+  <div
+    style={{
+      position: 'absolute',
+      inset: 0,
+      background: 'rgba(0,0,0,0.9)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 300,
+    }}
+  >
     <div style={{ fontSize: '48px', marginBottom: '10px' }}>⏸️</div>
-    <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', marginBottom: '30px' }}>PAUSED</div>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', color: 'white', marginBottom: '30px' }}>
+      PAUSED
+    </div>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <ActionButton onClick={() => { sounds.resume(); onResume(); }}>Resume</ActionButton>
-      <ActionButton onClick={() => { sounds.menuSelect(); onRestart(); }} color="#666">Restart</ActionButton>
-      <ActionButton onClick={() => { sounds.menuBack(); onQuit(); }} color="#444">Quit</ActionButton>
+      <ActionButton
+        onClick={() => {
+          sounds.resume();
+          onResume();
+        }}
+      >
+        Resume
+      </ActionButton>
+      <ActionButton
+        onClick={() => {
+          sounds.menuSelect();
+          onRestart();
+        }}
+        color="#666"
+      >
+        Restart
+      </ActionButton>
+      <ActionButton
+        onClick={() => {
+          sounds.menuBack();
+          onQuit();
+        }}
+        color="#444"
+      >
+        Quit
+      </ActionButton>
     </div>
-    <div style={{ marginTop: '30px', color: '#666', fontSize: '14px' }}>
-      Press ESC to resume
-    </div>
+    <div style={{ marginTop: '30px', color: '#666', fontSize: '14px' }}>Press ESC to resume</div>
   </div>
 );
 
@@ -1718,43 +2316,107 @@ const getChonkLevel = (score: number): ChonkLevel & { index: number } => {
   return { ...CHONK_LEVELS[0], index: 0 };
 };
 
-const HotDog: React.FC<{ x: number; y: number; isGolden: boolean; isPowerUp: boolean; powerUpType: string | null }> = ({ x, y, isGolden, isPowerUp, powerUpType }) => {
+const HotDog: React.FC<{
+  x: number;
+  y: number;
+  isGolden: boolean;
+  isPowerUp: boolean;
+  powerUpType: string | null;
+}> = ({ x, y, isGolden, isPowerUp, powerUpType }) => {
   if (isPowerUp && powerUpType) {
     const p = HOTDOG_POWERUPS[powerUpType];
     return (
-      <div style={{
-        position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)',
-        width: '36px', height: '36px', borderRadius: '50%', background: p.color,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
-        boxShadow: `0 0 15px ${p.color}`, border: '2px solid white',
-      }}>{p.emoji}</div>
+      <div
+        style={{
+          position: 'absolute',
+          left: `${x}%`,
+          top: `${y}%`,
+          transform: 'translate(-50%, -50%)',
+          width: '36px',
+          height: '36px',
+          borderRadius: '50%',
+          background: p.color,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '16px',
+          boxShadow: `0 0 15px ${p.color}`,
+          border: '2px solid white',
+        }}
+      >
+        {p.emoji}
+      </div>
     );
   }
   return (
-    <div style={{
-      position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)',
-      fontSize: '32px', filter: isGolden ? 'drop-shadow(0 0 8px gold)' : 'none',
-    }}>{isGolden ? '⭐🌭' : '🌭'}</div>
-  );
-};
-
-const BlazeSprite: React.FC<{ chonkFactor: number; isMoving: boolean }> = ({ chonkFactor, isMoving }) => {
-  const cf = Math.min(chonkFactor, 1.8);
-  const width = 50 + (cf - 1) * 30;
-  return (
-    <div style={{ position: 'relative', width: `${width}px`, height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ fontSize: `${28 + (cf - 1) * 15}px`, transform: isMoving ? 'scaleX(-1)' : 'none' }}>🐕</div>
-      <div style={{
-        position: 'absolute', top: '-8px', left: '50%', transform: 'translateX(-50%)',
-        width: '12px', height: '6px', background: COLORS.burntOrange, borderRadius: '3px',
-      }} />
+    <div
+      style={{
+        position: 'absolute',
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: 'translate(-50%, -50%)',
+        fontSize: '32px',
+        filter: isGolden ? 'drop-shadow(0 0 8px gold)' : 'none',
+      }}
+    >
+      {isGolden ? '⭐🌭' : '🌭'}
     </div>
   );
 };
 
-const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds, onGameComplete, isDailyChallenge, dailyRng }) => {
-  const [gamePhase, setGamePhase] = useState<'idle' | 'countdown' | 'playing' | 'paused' | 'stats'>('idle');
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(isDailyChallenge ? 'normal' : 'normal');
+const BlazeSprite: React.FC<{ chonkFactor: number; isMoving: boolean }> = ({
+  chonkFactor,
+  isMoving,
+}) => {
+  const cf = Math.min(chonkFactor, 1.8);
+  const width = 50 + (cf - 1) * 30;
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: `${width}px`,
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <div
+        style={{ fontSize: `${28 + (cf - 1) * 15}px`, transform: isMoving ? 'scaleX(-1)' : 'none' }}
+      >
+        🐕
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: '-8px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '12px',
+          height: '6px',
+          background: COLORS.burntOrange,
+          borderRadius: '3px',
+        }}
+      />
+    </div>
+  );
+};
+
+const HotDogDashGame: React.FC<GameProps> = ({
+  onBack,
+  onUpdateHighScore,
+  highScore,
+  sounds,
+  onGameComplete,
+  isDailyChallenge,
+  dailyRng,
+}) => {
+  const [gamePhase, setGamePhase] = useState<'idle' | 'countdown' | 'playing' | 'paused' | 'stats'>(
+    'idle'
+  );
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(
+    isDailyChallenge ? 'normal' : 'normal'
+  );
   // Store dailyRng in ref to maintain across renders
   const rngRef = useRef(dailyRng);
   const [score, setScore] = useState(0);
@@ -1768,7 +2430,13 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   const velocityXRef = useRef(0);
   const [blazeX, setBlazeX] = useState(50);
   // Stats tracking refs
-  const statsRef = useRef({ totalCatches: 0, goldenCatches: 0, powerupsCollected: 0, maxCombo: 0, missedHotdogs: 0 });
+  const statsRef = useRef({
+    totalCatches: 0,
+    goldenCatches: 0,
+    powerupsCollected: 0,
+    maxCombo: 0,
+    missedHotdogs: 0,
+  });
   const [gameStats, setGameStats] = useState<HotDogStats | null>(null);
   const [isMoving, setIsMoving] = useState(false);
   const gameRef = useRef<HTMLDivElement>(null);
@@ -1780,7 +2448,7 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   const [screenShake, setScreenShake] = useState<ScreenShake | null>(null);
   const lastComboMilestoneRef = useRef(0);
 
-  const chonkFactor = Math.min(1.8, 1.0 + (score * 0.012));
+  const chonkFactor = Math.min(1.8, 1.0 + score * 0.012);
   const currentChonkLevel = getChonkLevel(score);
 
   useEffect(() => {
@@ -1800,15 +2468,24 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
     };
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    return () => { window.removeEventListener('keydown', handleKeyDown); window.removeEventListener('keyup', handleKeyUp); };
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, [gamePhase]);
 
-  const handleTouch = useCallback((e: React.TouchEvent) => {
-    if (gamePhase !== 'playing' || !gameRef.current) return;
-    e.preventDefault();
-    const rect = gameRef.current.getBoundingClientRect();
-    targetXRef.current = Math.max(8, Math.min(92, ((e.touches[0].clientX - rect.left) / rect.width) * 100));
-  }, [gamePhase]);
+  const handleTouch = useCallback(
+    (e: React.TouchEvent) => {
+      if (gamePhase !== 'playing' || !gameRef.current) return;
+      e.preventDefault();
+      const rect = gameRef.current.getBoundingClientRect();
+      targetXRef.current = Math.max(
+        8,
+        Math.min(92, ((e.touches[0].clientX - rect.left) / rect.width) * 100)
+      );
+    },
+    [gamePhase]
+  );
 
   useEffect(() => {
     if (gamePhase !== 'playing') return;
@@ -1827,53 +2504,85 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
 
       // Spring-based magnet physics
       if (activePowerUps.MAGNET) {
-        setHotDogs(prev => prev.map(dog => {
-          if (dog.isPowerUp) return dog;
-          const dist = Math.abs(dog.x - blazeXRef.current);
-          if (dist < 30 && dog.y > 25) {
-            // Spring-based attraction with distance falloff
-            const force = (blazeXRef.current - dog.x) * PHYSICS.springStiffness * (1 - dist / 30);
-            return { ...dog, x: dog.x + force * 1.5 };
-          }
-          return dog;
-        }));
+        setHotDogs((prev) =>
+          prev.map((dog) => {
+            if (dog.isPowerUp) return dog;
+            const dist = Math.abs(dog.x - blazeXRef.current);
+            if (dist < 30 && dog.y > 25) {
+              // Spring-based attraction with distance falloff
+              const force = (blazeXRef.current - dog.x) * PHYSICS.springStiffness * (1 - dist / 30);
+              return { ...dog, x: dog.x + force * 1.5 };
+            }
+            return dog;
+          })
+        );
       }
 
       // Update hot dogs with gravity acceleration
       const speedMult = activePowerUps.SLOW ? 0.5 : 1;
-      setHotDogs(prev => {
+      setHotDogs((prev) => {
         const hitboxWidth = (15 + (chonkFactor - 1) * 8) * diffSettings.hitboxMult;
-        return prev.filter(dog => {
+        return prev.filter((dog) => {
           // Apply gravity to velocity
-          const newVelocity = Math.min(dog.velocityY + PHYSICS.gravity * speedMult, PHYSICS.terminalVelocity);
+          const newVelocity = Math.min(
+            dog.velocityY + PHYSICS.gravity * speedMult,
+            PHYSICS.terminalVelocity
+          );
           const newY = dog.y + newVelocity * speedMult;
 
           // Check collision with Blaze
           if (newY >= 65 && newY <= 92 && Math.abs(dog.x - blazeXRef.current) < hitboxWidth) {
             if (dog.isPowerUp && dog.powerUpType) {
               const type = dog.powerUpType;
-              setActivePowerUps(p => ({ ...p, [type]: true }));
-              setTimeout(() => setActivePowerUps(p => { const n = { ...p }; delete n[type]; return n; }), HOTDOG_POWERUPS[type].duration);
+              setActivePowerUps((p) => ({ ...p, [type]: true }));
+              setTimeout(
+                () =>
+                  setActivePowerUps((p) => {
+                    const n = { ...p };
+                    delete n[type];
+                    return n;
+                  }),
+                HOTDOG_POWERUPS[type].duration
+              );
               // Power-up particles
-              setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'powerup', 5)]);
-              setFloatingTexts(t => [...t, createFloatingText(dog.x, 80, HOTDOG_POWERUPS[type].emoji, HOTDOG_POWERUPS[type].color)]);
+              setParticles((p) => [...p, ...createParticleBurst(dog.x, 85, 'powerup', 5)]);
+              setFloatingTexts((t) => [
+                ...t,
+                createFloatingText(
+                  dog.x,
+                  80,
+                  HOTDOG_POWERUPS[type].emoji,
+                  HOTDOG_POWERUPS[type].color
+                ),
+              ]);
               sounds.powerup();
               statsRef.current.powerupsCollected++;
             } else {
               let points = dog.isGolden ? 5 : 1;
               points += Math.floor(combo / 5);
               if (activePowerUps.DOUBLE) points *= 2;
-              setScore(s => s + points);
-              setCombo(c => {
+              setScore((s) => s + points);
+              setCombo((c) => {
                 const newCombo = c + 1;
                 // Track max combo
                 if (newCombo > statsRef.current.maxCombo) statsRef.current.maxCombo = newCombo;
                 // Screen shake on combo milestones (5, 10, 15, 20...)
-                if (newCombo >= 5 && newCombo % 5 === 0 && newCombo > lastComboMilestoneRef.current) {
+                if (
+                  newCombo >= 5 &&
+                  newCombo % 5 === 0 &&
+                  newCombo > lastComboMilestoneRef.current
+                ) {
                   lastComboMilestoneRef.current = newCombo;
-                  setScreenShake({ intensity: 3 + Math.min(newCombo / 5, 4), duration: 200, startTime: Date.now() });
-                  setParticles(p => [...p, ...createParticleBurst(dog.x, 85, 'combo', 6, 1.2)]);
-                  setFloatingTexts(t => [...t, createFloatingText(dog.x, 75, `${newCombo}× COMBO!`, COLORS.mustard)]);
+                  setScreenShake({
+                    intensity: 3 + Math.min(newCombo / 5, 4),
+                    duration: 200,
+                    startTime: Date.now(),
+                  });
+                  setParticles((p) => [...p, ...createParticleBurst(dog.x, 85, 'combo', 6, 1.2)]);
+                  setFloatingTexts((t) => [
+                    ...t,
+                    createFloatingText(dog.x, 75, `${newCombo}× COMBO!`, COLORS.mustard),
+                  ]);
                   sounds.comboMilestone();
                 }
                 return newCombo;
@@ -1884,8 +2593,19 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
               // Particle burst on catch
               const particleType = dog.isGolden ? 'golden' : 'catch';
               const particleCount = dog.isGolden ? 8 : 3;
-              setParticles(p => [...p, ...createParticleBurst(dog.x, 85, particleType, particleCount)]);
-              setFloatingTexts(t => [...t, createFloatingText(dog.x, 82, `+${points}`, dog.isGolden ? COLORS.mustard : COLORS.ember)]);
+              setParticles((p) => [
+                ...p,
+                ...createParticleBurst(dog.x, 85, particleType, particleCount),
+              ]);
+              setFloatingTexts((t) => [
+                ...t,
+                createFloatingText(
+                  dog.x,
+                  82,
+                  `+${points}`,
+                  dog.isGolden ? COLORS.mustard : COLORS.ember
+                ),
+              ]);
               // Play catch sound
               dog.isGolden ? sounds.goldenCatch() : sounds.catch();
             }
@@ -1908,8 +2628,8 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
       });
 
       // Update particle effects
-      setParticles(p => updateParticles(p));
-      setFloatingTexts(t => updateFloatingTexts(t));
+      setParticles((p) => updateParticles(p));
+      setFloatingTexts((t) => updateFloatingTexts(t));
 
       // Clear expired screen shake
       if (screenShake && Date.now() - screenShake.startTime > screenShake.duration) {
@@ -1919,7 +2639,9 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
       frameRef.current = requestAnimationFrame(gameLoop);
     };
     frameRef.current = requestAnimationFrame(gameLoop);
-    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
   }, [gamePhase, chonkFactor, activePowerUps, combo, screenShake]);
 
   useEffect(() => {
@@ -1930,18 +2652,24 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
     const spawn = setInterval(() => {
       // Use seeded RNG for daily challenges, regular random otherwise
       const rng = rngRef.current;
-      const rand = () => rng ? rng.next() : Math.random();
+      const rand = () => (rng ? rng.next() : Math.random());
 
       const isPowerUp = rand() < 0.06;
       // Initial velocity starts slow, gravity accelerates
       const baseSpeed = 0.4 + rand() * 0.3 + Math.min(score * 0.003, 0.3);
-      setHotDogs(prev => [...prev, {
-        id: Date.now() + rand(), x: rand() * 75 + 12, y: -5,
-        speed: baseSpeed, // Keep for backwards compat
-        velocityY: baseSpeed, // Actual physics velocity
-        isGolden: !isPowerUp && rand() < 0.18, isPowerUp,
-        powerUpType: isPowerUp ? Object.keys(HOTDOG_POWERUPS)[Math.floor(rand() * 3)] : null,
-      }]);
+      setHotDogs((prev) => [
+        ...prev,
+        {
+          id: Date.now() + rand(),
+          x: rand() * 75 + 12,
+          y: -5,
+          speed: baseSpeed, // Keep for backwards compat
+          velocityY: baseSpeed, // Actual physics velocity
+          isGolden: !isPowerUp && rand() < 0.18,
+          isPowerUp,
+          powerUpType: isPowerUp ? Object.keys(HOTDOG_POWERUPS)[Math.floor(rand() * 3)] : null,
+        },
+      ]);
     }, interval);
     return () => clearInterval(spawn);
   }, [gamePhase, score]);
@@ -1949,7 +2677,7 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   useEffect(() => {
     if (gamePhase !== 'playing' || timeLeft <= 0) return;
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           // Game over - transition to stats screen
           const isNewHigh = score > highScore;
@@ -1978,10 +2706,26 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
 
   const initiateGame = () => {
     // Reset game state before countdown, using difficulty settings
-    setScore(0); setCombo(0); setTimeLeft(diffSettings.time); setHotDogs([]); setActivePowerUps({});
-    blazeXRef.current = 50; targetXRef.current = 50; velocityXRef.current = 0; setBlazeX(50);
-    setParticles([]); setFloatingTexts([]); setScreenShake(null); lastComboMilestoneRef.current = 0;
-    statsRef.current = { totalCatches: 0, goldenCatches: 0, powerupsCollected: 0, maxCombo: 0, missedHotdogs: 0 };
+    setScore(0);
+    setCombo(0);
+    setTimeLeft(diffSettings.time);
+    setHotDogs([]);
+    setActivePowerUps({});
+    blazeXRef.current = 50;
+    targetXRef.current = 50;
+    velocityXRef.current = 0;
+    setBlazeX(50);
+    setParticles([]);
+    setFloatingTexts([]);
+    setScreenShake(null);
+    lastComboMilestoneRef.current = 0;
+    statsRef.current = {
+      totalCatches: 0,
+      goldenCatches: 0,
+      powerupsCollected: 0,
+      maxCombo: 0,
+      missedHotdogs: 0,
+    };
     setGameStats(null);
     setGamePhase('countdown');
   };
@@ -2004,18 +2748,42 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: `linear-gradient(180deg, #0a2815 0%, #1a472a 30%, #2d5a27 60%, ${COLORS.texasSoil} 100%)`, fontFamily: 'system-ui', overflow: 'hidden', userSelect: 'none' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `linear-gradient(180deg, #0a2815 0%, #1a472a 30%, #2d5a27 60%, ${COLORS.texasSoil} 100%)`,
+        fontFamily: 'system-ui',
+        overflow: 'hidden',
+        userSelect: 'none',
+      }}
+    >
       <ArcadeHeader title="Hot Dog Dash" onBack={onBack} showBack />
-      <ScoreBar items={[
-        { label: 'SCORE', value: score, color: COLORS.ember },
-        { label: 'TIME', value: `${timeLeft}s`, color: timeLeft <= 10 ? COLORS.ketchup : 'white' },
-        { label: 'COMBO', value: `×${combo}`, color: combo > 5 ? COLORS.mustard : 'white' },
-        { label: 'BEST', value: highScore, color: COLORS.mustard },
-      ]} />
+      <ScoreBar
+        items={[
+          { label: 'SCORE', value: score, color: COLORS.ember },
+          {
+            label: 'TIME',
+            value: `${timeLeft}s`,
+            color: timeLeft <= 10 ? COLORS.ketchup : 'white',
+          },
+          { label: 'COMBO', value: `×${combo}`, color: combo > 5 ? COLORS.mustard : 'white' },
+          { label: 'BEST', value: highScore, color: COLORS.mustard },
+        ]}
+      />
       {gamePhase === 'playing' && (
-        <div style={{ background: 'rgba(0,0,0,0.5)', padding: '6px 15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div
+          style={{
+            background: 'rgba(0,0,0,0.5)',
+            padding: '6px 15px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
           <span style={{ fontSize: '14px' }}>{currentChonkLevel.emoji}</span>
-          <span style={{ color: COLORS.ember, fontSize: '12px', fontWeight: 'bold' }}>{currentChonkLevel.label}</span>
+          <span style={{ color: COLORS.ember, fontSize: '12px', fontWeight: 'bold' }}>
+            {currentChonkLevel.label}
+          </span>
         </div>
       )}
       <div
@@ -2027,25 +2795,49 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
           height: 'calc(100vh - 150px)',
           overflow: 'hidden',
           // Screen shake effect
-          transform: screenShake ? `translate(${calculateScreenShake(screenShake).x}px, ${calculateScreenShake(screenShake).y}px)` : undefined,
+          transform: screenShake
+            ? `translate(${calculateScreenShake(screenShake).x}px, ${calculateScreenShake(screenShake).y}px)`
+            : undefined,
         }}
       >
         {combo >= 5 && gamePhase === 'playing' && (
-          <div style={{
-            position: 'absolute', top: '10%', right: '15px',
-            fontSize: '28px', fontWeight: 'bold', color: COLORS.mustard,
-            textShadow: '0 0 10px rgba(255,215,0,0.5)',
-            animation: combo >= 10 ? 'pulse-glow 0.5s infinite' : undefined,
-            zIndex: 10,
-          }}>
+          <div
+            style={{
+              position: 'absolute',
+              top: '10%',
+              right: '15px',
+              fontSize: '28px',
+              fontWeight: 'bold',
+              color: COLORS.mustard,
+              textShadow: '0 0 10px rgba(255,215,0,0.5)',
+              animation: combo >= 10 ? 'pulse-glow 0.5s infinite' : undefined,
+              zIndex: 10,
+            }}
+          >
             {combo}× 🔥
           </div>
         )}
-        {hotDogs.map(dog => <HotDog key={dog.id} x={dog.x} y={dog.y} isGolden={dog.isGolden} isPowerUp={dog.isPowerUp} powerUpType={dog.powerUpType} />)}
+        {hotDogs.map((dog) => (
+          <HotDog
+            key={dog.id}
+            x={dog.x}
+            y={dog.y}
+            isGolden={dog.isGolden}
+            isPowerUp={dog.isPowerUp}
+            powerUpType={dog.powerUpType}
+          />
+        ))}
         {/* Particle effects */}
         <ParticleRenderer particles={particles} />
         <FloatingTextRenderer texts={floatingTexts} />
-        <div style={{ position: 'absolute', left: `${blazeX}%`, bottom: '6%', transform: 'translateX(-50%)' }}>
+        <div
+          style={{
+            position: 'absolute',
+            left: `${blazeX}%`,
+            bottom: '6%',
+            transform: 'translateX(-50%)',
+          }}
+        >
           <BlazeSprite chonkFactor={chonkFactor} isMoving={isMoving} />
         </div>
         {/* Countdown overlay */}
@@ -2054,7 +2846,12 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
         )}
         {/* Pause menu */}
         {gamePhase === 'paused' && (
-          <PauseMenu onResume={handleResume} onRestart={handleRestart} onQuit={onBack} sounds={sounds} />
+          <PauseMenu
+            onResume={handleResume}
+            onRestart={handleRestart}
+            onQuit={onBack}
+            sounds={sounds}
+          />
         )}
         {/* Stats screen */}
         {gamePhase === 'stats' && gameStats && (
@@ -2071,11 +2868,23 @@ const HotDogDashGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highSc
         <GameOverlay visible={gamePhase === 'idle'}>
           <div style={{ fontSize: '70px', marginBottom: '12px' }}>🐕🌭</div>
           <h2 style={{ color: COLORS.burntOrange, marginBottom: '8px' }}>Hot Dog Dash</h2>
-          <p style={{ color: '#aaa', marginBottom: '12px' }}>Catch hot dogs! Watch Blaze get chonky!</p>
-          <DifficultySelector selected={difficulty} onSelect={setDifficulty} difficulties={HOTDOG_DIFFICULTIES} />
+          <p style={{ color: '#aaa', marginBottom: '12px' }}>
+            Catch hot dogs! Watch Blaze get chonky!
+          </p>
+          <DifficultySelector
+            selected={difficulty}
+            onSelect={setDifficulty}
+            difficulties={HOTDOG_DIFFICULTIES}
+          />
           <ActionButton onClick={initiateGame}>🎮 Start Game</ActionButton>
-          <p style={{ color: '#555', fontSize: '11px', marginTop: '16px' }}>← → or touch to move • ESC to pause</p>
-          {highScore > 0 && <p style={{ color: COLORS.mustard, fontSize: '12px', marginTop: '8px' }}>🏆 Best: {highScore}</p>}
+          <p style={{ color: '#555', fontSize: '11px', marginTop: '16px' }}>
+            ← → or touch to move • ESC to pause
+          </p>
+          {highScore > 0 && (
+            <p style={{ color: COLORS.mustard, fontSize: '12px', marginTop: '8px' }}>
+              🏆 Best: {highScore}
+            </p>
+          )}
         </GameOverlay>
       </div>
     </div>
@@ -2100,9 +2909,21 @@ const BATTERS: Batter[] = [
   { name: 'Big Bertha', power: 100, contact: 60, emoji: '🎯' },
 ];
 
-const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds, onGameComplete, isDailyChallenge, dailyRng }) => {
-  const [gameState, setGameState] = useState<'select' | 'countdown' | 'playing' | 'paused' | 'stats'>('select');
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(isDailyChallenge ? 'normal' : 'normal');
+const SandlotSluggerGame: React.FC<GameProps> = ({
+  onBack,
+  onUpdateHighScore,
+  highScore,
+  sounds,
+  onGameComplete,
+  isDailyChallenge,
+  dailyRng,
+}) => {
+  const [gameState, setGameState] = useState<
+    'select' | 'countdown' | 'playing' | 'paused' | 'stats'
+  >('select');
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(
+    isDailyChallenge ? 'normal' : 'normal'
+  );
   const [selectedBatter, setSelectedBatter] = useState<number | null>(null);
   const diffSettings = SLUGGER_DIFFICULTIES[difficulty];
   // Store dailyRng in ref to maintain across renders
@@ -2134,7 +2955,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
   const throwPitch = useCallback(() => {
     // Use seeded RNG for daily challenges, regular random otherwise
     const rng = rngRef.current;
-    const rand = () => rng ? rng.next() : Math.random();
+    const rand = () => (rng ? rng.next() : Math.random());
 
     const pitchType = PITCH_TYPES[Math.floor(rand() * PITCH_TYPES.length)];
     setPitch(pitchType);
@@ -2156,7 +2977,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
   useEffect(() => {
     if (gameState !== 'playing' || !pitch) return;
     const animate = () => {
-      setPitchY(prev => {
+      setPitchY((prev) => {
         const newY = prev + pitch.speed * 1.5 * diffSettings.pitchSpeed;
         const progress = Math.min(1, newY / 85);
 
@@ -2170,11 +2991,11 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         setTimingIndicator(Math.min(100, Math.max(0, newY)));
 
         // Update ball rotation (spins during flight)
-        setBallRotation(r => (r + 15) % 360);
+        setBallRotation((r) => (r + 15) % 360);
 
         if (newY > 95 && !swingTiming) {
           statsRef.current.strikeouts++;
-          setOuts(o => {
+          setOuts((o) => {
             const newOuts = o + 1;
             if (newOuts >= 10) {
               // Trigger game over after a delay
@@ -2200,7 +3021,7 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
             return newOuts;
           });
           setCombo(0);
-          setFloatingTexts(t => [...t, createFloatingText(50, 60, 'STRIKE!', '#FF4444')]);
+          setFloatingTexts((t) => [...t, createFloatingText(50, 60, 'STRIKE!', '#FF4444')]);
           if (outs < 9) setTimeout(() => throwPitch(), 1000);
           return 100;
         }
@@ -2208,26 +3029,46 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
       });
 
       // Update particles
-      setParticles(p => updateParticles(p));
-      setFloatingTexts(t => updateFloatingTexts(t));
+      setParticles((p) => updateParticles(p));
+      setFloatingTexts((t) => updateFloatingTexts(t));
 
       // Animate ball flight if active
       if (ballFlight && ballFlightProgress < 1) {
-        setBallFlightProgress(p => Math.min(1, p + 0.02));
+        setBallFlightProgress((p) => Math.min(1, p + 0.02));
       }
 
       if (pitchY < 95) frameRef.current = requestAnimationFrame(animate);
     };
     frameRef.current = requestAnimationFrame(animate);
-    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
-  }, [gameState, pitch, pitchY, swingTiming, throwPitch, score, highScore, onUpdateHighScore, ballFlight, ballFlightProgress]);
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [
+    gameState,
+    pitch,
+    pitchY,
+    swingTiming,
+    throwPitch,
+    score,
+    highScore,
+    onUpdateHighScore,
+    ballFlight,
+    ballFlightProgress,
+  ]);
 
   const handleSwing = useCallback(() => {
-    if (gameState !== 'playing' || !pitch || swingTiming !== null || isSwinging || selectedBatter === null) return;
+    if (
+      gameState !== 'playing' ||
+      !pitch ||
+      swingTiming !== null ||
+      isSwinging ||
+      selectedBatter === null
+    )
+      return;
 
     // Use seeded RNG for daily challenges, regular random otherwise
     const rng = rngRef.current;
-    const rand = () => rng ? rng.next() : Math.random();
+    const rand = () => (rng ? rng.next() : Math.random());
 
     // Track swing
     statsRef.current.totalSwings++;
@@ -2272,10 +3113,14 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
       if (Math.abs(timing) > 0.5 || contactRoll > batter.contact) {
         setHitResult({ type: 'STRIKE!', points: 0, color: '#FF4444' });
         statsRef.current.strikeouts++;
-        setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) doGameOver(score); return newOuts; });
+        setOuts((o) => {
+          const newOuts = o + 1;
+          if (newOuts >= 10) doGameOver(score);
+          return newOuts;
+        });
         setCombo(0);
         // Swing miss particles
-        setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 2, 0.5)]);
+        setParticles((p) => [...p, ...createParticleBurst(50, 75, 'hit', 2, 0.5)]);
         sounds.batWhiff();
       } else {
         const powerFactor = (batter.power / 100) * (1 - Math.abs(timing));
@@ -2283,50 +3128,86 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
         if (Math.abs(timing) < 0.1 && powerFactor > 0.7 && distance > 400) {
           const points = Math.floor(100 + combo * 25 + (distance - 400));
-          setHitResult({ type: '💥 HOME RUN!', points, color: COLORS.mustard, distance: Math.floor(distance) });
-          setScore(s => s + points);
-          setCombo(c => {
+          setHitResult({
+            type: '💥 HOME RUN!',
+            points,
+            color: COLORS.mustard,
+            distance: Math.floor(distance),
+          });
+          setScore((s) => s + points);
+          setCombo((c) => {
             const newCombo = c + 1;
             if (newCombo > statsRef.current.maxCombo) statsRef.current.maxCombo = newCombo;
             return newCombo;
           });
-          setTotalHRs(t => t + 1);
+          setTotalHRs((t) => t + 1);
           statsRef.current.hits++;
           statsRef.current.homeRuns++;
-          setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 40, endY: -20, duration: 2000 });
+          setBallFlight({
+            startX: 50,
+            startY: 75,
+            endX: 50 + timing * 40,
+            endY: -20,
+            duration: 2000,
+          });
           setBallFlightProgress(0);
           // Home run explosion! 15 particles
-          setParticles(p => [...p, ...createParticleBurst(50, 75, 'homerun', 15, 1.5)]);
-          setFloatingTexts(t => [...t, createFloatingText(50, 65, '💥 GONE!', COLORS.mustard)]);
+          setParticles((p) => [...p, ...createParticleBurst(50, 75, 'homerun', 15, 1.5)]);
+          setFloatingTexts((t) => [...t, createFloatingText(50, 65, '💥 GONE!', COLORS.mustard)]);
           sounds.homeRun();
         } else if (distance > 350) {
-          setHitResult({ type: 'DEEP FLY OUT', points: 10, color: '#88FF88', distance: Math.floor(distance) });
-          setScore(s => s + 10);
-          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) doGameOver(score + 10); return newOuts; });
+          setHitResult({
+            type: 'DEEP FLY OUT',
+            points: 10,
+            color: '#88FF88',
+            distance: Math.floor(distance),
+          });
+          setScore((s) => s + 10);
+          setOuts((o) => {
+            const newOuts = o + 1;
+            if (newOuts >= 10) doGameOver(score + 10);
+            return newOuts;
+          });
           setCombo(0);
-          setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 30, endY: 20, duration: 1500 });
+          setBallFlight({
+            startX: 50,
+            startY: 75,
+            endX: 50 + timing * 30,
+            endY: 20,
+            duration: 1500,
+          });
           setBallFlightProgress(0);
           // Deep fly particles
-          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 6, 1.0)]);
+          setParticles((p) => [...p, ...createParticleBurst(50, 75, 'hit', 6, 1.0)]);
           sounds.batCrack();
         } else if (distance > 200) {
           const points = 25 + combo * 5;
           setHitResult({ type: 'BASE HIT!', points, color: '#44FF44' });
-          setScore(s => s + points);
+          setScore((s) => s + points);
           statsRef.current.hits++;
-          setBallFlight({ startX: 50, startY: 75, endX: 50 + timing * 25, endY: 45, duration: 1000 });
+          setBallFlight({
+            startX: 50,
+            startY: 75,
+            endX: 50 + timing * 25,
+            endY: 45,
+            duration: 1000,
+          });
           setBallFlightProgress(0);
           // Base hit particles
-          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 4, 0.8)]);
-          setFloatingTexts(t => [...t, createFloatingText(50, 70, `+${points}`, '#44FF44')]);
+          setParticles((p) => [...p, ...createParticleBurst(50, 75, 'hit', 4, 0.8)]);
+          setFloatingTexts((t) => [...t, createFloatingText(50, 70, `+${points}`, '#44FF44')]);
           sounds.baseHit();
         } else {
           setHitResult({ type: 'GROUNDER', points: 5, color: '#AAAAAA' });
-          setScore(s => s + 5);
-          setOuts(o => { const newOuts = o + 1; if (newOuts >= 10) doGameOver(score + 5); return newOuts; });
+          setScore((s) => s + 5);
+          setOuts((o) => {
+            const newOuts = o + 1;
+            if (newOuts >= 10) doGameOver(score + 5);
+            return newOuts;
+          });
           setCombo(0);
           // Weak contact particles
-          setParticles(p => [...p, ...createParticleBurst(50, 75, 'hit', 3, 0.5)]);
+          setParticles((p) => [...p, ...createParticleBurst(50, 75, 'hit', 3, 0.5)]);
           sounds.batCrack();
         }
       }
@@ -2336,7 +3217,21 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         setSwingPhase('ready');
       }, 2000);
     }, 150);
-  }, [gameState, pitch, swingTiming, pitchY, selectedBatter, isSwinging, combo, outs, score, highScore, onUpdateHighScore, throwPitch, sounds]);
+  }, [
+    gameState,
+    pitch,
+    swingTiming,
+    pitchY,
+    selectedBatter,
+    isSwinging,
+    combo,
+    outs,
+    score,
+    highScore,
+    onUpdateHighScore,
+    throwPitch,
+    sounds,
+  ]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -2346,15 +3241,26 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         return;
       }
       if (gameState !== 'playing') return;
-      if (e.code === 'Space') { e.preventDefault(); handleSwing(); }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        handleSwing();
+      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [gameState, handleSwing]);
 
   const initiateGame = (batterIndex: number) => {
-    setSelectedBatter(batterIndex); setScore(0); setOuts(0); setCombo(0); setTotalHRs(0);
-    setParticles([]); setFloatingTexts([]); setBallRotation(0); setSwingPhase('ready'); setTimingIndicator(0);
+    setSelectedBatter(batterIndex);
+    setScore(0);
+    setOuts(0);
+    setCombo(0);
+    setTotalHRs(0);
+    setParticles([]);
+    setFloatingTexts([]);
+    setBallRotation(0);
+    setSwingPhase('ready');
+    setTimingIndicator(0);
     statsRef.current = { totalSwings: 0, hits: 0, homeRuns: 0, maxCombo: 0, strikeouts: 0 };
     setGameStats(null);
     setGameState('countdown');
@@ -2398,45 +3304,86 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: `linear-gradient(180deg, ${COLORS.sky} 0%, #5BA3D9 40%, ${COLORS.grass} 40%, #1B5E20 100%)`, fontFamily: 'system-ui', overflow: 'hidden', userSelect: 'none' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `linear-gradient(180deg, ${COLORS.sky} 0%, #5BA3D9 40%, ${COLORS.grass} 40%, #1B5E20 100%)`,
+        fontFamily: 'system-ui',
+        overflow: 'hidden',
+        userSelect: 'none',
+      }}
+    >
       <ArcadeHeader title="Sandlot Slugger" onBack={onBack} showBack />
       {gameState !== 'select' && (
-        <ScoreBar items={[
-          { label: 'SCORE', value: score, color: COLORS.ember },
-          { label: 'OUTS', value: `${outs}/10`, color: outs >= 7 ? COLORS.ketchup : 'white' },
-          { label: 'HRs', value: totalHRs, color: COLORS.mustard },
-          { label: 'COMBO', value: `×${combo}`, color: combo > 0 ? COLORS.mustard : 'white' },
-        ]} />
+        <ScoreBar
+          items={[
+            { label: 'SCORE', value: score, color: COLORS.ember },
+            { label: 'OUTS', value: `${outs}/10`, color: outs >= 7 ? COLORS.ketchup : 'white' },
+            { label: 'HRs', value: totalHRs, color: COLORS.mustard },
+            { label: 'COMBO', value: `×${combo}`, color: combo > 0 ? COLORS.mustard : 'white' },
+          ]}
+        />
       )}
-      <div style={{ position: 'relative', height: gameState === 'select' ? 'calc(100vh - 60px)' : 'calc(100vh - 130px)', overflow: 'hidden' }}
-           onClick={gameState === 'playing' ? handleSwing : undefined}
-           onTouchStart={gameState === 'playing' ? handleSwing : undefined}>
-
+      <div
+        style={{
+          position: 'relative',
+          height: gameState === 'select' ? 'calc(100vh - 60px)' : 'calc(100vh - 130px)',
+          overflow: 'hidden',
+        }}
+        onClick={gameState === 'playing' ? handleSwing : undefined}
+        onTouchStart={gameState === 'playing' ? handleSwing : undefined}
+      >
         {gameState === 'select' && (
           <div style={{ padding: '30px 20px', textAlign: 'center' }}>
             <div style={{ fontSize: '64px', marginBottom: '10px' }}>⚾</div>
             <h2 style={{ color: COLORS.charcoal, marginBottom: '8px' }}>Choose Your Slugger!</h2>
-            <p style={{ color: '#555', marginBottom: '16px', fontSize: '14px' }}>10 outs per round. Swing for the fences!</p>
+            <p style={{ color: '#555', marginBottom: '16px', fontSize: '14px' }}>
+              10 outs per round. Swing for the fences!
+            </p>
             <DifficultySelector
               game="slugger"
               difficulty={difficulty}
               onSelect={setDifficulty}
               difficulties={SLUGGER_DIFFICULTIES}
             />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: '400px', margin: '0 auto' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '12px',
+                justifyContent: 'center',
+                maxWidth: '400px',
+                margin: '0 auto',
+              }}
+            >
               {BATTERS.map((batter, i) => (
-                <button key={i} onClick={() => initiateGame(i)} style={{
-                  background: 'white', border: `3px solid ${COLORS.texasSoil}`, borderRadius: '12px',
-                  padding: '16px', cursor: 'pointer', width: '150px', textAlign: 'center',
-                }}>
+                <button
+                  key={i}
+                  onClick={() => initiateGame(i)}
+                  style={{
+                    background: 'white',
+                    border: `3px solid ${COLORS.texasSoil}`,
+                    borderRadius: '12px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    width: '150px',
+                    textAlign: 'center',
+                  }}
+                >
                   <div style={{ fontSize: '36px', marginBottom: '8px' }}>{batter.emoji}</div>
                   <div style={{ fontWeight: 'bold', color: COLORS.charcoal }}>{batter.name}</div>
-                  <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>PWR: {batter.power} | CON: {batter.contact}</div>
+                  <div style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>
+                    PWR: {batter.power} | CON: {batter.contact}
+                  </div>
                 </button>
               ))}
             </div>
-            {highScore > 0 && <p style={{ marginTop: '24px', color: COLORS.mustard }}>🏆 Best Score: {highScore}</p>}
-            <p style={{ color: '#888', fontSize: '11px', marginTop: '12px' }}>SPACE or TAP to swing • ESC to pause</p>
+            {highScore > 0 && (
+              <p style={{ marginTop: '24px', color: COLORS.mustard }}>🏆 Best Score: {highScore}</p>
+            )}
+            <p style={{ color: '#888', fontSize: '11px', marginTop: '12px' }}>
+              SPACE or TAP to swing • ESC to pause
+            </p>
           </div>
         )}
 
@@ -2448,90 +3395,143 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
         {gameState === 'playing' && (
           <>
             {/* Outfield fence */}
-            <div style={{ position: 'absolute', top: '15%', left: '10%', right: '10%', height: '4px', background: '#8B4513', borderRadius: '2px' }} />
+            <div
+              style={{
+                position: 'absolute',
+                top: '15%',
+                left: '10%',
+                right: '10%',
+                height: '4px',
+                background: '#8B4513',
+                borderRadius: '2px',
+              }}
+            />
 
             {/* Pitch type indicator */}
             {pitch && (
-              <div style={{ position: 'absolute', top: '5%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.7)', padding: '4px 12px', borderRadius: '8px', color: pitch.color, fontWeight: 'bold', fontSize: '14px' }}>{pitch.name}</div>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '5%',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'rgba(0,0,0,0.7)',
+                  padding: '4px 12px',
+                  borderRadius: '8px',
+                  color: pitch.color,
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                }}
+              >
+                {pitch.name}
+              </div>
             )}
 
             {/* Timing zone indicator - glows green in sweet spot */}
-            <div style={{
-              position: 'absolute', left: '50%', top: '70%', transform: 'translate(-50%, -50%)',
-              width: '80px', height: '100px',
-              border: `3px solid ${timingIndicator >= 70 && timingIndicator <= 85 ? 'rgba(0,255,0,0.7)' : 'rgba(255,255,255,0.3)'}`,
-              borderRadius: '4px',
-              boxShadow: timingIndicator >= 70 && timingIndicator <= 85 ? '0 0 20px rgba(0,255,0,0.5), inset 0 0 15px rgba(0,255,0,0.2)' : 'none',
-              transition: 'border-color 0.1s, box-shadow 0.1s',
-            }} />
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '70%',
+                transform: 'translate(-50%, -50%)',
+                width: '80px',
+                height: '100px',
+                border: `3px solid ${timingIndicator >= 70 && timingIndicator <= 85 ? 'rgba(0,255,0,0.7)' : 'rgba(255,255,255,0.3)'}`,
+                borderRadius: '4px',
+                boxShadow:
+                  timingIndicator >= 70 && timingIndicator <= 85
+                    ? '0 0 20px rgba(0,255,0,0.5), inset 0 0 15px rgba(0,255,0,0.2)'
+                    : 'none',
+                transition: 'border-color 0.1s, box-shadow 0.1s',
+              }}
+            />
 
             {/* Spinning baseball with seams during pitch */}
             {pitch && pitchY < 95 && !ballFlight && (
-              <div style={{
-                position: 'absolute',
-                left: `${pitchX}%`,
-                top: `${pitchY}%`,
-                transform: `translate(-50%, -50%) rotate(${ballRotation}deg)`,
-                width: '24px',
-                height: '24px',
-                background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
-                borderRadius: '50%',
-                boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                overflow: 'hidden',
-              }}>
-                {/* Baseball seams */}
-                <div style={{
+              <div
+                style={{
                   position: 'absolute',
-                  width: '100%',
-                  height: '100%',
+                  left: `${pitchX}%`,
+                  top: `${pitchY}%`,
+                  transform: `translate(-50%, -50%) rotate(${ballRotation}deg)`,
+                  width: '24px',
+                  height: '24px',
+                  background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
                   borderRadius: '50%',
-                  border: '2px solid transparent',
-                  borderTopColor: '#cc0000',
-                  borderBottomColor: '#cc0000',
-                  transform: 'rotate(45deg)',
-                }} />
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Baseball seams */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    border: '2px solid transparent',
+                    borderTopColor: '#cc0000',
+                    borderBottomColor: '#cc0000',
+                    transform: 'rotate(45deg)',
+                  }}
+                />
               </div>
             )}
 
             {/* Ball flight animation after hit */}
             {ballFlight && ballFlightProgress < 1 && (
-              <div style={{
-                position: 'absolute',
-                left: `${ballFlight.startX + (ballFlight.endX - ballFlight.startX) * ballFlightProgress}%`,
-                top: `${ballFlight.startY + (ballFlight.endY - ballFlight.startY) * ballFlightProgress - Math.sin(ballFlightProgress * Math.PI) * 30}%`,
-                transform: `translate(-50%, -50%) rotate(${ballFlightProgress * 720}deg) scale(${1 - ballFlightProgress * 0.5})`,
-                width: '20px',
-                height: '20px',
-                background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
-                borderRadius: '50%',
-                boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-              }} />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: `${ballFlight.startX + (ballFlight.endX - ballFlight.startX) * ballFlightProgress}%`,
+                  top: `${ballFlight.startY + (ballFlight.endY - ballFlight.startY) * ballFlightProgress - Math.sin(ballFlightProgress * Math.PI) * 30}%`,
+                  transform: `translate(-50%, -50%) rotate(${ballFlightProgress * 720}deg) scale(${1 - ballFlightProgress * 0.5})`,
+                  width: '20px',
+                  height: '20px',
+                  background: 'radial-gradient(circle at 30% 30%, white, #ddd)',
+                  borderRadius: '50%',
+                  boxShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                }}
+              />
             )}
 
             {/* Batter with swing phases */}
-            <div style={{
-              position: 'absolute', left: '50%', top: '82%',
-              transform: `translateX(-50%) ${swingPhase === 'windup' ? 'rotate(5deg)' : swingPhase === 'follow' ? 'rotate(-10deg)' : ''}`,
-              fontSize: '50px',
-              transition: 'transform 0.05s',
-              transformOrigin: 'bottom center',
-            }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '82%',
+                transform: `translateX(-50%) ${swingPhase === 'windup' ? 'rotate(5deg)' : swingPhase === 'follow' ? 'rotate(-10deg)' : ''}`,
+                fontSize: '50px',
+                transition: 'transform 0.05s',
+                transformOrigin: 'bottom center',
+              }}
+            >
               {selectedBatter !== null ? BATTERS[selectedBatter].emoji : '🧑'}
             </div>
 
             {/* Bat with swing animation phases */}
-            <div style={{
-              position: 'absolute', left: '58%', top: '78%',
-              width: '60px', height: '8px',
-              background: 'linear-gradient(90deg, #8B4513 0%, #D2691E 80%, #A0522D 100%)',
-              borderRadius: '0 4px 4px 0',
-              transformOrigin: 'left center',
-              transform: swingPhase === 'ready' ? 'rotate(45deg)' :
-                         swingPhase === 'windup' ? 'rotate(60deg)' :
-                         swingPhase === 'swing' ? 'rotate(-90deg)' :
-                         'rotate(-60deg)', // follow
-              transition: swingPhase === 'swing' ? 'transform 0.08s ease-out' : 'transform 0.1s',
-            }} />
+            <div
+              style={{
+                position: 'absolute',
+                left: '58%',
+                top: '78%',
+                width: '60px',
+                height: '8px',
+                background: 'linear-gradient(90deg, #8B4513 0%, #D2691E 80%, #A0522D 100%)',
+                borderRadius: '0 4px 4px 0',
+                transformOrigin: 'left center',
+                transform:
+                  swingPhase === 'ready'
+                    ? 'rotate(45deg)'
+                    : swingPhase === 'windup'
+                      ? 'rotate(60deg)'
+                      : swingPhase === 'swing'
+                        ? 'rotate(-90deg)'
+                        : 'rotate(-60deg)', // follow
+                transition: swingPhase === 'swing' ? 'transform 0.08s ease-out' : 'transform 0.1s',
+              }}
+            />
 
             {/* Particles */}
             <ParticleRenderer particles={particles} />
@@ -2539,24 +3539,71 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
             {/* Hit result overlay */}
             {hitResult && (
-              <div style={{ position: 'absolute', top: '40%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.85)', padding: '20px 40px', borderRadius: '16px', textAlign: 'center', animation: 'popIn 0.3s ease-out' }}>
-                <div style={{ fontSize: '28px', fontWeight: 'bold', color: hitResult.color, marginBottom: '8px' }}>{hitResult.type}</div>
-                {hitResult.distance && <div style={{ color: '#aaa', fontSize: '14px' }}>{hitResult.distance} feet</div>}
-                {hitResult.points > 0 && <div style={{ color: COLORS.ember, fontSize: '20px', marginTop: '8px' }}>+{hitResult.points}</div>}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '40%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: 'rgba(0,0,0,0.85)',
+                  padding: '20px 40px',
+                  borderRadius: '16px',
+                  textAlign: 'center',
+                  animation: 'popIn 0.3s ease-out',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: hitResult.color,
+                    marginBottom: '8px',
+                  }}
+                >
+                  {hitResult.type}
+                </div>
+                {hitResult.distance && (
+                  <div style={{ color: '#aaa', fontSize: '14px' }}>{hitResult.distance} feet</div>
+                )}
+                {hitResult.points > 0 && (
+                  <div style={{ color: COLORS.ember, fontSize: '20px', marginTop: '8px' }}>
+                    +{hitResult.points}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Instructions */}
-            <div style={{ position: 'absolute', bottom: '5%', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: '8px', color: 'white', fontSize: '14px', textAlign: 'center' }}>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '5%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,0.6)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '14px',
+                textAlign: 'center',
+              }}
+            >
               <div>TAP or SPACE to swing!</div>
-              {timingIndicator >= 70 && timingIndicator <= 85 && <div style={{ color: '#44FF44', fontSize: '12px' }}>⚡ NOW!</div>}
+              {timingIndicator >= 70 && timingIndicator <= 85 && (
+                <div style={{ color: '#44FF44', fontSize: '12px' }}>⚡ NOW!</div>
+              )}
             </div>
           </>
         )}
 
         {/* Pause menu */}
         {gameState === 'paused' && (
-          <PauseMenu onResume={handleResume} onRestart={handleRestart} onQuit={onBack} sounds={sounds} />
+          <PauseMenu
+            onResume={handleResume}
+            onRestart={handleRestart}
+            onQuit={onBack}
+            sounds={sounds}
+          />
         )}
 
         {/* Stats screen */}
@@ -2587,15 +3634,43 @@ const SandlotSluggerGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hi
 
 const OFFENSIVE_PLAYS: OffensivePlay[] = [
   { name: 'Hail Mary', icon: '🎯', type: 'pass', distance: 'long', risk: 0.35, desc: 'Deep bomb' },
-  { name: 'Slant Route', icon: '↗️', type: 'pass', distance: 'short', risk: 0.75, desc: 'Quick pass' },
+  {
+    name: 'Slant Route',
+    icon: '↗️',
+    type: 'pass',
+    distance: 'short',
+    risk: 0.75,
+    desc: 'Quick pass',
+  },
   { name: 'Power Run', icon: '💪', type: 'run', distance: 'short', risk: 0.65, desc: 'Up the gut' },
-  { name: 'Screen Pass', icon: '🛡️', type: 'pass', distance: 'short', risk: 0.70, desc: 'Behind line' },
-  { name: 'Deep Post', icon: '📮', type: 'pass', distance: 'medium', risk: 0.50, desc: 'Downfield' },
+  {
+    name: 'Screen Pass',
+    icon: '🛡️',
+    type: 'pass',
+    distance: 'short',
+    risk: 0.7,
+    desc: 'Behind line',
+  },
+  { name: 'Deep Post', icon: '📮', type: 'pass', distance: 'medium', risk: 0.5, desc: 'Downfield' },
   { name: 'Draw Play', icon: '🎭', type: 'run', distance: 'medium', risk: 0.55, desc: 'Fake pass' },
-  { name: 'Out Route', icon: '➡️', type: 'pass', distance: 'medium', risk: 0.60, desc: 'Sideline' },
-  { name: 'Sweep', icon: '🏃', type: 'run', distance: 'medium', risk: 0.50, desc: 'Outside run' },
-  { name: 'Play Action', icon: '🎬', type: 'pass', distance: 'long', risk: 0.45, desc: 'Fake & throw' },
-  { name: 'QB Sneak', icon: '🐍', type: 'run', distance: 'short', risk: 0.80, desc: 'Short yardage' },
+  { name: 'Out Route', icon: '➡️', type: 'pass', distance: 'medium', risk: 0.6, desc: 'Sideline' },
+  { name: 'Sweep', icon: '🏃', type: 'run', distance: 'medium', risk: 0.5, desc: 'Outside run' },
+  {
+    name: 'Play Action',
+    icon: '🎬',
+    type: 'pass',
+    distance: 'long',
+    risk: 0.45,
+    desc: 'Fake & throw',
+  },
+  {
+    name: 'QB Sneak',
+    icon: '🐍',
+    type: 'run',
+    distance: 'short',
+    risk: 0.8,
+    desc: 'Short yardage',
+  },
 ];
 
 const DEFENSIVE_PLAYS: DefensivePlay[] = [
@@ -2624,9 +3699,21 @@ const TEAMS: Team[] = [
   { name: 'Air Raiders', emoji: '✈️', color: '#4169E1', offense: 95, defense: 65 },
 ];
 
-const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, highScore, sounds, onGameComplete, isDailyChallenge, dailyRng }) => {
-  const [gamePhase, setGamePhase] = useState<'teamSelect' | 'countdown' | 'play' | 'paused' | 'halftime' | 'stats'>('teamSelect');
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(isDailyChallenge ? 'normal' : 'normal');
+const GridironBlitzGame: React.FC<GameProps> = ({
+  onBack,
+  onUpdateHighScore,
+  highScore,
+  sounds,
+  onGameComplete,
+  isDailyChallenge,
+  dailyRng,
+}) => {
+  const [gamePhase, setGamePhase] = useState<
+    'teamSelect' | 'countdown' | 'play' | 'paused' | 'halftime' | 'stats'
+  >('teamSelect');
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(
+    isDailyChallenge ? 'normal' : 'normal'
+  );
   const diffSettings = FOOTBALL_DIFFICULTIES[difficulty];
   // Store dailyRng in ref to maintain across renders
   const rngRef = useRef(dailyRng);
@@ -2652,11 +3739,19 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
   const [ballAnimation, setBallAnimation] = useState<BallAnimation | null>(null);
   const [turboFlash, setTurboFlash] = useState(false);
   const [receiverPositions] = useState(() => [
-    { x: 70, y: 30 }, { x: 75, y: 60 }, { x: 65, y: 80 }
+    { x: 70, y: 30 },
+    { x: 75, y: 60 },
+    { x: 65, y: 80 },
   ]);
   const animFrameRef = useRef<number | undefined>(undefined);
   // Stats tracking
-  const statsRef = useRef({ touchdowns: 0, fieldGoals: 0, turnoversForced: 0, turnoversLost: 0, bigPlays: 0 });
+  const statsRef = useRef({
+    touchdowns: 0,
+    fieldGoals: 0,
+    turnoversForced: 0,
+    turnoversLost: 0,
+    bigPlays: 0,
+  });
   const [gameStats, setGameStats] = useState<FootballStats | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -2677,12 +3772,12 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     if (gamePhase !== 'play') return;
 
     const animate = () => {
-      setParticles(p => updateParticles(p));
-      setFloatingTexts(t => updateFloatingTexts(t));
+      setParticles((p) => updateParticles(p));
+      setFloatingTexts((t) => updateFloatingTexts(t));
 
       // Update ball animation progress
       if (ballAnimation && ballAnimation.active) {
-        setBallAnimation(prev => {
+        setBallAnimation((prev) => {
           if (!prev || prev.progress >= 1) return null;
           return {
             ...prev,
@@ -2704,14 +3799,14 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
   useEffect(() => {
     if (gamePhase !== 'play' || isAnimating) return;
     timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         // Clock warning under 10 seconds
         if (prev <= 10 && prev > 1) {
           sounds.clockWarning();
         }
         if (prev <= 1) {
           if (quarter < 4) {
-            setQuarter(q => q + 1);
+            setQuarter((q) => q + 1);
             if (quarter === 2) {
               setGamePhase('halftime');
               return 60;
@@ -2743,15 +3838,28 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         return prev - 1;
       });
     }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [gamePhase, quarter, isAnimating, playerScore, cpuScore, highScore, onUpdateHighScore, possession, resetDrive, sounds]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [
+    gamePhase,
+    quarter,
+    isAnimating,
+    playerScore,
+    cpuScore,
+    highScore,
+    onUpdateHighScore,
+    possession,
+    resetDrive,
+    sounds,
+  ]);
 
   const selectedTeamRef = useRef<number>(0);
 
   const initiateGame = (teamIndex: number) => {
     // Use seeded RNG for daily challenges, regular random otherwise
     const rng = rngRef.current;
-    const rand = () => rng ? rng.next() : Math.random();
+    const rand = () => (rng ? rng.next() : Math.random());
 
     selectedTeamRef.current = teamIndex;
     setPlayerTeam(TEAMS[teamIndex]);
@@ -2766,7 +3874,13 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     setFloatingTexts([]);
     setBallAnimation(null);
     setTurboFlash(false);
-    statsRef.current = { touchdowns: 0, fieldGoals: 0, turnoversForced: 0, turnoversLost: 0, bigPlays: 0 };
+    statsRef.current = {
+      touchdowns: 0,
+      fieldGoals: 0,
+      turnoversForced: 0,
+      turnoversLost: 0,
+      bigPlays: 0,
+    };
     setGameStats(null);
     resetDrive('player', 25);
     setGamePhase('countdown');
@@ -2801,14 +3915,17 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     return () => window.removeEventListener('keydown', handleKey);
   }, [gamePhase]);
 
-  const executePlay = (play: OffensivePlay | DefensivePlay | SpecialTeamsPlay, isSpecialTeams = false) => {
+  const executePlay = (
+    play: OffensivePlay | DefensivePlay | SpecialTeamsPlay,
+    isSpecialTeams = false
+  ) => {
     if (isAnimating || !playerTeam || !cpuTeam) return;
     setShowPlaybook(false);
     setIsAnimating(true);
 
     // Use seeded RNG for daily challenges, regular random otherwise
     const rng = rngRef.current;
-    const rand = () => rng ? rng.next() : Math.random();
+    const rand = () => (rng ? rng.next() : Math.random());
 
     const isPlayerOffense = possession === 'player';
     const offenseTeam = isPlayerOffense ? playerTeam : cpuTeam;
@@ -2836,16 +3953,18 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           if (rand() < makePct) {
             setPlayResult({ text: '🥅 FIELD GOAL IS GOOD! +3', color: COLORS.mustard });
             if (isPlayerOffense) {
-              setPlayerScore(s => s + 3);
+              setPlayerScore((s) => s + 3);
               statsRef.current.fieldGoals++;
-            }
-            else setCpuScore(s => s + 3);
+            } else setCpuScore((s) => s + 3);
             // Success particles
-            setParticles(p => [...p, ...createParticleBurst(95, 30, 'fieldgoal', 8, 1.2)]);
-            setFloatingTexts(t => [...t, createFloatingText(95, 25, '+3!', COLORS.mustard)]);
+            setParticles((p) => [...p, ...createParticleBurst(95, 30, 'fieldgoal', 8, 1.2)]);
+            setFloatingTexts((t) => [...t, createFloatingText(95, 25, '+3!', COLORS.mustard)]);
             sounds.fieldGoal();
           } else {
-            setPlayResult({ text: '❌ NO GOOD! Wide ' + (rand() > 0.5 ? 'left' : 'right'), color: COLORS.ketchup });
+            setPlayResult({
+              text: '❌ NO GOOD! Wide ' + (rand() > 0.5 ? 'left' : 'right'),
+              color: COLORS.ketchup,
+            });
             sounds.fieldGoalMiss();
           }
 
@@ -2883,9 +4002,12 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         // Smart pick: guess run vs pass based on down/distance
         const likelyRun = yardsToGo <= 3 || down === 4;
         const likelyPass = yardsToGo >= 8 || (timeLeft < 30 && quarter >= 3);
-        const counterType = likelyRun ? 'run' : likelyPass ? 'pass' : (rand() < 0.5 ? 'run' : 'pass');
-        const counterPlays = DEFENSIVE_PLAYS.filter(p => p.counters?.includes(counterType));
-        cpuPlay = counterPlays.length > 0 ? counterPlays[Math.floor(rand() * counterPlays.length)] : DEFENSIVE_PLAYS[Math.floor(rand() * DEFENSIVE_PLAYS.length)];
+        const counterType = likelyRun ? 'run' : likelyPass ? 'pass' : rand() < 0.5 ? 'run' : 'pass';
+        const counterPlays = DEFENSIVE_PLAYS.filter((p) => p.counters?.includes(counterType));
+        cpuPlay =
+          counterPlays.length > 0
+            ? counterPlays[Math.floor(rand() * counterPlays.length)]
+            : DEFENSIVE_PLAYS[Math.floor(rand() * DEFENSIVE_PLAYS.length)];
       } else {
         cpuPlay = DEFENSIVE_PLAYS[Math.floor(rand() * DEFENSIVE_PLAYS.length)];
       }
@@ -2895,8 +4017,13 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
       if (rand() < smartChance) {
         // Smart pick: short yardage = low risk run, long yardage = pass
         const preferRun = yardsToGo <= 4;
-        const smartPlays = OFFENSIVE_PLAYS.filter(p => preferRun ? p.type === 'run' : p.type === 'pass');
-        cpuPlay = smartPlays.length > 0 ? smartPlays[Math.floor(rand() * smartPlays.length)] : OFFENSIVE_PLAYS[Math.floor(rand() * OFFENSIVE_PLAYS.length)];
+        const smartPlays = OFFENSIVE_PLAYS.filter((p) =>
+          preferRun ? p.type === 'run' : p.type === 'pass'
+        );
+        cpuPlay =
+          smartPlays.length > 0
+            ? smartPlays[Math.floor(rand() * smartPlays.length)]
+            : OFFENSIVE_PLAYS[Math.floor(rand() * OFFENSIVE_PLAYS.length)];
       } else {
         cpuPlay = OFFENSIVE_PLAYS[Math.floor(rand() * OFFENSIVE_PLAYS.length)];
       }
@@ -2923,7 +4050,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           if (turboMeter > 50 && rand() < 0.25) {
             yards = Math.floor(yards * 1.5);
             resultText = '🔥 TURBO! ';
-            setTurboMeter(t => Math.max(0, t - 30));
+            setTurboMeter((t) => Math.max(0, t - 30));
             // Trigger turbo flash effect
             setTurboFlash(true);
             setTimeout(() => setTurboFlash(false), 600);
@@ -2972,7 +4099,8 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         const playerDefensePlay = play as DefensivePlay;
 
         const baseSuccess = cpuOffensePlay.risk + (cpuTeam.offense - playerTeam.defense) / 200;
-        const countered = playerDefensePlay.counters && playerDefensePlay.counters.includes(cpuOffensePlay.type);
+        const countered =
+          playerDefensePlay.counters && playerDefensePlay.counters.includes(cpuOffensePlay.type);
         const successChance = countered ? baseSuccess * 0.4 : baseSuccess;
 
         if (rand() < successChance) {
@@ -3023,22 +4151,25 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         if (newPosition >= 100) {
           const scoringTeam = possession;
           if (scoringTeam === 'player') {
-            setPlayerScore(s => s + 7);
+            setPlayerScore((s) => s + 7);
             setPlayResult({ text: '🏈 TOUCHDOWN! +7', color: COLORS.mustard });
             // TD celebration particles - 20 particle burst!
-            setParticles(p => [...p, ...createParticleBurst(95, 50, 'touchdown', 20, 1.5)]);
-            setFloatingTexts(t => [...t, createFloatingText(95, 40, 'TOUCHDOWN!', COLORS.mustard)]);
+            setParticles((p) => [...p, ...createParticleBurst(95, 50, 'touchdown', 20, 1.5)]);
+            setFloatingTexts((t) => [
+              ...t,
+              createFloatingText(95, 40, 'TOUCHDOWN!', COLORS.mustard),
+            ]);
             sounds.touchdown();
             statsRef.current.touchdowns++;
           } else {
-            setCpuScore(s => s + 7);
+            setCpuScore((s) => s + 7);
             setPlayResult({ text: `😱 ${cpuTeam.emoji} Touchdown! +7`, color: COLORS.ketchup });
             sounds.turnover(); // CPU touchdown feels like a turnover to the player
           }
 
           setTimeout(() => {
             resetDrive(scoringTeam === 'player' ? 'cpu' : 'player', 25);
-            setTurboMeter(t => Math.min(100, t + 25));
+            setTurboMeter((t) => Math.min(100, t + 25));
             setPlayResult(null);
             setIsAnimating(false);
           }, 2000);
@@ -3048,10 +4179,10 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         if (newPosition <= 0) {
           const scoringTeam = possession === 'player' ? 'cpu' : 'player';
           if (scoringTeam === 'player') {
-            setPlayerScore(s => s + 2);
+            setPlayerScore((s) => s + 2);
             setPlayResult({ text: '🛡️ SAFETY! +2', color: COLORS.mustard });
           } else {
-            setCpuScore(s => s + 2);
+            setCpuScore((s) => s + 2);
             setPlayResult({ text: `😬 Safety! ${cpuTeam.emoji} +2`, color: COLORS.ketchup });
           }
 
@@ -3071,7 +4202,9 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           setYardsToGo(10);
           setLineOfScrimmage(newPosition);
           if (!playResult?.text?.includes('TURBO') && !playResult?.text?.includes('BIG PLAY')) {
-            setPlayResult(prev => prev ? { ...prev, text: prev.text + ' - FIRST DOWN!' } : null);
+            setPlayResult((prev) =>
+              prev ? { ...prev, text: prev.text + ' - FIRST DOWN!' } : null
+            );
           }
         } else {
           const newDown = down + 1;
@@ -3088,7 +4221,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           setYardsToGo(Math.max(1, yardsToGo - yards));
         }
 
-        setTurboMeter(t => Math.min(100, t + 5));
+        setTurboMeter((t) => Math.min(100, t + 5));
 
         setTimeout(() => {
           setPlayResult(null);
@@ -3107,11 +4240,12 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         const progress = ballAnimation.progress;
         const x = ballAnimation.startX + (ballAnimation.endX - ballAnimation.startX) * progress;
         // Arc height for passes and FG
-        const arcHeight = ballAnimation.type === 'fg'
-          ? Math.sin(progress * Math.PI) * 40
-          : ballAnimation.type === 'pass'
-            ? Math.sin(progress * Math.PI) * 25
-            : 0;
+        const arcHeight =
+          ballAnimation.type === 'fg'
+            ? Math.sin(progress * Math.PI) * 40
+            : ballAnimation.type === 'pass'
+              ? Math.sin(progress * Math.PI) * 25
+              : 0;
         const y = ballAnimation.startY - arcHeight;
         return { x, y, rotation: ballAnimation.rotation };
       }
@@ -3121,72 +4255,114 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     const ballDisplay = getBallDisplayPosition();
 
     return (
-      <div style={{
-        position: 'relative', height: '180px', margin: '10px',
-        background: `linear-gradient(90deg,
+      <div
+        style={{
+          position: 'relative',
+          height: '180px',
+          margin: '10px',
+          background: `linear-gradient(90deg,
           ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 0%,
           ${possession === 'player' ? COLORS.ketchup : COLORS.mustard}44 10%,
           ${COLORS.grass} 10%, ${COLORS.grass} 90%,
           ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 90%,
           ${possession === 'player' ? COLORS.mustard : COLORS.ketchup}44 100%)`,
-        borderRadius: '8px', border: '4px solid white', overflow: 'hidden',
-        filter: turboFlash ? 'brightness(1.3) saturate(1.3)' : 'none',
-        transition: 'filter 0.15s ease-out',
-      }}>
+          borderRadius: '8px',
+          border: '4px solid white',
+          overflow: 'hidden',
+          filter: turboFlash ? 'brightness(1.3) saturate(1.3)' : 'none',
+          transition: 'filter 0.15s ease-out',
+        }}
+      >
         {/* Yard lines */}
-        {[10, 20, 30, 40, 50, 60, 70, 80, 90].map(yard => (
-          <div key={yard} style={{
-            position: 'absolute', left: `${yard}%`, top: 0, bottom: 0,
-            width: '2px', background: 'rgba(255,255,255,0.3)',
-          }}>
-            <span style={{ position: 'absolute', top: '50%', transform: 'translate(-50%, -50%)', color: 'rgba(255,255,255,0.5)', fontSize: '10px', fontWeight: 'bold' }}>
+        {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((yard) => (
+          <div
+            key={yard}
+            style={{
+              position: 'absolute',
+              left: `${yard}%`,
+              top: 0,
+              bottom: 0,
+              width: '2px',
+              background: 'rgba(255,255,255,0.3)',
+            }}
+          >
+            <span
+              style={{
+                position: 'absolute',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: 'rgba(255,255,255,0.5)',
+                fontSize: '10px',
+                fontWeight: 'bold',
+              }}
+            >
               {yard === 50 ? '50' : yard < 50 ? yard : 100 - yard}
             </span>
           </div>
         ))}
 
         {/* Line of scrimmage */}
-        <div style={{
-          position: 'absolute', left: `${lineOfScrimmage}%`, top: 0, bottom: 0,
-          width: '3px', background: '#4169E1', boxShadow: '0 0 8px #4169E1',
-        }} />
+        <div
+          style={{
+            position: 'absolute',
+            left: `${lineOfScrimmage}%`,
+            top: 0,
+            bottom: 0,
+            width: '3px',
+            background: '#4169E1',
+            boxShadow: '0 0 8px #4169E1',
+          }}
+        />
 
         {/* First down marker */}
-        <div style={{
-          position: 'absolute', left: `${Math.min(100, lineOfScrimmage + yardsToGo)}%`, top: 0, bottom: 0,
-          width: '3px', background: COLORS.mustard, boxShadow: `0 0 10px ${COLORS.mustard}`,
-        }} />
+        <div
+          style={{
+            position: 'absolute',
+            left: `${Math.min(100, lineOfScrimmage + yardsToGo)}%`,
+            top: 0,
+            bottom: 0,
+            width: '3px',
+            background: COLORS.mustard,
+            boxShadow: `0 0 10px ${COLORS.mustard}`,
+          }}
+        />
 
         {/* Receiver dots - floating animation during plays */}
-        {possession === 'player' && showPlaybook && receiverPositions.map((pos, i) => (
-          <div
-            key={`receiver-${i}`}
-            style={{
-              position: 'absolute',
-              left: `${pos.x}%`,
-              top: `${pos.y}%`,
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              background: COLORS.mustard,
-              boxShadow: `0 0 6px ${COLORS.mustard}`,
-              animation: 'receiverFloat 1.5s ease-in-out infinite',
-              animationDelay: `${i * 0.2}s`,
-              opacity: 0.8,
-            }}
-          />
-        ))}
+        {possession === 'player' &&
+          showPlaybook &&
+          receiverPositions.map((pos, i) => (
+            <div
+              key={`receiver-${i}`}
+              style={{
+                position: 'absolute',
+                left: `${pos.x}%`,
+                top: `${pos.y}%`,
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                background: COLORS.mustard,
+                boxShadow: `0 0 6px ${COLORS.mustard}`,
+                animation: 'receiverFloat 1.5s ease-in-out infinite',
+                animationDelay: `${i * 0.2}s`,
+                opacity: 0.8,
+              }}
+            />
+          ))}
 
         {/* Animated football */}
-        <div style={{
-          position: 'absolute',
-          left: `${ballDisplay.x}%`,
-          top: `${ballDisplay.y}%`,
-          transform: `translate(-50%, -50%) rotate(${ballDisplay.rotation}deg)`,
-          fontSize: '24px',
-          transition: ballAnimation?.active ? 'none' : 'left 0.5s ease-out, top 0.3s ease-out',
-          filter: turboFlash ? 'drop-shadow(0 0 8px #FFD700)' : 'none',
-        }}>🏈</div>
+        <div
+          style={{
+            position: 'absolute',
+            left: `${ballDisplay.x}%`,
+            top: `${ballDisplay.y}%`,
+            transform: `translate(-50%, -50%) rotate(${ballDisplay.rotation}deg)`,
+            fontSize: '24px',
+            transition: ballAnimation?.active ? 'none' : 'left 0.5s ease-out, top 0.3s ease-out',
+            filter: turboFlash ? 'drop-shadow(0 0 8px #FFD700)' : 'none',
+          }}
+        >
+          🏈
+        </div>
 
         {/* Endzone markers */}
         <div style={{ position: 'absolute', left: '2%', top: '10px', fontSize: '20px' }}>
@@ -3197,7 +4373,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         </div>
 
         {/* Particle renderer for field */}
-        {particles.map(particle => (
+        {particles.map((particle) => (
           <div
             key={particle.id}
             style={{
@@ -3215,7 +4391,7 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
         ))}
 
         {/* Floating text renderer for field */}
-        {floatingTexts.map(ft => (
+        {floatingTexts.map((ft) => (
           <div
             key={ft.id}
             style={{
@@ -3246,29 +4422,61 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
     return (
       <div style={{ margin: '10px' }}>
         {canSpecialTeams && (
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', justifyContent: 'center' }}>
-            <button onClick={() => setPlaybookTab('plays')} style={{
-              background: playbookTab === 'plays' ? COLORS.burntOrange : 'rgba(255,255,255,0.1)',
-              border: 'none', borderRadius: '8px', padding: '8px 16px', color: 'white', cursor: 'pointer',
-            }}>📋 Plays</button>
-            <button onClick={() => setPlaybookTab('special')} style={{
-              background: playbookTab === 'special' ? COLORS.mustard : 'rgba(255,255,255,0.1)',
-              border: 'none', borderRadius: '8px', padding: '8px 16px', color: playbookTab === 'special' ? 'black' : 'white', cursor: 'pointer',
-            }}>⭐ Special Teams</button>
+          <div
+            style={{ display: 'flex', gap: '8px', marginBottom: '10px', justifyContent: 'center' }}
+          >
+            <button
+              onClick={() => setPlaybookTab('plays')}
+              style={{
+                background: playbookTab === 'plays' ? COLORS.burntOrange : 'rgba(255,255,255,0.1)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              📋 Plays
+            </button>
+            <button
+              onClick={() => setPlaybookTab('special')}
+              style={{
+                background: playbookTab === 'special' ? COLORS.mustard : 'rgba(255,255,255,0.1)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                color: playbookTab === 'special' ? 'black' : 'white',
+                cursor: 'pointer',
+              }}
+            >
+              ⭐ Special Teams
+            </button>
           </div>
         )}
 
         <div style={{ color: '#888', fontSize: '11px', marginBottom: '8px', textAlign: 'center' }}>
-          {playbookTab === 'special' ? '4TH DOWN OPTIONS:' : (isPlayerOffense ? `OFFENSE - ${down}${['st','nd','rd','th'][Math.min(down-1,3)]} & ${yardsToGo}` : 'PICK YOUR DEFENSE:')}
+          {playbookTab === 'special'
+            ? '4TH DOWN OPTIONS:'
+            : isPlayerOffense
+              ? `OFFENSE - ${down}${['st', 'nd', 'rd', 'th'][Math.min(down - 1, 3)]} & ${yardsToGo}`
+              : 'PICK YOUR DEFENSE:'}
         </div>
 
         {playbookTab === 'special' ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
             {SPECIAL_TEAMS.map((play, i) => (
-              <button key={i} onClick={() => executePlay(play, true)} style={{
-                background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
-                border: `2px solid ${COLORS.mustard}`, borderRadius: '10px', padding: '12px 8px', cursor: 'pointer', color: 'white',
-              }}>
+              <button
+                key={i}
+                onClick={() => executePlay(play, true)}
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
+                  border: `2px solid ${COLORS.mustard}`,
+                  borderRadius: '10px',
+                  padding: '12px 8px',
+                  cursor: 'pointer',
+                  color: 'white',
+                }}
+              >
                 <div style={{ fontSize: '24px', marginBottom: '4px' }}>{play.icon}</div>
                 <div style={{ fontWeight: 'bold', fontSize: '12px' }}>{play.name}</div>
                 <div style={{ fontSize: '9px', color: '#888' }}>{play.desc}</div>
@@ -3276,13 +4484,29 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
             ))}
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', maxHeight: '280px', overflowY: 'auto' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '6px',
+              maxHeight: '280px',
+              overflowY: 'auto',
+            }}
+          >
             {plays.map((play, i) => (
-              <button key={i} onClick={() => executePlay(play)} style={{
-                background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
-                border: `2px solid ${isPlayerOffense ? COLORS.burntOrange : '#4CAF50'}`,
-                borderRadius: '8px', padding: '10px 6px', cursor: 'pointer', color: 'white', textAlign: 'center',
-              }}>
+              <button
+                key={i}
+                onClick={() => executePlay(play)}
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.charcoal} 0%, ${COLORS.midnight} 100%)`,
+                  border: `2px solid ${isPlayerOffense ? COLORS.burntOrange : '#4CAF50'}`,
+                  borderRadius: '8px',
+                  padding: '10px 6px',
+                  cursor: 'pointer',
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+              >
                 <div style={{ fontSize: '20px', marginBottom: '2px' }}>{play.icon}</div>
                 <div style={{ fontWeight: 'bold', fontSize: '11px' }}>{play.name}</div>
                 <div style={{ fontSize: '9px', color: '#666' }}>{play.desc}</div>
@@ -3295,22 +4519,38 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: possession === 'player'
-        ? `linear-gradient(180deg, ${playerTeam?.color || COLORS.charcoal}44 0%, ${COLORS.midnight} 100%)`
-        : `linear-gradient(180deg, ${cpuTeam?.color || COLORS.charcoal}44 0%, ${COLORS.midnight} 100%)`,
-      fontFamily: 'system-ui', overflow: 'hidden', userSelect: 'none', transition: 'background 0.5s',
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          possession === 'player'
+            ? `linear-gradient(180deg, ${playerTeam?.color || COLORS.charcoal}44 0%, ${COLORS.midnight} 100%)`
+            : `linear-gradient(180deg, ${cpuTeam?.color || COLORS.charcoal}44 0%, ${COLORS.midnight} 100%)`,
+        fontFamily: 'system-ui',
+        overflow: 'hidden',
+        userSelect: 'none',
+        transition: 'background 0.5s',
+      }}
+    >
       <ArcadeHeader title="Gridiron Blitz" onBack={onBack} showBack />
 
       {gamePhase !== 'teamSelect' && (
-        <ScoreBar items={[
-          { label: playerTeam?.name?.split(' ')[0] || 'YOU', value: playerScore, color: playerTeam?.color || 'white' },
-          { label: 'QTR', value: quarter, color: 'white' },
-          { label: 'TIME', value: timeLeft, color: timeLeft <= 10 ? COLORS.ketchup : 'white' },
-          { label: cpuTeam?.name?.split(' ')[0] || 'CPU', value: cpuScore, color: cpuTeam?.color || 'white' },
-        ]} />
+        <ScoreBar
+          items={[
+            {
+              label: playerTeam?.name?.split(' ')[0] || 'YOU',
+              value: playerScore,
+              color: playerTeam?.color || 'white',
+            },
+            { label: 'QTR', value: quarter, color: 'white' },
+            { label: 'TIME', value: timeLeft, color: timeLeft <= 10 ? COLORS.ketchup : 'white' },
+            {
+              label: cpuTeam?.name?.split(' ')[0] || 'CPU',
+              value: cpuScore,
+              color: cpuTeam?.color || 'white',
+            },
+          ]}
+        />
       )}
 
       <div style={{ padding: '5px' }}>
@@ -3318,7 +4558,9 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           <div style={{ textAlign: 'center', padding: '20px' }}>
             <div style={{ fontSize: '64px', marginBottom: '10px' }}>🏈</div>
             <h2 style={{ color: COLORS.burntOrange, marginBottom: '8px' }}>GRIDIRON BLITZ</h2>
-            <p style={{ color: '#888', marginBottom: '16px', fontSize: '14px' }}>4 quarters × {diffSettings.quarterTime} seconds. Call plays. Score big!</p>
+            <p style={{ color: '#888', marginBottom: '16px', fontSize: '14px' }}>
+              4 quarters × {diffSettings.quarterTime} seconds. Call plays. Score big!
+            </p>
             <DifficultySelector
               game="football"
               difficulty={difficulty}
@@ -3326,20 +4568,42 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
               difficulties={FOOTBALL_DIFFICULTIES}
             />
             <p style={{ color: 'white', marginBottom: '16px' }}>Choose your team:</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', maxWidth: '400px', margin: '0 auto' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '12px',
+                justifyContent: 'center',
+                maxWidth: '400px',
+                margin: '0 auto',
+              }}
+            >
               {TEAMS.map((team, i) => (
-                <button key={i} onClick={() => initiateGame(i)} style={{
-                  background: `linear-gradient(135deg, ${team.color}44 0%, ${COLORS.midnight} 100%)`,
-                  border: `3px solid ${team.color}`, borderRadius: '12px',
-                  padding: '16px', cursor: 'pointer', width: '150px', textAlign: 'center', color: 'white',
-                }}>
+                <button
+                  key={i}
+                  onClick={() => initiateGame(i)}
+                  style={{
+                    background: `linear-gradient(135deg, ${team.color}44 0%, ${COLORS.midnight} 100%)`,
+                    border: `3px solid ${team.color}`,
+                    borderRadius: '12px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    width: '150px',
+                    textAlign: 'center',
+                    color: 'white',
+                  }}
+                >
                   <div style={{ fontSize: '36px', marginBottom: '8px' }}>{team.emoji}</div>
                   <div style={{ fontWeight: 'bold' }}>{team.name}</div>
-                  <div style={{ fontSize: '10px', color: '#aaa', marginTop: '4px' }}>OFF: {team.offense} | DEF: {team.defense}</div>
+                  <div style={{ fontSize: '10px', color: '#aaa', marginTop: '4px' }}>
+                    OFF: {team.offense} | DEF: {team.defense}
+                  </div>
                 </button>
               ))}
             </div>
-            {highScore > 0 && <p style={{ marginTop: '24px', color: COLORS.mustard }}>🏆 Best: {highScore} pts</p>}
+            {highScore > 0 && (
+              <p style={{ marginTop: '24px', color: COLORS.mustard }}>🏆 Best: {highScore} pts</p>
+            )}
             <p style={{ color: '#666', fontSize: '11px', marginTop: '12px' }}>ESC to pause</p>
           </div>
         )}
@@ -3353,53 +4617,96 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           <>
             {renderField()}
 
-            <div style={{
-              textAlign: 'center', padding: '8px',
-              background: 'rgba(0,0,0,0.5)', borderRadius: '8px', margin: '5px 10px',
-            }}>
-              <span style={{ color: possession === 'player' ? COLORS.mustard : '#FF8888', fontWeight: 'bold', fontSize: '16px' }}>
-                {possession === 'player' ? `${playerTeam?.emoji} YOUR BALL` : `${cpuTeam?.emoji} DEFENSE`}
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '8px',
+                background: 'rgba(0,0,0,0.5)',
+                borderRadius: '8px',
+                margin: '5px 10px',
+              }}
+            >
+              <span
+                style={{
+                  color: possession === 'player' ? COLORS.mustard : '#FF8888',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                }}
+              >
+                {possession === 'player'
+                  ? `${playerTeam?.emoji} YOUR BALL`
+                  : `${cpuTeam?.emoji} DEFENSE`}
               </span>
               <span style={{ color: 'white', marginLeft: '12px', fontSize: '14px' }}>
-                {down}{['st','nd','rd','th'][Math.min(down-1,3)]} & {yardsToGo} at the {ballPosition < 50 ? ballPosition : 100 - ballPosition}
+                {down}
+                {['st', 'nd', 'rd', 'th'][Math.min(down - 1, 3)]} & {yardsToGo} at the{' '}
+                {ballPosition < 50 ? ballPosition : 100 - ballPosition}
               </span>
             </div>
 
-            <div style={{
-              margin: '5px 10px',
-              background: turboFlash ? 'rgba(255,200,0,0.3)' : 'rgba(0,0,0,0.3)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              transition: 'background 0.15s ease-out',
-              boxShadow: turboFlash ? `0 0 15px ${COLORS.mustard}` : 'none',
-            }}>
+            <div
+              style={{
+                margin: '5px 10px',
+                background: turboFlash ? 'rgba(255,200,0,0.3)' : 'rgba(0,0,0,0.3)',
+                borderRadius: '8px',
+                padding: '6px 10px',
+                transition: 'background 0.15s ease-out',
+                boxShadow: turboFlash ? `0 0 15px ${COLORS.mustard}` : 'none',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{
-                  color: turboFlash ? COLORS.mustard : COLORS.ember,
-                  fontSize: '11px',
-                  animation: turboFlash ? 'turboFlash 0.3s ease-in-out infinite' : 'none',
-                }}>⚡ TURBO</span>
-                <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{
-                    height: '100%',
-                    width: `${turboMeter}%`,
-                    background: turboFlash
-                      ? `linear-gradient(90deg, ${COLORS.mustard} 0%, #FFD700 50%, ${COLORS.ember} 100%)`
-                      : `linear-gradient(90deg, ${COLORS.ember} 0%, ${COLORS.mustard} 100%)`,
-                    transition: 'width 0.3s, background 0.15s',
-                    boxShadow: turboFlash ? `0 0 10px ${COLORS.mustard}` : 'none',
-                  }} />
+                <span
+                  style={{
+                    color: turboFlash ? COLORS.mustard : COLORS.ember,
+                    fontSize: '11px',
+                    animation: turboFlash ? 'turboFlash 0.3s ease-in-out infinite' : 'none',
+                  }}
+                >
+                  ⚡ TURBO
+                </span>
+                <div
+                  style={{
+                    flex: 1,
+                    height: '8px',
+                    background: 'rgba(255,255,255,0.1)',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${turboMeter}%`,
+                      background: turboFlash
+                        ? `linear-gradient(90deg, ${COLORS.mustard} 0%, #FFD700 50%, ${COLORS.ember} 100%)`
+                        : `linear-gradient(90deg, ${COLORS.ember} 0%, ${COLORS.mustard} 100%)`,
+                      transition: 'width 0.3s, background 0.15s',
+                      boxShadow: turboFlash ? `0 0 10px ${COLORS.mustard}` : 'none',
+                    }}
+                  />
                 </div>
               </div>
             </div>
 
             {playResult && (
-              <div style={{
-                textAlign: 'center', padding: '14px', margin: '10px',
-                background: 'rgba(0,0,0,0.85)', borderRadius: '12px', animation: 'popIn 0.3s ease-out',
-              }}>
-                <div style={{ color: playResult.color, fontSize: '18px', fontWeight: 'bold' }}>{playResult.text}</div>
-                {playResult.cpuPlay && <div style={{ color: '#666', fontSize: '11px', marginTop: '4px' }}>vs {playResult.cpuPlay}</div>}
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '14px',
+                  margin: '10px',
+                  background: 'rgba(0,0,0,0.85)',
+                  borderRadius: '12px',
+                  animation: 'popIn 0.3s ease-out',
+                }}
+              >
+                <div style={{ color: playResult.color, fontSize: '18px', fontWeight: 'bold' }}>
+                  {playResult.text}
+                </div>
+                {playResult.cpuPlay && (
+                  <div style={{ color: '#666', fontSize: '11px', marginTop: '4px' }}>
+                    vs {playResult.cpuPlay}
+                  </div>
+                )}
               </div>
             )}
 
@@ -3411,18 +4718,36 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
           <div style={{ textAlign: 'center', padding: '40px 20px' }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎺</div>
             <h2 style={{ color: COLORS.burntOrange, marginBottom: '16px' }}>HALFTIME!</h2>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '24px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '40px',
+                marginBottom: '24px',
+              }}
+            >
               <div>
                 <div style={{ fontSize: '14px', color: '#888' }}>{playerTeam?.name}</div>
-                <div style={{ fontSize: '36px', color: playerTeam?.color, fontWeight: 'bold' }}>{playerScore}</div>
+                <div style={{ fontSize: '36px', color: playerTeam?.color, fontWeight: 'bold' }}>
+                  {playerScore}
+                </div>
               </div>
               <div style={{ color: '#444', fontSize: '24px', alignSelf: 'center' }}>-</div>
               <div>
                 <div style={{ fontSize: '14px', color: '#888' }}>{cpuTeam?.name}</div>
-                <div style={{ fontSize: '36px', color: cpuTeam?.color, fontWeight: 'bold' }}>{cpuScore}</div>
+                <div style={{ fontSize: '36px', color: cpuTeam?.color, fontWeight: 'bold' }}>
+                  {cpuScore}
+                </div>
               </div>
             </div>
-            <ActionButton onClick={() => { setQuarter(3); setTimeLeft(diffSettings.quarterTime); resetDrive(possession === 'player' ? 'cpu' : 'player', 25); setGamePhase('play'); }}>
+            <ActionButton
+              onClick={() => {
+                setQuarter(3);
+                setTimeLeft(diffSettings.quarterTime);
+                resetDrive(possession === 'player' ? 'cpu' : 'player', 25);
+                setGamePhase('play');
+              }}
+            >
               ▶️ Start 2nd Half
             </ActionButton>
           </div>
@@ -3430,7 +4755,12 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
 
         {/* Pause menu */}
         {gamePhase === 'paused' && (
-          <PauseMenu onResume={handleResume} onRestart={handleRestart} onQuit={onBack} sounds={sounds} />
+          <PauseMenu
+            onResume={handleResume}
+            onRestart={handleRestart}
+            onQuit={onBack}
+            sounds={sounds}
+          />
         )}
 
         {/* Stats screen */}
@@ -3462,9 +4792,27 @@ const GridironBlitzGame: React.FC<GameProps> = ({ onBack, onUpdateHighScore, hig
 // ============================================================================
 
 const GAMES: Game[] = [
-  { id: 'hotdog-dash', title: "Hot Dog Dash", description: "Help Blaze catch falling hot dogs!", icon: "🌭", component: HotDogDashGame },
-  { id: 'sandlot-slugger', title: "Sandlot Slugger", description: "Backyard home run derby!", icon: "⚾", component: SandlotSluggerGame },
-  { id: 'gridiron-blitz', title: "Gridiron Blitz", description: "Fast arcade football action!", icon: "🏈", component: GridironBlitzGame },
+  {
+    id: 'hotdog-dash',
+    title: 'Hot Dog Dash',
+    description: 'Help Blaze catch falling hot dogs!',
+    icon: '🌭',
+    component: HotDogDashGame,
+  },
+  {
+    id: 'sandlot-slugger',
+    title: 'Sandlot Slugger',
+    description: 'Backyard home run derby!',
+    icon: '⚾',
+    component: SandlotSluggerGame,
+  },
+  {
+    id: 'gridiron-blitz',
+    title: 'Gridiron Blitz',
+    description: 'Fast arcade football action!',
+    icon: '🏈',
+    component: GridironBlitzGame,
+  },
 ];
 
 // ============================================================================
@@ -3483,36 +4831,60 @@ interface ArcadeHubProps {
   onShowAchievements: () => void;
 }
 
-const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChallenge, onClose, highScores, dailyChallengeData, isMuted, onToggleMute, progress, onShowAchievements }) => {
+const ArcadeHub: React.FC<ArcadeHubProps> = ({
+  onSelectGame,
+  onSelectDailyChallenge,
+  onClose,
+  highScores,
+  dailyChallengeData,
+  isMuted,
+  onToggleMute,
+  progress,
+  onShowAchievements,
+}) => {
   const totalGames = Object.values(progress.gamesPlayed).reduce((a, b) => a + b, 0);
   const achievementCount = progress.achievements.length;
 
   return (
-    <div style={{ minHeight: '100vh', background: `linear-gradient(135deg, ${COLORS.midnight} 0%, ${COLORS.charcoal} 50%, #1a1a2e 100%)`, fontFamily: 'system-ui' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `linear-gradient(135deg, ${COLORS.midnight} 0%, ${COLORS.charcoal} 50%, #1a1a2e 100%)`,
+        fontFamily: 'system-ui',
+      }}
+    >
       <ArcadeHeader title="Blaze Arcade" onClose={onClose} />
       <div style={{ padding: '30px 20px', textAlign: 'center' }}>
         <div style={{ marginBottom: '30px' }}>
           <div style={{ fontSize: '64px', marginBottom: '10px' }}>🐕🎮</div>
-          <h1 style={{ color: COLORS.burntOrange, fontSize: '28px', marginBottom: '8px' }}>Blaze Arcade</h1>
-          <p style={{ color: '#888', fontSize: '14px' }}>A Blaze Sports Intel Easter Egg Collection</p>
+          <h1 style={{ color: COLORS.burntOrange, fontSize: '28px', marginBottom: '8px' }}>
+            Blaze Arcade
+          </h1>
+          <p style={{ color: '#888', fontSize: '14px' }}>
+            A Blaze Sports Intel Easter Egg Collection
+          </p>
         </div>
 
         {/* Player stats bar */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '16px',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-        }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '8px',
-            padding: '8px 16px',
+        <div
+          style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}>
+            justifyContent: 'center',
+            gap: '16px',
+            marginBottom: '24px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '8px',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
             <span>🎮</span>
             <span style={{ color: '#888', fontSize: '12px' }}>Games:</span>
             <span style={{ color: 'white', fontWeight: 'bold' }}>{totalGames}</span>
@@ -3533,21 +4905,27 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChalle
           >
             <span>🏆</span>
             <span style={{ color: '#888', fontSize: '12px' }}>Achievements:</span>
-            <span style={{ color: achievementCount > 0 ? COLORS.mustard : 'white', fontWeight: 'bold' }}>
+            <span
+              style={{ color: achievementCount > 0 ? COLORS.mustard : 'white', fontWeight: 'bold' }}
+            >
               {achievementCount}/{ACHIEVEMENTS.length}
             </span>
           </button>
           {progress.currentStreak > 1 && (
-            <div style={{
-              background: 'rgba(255,107,53,0.1)',
-              borderRadius: '8px',
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
+            <div
+              style={{
+                background: 'rgba(255,107,53,0.1)',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               <span>🔥</span>
-              <span style={{ color: COLORS.ember, fontWeight: 'bold' }}>{progress.currentStreak} day streak!</span>
+              <span style={{ color: COLORS.ember, fontWeight: 'bold' }}>
+                {progress.currentStreak} day streak!
+              </span>
             </div>
           )}
         </div>
@@ -3578,16 +4956,27 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChalle
         </button>
 
         {/* Daily Challenge Section */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(255,215,0,0.1) 100%)',
-          borderRadius: '16px',
-          padding: '20px',
-          marginBottom: '30px',
-          maxWidth: '640px',
-          margin: '0 auto 30px',
-          border: '2px solid rgba(255,107,53,0.3)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '12px' }}>
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(255,107,53,0.15) 0%, rgba(255,215,0,0.1) 100%)',
+            borderRadius: '16px',
+            padding: '20px',
+            marginBottom: '30px',
+            maxWidth: '640px',
+            margin: '0 auto 30px',
+            border: '2px solid rgba(255,107,53,0.3)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              marginBottom: '12px',
+            }}
+          >
             <span style={{ fontSize: '24px' }}>📅</span>
             <h2 style={{ color: COLORS.ember, fontSize: '20px', margin: 0 }}>Daily Challenge</h2>
             <span style={{ fontSize: '24px' }}>🔥</span>
@@ -3596,7 +4985,7 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChalle
             {getDailyDateString()} • Same sequence for everyone • Compete globally!
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {GAMES.filter(g => g.component).map(game => {
+            {GAMES.filter((g) => g.component).map((game) => {
               const isCompleted = dailyChallengeData.completed.includes(game.id);
               const bestScore = dailyChallengeData.scores[game.id];
               return (
@@ -3618,9 +5007,13 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChalle
                   }}
                 >
                   <span style={{ fontSize: '28px' }}>{game.icon}</span>
-                  <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>{game.title.split(' ')[0]}</span>
+                  <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>
+                    {game.title.split(' ')[0]}
+                  </span>
                   {isCompleted ? (
-                    <span style={{ color: '#4CAF50', fontSize: '11px' }}>✓ {bestScore?.toLocaleString()}</span>
+                    <span style={{ color: '#4CAF50', fontSize: '11px' }}>
+                      ✓ {bestScore?.toLocaleString()}
+                    </span>
                   ) : (
                     <span style={{ color: COLORS.ember, fontSize: '11px' }}>Play Now!</span>
                   )}
@@ -3629,18 +5022,47 @@ const ArcadeHub: React.FC<ArcadeHubProps> = ({ onSelectGame, onSelectDailyChalle
             })}
           </div>
           {dailyChallengeData.completed.length === 3 && (
-            <div style={{ marginTop: '12px', color: COLORS.mustard, fontSize: '14px', fontWeight: 'bold' }}>
+            <div
+              style={{
+                marginTop: '12px',
+                color: COLORS.mustard,
+                fontSize: '14px',
+                fontWeight: 'bold',
+              }}
+            >
               🏆 All Daily Challenges Complete! 🏆
             </div>
           )}
         </div>
 
-        <h3 style={{ color: '#888', fontSize: '14px', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <h3
+          style={{
+            color: '#888',
+            fontSize: '14px',
+            marginBottom: '16px',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+          }}
+        >
           Free Play
         </h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center', maxWidth: '640px', margin: '0 auto' }}>
-          {GAMES.map(game => (
-            <GameCard key={game.id} game={game} highScore={highScores[game.id] || 0} onSelect={onSelectGame} />
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '20px',
+            justifyContent: 'center',
+            maxWidth: '640px',
+            margin: '0 auto',
+          }}
+        >
+          {GAMES.map((game) => (
+            <GameCard
+              key={game.id}
+              game={game}
+              highScore={highScores[game.id] || 0}
+              onSelect={onSelectGame}
+            />
           ))}
         </div>
         <div style={{ marginTop: '40px', color: '#555', fontSize: '12px' }}>
@@ -3668,7 +5090,9 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
   // Daily challenge state
   const [isDailyChallenge, setIsDailyChallenge] = useState(false);
   const [dailyRng, setDailyRng] = useState<SeededRandom | null>(null);
-  const [dailyChallengeData, setDailyChallengeData] = useState<DailyChallengeData>(() => getDailyChallengeData());
+  const [dailyChallengeData, setDailyChallengeData] = useState<DailyChallengeData>(() =>
+    getDailyChallengeData()
+  );
 
   // Initialize audio system
   const { sounds, toggleMute, isMuted } = useGameAudio();
@@ -3707,7 +5131,7 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
   }, [highScores]);
 
   const updateHighScore = (gameId: string, score: number) => {
-    setHighScores(prev => {
+    setHighScores((prev) => {
       const currentHigh = prev[gameId] || 0;
       if (score > currentHigh) {
         return { ...prev, [gameId]: score };
@@ -3732,21 +5156,24 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
     setCurrentGame(id);
   };
 
-  const handleDailyChallengeComplete = useCallback((gameId: string, score: number) => {
-    const prevData = getDailyChallengeData();
-    const wasAllComplete = prevData.completed.length === 3;
+  const handleDailyChallengeComplete = useCallback(
+    (gameId: string, score: number) => {
+      const prevData = getDailyChallengeData();
+      const wasAllComplete = prevData.completed.length === 3;
 
-    const isNewBest = saveDailyChallengeScore(gameId, score);
-    const newData = getDailyChallengeData();
-    setDailyChallengeData(newData);
+      const isNewBest = saveDailyChallengeScore(gameId, score);
+      const newData = getDailyChallengeData();
+      setDailyChallengeData(newData);
 
-    // If this completion made all 3 done (and wasn't already), record achievement
-    if (!wasAllComplete && newData.completed.length === 3) {
-      recordDailyComplete();
-    }
+      // If this completion made all 3 done (and wasn't already), record achievement
+      if (!wasAllComplete && newData.completed.length === 3) {
+        recordDailyComplete();
+      }
 
-    return isNewBest;
-  }, [recordDailyComplete]);
+      return isNewBest;
+    },
+    [recordDailyComplete]
+  );
 
   const handleBack = () => {
     sounds.menuBack();
@@ -3756,18 +5183,21 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
   };
 
   // Handle game completion with achievement checking
-  const handleGameComplete = useCallback((gameId: string, stats: HotDogStats | SluggerStats | FootballStats) => {
-    recordGamePlayed(gameId, stats.finalScore);
-    checkAchievements(stats);
+  const handleGameComplete = useCallback(
+    (gameId: string, stats: HotDogStats | SluggerStats | FootballStats) => {
+      recordGamePlayed(gameId, stats.finalScore);
+      checkAchievements(stats);
 
-    // Check for team defeated in football
-    if ('opponentScore' in stats && stats.finalScore > stats.opponentScore) {
-      // Record team defeat - we'd need to pass team name from the game
-    }
-  }, [recordGamePlayed, checkAchievements]);
+      // Check for team defeated in football
+      if ('opponentScore' in stats && stats.finalScore > stats.opponentScore) {
+        // Record team defeat - we'd need to pass team name from the game
+      }
+    },
+    [recordGamePlayed, checkAchievements]
+  );
 
   if (currentGame) {
-    const game = GAMES.find(g => g.id === currentGame);
+    const game = GAMES.find((g) => g.id === currentGame);
     if (game?.component) {
       const GameComponent = game.component;
       return (
@@ -3791,23 +5221,26 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
           />
           {/* Daily challenge banner */}
           {isDailyChallenge && (
-            <div style={{
-              position: 'fixed',
-              top: '60px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              background: 'linear-gradient(90deg, rgba(255,107,53,0.9) 0%, rgba(255,215,0,0.9) 100%)',
-              padding: '6px 20px',
-              borderRadius: '20px',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '12px',
-              zIndex: 150,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 4px 15px rgba(255,107,53,0.4)',
-            }}>
+            <div
+              style={{
+                position: 'fixed',
+                top: '60px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background:
+                  'linear-gradient(90deg, rgba(255,107,53,0.9) 0%, rgba(255,215,0,0.9) 100%)',
+                padding: '6px 20px',
+                borderRadius: '20px',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                zIndex: 150,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 4px 15px rgba(255,107,53,0.4)',
+              }}
+            >
               📅 DAILY CHALLENGE • {getDailyDateString()}
             </div>
           )}
@@ -3849,10 +5282,7 @@ export default function BlazeArcade({ onClose }: BlazeArcadeProps) {
       )}
       {/* Achievements display */}
       {showAchievements && (
-        <AchievementsDisplay
-          progress={progress}
-          onClose={() => setShowAchievements(false)}
-        />
+        <AchievementsDisplay progress={progress} onClose={() => setShowAchievements(false)} />
       )}
     </>
   );

@@ -8,15 +8,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 const tiers = [
   {
@@ -69,7 +60,7 @@ export default function PricingPage() {
         body: JSON.stringify({ tier }),
       });
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       if (data.error) {
         alert(data.error);
@@ -90,9 +81,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero */}
         <Section padding="lg" className="pt-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
@@ -224,9 +213,7 @@ export default function PricingPage() {
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
                   Questions?
                 </h2>
-                <p className="text-text-secondary mb-6">
-                  Reach out anytime. I read every email.
-                </p>
+                <p className="text-text-secondary mb-6">Reach out anytime. I read every email.</p>
                 <a
                   href="mailto:ahump20@outlook.com"
                   className="text-burnt-orange hover:text-ember transition-colors font-semibold"
@@ -238,8 +225,6 @@ export default function PricingPage() {
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

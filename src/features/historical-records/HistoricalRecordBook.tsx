@@ -1,9 +1,9 @@
 /**
  * BSI Historical Record Book Module
  * Display franchise records, single-season records, postseason history, key eras, and all-time players
- * 
+ *
  * All data must be sourced and cited - no fabrication
- * 
+ *
  * Brand Colors:
  * - Burnt Orange: #BF5700
  * - Texas Soil: #8B4513
@@ -627,9 +627,7 @@ export function HistoricalRecordBook({
                     padding: '0.25rem 0.625rem',
                     borderRadius: '4px',
                     backgroundColor:
-                      entry.result === 'won'
-                        ? 'rgba(16, 185, 129, 0.2)'
-                        : 'rgba(255,255,255,0.1)',
+                      entry.result === 'won' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.1)',
                     color: entry.result === 'won' ? '#10B981' : 'rgba(255,255,255,0.6)',
                   }}
                 >

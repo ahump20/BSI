@@ -7,15 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Games', href: '/college-baseball/games' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 // Sample games data - will be replaced with live API
 const todaysGames = [
@@ -81,9 +72,7 @@ export default function CollegeBaseballGamesPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24">
           <Container>
             <ScrollReveal direction="up">
@@ -162,8 +151,7 @@ export default function CollegeBaseballGamesPage() {
                         {game.away.score !== undefined && (
                           <span
                             className={`font-display text-xl font-bold ${
-                              game.status === 'Final' &&
-                              game.away.score > (game.home.score ?? 0)
+                              game.status === 'Final' && game.away.score > (game.home.score ?? 0)
                                 ? 'text-success'
                                 : 'text-white'
                             }`}
@@ -186,8 +174,7 @@ export default function CollegeBaseballGamesPage() {
                         {game.home.score !== undefined && (
                           <span
                             className={`font-display text-xl font-bold ${
-                              game.status === 'Final' &&
-                              game.home.score > (game.away.score ?? 0)
+                              game.status === 'Final' && game.home.score > (game.away.score ?? 0)
                                 ? 'text-success'
                                 : 'text-white'
                             }`}
@@ -217,13 +204,14 @@ export default function CollegeBaseballGamesPage() {
               <p>
                 Data sourced from official NCAA statistics. Updated in real-time during live games.
               </p>
-              <p className="mt-1">Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT</p>
+              <p className="mt-1">
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
+              </p>
             </div>
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

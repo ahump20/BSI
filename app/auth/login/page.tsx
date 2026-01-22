@@ -8,13 +8,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Pricing', href: '/pricing' },
-];
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -36,7 +29,7 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      const data: any = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Login failed');
@@ -52,8 +45,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24 min-h-screen">
           <Container>
             <ScrollReveal direction="up">
@@ -74,7 +66,10 @@ export default function LoginPage() {
                     )}
 
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Email
                       </label>
                       <Input
@@ -89,7 +84,10 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-sm font-medium text-text-secondary mb-2">
+                      <label
+                        htmlFor="password"
+                        className="block text-sm font-medium text-text-secondary mb-2"
+                      >
                         Password
                       </label>
                       <Input
@@ -103,7 +101,13 @@ export default function LoginPage() {
                       />
                     </div>
 
-                    <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      disabled={loading}
+                    >
                       {loading ? 'Signing in...' : 'Sign In'}
                     </Button>
                   </form>
@@ -111,7 +115,10 @@ export default function LoginPage() {
                   <div className="mt-6 text-center">
                     <p className="text-text-tertiary text-sm">
                       Do not have an account?{' '}
-                      <Link href="/auth/signup" className="text-burnt-orange hover:text-ember transition-colors">
+                      <Link
+                        href="/auth/signup"
+                        className="text-burnt-orange hover:text-ember transition-colors"
+                      >
                         Sign up
                       </Link>
                     </p>
@@ -122,7 +129,6 @@ export default function LoginPage() {
           </Container>
         </Section>
       </main>
-      <Footer />
     </>
   );
 }

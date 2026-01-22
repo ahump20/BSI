@@ -7,8 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
 import { TexasCovenantQuote } from '@/components/cinematic/CovenantQuote';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata: Metadata = {
   title: 'About | Blaze Sports Intel',
@@ -21,19 +19,10 @@ export const metadata: Metadata = {
   },
 };
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
-
 export default function AboutPage() {
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         {/* Hero */}
         <Section padding="lg" className="pt-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-texas-soil/20 via-transparent to-transparent pointer-events-none" />
@@ -161,7 +150,8 @@ export default function AboutPage() {
                   {
                     year: '2021',
                     title: 'Northwestern Mutual',
-                    description: 'Top 10% nationally. Learned that data wins when stories fall short.',
+                    description:
+                      'Top 10% nationally. Learned that data wins when stories fall short.',
                   },
                   {
                     year: '2024',
@@ -245,8 +235,6 @@ export default function AboutPage() {
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

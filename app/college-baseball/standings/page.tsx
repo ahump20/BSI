@@ -7,15 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic/ScrollReveal';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { Footer } from '@/components/layout-ds/Footer';
-
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'Games', href: '/college-baseball/games' },
-  { label: 'Standings', href: '/college-baseball/standings' },
-];
 
 const conferences = [
   { id: 'sec', name: 'SEC', fullName: 'Southeastern Conference' },
@@ -48,9 +39,7 @@ export default function CollegeBaseballStandingsPage() {
 
   return (
     <>
-      <Navbar items={navItems} />
-
-      <main id="main-content">
+      <main>
         <Section padding="lg" className="pt-24">
           <Container>
             <ScrollReveal direction="up">
@@ -102,9 +91,7 @@ export default function CollegeBaseballStandingsPage() {
                     <h2 className="font-display text-2xl font-bold text-white">
                       {currentConf?.fullName}
                     </h2>
-                    <p className="text-text-tertiary text-sm mt-1">
-                      2025 Conference Standings
-                    </p>
+                    <p className="text-text-tertiary text-sm mt-1">2025 Conference Standings</p>
                   </div>
                   <Badge variant="primary">Updated Daily</Badge>
                 </div>
@@ -184,18 +171,15 @@ export default function CollegeBaseballStandingsPage() {
 
             {/* Data Attribution */}
             <div className="mt-8 text-center text-xs text-text-tertiary">
-              <p>
-                RPI rankings from NCAA. Conference standings updated daily during season.
-              </p>
+              <p>RPI rankings from NCAA. Conference standings updated daily during season.</p>
               <p className="mt-1">
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                CT
               </p>
             </div>
           </Container>
         </Section>
       </main>
-
-      <Footer />
     </>
   );
 }

@@ -9,6 +9,9 @@ const nextConfig = {
     ignoreBuildErrors: true
   },
   trailingSlash: false,
+  experimental: {
+    turbopackUseSystemTlsCerts: true,
+  },
 };
 
 export default nextConfig;
