@@ -39,6 +39,21 @@ import {
   Info,
   X,
 } from 'lucide-react';
+import {
+  DEFAULT_FILLER_WORDS,
+  buildPatternModel,
+  computeAverageDrift,
+  computeDriftAssessment,
+  computeSessionSummary,
+  countFillerWords,
+  evaluateCoachingCue,
+  type CoachingCue,
+  type CoachingLevel,
+  type NeuralBaseline,
+  type NeuralMetricSnapshot,
+  type PatternModel,
+  type PatternSessionSummary,
+} from '@/lib/vision/neural-coach';
 
 // TensorFlow.js type declarations for CDN loading
 // Minimal type definition for TensorFlow.js API used in this component
@@ -69,9 +84,53 @@ interface TFTensor {
   shape: number[];
 }
 
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  item: (index: number) => SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item: (index: number) => SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: ((event: Event) => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognition;
+
 declare global {
   interface Window {
     tf: TensorFlowAPI;
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
   }
 }
 
@@ -98,6 +157,11 @@ const loadTensorFlow = (): Promise<TensorFlowAPI> => {
   });
 };
 
+const getSpeechRecognitionConstructor = (): SpeechRecognitionConstructor | null => {
+  if (typeof window === 'undefined') return null;
+  return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // BSI DESIGN TOKENS (matching globals.css)
 // ═══════════════════════════════════════════════════════════════════════════
@@ -111,6 +175,19 @@ const COLORS = {
   dust: '#c4b8a5',
   pro: '#22c55e', // Pro form overlay color
 };
+
+const NEURAL_PATTERN_STORAGE_KEY = 'bsi_neural_patterns_v2';
+const NEURAL_PATTERN_HISTORY_LIMIT = 12;
+const NEURAL_DRIFT_WINDOW_SIZE = 20;
+const NEURAL_COACH_UPDATE_MS = 400;
+const COACH_DRIFT_STREAK_FLOOR = 20;
+const HAPTIC_PATTERN_MID = [20, 80, 20];
+const HAPTIC_PATTERN_LATE = [30, 70, 30, 120, 30];
+const COACH_BEEP_FREQUENCY = 660;
+const COACH_BEEP_DURATION_MS = 140;
+const COACH_BEEP_VOLUME = 0.08;
+const DEFAULT_SYMMETRY_FALLBACK = 0;
+const DEFAULT_SPINE_LEAN_FALLBACK = 0;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PRO FORM REFERENCE DATA (normalized keypoints for ideal stances)
@@ -222,6 +299,12 @@ const formatDelta = (current: number | null, baseline: number | null | undefined
   if (Math.abs(diff) < 1) return { text: '—', cls: 'neutral' };
   const sign = diff > 0 ? '+' : '';
   return { text: `${sign}${diff.toFixed(0)}`, cls: diff > 0 ? 'positive' : 'negative' };
+};
+
+const getNumberFallback = (primary: unknown, fallback: unknown, defaultValue: number): number => {
+  if (typeof primary === 'number') return primary;
+  if (typeof fallback === 'number') return fallback;
+  return defaultValue;
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -391,9 +474,11 @@ interface AudioSignals {
 
 interface Baseline {
   stability: number;
-  shoulderSym: number;
-  hipSym: number;
-  energy: number;
+  shoulderSymmetry: number;
+  hipSymmetry: number;
+  spineLean: number;
+  energy?: number;
+  steadiness?: number;
   savedAt?: number;
   userId?: string;
 }
@@ -428,9 +513,11 @@ interface EnergyWindow {
 
 interface CalibData {
   stability: number | null;
-  shoulderSym: number | null;
-  hipSym: number | null;
+  shoulderSymmetry: number | null;
+  hipSymmetry: number | null;
+  spineLean: number | null;
   energy: number;
+  steadiness: number;
 }
 
 type PermissionStatus = 'unknown' | 'prompt' | 'granted' | 'denied';
@@ -462,6 +549,15 @@ export default function VisionAIIntelligencePage() {
   // Metrics
   const [poseSignals, setPoseSignals] = useState<PoseSignals | null>(null);
   const [audioSignals, setAudioSignals] = useState<AudioSignals | null>(null);
+  const [driftScore, setDriftScore] = useState(0);
+  const [coachingCue, setCoachingCue] = useState<CoachingCue>(() => evaluateCoachingCue(0, 0));
+  const [patternModel, setPatternModel] = useState<PatternModel | null>(null);
+  const [scenario, setScenario] = useState<'video-call' | 'presentation'>('video-call');
+  const [fillerWordCount, setFillerWordCount] = useState(0);
+  const [fillerRate, setFillerRate] = useState(0);
+  const [speechStatus, setSpeechStatus] = useState<
+    'ready' | 'listening' | 'unsupported' | 'blocked'
+  >('ready');
 
   // History for charts
   const [chartData, setChartData] = useState<ChartPoint[]>([]);
@@ -502,6 +598,15 @@ export default function VisionAIIntelligencePage() {
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef(0);
   const lastFrameRef = useRef(0);
+  const sessionSnapshotsRef = useRef<NeuralMetricSnapshot[]>([]);
+  const patternHistoryRef = useRef<PatternSessionSummary[]>([]);
+  const consecutiveDriftRef = useRef(0);
+  const lastCoachUpdateRef = useRef(0);
+  const lastCueRef = useRef<CoachingLevel>('clear');
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null);
+  const speechStartRef = useRef(0);
+  const fillerWordTotalRef = useRef(0);
+  const coachAudioRef = useRef<AudioContext | null>(null);
 
   // Rolling windows
   const poseWindowRef = useRef<PoseWindow[]>([]);
@@ -603,7 +708,33 @@ export default function VisionAIIntelligencePage() {
         if (res.ok) {
           const data = (await res.json()) as BaselineResponse;
           if (data.baseline) {
-            setBaseline(data.baseline);
+            const rawBaseline = data.baseline as Baseline & {
+              shoulderSym?: number;
+              hipSym?: number;
+            };
+            const normalized: Baseline = {
+              stability: rawBaseline.stability,
+              shoulderSymmetry: getNumberFallback(
+                rawBaseline.shoulderSymmetry,
+                rawBaseline.shoulderSym,
+                DEFAULT_SYMMETRY_FALLBACK
+              ),
+              hipSymmetry: getNumberFallback(
+                rawBaseline.hipSymmetry,
+                rawBaseline.hipSym,
+                DEFAULT_SYMMETRY_FALLBACK
+              ),
+              spineLean: getNumberFallback(
+                rawBaseline.spineLean,
+                undefined,
+                DEFAULT_SPINE_LEAN_FALLBACK
+              ),
+              energy: rawBaseline.energy,
+              steadiness: rawBaseline.steadiness,
+              savedAt: rawBaseline.savedAt,
+              userId: rawBaseline.userId,
+            };
+            setBaseline(normalized);
             setCalibrated(true);
           }
         }
@@ -613,6 +744,27 @@ export default function VisionAIIntelligencePage() {
     };
 
     loadSavedBaseline();
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // LOAD PATTERN HISTORY (LOCAL)
+  // ─────────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem(NEURAL_PATTERN_STORAGE_KEY);
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as PatternSessionSummary[];
+      if (Array.isArray(parsed)) {
+        const history = parsed.filter(
+          (entry) => entry && typeof entry.id === 'string' && typeof entry.createdAt === 'number'
+        );
+        patternHistoryRef.current = history;
+        setPatternModel(buildPatternModel(history));
+      }
+    } catch (err) {
+      console.warn('Failed to load neural pattern history:', err);
+    }
   }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -638,6 +790,130 @@ export default function VisionAIIntelligencePage() {
       setAnnouncement(`${tag}: ${msg}`);
       setTimeout(() => setAnnouncement(''), 1000);
     }
+  }, []);
+
+  const buildNeuralBaseline = useCallback(
+    (
+      snapshot: NeuralMetricSnapshot,
+      rollingBaseline: NeuralBaseline | null
+    ): NeuralBaseline | null => {
+      if (baseline) {
+        return {
+          stability: baseline.stability,
+          shoulderSymmetry: baseline.shoulderSymmetry,
+          hipSymmetry: baseline.hipSymmetry,
+          spineLean: baseline.spineLean,
+          energy: baseline.energy ?? snapshot.energy,
+          steadiness: baseline.steadiness ?? snapshot.steadiness,
+        };
+      }
+      if (patternModel) return patternModel.baseline;
+      return rollingBaseline;
+    },
+    [baseline, patternModel]
+  );
+
+  const persistPatternHistory = useCallback((history: PatternSessionSummary[]) => {
+    patternHistoryRef.current = history;
+    setPatternModel(buildPatternModel(history));
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(NEURAL_PATTERN_STORAGE_KEY, JSON.stringify(history));
+    }
+  }, []);
+
+  const triggerHaptic = useCallback((level: CoachingLevel) => {
+    if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return;
+    const pattern = level === 'late' ? HAPTIC_PATTERN_LATE : HAPTIC_PATTERN_MID;
+    navigator.vibrate(pattern);
+  }, []);
+
+  const playCoachTone = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = coachAudioRef.current ?? new AudioContextClass();
+      coachAudioRef.current = ctx;
+
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = COACH_BEEP_FREQUENCY;
+      gainNode.gain.value = COACH_BEEP_VOLUME;
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + COACH_BEEP_DURATION_MS / 1000);
+    } catch (err) {
+      console.warn('Coach tone unavailable:', err);
+    }
+  }, []);
+
+  const startSpeechRecognition = useCallback(() => {
+    const RecognitionClass = getSpeechRecognitionConstructor();
+    if (!RecognitionClass) {
+      setSpeechStatus('unsupported');
+      return;
+    }
+
+    try {
+      const recognition = new RecognitionClass();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        const increment = countFillerWords(transcript, DEFAULT_FILLER_WORDS);
+        if (increment > 0) {
+          fillerWordTotalRef.current += increment;
+          setFillerWordCount(fillerWordTotalRef.current);
+        }
+        const elapsedMinutes = (performance.now() - speechStartRef.current) / 60000;
+        setFillerRate(elapsedMinutes > 0 ? fillerWordTotalRef.current / elapsedMinutes : 0);
+      };
+
+      recognition.onerror = (event) => {
+        setSpeechStatus('blocked');
+        addLog('Voice', `Speech recognition error: ${event.error}`);
+      };
+
+      recognition.onend = () => {
+        if (runningRef.current) {
+          try {
+            recognition.start();
+          } catch (err) {
+            console.warn('Speech recognition restart failed:', err);
+          }
+          return;
+        }
+        setSpeechStatus('ready');
+      };
+
+      recognition.start();
+      speechRecognitionRef.current = recognition;
+      speechStartRef.current = performance.now();
+      setSpeechStatus('listening');
+    } catch (err) {
+      console.warn('Speech recognition unavailable:', err);
+      setSpeechStatus('blocked');
+    }
+  }, [addLog]);
+
+  const stopSpeechRecognition = useCallback(() => {
+    const recognition = speechRecognitionRef.current;
+    if (!recognition) return;
+    recognition.onend = null;
+    recognition.onresult = null;
+    recognition.onerror = null;
+    recognition.stop();
+    speechRecognitionRef.current = null;
+    setSpeechStatus('ready');
   }, []);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -707,10 +983,17 @@ export default function VisionAIIntelligencePage() {
       analyserRef.current = null;
     }
 
+    if (coachAudioRef.current) {
+      coachAudioRef.current.close().catch(() => {});
+      coachAudioRef.current = null;
+    }
+
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.srcObject = null;
     }
+
+    stopSpeechRecognition();
 
     // Save recording session if active
     if (isRecording && currentSessionIdRef.current) {
@@ -733,10 +1016,45 @@ export default function VisionAIIntelligencePage() {
       }
     }
 
+    const sessionSnapshots = sessionSnapshotsRef.current;
+    const sessionSummary = computeSessionSummary(sessionSnapshots);
+    if (sessionSummary) {
+      const summarySnapshot: NeuralMetricSnapshot = {
+        timestamp: Date.now(),
+        ...sessionSummary,
+      };
+      const baselineForDrift = buildNeuralBaseline(summarySnapshot, sessionSummary);
+      const driftAverage = baselineForDrift
+        ? computeAverageDrift(sessionSnapshots, baselineForDrift)
+        : 0;
+      const nextHistory = [
+        ...patternHistoryRef.current,
+        {
+          id: currentSessionIdRef.current || `session_${Date.now()}`,
+          createdAt: Date.now(),
+          baseline: sessionSummary,
+          driftAverage,
+        },
+      ].slice(-NEURAL_PATTERN_HISTORY_LIMIT);
+      persistPatternHistory(nextHistory);
+    }
+    sessionSnapshotsRef.current = [];
+    consecutiveDriftRef.current = 0;
+    lastCueRef.current = 'clear';
+    setCoachingCue(evaluateCoachingCue(0, 0));
+    setDriftScore(0);
+
     setIsRecording(false);
     setStatus('Stopped');
     addLog('Session', 'Analysis stopped');
-  }, [addLog, isRecording, mode, baseline]);
+  }, [
+    addLog,
+    isRecording,
+    mode,
+    buildNeuralBaseline,
+    persistPatternHistory,
+    stopSpeechRecognition,
+  ]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // INIT AUDIO
@@ -1049,9 +1367,11 @@ export default function VisionAIIntelligencePage() {
         if (calibratingRef.current) {
           calibDataRef.current.push({
             stability: poseMetrics.stability,
-            shoulderSym: poseMetrics.shoulderSym,
-            hipSym: poseMetrics.hipSym,
+            shoulderSymmetry: poseMetrics.shoulderSym,
+            hipSymmetry: poseMetrics.hipSym,
+            spineLean: poseMetrics.spineLean,
             energy: audioMetrics.energy,
+            steadiness: audioMetrics.steadiness,
           });
         }
 
@@ -1082,6 +1402,57 @@ export default function VisionAIIntelligencePage() {
           saveFrame(frame).catch((err) => console.warn('Failed to save frame:', err));
         }
 
+        const hasPoseMetrics =
+          poseMetrics.stability !== null &&
+          poseMetrics.shoulderSym !== null &&
+          poseMetrics.hipSym !== null &&
+          poseMetrics.spineLean !== null;
+
+        if (hasPoseMetrics) {
+          const snapshot: NeuralMetricSnapshot = {
+            timestamp: Date.now(),
+            stability: poseMetrics.stability ?? 0,
+            shoulderSymmetry: poseMetrics.shoulderSym ?? 0,
+            hipSymmetry: poseMetrics.hipSym ?? 0,
+            spineLean: poseMetrics.spineLean ?? 0,
+            energy: audioMetrics.energy,
+            steadiness: audioMetrics.steadiness,
+          };
+
+          sessionSnapshotsRef.current.push(snapshot);
+
+          if (now - lastCoachUpdateRef.current >= NEURAL_COACH_UPDATE_MS) {
+            const rollingBaseline = computeSessionSummary(
+              sessionSnapshotsRef.current.slice(-NEURAL_DRIFT_WINDOW_SIZE)
+            );
+            const baselineForCoach = buildNeuralBaseline(snapshot, rollingBaseline);
+            if (baselineForCoach) {
+              const assessment = computeDriftAssessment(baselineForCoach, snapshot);
+              setDriftScore(assessment.driftScore);
+              if (assessment.driftScore >= COACH_DRIFT_STREAK_FLOOR) {
+                consecutiveDriftRef.current += 1;
+              } else {
+                consecutiveDriftRef.current = 0;
+              }
+              const cue = evaluateCoachingCue(assessment.driftScore, consecutiveDriftRef.current);
+              setCoachingCue(cue);
+              if (cue.level !== lastCueRef.current) {
+                if (cue.level === 'mid' || cue.level === 'late') {
+                  triggerHaptic(cue.level);
+                }
+                if (cue.level === 'late') {
+                  playCoachTone();
+                }
+                if (cue.level !== 'clear') {
+                  addLog('Coach', `${cue.label}: ${cue.message}`);
+                }
+                lastCueRef.current = cue.level;
+              }
+            }
+            lastCoachUpdateRef.current = now;
+          }
+        }
+
         // Update chart data (every 10th frame)
         if (Math.floor(t * 10) % 3 === 0) {
           setChartData((prev) => {
@@ -1100,7 +1471,7 @@ export default function VisionAIIntelligencePage() {
     }
 
     rafRef.current = requestAnimationFrame(runLoop);
-  }, [processPose, processAudio]);
+  }, [processPose, processAudio, addLog, buildNeuralBaseline, playCoachTone, triggerHaptic]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // REQUEST PERMISSIONS (Mobile Safari specific)
@@ -1146,6 +1517,10 @@ export default function VisionAIIntelligencePage() {
     poseWindowRef.current = [];
     energyWindowRef.current = [];
     calibDataRef.current = [];
+    sessionSnapshotsRef.current = [];
+    consecutiveDriftRef.current = 0;
+    lastCoachUpdateRef.current = 0;
+    lastCueRef.current = 'clear';
     startTimeRef.current = performance.now();
     lastFrameRef.current = 0;
     frameCountRef.current = 0;
@@ -1153,8 +1528,13 @@ export default function VisionAIIntelligencePage() {
     setChartData([]);
     setPoseSignals(null);
     setAudioSignals(null);
+    setDriftScore(0);
+    setCoachingCue(evaluateCoachingCue(0, 0));
     setFps(0);
     setPlaybackSession(null);
+    fillerWordTotalRef.current = 0;
+    setFillerWordCount(0);
+    setFillerRate(0);
 
     const video = videoRef.current;
     if (!video) return;
@@ -1183,6 +1563,7 @@ export default function VisionAIIntelligencePage() {
       setRunning(true);
       setStatus('Analyzing...');
       addLog('Session', `Started in ${mode.toUpperCase()} mode`);
+      startSpeechRecognition();
 
       // Start loop (we use runningRef in runLoop)
       runningRef.current = true;
@@ -1193,7 +1574,15 @@ export default function VisionAIIntelligencePage() {
       addLog('Error', 'Camera permission denied');
       setCameraPermission('denied');
     }
-  }, [running, mode, addLog, runLoop, isMobileSafariBrowser, cameraPermission]);
+  }, [
+    running,
+    mode,
+    addLog,
+    runLoop,
+    isMobileSafariBrowser,
+    cameraPermission,
+    startSpeechRecognition,
+  ]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // TOGGLE RECORDING
@@ -1225,7 +1614,33 @@ export default function VisionAIIntelligencePage() {
         setIsPlaying(false);
 
         if (session.baseline) {
-          setBaseline(session.baseline);
+          const rawBaseline = session.baseline as Baseline & {
+            shoulderSym?: number;
+            hipSym?: number;
+          };
+          const normalized: Baseline = {
+            stability: rawBaseline.stability,
+            shoulderSymmetry: getNumberFallback(
+              rawBaseline.shoulderSymmetry,
+              rawBaseline.shoulderSym,
+              DEFAULT_SYMMETRY_FALLBACK
+            ),
+            hipSymmetry: getNumberFallback(
+              rawBaseline.hipSymmetry,
+              rawBaseline.hipSym,
+              DEFAULT_SYMMETRY_FALLBACK
+            ),
+            spineLean: getNumberFallback(
+              rawBaseline.spineLean,
+              undefined,
+              DEFAULT_SPINE_LEAN_FALLBACK
+            ),
+            energy: rawBaseline.energy,
+            steadiness: rawBaseline.steadiness,
+            savedAt: rawBaseline.savedAt,
+            userId: rawBaseline.userId,
+          };
+          setBaseline(normalized);
           setCalibrated(true);
         }
 
@@ -1331,9 +1746,13 @@ export default function VisionAIIntelligencePage() {
 
     const bl: Baseline = {
       stability: mean(data.map((d) => d.stability).filter((x): x is number => x != null)),
-      shoulderSym: mean(data.map((d) => d.shoulderSym).filter((x): x is number => x != null)),
-      hipSym: mean(data.map((d) => d.hipSym).filter((x): x is number => x != null)),
+      shoulderSymmetry: mean(
+        data.map((d) => d.shoulderSymmetry).filter((x): x is number => x != null)
+      ),
+      hipSymmetry: mean(data.map((d) => d.hipSymmetry).filter((x): x is number => x != null)),
+      spineLean: mean(data.map((d) => d.spineLean).filter((x): x is number => x != null)),
       energy: mean(data.map((d) => d.energy)),
+      steadiness: mean(data.map((d) => d.steadiness)),
       savedAt: Date.now(),
     };
 
@@ -1464,6 +1883,16 @@ export default function VisionAIIntelligencePage() {
     announce,
   ]);
 
+  useEffect(() => {
+    return () => {
+      stopSpeechRecognition();
+      if (coachAudioRef.current) {
+        coachAudioRef.current.close().catch(() => {});
+        coachAudioRef.current = null;
+      }
+    };
+  }, [stopSpeechRecognition]);
+
   // ─────────────────────────────────────────────────────────────────────────
   // METRIC HELP DEFINITIONS
   // ─────────────────────────────────────────────────────────────────────────
@@ -1503,6 +1932,12 @@ export default function VisionAIIntelligencePage() {
       description:
         'Measures consistency of your voice energy over time. Lower variance means more steady delivery.',
       ideal: '70+ for confident, even tone',
+    },
+    fillerWords: {
+      title: 'Filler Words',
+      description:
+        'Counts verbal fillers using on-device speech recognition. Transcripts are processed locally and discarded.',
+      ideal: 'Under 3 per minute for crisp delivery',
     },
   };
 
@@ -1571,8 +2006,9 @@ export default function VisionAIIntelligencePage() {
   // RENDER HELPERS
   // ─────────────────────────────────────────────────────────────────────────
   const renderDelta = (current: string | undefined, baselineKey: keyof Baseline) => {
-    if (!baseline || baseline[baselineKey] === undefined) return null;
-    const d = formatDelta(current ? parseFloat(current) : null, baseline[baselineKey] as number);
+    const baseValue = baseline?.[baselineKey];
+    if (baseValue === undefined || typeof baseValue !== 'number') return null;
+    const d = formatDelta(current ? parseFloat(current) : null, baseValue);
     if (!d) return null;
     return (
       <span
@@ -1587,6 +2023,59 @@ export default function VisionAIIntelligencePage() {
         {d.text}
       </span>
     );
+  };
+
+  const getSpeechStatusLabel = (status: 'ready' | 'listening' | 'unsupported' | 'blocked') => {
+    switch (status) {
+      case 'unsupported':
+        return 'Unsupported';
+      case 'blocked':
+        return 'Blocked';
+      case 'listening':
+        return 'Listening';
+      default:
+        return 'Ready';
+    }
+  };
+
+  const getFillerCountLabel = () => {
+    if (speechStatus === 'unsupported' || speechStatus === 'blocked') return '—';
+    return fillerWordCount.toString();
+  };
+
+  const getFillerRateLabel = () => {
+    if (speechStatus === 'unsupported' || speechStatus === 'blocked') return '—';
+    return `${fillerRate.toFixed(1)}/min`;
+  };
+
+  const getCueBadgeClass = (level: CoachingLevel) => {
+    switch (level) {
+      case 'late':
+        return 'bg-red-500/20 text-red-400 border-red-500/40';
+      case 'mid':
+        return 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+      case 'early':
+        return 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30';
+      default:
+        return 'bg-green-500/15 text-green-300 border-green-500/30';
+    }
+  };
+
+  const getScenarioLabel = (value: 'video-call' | 'presentation') => {
+    return value === 'video-call' ? 'Video Call Presence' : 'Presentation + Interview';
+  };
+
+  const getDriftTrendLabel = () => {
+    if (!patternModel) return '—';
+    const trend = patternModel.driftTrend;
+    const sign = trend > 0 ? '+' : '';
+    return `${sign}${trend.toFixed(1)}`;
+  };
+
+  const getPatternStatusLabel = () => {
+    const sampleCount = patternModel?.sampleCount ?? 0;
+    if (sampleCount >= 3) return 'Neural patterning active.';
+    return 'Collecting sessions for pattern learning.';
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1878,6 +2367,21 @@ export default function VisionAIIntelligencePage() {
                     </select>
                   </div>
 
+                  <div className="flex-1 min-w-[150px]">
+                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                      Scenario
+                    </label>
+                    <select
+                      value={scenario}
+                      onChange={(e) => setScenario(e.target.value as 'video-call' | 'presentation')}
+                      disabled={running || !!playbackSession}
+                      className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
+                    >
+                      <option value="video-call">Video Call Presence</option>
+                      <option value="presentation">Presentation + Interview</option>
+                    </select>
+                  </div>
+
                   {/* Pro Form Overlay Select */}
                   <div className="flex-1 min-w-[150px]">
                     <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
@@ -2151,10 +2655,110 @@ export default function VisionAIIntelligencePage() {
 
           {/* Right column - Signals */}
           <aside className="flex flex-col gap-4">
-            <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+            <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
               <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
                 <span className="font-display text-xs tracking-[0.2em] text-white/50">
                   {recordedSessions.length > 0 && !playbackSession ? '04' : '03'}
+                </span>
+                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                  Neural Coach v2
+                </span>
+              </div>
+
+              <div className="p-4 space-y-4">
+                <div className="flex items-center justify-between text-xs text-white/70">
+                  <span className="font-display text-[10px] tracking-[0.2em] uppercase text-white/50">
+                    Scenario
+                  </span>
+                  <span className="text-white/90">{getScenarioLabel(scenario)}</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="bg-midnight/60 border border-primary/15 rounded-md p-3">
+                    <div className="text-[10px] font-display tracking-[0.2em] uppercase text-white/50">
+                      Drift Score
+                    </div>
+                    <div className="text-2xl font-semibold text-white/90 mt-1">{driftScore}%</div>
+                    <div className="text-[10px] text-white/50 mt-1">
+                      Pattern trend: {getDriftTrendLabel()} per session
+                    </div>
+                  </div>
+
+                  <div className="bg-midnight/60 border border-primary/15 rounded-md p-3">
+                    <div className="text-[10px] font-display tracking-[0.2em] uppercase text-white/50">
+                      Active Cue
+                    </div>
+                    <div
+                      className={`inline-flex items-center px-2.5 py-1 mt-1 text-[10px] font-medium uppercase tracking-[0.18em] border rounded-full ${getCueBadgeClass(
+                        coachingCue.level
+                      )}`}
+                    >
+                      {coachingCue.label}
+                    </div>
+                    <p className="text-xs text-white/65 mt-2 leading-relaxed">
+                      {coachingCue.message}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-[10px] font-display tracking-[0.2em] uppercase text-white/50 mb-2">
+                    Detection Coverage
+                  </div>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-white/70">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 size={12} className="text-primary" />
+                      Body drift & stability
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 size={12} className="text-primary" />
+                      Shoulder & hip symmetry
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 size={12} className="text-primary" />
+                      Spine lean
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 size={12} className="text-primary" />
+                      Voice energy + steadiness
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 size={12} className="text-primary" />
+                      Filler word rate
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-midnight/60 border border-primary/10 rounded-md p-3">
+                  <div className="text-[10px] font-display tracking-[0.2em] uppercase text-white/50 mb-2">
+                    Progressive Coaching
+                  </div>
+                  <div className="space-y-1 text-xs text-white/65">
+                    <div className="flex items-center justify-between">
+                      <span>Early</span>
+                      <span className="text-white/80">Visual guidance + glow</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Mid</span>
+                      <span className="text-white/80">Haptic pulse / spatial shift</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Late</span>
+                      <span className="text-white/80">Explicit coach note</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-xs text-white/60">
+                  Sessions tracked: {patternModel?.sampleCount ?? 0}. {getPatternStatusLabel()}
+                </div>
+              </div>
+            </section>
+
+            <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+              <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
+                <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                  {recordedSessions.length > 0 && !playbackSession ? '05' : '04'}
                 </span>
                 <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
                   Live Signals
@@ -2190,7 +2794,7 @@ export default function VisionAIIntelligencePage() {
                     </MetricTooltip>
                     <span className="text-white/90 text-right">
                       {poseSignals?.shoulderSym ?? '—'}/100
-                      {renderDelta(poseSignals?.shoulderSym, 'shoulderSym')}
+                      {renderDelta(poseSignals?.shoulderSym, 'shoulderSymmetry')}
                     </span>
 
                     <MetricTooltip metricKey="hipSym">
@@ -2198,7 +2802,7 @@ export default function VisionAIIntelligencePage() {
                     </MetricTooltip>
                     <span className="text-white/90 text-right">
                       {poseSignals?.hipSym ?? '—'}/100
-                      {renderDelta(poseSignals?.hipSym, 'hipSym')}
+                      {renderDelta(poseSignals?.hipSym, 'hipSymmetry')}
                     </span>
 
                     <MetricTooltip metricKey="spineLean">
@@ -2254,6 +2858,22 @@ export default function VisionAIIntelligencePage() {
                     </MetricTooltip>
                     <span className="text-white/90 font-semibold text-right">
                       {audioSignals?.steadiness ?? '—'}
+                      {renderDelta(audioSignals?.steadiness, 'steadiness')}
+                    </span>
+
+                    <MetricTooltip metricKey="fillerWords">
+                      <span className="text-white/65">Filler Count</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">{getFillerCountLabel()}</span>
+
+                    <MetricTooltip metricKey="fillerWords">
+                      <span className="text-white/65">Filler Rate</span>
+                    </MetricTooltip>
+                    <span className="text-white/90 text-right">{getFillerRateLabel()}</span>
+
+                    <span className="text-white/65">Speech Status</span>
+                    <span className="text-white/90 text-right">
+                      {getSpeechStatusLabel(speechStatus)}
                     </span>
                   </div>
                 </div>

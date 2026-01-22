@@ -19,6 +19,8 @@ interface Baseline {
   shoulderSymmetry: number;
   hipSymmetry: number;
   spineLean: number;
+  energy?: number;
+  steadiness?: number;
   savedAt: number;
 }
 
@@ -127,7 +129,9 @@ export async function onRequestPost(context: { request: Request; env: Env }): Pr
       typeof baseline.stability !== 'number' ||
       typeof baseline.shoulderSymmetry !== 'number' ||
       typeof baseline.hipSymmetry !== 'number' ||
-      typeof baseline.spineLean !== 'number'
+      typeof baseline.spineLean !== 'number' ||
+      (baseline.energy !== undefined && typeof baseline.energy !== 'number') ||
+      (baseline.steadiness !== undefined && typeof baseline.steadiness !== 'number')
     ) {
       return new Response(
         JSON.stringify({
