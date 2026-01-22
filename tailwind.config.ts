@@ -21,7 +21,7 @@ const config: Config = {
       colors: {
         brand: {
           primary: dsColors.brand.burntOrange,
-          blaze: dsColors.brand.blaze,
+          blaze: dsColors.brand.burntOrange, // Fixed: was undefined, should be burntOrange
           ember: dsColors.brand.ember,
           texasSoil: dsColors.brand.texasSoil,
         },
@@ -47,6 +47,12 @@ const config: Config = {
           500: dsColors.brand.burntOrange,
           600: dsColors.brand.texasSoil,
         },
+        // Add top-level color utilities for common usage patterns
+        charcoal: dsColors.background.charcoal,
+        midnight: dsColors.background.midnight,
+        graphite: '#262626', // Slightly lighter than charcoal for hover states
+        cream: dsColors.background.cream,
+        'burnt-orange': dsColors.brand.burntOrange,
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...toFontStack(dsTypography.fontFamily.ui)],
