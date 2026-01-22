@@ -507,9 +507,10 @@ export default function DashboardPage() {
               />
               <QuickLinkCard
                 href="/vision-AI-Intelligence"
-                icon="🤖"
+                icon="🧠"
                 title="Vision AI"
-                subtitle="Smart Analysis"
+                subtitle="Neural Presence Coach"
+                badge="NEW"
               />
             </div>
           </ScrollReveal>
@@ -575,14 +576,20 @@ interface QuickLinkCardProps {
   icon: string;
   title: string;
   subtitle: string;
+  badge?: string;
 }
 
-function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
+function QuickLinkCard({ href, icon, title, subtitle, badge }: QuickLinkCardProps) {
   return (
     <Link
       href={href}
-      className="block p-4 bg-graphite rounded-lg hover:bg-white/5 hover:border-burnt-orange border border-transparent transition-all group"
+      className="block p-4 bg-graphite rounded-lg hover:bg-white/5 hover:border-burnt-orange border border-transparent transition-all group relative"
     >
+      {badge && (
+        <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[10px] font-bold rounded bg-burnt-orange text-white">
+          {badge}
+        </span>
+      )}
       <div className="text-2xl mb-2">{icon}</div>
       <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors">
         {title}

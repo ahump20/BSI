@@ -20,6 +20,9 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 # (e.g., /tools/draft-value.html is served at /tools/draft-value)
 # No explicit rewrites needed - they would cause redirect loops
 
+# Neural Coach redirect (consolidated into Vision AI Intelligence)
+/neural-coach /vision-AI-Intelligence 301
+
 # ============================================
 # League Score Redirects (legacy URL patterns)
 # ============================================
