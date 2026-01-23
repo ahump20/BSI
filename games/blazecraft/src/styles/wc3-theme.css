@@ -826,3 +826,44 @@
     transition: none;
   }
 }
+
+/* ================================================================
+   Autocast Toggle - Yellow border for auto-enabled abilities
+   ================================================================ */
+
+.wc3-button.autocast-enabled {
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6), inset 0 0 4px rgba(255, 215, 0, 0.3);
+  animation: autocast-pulse 2s ease-in-out infinite;
+}
+
+@keyframes autocast-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.6), inset 0 0 4px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.8), inset 0 0 6px rgba(255, 215, 0, 0.5); }
+}
+
+/* Day/Night Cycle Variables */
+:root {
+  --wc3-ambient-dawn: rgba(255, 200, 150, 0.15);
+  --wc3-ambient-day: rgba(255, 255, 240, 0.1);
+  --wc3-ambient-dusk: rgba(255, 150, 100, 0.2);
+  --wc3-ambient-night: rgba(50, 80, 150, 0.25);
+}
+
+/* Wisp Particle Animation */
+@keyframes wisp-float {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+  10% { opacity: 0.8; transform: translateY(80vh) scale(1); }
+  90% { opacity: 0.3; transform: translateY(5vh) scale(0.4); }
+  100% { transform: translateY(-5vh) scale(0.2); opacity: 0; }
+}
+
+.wc3-wisp { animation: wisp-float 8s ease-in-out infinite; }
+
+/* Torch Flicker Effect */
+@keyframes torch-flicker {
+  0%, 100% { opacity: 0.85; filter: brightness(1); }
+  50% { opacity: 0.75; filter: brightness(0.95); }
+}
+
+.wc3-torch-glow::before { animation: torch-flicker 0.5s ease-in-out infinite alternate; }
