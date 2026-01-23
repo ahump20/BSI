@@ -7,7 +7,6 @@ import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Footer } from '@/components/layout-ds/Footer';
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -54,14 +53,14 @@ const buttonContainerVariants = {
   },
 };
 
-export default function NotFound() {
+export default function NotFound(): JSX.Element {
   return (
     <>
       <main id="main-content">
         <Section padding="lg" className="pt-24 min-h-[70vh] flex items-center">
           <Container center>
             <motion.div
-              className="max-w-lg mx-auto text-center"
+              className="max-w-xl mx-auto text-center"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
@@ -76,14 +75,17 @@ export default function NotFound() {
                 className="font-display text-2xl font-bold uppercase tracking-display mb-4"
                 variants={itemVariants}
               >
-                Page Not <span className="text-gradient-blaze">Found</span>
+                Page Not Found
               </motion.h2>
-              <motion.p className="text-text-secondary mb-8" variants={itemVariants}>
-                Looks like this play got called back. The page you are looking for does not exist or
-                has been moved.
+              <motion.p className="text-xl text-text-secondary mb-4" variants={itemVariants}>
+                This one got away—like a passed ball in the ninth.
+              </motion.p>
+              <motion.p className="text-text-tertiary mb-10" variants={itemVariants}>
+                The page you're looking for doesn't exist. It might have been moved, deleted, or
+                never existed in the first place.
               </motion.p>
               <motion.div
-                className="flex flex-col sm:flex-row gap-4 justify-center"
+                className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
                 variants={buttonContainerVariants}
               >
                 <motion.div variants={itemVariants}>
@@ -94,12 +96,18 @@ export default function NotFound() {
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
-                  <Link href="/college-baseball">
+                  <Link href="/transfer-portal">
                     <Button variant="secondary" size="lg">
-                      College Baseball
+                      Transfer Portal
                     </Button>
                   </Link>
                 </motion.div>
+              </motion.div>
+              <motion.div className="border-t border-border-subtle pt-6" variants={itemVariants}>
+                <p className="text-sm text-text-muted italic">
+                  Fun fact: A passed ball is scored against the catcher, not a wild pitch. Details
+                  matter. That's why we're here.
+                </p>
               </motion.div>
             </motion.div>
           </Container>

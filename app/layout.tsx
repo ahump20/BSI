@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Oswald, Playfair_Display, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, Archivo_Black, Fraunces, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
@@ -9,29 +9,23 @@ import { SmartNavbar } from '@/components/layout-ds/SmartNavbar';
 import { BottomNav } from '@/components/sports';
 import { mainNavItems } from '@/lib/navigation';
 
-// Optimized font loading - eliminates render-blocking
-const inter = Inter({
+// Typography system: Archivo Black (display), Plus Jakarta Sans (body), Fraunces (serif), JetBrains Mono (mono)
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-sans',
   display: 'swap',
 });
 
-const oswald = Oswald({
-  subsets: ['latin'],
-  variable: '--font-oswald',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const bebasNeue = Bebas_Neue({
+const archivoBlack = Archivo_Black({
   weight: '400',
   subsets: ['latin'],
-  variable: '--font-bebas',
+  variable: '--font-display',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-serif',
   display: 'swap',
 });
 
@@ -103,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${oswald.variable} ${playfair.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${plusJakarta.variable} ${archivoBlack.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />

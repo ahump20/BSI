@@ -11,13 +11,31 @@ import { motion, useInView } from 'framer-motion';
 import { useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
-import { directionVariants, duration as defaultDurations, easing } from './variants';
+import {
+  directionVariants,
+  duration as defaultDurations,
+  easing,
+  blazeReveal,
+  pitchReveal,
+  tackleReveal,
+} from './variants';
+
+export type RevealDirection =
+  | 'up'
+  | 'down'
+  | 'left'
+  | 'right'
+  | 'scale'
+  | 'fade'
+  | 'blaze'
+  | 'pitch'
+  | 'tackle';
 
 export interface ScrollRevealProps {
   /** Content to reveal */
   children: ReactNode;
   /** Animation direction */
-  direction?: 'up' | 'down' | 'left' | 'right' | 'scale' | 'fade';
+  direction?: RevealDirection;
   /** Animation delay in seconds */
   delay?: number;
   /** Animation duration in seconds */
@@ -53,7 +71,14 @@ export function ScrollReveal({
     return <Component className={className}>{children}</Component>;
   }
 
-  const variants = directionVariants[direction];
+  // Extended variants map including new reveal styles
+  const extendedVariants: Record<RevealDirection, typeof blazeReveal> = {
+    ...directionVariants,
+    blaze: blazeReveal,
+    pitch: pitchReveal,
+    tackle: tackleReveal,
+  };
+  const variants = extendedVariants[direction];
   const MotionComponent = motion[as];
 
   return (
@@ -85,7 +110,7 @@ export interface ScrollRevealGroupProps {
   /** Delay between each child (seconds) */
   stagger?: number;
   /** Animation direction for children */
-  direction?: ScrollRevealProps['direction'];
+  direction?: RevealDirection;
   /** Animation duration for each child */
   duration?: number;
   /** Additional class names */
@@ -112,7 +137,13 @@ export function ScrollRevealGroup({
     return <div className={className}>{children}</div>;
   }
 
-  const childVariants = directionVariants[direction];
+  const extendedVariants: Record<RevealDirection, typeof blazeReveal> = {
+    ...directionVariants,
+    blaze: blazeReveal,
+    pitch: pitchReveal,
+    tackle: tackleReveal,
+  };
+  const childVariants = extendedVariants[direction];
 
   return (
     <motion.div

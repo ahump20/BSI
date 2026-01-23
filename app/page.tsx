@@ -26,17 +26,17 @@ const features = [
     icon: '🔄',
     title: 'Transfer Portal Tracker',
     description:
-      'Real-time tracking of every D1 transfer. Baseball and football. The coverage ESPN ignores.',
+      'Every D1 transfer. Baseball and football. Updated while ESPN runs their third Yankees segment.',
   },
   {
     icon: '📊',
     title: 'Live Data Intelligence',
-    description: 'Scores updated every 30 seconds. Stats that matter. No fluff.',
+    description: '30-second updates. Verified sources. No placeholders, no "check back later."',
   },
   {
     icon: '🎯',
-    title: 'Built for Real Fans',
-    description: 'College baseball deserves better. We built what fans actually want.',
+    title: 'Built for the Overlooked',
+    description: 'Rice vs. Houston midweek? We have the box score. Your team matters here.',
   },
 ];
 
@@ -58,10 +58,13 @@ export default function HomePage() {
             <br />
             <span className="text-burnt-orange">PATH LESS BEATEN</span>
           </h1>
-          <p className="text-xl md:text-2xl text-text-secondary mb-10 max-w-3xl mx-auto">
-            The #1 NCAA Transfer Portal tracker. College Baseball. CFB. Real-time intel on every
-            player entering, committing, or withdrawing.{' '}
-            <span className="text-burnt-orange">Built for fans who care.</span>
+          <p className="text-xl md:text-2xl text-text-secondary mb-4 max-w-3xl mx-auto">
+            Every game matters to someone. We cover the ones ESPN ignores.
+          </p>
+          <p className="text-lg text-text-tertiary mb-10 max-w-3xl mx-auto">
+            The #1 NCAA Transfer Portal tracker for College Baseball and CFB.{' '}
+            <span className="text-burnt-orange">Real-time intel updated every 30 seconds</span>—not
+            when someone remembers to check.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

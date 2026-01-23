@@ -13,6 +13,9 @@ export const easing = {
   outExpo: [0.16, 1, 0.3, 1] as const,
   elastic: [0.34, 1.56, 0.64, 1] as const,
   bounce: [0.68, -0.55, 0.265, 1.55] as const,
+  // Sport-specific curves
+  pitchRelease: [0.45, 0.05, 0.55, 0.95] as const, // Quick start, smooth decel (like fastball)
+  tackleSnap: [0.87, 0, 0.13, 1] as const, // Explosive start (like off the snap)
 };
 
 // Standard durations
@@ -223,4 +226,156 @@ export const directionVariants: Record<string, Variants> = {
   right: fadeInRight,
   scale: scaleIn,
   fade: fadeIn,
+};
+
+// =============================================================================
+// Blaze Reveal (Signature Animation)
+// Element clips in from bottom with subtle scale and elastic easing
+// =============================================================================
+
+export const blazeReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+    scale: 0.98,
+    clipPath: 'inset(100% 0% 0% 0%)',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    clipPath: 'inset(0% 0% 0% 0%)',
+    transition: {
+      duration: 0.8,
+      ease: easing.elastic,
+      clipPath: {
+        duration: 0.6,
+        ease: easing.outExpo,
+      },
+    },
+  },
+};
+
+export const blazeRevealStagger: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+// =============================================================================
+// Sport-Specific Reveal Variants
+// =============================================================================
+
+export const pitchReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -30,
+    scale: 0.95,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: easing.pitchRelease,
+    },
+  },
+};
+
+export const tackleReveal: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.92,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: easing.tackleSnap,
+    },
+  },
+};
+
+// =============================================================================
+// Scroll-Triggered Parallax Variants
+// =============================================================================
+
+export const cardParallax: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 60,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: easing.outExpo,
+    },
+  },
+};
+
+export const statCountUp: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: easing.elastic,
+    },
+  },
+};
+
+// =============================================================================
+// Overlapping Card Cluster Variants
+// =============================================================================
+
+export const cardCluster: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+export const cardClusterItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+    rotate: -2,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotate: 0,
+    transition: {
+      duration: 0.5,
+      ease: easing.outExpo,
+    },
+  },
+  hover: {
+    y: -8,
+    zIndex: 10,
+    boxShadow: '0 20px 50px rgba(191, 87, 0, 0.25)',
+    transition: {
+      duration: 0.25,
+      ease: easing.smooth,
+    },
+  },
 };

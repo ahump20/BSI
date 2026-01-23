@@ -28,3 +28,6 @@ export type { StatCounterProps, StatGroupProps } from './StatCounter';
 
 export { CovenantQuote, TexasCovenantQuote } from './CovenantQuote';
 export type { CovenantQuoteProps } from './CovenantQuote';
+
+export { GradientMesh } from './GradientMesh';
+export type { GradientMeshProps, GradientPreset } from './GradientMesh';

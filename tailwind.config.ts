@@ -157,8 +157,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          'var(--font-inter)',
-          'Inter',
+          'var(--font-sans)',
+          'Plus Jakarta Sans',
           '-apple-system',
           'BlinkMacSystemFont',
           'Segoe UI',
@@ -166,10 +166,8 @@ const config: Config = {
           'sans-serif',
         ],
         display: [
-          'var(--font-bebas)',
-          'Bebas Neue',
-          'var(--font-oswald)',
-          'Oswald',
+          'var(--font-display)',
+          'Archivo Black',
           'Impact',
           'Arial Black',
           'sans-serif',
@@ -183,7 +181,7 @@ const config: Config = {
           'Courier New',
           'monospace',
         ],
-        serif: ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'serif'],
+        serif: ['var(--font-serif)', 'Fraunces', 'Georgia', 'serif'],
       },
       fontSize: {
         xs: ['clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)', { lineHeight: '1.5' }],
@@ -253,6 +251,9 @@ const config: Config = {
         'ease-out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
         'ease-elastic': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
         'ease-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        // Sport-specific curves
+        'ease-pitch-release': 'cubic-bezier(0.45, 0.05, 0.55, 0.95)',
+        'ease-tackle-snap': 'cubic-bezier(0.87, 0, 0.13, 1)',
       },
       zIndex: {
         dropdown: '1000',
