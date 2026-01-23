@@ -17,9 +17,13 @@
 import {
   SEMANTIC_RULES,
   validateDataset,
-  isInSeason,
-  type DatasetStatus,
+  isWithinSeason,
+  type DatasetStatus as BaseDatasetStatus,
+  type SemanticRule,
 } from '../../lib/semantic-validation';
+
+// Extended status that includes 'unavailable' for this endpoint
+type DatasetStatus = BaseDatasetStatus | 'unavailable';
 
 interface Env {
   CACHE?: KVNamespace;
@@ -86,7 +90,7 @@ const D1_DATASET_QUERIES: Record<string, string> = {
 async function checkD1Dataset(
   db: D1Database,
   datasetId: string,
-  rule: (typeof SEMANTIC_RULES)[string]
+  _rule: SemanticRule
 ): Promise<{ count: number; source: 'd1' | 'unavailable'; error: string | null }> {
   try {
     const currentYear = new Date().getFullYear();
@@ -159,7 +163,7 @@ export async function onRequestGet(context: { env: Env }): Promise<Response> {
   const datasets: DatasetHealth[] = [];
 
   // Check each defined dataset
-  for (const [datasetId, rule] of Object.entries(SEMANTIC_RULES)) {
+  for (const [datasetId, rule] of SEMANTIC_RULES.entries()) {
     let actualCount = 0;
     let status: DatasetStatus = 'unavailable';
     let lastValidated: string | null = null;
@@ -195,13 +199,14 @@ export async function onRequestGet(context: { env: Env }): Promise<Response> {
 
         if (cached?.data) {
           actualCount = Array.isArray(cached.data) ? cached.data.length : 0;
-          const validation = validateDataset(datasetId, cached.data);
-          status = validation.status;
+          const records = Array.isArray(cached.data) ? cached.data : [];
+          const validation = validateDataset(datasetId, records as Record<string, unknown>[]);
+          status = validation.status === 'empty' ? 'unavailable' : validation.status;
           source = 'kv';
-          lastValidated = cached.fetchedAt || validation.validatedAt;
+          lastValidated = cached.fetchedAt || new Date().toISOString();
 
-          if (status !== 'valid') {
-            lastFailureReason = validation.reason;
+          if (status !== 'valid' && validation.errors.length > 0) {
+            lastFailureReason = validation.errors.join('; ');
           }
         } else {
           lastFailureReason = 'No data in KV cache';
@@ -214,13 +219,16 @@ export async function onRequestGet(context: { env: Env }): Promise<Response> {
       lastFailureReason = 'No storage binding available';
     }
 
+    // Extract sport from datasetId (e.g., 'cbb-games-live' -> 'cbb')
+    const sport = datasetId.split('-')[0] || 'unknown';
+
     datasets.push({
       datasetId,
       description: rule.description,
-      sport: rule.sport,
+      sport,
       expectedMin: rule.minRecordCount,
       actualCount,
-      inSeason: isInSeason(rule),
+      inSeason: rule.seasonMonths ? isWithinSeason(rule.seasonMonths) : true,
       status,
       lastValidated,
       lastFailureReason,

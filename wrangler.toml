@@ -1,5 +1,5 @@
 name = "college-baseball-tracker"
-pages_build_output_dir = "dist"
+pages_build_output_dir = "out"
 compatibility_date = "2025-03-07"
 compatibility_flags = ["nodejs_compat"]
 
@@ -19,7 +19,8 @@ compatibility_flags = ["nodejs_compat"]
 #   - session:* for user sessions
 kv_namespaces = [
   { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
-  { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" }
+  { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" },
+  { binding = "BSI_CACHE", id = "429e580ad8aa4a189af2513490d8790d", preview_id = "f2dc8c57c641403481809db1a4962822" }
 ]
 
 # New dedicated KV namespaces (IDs populated by setup script)
