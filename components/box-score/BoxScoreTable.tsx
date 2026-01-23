@@ -1,8 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+
+type SportType = 'mlb' | 'cbb' | 'nfl' | 'nba';
+
+// Map sport to player route prefix
+const PLAYER_ROUTE_MAP: Record<SportType, string> = {
+  mlb: '/mlb/players',
+  cbb: '/college-baseball/players',
+  nfl: '/nfl/players',
+  nba: '/nba/players',
+};
 
 // ============================================================================
 // TYPES
@@ -87,6 +98,8 @@ export interface BoxScoreTableProps {
   boxscore?: BoxScoreData;
   awayTeam: TeamInfo;
   homeTeam: TeamInfo;
+  /** Sport type for player profile linking */
+  sport?: SportType;
   variant?: 'full' | 'compact';
   showLinescore?: boolean;
   defaultTab?: 'batting' | 'pitching';
@@ -107,12 +120,14 @@ export function BoxScoreTable({
   boxscore,
   awayTeam,
   homeTeam,
+  sport = 'mlb',
   variant = 'full',
   showLinescore = true,
   defaultTab = 'batting',
   className = '',
 }: BoxScoreTableProps) {
   const [activeTab, setActiveTab] = useState<'batting' | 'pitching'>(defaultTab);
+  const playerRoutePrefix = PLAYER_ROUTE_MAP[sport];
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -152,16 +167,36 @@ export function BoxScoreTable({
           {/* Batting Tables */}
           {activeTab === 'batting' && (
             <div className="space-y-6">
-              <BattingTable team={awayTeam} batting={boxscore.away.batting} variant={variant} />
-              <BattingTable team={homeTeam} batting={boxscore.home.batting} variant={variant} />
+              <BattingTable
+                team={awayTeam}
+                batting={boxscore.away.batting}
+                variant={variant}
+                playerRoutePrefix={playerRoutePrefix}
+              />
+              <BattingTable
+                team={homeTeam}
+                batting={boxscore.home.batting}
+                variant={variant}
+                playerRoutePrefix={playerRoutePrefix}
+              />
             </div>
           )}
 
           {/* Pitching Tables */}
           {activeTab === 'pitching' && (
             <div className="space-y-6">
-              <PitchingTable team={awayTeam} pitching={boxscore.away.pitching} variant={variant} />
-              <PitchingTable team={homeTeam} pitching={boxscore.home.pitching} variant={variant} />
+              <PitchingTable
+                team={awayTeam}
+                pitching={boxscore.away.pitching}
+                variant={variant}
+                playerRoutePrefix={playerRoutePrefix}
+              />
+              <PitchingTable
+                team={homeTeam}
+                pitching={boxscore.home.pitching}
+                variant={variant}
+                playerRoutePrefix={playerRoutePrefix}
+              />
             </div>
           )}
         </>
@@ -286,9 +321,10 @@ interface BattingTableProps {
   team: TeamInfo;
   batting: BattingLine[];
   variant: 'full' | 'compact';
+  playerRoutePrefix: string;
 }
 
-function BattingTable({ team, batting, variant }: BattingTableProps) {
+function BattingTable({ team, batting, variant, playerRoutePrefix }: BattingTableProps) {
   const columns =
     variant === 'compact'
       ? ['AB', 'R', 'H', 'RBI', 'BB', 'SO', 'AVG']
@@ -346,7 +382,12 @@ function BattingTable({ team, batting, variant }: BattingTableProps) {
                   >
                     <td className="p-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">{line.player.name}</span>
+                        <Link
+                          href={`${playerRoutePrefix}/${line.player.id}`}
+                          className="font-medium text-white hover:text-burnt-orange transition-colors"
+                        >
+                          {line.player.name}
+                        </Link>
                         <span className="text-text-tertiary text-xs">{line.player.position}</span>
                         {hasHR && (
                           <Badge variant="warning" size="sm">
@@ -429,9 +470,10 @@ interface PitchingTableProps {
   team: TeamInfo;
   pitching: PitchingLine[];
   variant: 'full' | 'compact';
+  playerRoutePrefix: string;
 }
 
-function PitchingTable({ team, pitching, variant }: PitchingTableProps) {
+function PitchingTable({ team, pitching, variant, playerRoutePrefix }: PitchingTableProps) {
   const columns =
     variant === 'compact'
       ? ['IP', 'H', 'R', 'ER', 'BB', 'SO', 'ERA']
@@ -478,7 +520,12 @@ function PitchingTable({ team, pitching, variant }: PitchingTableProps) {
                   >
                     <td className="p-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">{line.player.name}</span>
+                        <Link
+                          href={`${playerRoutePrefix}/${line.player.id}`}
+                          className="font-medium text-white hover:text-burnt-orange transition-colors"
+                        >
+                          {line.player.name}
+                        </Link>
                         {line.decision && (
                           <span className={`text-xs font-bold ${decisionColor}`}>
                             ({line.decision})

@@ -5,6 +5,9 @@
 export { Navbar } from './Navbar';
 export type { NavbarProps, NavItem } from './Navbar';
 
+export { SmartNavbar } from './SmartNavbar';
+export type { SmartNavbarProps } from './SmartNavbar';
+
 export { MobileMenu } from './MobileMenu';
 export type { MobileMenuProps } from './MobileMenu';
 

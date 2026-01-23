@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -93,7 +94,12 @@ export default function CollegeBoxScoreClient() {
                         <span className="text-text-tertiary text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-white font-medium">{batter.player.name}</span>
+                        <Link
+                          href={`/college-baseball/players/${batter.player.id}`}
+                          className="text-white font-medium hover:text-burnt-orange transition-colors"
+                        >
+                          {batter.player.name}
+                        </Link>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
                         )}
@@ -142,7 +148,12 @@ export default function CollegeBoxScoreClient() {
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{pitcher.player.name}</span>
+                        <Link
+                          href={`/college-baseball/players/${pitcher.player.id}`}
+                          className="text-white font-medium hover:text-burnt-orange transition-colors"
+                        >
+                          {pitcher.player.name}
+                        </Link>
                         {pitcher.player.year && (
                           <span className="text-text-tertiary text-xs">
                             ({pitcher.player.year})
@@ -228,7 +239,12 @@ export default function CollegeBoxScoreClient() {
                         <span className="text-text-tertiary text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-white font-medium">{batter.player.name}</span>
+                        <Link
+                          href={`/college-baseball/players/${batter.player.id}`}
+                          className="text-white font-medium hover:text-burnt-orange transition-colors"
+                        >
+                          {batter.player.name}
+                        </Link>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
                         )}
@@ -277,7 +293,12 @@ export default function CollegeBoxScoreClient() {
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{pitcher.player.name}</span>
+                        <Link
+                          href={`/college-baseball/players/${pitcher.player.id}`}
+                          className="text-white font-medium hover:text-burnt-orange transition-colors"
+                        >
+                          {pitcher.player.name}
+                        </Link>
                         {pitcher.player.year && (
                           <span className="text-text-tertiary text-xs">
                             ({pitcher.player.year})

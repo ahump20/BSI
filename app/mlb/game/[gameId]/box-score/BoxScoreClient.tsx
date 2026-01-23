@@ -122,6 +122,7 @@ export default function BoxScoreClient() {
         score: game.teams.home.score,
         isWinner: game.teams.home.isWinner,
       }}
+      sport="mlb"
       variant="full"
       showLinescore={true}
     />

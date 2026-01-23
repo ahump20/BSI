@@ -151,7 +151,7 @@ export function ScoreCard({
   })();
 
   // Defensive null checks - ensure team objects have required properties
-  const safeHomeTeam = {
+  const safeHomeTeam: Team = {
     name: homeTeam?.name || 'Home',
     abbreviation: homeTeam?.abbreviation || 'HOM',
     score: homeTeam?.score ?? 0,
@@ -160,7 +160,7 @@ export function ScoreCard({
     isWinner: homeTeam?.isWinner,
   };
 
-  const safeAwayTeam = {
+  const safeAwayTeam: Team = {
     name: awayTeam?.name || 'Away',
     abbreviation: awayTeam?.abbreviation || 'AWY',
     score: awayTeam?.score ?? 0,
@@ -299,13 +299,14 @@ export function ScoreCard({
 }
 
 /**
- * Team Row Component with winner styling
+ * Team Row Component with winner styling and optional logo
  */
 interface TeamRowProps {
   team: {
     name: string;
     abbreviation: string;
     score: number;
+    logo?: string;
     record?: string;
     isWinner?: boolean;
   };
@@ -318,13 +319,22 @@ function TeamRow({ team, isWinner, isScheduled, theme }: TeamRowProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-            isWinner ? `${theme.badgeBg} ${theme.badgeText}` : 'bg-charcoal text-burnt-orange'
-          }`}
-        >
-          {team.abbreviation.slice(0, 3)}
-        </div>
+        {team.logo ? (
+          <img
+            src={team.logo}
+            alt={`${team.name} logo`}
+            className="w-10 h-10 object-contain flex-shrink-0"
+            loading="lazy"
+          />
+        ) : (
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+              isWinner ? `${theme.badgeBg} ${theme.badgeText}` : 'bg-charcoal text-burnt-orange'
+            }`}
+          >
+            {team.abbreviation.slice(0, 3)}
+          </div>
+        )}
         <div className="min-w-0">
           <p
             className={`font-semibold truncate ${isWinner ? 'text-white' : 'text-text-secondary'}`}

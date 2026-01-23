@@ -5,7 +5,7 @@ import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
-import { Navbar } from '@/components/layout-ds/Navbar';
+import { SmartNavbar } from '@/components/layout-ds/SmartNavbar';
 import { BottomNav } from '@/components/sports';
 import { mainNavItems } from '@/lib/navigation';
 
@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="#main-content" className="skip-link">
               Skip to main content
             </a>
-            <Navbar items={mainNavItems} />
+            <SmartNavbar items={mainNavItems} />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>
             {/* Mobile Bottom Navigation - auto-detects sport context from route */}

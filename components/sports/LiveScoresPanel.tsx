@@ -8,14 +8,11 @@
  * Last Updated: 2025-01-07
  */
 
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScoreCard, ScoreCardSkeleton } from './ScoreCard';
 import { LiveBadge } from '@/components/ui/Badge';
-import { GameDetailModal } from '@/components/game-detail';
 import { useUserSettings } from '@/lib/hooks';
 import type { Sport } from './SportTabs';
-import type { UnifiedSportKey } from '@/lib/types/adapters';
 
 const API_BASE = 'https://blazesportsintel.com/api';
 
@@ -33,11 +30,13 @@ interface Game {
     name: string;
     abbreviation: string;
     score: number;
+    logo?: string;
   };
   awayTeam: {
     name: string;
     abbreviation: string;
     score: number;
+    logo?: string;
   };
   status: 'scheduled' | 'live' | 'final' | 'delayed' | 'postponed';
   gameTime?: string;
@@ -158,11 +157,13 @@ function transformESPNGame(
       name: homeCompetitor?.team?.displayName || 'Home',
       abbreviation: homeCompetitor?.team?.abbreviation || 'HOM',
       score: parseInt(homeCompetitor?.score || '0', 10) || 0,
+      logo: homeCompetitor?.team?.logos?.[0]?.href,
     },
     awayTeam: {
       name: awayCompetitor?.team?.displayName || 'Away',
       abbreviation: awayCompetitor?.team?.abbreviation || 'AWY',
       score: parseInt(awayCompetitor?.score || '0', 10) || 0,
+      logo: awayCompetitor?.team?.logos?.[0]?.href,
     },
     status,
     gameTime,
@@ -282,12 +283,12 @@ function getMockGames(sport: Sport): Game[] {
   return mockGames[sport] || [];
 }
 
-// Map Sport to UnifiedSportKey for the modal
-const SPORT_KEY_MAP: Record<Sport, UnifiedSportKey> = {
-  mlb: 'mlb',
-  nfl: 'nfl',
-  nba: 'nba',
-  ncaa: 'cbb', // Default to college baseball for NCAA
+// Map Sport to route prefix for game detail pages
+const SPORT_ROUTE_MAP: Record<Sport, string> = {
+  mlb: '/mlb/game',
+  nfl: '/nfl/game',
+  nba: '/nba/game',
+  ncaa: '/college-baseball/game',
 };
 
 interface LiveScoresPanelProps {
@@ -295,21 +296,8 @@ interface LiveScoresPanelProps {
 }
 
 export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
-  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   // Get user's timezone preference for formatting
   const { formatTime, isLoaded: timezoneLoaded } = useUserSettings();
-
-  const handleGameClick = (gameId: string) => {
-    setSelectedGameId(gameId);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedGameId(null);
-  };
 
   const {
     data: games,
@@ -374,7 +362,8 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
               inning={game.inning}
               quarter={game.quarter}
               period={game.period}
-              onClick={() => handleGameClick(game.id)}
+              sport={sport === 'ncaa' ? 'cbb' : sport}
+              href={`${SPORT_ROUTE_MAP[sport]}/${game.id}`}
             />
           ))}
         </div>
@@ -384,14 +373,6 @@ export function LiveScoresPanel({ sport }: LiveScoresPanelProps) {
           <p className="text-white/40 text-sm mt-1">Check back later for upcoming matchups</p>
         </div>
       )}
-
-      {/* Game Detail Modal */}
-      <GameDetailModal
-        gameId={selectedGameId}
-        sport={SPORT_KEY_MAP[sport]}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
     </div>
   );
 }

@@ -11,43 +11,61 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 const tiers = [
   {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    period: 'forever',
+    description: 'Essential coverage for casual fans. No credit card required.',
+    features: [
+      'Live scores across MLB, NFL, NBA',
+      'College baseball scores (300+ D1 programs)',
+      'Basic standings and rankings',
+      'Public transfer portal data',
+      'Standard refresh rates (60s)',
+    ],
+    cta: 'Get Started Free',
+    popular: false,
+    href: '/dashboard',
+  },
+  {
     id: 'pro',
     name: 'Pro',
     price: 29,
     period: 'month',
-    description: 'For fans, fantasy players, and amateur coaches who want the edge.',
+    description: 'For serious fans who want real-time intel and advanced tools.',
     features: [
-      'Live scores across MLB, NFL, NBA, NCAA',
-      'Real-time game updates every 30 seconds',
-      'Complete box scores with batting/pitching lines',
-      'Game predictions & win probability',
+      'Everything in Free, plus:',
+      'Real-time scores (7s refresh)',
+      'Complete box scores & play-by-play',
+      'Transfer portal alerts',
+      'Strike zone analyzer',
+      'Spray charts & pitch arsenal',
+      'NIL valuation estimates',
       'Player comparison tools',
-      'Conference standings and rankings',
-      'Basic analytics dashboard',
       '14-day free trial',
     ],
     cta: 'Start Free Trial',
-    popular: false,
+    popular: true,
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     price: 199,
     period: 'month',
-    description: 'For college programs, scouts, and media who need professional-grade intel.',
+    description: 'For scouts, analysts, and media who need professional-grade intel.',
     features: [
-      'Everything in Pro',
-      'Advanced player analytics with AI insights',
+      'Everything in Pro, plus:',
       'Historical data access (5+ years)',
-      'Season projections & Monte Carlo simulations',
       'Custom data exports (CSV, JSON)',
       'API access for integrations',
-      'Priority support',
-      'Team collaboration tools',
+      'Priority support channel',
+      'Team accounts (up to 10 seats)',
       'Custom dashboards',
+      'White-label options',
     ],
-    cta: 'Get Started',
-    popular: true,
+    cta: 'Contact Sales',
+    popular: false,
+    href: 'mailto:enterprise@blazesportsintel.com',
   },
 ];
 
@@ -108,7 +126,7 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <Section padding="lg" background="charcoal">
           <Container>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {tiers.map((tier, index) => (
                 <ScrollReveal key={tier.id} direction="up" delay={index * 100}>
                   <Card
@@ -154,15 +172,28 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    <Button
-                      variant={tier.popular ? 'primary' : 'secondary'}
-                      size="lg"
-                      className="w-full"
-                      onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
-                      disabled={loading !== null}
-                    >
-                      {loading === tier.id ? 'Loading...' : tier.cta}
-                    </Button>
+                    {tier.href ? (
+                      <a
+                        href={tier.href}
+                        className={`block w-full py-3 px-6 rounded-lg font-semibold text-center transition-all ${
+                          tier.popular
+                            ? 'bg-burnt-orange text-white hover:bg-burnt-orange/90'
+                            : 'bg-graphite text-white hover:bg-white/10 border border-border-subtle'
+                        }`}
+                      >
+                        {tier.cta}
+                      </a>
+                    ) : (
+                      <Button
+                        variant={tier.popular ? 'primary' : 'secondary'}
+                        size="lg"
+                        className="w-full"
+                        onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
+                        disabled={loading !== null}
+                      >
+                        {loading === tier.id ? 'Loading...' : tier.cta}
+                      </Button>
+                    )}
                   </Card>
                 </ScrollReveal>
               ))}
