@@ -113,11 +113,18 @@ export default function AboutPage() {
                   Born on <span style={{ color: colors.burntOrange }}>Texas Soil</span>
                 </h1>
                 <p
-                  className="text-xl text-gray-300 mb-8 leading-relaxed"
+                  className="text-xl text-gray-300 mb-4 leading-relaxed"
                   style={{ fontFamily: 'Georgia, serif' }}
                 >
-                  August 17, 1995 — the same day as Davy Crockett. Memphis hospital, but my dad put
-                  Texas soil under that bed. Because that is what Humphreys do.
+                  August 17, 1995 — the same day as Davy Crockett. Memphis hospital, Texas soil
+                  under that bed. Because that is what Humphreys do.
+                </p>
+                <p
+                  className="text-lg text-gray-400 mb-8 leading-relaxed italic"
+                  style={{ fontFamily: 'Georgia, serif' }}
+                >
+                  The doctor said, &quot;You know you ain&apos;t the first to do this — but
+                  they&apos;ve ALL been from Texas.&quot;
                 </p>
 
                 {/* Credential Badges */}

@@ -24,12 +24,15 @@ import { Marquee } from '@/components/ui/Marquee';
 
 export type HeroVariant = 'home' | 'gradient' | 'image' | 'video';
 export type SportTheme = 'baseball' | 'football' | 'basketball' | 'default';
+export type HeroLayout = 'center' | 'asymmetric';
 
 export interface HeroSectionProps {
   /** Visual treatment variant */
   variant?: HeroVariant;
   /** Sport-specific theming (for gradient variant) */
   sportTheme?: SportTheme;
+  /** Layout style - center (default) or asymmetric (left-aligned with right content) */
+  layout?: HeroLayout;
   /** Background image URL (for 'image' variant) */
   backgroundImage?: string;
   /** Background video URL (for 'video' variant) */
@@ -44,6 +47,8 @@ export interface HeroSectionProps {
   actions?: ReactNode;
   /** Additional content below actions */
   children?: ReactNode;
+  /** Right-side content for asymmetric layout (stats, badges, etc.) */
+  rightContent?: ReactNode;
   /** Height preset */
   size?: 'sm' | 'md' | 'lg' | 'full';
   /** Show marquee strip at bottom */
@@ -95,6 +100,7 @@ const sportGradients: Record<SportTheme, string> = {
 export function HeroSection({
   variant = 'home',
   sportTheme = 'default',
+  layout = 'center',
   backgroundImage,
   backgroundVideo,
   title,
@@ -102,6 +108,7 @@ export function HeroSection({
   kicker,
   actions,
   children,
+  rightContent,
   size = 'full',
   showMarquee = false,
   enableParallax = true,
@@ -282,49 +289,73 @@ export function HeroSection({
 
       {/* Content with Parallax and Animations */}
       <motion.div
-        className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6"
+        className={cn(
+          'relative z-10 w-full px-4 sm:px-6',
+          layout === 'asymmetric'
+            ? 'max-w-7xl mx-auto grid md:grid-cols-5 gap-8 md:gap-12 items-end'
+            : 'max-w-4xl mx-auto text-center'
+        )}
         style={enableParallax ? { y: contentY, opacity: contentOpacity } : undefined}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {kicker && (
-          <motion.span
-            className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 rounded-full"
-            variants={itemVariants}
-          >
-            {kicker}
-          </motion.span>
-        )}
+        {/* Left content (title block) - 60% on asymmetric */}
+        <div className={cn(layout === 'asymmetric' && 'md:col-span-3 text-left')}>
+          {kicker && (
+            <motion.span
+              className="inline-block mb-4 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-burnt-orange bg-burnt-orange/10 border border-burnt-orange/20 rounded-full"
+              variants={itemVariants}
+            >
+              {kicker}
+            </motion.span>
+          )}
 
-        {title && (
-          <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-4 tracking-tight"
-            variants={itemVariants}
-          >
-            {title}
-          </motion.h1>
-        )}
+          {title && (
+            <motion.h1
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-4 tracking-tight"
+              variants={itemVariants}
+            >
+              {title}
+            </motion.h1>
+          )}
 
-        {subtitle && (
-          <motion.p
-            className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-8"
-            variants={itemVariants}
-          >
-            {subtitle}
-          </motion.p>
-        )}
+          {subtitle && (
+            <motion.p
+              className={cn(
+                'text-lg sm:text-xl text-text-secondary mb-8',
+                layout === 'center' && 'max-w-2xl mx-auto'
+              )}
+              variants={itemVariants}
+            >
+              {subtitle}
+            </motion.p>
+          )}
 
-        {actions && (
+          {actions && (
+            <motion.div
+              className={cn(
+                'flex flex-wrap gap-4',
+                layout === 'center' && 'items-center justify-center'
+              )}
+              variants={itemVariants}
+            >
+              {actions}
+            </motion.div>
+          )}
+
+          {children && <motion.div variants={itemVariants}>{children}</motion.div>}
+        </div>
+
+        {/* Right content (stats/badges) - 40% on asymmetric, overlaps bottom */}
+        {layout === 'asymmetric' && rightContent && (
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-4"
+            className="md:col-span-2 relative md:translate-y-8"
             variants={itemVariants}
           >
-            {actions}
+            {rightContent}
           </motion.div>
         )}
-
-        {children && <motion.div variants={itemVariants}>{children}</motion.div>}
       </motion.div>
 
       {/* Optional marquee */}
