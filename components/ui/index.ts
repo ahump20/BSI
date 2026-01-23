@@ -45,6 +45,15 @@ export type { SkeletonProps } from './Skeleton';
 // Marquee
 export { Marquee } from './Marquee';
 
+// Live Scores Marquee
+export { LiveScoresMarquee } from './LiveScoresMarquee';
+export type {
+  LiveScoresMarqueeProps,
+  TickerGame,
+  GameStatus as TickerGameStatus,
+  SportType,
+} from './LiveScoresMarquee';
+
 // Quote Block
 export { QuoteBlock } from './QuoteBlock';
 

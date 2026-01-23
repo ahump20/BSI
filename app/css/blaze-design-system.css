@@ -768,5 +768,137 @@ body {
 }
 
 /* ========================================================================== */
+/* 12. CURSOR ANIMATIONS                                                      */
+/* ========================================================================== */
+
+/**
+ * Custom cursor effects for premium interaction feel
+ * Only applies on devices with fine pointer (mouse/trackpad)
+ */
+
+@media (pointer: fine) {
+  /* Custom cursor container - used with JavaScript for custom cursor */
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--color-brand-primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition:
+      transform 0.15s ease-out,
+      opacity 0.15s ease-out;
+  }
+
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--color-brand-primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.5;
+    transition:
+      transform 0.1s ease-out,
+      width 0.2s ease-out,
+      height 0.2s ease-out;
+  }
+
+  /* Cursor states */
+  .cursor-dot.hovering {
+    transform: scale(1.5);
+    background: var(--color-brand-tertiary);
+  }
+
+  .cursor-ring.hovering {
+    width: 48px;
+    height: 48px;
+    opacity: 0.8;
+    border-color: var(--color-brand-tertiary);
+  }
+
+  .cursor-dot.clicking {
+    transform: scale(0.8);
+  }
+
+  .cursor-ring.clicking {
+    width: 24px;
+    height: 24px;
+    opacity: 1;
+  }
+
+  /* Hide default cursor on elements with custom cursor */
+  .custom-cursor,
+  .custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* Magnetic button effect - element follows cursor slightly */
+.magnetic-target {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.magnetic-target.is-magnetic {
+  /* Transform applied via JavaScript based on cursor position */
+}
+
+/* Hover ripple effect */
+.ripple-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-hover::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(191, 87, 0, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.4s ease-out,
+    height 0.4s ease-out;
+  pointer-events: none;
+}
+
+.ripple-hover:hover::before {
+  width: 300%;
+  height: 300%;
+}
+
+/* Click ripple effect (requires JavaScript to position) */
+.ripple-click {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-click .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0);
+  animation: ripple-expand 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple-expand {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ========================================================================== */
 /* END OF DESIGN SYSTEM                                                       */
 /* ========================================================================== */

@@ -98,4 +98,27 @@ If I say "WHY FIRST" or "stop optimizing" — stop. Return to understanding what
 
 ---
 
+## Claude Code Workflow
+
+### Preferred Setup
+- Terminal: Ghostty (ghostty.org) for CLI usage — best performance with Claude Code
+- Plan mode: Always use for features touching >3 files
+- Ask questions before assuming requirements
+
+### Project Planning Files
+When starting a new feature, create `/tasks/{feature-name}.md` with:
+- Goal statement
+- Acceptance criteria
+- Technical approach
+- Files to modify
+
+### Prompt Patterns
+For UI work: "I want it to be [aesthetic] with [specific features]. Include [animations/interactions]. Feel free to ask questions."
+
+For API work: "Endpoint should handle [use case]. Return [format]. Include proper error handling and validation."
+
+For debugging: "The bug is [symptom]. I expect [expected behavior]. Relevant files are [files]."
+
+---
+
 _Update this file with `#` when patterns emerge. This is living documentation._

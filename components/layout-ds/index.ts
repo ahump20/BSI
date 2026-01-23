@@ -16,3 +16,6 @@ export type { FooterProps, FooterSection, SocialLink } from './Footer';
 
 export { SearchBar } from './SearchBar';
 export type { default as SearchBarComponent } from './SearchBar';
+
+export { BentoGrid, BentoCard, BentoStat } from './BentoGrid';
+export type { BentoGridProps, BentoCardProps, BentoCardSize, BentoStatProps } from './BentoGrid';
