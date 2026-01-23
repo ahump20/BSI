@@ -146,8 +146,8 @@ export function ScoreCard({
       return formatGame(startTime);
     }
 
-    // Fallback
-    return 'TBD';
+    // Fallback - show "Scheduled" instead of ambiguous "TBD"
+    return 'Scheduled';
   })();
 
   // Defensive null checks - ensure team objects have required properties
@@ -354,13 +354,15 @@ function TeamRow({ team, isWinner, isScheduled, theme }: TeamRowProps) {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
           </svg>
         )}
-        <span
-          className={`text-2xl font-bold font-mono tabular-nums min-w-[2ch] text-right ${
-            isScheduled ? 'text-text-tertiary' : isWinner ? 'text-white' : 'text-text-secondary'
-          }`}
-        >
-          {isScheduled ? '-' : team.score}
-        </span>
+        {!isScheduled && (
+          <span
+            className={`text-2xl font-bold font-mono tabular-nums min-w-[2ch] text-right ${
+              isWinner ? 'text-white' : 'text-text-secondary'
+            }`}
+          >
+            {team.score}
+          </span>
+        )}
       </div>
     </div>
   );

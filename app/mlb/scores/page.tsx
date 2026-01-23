@@ -168,7 +168,7 @@ export default function MLBScoresPage() {
                   {game.status.inningState} {game.status.inning}
                 </span>
               ) : (
-                game.status.detailedState
+                game.status.detailedState || 'Scheduled'
               )}
             </span>
             <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
@@ -199,17 +199,15 @@ export default function MLBScoresPage() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : isFinal && game.teams.away.isWinner
-                        ? 'text-white'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {isScheduled ? '-' : game.teams.away.score}
-                </span>
+                {!isScheduled && (
+                  <span
+                    className={`text-2xl font-bold font-mono ${
+                      isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'
+                    }`}
+                  >
+                    {game.teams.away.score}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -236,17 +234,15 @@ export default function MLBScoresPage() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : isFinal && game.teams.home.isWinner
-                        ? 'text-white'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {isScheduled ? '-' : game.teams.home.score}
-                </span>
+                {!isScheduled && (
+                  <span
+                    className={`text-2xl font-bold font-mono ${
+                      isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'
+                    }`}
+                  >
+                    {game.teams.home.score}
+                  </span>
+                )}
               </div>
             </div>
           </div>
