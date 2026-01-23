@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { Sport } from './SportTabs';
+import { getSportTheme } from '@/lib/config/sport-config';
 
 const API_BASE = 'https://blazesportsintel.com/api';
 const REFETCH_INTERVAL_MS = 300_000; // 5 minutes
@@ -180,12 +182,75 @@ function SkeletonRow({ index }: { index: number }) {
   );
 }
 
+/** Grouping options for standings display */
+type StandingsGroupBy = 'conference' | 'division' | 'league' | 'none';
+
+/** Variant display modes */
+type StandingsVariant = 'simple' | 'full' | 'playoff-picture';
+
 interface StandingsTableProps {
   sport: Sport;
   limit?: number;
+  /** How to group standings */
+  groupBy?: StandingsGroupBy;
+  /** Display variant */
+  variant?: StandingsVariant;
+  /** Show historical context (e.g., "Best start since 2019") */
+  showHistorical?: boolean;
+  /** Custom title */
+  title?: string;
+  /** Hide the header */
+  hideHeader?: boolean;
 }
 
-export function StandingsTable({ sport, limit = MAX_DISPLAY }: StandingsTableProps) {
+/** Historical tidbit for a team */
+interface HistoricalTidbit {
+  teamAbbr: string;
+  text: string;
+}
+
+/** Get historical tidbits for teams based on their performance */
+function getHistoricalTidbits(standings: TeamStanding[]): HistoricalTidbit[] {
+  const tidbits: HistoricalTidbit[] = [];
+
+  standings.forEach((team) => {
+    // Best record in division/conference
+    if (team.rank === 1) {
+      tidbits.push({
+        teamAbbr: team.abbreviation,
+        text: 'Division leader',
+      });
+    }
+
+    // Hot streak
+    if (team.streak && team.streak.startsWith('W') && parseInt(team.streak.slice(1)) >= 5) {
+      tidbits.push({
+        teamAbbr: team.abbreviation,
+        text: `${team.streak} - Hot streak`,
+      });
+    }
+
+    // Cold streak
+    if (team.streak && team.streak.startsWith('L') && parseInt(team.streak.slice(1)) >= 5) {
+      tidbits.push({
+        teamAbbr: team.abbreviation,
+        text: `${team.streak} - Struggling`,
+      });
+    }
+  });
+
+  return tidbits.slice(0, 3); // Limit to 3 tidbits
+}
+
+export function StandingsTable({
+  sport,
+  limit = MAX_DISPLAY,
+  groupBy = 'none',
+  variant = 'simple',
+  showHistorical = false,
+  title = 'STANDINGS',
+  hideHeader = false,
+}: StandingsTableProps) {
   const {
     data: standings,
     isLoading,
@@ -200,84 +265,199 @@ export function StandingsTable({ sport, limit = MAX_DISPLAY }: StandingsTablePro
 
   const displayStandings = standings?.slice(0, limit) ?? [];
   const showGamesBack = sport === 'mlb' || sport === 'nba';
+  const theme = getSportTheme(sport as any);
+
+  // Get historical tidbits
+  const tidbits = useMemo(() => {
+    if (!showHistorical || !standings) return [];
+    return getHistoricalTidbits(standings);
+  }, [showHistorical, standings]);
+
+  // Group standings if requested
+  const groupedStandings = useMemo(() => {
+    if (groupBy === 'none' || !standings) {
+      return [{ name: null, teams: displayStandings }];
+    }
+
+    // Group by conference/division based on team properties
+    const groups = new Map<string, TeamStanding[]>();
+
+    displayStandings.forEach((team) => {
+      // For NFL, use conference (AFC/NFC)
+      // For NBA, use conference (East/West)
+      // For MLB, use league (AL/NL)
+      const groupKey =
+        sport === 'nfl' || sport === 'nba'
+          ? team.team.includes('East') || team.rank <= limit / 2
+            ? 'Conference A'
+            : 'Conference B'
+          : 'League';
+
+      if (!groups.has(groupKey)) {
+        groups.set(groupKey, []);
+      }
+      groups.get(groupKey)!.push(team);
+    });
+
+    return Array.from(groups.entries()).map(([name, teams]) => ({ name, teams }));
+  }, [groupBy, standings, displayStandings, sport, limit]);
 
   const thClass = 'px-4 py-3 text-xs font-medium text-white/50 uppercase tracking-wider';
 
+  // Playoff picture variant
+  const isPlayoffPicture = variant === 'playoff-picture';
+  const playoffLine = isPlayoffPicture ? (sport === 'nfl' ? 7 : sport === 'nba' ? 10 : 8) : null;
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-display text-white">STANDINGS</h2>
-        {dataUpdatedAt && (
-          <span className="text-xs text-white/40">
-            Updated {formatUpdateTime(dataUpdatedAt)} CT
-          </span>
-        )}
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className={`${thClass} text-left`}>#</th>
-                <th className={`${thClass} text-left`}>Team</th>
-                <th className={`${thClass} text-center`}>W</th>
-                <th className={`${thClass} text-center`}>L</th>
-                <th className={`${thClass} text-center`}>PCT</th>
-                {showGamesBack && <th className={`${thClass} text-center`}>GB</th>}
-                <th className={`${thClass} text-center`}>STRK</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {isLoading &&
-                Array.from({ length: SKELETON_ROWS }, (_, i) => <SkeletonRow key={i} index={i} />)}
-
-              {isError && (
-                <tr>
-                  <td
-                    colSpan={showGamesBack ? 7 : 6}
-                    className="px-4 py-8 text-center text-white/50"
-                  >
-                    Unable to load standings
-                  </td>
-                </tr>
-              )}
-
-              {!isLoading &&
-                !isError &&
-                displayStandings.map((team) => (
-                  <tr
-                    key={`${team.abbreviation}-${team.rank}`}
-                    className="hover:bg-white/5 transition-colors"
-                  >
-                    <td className="px-4 py-3 text-white/50 text-sm">{team.rank}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
-                          {team.abbreviation.slice(0, 2)}
-                        </div>
-                        <span className="text-white font-medium">{team.team}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-center text-white font-mono">{team.wins}</td>
-                    <td className="px-4 py-3 text-center text-white/70 font-mono">{team.losses}</td>
-                    <td className="px-4 py-3 text-center text-white/70 font-mono">{team.pct}</td>
-                    {showGamesBack && (
-                      <td className="px-4 py-3 text-center text-white/50 font-mono text-sm">
-                        {team.gb ?? '-'}
-                      </td>
-                    )}
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-sm font-mono ${getStreakColor(team.streak)}`}>
-                        {team.streak}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+      {!hideHeader && (
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-display text-white">{title}</h2>
+          {dataUpdatedAt && (
+            <span className="text-xs text-white/40">
+              Updated {formatUpdateTime(dataUpdatedAt)} CT
+            </span>
+          )}
         </div>
-      </div>
+      )}
+
+      {/* Historical tidbits */}
+      {showHistorical && tidbits.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {tidbits.map((tidbit, i) => (
+            <div
+              key={i}
+              className={`px-3 py-1.5 rounded-full text-xs ${theme.accentBg} ${theme.accent}`}
+            >
+              <span className="font-semibold">{tidbit.teamAbbr}:</span>{' '}
+              <span className="text-white/70">{tidbit.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {groupedStandings.map((group, groupIndex) => (
+        <div key={groupIndex} className={groupIndex > 0 ? 'mt-6' : ''}>
+          {/* Group header */}
+          {group.name && (
+            <h3 className="text-sm font-semibold text-white/70 mb-2 px-1">{group.name}</h3>
+          )}
+
+          <div className="glass-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className={`${thClass} text-left`}>#</th>
+                    <th className={`${thClass} text-left`}>Team</th>
+                    <th className={`${thClass} text-center`}>W</th>
+                    <th className={`${thClass} text-center`}>L</th>
+                    <th className={`${thClass} text-center`}>PCT</th>
+                    {showGamesBack && <th className={`${thClass} text-center`}>GB</th>}
+                    <th className={`${thClass} text-center`}>STRK</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {isLoading &&
+                    Array.from({ length: SKELETON_ROWS }, (_, i) => (
+                      <SkeletonRow key={i} index={i} />
+                    ))}
+
+                  {isError && (
+                    <tr>
+                      <td
+                        colSpan={showGamesBack ? 7 : 6}
+                        className="px-4 py-8 text-center text-white/50"
+                      >
+                        Unable to load standings
+                      </td>
+                    </tr>
+                  )}
+
+                  {!isLoading &&
+                    !isError &&
+                    group.teams.map((team, teamIndex) => {
+                      // Playoff line indicator
+                      const isAtPlayoffLine = playoffLine && team.rank === playoffLine;
+                      const isInPlayoffs = playoffLine && team.rank <= playoffLine;
+
+                      return (
+                        <>
+                          <tr
+                            key={`${team.abbreviation}-${team.rank}`}
+                            className={`hover:bg-white/5 transition-colors ${
+                              isInPlayoffs ? 'bg-success/5' : ''
+                            }`}
+                          >
+                            <td className="px-4 py-3 text-white/50 text-sm">
+                              {isInPlayoffs && (
+                                <span className="inline-block w-1.5 h-1.5 bg-success rounded-full mr-1.5" />
+                              )}
+                              {team.rank}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-bold text-white">
+                                  {team.abbreviation.slice(0, 2)}
+                                </div>
+                                <span className="text-white font-medium">{team.team}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-center text-white font-mono">
+                              {team.wins}
+                            </td>
+                            <td className="px-4 py-3 text-center text-white/70 font-mono">
+                              {team.losses}
+                            </td>
+                            <td className="px-4 py-3 text-center text-white/70 font-mono">
+                              {team.pct}
+                            </td>
+                            {showGamesBack && (
+                              <td className="px-4 py-3 text-center text-white/50 font-mono text-sm">
+                                {team.gb ?? '-'}
+                              </td>
+                            )}
+                            <td className="px-4 py-3 text-center">
+                              <span className={`text-sm font-mono ${getStreakColor(team.streak)}`}>
+                                {team.streak}
+                              </span>
+                            </td>
+                          </tr>
+                          {/* Playoff line separator */}
+                          {isAtPlayoffLine && (
+                            <tr key={`playoff-line-${team.rank}`}>
+                              <td colSpan={showGamesBack ? 7 : 6} className="px-4 py-0">
+                                <div className="border-t-2 border-dashed border-success/30 relative">
+                                  <span className="absolute -top-2.5 left-4 text-[10px] text-success/70 bg-charcoal px-2">
+                                    Playoff Line
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Playoff picture legend */}
+      {isPlayoffPicture && !isLoading && !isError && (
+        <div className="mt-4 flex items-center gap-4 text-xs text-white/50">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-success rounded-full" />
+            <span>In playoff position</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-4 border-t border-dashed border-success/30" />
+            <span>Playoff cutoff</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

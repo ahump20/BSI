@@ -381,9 +381,36 @@ export class ESPNUnifiedAdapter {
 
     const data = await this.fetchWithCache<any>(url, cacheKey, CACHE_TTLS.summary);
 
+    // Extract team stats for comparison
+    const boxscore = data.boxscore;
+    const teams = boxscore?.teams || [];
+    const homeTeamStats = teams.find((t: any) => t.homeAway === 'home')?.statistics;
+    const awayTeamStats = teams.find((t: any) => t.homeAway === 'away')?.statistics;
+
+    // Add comparison stats to boxscore
+    const enhancedBoxscore = boxscore
+      ? {
+          ...boxscore,
+          homeStats: {
+            ...boxscore.homeStats,
+            stats: {
+              ...(boxscore.homeStats?.stats || {}),
+              ...this.extractComparisonStats(homeTeamStats, sportKey),
+            },
+          },
+          awayStats: {
+            ...boxscore.awayStats,
+            stats: {
+              ...(boxscore.awayStats?.stats || {}),
+              ...this.extractComparisonStats(awayTeamStats, sportKey),
+            },
+          },
+        }
+      : undefined;
+
     return {
       game: this.transformEvent(data.header?.competitions?.[0] || data, sportKey),
-      boxscore: data.boxscore,
+      boxscore: enhancedBoxscore,
       leaders: data.leaders,
       drives: data.drives,
       plays: data.plays,
@@ -698,6 +725,38 @@ export class ESPNUnifiedAdapter {
     if (score === null || score === undefined || score === '') return null;
     const parsed = parseFloat(score);
     return isNaN(parsed) ? null : parsed;
+  }
+
+  /**
+   * Extract comparison stats from team statistics based on sport type
+   */
+  private extractComparisonStats(teamStats: any, sport: SportKey): Record<string, number | string> {
+    const stats: Record<string, number | string> = {};
+
+    if (sport === 'mlb' || sport === 'cbb') {
+      stats.AVG = teamStats?.batting?.avg || '.000';
+      stats.HR = teamStats?.batting?.homeRuns || 0;
+      stats.RBI = teamStats?.batting?.rbi || 0;
+      stats.ERA = teamStats?.pitching?.era || '0.00';
+      stats.WHIP = teamStats?.pitching?.whip || '0.00';
+      stats.K = teamStats?.pitching?.strikeouts || 0;
+    } else if (sport === 'nfl' || sport === 'ncaaf') {
+      stats.PPG = teamStats?.scoring?.pointsPerGame || 0;
+      stats.YPG = teamStats?.offense?.yardsPerGame || 0;
+      stats.TOP = teamStats?.possession?.timeOfPossession || '0:00';
+      stats.TO = teamStats?.turnovers?.total || 0;
+      stats['3rd%'] = teamStats?.thirdDown?.percentage || '0%';
+      stats['RedZone%'] = teamStats?.redZone?.percentage || '0%';
+    } else if (sport === 'nba' || sport === 'ncaab' || sport === 'wnba' || sport === 'wcbb') {
+      stats.PPG = teamStats?.scoring?.pointsPerGame || 0;
+      stats['FG%'] = teamStats?.shooting?.fieldGoalPercentage || '0%';
+      stats['3P%'] = teamStats?.shooting?.threePointPercentage || '0%';
+      stats.REB = teamStats?.rebounds?.total || 0;
+      stats.AST = teamStats?.assists?.total || 0;
+      stats.TO = teamStats?.turnovers?.total || 0;
+    }
+
+    return stats;
   }
 
   // ==========================================================================

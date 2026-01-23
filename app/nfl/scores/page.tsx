@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { TeamLogo } from '@/components/ui/TeamLogo';
 
 interface NFLGame {
   id: string;
@@ -130,119 +131,113 @@ export default function NFLScoresPage() {
     const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
 
     return (
-      <div
-        className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
-          isLive ? 'border-success' : 'border-border-subtle'
-        }`}
-      >
-        {/* Game Status Bar */}
+      <Link href={`/nfl/game/${game.id}`} className="block">
         <div
-          className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-            isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+            isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
-          <span
-            className={`text-xs font-semibold uppercase ${
-              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+          {/* Game Status Bar */}
+          <div
+            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+              isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
             }`}
           >
-            {isLive ? (
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />Q{game.quarter}{' '}
-                {game.timeRemaining}
-              </span>
-            ) : isFinal ? (
-              'Final'
-            ) : game.status === 'postponed' ? (
-              'Postponed'
-            ) : (
-              game.time
-            )}
-          </span>
-          <span className="text-xs text-text-tertiary">Week {game.week}</span>
-        </div>
+            <span
+              className={`text-xs font-semibold uppercase ${
+                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+              }`}
+            >
+              {isLive ? (
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-success rounded-full animate-pulse" />Q{game.quarter}{' '}
+                  {game.timeRemaining}
+                </span>
+              ) : isFinal ? (
+                'Final'
+              ) : game.status === 'postponed' ? (
+                'Postponed'
+              ) : (
+                game.time
+              )}
+            </span>
+            <span className="text-xs text-text-tertiary">Week {game.week}</span>
+          </div>
 
-        {/* Teams */}
-        <div className="p-4 space-y-3">
-          {/* Away Team */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {game.awayTeam.abbreviation}
+          {/* Teams */}
+          <div className="p-4 space-y-3">
+            {/* Away Team */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <TeamLogo abbreviation={game.awayTeam.abbreviation} sport="nfl" size="md" />
+                <div>
+                  <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
+                    {game.awayTeam.name}
+                  </p>
+                  <p className="text-xs text-text-tertiary">{game.awayTeam.record}</p>
+                </div>
               </div>
-              <div>
-                <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
-                  {game.awayTeam.name}
-                </p>
-                <p className="text-xs text-text-tertiary">{game.awayTeam.record}</p>
+              <div className="flex items-center gap-2">
+                {isLive && game.possession === 'away' && (
+                  <span className="w-2 h-2 bg-burnt-orange rounded-full" title="Has possession" />
+                )}
+                {awayWon && (
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                )}
+                {!isScheduled && (
+                  <span
+                    className={`text-2xl font-bold font-mono ${
+                      awayWon ? 'text-white' : 'text-text-secondary'
+                    }`}
+                  >
+                    {game.awayTeam.score ?? 0}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {isLive && game.possession === 'away' && (
-                <span className="w-2 h-2 bg-burnt-orange rounded-full" title="Has possession" />
-              )}
-              {awayWon && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className={`text-2xl font-bold font-mono ${
-                  isScheduled
-                    ? 'text-text-tertiary'
-                    : awayWon
-                      ? 'text-white'
-                      : 'text-text-secondary'
-                }`}
-              >
-                {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
-              </span>
+
+            {/* Home Team */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <TeamLogo abbreviation={game.homeTeam.abbreviation} sport="nfl" size="md" />
+                <div>
+                  <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
+                    {game.homeTeam.name}
+                  </p>
+                  <p className="text-xs text-text-tertiary">{game.homeTeam.record}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {isLive && game.possession === 'home' && (
+                  <span className="w-2 h-2 bg-burnt-orange rounded-full" title="Has possession" />
+                )}
+                {homeWon && (
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                  </svg>
+                )}
+                {!isScheduled && (
+                  <span
+                    className={`text-2xl font-bold font-mono ${
+                      homeWon ? 'text-white' : 'text-text-secondary'
+                    }`}
+                  >
+                    {game.homeTeam.score ?? 0}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Home Team */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                {game.homeTeam.abbreviation}
-              </div>
-              <div>
-                <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
-                  {game.homeTeam.name}
-                </p>
-                <p className="text-xs text-text-tertiary">{game.homeTeam.record}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {isLive && game.possession === 'home' && (
-                <span className="w-2 h-2 bg-burnt-orange rounded-full" title="Has possession" />
-              )}
-              {homeWon && (
-                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
-              )}
-              <span
-                className={`text-2xl font-bold font-mono ${
-                  isScheduled
-                    ? 'text-text-tertiary'
-                    : homeWon
-                      ? 'text-white'
-                      : 'text-text-secondary'
-                }`}
-              >
-                {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
-              </span>
-            </div>
+          {/* Venue Footer */}
+          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3 flex items-center justify-between">
+            <span>{game.venue || 'TBD'}</span>
+            {game.broadcast && <span className="text-burnt-orange">{game.broadcast}</span>}
           </div>
         </div>
-
-        {/* Venue Footer */}
-        <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3 flex items-center justify-between">
-          <span>{game.venue || 'TBD'}</span>
-          {game.broadcast && <span className="text-burnt-orange">{game.broadcast}</span>}
-        </div>
-      </div>
+      </Link>
     );
   };
 

@@ -10,56 +10,15 @@ import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { CitationFooter, TeamComparison } from '@/components/sports';
+import { CitationFooter } from '@/components/sports';
 
-// ============================================================================
-// TYPES
-// ============================================================================
-
-interface BattingLine {
-  player: { id: string; name: string; position: string };
-  ab: number;
-  r: number;
-  h: number;
-  rbi: number;
-  bb: number;
-  so: number;
-  avg: string;
-}
-
-interface PitchingLine {
-  player: { id: string; name: string };
-  decision?: 'W' | 'L' | 'S' | 'H' | 'BS';
-  ip: string;
-  h: number;
-  r: number;
-  er: number;
-  bb: number;
-  so: number;
-  pitches?: number;
-  strikes?: number;
-  era: string;
-}
-
-interface Play {
+export interface NBAGameData {
   id: string;
-  inning: number;
-  halfInning: 'top' | 'bottom';
-  description: string;
-  result: string;
-  isScoring: boolean;
-  runsScored: number;
-  scoreAfter: { away: number; home: number };
-}
-
-export interface GameData {
-  id: number;
   date: string;
   status: {
     state: string;
-    detailedState: string;
-    inning?: number;
-    inningState?: string;
+    quarter?: number;
+    timeRemaining?: string;
     isLive: boolean;
     isFinal: boolean;
   };
@@ -70,6 +29,7 @@ export interface GameData {
       score: number;
       isWinner: boolean;
       record?: string;
+      linescores?: string[];
     };
     home: {
       name: string;
@@ -77,89 +37,52 @@ export interface GameData {
       score: number;
       isWinner: boolean;
       record?: string;
+      linescores?: string[];
     };
   };
-  venue: { name: string };
-  linescore?: {
-    innings: Array<{ away: number; home: number }>;
-    totals: {
-      away: { runs: number; hits: number; errors: number };
-      home: { runs: number; hits: number; errors: number };
-    };
-  };
-  boxscore?: {
-    away: { batting: BattingLine[]; pitching: PitchingLine[] };
-    home: { batting: BattingLine[]; pitching: PitchingLine[] };
-  };
-  plays?: Play[];
+  venue: string;
+  leaders?: Array<{
+    team: string;
+    categories: Array<{
+      category: string;
+      leader: { name: string; value: string };
+    }>;
+  }>;
 }
 
 interface DataMeta {
   dataSource: string;
   lastUpdated: string;
-  timezone: string;
-}
-
-interface GameApiResponse {
-  game?: GameData;
-  meta?: DataMeta;
 }
 
 interface GameContextValue {
-  game: GameData | null;
+  game: NBAGameData | null;
   loading: boolean;
   error: string | null;
   meta: DataMeta | null;
   refresh: () => void;
 }
 
-// ============================================================================
-// CONTEXT
-// ============================================================================
-
 const GameContext = createContext<GameContextValue | null>(null);
 
 export function useGameData() {
   const context = useContext(GameContext);
   if (!context) {
-    throw new Error('useGameData must be used within a GameDetailLayout');
+    throw new Error('useGameData must be used within NBAGameLayoutClient');
   }
   return context;
 }
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-function _formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
-// ============================================================================
-// LAYOUT COMPONENT
-// ============================================================================
 
 interface GameLayoutClientProps {
   children: ReactNode;
 }
 
-export default function GameLayoutClient({ children }: GameLayoutClientProps) {
+export default function NBAGameLayoutClient({ children }: GameLayoutClientProps) {
   const params = useParams();
   const pathname = usePathname();
   const gameId = params?.gameId as string;
 
-  const [game, setGame] = useState<GameData | null>(null);
+  const [game, setGame] = useState<NBAGameData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [meta, setMeta] = useState<DataMeta | null>(null);
@@ -168,12 +91,45 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
     if (!gameId) return;
 
     try {
-      const res = await fetch(`/api/mlb/game/${gameId}`);
+      const res = await fetch(`/api/nba/games/${gameId}`);
       if (!res.ok) throw new Error('Failed to fetch game data');
-      const data = (await res.json()) as GameApiResponse;
+      const data = await res.json();
 
-      if (data.game) {
-        setGame(data.game);
+      if (data.competitors) {
+        const away = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'away');
+        const home = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'home');
+
+        setGame({
+          id: gameId,
+          date: data.timestamp || new Date().toISOString(),
+          status: {
+            state: data.game?.status?.description || 'Unknown',
+            quarter: data.game?.status?.period,
+            timeRemaining: data.game?.status?.clock,
+            isLive: !data.game?.status?.completed && (data.game?.status?.period || 0) > 0,
+            isFinal: data.game?.status?.completed || false,
+          },
+          teams: {
+            away: {
+              name: away?.team?.name || 'Away',
+              abbreviation: away?.team?.abbreviation || 'AWY',
+              score: parseInt(away?.score) || 0,
+              isWinner: away?.winner || false,
+              record: '',
+              linescores: away?.linescores || [],
+            },
+            home: {
+              name: home?.team?.name || 'Home',
+              abbreviation: home?.team?.abbreviation || 'HME',
+              score: parseInt(home?.score) || 0,
+              isWinner: home?.winner || false,
+              record: '',
+              linescores: home?.linescores || [],
+            },
+          },
+          venue: data.game?.venue?.name || 'TBD',
+          leaders: data.leaders,
+        });
       }
       if (data.meta) {
         setMeta(data.meta);
@@ -192,7 +148,6 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
     fetchGame();
   }, [fetchGame]);
 
-  // Auto-refresh for live games
   useEffect(() => {
     if (game?.status.isLive) {
       const interval = setInterval(fetchGame, 30000);
@@ -200,20 +155,13 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
     }
   }, [game?.status.isLive, fetchGame]);
 
-  // Tab navigation
   const tabs = [
-    { id: 'summary', label: 'Summary', href: `/mlb/game/${gameId}` },
-    { id: 'box-score', label: 'Box Score', href: `/mlb/game/${gameId}/box-score` },
-    { id: 'play-by-play', label: 'Play-by-Play', href: `/mlb/game/${gameId}/play-by-play` },
-    { id: 'team-stats', label: 'Team Stats', href: `/mlb/game/${gameId}/team-stats` },
-    { id: 'recap', label: 'Recap', href: `/mlb/game/${gameId}/recap` },
+    { id: 'summary', label: 'Summary', href: `/nba/game/${gameId}` },
+    { id: 'box-score', label: 'Box Score', href: `/nba/game/${gameId}/box-score` },
   ];
 
   const getActiveTab = () => {
     if (pathname?.includes('/box-score')) return 'box-score';
-    if (pathname?.includes('/play-by-play')) return 'play-by-play';
-    if (pathname?.includes('/team-stats')) return 'team-stats';
-    if (pathname?.includes('/recap')) return 'recap';
     return 'summary';
   };
 
@@ -222,19 +170,18 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   return (
     <GameContext.Provider value={{ game, loading, error, meta, refresh: fetchGame }}>
       <main id="main-content">
-        {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
-                href="/mlb"
+                href="/nba"
                 className="text-text-tertiary hover:text-burnt-orange transition-colors"
               >
-                MLB
+                NBA
               </Link>
               <span className="text-text-tertiary">/</span>
               <Link
-                href="/mlb/scores"
+                href="/nba/scores"
                 className="text-text-tertiary hover:text-burnt-orange transition-colors"
               >
                 Scores
@@ -276,7 +223,6 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
           </Section>
         ) : game ? (
           <>
-            {/* Game Header */}
             <Section padding="md" className="relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
               <Container>
@@ -292,9 +238,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                     {game.status.isLive && <LiveBadge />}
                   </div>
 
-                  {/* Scoreboard */}
                   <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
-                    {/* Away Team */}
                     <div className="text-center">
                       <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2">
                         {game.teams.away.abbreviation}
@@ -312,24 +256,20 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       </p>
                     </div>
 
-                    {/* Status */}
                     <div className="text-center">
                       {game.status.isLive ? (
                         <span className="flex items-center justify-center gap-1.5 text-success font-semibold">
-                          <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                          {game.status.inningState} {game.status.inning}
+                          <span className="w-2 h-2 bg-success rounded-full animate-pulse" />Q
+                          {game.status.quarter} {game.status.timeRemaining}
                         </span>
                       ) : game.status.isFinal ? (
                         <span className="text-text-tertiary font-semibold">FINAL</span>
                       ) : (
-                        <span className="text-burnt-orange font-semibold">
-                          {game.status.detailedState}
-                        </span>
+                        <span className="text-burnt-orange font-semibold">{game.status.state}</span>
                       )}
-                      <p className="text-xs text-text-tertiary mt-1">{game.venue?.name}</p>
+                      <p className="text-xs text-text-tertiary mt-1">{game.venue}</p>
                     </div>
 
-                    {/* Home Team */}
                     <div className="text-center">
                       <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2">
                         {game.teams.home.abbreviation}
@@ -348,27 +288,22 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                     </div>
                   </div>
 
-                  {/* Linescore Preview (compact) */}
-                  {game.linescore && (
-                    <Card variant="default" padding="sm" className="mt-4 max-w-2xl mx-auto">
+                  {/* Quarter Scores */}
+                  {(game.teams.away.linescores?.length ?? 0) > 0 && (
+                    <Card variant="default" padding="sm" className="mt-4 max-w-md mx-auto">
                       <div className="overflow-x-auto">
                         <table className="w-full text-xs">
                           <thead>
                             <tr className="border-b border-border-subtle text-text-tertiary">
                               <th className="text-left p-1.5 w-12">Team</th>
-                              {Array.from(
-                                { length: Math.max(game.linescore.innings.length, 9) },
-                                (_, i) => (
-                                  <th key={i} className="text-center p-1.5 w-5">
-                                    {i + 1}
-                                  </th>
-                                )
-                              )}
-                              <th className="text-center p-1.5 w-6 border-l border-border-subtle text-burnt-orange font-bold">
-                                R
+                              {(game.teams.away.linescores || []).map((_, i) => (
+                                <th key={i} className="text-center p-1.5 w-8">
+                                  {i < 4 ? `Q${i + 1}` : `OT${i - 3}`}
+                                </th>
+                              ))}
+                              <th className="text-center p-1.5 w-8 border-l border-border-subtle text-burnt-orange font-bold">
+                                T
                               </th>
-                              <th className="text-center p-1.5 w-6">H</th>
-                              <th className="text-center p-1.5 w-6">E</th>
                             </tr>
                           </thead>
                           <tbody className="text-text-secondary">
@@ -376,44 +311,26 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                               <td className="p-1.5 font-semibold text-white">
                                 {game.teams.away.abbreviation}
                               </td>
-                              {Array.from(
-                                { length: Math.max(game.linescore.innings.length, 9) },
-                                (_, i) => (
-                                  <td key={i} className="text-center p-1.5 font-mono">
-                                    {game.linescore?.innings[i]?.away ?? '-'}
-                                  </td>
-                                )
-                              )}
+                              {(game.teams.away.linescores || []).map((score, i) => (
+                                <td key={i} className="text-center p-1.5 font-mono">
+                                  {score}
+                                </td>
+                              ))}
                               <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
-                                {game.linescore.totals.away.runs}
-                              </td>
-                              <td className="text-center p-1.5 font-mono">
-                                {game.linescore.totals.away.hits}
-                              </td>
-                              <td className="text-center p-1.5 font-mono">
-                                {game.linescore.totals.away.errors}
+                                {game.teams.away.score}
                               </td>
                             </tr>
                             <tr>
                               <td className="p-1.5 font-semibold text-white">
                                 {game.teams.home.abbreviation}
                               </td>
-                              {Array.from(
-                                { length: Math.max(game.linescore.innings.length, 9) },
-                                (_, i) => (
-                                  <td key={i} className="text-center p-1.5 font-mono">
-                                    {game.linescore?.innings[i]?.home ?? '-'}
-                                  </td>
-                                )
-                              )}
+                              {(game.teams.home.linescores || []).map((score, i) => (
+                                <td key={i} className="text-center p-1.5 font-mono">
+                                  {score}
+                                </td>
+                              ))}
                               <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
-                                {game.linescore.totals.home.runs}
-                              </td>
-                              <td className="text-center p-1.5 font-mono">
-                                {game.linescore.totals.home.hits}
-                              </td>
-                              <td className="text-center p-1.5 font-mono">
-                                {game.linescore.totals.home.errors}
+                                {game.teams.home.score}
                               </td>
                             </tr>
                           </tbody>
@@ -421,55 +338,10 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       </div>
                     </Card>
                   )}
-
-                  {/* Team Comparison Section */}
-                  <div className="mt-6">
-                    <TeamComparison
-                      sport="mlb"
-                      homeTeam={{
-                        id: String(game.id),
-                        name: game.teams.home.name,
-                        displayName: game.teams.home.name,
-                        abbreviation: game.teams.home.abbreviation,
-                        record: game.teams.home.record
-                          ? { overall: game.teams.home.record, wins: 0, losses: 0 }
-                          : undefined,
-                      }}
-                      awayTeam={{
-                        id: String(game.id),
-                        name: game.teams.away.name,
-                        displayName: game.teams.away.name,
-                        abbreviation: game.teams.away.abbreviation,
-                        record: game.teams.away.record
-                          ? { overall: game.teams.away.record, wins: 0, losses: 0 }
-                          : undefined,
-                      }}
-                      homeStats={{
-                        stats: game.boxscore?.home
-                          ? {
-                              H: game.linescore?.totals?.home?.hits || 0,
-                              R: game.linescore?.totals?.home?.runs || 0,
-                              E: game.linescore?.totals?.home?.errors || 0,
-                            }
-                          : {},
-                      }}
-                      awayStats={{
-                        stats: game.boxscore?.away
-                          ? {
-                              H: game.linescore?.totals?.away?.hits || 0,
-                              R: game.linescore?.totals?.away?.runs || 0,
-                              E: game.linescore?.totals?.away?.errors || 0,
-                            }
-                          : {},
-                      }}
-                      variant="compact"
-                    />
-                  </div>
                 </ScrollReveal>
               </Container>
             </Section>
 
-            {/* Tab Navigation */}
             <Section padding="none" background="charcoal" borderTop>
               <Container>
                 <div className="flex gap-2 border-b border-border-subtle overflow-x-auto pb-px">
@@ -490,14 +362,12 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
               </Container>
             </Section>
 
-            {/* Page Content */}
             <Section padding="lg" background="charcoal">
               <Container>
                 <ScrollReveal key={pathname}>{children}</ScrollReveal>
 
-                {/* Data Source Footer */}
                 <CitationFooter
-                  source={meta?.dataSource || 'MLB Stats API'}
+                  source={meta?.dataSource || 'ESPN NBA API'}
                   fetchedAt={meta?.lastUpdated || new Date().toISOString()}
                   className="mt-8"
                 />

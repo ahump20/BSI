@@ -13,7 +13,9 @@ import Link from 'next/link';
 import { type GameStatus } from '@/components/ui/Badge';
 import { useUserSettings } from '@/lib/hooks';
 
-// Sport-specific color theming
+import { getSportConfig } from '@/lib/config/sport-config';
+
+// Sport-specific color theming - supports all unified sport keys
 const sportThemes = {
   mlb: {
     accent: 'text-baseball',
@@ -55,6 +57,51 @@ const sportThemes = {
     badgeBg: 'bg-burnt-orange/20',
     badgeText: 'text-burnt-orange',
   },
+  // Added: CFB alias for ncaaf
+  cfb: {
+    accent: 'text-burnt-orange',
+    accentBg: 'bg-burnt-orange/10',
+    accentRing: 'ring-burnt-orange/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(191,87,0,0.15)]',
+    badgeBg: 'bg-burnt-orange/20',
+    badgeText: 'text-burnt-orange',
+  },
+  // Added: NCAA Men's Basketball
+  ncaab: {
+    accent: 'text-burnt-orange',
+    accentBg: 'bg-burnt-orange/10',
+    accentRing: 'ring-burnt-orange/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(191,87,0,0.15)]',
+    badgeBg: 'bg-burnt-orange/20',
+    badgeText: 'text-burnt-orange',
+  },
+  // Added: NCAA Women's Basketball
+  wcbb: {
+    accent: 'text-burnt-orange',
+    accentBg: 'bg-burnt-orange/10',
+    accentRing: 'ring-burnt-orange/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(191,87,0,0.15)]',
+    badgeBg: 'bg-burnt-orange/20',
+    badgeText: 'text-burnt-orange',
+  },
+  // Added: WNBA
+  wnba: {
+    accent: 'text-basketball',
+    accentBg: 'bg-basketball/10',
+    accentRing: 'ring-basketball/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(255,107,53,0.15)]',
+    badgeBg: 'bg-basketball/20',
+    badgeText: 'text-basketball',
+  },
+  // Added: NHL
+  nhl: {
+    accent: 'text-blue-400',
+    accentBg: 'bg-blue-400/10',
+    accentRing: 'ring-blue-400/50',
+    accentGlow: 'shadow-[0_0_20px_rgba(96,165,250,0.15)]',
+    badgeBg: 'bg-blue-400/20',
+    badgeText: 'text-blue-400',
+  },
 };
 
 // Team interface for score cards
@@ -81,6 +128,25 @@ interface LineScore {
   };
 }
 
+// Period scores for football/basketball
+interface PeriodScores {
+  away: (number | null)[];
+  home: (number | null)[];
+}
+
+// All supported sport keys
+type SupportedSport =
+  | 'mlb'
+  | 'nfl'
+  | 'nba'
+  | 'cbb'
+  | 'ncaaf'
+  | 'cfb'
+  | 'ncaab'
+  | 'wcbb'
+  | 'wnba'
+  | 'nhl';
+
 // Props for the ESPN-style ScoreCard
 export interface ScoreCardProps {
   gameId?: string | number;
@@ -97,11 +163,15 @@ export interface ScoreCardProps {
   period?: string;
   broadcast?: string;
   linescore?: LineScore;
-  sport?: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'ncaaf';
+  /** Period/quarter scores for football/basketball */
+  periodScores?: PeriodScores;
+  sport?: SupportedSport;
   href?: string;
   onClick?: () => void;
   compact?: boolean;
   showLinescore?: boolean;
+  /** Show period-by-period scores for football/basketball */
+  showPeriodScores?: boolean;
 }
 
 /**
@@ -124,14 +194,17 @@ export function ScoreCard({
   period,
   broadcast,
   linescore,
+  periodScores,
   sport = 'mlb',
   href,
   onClick,
   compact = false,
   showLinescore = true,
+  showPeriodScores = true,
 }: ScoreCardProps) {
   // Get sport-specific theme
   const theme = sportThemes[sport] || sportThemes.mlb;
+  const sportConfig = getSportConfig(sport === 'cfb' ? 'ncaaf' : (sport as any));
 
   // Get user's timezone preference for formatting
   const { formatGame, isLoaded: timezoneLoaded } = useUserSettings();
@@ -258,6 +331,22 @@ export function ScoreCard({
               linescore={linescore}
               awayAbbr={safeAwayTeam.abbreviation}
               homeAbbr={safeHomeTeam.abbreviation}
+              theme={theme}
+            />
+          </div>
+        )}
+
+        {/* Period Scores (Football/Basketball) */}
+        {!isBaseball && showPeriodScores && periodScores && !compact && (isFinal || isLive) && (
+          <div className="mt-4 pt-3 border-t border-border-subtle overflow-x-auto">
+            <PeriodScoresTable
+              periodScores={periodScores}
+              awayAbbr={safeAwayTeam.abbreviation}
+              homeAbbr={safeHomeTeam.abbreviation}
+              awayTotal={safeAwayTeam.score}
+              homeTotal={safeHomeTeam.score}
+              periodLabel={sportConfig.periodLabel}
+              periodCount={sportConfig.periodCount}
               theme={theme}
             />
           </div>
@@ -447,13 +536,89 @@ function LinescoreTable({
 }
 
 /**
+ * Period Scores Table for Football/Basketball
+ */
+interface PeriodScoresTableProps {
+  periodScores: PeriodScores;
+  awayAbbr: string;
+  homeAbbr: string;
+  awayTotal: number;
+  homeTotal: number;
+  periodLabel: string;
+  periodCount: number;
+  theme: typeof sportThemes.mlb;
+}
+
+function PeriodScoresTable({
+  periodScores,
+  awayAbbr,
+  homeAbbr,
+  awayTotal,
+  homeTotal,
+  periodLabel,
+  periodCount,
+  theme,
+}: PeriodScoresTableProps) {
+  // Determine periods to display (regular + any OT)
+  const maxPeriods = Math.max(periodScores.away.length, periodScores.home.length, periodCount);
+
+  return (
+    <table className="w-full min-w-[300px] text-xs">
+      <thead>
+        <tr className="text-text-tertiary">
+          <th className="text-left font-medium py-1 pr-2 w-12">Team</th>
+          {Array.from({ length: maxPeriods }, (_, i) => (
+            <th key={i} className="text-center font-medium py-1 w-8">
+              {i < periodCount
+                ? periodLabel === 'Half'
+                  ? i === 0
+                    ? '1st'
+                    : '2nd'
+                  : i + 1
+                : `OT${i - periodCount + 1}`}
+            </th>
+          ))}
+          <th
+            className={`text-center font-bold py-1 w-10 border-l border-border-subtle ${theme.accent}`}
+          >
+            T
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* Away Team */}
+        <tr className="text-text-secondary">
+          <td className="font-semibold text-white py-1 pr-2">{awayAbbr}</td>
+          {Array.from({ length: maxPeriods }, (_, i) => (
+            <td key={i} className="text-center py-1 font-mono tabular-nums">
+              {periodScores.away[i] ?? '-'}
+            </td>
+          ))}
+          <td className="text-center py-1 font-mono tabular-nums font-bold text-white border-l border-border-subtle">
+            {awayTotal}
+          </td>
+        </tr>
+        {/* Home Team */}
+        <tr className="text-text-secondary">
+          <td className="font-semibold text-white py-1 pr-2">{homeAbbr}</td>
+          {Array.from({ length: maxPeriods }, (_, i) => (
+            <td key={i} className="text-center py-1 font-mono tabular-nums">
+              {periodScores.home[i] ?? '-'}
+            </td>
+          ))}
+          <td className="text-center py-1 font-mono tabular-nums font-bold text-white border-l border-border-subtle">
+            {homeTotal}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+/**
  * Loading Skeleton for ScoreCard with sport-specific theming
  */
-export function ScoreCardSkeleton({
-  sport = 'mlb',
-}: {
-  sport?: 'mlb' | 'nfl' | 'nba' | 'cbb' | 'ncaaf';
-}) {
+export function ScoreCardSkeleton({ sport = 'mlb' }: { sport?: SupportedSport }) {
   const theme = sportThemes[sport] || sportThemes.mlb;
 
   return (

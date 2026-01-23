@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { TeamLogo } from '@/components/ui/TeamLogo';
 
 interface Game {
   id: number;
@@ -179,9 +180,7 @@ export default function MLBScoresPage() {
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.teams.away.abbreviation}
-                </div>
+                <TeamLogo abbreviation={game.teams.away.abbreviation} sport="mlb" size="sm" />
                 <div>
                   <p
                     className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'}`}
@@ -214,9 +213,7 @@ export default function MLBScoresPage() {
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.teams.home.abbreviation}
-                </div>
+                <TeamLogo abbreviation={game.teams.home.abbreviation} sport="mlb" size="sm" />
                 <div>
                   <p
                     className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'}`}

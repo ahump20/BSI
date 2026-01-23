@@ -11,6 +11,42 @@ export { StatTable, type Column, type StatTableProps } from './StatTable';
 export { ScoreHeader, type ScoreHeaderGame, type TeamInfo, type GameStatus } from './ScoreHeader';
 export { BottomNav, DEFAULT_NAV_ITEMS, type NavItem } from './BottomNav';
 
+// Team comparison and analytics
+export {
+  TeamComparison,
+  TeamComparisonSkeleton,
+  type TeamComparisonProps,
+  type TeamStats,
+} from './TeamComparison';
+
+// Historical context and tidbits
+export {
+  HistoricalContext,
+  createRivalryFact,
+  createStreakFact,
+  createMilestoneFact,
+  type ContextualFact,
+  type FactType,
+  type HistoricalContextProps,
+} from './HistoricalContext';
+
+// Sport page containers
+export {
+  SportPage,
+  SportPageTwoColumn,
+  GameDetailLayout,
+  TeamComparisonSelector,
+  type SportPageProps,
+  type SportPageSection,
+} from './SportPage';
+
+// Player stats table
+export {
+  PlayerStatsTable,
+  PlayerStatsTableSkeleton,
+  type PlayerStatsTableProps,
+} from './PlayerStatsTable';
+
 // Data transparency and citation system
 export {
   CitationFooter,
