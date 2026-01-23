@@ -33,26 +33,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: games/blazecraft/pnpm-lock.yaml
+          cache: 'npm'
+          cache-dependency-path: games/blazecraft/package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci
 
       - name: Type check
-        run: pnpm run typecheck
+        run: npm run typecheck
 
       - name: Build project
-        run: pnpm run build
+        run: npm run build
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3.1.0
