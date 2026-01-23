@@ -230,30 +230,37 @@ async function searchCollegeBaseballTeams(
 
   binds.push(params.limit || 20);
 
-  const results = await env.DB.prepare(sql)
-    .bind(...binds)
-    .all();
+  try {
+    const results = await env.DB.prepare(sql)
+      .bind(...binds)
+      .all();
 
-  if (!results.success) {
+    if (!results.success) {
+      return [];
+    }
+
+    return results.results.map((row: Record<string, unknown>) => ({
+      id: String(row.id),
+      name: String(row.name),
+      abbreviation: String(row.abbreviation || ''),
+      conference: String(row.conference),
+      division: row.division ? String(row.division) : undefined,
+      sport: 'college_baseball' as const,
+      logo: row.logo ? String(row.logo) : undefined,
+      record:
+        row.overall_wins !== null && row.overall_losses !== null
+          ? `${row.overall_wins}-${row.overall_losses}`
+          : undefined,
+      ranking: row.ranking ? Number(row.ranking) : undefined,
+      city: row.city ? String(row.city) : undefined,
+      state: row.state ? String(row.state) : undefined,
+    }));
+  } catch (dbError) {
+    // Database schema mismatch or table doesn't exist - return empty array
+    // Static pro team data will still be returned by searchTeams()
+    console.error('College baseball DB query failed:', dbError);
     return [];
   }
-
-  return results.results.map((row: Record<string, unknown>) => ({
-    id: String(row.id),
-    name: String(row.name),
-    abbreviation: String(row.abbreviation || ''),
-    conference: String(row.conference),
-    division: row.division ? String(row.division) : undefined,
-    sport: 'college_baseball' as const,
-    logo: row.logo ? String(row.logo) : undefined,
-    record:
-      row.overall_wins !== null && row.overall_losses !== null
-        ? `${row.overall_wins}-${row.overall_losses}`
-        : undefined,
-    ranking: row.ranking ? Number(row.ranking) : undefined,
-    city: row.city ? String(row.city) : undefined,
-    state: row.state ? String(row.state) : undefined,
-  }));
 }
 
 /**
