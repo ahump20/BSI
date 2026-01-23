@@ -1,200 +1,242 @@
 /**
- * Validated Read Layer
- *
- * Reads data from KV with semantic validation.
- * Falls back to R2 snapshots if KV data is invalid or missing.
- *
- * This ensures the read path enforces the same truth standards
- * as the write path.
+ * BSI Validated Read
+ * KV read with validation, HTTP status reconstruction, and R2 fallback.
  */
 
-import {
-  validateDataset,
-  getLatestSnapshot,
-  SEMANTIC_RULES,
-  type R2Bucket,
-  type ValidationResult,
-} from './semantic-validation';
-import {
-  createOkResponse,
-  createInvalidResponse,
-  createUnavailableResponse,
-  type APIResponse,
-} from './api-contract';
+import type { APIResponse, LifecycleState } from './api-contract';
+import { createSuccessResponse, createUnavailableResponse } from './api-contract';
+import type { KVSafetyMetadata, SafeHTTPStatus } from './kv-safety';
+import { parseKVValue, hasKVSafetyMetadata, createKVSafetyMetadata } from './kv-safety';
+import { validateDataset, getRule, type SemanticRule, type ValidationResult } from './semantic-validation';
+import { buildCacheHeaders, isCacheEligible, mapToHTTPStatus, determineLifecycleState } from './http-correctness';
 
-/**
- * KV namespace interface (Cloudflare Workers)
- */
-export interface KVNamespace {
-  get(key: string, options?: { type?: 'text' | 'json' }): Promise<unknown>;
-  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+/** Result from validatedRead */
+export interface ValidatedReadResult<T> {
+  response: APIResponse<T[]>;
+  httpStatus: SafeHTTPStatus;
+  headers: HeadersInit;
+  source: 'kv' | 'r2' | 'none';
+  meta: KVSafetyMetadata | null;
+}
+
+/** KVNamespace type (Cloudflare Workers) */
+interface KVNamespace {
+  get(key: string): Promise<string | null>;
+  get(key: string, options: { type: 'text' }): Promise<string | null>;
+  get(key: string, options: { type: 'json' }): Promise<unknown | null>;
+}
+
+/** R2Bucket type (Cloudflare Workers) */
+interface R2Bucket {
+  get(key: string): Promise<R2ObjectBody | null>;
+}
+
+interface R2ObjectBody {
+  text(): Promise<string>;
 }
 
 /**
- * Shape of cached data in KV
+ * Read from KV with validation and HTTP status reconstruction.
+ * Supports both new KVSafeData format and legacy CachedData format.
  */
-interface CachedData<T> {
-  data: T[];
-  fetchedAt: string;
-  recordCount: number;
-}
-
-/**
- * Read data from KV with validation, falling back to R2 if needed.
- *
- * Flow:
- * 1. Read from KV
- * 2. Validate against semantic rules
- * 3. If valid, return with status 'ok'
- * 4. If invalid, try R2 fallback
- * 5. If R2 valid, return with source 'r2-fallback'
- * 6. If both fail, return with status 'invalid'
- *
- * @param kv - KV namespace binding
- * @param r2 - R2 bucket binding (optional, null disables fallback)
- * @param cacheKey - KV key to read from
- * @param datasetId - Semantic rule ID for validation
- */
-export async function validatedRead<T>(
+export async function validatedRead<T extends Record<string, unknown>>(
   kv: KVNamespace,
   r2: R2Bucket | null,
   cacheKey: string,
   datasetId: string
-): Promise<APIResponse<T[]>> {
-  const rule = SEMANTIC_RULES[datasetId];
+): Promise<ValidatedReadResult<T>> {
+  const rule = getRule(datasetId);
 
-  // Unknown dataset - return unavailable
+  // No rule defined
   if (!rule) {
-    return createUnavailableResponse(`Unknown dataset: ${datasetId}. No semantic rules defined.`);
+    return createErrorResult<T>(
+      'NO_RULE',
+      `No semantic rule defined for dataset: ${datasetId}`,
+      datasetId
+    );
   }
 
   // Try KV first
-  let cached: CachedData<T> | null = null;
-  try {
-    cached = (await kv.get(cacheKey, { type: 'json' })) as CachedData<T> | null;
-  } catch {
-    // KV read failed - continue to fallback
-  }
+  const kvRaw = await kv.get(cacheKey);
 
-  if (cached?.data) {
-    const validation = validateDataset(datasetId, cached.data);
+  if (kvRaw !== null) {
+    const parsed = parseKVValue<T>(kvRaw);
 
-    if (validation.status === 'valid') {
-      return createOkResponse(cached.data, 'kv', true);
-    }
-
-    // KV data invalid - try R2 fallback
-    if (r2) {
-      const fallbackResult = await tryR2Fallback<T>(r2, datasetId);
-      if (fallbackResult) {
-        return fallbackResult;
+    if (parsed !== null) {
+      // New format with safety metadata
+      if (parsed.meta !== null && !parsed.isLegacy) {
+        return createResultFromSafeData(parsed.data, parsed.meta, rule);
       }
-    }
 
-    // Both failed - return invalid with KV validation reason
-    return createInvalidResponse(validation.reason, 'kv');
-  }
-
-  // KV empty - try R2 fallback
-  if (r2) {
-    const fallbackResult = await tryR2Fallback<T>(r2, datasetId);
-    if (fallbackResult) {
-      return fallbackResult;
+      // Legacy format - treat as stale until re-ingestion
+      return createLegacyResult(parsed.data, datasetId, rule);
     }
   }
 
-  // No data anywhere
-  return createInvalidResponse(
-    `No data available for ${datasetId}. Expected at least ${rule.minRecordCount} records.`,
-    'kv'
+  // Try R2 fallback
+  if (r2 !== null) {
+    const r2Result = await tryR2Fallback<T>(r2, cacheKey, datasetId, rule);
+    if (r2Result !== null) {
+      return r2Result;
+    }
+  }
+
+  // No data found
+  return createErrorResult<T>(
+    'NOT_FOUND',
+    `No data found for key: ${cacheKey}`,
+    datasetId
   );
 }
 
-/**
- * Try to get valid data from R2 snapshot
- */
-async function tryR2Fallback<T>(r2: R2Bucket, datasetId: string): Promise<APIResponse<T[]> | null> {
-  try {
-    const snapshot = await getLatestSnapshot<T>(r2, datasetId);
+/** Create result from KVSafeData format */
+function createResultFromSafeData<T>(
+  data: T[],
+  meta: KVSafetyMetadata,
+  rule: SemanticRule
+): ValidatedReadResult<T> {
+  const headers = buildCacheHeaders(meta, rule);
+  const lifecycle = meta.lifecycleState;
+  const cacheEligible = isCacheEligible(meta);
 
-    if (snapshot?.data) {
-      const validation = validateDataset(datasetId, snapshot.data);
-
-      if (validation.status === 'valid') {
-        return createOkResponse(snapshot.data, 'r2-fallback');
-      }
+  const response = createSuccessResponse(
+    data,
+    lifecycle,
+    {
+      hit: true,
+      ttlSeconds: cacheEligible ? 300 : 0,
+      eligible: cacheEligible,
     }
-  } catch {
-    // R2 read failed - return null to indicate no fallback available
-  }
+  );
 
-  return null;
+  return {
+    response,
+    httpStatus: meta.httpStatusAtWrite,
+    headers,
+    source: 'kv',
+    meta,
+  };
+}
+
+/** Create result from legacy cached data format */
+function createLegacyResult<T extends Record<string, unknown>>(
+  data: T[],
+  datasetId: string,
+  rule: SemanticRule
+): ValidatedReadResult<T> {
+  // Validate the legacy data
+  const validation = validateDataset(datasetId, data);
+  const lifecycle = determineLifecycleState(validation, true, false);
+
+  // Legacy data is always treated as stale until re-ingestion
+  const httpMapping = mapToHTTPStatus({
+    validationResult: validation,
+    lifecycleState: 'stale',
+    recordCount: data.length,
+    rule,
+  });
+
+  // Create synthetic metadata for headers
+  const syntheticMeta = createKVSafetyMetadata({
+    httpStatusAtWrite: httpMapping.httpStatus,
+    lifecycleState: 'stale',
+    recordCount: data.length,
+    validationStatus: validation.status,
+    datasetId,
+    expectedMinCount: rule.minRecordCount,
+  });
+
+  const headers = buildCacheHeaders(syntheticMeta, rule);
+
+  const response = createSuccessResponse(
+    data,
+    'stale',
+    { hit: true, ttlSeconds: 0, eligible: false }
+  );
+
+  return {
+    response,
+    httpStatus: 503, // Legacy data treated as 503 until re-ingestion
+    headers: {
+      ...headers,
+      'X-BSI-Legacy-Format': 'true',
+    },
+    source: 'kv',
+    meta: syntheticMeta,
+  };
+}
+
+/** Try R2 fallback */
+async function tryR2Fallback<T extends Record<string, unknown>>(
+  r2: R2Bucket,
+  cacheKey: string,
+  datasetId: string,
+  rule: SemanticRule
+): Promise<ValidatedReadResult<T> | null> {
+  try {
+    const r2Object = await r2.get(cacheKey);
+
+    if (r2Object === null) {
+      return null;
+    }
+
+    const r2Raw = await r2Object.text();
+    const parsed = parseKVValue<T>(r2Raw);
+
+    if (parsed === null) {
+      return null;
+    }
+
+    // R2 data with safety metadata
+    if (parsed.meta !== null && !parsed.isLegacy) {
+      const result = createResultFromSafeData(parsed.data, parsed.meta, rule);
+      return {
+        ...result,
+        source: 'r2',
+      };
+    }
+
+    // R2 legacy format
+    const result = createLegacyResult(parsed.data, datasetId, rule);
+    return {
+      ...result,
+      source: 'r2',
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Create error result */
+function createErrorResult<T>(
+  code: string,
+  message: string,
+  datasetId: string
+): ValidatedReadResult<T> {
+  const response = createUnavailableResponse<T[]>(code, message, 'unavailable');
+
+  return {
+    response,
+    httpStatus: 503,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      'X-BSI-Dataset': datasetId,
+      'X-BSI-Lifecycle': 'unavailable',
+      'X-BSI-Cache-Eligible': 'false',
+    },
+    source: 'none',
+    meta: null,
+  };
 }
 
 /**
- * Read with validation but return validation result for diagnostics
+ * Create a Response object from ValidatedReadResult.
+ * Convenience helper for Workers.
  */
-export async function validatedReadWithDiagnostics<T>(
-  kv: KVNamespace,
-  cacheKey: string,
-  datasetId: string
-): Promise<{
-  data: T[] | null;
-  validation: ValidationResult;
-  source: 'kv' | 'none';
-  fetchedAt: string | null;
-}> {
-  const rule = SEMANTIC_RULES[datasetId];
-
-  if (!rule) {
-    return {
-      data: null,
-      validation: {
-        status: 'invalid',
-        datasetId,
-        recordCount: 0,
-        expectedMin: 0,
-        passedSchema: false,
-        passedDensity: false,
-        reason: `Unknown dataset: ${datasetId}`,
-        validatedAt: new Date().toISOString(),
-      },
-      source: 'none',
-      fetchedAt: null,
-    };
-  }
-
-  let cached: CachedData<T> | null = null;
-  try {
-    cached = (await kv.get(cacheKey, { type: 'json' })) as CachedData<T> | null;
-  } catch {
-    // KV read failed
-  }
-
-  if (!cached?.data) {
-    return {
-      data: null,
-      validation: {
-        status: 'unavailable',
-        datasetId,
-        recordCount: 0,
-        expectedMin: rule.minRecordCount,
-        passedSchema: false,
-        passedDensity: false,
-        reason: 'No cached data found',
-        validatedAt: new Date().toISOString(),
-      },
-      source: 'none',
-      fetchedAt: null,
-    };
-  }
-
-  const validation = validateDataset(datasetId, cached.data);
-
-  return {
-    data: validation.status === 'valid' ? cached.data : null,
-    validation,
-    source: 'kv',
-    fetchedAt: cached.fetchedAt,
-  };
+export function toResponse<T>(result: ValidatedReadResult<T>): Response {
+  return new Response(JSON.stringify(result.response), {
+    status: result.httpStatus,
+    headers: result.headers,
+  });
 }
