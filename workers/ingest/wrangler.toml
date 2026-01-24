@@ -13,7 +13,7 @@ account_id = "a12cb329d84130460eed99b816e4d0d3"
 ENVIRONMENT = "production"
 CATALOG_PREFIX = "archives/"
 ENABLE_REENQUEUE = "false"
-GITHUB_REPO = "ahump20/blaze-sports-intel"
+GITHUB_REPO = "ahump20/BSI"
 
 # Cron Triggers
 [triggers]
