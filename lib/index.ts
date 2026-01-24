@@ -58,4 +58,23 @@ export {
 } from './http-correctness';
 
 // Validated Read
-export { type ValidatedReadResult, validatedRead, toResponse } from './validated-read';
+export {
+  type ValidatedReadResult,
+  type ValidatedReadOptions,
+  validatedRead,
+  toResponse,
+} from './validated-read';
+
+// Readiness Service
+export {
+  type ReadinessState,
+  type ReadinessRecord,
+  type ReadinessCheckResult,
+  checkReadiness,
+  transitionReadiness,
+  markLiveIngestion,
+  validateFromSnapshot,
+  getSystemReadiness,
+  getScopeReadiness,
+  initializeScope,
+} from './readiness';

@@ -14,6 +14,7 @@
 import type { LifecycleState } from './api-contract';
 import type { ValidationResult, SemanticRule } from './semantic-validation';
 import type { KVSafetyMetadata, SafeHTTPStatus } from './kv-safety';
+import type { ReadinessState } from './readiness';
 
 /** Result of HTTP status mapping */
 export interface HTTPMappingResult {
@@ -29,6 +30,8 @@ export interface HTTPMappingInput {
   lifecycleState: LifecycleState;
   recordCount: number;
   rule: SemanticRule;
+  /** Optional system-level readiness state. Takes precedence over lifecycle. */
+  readinessState?: ReadinessState;
 }
 
 /** Cache TTL constants (seconds) */
@@ -41,9 +44,30 @@ const CACHE_TTL = {
 /**
  * Map validation result and lifecycle state to HTTP status.
  * This is the single source of truth for HTTP semantics.
+ *
+ * Readiness takes precedence: if system is not ready, return 202/503 immediately.
  */
 export function mapToHTTPStatus(input: HTTPMappingInput): HTTPMappingResult {
-  const { validationResult, lifecycleState, recordCount, rule } = input;
+  const { validationResult, lifecycleState, recordCount, rule, readinessState } = input;
+
+  // Case 0: System-level readiness check (takes precedence)
+  if (readinessState && readinessState !== 'ready') {
+    if (readinessState === 'initializing') {
+      return {
+        httpStatus: 202,
+        cacheEligible: false,
+        cacheControl: 'no-store',
+        reason: 'System initializing - awaiting first validation',
+      };
+    }
+    // degraded or unavailable
+    return {
+      httpStatus: 503,
+      cacheEligible: false,
+      cacheControl: 'no-store',
+      reason: `System ${readinessState}`,
+    };
+  }
 
   // Case 1: First ingestion pending
   if (lifecycleState === 'initializing') {

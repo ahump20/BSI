@@ -10,5 +10,14 @@ binding = "BSI_CACHE"
 id = "429e580ad8aa4a189af2513490d8790d"
 preview_id = "f2dc8c57c641403481809db1a4962822"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-historical-db"
+database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
+
+[[r2_buckets]]
+binding = "SNAPSHOTS"
+bucket_name = "blaze-sports-data-lake"
+
 [vars]
 # Set CFB_API_KEY via wrangler secret put

@@ -3,22 +3,18 @@
  * KV read with validation, HTTP status reconstruction, and R2 fallback.
  */
 
-import type { APIResponse, LifecycleState } from './api-contract';
+import type { APIResponse } from './api-contract';
 import { createSuccessResponse, createUnavailableResponse } from './api-contract';
 import type { KVSafetyMetadata, SafeHTTPStatus } from './kv-safety';
-import { parseKVValue, hasKVSafetyMetadata, createKVSafetyMetadata } from './kv-safety';
-import {
-  validateDataset,
-  getRule,
-  type SemanticRule,
-  type ValidationResult,
-} from './semantic-validation';
+import { parseKVValue, createKVSafetyMetadata } from './kv-safety';
+import { validateDataset, getRule, type SemanticRule } from './semantic-validation';
 import {
   buildCacheHeaders,
   isCacheEligible,
   mapToHTTPStatus,
   determineLifecycleState,
 } from './http-correctness';
+import { checkReadiness, type ReadinessState } from './readiness';
 
 /** Result from validatedRead */
 export interface ValidatedReadResult<T> {
@@ -45,15 +41,27 @@ interface R2ObjectBody {
   text(): Promise<string>;
 }
 
+/** Options for validatedRead */
+export interface ValidatedReadOptions {
+  /** Optional D1 database for readiness check before KV read */
+  db?: Parameters<typeof checkReadiness>[0];
+  /** Scope for readiness check (defaults to datasetId) */
+  readinessScope?: string;
+}
+
 /**
  * Read from KV with validation and HTTP status reconstruction.
  * Supports both new KVSafeData format and legacy CachedData format.
+ *
+ * If db is provided, checks D1 readiness before reading KV.
+ * This prevents cold starts from poisoning cache.
  */
 export async function validatedRead<T extends Record<string, unknown>>(
   kv: KVNamespace,
   r2: R2Bucket | null,
   cacheKey: string,
-  datasetId: string
+  datasetId: string,
+  options?: ValidatedReadOptions
 ): Promise<ValidatedReadResult<T>> {
   const rule = getRule(datasetId);
 
@@ -64,6 +72,23 @@ export async function validatedRead<T extends Record<string, unknown>>(
       `No semantic rule defined for dataset: ${datasetId}`,
       datasetId
     );
+  }
+
+  // Check readiness if D1 is provided
+  if (options?.db) {
+    const scope = options.readinessScope ?? datasetId;
+    const readiness = await checkReadiness(options.db, scope);
+
+    if (!readiness.allowKVRead) {
+      // When allowKVRead is false, httpStatus is always 202 or 503
+      const blockedStatus = readiness.httpStatus as 202 | 503;
+      return createReadinessBlockedResult<T>(
+        readiness.state,
+        readiness.reason,
+        blockedStatus,
+        datasetId
+      );
+    }
   }
 
   // Try KV first
@@ -128,7 +153,7 @@ function createLegacyResult<T extends Record<string, unknown>>(
 ): ValidatedReadResult<T> {
   // Validate the legacy data
   const validation = validateDataset(datasetId, data);
-  const lifecycle = determineLifecycleState(validation, true, false);
+  const _lifecycle = determineLifecycleState(validation, true, false);
 
   // Legacy data is always treated as stale until re-ingestion
   const httpMapping = mapToHTTPStatus({
@@ -226,6 +251,34 @@ function createErrorResult<T>(
       'X-BSI-Dataset': datasetId,
       'X-BSI-Lifecycle': 'unavailable',
       'X-BSI-Cache-Eligible': 'false',
+    },
+    source: 'none',
+    meta: null,
+  };
+}
+
+/** Create result when blocked by readiness check */
+function createReadinessBlockedResult<T>(
+  readinessState: ReadinessState,
+  reason: string,
+  httpStatus: 202 | 503,
+  datasetId: string
+): ValidatedReadResult<T> {
+  const lifecycle = readinessState === 'initializing' ? 'initializing' : 'unavailable';
+  const code = readinessState === 'initializing' ? 'INITIALIZING' : 'NOT_READY';
+  const response = createUnavailableResponse<T[]>(code, reason, lifecycle);
+
+  return {
+    response,
+    httpStatus,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      'X-BSI-Dataset': datasetId,
+      'X-BSI-Lifecycle': lifecycle,
+      'X-BSI-Readiness': readinessState,
+      'X-BSI-Cache-Eligible': 'false',
+      'Retry-After': readinessState === 'initializing' ? '30' : '60',
     },
     source: 'none',
     meta: null,

@@ -7,10 +7,13 @@
 import { validateDataset, getRule } from '../../lib/semantic-validation';
 import { createKVSafetyMetadata, wrapWithSafetyMetadata, type KVSafeData } from '../../lib/kv-safety';
 import { mapToHTTPStatus, determineLifecycleState } from '../../lib/http-correctness';
+import { transitionReadiness, markLiveIngestion } from '../../lib/readiness';
 
 /** Environment bindings */
 interface Env {
   BSI_CACHE: KVNamespace;
+  DB: D1Database;
+  SNAPSHOTS: R2Bucket;
   CFB_API_KEY: string;
 }
 
@@ -64,6 +67,48 @@ const CACHE_TTL = {
   ELIGIBLE: 3600,     // 1 hour for valid, cacheable data
   INELIGIBLE: 300,    // 5 minutes for non-cacheable data
 } as const;
+
+/** R2 snapshot format for cold-start recovery */
+interface R2Snapshot<T> {
+  data: T[];
+  validation: {
+    status: 'valid' | 'invalid' | 'empty';
+    recordCount: number;
+    rule: string;
+  };
+  snapshotAt: string;
+}
+
+/**
+ * Create R2 snapshot for cold-start recovery
+ */
+async function createSnapshot<T>(
+  r2: R2Bucket,
+  datasetId: string,
+  data: T[],
+  validationStatus: 'valid' | 'invalid' | 'empty'
+): Promise<void> {
+  const snapshot: R2Snapshot<T> = {
+    data,
+    validation: {
+      status: validationStatus,
+      recordCount: data.length,
+      rule: datasetId,
+    },
+    snapshotAt: new Date().toISOString(),
+  };
+
+  const snapshotKey = `snapshots/${datasetId}/latest.json`;
+
+  await r2.put(snapshotKey, JSON.stringify(snapshot), {
+    httpMetadata: { contentType: 'application/json' },
+    customMetadata: {
+      datasetId,
+      recordCount: String(data.length),
+      validationStatus,
+    },
+  });
+}
 
 /**
  * Fetch data from CollegeFootballData API
@@ -142,7 +187,8 @@ function transformGames(
 }
 
 /**
- * Sync a single dataset with safe KV write pattern
+ * Sync a single dataset with safe KV write pattern.
+ * Updates system readiness state after successful ingestion.
  */
 async function syncDataset(
   config: DatasetConfig,
@@ -177,6 +223,9 @@ async function syncDataset(
     await env.BSI_CACHE.put(config.cacheKey, JSON.stringify(failureData), {
       expirationTtl: CACHE_TTL.INELIGIBLE,
     });
+
+    // Mark dataset as unavailable on fetch failure
+    await transitionReadiness(env.DB, config.datasetId, 'unavailable', error ?? 'API fetch failed');
 
     return {
       success: false,
@@ -228,6 +277,33 @@ async function syncDataset(
   await env.BSI_CACHE.put(config.cacheKey, JSON.stringify(safeData), {
     expirationTtl: httpResult.cacheEligible ? CACHE_TTL.ELIGIBLE : CACHE_TTL.INELIGIBLE,
   });
+
+  // Update readiness state after successful KV write
+  if (httpResult.httpStatus === 200) {
+    // Mark dataset scope as ready
+    await markLiveIngestion(env.DB, config.datasetId, `Ingested ${transformedData.length} records`);
+
+    // Also mark system scope as ready on first successful ingestion
+    if (isFirstIngestion) {
+      await markLiveIngestion(env.DB, 'system', 'First successful data ingestion completed');
+    }
+
+    // Create R2 snapshot for cold-start recovery
+    await createSnapshot(
+      env.SNAPSHOTS,
+      config.datasetId,
+      transformedData,
+      validation.status as 'valid' | 'invalid' | 'empty'
+    );
+  } else {
+    // Transition to degraded if validation failed but we have data
+    await transitionReadiness(
+      env.DB,
+      config.datasetId,
+      transformedData.length > 0 ? 'degraded' : 'unavailable',
+      httpResult.reason
+    );
+  }
 
   return {
     success: httpResult.httpStatus === 200,
