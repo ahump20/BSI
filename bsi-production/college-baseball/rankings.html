@@ -739,12 +739,12 @@
 
         if (rankings && rankings.length > 0) {
           // Transform to rendering format
-          var teams = rankings.map(function(r) {
+          var teams = rankings.map(function(r) {            // Handle both nested team object (new API) and flat structure (legacy)            var teamData = r.team || {};
             return {
               team: {
-                displayName: r.team_name || r.name,
-                logos: r.team_logo ? [{ href: r.team_logo }] : (r.logo ? [{ href: r.logo }] : null),
-                conferenceId: r.conference || ''
+                displayName: teamData.name || r.team_name || r.name || 'Unknown',
+                logos: teamData.logo ? [{ href: teamData.logo }] : (r.team_logo ? [{ href: r.team_logo }] : (r.logo ? [{ href: r.logo }] : null)),
+                conferenceId: teamData.conference || r.conference || '', colors: teamData.colors || null
               },
               recordSummary: r.record || '',
               previousRank: r.previous_rank || r.previousRank,
