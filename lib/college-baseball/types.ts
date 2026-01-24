@@ -178,3 +178,67 @@ export interface CachedData<T> {
   expires: number;
   source: string;
 }
+
+// ============================================
+// Draft Prospect Types (2026 MLB Draft)
+// ============================================
+
+export interface DraftProspect {
+  id: string;
+  name: string;
+  school: string;
+  conference: string;
+  position: string;
+  bats: 'L' | 'R' | 'S';
+  throws: 'L' | 'R';
+  year: 'FR' | 'SO' | 'JR' | 'RS-FR' | 'RS-SO' | 'RS-JR' | 'RS-SR';
+  draftClass: number;
+  ranking: ProspectRanking;
+  scouting: ProspectScouting;
+  projection: ProspectProjection;
+  stats?: PlayerStats;
+  notes: string;
+  lastUpdated: string;
+}
+
+export interface ProspectRanking {
+  overall: number;
+  position: number;
+  conference: number;
+  source: 'd1baseball' | 'baseball-america' | 'perfect-game' | 'mlb-pipeline';
+  previousRank?: number;
+  change?: number;
+}
+
+export interface ProspectScouting {
+  // Position player grades (20-80 scale)
+  hit?: number;
+  power?: number;
+  run?: number;
+  arm?: number;
+  field?: number;
+  // Pitcher grades (20-80 scale)
+  fastball?: number;
+  slider?: number;
+  curveball?: number;
+  changeup?: number;
+  command?: number;
+  // Overall assessment
+  overallGrade: number;
+  ceiling:
+    | 'All-Star'
+    | 'Above-Average Regular'
+    | 'Average Regular'
+    | 'Platoon/Bench'
+    | 'Organizational';
+  eta: number; // Expected MLB debut year
+}
+
+export interface ProspectProjection {
+  draftRound: number;
+  draftPick?: number;
+  slotValue?: number;
+  comparables: string[];
+  risk: 'Low' | 'Medium' | 'High';
+  upside: 'Low' | 'Medium' | 'High' | 'Elite';
+}
