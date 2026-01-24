@@ -93,12 +93,57 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+// Schema.org structured data for SEO
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://blazesportsintel.com/#organization',
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://blazesportsintel.com/images/logo/blaze-logo.png',
+      },
+      sameAs: ['https://twitter.com/blazesportsintel'],
+      description:
+        'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics.',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://blazesportsintel.com/#website',
+      url: 'https://blazesportsintel.com',
+      name: 'Blaze Sports Intel',
+      publisher: { '@id': 'https://blazesportsintel.com/#organization' },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://blazesportsintel.com/search?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
+    {
+      '@type': 'SportsOrganization',
+      '@id': 'https://blazesportsintel.com/#sportsorg',
+      name: 'Blaze Sports Intel',
+      sport: ['Baseball', 'Football', 'Basketball'],
+      url: 'https://blazesportsintel.com',
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`dark ${plusJakarta.variable} ${archivoBlack.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
         <CustomCursor />
