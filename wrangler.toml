@@ -20,7 +20,8 @@ compatibility_flags = ["nodejs_compat"]
 kv_namespaces = [
   { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
   { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" },
-  { binding = "BSI_CACHE", id = "429e580ad8aa4a189af2513490d8790d", preview_id = "f2dc8c57c641403481809db1a4962822" }
+  { binding = "BSI_CACHE", id = "429e580ad8aa4a189af2513490d8790d", preview_id = "f2dc8c57c641403481809db1a4962822" },
+  { binding = "BSI_FANBASE_CACHE", id = "BSI_FANBASE_CACHE_ID" }  # Create with: wrangler kv:namespace create BSI_FANBASE_CACHE
 ]
 
 # New dedicated KV namespaces (IDs populated by setup script)
@@ -58,6 +59,14 @@ database_id = "9cecff0f-a3ab-433f-bf10-d2664d9542b0"
 binding = "GAME_DB"
 database_name = "bsi-game-db"
 database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
+# D1 database for fanbase sentiment tracking
+# Create with: wrangler d1 create bsi-fanbase-db
+# Then run migration: wrangler d1 execute bsi-fanbase-db --file=./migrations/011_fanbase_sentiment.sql
+[[d1_databases]]
+binding = "FANBASE_DB"
+database_name = "bsi-fanbase-db"
+database_id = "FANBASE_DB_ID"  # Replace with actual ID after creation
 
 # Core database with predictions (created by setup script)
 # Run scripts/setup-cloudflare-infrastructure.sh to create
