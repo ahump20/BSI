@@ -1,13 +1,16 @@
 /**
  * BSI College Data Sync Worker
- * Scheduled worker for ingesting college sports data with HTTP safety metadata.
+ * Scheduled worker for ingesting college sports data with dataset-level commit boundaries.
  * Uses collegefootballdata.com API for CFB data.
+ *
+ * Each dataset ingests independently with LKG (Last Known Good) guarantees:
+ * - Failures don't invalidate existing KV data
+ * - Versioned KV keys with atomic pointer swap
+ * - D1 commit records track version history
  */
 
-import { validateDataset, getRule } from '../../lib/semantic-validation';
-import { createKVSafetyMetadata, wrapWithSafetyMetadata, type KVSafeData } from '../../lib/kv-safety';
-import { mapToHTTPStatus, determineLifecycleState } from '../../lib/http-correctness';
-import { transitionReadiness, markLiveIngestion } from '../../lib/readiness';
+import { orchestrateIngestion, type CommitResult } from '../../lib/dataset-commit';
+import { handleHealthRequest } from '../../lib/admin-health';
 
 /** Environment bindings */
 interface Env {
@@ -62,53 +65,8 @@ const DATASETS: DatasetConfig[] = [
   },
 ];
 
-/** Cache TTL based on HTTP status */
-const CACHE_TTL = {
-  ELIGIBLE: 3600,     // 1 hour for valid, cacheable data
-  INELIGIBLE: 300,    // 5 minutes for non-cacheable data
-} as const;
-
-/** R2 snapshot format for cold-start recovery */
-interface R2Snapshot<T> {
-  data: T[];
-  validation: {
-    status: 'valid' | 'invalid' | 'empty';
-    recordCount: number;
-    rule: string;
-  };
-  snapshotAt: string;
-}
-
-/**
- * Create R2 snapshot for cold-start recovery
- */
-async function createSnapshot<T>(
-  r2: R2Bucket,
-  datasetId: string,
-  data: T[],
-  validationStatus: 'valid' | 'invalid' | 'empty'
-): Promise<void> {
-  const snapshot: R2Snapshot<T> = {
-    data,
-    validation: {
-      status: validationStatus,
-      recordCount: data.length,
-      rule: datasetId,
-    },
-    snapshotAt: new Date().toISOString(),
-  };
-
-  const snapshotKey = `snapshots/${datasetId}/latest.json`;
-
-  await r2.put(snapshotKey, JSON.stringify(snapshot), {
-    httpMetadata: { contentType: 'application/json' },
-    customMetadata: {
-      datasetId,
-      recordCount: String(data.length),
-      validationStatus,
-    },
-  });
-}
+/** Cache TTL for committed data */
+const CACHE_TTL = 3600; // 1 hour
 
 /**
  * Fetch data from CollegeFootballData API
@@ -187,141 +145,53 @@ function transformGames(
 }
 
 /**
- * Sync a single dataset with safe KV write pattern.
- * Updates system readiness state after successful ingestion.
+ * Sync a single dataset with commit boundaries.
+ * Uses orchestrateIngestion for LKG-safe ingestion.
+ * Failures don't invalidate existing KV data.
  */
 async function syncDataset(
   config: DatasetConfig,
-  env: Env,
-  isFirstIngestion: boolean
-): Promise<{ success: boolean; httpStatus: number; reason: string }> {
-  const rule = getRule(config.datasetId);
+  env: Env
+): Promise<CommitResult> {
+  // Create fetcher that transforms data for this specific dataset
+  const fetcher = async (): Promise<{ data: Record<string, unknown>[] | null; error: string | null }> => {
+    const endpoint = config.buildEndpoint();
+    const { data: rawData, error } = await fetchFromCFBData<Record<string, unknown>>(endpoint, env.CFB_API_KEY);
 
-  if (!rule) {
-    return {
-      success: false,
-      httpStatus: 503,
-      reason: `No semantic rule for dataset: ${config.datasetId}`,
-    };
-  }
-
-  const endpoint = config.buildEndpoint();
-  const { data: rawData, error } = await fetchFromCFBData<Record<string, unknown>>(endpoint, env.CFB_API_KEY);
-
-  if (error !== null || rawData === null) {
-    const failureMeta = createKVSafetyMetadata({
-      httpStatusAtWrite: 503,
-      lifecycleState: 'unavailable',
-      recordCount: 0,
-      validationStatus: 'invalid',
-      datasetId: config.datasetId,
-      expectedMinCount: rule.minRecordCount,
-    });
-
-    const failureData = wrapWithSafetyMetadata<Record<string, unknown>>([], failureMeta);
-
-    await env.BSI_CACHE.put(config.cacheKey, JSON.stringify(failureData), {
-      expirationTtl: CACHE_TTL.INELIGIBLE,
-    });
-
-    // Mark dataset as unavailable on fetch failure
-    await transitionReadiness(env.DB, config.datasetId, 'unavailable', error ?? 'API fetch failed');
-
-    return {
-      success: false,
-      httpStatus: 503,
-      reason: error ?? 'Unknown error',
-    };
-  }
-
-  // Transform data based on dataset type
-  let transformedData: Record<string, unknown>[];
-
-  if (config.datasetId === 'cfb-rankings-ap') {
-    transformedData = transformRankings(rawData as never, 'AP Top 25');
-  } else if (config.datasetId === 'cfb-rankings-coaches') {
-    transformedData = transformRankings(rawData as never, 'Coaches Poll');
-  } else if (config.datasetId === 'cfb-games-live') {
-    transformedData = transformGames(rawData as never);
-  } else {
-    transformedData = rawData;
-  }
-
-  // Validate the transformed data
-  const validation = validateDataset(config.datasetId, transformedData);
-
-  // Determine lifecycle state
-  const lifecycle = determineLifecycleState(validation, transformedData.length > 0, isFirstIngestion);
-
-  // Map to HTTP status
-  const httpResult = mapToHTTPStatus({
-    validationResult: validation,
-    lifecycleState: lifecycle,
-    recordCount: transformedData.length,
-    rule,
-  });
-
-  // Create safety metadata
-  const meta = createKVSafetyMetadata({
-    httpStatusAtWrite: httpResult.httpStatus,
-    lifecycleState: lifecycle,
-    recordCount: transformedData.length,
-    validationStatus: validation.status,
-    datasetId: config.datasetId,
-    expectedMinCount: rule.minRecordCount,
-  });
-
-  // Wrap and write to KV
-  const safeData: KVSafeData<Record<string, unknown>> = wrapWithSafetyMetadata(transformedData, meta);
-
-  await env.BSI_CACHE.put(config.cacheKey, JSON.stringify(safeData), {
-    expirationTtl: httpResult.cacheEligible ? CACHE_TTL.ELIGIBLE : CACHE_TTL.INELIGIBLE,
-  });
-
-  // Update readiness state after successful KV write
-  if (httpResult.httpStatus === 200) {
-    // Mark dataset scope as ready
-    await markLiveIngestion(env.DB, config.datasetId, `Ingested ${transformedData.length} records`);
-
-    // Also mark system scope as ready on first successful ingestion
-    if (isFirstIngestion) {
-      await markLiveIngestion(env.DB, 'system', 'First successful data ingestion completed');
+    if (error !== null || rawData === null) {
+      return { data: null, error: error ?? 'Fetch returned null' };
     }
 
-    // Create R2 snapshot for cold-start recovery
-    await createSnapshot(
-      env.SNAPSHOTS,
-      config.datasetId,
-      transformedData,
-      validation.status as 'valid' | 'invalid' | 'empty'
-    );
-  } else {
-    // Transition to degraded if validation failed but we have data
-    await transitionReadiness(
-      env.DB,
-      config.datasetId,
-      transformedData.length > 0 ? 'degraded' : 'unavailable',
-      httpResult.reason
-    );
-  }
+    // Transform data based on dataset type
+    let transformedData: Record<string, unknown>[];
 
-  return {
-    success: httpResult.httpStatus === 200,
-    httpStatus: httpResult.httpStatus,
-    reason: httpResult.reason,
+    if (config.datasetId === 'cfb-rankings-ap') {
+      transformedData = transformRankings(rawData as never, 'AP Top 25');
+    } else if (config.datasetId === 'cfb-rankings-coaches') {
+      transformedData = transformRankings(rawData as never, 'Coaches Poll');
+    } else if (config.datasetId === 'cfb-games-live') {
+      transformedData = transformGames(rawData as never);
+    } else {
+      transformedData = rawData;
+    }
+
+    return { data: transformedData, error: null };
   };
+
+  // Orchestrate full ingestion with commit boundaries
+  return orchestrateIngestion(fetcher, {
+    datasetId: config.datasetId,
+    cacheKeyPrefix: config.cacheKey,
+    db: env.DB,
+    kv: env.BSI_CACHE,
+    r2: env.SNAPSHOTS,
+    cacheTtl: CACHE_TTL,
+  });
 }
 
 /**
- * Check if this is the first ingestion for a dataset
- */
-async function checkFirstIngestion(cacheKey: string, kv: KVNamespace): Promise<boolean> {
-  const existing = await kv.get(cacheKey);
-  return existing === null;
-}
-
-/**
- * Scheduled handler - runs on cron trigger
+ * Scheduled handler - runs on cron trigger.
+ * Each dataset syncs independently - failures in one don't affect others.
  */
 export default {
   async scheduled(
@@ -329,35 +199,40 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<void> {
-    const results: Array<{ dataset: string; success: boolean; httpStatus: number; reason: string }> = [];
+    const results: CommitResult[] = [];
 
+    // Sync each dataset independently - failure isolation
     for (const config of DATASETS) {
-      const isFirstIngestion = await checkFirstIngestion(config.cacheKey, env.BSI_CACHE);
-      const result = await syncDataset(config, env, isFirstIngestion);
+      const result = await syncDataset(config, env);
+      results.push(result);
 
-      results.push({
-        dataset: config.datasetId,
-        ...result,
-      });
-    }
-
-    const successCount = results.filter(r => r.success).length;
-    const failCount = results.length - successCount;
-
-    console.log(`College data sync complete: ${successCount} succeeded, ${failCount} failed`);
-
-    for (const r of results) {
-      if (!r.success) {
-        console.error(`  ${r.dataset}: HTTP ${r.httpStatus} - ${r.reason}`);
+      // Log per-dataset result
+      if (result.success) {
+        console.log(`${config.datasetId}: committed v${result.version} (${result.recordCount} records)`);
+      } else if (result.isServingLKG) {
+        console.warn(`${config.datasetId}: failed, serving LKG v${result.version} - ${result.reason}`);
+      } else {
+        console.error(`${config.datasetId}: failed, no LKG available - ${result.reason}`);
       }
     }
+
+    const committed = results.filter(r => r.committed).length;
+    const servingLKG = results.filter(r => r.isServingLKG).length;
+    const unavailable = results.filter(r => !r.success && !r.isServingLKG).length;
+
+    console.log(`College data sync complete: ${committed} committed, ${servingLKG} serving LKG, ${unavailable} unavailable`);
   },
 
   /**
-   * HTTP handler - for manual triggers and health checks
+   * HTTP handler - for manual triggers, health checks, and admin endpoints
    */
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    // Admin health endpoints
+    if (url.pathname.startsWith('/admin/health')) {
+      return handleHealthRequest(request, env.DB);
+    }
 
     if (url.pathname === '/health') {
       return new Response(JSON.stringify({ status: 'ok', worker: 'college-data-sync' }), {
@@ -375,19 +250,24 @@ export default {
         });
       }
 
-      const results: Array<{ dataset: string; success: boolean; httpStatus: number; reason: string }> = [];
+      const results: CommitResult[] = [];
 
       for (const config of DATASETS) {
-        const isFirstIngestion = await checkFirstIngestion(config.cacheKey, env.BSI_CACHE);
-        const result = await syncDataset(config, env, isFirstIngestion);
-
-        results.push({
-          dataset: config.datasetId,
-          ...result,
-        });
+        const result = await syncDataset(config, env);
+        results.push({ ...result, datasetId: config.datasetId } as CommitResult & { datasetId: string });
       }
 
-      return new Response(JSON.stringify({ results }), {
+      const committed = results.filter(r => r.committed).length;
+      const servingLKG = results.filter(r => r.isServingLKG).length;
+
+      return new Response(JSON.stringify({
+        summary: {
+          committed,
+          servingLKG,
+          total: results.length,
+        },
+        results,
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
