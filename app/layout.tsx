@@ -60,6 +60,9 @@ export const metadata: Metadata = {
   creator: 'Blaze Intelligence',
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Blaze Sports Intel | Real-Time Sports Analytics',
     description: 'Enterprise sports intelligence platform with real MLB, NFL, NBA data',
