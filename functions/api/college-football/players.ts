@@ -89,7 +89,7 @@ const COLLEGE_FOOTBALL_TEAMS: CollegeFootballTeam[] = [
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
   CFBD_API_KEY?: string;
 }
 
@@ -116,8 +116,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Check cache first
   const cacheKey = `college-football:players:${teamFilter || 'all'}:${conferenceFilter || 'all'}:${positionFilter || 'all'}`;
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey, 'json');
     if (cached) {
       return new Response(JSON.stringify(cached), { status: 200, headers });
     }
@@ -264,8 +264,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     };
 
     // Cache for 30 minutes
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(response), {
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(cacheKey, JSON.stringify(response), {
         expirationTtl: 1800,
       });
     }

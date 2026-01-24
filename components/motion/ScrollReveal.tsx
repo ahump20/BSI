@@ -7,7 +7,7 @@
  * Uses Framer Motion's useInView for performance.
  */
 
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Variants } from 'framer-motion';
 import { useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
@@ -72,7 +72,7 @@ export function ScrollReveal({
   }
 
   // Extended variants map including new reveal styles
-  const extendedVariants: Record<RevealDirection, typeof blazeReveal> = {
+  const extendedVariants: Partial<Record<RevealDirection, Variants>> = {
     ...directionVariants,
     blaze: blazeReveal,
     pitch: pitchReveal,
@@ -137,7 +137,7 @@ export function ScrollRevealGroup({
     return <div className={className}>{children}</div>;
   }
 
-  const extendedVariants: Record<RevealDirection, typeof blazeReveal> = {
+  const extendedVariants: Partial<Record<RevealDirection, Variants>> = {
     ...directionVariants,
     blaze: blazeReveal,
     pitch: pitchReveal,

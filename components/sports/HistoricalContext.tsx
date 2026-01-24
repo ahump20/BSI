@@ -184,7 +184,7 @@ async function fetchContext(
     });
     const res = await fetch(`/api/v1/context?${params}`);
     if (!res.ok) return [];
-    const data = await res.json();
+    const data = (await res.json()) as { facts?: ContextualFact[] };
     return data.facts || [];
   } catch {
     return [];

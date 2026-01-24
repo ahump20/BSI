@@ -75,7 +75,7 @@ const MAX_COLLEGE_AGE = 25;
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball';
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -100,8 +100,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Check cache first
   const cacheKey = `college-baseball:players:${teamFilter || 'all'}:${conferenceFilter || 'all'}`;
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey, 'json');
     if (cached) {
       return new Response(JSON.stringify(cached), { status: 200, headers });
     }
@@ -246,8 +246,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     };
 
     // Cache for 30 minutes
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(response), {
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(cacheKey, JSON.stringify(response), {
         expirationTtl: 1800,
       });
     }

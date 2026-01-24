@@ -24,7 +24,7 @@ export const fadeInUp: Variants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.23, 1, 0.32, 1],
+      ease: [0.23, 1, 0.32, 1] as const,
     },
   },
 };
@@ -39,7 +39,7 @@ export const fadeInDown: Variants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.23, 1, 0.32, 1],
+      ease: [0.23, 1, 0.32, 1] as const,
     },
   },
 };
@@ -54,7 +54,7 @@ export const fadeInLeft: Variants = {
     x: 0,
     transition: {
       duration: 0.5,
-      ease: [0.23, 1, 0.32, 1],
+      ease: [0.23, 1, 0.32, 1] as const,
     },
   },
 };
@@ -69,7 +69,7 @@ export const fadeInRight: Variants = {
     x: 0,
     transition: {
       duration: 0.5,
-      ease: [0.23, 1, 0.32, 1],
+      ease: [0.23, 1, 0.32, 1] as const,
     },
   },
 };
@@ -84,7 +84,7 @@ export const scaleIn: Variants = {
     scale: 1,
     transition: {
       duration: 0.4,
-      ease: [0.23, 1, 0.32, 1],
+      ease: [0.23, 1, 0.32, 1] as const,
     },
   },
 };
@@ -297,7 +297,7 @@ export function AnimatedCard({
               transition: {
                 duration: 0.5,
                 delay: index * 0.08,
-                ease: [0.23, 1, 0.32, 1],
+                ease: [0.23, 1, 0.32, 1] as const,
               },
             }
           : {}
@@ -347,7 +347,7 @@ export function RevealText({ children, className = '', delay = 0 }: RevealTextPr
                       transition: {
                         duration: 0.3,
                         delay: delay + wordIndex * 0.1 + charIndex * 0.03,
-                        ease: [0.23, 1, 0.32, 1],
+                        ease: [0.23, 1, 0.32, 1] as const,
                       },
                     }
                   : {}

@@ -96,7 +96,7 @@ export default function CFBGameLayoutClient({ children }: GameLayoutClientProps)
     try {
       const res = await fetch(`/api/cfb/game/${gameId}`);
       if (!res.ok) throw new Error('Failed to fetch game data');
-      const data = await res.json();
+      const data = (await res.json()) as { game?: CFBGameData; meta?: DataMeta };
 
       if (data.game) {
         setGame(data.game);

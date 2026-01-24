@@ -11,7 +11,7 @@
  */
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 const ESPN_CFB_BASE = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
@@ -43,8 +43,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `cfb:scoreboard:${dateParam || 'current'}`;
       let scoreboard = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) scoreboard = cached;
       }
 
@@ -162,8 +162,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const hasLiveGames = liveGames.length > 0;
         const ttl = hasLiveGames ? 30 : 300;
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
             expirationTtl: ttl,
           });
         }
@@ -180,8 +180,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = 'cfb:rankings';
       let rankings = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) rankings = cached;
       }
 
@@ -246,8 +246,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(rankings), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(rankings), {
             expirationTtl: 1800, // 30 minutes
           });
         }
@@ -268,8 +268,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const cacheKey = 'cfb:teams:all';
         let teams = null;
 
-        if (env.SPORTS_CACHE) {
-          const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (env.BSI_CACHE) {
+          const cached = await env.BSI_CACHE.get(cacheKey, 'json');
           if (cached) teams = cached;
         }
 
@@ -321,8 +321,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             },
           };
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teams), {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(cacheKey, JSON.stringify(teams), {
               expirationTtl: 86400, // 24 hours
             });
           }
@@ -337,8 +337,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const cacheKey = `cfb:team:${teamId}`;
         let teamData = null;
 
-        if (env.SPORTS_CACHE) {
-          const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (env.BSI_CACHE) {
+          const cached = await env.BSI_CACHE.get(cacheKey, 'json');
           if (cached) teamData = cached;
         }
 
@@ -409,8 +409,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             },
           };
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teamData), {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(cacheKey, JSON.stringify(teamData), {
               expirationTtl: 1800, // 30 minutes
             });
           }
@@ -437,8 +437,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `cfb:game:${gameId}`;
       let gameData = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) gameData = cached;
       }
 
@@ -537,8 +537,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const isCompleted = gameData.game.status.completed;
         const ttl = isCompleted ? 3600 : 30;
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(gameData), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(gameData), {
             expirationTtl: ttl,
           });
         }
@@ -555,8 +555,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = 'cfb:bowls:2025';
       let bowls = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) bowls = cached;
       }
 
@@ -646,8 +646,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(bowls), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(bowls), {
             expirationTtl: 600, // 10 minutes
           });
         }

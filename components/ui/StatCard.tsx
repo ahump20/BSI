@@ -125,7 +125,7 @@ function AnimatedProgress({
         animate={{ width: isInView ? `${Math.min(value, 100)}%` : 0 }}
         transition={{
           duration: 1,
-          ease: [0.25, 0.46, 0.45, 0.94],
+          ease: [0.25, 0.46, 0.45, 0.94] as const,
           delay: 0.2,
         }}
       />
@@ -153,7 +153,7 @@ export function StatCard({
   size = 'md',
   theme = 'default',
   className,
-}: StatCardProps): JSX.Element {
+}: StatCardProps) {
   const styles = sizeStyles[size];
   const isNumeric = typeof value === 'number';
 
@@ -166,7 +166,7 @@ export function StatCard({
       )}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const }}
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-start justify-between">

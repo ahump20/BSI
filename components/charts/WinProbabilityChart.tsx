@@ -46,7 +46,7 @@ export function WinProbabilityChart({
   awayColor = BSI_CHART_COLORS.gold,
   height = 200,
   className = '',
-}: WinProbabilityChartProps): JSX.Element {
+}: WinProbabilityChartProps) {
   // Compute away probability if not provided
   const computedAwayProb = useMemo(() => {
     if (awayProbability) return awayProbability;

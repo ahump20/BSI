@@ -66,6 +66,7 @@
     "recharts": "^3.5.1",
     "tailwind-merge": "^3.4.0",
     "three": "^0.170.0",
+    "uplot": "^1.6.32",
     "web-vitals": "^4.2.4",
     "zod": "^4.1.12"
   },

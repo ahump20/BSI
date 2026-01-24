@@ -4,7 +4,7 @@
  */
 
 interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -34,8 +34,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const cacheKey = `nfl:game:${gameId}`;
     let gameData = null;
 
-    if (env.SPORTS_CACHE) {
-      const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+    if (env.BSI_CACHE) {
+      const cached = await env.BSI_CACHE.get(cacheKey, 'json');
       if (cached) gameData = cached;
     }
 
@@ -108,8 +108,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const isCompleted = gameData.game.status.isFinal;
       const ttl = isCompleted ? 3600 : 30;
 
-      if (env.SPORTS_CACHE) {
-        await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(gameData), {
+      if (env.BSI_CACHE) {
+        await env.BSI_CACHE.put(cacheKey, JSON.stringify(gameData), {
           expirationTtl: ttl,
         });
       }

@@ -12,6 +12,31 @@ import type { UnifiedSportKey } from '@/lib/types/adapters';
 import { getSportConfig, getSportTheme } from '@/lib/config/sport-config';
 import { LiveScoresPanel } from './LiveScoresPanel';
 import { StandingsTable } from './StandingsTable';
+import type { Sport } from './SportTabs';
+
+/**
+ * Maps UnifiedSportKey to the Sport type used by LiveScoresPanel
+ */
+function mapToLiveScoresSport(sport: UnifiedSportKey): Sport {
+  switch (sport) {
+    case 'ncaaf':
+    case 'ncaab':
+    case 'wcbb':
+    case 'cbb':
+      return 'ncaa';
+    case 'nfl':
+      return 'nfl';
+    case 'nba':
+    case 'wnba':
+      return 'nba';
+    case 'mlb':
+      return 'mlb';
+    case 'nhl':
+      return 'nba'; // Fallback - NHL not in Sport type yet
+    default:
+      return 'mlb';
+  }
+}
 
 export type SportPageSection = 'scores' | 'standings' | 'teams' | 'compare' | 'rankings';
 
@@ -99,8 +124,8 @@ export function TeamComparisonSelector({ sport }: { sport: UnifiedSportKey }) {
     const sportApiKey = sport === 'ncaaf' ? 'cfb' : sport;
     fetch(`/api/${sportApiKey}/teams`)
       .then((r) => r.json())
-      .then((data) => {
-        setTeams(data.teams || []);
+      .then((data: { teams?: Array<{ id: string; name: string; abbreviation?: string }> }) => {
+        setTeams((data.teams || []).map((t) => ({ ...t, abbreviation: t.abbreviation || '' })));
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -186,7 +211,7 @@ export function SportPage({
             case 'scores':
               return (
                 <Section key="scores" title="Live Scores">
-                  <LiveScoresPanel sport={sport} pollInterval={config.pollingInterval} />
+                  <LiveScoresPanel sport={mapToLiveScoresSport(sport)} />
                 </Section>
               );
 

@@ -1,9 +1,9 @@
 /**
  * Highlightly Cache Layer
- * 
+ *
  * Provides intelligent caching with TTL, stale-while-revalidate (SWR),
  * and rate limit awareness for RapidAPI Highlightly data.
- * 
+ *
  * @module lib/cache/highlightly-cache
  */
 
@@ -130,19 +130,19 @@ export function generateCacheKey(
   params?: Record<string, string | number | boolean | undefined>
 ): string {
   const parts = [CACHE_PREFIX, sport, dataType];
-  
+
   if (params) {
     const sortedParams = Object.keys(params)
       .filter((k) => params[k] !== undefined)
       .sort()
       .map((k) => k + '=' + String(params[k]))
       .join('&');
-    
+
     if (sortedParams) {
       parts.push(sortedParams);
     }
   }
-  
+
   return parts.join(':');
 }
 
@@ -168,13 +168,10 @@ export class HighlightlyCache {
   /**
    * Get data from cache
    */
-  async get<T>(
-    cacheKey: string,
-    dataType: CacheDataType
-  ): Promise<CacheResult<T>> {
+  async get<T>(cacheKey: string, dataType: CacheDataType): Promise<CacheResult<T>> {
     try {
       const raw = await this.kv.get(cacheKey, 'text');
-      
+
       if (!raw) {
         return {
           data: null,
@@ -262,7 +259,7 @@ export class HighlightlyCache {
 
     try {
       const list = await this.kv.list({ prefix });
-      
+
       for (const key of list.keys) {
         await this.kv.delete(key.name);
         deleted++;
@@ -282,7 +279,7 @@ export class HighlightlyCache {
 
     try {
       const list = await this.kv.list({ prefix: CACHE_PREFIX });
-      
+
       for (const key of list.keys) {
         if (key.name.includes(':' + dataType + ':') || key.name.endsWith(':' + dataType)) {
           await this.kv.delete(key.name);
@@ -403,7 +400,7 @@ export async function withSWR<T>(
   // Cache miss - fetch fresh data
   const result = await fetcher();
   await cache.set(cacheKey, result.data, options, result.rateLimit);
-  
+
   return {
     data: result.data,
     cached: false,

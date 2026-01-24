@@ -90,42 +90,52 @@ export default function NFLGameLayoutClient({ children }: GameLayoutClientProps)
     try {
       const res = await fetch(`/api/nfl/games/${gameId}`);
       if (!res.ok) throw new Error('Failed to fetch game data');
-      const data = await res.json();
+      const data = (await res.json()) as {
+        game?: NFLGameData;
+        competitors?: Array<{
+          homeAway: string;
+          team?: { name?: string; abbreviation?: string };
+          score?: string;
+          winner?: boolean;
+        }>;
+        timestamp?: string;
+        meta?: DataMeta;
+      };
 
       if (data.game) {
         setGame(data.game);
       } else if (data.competitors) {
         // Transform ESPN-style response
-        const away = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'away');
-        const home = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'home');
+        const away = data.competitors.find((c) => c.homeAway === 'away');
+        const home = data.competitors.find((c) => c.homeAway === 'home');
 
         setGame({
           id: gameId,
           date: data.timestamp || new Date().toISOString(),
           status: {
-            state: data.game?.status?.description || 'Unknown',
-            quarter: data.game?.status?.period,
-            timeRemaining: data.game?.status?.clock,
-            isLive: !data.game?.status?.completed && data.game?.status?.period > 0,
-            isFinal: data.game?.status?.completed || false,
+            state: 'Unknown',
+            quarter: undefined,
+            timeRemaining: undefined,
+            isLive: false,
+            isFinal: false,
           },
           teams: {
             away: {
               name: away?.team?.name || 'Away',
               abbreviation: away?.team?.abbreviation || 'AWY',
-              score: parseInt(away?.score) || 0,
+              score: parseInt(away?.score || '0') || 0,
               isWinner: away?.winner || false,
               record: '',
             },
             home: {
               name: home?.team?.name || 'Home',
               abbreviation: home?.team?.abbreviation || 'HME',
-              score: parseInt(home?.score) || 0,
+              score: parseInt(home?.score || '0') || 0,
               isWinner: home?.winner || false,
               record: '',
             },
           },
-          venue: data.game?.venue?.name || 'TBD',
+          venue: 'TBD',
         });
       }
       if (data.meta) {

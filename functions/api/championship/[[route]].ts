@@ -4,7 +4,7 @@
  */
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -108,8 +108,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       };
 
       // Cache for 5 minutes
-      if (env.SPORTS_CACHE) {
-        await env.SPORTS_CACHE.put('championship:dashboard', JSON.stringify(championshipData), {
+      if (env.BSI_CACHE) {
+        await env.BSI_CACHE.put('championship:dashboard', JSON.stringify(championshipData), {
           expirationTtl: 300,
         });
       }

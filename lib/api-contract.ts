@@ -5,11 +5,11 @@
 
 /** Client-visible lifecycle states for datasets */
 export type LifecycleState =
-  | 'initializing'  // First ingestion pending
-  | 'live'          // Active, valid data
-  | 'stale'         // Data exists but outdated
-  | 'empty_valid'   // Legitimately empty (off-season)
-  | 'unavailable';  // Failed or missing when expected
+  | 'initializing' // First ingestion pending
+  | 'live' // Active, valid data
+  | 'stale' // Data exists but outdated
+  | 'empty_valid' // Legitimately empty (off-season)
+  | 'unavailable'; // Failed or missing when expected
 
 /** Response status indicating data validity */
 export type ResponseStatus = 'ok' | 'invalid' | 'unavailable';
@@ -94,7 +94,11 @@ export function createAPIResponse<T>(options: CreateResponseOptions<T>): APIResp
 export function createSuccessResponse<T>(
   data: T,
   lifecycle: LifecycleState = 'live',
-  cacheOpts: { hit: boolean; ttlSeconds: number; eligible: boolean } = { hit: false, ttlSeconds: 300, eligible: true }
+  cacheOpts: { hit: boolean; ttlSeconds: number; eligible: boolean } = {
+    hit: false,
+    ttlSeconds: 300,
+    eligible: true,
+  }
 ): APIResponse<T> {
   return createAPIResponse({
     status: 'ok',
@@ -129,10 +133,7 @@ export function createUnavailableResponse<T>(
 }
 
 /** Create an invalid response */
-export function createInvalidResponse<T>(
-  errorCode: string,
-  errorMessage: string
-): APIResponse<T> {
+export function createInvalidResponse<T>(errorCode: string, errorMessage: string): APIResponse<T> {
   return createAPIResponse({
     status: 'invalid',
     data: null,

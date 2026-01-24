@@ -44,12 +44,7 @@ const gapClasses = {
   lg: 'gap-6',
 };
 
-export function BentoGrid({
-  children,
-  columns = 4,
-  gap = 'md',
-  className,
-}: BentoGridProps): JSX.Element {
+export function BentoGrid({ children, columns = 4, gap = 'md', className }: BentoGridProps) {
   return (
     <div className={cn('grid w-full', columnClasses[columns], gapClasses[gap], className)}>
       {children}
@@ -101,7 +96,7 @@ export function BentoCard({
   interactive = false,
   onClick,
   className,
-}: BentoCardProps): JSX.Element {
+}: BentoCardProps) {
   const Component = onClick ? 'button' : 'div';
 
   return (
@@ -186,14 +181,7 @@ export interface BentoStatProps {
   className?: string;
 }
 
-export function BentoStat({
-  value,
-  label,
-  delta,
-  icon,
-  size = '1x1',
-  className,
-}: BentoStatProps): JSX.Element {
+export function BentoStat({ value, label, delta, icon, size = '1x1', className }: BentoStatProps) {
   return (
     <BentoCard size={size} className={cn('text-center', className)}>
       <div className="flex flex-col items-center justify-center h-full">

@@ -582,9 +582,7 @@ export function HomePageClient() {
           </div>
 
           <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/40 text-sm">
-              © 2025 Blaze Sports Intel. All rights reserved.
-            </p>
+            <p className="text-white/40 text-sm">© 2025 Blaze Sports Intel. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <a
                 href="mailto:austin@blazesportsintel.com"

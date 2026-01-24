@@ -48,7 +48,7 @@ export function TeamThemedCard({
   hoverable = true,
   onClick,
   className,
-}: TeamThemedCardProps): JSX.Element {
+}: TeamThemedCardProps) {
   // Get team colors
   const colors = useMemo(() => {
     if (customColors) return customColors;
@@ -129,7 +129,7 @@ export function TeamThemedCard({
       whileTap={hoverable ? { scale: 0.98 } : undefined}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const }}
     >
       {/* Gradient overlay for depth */}
       {variant === 'gradient' && (
@@ -160,7 +160,7 @@ export function TeamBadge({
   colors?: TeamColors;
   children: ReactNode;
   className?: string;
-}): JSX.Element {
+}) {
   const colors = useMemo(() => {
     if (customColors) return customColors;
     if (teamId) return getTeamColors(teamId);
@@ -198,7 +198,7 @@ export function TeamAccentText({
   colors?: TeamColors;
   children: ReactNode;
   className?: string;
-}): JSX.Element {
+}) {
   const colors = useMemo(() => {
     if (customColors) return customColors;
     if (teamId) return getTeamColors(teamId);
@@ -223,7 +223,7 @@ export function TeamDivider({
   teamId?: string;
   colors?: TeamColors;
   className?: string;
-}): JSX.Element {
+}) {
   const colors = useMemo(() => {
     if (customColors) return customColors;
     if (teamId) return getTeamColors(teamId);

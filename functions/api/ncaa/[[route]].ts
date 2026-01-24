@@ -24,7 +24,7 @@ const SPORT_PATHS: Record<SportKey, SportConfig> = {
 };
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -62,8 +62,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const cacheKey = `ncaa:${sport}:teams:all`;
         let teams: any = null;
 
-        if (env.SPORTS_CACHE) {
-          const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (env.BSI_CACHE) {
+          const cached = await env.BSI_CACHE.get(cacheKey, 'json');
           if (cached) teams = cached;
         }
 
@@ -102,8 +102,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             },
           };
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teams), {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(cacheKey, JSON.stringify(teams), {
               expirationTtl: 3600,
             });
           }
@@ -118,8 +118,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `ncaa:${sport}:team:${teamId}:full`;
       let teamData: any = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) teamData = cached;
       }
 
@@ -186,8 +186,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teamData), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(teamData), {
             expirationTtl: 300,
           });
         }
@@ -204,8 +204,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `ncaa:${sport}:scoreboard:${cacheToken}`;
       let scoreboard: any = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) scoreboard = cached;
       }
 
@@ -251,8 +251,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const allCompleted = scoreboard.games.every((game: any) => game?.status?.completed);
         const ttl = allCompleted ? 300 : 30;
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
             expirationTtl: ttl,
           });
         }
@@ -268,8 +268,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `ncaa:${sport}:rankings`;
       let rankings: any = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) rankings = cached;
       }
 
@@ -292,7 +292,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             payload?.rankings?.map((poll: any) => ({
               name: poll?.name ?? null,
               type: poll?.type ?? null,
-              ranks: poll?.ranks?.slice(0, 25) ?? [],
+              ranks:
+                poll?.ranks?.slice(0, 25).map((rank: any) => ({
+                  ...rank,
+                  team: {
+                    id: rank.team?.id ?? null,
+                    name: rank.team?.displayName ?? rank.team?.name ?? rank.team?.location ?? null,
+                    abbreviation: rank.team?.abbreviation ?? null,
+                    logos: rank.team?.logos ?? [],
+                  },
+                })) ?? [],
             })) ?? [],
           meta: {
             dataSource: sport === 'baseball' ? 'ESPN College Baseball API' : 'ESPN NCAA API',
@@ -301,8 +310,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(rankings), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(rankings), {
             expirationTtl: 3600,
           });
         }

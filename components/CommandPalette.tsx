@@ -341,7 +341,7 @@ export default function CommandPalette({
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] as const }}
             className="fixed left-1/2 top-[15%] -translate-x-1/2 w-full max-w-xl z-[101]"
           >
             <div

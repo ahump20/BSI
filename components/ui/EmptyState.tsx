@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { type ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 export type EmptyStateIcon =
   | 'baseball'
@@ -161,7 +161,7 @@ const sizeStyles = {
 };
 
 // Animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -172,26 +172,26 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 15 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
     },
   },
 };
 
-const iconVariants = {
+const iconVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: {
     opacity: 1,
     scale: 1,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
     },
   },
 };
@@ -209,7 +209,7 @@ export function EmptyState({
   action,
   size = 'md',
   className = '',
-}: EmptyStateProps): JSX.Element {
+}: EmptyStateProps) {
   const styles = sizeStyles[size];
 
   const ActionContent = (

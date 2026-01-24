@@ -22,7 +22,11 @@
     "NodeJS": "readonly",
     "React": "readonly",
     "ExecutionContext": "readonly",
-    "totalSeconds": "readonly"
+    "totalSeconds": "readonly",
+    "JSX": "readonly",
+    "HeadersInit": "readonly",
+    "RequestCache": "readonly",
+    "uPlot": "readonly"
   },
   "extends": [
     "eslint:recommended",

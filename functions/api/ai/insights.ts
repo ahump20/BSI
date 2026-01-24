@@ -5,7 +5,7 @@
 
 export interface Env {
   AI: any; // Cloudflare Workers AI binding
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -91,8 +91,8 @@ Be specific with numbers and percentages. Sound authoritative and data-driven.`;
     // Check cache first
     const cacheKey = `ai:insight:${sport}:${teamData.name}:${teamData.wins}-${teamData.losses}`;
 
-    if (env.SPORTS_CACHE) {
-      const cached = await env.SPORTS_CACHE.get(cacheKey);
+    if (env.BSI_CACHE) {
+      const cached = await env.BSI_CACHE.get(cacheKey);
       if (cached) {
         return new Response(
           JSON.stringify({
@@ -125,8 +125,8 @@ Be specific with numbers and percentages. Sound authoritative and data-driven.`;
     const insight = aiResponse.response || 'Analysis unavailable at this time.';
 
     // Cache for 1 hour
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(cacheKey, insight, {
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(cacheKey, insight, {
         expirationTtl: 3600,
       });
     }

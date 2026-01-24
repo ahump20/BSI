@@ -44,7 +44,9 @@ interface ESPNRankEntry {
   firstPlaceVotes?: number;
   team: {
     id: string;
-    name: string;
+    name?: string;
+    displayName?: string;
+    location?: string;
     abbreviation?: string;
     logos?: Array<{ href: string }>;
   };
@@ -88,7 +90,11 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
     teams: firstPoll.ranks.map((entry) => ({
       rank: entry.current,
       previousRank: entry.previous,
-      team: entry.team?.name || 'Unknown',
+      team:
+        entry.team?.name ??
+        entry.team?.displayName ??
+        entry.team?.location ??
+        `Team #${entry.current}`,
       conference: '', // ESPN doesn't include conference in rankings
       record: entry.recordSummary || '',
       points: entry.points,

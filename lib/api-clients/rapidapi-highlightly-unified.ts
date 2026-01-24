@@ -362,7 +362,9 @@ export class RapidAPIHighlightlyClient {
           const delay = retryAfter
             ? parseInt(retryAfter, 10) * 1000
             : this.config.retryBaseDelay * Math.pow(2, attempt);
-          console.warn('[RapidAPI] Rate limited. Waiting ' + delay + 'ms before retry ' + (attempt + 1));
+          console.warn(
+            '[RapidAPI] Rate limited. Waiting ' + delay + 'ms before retry ' + (attempt + 1)
+          );
           await sleep(delay);
           continue;
         }
@@ -404,7 +406,14 @@ export class RapidAPIHighlightlyClient {
         if (attempt < this.config.maxRetries - 1) {
           const delay = this.config.retryBaseDelay * Math.pow(2, attempt);
           console.warn(
-            '[RapidAPI] Retry ' + (attempt + 1) + '/' + this.config.maxRetries + ' in ' + delay + 'ms: ' + lastError.message
+            '[RapidAPI] Retry ' +
+              (attempt + 1) +
+              '/' +
+              this.config.maxRetries +
+              ' in ' +
+              delay +
+              'ms: ' +
+              lastError.message
           );
           await sleep(delay);
         }

@@ -69,7 +69,7 @@ const sportLabels: Record<SportType, string> = {
   nba: 'NBA',
 };
 
-function GameTicker({ game }: { game: TickerGame }): JSX.Element {
+function GameTicker({ game }: { game: TickerGame }) {
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
 
@@ -123,7 +123,7 @@ export function LiveScoresMarquee({
   pauseOnHover = true,
   className,
   emptyMessage = 'No live games',
-}: LiveScoresMarqueeProps): JSX.Element {
+}: LiveScoresMarqueeProps) {
   const speedDuration = {
     slow: '60s',
     normal: '40s',

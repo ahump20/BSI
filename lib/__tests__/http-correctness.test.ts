@@ -16,9 +16,7 @@ const createRule = (overrides: Partial<SemanticRule> = {}): SemanticRule => ({
   ...overrides,
 });
 
-const createValidationResult = (
-  overrides: Partial<ValidationResult> = {}
-): ValidationResult => ({
+const createValidationResult = (overrides: Partial<ValidationResult> = {}): ValidationResult => ({
   status: 'valid',
   datasetId: 'test-dataset',
   recordCount: 10,

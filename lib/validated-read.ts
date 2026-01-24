@@ -7,8 +7,18 @@ import type { APIResponse, LifecycleState } from './api-contract';
 import { createSuccessResponse, createUnavailableResponse } from './api-contract';
 import type { KVSafetyMetadata, SafeHTTPStatus } from './kv-safety';
 import { parseKVValue, hasKVSafetyMetadata, createKVSafetyMetadata } from './kv-safety';
-import { validateDataset, getRule, type SemanticRule, type ValidationResult } from './semantic-validation';
-import { buildCacheHeaders, isCacheEligible, mapToHTTPStatus, determineLifecycleState } from './http-correctness';
+import {
+  validateDataset,
+  getRule,
+  type SemanticRule,
+  type ValidationResult,
+} from './semantic-validation';
+import {
+  buildCacheHeaders,
+  isCacheEligible,
+  mapToHTTPStatus,
+  determineLifecycleState,
+} from './http-correctness';
 
 /** Result from validatedRead */
 export interface ValidatedReadResult<T> {
@@ -82,11 +92,7 @@ export async function validatedRead<T extends Record<string, unknown>>(
   }
 
   // No data found
-  return createErrorResult<T>(
-    'NOT_FOUND',
-    `No data found for key: ${cacheKey}`,
-    datasetId
-  );
+  return createErrorResult<T>('NOT_FOUND', `No data found for key: ${cacheKey}`, datasetId);
 }
 
 /** Create result from KVSafeData format */
@@ -99,15 +105,11 @@ function createResultFromSafeData<T>(
   const lifecycle = meta.lifecycleState;
   const cacheEligible = isCacheEligible(meta);
 
-  const response = createSuccessResponse(
-    data,
-    lifecycle,
-    {
-      hit: true,
-      ttlSeconds: cacheEligible ? 300 : 0,
-      eligible: cacheEligible,
-    }
-  );
+  const response = createSuccessResponse(data, lifecycle, {
+    hit: true,
+    ttlSeconds: cacheEligible ? 300 : 0,
+    eligible: cacheEligible,
+  });
 
   return {
     response,
@@ -148,11 +150,11 @@ function createLegacyResult<T extends Record<string, unknown>>(
 
   const headers = buildCacheHeaders(syntheticMeta, rule);
 
-  const response = createSuccessResponse(
-    data,
-    'stale',
-    { hit: true, ttlSeconds: 0, eligible: false }
-  );
+  const response = createSuccessResponse(data, 'stale', {
+    hit: true,
+    ttlSeconds: 0,
+    eligible: false,
+  });
 
   return {
     response,

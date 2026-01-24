@@ -4,7 +4,7 @@
  */
 
 export interface Env {
-  SPORTS_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -33,8 +33,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const cacheKey = 'nba:teams:all';
         let teams = null;
 
-        if (env.SPORTS_CACHE) {
-          const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (env.BSI_CACHE) {
+          const cached = await env.BSI_CACHE.get(cacheKey, 'json');
           if (cached) teams = cached;
         }
 
@@ -71,8 +71,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             },
           };
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teams), {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(cacheKey, JSON.stringify(teams), {
               expirationTtl: 3600,
             });
           }
@@ -86,8 +86,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const cacheKey = `nba:team:${teamId}:full`;
         let teamData = null;
 
-        if (env.SPORTS_CACHE) {
-          const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+        if (env.BSI_CACHE) {
+          const cached = await env.BSI_CACHE.get(cacheKey, 'json');
           if (cached) teamData = cached;
         }
 
@@ -150,8 +150,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             },
           };
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(teamData), {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(cacheKey, JSON.stringify(teamData), {
               expirationTtl: 300,
             });
           }
@@ -170,8 +170,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `nba:scoreboard:${date}`;
       let scoreboard = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) scoreboard = cached;
       }
 
@@ -213,8 +213,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const allCompleted = scoreboard.games.every((g: any) => g.status.type.completed);
         const ttl = allCompleted ? 300 : 30;
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(scoreboard), {
             expirationTtl: ttl,
           });
         }
@@ -231,8 +231,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = 'nba:standings';
       let standings = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) standings = cached;
       }
 
@@ -268,8 +268,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(standings), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(standings), {
             expirationTtl: 300,
           });
         }
@@ -295,8 +295,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `nba:player:${playerId}`;
       let playerData = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) playerData = cached;
       }
 
@@ -370,8 +370,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           },
         };
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(playerData), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(playerData), {
             expirationTtl: 600,
           });
         }
@@ -397,8 +397,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const cacheKey = `nba:game:${gameId}`;
       let gameData = null;
 
-      if (env.SPORTS_CACHE) {
-        const cached = await env.SPORTS_CACHE.get(cacheKey, 'json');
+      if (env.BSI_CACHE) {
+        const cached = await env.BSI_CACHE.get(cacheKey, 'json');
         if (cached) gameData = cached;
       }
 
@@ -470,8 +470,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const isCompleted = gameData.game.status.completed;
         const ttl = isCompleted ? 3600 : 30;
 
-        if (env.SPORTS_CACHE) {
-          await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(gameData), {
+        if (env.BSI_CACHE) {
+          await env.BSI_CACHE.put(cacheKey, JSON.stringify(gameData), {
             expirationTtl: ttl,
           });
         }

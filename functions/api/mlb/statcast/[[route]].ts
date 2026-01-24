@@ -18,7 +18,7 @@ import type {
 } from '../../../../lib/types/statcast';
 
 interface Env {
-  SPORTS_CACHE: KVNamespace;
+  BSI_CACHE: KVNamespace;
 }
 
 const corsHeaders = {
@@ -129,7 +129,7 @@ async function getPlayerStatcast(playerId: string, url: URL, env: Env): Promise<
   const cacheKey = `statcast:player:${playerId}:${season}`;
 
   // Check cache first (5 minute TTL)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached) {
     return jsonResponse({
       success: true,
@@ -206,7 +206,7 @@ async function getPlayerStatcast(playerId: string, url: URL, env: Env): Promise<
     };
 
     // Cache for 5 minutes
-    await env.SPORTS_CACHE?.put(cacheKey, JSON.stringify(statcastSummary), {
+    await env.BSI_CACHE?.put(cacheKey, JSON.stringify(statcastSummary), {
       expirationTtl: 300,
     });
 
@@ -250,7 +250,7 @@ async function getStatcastLeaderboard(metric: string, url: URL, env: Env): Promi
   const cacheKey = `statcast:leaderboard:${metric}:${season}:${limit}`;
 
   // Check cache first (10 minute TTL for leaderboards)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached) {
     return jsonResponse({
       success: true,
@@ -329,7 +329,7 @@ async function getStatcastLeaderboard(metric: string, url: URL, env: Env): Promi
       parseInt(season)
     );
 
-    await env.SPORTS_CACHE?.put(cacheKey, JSON.stringify(leaderboard), {
+    await env.BSI_CACHE?.put(cacheKey, JSON.stringify(leaderboard), {
       expirationTtl: 600, // 10 minutes
     });
 
@@ -390,7 +390,7 @@ async function getStatcastEvents(url: URL, env: Env): Promise<Response> {
   const cacheKey = `statcast:events:${playerId}:${season}`;
 
   // Check cache
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached) {
     return jsonResponse({
       success: true,
@@ -408,7 +408,7 @@ async function getStatcastEvents(url: URL, env: Env): Promise<Response> {
   // TODO: Implement Baseball Savant Statcast search integration
   const events: BattedBallEvent[] = [];
 
-  await env.SPORTS_CACHE?.put(cacheKey, JSON.stringify(events), {
+  await env.BSI_CACHE?.put(cacheKey, JSON.stringify(events), {
     expirationTtl: 300, // 5 minutes
   });
 

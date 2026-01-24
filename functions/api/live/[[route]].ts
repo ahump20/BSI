@@ -26,7 +26,7 @@ interface Env {
   SPORTSDATAIO_API_KEY: string;
   CFBDATA_API_KEY: string;
   THEODDS_API_KEY: string;
-  SPORTS_CACHE: KVNamespace;
+  BSI_CACHE: KVNamespace;
   NCAA_BASEBALL_QUEUE?: LiveStatsQueue<NCAABaseballQueuePayload>;
 }
 
@@ -217,7 +217,7 @@ async function getNCAAFootball(url: URL, env: Env) {
   const cacheKey = `ncaa:football:${year}:${week || 'latest'}`;
 
   // Try cache first
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
     return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
       headers: {
@@ -298,8 +298,8 @@ async function getNCAAFootball(url: URL, env: Env) {
   };
 
   // Cache for 5 minutes
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(
       cacheKey,
       JSON.stringify({
         data: responseData,
@@ -324,7 +324,7 @@ async function getNCAAGames(url: URL, env: Env) {
   const cacheKey = `ncaa:games:${date}:${conference || 'all'}`;
 
   // Try cache first (30-second TTL for live games)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
     return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
       headers: {
@@ -374,8 +374,8 @@ async function getNCAAGames(url: URL, env: Env) {
     };
 
     // Cache for 30 seconds (live games)
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(
         cacheKey,
         JSON.stringify({
           data: responseData,
@@ -490,12 +490,12 @@ async function streamNCAABaseball(url: URL, env: Env) {
   const cacheKey = `ncaa:baseball:live:${gameId}`;
   let cacheHit = false;
 
-  if (env.SPORTS_CACHE) {
+  if (env.BSI_CACHE) {
     if (frames.length > 0) {
       const latestFrame = frames[frames.length - 1];
-      await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(latestFrame), { expirationTtl: 10 });
+      await env.BSI_CACHE.put(cacheKey, JSON.stringify(latestFrame), { expirationTtl: 10 });
     } else {
-      const cachedFrame = (await env.SPORTS_CACHE.get(cacheKey, 'json')) as LiveFrame | null;
+      const cachedFrame = (await env.BSI_CACHE.get(cacheKey, 'json')) as LiveFrame | null;
       if (cachedFrame && cachedFrame.sequence > sinceSequence) {
         frames.push(cachedFrame);
         frames.sort((a, b) => a.sequence - b.sequence);
@@ -852,7 +852,7 @@ async function getMLBScores(url: URL, env: Env) {
   const cacheKey = `mlb:live:${date}`;
 
   // Try cache first (30-second TTL for live data)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
     return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
       headers: {
@@ -919,8 +919,8 @@ async function getMLBScores(url: URL, env: Env) {
   };
 
   // Cache for 30 seconds
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(
       cacheKey,
       JSON.stringify({
         data: responseData,
@@ -948,7 +948,7 @@ async function getNFLScores(url: URL, env: Env) {
   const cacheKey = `nfl:live:${season}:${week}`;
 
   // Try cache first (30-second TTL)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
     return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
       headers: {
@@ -1016,8 +1016,8 @@ async function getNFLScores(url: URL, env: Env) {
   };
 
   // Cache for 30 seconds
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(
       cacheKey,
       JSON.stringify({
         data: responseData,
@@ -1044,7 +1044,7 @@ async function getNBAScores(url: URL, env: Env) {
   const cacheKey = `nba:live:${date}`;
 
   // Try cache first (30-second TTL)
-  const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+  const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
   if (cached && (cached as any).expires > Date.now()) {
     return new Response(JSON.stringify({ ...(cached as any).data, cached: true }), {
       headers: {
@@ -1111,8 +1111,8 @@ async function getNBAScores(url: URL, env: Env) {
   };
 
   // Cache for 30 seconds
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(
       cacheKey,
       JSON.stringify({
         data: responseData,

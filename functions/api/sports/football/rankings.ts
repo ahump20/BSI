@@ -24,7 +24,7 @@ export async function onRequest(context: any) {
     const cacheKey = `football:rankings:${state}:${classification}`;
 
     // Try to get from KV cache first
-    const cached = await env.SPORTS_CACHE?.get(cacheKey, 'json');
+    const cached = await env.BSI_CACHE?.get(cacheKey, 'json');
     if (cached && cached.expires > Date.now()) {
       return new Response(
         JSON.stringify({
@@ -134,8 +134,8 @@ export async function onRequest(context: any) {
     };
 
     // Cache in KV for 5 minutes
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(
         cacheKey,
         JSON.stringify({
           data: response,

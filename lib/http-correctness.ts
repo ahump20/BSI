@@ -33,8 +33,8 @@ export interface HTTPMappingInput {
 
 /** Cache TTL constants (seconds) */
 const CACHE_TTL = {
-  LIVE_DATA: 300,      // 5 minutes for live valid data
-  STALE_HINT: 60,      // 1 minute stale-while-revalidate hint
+  LIVE_DATA: 300, // 5 minutes for live valid data
+  STALE_HINT: 60, // 1 minute stale-while-revalidate hint
   NO_CACHE: 0,
 } as const;
 
@@ -56,11 +56,7 @@ export function mapToHTTPStatus(input: HTTPMappingInput): HTTPMappingResult {
   }
 
   // Case 2: Empty + off-season allowed
-  if (
-    recordCount === 0 &&
-    validationResult.isOffSeason &&
-    rule.allowsEmptyWhenOffSeason
-  ) {
+  if (recordCount === 0 && validationResult.isOffSeason && rule.allowsEmptyWhenOffSeason) {
     return {
       httpStatus: 204,
       cacheEligible: false,
@@ -163,10 +159,7 @@ export function isCacheEligible(meta: KVSafetyMetadata): boolean {
 /**
  * Build HTTP headers from KV metadata.
  */
-export function buildCacheHeaders(
-  meta: KVSafetyMetadata,
-  rule: SemanticRule
-): HeadersInit {
+export function buildCacheHeaders(meta: KVSafetyMetadata, rule: SemanticRule): HeadersInit {
   const headers: Record<string, string> = {
     'X-BSI-Lifecycle': meta.lifecycleState,
     'X-BSI-Cache-Eligible': String(isCacheEligible(meta)),
@@ -176,7 +169,8 @@ export function buildCacheHeaders(
   };
 
   if (isCacheEligible(meta)) {
-    headers['Cache-Control'] = `public, max-age=${CACHE_TTL.LIVE_DATA}, stale-while-revalidate=${CACHE_TTL.STALE_HINT}`;
+    headers['Cache-Control'] =
+      `public, max-age=${CACHE_TTL.LIVE_DATA}, stale-while-revalidate=${CACHE_TTL.STALE_HINT}`;
   } else {
     headers['Cache-Control'] = 'no-store';
   }

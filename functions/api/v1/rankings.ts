@@ -30,7 +30,7 @@ interface RankingRecord {
 
 /** Valid ranking polls */
 const VALID_POLLS = ['ap', 'coaches', 'cfp'] as const;
-type Poll = typeof VALID_POLLS[number];
+type Poll = (typeof VALID_POLLS)[number];
 
 /**
  * Handle GET requests for rankings
@@ -46,17 +46,20 @@ export async function onRequestGet(context: EventContext<Env>): Promise<Response
 
   // Expected: ['api', 'v1', 'rankings', sport, poll]
   if (pathParts.length < 5) {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_PATH',
-        message: 'Expected format: /api/v1/rankings/{sport}/{poll}',
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_PATH',
+          message: 'Expected format: /api/v1/rankings/{sport}/{poll}',
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   const sport = pathParts[3];
@@ -64,32 +67,38 @@ export async function onRequestGet(context: EventContext<Env>): Promise<Response
 
   // Only CFB rankings supported currently
   if (sport !== 'cfb') {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_SPORT',
-        message: 'Only "cfb" (college football) rankings are currently supported',
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_SPORT',
+          message: 'Only "cfb" (college football) rankings are currently supported',
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Validate poll type
   if (!VALID_POLLS.includes(poll)) {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_POLL',
-        message: `Poll must be one of: ${VALID_POLLS.join(', ')}`,
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_POLL',
+          message: `Poll must be one of: ${VALID_POLLS.join(', ')}`,
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Build cache key and dataset ID

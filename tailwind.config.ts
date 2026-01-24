@@ -135,6 +135,12 @@ const config: Config = {
           lane: '#FFD700',
           field: '#10B981',
         },
+        nba: {
+          DEFAULT: '#17408B',
+          red: '#C9082A',
+          court: '#E2B67F',
+          paint: '#17408B',
+        },
         // Team Colors
         cardinals: {
           DEFAULT: '#C41E3A',
@@ -228,6 +234,10 @@ const config: Config = {
         'slide-in-right': 'slideInRight 0.5s ease-out forwards',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
+        'pulse-live': 'pulseLive 1.5s ease-in-out infinite',
+        'ticker-scroll': 'tickerScroll 30s linear infinite',
+        'bounce-subtle': 'bounceSubtle 0.5s ease-out',
+        shake: 'shake 0.5s ease-in-out',
       },
       keyframes: {
         fadeIn: {
@@ -245,6 +255,23 @@ const config: Config = {
         pulseGlow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(191, 87, 0, 0.3)' },
           '50%': { boxShadow: '0 0 40px rgba(191, 87, 0, 0.6)' },
+        },
+        pulseLive: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.6', transform: 'scale(0.95)' },
+        },
+        tickerScroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        bounceSubtle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-4px)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '20%, 60%': { transform: 'translateX(-4px)' },
+          '40%, 80%': { transform: 'translateX(4px)' },
         },
       },
       transitionTimingFunction: {

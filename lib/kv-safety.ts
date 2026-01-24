@@ -70,11 +70,7 @@ export function isLegacyCachedData<T>(value: unknown): value is LegacyCachedData
 
   const obj = value as Record<string, unknown>;
 
-  return (
-    Array.isArray(obj.data) &&
-    typeof obj.cachedAt === 'string' &&
-    !('meta' in obj)
-  );
+  return Array.isArray(obj.data) && typeof obj.cachedAt === 'string' && !('meta' in obj);
 }
 
 /** Create safety metadata for KV write */
@@ -98,10 +94,7 @@ export function createKVSafetyMetadata(params: {
 }
 
 /** Wrap data with safety metadata for KV storage */
-export function wrapWithSafetyMetadata<T>(
-  data: T[],
-  meta: KVSafetyMetadata
-): KVSafeData<T> {
+export function wrapWithSafetyMetadata<T>(data: T[], meta: KVSafetyMetadata): KVSafeData<T> {
   return { data, meta };
 }
 

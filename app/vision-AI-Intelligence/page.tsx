@@ -132,8 +132,7 @@ class FaceDetector {
       const { Camera } = await import('@mediapipe/camera_utils');
 
       this.faceMesh = new FaceMesh({
-        locateFile: (file: string) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+        locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
       });
 
       this.faceMesh.setOptions({
@@ -276,7 +275,7 @@ class VoiceAnalyzer {
   private audioContext: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
   private mediaStream: MediaStream | null = null;
-  private dataArray: Uint8Array | null = null;
+  private dataArray: Uint8Array<ArrayBuffer> | null = null;
   private pitchHistory: number[] = [];
   private isInitialized = false;
 
@@ -893,27 +892,24 @@ export default function VisionAIIntelligencePage() {
 
     // Initialize face detector
     faceDetectorRef.current = new FaceDetector();
-    const faceSuccess = await faceDetectorRef.current.initialize(
-      videoRef.current,
-      (result) => {
-        if (result.boundingBox) {
-          setFaceBox(result.boundingBox);
-        } else {
-          setFaceBox(null);
-        }
-
-        const voiceMetrics = voiceAnalyzerRef.current?.getMetrics() || {
-          energy: 0,
-          pitchStability: 50,
-          speechPresence: 0,
-          fillerCount: 0,
-        };
-
-        setMetrics((prev) =>
-          processLandmarksToMetrics(result.landmarks, result.faceDetected, voiceMetrics, prev)
-        );
+    const faceSuccess = await faceDetectorRef.current.initialize(videoRef.current, (result) => {
+      if (result.boundingBox) {
+        setFaceBox(result.boundingBox);
+      } else {
+        setFaceBox(null);
       }
-    );
+
+      const voiceMetrics = voiceAnalyzerRef.current?.getMetrics() || {
+        energy: 0,
+        pitchStability: 50,
+        speechPresence: 0,
+        fillerCount: 0,
+      };
+
+      setMetrics((prev) =>
+        processLandmarksToMetrics(result.landmarks, result.faceDetected, voiceMetrics, prev)
+      );
+    });
 
     if (!faceSuccess) {
       setCameraError('Camera access denied. Using demo mode.');
@@ -1021,8 +1017,10 @@ export default function VisionAIIntelligencePage() {
     // Clear intervals
     if (sessionTimerRef.current) clearInterval(sessionTimerRef.current);
     if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    if ((animationFrameRef as any).demoInterval) clearInterval((animationFrameRef as any).demoInterval);
-    if ((animationFrameRef as any).phaseInterval) clearInterval((animationFrameRef as any).phaseInterval);
+    if ((animationFrameRef as any).demoInterval)
+      clearInterval((animationFrameRef as any).demoInterval);
+    if ((animationFrameRef as any).phaseInterval)
+      clearInterval((animationFrameRef as any).phaseInterval);
 
     // Save session
     const summary = predictorRef.current.getSessionSummary();
@@ -1121,11 +1119,7 @@ export default function VisionAIIntelligencePage() {
   }, [fusion, isRunning, metrics.faceDetected, isDemo]);
 
   const neuralState =
-    fusion.state === 'optimal'
-      ? 'tracking'
-      : predictions.length > 0
-        ? 'predicting'
-        : fusion.state;
+    fusion.state === 'optimal' ? 'tracking' : predictions.length > 0 ? 'predicting' : fusion.state;
 
   return (
     <>
@@ -1257,23 +1251,49 @@ export default function VisionAIIntelligencePage() {
         }
 
         @keyframes neuralPulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(0.9); }
+          0%,
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.6;
+            transform: scale(0.9);
+          }
         }
 
         @keyframes neuralPredict {
-          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
-          50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
+          0%,
+          100% {
+            opacity: 1;
+            box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+          }
+          50% {
+            opacity: 0.8;
+            box-shadow: 0 0 0 6px rgba(139, 92, 246, 0);
+          }
         }
 
         @keyframes neuralWarn {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         @keyframes neuralAlert {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.2); }
+          0%,
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.7;
+            transform: scale(1.2);
+          }
         }
 
         .nc-neural-label {
@@ -1511,8 +1531,13 @@ export default function VisionAIIntelligencePage() {
         }
 
         @keyframes recordPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-          50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+          }
         }
 
         .nc-btn-demo {
@@ -1958,8 +1983,13 @@ export default function VisionAIIntelligencePage() {
         }
 
         @keyframes modePulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         @media (max-width: 900px) {
@@ -2045,7 +2075,9 @@ export default function VisionAIIntelligencePage() {
                 )}
 
                 {isRunning && predictions.length > 0 && (
-                  <div className={`nc-prediction-badge ${predictions[0]?.imminent ? 'active' : ''}`}>
+                  <div
+                    className={`nc-prediction-badge ${predictions[0]?.imminent ? 'active' : ''}`}
+                  >
                     <span className="nc-prediction-text">
                       ⚡ {PATTERN_LABELS[predictions[0]?.type]?.name} in {predictions[0]?.eta}s
                     </span>
@@ -2055,7 +2087,9 @@ export default function VisionAIIntelligencePage() {
                 {isRunning && (
                   <div className="nc-escalation">
                     <div className={`nc-escalation-step ${escalationLevel >= 0 ? 'active' : ''}`} />
-                    <div className={`nc-escalation-step ${escalationLevel >= 1 ? 'warning' : ''}`} />
+                    <div
+                      className={`nc-escalation-step ${escalationLevel >= 1 ? 'warning' : ''}`}
+                    />
                     <div className={`nc-escalation-step ${escalationLevel >= 2 ? 'alert' : ''}`} />
                   </div>
                 )}

@@ -87,8 +87,8 @@ async function getMLBData(env) {
   const cacheKey = 'mlb-data-cardinals';
 
   // Check Cloudflare KV cache
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -140,8 +140,8 @@ async function getMLBData(env) {
   };
 
   // Cache in KV for 5 minutes
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }
@@ -153,8 +153,8 @@ async function getMLBData(env) {
 async function getNFLData(env) {
   const cacheKey = 'nfl-data-titans';
 
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -191,8 +191,8 @@ async function getNFLData(env) {
     },
   };
 
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }
@@ -204,8 +204,8 @@ async function getNFLData(env) {
 async function getNBAData(env) {
   const cacheKey = 'nba-data-grizzlies';
 
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -235,8 +235,8 @@ async function getNBAData(env) {
     },
   };
 
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }
@@ -248,8 +248,8 @@ async function getNBAData(env) {
 async function getNCAAData(env) {
   const cacheKey = 'ncaa-data-longhorns-sec';
 
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -295,8 +295,8 @@ async function getNCAAData(env) {
     },
   };
 
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }
@@ -308,8 +308,8 @@ async function getNCAAData(env) {
 async function getPerfectGameData(env) {
   const cacheKey = 'perfect-game-youth-data';
 
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -352,8 +352,8 @@ async function getPerfectGameData(env) {
     },
   };
 
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }
@@ -365,8 +365,8 @@ async function getPerfectGameData(env) {
 async function getTexasHSData(env) {
   const cacheKey = 'texas-hs-football-data';
 
-  if (env.SPORTS_CACHE) {
-    const cached = await env.SPORTS_CACHE.get(cacheKey);
+  if (env.BSI_CACHE) {
+    const cached = await env.BSI_CACHE.get(cacheKey);
     if (cached) return JSON.parse(cached);
   }
 
@@ -422,8 +422,8 @@ async function getTexasHSData(env) {
     },
   };
 
-  if (env.SPORTS_CACHE) {
-    await env.SPORTS_CACHE.put(cacheKey, JSON.stringify(data), {
+  if (env.BSI_CACHE) {
+    await env.BSI_CACHE.put(cacheKey, JSON.stringify(data), {
       expirationTtl: 300,
     });
   }

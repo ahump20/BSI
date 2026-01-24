@@ -57,7 +57,7 @@ export function GradientMesh({
   className,
   animate = false,
   absolute = true,
-}: GradientMeshProps): JSX.Element {
+}: GradientMeshProps) {
   return (
     <div
       className={cn(

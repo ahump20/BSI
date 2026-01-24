@@ -33,7 +33,7 @@ export function Sparkline({
   height = 30,
   fill = true,
   className = '',
-}: SparklineProps): JSX.Element {
+}: SparklineProps) {
   // Generate x values as indices
   const chartData: AlignedData = useMemo(() => [data.map((_, i) => i), data], [data]);
 

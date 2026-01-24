@@ -45,17 +45,20 @@ export async function onRequestGet(context: EventContext<Env>): Promise<Response
 
   // Expected: ['api', 'v1', 'games', sport, type]
   if (pathParts.length < 5) {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_PATH',
-        message: 'Expected format: /api/v1/games/{sport}/{type}',
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_PATH',
+          message: 'Expected format: /api/v1/games/{sport}/{type}',
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   const sport = pathParts[3]; // cbb or cfb
@@ -63,32 +66,38 @@ export async function onRequestGet(context: EventContext<Env>): Promise<Response
 
   // Validate sport
   if (!['cbb', 'cfb'].includes(sport)) {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_SPORT',
-        message: 'Sport must be "cbb" (college baseball) or "cfb" (college football)',
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_SPORT',
+          message: 'Sport must be "cbb" (college baseball) or "cfb" (college football)',
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Validate game type
   if (!['live', 'upcoming'].includes(gameType)) {
-    return new Response(JSON.stringify({
-      status: 'invalid',
-      data: null,
-      error: {
-        code: 'INVALID_GAME_TYPE',
-        message: 'Game type must be "live" or "upcoming"',
-      },
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        status: 'invalid',
+        data: null,
+        error: {
+          code: 'INVALID_GAME_TYPE',
+          message: 'Game type must be "live" or "upcoming"',
+        },
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   // Build cache key and dataset ID

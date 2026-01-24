@@ -63,7 +63,7 @@ const sectionVariants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
     },
   },
 };
@@ -96,7 +96,7 @@ export function PageTemplate({
   showFooter = true,
   className,
   containerClassName,
-}: PageTemplateProps): JSX.Element {
+}: PageTemplateProps) {
   const hasSidebar = !!sidebar;
 
   return (
@@ -186,7 +186,7 @@ export function PageSection({
   title?: string;
   subtitle?: string;
   actions?: ReactNode;
-}): JSX.Element {
+}) {
   return (
     <motion.section variants={sectionVariants} className={cn('space-y-4', className)}>
       {(title || subtitle || actions) && (
@@ -220,7 +220,7 @@ export function PageGrid({
   columns?: 1 | 2 | 3 | 4;
   gap?: 'sm' | 'md' | 'lg';
   className?: string;
-}): JSX.Element {
+}) {
   const columnStyles = {
     1: 'grid-cols-1',
     2: 'grid-cols-1 sm:grid-cols-2',

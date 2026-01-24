@@ -93,11 +93,26 @@ export default function NBAGameLayoutClient({ children }: GameLayoutClientProps)
     try {
       const res = await fetch(`/api/nba/games/${gameId}`);
       if (!res.ok) throw new Error('Failed to fetch game data');
-      const data = await res.json();
+      const data = (await res.json()) as {
+        competitors?: Array<{
+          homeAway: string;
+          team?: { name?: string; abbreviation?: string };
+          score?: string;
+          winner?: boolean;
+          linescores?: string[];
+        }>;
+        timestamp?: string;
+        game?: {
+          status?: { description?: string; period?: number; clock?: string; completed?: boolean };
+          venue?: { name?: string };
+        };
+        leaders?: NBAGameData['leaders'];
+        meta?: DataMeta;
+      };
 
       if (data.competitors) {
-        const away = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'away');
-        const home = data.competitors.find((c: { homeAway: string }) => c.homeAway === 'home');
+        const away = data.competitors.find((c) => c.homeAway === 'away');
+        const home = data.competitors.find((c) => c.homeAway === 'home');
 
         setGame({
           id: gameId,
@@ -113,7 +128,7 @@ export default function NBAGameLayoutClient({ children }: GameLayoutClientProps)
             away: {
               name: away?.team?.name || 'Away',
               abbreviation: away?.team?.abbreviation || 'AWY',
-              score: parseInt(away?.score) || 0,
+              score: parseInt(away?.score || '0') || 0,
               isWinner: away?.winner || false,
               record: '',
               linescores: away?.linescores || [],
@@ -121,7 +136,7 @@ export default function NBAGameLayoutClient({ children }: GameLayoutClientProps)
             home: {
               name: home?.team?.name || 'Home',
               abbreviation: home?.team?.abbreviation || 'HME',
-              score: parseInt(home?.score) || 0,
+              score: parseInt(home?.score || '0') || 0,
               isWinner: home?.winner || false,
               record: '',
               linescores: home?.linescores || [],

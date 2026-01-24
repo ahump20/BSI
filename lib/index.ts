@@ -58,8 +58,4 @@ export {
 } from './http-correctness';
 
 // Validated Read
-export {
-  type ValidatedReadResult,
-  validatedRead,
-  toResponse,
-} from './validated-read';
+export { type ValidatedReadResult, validatedRead, toResponse } from './validated-read';

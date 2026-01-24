@@ -9,7 +9,7 @@ export type DatasetStatus = 'valid' | 'invalid' | 'empty' | 'partial';
 /** Season definition with month boundaries */
 export interface SeasonMonths {
   start: number; // 1-12
-  end: number;   // 1-12
+  end: number; // 1-12
 }
 
 /** Semantic rule for dataset validation */
@@ -36,72 +36,108 @@ export interface ValidationResult {
 /** Default rules for BSI datasets */
 export const SEMANTIC_RULES: Map<string, SemanticRule> = new Map([
   // College Baseball Games - Season: Feb-Jun
-  ['cbb-games-live', {
-    datasetId: 'cbb-games-live',
-    description: 'Live college baseball game scores',
-    minRecordCount: 1,
-    requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'status'],
-    seasonMonths: { start: 2, end: 6 },
-    allowsEmptyWhenOffSeason: true,
-  }],
-  ['cbb-games-upcoming', {
-    datasetId: 'cbb-games-upcoming',
-    description: 'Upcoming college baseball games',
-    minRecordCount: 1,
-    requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'scheduledAt'],
-    seasonMonths: { start: 2, end: 6 },
-    allowsEmptyWhenOffSeason: true,
-  }],
+  [
+    'cbb-games-live',
+    {
+      datasetId: 'cbb-games-live',
+      description: 'Live college baseball game scores',
+      minRecordCount: 1,
+      requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'status'],
+      seasonMonths: { start: 2, end: 6 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
+  [
+    'cbb-games-upcoming',
+    {
+      datasetId: 'cbb-games-upcoming',
+      description: 'Upcoming college baseball games',
+      minRecordCount: 1,
+      requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'scheduledAt'],
+      seasonMonths: { start: 2, end: 6 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
+  // College Baseball Rankings - Season: Feb-Jun
+  [
+    'cbb-rankings',
+    {
+      datasetId: 'cbb-rankings',
+      description: 'College Baseball Top 25 Rankings',
+      minRecordCount: 25,
+      requiredFields: ['rank', 'team'],
+      seasonMonths: { start: 2, end: 6 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
   // College Football Rankings - Season: Aug-Jan
   // Note: collegefootballdata.com doesn't include record in rankings response
-  ['cfb-rankings-ap', {
-    datasetId: 'cfb-rankings-ap',
-    description: 'AP College Football Rankings',
-    minRecordCount: 25,
-    requiredFields: ['rank', 'team'],
-    seasonMonths: { start: 8, end: 1 },
-    allowsEmptyWhenOffSeason: true,
-  }],
-  ['cfb-rankings-coaches', {
-    datasetId: 'cfb-rankings-coaches',
-    description: 'Coaches Poll College Football Rankings',
-    minRecordCount: 25,
-    requiredFields: ['rank', 'team'],
-    seasonMonths: { start: 8, end: 1 },
-    allowsEmptyWhenOffSeason: true,
-  }],
-  ['cfb-rankings-cfp', {
-    datasetId: 'cfb-rankings-cfp',
-    description: 'College Football Playoff Rankings',
-    minRecordCount: 25,
-    requiredFields: ['rank', 'team'],
-    seasonMonths: { start: 10, end: 1 },
-    allowsEmptyWhenOffSeason: true,
-  }],
+  [
+    'cfb-rankings-ap',
+    {
+      datasetId: 'cfb-rankings-ap',
+      description: 'AP College Football Rankings',
+      minRecordCount: 25,
+      requiredFields: ['rank', 'team'],
+      seasonMonths: { start: 8, end: 1 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
+  [
+    'cfb-rankings-coaches',
+    {
+      datasetId: 'cfb-rankings-coaches',
+      description: 'Coaches Poll College Football Rankings',
+      minRecordCount: 25,
+      requiredFields: ['rank', 'team'],
+      seasonMonths: { start: 8, end: 1 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
+  [
+    'cfb-rankings-cfp',
+    {
+      datasetId: 'cfb-rankings-cfp',
+      description: 'College Football Playoff Rankings',
+      minRecordCount: 25,
+      requiredFields: ['rank', 'team'],
+      seasonMonths: { start: 10, end: 1 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
   // College Football Games
-  ['cfb-games-live', {
-    datasetId: 'cfb-games-live',
-    description: 'Live college football game scores',
-    minRecordCount: 1,
-    requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'status'],
-    seasonMonths: { start: 8, end: 1 },
-    allowsEmptyWhenOffSeason: true,
-  }],
+  [
+    'cfb-games-live',
+    {
+      datasetId: 'cfb-games-live',
+      description: 'Live college football game scores',
+      minRecordCount: 1,
+      requiredFields: ['gameId', 'homeTeam', 'awayTeam', 'status'],
+      seasonMonths: { start: 8, end: 1 },
+      allowsEmptyWhenOffSeason: true,
+    },
+  ],
   // Teams (always expected to have data)
-  ['cbb-teams', {
-    datasetId: 'cbb-teams',
-    description: 'College baseball teams',
-    minRecordCount: 100,
-    requiredFields: ['teamId', 'name', 'conference'],
-    allowsEmptyWhenOffSeason: false,
-  }],
-  ['cfb-teams', {
-    datasetId: 'cfb-teams',
-    description: 'College football teams',
-    minRecordCount: 100,
-    requiredFields: ['teamId', 'name', 'conference'],
-    allowsEmptyWhenOffSeason: false,
-  }],
+  [
+    'cbb-teams',
+    {
+      datasetId: 'cbb-teams',
+      description: 'College baseball teams',
+      minRecordCount: 100,
+      requiredFields: ['teamId', 'name', 'conference'],
+      allowsEmptyWhenOffSeason: false,
+    },
+  ],
+  [
+    'cfb-teams',
+    {
+      datasetId: 'cfb-teams',
+      description: 'College football teams',
+      minRecordCount: 100,
+      requiredFields: ['teamId', 'name', 'conference'],
+      allowsEmptyWhenOffSeason: false,
+    },
+  ],
 ]);
 
 /** Check if current date is within season months */
@@ -118,7 +154,7 @@ export function isWithinSeason(seasonMonths: SeasonMonths, now: Date = new Date(
 
 /** Check if a record has all required fields */
 function hasRequiredFields(record: Record<string, unknown>, requiredFields: string[]): boolean {
-  return requiredFields.every(field => {
+  return requiredFields.every((field) => {
     const value = record[field];
     return value !== undefined && value !== null && value !== '';
   });
@@ -189,7 +225,9 @@ export function validateDataset<T extends Record<string, unknown>>(
   // Check minimum record count
   if (records.length < rule.minRecordCount) {
     if (isOffSeason && rule.allowsEmptyWhenOffSeason) {
-      warnings.push(`Record count (${records.length}) below minimum (${rule.minRecordCount}), but within off-season tolerance`);
+      warnings.push(
+        `Record count (${records.length}) below minimum (${rule.minRecordCount}), but within off-season tolerance`
+      );
     } else {
       errors.push(`Record count (${records.length}) below minimum (${rule.minRecordCount})`);
     }
@@ -204,7 +242,7 @@ export function validateDataset<T extends Record<string, unknown>>(
       if (!hasRequiredFields(records[i], rule.requiredFields)) {
         invalidRecordCount++;
         if (sampleBadRecord.length < 3) {
-          const missing = rule.requiredFields.filter(f => {
+          const missing = rule.requiredFields.filter((f) => {
             const val = records[i][f];
             return val === undefined || val === null || val === '';
           });
@@ -216,7 +254,7 @@ export function validateDataset<T extends Record<string, unknown>>(
     if (invalidRecordCount > 0) {
       const pct = ((invalidRecordCount / records.length) * 100).toFixed(1);
       errors.push(`${invalidRecordCount} records (${pct}%) missing required fields`);
-      sampleBadRecord.forEach(s => errors.push(s));
+      sampleBadRecord.forEach((s) => errors.push(s));
     }
   }
 

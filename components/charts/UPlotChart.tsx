@@ -44,7 +44,7 @@ export function UPlotChart({
   width,
   height = 300,
   className = '',
-}: UPlotChartProps): JSX.Element {
+}: UPlotChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<uPlot | null>(null);
 
