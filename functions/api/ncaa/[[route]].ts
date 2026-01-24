@@ -297,7 +297,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
                   ...rank,
                   team: {
                     id: rank.team?.id ?? null,
-                    name: rank.team?.displayName ?? rank.team?.name ?? rank.team?.location ?? null,
+                    // Combine location + nickname for full name (e.g., "UCLA Bruins")
+                    // Fall back to displayName, location alone, or name alone
+                    name:
+                      rank.team?.displayName ??
+                      (rank.team?.location && rank.team?.name
+                        ? `${rank.team.location} ${rank.team.name}`
+                        : null) ??
+                      rank.team?.location ??
+                      rank.team?.name ??
+                      null,
                     abbreviation: rank.team?.abbreviation ?? null,
                     logos: rank.team?.logos ?? [],
                   },
