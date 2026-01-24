@@ -1,125 +1,86 @@
-import { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import { Container } from '@/components/ui/Container';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { FanbaseCard, FanbaseListCard } from '@/components/fanbase';
+import { FanbaseListCard } from '@/components/fanbase';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { FanbaseProfile, TrendingFanbase } from '@/lib/fanbase/types';
+import { fetchSchools, type APISchool } from '@/lib/fanbase/api-types';
+import type { TrendingFanbase } from '@/lib/fanbase/types';
 
-export const metadata: Metadata = {
-  title: 'College Football Fanbases | Blaze Sports Intel',
-  description:
-    'Explore CFB fanbase sentiment, personality traits, and engagement metrics. Track how fan emotions change throughout the season.',
-  openGraph: {
-    title: 'College Football Fanbases | Blaze Sports Intel',
-    description: 'Fanbase sentiment tracking and characteristics for college football teams.',
-    url: 'https://blazesportsintel.com/fanbase',
-    type: 'website',
-  },
-};
+function SchoolCard({ school }: { school: APISchool }) {
+  return (
+    <Link href={`/fanbase/${school.id}`} className="block">
+      <Card variant="hover" padding="md" className="relative overflow-hidden group">
+        <div
+          className="absolute top-0 left-0 w-1 h-full"
+          style={{ backgroundColor: school.primary_color }}
+        />
+        <CardContent className="pl-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+                style={{ backgroundColor: school.primary_color }}
+              >
+                {school.name.charAt(0)}
+              </div>
+              <div>
+                <h3 className="font-semibold text-white group-hover:text-burnt-orange transition-colors">
+                  {school.name}
+                </h3>
+                <p className="text-xs text-white/50">{school.mascot}</p>
+              </div>
+            </div>
+            <Badge variant="secondary" size="sm">
+              {school.conference}
+            </Badge>
+          </div>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-xs text-white/40">
+              {school.location_city}, {school.location_state}
+            </p>
+            <span className="text-xs text-white/30 group-hover:text-burnt-orange/60 transition-colors">
+              View Profile
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
 
-const SEC_TEAMS: FanbaseProfile[] = [
-  {
-    id: 'texas-longhorns',
-    school: 'University of Texas',
-    shortName: 'Texas',
-    mascot: 'Longhorns',
-    conference: 'SEC',
-    primaryColor: '#BF5700',
-    secondaryColor: '#FFFFFF',
-    sentiment: { overall: 0.45, optimism: 0.7, loyalty: 0.85, volatility: 0.6 },
-    personality: {
-      traits: ['passionate', 'demanding', 'traditional'],
-      rivalries: ['Oklahoma', 'Texas A&M'],
-      traditions: ["Hook 'em", 'The Eyes of Texas'],
-      quirks: ['Longhorn Network debates'],
-    },
-    engagement: {
-      socialMediaActivity: 0.9,
-      gameAttendance: 0.85,
-      travelSupport: 0.75,
-      merchandisePurchasing: 0.9,
-    },
-    demographics: {
-      primaryAge: '25-45',
-      geographicSpread: ['Texas', 'National'],
-      alumniPercentage: 0.35,
-    },
-    meta: {
-      lastUpdated: new Date().toISOString(),
-      dataSource: 'manual',
-      confidence: 0.7,
-      sampleSize: 0,
-    },
-  },
-  {
-    id: 'georgia-bulldogs',
-    school: 'University of Georgia',
-    shortName: 'Georgia',
-    mascot: 'Bulldogs',
-    conference: 'SEC',
-    primaryColor: '#BA0C2F',
-    secondaryColor: '#000000',
-    sentiment: { overall: 0.72, optimism: 0.85, loyalty: 0.9, volatility: 0.4 },
-    personality: {
-      traits: ['loyal', 'passionate', 'confident'],
-      rivalries: ['Florida', 'Auburn', 'Georgia Tech'],
-      traditions: ['Uga', 'Between the Hedges'],
-      quirks: ['Barking at opponents'],
-    },
-    engagement: {
-      socialMediaActivity: 0.85,
-      gameAttendance: 0.95,
-      travelSupport: 0.9,
-      merchandisePurchasing: 0.85,
-    },
-    demographics: {
-      primaryAge: '25-50',
-      geographicSpread: ['Georgia', 'Southeast'],
-      alumniPercentage: 0.4,
-    },
-    meta: {
-      lastUpdated: new Date().toISOString(),
-      dataSource: 'manual',
-      confidence: 0.7,
-      sampleSize: 0,
-    },
-  },
-  {
-    id: 'alabama-crimson-tide',
-    school: 'University of Alabama',
-    shortName: 'Alabama',
-    mascot: 'Crimson Tide',
-    conference: 'SEC',
-    primaryColor: '#9E1B32',
-    secondaryColor: '#FFFFFF',
-    sentiment: { overall: 0.55, optimism: 0.65, loyalty: 0.95, volatility: 0.5 },
-    personality: {
-      traits: ['demanding', 'historic', 'intense'],
-      rivalries: ['Auburn', 'Tennessee', 'LSU'],
-      traditions: ['Roll Tide', 'Rammer Jammer'],
-      quirks: ['Championship expectations'],
-    },
-    engagement: {
-      socialMediaActivity: 0.95,
-      gameAttendance: 0.95,
-      travelSupport: 0.9,
-      merchandisePurchasing: 0.95,
-    },
-    demographics: {
-      primaryAge: '30-55',
-      geographicSpread: ['Alabama', 'National'],
-      alumniPercentage: 0.25,
-    },
-    meta: {
-      lastUpdated: new Date().toISOString(),
-      dataSource: 'manual',
-      confidence: 0.7,
-      sampleSize: 0,
-    },
-  },
-];
+function SchoolsGrid({ schools }: { schools: APISchool[] }) {
+  return (
+    <div className="grid sm:grid-cols-2 gap-4">
+      {schools.map((school) => (
+        <SchoolCard key={school.id} school={school} />
+      ))}
+    </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="grid sm:grid-cols-2 gap-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Card key={i} padding="md" className="animate-pulse">
+          <CardContent>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/10" />
+              <div className="space-y-2 flex-1">
+                <div className="h-4 bg-white/10 rounded w-3/4" />
+                <div className="h-3 bg-white/10 rounded w-1/2" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
 
 function TrendingSection({ trending }: { trending: TrendingFanbase[] }) {
   if (trending.length === 0) {
@@ -149,7 +110,16 @@ function TrendingSection({ trending }: { trending: TrendingFanbase[] }) {
 }
 
 export default function FanbaseLandingPage() {
-  // Mock trending data - in production, fetch from API
+  const {
+    data: schools = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['sec-schools'],
+    queryFn: fetchSchools,
+    staleTime: 1000 * 60 * 10,
+  });
+
   const trendingFanbases: TrendingFanbase[] = [];
 
   return (
@@ -160,7 +130,7 @@ export default function FanbaseLandingPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <Badge variant="accent" className="mb-4">
-                CFB Fanbases
+                SEC Fanbases
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 College Football Fanbase Intelligence
@@ -178,10 +148,10 @@ export default function FanbaseLandingPage() {
                   Compare Fanbases
                 </Link>
                 <Link
-                  href="#sec"
+                  href="/fanbase/triggers"
                   className="px-6 py-3 bg-charcoal text-white font-medium rounded-lg hover:bg-charcoal/70 transition-colors border border-border-subtle"
                 >
-                  Browse SEC
+                  View Triggers
                 </Link>
               </div>
             </div>
@@ -201,28 +171,23 @@ export default function FanbaseLandingPage() {
                       Sentiment and characteristics for SEC teams
                     </p>
                   </div>
-                  <Badge variant="secondary">16 Teams</Badge>
+                  <Badge variant="secondary">{schools.length} Teams</Badge>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {SEC_TEAMS.map((profile) => (
-                    <FanbaseCard
-                      key={profile.id}
-                      profile={profile}
-                      trend="stable"
-                      showEngagement={false}
-                    />
-                  ))}
-
-                  {/* Placeholder cards for teams without data */}
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <Card key={`placeholder-${i}`} padding="md" className="opacity-50">
-                      <CardContent className="text-center py-8">
-                        <p className="text-white/30 text-sm">More teams coming soon</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                {isLoading ? (
+                  <LoadingSkeleton />
+                ) : error ? (
+                  <Card padding="md">
+                    <CardContent className="text-center py-8">
+                      <p className="text-error">Failed to load schools</p>
+                      <p className="text-sm text-white/50 mt-1">
+                        {error instanceof Error ? error.message : 'Unknown error'}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <SchoolsGrid schools={schools} />
+                )}
               </div>
 
               {/* Sidebar */}
@@ -231,7 +196,7 @@ export default function FanbaseLandingPage() {
                 <Card padding="md">
                   <CardHeader>
                     <CardTitle size="sm">Trending This Week</CardTitle>
-                    <Badge variant="primary">Week 1</Badge>
+                    <Badge variant="primary">Offseason</Badge>
                   </CardHeader>
                   <CardContent>
                     <TrendingSection trending={trendingFanbases} />
@@ -252,11 +217,11 @@ export default function FanbaseLandingPage() {
                       <p className="text-xs text-white/50">Side-by-side fanbase comparison</p>
                     </Link>
                     <Link
-                      href="/fanbase/texas-longhorns"
+                      href="/fanbase/triggers"
                       className="block p-3 rounded-lg bg-charcoal/50 hover:bg-charcoal transition-colors"
                     >
-                      <p className="font-medium text-white">Texas Longhorns</p>
-                      <p className="text-xs text-white/50">Featured fanbase profile</p>
+                      <p className="font-medium text-white">Trigger Alerts</p>
+                      <p className="text-xs text-white/50">High-intensity emotional triggers</p>
                     </Link>
                   </CardContent>
                 </Card>

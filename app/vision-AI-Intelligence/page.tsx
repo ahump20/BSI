@@ -91,6 +91,31 @@ interface SessionData {
   metrics: BiometricMetrics[];
 }
 
+// MediaPipe types (external library has incomplete TS definitions)
+interface NormalizedLandmark {
+  x: number;
+  y: number;
+  z?: number;
+  visibility?: number;
+}
+
+interface MediaPipeFaceMeshResults {
+  multiFaceLandmarks?: NormalizedLandmark[][];
+  image?: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement;
+}
+
+interface MediaPipeFaceMesh {
+  setOptions: (options: Record<string, unknown>) => void;
+  onResults: (callback: (results: MediaPipeFaceMeshResults) => void) => void;
+  send: (input: { image: HTMLVideoElement }) => Promise<void>;
+  close: () => void;
+}
+
+interface MediaPipeCamera {
+  start: () => Promise<void>;
+  stop: () => void;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILITIES
 // ═══════════════════════════════════════════════════════════════════════════
@@ -113,8 +138,8 @@ interface FaceDetectionResult {
 }
 
 class FaceDetector {
-  private faceMesh: any = null;
-  private camera: any = null;
+  private faceMesh: MediaPipeFaceMesh | null = null;
+  private camera: MediaPipeCamera | null = null;
   private videoElement: HTMLVideoElement | null = null;
   private onResults: ((results: FaceDetectionResult) => void) | null = null;
   private isInitialized = false;
@@ -133,7 +158,7 @@ class FaceDetector {
 
       this.faceMesh = new FaceMesh({
         locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
-      });
+      }) as unknown as MediaPipeFaceMesh;
 
       this.faceMesh.setOptions({
         maxNumFaces: 1,
@@ -142,7 +167,7 @@ class FaceDetector {
         minTrackingConfidence: 0.5,
       });
 
-      this.faceMesh.onResults((results: any) => {
+      this.faceMesh.onResults((results: MediaPipeFaceMeshResults) => {
         this.processResults(results);
       });
 
@@ -199,7 +224,7 @@ class FaceDetector {
     detect();
   }
 
-  private processResults(results: any): void {
+  private processResults(results: MediaPipeFaceMeshResults): void {
     if (!this.onResults) return;
 
     if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
@@ -220,8 +245,8 @@ class FaceDetector {
     const chin = landmarks[152];
 
     // Calculate bounding box
-    const xs = landmarks.map((l: any) => l.x);
-    const ys = landmarks.map((l: any) => l.y);
+    const xs = landmarks.map((l: NormalizedLandmark) => l.x);
+    const ys = landmarks.map((l: NormalizedLandmark) => l.y);
     const minX = Math.min(...xs);
     const maxX = Math.max(...xs);
     const minY = Math.min(...ys);

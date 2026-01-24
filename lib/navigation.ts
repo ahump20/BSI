@@ -21,6 +21,7 @@ export const mainNavItems: NavItem[] = [
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'SEC Fanbases', href: '/fanbase', badge: 'NEW' },
   { label: 'Pricing', href: '/pricing' },
 ];
 
@@ -64,6 +65,11 @@ export const collegeBaseballNavItems: NavItem[] = [
  * Used with Navbar's secondaryNav prop for context-specific tabs
  */
 export const secondaryNavConfig: Record<string, NavItem[]> = {
+  fanbase: [
+    { label: 'Explorer', href: '/fanbase' },
+    { label: 'Compare', href: '/fanbase/compare' },
+    { label: 'Triggers', href: '/fanbase/triggers', badge: 'HOT' },
+  ],
   'college-baseball': [
     { label: 'Scores', href: '/college-baseball/scores' },
     { label: 'Standings', href: '/college-baseball/standings' },

@@ -17,6 +17,8 @@ import type {
   StoredForecast,
   GamePrediction,
   CalibrationResult,
+  D1Database,
+  KVNamespace,
 } from './types';
 
 // Cache TTLs (seconds)
