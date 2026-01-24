@@ -66,7 +66,7 @@ database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
 [[d1_databases]]
 binding = "FANBASE_DB"
 database_name = "bsi-fanbase-db"
-database_id = "FANBASE_DB_ID"  # Replace with actual ID after creation
+database_id = "955e3dc2-4ea1-4b46-8464-0340f1cf3fc5"
 
 # Core database with predictions (created by setup script)
 # Run scripts/setup-cloudflare-infrastructure.sh to create
