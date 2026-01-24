@@ -18,6 +18,12 @@ export interface KVSafetyMetadata {
   validationStatus: DatasetStatus;
   datasetId: string;
   expectedMinCount: number;
+  /** Version number for commit boundary tracking */
+  version?: number;
+  /** Whether this data is from Last Known Good fallback */
+  isLKG?: boolean;
+  /** Reason for serving LKG if applicable */
+  lkgReason?: string | null;
 }
 
 /** KV data wrapped with safety metadata */

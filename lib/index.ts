@@ -61,7 +61,9 @@ export {
 export {
   type ValidatedReadResult,
   type ValidatedReadOptions,
+  type ValidatedReadVersionedResult,
   validatedRead,
+  validatedReadVersioned,
   toResponse,
 } from './validated-read';
 
@@ -70,6 +72,7 @@ export {
   type ReadinessState,
   type ReadinessRecord,
   type ReadinessCheckResult,
+  type LKGStatus,
   checkReadiness,
   transitionReadiness,
   markLiveIngestion,
@@ -77,4 +80,39 @@ export {
   getSystemReadiness,
   getScopeReadiness,
   initializeScope,
+  isServingLKG,
+  markScopeServingLKG,
+  clearScopeLKGStatus,
 } from './readiness';
+
+// Dataset Commit Boundary System
+export {
+  type CommitStatus,
+  type DatasetCommit,
+  type DatasetCurrentVersion,
+  buildVersionedKey,
+  buildCurrentKey,
+  parseSportFromDatasetId,
+  getNextVersion,
+  getCurrentVersion,
+  getCommit,
+  getRecentCommits,
+  getLastCommittedVersion,
+  createPendingCommit,
+  promoteCommit,
+  rollbackCommit,
+  markServingLKG,
+  clearLKGStatus,
+  getDatasetsServingLKG,
+  getAllCurrentVersions,
+} from './dataset-commit';
+
+// Dataset Ingestion Pipeline
+export {
+  type IngestContext,
+  type IngestResult,
+  ingestDataset,
+  promoteVersion,
+  markIngestionFailed,
+  readCurrentVersion,
+} from './dataset-ingest';

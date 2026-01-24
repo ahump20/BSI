@@ -343,3 +343,77 @@ export async function initializeScope(
     .bind(scope, state, now, reason)
     .run();
 }
+
+/** LKG status result */
+export interface LKGStatus {
+  isLKG: boolean;
+  reason: string | null;
+  lkgVersion: number | null;
+}
+
+/** D1 row from dataset_current_version query (snake_case) */
+interface D1CurrentVersionRow {
+  dataset_id: string;
+  current_version: number;
+  last_committed_version: number | null;
+  last_committed_at: string | null;
+  is_serving_lkg: number;
+  lkg_reason: string | null;
+}
+
+/**
+ * Check if a dataset scope is serving Last Known Good (LKG) data.
+ */
+export async function isServingLKG(db: D1Database, scope: string): Promise<LKGStatus> {
+  const row = await db
+    .prepare('SELECT * FROM dataset_current_version WHERE dataset_id = ?')
+    .bind(scope)
+    .first<D1CurrentVersionRow>();
+
+  if (!row) {
+    return { isLKG: false, reason: null, lkgVersion: null };
+  }
+
+  return {
+    isLKG: row.is_serving_lkg === 1,
+    reason: row.lkg_reason,
+    lkgVersion: row.is_serving_lkg === 1 ? row.last_committed_version : null,
+  };
+}
+
+/**
+ * Mark a dataset scope as serving LKG.
+ * Also transitions the system_readiness state to degraded.
+ */
+export async function markScopeServingLKG(
+  db: D1Database,
+  scope: string,
+  reason: string
+): Promise<void> {
+  // Update dataset_current_version table
+  await db
+    .prepare(
+      `UPDATE dataset_current_version
+       SET is_serving_lkg = 1, lkg_reason = ?
+       WHERE dataset_id = ?`
+    )
+    .bind(reason, scope)
+    .run();
+
+  // Transition system_readiness to degraded
+  await transitionReadiness(db, scope, 'degraded', `Serving LKG: ${reason}`);
+}
+
+/**
+ * Clear LKG status for a dataset scope.
+ */
+export async function clearScopeLKGStatus(db: D1Database, scope: string): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE dataset_current_version
+       SET is_serving_lkg = 0, lkg_reason = NULL
+       WHERE dataset_id = ?`
+    )
+    .bind(scope)
+    .run();
+}

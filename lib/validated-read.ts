@@ -14,7 +14,13 @@ import {
   mapToHTTPStatus,
   determineLifecycleState,
 } from './http-correctness';
-import { checkReadiness, type ReadinessState } from './readiness';
+import { checkReadiness, isServingLKG, type ReadinessState } from './readiness';
+import {
+  buildVersionedKey,
+  buildCurrentKey,
+  getCurrentVersion,
+  getLastCommittedVersion,
+} from './dataset-commit';
 
 /** Result from validatedRead */
 export interface ValidatedReadResult<T> {
@@ -294,4 +300,271 @@ export function toResponse<T>(result: ValidatedReadResult<T>): Response {
     status: result.httpStatus,
     headers: result.headers,
   });
+}
+
+/** D1Database interface (Cloudflare Workers) */
+interface D1Database {
+  prepare(query: string): D1PreparedStatement;
+}
+
+interface D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement;
+  first<T = unknown>(): Promise<T | null>;
+  all<T = unknown>(): Promise<D1Result<T>>;
+  run(): Promise<D1Result<unknown>>;
+}
+
+interface D1Result<T> {
+  results: T[];
+  success: boolean;
+  meta?: {
+    changes: number;
+    last_row_id: number;
+  };
+}
+
+/** Extended result with version info */
+export interface ValidatedReadVersionedResult<T> extends ValidatedReadResult<T> {
+  version: number | null;
+  isLKG: boolean;
+  lkgReason: string | null;
+}
+
+/**
+ * Read from versioned KV with validation and HTTP status reconstruction.
+ * Uses the commit boundary system with current pointer and LKG fallback.
+ *
+ * Read flow:
+ * 1. Read :current pointer from KV
+ * 2. Read :v{version} data from KV
+ * 3. On pointer miss, fallback to D1 dataset_current_version.last_committed_version
+ */
+export async function validatedReadVersioned<T extends Record<string, unknown>>(
+  kv: KVNamespace,
+  r2: R2Bucket | null,
+  db: D1Database,
+  datasetId: string
+): Promise<ValidatedReadVersionedResult<T>> {
+  const rule = getRule(datasetId);
+
+  // No rule defined
+  if (!rule) {
+    return {
+      ...createErrorResult<T>(
+        'NO_RULE',
+        `No semantic rule defined for dataset: ${datasetId}`,
+        datasetId
+      ),
+      version: null,
+      isLKG: false,
+      lkgReason: null,
+    };
+  }
+
+  // Check readiness first
+  const readiness = await checkReadiness(db, datasetId);
+
+  if (!readiness.allowKVRead) {
+    const blockedStatus = readiness.httpStatus as 202 | 503;
+    return {
+      ...createReadinessBlockedResult<T>(
+        readiness.state,
+        readiness.reason,
+        blockedStatus,
+        datasetId
+      ),
+      version: null,
+      isLKG: false,
+      lkgReason: null,
+    };
+  }
+
+  // Read current pointer from KV
+  const currentKey = buildCurrentKey(datasetId);
+  const versionStr = await kv.get(currentKey);
+
+  let version: number | null = null;
+  let versionedKey: string;
+
+  if (versionStr) {
+    // Current pointer exists in KV
+    version = parseInt(versionStr, 10);
+    versionedKey = buildVersionedKey(datasetId, version);
+  } else {
+    // Fallback to D1 for last committed version
+    const currentVersionInfo = await getCurrentVersion(db, datasetId);
+
+    if (currentVersionInfo?.lastCommittedVersion) {
+      version = currentVersionInfo.lastCommittedVersion;
+      versionedKey = buildVersionedKey(datasetId, version);
+    } else {
+      // Try legacy key as final fallback
+      const legacyResult = await validatedRead<T>(kv, r2, datasetId, datasetId, { db });
+      return {
+        ...legacyResult,
+        version: null,
+        isLKG: false,
+        lkgReason: null,
+      };
+    }
+  }
+
+  // Read versioned data from KV
+  const kvRaw = await kv.get(versionedKey);
+
+  if (kvRaw !== null) {
+    const parsed = parseKVValue<T>(kvRaw);
+
+    if (parsed !== null && parsed.meta !== null && !parsed.isLegacy) {
+      const result = createResultFromVersionedData(parsed.data, parsed.meta, rule);
+
+      // Check LKG status
+      const lkgStatus = await isServingLKG(db, datasetId);
+
+      return {
+        ...result,
+        version,
+        isLKG: lkgStatus.isLKG,
+        lkgReason: lkgStatus.reason,
+        headers: {
+          ...result.headers,
+          'X-BSI-Version': String(version),
+          ...(lkgStatus.isLKG && { 'X-BSI-LKG': 'true' }),
+        },
+      };
+    }
+  }
+
+  // Versioned key missing - try LKG fallback
+  const lkg = await getLastCommittedVersion(db, datasetId);
+
+  if (lkg) {
+    const lkgKey = buildVersionedKey(datasetId, lkg.version);
+    const lkgRaw = await kv.get(lkgKey);
+
+    if (lkgRaw !== null) {
+      const parsed = parseKVValue<T>(lkgRaw);
+
+      if (parsed !== null && parsed.meta !== null && !parsed.isLegacy) {
+        const result = createResultFromVersionedData(parsed.data, parsed.meta, rule);
+
+        return {
+          ...result,
+          version: lkg.version,
+          isLKG: true,
+          lkgReason: `Current version ${version} missing, fell back to LKG v${lkg.version}`,
+          headers: {
+            ...result.headers,
+            'X-BSI-Version': String(lkg.version),
+            'X-BSI-LKG': 'true',
+            'X-BSI-LKG-Reason': 'version_missing',
+          },
+        };
+      }
+    }
+  }
+
+  // Try R2 fallback
+  if (r2 !== null) {
+    const r2Result = await tryR2FallbackVersioned<T>(r2, datasetId, rule);
+    if (r2Result !== null) {
+      return r2Result;
+    }
+  }
+
+  // No data found
+  return {
+    ...createErrorResult<T>('NOT_FOUND', `No data found for dataset: ${datasetId}`, datasetId),
+    version: null,
+    isLKG: false,
+    lkgReason: null,
+  };
+}
+
+/** Create result from versioned KVSafeData format */
+function createResultFromVersionedData<T>(
+  data: T[],
+  meta: KVSafetyMetadata,
+  rule: SemanticRule
+): ValidatedReadResult<T> {
+  const headers = buildCacheHeaders(meta, rule);
+  const lifecycle = meta.lifecycleState;
+  const cacheEligible = isCacheEligible(meta);
+
+  const response = createSuccessResponse(data, lifecycle, {
+    hit: true,
+    ttlSeconds: cacheEligible ? 300 : 0,
+    eligible: cacheEligible,
+  });
+
+  return {
+    response,
+    httpStatus: meta.httpStatusAtWrite,
+    headers,
+    source: 'kv',
+    meta,
+  };
+}
+
+/** Try R2 fallback for versioned read */
+async function tryR2FallbackVersioned<T extends Record<string, unknown>>(
+  r2: R2Bucket,
+  datasetId: string,
+  rule: SemanticRule
+): Promise<ValidatedReadVersionedResult<T> | null> {
+  try {
+    const snapshotKey = `snapshots/${datasetId}/latest.json`;
+    const r2Object = await r2.get(snapshotKey);
+
+    if (r2Object === null) {
+      return null;
+    }
+
+    const r2Raw = await r2Object.text();
+    const snapshot = JSON.parse(r2Raw) as {
+      data: T[];
+      version?: number;
+      validation: { status: string; recordCount: number };
+      snapshotAt: string;
+    };
+
+    if (!Array.isArray(snapshot.data)) {
+      return null;
+    }
+
+    // Create synthetic metadata
+    const syntheticMeta = createKVSafetyMetadata({
+      httpStatusAtWrite: 503,
+      lifecycleState: 'stale',
+      recordCount: snapshot.data.length,
+      validationStatus:
+        (snapshot.validation?.status as 'valid' | 'invalid' | 'empty' | 'partial') ?? 'valid',
+      datasetId,
+      expectedMinCount: rule.minRecordCount,
+    });
+
+    const headers = buildCacheHeaders(syntheticMeta, rule);
+    const response = createSuccessResponse(snapshot.data, 'stale', {
+      hit: true,
+      ttlSeconds: 0,
+      eligible: false,
+    });
+
+    return {
+      response,
+      httpStatus: 503,
+      headers: {
+        ...headers,
+        'X-BSI-Source': 'r2-snapshot',
+        'X-BSI-Version': String(snapshot.version ?? 'unknown'),
+      },
+      source: 'r2',
+      meta: syntheticMeta,
+      version: snapshot.version ?? null,
+      isLKG: true,
+      lkgReason: 'Recovered from R2 snapshot',
+    };
+  } catch {
+    return null;
+  }
 }

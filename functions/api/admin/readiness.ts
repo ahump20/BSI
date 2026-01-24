@@ -12,6 +12,11 @@ import {
   type ReadinessRecord,
   type ReadinessState,
 } from '../../../lib/readiness';
+import {
+  getAllCurrentVersions,
+  getDatasetsServingLKG,
+  type DatasetCurrentVersion,
+} from '../../../lib/dataset-commit';
 
 interface Env {
   DB: D1Database;
@@ -31,16 +36,32 @@ interface ReadinessSummary {
   degraded: number;
   unavailable: number;
   readinessScore: number;
+  servingLKG: number;
+}
+
+/** Extended dataset info with version and LKG status */
+interface DatasetWithVersionInfo {
+  scope: string;
+  readinessState: ReadinessState;
+  lastTransitionAt: string;
+  reason: string | null;
+  snapshotValidatedAt: string | null;
+  liveIngestionAt: string | null;
+  isServingLKG: boolean;
+  lkgVersion: number | null;
+  lkgReason: string | null;
+  currentVersion: number | null;
+  lastCommittedAt: string | null;
 }
 
 interface ReadinessResponse {
   system: ReadinessRecord | null;
-  datasets: ReadinessRecord[];
+  datasets: DatasetWithVersionInfo[];
   summary: ReadinessSummary;
   timestamp: string;
 }
 
-function calculateSummary(records: ReadinessRecord[]): ReadinessSummary {
+function calculateSummary(records: ReadinessRecord[], lkgCount: number): ReadinessSummary {
   const counts: Record<ReadinessState, number> = {
     ready: 0,
     initializing: 0,
@@ -62,7 +83,36 @@ function calculateSummary(records: ReadinessRecord[]): ReadinessSummary {
     degraded: counts.degraded,
     unavailable: counts.unavailable,
     readinessScore,
+    servingLKG: lkgCount,
   };
+}
+
+/** Merge readiness records with version info */
+function mergeWithVersionInfo(
+  readinessRecords: ReadinessRecord[],
+  versionRecords: DatasetCurrentVersion[]
+): DatasetWithVersionInfo[] {
+  const versionMap = new Map<string, DatasetCurrentVersion>();
+  for (const v of versionRecords) {
+    versionMap.set(v.datasetId, v);
+  }
+
+  return readinessRecords.map((r) => {
+    const version = versionMap.get(r.scope);
+    return {
+      scope: r.scope,
+      readinessState: r.readinessState,
+      lastTransitionAt: r.lastTransitionAt,
+      reason: r.reason,
+      snapshotValidatedAt: r.snapshotValidatedAt,
+      liveIngestionAt: r.liveIngestionAt,
+      isServingLKG: version?.isServingLKG ?? false,
+      lkgVersion: version?.isServingLKG ? version.lastCommittedVersion : null,
+      lkgReason: version?.lkgReason ?? null,
+      currentVersion: version?.currentVersion ?? null,
+      lastCommittedAt: version?.lastCommittedAt ?? null,
+    };
+  });
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -114,16 +164,23 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // All scopes query
-    const allRecords = await getSystemReadiness(env.DB);
+    const [allRecords, versionRecords, lkgRecords] = await Promise.all([
+      getSystemReadiness(env.DB),
+      getAllCurrentVersions(env.DB),
+      getDatasetsServingLKG(env.DB),
+    ]);
 
     // Separate system scope from dataset scopes
     const systemRecord = allRecords.find((r) => r.scope === 'system') ?? null;
     const datasetRecords = allRecords.filter((r) => r.scope !== 'system');
 
+    // Merge readiness with version info
+    const datasetsWithVersion = mergeWithVersionInfo(datasetRecords, versionRecords);
+
     const response: ReadinessResponse = {
       system: systemRecord,
-      datasets: datasetRecords,
-      summary: calculateSummary(allRecords),
+      datasets: datasetsWithVersion,
+      summary: calculateSummary(allRecords, lkgRecords.length),
       timestamp: new Date().toISOString(),
     };
 
