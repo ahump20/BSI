@@ -11,14 +11,22 @@ account_id = "a12cb329d84130460eed99b816e4d0d3"
 # Environment Variables
 [vars]
 ENVIRONMENT = "production"
+CATALOG_PREFIX = "archives/"
+ENABLE_REENQUEUE = "false"
+GITHUB_REPO = "ahump20/blaze-sports-intel"
 
 # Cron Triggers
 [triggers]
 crons = [
   "*/5 * * * *",   # Live games - every 5 minutes
   "0 * * * *",     # Team stats refresh - hourly
-  "0 2 * * *"      # Historical aggregations - daily at 2am CST
+  "0 2 * * *",     # Historical aggregations - daily at 2am CST
+  "0 3 * * *"      # Asset catalog - daily at 3am CST
 ]
+
+# Smart Placement for consistent cross-edge behavior
+[placement]
+mode = "smart"
 
 # KV Namespace (Cache)
 [[kv_namespaces]]
