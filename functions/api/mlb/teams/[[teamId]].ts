@@ -249,15 +249,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const correlationId = `bsi-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 
+    // Check if error indicates team not found (404 from MLB API)
+    const isNotFound =
+      errorMessage.includes('404') ||
+      errorMessage.toLowerCase().includes('not found') ||
+      errorMessage.includes('No team found');
+
     return new Response(
       JSON.stringify({
-        error: 'Failed to fetch team data',
-        message: errorMessage,
+        error: isNotFound ? 'Team not found' : 'Failed to fetch team data',
+        message: isNotFound ? `No MLB team found with ID ${params.teamId}` : errorMessage,
         correlationId,
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       }),
       {
-        status: 500,
+        status: isNotFound ? 404 : 500,
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
