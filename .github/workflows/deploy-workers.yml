@@ -245,7 +245,7 @@ jobs:
 
       - name: Deploy to Staging
         if: inputs.environment == 'staging' || github.ref != 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v3.1.0
+        uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -253,7 +253,7 @@ jobs:
 
       - name: Deploy to Production
         if: inputs.environment == 'production' || github.ref == 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v3.1.0
+        uses: cloudflare/wrangler-action@v3.14.1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
