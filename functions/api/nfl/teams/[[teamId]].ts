@@ -242,6 +242,18 @@ interface Env {
   KV?: KVNamespace;
 }
 
+/**
+ * Get the current NFL season year.
+ * NFL season starts in September and ends in February.
+ * So in Jan-Aug, we use previous year's season.
+ */
+function getCurrentNFLSeason(): number {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+  return month < 8 ? year - 1 : year;
+}
+
 export const onRequest: PagesFunction<Env> = async ({ request, params }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -326,18 +338,41 @@ export const onRequest: PagesFunction<Env> = async ({ request, params }) => {
   }
 };
 
-async function fetchTeamData(teamId: number): Promise<any> {
+interface TeamData {
+  team: {
+    id: number;
+    name: string;
+    abbreviation: string;
+    city: string;
+    division: string;
+    conference: string;
+    wins: number;
+    losses: number;
+    ties: number;
+    winPct: number;
+    pointsFor: number;
+    pointsAgainst: number;
+    pointDifferential: number;
+    lastUpdated: string;
+  };
+  lastUpdated: string;
+  dataSource: string;
+}
+
+async function fetchTeamData(teamId: number): Promise<TeamData> {
   const headers = {
     'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
     Accept: 'application/json',
   };
 
   const meta = TEAM_META[teamId]!;
+  const season = getCurrentNFLSeason();
 
   // Fetch standings for stats
-  const response = await fetch('https://site.api.espn.com/apis/v2/sports/football/nfl/standings', {
-    headers,
-  });
+  const response = await fetch(
+    `https://site.api.espn.com/apis/v2/sports/football/nfl/standings?season=${season}`,
+    { headers }
+  );
 
   if (!response.ok) {
     throw new Error(`ESPN API returned ${response.status}`);
@@ -345,24 +380,24 @@ async function fetchTeamData(teamId: number): Promise<any> {
 
   const data = await response.json();
 
-  // Find team in standings
-  let teamStats: any = null;
+  // Find team in standings - ESPN structure: children (conferences) -> standings.entries (teams)
+  let teamStats: { stats: { name: string; abbreviation?: string; value?: number }[] } | null = null;
+
   for (const conf of data.children || []) {
-    for (const div of conf.children || []) {
-      for (const entry of div.standings?.entries || []) {
-        if (entry.team?.id === teamId || entry.team?.id === String(teamId)) {
-          teamStats = entry;
-          break;
-        }
+    const entries = conf.standings?.entries || [];
+    for (const entry of entries) {
+      const entryTeamId = parseInt(entry.team?.id) || 0;
+      if (entryTeamId === teamId) {
+        teamStats = entry;
+        break;
       }
-      if (teamStats) break;
     }
     if (teamStats) break;
   }
 
   const stats = teamStats?.stats || [];
   const getStatValue = (name: string): number => {
-    const stat = stats.find((s: any) => s.name === name || s.abbreviation === name);
+    const stat = stats.find((s) => s.name === name || s.abbreviation === name);
     return stat?.value ?? 0;
   };
 

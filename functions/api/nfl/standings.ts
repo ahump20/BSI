@@ -23,56 +23,68 @@ const VALID_DIVISIONS = [
   'NFC West',
 ];
 
-// ESPN team ID to abbreviation mapping
-const TEAM_ABBR_MAP: Record<number, string> = {
-  1: 'ATL',
-  2: 'BUF',
-  3: 'CHI',
-  4: 'CIN',
-  5: 'CLE',
-  6: 'DAL',
-  7: 'DEN',
-  8: 'DET',
-  9: 'GB',
-  10: 'TEN',
-  11: 'IND',
-  12: 'KC',
-  13: 'LV',
-  14: 'LAR',
-  15: 'MIA',
-  16: 'MIN',
-  17: 'NE',
-  18: 'NO',
-  19: 'NYG',
-  20: 'NYJ',
-  21: 'PHI',
-  22: 'ARI',
-  23: 'PIT',
-  24: 'LAC',
-  25: 'SF',
-  26: 'SEA',
-  27: 'TB',
-  28: 'WAS',
-  29: 'CAR',
-  30: 'JAX',
-  33: 'BAL',
-  34: 'HOU',
-};
-
-// Division ID mapping from ESPN API
-const DIVISION_MAP: Record<string, { conference: string; division: string }> = {
-  '1': { conference: 'AFC', division: 'AFC East' },
-  '2': { conference: 'AFC', division: 'AFC North' },
-  '3': { conference: 'AFC', division: 'AFC South' },
-  '4': { conference: 'AFC', division: 'AFC West' },
-  '5': { conference: 'NFC', division: 'NFC East' },
-  '6': { conference: 'NFC', division: 'NFC North' },
-  '7': { conference: 'NFC', division: 'NFC South' },
-  '8': { conference: 'NFC', division: 'NFC West' },
+// ESPN team ID to division mapping
+const TEAM_DIVISION: Record<
+  number,
+  { abbreviation: string; division: string; conference: string }
+> = {
+  // AFC East
+  2: { abbreviation: 'BUF', division: 'AFC East', conference: 'AFC' },
+  15: { abbreviation: 'MIA', division: 'AFC East', conference: 'AFC' },
+  17: { abbreviation: 'NE', division: 'AFC East', conference: 'AFC' },
+  20: { abbreviation: 'NYJ', division: 'AFC East', conference: 'AFC' },
+  // AFC North
+  33: { abbreviation: 'BAL', division: 'AFC North', conference: 'AFC' },
+  4: { abbreviation: 'CIN', division: 'AFC North', conference: 'AFC' },
+  5: { abbreviation: 'CLE', division: 'AFC North', conference: 'AFC' },
+  23: { abbreviation: 'PIT', division: 'AFC North', conference: 'AFC' },
+  // AFC South
+  34: { abbreviation: 'HOU', division: 'AFC South', conference: 'AFC' },
+  11: { abbreviation: 'IND', division: 'AFC South', conference: 'AFC' },
+  30: { abbreviation: 'JAX', division: 'AFC South', conference: 'AFC' },
+  10: { abbreviation: 'TEN', division: 'AFC South', conference: 'AFC' },
+  // AFC West
+  7: { abbreviation: 'DEN', division: 'AFC West', conference: 'AFC' },
+  12: { abbreviation: 'KC', division: 'AFC West', conference: 'AFC' },
+  13: { abbreviation: 'LV', division: 'AFC West', conference: 'AFC' },
+  24: { abbreviation: 'LAC', division: 'AFC West', conference: 'AFC' },
+  // NFC East
+  6: { abbreviation: 'DAL', division: 'NFC East', conference: 'NFC' },
+  19: { abbreviation: 'NYG', division: 'NFC East', conference: 'NFC' },
+  21: { abbreviation: 'PHI', division: 'NFC East', conference: 'NFC' },
+  28: { abbreviation: 'WAS', division: 'NFC East', conference: 'NFC' },
+  // NFC North
+  3: { abbreviation: 'CHI', division: 'NFC North', conference: 'NFC' },
+  8: { abbreviation: 'DET', division: 'NFC North', conference: 'NFC' },
+  9: { abbreviation: 'GB', division: 'NFC North', conference: 'NFC' },
+  16: { abbreviation: 'MIN', division: 'NFC North', conference: 'NFC' },
+  // NFC South
+  1: { abbreviation: 'ATL', division: 'NFC South', conference: 'NFC' },
+  29: { abbreviation: 'CAR', division: 'NFC South', conference: 'NFC' },
+  18: { abbreviation: 'NO', division: 'NFC South', conference: 'NFC' },
+  27: { abbreviation: 'TB', division: 'NFC South', conference: 'NFC' },
+  // NFC West
+  22: { abbreviation: 'ARI', division: 'NFC West', conference: 'NFC' },
+  14: { abbreviation: 'LAR', division: 'NFC West', conference: 'NFC' },
+  25: { abbreviation: 'SF', division: 'NFC West', conference: 'NFC' },
+  26: { abbreviation: 'SEA', division: 'NFC West', conference: 'NFC' },
 };
 
 interface Env {
   KV?: KVNamespace;
+}
+
+/**
+ * Get the current NFL season year.
+ * NFL season starts in September and ends in February.
+ * So in Jan-Aug, we use previous year's season.
+ */
+function getCurrentNFLSeason(): number {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+  // If we're in Jan-Aug, the current NFL season is the previous year
+  return month < 8 ? year - 1 : year;
 }
 
 export const onRequest: PagesFunction<Env> = async ({ request }) => {
@@ -89,7 +101,7 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   const division = url.searchParams.get('division');
   const season = url.searchParams.get('season')
     ? parseInt(url.searchParams.get('season')!)
-    : new Date().getFullYear();
+    : getCurrentNFLSeason();
 
   // Validate conference
   if (conference && !VALID_CONFERENCES.includes(conference)) {
@@ -148,11 +160,36 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   }
 };
 
+interface TeamStanding {
+  id: number;
+  name: string;
+  abbreviation: string;
+  city: string;
+  division: string;
+  conference: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  winPct: number;
+  pointsFor: number;
+  pointsAgainst: number;
+  pointDifferential: number;
+  lastUpdated: string;
+}
+
+interface DivisionStanding {
+  conference: string;
+  division: string;
+  teams: TeamStanding[];
+  lastUpdated: string;
+  dataSource: string;
+}
+
 async function fetchESPNStandings(
   season: number,
   filterConference: string | null,
   filterDivision: string | null
-): Promise<any[]> {
+): Promise<DivisionStanding[]> {
   const headers = {
     'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
     Accept: 'application/json',
@@ -169,103 +206,93 @@ async function fetchESPNStandings(
   }
 
   const data = await response.json();
-  const divisionStandings: any[] = [];
 
-  // ESPN structure: children (conferences) -> standings.entries (divisions)
+  // Collect all teams from both conferences
+  const allTeams: TeamStanding[] = [];
+
+  // ESPN structure: children (AFC/NFC conferences) -> standings.entries (teams)
   for (const conf of data.children || []) {
-    const confName = conf.abbreviation; // 'AFC' or 'NFC'
+    const entries = conf.standings?.entries || [];
 
-    // Filter by conference if specified
-    if (filterConference && confName !== filterConference) {
-      continue;
-    }
+    for (const entry of entries) {
+      const team = entry.team;
+      const teamId = parseInt(team?.id) || 0;
+      const teamMeta = TEAM_DIVISION[teamId];
 
-    for (const divisionData of conf.standings?.entries || []) {
-      // Get division info from the first team's group
-      const firstTeam = divisionData;
-      const divId = firstTeam?.group?.id;
-      const divInfo = DIVISION_MAP[divId] || {
-        conference: confName,
-        division: `${confName} Unknown`,
+      if (!teamMeta) {
+        continue; // Skip unknown teams
+      }
+
+      const stats = entry.stats || [];
+      const getStatValue = (name: string): number => {
+        const stat = stats.find(
+          (s: { name: string; abbreviation?: string; value?: number }) =>
+            s.name === name || s.abbreviation === name
+        );
+        return stat?.value ?? 0;
       };
 
-      // Filter by division if specified
-      if (filterDivision && divInfo.division !== filterDivision) {
-        continue;
-      }
+      const wins = getStatValue('wins');
+      const losses = getStatValue('losses');
+      const ties = getStatValue('ties');
+      const totalGames = wins + losses + ties;
+      const winPct = totalGames > 0 ? (wins + ties * 0.5) / totalGames : 0;
+      const pointsFor = getStatValue('pointsFor');
+      const pointsAgainst = getStatValue('pointsAgainst');
 
-      // This is actually a team entry, not a division - ESPN nests differently
-      // Let me re-examine the structure
+      allTeams.push({
+        id: teamId,
+        name: team?.displayName || team?.name || 'Unknown',
+        abbreviation: teamMeta.abbreviation,
+        city: team?.location || '',
+        division: teamMeta.division,
+        conference: teamMeta.conference,
+        wins,
+        losses,
+        ties,
+        winPct: Math.round(winPct * 1000) / 1000,
+        pointsFor,
+        pointsAgainst,
+        pointDifferential: pointsFor - pointsAgainst,
+        lastUpdated: new Date().toISOString(),
+      });
     }
   }
 
-  // Actually, ESPN API has a different structure - let me process it correctly
-  // conferences -> standings -> entries (teams grouped by division)
-  for (const conf of data.children || []) {
-    const confAbbr = conf.abbreviation; // 'AFC' or 'NFC'
+  // Group teams by division
+  const divisionMap = new Map<string, TeamStanding[]>();
 
-    if (filterConference && confAbbr !== filterConference) {
+  for (const team of allTeams) {
+    // Apply filters
+    if (filterConference && team.conference !== filterConference) {
+      continue;
+    }
+    if (filterDivision && team.division !== filterDivision) {
       continue;
     }
 
-    // Each conference has standings with entries grouped by division
-    for (const divGroup of conf.children || []) {
-      const divName = divGroup.name; // e.g., "AFC East"
-      const fullDivisionName = `${confAbbr} ${divName?.split(' ').pop() || 'Unknown'}`;
-
-      if (filterDivision && fullDivisionName !== filterDivision) {
-        continue;
-      }
-
-      const teams = (divGroup.standings?.entries || []).map((entry: any) => {
-        const team = entry.team;
-        const stats = entry.stats || [];
-
-        const getStatValue = (name: string): number => {
-          const stat = stats.find((s: any) => s.name === name || s.abbreviation === name);
-          return stat?.value ?? 0;
-        };
-
-        const wins = getStatValue('wins');
-        const losses = getStatValue('losses');
-        const ties = getStatValue('ties');
-        const totalGames = wins + losses + ties;
-        const winPct = totalGames > 0 ? (wins + ties * 0.5) / totalGames : 0;
-        const pointsFor = getStatValue('pointsFor');
-        const pointsAgainst = getStatValue('pointsAgainst');
-
-        return {
-          id: team?.id || 0,
-          name: team?.displayName || team?.name || 'Unknown',
-          abbreviation: TEAM_ABBR_MAP[team?.id] || team?.abbreviation || 'UNK',
-          city: team?.location || team?.displayName?.split(' ').slice(0, -1).join(' ') || '',
-          division: fullDivisionName,
-          conference: confAbbr,
-          wins,
-          losses,
-          ties,
-          winPct: Math.round(winPct * 1000) / 1000,
-          pointsFor,
-          pointsAgainst,
-          pointDifferential: pointsFor - pointsAgainst,
-          lastUpdated: new Date().toISOString(),
-        };
-      });
-
-      // Sort by win percentage descending
-      teams.sort((a: any, b: any) => b.winPct - a.winPct);
-
-      divisionStandings.push({
-        conference: confAbbr,
-        division: fullDivisionName,
-        teams,
-        lastUpdated: new Date().toISOString(),
-        dataSource: 'ESPN API',
-      });
-    }
+    const existing = divisionMap.get(team.division) || [];
+    existing.push(team);
+    divisionMap.set(team.division, existing);
   }
 
-  // Sort: AFC first, then by division order (East, North, South, West)
+  // Convert to array and sort teams within each division
+  const divisionStandings: DivisionStanding[] = [];
+
+  for (const [divisionName, teams] of divisionMap) {
+    // Sort by win percentage descending
+    teams.sort((a, b) => b.winPct - a.winPct);
+
+    divisionStandings.push({
+      conference: teams[0]?.conference || divisionName.split(' ')[0],
+      division: divisionName,
+      teams,
+      lastUpdated: new Date().toISOString(),
+      dataSource: 'ESPN API',
+    });
+  }
+
+  // Sort divisions: AFC first, then by division order (East, North, South, West)
   const divOrder = ['East', 'North', 'South', 'West'];
   return divisionStandings.sort((a, b) => {
     if (a.conference !== b.conference) {

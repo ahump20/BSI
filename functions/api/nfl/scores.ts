@@ -12,6 +12,18 @@ interface Env {
   KV?: KVNamespace;
 }
 
+/**
+ * Get the current NFL season year.
+ * NFL season starts in September and ends in February.
+ * So in Jan-Aug, we use previous year's season.
+ */
+function getCurrentNFLSeason(): number {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+  return month < 8 ? year - 1 : year;
+}
+
 export const onRequest: PagesFunction<Env> = async ({ request }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -21,7 +33,8 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   const seasonParam = url.searchParams.get('season');
   const weekParam = url.searchParams.get('week');
 
-  const season = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
+  // NFL season runs Sept-Feb, so in Jan-Aug use previous year
+  const season = seasonParam ? parseInt(seasonParam) : getCurrentNFLSeason();
   const week = weekParam ? parseInt(weekParam) : undefined;
 
   // Validate week (1-18 regular season, 19-22 playoffs)

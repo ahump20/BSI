@@ -185,6 +185,18 @@ const TEAM_META = {
   34: { name: 'Houston Texans', city: 'Houston', conference: 'AFC', division: 'AFC South' },
 };
 
+/**
+ * Get the current NFL season year.
+ * NFL season starts in September and ends in February.
+ * So in Jan-Aug, we use previous year's season.
+ */
+function getCurrentNFLSeason() {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+  return month < 8 ? year - 1 : year;
+}
+
 export async function onRequest({ request, params, env }) {
   const teamIdParam = params.teamId;
   const teamIdRaw = Array.isArray(teamIdParam) ? teamIdParam[0] : teamIdParam;
@@ -281,12 +293,17 @@ async function fetchNFLTeamData(teamId) {
     Accept: 'application/json',
   };
 
+  const season = getCurrentNFLSeason();
+  const meta = TEAM_META[teamId] || {};
+
   // Fetch team data and standings from ESPN API in parallel
   const [teamResponse, standingsResponse] = await Promise.all([
     fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${teamId}`, {
       headers,
     }),
-    fetch('https://site.api.espn.com/apis/v2/sports/football/nfl/standings', { headers }),
+    fetch(`https://site.api.espn.com/apis/v2/sports/football/nfl/standings?season=${season}`, {
+      headers,
+    }),
   ]);
 
   if (!teamResponse.ok) {
@@ -297,19 +314,17 @@ async function fetchNFLTeamData(teamId) {
   const standingsData = await standingsResponse.json();
 
   const team = teamData.team || {};
-  const meta = TEAM_META[teamId] || {};
 
-  // Find team in standings to get detailed stats
+  // Find team in standings - ESPN structure: children (conferences) -> standings.entries (teams)
   let teamStats = null;
   for (const conf of standingsData.children || []) {
-    for (const div of conf.children || []) {
-      for (const entry of div.standings?.entries || []) {
-        if (entry.team?.id === teamId || entry.team?.id === String(teamId)) {
-          teamStats = entry;
-          break;
-        }
+    const entries = conf.standings?.entries || [];
+    for (const entry of entries) {
+      const entryTeamId = parseInt(entry.team?.id) || 0;
+      if (entryTeamId === teamId) {
+        teamStats = entry;
+        break;
       }
-      if (teamStats) break;
     }
     if (teamStats) break;
   }
