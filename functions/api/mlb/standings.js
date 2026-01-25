@@ -125,8 +125,13 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
     const fullDivisionName = `${leagueAbbr} ${simpleDivisionName}`; // e.g., "NL Central"
 
     // Filter by division if specified (e.g., "NL Central")
-    if (filterDivision && fullDivisionName !== filterDivision) {
-      return;
+    // Normalize both values for comparison to handle whitespace/casing
+    if (filterDivision) {
+      const normalizedFilter = filterDivision.trim().toLowerCase();
+      const normalizedFull = fullDivisionName.trim().toLowerCase();
+      if (normalizedFull !== normalizedFilter) {
+        return;
+      }
     }
     // Filter by league if specified
     if (filterLeague && leagueAbbr !== filterLeague) {
