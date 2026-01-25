@@ -75,7 +75,7 @@
     "@cloudflare/workers-types": "^4.20251128.0",
     "@next/swc-wasm-nodejs": "^16.1.1",
     "@playwright/test": "^1.56.1",
-    "@prisma/client": "^6.18.0",
+    "@prisma/client": "^7.3.0",
     "@types/luxon": "^3.4.2",
     "@types/node": "^24.9.1",
     "@types/pg": "^8.10.9",
