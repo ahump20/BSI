@@ -24,6 +24,17 @@ function getCurrentNFLSeason(): number {
   return month < 8 ? year - 1 : year;
 }
 
+/**
+ * Determine if we're in postseason (Jan-Feb) or regular season (Sept-Dec).
+ * Returns the appropriate ESPN seasontype: 2 = regular, 3 = postseason
+ */
+function getCurrentSeasonType(): number {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  // Jan-Feb is postseason (month 0-1), Sept-Dec is regular season
+  return month <= 1 ? 3 : 2;
+}
+
 export const onRequest: PagesFunction<Env> = async ({ request }) => {
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -43,7 +54,7 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   }
 
   try {
-    const data = await fetchESPNScores(season, week);
+    const data = await fetchESPNScores(season, week, seasonParam !== null);
 
     return new Response(JSON.stringify(data), {
       status: 200,
@@ -74,14 +85,57 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   }
 };
 
-async function fetchESPNScores(season: number, week?: number): Promise<any> {
+interface GameData {
+  id: number;
+  week: number;
+  season: number;
+  homeTeam: {
+    id: number;
+    name: string;
+    score?: number;
+  };
+  awayTeam: {
+    id: number;
+    name: string;
+    score?: number;
+  };
+  status: 'scheduled' | 'in_progress' | 'final' | 'postponed';
+  startTime: string;
+  venue?: string;
+}
+
+interface ScoreData {
+  week: number;
+  season: number;
+  games: GameData[];
+  hasLiveGames: boolean;
+  meta: {
+    dataSource: string;
+    lastUpdated: string;
+    timezone: string;
+  };
+}
+
+async function fetchESPNScores(
+  season: number,
+  week?: number,
+  explicitSeason?: boolean
+): Promise<ScoreData> {
   const headers = {
     'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
     Accept: 'application/json',
   };
 
-  // ESPN scoreboard endpoint
-  let url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&season=${season}`;
+  // ESPN scoreboard endpoint - don't include season param unless explicitly requested
+  // as it can cause issues with the API
+  const seasonType = getCurrentSeasonType();
+  let url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=${seasonType}`;
+
+  // Only add season if explicitly passed by user (for historical queries)
+  if (explicitSeason) {
+    url += `&season=${season}`;
+  }
+
   if (week) {
     url += `&week=${week}`;
   }
@@ -95,52 +149,66 @@ async function fetchESPNScores(season: number, week?: number): Promise<any> {
   const data = await response.json();
   const events = data.events || [];
 
-  const games = events.map((event: any) => {
-    const competition = event.competitions?.[0] || {};
-    const competitors = competition.competitors || [];
-    const homeTeam = competitors.find((c: any) => c.homeAway === 'home');
-    const awayTeam = competitors.find((c: any) => c.homeAway === 'away');
+  const games: GameData[] = events.map(
+    (event: {
+      id?: string;
+      date?: string;
+      status?: { type?: { name?: string } };
+      competitions?: Array<{
+        venue?: { fullName?: string };
+        competitors?: Array<{
+          homeAway?: string;
+          score?: string;
+          team?: { id?: string; displayName?: string; name?: string };
+        }>;
+      }>;
+    }) => {
+      const competition = event.competitions?.[0] || {};
+      const competitors = competition.competitors || [];
+      const homeTeam = competitors.find((c) => c.homeAway === 'home');
+      const awayTeam = competitors.find((c) => c.homeAway === 'away');
 
-    // Map ESPN status to our status enum
-    const espnStatus = event.status?.type?.name || 'STATUS_SCHEDULED';
-    let status: 'scheduled' | 'in_progress' | 'final' | 'postponed' = 'scheduled';
+      // Map ESPN status to our status enum
+      const espnStatus = event.status?.type?.name || 'STATUS_SCHEDULED';
+      let status: 'scheduled' | 'in_progress' | 'final' | 'postponed' = 'scheduled';
 
-    if (espnStatus === 'STATUS_FINAL' || espnStatus === 'STATUS_FINAL_OVERTIME') {
-      status = 'final';
-    } else if (
-      espnStatus === 'STATUS_IN_PROGRESS' ||
-      espnStatus === 'STATUS_HALFTIME' ||
-      espnStatus === 'STATUS_END_PERIOD'
-    ) {
-      status = 'in_progress';
-    } else if (espnStatus === 'STATUS_POSTPONED' || espnStatus === 'STATUS_CANCELED') {
-      status = 'postponed';
+      if (espnStatus === 'STATUS_FINAL' || espnStatus === 'STATUS_FINAL_OVERTIME') {
+        status = 'final';
+      } else if (
+        espnStatus === 'STATUS_IN_PROGRESS' ||
+        espnStatus === 'STATUS_HALFTIME' ||
+        espnStatus === 'STATUS_END_PERIOD'
+      ) {
+        status = 'in_progress';
+      } else if (espnStatus === 'STATUS_POSTPONED' || espnStatus === 'STATUS_CANCELED') {
+        status = 'postponed';
+      }
+
+      return {
+        id: parseInt(event.id || '0') || 0,
+        week: (data.week as { number?: number })?.number || week || 1,
+        season,
+        homeTeam: {
+          id: parseInt(homeTeam?.team?.id || '0') || 0,
+          name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Unknown',
+          score: homeTeam?.score ? parseInt(homeTeam.score) : undefined,
+        },
+        awayTeam: {
+          id: parseInt(awayTeam?.team?.id || '0') || 0,
+          name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Unknown',
+          score: awayTeam?.score ? parseInt(awayTeam.score) : undefined,
+        },
+        status,
+        startTime: event.date || new Date().toISOString(),
+        venue: competition.venue?.fullName || undefined,
+      };
     }
+  );
 
-    return {
-      id: parseInt(event.id) || 0,
-      week: data.week?.number || week || 1,
-      season,
-      homeTeam: {
-        id: parseInt(homeTeam?.team?.id) || 0,
-        name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Unknown',
-        score: parseInt(homeTeam?.score) || undefined,
-      },
-      awayTeam: {
-        id: parseInt(awayTeam?.team?.id) || 0,
-        name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Unknown',
-        score: parseInt(awayTeam?.score) || undefined,
-      },
-      status,
-      startTime: event.date || new Date().toISOString(),
-      venue: competition.venue?.fullName || undefined,
-    };
-  });
-
-  const hasLiveGames = games.some((g: any) => g.status === 'in_progress');
+  const hasLiveGames = games.some((g) => g.status === 'in_progress');
 
   return {
-    week: data.week?.number || week || 1,
+    week: (data.week as { number?: number })?.number || week || 1,
     season,
     games,
     hasLiveGames,
