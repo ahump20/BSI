@@ -172,8 +172,10 @@ const defaultSections: FooterSection[] = [
     links: [
       { label: 'Dashboard', href: '/dashboard' },
       { label: 'Live Scores', href: '/scores' },
-      { label: 'Analytics', href: '/analytics' },
-      { label: 'API', href: '/api' },
+      { label: 'Games', href: '/games' },
+      { label: 'Blaze Vision', href: '/blaze-vision' },
+      { label: 'Developers', href: '/developers' },
+      { label: 'Status', href: '/status' },
     ],
   },
   {

@@ -1,0 +1,361 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Blaze Sports Intel API",
+    "description": "REST API for sports data, analytics, and predictions from Blaze Sports Intel.\n\n## Authentication\n\nPublic endpoints require no authentication. Pro endpoints require an API key passed in the `X-API-Key` header.\n\n## Rate Limits\n\n- **Public**: 100 requests/minute\n- **Pro**: 1000 requests/minute\n\n## Support\n\nFor API questions, contact api@blazesportsintel.com",
+    "version": "1.0.0",
+    "contact": {
+      "name": "BSI API Support",
+      "email": "api@blazesportsintel.com",
+      "url": "https://blazesportsintel.com/developers"
+    },
+    "license": {
+      "name": "Proprietary",
+      "url": "https://blazesportsintel.com/terms"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://blazesportsintel.com",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Service health and status endpoints"
+    },
+    {
+      "name": "Vision",
+      "description": "Blaze Vision access and features"
+    }
+  ],
+  "paths": {
+    "/api/healthz": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Aggregated health check",
+        "description": "Returns overall system health status with service breakdown for D1 database and KV cache.",
+        "operationId": "getHealthz",
+        "responses": {
+          "200": {
+            "description": "All services healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthzResponse"
+                },
+                "example": {
+                  "ok": true,
+                  "status": "healthy",
+                  "version": "1.0.0",
+                  "colo": "DFW",
+                  "region": "WNAM",
+                  "timestamp": "2025-01-24T12:00:00.000Z",
+                  "services": {
+                    "d1": {
+                      "status": "healthy",
+                      "latency": 12
+                    },
+                    "kv": {
+                      "status": "healthy",
+                      "latency": 8
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Some services degraded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthzResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Services down",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthzResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health/{endpoint}": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Individual service health check",
+        "description": "Check health of a specific service: d1, kv, monitor, or analytics.",
+        "operationId": "getHealthEndpoint",
+        "parameters": [
+          {
+            "name": "endpoint",
+            "in": "path",
+            "required": true,
+            "description": "Service to check",
+            "schema": {
+              "type": "string",
+              "enum": ["d1", "kv", "monitor", "analytics"]
+            }
+          },
+          {
+            "name": "ns",
+            "in": "query",
+            "required": false,
+            "description": "KV namespace (for kv endpoint): 'cache' or 'sessions'",
+            "schema": {
+              "type": "string",
+              "default": "cache"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealth"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service down",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceHealth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vision/access-request": {
+      "post": {
+        "tags": ["Vision"],
+        "summary": "Request Blaze Vision access",
+        "description": "Submit an access request for Blaze Vision or game notifications. Rate limited to 20 requests per hour per IP.",
+        "operationId": "postVisionAccessRequest",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessRequestBody"
+              },
+              "example": {
+                "name": "John Smith",
+                "email": "john@example.com",
+                "organization": "University Athletics",
+                "role": "Coach",
+                "sportFocus": "baseball",
+                "notes": "Interested in using for player development sessions"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Request received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessRequestResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Request received. We will review and contact you soon.",
+                  "id": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateLimitResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthzResponse": {
+        "type": "object",
+        "required": ["ok", "status", "version", "colo", "region", "timestamp", "services"],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "True if all services are healthy"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "degraded", "down"],
+            "description": "Overall system status"
+          },
+          "version": {
+            "type": "string",
+            "description": "API version"
+          },
+          "colo": {
+            "type": "string",
+            "description": "Cloudflare colo code handling the request"
+          },
+          "region": {
+            "type": "string",
+            "description": "Cloudflare region"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp"
+          },
+          "services": {
+            "type": "object",
+            "properties": {
+              "d1": {
+                "$ref": "#/components/schemas/ServiceHealth"
+              },
+              "kv": {
+                "$ref": "#/components/schemas/ServiceHealth"
+              }
+            }
+          }
+        }
+      },
+      "ServiceHealth": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "degraded", "down"]
+          },
+          "latency": {
+            "type": "integer",
+            "description": "Response time in milliseconds"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message if not healthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AccessRequestBody": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "description": "Full name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address"
+          },
+          "organization": {
+            "type": "string",
+            "description": "Company or organization"
+          },
+          "role": {
+            "type": "string",
+            "description": "Job title or role"
+          },
+          "sportFocus": {
+            "type": "string",
+            "description": "Primary sport interest"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Use case description"
+          },
+          "interest": {
+            "type": "string",
+            "description": "Specific product interest (e.g., 'blaze-vision', 'blaze-blitz-football')"
+          }
+        }
+      },
+      "AccessRequestResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Request tracking ID"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "RateLimitResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "retryAfter": {
+            "type": "integer",
+            "description": "Seconds until rate limit resets"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for Pro tier access"
+      }
+    }
+  }
+}

@@ -21,6 +21,7 @@ export const mainNavItems: NavItem[] = [
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
   { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Games', href: '/games' },
   { label: 'SEC Fanbases', href: '/fanbase', badge: 'NEW' },
   { label: 'Pricing', href: '/pricing' },
 ];
