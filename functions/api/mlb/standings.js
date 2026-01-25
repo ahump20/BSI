@@ -16,6 +16,22 @@ import {
 // Valid MLB divisions
 const VALID_DIVISIONS = ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
 
+// MLB Division ID to Name mapping (API sometimes returns only IDs)
+const DIVISION_MAP = {
+  200: { name: 'AL West', league: 'AL' },
+  201: { name: 'AL East', league: 'AL' },
+  202: { name: 'AL Central', league: 'AL' },
+  203: { name: 'NL West', league: 'NL' },
+  204: { name: 'NL East', league: 'NL' },
+  205: { name: 'NL Central', league: 'NL' },
+};
+
+// MLB League ID to abbreviation mapping
+const LEAGUE_MAP = {
+  103: 'AL',
+  104: 'NL',
+};
+
 /**
  * MLB Standings endpoint
  * GET /api/mlb/standings?division=AL_East
@@ -115,14 +131,24 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
   // MLB Stats API structure: records array contains divisions
   const records = data.records || [];
 
-  records.forEach((division) => {
-    const divisionName = division.division?.name; // e.g., "American League East"
-    const leagueName = division.league?.name; // "American League" or "National League"
-    const leagueAbbr = leagueName?.includes('American') ? 'AL' : 'NL';
+  records.forEach((record) => {
+    const divisionId = record.division?.id;
+    const leagueId = record.league?.id;
 
-    // Extract simple division name (East, Central, West)
-    const simpleDivisionName = divisionName?.split(' ').pop() || 'Unknown';
-    const fullDivisionName = `${leagueAbbr} ${simpleDivisionName}`; // e.g., "NL Central"
+    // Use mapping for division/league info (API may not include names for future seasons)
+    const divisionInfo = DIVISION_MAP[divisionId];
+    const leagueAbbr = divisionInfo?.league || LEAGUE_MAP[leagueId] || 'NL';
+
+    // Get full division name from mapping, or fallback to parsing the name field
+    let fullDivisionName;
+    if (divisionInfo) {
+      fullDivisionName = divisionInfo.name;
+    } else {
+      // Fallback: parse from division name if available
+      const divisionName = record.division?.name; // e.g., "American League East"
+      const simpleDivisionName = divisionName?.split(' ').pop() || 'Unknown';
+      fullDivisionName = `${leagueAbbr} ${simpleDivisionName}`;
+    }
 
     // Filter by division if specified (e.g., "NL Central")
     // Normalize both values for comparison to handle whitespace/casing
@@ -139,7 +165,7 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
     }
 
     // Process teams in this division
-    const teams = (division.teamRecords || []).map((teamRecord) => {
+    const teams = (record.teamRecords || []).map((teamRecord) => {
       const team = teamRecord.team;
       const wins = teamRecord.wins || 0;
       const losses = teamRecord.losses || 0;
