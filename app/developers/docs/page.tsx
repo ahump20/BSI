@@ -11,12 +11,8 @@ export default function ApiDocsPage() {
           url: '/openapi.json',
           dom_id: '#swagger-ui',
           deepLinking: true,
-          presets: [
-            (window as any).SwaggerUIBundle.presets.apis,
-            (window as any).SwaggerUIStandalonePreset,
-          ],
+          presets: [(window as any).SwaggerUIBundle.presets.apis],
           plugins: [(window as any).SwaggerUIBundle.plugins.DownloadUrl],
-          layout: 'StandaloneLayout',
         });
       }
     };
@@ -38,10 +34,6 @@ export default function ApiDocsPage() {
         onLoad={() => {
           window.dispatchEvent(new Event('swagger-loaded'));
         }}
-      />
-      <Script
-        src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js"
-        strategy="afterInteractive"
       />
 
       <style jsx global>{`
