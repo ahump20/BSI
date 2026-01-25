@@ -1,112 +1,140 @@
 /**
- * NFL Live Scores API - Real SportsDataIO Data
- * Live and completed game scores with real-time updates
+ * NFL Scores API - ESPN Data
  *
- * Endpoints:
- * - GET /api/nfl/scores - Current week's games
- * - GET /api/nfl/scores?week=5 - Specific week
- * - GET /api/nfl/scores?season=2024&week=5 - Historical week
- *
- * Data Source: SportsDataIO NFL API
- * Update Frequency: 30 seconds for live games
+ * GET /api/nfl/scores - Current week's games
+ * GET /api/nfl/scores?week=5 - Specific week
+ * GET /api/nfl/scores?season=2025&week=5 - Historical
  */
 
-import { createSportsDataIOAdapter } from '../../../lib/adapters/sportsdataio';
-import { corsHeaders } from '../_utils';
+import { corsHeaders, generateCorrelationId, badRequest } from '../_utils.js';
 
 interface Env {
-  SPORTSDATAIO_API_KEY: string;
-  KV: KVNamespace;
+  KV?: KVNamespace;
 }
 
-export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
-  // Handle CORS preflight
+export const onRequest: PagesFunction<Env> = async ({ request }) => {
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: corsHeaders,
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  const url = new URL(request.url);
+  const seasonParam = url.searchParams.get('season');
+  const weekParam = url.searchParams.get('week');
+
+  const season = seasonParam ? parseInt(seasonParam) : new Date().getFullYear();
+  const week = weekParam ? parseInt(weekParam) : undefined;
+
+  // Validate week (1-18 regular season, 19-22 playoffs)
+  if (week !== undefined && (week < 1 || week > 22)) {
+    return badRequest(`Invalid week: ${week}. Week must be between 1 and 22.`);
   }
 
   try {
-    const url = new URL(request.url);
-    const seasonParam = url.searchParams.get('season');
-    const weekParam = url.searchParams.get('week');
+    const data = await fetchESPNScores(season, week);
 
-    const season = seasonParam ? parseInt(seasonParam) : undefined;
-    const week = weekParam ? parseInt(weekParam) : undefined;
-
-    // Create adapter with env API key
-    const adapter = createSportsDataIOAdapter(env.SPORTSDATAIO_API_KEY);
-
-    // Fetch scores from SportsDataIO
-    const response = await adapter.getNFLScores(season, week);
-
-    if (!response.success || !response.data) {
-      return new Response(
-        JSON.stringify({
-          error: 'Failed to fetch NFL scores',
-          details: response.error,
-          source: response.source,
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    const games = response.data;
-
-    // Categorize games by status
-    const categorized = {
-      live: games.filter((g) => g.Status === 'InProgress' || g.Status === 'Halftime'),
-      final: games.filter((g) => g.Status === 'Final' || g.Status === 'F/OT'),
-      scheduled: games.filter((g) => g.Status === 'Scheduled' || g.Status === 'Pregame'),
-    };
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        season: season || new Date().getFullYear(),
-        week: week || games[0]?.Week || 1,
-        games: categorized,
-        rawData: games,
-        source: response.source,
-        meta: {
-          totalGames: games.length,
-          liveGames: categorized.live.length,
-          completedGames: categorized.final.length,
-          scheduledGames: categorized.scheduled.length,
-          dataProvider: 'SportsDataIO',
-          timezone: 'America/Chicago',
-          cached: response.source.cacheHit,
-          updateFrequency: categorized.live.length > 0 ? '30 seconds' : '5 minutes',
-        },
-      }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          // Live games: 30s cache, otherwise 5min
-          'Cache-Control':
-            categorized.live.length > 0 ? 'public, max-age=30' : 'public, max-age=300',
-        },
-      }
-    );
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Cache-Control': data.hasLiveGames ? 'public, max-age=30' : 'public, max-age=300',
+      },
+    });
   } catch (error) {
     console.error('NFL Scores Error:', error);
+    const correlationId = generateCorrelationId();
     return new Response(
       JSON.stringify({
-        error: 'Internal server error',
+        error: 'Failed to fetch NFL scores',
         message: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString(),
+        correlationId,
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+          'X-Correlation-ID': correlationId,
+        },
       }
     );
   }
 };
+
+async function fetchESPNScores(season: number, week?: number): Promise<any> {
+  const headers = {
+    'User-Agent': 'BlazeSportsIntel/1.0 (https://blazesportsintel.com)',
+    Accept: 'application/json',
+  };
+
+  // ESPN scoreboard endpoint
+  let url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&season=${season}`;
+  if (week) {
+    url += `&week=${week}`;
+  }
+
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    throw new Error(`ESPN API returned ${response.status}`);
+  }
+
+  const data = await response.json();
+  const events = data.events || [];
+
+  const games = events.map((event: any) => {
+    const competition = event.competitions?.[0] || {};
+    const competitors = competition.competitors || [];
+    const homeTeam = competitors.find((c: any) => c.homeAway === 'home');
+    const awayTeam = competitors.find((c: any) => c.homeAway === 'away');
+
+    // Map ESPN status to our status enum
+    const espnStatus = event.status?.type?.name || 'STATUS_SCHEDULED';
+    let status: 'scheduled' | 'in_progress' | 'final' | 'postponed' = 'scheduled';
+
+    if (espnStatus === 'STATUS_FINAL' || espnStatus === 'STATUS_FINAL_OVERTIME') {
+      status = 'final';
+    } else if (
+      espnStatus === 'STATUS_IN_PROGRESS' ||
+      espnStatus === 'STATUS_HALFTIME' ||
+      espnStatus === 'STATUS_END_PERIOD'
+    ) {
+      status = 'in_progress';
+    } else if (espnStatus === 'STATUS_POSTPONED' || espnStatus === 'STATUS_CANCELED') {
+      status = 'postponed';
+    }
+
+    return {
+      id: parseInt(event.id) || 0,
+      week: data.week?.number || week || 1,
+      season,
+      homeTeam: {
+        id: parseInt(homeTeam?.team?.id) || 0,
+        name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Unknown',
+        score: parseInt(homeTeam?.score) || undefined,
+      },
+      awayTeam: {
+        id: parseInt(awayTeam?.team?.id) || 0,
+        name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Unknown',
+        score: parseInt(awayTeam?.score) || undefined,
+      },
+      status,
+      startTime: event.date || new Date().toISOString(),
+      venue: competition.venue?.fullName || undefined,
+    };
+  });
+
+  const hasLiveGames = games.some((g: any) => g.status === 'in_progress');
+
+  return {
+    week: data.week?.number || week || 1,
+    season,
+    games,
+    hasLiveGames,
+    meta: {
+      dataSource: 'ESPN API',
+      lastUpdated: new Date().toISOString(),
+      timezone: 'America/Chicago',
+    },
+  };
+}
