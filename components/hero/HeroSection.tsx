@@ -16,8 +16,8 @@
  */
 
 import Link from 'next/link';
-import { type ReactNode, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { type ReactNode, useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion, type Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { HeroEmbers } from '@/components/three/HeroEmbers';
 import { Marquee } from '@/components/ui/Marquee';
@@ -60,7 +60,7 @@ export interface HeroSectionProps {
 }
 
 // Animation variants for staggered content entrance
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -71,7 +71,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
@@ -113,7 +113,11 @@ export function HeroSection({
   showMarquee = false,
   enableParallax = true,
   className,
-}: HeroSectionProps): JSX.Element {
+}: HeroSectionProps) {
+  // Respect user's motion preference
+  const prefersReducedMotion = useReducedMotion();
+  const shouldAnimate = enableParallax && !prefersReducedMotion;
+
   // Parallax scroll setup
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -122,9 +126,10 @@ export function HeroSection({
   });
 
   // Parallax transforms - background moves slower than foreground
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
-  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '15%']);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // Disabled when user prefers reduced motion
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', shouldAnimate ? '30%' : '0%']);
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', shouldAnimate ? '15%' : '0%']);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, shouldAnimate ? 0 : 1]);
 
   // Homepage variant with parallax
   if (variant === 'home') {
@@ -139,7 +144,7 @@ export function HeroSection({
         {/* Three.js Ember Particles Background with Parallax */}
         <motion.div
           className="absolute inset-0 -z-10"
-          style={enableParallax ? { y: backgroundY } : undefined}
+          style={shouldAnimate ? { y: backgroundY } : undefined}
         >
           <HeroEmbers className="" />
         </motion.div>
@@ -150,7 +155,7 @@ export function HeroSection({
         {/* Hero Content with Parallax */}
         <motion.div
           className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 relative z-10"
-          style={enableParallax ? { y: contentY, opacity: contentOpacity } : undefined}
+          style={shouldAnimate ? { y: contentY, opacity: contentOpacity } : undefined}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -241,7 +246,7 @@ export function HeroSection({
       {variant === 'video' && backgroundVideo ? (
         <motion.div
           className="absolute inset-0 z-0"
-          style={enableParallax ? { y: backgroundY } : undefined}
+          style={shouldAnimate ? { y: backgroundY } : undefined}
         >
           <video
             autoPlay
@@ -258,7 +263,7 @@ export function HeroSection({
       ) : variant === 'image' && backgroundImage ? (
         <motion.div
           className="absolute inset-0 z-0"
-          style={enableParallax ? { y: backgroundY } : undefined}
+          style={shouldAnimate ? { y: backgroundY } : undefined}
         >
           <div
             className="w-full h-full bg-cover bg-center scale-110"
@@ -269,7 +274,7 @@ export function HeroSection({
       ) : (
         <motion.div
           className={cn('absolute inset-0 z-0 bg-gradient-to-b', sportGradients[sportTheme])}
-          style={enableParallax ? { y: backgroundY } : undefined}
+          style={shouldAnimate ? { y: backgroundY } : undefined}
         />
       )}
 
@@ -295,7 +300,7 @@ export function HeroSection({
             ? 'max-w-7xl mx-auto grid md:grid-cols-5 gap-8 md:gap-12 items-end'
             : 'max-w-4xl mx-auto text-center'
         )}
-        style={enableParallax ? { y: contentY, opacity: contentOpacity } : undefined}
+        style={shouldAnimate ? { y: contentY, opacity: contentOpacity } : undefined}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -349,10 +354,7 @@ export function HeroSection({
 
         {/* Right content (stats/badges) - 40% on asymmetric, overlaps bottom */}
         {layout === 'asymmetric' && rightContent && (
-          <motion.div
-            className="md:col-span-2 relative md:translate-y-8"
-            variants={itemVariants}
-          >
+          <motion.div className="md:col-span-2 relative md:translate-y-8" variants={itemVariants}>
             {rightContent}
           </motion.div>
         )}
