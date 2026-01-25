@@ -1,5 +1,5 @@
 const DEFAULT_CORS_HEADERS = {
-  'Access-Control-Allow-Origin': 'https://blazesportsintel.com',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Accept',
   'X-Content-Type-Options': 'nosniff',
@@ -7,6 +7,13 @@ const DEFAULT_CORS_HEADERS = {
   'X-XSS-Protection': '1; mode=block',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+};
+
+/**
+ * Generate a unique correlation ID for request tracing
+ */
+export const generateCorrelationId = () => {
+  return `bsi-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 };
 
 export const corsHeaders = {
@@ -25,15 +32,62 @@ export const ok = (data, init = {}) =>
 
 export const err = (error, status = 500, init = {}) => {
   const message = error instanceof Error && error.message ? error.message : 'Internal Server Error';
+  const correlationId = generateCorrelationId();
 
   return new Response(
     JSON.stringify({
       error: message,
+      correlationId,
     }),
     {
       status,
       headers: {
         ...corsHeaders,
+        'X-Correlation-ID': correlationId,
+        ...(init.headers || {}),
+      },
+    }
+  );
+};
+
+/**
+ * 404 Not Found response
+ */
+export const notFound = (message = 'Resource not found', init = {}) => {
+  const correlationId = generateCorrelationId();
+
+  return new Response(
+    JSON.stringify({
+      error: message,
+      correlationId,
+    }),
+    {
+      status: 404,
+      headers: {
+        ...corsHeaders,
+        'X-Correlation-ID': correlationId,
+        ...(init.headers || {}),
+      },
+    }
+  );
+};
+
+/**
+ * 400 Bad Request response
+ */
+export const badRequest = (message = 'Bad request', init = {}) => {
+  const correlationId = generateCorrelationId();
+
+  return new Response(
+    JSON.stringify({
+      error: message,
+      correlationId,
+    }),
+    {
+      status: 400,
+      headers: {
+        ...corsHeaders,
+        'X-Correlation-ID': correlationId,
         ...(init.headers || {}),
       },
     }
@@ -252,11 +306,14 @@ export const rateLimit = async (env, request, maxRequests = 100, windowMs = 6000
  * Rate limit error response
  */
 export const rateLimitError = (resetAt, retryAfter) => {
+  const correlationId = generateCorrelationId();
+
   return new Response(
     JSON.stringify({
       error: 'Too Many Requests',
       message: 'Rate limit exceeded. Please try again later.',
       retryAfter: retryAfter || 60,
+      correlationId,
     }),
     {
       status: 429,
@@ -264,6 +321,7 @@ export const rateLimitError = (resetAt, retryAfter) => {
         ...corsHeaders,
         'Retry-After': String(retryAfter || 60),
         'X-RateLimit-Reset': resetAt ? resetAt.toISOString() : '',
+        'X-Correlation-ID': correlationId,
       },
     }
   );

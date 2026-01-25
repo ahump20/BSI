@@ -179,6 +179,26 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     const [teamInfo, roster, stats, schedule, standings, liveGames] = await Promise.all(promises);
 
+    // Return 404 if team not found
+    if (!teamInfo || !teamInfo.id) {
+      const correlationId = `bsi-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+      return new Response(
+        JSON.stringify({
+          error: 'Team not found',
+          message: `No MLB team found with ID ${teamIdNum}`,
+          correlationId,
+        }),
+        {
+          status: 404,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'X-Correlation-ID': correlationId,
+          },
+        }
+      );
+    }
+
     response.team = teamInfo;
     if (roster) response.roster = roster;
     if (stats) response.stats = stats;
@@ -227,11 +247,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     console.error('MLB team error:', error);
 
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const correlationId = `bsi-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 
     return new Response(
       JSON.stringify({
         error: 'Failed to fetch team data',
         message: errorMessage,
+        correlationId,
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       }),
       {
@@ -239,6 +261,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
+          'X-Correlation-ID': correlationId,
         },
       }
     );

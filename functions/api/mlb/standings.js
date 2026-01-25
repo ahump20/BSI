@@ -4,6 +4,7 @@
 import {
   ok,
   err,
+  badRequest,
   cache,
   withRetry,
   validateMLBRecord,
@@ -11,6 +12,9 @@ import {
   rateLimit,
   rateLimitError,
 } from '../_utils.js';
+
+// Valid MLB divisions
+const VALID_DIVISIONS = ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
 
 /**
  * MLB Standings endpoint
@@ -28,6 +32,18 @@ export async function onRequestGet(context) {
 
   const division = url.searchParams.get('division');
   const league = url.searchParams.get('league'); // 'AL' or 'NL'
+
+  // Validate division parameter if provided
+  if (division && !VALID_DIVISIONS.includes(division)) {
+    return badRequest(
+      `Invalid division: "${division}". Valid divisions are: ${VALID_DIVISIONS.join(', ')}`
+    );
+  }
+
+  // Validate league parameter if provided
+  if (league && !['AL', 'NL'].includes(league)) {
+    return badRequest(`Invalid league: "${league}". Valid leagues are: AL, NL`);
+  }
 
   try {
     const cacheKey = `mlb:standings:${division || league || 'all'}`;
@@ -91,26 +107,28 @@ async function fetchMLBStandings(filterDivision, filterLeague) {
 
 /**
  * Process and validate MLB standings data
+ * Returns array of { division, league, teams } objects matching test expectations
  */
 function processMLBStandingsData(data, filterDivision, filterLeague) {
-  const allTeams = [];
+  const divisionStandings = [];
 
   // MLB Stats API structure: records array contains divisions
   const records = data.records || [];
 
   records.forEach((division) => {
     const divisionName = division.division?.name; // e.g., "American League East"
-    const divisionAbbr = division.division?.abbreviation; // e.g., "ALE"
     const leagueName = division.league?.name; // "American League" or "National League"
     const leagueAbbr = leagueName?.includes('American') ? 'AL' : 'NL';
 
     // Extract simple division name (East, Central, West)
     const simpleDivisionName = divisionName?.split(' ').pop() || 'Unknown';
+    const fullDivisionName = `${leagueAbbr} ${simpleDivisionName}`; // e.g., "NL Central"
 
-    // Filter by division or league if specified
-    if (filterDivision && !divisionAbbr?.includes(filterDivision)) {
+    // Filter by division if specified (e.g., "NL Central")
+    if (filterDivision && fullDivisionName !== filterDivision) {
       return;
     }
+    // Filter by league if specified
     if (filterLeague && leagueAbbr !== filterLeague) {
       return;
     }
@@ -122,23 +140,26 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
       const losses = teamRecord.losses || 0;
       const gamesPlayed = teamRecord.gamesPlayed || 0;
       const winningPercentage = parseFloat(teamRecord.leagueRecord?.pct || '0.000');
-      const gamesBack = parseFloat(teamRecord.gamesBack || '0.0');
+      const gamesBack = parseFloat(teamRecord.gamesBack || '0') || 0;
       const streak = teamRecord.streak?.streakCode || '-';
       const runsScored = teamRecord.runsScored || 0;
       const runsAllowed = teamRecord.runsAllowed || 0;
 
       const teamData = {
-        teamName: team.name || team.teamName || 'Unknown Team',
-        teamAbbr: team.abbreviation || team.name?.slice(0, 3).toUpperCase() || 'UNK',
+        id: team.id,
+        name: team.name || team.teamName || 'Unknown Team',
+        abbreviation: team.abbreviation || team.name?.slice(0, 3).toUpperCase() || 'UNK',
+        city: team.locationName || team.name?.split(' ').slice(0, -1).join(' ') || '',
+        division: fullDivisionName,
+        league: leagueAbbr,
         wins,
         losses,
-        winPercentage: winningPercentage,
+        winPct: winningPercentage,
         gamesBack,
-        division: simpleDivisionName,
-        league: leagueAbbr,
         runsScored,
         runsAllowed,
         streakCode: streak,
+        lastUpdated: new Date().toISOString(),
       };
 
       // Validate record
@@ -156,22 +177,26 @@ function processMLBStandingsData(data, filterDivision, filterLeague) {
       return teamData;
     });
 
-    allTeams.push(...teams);
+    // Sort teams by wins descending within division
+    teams.sort((a, b) => b.wins - a.wins);
+
+    divisionStandings.push({
+      division: fullDivisionName,
+      league: leagueAbbr,
+      teams,
+      lastUpdated: new Date().toISOString(),
+      dataSource: 'MLB Stats API',
+    });
   });
 
-  // Sort teams by league and division, then by wins
-  return allTeams.sort((a, b) => {
-    // Sort by league (AL first)
+  // Sort divisions: AL first, then by East/Central/West
+  const divOrder = ['East', 'Central', 'West'];
+  return divisionStandings.sort((a, b) => {
     if (a.league !== b.league) {
       return a.league === 'AL' ? -1 : 1;
     }
-    // Then by division
-    const divOrder = ['East', 'Central', 'West'];
-    const divCompare = divOrder.indexOf(a.division) - divOrder.indexOf(b.division);
-    if (divCompare !== 0) {
-      return divCompare;
-    }
-    // Then by wins (descending)
-    return b.wins - a.wins;
+    const aDivPart = a.division.split(' ').pop();
+    const bDivPart = b.division.split(' ').pop();
+    return divOrder.indexOf(aDivPart) - divOrder.indexOf(bDivPart);
   });
 }
