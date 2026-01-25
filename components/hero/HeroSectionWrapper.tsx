@@ -17,7 +17,13 @@ const HeroSection = dynamic(() => import('./HeroSection').then((mod) => mod.Hero
 });
 
 export function HeroSectionWrapper() {
-  return <HeroSection />;
+  return (
+    <HeroSection
+      variant="video"
+      backgroundVideo="/videos/bsi-promo.mp4"
+      backgroundImage="/images/bsi-promo-poster.jpg"
+    />
+  );
 }
 
 export default HeroSectionWrapper;
