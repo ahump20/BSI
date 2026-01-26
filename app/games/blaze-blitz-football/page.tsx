@@ -25,7 +25,7 @@ export default function BlazeBlitzFootballPage() {
       description="7-on-7 arcade football action. Run, juke, and score touchdowns before time runs out. Use your turbo wisely. A fast-paced 90-second football experience you can play anywhere."
       icon="🏈"
       isLive={true}
-      playUrl="./play"
+      playUrl="/games/blaze-blitz-football/play"
       features={[
         '90-second arcade sessions',
         '7-on-7 football action',

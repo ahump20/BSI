@@ -25,7 +25,7 @@ export default function SandlotSluggersPage() {
       description="A 60-second batting challenge that's simple to play but hard to master. Time your swings perfectly, rack up hits, and chase home runs. Watch the ball soar over the backyard fence."
       icon="⚾"
       isLive={true}
-      playUrl="./play"
+      playUrl="/games/sandlot-sluggers/play"
       features={[
         '60-second batting challenges',
         'Simple timing-based gameplay',

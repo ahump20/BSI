@@ -25,7 +25,7 @@ export default function BlazeHotDogPage() {
       description="Help Blaze the dachshund catch falling hot dogs! Watch her get progressively chonkier as you rack up points. Golden hot dogs are worth 5 pts. Power-ups included. A fun 45-second arcade experience."
       icon="🌭"
       isLive={true}
-      playUrl="./play"
+      playUrl="/games/blaze-hot-dog/play"
       features={[
         '45-second arcade sessions',
         'Touch and keyboard controls',
