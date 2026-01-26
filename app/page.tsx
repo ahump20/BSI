@@ -26,7 +26,7 @@ const features = [
     icon: '🔄',
     title: 'Transfer Portal Tracker',
     description:
-      'Every D1 transfer. Baseball and football. Updated while ESPN runs their third Yankees segment.',
+      'Every D1 transfer. Baseball and football. Updated in real-time, every 30 seconds.',
   },
   {
     icon: '📊',
@@ -59,7 +59,7 @@ export default function HomePage() {
             <span className="text-burnt-orange">PATH LESS BEATEN</span>
           </h1>
           <p className="text-xl md:text-2xl text-text-secondary mb-4 max-w-3xl mx-auto">
-            Every game matters to someone. We cover the ones ESPN ignores.
+            Every game matters to someone. Complete coverage for every team.
           </p>
           <p className="text-lg text-text-tertiary mb-10 max-w-3xl mx-auto">
             The #1 NCAA Transfer Portal tracker for College Baseball and CFB.{' '}
@@ -109,9 +109,8 @@ export default function HomePage() {
                 <span className="block text-burnt-orange">Intelligence Hub</span>
               </h2>
               <p className="text-lg text-text-secondary mb-6 leading-relaxed">
-                ESPN treats college baseball like an afterthought. We built what fans actually
-                deserve. Track every D1 transfer in real-time. See commitments as they happen. Get
-                alerts for players at your school.
+                College baseball deserves better coverage—so we built it. Track every D1 transfer in
+                real-time. See commitments as they happen. Get alerts for players at your school.
               </p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-3 text-text-primary">
@@ -232,7 +231,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-display font-bold text-white text-center mb-4">WHY BSI?</h2>
           <p className="text-text-secondary text-center mb-12 max-w-2xl mx-auto">
-            Built by a fan who got tired of waiting for ESPN to care about college baseball.
+            Built by fans who wanted better coverage for college baseball.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (

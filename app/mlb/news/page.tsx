@@ -124,8 +124,7 @@ export default function MLBNewsPage() {
                 MLB News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                Trades, injuries, game recaps, and analysis—without the hot takes. Just the news
-                that matters.
+                Trades, injuries, game recaps, and analysis. Data-driven coverage for what matters.
               </p>
             </ScrollReveal>
           </Container>

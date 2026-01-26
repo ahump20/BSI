@@ -160,8 +160,8 @@ export default function ScoresHubPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary mt-4 text-lg max-w-2xl">
-                Real-time scores across MLB, NFL, NBA, and 300+ college baseball programs. The
-                coverage ESPN won&apos;t give you.
+                Real-time scores across MLB, NFL, NBA, and 300+ college baseball programs. Complete
+                coverage, every game.
               </p>
             </ScrollReveal>
 

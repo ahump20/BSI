@@ -68,8 +68,7 @@ export default function CollegeRecapClient() {
           </svg>
           <p className="text-text-secondary">Game recap drops after the final out.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Not some AI-generated summary—actual game context, key moments, and the stuff ESPN won't
-            tell you.
+            Not some AI-generated summary—actual game context, key moments, and real analysis.
           </p>
         </div>
       </Card>

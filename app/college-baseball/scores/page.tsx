@@ -326,7 +326,7 @@ export default function CollegeBaseballScoresPage() {
 
                 <ScrollReveal direction="up" delay={150}>
                   <p className="text-text-secondary mt-2">
-                    Live scores for all 300+ D1 programs — the coverage ESPN won&apos;t give you
+                    Live scores for all 300+ D1 programs — complete coverage, every game
                   </p>
                 </ScrollReveal>
               </div>

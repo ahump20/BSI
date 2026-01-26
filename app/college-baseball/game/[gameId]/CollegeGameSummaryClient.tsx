@@ -51,7 +51,7 @@ export default function CollegeGameSummaryClient() {
           </svg>
           <p className="text-text-secondary">First pitch hasn't happened yet.</p>
           <p className="text-text-tertiary text-sm mt-2">
-            Come back when the game gets going. This is what ESPN ignores—but we'll have every stat.
+            Come back when the game gets going. We'll have every stat, every play.
           </p>
           <p className="text-burnt-orange text-sm mt-4 font-semibold">
             {game.status.detailedState}

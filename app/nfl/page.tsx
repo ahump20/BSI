@@ -52,8 +52,8 @@ export default function NFLPage() {
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary text-lg max-w-2xl mb-8">
-                Complete coverage of all 32 NFL teams. Standings, news, and analysis without the
-                network spin.
+                Complete coverage of all 32 NFL teams. Standings, news, and analysis. Real data,
+                real-time.
               </p>
             </ScrollReveal>
 

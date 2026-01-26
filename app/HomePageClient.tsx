@@ -142,7 +142,7 @@ const features = [
   {
     icon: '🎯',
     title: 'College Baseball First',
-    description: 'ESPN treats it like an afterthought. We built what fans actually deserve.',
+    description: 'The coverage fans deserve. Complete D1 data for every team, every game.',
     gradient: 'from-gold-500 to-gold-600',
   },
   {
@@ -406,12 +406,9 @@ export function HomePageClient() {
           </svg>
 
           <blockquote className="text-2xl md:text-3xl font-serif text-white/90 leading-relaxed mb-8">
-            ESPN treats college baseball like an afterthought. Fans check scores at 11 PM and get a
-            paragraph if they're lucky.
-            <span className="text-burnt-orange-400">
-              {' '}
-              I got tired of waiting for someone else to fix it.
-            </span>
+            College baseball fans check scores at 11 PM and find incomplete coverage. Every team
+            deserves real data, real analytics.
+            <span className="text-burnt-orange-400"> I built what fans actually needed.</span>
           </blockquote>
 
           <div className="flex items-center justify-center gap-4">

@@ -127,8 +127,8 @@ export default function CollegeBaseballNewsPage() {
                 College Baseball News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                The transfer portal moves, recruiting wins, and game coverage ESPN won't give you.
-                All 300+ D1 programs, actually covered.
+                The transfer portal moves, recruiting wins, and game coverage fans deserve. All 300+
+                D1 programs, actually covered.
               </p>
             </ScrollReveal>
           </Container>

@@ -25,7 +25,7 @@ const colors = {
 const chapters = [
   { id: 'soil', title: 'The Soil', subtitle: 'West Columbia, 1995' },
   { id: 'legacy', title: 'The Legacy', subtitle: '40 Years of Longhorn Football' },
-  { id: 'fire', title: 'The Fire', subtitle: 'ESPN Treats College Baseball Like an Afterthought' },
+  { id: 'fire', title: 'The Fire', subtitle: 'A Gap That Needed Filling' },
   { id: 'name', title: 'The Name', subtitle: 'A Dog Named Blaze' },
   { id: 'covenant', title: 'The Covenant', subtitle: 'What Texas Really Means' },
 ];
@@ -350,9 +350,7 @@ export default function AboutPage() {
                 >
                   The Fire
                 </h2>
-                <p className="text-gray-400 mt-2">
-                  ESPN Treats College Baseball Like an Afterthought
-                </p>
+                <p className="text-gray-400 mt-2">A Gap That Needed Filling</p>
               </div>
 
               <div
@@ -369,10 +367,10 @@ export default function AboutPage() {
                   Waiting for someone else to fix sports coverage.
                 </p>
                 <p className="leading-relaxed">
-                  ESPN treats college baseball like an afterthought. Try finding a box score for a
-                  midweek game between Rice and Houston. Try tracking your team&apos;s conference
-                  standings without clicking through 15 pages. Try getting real analytics instead of
-                  just scores.
+                  College baseball coverage has gaps. Try finding a box score for a midweek game
+                  between Rice and Houston. Try tracking your team&apos;s conference standings
+                  without clicking through 15 pages. Try getting real analytics instead of just
+                  scores.
                 </p>
                 <p className="leading-relaxed text-xl" style={{ color: colors.ember }}>
                   Fans deserve better. So I built it myself.
@@ -577,7 +575,7 @@ export default function AboutPage() {
                       <div>
                         <h4 className="font-semibold text-white">Fan-First Coverage</h4>
                         <p className="text-sm text-gray-400">
-                          We cover the games ESPN ignores. Every game matters to someone.
+                          We cover every game, every team. Every game matters to someone.
                         </p>
                       </div>
                     </div>

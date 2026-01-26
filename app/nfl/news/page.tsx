@@ -124,7 +124,7 @@ export default function NFLNewsPage() {
                 NFL News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                Trades, injuries, draft buzz, and game coverage. All 32 teams, no network spin.
+                Trades, injuries, draft buzz, and game coverage. All 32 teams. Just the facts.
               </p>
             </ScrollReveal>
           </Container>

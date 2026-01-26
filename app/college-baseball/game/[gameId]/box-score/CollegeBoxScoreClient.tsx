@@ -38,7 +38,7 @@ export default function CollegeBoxScoreClient() {
           <p className="text-text-secondary">Box score not available yet.</p>
           <p className="text-text-tertiary text-sm mt-2">
             Once the first pitch flies, every at-bat and every pitch gets tracked here. The full
-            picture, no ESPN filter.
+            picture.
           </p>
         </div>
       </Card>
