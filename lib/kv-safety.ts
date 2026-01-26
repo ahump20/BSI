@@ -7,7 +7,7 @@ import type { LifecycleState } from './api-contract';
 import type { DatasetStatus } from './semantic-validation';
 
 /** HTTP status codes used for KV safety metadata */
-export type SafeHTTPStatus = 200 | 202 | 204 | 503;
+export type SafeHTTPStatus = 200 | 202 | 204 | 422 | 503;
 
 /** Metadata stored with KV entries for HTTP reconstruction */
 export interface KVSafetyMetadata {
@@ -24,6 +24,12 @@ export interface KVSafetyMetadata {
   isLKG?: boolean;
   /** Reason for serving LKG if applicable */
   lkgReason?: string | null;
+  /** Schema version at time of write (semver) */
+  schemaVersion?: string;
+  /** Schema hash for quick mismatch detection */
+  schemaHash?: string;
+  /** Timestamp when commit was finalized */
+  committedAt?: string;
 }
 
 /** KV data wrapped with safety metadata */

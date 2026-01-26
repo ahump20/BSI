@@ -12,10 +12,14 @@ export {
   type ResponseMeta,
   type APIResponse,
   type CreateResponseOptions,
+  type ConsumerCompatibility,
+  type RenderabilityContract,
+  type SchemaAssertionResult,
   createAPIResponse,
   createSuccessResponse,
   createUnavailableResponse,
   createInvalidResponse,
+  buildRenderabilityContract,
 } from './api-contract';
 
 // Semantic Validation
@@ -62,8 +66,10 @@ export {
   type ValidatedReadResult,
   type ValidatedReadOptions,
   type ValidatedReadVersionedResult,
+  type SchemaAssertionInfo,
   validatedRead,
   validatedReadVersioned,
+  assertShapeBeforeResponse,
   toResponse,
 } from './validated-read';
 
@@ -116,3 +122,22 @@ export {
   markIngestionFailed,
   readCurrentVersion,
 } from './dataset-ingest';
+
+// Schema Validation System
+export {
+  type InvariantRuleType,
+  type InvariantRule,
+  type SchemaInvariants,
+  type DatasetSchema,
+  type SchemaErrorReason,
+  type FieldViolation,
+  type SchemaValidationResult,
+  computeSchemaHash,
+  getActiveSchema,
+  getSchemaByVersion,
+  validateAgainstSchema,
+  isSchemaCompatible,
+  canPromoteToKV,
+  createSchema,
+  deactivateSchema,
+} from './schema-validation';

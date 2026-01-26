@@ -27,12 +27,25 @@ export interface QuotaMeta {
   resetAt: string;
 }
 
+/** Consumer compatibility status for schema versioning */
+export type ConsumerCompatibility = 'compatible' | 'incompatible' | 'unknown';
+
+/** Renderability contract for schema-validated responses */
+export interface RenderabilityContract {
+  renderable: boolean;
+  schemaVersion: string | null;
+  consumerCompatibility: ConsumerCompatibility;
+  reason?: string;
+}
+
 /** Full response metadata */
 export interface ResponseMeta {
   cache: CacheMeta;
   planTier: 'highlightly_pro';
   quota: QuotaMeta;
   lifecycle: LifecycleState;
+  /** Schema renderability contract (present when schema validation is enabled) */
+  renderability?: RenderabilityContract;
 }
 
 /** Standard BSI API response wrapper */
@@ -146,4 +159,98 @@ export function createInvalidResponse<T>(errorCode: string, errorMessage: string
     errorCode,
     errorMessage,
   });
+}
+
+/** Schema assertion result for building renderability contract */
+export interface SchemaAssertionResult {
+  passed: boolean;
+  reason?: string;
+}
+
+/**
+ * Build a RenderabilityContract from schema assertion result.
+ * Used to inform consumers whether data is structurally valid.
+ */
+export function buildRenderabilityContract(
+  schemaAssertion: SchemaAssertionResult | undefined,
+  schemaVersion: string | null,
+  currentSchemaVersion: string | null
+): RenderabilityContract {
+  // No schema defined - unknown compatibility
+  if (!schemaVersion) {
+    return {
+      renderable: true,
+      schemaVersion: null,
+      consumerCompatibility: 'unknown',
+    };
+  }
+
+  // Schema assertion failed
+  if (schemaAssertion && !schemaAssertion.passed) {
+    return {
+      renderable: false,
+      schemaVersion,
+      consumerCompatibility: 'incompatible',
+      reason: schemaAssertion.reason,
+    };
+  }
+
+  // Check version compatibility (N or N-1)
+  const compatibility = determineCompatibility(schemaVersion, currentSchemaVersion);
+
+  return {
+    renderable: schemaAssertion?.passed ?? true,
+    schemaVersion,
+    consumerCompatibility: compatibility,
+    reason: compatibility === 'incompatible' ? `Schema version mismatch` : undefined,
+  };
+}
+
+/**
+ * Determine consumer compatibility based on schema versions.
+ * Compatible if data version is N or N-1 relative to current active version.
+ */
+function determineCompatibility(
+  dataVersion: string,
+  currentVersion: string | null
+): ConsumerCompatibility {
+  if (!currentVersion) {
+    return 'unknown';
+  }
+
+  const dataSemver = parseSemverSimple(dataVersion);
+  const currentSemver = parseSemverSimple(currentVersion);
+
+  if (!dataSemver || !currentSemver) {
+    return dataVersion === currentVersion ? 'compatible' : 'unknown';
+  }
+
+  // Same major version is compatible
+  if (dataSemver.major === currentSemver.major) {
+    return 'compatible';
+  }
+
+  // N-1 major version is compatible
+  if (currentSemver.major === dataSemver.major + 1) {
+    return 'compatible';
+  }
+
+  return 'incompatible';
+}
+
+/**
+ * Parse semver string (simple implementation).
+ */
+function parseSemverSimple(
+  version: string
+): { major: number; minor: number; patch: number } | null {
+  const match = version.match(/^(\d+)\.(\d+)\.(\d+)/);
+  if (!match) {
+    return null;
+  }
+  return {
+    major: parseInt(match[1], 10),
+    minor: parseInt(match[2], 10),
+    patch: parseInt(match[3], 10),
+  };
 }

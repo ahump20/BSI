@@ -22,6 +22,10 @@ export interface DatasetCommit {
   committedAt: string | null;
   kvVersionedKey: string;
   source: string;
+  /** Schema version at time of commit (semver) */
+  schemaVersion: string | null;
+  /** Schema hash for quick mismatch detection */
+  schemaHash: string | null;
 }
 
 /** D1 row structure for dataset_current_version table */
@@ -32,6 +36,10 @@ export interface DatasetCurrentVersion {
   lastCommittedAt: string | null;
   isServingLKG: boolean;
   lkgReason: string | null;
+  /** Current active schema version */
+  currentSchemaVersion: string | null;
+  /** Schema hash of last committed data */
+  lastCommittedSchemaHash: string | null;
 }
 
 /** D1 row from query (snake_case) */
@@ -49,6 +57,8 @@ interface D1CommitRow {
   committed_at: string | null;
   kv_versioned_key: string;
   source: string;
+  schema_version: string | null;
+  schema_hash: string | null;
 }
 
 /** D1 row from query (snake_case) */
@@ -59,6 +69,8 @@ interface D1CurrentVersionRow {
   last_committed_at: string | null;
   is_serving_lkg: number;
   lkg_reason: string | null;
+  current_schema_version: string | null;
+  last_committed_schema_hash: string | null;
 }
 
 /** D1Database interface (Cloudflare Workers) */
@@ -144,6 +156,8 @@ export async function getCurrentVersion(
     lastCommittedAt: row.last_committed_at,
     isServingLKG: row.is_serving_lkg === 1,
     lkgReason: row.lkg_reason,
+    currentSchemaVersion: row.current_schema_version,
+    lastCommittedSchemaHash: row.last_committed_schema_hash,
   };
 }
 
@@ -223,6 +237,10 @@ export async function createPendingCommit(
     validationErrors: string[] | null;
     kvVersionedKey: string;
     source?: string;
+    /** Schema version (semver) at time of commit */
+    schemaVersion?: string;
+    /** Schema hash for quick validation */
+    schemaHash?: string;
   }
 ): Promise<void> {
   const now = new Date().toISOString();
@@ -232,8 +250,9 @@ export async function createPendingCommit(
     .prepare(
       `INSERT INTO dataset_commits
        (dataset_id, sport, version, status, record_count, previous_record_count,
-        validation_status, validation_errors, ingested_at, kv_versioned_key, source)
-       VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`
+        validation_status, validation_errors, ingested_at, kv_versioned_key, source,
+        schema_version, schema_hash)
+       VALUES (?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .bind(
       params.datasetId,
@@ -245,7 +264,9 @@ export async function createPendingCommit(
       errorsJson,
       now,
       params.kvVersionedKey,
-      params.source ?? 'highlightly'
+      params.source ?? 'highlightly',
+      params.schemaVersion ?? null,
+      params.schemaHash ?? null
     )
     .run();
 }
@@ -257,7 +278,8 @@ export async function createPendingCommit(
 export async function promoteCommit(
   db: D1Database,
   datasetId: string,
-  version: number
+  version: number,
+  schemaInfo?: { schemaVersion: string; schemaHash: string }
 ): Promise<boolean> {
   const now = new Date().toISOString();
 
@@ -281,20 +303,30 @@ export async function promoteCommit(
     .bind(now, datasetId, version)
     .run();
 
-  // Update current version pointer
+  // Update current version pointer with schema info
   await db
     .prepare(
       `INSERT INTO dataset_current_version
-       (dataset_id, current_version, last_committed_version, last_committed_at, is_serving_lkg, lkg_reason)
-       VALUES (?, ?, ?, ?, 0, NULL)
+       (dataset_id, current_version, last_committed_version, last_committed_at,
+        is_serving_lkg, lkg_reason, current_schema_version, last_committed_schema_hash)
+       VALUES (?, ?, ?, ?, 0, NULL, ?, ?)
        ON CONFLICT(dataset_id) DO UPDATE SET
          current_version = excluded.current_version,
          last_committed_version = excluded.last_committed_version,
          last_committed_at = excluded.last_committed_at,
          is_serving_lkg = 0,
-         lkg_reason = NULL`
+         lkg_reason = NULL,
+         current_schema_version = excluded.current_schema_version,
+         last_committed_schema_hash = excluded.last_committed_schema_hash`
     )
-    .bind(datasetId, version, version, now)
+    .bind(
+      datasetId,
+      version,
+      version,
+      now,
+      schemaInfo?.schemaVersion ?? null,
+      schemaInfo?.schemaHash ?? null
+    )
     .run();
 
   return true;
@@ -368,6 +400,8 @@ export async function getDatasetsServingLKG(db: D1Database): Promise<DatasetCurr
     lastCommittedAt: row.last_committed_at,
     isServingLKG: row.is_serving_lkg === 1,
     lkgReason: row.lkg_reason,
+    currentSchemaVersion: row.current_schema_version,
+    lastCommittedSchemaHash: row.last_committed_schema_hash,
   }));
 }
 
@@ -386,6 +420,8 @@ export async function getAllCurrentVersions(db: D1Database): Promise<DatasetCurr
     lastCommittedAt: row.last_committed_at,
     isServingLKG: row.is_serving_lkg === 1,
     lkgReason: row.lkg_reason,
+    currentSchemaVersion: row.current_schema_version,
+    lastCommittedSchemaHash: row.last_committed_schema_hash,
   }));
 }
 
@@ -404,5 +440,7 @@ function mapCommitRow(row: D1CommitRow): DatasetCommit {
     committedAt: row.committed_at,
     kvVersionedKey: row.kv_versioned_key,
     source: row.source,
+    schemaVersion: row.schema_version,
+    schemaHash: row.schema_hash,
   };
 }

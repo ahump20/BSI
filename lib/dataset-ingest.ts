@@ -5,7 +5,7 @@
 
 import type { DatasetStatus, ValidationResult } from './semantic-validation';
 import { validateDataset, getRule } from './semantic-validation';
-import { createKVSafetyMetadata, type KVSafeData } from './kv-safety';
+import { createKVSafetyMetadata, type KVSafeData, type SafeHTTPStatus } from './kv-safety';
 import { mapToHTTPStatus, determineLifecycleState } from './http-correctness';
 import { transitionReadiness, markLiveIngestion } from './readiness';
 import {
@@ -22,6 +22,7 @@ import {
   clearLKGStatus,
   type DatasetCurrentVersion,
 } from './dataset-commit';
+import { validateAgainstSchema, type SchemaValidationResult } from './schema-validation';
 
 /** KVNamespace interface (Cloudflare Workers) */
 interface KVNamespace {
@@ -78,6 +79,12 @@ export interface IngestResult {
   recordCount: number;
   validationStatus: DatasetStatus;
   error?: string;
+  /** Schema version used for validation (null if no schema defined) */
+  schemaVersion?: string | null;
+  /** Schema hash for edge verification */
+  schemaHash?: string | null;
+  /** Schema validation errors if any */
+  schemaErrors?: string[];
 }
 
 /** Cache TTL based on commit status */
@@ -100,7 +107,7 @@ interface R2Snapshot<T> {
 
 /**
  * Ingest dataset with commit boundary.
- * Writes to versioned KV key, validates, then promotes if valid.
+ * Writes to versioned KV key, validates (semantic + schema), then promotes if valid.
  * Falls back to LKG if validation fails.
  */
 export async function ingestDataset<T extends Record<string, unknown>>(
@@ -134,9 +141,23 @@ export async function ingestDataset<T extends Record<string, unknown>>(
     ? await getPreviousRecordCount(ctx.db, ctx.datasetId, currentVersionInfo.currentVersion)
     : null;
 
-  // Validate the data
+  // Validate the data (semantic validation)
   const validation = validateDataset(ctx.datasetId, data);
   const lifecycle = determineLifecycleState(validation, data.length > 0, !currentVersionInfo);
+
+  // Schema validation (if schema is defined for this dataset)
+  const schemaValidation = await validateAgainstSchema(ctx.db, ctx.datasetId, data);
+
+  // Schema validation failed - reject early
+  if (!schemaValidation.valid) {
+    return await handleSchemaValidationFailure(
+      ctx,
+      version,
+      validation,
+      schemaValidation,
+      data.length
+    );
+  }
 
   // Map to HTTP status
   const httpResult = mapToHTTPStatus({
@@ -156,12 +177,15 @@ export async function ingestDataset<T extends Record<string, unknown>>(
     expectedMinCount: rule.minRecordCount,
   });
 
-  // Extend metadata with version info
+  // Extend metadata with version and schema info
   const extendedMeta = {
     ...meta,
     version,
     isLKG: false,
     lkgReason: null as string | null,
+    schemaVersion: schemaValidation.schemaVersion,
+    schemaHash: schemaValidation.schemaHash,
+    committedAt: null as string | null,
   };
 
   // Wrap data with metadata
@@ -175,7 +199,7 @@ export async function ingestDataset<T extends Record<string, unknown>>(
     expirationTtl: CACHE_TTL.PENDING,
   });
 
-  // Create pending commit record
+  // Create pending commit record with schema info
   await createPendingCommit(ctx.db, {
     datasetId: ctx.datasetId,
     sport,
@@ -186,6 +210,8 @@ export async function ingestDataset<T extends Record<string, unknown>>(
     validationErrors: validation.errors.length > 0 ? validation.errors : null,
     kvVersionedKey: versionedKey,
     source: ctx.source,
+    schemaVersion: schemaValidation.schemaVersion ?? undefined,
+    schemaHash: schemaValidation.schemaHash ?? undefined,
   });
 
   // Decision: promote or fallback to LKG
@@ -196,7 +222,8 @@ export async function ingestDataset<T extends Record<string, unknown>>(
       versionedKey,
       currentKey,
       safeData,
-      httpResult
+      httpResult,
+      schemaValidation
     );
   }
 
@@ -213,16 +240,33 @@ async function handleSuccessfulIngestion<T>(
   versionedKey: string,
   currentKey: string,
   safeData: KVSafeData<T>,
-  httpResult: { httpStatus: 200 | 202 | 204 | 503; cacheEligible: boolean; reason: string }
+  httpResult: { httpStatus: SafeHTTPStatus; cacheEligible: boolean; reason: string },
+  schemaValidation: SchemaValidationResult
 ): Promise<IngestResult> {
-  // Promote commit in D1
-  await promoteCommit(ctx.db, ctx.datasetId, version);
+  const now = new Date().toISOString();
+
+  // Update metadata with committed timestamp
+  const committedMeta = {
+    ...safeData.meta,
+    committedAt: now,
+  };
+  const committedData: KVSafeData<T> = { data: safeData.data, meta: committedMeta };
+
+  // Promote commit in D1 with schema info
+  await promoteCommit(
+    ctx.db,
+    ctx.datasetId,
+    version,
+    schemaValidation.schemaVersion && schemaValidation.schemaHash
+      ? { schemaVersion: schemaValidation.schemaVersion, schemaHash: schemaValidation.schemaHash }
+      : undefined
+  );
 
   // Write current pointer (atomic swap)
   await ctx.kv.put(currentKey, String(version));
 
-  // Update versioned key TTL to committed duration
-  await ctx.kv.put(versionedKey, JSON.stringify(safeData), {
+  // Update versioned key with committed metadata and extended TTL
+  await ctx.kv.put(versionedKey, JSON.stringify(committedData), {
     expirationTtl: CACHE_TTL.COMMITTED,
   });
 
@@ -246,6 +290,72 @@ async function handleSuccessfulIngestion<T>(
     httpStatus: httpResult.httpStatus,
     recordCount: safeData.data.length,
     validationStatus: 'valid',
+    schemaVersion: schemaValidation.schemaVersion,
+    schemaHash: schemaValidation.schemaHash,
+  };
+}
+
+/**
+ * Handle schema validation failure: rollback and fallback to LKG.
+ */
+async function handleSchemaValidationFailure(
+  ctx: IngestContext,
+  version: number,
+  semanticValidation: ValidationResult,
+  schemaValidation: SchemaValidationResult,
+  recordCount: number
+): Promise<IngestResult> {
+  const schemaErrors = schemaValidation.errors;
+  const errorReason = `Schema validation failed: ${schemaErrors.join('; ')}`;
+
+  // Rollback this commit
+  await rollbackCommit(ctx.db, ctx.datasetId, version, errorReason);
+
+  // Check for LKG
+  const lkg = await getLastCommittedVersion(ctx.db, ctx.datasetId);
+
+  if (lkg) {
+    // LKG exists - mark as serving LKG
+    await markServingLKG(ctx.db, ctx.datasetId, lkg.version, errorReason);
+
+    // Transition to degraded state
+    await transitionReadiness(
+      ctx.db,
+      ctx.datasetId,
+      'degraded',
+      `Schema validation failed, serving LKG v${lkg.version}: ${errorReason}`
+    );
+
+    return {
+      success: false,
+      version,
+      committed: false,
+      isLKG: true,
+      httpStatus: 422,
+      recordCount,
+      validationStatus: semanticValidation.status,
+      error: `Schema validation failed, serving LKG v${lkg.version}`,
+      schemaVersion: schemaValidation.schemaVersion,
+      schemaHash: schemaValidation.schemaHash,
+      schemaErrors,
+    };
+  }
+
+  // No LKG - mark unavailable
+  await transitionReadiness(ctx.db, ctx.datasetId, 'unavailable', `No LKG: ${errorReason}`);
+
+  return {
+    success: false,
+    version,
+    committed: false,
+    isLKG: false,
+    httpStatus: 422,
+    recordCount,
+    validationStatus: semanticValidation.status,
+    error: `Schema validation failed, no LKG available`,
+    schemaVersion: schemaValidation.schemaVersion,
+    schemaHash: schemaValidation.schemaHash,
+    schemaErrors,
   };
 }
 
@@ -256,7 +366,7 @@ async function handleFailedIngestion(
   ctx: IngestContext,
   version: number,
   validation: ValidationResult,
-  httpResult: { httpStatus: 200 | 202 | 204 | 503; cacheEligible: boolean; reason: string }
+  httpResult: { httpStatus: SafeHTTPStatus; cacheEligible: boolean; reason: string }
 ): Promise<IngestResult> {
   const errorReason = validation.errors.join('; ') || 'Validation failed';
 

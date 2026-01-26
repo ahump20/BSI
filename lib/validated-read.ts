@@ -3,8 +3,12 @@
  * KV read with validation, HTTP status reconstruction, and R2 fallback.
  */
 
-import type { APIResponse } from './api-contract';
-import { createSuccessResponse, createUnavailableResponse } from './api-contract';
+import type { APIResponse, RenderabilityContract } from './api-contract';
+import {
+  createSuccessResponse,
+  createUnavailableResponse,
+  buildRenderabilityContract,
+} from './api-contract';
 import type { KVSafetyMetadata, SafeHTTPStatus } from './kv-safety';
 import { parseKVValue, createKVSafetyMetadata } from './kv-safety';
 import { validateDataset, getRule, type SemanticRule } from './semantic-validation';
@@ -21,6 +25,7 @@ import {
   getCurrentVersion,
   getLastCommittedVersion,
 } from './dataset-commit';
+import { getActiveSchema, isSchemaCompatible, type SchemaErrorReason } from './schema-validation';
 
 /** Result from validatedRead */
 export interface ValidatedReadResult<T> {
@@ -323,11 +328,149 @@ interface D1Result<T> {
   };
 }
 
+/** Schema assertion result for edge read */
+export interface SchemaAssertionInfo {
+  passed: boolean;
+  reason?: SchemaErrorReason;
+  details?: string;
+}
+
 /** Extended result with version info */
 export interface ValidatedReadVersionedResult<T> extends ValidatedReadResult<T> {
   version: number | null;
   isLKG: boolean;
   lkgReason: string | null;
+  /** Schema assertion result (present when schema validation is enabled) */
+  schemaAssertion?: SchemaAssertionInfo;
+  /** Renderability contract for consumers */
+  renderability?: RenderabilityContract;
+}
+
+/**
+ * Assert shape validity before serving response.
+ * Checks:
+ * 1. Schema hash matches D1 lastCommittedSchemaHash
+ * 2. Schema version is compatible (N or N-1)
+ * 3. Required fields exist in data (first record sampled)
+ * 4. Record count >= minimumRenderableCount
+ *
+ * Returns assertion result. On failure, caller should return 422 with no-store.
+ */
+export async function assertShapeBeforeResponse<T extends Record<string, unknown>>(
+  data: T[],
+  meta: KVSafetyMetadata | null,
+  db: D1Database,
+  datasetId: string
+): Promise<SchemaAssertionInfo> {
+  // No metadata - pass (backward compatible)
+  if (!meta) {
+    return { passed: true };
+  }
+
+  // No schema defined in metadata - pass (backward compatible)
+  if (!meta.schemaVersion || !meta.schemaHash) {
+    return { passed: true };
+  }
+
+  // Get current version info from D1
+  const currentVersionInfo = await getCurrentVersion(db, datasetId);
+
+  // No schema tracking in D1 - pass (backward compatible)
+  if (!currentVersionInfo?.lastCommittedSchemaHash) {
+    return { passed: true };
+  }
+
+  // Assertion 1: Schema hash matches
+  if (meta.schemaHash !== currentVersionInfo.lastCommittedSchemaHash) {
+    return {
+      passed: false,
+      reason: 'schema_mismatch',
+      details: `Data schema hash ${meta.schemaHash} does not match current ${currentVersionInfo.lastCommittedSchemaHash}`,
+    };
+  }
+
+  // Assertion 2: Schema version compatibility (N or N-1)
+  if (
+    currentVersionInfo.currentSchemaVersion &&
+    !isSchemaCompatible(currentVersionInfo.currentSchemaVersion, meta.schemaVersion)
+  ) {
+    return {
+      passed: false,
+      reason: 'schema_mismatch',
+      details: `Schema version ${meta.schemaVersion} incompatible with current ${currentVersionInfo.currentSchemaVersion}`,
+    };
+  }
+
+  // Assertion 3: Check minimum renderable count
+  const activeSchema = await getActiveSchema(db, datasetId);
+  if (activeSchema && data.length < activeSchema.minimumRenderableCount) {
+    return {
+      passed: false,
+      reason: 'insufficient_records',
+      details: `Record count ${data.length} below minimum ${activeSchema.minimumRenderableCount}`,
+    };
+  }
+
+  // Assertion 4: Spot-check required fields on first record
+  if (activeSchema && activeSchema.requiredFields.length > 0 && data.length > 0) {
+    const firstRecord = data[0];
+    for (const field of activeSchema.requiredFields) {
+      if (!(field in firstRecord) || firstRecord[field] === undefined) {
+        return {
+          passed: false,
+          reason: 'missing_required_field',
+          details: `First record missing required field '${field}'`,
+        };
+      }
+    }
+  }
+
+  return { passed: true };
+}
+
+/**
+ * Create a schema assertion failed result with 422 status.
+ */
+function createSchemaAssertionFailedResult<T>(
+  assertion: SchemaAssertionInfo,
+  datasetId: string,
+  version: number | null,
+  schemaVersion: string | null,
+  currentSchemaVersion: string | null
+): ValidatedReadVersionedResult<T> {
+  const renderability = buildRenderabilityContract(
+    { passed: false, reason: assertion.details },
+    schemaVersion,
+    currentSchemaVersion
+  );
+
+  const response = createUnavailableResponse<T[]>(
+    'SCHEMA_ASSERTION_FAILED',
+    assertion.details || 'Schema assertion failed',
+    'unavailable'
+  );
+
+  return {
+    response,
+    httpStatus: 422,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      'X-BSI-Dataset': datasetId,
+      'X-BSI-Lifecycle': 'unavailable',
+      'X-BSI-Cache-Eligible': 'false',
+      'X-BSI-Schema-Assertion': 'failed',
+      'X-BSI-Schema-Error': assertion.reason || 'unknown',
+      ...(version !== null && { 'X-BSI-Version': String(version) }),
+    },
+    source: 'none',
+    meta: null,
+    version,
+    isLKG: false,
+    lkgReason: null,
+    schemaAssertion: assertion,
+    renderability,
+  };
 }
 
 /**
@@ -338,6 +481,7 @@ export interface ValidatedReadVersionedResult<T> extends ValidatedReadResult<T> 
  * 1. Read :current pointer from KV
  * 2. Read :v{version} data from KV
  * 3. On pointer miss, fallback to D1 dataset_current_version.last_committed_version
+ * 4. Assert schema shape before response
  */
 export async function validatedReadVersioned<T extends Record<string, unknown>>(
   kv: KVNamespace,
@@ -416,20 +560,51 @@ export async function validatedReadVersioned<T extends Record<string, unknown>>(
     const parsed = parseKVValue<T>(kvRaw);
 
     if (parsed !== null && parsed.meta !== null && !parsed.isLegacy) {
+      // Assert schema shape before response
+      const schemaAssertion = await assertShapeBeforeResponse(
+        parsed.data,
+        parsed.meta,
+        db,
+        datasetId
+      );
+
+      // Schema assertion failed - return 422
+      if (!schemaAssertion.passed) {
+        const currentVersionInfo = await getCurrentVersion(db, datasetId);
+        return createSchemaAssertionFailedResult<T>(
+          schemaAssertion,
+          datasetId,
+          version,
+          parsed.meta.schemaVersion ?? null,
+          currentVersionInfo?.currentSchemaVersion ?? null
+        );
+      }
+
       const result = createResultFromVersionedData(parsed.data, parsed.meta, rule);
 
       // Check LKG status
       const lkgStatus = await isServingLKG(db, datasetId);
+
+      // Build renderability contract
+      const currentVersionInfo = await getCurrentVersion(db, datasetId);
+      const renderability = buildRenderabilityContract(
+        { passed: true },
+        parsed.meta.schemaVersion ?? null,
+        currentVersionInfo?.currentSchemaVersion ?? null
+      );
 
       return {
         ...result,
         version,
         isLKG: lkgStatus.isLKG,
         lkgReason: lkgStatus.reason,
+        schemaAssertion,
+        renderability,
         headers: {
           ...result.headers,
           'X-BSI-Version': String(version),
           ...(lkgStatus.isLKG && { 'X-BSI-LKG': 'true' }),
+          ...(parsed.meta.schemaVersion && { 'X-BSI-Schema-Version': parsed.meta.schemaVersion }),
         },
       };
     }
@@ -446,18 +621,49 @@ export async function validatedReadVersioned<T extends Record<string, unknown>>(
       const parsed = parseKVValue<T>(lkgRaw);
 
       if (parsed !== null && parsed.meta !== null && !parsed.isLegacy) {
+        // Assert schema shape for LKG data
+        const schemaAssertion = await assertShapeBeforeResponse(
+          parsed.data,
+          parsed.meta,
+          db,
+          datasetId
+        );
+
+        // LKG data also fails schema assertion - return 422
+        if (!schemaAssertion.passed) {
+          const currentVersionInfo = await getCurrentVersion(db, datasetId);
+          return createSchemaAssertionFailedResult<T>(
+            schemaAssertion,
+            datasetId,
+            lkg.version,
+            parsed.meta.schemaVersion ?? null,
+            currentVersionInfo?.currentSchemaVersion ?? null
+          );
+        }
+
         const result = createResultFromVersionedData(parsed.data, parsed.meta, rule);
+
+        // Build renderability contract for LKG
+        const currentVersionInfo = await getCurrentVersion(db, datasetId);
+        const renderability = buildRenderabilityContract(
+          { passed: true },
+          parsed.meta.schemaVersion ?? null,
+          currentVersionInfo?.currentSchemaVersion ?? null
+        );
 
         return {
           ...result,
           version: lkg.version,
           isLKG: true,
           lkgReason: `Current version ${version} missing, fell back to LKG v${lkg.version}`,
+          schemaAssertion,
+          renderability,
           headers: {
             ...result.headers,
             'X-BSI-Version': String(lkg.version),
             'X-BSI-LKG': 'true',
             'X-BSI-LKG-Reason': 'version_missing',
+            ...(parsed.meta.schemaVersion && { 'X-BSI-Schema-Version': parsed.meta.schemaVersion }),
           },
         };
       }
