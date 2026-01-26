@@ -1,5 +1,13 @@
 {
   "version": 1,
-  "include": ["/api/*"],
+  "include": [
+    "/api/*",
+    "/games/blaze-hot-dog/play",
+    "/games/blaze-hot-dog/play/*",
+    "/games/sandlot-sluggers/play",
+    "/games/sandlot-sluggers/play/*",
+    "/games/blaze-blitz-football/play",
+    "/games/blaze-blitz-football/play/*"
+  ],
   "exclude": []
 }

@@ -37,16 +37,6 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 /legal/terms /terms 301
 
 # ============================================
-# Games Proxy Rewrites (200 = proxy, not redirect)
-# ============================================
-/games/blaze-hot-dog/play/* https://blaze-hotdog-dash.pages.dev/:splat 200
-/games/blaze-hot-dog/play https://blaze-hotdog-dash.pages.dev 200
-/games/sandlot-sluggers/play/* https://blaze-backyard-baseball.pages.dev/:splat 200
-/games/sandlot-sluggers/play https://blaze-backyard-baseball.pages.dev 200
-/games/blaze-blitz-football/play/* https://blaze-blitz-football.pages.dev/:splat 200
-/games/blaze-blitz-football/play https://blaze-blitz-football.pages.dev 200
-
-# ============================================
 # Static Asset Rewrites
 # ============================================
 # CSS assets commonly requested without public/ prefix
