@@ -4,10 +4,10 @@ import { GameProductPage } from '@/components/games/GameProductPage';
 export const metadata: Metadata = {
   title: 'Blaze Blitz Football | BSI Arcade',
   description:
-    'Fast-paced football action with real-time play calling. Build your roster, call the plays, dominate the field. Coming soon from BSI Arcade.',
+    '7-on-7 arcade football action. Run, juke, and score touchdowns in 90 seconds. Play free in your browser.',
   openGraph: {
     title: 'Blaze Blitz Football | BSI Arcade',
-    description: 'Fast-paced football action with real-time play calling. Coming soon.',
+    description: '7-on-7 arcade football. Run, juke, score touchdowns. Play free now.',
     url: 'https://blazesportsintel.com/games/blaze-blitz-football',
     type: 'website',
   },
@@ -21,18 +21,20 @@ export default function BlazeBlitzFootballPage() {
     <GameProductPage
       id="blaze-blitz-football"
       title="Blaze Blitz Football"
-      tagline="Call the plays. Control the clock. Win the game."
-      description="Blaze Blitz Football brings the intensity of Friday nights to your screen. Build your roster from a pool of recruits, call plays in real-time, and outcoach your opponents. Whether you're running a two-minute drill or grinding out a fourth-quarter drive, every decision matters."
+      tagline="Run, juke, score. 90 seconds of pure football."
+      description="7-on-7 arcade football action. Run, juke, and score touchdowns before time runs out. Use your turbo wisely. A fast-paced 90-second football experience you can play anywhere."
       icon="🏈"
+      isLive={true}
+      playUrl="./play"
       features={[
-        'Real-time play calling with audibles',
-        'Roster building and player development',
-        'Multiple game modes: Season, Rivalry, Quick Play',
-        'Dynamic weather and field conditions',
-        'Formation editor and custom playbooks',
-        'Online multiplayer matchups',
-        'Career stats and leaderboards',
-        'Authentic football strategy depth',
+        '90-second arcade sessions',
+        '7-on-7 football action',
+        'Run, juke, and score touchdowns',
+        'Turbo boost for breakaway plays',
+        'Touch controls for mobile',
+        'Leaderboard competition',
+        'Instant browser play',
+        'No downloads or accounts needed',
       ]}
     />
   );

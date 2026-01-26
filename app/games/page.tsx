@@ -23,28 +23,25 @@ export const metadata: Metadata = {
 
 const games = [
   {
-    id: 'blaze-blitz-football',
-    title: 'Blaze Blitz Football',
-    description:
-      'Fast-paced football action with real-time play calling. Build your roster, call the plays, dominate the field.',
-    status: 'Coming Soon',
-    image: '/images/games/football-placeholder.svg',
-  },
-  {
     id: 'blaze-hot-dog',
-    title: 'Blaze Hot Dog',
+    title: 'Blaze Hot Dog Dash',
     description:
-      'Classic hot dog vendor arcade game. Serve fans at the stadium before the seventh inning stretch.',
-    status: 'Coming Soon',
-    image: '/images/games/hotdog-placeholder.svg',
+      'Help Blaze the dachshund catch falling hot dogs! Watch her get progressively chonkier. Golden hot dogs = 5 pts.',
+    isLive: true,
   },
   {
     id: 'sandlot-sluggers',
     title: 'Sandlot Sluggers',
     description:
-      'Backyard baseball with neighborhood rules. Home run derby, strikeout challenges, and summer memories.',
-    status: 'Coming Soon',
-    image: '/images/games/baseball-placeholder.svg',
+      'A 60-second batting challenge. Time your swings, rack up hits, and chase home runs. Simple to play, hard to master.',
+    isLive: true,
+  },
+  {
+    id: 'blaze-blitz-football',
+    title: 'Blaze Blitz Football',
+    description:
+      '7-on-7 arcade football action. Run, juke, and score touchdowns before time runs out. Use turbo wisely.',
+    isLive: true,
   },
 ];
 
@@ -63,7 +60,7 @@ export default function GamesPage() {
               <span className="text-gradient-blaze">Games</span>
             </h1>
             <p className="text-text-secondary text-center max-w-2xl mx-auto">
-              Sports games built by fans, for fans. Sign up to get notified when we launch.
+              Sports games built by fans, for fans. Play instantly in your browser.
             </p>
           </Container>
         </Section>
@@ -90,8 +87,8 @@ export default function GamesPage() {
                         <h2 className="font-display text-xl font-bold text-white group-hover:text-burnt-orange transition-colors">
                           {game.title}
                         </h2>
-                        <Badge variant="secondary" size="sm">
-                          {game.status}
+                        <Badge variant={game.isLive ? 'primary' : 'secondary'} size="sm">
+                          {game.isLive ? 'Play Now' : 'Coming Soon'}
                         </Badge>
                       </div>
                       <p className="text-text-tertiary text-sm">{game.description}</p>

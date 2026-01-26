@@ -2,12 +2,12 @@ import { Metadata } from 'next';
 import { GameProductPage } from '@/components/games/GameProductPage';
 
 export const metadata: Metadata = {
-  title: 'Blaze Hot Dog | BSI Arcade',
+  title: 'Blaze Hot Dog Dash | BSI Arcade',
   description:
-    'Classic hot dog vendor arcade game. Serve fans at the stadium before the seventh inning stretch. Coming soon from BSI Arcade.',
+    'Help Blaze the dachshund catch falling hot dogs! A fun 45-second arcade game. Play free in your browser.',
   openGraph: {
-    title: 'Blaze Hot Dog | BSI Arcade',
-    description: 'Classic stadium vendor arcade action. Coming soon.',
+    title: 'Blaze Hot Dog Dash | BSI Arcade',
+    description: 'Help Blaze catch hot dogs and get chonkier! Play free now.',
     url: 'https://blazesportsintel.com/games/blaze-hot-dog',
     type: 'website',
   },
@@ -20,19 +20,21 @@ export default function BlazeHotDogPage() {
   return (
     <GameProductPage
       id="blaze-hot-dog"
-      title="Blaze Hot Dog"
-      tagline="Hot dogs here! Get your hot dogs!"
-      description="Navigate the crowded stadium aisles as a hot dog vendor trying to serve as many fans as possible before the seventh inning stretch. Dodge spilled sodas, avoid blocking views during big plays, and master the art of making change while walking stairs backwards."
+      title="Blaze Hot Dog Dash"
+      tagline="Help Blaze catch falling hot dogs!"
+      description="Help Blaze the dachshund catch falling hot dogs! Watch her get progressively chonkier as you rack up points. Golden hot dogs are worth 5 pts. Power-ups included. A fun 45-second arcade experience."
       icon="🌭"
+      isLive={true}
+      playUrl="./play"
       features={[
-        'Classic arcade gameplay with modern polish',
-        'Multiple stadium venues to unlock',
-        'Power-ups: Speed Boost, Extra Inventory, Double Tips',
-        'Challenge modes: Time Attack, No-Drop, VIP Section',
-        'Day and night game atmospheres',
-        'Leaderboards and daily challenges',
-        'Unlockable vendor gear and hot dog varieties',
-        'Authentic ballpark sounds and crowd reactions',
+        '45-second arcade sessions',
+        'Touch and keyboard controls',
+        'Progressive chonk levels for Blaze',
+        'Golden hot dogs worth 5 points',
+        'Power-ups for extra time and points',
+        'Mobile-friendly touch controls',
+        'Instant play - no downloads',
+        'Share your high scores',
       ]}
     />
   );

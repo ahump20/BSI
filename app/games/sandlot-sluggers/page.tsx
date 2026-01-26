@@ -4,10 +4,10 @@ import { GameProductPage } from '@/components/games/GameProductPage';
 export const metadata: Metadata = {
   title: 'Sandlot Sluggers | BSI Arcade',
   description:
-    'Backyard baseball with neighborhood rules. Home run derby, strikeout challenges, and summer memories. Coming soon from BSI Arcade.',
+    'A 60-second batting challenge. Time your swings, rack up hits, and chase home runs. Play free in your browser.',
   openGraph: {
     title: 'Sandlot Sluggers | BSI Arcade',
-    description: 'Backyard baseball with neighborhood rules. Coming soon.',
+    description: '60-second batting challenge. Simple to play, hard to master. Play free now.',
     url: 'https://blazesportsintel.com/games/sandlot-sluggers',
     type: 'website',
   },
@@ -21,18 +21,20 @@ export default function SandlotSluggersPage() {
     <GameProductPage
       id="sandlot-sluggers"
       title="Sandlot Sluggers"
-      tagline="Backyard legends. Neighborhood rules."
-      description="Remember playing baseball until the streetlights came on? Sandlot Sluggers captures that feeling. Pick your team from the kids in the neighborhood, argue about ground rules, and swing for the fences. Ghost runners allowed."
+      tagline="60 seconds. Infinite home runs."
+      description="A 60-second batting challenge that's simple to play but hard to master. Time your swings perfectly, rack up hits, and chase home runs. Watch the ball soar over the backyard fence."
       icon="⚾"
+      isLive={true}
+      playUrl="./play"
       features={[
-        'Home Run Derby mode with increasing difficulty',
-        'Strikeout Challenge: pitch your way to glory',
-        'Neighborhood pickup games with AI teammates',
-        'Unlockable backyard venues and equipment',
-        'Custom house rules: ghost runners, do-overs, automatic outs',
-        'Day-to-dusk gameplay with golden hour lighting',
-        'Nostalgic soundtrack and sound effects',
-        'Local multiplayer support',
+        '60-second batting challenges',
+        'Simple timing-based gameplay',
+        'Chase home runs and high scores',
+        'Mobile-ready touch controls',
+        'Leaderboard competition',
+        'Instant play in your browser',
+        'No downloads required',
+        'Share your best scores',
       ]}
     />
   );

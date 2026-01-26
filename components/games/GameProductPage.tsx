@@ -16,6 +16,8 @@ interface GameProductPageProps {
   description: string;
   features: string[];
   icon: string;
+  isLive?: boolean;
+  playUrl?: string;
 }
 
 export function GameProductPage({
@@ -25,6 +27,8 @@ export function GameProductPage({
   description,
   features,
   icon,
+  isLive = false,
+  playUrl,
 }: GameProductPageProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -83,7 +87,15 @@ export function GameProductPage({
                 <div className="w-full md:w-1/3">
                   <Card padding="lg" className="text-center">
                     <div className="text-8xl mb-4">{icon}</div>
-                    <Badge variant="secondary">Coming Soon</Badge>
+                    {isLive && playUrl ? (
+                      <Link href={playUrl}>
+                        <Button variant="primary" size="lg" className="w-full">
+                          Play Now
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Badge variant="secondary">Coming Soon</Badge>
+                    )}
                   </Card>
                 </div>
 
@@ -132,69 +144,87 @@ export function GameProductPage({
           <Container>
             <div className="max-w-md mx-auto">
               <Card padding="lg">
-                <h2 className="font-display text-xl font-bold uppercase tracking-display mb-2 text-center">
-                  Get Notified
-                </h2>
-                <p className="text-text-tertiary text-sm text-center mb-6">
-                  Be the first to know when {title} launches.
-                </p>
-
-                {status === 'success' ? (
-                  <div className="text-center py-4">
-                    <div className="text-success text-4xl mb-2">✓</div>
-                    <p className="text-text-secondary">{message}</p>
-                  </div>
+                {isLive && playUrl ? (
+                  <>
+                    <h2 className="font-display text-xl font-bold uppercase tracking-display mb-2 text-center">
+                      Ready to Play?
+                    </h2>
+                    <p className="text-text-tertiary text-sm text-center mb-6">
+                      {title} is available now. Jump in and start playing.
+                    </p>
+                    <Link href={playUrl}>
+                      <Button variant="primary" size="lg" className="w-full">
+                        Play Now
+                      </Button>
+                    </Link>
+                  </>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-text-secondary mb-1"
-                      >
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        minLength={2}
-                        className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
-                        placeholder="Your name"
-                      />
-                    </div>
+                  <>
+                    <h2 className="font-display text-xl font-bold uppercase tracking-display mb-2 text-center">
+                      Get Notified
+                    </h2>
+                    <p className="text-text-tertiary text-sm text-center mb-6">
+                      Be the first to know when {title} launches.
+                    </p>
 
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-text-secondary mb-1"
-                      >
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
-                        placeholder="you@example.com"
-                      />
-                    </div>
+                    {status === 'success' ? (
+                      <div className="text-center py-4">
+                        <div className="text-success text-4xl mb-2">✓</div>
+                        <p className="text-text-secondary">{message}</p>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                          <label
+                            htmlFor="name"
+                            className="block text-sm font-medium text-text-secondary mb-1"
+                          >
+                            Name
+                          </label>
+                          <input
+                            type="text"
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            minLength={2}
+                            className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+                            placeholder="Your name"
+                          />
+                        </div>
 
-                    {status === 'error' && <p className="text-error text-sm">{message}</p>}
+                        <div>
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-text-secondary mb-1"
+                          >
+                            Email
+                          </label>
+                          <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
+                            placeholder="you@example.com"
+                          />
+                        </div>
 
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      size="lg"
-                      className="w-full"
-                      disabled={status === 'loading'}
-                    >
-                      {status === 'loading' ? 'Submitting...' : 'Notify Me'}
-                    </Button>
-                  </form>
+                        {status === 'error' && <p className="text-error text-sm">{message}</p>}
+
+                        <Button
+                          type="submit"
+                          variant="primary"
+                          size="lg"
+                          className="w-full"
+                          disabled={status === 'loading'}
+                        >
+                          {status === 'loading' ? 'Submitting...' : 'Notify Me'}
+                        </Button>
+                      </form>
+                    )}
+                  </>
                 )}
               </Card>
             </div>
