@@ -10,9 +10,6 @@ export type { NoiseOverlayProps } from './NoiseOverlay';
 // Alternative SVG-based noise (no external PNG required)
 export { NoiseOverlay as NoiseOverlaySVG } from './NoiseOverlaySVG';
 
-export { CustomCursor } from './CustomCursor';
-export type { CustomCursorProps } from './CustomCursor';
-
 export { IntelTicker } from './IntelTicker';
 export type { IntelTickerProps, TickerItem } from './IntelTicker';
 

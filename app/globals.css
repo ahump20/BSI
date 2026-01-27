@@ -886,19 +886,6 @@ body {
   opacity: 0.3;
 }
 
-body.custom-cursor-active {
-  cursor: none;
-}
-
-body.custom-cursor-active a,
-body.custom-cursor-active button,
-body.custom-cursor-active [role='button'],
-body.custom-cursor-active input,
-body.custom-cursor-active select,
-body.custom-cursor-active textarea {
-  cursor: none;
-}
-
 /* ========================================
    Typography Cinematic
    ======================================== */

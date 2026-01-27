@@ -3,7 +3,7 @@ import { Plus_Jakarta_Sans, Archivo_Black, Fraunces, JetBrains_Mono } from 'next
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
-import { NoiseOverlay, CustomCursor } from '../components/cinematic';
+import { NoiseOverlay } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
 import { SmartNavbar } from '@/components/layout-ds/SmartNavbar';
 import { BottomNav } from '@/components/sports';
@@ -149,7 +149,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
-        <CustomCursor />
         <Providers>
           <MotionProvider>
             <a href="#main-content" className="skip-link">
