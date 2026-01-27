@@ -54,6 +54,7 @@ export function BottomNav({ items, sportContext, className = '' }: BottomNavProp
         flex justify-around
         bg-charcoal border-t border-gray-700
         py-2 pb-[max(8px,env(safe-area-inset-bottom))]
+        md:hidden
         ${className}
       `}
       role="navigation"

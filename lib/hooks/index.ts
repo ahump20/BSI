@@ -81,3 +81,42 @@ export {
   type AuthState,
   type UseAuthOptions,
 } from './useAuth';
+
+// Game data hooks
+export {
+  useGameData,
+  type GameData,
+  type TeamData,
+  type GameStatus,
+  type PlayData,
+  type UseGameDataResult,
+} from './useGameData';
+
+// Player data hooks
+export {
+  usePlayerData,
+  type PlayerData,
+  type PlayerBio,
+  type PlayerTeam,
+  type PlayerStats,
+  type UsePlayerDataResult,
+} from './usePlayerData';
+
+// Responsive hooks
+export {
+  useMediaQuery,
+  useWindowSize,
+  useBreakpoint,
+  useMobile,
+  useIsTouchDevice,
+  usePrefersReducedMotion,
+  useOrientation,
+  isClient,
+  getInitialMobileState,
+  getInitialBreakpoint,
+  BREAKPOINTS,
+  MEDIA_QUERIES,
+  type Breakpoint,
+  type WindowSize,
+  type Orientation,
+} from './useResponsive';

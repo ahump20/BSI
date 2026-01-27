@@ -133,7 +133,7 @@ export function Navbar({
 
               {/* Mobile menu button */}
               <button
-                className="lg:hidden p-2 -mr-2 text-text-primary hover:text-burnt-orange transition-colors"
+                className="lg:hidden p-3 -mr-3 text-text-primary hover:text-burnt-orange transition-colors touch-target"
                 onClick={() => setIsMobileMenuOpen(true)}
                 aria-label="Open menu"
                 aria-expanded={isMobileMenuOpen}

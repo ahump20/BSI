@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMobile, usePrefersReducedMotion } from '@/lib/hooks/useResponsive';
 
 interface NoiseOverlayProps {
   /** Opacity of the noise overlay (0-1) */
@@ -25,38 +25,11 @@ export function NoiseOverlay({
   disableOnMobile = false,
   zIndex = 9999,
 }: NoiseOverlayProps) {
-  const [shouldRender, setShouldRender] = useState(true);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const isMobile = useMobile();
+  const reducedMotion = usePrefersReducedMotion();
 
-  useEffect(() => {
-    // Check for reduced motion preference
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(motionQuery.matches);
-
-    const handleMotionChange = (e: MediaQueryListEvent) => {
-      setReducedMotion(e.matches);
-    };
-    motionQuery.addEventListener('change', handleMotionChange);
-
-    // Check for mobile if disabled
-    if (disableOnMobile) {
-      const isMobile = window.innerWidth < 768;
-      setShouldRender(!isMobile);
-
-      const handleResize = () => {
-        setShouldRender(window.innerWidth >= 768);
-      };
-      window.addEventListener('resize', handleResize, { passive: true });
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        motionQuery.removeEventListener('change', handleMotionChange);
-      };
-    }
-
-    return () => {
-      motionQuery.removeEventListener('change', handleMotionChange);
-    };
-  }, [disableOnMobile]);
+  // Determine if we should render based on mobile state
+  const shouldRender = !disableOnMobile || !isMobile;
 
   if (!shouldRender) return null;
 

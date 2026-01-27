@@ -29,9 +29,11 @@
 
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 // @ts-expect-error d3 types not installed - install @types/d3 for full type support
 import * as d3 from 'd3';
+import { logger } from '../../lib/utils/logger';
+import { useWindowSize, useMobile } from '@/lib/hooks/useResponsive';
 
 // ============================================================================
 // Type Definitions
@@ -67,15 +69,33 @@ type VisualizationType = 'force' | 'chord' | 'matrix';
 
 export function PortalHeatmap() {
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const simulationRef = useRef<d3.Simulation<any, any> | null>(null);
   const [data, setData] = useState<HeatmapData | null>(null);
   const [vizType, setVizType] = useState<VisualizationType>('force');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [_selectedConference, setSelectedConference] = useState<string | null>(null);
 
-  // Dimensions
-  const width = 1200;
-  const height = 800;
+  // Responsive dimensions
+  const windowSize = useWindowSize();
+  const isMobile = useMobile();
+
+  // Calculate responsive dimensions based on container/viewport
+  const dimensions = useMemo(() => {
+    // Leave padding for container (48px on each side for desktop, 24px for mobile)
+    const padding = isMobile ? 48 : 96;
+    const maxWidth = Math.min(windowSize.width - padding, 1200);
+    const width = Math.max(maxWidth, 320); // Minimum width for usability
+
+    // Maintain aspect ratio, but allow more height on mobile for vertical scrolling
+    const aspectRatio = isMobile ? 1.2 : 0.67; // 3:2 for desktop, taller for mobile
+    const height = Math.min(Math.round(width * aspectRatio), 800);
+
+    return { width, height };
+  }, [windowSize.width, isMobile]);
+
+  const { width, height } = dimensions;
 
   // ============================================================================
   // Data Fetching
@@ -100,7 +120,7 @@ export function PortalHeatmap() {
       const heatmapData = transformToHeatmapData(result);
       setData(heatmapData);
     } catch (err) {
-      console.error('Heatmap data fetch error:', err);
+      logger.error({ component: 'PortalHeatmap', error: err }, 'Heatmap data fetch error');
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
@@ -181,6 +201,12 @@ export function PortalHeatmap() {
   useEffect(() => {
     if (!data || !svgRef.current) return;
 
+    // Stop any existing simulation to prevent memory leaks
+    if (simulationRef.current) {
+      simulationRef.current.stop();
+      simulationRef.current = null;
+    }
+
     // Clear previous visualization
     d3.select(svgRef.current).selectAll('*').remove();
 
@@ -192,6 +218,14 @@ export function PortalHeatmap() {
     } else if (vizType === 'matrix') {
       renderMatrixHeatmap(data);
     }
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+        simulationRef.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- render functions are stable, depend on data/vizType/dimensions
   }, [data, vizType, width, height]);
 
@@ -202,13 +236,19 @@ export function PortalHeatmap() {
   const renderForceGraph = (data: HeatmapData) => {
     const svg = d3.select(svgRef.current);
 
-    // Create simulation
-    const simulation = d3
-      .forceSimulation(data.nodes as any)
+    // Deep clone nodes to avoid mutating original data
+    const nodesCopy = data.nodes.map((n) => ({ ...n }));
+    const flowsCopy = data.flows.map((f) => ({ ...f }));
+
+    // Create simulation and store in ref for cleanup
+    const simulation = d3.forceSimulation(nodesCopy as any);
+    simulationRef.current = simulation;
+
+    simulation
       .force(
         'link',
         d3
-          .forceLink(data.flows)
+          .forceLink(flowsCopy)
           .id((d: any) => d.id)
           .distance(150)
           .strength(0.5)
@@ -254,7 +294,7 @@ export function PortalHeatmap() {
     const link = g
       .append('g')
       .selectAll('line')
-      .data(data.flows)
+      .data(flowsCopy)
       .enter()
       .append('line')
       .attr('stroke', '#9ca3af')
@@ -266,7 +306,7 @@ export function PortalHeatmap() {
     const node = g
       .append('g')
       .selectAll('g')
-      .data(data.nodes)
+      .data(nodesCopy)
       .enter()
       .append('g')
       .call(
@@ -702,10 +742,10 @@ export function PortalHeatmap() {
 
   if (isLoading) {
     return (
-      <div style={styles.container}>
-        <div style={styles.loadingContainer}>
-          <div style={styles.spinner} />
-          <p style={styles.loadingText}>Loading portal heatmap...</p>
+      <div className="w-full p-4 md:p-6 font-sans">
+        <div className="flex flex-col items-center justify-center p-16 min-h-[400px]">
+          <div className="w-12 h-12 border-4 border-burnt-orange/10 border-t-burnt-orange rounded-full animate-spin" />
+          <p className="mt-4 text-gray-400 text-sm">Loading portal heatmap...</p>
         </div>
       </div>
     );
@@ -713,11 +753,14 @@ export function PortalHeatmap() {
 
   if (error) {
     return (
-      <div style={styles.container}>
-        <div style={styles.errorContainer}>
-          <h3 style={styles.errorTitle}>Failed to Load Heatmap</h3>
-          <p style={styles.errorMessage}>{error}</p>
-          <button onClick={fetchHeatmapData} style={styles.retryButton}>
+      <div className="w-full p-4 md:p-6 font-sans">
+        <div className="flex flex-col items-center justify-center p-16 min-h-[400px]">
+          <h3 className="text-xl font-bold text-red-500 mb-2">Failed to Load Heatmap</h3>
+          <p className="text-gray-400 text-sm mb-6 text-center">{error}</p>
+          <button
+            onClick={fetchHeatmapData}
+            className="px-6 py-3 bg-gradient-to-br from-burnt-orange to-ember border-none rounded-lg text-white text-sm font-bold cursor-pointer transition-transform duration-200 hover:scale-105 touch-target"
+          >
             Retry
           </button>
         </div>
@@ -726,40 +769,59 @@ export function PortalHeatmap() {
   }
 
   return (
-    <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
+    <div className="w-full p-4 md:p-6 font-sans">
+      {/* Header - stacks on mobile */}
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-6 pb-4 border-b-2 border-burnt-orange/20">
         <div>
-          <h2 style={styles.title}>Transfer Portal Heatmap</h2>
-          <p style={styles.subtitle}>Interactive visualization of conference movement patterns</p>
+          <h2 className="text-xl md:text-2xl font-bold text-white m-0 mb-2">
+            Transfer Portal Heatmap
+          </h2>
+          <p className="text-sm text-gray-400 m-0">
+            Interactive visualization of conference movement patterns
+          </p>
         </div>
 
-        {/* Visualization Type Selector */}
-        <div style={styles.vizSelector}>
+        {/* Visualization Type Selector - horizontal scroll on mobile */}
+        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 -mx-1 px-1">
           <button
             onClick={() => setVizType('force')}
-            style={{
-              ...styles.vizButton,
-              ...(vizType === 'force' ? styles.vizButtonActive : {}),
-            }}
+            className={`
+              px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap
+              transition-all duration-200 touch-target-sm
+              ${
+                vizType === 'force'
+                  ? 'bg-burnt-orange/20 border border-burnt-orange text-burnt-orange'
+                  : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
+              }
+            `}
           >
             Force Graph
           </button>
           <button
             onClick={() => setVizType('chord')}
-            style={{
-              ...styles.vizButton,
-              ...(vizType === 'chord' ? styles.vizButtonActive : {}),
-            }}
+            className={`
+              px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap
+              transition-all duration-200 touch-target-sm
+              ${
+                vizType === 'chord'
+                  ? 'bg-burnt-orange/20 border border-burnt-orange text-burnt-orange'
+                  : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
+              }
+            `}
           >
             Chord Diagram
           </button>
           <button
             onClick={() => setVizType('matrix')}
-            style={{
-              ...styles.vizButton,
-              ...(vizType === 'matrix' ? styles.vizButtonActive : {}),
-            }}
+            className={`
+              px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap
+              transition-all duration-200 touch-target-sm
+              ${
+                vizType === 'matrix'
+                  ? 'bg-burnt-orange/20 border border-burnt-orange text-burnt-orange'
+                  : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white'
+              }
+            `}
           >
             Matrix
           </button>
@@ -767,26 +829,38 @@ export function PortalHeatmap() {
       </div>
 
       {/* SVG Canvas */}
-      <div style={styles.svgContainer}>
-        <svg ref={svgRef} width={width} height={height} style={styles.svg} />
+      <div
+        ref={containerRef}
+        style={styles.svgContainer}
+        className={isMobile ? 'overflow-x-auto' : ''}
+      >
+        <svg
+          ref={svgRef}
+          width={width}
+          height={height}
+          style={styles.svg}
+          viewBox={`0 0 ${width} ${height}`}
+          preserveAspectRatio="xMidYMid meet"
+        />
       </div>
 
-      {/* Instructions */}
-      <div style={styles.instructions}>
-        <h3 style={styles.instructionsTitle}>How to Use</h3>
-        <ul style={styles.instructionsList}>
+      {/* Instructions - collapsible on mobile */}
+      <div className="bg-burnt-orange/5 border border-burnt-orange/20 rounded-xl p-4 md:p-6">
+        <h3 className="text-base md:text-lg font-bold text-burnt-orange m-0 mb-4">How to Use</h3>
+        <ul className="m-0 pl-6 text-gray-400 text-sm leading-relaxed space-y-1">
           {vizType === 'force' && (
             <>
-              <li>Drag nodes to rearrange the layout</li>
-              <li>Hover over nodes to see conference statistics</li>
+              <li>{isMobile ? 'Tap and drag' : 'Drag'} nodes to rearrange the layout</li>
+              <li>{isMobile ? 'Tap' : 'Hover over'} nodes to see conference statistics</li>
               <li>Arrow thickness indicates transfer volume</li>
               <li>Node size reflects total portal entries</li>
-              <li>Use mouse wheel to zoom in/out</li>
+              {!isMobile && <li>Use mouse wheel to zoom in/out</li>}
+              {isMobile && <li>Pinch to zoom in/out</li>}
             </>
           )}
           {vizType === 'chord' && (
             <>
-              <li>Hover over segments to see conference details</li>
+              <li>{isMobile ? 'Tap' : 'Hover over'} segments to see conference details</li>
               <li>Ribbons show transfer flows between conferences</li>
               <li>Ribbon thickness indicates transfer volume</li>
               <li>Colors match source conference</li>
@@ -797,7 +871,8 @@ export function PortalHeatmap() {
               <li>Rows represent source conferences</li>
               <li>Columns represent destination conferences</li>
               <li>Cell color intensity shows transfer volume</li>
-              <li>Hover over cells to see exact counts</li>
+              <li>{isMobile ? 'Tap' : 'Hover over'} cells to see exact counts</li>
+              {isMobile && <li>Scroll horizontally to see all conferences</li>}
             </>
           )}
         </ul>
@@ -807,148 +882,23 @@ export function PortalHeatmap() {
 }
 
 // ============================================================================
-// Styles
+// Styles (minimal - most styling moved to Tailwind classes)
 // ============================================================================
 
 const styles: Record<string, React.CSSProperties> = {
-  container: {
-    width: '100%',
-    padding: '24px',
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-  },
-
-  // Header
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '24px',
-    paddingBottom: '16px',
-    borderBottom: '2px solid rgba(255, 107, 0, 0.2)',
-  },
-  title: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#ffffff',
-    margin: '0 0 8px 0',
-  },
-  subtitle: {
-    fontSize: '14px',
-    color: '#9ca3af',
-    margin: 0,
-  },
-
-  // Visualization Selector
-  vizSelector: {
-    display: 'flex',
-    gap: '8px',
-  },
-  vizButton: {
-    padding: '10px 20px',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '8px',
-    color: '#9ca3af',
-    fontSize: '14px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  vizButtonActive: {
-    background: 'rgba(255, 107, 0, 0.2)',
-    borderColor: '#ff6b00',
-    color: '#ff6b00',
-  },
-
-  // SVG Container
+  // SVG Container - keeping as inline for dynamic sizing
   svgContainer: {
     background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01))',
     border: '1px solid rgba(255, 255, 255, 0.1)',
     borderRadius: '12px',
-    padding: '24px',
+    padding: '16px',
     marginBottom: '24px',
-    overflow: 'hidden',
   },
   svg: {
     display: 'block',
     margin: '0 auto',
     background: 'transparent',
-  },
-
-  // Instructions
-  instructions: {
-    background: 'rgba(255, 107, 0, 0.05)',
-    border: '1px solid rgba(255, 107, 0, 0.2)',
-    borderRadius: '12px',
-    padding: '24px',
-  },
-  instructionsTitle: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#ff6b00',
-    margin: '0 0 16px 0',
-  },
-  instructionsList: {
-    margin: 0,
-    paddingLeft: '24px',
-    color: '#9ca3af',
-    fontSize: '14px',
-    lineHeight: '1.8',
-  },
-
-  // Loading
-  loadingContainer: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '64px',
-    minHeight: '400px',
-  },
-  spinner: {
-    width: '48px',
-    height: '48px',
-    border: '4px solid rgba(255, 107, 0, 0.1)',
-    borderTopColor: '#ff6b00',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite',
-  },
-  loadingText: {
-    marginTop: '16px',
-    color: '#9ca3af',
-    fontSize: '14px',
-  },
-
-  // Error
-  errorContainer: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '64px',
-    minHeight: '400px',
-  },
-  errorTitle: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#ef4444',
-    marginBottom: '8px',
-  },
-  errorMessage: {
-    color: '#9ca3af',
-    fontSize: '14px',
-    marginBottom: '24px',
-    textAlign: 'center' as const,
-  },
-  retryButton: {
-    padding: '12px 24px',
-    background: 'linear-gradient(135deg, #ff6b00, #ff8800)',
-    border: 'none',
-    borderRadius: '8px',
-    color: '#ffffff',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    transition: 'transform 0.2s',
+    maxWidth: '100%',
+    height: 'auto',
   },
 };

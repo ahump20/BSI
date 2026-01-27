@@ -60,7 +60,9 @@ export function VideoHighlightCard({
   return (
     <button
       onClick={onClick}
-      className={`text-left group relative rounded overflow-hidden transition-all ${
+      aria-label={`Play video: ${video.title}`}
+      aria-pressed={isSelected}
+      className={`text-left group relative rounded overflow-hidden transition-all touch-target ${
         isSelected ? 'ring-2 ring-burnt-orange' : 'hover:ring-1 hover:ring-white/30'
       } ${className}`}
     >
@@ -75,14 +77,22 @@ export function VideoHighlightCard({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-white/20" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-8 h-8 text-white/20"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
         )}
 
         {/* Play overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          aria-hidden="true"
+        >
           <div
             className={`${playButtonSize[size]} rounded-full bg-burnt-orange flex items-center justify-center`}
           >

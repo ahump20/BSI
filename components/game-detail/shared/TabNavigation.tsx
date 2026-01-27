@@ -74,7 +74,7 @@ export function TabNavigation({ activeTab, onTabChange, availableTabs }: TabNavi
             tabIndex={isActive ? 0 : -1}
             onClick={() => onTabChange(tab)}
             className={`
-              relative px-4 py-3 text-sm font-medium whitespace-nowrap
+              relative px-4 py-3 text-sm font-medium whitespace-nowrap touch-target-sm
               transition-colors duration-200
               ${isActive ? 'text-burnt-orange' : 'text-white/60 hover:text-white/80'}
               focus:outline-none focus-visible:ring-2 focus-visible:ring-burnt-orange focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal

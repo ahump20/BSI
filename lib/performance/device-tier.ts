@@ -18,6 +18,12 @@ export interface DeviceCapabilities {
   maxTextureSize: number;
   particleCount: number;
   enable3D: boolean;
+  /** Enable film grain overlay (disabled on low-end devices) */
+  enableGrain: boolean;
+  /** Enable backdrop blur effects (expensive on mobile) */
+  enableBackdropBlur: boolean;
+  /** Enable heavy glow effects (reduced on mobile) */
+  enableGlow: boolean;
 }
 
 /**
@@ -176,6 +182,15 @@ export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
   // - WebGL2 or WebGPU is supported
   const enable3D = !isReducedMotion && tier !== 'LOW' && (webgl2.supported || supportsWebGPU);
 
+  // Enable grain only on MEDIUM+ tiers and non-mobile (performance concern)
+  const enableGrain = !isReducedMotion && !isMobile && tier !== 'LOW';
+
+  // Enable backdrop blur on MEDIUM+ tiers (expensive on mobile/low-end)
+  const enableBackdropBlur = tier !== 'LOW';
+
+  // Enable heavy glow effects only on HIGH+ tiers
+  const enableGlow = tier === 'HIGH' || tier === 'ULTRA';
+
   return {
     tier,
     supportsWebGPU,
@@ -187,6 +202,9 @@ export async function detectDeviceCapabilities(): Promise<DeviceCapabilities> {
     maxTextureSize: webgl2.maxTextureSize,
     particleCount: getParticleCount(tier),
     enable3D,
+    enableGrain,
+    enableBackdropBlur,
+    enableGlow,
   };
 }
 
@@ -208,6 +226,10 @@ export function getInitialCapabilities(): DeviceCapabilities {
     maxTextureSize: 0,
     particleCount: 0,
     enable3D: false,
+    // Conservative defaults - assume low-end until proven otherwise
+    enableGrain: false,
+    enableBackdropBlur: !isMobile, // Most desktops can handle it
+    enableGlow: false,
   };
 }
 
