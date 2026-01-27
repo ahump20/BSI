@@ -85,7 +85,7 @@ export default function NBAScoresPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/nba/scores?date=${date}`);
+      const res = await fetch(`/api/nba/scoreboard?date=${date}`);
       if (!res.ok) throw new Error('Failed to fetch scores');
       const data = (await res.json()) as {
         games?: NBAGame[];

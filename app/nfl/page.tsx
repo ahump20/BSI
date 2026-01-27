@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/ui/SportIcon';
 
 const divisions = [
   {
@@ -85,7 +86,11 @@ export default function NFLPage() {
                 <Link href="/nfl/standings" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-3xl">🏆</span>
+                      <span className="text-burnt-orange">
+                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </span>
                       <h3 className="text-xl font-display font-bold text-white">Standings</h3>
                     </div>
                     <p className="text-text-secondary text-sm">
@@ -103,7 +108,18 @@ export default function NFLPage() {
                 <Link href="/nfl/news" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-3xl">📰</span>
+                      <span className="text-burnt-orange">
+                        <svg
+                          className="w-8 h-8"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                        </svg>
+                      </span>
                       <h3 className="text-xl font-display font-bold text-white">News</h3>
                     </div>
                     <p className="text-text-secondary text-sm">
@@ -120,7 +136,9 @@ export default function NFLPage() {
                 <Link href="/nfl/scores" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-3xl">🏈</span>
+                      <span className="text-burnt-orange">
+                        <SportIcon icon="nfl" size="lg" />
+                      </span>
                       <h3 className="text-xl font-display font-bold text-white">Scores</h3>
                     </div>
                     <p className="text-text-secondary text-sm">

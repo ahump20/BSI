@@ -1,25 +1,26 @@
 import FanbaseProfileClient from './FanbaseProfileClient';
 
 // Static params for all fanbase pages (for static export)
+// IDs match what bsi-fanbase-sentiment API returns
 export function generateStaticParams() {
   return [
-    // SEC Teams
-    { school: 'texas-longhorns' },
-    { school: 'oklahoma-sooners' },
-    { school: 'georgia-bulldogs' },
-    { school: 'alabama-crimson-tide' },
-    { school: 'lsu-tigers' },
-    { school: 'ole-miss-rebels' },
-    { school: 'tennessee-volunteers' },
-    { school: 'texas-am-aggies' },
-    { school: 'florida-gators' },
-    { school: 'auburn-tigers' },
-    { school: 'missouri-tigers' },
-    { school: 'kentucky-wildcats' },
-    { school: 'arkansas-razorbacks' },
-    { school: 'mississippi-state-bulldogs' },
-    { school: 'south-carolina-gamecocks' },
-    { school: 'vanderbilt-commodores' },
+    // SEC Teams - using API school IDs
+    { school: 'texas' },
+    { school: 'oklahoma' },
+    { school: 'georgia' },
+    { school: 'alabama' },
+    { school: 'lsu' },
+    { school: 'ole-miss' },
+    { school: 'tennessee' },
+    { school: 'texas-am' },
+    { school: 'florida' },
+    { school: 'auburn' },
+    { school: 'missouri' },
+    { school: 'kentucky' },
+    { school: 'arkansas' },
+    { school: 'mississippi-state' },
+    { school: 'south-carolina' },
+    { school: 'vanderbilt' },
   ];
 }
 

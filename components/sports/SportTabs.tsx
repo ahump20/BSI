@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SportIcon, type SportIconType } from '@/components/ui/SportIcon';
 
 export type Sport = 'mlb' | 'nfl' | 'nba' | 'ncaa';
 
@@ -9,11 +10,11 @@ interface SportTabsProps {
   onSportChange?: (sport: Sport) => void;
 }
 
-const sports: { id: Sport; name: string; icon: string; season: string }[] = [
-  { id: 'mlb', name: 'MLB', icon: '⚾', season: 'Off-Season' },
-  { id: 'nfl', name: 'NFL', icon: '🏈', season: 'In Season' },
-  { id: 'nba', name: 'NBA', icon: '🏀', season: 'In Season' },
-  { id: 'ncaa', name: 'NCAA', icon: '🎓', season: 'Various' },
+const sports: { id: Sport; name: string; icon: SportIconType; season: string }[] = [
+  { id: 'mlb', name: 'MLB', icon: 'mlb', season: 'Off-Season' },
+  { id: 'nfl', name: 'NFL', icon: 'nfl', season: 'In Season' },
+  { id: 'nba', name: 'NBA', icon: 'nba', season: 'In Season' },
+  { id: 'ncaa', name: 'NCAA', icon: 'ncaa', season: 'Various' },
 ];
 
 export function SportTabs({ defaultSport = 'nfl', onSportChange }: SportTabsProps) {
@@ -39,7 +40,7 @@ export function SportTabs({ defaultSport = 'nfl', onSportChange }: SportTabsProp
             }
           `}
         >
-          <span className="text-lg">{sport.icon}</span>
+          <SportIcon icon={sport.icon} size="sm" />
           <span>{sport.name}</span>
         </button>
       ))}
@@ -71,7 +72,7 @@ export function SportTabsCompact({ defaultSport = 'nfl', onSportChange }: SportT
             }
           `}
         >
-          <span>{sport.icon}</span>
+          <SportIcon icon={sport.icon} size="xs" />
           <span className="hidden sm:inline">{sport.name}</span>
         </button>
       ))}

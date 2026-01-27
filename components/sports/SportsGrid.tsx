@@ -9,10 +9,11 @@
 
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { SportIcon, type SportIconType } from '@/components/ui/SportIcon';
 
 interface Sport {
   name: string;
-  icon: string;
+  icon: SportIconType;
   href: string;
   description: string;
   comingSoon?: boolean;
@@ -21,32 +22,32 @@ interface Sport {
 const SPORTS: Sport[] = [
   {
     name: 'MLB',
-    icon: '⚾',
+    icon: 'mlb',
     href: '/mlb',
     description: 'Live scores, standings & Statcast analytics',
   },
   {
     name: 'NFL',
-    icon: '🏈',
+    icon: 'nfl',
     href: '/nfl',
     description: 'Game coverage & team intelligence',
   },
   {
     name: 'NCAA Football',
-    icon: '🏟️',
+    icon: 'cfb',
     href: '/cfb',
     description: 'College football analytics',
     comingSoon: true,
   },
   {
     name: 'NBA',
-    icon: '🏀',
+    icon: 'nba',
     href: '/nba',
     description: 'Live scores & standings',
   },
   {
     name: 'College Baseball',
-    icon: '🎓',
+    icon: 'ncaa',
     href: '/college-baseball',
     description: 'D1 rankings, box scores & complete coverage',
   },
@@ -92,8 +93,8 @@ export function SportsGrid({ className }: SportsGridProps) {
               )}
 
               {/* Icon */}
-              <span className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                {sport.icon}
+              <span className="mb-4 group-hover:scale-110 transition-transform duration-300 text-burnt-orange">
+                <SportIcon icon={sport.icon} size="xl" />
               </span>
 
               {/* Name */}

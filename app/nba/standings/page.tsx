@@ -2,12 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
-import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+
+// Dynamic import to avoid SSR hydration issues with IntersectionObserver
+const ScrollReveal = dynamic(
+  () => import('@/components/cinematic/ScrollReveal').then((mod) => mod.ScrollReveal),
+  { ssr: false }
+);
 
 interface Team {
   name: string;

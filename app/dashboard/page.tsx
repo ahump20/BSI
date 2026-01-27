@@ -16,6 +16,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
 import { useAuth } from '@/lib/hooks';
+import { SportIcon, type SportIconType } from '@/components/ui/SportIcon';
 
 // Lazy-load chart components to split recharts from main bundle
 const StandingsBarChart = dynamic(
@@ -497,21 +498,15 @@ export default function DashboardPage() {
           {/* Quick Links */}
           <ScrollReveal direction="up" delay={500}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <QuickLinkCard href="/mlb" icon="⚾" title="MLB" subtitle="Scores & Standings" />
-              <QuickLinkCard href="/nfl" icon="🏈" title="NFL" subtitle="Games & Stats" />
+              <QuickLinkCard href="/mlb" icon="mlb" title="MLB" subtitle="Scores & Standings" />
+              <QuickLinkCard href="/nfl" icon="nfl" title="NFL" subtitle="Games & Stats" />
               <QuickLinkCard
                 href="/college-baseball"
-                icon="🎓"
+                icon="ncaa"
                 title="NCAA Baseball"
                 subtitle="Rankings & Scores"
               />
-              <QuickLinkCard
-                href="/vision-AI-Intelligence"
-                icon="🧠"
-                title="Vision AI"
-                subtitle="Neural Presence Coach"
-                badge="NEW"
-              />
+              <QuickLinkCard href="/nba" icon="nba" title="NBA" subtitle="Scores & Standings" />
             </div>
           </ScrollReveal>
 
@@ -573,7 +568,7 @@ function StatCard({ label, value, subtitle, trend, icon }: StatCardProps) {
 
 interface QuickLinkCardProps {
   href: string;
-  icon: string;
+  icon: SportIconType;
   title: string;
   subtitle: string;
   badge?: string;
@@ -590,7 +585,9 @@ function QuickLinkCard({ href, icon, title, subtitle, badge }: QuickLinkCardProp
           {badge}
         </span>
       )}
-      <div className="text-2xl mb-2">{icon}</div>
+      <div className="mb-2 text-burnt-orange">
+        <SportIcon icon={icon} size="lg" />
+      </div>
       <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors">
         {title}
       </p>

@@ -29,6 +29,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import type { AlertPreferences, Alert } from '../../lib/types';
+import { logger } from '../../lib/utils/logger';
 
 // ============================================================================
 // Type Definitions
@@ -132,16 +133,21 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
   // Refs
   const wsRef = useRef<WebSocket | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSyncingRef = useRef(false);
 
   // ============================================================================
   // Effects
   // ============================================================================
 
   /**
-   * Load watchlist from localStorage on mount
+   * Load watchlist from localStorage on mount, then sync with server
    */
   useEffect(() => {
     loadWatchlist();
+
+    // Sync with server after initial local load
+    loadFromServer();
 
     // Listen for storage events (cross-tab sync)
     const handleStorageChange = (e: StorageEvent) => {
@@ -151,8 +157,15 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadWatchlist is stable, runs on userId change
+
+    // Cleanup sync timeout on unmount
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadWatchlist and loadFromServer are stable, runs on userId change
   }, [userId]);
 
   /**
@@ -224,7 +237,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       const ws = new WebSocket(`${websocketUrl}/ws/alerts/${userId}`);
 
       ws.onopen = () => {
-        console.log('WebSocket connected for alerts');
+        logger.debug({ component: 'WatchlistManager' }, 'WebSocket connected for alerts');
         setIsConnected(true);
 
         // Send preferences update
@@ -253,17 +266,20 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
             }
           }
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          logger.error(
+            { component: 'WatchlistManager', error },
+            'Failed to parse WebSocket message'
+          );
         }
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        logger.error({ component: 'WatchlistManager', error }, 'WebSocket error');
         setIsConnected(false);
       };
 
       ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        logger.debug({ component: 'WatchlistManager' }, 'WebSocket disconnected');
         setIsConnected(false);
 
         // Attempt reconnection after 5 seconds
@@ -276,7 +292,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
 
       wsRef.current = ws;
     } catch (error) {
-      console.error('Failed to connect WebSocket:', error);
+      logger.error({ component: 'WatchlistManager', error }, 'Failed to connect WebSocket');
     }
   };
 
@@ -307,12 +323,120 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
         setPreferences(data.preferences);
       }
     } catch (error) {
-      console.error('Failed to load watchlist:', error);
+      logger.error({ component: 'WatchlistManager', error }, 'Failed to load watchlist');
     }
   };
 
   /**
-   * Save watchlist to localStorage
+   * Load watchlist from server (D1)
+   */
+  const loadFromServer = async () => {
+    try {
+      const response = await fetch(`/api/user/watchlist?userId=${encodeURIComponent(userId)}`);
+      if (!response.ok) {
+        logger.warn(
+          { component: 'WatchlistManager' },
+          'Server watchlist fetch failed, using local'
+        );
+        return;
+      }
+
+      const result = (await response.json()) as {
+        success: boolean;
+        data?: { teams?: Team[]; lastUpdated?: string };
+      };
+      if (!result.success || !result.data) {
+        return;
+      }
+
+      const serverData = result.data;
+      const localStored = localStorage.getItem(`watchlist_${userId}`);
+
+      if (!localStored) {
+        // No local data, use server data
+        if (serverData.teams && serverData.teams.length > 0) {
+          setWatchlist(serverData.teams);
+          saveWatchlist(serverData.teams, preferences);
+        }
+        return;
+      }
+
+      const localData: WatchlistData = JSON.parse(localStored);
+      const localTime = new Date(localData.lastUpdated).getTime();
+      const serverTime = serverData.lastUpdated ? new Date(serverData.lastUpdated).getTime() : 0;
+
+      // Use whichever is newer
+      if (serverTime > localTime && serverData.teams) {
+        setWatchlist(serverData.teams);
+        saveWatchlist(serverData.teams, preferences);
+        logger.debug({ component: 'WatchlistManager' }, 'Synced from server (server newer)');
+      } else if (localData.teams.length > 0 && serverData.teams?.length === 0) {
+        // Local has data, server empty - push to server
+        syncToServer(localData.teams, localData.preferences);
+        logger.debug({ component: 'WatchlistManager' }, 'Pushed local data to server');
+      }
+    } catch (error) {
+      logger.error({ component: 'WatchlistManager', error }, 'Failed to load from server');
+    }
+  };
+
+  /**
+   * Sync watchlist to server (D1) with debounce
+   */
+  const syncToServer = async (teams: Team[], prefs: AlertPreferences) => {
+    if (isSyncingRef.current) {
+      return;
+    }
+
+    // Clear any pending sync
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
+
+    // Debounce by 2 seconds
+    syncTimeoutRef.current = setTimeout(async () => {
+      isSyncingRef.current = true;
+
+      try {
+        // Sync watchlist
+        const watchlistResponse = await fetch(
+          `/api/user/watchlist?userId=${encodeURIComponent(userId)}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teams }),
+          }
+        );
+
+        if (!watchlistResponse.ok) {
+          logger.warn({ component: 'WatchlistManager' }, 'Watchlist sync failed');
+        }
+
+        // Sync preferences
+        const prefsResponse = await fetch(
+          `/api/user/preferences?userId=${encodeURIComponent(userId)}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(prefs),
+          }
+        );
+
+        if (!prefsResponse.ok) {
+          logger.warn({ component: 'WatchlistManager' }, 'Preferences sync failed');
+        }
+
+        logger.debug({ component: 'WatchlistManager' }, 'Synced to server');
+      } catch (error) {
+        logger.error({ component: 'WatchlistManager', error }, 'Server sync error');
+      } finally {
+        isSyncingRef.current = false;
+      }
+    }, 2000);
+  };
+
+  /**
+   * Save watchlist to localStorage and trigger server sync
    */
   const saveWatchlist = (teams: Team[], prefs: AlertPreferences) => {
     try {
@@ -324,8 +448,11 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       };
 
       localStorage.setItem(`watchlist_${userId}`, JSON.stringify(data));
+
+      // Trigger debounced server sync
+      syncToServer(teams, prefs);
     } catch (error) {
-      console.error('Failed to save watchlist:', error);
+      logger.error({ component: 'WatchlistManager', error }, 'Failed to save watchlist');
     }
   };
 
@@ -399,7 +526,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newPreferences),
     }).catch((error) => {
-      console.error('Failed to update preferences via HTTP:', error);
+      logger.error(
+        { component: 'WatchlistManager', error },
+        'Failed to update preferences via HTTP'
+      );
     });
   };
 
@@ -422,7 +552,7 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
       const results: Team[] = await response.json();
       setSearchResults(results);
     } catch (error) {
-      console.error('Team search error:', error);
+      logger.error({ component: 'WatchlistManager', error }, 'Team search error');
       setSearchResults([]);
     } finally {
       setIsSearching(false);
@@ -449,7 +579,10 @@ export const WatchlistManager: React.FC<WatchlistManagerProps> = ({
           const games: UpcomingGame[] = await response.json();
           gamesByTeam.set(team.id, games);
         } catch (error) {
-          console.error(`Failed to fetch games for team ${team.id}:`, error);
+          logger.error(
+            { component: 'WatchlistManager', teamId: team.id, error },
+            'Failed to fetch games for team'
+          );
         }
       })
     );

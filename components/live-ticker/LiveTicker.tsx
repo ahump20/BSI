@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUserSettings } from '@/lib/hooks';
+import { SportIcon, type SportIconType } from '@/components/ui/SportIcon';
 
 // Types (matching worker types)
 type TickerType = 'score' | 'news' | 'injury' | 'trade' | 'weather';
@@ -67,12 +68,12 @@ const PRIORITY_COLORS: Record<Priority, string> = {
   3: 'bg-charcoal', // Standard
 };
 
-const LEAGUE_ICONS: Record<League, string> = {
-  MLB: '⚾',
-  NFL: '🏈',
-  NCAAF: '🏈',
-  NBA: '🏀',
-  NCAABB: '🏀',
+const LEAGUE_ICONS: Record<League, SportIconType> = {
+  MLB: 'mlb',
+  NFL: 'nfl',
+  NCAAF: 'cfb',
+  NBA: 'nba',
+  NCAABB: 'nba',
 };
 
 const TYPE_LABELS: Record<TickerType, string> = {
@@ -227,7 +228,7 @@ export function LiveTicker({
             transition={{ duration: 0.3 }}
             className="flex items-center gap-2"
           >
-            <span className="text-lg">{LEAGUE_ICONS[currentItem.league]}</span>
+            <SportIcon icon={LEAGUE_ICONS[currentItem.league]} size="sm" />
             <span
               className={`px-1.5 py-0.5 text-[10px] font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
             >
@@ -277,11 +278,11 @@ export function LiveTicker({
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xl">{LEAGUE_ICONS[currentItem.league]}</span>
+              <SportIcon icon={LEAGUE_ICONS[currentItem.league]} size="md" />
               <span
                 className={`px-2 py-0.5 text-xs font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
               >
-                {currentItem.priority === 1 ? '🔴 BREAKING' : TYPE_LABELS[currentItem.type]}
+                {currentItem.priority === 1 ? 'BREAKING' : TYPE_LABELS[currentItem.type]}
               </span>
               <span className="text-xs text-cream/50">{currentItem.league}</span>
             </div>

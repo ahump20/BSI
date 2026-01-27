@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
 import { HomeLiveScores } from '@/components/home';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/ui/SportIcon';
 
 export const metadata = {
   title: 'Blaze Sports Intel | NCAA Transfer Portal & Real-Time Sports Analytics',
@@ -12,29 +13,34 @@ export const metadata = {
 const sports = [
   {
     name: 'College Baseball',
-    icon: '🎓',
+    icon: 'ncaa' as const,
     href: '/college-baseball',
     description: 'D1 standings, rankings & box scores',
   },
-  { name: 'MLB', icon: '⚾', href: '/mlb', description: 'Live scores, standings & Statcast' },
-  { name: 'NFL', icon: '🏈', href: '/nfl', description: 'Live scores & standings' },
-  { name: 'NBA', icon: '🏀', href: '/nba', description: 'Live scores & standings' },
+  {
+    name: 'MLB',
+    icon: 'mlb' as const,
+    href: '/mlb',
+    description: 'Live scores, standings & Statcast',
+  },
+  { name: 'NFL', icon: 'nfl' as const, href: '/nfl', description: 'Live scores & standings' },
+  { name: 'NBA', icon: 'nba' as const, href: '/nba', description: 'Live scores & standings' },
 ];
 
 const features = [
   {
-    icon: '🔄',
+    icon: 'refresh' as const,
     title: 'Transfer Portal Tracker',
     description:
       'Every D1 transfer. Baseball and football. Updated in real-time, every 30 seconds.',
   },
   {
-    icon: '📊',
+    icon: 'chart' as const,
     title: 'Live Data Intelligence',
     description: '30-second updates. Verified sources. No placeholders, no "check back later."',
   },
   {
-    icon: '🎯',
+    icon: 'target' as const,
     title: 'Built for the Overlooked',
     description: 'Rice vs. Houston midweek? We have the box score. Your team matters here.',
   },
@@ -214,7 +220,9 @@ export default function HomePage() {
             {sports.map((sport) => (
               <Link key={sport.name} href={sport.href}>
                 <div className="bg-midnight/50 p-6 rounded-xl border border-border-subtle hover:border-burnt-orange/50 transition-all hover:shadow-glow-sm text-center h-full group">
-                  <span className="text-5xl mb-4 block">{sport.icon}</span>
+                  <span className="mb-4 block text-burnt-orange">
+                    <SportIcon icon={sport.icon} size="xl" />
+                  </span>
                   <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-burnt-orange transition-colors">
                     {sport.name}
                   </h3>
@@ -239,8 +247,8 @@ export default function HomePage() {
                 key={feature.title}
                 className="bg-charcoal-900/50 p-6 rounded-xl border border-border-subtle hover:border-burnt-orange/30 transition-colors"
               >
-                <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center mb-4">
-                  <span className="text-2xl">{feature.icon}</span>
+                <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center mb-4 text-burnt-orange">
+                  <SportIcon icon={feature.icon} size="lg" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-text-secondary">{feature.description}</p>

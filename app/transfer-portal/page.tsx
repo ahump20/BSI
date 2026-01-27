@@ -15,6 +15,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { SportIcon } from '@/components/ui/SportIcon';
 import {
   PortalCard,
   PortalCardGrid,
@@ -269,23 +270,23 @@ function SportToggle({
     <div className="inline-flex rounded-lg bg-charcoal-900/60 border border-border-subtle p-1">
       <button
         onClick={() => onChange('baseball')}
-        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-2 ${
           selected === 'baseball'
             ? 'bg-burnt-orange text-white shadow-lg'
             : 'text-text-secondary hover:text-text-primary'
         }`}
       >
-        ⚾ College Baseball
+        <SportIcon icon="mlb" size="sm" /> College Baseball
       </button>
       <button
         onClick={() => onChange('football')}
-        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
+        className={`px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-2 ${
           selected === 'football'
             ? 'bg-burnt-orange text-white shadow-lg'
             : 'text-text-secondary hover:text-text-primary'
         }`}
       >
-        🏈 College Football
+        <SportIcon icon="nfl" size="sm" /> College Football
       </button>
     </div>
   );
@@ -357,7 +358,10 @@ function TrendingSidebar({ entries }: { entries: PortalEntry[] }) {
   return (
     <div className="p-5 rounded-xl bg-charcoal-900/60 border border-border-subtle">
       <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
-        <span className="text-burnt-orange">🔥</span> Trending Now
+        <span className="text-burnt-orange">
+          <SportIcon icon="trending" size="sm" />
+        </span>{' '}
+        Trending Now
       </h3>
       <div className="space-y-3">
         {trending.map((entry, i) => (

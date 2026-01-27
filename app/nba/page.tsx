@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/ui/SportIcon';
 
 const conferences = [
   {
@@ -80,7 +81,11 @@ export default function NBAPage() {
                 <Link href="/nba/standings" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-3xl">🏆</span>
+                      <span className="text-burnt-orange">
+                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                      </span>
                       <h3 className="text-xl font-display font-bold text-white">Standings</h3>
                     </div>
                     <p className="text-text-secondary text-sm">
@@ -98,7 +103,9 @@ export default function NBAPage() {
                 <Link href="/nba/scores" className="block">
                   <Card variant="hover" padding="lg" className="h-full">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-3xl">🏀</span>
+                      <span className="text-burnt-orange">
+                        <SportIcon icon="nba" size="lg" />
+                      </span>
                       <h3 className="text-xl font-display font-bold text-white">Scores</h3>
                     </div>
                     <p className="text-text-secondary text-sm">

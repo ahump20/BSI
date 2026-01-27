@@ -3,17 +3,18 @@
 import { useState } from 'react';
 import { LiveScoresPanel } from '@/components/sports/LiveScoresPanel';
 import type { Sport } from '@/components/sports/SportTabs';
+import { SportIcon, type SportIconType } from '@/components/ui/SportIcon';
 
 /**
  * Homepage live scores widget with sport-switching tabs
  * Defaults to NCAA (college baseball) per BSI sports priority
  */
 
-const sports: { id: Sport; name: string; icon: string }[] = [
-  { id: 'ncaa', name: 'College Baseball', icon: '🎓' },
-  { id: 'mlb', name: 'MLB', icon: '⚾' },
-  { id: 'nfl', name: 'NFL', icon: '🏈' },
-  { id: 'nba', name: 'NBA', icon: '🏀' },
+const sports: { id: Sport; name: string; icon: SportIconType }[] = [
+  { id: 'ncaa', name: 'College Baseball', icon: 'ncaa' },
+  { id: 'mlb', name: 'MLB', icon: 'mlb' },
+  { id: 'nfl', name: 'NFL', icon: 'nfl' },
+  { id: 'nba', name: 'NBA', icon: 'nba' },
 ];
 
 export function HomeLiveScores() {
@@ -38,7 +39,7 @@ export function HomeLiveScores() {
             `}
             aria-pressed={activeSport === sport.id}
           >
-            <span>{sport.icon}</span>
+            <SportIcon icon={sport.icon} size="sm" />
             <span className="hidden sm:inline">{sport.name}</span>
           </button>
         ))}
