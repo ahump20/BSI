@@ -44,8 +44,8 @@ export async function onRequestGet(context) {
       async () => {
         return await fetchNBAScores(date, teamFilter);
       },
-      30
-    ); // 30 second cache for live scores
+      60
+    ); // 60 second cache (KV minimum TTL)
 
     // Check if any games are live
     const hasLiveGames = scores.games?.some((g) => g.status?.type === 'STATUS_IN_PROGRESS');

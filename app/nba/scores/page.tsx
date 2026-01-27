@@ -36,10 +36,85 @@ interface NBAGame {
   broadcast?: string;
 }
 
+// Raw API response types
+interface APITeam {
+  id: string;
+  team: string;
+  abbreviation: string;
+  score: string | number;
+  record: string;
+}
+
+interface APIGame {
+  id: string;
+  date: string;
+  status: {
+    type: string;
+    period?: number;
+    clock?: string;
+  };
+  teams: {
+    home: APITeam;
+    away: APITeam;
+  };
+  venue?: {
+    name?: string;
+  };
+  broadcast?: string;
+}
+
 interface DataMeta {
   dataSource: string;
   lastUpdated: string;
   timezone: string;
+}
+
+// Transform API response to UI format
+function transformAPIGame(apiGame: APIGame): NBAGame {
+  const statusMap: Record<string, 'scheduled' | 'live' | 'final' | 'postponed'> = {
+    STATUS_SCHEDULED: 'scheduled',
+    STATUS_IN_PROGRESS: 'live',
+    STATUS_FINAL: 'final',
+    STATUS_POSTPONED: 'postponed',
+  };
+
+  const gameTime = new Date(apiGame.date).toLocaleTimeString('en-US', {
+    timeZone: 'America/Chicago',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  return {
+    id: apiGame.id,
+    date: apiGame.date,
+    time: gameTime,
+    status: statusMap[apiGame.status?.type] || 'scheduled',
+    quarter: apiGame.status?.period,
+    timeRemaining: apiGame.status?.clock,
+    homeTeam: {
+      id: apiGame.teams?.home?.id || '',
+      name: apiGame.teams?.home?.team || 'TBD',
+      abbreviation: apiGame.teams?.home?.abbreviation || '',
+      score:
+        typeof apiGame.teams?.home?.score === 'string'
+          ? parseInt(apiGame.teams.home.score) || null
+          : (apiGame.teams?.home?.score ?? null),
+      record: apiGame.teams?.home?.record || '0-0',
+    },
+    awayTeam: {
+      id: apiGame.teams?.away?.id || '',
+      name: apiGame.teams?.away?.team || 'TBD',
+      abbreviation: apiGame.teams?.away?.abbreviation || '',
+      score:
+        typeof apiGame.teams?.away?.score === 'string'
+          ? parseInt(apiGame.teams.away.score) || null
+          : (apiGame.teams?.away?.score ?? null),
+      record: apiGame.teams?.away?.record || '0-0',
+    },
+    venue: apiGame.venue?.name || 'TBD',
+    broadcast: apiGame.broadcast,
+  };
 }
 
 function formatTimestamp(isoString?: string): string {
@@ -85,23 +160,20 @@ export default function NBAScoresPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/nba/scoreboard?date=${date}`);
+      const res = await fetch(`/api/nba/scores?date=${date}`);
       if (!res.ok) throw new Error('Failed to fetch scores');
       const data = (await res.json()) as {
-        games?: NBAGame[];
-        data?: NBAGame[];
+        games?: APIGame[];
+        data?: APIGame[];
         meta?: DataMeta;
       };
 
-      if (data.games) {
-        setGames(data.games);
-        setHasLiveGames(data.games.some((g: NBAGame) => g.status === 'live'));
-      } else if (data.data) {
-        setGames(data.data);
-        setHasLiveGames(data.data.some((g: NBAGame) => g.status === 'live'));
-      } else {
-        setGames([]);
-      }
+      const rawGames = data.games || data.data || [];
+      const transformedGames = rawGames.map(transformAPIGame);
+
+      setGames(transformedGames);
+      setHasLiveGames(transformedGames.some((g) => g.status === 'live'));
+
       if (data.meta) {
         setMeta(data.meta);
       }
