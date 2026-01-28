@@ -39,12 +39,21 @@ const CACHE_PREFIX = {
 
 /**
  * StateTracker - Manages persistence of prediction engine state.
+ *
+ * Requires BSI_HISTORICAL_DB and BSI_PREDICTION_CACHE bindings.
+ * Used by standalone prediction workers (workers/prediction/).
  */
 export class StateTracker {
   private readonly db: D1Database;
   private readonly cache: KVNamespace;
 
   constructor(env: CloudflareEnv) {
+    if (!env.BSI_HISTORICAL_DB) {
+      throw new Error('StateTracker requires BSI_HISTORICAL_DB binding');
+    }
+    if (!env.BSI_PREDICTION_CACHE) {
+      throw new Error('StateTracker requires BSI_PREDICTION_CACHE binding');
+    }
     this.db = env.BSI_HISTORICAL_DB;
     this.cache = env.BSI_PREDICTION_CACHE;
   }
@@ -620,6 +629,138 @@ export class StateTracker {
 
     // Invalidate cache
     await this.cache.delete(`${CACHE_PREFIX.calibration}${calibration.sport}`);
+  }
+
+  // ============================================================================
+  // Sentiment Integration
+  // ============================================================================
+
+  /**
+   * Update team psychological state based on fanbase sentiment changes.
+   *
+   * When sentiment volatility spikes or loyalty drops, adjust team cohesion
+   * and confidence accordingly. This creates a feedback loop between
+   * fanbase mood and predicted performance.
+   *
+   * @param teamId - Team identifier
+   * @param sport - Sport type
+   * @param season - Season year
+   * @param sentimentDelta - Change in overall sentiment (-1 to 1)
+   * @param volatility - Current sentiment volatility (0-1)
+   * @param loyaltyChange - Change in fanbase loyalty (-1 to 1)
+   */
+  async updatePsychStateFromSentiment(
+    teamId: string,
+    sport: SupportedSport,
+    season: number,
+    sentimentDelta: number,
+    volatility: number,
+    loyaltyChange: number
+  ): Promise<void> {
+    // Get current team state
+    const currentState = await this.getTeamState(teamId, sport, season);
+    if (!currentState) return;
+
+    // Calculate adjustments based on sentiment changes
+    // High volatility suggests unstable fanbase = potential cohesion impact
+    // Loyalty drops suggest external pressure = confidence impact
+
+    // Cohesion adjustment: high volatility reduces cohesion slightly
+    // Range: -0.05 to +0.02 based on volatility
+    const cohesionAdjustment =
+      volatility > 0.6
+        ? -0.03 * (volatility - 0.5) // Negative when very volatile
+        : 0.01 * (0.5 - volatility); // Slight positive when stable
+
+    // Confidence adjustment: large sentiment swings affect confidence
+    // Range: -0.04 to +0.04 based on sentiment delta
+    const confidenceAdjustment = sentimentDelta * 0.04;
+
+    // Loyalty impact: significant loyalty drops hurt focus
+    // Range: -0.03 to 0
+    const focusAdjustment =
+      loyaltyChange < -0.1
+        ? loyaltyChange * 0.3 // Scale down the impact
+        : 0;
+
+    // Apply adjustments with clamping to [0, 1]
+    const clamp = (val: number, min: number, max: number) => Math.min(max, Math.max(min, val));
+
+    const updatedState: TeamState = {
+      ...currentState,
+      cohesion: clamp(currentState.cohesion + cohesionAdjustment, 0, 1),
+      confidence: clamp(currentState.confidence + confidenceAdjustment, 0, 1),
+      focus: clamp(currentState.focus + focusAdjustment, 0, 1),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Save updated state
+    await this.saveTeamState(updatedState);
+  }
+
+  /**
+   * Record prediction result and trigger calibration feedback.
+   *
+   * Call this when a game completes to update:
+   * 1. The prediction with actual result (for Brier score)
+   * 2. Team psychological states based on result vs expectation
+   */
+  async recordPredictionResult(
+    gameId: string,
+    homeTeamId: string,
+    awayTeamId: string,
+    sport: SupportedSport,
+    season: number,
+    homeScore: number,
+    awayScore: number
+  ): Promise<void> {
+    // Determine winner
+    const actualResult = homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
+
+    // Update prediction with result
+    await this.updatePredictionResult(
+      gameId,
+      actualResult as 'home' | 'away' | 'draw',
+      homeScore,
+      awayScore
+    );
+
+    // Get the prediction to calculate expectation gap
+    const prediction = await this.getPrediction(gameId);
+    if (!prediction) return;
+
+    // Calculate expectation gap for each team
+    // Positive gap = outperformed expectations, negative = underperformed
+    const homeExpectationGap = (actualResult === 'home' ? 1 : 0) - prediction.homeWinProbability;
+    const awayExpectationGap = (actualResult === 'away' ? 1 : 0) - prediction.awayWinProbability;
+
+    // Update team states based on result
+    // Teams that outperform get confidence/cohesion boost
+    // Teams that underperform get small negative adjustment
+    const homeState = await this.getTeamState(homeTeamId, sport, season);
+    const awayState = await this.getTeamState(awayTeamId, sport, season);
+
+    if (homeState) {
+      const confidenceBoost = homeExpectationGap * 0.1; // ±10% of gap
+      const updatedHomeState: TeamState = {
+        ...homeState,
+        confidence: Math.max(0, Math.min(1, homeState.confidence + confidenceBoost)),
+        gameNumber: homeState.gameNumber + 1,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.saveTeamState(updatedHomeState);
+    }
+
+    if (awayState) {
+      const confidenceBoost = awayExpectationGap * 0.1;
+      const updatedAwayState: TeamState = {
+        ...awayState,
+        confidence: Math.max(0, Math.min(1, awayState.confidence + confidenceBoost)),
+        gameNumber: awayState.gameNumber + 1,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.saveTeamState(updatedAwayState);
+    }
   }
 
   // ============================================================================

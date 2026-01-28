@@ -737,6 +737,7 @@ export interface DetailedPlayerBoxStats extends PlayerBoxStats {
 
 export type GameDetailTab =
   | 'gamecast'
+  | 'intel'
   | 'recap'
   | 'boxscore'
   | 'playbyplay'
@@ -753,6 +754,7 @@ export interface GameDetailTabConfig {
 
 export const GAME_DETAIL_TABS: GameDetailTabConfig[] = [
   { id: 'gamecast', label: 'Gamecast', sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'] },
+  { id: 'intel', label: 'Intel', sports: ['mlb', 'cbb', 'nfl', 'ncaaf', 'nba', 'ncaab'] },
   {
     id: 'recap',
     label: 'Recap',

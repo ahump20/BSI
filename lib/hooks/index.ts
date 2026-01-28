@@ -120,3 +120,12 @@ export {
   type WindowSize,
   type Orientation,
 } from './useResponsive';
+
+// Game intelligence hooks
+export {
+  useGameIntel,
+  usePrediction,
+  useFanbaseSentiment,
+  type GameIntelState,
+  type UseGameIntelOptions,
+} from './useGameIntel';

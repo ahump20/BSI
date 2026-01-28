@@ -6,6 +6,7 @@ import type { GameDetailTab } from '@/lib/types/adapters';
 
 const TAB_LABELS: Record<GameDetailTab, string> = {
   gamecast: 'Gamecast',
+  intel: 'Intel',
   recap: 'Recap',
   boxscore: 'Box Score',
   playbyplay: 'Play-by-Play',

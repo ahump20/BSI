@@ -16,6 +16,7 @@ import { PlayByPlayTab } from './tabs/PlayByPlayTab';
 import { PitchTrackerTab } from './tabs/PitchTrackerTab';
 import { TeamStatsTab } from './tabs/TeamStatsTab';
 import { VideosTab } from './tabs/VideosTab';
+import { IntelTab } from './tabs/IntelTab';
 
 export function GameDetailModal({
   gameId,
@@ -150,6 +151,8 @@ export function GameDetailModal({
             loading={loading.boxScore}
           />
         );
+      case 'intel':
+        return <IntelTab game={game} sport={sport} />;
       case 'recap':
         return <RecapTab recap={recap} game={game} loading={loading.recap} />;
       case 'boxscore':

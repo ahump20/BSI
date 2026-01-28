@@ -27,8 +27,13 @@ export { TabNavigation } from './shared/TabNavigation';
 
 // Tab components (for standalone use)
 export { GamecastTab } from './tabs/GamecastTab';
+export { IntelTab, type IntelTabProps } from './tabs/IntelTab';
 export { RecapTab } from './tabs/RecapTab';
 export { BoxScoreTab } from './tabs/BoxScoreTab';
 export { PlayByPlayTab } from './tabs/PlayByPlayTab';
 export { TeamStatsTab } from './tabs/TeamStatsTab';
 export { VideosTab } from './tabs/VideosTab';
+
+// Full-page game detail components
+export { GameHeader, type GameHeaderProps } from './GameHeader';
+export { WinProbabilityChart } from './WinProbabilityChart';

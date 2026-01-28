@@ -29,6 +29,11 @@ import {
   type PlayerMetrics,
   type NILValuation,
 } from '../../lib/analytics/baseball/nil-calculator';
+import { logger } from '../../lib/utils/logger';
+import {
+  createPortalCommitmentEvents,
+  type PortalEntryData,
+} from '../../lib/fanbase/sentiment-engine';
 
 // ============================================================================
 // Type Definitions
@@ -141,7 +146,7 @@ export function PortalTracker() {
 
       setEntries(entriesWithNIL);
     } catch (err) {
-      console.error('Portal data fetch error:', err);
+      logger.error({ component: 'PortalTracker', error: err }, 'Portal data fetch error');
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
@@ -154,7 +159,7 @@ export function PortalTracker() {
 
       ws.onopen = () => {
         setIsConnected(true);
-        console.log('Portal WebSocket connected');
+        logger.debug({ component: 'PortalTracker' }, 'Portal WebSocket connected');
       };
 
       ws.onmessage = (event) => {
@@ -166,7 +171,7 @@ export function PortalTracker() {
             handleCommitment(update.data);
           }
         } catch (error) {
-          console.error('Failed to parse portal update:', error);
+          logger.error({ component: 'PortalTracker', error }, 'Failed to parse portal update');
         }
       };
 
@@ -178,7 +183,7 @@ export function PortalTracker() {
 
       wsRef.current = ws;
     } catch (error) {
-      console.error('Failed to connect portal WebSocket:', error);
+      logger.error({ component: 'PortalTracker', error }, 'Failed to connect portal WebSocket');
     }
   };
 
@@ -204,18 +209,25 @@ export function PortalTracker() {
     showNotification(`${entry.playerName} entered the portal`, 'info');
   };
 
-  const handleCommitment = (update: { id: string; newSchool: string; newConference: string }) => {
+  const handleCommitment = async (update: {
+    id: string;
+    newSchool: string;
+    newConference: string;
+  }) => {
+    // Find the entry being committed
+    const entry = entries.find((e) => e.id === update.id);
+
     setEntries((prev) =>
-      prev.map((entry) =>
-        entry.id === update.id
+      prev.map((e) =>
+        e.id === update.id
           ? {
-              ...entry,
+              ...e,
               status: 'committed',
               newSchool: update.newSchool,
               newConference: update.newConference,
               commitDate: new Date().toISOString(),
             }
-          : entry
+          : e
       )
     );
 
@@ -228,6 +240,60 @@ export function PortalTracker() {
           }
         : null
     );
+
+    // Dispatch sentiment events for portal commitment
+    if (entry) {
+      await dispatchPortalSentimentEvents(entry, update.newSchool);
+    }
+  };
+
+  /**
+   * Dispatch sentiment events to the API when a portal commitment occurs.
+   * Creates events for both the losing school and gaining school.
+   */
+  const dispatchPortalSentimentEvents = async (entry: PortalEntry, newSchool: string) => {
+    try {
+      // Convert PortalEntry to PortalEntryData for the sentiment engine
+      const portalData: PortalEntryData = {
+        id: entry.id,
+        playerName: entry.playerName,
+        position: entry.position,
+        previousSchool: entry.previousSchool,
+        previousSchoolId: entry.previousSchool.toLowerCase().replace(/\s+/g, '-'),
+        newSchool: newSchool,
+        newSchoolId: newSchool.toLowerCase().replace(/\s+/g, '-'),
+        rating: entry.metrics.positionRank ? Math.min(5, 5 - entry.metrics.positionRank / 100) : 3,
+      };
+
+      // Create sentiment events for both schools
+      const events = createPortalCommitmentEvents(portalData);
+
+      // Dispatch each event to the sentiment API
+      for (const event of events) {
+        const response = await fetch('/api/v1/sentiment/portal-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(event),
+        });
+
+        if (!response.ok) {
+          logger.warn(
+            { component: 'PortalTracker', eventId: event.id, status: response.status },
+            'Failed to dispatch portal sentiment event'
+          );
+        }
+      }
+
+      logger.debug(
+        { component: 'PortalTracker', playerId: entry.id, eventCount: events.length },
+        'Portal sentiment events dispatched'
+      );
+    } catch (error) {
+      logger.error(
+        { component: 'PortalTracker', error },
+        'Error dispatching portal sentiment events'
+      );
+    }
   };
 
   // ============================================================================
@@ -338,8 +404,9 @@ export function PortalTracker() {
   };
 
   const showNotification = (message: string, type: 'info' | 'success' | 'error') => {
-    // In production, integrate with toast library
-    console.log(`[${type.toUpperCase()}] ${message}`);
+    // TODO: Integrate with toast library for user-facing notifications
+    const logMethod = type === 'error' ? 'error' : type === 'success' ? 'info' : 'debug';
+    logger[logMethod]({ component: 'PortalTracker', notificationType: type }, message);
   };
 
   const getPositionColor = (position: string): string => {

@@ -486,3 +486,79 @@ export function createGameEvent(
     metadata: meta,
   };
 }
+
+// ============================================================================
+// Portal Event Factory
+// ============================================================================
+
+/**
+ * Portal entry data from PortalTracker component.
+ */
+export interface PortalEntryData {
+  id: string;
+  playerName: string;
+  position: string;
+  previousSchool: string;
+  previousSchoolId?: string;
+  newSchool?: string;
+  newSchoolId?: string;
+  rating: number; // 0-5 stars
+}
+
+/**
+ * Create a sentiment event from a portal entry/commitment.
+ *
+ * Generates either a 'gain' event for the destination school
+ * or a 'loss' event for the departing school.
+ *
+ * @param entry - Portal entry data
+ * @param eventType - Whether this is a 'gain' or 'loss' for the school
+ * @param schoolId - The school this event affects
+ */
+export function createPortalEvent(
+  entry: PortalEntryData,
+  eventType: 'gain' | 'loss',
+  schoolId: string
+): SentimentEvent {
+  const meta: PortalEventMeta = {
+    playerName: entry.playerName,
+    position: entry.position,
+    rating: entry.rating,
+    fromSchool: eventType === 'gain' ? entry.previousSchool : undefined,
+    toSchool: eventType === 'loss' ? entry.newSchool : undefined,
+  };
+
+  return {
+    id: `portal-${entry.id}-${schoolId}-${eventType}`,
+    schoolId,
+    eventType: eventType === 'gain' ? 'transfer_portal_gain' : 'transfer_portal_loss',
+    timestamp: new Date().toISOString(),
+    metadata: meta,
+  };
+}
+
+/**
+ * Dispatch portal events for both affected schools.
+ *
+ * When a player commits to a new school:
+ * 1. Creates a 'loss' event for the previous school
+ * 2. Creates a 'gain' event for the new school
+ *
+ * @param entry - Portal entry with commitment data
+ * @returns Array of sentiment events to process
+ */
+export function createPortalCommitmentEvents(entry: PortalEntryData): SentimentEvent[] {
+  const events: SentimentEvent[] = [];
+
+  // Loss event for previous school
+  if (entry.previousSchoolId) {
+    events.push(createPortalEvent(entry, 'loss', entry.previousSchoolId));
+  }
+
+  // Gain event for new school
+  if (entry.newSchoolId && entry.newSchool) {
+    events.push(createPortalEvent(entry, 'gain', entry.newSchoolId));
+  }
+
+  return events;
+}

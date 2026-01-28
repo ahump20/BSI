@@ -147,6 +147,19 @@ type SupportedSport =
   | 'wnba'
   | 'nhl';
 
+// Intel props for prediction/sentiment display
+interface ScoreCardIntel {
+  prediction?: {
+    homeWinProb: number;
+    confidence: 'high' | 'medium' | 'low';
+    topFactor?: string;
+  };
+  sentiment?: {
+    homeTemp: number; // -1 to 1
+    awayTemp: number; // -1 to 1
+  };
+}
+
 // Props for the ESPN-style ScoreCard
 export interface ScoreCardProps {
   gameId?: string | number;
@@ -172,6 +185,8 @@ export interface ScoreCardProps {
   showLinescore?: boolean;
   /** Show period-by-period scores for football/basketball */
   showPeriodScores?: boolean;
+  /** Intel data: prediction probabilities and sentiment */
+  intel?: ScoreCardIntel;
 }
 
 /**
@@ -201,6 +216,7 @@ export function ScoreCard({
   compact = false,
   showLinescore = true,
   showPeriodScores = true,
+  intel,
 }: ScoreCardProps) {
   // Get sport-specific theme
   const theme = sportThemes[sport] || sportThemes.mlb;
@@ -303,6 +319,9 @@ export function ScoreCard({
           <span className="text-xs text-text-tertiary truncate max-w-[150px]">{venue}</span>
         )}
       </div>
+
+      {/* Intel Badge */}
+      {intel && <IntelBadge intel={intel} status={status} theme={theme} isFinal={isFinal} />}
 
       {/* Teams Section */}
       <div className="p-4">
@@ -439,7 +458,10 @@ function TeamRow({ team, isWinner, isScheduled, theme }: TeamRowProps) {
             viewBox="0 0 24 24"
             className="w-4 h-4 text-success flex-shrink-0"
             fill="currentColor"
+            aria-hidden="true"
+            role="img"
           >
+            <title>Winner</title>
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
           </svg>
         )}
@@ -479,28 +501,41 @@ function LinescoreTable({
   const displayInnings = Math.max(innings.length, maxInnings);
 
   return (
-    <table className="w-full min-w-[400px] text-xs">
+    <table
+      className="w-full min-w-[400px] text-xs"
+      role="table"
+      aria-label={`Linescore for ${awayAbbr} vs ${homeAbbr}`}
+    >
       <thead>
         <tr className="text-text-tertiary">
-          <th className="text-left font-medium py-1 pr-2 w-12">Team</th>
+          <th scope="col" className="text-left font-medium py-1 pr-2 w-12">
+            Team
+          </th>
           {Array.from({ length: displayInnings }, (_, i) => (
-            <th key={i} className="text-center font-medium py-1 w-6">
+            <th key={i} scope="col" className="text-center font-medium py-1 w-6">
               {i + 1}
             </th>
           ))}
           <th
+            scope="col"
             className={`text-center font-bold py-1 w-6 border-l border-border-subtle ${theme.accent}`}
           >
             R
           </th>
-          <th className="text-center font-medium py-1 w-6">H</th>
-          <th className="text-center font-medium py-1 w-6">E</th>
+          <th scope="col" className="text-center font-medium py-1 w-6">
+            H
+          </th>
+          <th scope="col" className="text-center font-medium py-1 w-6">
+            E
+          </th>
         </tr>
       </thead>
       <tbody>
         {/* Away Team */}
         <tr className="text-text-secondary">
-          <td className="font-semibold text-white py-1 pr-2">{awayAbbr}</td>
+          <th scope="row" className="font-semibold text-white py-1 pr-2">
+            {awayAbbr}
+          </th>
           {Array.from({ length: displayInnings }, (_, i) => (
             <td key={i} className="text-center py-1 font-mono tabular-nums">
               {innings[i]?.away ?? '-'}
@@ -516,7 +551,9 @@ function LinescoreTable({
         </tr>
         {/* Home Team */}
         <tr className="text-text-secondary">
-          <td className="font-semibold text-white py-1 pr-2">{homeAbbr}</td>
+          <th scope="row" className="font-semibold text-white py-1 pr-2">
+            {homeAbbr}
+          </th>
           {Array.from({ length: displayInnings }, (_, i) => (
             <td key={i} className="text-center py-1 font-mono tabular-nums">
               {innings[i]?.home ?? '-'}
@@ -563,12 +600,18 @@ function PeriodScoresTable({
   const maxPeriods = Math.max(periodScores.away.length, periodScores.home.length, periodCount);
 
   return (
-    <table className="w-full min-w-[300px] text-xs">
+    <table
+      className="w-full min-w-[300px] text-xs"
+      role="table"
+      aria-label={`Period scores for ${awayAbbr} vs ${homeAbbr}`}
+    >
       <thead>
         <tr className="text-text-tertiary">
-          <th className="text-left font-medium py-1 pr-2 w-12">Team</th>
+          <th scope="col" className="text-left font-medium py-1 pr-2 w-12">
+            Team
+          </th>
           {Array.from({ length: maxPeriods }, (_, i) => (
-            <th key={i} className="text-center font-medium py-1 w-8">
+            <th key={i} scope="col" className="text-center font-medium py-1 w-8">
               {i < periodCount
                 ? periodLabel === 'Half'
                   ? i === 0
@@ -579,6 +622,7 @@ function PeriodScoresTable({
             </th>
           ))}
           <th
+            scope="col"
             className={`text-center font-bold py-1 w-10 border-l border-border-subtle ${theme.accent}`}
           >
             T
@@ -588,7 +632,9 @@ function PeriodScoresTable({
       <tbody>
         {/* Away Team */}
         <tr className="text-text-secondary">
-          <td className="font-semibold text-white py-1 pr-2">{awayAbbr}</td>
+          <th scope="row" className="font-semibold text-white py-1 pr-2">
+            {awayAbbr}
+          </th>
           {Array.from({ length: maxPeriods }, (_, i) => (
             <td key={i} className="text-center py-1 font-mono tabular-nums">
               {periodScores.away[i] ?? '-'}
@@ -600,7 +646,9 @@ function PeriodScoresTable({
         </tr>
         {/* Home Team */}
         <tr className="text-text-secondary">
-          <td className="font-semibold text-white py-1 pr-2">{homeAbbr}</td>
+          <th scope="row" className="font-semibold text-white py-1 pr-2">
+            {homeAbbr}
+          </th>
           {Array.from({ length: maxPeriods }, (_, i) => (
             <td key={i} className="text-center py-1 font-mono tabular-nums">
               {periodScores.home[i] ?? '-'}
@@ -612,6 +660,136 @@ function PeriodScoresTable({
         </tr>
       </tbody>
     </table>
+  );
+}
+
+/**
+ * Intel Badge Component - Displays prediction/sentiment data
+ */
+interface IntelBadgeProps {
+  intel: ScoreCardIntel;
+  status: GameStatus;
+  theme: typeof sportThemes.mlb;
+  isFinal: boolean;
+}
+
+function IntelBadge({ intel, status, theme, isFinal }: IntelBadgeProps) {
+  const { prediction, sentiment } = intel;
+
+  // No intel data to display
+  if (!prediction && !sentiment) return null;
+
+  // Get sentiment trend text
+  const getSentimentTrend = (homeTemp: number, awayTemp: number): string | null => {
+    const avg = (homeTemp + awayTemp) / 2;
+    if (avg > 0.2) return 'Rising';
+    if (avg < -0.2) return 'Falling';
+    return 'Stable';
+  };
+
+  // Scheduled: Show prediction percentage + sentiment trend
+  if (status === 'scheduled' && prediction) {
+    const prob = Math.round(prediction.homeWinProb * 100);
+    const trend = sentiment ? getSentimentTrend(sentiment.homeTemp, sentiment.awayTemp) : null;
+
+    return (
+      <div className="px-4 py-1.5 bg-charcoal-800/50 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <span className={`font-semibold ${theme.accent}`}>{prob}%</span>
+          <span className="text-text-tertiary">win prob</span>
+          {prediction.confidence === 'high' && (
+            <span className="text-success text-[10px] font-medium">HIGH</span>
+          )}
+        </div>
+        {trend && (
+          <div className="flex items-center gap-1">
+            <span className="text-text-tertiary">{trend}</span>
+            <TrendIcon trend={trend} />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Live: Show live win probability with pulsing indicator
+  if (status === 'live' && prediction) {
+    const prob = Math.round(prediction.homeWinProb * 100);
+
+    return (
+      <div className="px-4 py-1.5 bg-success/5 border-b border-success/20 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+          <span className="text-white font-semibold">{prob}%</span>
+          <span className="text-text-tertiary">live win prob</span>
+        </div>
+        {prediction.topFactor && (
+          <span className="text-text-tertiary truncate max-w-[120px]">{prediction.topFactor}</span>
+        )}
+      </div>
+    );
+  }
+
+  // Final: Show calibration feedback (predicted vs actual)
+  if (isFinal && prediction) {
+    const prob = Math.round(prediction.homeWinProb * 100);
+    const predictedHome = prob >= 50;
+    // Note: For full calibration feedback, we'd need the actual result
+    // For now, just show what we predicted
+
+    return (
+      <div className="px-4 py-1.5 bg-charcoal-800/30 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2">
+          <span className="text-text-tertiary">Predicted</span>
+          <span className="text-white font-semibold">{prob}%</span>
+          <span className="text-text-tertiary">{predictedHome ? 'home' : 'away'}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+/**
+ * Trend Icon Component
+ */
+function TrendIcon({ trend }: { trend: string }) {
+  if (trend === 'Rising') {
+    return (
+      <svg
+        className="w-3 h-3 text-success"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M7 17l5-5 5 5" />
+      </svg>
+    );
+  }
+  if (trend === 'Falling') {
+    return (
+      <svg
+        className="w-3 h-3 text-error"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M7 7l5 5 5-5" />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      className="w-3 h-3 text-text-tertiary"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M5 12h14" />
+    </svg>
   );
 }
 
