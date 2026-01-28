@@ -23,13 +23,17 @@ export function getCurrentSeason(sport, date = new Date()) {
 
     case 'nfl':
       // NFL season: September-February (spans years)
-      // In March-August (2-7), use previous year
-      return month >= 8 || month <= 1 ? year : year - 1;
+      // September-December: season starts in current year
+      // January-February: ongoing season that started previous year
+      // March-August: off-season, use previous completed season
+      return month >= 8 ? year : year - 1;
 
     case 'nba':
       // NBA season: October-June (spans years)
-      // In July-September (6-8), use previous year
-      return month >= 9 || month <= 5 ? year : year - 1;
+      // October-December: season starts in current year
+      // January-June: ongoing season that started previous year
+      // July-September: off-season, use previous completed season
+      return month >= 9 ? year : year - 1;
 
     default:
       return year;
