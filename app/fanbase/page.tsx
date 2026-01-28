@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { FanbaseListCard } from '@/components/fanbase';
 import { Footer } from '@/components/layout-ds/Footer';
-import { fetchSchools, type APISchool } from '@/lib/fanbase/api-types';
+import { fetchSchools, fetchTrending, type APISchool } from '@/lib/fanbase/api-types';
 import type { TrendingFanbase } from '@/lib/fanbase/types';
 
 function SchoolCard({ school }: { school: APISchool }) {
@@ -82,22 +82,36 @@ function LoadingSkeleton() {
   );
 }
 
-function TrendingSection({ trending }: { trending: TrendingFanbase[] }) {
+function TrendingSection({
+  trending,
+  isLoading,
+}: {
+  trending: TrendingFanbase[];
+  isLoading?: boolean;
+}) {
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-16 bg-white/5 rounded-lg animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
   if (trending.length === 0) {
     return (
-      <Card padding="md">
-        <CardContent>
-          <p className="text-white/50 text-center py-8">
-            No trending data available yet. Check back during the season.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="text-center py-6">
+        <p className="text-white/50 text-sm">
+          No trending data available yet. Check back during the season.
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-2">
-      {trending.map((item) => (
+      {trending.slice(0, 5).map((item) => (
         <FanbaseListCard
           key={item.fanbase.id}
           profile={item.fanbase}
@@ -120,7 +134,11 @@ export default function FanbaseLandingPage() {
     staleTime: 1000 * 60 * 10,
   });
 
-  const trendingFanbases: TrendingFanbase[] = [];
+  const { data: trendingFanbases = [], isLoading: isTrendingLoading } = useQuery({
+    queryKey: ['fanbase-trending'],
+    queryFn: fetchTrending,
+    staleTime: 1000 * 60 * 5, // 5 minute cache
+  });
 
   return (
     <>
@@ -196,10 +214,12 @@ export default function FanbaseLandingPage() {
                 <Card padding="md">
                   <CardHeader>
                     <CardTitle size="sm">Trending This Week</CardTitle>
-                    <Badge variant="primary">Offseason</Badge>
+                    <Badge variant={trendingFanbases.length > 0 ? 'accent' : 'secondary'}>
+                      {trendingFanbases.length > 0 ? 'Live' : 'Offseason'}
+                    </Badge>
                   </CardHeader>
                   <CardContent>
-                    <TrendingSection trending={trendingFanbases} />
+                    <TrendingSection trending={trendingFanbases} isLoading={isTrendingLoading} />
                   </CardContent>
                 </Card>
 

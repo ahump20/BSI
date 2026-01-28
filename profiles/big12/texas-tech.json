@@ -1,0 +1,72 @@
+{
+  "id": "texas-tech",
+  "school": "Texas Tech University",
+  "shortName": "Texas Tech",
+  "mascot": "Red Raiders",
+  "conference": "Big 12",
+  "primaryColor": "#CC0000",
+  "secondaryColor": "#000000",
+  "logo": "/images/teams/big12/texas-tech.png",
+
+  "sentiment": {
+    "overall": 0.15,
+    "optimism": 0.55,
+    "loyalty": 0.75,
+    "volatility": 0.65
+  },
+
+  "personality": {
+    "traits": [
+      "resilient",
+      "underdog-mentality",
+      "passionate",
+      "tortilla-throwing",
+      "loyal-through-rebuilds"
+    ],
+    "rivalries": [
+      "texas",
+      "baylor",
+      "tcu"
+    ],
+    "traditions": [
+      "Throwing tortillas at kickoff",
+      "Raider Red mascot",
+      "Guns Up hand sign",
+      "Carol of Lights",
+      "Matador Song"
+    ],
+    "quirks": [
+      "Endless debate about whether to leave Big 12 for SEC",
+      "Perpetual 'sleeping giant' narrative",
+      "Deep nostalgia for Leach/Crabtree era",
+      "Defensive about Lubbock weather",
+      "Mike Leach shrine keepers"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.65,
+    "gameAttendance": 0.70,
+    "travelSupport": 0.55,
+    "merchandisePurchasing": 0.60
+  },
+
+  "demographics": {
+    "primaryAge": "25-50",
+    "geographicSpread": [
+      "West Texas",
+      "Dallas-Fort Worth",
+      "Lubbock metro",
+      "Houston"
+    ],
+    "alumniPercentage": 0.55
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.65,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "baylor",
+  "school": "Baylor University",
+  "shortName": "Baylor",
+  "mascot": "Bears",
+  "conference": "Big 12",
+  "primaryColor": "#003015",
+  "secondaryColor": "#FFB81C",
+  "logo": "/images/teams/big12/baylor.png",
+
+  "sentiment": {
+    "overall": 0.05,
+    "optimism": 0.40,
+    "loyalty": 0.70,
+    "volatility": 0.55
+  },
+
+  "personality": {
+    "traits": [
+      "baptist-values",
+      "defensive-about-scandals",
+      "rising-program",
+      "family-atmosphere",
+      "chip-on-shoulder"
+    ],
+    "rivalries": [
+      "tcu",
+      "texas-tech"
+    ],
+    "traditions": [
+      "Bear mascots (Joy & Lady)",
+      "Line tradition",
+      "Sic 'em Bears",
+      "McLane Stadium on the Brazos",
+      "Old Baylor football lamp lighting"
+    ],
+    "quirks": [
+      "2021 Big 12 championship as new identity anchor",
+      "Scandal era still haunts recruiting conversations",
+      "Matt Rhule as program savior narrative",
+      "Private school underdog vs state schools",
+      "Waco renaissance tied to football success",
+      "Baptist dry campus jokes on road trips"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.55,
+    "gameAttendance": 0.70,
+    "travelSupport": 0.50,
+    "merchandisePurchasing": 0.55
+  },
+
+  "demographics": {
+    "primaryAge": "25-50",
+    "geographicSpread": [
+      "Central Texas",
+      "Dallas-Fort Worth",
+      "Houston"
+    ],
+    "alumniPercentage": 0.65
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.60,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}

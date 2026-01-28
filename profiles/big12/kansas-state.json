@@ -1,0 +1,70 @@
+{
+  "id": "kansas-state",
+  "school": "Kansas State University",
+  "shortName": "Kansas State",
+  "mascot": "Wildcats",
+  "conference": "Big 12",
+  "primaryColor": "#512888",
+  "secondaryColor": "#A7A7A7",
+  "logo": "/images/teams/big12/kansas-state.png",
+
+  "sentiment": {
+    "overall": 0.35,
+    "optimism": 0.65,
+    "loyalty": 0.85,
+    "volatility": 0.40
+  },
+
+  "personality": {
+    "traits": [
+      "humble",
+      "blue-collar",
+      "Snyder-devotees",
+      "grateful-for-success",
+      "defensive-about-Manhattan"
+    ],
+    "rivalries": [
+      "kansas",
+      "iowa-state"
+    ],
+    "traditions": [
+      "Wabash Cannonball",
+      "Willie the Wildcat",
+      "Family atmosphere",
+      "Purple Power",
+      "Coach Snyder Highway"
+    ],
+    "quirks": [
+      "Will tell you about the 0-26-1 start unprompted",
+      "Bill Snyder worship is a religion",
+      "Genuinely nice fanbase stereotype",
+      "Manhattan Kansas > Manhattan NYC debates",
+      "Fiercely protective of the 'family' culture"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.50,
+    "gameAttendance": 0.80,
+    "travelSupport": 0.70,
+    "merchandisePurchasing": 0.65
+  },
+
+  "demographics": {
+    "primaryAge": "30-60",
+    "geographicSpread": [
+      "Kansas",
+      "Kansas City metro",
+      "Nebraska border"
+    ],
+    "alumniPercentage": 0.65
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.70,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}

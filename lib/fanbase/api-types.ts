@@ -126,3 +126,28 @@ export async function fetchSECTriggers(): Promise<APITriggerWithSchool[]> {
   if (!json.success) throw new Error(json.error ?? 'Failed to fetch triggers');
   return json.data;
 }
+
+// ============================================================================
+// Trending API (via Pages Function)
+// ============================================================================
+
+import type { TrendingFanbase } from './types';
+
+const PAGES_API_BASE = '/api/v1/fanbase';
+
+/**
+ * Fetch trending fanbases with biggest sentiment changes.
+ * Uses the Pages Function which queries the v_trending_fanbases D1 view.
+ */
+export async function fetchTrending(): Promise<TrendingFanbase[]> {
+  const res = await fetch(`${PAGES_API_BASE}/trending`);
+  const json = (await res.json()) as { success: boolean; data: TrendingFanbase[]; error?: string };
+  if (!json.success) {
+    // Return empty array if no trending data (offseason)
+    if (json.error?.includes('NOT_FOUND') || json.error?.includes('no data')) {
+      return [];
+    }
+    throw new Error(json.error ?? 'Failed to fetch trending');
+  }
+  return json.data ?? [];
+}

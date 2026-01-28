@@ -2,7 +2,13 @@ export { TraitBadges, RivalryBadges, TraditionBadges } from './TraitBadges';
 export type { TraitBadgesProps, RivalryBadgesProps, TraditionBadgesProps } from './TraitBadges';
 
 export { SentimentChart, SentimentGauge, MetricBar } from './SentimentChart';
-export type { SentimentChartProps, SentimentGaugeProps, MetricBarProps } from './SentimentChart';
+export type {
+  SentimentChartProps,
+  SentimentGaugeProps,
+  MetricBarProps,
+  TimeRange,
+  SentimentEvent,
+} from './SentimentChart';
 
 export { FanbaseCard, FanbaseListCard, CompareCard } from './FanbaseCard';
 export type { FanbaseCardProps, FanbaseListCardProps, CompareCardProps } from './FanbaseCard';
@@ -18,3 +24,9 @@ export type { RivalryComparisonProps } from './RivalryComparison';
 
 export { TriggerAlert } from './TriggerAlert';
 export type { TriggerAlertProps } from './TriggerAlert';
+
+export { ValidationScorecard, ValidationSummary } from './ValidationScorecard';
+export type { ValidationScorecardProps, ValidationSummaryProps } from './ValidationScorecard';
+
+export { BarometerWidget, BarometerCompact } from './BarometerWidget';
+export type { BarometerWidgetProps, BarometerCompactProps } from './BarometerWidget';

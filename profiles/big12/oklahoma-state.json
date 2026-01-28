@@ -1,0 +1,72 @@
+{
+  "id": "oklahoma-state",
+  "school": "Oklahoma State University",
+  "shortName": "Oklahoma State",
+  "mascot": "Cowboys",
+  "conference": "Big 12",
+  "primaryColor": "#FF6600",
+  "secondaryColor": "#000000",
+  "logo": "/images/teams/big12/oklahoma-state.png",
+
+  "sentiment": {
+    "overall": 0.10,
+    "optimism": 0.45,
+    "loyalty": 0.80,
+    "volatility": 0.60
+  },
+
+  "personality": {
+    "traits": [
+      "little-brother-syndrome",
+      "blue-collar",
+      "cowboy-culture",
+      "loyal-through-hardship",
+      "Boone-Pickens-grateful"
+    ],
+    "rivalries": [
+      "oklahoma",
+      "texas-tech"
+    ],
+    "traditions": [
+      "Paddle People",
+      "Spirit Rider",
+      "Pistol Pete mascot",
+      "Homecoming (America's Greatest)",
+      "Orange Power",
+      "Waving the wheat (mockingly)"
+    ],
+    "quirks": [
+      "Bedlam ending still raw",
+      "T. Boone Pickens as patron saint",
+      "2011 championship snub defines generation",
+      "Oklahoma leaving = betrayal narrative",
+      "Mullet Mike Gundy appreciation society",
+      "Wrestling school that plays football well"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.60,
+    "gameAttendance": 0.75,
+    "travelSupport": 0.60,
+    "merchandisePurchasing": 0.65
+  },
+
+  "demographics": {
+    "primaryAge": "25-55",
+    "geographicSpread": [
+      "Oklahoma",
+      "North Texas",
+      "Kansas"
+    ],
+    "alumniPercentage": 0.60
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.70,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "tcu",
+  "school": "Texas Christian University",
+  "shortName": "TCU",
+  "mascot": "Horned Frogs",
+  "conference": "Big 12",
+  "primaryColor": "#4D1979",
+  "secondaryColor": "#A3A9AC",
+  "logo": "/images/teams/big12/tcu.png",
+
+  "sentiment": {
+    "overall": 0.20,
+    "optimism": 0.50,
+    "loyalty": 0.70,
+    "volatility": 0.55
+  },
+
+  "personality": {
+    "traits": [
+      "nouveau-riche",
+      "chip-on-shoulder",
+      "upwardly-mobile",
+      "defensive-about-legitimacy",
+      "wine-and-cheese-adjacent"
+    ],
+    "rivalries": [
+      "baylor",
+      "smu",
+      "texas-tech"
+    ],
+    "traditions": [
+      "Riff Ram hand sign",
+      "Fight song 'TCU Fight Song'",
+      "Frog Horn",
+      "Iron Skillet (SMU rivalry trophy)",
+      "Purple game day atmosphere"
+    ],
+    "quirks": [
+      "Constant 'we belong' narrative in Texas football",
+      "Patterson-era nostalgia running deep",
+      "Small private school inferiority complex vs UT/A&M",
+      "National championship game still fresh wound",
+      "Fort Worth identity pride"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.55,
+    "gameAttendance": 0.65,
+    "travelSupport": 0.50,
+    "merchandisePurchasing": 0.60
+  },
+
+  "demographics": {
+    "primaryAge": "25-55",
+    "geographicSpread": [
+      "Fort Worth",
+      "Dallas-Fort Worth",
+      "Texas statewide"
+    ],
+    "alumniPercentage": 0.70
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.60,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}

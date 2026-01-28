@@ -1,0 +1,74 @@
+{
+  "id": "byu",
+  "school": "Brigham Young University",
+  "shortName": "BYU",
+  "mascot": "Cougars",
+  "conference": "Big 12",
+  "primaryColor": "#002E5D",
+  "secondaryColor": "#FFFFFF",
+  "logo": "/images/teams/big12/byu.png",
+
+  "sentiment": {
+    "overall": 0.25,
+    "optimism": 0.60,
+    "loyalty": 0.90,
+    "volatility": 0.50
+  },
+
+  "personality": {
+    "traits": [
+      "faithful",
+      "family-oriented",
+      "mission-driven",
+      "persecution-complex",
+      "nationally-dispersed"
+    ],
+    "rivalries": [
+      "utah",
+      "utah-state"
+    ],
+    "traditions": [
+      "Cosmo the Cougar",
+      "Rise and Shout",
+      "Cougar Tail pastries",
+      "LaVell Edwards Stadium",
+      "Post-game fireworks",
+      "Honor Code"
+    ],
+    "quirks": [
+      "Mission stories as conversation starters",
+      "Chocolate milk in the tailgate coolers",
+      "Saturday kickoffs complicated by church",
+      "Holy War rivalry transcends football",
+      "National fanbase from missionary connections",
+      "1984 championship as foundational myth"
+    ]
+  },
+
+  "engagement": {
+    "socialMediaActivity": 0.70,
+    "gameAttendance": 0.85,
+    "travelSupport": 0.75,
+    "merchandisePurchasing": 0.70
+  },
+
+  "demographics": {
+    "primaryAge": "25-50",
+    "geographicSpread": [
+      "Utah",
+      "Arizona",
+      "Idaho",
+      "California",
+      "National (LDS diaspora)"
+    ],
+    "alumniPercentage": 0.50
+  },
+
+  "meta": {
+    "lastUpdated": "2026-01-28T00:00:00Z",
+    "dataSource": "manual",
+    "confidence": 0.70,
+    "sampleSize": 0,
+    "researcher": "BSI"
+  }
+}
