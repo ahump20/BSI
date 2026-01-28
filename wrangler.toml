@@ -21,7 +21,7 @@ kv_namespaces = [
   { binding = "KV", id = "a53c3726fc3044be82e79d2d1e371d26" },
   { binding = "NIL_CACHE", id = "a53c3726fc3044be82e79d2d1e371d26", preview_id = "a53c3726fc3044be82e79d2d1e371d26" },
   { binding = "BSI_CACHE", id = "429e580ad8aa4a189af2513490d8790d", preview_id = "f2dc8c57c641403481809db1a4962822" },
-  # { binding = "BSI_FANBASE_CACHE", id = "BSI_FANBASE_CACHE_ID" }  # Create with: wrangler kv:namespace create BSI_FANBASE_CACHE
+  { binding = "BSI_FANBASE_CACHE", id = "88ada3ae7b2849349c260adabf209760" },
 ]
 
 # New dedicated KV namespaces (IDs populated by setup script)
