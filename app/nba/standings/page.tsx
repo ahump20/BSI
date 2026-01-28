@@ -433,9 +433,45 @@ export default function NBAStandingsPage() {
       try {
         const res = await fetch('/api/nba/standings');
         if (res.ok) {
-          const data = (await res.json()) as { standings?: Conference[] };
+          const data = (await res.json()) as {
+            standings?: Array<{
+              name: string;
+              abbreviation: string;
+              teams: Array<{
+                name: string;
+                abbreviation: string;
+                wins: number;
+                losses: number;
+                record?: { winningPercentage: string };
+                standings?: { gamesBack: string | number; streak: string };
+                stats?: { homeRecord: string; roadRecord: string; lastTenRecord: string };
+              }>;
+            }>;
+          };
+
           if (data.standings && data.standings.length > 0) {
-            setStandings(data.standings);
+            // Transform API response to match page interface
+            const transformed = data.standings.map((conf) => ({
+              name: conf.name,
+              teams: conf.teams.map((team) => ({
+                name: team.name,
+                abbreviation: team.abbreviation,
+                wins: team.wins,
+                losses: team.losses,
+                pct: team.record?.winningPercentage
+                  ? parseFloat(team.record.winningPercentage)
+                  : team.wins / (team.wins + team.losses || 1),
+                gb:
+                  team.standings?.gamesBack !== undefined
+                    ? team.standings.gamesBack.toString()
+                    : '-',
+                home: team.stats?.homeRecord || '0-0',
+                away: team.stats?.roadRecord || '0-0',
+                last10: team.stats?.lastTenRecord || '0-0',
+                streak: team.standings?.streak || '-',
+              })),
+            }));
+            setStandings(transformed);
             setDataFresh(true);
           }
         }

@@ -12,6 +12,7 @@ import {
   rateLimit,
   rateLimitError,
 } from '../_utils.js';
+import { getCurrentSeason, getSeasonLabel, isInSeason } from '../_season-utils.js';
 
 // Valid MLB divisions
 const VALID_DIVISIONS = ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
@@ -96,25 +97,27 @@ export async function onRequestGet(context) {
   }
 
   try {
-    const cacheKey = `mlb:standings:${division || league || 'all'}`;
+    const season = getCurrentSeason('mlb');
+    const cacheKey = `mlb:standings:${season}:${division || league || 'all'}`;
 
     const standings = await cache(
       env,
       cacheKey,
       async () => {
-        return await fetchMLBStandings(division, league);
+        return await fetchMLBStandings(division, league, season);
       },
       300
     ); // 5 minute cache
 
     return ok({
       league: 'MLB',
-      season: '2025',
+      season: getSeasonLabel('mlb', season),
       standings,
       meta: {
         dataSource: 'MLB Stats API',
         lastUpdated: new Date().toISOString(),
         timezone: 'America/Chicago',
+        isLiveSeason: isInSeason('mlb'),
       },
     });
   } catch (error) {
@@ -125,7 +128,7 @@ export async function onRequestGet(context) {
 /**
  * Fetch MLB standings from MLB Stats API with retry logic
  */
-async function fetchMLBStandings(filterDivision, filterLeague) {
+async function fetchMLBStandings(filterDivision, filterLeague, season) {
   return await withRetry(
     async () => {
       const headers = {
@@ -133,9 +136,8 @@ async function fetchMLBStandings(filterDivision, filterLeague) {
         Accept: 'application/json',
       };
 
-      // MLB Stats API endpoint
-      const standingsUrl =
-        'https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=2025&standingsTypes=regularSeason';
+      // MLB Stats API endpoint with dynamic season
+      const standingsUrl = `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=${season}&standingsTypes=regularSeason`;
 
       const response = await fetchWithTimeout(standingsUrl, { headers }, 10000);
 

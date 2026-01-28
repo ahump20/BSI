@@ -5,10 +5,11 @@
  * GET /api/nfl/standings
  * GET /api/nfl/standings?conference=AFC
  * GET /api/nfl/standings?division=AFC%20South
- * GET /api/nfl/standings?season=2025
+ * GET /api/nfl/standings?season=2024
  */
 
 import { corsHeaders, generateCorrelationId, badRequest } from '../_utils.js';
+import { getCurrentSeason, getSeasonLabel, isInSeason } from '../_season-utils.js';
 
 // Valid NFL conferences and divisions
 const VALID_CONFERENCES = ['AFC', 'NFC'];
@@ -74,19 +75,6 @@ interface Env {
   KV?: KVNamespace;
 }
 
-/**
- * Get the current NFL season year.
- * NFL season starts in September and ends in February.
- * So in Jan-Aug, we use previous year's season.
- */
-function getCurrentNFLSeason(): number {
-  const now = new Date();
-  const month = now.getMonth(); // 0-11
-  const year = now.getFullYear();
-  // If we're in Jan-Aug, the current NFL season is the previous year
-  return month < 8 ? year - 1 : year;
-}
-
 export const onRequest: PagesFunction<Env> = async ({ request }) => {
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
@@ -101,7 +89,7 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   const division = url.searchParams.get('division');
   const season = url.searchParams.get('season')
     ? parseInt(url.searchParams.get('season')!)
-    : getCurrentNFLSeason();
+    : getCurrentSeason('nfl');
 
   // Validate conference
   if (conference && !VALID_CONFERENCES.includes(conference)) {
@@ -122,12 +110,13 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
 
     return new Response(
       JSON.stringify({
-        season,
+        season: getSeasonLabel('nfl', season),
         standings,
         meta: {
           dataSource: 'ESPN API',
           lastUpdated: new Date().toISOString(),
           timezone: 'America/Chicago',
+          isLiveSeason: isInSeason('nfl'),
         },
       }),
       {

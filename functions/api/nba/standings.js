@@ -12,6 +12,7 @@ import {
   rateLimitError,
   corsHeaders,
 } from '../_utils.js';
+import { getCurrentSeason, getSeasonLabel, isInSeason } from '../_season-utils.js';
 
 /**
  * NBA Standings endpoint
@@ -35,7 +36,8 @@ export async function onRequestGet(context) {
   const conference = url.searchParams.get('conference'); // 'East' or 'West'
 
   try {
-    const cacheKey = `nba:standings:${conference || 'all'}`;
+    const season = getCurrentSeason('nba');
+    const cacheKey = `nba:standings:${season}:${conference || 'all'}`;
 
     const standings = await cache(
       env,
@@ -48,12 +50,13 @@ export async function onRequestGet(context) {
 
     return ok({
       league: 'NBA',
-      season: '2025-26',
+      season: getSeasonLabel('nba', season),
       standings,
       meta: {
         dataSource: 'ESPN NBA API',
         lastUpdated: new Date().toISOString(),
         timezone: 'America/Chicago',
+        isLiveSeason: isInSeason('nba'),
       },
     });
   } catch (error) {
