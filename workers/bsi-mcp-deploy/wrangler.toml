@@ -1,0 +1,30 @@
+name = "bsi-mcp-deploy"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+account_id = "a12cb329d84130460eed99b816e4d0d3"
+
+# KV Namespace for OAuth state and session management
+[[kv_namespaces]]
+binding = "MCP_STATE"
+id = "9c318069f7134a6ca6652f6df7f16b3b"
+
+[vars]
+ENVIRONMENT = "production"
+GITHUB_REPO = "ahump20/BSI"
+GITHUB_WORKFLOW_FILE = "deploy.yml"
+
+# Routes - Custom domain mapping (optional)
+# routes = [
+#   { pattern = "mcp.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+# ]
+
+[observability]
+enabled = true
+
+[build]
+command = ""
+
+[limits]
+cpu_ms = 50
