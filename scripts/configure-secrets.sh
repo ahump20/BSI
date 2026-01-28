@@ -86,7 +86,11 @@ BSI_WORKERS=(
 
 # Required secrets for BSI
 BSI_SECRETS=(
-    # Sports Data APIs
+    # Highlightly Sports Pro (RapidAPI) - PRIMARY DATA SOURCE
+    "HIGHLIGHTLY_API_KEY|Highlightly Pro API key via RapidAPI (x-rapidapi-key)"
+    "NIL_RAPIDAPI_KEY|NIL Athletes API key via RapidAPI"
+
+    # Sports Data APIs (fallback/supplementary)
     "SPORTSDATAIO_API_KEY|Sports Data IO API key for MLB/NFL/NBA data"
     "CFBDATA_API_KEY|College Football Data API key"
     "THEODDS_API_KEY|The Odds API key for betting lines (optional)"
@@ -230,7 +234,11 @@ cat << 'TEMPLATE'
 # =====================================================
 # Copy this to .env.secrets and fill in values
 
-# Sports Data APIs
+# Highlightly Sports Pro (RapidAPI) - PRIMARY
+HIGHLIGHTLY_API_KEY=your-rapidapi-key
+NIL_RAPIDAPI_KEY=your-rapidapi-key
+
+# Sports Data APIs (fallback)
 SPORTSDATAIO_API_KEY=
 CFBDATA_API_KEY=
 THEODDS_API_KEY=

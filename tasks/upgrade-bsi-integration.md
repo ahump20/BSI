@@ -251,6 +251,159 @@ CLOUDFLARE_STREAM_TOKEN=...
 
 ---
 
+## Production Deployment Plan
+
+### Primary Data Source: Highlightly Sports Pro (RapidAPI)
+
+BSI uses [Highlightly Pro API](https://highlightly.net/) as the primary sports data source:
+
+| Sport | Endpoint | Coverage |
+|-------|----------|----------|
+| Baseball | `baseball.highlightly.net` | MLB, NCAA |
+| Football | `american-football.highlightly.net` | NFL, NCAA |
+| Basketball | `basketball.highlightly.net` | NBA, NCAA |
+
+**Required secrets:**
+```bash
+HIGHLIGHTLY_API_KEY=your-rapidapi-key  # x-rapidapi-key header
+NIL_RAPIDAPI_KEY=your-rapidapi-key     # For NIL athlete data
+```
+
+---
+
+### Deployment Options
+
+#### Option 1: GitHub Actions (Recommended)
+
+Push to main branch triggers automatic deployment via existing workflows:
+
+```bash
+# Stage changes
+git add wrangler.toml bsi-production/wrangler.toml scripts/
+
+# Commit
+git commit -m "feat(infra): add missing Cloudflare bindings"
+
+# Push to main (triggers deploy-pages.yml + deploy-workers.yml)
+git push origin main
+```
+
+**Workflows triggered:**
+- `.github/workflows/deploy-pages.yml` - Deploys blazesportsintel.com
+- `.github/workflows/deploy-workers.yml` - Deploys changed workers with D1 migrations
+
+**Required GitHub Secrets:**
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API token with Workers/Pages/D1/KV/R2 permissions
+- `CLOUDFLARE_ACCOUNT_ID` - `a12cb329d84130460eed99b816e4d0d3`
+
+#### Option 2: Manual Wrangler Deploy
+
+```bash
+# Deploy main Pages site
+pnpm build && npx wrangler pages deploy out --project-name=blazesportsintel
+
+# Deploy bsi-home worker
+cd bsi-production && npx wrangler deploy
+
+# Deploy specific workers
+npx wrangler deploy --config workers/bsi-ingest/wrangler.toml
+npx wrangler deploy --config workers/bsi-cfb-ai/wrangler.toml
+```
+
+#### Option 3: Workflow Dispatch (Manual Trigger)
+
+Go to GitHub Actions and manually trigger:
+1. **Deploy Workers** - Select specific worker or "all"
+2. **Deploy Pages** - Deploys main site
+
+---
+
+### Secrets Deployment
+
+**Step 1: Create secrets file**
+```bash
+cat > .env.secrets << 'EOF'
+# Highlightly Pro (PRIMARY)
+HIGHLIGHTLY_API_KEY=your-rapidapi-key
+NIL_RAPIDAPI_KEY=your-rapidapi-key
+
+# Stripe
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_PRICE_ID=price_1SX9voLvpRBk20R2pW0AjUIv
+STRIPE_ENTERPRISE_PRICE_ID=price_1SX9w7LvpRBk20R2DJkKAH3y
+
+# Auth
+JWT_SECRET=your-32-char-minimum-secret
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# Email
+RESEND_API_KEY=re_...
+
+# AI (optional)
+GOOGLE_GEMINI_API_KEY=...
+EOF
+```
+
+**Step 2: Run configuration script**
+```bash
+./scripts/configure-secrets.sh --dry-run  # Preview
+./scripts/configure-secrets.sh            # Apply to all workers
+```
+
+---
+
+### Synchronization Architecture
+
+```
+blazesportsintel.com (Pages)
+    |
+    +-- /api/* --> Pages Functions
+    |                 |
+    |                 +-- KV (BSI_CACHE, BSI_SESSIONS)
+    |                 +-- D1 (bsi-game-db, bsi-historical-db)
+    |                 +-- R2 (blaze-sports-data-lake)
+    |
+    +-- Service Bindings
+            |
+            +-- bsi-ingest (cron: daily 6am CT)
+            |       +-- Highlightly API --> D1/R2
+            |
+            +-- bsi-cache-warmer (cron: every 6h)
+            |       +-- Pre-warm popular endpoints
+            |
+            +-- bsi-prediction-api
+            |       +-- SPORTS_DATA_KV --> ML predictions
+            |
+            +-- bsi-fanbase-sentiment
+                    +-- BSI_FANBASE_CACHE --> real-time sentiment
+
+blazecraft.app (Pages)
+    |
+    +-- BLAZECRAFT_CACHE, blazecraft-db
+    +-- BSI_API_KEY --> Cross-site auth to BSI APIs
+```
+
+---
+
+### Post-Deployment Verification
+
+```bash
+# Health checks
+curl https://blazesportsintel.com/api/health
+curl https://blazesportsintel.com/api/college-baseball/rankings
+
+# Verify bindings
+curl https://blazesportsintel.com/api/debug/bindings  # If debug endpoint exists
+
+# Check worker logs
+npx wrangler tail bsi-ingest --format=pretty
+npx wrangler tail bsi-home --format=pretty
+```
+
+---
+
 ## Architecture Notes
 
 All BSI infrastructure follows Cloudflare-only architecture:
@@ -259,3 +412,10 @@ All BSI infrastructure follows Cloudflare-only architecture:
 - No external cache (KV only)
 - Edge-first AI (Workers AI + Vectorize)
 - Timezone: America/Chicago
+- Primary API: Highlightly Sports Pro via RapidAPI
+
+**Sources:**
+- [Cloudflare Wrangler Action](https://github.com/cloudflare/wrangler-action)
+- [Cloudflare Workers GitHub Actions](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/)
+- [Highlightly Sports API](https://highlightly.net/)
+- [Highlightly Baseball API](https://highlightly.net/documentation/baseball/)
