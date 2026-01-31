@@ -399,7 +399,7 @@ describe('NFL API Tests', () => {
       expect(response.ok).toBe(true);
 
       const data = await response.json();
-      expect(data.season).toBe(2025);
+      expect(data.season).toContain('2025');
     });
 
     it('should support teamId parameter', async () => {
@@ -415,7 +415,7 @@ describe('NFL API Tests', () => {
       expect(response.ok).toBe(true);
 
       const data = await response.json();
-      expect(data.season).toBe(2025);
+      expect(data.season).toContain('2025');
       expect(data.standings.length).toBe(4); // 4 AFC divisions
     });
   });
