@@ -37,18 +37,35 @@ const CACHE_TTL_SECONDS = 60;
 type SortField = 'date' | 'engagement' | 'name' | 'stars';
 
 function buildCacheKey(params: URLSearchParams): string {
-  const keys = ['sport', 'position', 'conference', 'status', 'search', 'minStars', 'sort', 'order', 'limit', 'page', 'since'];
+  const keys = [
+    'sport',
+    'position',
+    'conference',
+    'status',
+    'search',
+    'minStars',
+    'sort',
+    'order',
+    'limit',
+    'page',
+    'since',
+  ];
   const parts = keys.map((k) => `${k}=${params.get(k) || ''}`).join('&');
   return `portal:v2:${parts}`;
 }
 
 function sortColumn(sort: SortField): string {
   switch (sort) {
-    case 'date': return 'event_timestamp';
-    case 'engagement': return 'engagement_score';
-    case 'name': return 'player_name';
-    case 'stars': return 'stars';
-    default: return 'event_timestamp';
+    case 'date':
+      return 'event_timestamp';
+    case 'engagement':
+      return 'engagement_score';
+    case 'name':
+      return 'player_name';
+    case 'stars':
+      return 'stars';
+    default:
+      return 'event_timestamp';
   }
 }
 
@@ -168,7 +185,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       params.push(parseInt(minStars, 10));
     }
     if (search) {
-      conditions.push(`(player_name LIKE ?${++paramIdx} OR from_team LIKE ?${paramIdx} OR to_team LIKE ?${paramIdx})`);
+      conditions.push(
+        `(player_name LIKE ?${++paramIdx} OR from_team LIKE ?${paramIdx} OR to_team LIKE ?${paramIdx})`
+      );
       params.push(`%${search}%`);
     }
     if (since) {
@@ -181,7 +200,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Count query
     const countQuery = `SELECT COUNT(*) as total FROM transfer_portal WHERE ${whereClause}`;
-    const countResult = await env.GAME_DB.prepare(countQuery).bind(...params).first<{ total: number }>();
+    const countResult = await env.GAME_DB.prepare(countQuery)
+      .bind(...params)
+      .first<{ total: number }>();
     const total = countResult?.total ?? 0;
 
     // Data query
@@ -191,11 +212,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       ORDER BY ${sortCol} ${order}
       LIMIT ${limit} OFFSET ${offset}
     `;
-    const dataResult = await env.GAME_DB.prepare(dataQuery).bind(...params).all<D1Row>();
+    const dataResult = await env.GAME_DB.prepare(dataQuery)
+      .bind(...params)
+      .all<D1Row>();
     const entries = (dataResult.results || []).map(rowToEntry);
 
     // Get freshness marker from KV
-    const lastUpdated = await env.KV.get('portal:last_updated') || new Date().toISOString();
+    const lastUpdated = (await env.KV.get('portal:last_updated')) || new Date().toISOString();
 
     const response = JSON.stringify({
       data: entries,
@@ -216,7 +239,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ data: [], meta: { total: 0, page: 1, per_page: 50, has_more: false, last_updated: new Date().toISOString(), source: 'bsi-portal-error' }, error: message }),
+      JSON.stringify({
+        data: [],
+        meta: {
+          total: 0,
+          page: 1,
+          per_page: 50,
+          has_more: false,
+          last_updated: new Date().toISOString(),
+          source: 'bsi-portal-error',
+        },
+        error: message,
+      }),
       { status: 500, headers: HEADERS }
     );
   }

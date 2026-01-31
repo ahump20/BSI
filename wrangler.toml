@@ -101,6 +101,17 @@ database_id = "955e3dc2-4ea1-4b46-8464-0340f1cf3fc5"
 # - Enterprise: $199/month (prod_TU8CTVQzZyiZFs)
 
 # ============================================
+# Highlightly / RapidAPI Integration (REQUIRED for live sports data)
+# ============================================
+# Set this secret via Cloudflare Dashboard or CLI:
+#
+#   wrangler secret put RAPIDAPI_KEY
+#
+# Required secrets:
+# - RAPIDAPI_KEY: RapidAPI key for Highlightly Pro (x-rapidapi-key header)
+#   Used by: Transfer Portal sync, College Baseball scores, College Football scores
+
+# ============================================
 # AI Services Configuration
 # ============================================
 

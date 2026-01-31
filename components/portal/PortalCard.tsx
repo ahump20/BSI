@@ -200,57 +200,106 @@ export function PortalCard({
             )}
           </div>
 
-          {/* Stats (baseball only, when enabled) */}
-          {showStats && sport === 'baseball' && entry.baseball_stats && variant !== 'compact' && (
-            <div className="mt-3 pt-3 border-t border-border-subtle">
-              <div className="flex gap-4 text-xs">
-                {isPitcher ? (
-                  <>
-                    {entry.baseball_stats.era !== undefined && (
+          {/* Stats display */}
+          {showStats && variant !== 'compact' && (
+            <>
+              {sport === 'baseball' && entry.baseball_stats && (
+                <div className="mt-3 pt-3 border-t border-border-subtle">
+                  <div className="flex gap-4 text-xs">
+                    {isPitcher ? (
+                      <>
+                        {entry.baseball_stats.era !== undefined && (
+                          <StatDisplay
+                            label="ERA"
+                            value={entry.baseball_stats.era.toFixed(2)}
+                            numericValue={entry.baseball_stats.era}
+                          />
+                        )}
+                        {entry.baseball_stats.wins !== undefined &&
+                          entry.baseball_stats.losses !== undefined && (
+                            <StatDisplay
+                              label="W-L"
+                              value={`${entry.baseball_stats.wins}-${entry.baseball_stats.losses}`}
+                            />
+                          )}
+                        {entry.baseball_stats.strikeouts !== undefined && (
+                          <StatDisplay label="K" value={entry.baseball_stats.strikeouts} />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {entry.baseball_stats.avg !== undefined && (
+                          <StatDisplay
+                            label="AVG"
+                            value={entry.baseball_stats.avg.toFixed(3)}
+                            numericValue={entry.baseball_stats.avg}
+                          />
+                        )}
+                        {entry.baseball_stats.hr !== undefined && (
+                          <StatDisplay
+                            label="HR"
+                            value={entry.baseball_stats.hr}
+                            numericValue={entry.baseball_stats.hr}
+                          />
+                        )}
+                        {entry.baseball_stats.rbi !== undefined && (
+                          <StatDisplay
+                            label="RBI"
+                            value={entry.baseball_stats.rbi}
+                            numericValue={entry.baseball_stats.rbi}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              {sport === 'football' && entry.football_stats && (
+                <div className="mt-3 pt-3 border-t border-border-subtle">
+                  <div className="flex flex-wrap gap-3 text-xs">
+                    {entry.football_stats.pass_yards !== undefined && (
                       <StatDisplay
-                        label="ERA"
-                        value={entry.baseball_stats.era.toFixed(2)}
-                        numericValue={entry.baseball_stats.era}
+                        label="PASS"
+                        value={`${entry.football_stats.pass_yards.toLocaleString()} yds`}
+                        mono={false}
                       />
                     )}
-                    {entry.baseball_stats.wins !== undefined &&
-                      entry.baseball_stats.losses !== undefined && (
-                        <StatDisplay
-                          label="W-L"
-                          value={`${entry.baseball_stats.wins}-${entry.baseball_stats.losses}`}
-                        />
-                      )}
-                    {entry.baseball_stats.strikeouts !== undefined && (
-                      <StatDisplay label="K" value={entry.baseball_stats.strikeouts} />
+                    {entry.football_stats.pass_td !== undefined && (
+                      <StatDisplay label="P-TD" value={entry.football_stats.pass_td} />
                     )}
-                  </>
-                ) : (
-                  <>
-                    {entry.baseball_stats.avg !== undefined && (
+                    {entry.football_stats.rush_yards !== undefined && (
                       <StatDisplay
-                        label="AVG"
-                        value={entry.baseball_stats.avg.toFixed(3)}
-                        numericValue={entry.baseball_stats.avg}
+                        label="RUSH"
+                        value={`${entry.football_stats.rush_yards.toLocaleString()} yds`}
+                        mono={false}
                       />
                     )}
-                    {entry.baseball_stats.hr !== undefined && (
+                    {entry.football_stats.rush_td !== undefined && (
+                      <StatDisplay label="R-TD" value={entry.football_stats.rush_td} />
+                    )}
+                    {entry.football_stats.rec_yards !== undefined && (
                       <StatDisplay
-                        label="HR"
-                        value={entry.baseball_stats.hr}
-                        numericValue={entry.baseball_stats.hr}
+                        label="REC"
+                        value={`${entry.football_stats.rec_yards.toLocaleString()} yds`}
+                        mono={false}
                       />
                     )}
-                    {entry.baseball_stats.rbi !== undefined && (
-                      <StatDisplay
-                        label="RBI"
-                        value={entry.baseball_stats.rbi}
-                        numericValue={entry.baseball_stats.rbi}
-                      />
+                    {entry.football_stats.rec_td !== undefined && (
+                      <StatDisplay label="R-TD" value={entry.football_stats.rec_td} />
                     )}
-                  </>
-                )}
-              </div>
-            </div>
+                    {entry.football_stats.tackles !== undefined && (
+                      <StatDisplay label="TKL" value={entry.football_stats.tackles} />
+                    )}
+                    {entry.football_stats.sacks !== undefined && (
+                      <StatDisplay label="SACK" value={entry.football_stats.sacks} />
+                    )}
+                    {entry.football_stats.interceptions !== undefined && (
+                      <StatDisplay label="INT" value={entry.football_stats.interceptions} />
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Footer */}
