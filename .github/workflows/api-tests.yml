@@ -143,8 +143,10 @@ jobs:
           SPORTSDATAIO_API_KEY: ${{ secrets.SPORTSDATAIO_API_KEY }}
 
       - name: Alert if data stale
-        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
+        if: failure() && env.HAS_SLACK == 'true'
         uses: slackapi/slack-github-action@v2
+        env:
+          HAS_SLACK: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
