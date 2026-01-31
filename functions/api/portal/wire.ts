@@ -47,7 +47,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       params.push(since);
     }
     if (sport) {
-      conditions.push(`c.sport = ?${++idx}`);
+      conditions.push(`p.sport = ?${++idx}`);
       params.push(sport);
     }
 
