@@ -11,6 +11,10 @@ on:
       - college-baseball
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+
 env:
   NODE_VERSION: '20'
 
