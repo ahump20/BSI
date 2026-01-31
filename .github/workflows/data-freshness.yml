@@ -98,7 +98,7 @@ jobs:
           steps.nba_check.outcome == 'failure' ||
           steps.cbb_check.outcome == 'failure' ||
           steps.cache_check.outcome == 'failure'
-        uses: slackapi/slack-github-action@v1
+        uses: slackapi/slack-github-action@v2
         with:
           payload: |
             {
