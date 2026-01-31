@@ -71,9 +71,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
     query += ' ORDER BY c.event_timestamp DESC LIMIT ' + limit;
 
-    const result = params.length > 0
-      ? await env.GAME_DB.prepare(query).bind(...params).all<ChangelogRow>()
-      : await env.GAME_DB.prepare(query).all<ChangelogRow>();
+    const result =
+      params.length > 0
+        ? await env.GAME_DB.prepare(query)
+            .bind(...params)
+            .all<ChangelogRow>()
+        : await env.GAME_DB.prepare(query).all<ChangelogRow>();
 
     const recentChanges = (result.results || []).map((row) => ({
       id: row.id,
@@ -104,7 +107,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ last_updated: null, update_count_24h: 0, recent_changes: [], status: 'stale', error: message }),
+      JSON.stringify({
+        last_updated: null,
+        update_count_24h: 0,
+        recent_changes: [],
+        status: 'stale',
+        error: message,
+      }),
       { status: 500, headers: HEADERS }
     );
   }

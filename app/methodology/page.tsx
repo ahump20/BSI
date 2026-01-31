@@ -203,7 +203,9 @@ export default function MethodologyPage() {
                     {refreshRates.map((rate, idx) => (
                       <tr
                         key={rate.context}
-                        className={idx !== refreshRates.length - 1 ? 'border-b border-border-subtle' : ''}
+                        className={
+                          idx !== refreshRates.length - 1 ? 'border-b border-border-subtle' : ''
+                        }
                       >
                         <td className="py-3 px-4 text-white">{rate.context}</td>
                         <td className="py-3 px-4 text-burnt-orange font-mono text-right">
@@ -221,9 +223,7 @@ export default function MethodologyPage() {
         {/* Principles */}
         <Section padding="lg" borderTop>
           <Container>
-            <h2 className="text-3xl font-display font-bold text-white mb-4">
-              Our Data Principles
-            </h2>
+            <h2 className="text-3xl font-display font-bold text-white mb-4">Our Data Principles</h2>
             <p className="text-text-secondary mb-8 max-w-2xl">
               The rules we follow when collecting, validating, and displaying data.
             </p>
