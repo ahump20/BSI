@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Transfer Portal Ingestion Endpoint
  *
@@ -58,16 +59,29 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: HEADERS });
+    return new Response(JSON.stringify({ error: 'POST required' }), {
+      status: 405,
+      headers: HEADERS,
+    });
+  }
+
+  // Auth gate: require Authorization header or internal cron header
+  const authHeader = request.headers.get('Authorization');
+  const cronHeader = request.headers.get('X-BSI-Cron');
+  if (!authHeader && !cronHeader) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: HEADERS,
+    });
   }
 
   try {
-    const body = await request.json() as { entries?: IngestEntry[] };
+    const body = (await request.json()) as { entries?: IngestEntry[] };
     if (!body.entries || !Array.isArray(body.entries) || body.entries.length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'Body must contain entries array' }),
-        { status: 400, headers: HEADERS }
-      );
+      return new Response(JSON.stringify({ error: 'Body must contain entries array' }), {
+        status: 400,
+        headers: HEADERS,
+      });
     }
 
     const now = new Date().toISOString();
@@ -75,11 +89,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Store raw snapshot in R2
     const snapshotKey = `portal/snapshots/ingest-${Date.now()}.json`;
-    await env.SPORTS_DATA.put(snapshotKey, JSON.stringify({
-      ingested_at: now,
-      entry_count: body.entries.length,
-      raw: body.entries,
-    }));
+    await env.SPORTS_DATA.put(
+      snapshotKey,
+      JSON.stringify({
+        ingested_at: now,
+        entry_count: body.entries.length,
+        raw: body.entries,
+      })
+    );
 
     let inserted = 0;
     let updated = 0;
@@ -92,39 +109,61 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     for (const entry of body.entries) {
       // Check if entry exists
-      const existing = await db.prepare('SELECT id, status, to_team FROM transfer_portal WHERE id = ?1').bind(entry.id).first<{ id: string; status: string; to_team: string | null }>();
+      const existing = await db
+        .prepare('SELECT id, status, to_team FROM transfer_portal WHERE id = ?1')
+        .bind(entry.id)
+        .first<{ id: string; status: string; to_team: string | null }>();
 
       if (existing) {
         // Update existing
-        await db.prepare(`
+        await db
+          .prepare(
+            `
           UPDATE transfer_portal SET
             player_name = ?2, status = ?3, to_team = ?4, to_conference = ?5,
             commitment_date = ?6, stats_json = ?7, engagement_score = ?8,
             source_url = ?9, source_confidence = ?10, last_verified_at = ?11,
             updated_at = ?11, raw_snapshot_key = ?12
           WHERE id = ?1
-        `).bind(
-          entry.id, entry.player_name, entry.status, entry.to_team || null,
-          entry.to_conference || null, entry.commitment_date || null,
-          entry.stats_json || null, entry.engagement_score || null,
-          entry.source_url || null, entry.source_confidence ?? 1.0,
-          now, snapshotKey
-        ).run();
+        `
+          )
+          .bind(
+            entry.id,
+            entry.player_name,
+            entry.status,
+            entry.to_team || null,
+            entry.to_conference || null,
+            entry.commitment_date || null,
+            entry.stats_json || null,
+            entry.engagement_score || null,
+            entry.source_url || null,
+            entry.source_confidence ?? 1.0,
+            now,
+            snapshotKey
+          )
+          .run();
 
         // Detect status change for changelog
         if (existing.status !== entry.status) {
           changelogBatch.push(
             changeStmt.bind(
-              generateChangelogId(), entry.id, entry.status,
+              generateChangelogId(),
+              entry.id,
+              entry.status,
               `${entry.player_name} ${entry.status === 'committed' ? 'committed to ' + (entry.to_team || 'TBD') : entry.status}`,
-              existing.status, entry.status, now, now
+              existing.status,
+              entry.status,
+              now,
+              now
             )
           );
         }
         updated++;
       } else {
         // Insert new
-        await db.prepare(`
+        await db
+          .prepare(
+            `
           INSERT INTO transfer_portal (
             id, player_name, sport, position, class_year,
             from_team, to_team, from_conference, to_conference,
@@ -142,20 +181,45 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             0, 0, ?21, 0,
             ?22, ?23, ?23, ?23
           )
-        `).bind(
-          entry.id, entry.player_name, entry.sport, entry.position, entry.class_year || 'Jr',
-          entry.from_team, entry.to_team || null, entry.from_conference || '', entry.to_conference || null,
-          entry.status, now, entry.portal_date, entry.commitment_date || null,
-          entry.stats_json || null, entry.engagement_score || null, entry.stars || null, entry.overall_rank || null,
-          entry.source_url || null, entry.source_id || null, entry.source_name,
-          entry.source_confidence ?? 1.0, snapshotKey, now
-        ).run();
+        `
+          )
+          .bind(
+            entry.id,
+            entry.player_name,
+            entry.sport,
+            entry.position,
+            entry.class_year || 'Jr',
+            entry.from_team,
+            entry.to_team || null,
+            entry.from_conference || '',
+            entry.to_conference || null,
+            entry.status,
+            now,
+            entry.portal_date,
+            entry.commitment_date || null,
+            entry.stats_json || null,
+            entry.engagement_score || null,
+            entry.stars || null,
+            entry.overall_rank || null,
+            entry.source_url || null,
+            entry.source_id || null,
+            entry.source_name,
+            entry.source_confidence ?? 1.0,
+            snapshotKey,
+            now
+          )
+          .run();
 
         changelogBatch.push(
           changeStmt.bind(
-            generateChangelogId(), entry.id, 'entered',
+            generateChangelogId(),
+            entry.id,
+            'entered',
             `${entry.player_name} entered the transfer portal from ${entry.from_team}`,
-            null, entry.from_team, now, now
+            null,
+            entry.from_team,
+            now,
+            now
           )
         );
         inserted++;

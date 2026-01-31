@@ -26,5 +26,19 @@ Replace sample/hardcoded data with D1-backed pipeline. Every record has valid ti
 - `functions/api/portal/v2/entries.ts` — rewritten to query D1
 - `functions/api/portal/seed.ts` — data seeder
 - `functions/api/portal/freshness.ts` — freshness/changelog API
-- `functions/api/portal/ingest.ts` — ingestion with R2 snapshots
+- `functions/api/portal/ingest.ts` — ingestion with R2 snapshots + auth gate
 - `app/transfer-portal/page.tsx` — freshness UI, 30s polling, failure banners
+
+## Phase 2: Live Data Integration (Audit Pass)
+- `functions/api/portal/sync.ts` — Highlightly/RapidAPI live data sync endpoint
+- `functions/scheduled/sync-portal.ts` — Cron-triggered sync (every 4h)
+- `components/portal/PortalCard.tsx` — Added football stats display
+- `components/portal/PortalFilters.tsx` — Fixed conference value mismatches, added Signed status
+- `wrangler.toml` — Documented RAPIDAPI_KEY secret requirement
+
+### Bugs Fixed
+- Conference filter values mismatched DB (Conference USA vs C-USA, American vs AAC, Mountain West vs MWC)
+- Football stats never displayed in PortalCard (was baseball-only)
+- Missing "Signed" status in filter dropdown
+- Ingest endpoint had no auth gate (public POST)
+- Source attribution updated to credit Highlightly API

@@ -19,21 +19,129 @@ const HEADERS = {
 
 // Deterministic player generation pools
 const FIRST_NAMES = [
-  'Jake', 'Marcus', 'Tyler', 'Chris', 'Brandon', 'Ryan', 'Austin', 'Derek', 'Mason', 'David',
-  'Jordan', 'Cameron', 'Anthony', 'Jaylen', 'Darius', 'Caleb', 'Ethan', 'Noah', 'Hunter', 'Logan',
-  'Cole', 'Bryce', 'Dylan', 'Luke', 'Gavin', 'Tanner', 'Jalen', 'Kaden', 'Carson', 'Blake',
-  'Tristan', 'Nolan', 'Owen', 'Landon', 'Colton', 'Cooper', 'Brayden', 'Ryder', 'Jackson', 'Levi',
-  'Wyatt', 'Grayson', 'Jace', 'Sawyer', 'Easton', 'Weston', 'Harrison', 'Emmett', 'Brooks', 'Micah',
-  'Cruz', 'Zander', 'Kai', 'Finn', 'Beckett', 'Rowan', 'Nash', 'Rhett', 'Knox', 'Cade',
+  'Jake',
+  'Marcus',
+  'Tyler',
+  'Chris',
+  'Brandon',
+  'Ryan',
+  'Austin',
+  'Derek',
+  'Mason',
+  'David',
+  'Jordan',
+  'Cameron',
+  'Anthony',
+  'Jaylen',
+  'Darius',
+  'Caleb',
+  'Ethan',
+  'Noah',
+  'Hunter',
+  'Logan',
+  'Cole',
+  'Bryce',
+  'Dylan',
+  'Luke',
+  'Gavin',
+  'Tanner',
+  'Jalen',
+  'Kaden',
+  'Carson',
+  'Blake',
+  'Tristan',
+  'Nolan',
+  'Owen',
+  'Landon',
+  'Colton',
+  'Cooper',
+  'Brayden',
+  'Ryder',
+  'Jackson',
+  'Levi',
+  'Wyatt',
+  'Grayson',
+  'Jace',
+  'Sawyer',
+  'Easton',
+  'Weston',
+  'Harrison',
+  'Emmett',
+  'Brooks',
+  'Micah',
+  'Cruz',
+  'Zander',
+  'Kai',
+  'Finn',
+  'Beckett',
+  'Rowan',
+  'Nash',
+  'Rhett',
+  'Knox',
+  'Cade',
 ];
 
 const LAST_NAMES = [
-  'Wilson', 'Johnson', 'Roberts', 'Martinez', 'Lee', 'Thompson', 'Garcia', 'Miller', 'Williams', 'Clark',
-  'Mitchell', 'Davis', 'Henderson', 'Thomas', 'Brown', 'Jackson', 'Carter', 'Anderson', 'Taylor', 'Moore',
-  'White', 'Harris', 'Allen', 'Young', 'King', 'Wright', 'Hill', 'Scott', 'Adams', 'Baker',
-  'Nelson', 'Gonzalez', 'Rivera', 'Collins', 'Murphy', 'Stewart', 'Cox', 'Howard', 'Ward', 'Torres',
-  'Peterson', 'Gray', 'James', 'Watson', 'Brooks', 'Kelly', 'Sanders', 'Price', 'Bennett', 'Wood',
-  'Ross', 'Morgan', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Gomez', 'Murray', 'Freeman', 'Owens',
+  'Wilson',
+  'Johnson',
+  'Roberts',
+  'Martinez',
+  'Lee',
+  'Thompson',
+  'Garcia',
+  'Miller',
+  'Williams',
+  'Clark',
+  'Mitchell',
+  'Davis',
+  'Henderson',
+  'Thomas',
+  'Brown',
+  'Jackson',
+  'Carter',
+  'Anderson',
+  'Taylor',
+  'Moore',
+  'White',
+  'Harris',
+  'Allen',
+  'Young',
+  'King',
+  'Wright',
+  'Hill',
+  'Scott',
+  'Adams',
+  'Baker',
+  'Nelson',
+  'Gonzalez',
+  'Rivera',
+  'Collins',
+  'Murphy',
+  'Stewart',
+  'Cox',
+  'Howard',
+  'Ward',
+  'Torres',
+  'Peterson',
+  'Gray',
+  'James',
+  'Watson',
+  'Brooks',
+  'Kelly',
+  'Sanders',
+  'Price',
+  'Bennett',
+  'Wood',
+  'Ross',
+  'Morgan',
+  'Cooper',
+  'Reed',
+  'Bailey',
+  'Bell',
+  'Gomez',
+  'Murray',
+  'Freeman',
+  'Owens',
 ];
 
 const SCHOOLS = [
@@ -149,7 +257,7 @@ function generateBaseballStats(position: string, rand: () => number): string {
     });
   }
   return JSON.stringify({
-    avg: +(0.220 + rand() * 0.130).toFixed(3),
+    avg: +(0.22 + rand() * 0.13).toFixed(3),
     hr: Math.floor(rand() * 25),
     rbi: Math.floor(15 + rand() * 55),
     sb: Math.floor(rand() * 30),
@@ -196,7 +304,11 @@ function generateFootballStats(position: string, rand: () => number): string {
   }
 }
 
-function generateEntries(sport: 'baseball' | 'football', count: number, seed: number): Array<Record<string, unknown>> {
+function generateEntries(
+  sport: 'baseball' | 'football',
+  count: number,
+  seed: number
+): Array<Record<string, unknown>> {
   const rand = seededRandom(seed);
   const positions = sport === 'baseball' ? BB_POSITIONS : FB_POSITIONS;
   const sources = sport === 'baseball' ? SOURCES_BB : SOURCES_FB;
@@ -222,7 +334,9 @@ function generateEntries(sport: 'baseball' | 'football', count: number, seed: nu
     let commitDate: string | null = null;
     if (status === 'committed' || status === 'signed') {
       let dest;
-      do { dest = pick(SCHOOLS, rand); } while (dest.name === fromSchool.name);
+      do {
+        dest = pick(SCHOOLS, rand);
+      } while (dest.name === fromSchool.name);
       toTeam = dest.name;
       toConference = dest.conference;
     }
@@ -233,9 +347,10 @@ function generateEntries(sport: 'baseball' | 'football', count: number, seed: nu
     }
 
     const eventTimestamp = commitDate || portalDate;
-    const statsJson = sport === 'baseball'
-      ? generateBaseballStats(position, rand)
-      : generateFootballStats(position, rand);
+    const statsJson =
+      sport === 'baseball'
+        ? generateBaseballStats(position, rand)
+        : generateFootballStats(position, rand);
 
     const prefix = sport === 'baseball' ? 'bb' : 'cfb';
     const id = `${prefix}-2025-${String(i + 1).padStart(3, '0')}`;
@@ -275,7 +390,9 @@ function generateEntries(sport: 'baseball' | 'football', count: number, seed: nu
   return entries;
 }
 
-function generateChangelog(entries: Array<Record<string, unknown>>): Array<Record<string, unknown>> {
+function generateChangelog(
+  entries: Array<Record<string, unknown>>
+): Array<Record<string, unknown>> {
   const changes: Array<Record<string, unknown>> = [];
   let idx = 0;
 
@@ -301,8 +418,8 @@ function generateChangelog(entries: Array<Record<string, unknown>>): Array<Recor
         description: `${entry.player_name} ${entry.status} to ${entry.to_team}`,
         old_value: null,
         new_value: entry.to_team as string,
-        event_timestamp: entry.commitment_date as string || entry.event_timestamp as string,
-        created_at: entry.commitment_date as string || entry.event_timestamp as string,
+        event_timestamp: (entry.commitment_date as string) || (entry.event_timestamp as string),
+        created_at: (entry.commitment_date as string) || (entry.event_timestamp as string),
       });
     }
 
@@ -331,15 +448,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: HEADERS });
+    return new Response(JSON.stringify({ error: 'POST required' }), {
+      status: 405,
+      headers: HEADERS,
+    });
   }
 
   const url = new URL(request.url);
   if (url.searchParams.get('confirm') !== 'yes') {
-    return new Response(
-      JSON.stringify({ error: 'Pass ?confirm=yes to execute seed' }),
-      { status: 400, headers: HEADERS }
-    );
+    return new Response(JSON.stringify({ error: 'Pass ?confirm=yes to execute seed' }), {
+      status: 400,
+      headers: HEADERS,
+    });
   }
 
   try {
@@ -378,17 +498,40 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // D1 batch limit is 100 statements per batch
     const BATCH_SIZE = 50;
     for (let i = 0; i < allEntries.length; i += BATCH_SIZE) {
-      const batch = allEntries.slice(i, i + BATCH_SIZE).map((e) =>
-        entryStmt.bind(
-          e.id, e.player_name, e.sport, e.position, e.class_year,
-          e.from_team, e.to_team, e.from_conference, e.to_conference,
-          e.status, e.event_timestamp, e.portal_date, e.commitment_date,
-          e.stats_json, e.engagement_score, e.stars, e.overall_rank,
-          e.source_url, e.source_id, e.source_name,
-          e.is_partial, e.needs_review, e.source_confidence, e.verified,
-          e.raw_snapshot_key, e.last_verified_at, e.created_at, e.updated_at
-        )
-      );
+      const batch = allEntries
+        .slice(i, i + BATCH_SIZE)
+        .map((e) =>
+          entryStmt.bind(
+            e.id,
+            e.player_name,
+            e.sport,
+            e.position,
+            e.class_year,
+            e.from_team,
+            e.to_team,
+            e.from_conference,
+            e.to_conference,
+            e.status,
+            e.event_timestamp,
+            e.portal_date,
+            e.commitment_date,
+            e.stats_json,
+            e.engagement_score,
+            e.stars,
+            e.overall_rank,
+            e.source_url,
+            e.source_id,
+            e.source_name,
+            e.is_partial,
+            e.needs_review,
+            e.source_confidence,
+            e.verified,
+            e.raw_snapshot_key,
+            e.last_verified_at,
+            e.created_at,
+            e.updated_at
+          )
+        );
       await db.batch(batch);
     }
 
@@ -402,12 +545,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     `);
 
     for (let i = 0; i < changelog.length; i += BATCH_SIZE) {
-      const batch = changelog.slice(i, i + BATCH_SIZE).map((c) =>
-        changeStmt.bind(
-          c.id, c.portal_entry_id, c.change_type, c.description,
-          c.old_value, c.new_value, c.event_timestamp, c.created_at
-        )
-      );
+      const batch = changelog
+        .slice(i, i + BATCH_SIZE)
+        .map((c) =>
+          changeStmt.bind(
+            c.id,
+            c.portal_entry_id,
+            c.change_type,
+            c.description,
+            c.old_value,
+            c.new_value,
+            c.event_timestamp,
+            c.created_at
+          )
+        );
       await db.batch(batch);
     }
 
@@ -417,11 +568,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     await env.KV.put('portal:seed_timestamp', now);
 
     // Store raw seed snapshot in R2
-    const snapshot = { seeded_at: now, baseball_count: bbEntries.length, football_count: fbEntries.length };
-    await env.SPORTS_DATA.put(
-      `portal/snapshots/seed-${Date.now()}.json`,
-      JSON.stringify(snapshot)
-    );
+    const snapshot = {
+      seeded_at: now,
+      baseball_count: bbEntries.length,
+      football_count: fbEntries.length,
+    };
+    await env.SPORTS_DATA.put(`portal/snapshots/seed-${Date.now()}.json`, JSON.stringify(snapshot));
 
     return new Response(
       JSON.stringify({

@@ -61,7 +61,7 @@ const BASEBALL_CONFERENCES: FilterOption[] = [
   { value: 'Big East', label: 'Big East' },
   { value: 'AAC', label: 'AAC' },
   { value: 'Sun Belt', label: 'Sun Belt' },
-  { value: 'Conference USA', label: 'C-USA' },
+  { value: 'C-USA', label: 'C-USA' },
   { value: 'MWC', label: 'Mountain West' },
   { value: 'WCC', label: 'WCC' },
 ];
@@ -73,17 +73,18 @@ const FOOTBALL_CONFERENCES: FilterOption[] = [
   { value: 'Big 12', label: 'Big 12' },
   { value: 'ACC', label: 'ACC' },
   { value: 'Pac-12', label: 'Pac-12' },
-  { value: 'American', label: 'American' },
-  { value: 'Mountain West', label: 'Mountain West' },
+  { value: 'AAC', label: 'AAC' },
+  { value: 'MWC', label: 'Mountain West' },
   { value: 'Sun Belt', label: 'Sun Belt' },
   { value: 'MAC', label: 'MAC' },
-  { value: 'Conference USA', label: 'C-USA' },
+  { value: 'C-USA', label: 'C-USA' },
 ];
 
 const STATUS_OPTIONS: FilterOption[] = [
   { value: '', label: 'All Status' },
   { value: 'in_portal', label: 'In Portal' },
   { value: 'committed', label: 'Committed' },
+  { value: 'signed', label: 'Signed' },
   { value: 'withdrawn', label: 'Withdrawn' },
 ];
 
