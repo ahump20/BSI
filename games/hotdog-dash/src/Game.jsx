@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Environment, ContactShadows } from '@react-three/drei';
+import * as THREE from 'three';
 
 const KONAMI_CODE = [
   'ArrowUp',
@@ -86,7 +89,108 @@ const createFloatingText = (x, y, text, color) => ({
   life: 1,
 });
 
-// Hot Dog Component
+// 3D Blaze Model Component
+function BlazeModel({ position, chonkFactor, isMoving, isCatching, facingRight }) {
+  const { scene } = useGLTF('/blaze-dachshund.glb');
+  const modelRef = useRef();
+  const time = useRef(0);
+
+  // Clone the scene to avoid sharing state
+  const clonedScene = React.useMemo(() => scene.clone(), [scene]);
+
+  useFrame((state, delta) => {
+    if (!modelRef.current) return;
+    time.current += delta;
+
+    // Breathing animation
+    const breathe = Math.sin(time.current * 2) * 0.02;
+    modelRef.current.scale.y = 1 + breathe;
+
+    // Wobble when catching
+    if (isCatching) {
+      modelRef.current.rotation.z = Math.sin(time.current * 25) * 0.1;
+    } else {
+      modelRef.current.rotation.z *= 0.9;
+    }
+
+    // Running animation - bob up and down
+    if (isMoving) {
+      modelRef.current.position.y = position[1] + Math.abs(Math.sin(time.current * 12)) * 0.05;
+    } else {
+      modelRef.current.position.y = position[1];
+    }
+
+    // Face direction of movement
+    modelRef.current.rotation.y = facingRight ? -Math.PI / 2 : Math.PI / 2;
+
+    // Chonk scaling (wider body)
+    const chonkScale = 1 + (chonkFactor - 1) * 0.3;
+    modelRef.current.scale.x = chonkScale;
+    modelRef.current.scale.z = 1 + (chonkFactor - 1) * 0.15;
+  });
+
+  return (
+    <primitive
+      ref={modelRef}
+      object={clonedScene}
+      position={position}
+      scale={[0.8, 0.8, 0.8]}
+    />
+  );
+}
+
+// 3D Scene Component
+function Scene3D({ blazeX, chonkFactor, isMoving, isCatching, facingRight }) {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    camera.position.set(0, 2, 5);
+    camera.lookAt(0, 0.5, 0);
+  }, [camera]);
+
+  // Convert 2D percentage to 3D position (-2 to 2 range)
+  const blazeX3D = ((blazeX - 50) / 50) * 2;
+
+  return (
+    <>
+      {/* Lighting */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 10, 5]} intensity={1} castShadow />
+      <directionalLight position={[-5, 5, -5]} intensity={0.3} />
+
+      {/* Environment */}
+      <Environment preset="park" background blur={0.8} />
+
+      {/* Ground */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
+        <planeGeometry args={[10, 10]} />
+        <meshStandardMaterial color="#4a7c59" />
+      </mesh>
+
+      {/* Contact shadow for Blaze */}
+      <ContactShadows
+        position={[0, 0, 0]}
+        opacity={0.4}
+        scale={10}
+        blur={2}
+        far={4}
+      />
+
+      {/* 3D Blaze */}
+      <Suspense fallback={null}>
+        <BlazeModel
+          position={[blazeX3D, 0.3, 0]}
+          chonkFactor={chonkFactor}
+          isMoving={isMoving}
+          isCatching={isCatching}
+          facingRight={facingRight}
+        />
+      </Suspense>
+    </>
+  );
+}
+
+// Hot Dog Component (2D overlay)
 const HotDog = ({ x, y, isGolden, rotation, scale, isPowerUp, powerUpType }) => {
   if (isPowerUp) {
     const powerUp = POWERUP_TYPES[powerUpType];
@@ -108,6 +212,7 @@ const HotDog = ({ x, y, isGolden, rotation, scale, isPowerUp, powerUpType }) => 
           boxShadow: `0 0 15px ${powerUp.color}, 0 0 30px ${powerUp.color}66`,
           animation: 'pulse-glow 0.5s ease-in-out infinite alternate',
           border: '2px solid white',
+          zIndex: 20,
         }}
       >
         {powerUp.emoji}
@@ -127,6 +232,7 @@ const HotDog = ({ x, y, isGolden, rotation, scale, isPowerUp, powerUpType }) => 
         filter: isGolden
           ? 'drop-shadow(0 0 8px #FFD700) drop-shadow(0 0 16px #FFD700)'
           : 'drop-shadow(2px 2px 3px rgba(0,0,0,0.4))',
+        zIndex: 20,
       }}
     >
       <div
@@ -183,452 +289,6 @@ const HotDog = ({ x, y, isGolden, rotation, scale, isPowerUp, powerUpType }) => 
   );
 };
 
-// Fixed Blaze Component - proper proportions at all chonk levels
-const Blaze = ({ chonkFactor, isWobbling, isCatching, isMoving, hasMagnet, hasDouble, isTiny }) => {
-  const time = Date.now();
-  const wobble = isWobbling ? Math.sin(time / 40) * 6 : 0;
-  const breathe = Math.sin(time / 600) * 1.5;
-  const tailWag = Math.sin(time / (isCatching ? 60 : 180)) * (isCatching ? 35 : 15);
-  const earFlop = Math.sin(time / 400) * 4;
-  const tongueWag = Math.sin(time / 150) * 4;
-  const legAnim = isMoving ? Math.sin(time / 100) * 12 : 0;
-
-  // Chonk affects specific parts, not overall scale
-  // clamp chonkFactor for visual sanity
-  const cf = Math.min(chonkFactor, 1.8);
-
-  // Body gets wider and rounder, not taller
-  const bodyWidth = 52 + (cf - 1) * 28;
-  const bodyHeight = 24 + (cf - 1) * 10;
-  const bellyShow = cf > 1.15;
-  const bellySize = Math.max(0, (cf - 1.15) * 25);
-
-  // Cheek puffiness
-  const cheekSize = Math.max(0, (cf - 1.2) * 12);
-
-  // Leg shortening (they get hidden by belly)
-  const legHeight = Math.max(6, 14 - (cf - 1) * 10);
-
-  // Apply tiny mode
-  const tinyScale = isTiny ? 0.7 : 1;
-
-  return (
-    <div
-      style={{
-        position: 'relative',
-        width: '90px',
-        height: '55px',
-        transform: `rotate(${wobble}deg) scale(${tinyScale})`,
-        transition: 'transform 0.05s ease-out',
-      }}
-    >
-      {/* Magnet effect ring */}
-      {hasMagnet && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '120px',
-            height: '120px',
-            borderRadius: '50%',
-            border: '2px dashed #E74C3C',
-            opacity: 0.5,
-            animation: 'spin 2s linear infinite',
-          }}
-        />
-      )}
-
-      {/* Double points indicator */}
-      {hasDouble && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '-15px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#9B59B6',
-            color: 'white',
-            padding: '2px 6px',
-            borderRadius: '8px',
-            fontSize: '10px',
-            fontWeight: 'bold',
-          }}
-        >
-          x2
-        </div>
-      )}
-
-      {/* Shadow */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '0px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: `${bodyWidth + 10}px`,
-          height: '8px',
-          background: 'radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%)',
-          borderRadius: '50%',
-        }}
-      />
-
-      {/* Tail */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '8px',
-          top: '22px',
-          width: '16px',
-          height: '7px',
-          background: `linear-gradient(90deg, ${colors.texasSoil} 0%, #7B4420 100%)`,
-          borderRadius: '8px',
-          transformOrigin: 'right center',
-          transform: `rotate(${-25 + tailWag}deg)`,
-        }}
-      />
-
-      {/* Back legs */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '18px',
-          bottom: '2px',
-          width: '8px',
-          height: `${legHeight}px`,
-          background: `linear-gradient(180deg, ${colors.texasSoil} 0%, #6B3A10 100%)`,
-          borderRadius: '0 0 4px 4px',
-          transformOrigin: 'top center',
-          transform: `rotate(${legAnim}deg)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: '28px',
-          bottom: '2px',
-          width: '8px',
-          height: `${legHeight}px`,
-          background: `linear-gradient(180deg, ${colors.texasSoil} 0%, #6B3A10 100%)`,
-          borderRadius: '0 0 4px 4px',
-          transformOrigin: 'top center',
-          transform: `rotate(${-legAnim}deg)`,
-        }}
-      />
-
-      {/* Front legs */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '22px',
-          bottom: '2px',
-          width: '8px',
-          height: `${legHeight}px`,
-          background: `linear-gradient(180deg, ${colors.texasSoil} 0%, #6B3A10 100%)`,
-          borderRadius: '0 0 4px 4px',
-          transformOrigin: 'top center',
-          transform: `rotate(${-legAnim}deg)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          right: '12px',
-          bottom: '2px',
-          width: '8px',
-          height: `${legHeight}px`,
-          background: `linear-gradient(180deg, ${colors.texasSoil} 0%, #6B3A10 100%)`,
-          borderRadius: '0 0 4px 4px',
-          transformOrigin: 'top center',
-          transform: `rotate(${legAnim}deg)`,
-        }}
-      />
-
-      {/* Main body - gets rounder with chonk */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          top: `${12 + breathe}px`,
-          width: `${bodyWidth}px`,
-          height: `${bodyHeight}px`,
-          background: `linear-gradient(180deg, #A0522D 0%, ${colors.texasSoil} 40%, #6B3A10 100%)`,
-          borderRadius: `${bodyHeight / 2}px`,
-          boxShadow: 'inset 0 -4px 8px rgba(0,0,0,0.2), inset 0 4px 8px rgba(255,255,255,0.1)',
-        }}
-      />
-
-      {/* Belly - cute round tummy that shows with chonk */}
-      {bellyShow && (
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            top: `${22 + breathe + bellySize / 3}px`,
-            width: `${bodyWidth * 0.65}px`,
-            height: `${bellySize + 6}px`,
-            background: 'linear-gradient(180deg, #DEBB98 0%, #D4A574 100%)',
-            borderRadius: '0 0 50% 50% / 0 0 100% 100%',
-            boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.1)',
-          }}
-        />
-      )}
-
-      {/* Collar */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '18px',
-          top: `${16 + breathe}px`,
-          width: '12px',
-          height: '7px',
-          background: `linear-gradient(180deg, ${colors.burntOrange} 0%, #A04600 100%)`,
-          borderRadius: '3px',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '-5px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '6px',
-            height: '6px',
-            background: `linear-gradient(135deg, ${colors.mustard} 0%, #DAA520 100%)`,
-            borderRadius: '50%',
-          }}
-        />
-      </div>
-
-      {/* Head - stays mostly same size */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '0px',
-          top: `${8 + breathe}px`,
-          width: '30px',
-          height: '26px',
-        }}
-      >
-        {/* Head shape */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            background: `radial-gradient(ellipse at 35% 35%, #A0522D 0%, ${colors.texasSoil} 60%, #6B3A10 100%)`,
-            borderRadius: '50% 50% 45% 45%',
-          }}
-        />
-
-        {/* Chubby cheek */}
-        {cheekSize > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              right: '-2px',
-              top: '12px',
-              width: `${cheekSize}px`,
-              height: `${cheekSize * 0.8}px`,
-              background: '#9B5A30',
-              borderRadius: '50%',
-              opacity: 0.6,
-            }}
-          />
-        )}
-
-        {/* Ear */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '3px',
-            top: '-6px',
-            width: '12px',
-            height: '18px',
-            background: `linear-gradient(180deg, ${colors.texasSoil} 0%, #5D2E0C 100%)`,
-            borderRadius: '45% 45% 40% 40%',
-            transform: `rotate(${-20 + earFlop}deg)`,
-            transformOrigin: 'bottom center',
-          }}
-        />
-
-        {/* Snout */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '-6px',
-            bottom: '4px',
-            width: '18px',
-            height: '12px',
-            background: `linear-gradient(180deg, #7B4420 0%, #5D2E0C 100%)`,
-            borderRadius: '40%',
-          }}
-        >
-          {/* Nose */}
-          <div
-            style={{
-              position: 'absolute',
-              right: '1px',
-              top: '2px',
-              width: '9px',
-              height: '7px',
-              background: 'linear-gradient(135deg, #333 0%, #111 100%)',
-              borderRadius: '40% 40% 45% 45%',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: '2px',
-                left: '2px',
-                width: '3px',
-                height: '2px',
-                background: 'rgba(255,255,255,0.4)',
-                borderRadius: '50%',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Eye - changes expression with chonk */}
-        {cf < 1.35 ? (
-          // Normal eye
-          <div
-            style={{
-              position: 'absolute',
-              right: '10px',
-              top: '7px',
-              width: '9px',
-              height: '9px',
-              background: 'linear-gradient(135deg, #222 0%, #000 100%)',
-              borderRadius: '50%',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: '2px',
-                left: '2px',
-                width: '3px',
-                height: '3px',
-                background: 'white',
-                borderRadius: '50%',
-              }}
-            />
-          </div>
-        ) : (
-          // Happy squinty eye
-          <div
-            style={{
-              position: 'absolute',
-              right: '8px',
-              top: '9px',
-              width: '12px',
-              height: '5px',
-              borderBottom: '3px solid #222',
-              borderRadius: '0 0 50% 50%',
-            }}
-          />
-        )}
-
-        {/* Eyebrow */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '8px',
-            top: '4px',
-            width: '11px',
-            height: '2px',
-            background: '#5D2E0C',
-            borderRadius: '2px',
-            transform: cf >= 1.35 ? 'rotate(-12deg)' : 'rotate(-5deg)',
-          }}
-        />
-
-        {/* Blush */}
-        {cf > 1.3 && (
-          <div
-            style={{
-              position: 'absolute',
-              right: '3px',
-              top: '14px',
-              width: '8px',
-              height: '4px',
-              background: 'rgba(255,130,130,0.5)',
-              borderRadius: '50%',
-              filter: 'blur(1px)',
-            }}
-          />
-        )}
-
-        {/* Tongue */}
-        {(isCatching || cf > 1.25) && (
-          <div
-            style={{
-              position: 'absolute',
-              right: '2px',
-              bottom: '0px',
-              width: '8px',
-              height: `${8 + Math.min((cf - 1) * 6, 8)}px`,
-              background: 'linear-gradient(180deg, #FF8CAD 0%, #FF6B8A 100%)',
-              borderRadius: '0 0 5px 5px',
-              transform: `rotate(${tongueWag}deg)`,
-              transformOrigin: 'top center',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: '40%',
-                left: '50%',
-                width: '1px',
-                height: '45%',
-                background: 'rgba(0,0,0,0.15)',
-              }}
-            />
-          </div>
-        )}
-
-        {/* Drool at high chonk */}
-        {cf > 1.5 && (
-          <div
-            style={{
-              position: 'absolute',
-              right: '8px',
-              bottom: '-4px',
-              width: '3px',
-              height: `${4 + Math.sin(time / 400) * 2}px`,
-              background:
-                'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(200,220,255,0.4) 100%)',
-              borderRadius: '0 0 2px 2px',
-            }}
-          />
-        )}
-      </div>
-
-      {/* Sleep bubbles at max chonk when idle */}
-      {cf >= 1.7 && !isMoving && (
-        <div
-          style={{
-            position: 'absolute',
-            right: '-12px',
-            top: '-5px',
-            fontSize: '12px',
-            opacity: 0.7,
-            animation: 'float 1.5s ease-in-out infinite',
-          }}
-        >
-          💤
-        </div>
-      )}
-    </div>
-  );
-};
-
 // Floating Text Component
 const FloatingText = ({ item }) => (
   <div
@@ -643,6 +303,7 @@ const FloatingText = ({ item }) => (
       textShadow: '0 0 10px rgba(0,0,0,0.5)',
       opacity: item.life,
       pointerEvents: 'none',
+      zIndex: 30,
     }}
   >
     {item.text}
@@ -668,6 +329,7 @@ const Particle = ({ particle }) => {
         opacity: particle.life,
         transform: `rotate(${particle.rotation}deg)`,
         pointerEvents: 'none',
+        zIndex: 25,
       }}
     >
       {emoji}
@@ -805,6 +467,7 @@ const ComboDisplay = ({ combo }) => {
         right: '10px',
         textAlign: 'right',
         animation: 'pulse 0.3s ease-out',
+        zIndex: 40,
       }}
     >
       <div
@@ -823,6 +486,18 @@ const ComboDisplay = ({ combo }) => {
   );
 };
 
+// Preload the GLB model
+useGLTF.preload('/blaze-dachshund.glb');
+
+class GameErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 export default function BlazeHotDogDash() {
   const [gameActive, setGameActive] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -838,6 +513,7 @@ export default function BlazeHotDogDash() {
   const [levelUpNotif, setLevelUpNotif] = useState(null);
   const [lastChonkIndex, setLastChonkIndex] = useState(0);
   const [screenShake, setScreenShake] = useState(0);
+  const [facingRight, setFacingRight] = useState(true);
 
   // Power-ups
   const [activePowerUps, setActivePowerUps] = useState({});
@@ -896,8 +572,14 @@ export default function BlazeHotDogDash() {
   useEffect(() => {
     if (!gameStarted) return;
     const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') keysPressed.current.left = true;
-      if (e.key === 'ArrowRight') keysPressed.current.right = true;
+      if (e.key === 'ArrowLeft') {
+        keysPressed.current.left = true;
+        setFacingRight(false);
+      }
+      if (e.key === 'ArrowRight') {
+        keysPressed.current.right = true;
+        setFacingRight(true);
+      }
     };
     const handleKeyUp = (e) => {
       if (e.key === 'ArrowLeft') keysPressed.current.left = false;
@@ -918,7 +600,10 @@ export default function BlazeHotDogDash() {
       e.preventDefault();
       const rect = gameRef.current.getBoundingClientRect();
       const touchX = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
-      targetXRef.current = Math.max(8, Math.min(92, touchX));
+      const newTargetX = Math.max(8, Math.min(92, touchX));
+      if (newTargetX > targetXRef.current) setFacingRight(true);
+      else if (newTargetX < targetXRef.current) setFacingRight(false);
+      targetXRef.current = newTargetX;
     },
     [gameStarted]
   );
@@ -970,8 +655,8 @@ export default function BlazeHotDogDash() {
         prev.forEach((dog) => {
           const newY = dog.y + dog.speed * speedMult * (deltaTime / 16);
 
-          // Collision
-          if (newY >= 65 && newY <= 92 && Math.abs(dog.x - blazeXRef.current) < hitboxWidth) {
+          // Collision - adjusted for 3D canvas position
+          if (newY >= 60 && newY <= 88 && Math.abs(dog.x - blazeXRef.current) < hitboxWidth) {
             if (dog.isPowerUp) {
               // Activate power-up
               const powerUpType = dog.powerUpType;
@@ -1139,6 +824,7 @@ export default function BlazeHotDogDash() {
     setLastChonkIndex(0);
     setLevelUpNotif(null);
     setScreenShake(0);
+    setFacingRight(true);
     keysPressed.current = { left: false, right: false };
   };
 
@@ -1224,7 +910,7 @@ export default function BlazeHotDogDash() {
     <div
       style={{
         minHeight: '100vh',
-        background: `linear-gradient(180deg, #0a2815 0%, #1a472a 30%, #2d5a27 60%, ${colors.texasSoil} 100%)`,
+        background: `linear-gradient(180deg, #87CEEB 0%, #98D8C8 50%, #4a7c59 100%)`,
         fontFamily: 'system-ui, -apple-system, sans-serif',
         overflow: 'hidden',
         userSelect: 'none',
@@ -1254,6 +940,7 @@ export default function BlazeHotDogDash() {
         >
           <span style={{ fontSize: '22px' }}>🌭</span>
           Blaze's Hot Dog Dash
+          <span style={{ fontSize: '10px', color: '#666', marginLeft: '8px' }}>2.5D</span>
         </div>
         <button
           onClick={closeGame}
@@ -1358,6 +1045,34 @@ export default function BlazeHotDogDash() {
           overflow: 'hidden',
         }}
       >
+        {/* 3D Canvas for Blaze */}
+        <GameErrorBoundary fallback={null}>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '40%',
+              zIndex: 10,
+            }}
+          >
+            <Canvas
+              shadows
+              camera={{ position: [0, 2, 5], fov: 50 }}
+              style={{ background: 'transparent' }}
+            >
+              <Scene3D
+                blazeX={blazeX}
+                chonkFactor={chonkFactor}
+                isMoving={isMoving}
+                isCatching={isCatching}
+                facingRight={facingRight}
+              />
+            </Canvas>
+          </div>
+        </GameErrorBoundary>
+
         {/* Combo Display */}
         <ComboDisplay combo={combo} />
 
@@ -1385,26 +1100,6 @@ export default function BlazeHotDogDash() {
           <FloatingText key={t.id} item={t} />
         ))}
 
-        {/* Blaze */}
-        <div
-          style={{
-            position: 'absolute',
-            left: `${blazeX}%`,
-            bottom: '6%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <Blaze
-            chonkFactor={chonkFactor}
-            isWobbling={isCatching}
-            isCatching={isCatching}
-            isMoving={isMoving}
-            hasMagnet={hasMagnet}
-            hasDouble={hasDouble}
-            isTiny={hasTiny}
-          />
-        </div>
-
         {/* Power-up Notification */}
         {powerUpNotif && <PowerUpNotification powerUp={powerUpNotif} />}
 
@@ -1426,6 +1121,7 @@ export default function BlazeHotDogDash() {
               justifyContent: 'center',
               color: 'white',
               padding: '20px',
+              zIndex: 100,
             }}
           >
             {timeLeft === 0 ? (
@@ -1487,7 +1183,7 @@ export default function BlazeHotDogDash() {
                   Blaze's Hot Dog Dash
                 </h2>
                 <p style={{ color: '#666', fontSize: '12px', marginBottom: '12px' }}>
-                  A Blaze Sports Intel Easter Egg
+                  A Blaze Sports Intel Easter Egg • Now in 2.5D!
                 </p>
                 <div
                   style={{
@@ -1505,7 +1201,7 @@ export default function BlazeHotDogDash() {
                   <p style={{ color: colors.mustard, marginBottom: '6px' }}>
                     ⭐ Golden = 5 pts &nbsp; 🧲💜🐌🤏 = Power-ups!
                   </p>
-                  <p style={{ color: '#666', fontSize: '11px' }}>(Watch her get chubbier 🥹)</p>
+                  <p style={{ color: '#666', fontSize: '11px' }}>(Watch her get chubbier in 3D 🥹)</p>
                 </div>
               </>
             )}

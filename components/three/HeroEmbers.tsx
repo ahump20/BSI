@@ -9,9 +9,37 @@
  * Colors: Burnt Orange (#BF5700) -> Ember (#FF6B35) -> Gold (#C9A227)
  */
 
-import { useEffect, useState, useRef, useMemo, Suspense } from 'react';
+import React, { useEffect, useState, useRef, useMemo, Suspense, Component, ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import type * as THREE from 'three';
+
+/**
+ * Error boundary for Three.js canvas - falls back to CSS on WebGL errors
+ */
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class ThreeErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  ErrorBoundaryState
+> {
+  constructor(props: { children: ReactNode; fallback: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 // Lazy load Three.js components to reduce bundle size
 const Canvas = dynamic(() => import('@react-three/fiber').then((mod) => mod.Canvas), {
@@ -67,22 +95,30 @@ export function HeroEmbers({ className = '', particleCount }: HeroEmbersProps) {
   // Medium/High tier: Three.js with CSS fallback during load
   const count = particleCount ?? (tier === 'high' ? 400 : 200);
 
+  const cssFallback = <CSSFallback className="" reducedMotion={false} />;
+
   return (
     <div className={`absolute inset-0 -z-5 overflow-hidden ${className}`} aria-hidden="true">
-      {/* CSS fallback visible while Three.js loads */}
-      <CSSFallback className="" reducedMotion={false} />
+      {/* CSS fallback visible while Three.js loads or on WebGL error */}
+      {cssFallback}
 
-      {/* Three.js overlay */}
-      <Suspense fallback={null}>
-        <Canvas
-          dpr={tier === 'high' ? Math.min(2, window.devicePixelRatio) : 1}
-          gl={{ antialias: tier === 'high', alpha: true, powerPreference: 'default' }}
-          style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-          camera={{ position: [0, 0, 8], fov: 60 }}
-        >
-          <EmberParticles count={count} />
-        </Canvas>
-      </Suspense>
+      {/* Three.js overlay with error boundary */}
+      <ThreeErrorBoundary fallback={null}>
+        <Suspense fallback={null}>
+          <Canvas
+            dpr={
+              tier === 'high'
+                ? Math.min(2, typeof window !== 'undefined' ? window.devicePixelRatio : 1)
+                : 1
+            }
+            gl={{ antialias: tier === 'high', alpha: true, powerPreference: 'default' }}
+            style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+            camera={{ position: [0, 0, 8], fov: 60 }}
+          >
+            <EmberParticles count={count} />
+          </Canvas>
+        </Suspense>
+      </ThreeErrorBoundary>
     </div>
   );
 }
