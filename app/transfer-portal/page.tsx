@@ -266,7 +266,7 @@ function TrendingSidebar({ entries }: { entries: PortalEntry[] }) {
         {trending.map((entry, i) => (
           <Link
             key={entry.id}
-            href={`/transfer-portal/${entry.id}`}
+            href={`/transfer-portal/player?id=${entry.id}`}
             className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-surface transition-colors group"
           >
             <span className="w-6 h-6 rounded-full bg-burnt-orange/20 text-burnt-orange text-xs font-bold flex items-center justify-center">
@@ -313,7 +313,7 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
         {commits.map((entry) => (
           <Link
             key={entry.id}
-            href={`/transfer-portal/${entry.id}`}
+            href={`/transfer-portal/player?id=${entry.id}`}
             className="block p-2 -mx-2 rounded-lg hover:bg-surface transition-colors group"
           >
             <p className="text-sm font-medium text-text-primary group-hover:text-burnt-orange truncate transition-colors">
@@ -437,7 +437,7 @@ function PortalTable({
             <tr key={entry.id} className="hover:bg-charcoal-900/40 transition-colors">
               <td className="px-3 py-2.5">
                 <Link
-                  href={`/transfer-portal/${entry.id}`}
+                  href={`/transfer-portal/player?id=${entry.id}`}
                   className="font-medium text-text-primary hover:text-burnt-orange transition-colors"
                 >
                   {entry.player_name}
@@ -594,7 +594,7 @@ function WireTicker({ sport }: { sport: PortalSport }) {
         {events.map((ev) => (
           <Link
             key={ev.id}
-            href={`/transfer-portal/${ev.portal_entry_id}`}
+            href={`/transfer-portal/player?id=${ev.portal_entry_id}`}
             className="flex items-center gap-3 px-4 py-2 hover:bg-surface/50 transition-colors"
           >
             <span className={`text-sm font-bold ${typeColor[ev.change_type] || 'text-text-muted'}`}>
@@ -909,7 +909,7 @@ export default function TransferPortalHub() {
                         entry={entry}
                         sport={sport}
                         showStats
-                        href={`/transfer-portal/${entry.id}`}
+                        href={`/transfer-portal/player?id=${entry.id}`}
                       />
                     ))}
                   </PortalCardGrid>

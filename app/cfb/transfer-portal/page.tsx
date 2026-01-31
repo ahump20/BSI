@@ -168,7 +168,7 @@ export default function CFBTransferPortalPage() {
                     entry={entry}
                     sport="football"
                     showStats={false}
-                    href={`/transfer-portal/${entry.id}`}
+                    href={`/transfer-portal/player?id=${entry.id}`}
                   />
                 </ScrollReveal>
               ))}

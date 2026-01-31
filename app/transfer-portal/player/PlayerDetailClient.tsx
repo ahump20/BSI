@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -112,8 +112,8 @@ function teamSlug(name: string): string {
 }
 
 export function PlayerDetailClient() {
-  const params = useParams();
-  const playerId = params?.playerId as string;
+  const searchParams = useSearchParams();
+  const playerId = searchParams.get('id');
 
   const [player, setPlayer] = useState<PortalEntry | null>(null);
   const [changes, setChanges] = useState<ChangeEvent[]>([]);
@@ -121,7 +121,11 @@ export function PlayerDetailClient() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!playerId) return;
+    if (!playerId) {
+      setLoading(false);
+      setError('No player ID provided');
+      return;
+    }
 
     const controller = new AbortController();
     setLoading(true);

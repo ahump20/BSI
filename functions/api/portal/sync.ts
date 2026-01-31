@@ -8,7 +8,7 @@
  * Also callable from scheduled cron via service binding.
  *
  * Requires env secrets:
- *   - RAPIDAPI_KEY (x-rapidapi-key for Highlightly Pro)
+ *   - HIGHLIGHTLY_API_KEY (x-rapidapi-key for Highlightly Pro)
  *
  * Data flow:
  *   Highlightly API -> normalize -> D1 upsert -> KV freshness -> R2 snapshot
@@ -20,7 +20,7 @@ interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
   SPORTS_DATA: R2Bucket;
-  RAPIDAPI_KEY: string;
+  HIGHLIGHTLY_API_KEY: string;
 }
 
 const HEADERS = {
@@ -565,8 +565,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   }
 
-  if (!env.RAPIDAPI_KEY) {
-    return new Response(JSON.stringify({ error: 'RAPIDAPI_KEY secret not configured' }), {
+  if (!env.HIGHLIGHTLY_API_KEY) {
+    return new Response(JSON.stringify({ error: 'HIGHLIGHTLY_API_KEY secret not configured' }), {
       status: 500,
       headers: HEADERS,
     });
@@ -577,8 +577,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // Fetch from Highlightly API for both sports
     const [rawBaseball, rawFootball] = await Promise.allSettled([
-      fetchBaseballPortalData(env.RAPIDAPI_KEY),
-      fetchFootballPortalData(env.RAPIDAPI_KEY),
+      fetchBaseballPortalData(env.HIGHLIGHTLY_API_KEY),
+      fetchFootballPortalData(env.HIGHLIGHTLY_API_KEY),
     ]);
 
     const baseballPlayers = rawBaseball.status === 'fulfilled' ? rawBaseball.value : [];

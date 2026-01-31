@@ -173,7 +173,7 @@ export default function TransferPortalPage() {
                     entry={entry}
                     sport="baseball"
                     showStats={true}
-                    href={`/transfer-portal/${entry.id}`}
+                    href={`/transfer-portal/player?id=${entry.id}`}
                   />
                 </ScrollReveal>
               ))}
