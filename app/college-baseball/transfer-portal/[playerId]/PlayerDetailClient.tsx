@@ -12,53 +12,10 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { StatusBadge } from '@/components/portal';
+import { StatusBadge, type PortalEntry } from '@/components/portal';
 
 interface PlayerApiResponse {
-  player?: PlayerProfile;
-  data?: PlayerProfile;
-}
-
-interface PlayerProfile {
-  id: string;
-  player_name: string;
-  school_from: string;
-  school_to: string | null;
-  position: string;
-  conference: string;
-  class_year: string;
-  status: 'in_portal' | 'committed' | 'withdrawn';
-  portal_date: string;
-  engagement_score?: number;
-  source?: string;
-  verified?: boolean;
-  stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    era?: number;
-    wins?: number;
-    losses?: number;
-    strikeouts?: number;
-    ip?: number;
-    games?: number;
-    obp?: number;
-    slg?: number;
-    sb?: number;
-  };
-  bio?: {
-    height?: string;
-    weight?: string;
-    hometown?: string;
-    high_school?: string;
-    bats?: string;
-    throws?: string;
-  };
-  timeline?: Array<{
-    date: string;
-    event: string;
-    description?: string;
-  }>;
+  data?: PortalEntry;
 }
 
 // Stat display component
@@ -86,7 +43,7 @@ function StatItem({
 export function PlayerDetailClient() {
   const params = useParams();
   const playerId = params.playerId as string;
-  const [player, setPlayer] = useState<PlayerProfile | null>(null);
+  const [player, setPlayer] = useState<PortalEntry | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,10 +55,9 @@ export function PlayerDetailClient() {
           throw new Error('Player not found');
         }
         const data = (await response.json()) as PlayerApiResponse;
-        setPlayer(data.player || data.data || null);
+        setPlayer(data.data || null);
       } catch {
-        // Use mock data for development
-        setPlayer(getMockPlayer(playerId));
+        setPlayer(null);
       } finally {
         setLoading(false);
       }
@@ -266,7 +222,7 @@ export function PlayerDetailClient() {
         </Section>
 
         {/* Stats Grid */}
-        {player.stats && (
+        {player.baseball_stats && (
           <Section className="py-8">
             <Container>
               <ScrollReveal delay={0.2}>
@@ -276,97 +232,48 @@ export function PlayerDetailClient() {
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                   {isPitcher ? (
                     <>
-                      {player.stats.era !== undefined && (
-                        <StatItem label="ERA" value={player.stats.era.toFixed(2)} highlight />
+                      {player.baseball_stats.era !== undefined && (
+                        <StatItem
+                          label="ERA"
+                          value={player.baseball_stats.era.toFixed(2)}
+                          highlight
+                        />
                       )}
-                      {player.stats.wins !== undefined && (
-                        <StatItem label="Wins" value={player.stats.wins} />
+                      {player.baseball_stats.wins !== undefined && (
+                        <StatItem label="Wins" value={player.baseball_stats.wins} />
                       )}
-                      {player.stats.losses !== undefined && (
-                        <StatItem label="Losses" value={player.stats.losses} />
+                      {player.baseball_stats.losses !== undefined && (
+                        <StatItem label="Losses" value={player.baseball_stats.losses} />
                       )}
-                      {player.stats.strikeouts !== undefined && (
-                        <StatItem label="K" value={player.stats.strikeouts} highlight />
+                      {player.baseball_stats.strikeouts !== undefined && (
+                        <StatItem label="K" value={player.baseball_stats.strikeouts} highlight />
                       )}
-                      {player.stats.ip !== undefined && (
-                        <StatItem label="IP" value={player.stats.ip.toFixed(1)} />
+                      {player.baseball_stats.innings !== undefined && (
+                        <StatItem label="IP" value={player.baseball_stats.innings.toFixed(1)} />
                       )}
-                      {player.stats.games !== undefined && (
-                        <StatItem label="Games" value={player.stats.games} />
+                      {player.baseball_stats.whip !== undefined && (
+                        <StatItem label="WHIP" value={player.baseball_stats.whip.toFixed(2)} />
                       )}
                     </>
                   ) : (
                     <>
-                      {player.stats.avg !== undefined && (
-                        <StatItem label="AVG" value={player.stats.avg.toFixed(3)} highlight />
+                      {player.baseball_stats.avg !== undefined && (
+                        <StatItem
+                          label="AVG"
+                          value={player.baseball_stats.avg.toFixed(3)}
+                          highlight
+                        />
                       )}
-                      {player.stats.hr !== undefined && (
-                        <StatItem label="HR" value={player.stats.hr} />
+                      {player.baseball_stats.hr !== undefined && (
+                        <StatItem label="HR" value={player.baseball_stats.hr} />
                       )}
-                      {player.stats.rbi !== undefined && (
-                        <StatItem label="RBI" value={player.stats.rbi} highlight />
+                      {player.baseball_stats.rbi !== undefined && (
+                        <StatItem label="RBI" value={player.baseball_stats.rbi} highlight />
                       )}
-                      {player.stats.obp !== undefined && (
-                        <StatItem label="OBP" value={player.stats.obp.toFixed(3)} />
-                      )}
-                      {player.stats.slg !== undefined && (
-                        <StatItem label="SLG" value={player.stats.slg.toFixed(3)} />
-                      )}
-                      {player.stats.sb !== undefined && (
-                        <StatItem label="SB" value={player.stats.sb} />
+                      {player.baseball_stats.sb !== undefined && (
+                        <StatItem label="SB" value={player.baseball_stats.sb} />
                       )}
                     </>
-                  )}
-                </div>
-              </ScrollReveal>
-            </Container>
-          </Section>
-        )}
-
-        {/* Bio Section */}
-        {player.bio && (
-          <Section className="py-8">
-            <Container>
-              <ScrollReveal delay={0.3}>
-                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
-                  Player Info
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {player.bio.height && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Height</p>
-                      <p className="text-text-primary font-medium">{player.bio.height}</p>
-                    </div>
-                  )}
-                  {player.bio.weight && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Weight</p>
-                      <p className="text-text-primary font-medium">{player.bio.weight}</p>
-                    </div>
-                  )}
-                  {player.bio.bats && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Bats</p>
-                      <p className="text-text-primary font-medium">{player.bio.bats}</p>
-                    </div>
-                  )}
-                  {player.bio.throws && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30">
-                      <p className="text-xs text-text-muted uppercase mb-1">Throws</p>
-                      <p className="text-text-primary font-medium">{player.bio.throws}</p>
-                    </div>
-                  )}
-                  {player.bio.hometown && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
-                      <p className="text-xs text-text-muted uppercase mb-1">Hometown</p>
-                      <p className="text-text-primary font-medium">{player.bio.hometown}</p>
-                    </div>
-                  )}
-                  {player.bio.high_school && (
-                    <div className="p-4 rounded-lg bg-charcoal-800/30 col-span-2">
-                      <p className="text-xs text-text-muted uppercase mb-1">High School</p>
-                      <p className="text-text-primary font-medium">{player.bio.high_school}</p>
-                    </div>
                   )}
                 </div>
               </ScrollReveal>
@@ -399,83 +306,5 @@ export function PlayerDetailClient() {
 
       <Footer />
     </>
-  );
-}
-
-// Mock player data for development
-function getMockPlayer(id: string): PlayerProfile {
-  const mockPlayers: Record<string, PlayerProfile> = {
-    'sample-player-1': {
-      id: 'sample-player-1',
-      player_name: 'Jake Wilson',
-      school_from: 'Texas A&M',
-      school_to: null,
-      position: 'RHP',
-      conference: 'SEC',
-      class_year: 'Jr',
-      status: 'in_portal',
-      portal_date: '2025-06-02',
-      engagement_score: 95,
-      verified: true,
-      stats: {
-        era: 2.87,
-        wins: 8,
-        losses: 2,
-        strikeouts: 94,
-        ip: 78.2,
-        games: 15,
-      },
-      bio: {
-        height: '6\'3"',
-        weight: '205 lbs',
-        hometown: 'Houston, TX',
-        high_school: 'St. Thomas',
-        throws: 'Right',
-      },
-    },
-    '2': {
-      id: '2',
-      player_name: 'Marcus Johnson',
-      school_from: 'Florida',
-      school_to: 'LSU',
-      position: 'SS',
-      conference: 'SEC',
-      class_year: 'Sr',
-      status: 'committed',
-      portal_date: '2025-06-02',
-      engagement_score: 88,
-      verified: true,
-      stats: {
-        avg: 0.312,
-        hr: 14,
-        rbi: 52,
-        obp: 0.401,
-        slg: 0.567,
-        sb: 12,
-      },
-      bio: {
-        height: '6\'1"',
-        weight: '185 lbs',
-        hometown: 'Miami, FL',
-        high_school: 'Columbus',
-        bats: 'Right',
-        throws: 'Right',
-      },
-    },
-  };
-
-  return (
-    mockPlayers[id] || {
-      id,
-      player_name: 'Unknown Player',
-      school_from: 'Unknown',
-      school_to: null,
-      position: 'UTL',
-      conference: 'Unknown',
-      class_year: 'Jr',
-      status: 'in_portal',
-      portal_date: '2025-06-02',
-      verified: false,
-    }
   );
 }

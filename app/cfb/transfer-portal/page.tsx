@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
@@ -17,153 +17,10 @@ import {
   type FilterState,
 } from '@/components/portal';
 
-// Sample CFB portal data with star ratings
-const MOCK_ENTRIES: PortalEntry[] = [
-  {
-    id: 'cfb-2025-001',
-    player_name: 'Jaylen Carter',
-    school_from: 'Georgia',
-    school_to: null,
-    position: 'QB',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-09',
-    engagement_score: 98,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-002',
-    player_name: 'Marcus Williams',
-    school_from: 'Ohio State',
-    school_to: 'Texas',
-    position: 'WR',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 94,
-    stars: 5,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-003',
-    player_name: 'Darius Jackson',
-    school_from: 'Alabama',
-    school_to: null,
-    position: 'RB',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    engagement_score: 87,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-10T00:00:00Z',
-    updated_at: '2025-12-10T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-004',
-    player_name: 'Tyler Henderson',
-    school_from: 'USC',
-    school_to: 'Colorado',
-    position: 'DB',
-    conference: 'Big 12',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 82,
-    stars: 3,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-005',
-    player_name: 'Jordan Mitchell',
-    school_from: 'Michigan',
-    school_to: null,
-    position: 'LB',
-    conference: 'Big Ten',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-11',
-    engagement_score: 79,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-11T00:00:00Z',
-    updated_at: '2025-12-11T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-006',
-    player_name: 'Brandon Thomas',
-    school_from: 'Oklahoma',
-    school_to: null,
-    position: 'OL',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'withdrawn',
-    portal_date: '2025-12-09',
-    engagement_score: 55,
-    stars: 3,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-007',
-    player_name: 'Chris Davis',
-    school_from: 'Clemson',
-    school_to: null,
-    position: 'DL',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-12',
-    engagement_score: 91,
-    stars: 5,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-12T00:00:00Z',
-    updated_at: '2025-12-12T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-008',
-    player_name: 'DeShawn Brown',
-    school_from: 'Oregon',
-    school_to: 'Tennessee',
-    position: 'QB',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-10',
-    engagement_score: 96,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-10T00:00:00Z',
-    updated_at: '2025-12-10T00:00:00Z',
-  },
-];
+interface PortalApiResponse {
+  data?: PortalEntry[];
+  entries?: PortalEntry[];
+}
 
 // Stats card component (page-specific)
 function StatCard({
@@ -203,13 +60,42 @@ function StatCard({
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries] = useState<PortalEntry[]>(MOCK_ENTRIES);
+  const [entries, setEntries] = useState<PortalEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
     status: '',
     search: '',
   });
+
+  const loadEntries = useCallback(async () => {
+    try {
+      const params = new URLSearchParams();
+      if (filters.position) params.set('position', filters.position);
+      if (filters.conference) params.set('conference', filters.conference);
+      if (filters.status) params.set('status', filters.status);
+      params.set('sport', 'football');
+      params.set('limit', '100');
+
+      const response = await fetch(`/api/portal/v2/entries?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = (await response.json()) as PortalApiResponse;
+      setEntries(data.data || data.entries || []);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading portal entries:', err);
+      setEntries([]);
+      setError('Unable to load transfer portal data right now.');
+    }
+  }, [filters.position, filters.conference, filters.status]);
+
+  useEffect(() => {
+    loadEntries();
+  }, [loadEntries]);
 
   // Filter entries locally
   const filteredEntries = entries.filter((entry) => {
@@ -264,6 +150,7 @@ export default function CFBTransferPortalPage() {
                 <StatCard label="Committed" value={stats.committed} change="+12" />
                 <StatCard label="Power 4" value={stats.powerFour} change="+28" />
               </div>
+              {error && <div className="mt-4 text-sm text-error text-center">{error}</div>}
             </ScrollReveal>
           </Container>
         </Section>

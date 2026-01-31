@@ -16,6 +16,7 @@ id = "9752bd76e948431f93b6df097b1f2bed"
 [vars]
 ENVIRONMENT = "production"
 CACHE_TTL_SECONDS = "60"
+PORTAL_API_BASE = "https://blazesportsintel.com"
 
 # Routes - Custom domain mapping
 # routes = [

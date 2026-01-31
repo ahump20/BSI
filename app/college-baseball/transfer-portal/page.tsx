@@ -22,173 +22,10 @@ import {
 interface PortalApiResponse {
   data?: PortalEntry[];
   entries?: PortalEntry[];
+  meta?: {
+    last_updated?: string;
+  };
 }
-
-// Mock data for UI development (will be replaced by API)
-const MOCK_ENTRIES: PortalEntry[] = [
-  {
-    id: '1',
-    player_name: 'Jake Wilson',
-    school_from: 'Texas A&M',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-02',
-    engagement_score: 95,
-    baseball_stats: { era: 2.87, wins: 8, losses: 2, strikeouts: 94 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-02T00:00:00Z',
-    updated_at: '2025-06-02T00:00:00Z',
-  },
-  {
-    id: '2',
-    player_name: 'Marcus Johnson',
-    school_from: 'Florida',
-    school_to: 'LSU',
-    position: 'SS',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-06-02',
-    engagement_score: 88,
-    baseball_stats: { avg: 0.312, hr: 14, rbi: 52 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-02T00:00:00Z',
-    updated_at: '2025-06-02T00:00:00Z',
-  },
-  {
-    id: '3',
-    player_name: 'Tyler Roberts',
-    school_from: 'Oregon State',
-    school_to: null,
-    position: 'OF',
-    conference: 'Pac-12',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-06-03',
-    engagement_score: 72,
-    baseball_stats: { avg: 0.289, hr: 8, rbi: 38 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-03T00:00:00Z',
-    updated_at: '2025-06-03T00:00:00Z',
-  },
-  {
-    id: '4',
-    player_name: 'Chris Martinez',
-    school_from: 'Miami',
-    school_to: 'Texas',
-    position: 'LHP',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-06-02',
-    engagement_score: 91,
-    baseball_stats: { era: 3.24, wins: 6, losses: 3, strikeouts: 78 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-02T00:00:00Z',
-    updated_at: '2025-06-02T00:00:00Z',
-  },
-  {
-    id: '5',
-    player_name: 'Brandon Lee',
-    school_from: 'Stanford',
-    school_to: null,
-    position: 'C',
-    conference: 'Pac-12',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-04',
-    engagement_score: 65,
-    baseball_stats: { avg: 0.275, hr: 6, rbi: 29 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-04T00:00:00Z',
-    updated_at: '2025-06-04T00:00:00Z',
-  },
-  {
-    id: '6',
-    player_name: 'David Thompson',
-    school_from: 'Tennessee',
-    school_to: null,
-    position: '1B',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'withdrawn',
-    portal_date: '2025-06-02',
-    engagement_score: 45,
-    baseball_stats: { avg: 0.301, hr: 11, rbi: 44 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-02T00:00:00Z',
-    updated_at: '2025-06-02T00:00:00Z',
-  },
-  {
-    id: '7',
-    player_name: 'Ryan Garcia',
-    school_from: 'Texas',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-02',
-    engagement_score: 89,
-    baseball_stats: { era: 3.56, wins: 7, losses: 4, strikeouts: 82 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-02T00:00:00Z',
-    updated_at: '2025-06-02T00:00:00Z',
-  },
-  {
-    id: '8',
-    player_name: 'Austin Miller',
-    school_from: 'Arkansas',
-    school_to: 'Vanderbilt',
-    position: '2B',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-06-03',
-    engagement_score: 77,
-    baseball_stats: { avg: 0.267, hr: 5, rbi: 31 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-03T00:00:00Z',
-    updated_at: '2025-06-03T00:00:00Z',
-  },
-  {
-    id: '9',
-    player_name: 'Derek Williams',
-    school_from: 'Wake Forest',
-    school_to: null,
-    position: 'OF',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-05',
-    engagement_score: 68,
-    baseball_stats: { avg: 0.295, hr: 9, rbi: 41 },
-    sport: 'baseball',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-06-05T00:00:00Z',
-    updated_at: '2025-06-05T00:00:00Z',
-  },
-];
 
 // Alert subscription component (page-specific)
 function AlertSubscription() {
@@ -300,7 +137,8 @@ function StatCard({
 }
 
 export default function TransferPortalPage() {
-  const [entries, setEntries] = useState<PortalEntry[]>(MOCK_ENTRIES);
+  const [entries, setEntries] = useState<PortalEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
@@ -320,20 +158,20 @@ export default function TransferPortalPage() {
       if (filters.status) params.set('status', filters.status);
       params.set('limit', '100');
 
-      const response = await fetch(`/api/portal/entries?${params.toString()}`);
+      params.set('sport', 'baseball');
+      const response = await fetch(`/api/portal/v2/entries?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = (await response.json()) as PortalApiResponse;
-      const entries = data.data || data.entries || [];
-      if (entries.length > 0) {
-        setEntries(entries);
-      }
+      setEntries(data.data || data.entries || []);
+      setError(null);
     } catch (err) {
       console.error('Error loading portal entries:', err);
-      // Keep mock data on error for development
+      setEntries([]);
+      setError('Unable to load transfer portal data right now.');
     } finally {
       setLoading(false);
     }
@@ -400,6 +238,7 @@ export default function TransferPortalPage() {
               <div className="mt-6">
                 <StatusLegend variant="compact" />
               </div>
+              {error && <div className="mt-4 text-sm text-error text-center">{error}</div>}
             </ScrollReveal>
           </Container>
         </Section>

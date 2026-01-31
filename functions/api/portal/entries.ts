@@ -8,196 +8,109 @@
 
 interface Env {
   KV: KVNamespace;
-  DB: D1Database;
+  GAME_DB: D1Database;
 }
 
-interface PortalEntry {
+interface D1Row {
   id: string;
   player_name: string;
-  school_from: string;
-  school_to: string | null;
+  sport: string;
   position: string;
-  conference: string;
   class_year: string;
-  status: 'in_portal' | 'committed' | 'withdrawn';
+  from_team: string;
+  to_team: string | null;
+  from_conference: string | null;
+  to_conference: string | null;
+  status: string;
   portal_date: string;
-  engagement_score?: number;
-  stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    era?: number;
-    wins?: number;
-    losses?: number;
-    strikeouts?: number;
-  };
+  commitment_date: string | null;
+  stats_json: string | null;
+  engagement_score: number | null;
+  stars: number | null;
+  overall_rank: number | null;
+  source_url: string | null;
+  source_id: string | null;
+  source_name: string;
+  is_partial: number;
+  needs_review: number;
+  source_confidence: number | null;
+  verified: number;
+  last_verified_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
-// Sample data - replace with D1 queries when database populated
-const SAMPLE_ENTRIES: PortalEntry[] = [
-  {
-    id: 'tp-001',
-    player_name: 'Jake Wilson',
-    school_from: 'Texas A&M',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-02',
-    engagement_score: 95,
-    stats: { era: 2.87, wins: 8, losses: 2, strikeouts: 94 },
-  },
-  {
-    id: 'tp-002',
-    player_name: 'Marcus Johnson',
-    school_from: 'Florida',
-    school_to: 'LSU',
-    position: 'SS',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-06-02',
-    engagement_score: 88,
-    stats: { avg: 0.312, hr: 14, rbi: 52 },
-  },
-  {
-    id: 'tp-003',
-    player_name: 'Tyler Roberts',
-    school_from: 'Oregon State',
-    school_to: null,
-    position: 'OF',
-    conference: 'Pac-12',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-06-03',
-    engagement_score: 72,
-    stats: { avg: 0.289, hr: 8, rbi: 38 },
-  },
-  {
-    id: 'tp-004',
-    player_name: 'Chris Martinez',
-    school_from: 'Miami',
-    school_to: 'Texas',
-    position: 'LHP',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-06-02',
-    engagement_score: 91,
-    stats: { era: 3.24, wins: 6, losses: 3, strikeouts: 78 },
-  },
-  {
-    id: 'tp-005',
-    player_name: 'Brandon Lee',
-    school_from: 'Stanford',
-    school_to: null,
-    position: 'C',
-    conference: 'Pac-12',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-04',
-    engagement_score: 65,
-    stats: { avg: 0.275, hr: 6, rbi: 29 },
-  },
-  {
-    id: 'tp-006',
-    player_name: 'David Thompson',
-    school_from: 'Tennessee',
-    school_to: null,
-    position: '1B',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'withdrawn',
-    portal_date: '2025-06-02',
-    engagement_score: 45,
-    stats: { avg: 0.301, hr: 11, rbi: 44 },
-  },
-  {
-    id: 'tp-007',
-    player_name: 'Ryan Garcia',
-    school_from: 'Texas',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-02',
-    engagement_score: 89,
-    stats: { era: 3.56, wins: 7, losses: 4, strikeouts: 82 },
-  },
-  {
-    id: 'tp-008',
-    player_name: 'Austin Miller',
-    school_from: 'Arkansas',
-    school_to: 'Vanderbilt',
-    position: '2B',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-06-03',
-    engagement_score: 77,
-    stats: { avg: 0.267, hr: 5, rbi: 31 },
-  },
-  {
-    id: 'tp-009',
-    player_name: 'Derek Williams',
-    school_from: 'Wake Forest',
-    school_to: null,
-    position: 'OF',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-05',
-    engagement_score: 68,
-    stats: { avg: 0.295, hr: 9, rbi: 41 },
-  },
-  {
-    id: 'tp-010',
-    player_name: 'Javier Rodriguez',
-    school_from: 'Texas Tech',
-    school_to: null,
-    position: 'RHP',
-    conference: 'Big 12',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-06-03',
-    engagement_score: 74,
-    stats: { era: 3.89, wins: 5, losses: 3, strikeouts: 67 },
-  },
-  {
-    id: 'tp-011',
-    player_name: 'Cameron Brooks',
-    school_from: 'Clemson',
-    school_to: 'Georgia',
-    position: '3B',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-06-02',
-    engagement_score: 82,
-    stats: { avg: 0.318, hr: 12, rbi: 48 },
-  },
-  {
-    id: 'tp-012',
-    player_name: 'Isaiah Taylor',
-    school_from: 'Virginia',
-    school_to: null,
-    position: 'CF',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-06-04',
-    engagement_score: 79,
-    stats: { avg: 0.308, hr: 7, rbi: 35 },
-  },
-];
+function parseStats(statsJson: string | null): unknown | undefined {
+  if (!statsJson) return undefined;
+  try {
+    return JSON.parse(statsJson);
+  } catch {
+    return undefined;
+  }
+}
+
+function formatChicagoTimestamp(date: Date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZoneName: 'shortOffset',
+  });
+  const parts = formatter.formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+  const offsetToken = get('timeZoneName');
+  const offsetMatch = /GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(offsetToken);
+  const sign = offsetMatch?.[1] ?? '+';
+  const hours = offsetMatch?.[2]?.padStart(2, '0') ?? '00';
+  const minutes = offsetMatch?.[3]?.padStart(2, '0') ?? '00';
+  const offset = `${sign}${hours}:${minutes}`;
+
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}${offset}`;
+}
+
+function rowToEntry(row: D1Row): Record<string, unknown> {
+  const stats = parseStats(row.stats_json);
+  return {
+    id: row.id,
+    player_name: row.player_name,
+    school_from: row.from_team,
+    school_to: row.to_team || null,
+    position: row.position,
+    conference: row.from_conference || '',
+    class_year: row.class_year,
+    status: row.status,
+    portal_date: row.portal_date,
+    commitment_date: row.commitment_date || undefined,
+    sport: row.sport,
+    engagement_score: row.engagement_score ?? undefined,
+    stars: row.stars ?? undefined,
+    overall_rank: row.overall_rank ?? undefined,
+    baseball_stats: row.sport === 'baseball' ? stats : undefined,
+    football_stats: row.sport === 'football' ? stats : undefined,
+    is_partial: row.is_partial === 1,
+    needs_review: row.needs_review === 1,
+    source_confidence: row.source_confidence ?? 1,
+    source_url: row.source_url || undefined,
+    source_id: row.source_id || undefined,
+    verified: row.verified === 1,
+    source: row.source_name,
+    last_verified_at: row.last_verified_at,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
 
 export async function onRequestGet(context: { request: Request; env: Env }): Promise<Response> {
   const { request, env } = context;
   const url = new URL(request.url);
 
   // Parse query params
+  const sport = url.searchParams.get('sport') || 'baseball';
   const position = url.searchParams.get('position') || '';
   const conference = url.searchParams.get('conference') || '';
   const status = url.searchParams.get('status') || '';
@@ -219,40 +132,54 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
       });
     }
 
-    // Filter entries
-    let entries = [...SAMPLE_ENTRIES];
+    const conditions: string[] = ['sport = ?1'];
+    const params: (string | number)[] = [sport];
+    let paramIdx = 1;
 
     if (position) {
-      entries = entries.filter((e) => {
-        if (position === 'P') return e.position.includes('P');
-        if (position === 'C') return e.position === 'C';
-        if (position === 'INF') return ['1B', '2B', '3B', 'SS'].includes(e.position);
-        if (position === 'OF') return ['OF', 'LF', 'CF', 'RF'].includes(e.position);
-        return e.position.includes(position);
-      });
+      conditions.push(`position LIKE ?${++paramIdx}`);
+      params.push(`%${position}%`);
     }
-
     if (conference) {
-      entries = entries.filter((e) => e.conference === conference);
+      conditions.push(`from_conference = ?${++paramIdx}`);
+      params.push(conference);
     }
-
     if (status) {
-      entries = entries.filter((e) => e.status === status);
+      conditions.push(`status = ?${++paramIdx}`);
+      params.push(status);
     }
 
-    // Apply pagination
-    const paginatedEntries = entries.slice(offset, offset + limit);
+    const whereClause = conditions.join(' AND ');
+
+    const countQuery = `SELECT COUNT(*) as total FROM transfer_portal WHERE ${whereClause}`;
+    const countResult = await env.GAME_DB.prepare(countQuery)
+      .bind(...params)
+      .first<{ total: number }>();
+    const total = countResult?.total ?? 0;
+
+    const dataQuery = `
+      SELECT * FROM transfer_portal
+      WHERE ${whereClause}
+      ORDER BY event_timestamp DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+    const dataResult = await env.GAME_DB.prepare(dataQuery)
+      .bind(...params)
+      .all<D1Row>();
+    const paginatedEntries = (dataResult.results || []).map(rowToEntry);
+
+    const lastUpdated = (await env.KV.get('portal:last_updated')) || formatChicagoTimestamp();
 
     const response = {
       data: paginatedEntries,
       meta: {
-        total: entries.length,
+        total,
         limit,
         offset,
-        has_more: offset + limit < entries.length,
+        has_more: offset + limit < total,
+        last_updated: lastUpdated,
+        source: 'bsi-portal-d1',
       },
-      source: 'NCAA Transfer Portal, D1Baseball',
-      updated_at: new Date().toISOString(),
     };
 
     const responseJson = JSON.stringify(response);
@@ -273,6 +200,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
       JSON.stringify({
         error: 'Failed to fetch portal entries',
         message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: formatChicagoTimestamp(),
       }),
       {
         status: 500,

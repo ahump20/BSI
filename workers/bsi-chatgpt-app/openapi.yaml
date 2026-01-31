@@ -583,52 +583,76 @@ components:
     TransferPortalResponse:
       type: object
       required:
-        - entries
+        - success
         - timestamp
-        - source
+        - timezone
+        - entries
       properties:
+        success:
+          type: boolean
         entries:
           type: array
           items:
-            $ref: '#/components/schemas/TransferEntry'
+            $ref: '#/components/schemas/TransferPortalEntry'
         timestamp:
           type: string
-          format: date-time
-        source:
+        timezone:
           type: string
-          example: On3/247Sports via Blaze Sports Intel
-        cached:
-          type: boolean
+          example: America/Chicago
+        sport:
+          type: string
+          nullable: true
+        totalAvailable:
+          type: integer
+        totalCommitted:
+          type: integer
+        recentCommitments:
+          type: integer
 
-    TransferEntry:
+    TransferPortalEntry:
       type: object
       properties:
-        playerId:
+        entryId:
           type: string
-        name:
+        athleteName:
           type: string
         sport:
           type: string
+          enum: [football, baseball, basketball]
         position:
           type: string
-        previousSchool:
+        formerSchool:
+          type: string
+        formerConference:
+          type: string
+        class:
+          type: string
+        rating:
+          type: number
+          nullable: true
+        entryDate:
           type: string
         status:
           type: string
-          enum: [entered, committed, withdrawn]
-        destination:
+          enum: [available, committed, withdrawn]
+        newSchool:
           type: string
           nullable: true
-          description: Null if not yet committed
-        enteredDate:
+        commitDate:
           type: string
-          format: date
-        rating:
+          nullable: true
+        stats:
+          type: object
+          additionalProperties:
+            type: number
+        source:
+          type: string
+        sourceConfidence:
           type: number
-          format: float
-          description: Transfer ranking/rating
-        eligibility:
+          description: Confidence score 0-1
+        sourceUrl:
           type: string
+          nullable: true
 
     ErrorResponse:
       type: object

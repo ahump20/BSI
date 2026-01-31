@@ -5,7 +5,13 @@
  * Handles caching, error states, and real-time updates.
  */
 
-import type { PortalEntry, PortalFilters, PortalApiResponse, PortalFreshnessResponse, PortalSport } from './types';
+import type {
+  PortalEntry,
+  PortalFilters,
+  PortalApiResponse,
+  PortalFreshnessResponse,
+  PortalSport,
+} from './types';
 
 const API_BASE = '/api/portal';
 
@@ -20,7 +26,13 @@ interface FetchOptions {
 export async function fetchPortalEntries(
   sport: PortalSport,
   filters: Partial<PortalFilters> = {},
-  options: FetchOptions & { since?: string; sort?: string; order?: string; page?: number; limit?: number } = {}
+  options: FetchOptions & {
+    since?: string;
+    sort?: string;
+    order?: string;
+    page?: number;
+    limit?: number;
+  } = {}
 ): Promise<PortalApiResponse> {
   const params = new URLSearchParams();
   params.set('sport', sport);

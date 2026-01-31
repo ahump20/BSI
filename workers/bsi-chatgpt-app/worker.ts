@@ -15,6 +15,7 @@ interface Env {
   SPORTSDATAIO_API_KEY: string;
   ESPN_API_KEY: string;
   PERFECT_GAME_API_KEY: string;
+  PORTAL_API_BASE?: string;
 }
 
 interface CacheOptions {
@@ -249,6 +250,9 @@ interface TransferPortalEntry {
   newSchool: string | null;
   commitDate: string | null;
   stats: Record<string, number | string>;
+  source: string;
+  sourceConfidence: number;
+  sourceUrl: string | null;
 }
 
 interface TransferPortalResponse {
@@ -952,70 +956,76 @@ async function fetchNILValuation(env: Env, athleteId: string): Promise<NILValuat
 // =============================================================================
 
 async function fetchTransferPortal(env: Env, sport?: string): Promise<TransferPortalResponse> {
-  const entries: TransferPortalEntry[] = [
-    {
-      entryId: 'tp-001',
-      athleteName: 'Dylan Raiola',
-      sport: 'football',
-      position: 'QB',
-      formerSchool: 'Nebraska',
-      formerConference: 'Big Ten',
-      class: 'Freshman',
-      rating: 4.5,
-      entryDate: '2024-12-15',
-      status: 'available',
-      newSchool: null,
-      commitDate: null,
-      stats: { passYards: 2800, touchdowns: 18, interceptions: 8 },
-    },
-    {
-      entryId: 'tp-002',
-      athleteName: 'Cam Ward',
-      sport: 'football',
-      position: 'QB',
-      formerSchool: 'Miami',
-      formerConference: 'ACC',
-      class: 'Senior',
-      rating: 5.0,
-      entryDate: '2024-12-10',
-      status: 'committed',
-      newSchool: null,
-      commitDate: null,
-      stats: { passYards: 4123, touchdowns: 36, interceptions: 7 },
-    },
-    {
-      entryId: 'tp-003',
-      athleteName: 'Marcus Adams Jr.',
-      sport: 'basketball',
-      position: 'PG',
-      formerSchool: 'Kansas',
-      formerConference: 'Big 12',
-      class: 'Sophomore',
-      rating: 4.0,
-      entryDate: '2024-12-12',
-      status: 'available',
-      newSchool: null,
-      commitDate: null,
-      stats: { pointsPerGame: 12.5, assistsPerGame: 5.2, stealsPerGame: 1.8 },
-    },
-    {
-      entryId: 'tp-004',
-      athleteName: 'Jake Rivers',
-      sport: 'baseball',
-      position: 'RHP',
-      formerSchool: 'Vanderbilt',
-      formerConference: 'SEC',
-      class: 'Junior',
-      rating: 4.2,
-      entryDate: '2024-12-08',
-      status: 'committed',
-      newSchool: 'Texas',
-      commitDate: '2024-12-14',
-      stats: { era: 2.85, strikeouts: 112, wins: 9 },
-    },
-  ];
+  const baseUrl = env.PORTAL_API_BASE || 'https://blazesportsintel.com';
+  const url = new URL('/api/portal/v2/entries', baseUrl);
+  if (sport) {
+    url.searchParams.set('sport', sport.toLowerCase());
+  }
+  url.searchParams.set('limit', '100');
 
-  const filteredEntries = sport ? entries.filter((e) => e.sport === sport.toLowerCase()) : entries;
+  const response = await fetch(url.toString(), {
+    headers: { 'Accept': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Portal API error ${response.status}: ${response.statusText}`);
+  }
+
+  const payload = (await response.json()) as {
+    data?: Array<{
+      id: string;
+      player_name: string;
+      sport: 'baseball' | 'football';
+      position: string;
+      conference: string;
+      class_year: string;
+      school_from: string;
+      school_to: string | null;
+      status: 'in_portal' | 'committed' | 'withdrawn' | 'signed';
+      portal_date: string;
+      commitment_date?: string;
+      stars?: number;
+      baseball_stats?: Record<string, number>;
+      football_stats?: Record<string, number>;
+      source: string;
+      source_confidence: number;
+      source_url?: string;
+    }>;
+  };
+
+  const mappedEntries: TransferPortalEntry[] = (payload.data || [])
+    .filter((entry) => entry.sport === 'baseball' || entry.sport === 'football')
+    .map((entry) => {
+      const stats =
+        entry.sport === 'baseball'
+          ? entry.baseball_stats || {}
+          : entry.football_stats || {};
+      const statusMap: TransferPortalEntry['status'] =
+        entry.status === 'in_portal' ? 'available' : entry.status === 'withdrawn' ? 'withdrawn' : 'committed';
+
+      return {
+        entryId: entry.id,
+        athleteName: entry.player_name,
+        sport: entry.sport,
+        position: entry.position,
+        formerSchool: entry.school_from,
+        formerConference: entry.conference,
+        class: entry.class_year,
+        rating: entry.stars ?? null,
+        entryDate: entry.portal_date,
+        status: statusMap,
+        newSchool: entry.school_to ?? null,
+        commitDate: entry.commitment_date ?? null,
+        stats,
+        source: entry.source,
+        sourceConfidence: entry.source_confidence,
+        sourceUrl: entry.source_url ?? null,
+      };
+    });
+
+  const filteredEntries = sport
+    ? mappedEntries.filter((entry) => entry.sport === sport.toLowerCase())
+    : mappedEntries;
 
   const available = filteredEntries.filter((e) => e.status === 'available');
   const committed = filteredEntries.filter((e) => e.status === 'committed');
