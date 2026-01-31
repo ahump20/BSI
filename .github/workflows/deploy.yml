@@ -35,7 +35,7 @@ jobs:
       blazecraft: ${{ steps.changes.outputs.blazecraft }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
@@ -79,7 +79,7 @@ jobs:
     if: needs.detect-changes.outputs.blazesportsintel == 'true' || github.event_name == 'pull_request'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -135,7 +135,7 @@ jobs:
         working-directory: games/blazecraft
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
