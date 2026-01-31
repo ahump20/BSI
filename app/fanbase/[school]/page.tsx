@@ -4,7 +4,7 @@ import FanbaseProfileClient from './FanbaseProfileClient';
 // IDs match what bsi-fanbase-sentiment API returns
 export function generateStaticParams() {
   return [
-    // SEC Teams - using API school IDs
+    // SEC Teams
     { school: 'texas' },
     { school: 'oklahoma' },
     { school: 'georgia' },
@@ -21,6 +21,13 @@ export function generateStaticParams() {
     { school: 'mississippi-state' },
     { school: 'south-carolina' },
     { school: 'vanderbilt' },
+    // Big 12 Teams
+    { school: 'texas-tech' },
+    { school: 'tcu' },
+    { school: 'baylor' },
+    { school: 'kansas-state' },
+    { school: 'oklahoma-state' },
+    { school: 'byu' },
   ];
 }
 

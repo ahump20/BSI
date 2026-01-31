@@ -65,17 +65,25 @@ export class Stadium {
   private meshes: Mesh[] = [];
   private lights: (PointLight | SpotLight)[] = [];
   private crowdParticles: ParticleSystem[] = [];
+  private glbLoaded = false;
 
   constructor(scene: Scene) {
     this.scene = scene;
   }
 
-  /** Build complete stadium */
-  public build(): void {
+  /** Build complete stadium - skips geometry if GLB loaded */
+  public build(glbLoaded = false): void {
+    this.glbLoaded = glbLoaded;
     this.createSkybox();
-    this.createStands();
+
+    // Only create procedural geometry if GLB not loaded
+    if (!glbLoaded) {
+      this.createStands();
+      this.createGoalPosts();
+    }
+
+    // Always create dynamic elements
     this.createStadiumLights();
-    this.createGoalPosts();
     this.createAtmosphere();
     this.createCrowdEffect();
   }

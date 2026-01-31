@@ -33,8 +33,12 @@ export function TeamLogo({ abbreviation, sport, size = 'md', className = '' }: T
     return (
       <div
         className={`${sizeClasses[size]} bg-charcoal rounded-full flex items-center justify-center font-bold text-burnt-orange ${className}`}
+        role="img"
+        aria-label={`${abbreviation} team logo`}
       >
-        <span className={textSizeClasses[size]}>{fallbackText}</span>
+        <span className={textSizeClasses[size]} aria-hidden="true">
+          {fallbackText}
+        </span>
       </div>
     );
   }

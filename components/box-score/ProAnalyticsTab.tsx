@@ -60,6 +60,52 @@ interface PitcherStuffStats {
   swingMissRate: number;
 }
 
+// API Response types
+interface ApiBatterData {
+  id: string;
+  name: string;
+  position: string;
+  atBats: number;
+  hits: number;
+  avg: number;
+  slg: number;
+  woba: number;
+  hardHitRate: number;
+  barrelRate: number;
+  avgExitVelo: number;
+  avgLaunchAngle: number;
+  battedBalls?: BattedBallData[];
+}
+
+interface ApiPitchData {
+  pitchType?: string;
+  type?: string;
+  velocity: number;
+  spinRate: number;
+  horizontalBreak: number;
+  verticalBreak: number;
+  extension?: number;
+  releaseHeight?: number;
+}
+
+interface ApiPitcherData {
+  id: string;
+  name: string;
+  pitchCount: number;
+  avgVelocity: number;
+  avgSpinRate: number;
+  avgHorizontalBreak: number;
+  avgVerticalBreak: number;
+  whiffRate: number;
+  swingMissRate: number;
+  pitches?: ApiPitchData[];
+}
+
+interface AdvancedStatsResponse {
+  batting: ApiBatterData[];
+  pitching: ApiPitcherData[];
+}
+
 export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
   teamId,
   gameId,
@@ -89,10 +135,10 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
 
       // Fetch player data from API
       const response = await fetch(`/api/college-baseball/game/${gameId}/advanced-stats`);
-      const data = (await response.json()) as { batting: any[]; pitching: any[] };
+      const data = (await response.json()) as AdvancedStatsResponse;
 
       // Calculate expected metrics for batters
-      const battingStats: PlayerBattingStats[] = data.batting.map((player: any) => {
+      const battingStats: PlayerBattingStats[] = data.batting.map((player: ApiBatterData) => {
         const battedBalls: BattedBallData[] = player.battedBalls || [];
 
         // Calculate aggregate expected metrics
@@ -124,8 +170,8 @@ export const ProAnalyticsTab: React.FC<ProAnalyticsTabProps> = ({
       });
 
       // Calculate Stuff+ for pitchers
-      const pitchingStats: PitcherStuffStats[] = data.pitching.map((pitcher: any) => {
-        const pitches: any[] = pitcher.pitches || [];
+      const pitchingStats: PitcherStuffStats[] = data.pitching.map((pitcher: ApiPitcherData) => {
+        const pitches: ApiPitchData[] = pitcher.pitches || [];
 
         // Calculate Stuff+ for primary pitch
         const primaryPitch = pitches[0];

@@ -24,6 +24,21 @@ export enum LogLevel {
   FATAL = 'fatal',
 }
 
+// External service type definitions
+interface SentryLike {
+  captureException: (
+    error: Error,
+    options?: { level?: string; contexts?: Record<string, unknown> }
+  ) => void;
+}
+
+function getSentry(): SentryLike | undefined {
+  if (typeof globalThis !== 'undefined' && 'Sentry' in globalThis) {
+    return (globalThis as { Sentry?: SentryLike }).Sentry;
+  }
+  return undefined;
+}
+
 const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
   [LogLevel.DEBUG]: 10,
   [LogLevel.INFO]: 20,
@@ -33,7 +48,7 @@ const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
 };
 
 export interface LogContext {
-  [key: string]: any;
+  [key: string]: unknown;
   correlationId?: string;
   userId?: string;
   requestId?: string;
@@ -230,7 +245,7 @@ export class Logger {
         message: error.message,
         name: error.name,
         stack: error.stack,
-        code: (error as any).code,
+        code: 'code' in error ? String(error.code) : undefined,
       };
     }
 
@@ -320,20 +335,17 @@ export class Logger {
    */
   private sendToExternalServices(entry: LogEntry, error?: Error): void {
     // Send to Sentry
-    if (
-      this.config.sendToSentry &&
-      typeof globalThis !== 'undefined' &&
-      (globalThis as any).Sentry
-    ) {
+    const sentry = this.config.sendToSentry ? getSentry() : undefined;
+    if (sentry) {
       try {
-        (globalThis as any).Sentry.captureException(error || new Error(entry.message), {
+        sentry.captureException(error || new Error(entry.message), {
           level: entry.level === LogLevel.FATAL ? 'fatal' : 'error',
           contexts: {
-            log: entry.context,
+            log: entry.context as Record<string, unknown>,
           },
         });
       } catch (err) {
-        console.error('Failed to send error to Sentry:', err);
+        // Sentry send failed - ignore silently in production
       }
     }
 
@@ -419,10 +431,10 @@ export function createRequestLogger(request: Request): Logger {
 /**
  * Middleware to add logging to requests
  */
-export function withLogging(
-  handler: (request: Request, env: any, ctx: any, logger: Logger) => Promise<Response>
+export function withLogging<E = unknown, C = unknown>(
+  handler: (request: Request, env: E, ctx: C, logger: Logger) => Promise<Response>
 ) {
-  return async (request: Request, env: any, ctx: any): Promise<Response> => {
+  return async (request: Request, env: E, ctx: C): Promise<Response> => {
     const requestLogger = createRequestLogger(request);
     const stopTimer = requestLogger.startTimer(
       {

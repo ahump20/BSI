@@ -14,6 +14,12 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 /plans /pricing 301
 
 # ============================================
+# Baseball → College Baseball consolidation
+# ============================================
+/baseball/* /college-baseball/:splat 301
+/baseball /college-baseball 301
+
+# ============================================
 # Tools
 # ============================================
 # NOTE: Cloudflare Pages automatically serves .html files at clean URLs

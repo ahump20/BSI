@@ -8,6 +8,11 @@
  * @version 1.0.0
  */
 
+import type { D1Database, KVNamespace, R2Bucket } from '@cloudflare/workers-types';
+
+// Re-export for consumers of this module
+export type { D1Database, KVNamespace, R2Bucket };
+
 // ============================================================================
 // Core Enums & Constants
 // ============================================================================
@@ -695,26 +700,49 @@ export interface TeamDiamondScores {
 
 /**
  * Cloudflare Worker environment bindings.
- * Note: D1Database, KVNamespace, R2Bucket, ExecutionContext are provided
+ *
+ * Supports two deployment contexts:
+ * 1. Pages Functions (root wrangler.toml): DB, KV, BSI_CACHE, etc.
+ * 2. Standalone Workers (workers/[name]/wrangler.toml): BSI_HISTORICAL_DB, BSI_PREDICTION_CACHE, etc.
+ *
+ * Note: D1Database, KVNamespace, R2Bucket are provided
  * by @cloudflare/workers-types and should NOT be redeclared here.
  */
 export interface CloudflareEnv {
-  // D1 Database
-  BSI_HISTORICAL_DB: D1Database;
+  // D1 Databases - Pages Functions (root wrangler.toml)
+  DB?: D1Database;
+  NIL_DB?: D1Database;
+  GAME_DB?: D1Database;
+  FANBASE_DB?: D1Database;
 
-  // KV Namespaces
-  BSI_PREDICTION_CACHE: KVNamespace;
-  BSI_SPORTS_CACHE: KVNamespace;
+  // D1 Databases - Standalone Workers (workers/*/wrangler.toml)
+  BSI_HISTORICAL_DB?: D1Database;
+
+  // KV Namespaces - Pages Functions
+  KV?: KVNamespace;
+  NIL_CACHE?: KVNamespace;
+  BSI_CACHE?: KVNamespace;
+  BSI_FANBASE_CACHE?: KVNamespace;
+
+  // KV Namespaces - Standalone Workers
+  BSI_PREDICTION_CACHE?: KVNamespace;
+  BSI_SPORTS_CACHE?: KVNamespace;
 
   // R2 Buckets
-  BSI_MODEL_STORAGE: R2Bucket;
+  SPORTS_DATA?: R2Bucket;
+  NIL_ARCHIVE?: R2Bucket;
+
+  // AI bindings (Pages Functions)
+  AI?: unknown;
+  VECTORIZE?: unknown;
+  ANALYTICS?: unknown;
 
   // Environment variables
   ENVIRONMENT: string;
-  MODEL_VERSION: string;
-  SIMULATION_COUNT: string;
+  MODEL_VERSION?: string;
+  SIMULATION_COUNT?: string;
 
-  // API Keys
+  // API Keys (secrets)
   SPORTSDATAIO_KEY?: string;
   ODDS_API_KEY?: string;
 }

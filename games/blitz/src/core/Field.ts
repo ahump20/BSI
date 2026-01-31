@@ -1,6 +1,7 @@
 /**
  * Blaze Blitz Football - Field Generation
  *
+ * Loads GLB stadium model or falls back to procedural generation.
  * Creates the 100-yard football field with yard lines,
  * end zones, hash marks, and team branding
  */
@@ -13,7 +14,9 @@ import {
   Color3,
   Mesh,
   DynamicTexture,
+  SceneLoader,
 } from '@babylonjs/core';
+import '@babylonjs/loaders/glTF';
 import type { BlitzTeam } from '@data/teams';
 
 /** Field dimensions in game units (1 unit = 1 yard) */
@@ -25,6 +28,9 @@ export const FIELD_CONFIG = {
   yardLineInterval: 5, // Yard lines every 5 yards
   numberInterval: 10, // Numbers every 10 yards
 } as const;
+
+/** GLB stadium asset path */
+const STADIUM_GLB_URL = '/assets/blitz-stadium.glb';
 
 /** Colors for field elements */
 const FIELD_COLORS = {
@@ -41,6 +47,7 @@ export class FootballField {
   private homeTeam: BlitzTeam;
   private awayTeam: BlitzTeam;
   private fieldMeshes: Mesh[] = [];
+  private glbLoaded = false;
 
   constructor(scene: Scene, homeTeam: BlitzTeam, awayTeam: BlitzTeam) {
     this.scene = scene;
@@ -48,14 +55,80 @@ export class FootballField {
     this.awayTeam = awayTeam;
   }
 
-  /** Build the complete field */
-  public build(): void {
+  /** Build the complete field - tries GLB first, falls back to procedural */
+  public async build(): Promise<void> {
+    try {
+      await this.loadGLB();
+      this.glbLoaded = true;
+      console.log('[Field] GLB stadium loaded successfully');
+      // Apply team colors to end zones from GLB
+      this.applyTeamColorsToGLB();
+    } catch (err) {
+      console.warn('[Field] GLB load failed, using procedural:', err);
+      this.buildProcedural();
+    }
+  }
+
+  /** Load the GLB stadium model */
+  private async loadGLB(): Promise<void> {
+    const result = await SceneLoader.ImportMeshAsync('', STADIUM_GLB_URL, '', this.scene);
+
+    // Position and scale the imported meshes
+    result.meshes.forEach((mesh) => {
+      if (mesh.name.startsWith('BLITZ_')) {
+        // GLB was exported in Blender units (meters), scale to yards
+        // Blender: field is 53.33 x 120 units
+        // Game expects: 53.33 x 120 yards centered at z=50
+        mesh.scaling.setAll(1);
+        mesh.position.z = FIELD_CONFIG.length / 2; // Center field
+        this.fieldMeshes.push(mesh as Mesh);
+      }
+    });
+  }
+
+  /** Apply team colors to GLB end zones */
+  private applyTeamColorsToGLB(): void {
+    const homeEndZone = this.scene.getMeshByName('BLITZ_HomeEndzone');
+    const awayEndZone = this.scene.getMeshByName('BLITZ_AwayEndzone');
+
+    if (homeEndZone) {
+      const homeMat = new PBRMaterial('homeEndZoneMat', this.scene);
+      homeMat.albedoColor = Color3.FromHexString(this.homeTeam.primaryColor);
+      homeMat.roughness = 0.9;
+      homeMat.metallic = 0;
+      homeEndZone.material = homeMat;
+    }
+
+    if (awayEndZone) {
+      const awayMat = new PBRMaterial('awayEndZoneMat', this.scene);
+      awayMat.albedoColor = Color3.FromHexString(this.awayTeam.primaryColor);
+      awayMat.roughness = 0.9;
+      awayMat.metallic = 0;
+      awayEndZone.material = awayMat;
+    }
+
+    // Add team text overlays
+    this.createEndZoneText(this.homeTeam, -FIELD_CONFIG.endZoneDepth / 2, false);
+    this.createEndZoneText(
+      this.awayTeam,
+      FIELD_CONFIG.length + FIELD_CONFIG.endZoneDepth / 2,
+      true
+    );
+  }
+
+  /** Build procedural field (fallback) */
+  private buildProcedural(): void {
     this.createGround();
     this.createEndZones();
     this.createYardLines();
     this.createHashMarks();
     this.createFieldNumbers();
     this.createSidelines();
+  }
+
+  /** Check if GLB was loaded */
+  public isGLBLoaded(): boolean {
+    return this.glbLoaded;
   }
 
   /** Create the main grass surface */

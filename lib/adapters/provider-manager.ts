@@ -12,6 +12,7 @@
 import { SportsDataIOAdapter } from './sports-data-io';
 import { NCAAAPIAdapter } from './ncaa-api';
 import { ESPNAPIAdapter } from './espn-api';
+import { logger } from '../utils/logger';
 import type {
   Env,
   GamesQueryParams,
@@ -66,22 +67,22 @@ export class ProviderManager {
     for (const { name, adapter } of providers) {
       // Check circuit breaker
       if (this.isCircuitOpen(name)) {
-        console.warn(`[ProviderManager] Circuit breaker open for ${name}, skipping`);
+        logger.warn({ provider: name }, 'Circuit breaker open, skipping provider');
         continue;
       }
 
       try {
-        console.log(`[ProviderManager] Attempting to fetch games from ${name}...`);
+        logger.debug({ provider: name }, 'Attempting to fetch games');
 
         const games = await adapter.getGames(params);
 
         // Success - reset circuit breaker
         this.recordSuccess(name);
 
-        console.log(`[ProviderManager] Successfully fetched ${games.length} games from ${name}`);
+        logger.info({ provider: name, count: games.length }, 'Successfully fetched games');
         return games;
       } catch (error) {
-        console.error(`[ProviderManager] ${name} failed:`, error);
+        logger.error({ provider: name, error }, 'Provider failed');
 
         // Record failure
         this.recordFailure(name);
@@ -111,22 +112,22 @@ export class ProviderManager {
     for (const { name, adapter } of providers) {
       // Check circuit breaker
       if (this.isCircuitOpen(name)) {
-        console.warn(`[ProviderManager] Circuit breaker open for ${name}, skipping`);
+        logger.warn({ provider: name }, 'Circuit breaker open, skipping provider');
         continue;
       }
 
       try {
-        console.log(`[ProviderManager] Attempting to fetch team stats from ${name}...`);
+        logger.debug({ provider: name }, 'Attempting to fetch team stats');
 
         const stats = await adapter.getTeamStats(params);
 
         // Success - reset circuit breaker
         this.recordSuccess(name);
 
-        console.log(`[ProviderManager] Successfully fetched team stats from ${name}`);
+        logger.info({ provider: name }, 'Successfully fetched team stats');
         return stats;
       } catch (error) {
-        console.error(`[ProviderManager] ${name} failed:`, error);
+        logger.error({ provider: name, error }, 'Provider failed');
 
         // Record failure
         this.recordFailure(name);
@@ -155,7 +156,7 @@ export class ProviderManager {
         breaker.isOpen = false;
         breaker.failures = 0;
         breaker.lastFailure = null;
-        console.log(`[ProviderManager] Circuit breaker reset for ${providerName}`);
+        logger.debug({ provider: providerName }, 'Circuit breaker reset');
         return false;
       }
     }
@@ -189,9 +190,7 @@ export class ProviderManager {
     // Open circuit if threshold reached
     if (breaker.failures >= ProviderManager.FAILURE_THRESHOLD) {
       breaker.isOpen = true;
-      console.warn(
-        `[ProviderManager] Circuit breaker opened for ${providerName} after ${breaker.failures} failures`
-      );
+      logger.warn({ provider: providerName, failures: breaker.failures }, 'Circuit breaker opened');
     }
   }
 

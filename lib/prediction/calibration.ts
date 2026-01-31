@@ -39,6 +39,9 @@ export class CalibrationEngine {
   private readonly env: CloudflareEnv;
 
   constructor(env: CloudflareEnv) {
+    if (!env.BSI_HISTORICAL_DB) {
+      throw new Error('CalibrationEngine requires BSI_HISTORICAL_DB binding');
+    }
     this.env = env;
   }
 

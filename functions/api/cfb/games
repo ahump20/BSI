@@ -3,42 +3,63 @@
  * Fetches CFB games and generates AI-powered previews/recaps
  */
 
+import { z } from 'zod';
+
 export interface Env {
-  AI: any;
-  SPORTS_CACHE?: KVNamespace;
+  AI: Ai;
+  BSI_CACHE?: KVNamespace;
 }
 
-interface ESPNGame {
-  id: string;
-  name: string;
-  date: string;
-  status: {
-    type: {
-      name: string;
-      completed: boolean;
-    };
-  };
-  competitions: Array<{
-    competitors: Array<{
-      team: {
-        displayName: string;
-        abbreviation: string;
-        logo: string;
-      };
-      homeAway: string;
-      score: string;
-      winner?: boolean;
-      records?: Array<{ summary: string }>;
-    }>;
-    venue?: {
-      fullName: string;
-    };
-    broadcasts?: Array<{ names: string[] }>;
-    headlines?: Array<{ shortLinkText: string }>;
-  }>;
-}
+// Zod schema for ESPN API response validation
+const ESPNCompetitorSchema = z.object({
+  team: z.object({
+    displayName: z.string(),
+    abbreviation: z.string(),
+    logo: z.string().optional(),
+  }),
+  homeAway: z.string(),
+  score: z.string().optional(),
+  winner: z.boolean().optional(),
+  records: z.array(z.object({ summary: z.string() })).optional(),
+});
+
+const ESPNCompetitionSchema = z.object({
+  competitors: z.array(ESPNCompetitorSchema),
+  venue: z.object({ fullName: z.string() }).optional(),
+  broadcasts: z.array(z.object({ names: z.array(z.string()) })).optional(),
+  headlines: z.array(z.object({ shortLinkText: z.string() })).optional(),
+});
+
+const ESPNGameSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  date: z.string(),
+  status: z.object({
+    type: z.object({
+      name: z.string(),
+      completed: z.boolean(),
+    }),
+  }),
+  competitions: z.array(ESPNCompetitionSchema),
+});
+
+const ESPNResponseSchema = z.object({
+  events: z.array(ESPNGameSchema).default([]),
+});
+
+type ESPNGame = z.infer<typeof ESPNGameSchema>;
 
 const ESPN_CFB_API = 'https://site.api.espn.com/apis/site/v2/sports/football/college-football';
+const MAX_AI_CALLS_PER_REQUEST = 10;
+const DATE_PATTERN = /^\d{8}$/;
+
+function isValidDateParam(date: string): boolean {
+  if (!DATE_PATTERN.test(date)) return false;
+  const year = parseInt(date.slice(0, 4), 10);
+  const month = parseInt(date.slice(4, 6), 10);
+  const day = parseInt(date.slice(6, 8), 10);
+  return year >= 2000 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+}
 
 function getChicagoDate(): string {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
@@ -80,8 +101,7 @@ Keep it under 150 words. Be direct, no clichés. Write in present tense where ap
       max_tokens: 300,
     });
     return response?.response || 'Preview unavailable.';
-  } catch (error) {
-    console.error('AI preview error:', error);
+  } catch {
     return `${awayTeam?.team.displayName} travels to face ${homeTeam?.team.displayName} in this matchup. Game time details available closer to kickoff.`;
   }
 }
@@ -111,8 +131,7 @@ Keep it under 150 words. Be analytical and direct.`;
       max_tokens: 300,
     });
     return response?.response || 'Recap unavailable.';
-  } catch (error) {
-    console.error('AI recap error:', error);
+  } catch {
     return `${winner?.team.displayName} defeated ${winner === homeTeam ? awayTeam?.team.displayName : homeTeam?.team.displayName} by a final score of ${homeTeam?.score}-${awayTeam?.score}.`;
   }
 }
@@ -142,12 +161,23 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   try {
     const dateParam = url.searchParams.get('date');
     const date = dateParam || getChicagoDate().replace(/-/g, '');
-    const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+    const limitParam = parseInt(url.searchParams.get('limit') || '10', 10);
+
+    // Validate date format
+    if (dateParam && !isValidDateParam(dateParam)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid date format. Use YYYYMMDD.' }),
+        { status: 400, headers }
+      );
+    }
+
+    // Rate limit: cap at MAX_AI_CALLS_PER_REQUEST to prevent expensive runaway
+    const limit = Math.min(Math.max(1, limitParam), MAX_AI_CALLS_PER_REQUEST);
 
     // Check cache first
     const cacheKey = `cfb:games:${date}:${limit}`;
-    if (env.SPORTS_CACHE) {
-      const cached = await env.SPORTS_CACHE.get(cacheKey);
+    if (env.BSI_CACHE) {
+      const cached = await env.BSI_CACHE.get(cacheKey);
       if (cached) {
         return new Response(cached, {
           headers: { ...headers, 'X-Cache': 'HIT' },
@@ -161,8 +191,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       throw new Error(`ESPN API error: ${response.status}`);
     }
 
-    const data = (await response.json()) as { events: ESPNGame[] };
-    const games = data.events || [];
+    const rawData = await response.json();
+    const parseResult = ESPNResponseSchema.safeParse(rawData);
+
+    if (!parseResult.success) {
+      throw new Error(`Invalid ESPN API response: ${parseResult.error.message}`);
+    }
+
+    const games = parseResult.data.events;
 
     // Process games with AI content
     const processedGames = await Promise.all(
@@ -177,8 +213,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         const contentCacheKey = `cfb:${contentType}:${game.id}`;
         let aiContent: string | null = null;
 
-        if (env.SPORTS_CACHE) {
-          aiContent = await env.SPORTS_CACHE.get(contentCacheKey);
+        if (env.BSI_CACHE) {
+          aiContent = await env.BSI_CACHE.get(contentCacheKey);
         }
 
         if (!aiContent) {
@@ -186,8 +222,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             ? await generateRecap(env, game)
             : await generatePreview(env, game);
 
-          if (env.SPORTS_CACHE) {
-            await env.SPORTS_CACHE.put(contentCacheKey, aiContent, {
+          if (env.BSI_CACHE) {
+            await env.BSI_CACHE.put(contentCacheKey, aiContent, {
               expirationTtl: isCompleted ? 86400 : 3600,
             });
           }
@@ -236,19 +272,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const json = JSON.stringify(result);
 
     // Cache for 5 minutes
-    if (env.SPORTS_CACHE) {
-      await env.SPORTS_CACHE.put(cacheKey, json, { expirationTtl: 300 });
+    if (env.BSI_CACHE) {
+      await env.BSI_CACHE.put(cacheKey, json, { expirationTtl: 300 });
     }
 
     return new Response(json, {
       headers: { ...headers, 'X-Cache': 'MISS' },
     });
-  } catch (error: any) {
-    console.error('CFB Games API error:', error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({
         error: 'Failed to fetch games',
-        message: error.message,
+        message,
       }),
       {
         status: 500,

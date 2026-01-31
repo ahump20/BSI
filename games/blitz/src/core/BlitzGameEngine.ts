@@ -217,7 +217,7 @@ export class BlitzGameEngine {
     this.setupCamera();
     this.setupLighting();
     this.setupPostProcessing();
-    this.createField();
+    await this.createField();
     this.buildStadium();
     this.initializeVisualEffects();
     this.createEnhancedPlayers();
@@ -239,7 +239,9 @@ export class BlitzGameEngine {
   /** Build enhanced stadium environment */
   private buildStadium(): void {
     this.stadium = new Stadium(this.scene);
-    this.stadium.build();
+    // Pass GLB loaded status to skip procedural geometry
+    const glbLoaded = this.field?.isGLBLoaded() ?? false;
+    this.stadium.build(glbLoaded);
   }
 
   /** Initialize visual effects system */
@@ -335,9 +337,9 @@ export class BlitzGameEngine {
     pipeline.samples = 4;
   }
 
-  private createField(): void {
+  private async createField(): Promise<void> {
     this.field = new FootballField(this.scene, this.config.homeTeam, this.config.awayTeam);
-    this.field.build();
+    await this.field.build();
   }
 
   private createPlayers(): void {
