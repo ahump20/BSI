@@ -43,6 +43,11 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 /legal/terms /terms 301
 
 # ============================================
+# SPA Fallbacks for Dynamic Routes
+# ============================================
+/transfer-portal/:playerId /transfer-portal/placeholder 200
+
+# ============================================
 # Static Asset Rewrites
 # ============================================
 # CSS assets commonly requested without public/ prefix
