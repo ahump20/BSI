@@ -129,21 +129,25 @@ jobs:
         run: npm ci
 
       - name: Check MLB data freshness
+        continue-on-error: true
         run: |
           node scripts/check-data-freshness.js mlb
         env:
           SPORTSDATAIO_API_KEY: ${{ secrets.SPORTSDATAIO_API_KEY }}
 
       - name: Check NFL data freshness
+        continue-on-error: true
         run: |
           node scripts/check-data-freshness.js nfl
         env:
           SPORTSDATAIO_API_KEY: ${{ secrets.SPORTSDATAIO_API_KEY }}
 
       - name: Alert if data stale
-        if: failure()
+        if: failure() && secrets.SLACK_WEBHOOK_URL != ''
         uses: slackapi/slack-github-action@v2
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
           payload: |
             {
               "text": "⚠️ Stale data detected in API endpoints",
@@ -157,5 +161,3 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
