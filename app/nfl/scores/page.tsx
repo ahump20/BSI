@@ -63,10 +63,15 @@ function formatTimestamp(isoString?: string): string {
 // Get current NFL week (rough estimate based on season start)
 function getCurrentNFLWeek(): number {
   const now = new Date();
-  const seasonStart = new Date(now.getFullYear(), 8, 5); // September 5
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+  // NFL season starts in September of the previous year if we're in Jan/Feb
+  const seasonYear = month < 8 ? year - 1 : year;
+  const seasonStart = new Date(seasonYear, 8, 5); // September 5
   if (now < seasonStart) return 1;
   const diffWeeks = Math.floor((now.getTime() - seasonStart.getTime()) / (7 * 24 * 60 * 60 * 1000));
-  return Math.min(Math.max(diffWeeks + 1, 1), 18);
+  // Regular season is 18 weeks, playoffs go up to week 22 (Super Bowl)
+  return Math.min(Math.max(diffWeeks + 1, 1), 22);
 }
 
 export default function NFLScoresPage() {
@@ -121,8 +126,8 @@ export default function NFLScoresPage() {
     }
   }, [hasLiveGames, selectedWeek, fetchScores]);
 
-  // Week options (1-18 for regular season)
-  const weekOptions = Array.from({ length: 18 }, (_, i) => i + 1);
+  // Week options (1-18 regular season, 19-22 playoffs/Super Bowl)
+  const weekOptions = Array.from({ length: 22 }, (_, i) => i + 1);
 
   const GameCard = ({ game }: { game: NFLGame }) => {
     const isLive = game.status === 'live';
@@ -314,24 +319,36 @@ export default function NFLScoresPage() {
               </button>
 
               <div className="flex gap-1">
-                {weekOptions.map((week) => (
-                  <button
-                    key={week}
-                    onClick={() => setSelectedWeek(week)}
-                    className={`px-3 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
-                      selectedWeek === week
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {week}
-                  </button>
-                ))}
+                {weekOptions.map((week) => {
+                  const label =
+                    week <= 18
+                      ? `${week}`
+                      : week === 19
+                        ? 'WC'
+                        : week === 20
+                          ? 'DIV'
+                          : week === 21
+                            ? 'CONF'
+                            : 'SB';
+                  return (
+                    <button
+                      key={week}
+                      onClick={() => setSelectedWeek(week)}
+                      className={`px-3 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                        selectedWeek === week
+                          ? 'bg-burnt-orange text-white'
+                          : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
 
               <button
-                onClick={() => setSelectedWeek(Math.min(18, selectedWeek + 1))}
-                disabled={selectedWeek >= 18}
+                onClick={() => setSelectedWeek(Math.min(22, selectedWeek + 1))}
+                disabled={selectedWeek >= 22}
                 className="p-2 text-text-tertiary hover:text-white transition-colors disabled:opacity-30"
                 aria-label="Next week"
               >
@@ -347,7 +364,17 @@ export default function NFLScoresPage() {
               </button>
             </div>
 
-            <p className="text-text-tertiary text-sm mb-6">Week {selectedWeek} of 18</p>
+            <p className="text-text-tertiary text-sm mb-6">
+              {selectedWeek <= 18
+                ? `Week ${selectedWeek} of 18`
+                : selectedWeek === 19
+                  ? 'Wild Card Round'
+                  : selectedWeek === 20
+                    ? 'Divisional Round'
+                    : selectedWeek === 21
+                      ? 'Conference Championships'
+                      : 'Super Bowl'}
+            </p>
 
             {/* Games Grid */}
             {loading ? (
@@ -360,8 +387,7 @@ export default function NFLScoresPage() {
               <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
                 <p className="text-warning font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  NFL season runs September through February. Check back during the season for live
-                  games.
+                  Unable to load scores. This might be a temporary issue with our data source.
                 </p>
                 <button
                   onClick={() => fetchScores(selectedWeek)}

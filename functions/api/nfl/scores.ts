@@ -85,23 +85,28 @@ export const onRequest: PagesFunction<Env> = async ({ request }) => {
   }
 };
 
+interface TeamData {
+  id: string;
+  name: string;
+  abbreviation: string;
+  score: number | null;
+  record: string;
+}
+
 interface GameData {
-  id: number;
+  id: string;
+  date: string;
+  time: string;
   week: number;
   season: number;
-  homeTeam: {
-    id: number;
-    name: string;
-    score?: number;
-  };
-  awayTeam: {
-    id: number;
-    name: string;
-    score?: number;
-  };
-  status: 'scheduled' | 'in_progress' | 'final' | 'postponed';
-  startTime: string;
-  venue?: string;
+  status: 'scheduled' | 'live' | 'final' | 'postponed';
+  quarter?: number;
+  timeRemaining?: string;
+  possession?: 'home' | 'away';
+  homeTeam: TeamData;
+  awayTeam: TeamData;
+  venue: string;
+  broadcast?: string;
 }
 
 interface ScoreData {
@@ -126,18 +131,31 @@ async function fetchESPNScores(
     Accept: 'application/json',
   };
 
-  // ESPN scoreboard endpoint - don't include season param unless explicitly requested
-  // as it can cause issues with the API
-  const seasonType = getCurrentSeasonType();
-  let url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=${seasonType}`;
+  // ESPN uses seasontype=2 for regular season (weeks 1-18)
+  // and seasontype=3 for postseason (ESPN weeks 1-4 = WC/DIV/CONF/SB)
+  let espnSeasonType: number;
+  let espnWeek: number | undefined;
 
-  // Only add season if explicitly passed by user (for historical queries)
+  if (week && week > 18) {
+    // Playoff weeks: our 19-22 maps to ESPN postseason weeks 1-4
+    espnSeasonType = 3;
+    espnWeek = week - 18;
+  } else if (week) {
+    espnSeasonType = 2;
+    espnWeek = week;
+  } else {
+    // No week specified: use current season type
+    espnSeasonType = getCurrentSeasonType();
+  }
+
+  let url = `https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=${espnSeasonType}`;
+
   if (explicitSeason) {
     url += `&season=${season}`;
   }
 
-  if (week) {
-    url += `&week=${week}`;
+  if (espnWeek) {
+    url += `&week=${espnWeek}`;
   }
 
   const response = await fetch(url, { headers });
@@ -149,63 +167,78 @@ async function fetchESPNScores(
   const data = await response.json();
   const events = data.events || [];
 
-  const games: GameData[] = events.map(
-    (event: {
-      id?: string;
-      date?: string;
-      status?: { type?: { name?: string } };
-      competitions?: Array<{
-        venue?: { fullName?: string };
-        competitors?: Array<{
-          homeAway?: string;
-          score?: string;
-          team?: { id?: string; displayName?: string; name?: string };
-        }>;
-      }>;
-    }) => {
-      const competition = event.competitions?.[0] || {};
-      const competitors = competition.competitors || [];
-      const homeTeam = competitors.find((c) => c.homeAway === 'home');
-      const awayTeam = competitors.find((c) => c.homeAway === 'away');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const games: GameData[] = events.map((event: any) => {
+    const competition = event.competitions?.[0] || {};
+    const competitors = competition.competitors || [];
+    const status_obj = competition.status || event.status || {};
+    const homeTeam = competitors.find((c: any) => c.homeAway === 'home');
+    const awayTeam = competitors.find((c: any) => c.homeAway === 'away');
 
-      // Map ESPN status to our status enum
-      const espnStatus = event.status?.type?.name || 'STATUS_SCHEDULED';
-      let status: 'scheduled' | 'in_progress' | 'final' | 'postponed' = 'scheduled';
+    // Map ESPN status to frontend status enum
+    const espnStatus = status_obj?.type?.name || 'STATUS_SCHEDULED';
+    let status: 'scheduled' | 'live' | 'final' | 'postponed' = 'scheduled';
 
-      if (espnStatus === 'STATUS_FINAL' || espnStatus === 'STATUS_FINAL_OVERTIME') {
-        status = 'final';
-      } else if (
-        espnStatus === 'STATUS_IN_PROGRESS' ||
-        espnStatus === 'STATUS_HALFTIME' ||
-        espnStatus === 'STATUS_END_PERIOD'
-      ) {
-        status = 'in_progress';
-      } else if (espnStatus === 'STATUS_POSTPONED' || espnStatus === 'STATUS_CANCELED') {
-        status = 'postponed';
-      }
-
-      return {
-        id: parseInt(event.id || '0') || 0,
-        week: (data.week as { number?: number })?.number || week || 1,
-        season,
-        homeTeam: {
-          id: parseInt(homeTeam?.team?.id || '0') || 0,
-          name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Unknown',
-          score: homeTeam?.score ? parseInt(homeTeam.score) : undefined,
-        },
-        awayTeam: {
-          id: parseInt(awayTeam?.team?.id || '0') || 0,
-          name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Unknown',
-          score: awayTeam?.score ? parseInt(awayTeam.score) : undefined,
-        },
-        status,
-        startTime: event.date || new Date().toISOString(),
-        venue: competition.venue?.fullName || undefined,
-      };
+    if (espnStatus === 'STATUS_FINAL' || espnStatus === 'STATUS_FINAL_OVERTIME') {
+      status = 'final';
+    } else if (
+      espnStatus === 'STATUS_IN_PROGRESS' ||
+      espnStatus === 'STATUS_HALFTIME' ||
+      espnStatus === 'STATUS_END_PERIOD'
+    ) {
+      status = 'live';
+    } else if (espnStatus === 'STATUS_POSTPONED' || espnStatus === 'STATUS_CANCELED') {
+      status = 'postponed';
     }
-  );
 
-  const hasLiveGames = games.some((g) => g.status === 'in_progress');
+    const gameTime = new Date(event.date || Date.now()).toLocaleTimeString('en-US', {
+      timeZone: 'America/Chicago',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+
+    // Determine possession from situation data
+    let possession: 'home' | 'away' | undefined;
+    if (competition.situation?.possession) {
+      const possTeamId = competition.situation.possession;
+      if (possTeamId === homeTeam?.id || possTeamId === homeTeam?.team?.id) {
+        possession = 'home';
+      } else {
+        possession = 'away';
+      }
+    }
+
+    return {
+      id: event.id || '0',
+      date: event.date || new Date().toISOString(),
+      time: gameTime,
+      week: (data.week as { number?: number })?.number || week || 1,
+      season,
+      status,
+      quarter: status_obj?.period,
+      timeRemaining: status_obj?.displayClock,
+      possession,
+      homeTeam: {
+        id: homeTeam?.team?.id || homeTeam?.id || '0',
+        name: homeTeam?.team?.displayName || homeTeam?.team?.name || 'Unknown',
+        abbreviation: homeTeam?.team?.abbreviation || '',
+        score: homeTeam?.score ? parseInt(homeTeam.score) : null,
+        record: homeTeam?.records?.[0]?.summary || '0-0',
+      },
+      awayTeam: {
+        id: awayTeam?.team?.id || awayTeam?.id || '0',
+        name: awayTeam?.team?.displayName || awayTeam?.team?.name || 'Unknown',
+        abbreviation: awayTeam?.team?.abbreviation || '',
+        score: awayTeam?.score ? parseInt(awayTeam.score) : null,
+        record: awayTeam?.records?.[0]?.summary || '0-0',
+      },
+      venue: competition.venue?.fullName || 'TBD',
+      broadcast: competition.broadcasts?.[0]?.names?.join(', '),
+    };
+  });
+
+  const hasLiveGames = games.some((g) => g.status === 'live');
 
   return {
     week: (data.week as { number?: number })?.number || week || 1,

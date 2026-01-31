@@ -92,7 +92,9 @@ async function fetchNBAScores(date, teamFilter) {
 
       // Add date parameter if specified (format: YYYYMMDD)
       if (date) {
-        scoresUrl += `?dates=${date}`;
+        // Strip hyphens if ISO format (YYYY-MM-DD -> YYYYMMDD)
+        const formattedDate = date.replace(/-/g, '');
+        scoresUrl += `?dates=${formattedDate}`;
       }
 
       const response = await fetchWithTimeout(scoresUrl, { headers }, 10000);

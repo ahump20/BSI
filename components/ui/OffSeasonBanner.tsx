@@ -16,19 +16,26 @@ const SEASON_CONFIG: Record<
 function isOffSeason(sport: Sport): boolean {
   const now = new Date();
   const config = SEASON_CONFIG[sport];
-  const month = now.getMonth() + 1;
+  const month = now.getMonth() + 1; // 1-12
   const day = now.getDate();
 
   switch (sport) {
     case 'mlb':
-      // Off-season: Nov through late March
+      // Season: late March through October
+      // Off-season: November through late March
       return month >= 11 || month < 3 || (month === 3 && day < config.startDay);
     case 'nfl':
-      // Off-season: Feb through early Sept
-      return month >= 3 && (month < 9 || (month === 9 && day < config.startDay));
+      // Season: September through early February (Super Bowl)
+      // Off-season: mid-February through early September
+      return (
+        (month >= 3 && month <= 8) ||
+        (month === 2 && day > 15) ||
+        (month === 9 && day < config.startDay)
+      );
     case 'nba':
-      // Off-season: late June through mid October
-      return month >= 7 && (month < 10 || (month === 10 && day < config.startDay));
+      // Season: mid-October through mid-June
+      // Off-season: July through mid-October
+      return (month >= 7 && month <= 9) || (month === 10 && day < config.startDay);
     default:
       return false;
   }

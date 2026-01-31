@@ -436,7 +436,7 @@ export default function NBAScoresPage() {
               <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
                 <p className="text-warning font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  NBA season runs October through June. Check back during the season for live games.
+                  Unable to load scores. This might be a temporary issue with our data source.
                 </p>
                 <button
                   onClick={() => fetchScores(selectedDate)}
