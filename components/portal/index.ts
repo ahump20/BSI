@@ -34,3 +34,6 @@ export {
   type FilterOption,
   type PortalFiltersProps,
 } from './PortalFilters';
+
+// Status Legend for explaining portal statuses
+export { StatusLegend, type StatusLegendProps } from './StatusLegend';

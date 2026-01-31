@@ -143,6 +143,7 @@ export function PortalFilters({
   return (
     <div
       className={cn(
+        'sticky top-20 z-30',
         'rounded-xl border border-border-subtle',
         'bg-gradient-to-br from-charcoal-800/30 to-charcoal-900/30',
         'backdrop-blur-sm',

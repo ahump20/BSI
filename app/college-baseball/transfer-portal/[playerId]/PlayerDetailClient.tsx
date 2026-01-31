@@ -8,6 +8,8 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { StatusBadge } from '@/components/portal';
@@ -137,17 +139,16 @@ export function PlayerDetailClient() {
         <main id="main-content" className="min-h-screen bg-midnight">
           <Section className="pt-24 pb-16">
             <Container>
-              <div className="text-center py-16">
-                <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
-                  Player Not Found
-                </h1>
-                <p className="text-text-secondary mb-8">
-                  The player profile you&apos;re looking for doesn&apos;t exist.
-                </p>
-                <Link href="/college-baseball/transfer-portal">
-                  <Button variant="primary">Back to Portal Tracker</Button>
-                </Link>
-              </div>
+              <EmptyState
+                icon="search"
+                title="Player Not Found"
+                description="This player profile doesn't exist or may have been removed from the transfer portal."
+                action={{
+                  label: 'Back to Portal Tracker',
+                  href: '/college-baseball/transfer-portal',
+                }}
+                size="lg"
+              />
             </Container>
           </Section>
         </main>
@@ -162,20 +163,14 @@ export function PlayerDetailClient() {
         {/* Breadcrumb */}
         <Section className="pt-24 pb-4">
           <Container>
-            <div className="flex items-center gap-2 text-sm text-text-tertiary">
-              <Link href="/college-baseball" className="hover:text-burnt-orange transition-colors">
-                College Baseball
-              </Link>
-              <span>/</span>
-              <Link
-                href="/college-baseball/transfer-portal"
-                className="hover:text-burnt-orange transition-colors"
-              >
-                Transfer Portal
-              </Link>
-              <span>/</span>
-              <span className="text-text-primary">{player.player_name}</span>
-            </div>
+            <Breadcrumb
+              items={[
+                { label: 'College Baseball', href: '/college-baseball' },
+                { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
+                { label: player.player_name },
+              ]}
+              className="mb-0"
+            />
           </Container>
         </Section>
 

@@ -296,10 +296,38 @@ export default function DashboardPage() {
   // Show loading state while checking auth
   if (authLoading) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-midnight">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
-          <p className="text-text-tertiary text-sm">Loading...</p>
+      <main className="min-h-screen bg-midnight pt-20 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <div className="w-10 h-10 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+            <div className="text-center">
+              <p className="text-text-primary text-sm font-medium">Verifying your session...</p>
+              <p className="text-text-tertiary text-xs mt-1">
+                You'll be redirected if not signed in
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="glass-card p-4">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="skeleton w-12 h-12 rounded-full" />
+                  <div className="flex-1">
+                    <div className="skeleton h-4 w-3/5 mb-2 rounded" />
+                    <div className="skeleton h-3 w-2/5 rounded" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[1, 2, 3].map((j) => (
+                    <div key={j}>
+                      <div className="skeleton h-3 w-1/2 mb-1 rounded" />
+                      <div className="skeleton h-5 w-3/4 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     );

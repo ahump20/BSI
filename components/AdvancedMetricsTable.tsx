@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { Tooltip } from '@/components/ui/Tooltip';
 
 type HighlightType = 'video' | 'image';
 
@@ -391,7 +392,6 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                 <th
                   key={column.key}
                   style={column.width ? { width: column.width } : undefined}
-                  title={column.tooltip}
                   onClick={() =>
                     column.key !== 'highlight' &&
                     column.isSortable !== false &&
@@ -399,7 +399,15 @@ export default function AdvancedMetricsTable({ data }: AdvancedMetricsTableProps
                   }
                   className={column.key === sortKey ? `sorted-${sortDirection}` : undefined}
                 >
-                  {column.label}
+                  {column.tooltip ? (
+                    <Tooltip content={column.tooltip}>
+                      <span className="cursor-help border-b border-dotted border-text-tertiary">
+                        {column.label}
+                      </span>
+                    </Tooltip>
+                  ) : (
+                    column.label
+                  )}
                   {column.key === sortKey && (
                     <span className="sort-indicator">{sortDirection === 'asc' ? '▲' : '▼'}</span>
                   )}

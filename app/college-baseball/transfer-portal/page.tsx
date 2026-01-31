@@ -14,6 +14,7 @@ import {
   PortalCard,
   PortalCardGrid,
   PortalFilters,
+  StatusLegend,
   type PortalEntry,
   type FilterState,
 } from '@/components/portal';
@@ -396,6 +397,9 @@ export default function TransferPortalPage() {
                 <StatCard label="Committed" value={stats.committed} change="+3" />
                 <StatCard label="Withdrawn" value={stats.withdrawn} change="+1" />
               </div>
+              <div className="mt-6">
+                <StatusLegend variant="compact" />
+              </div>
             </ScrollReveal>
           </Container>
         </Section>
@@ -651,9 +655,9 @@ export default function TransferPortalPage() {
                   </Badge>
                   <h3 className="font-display text-lg font-bold text-burnt-orange mb-2">Pro</h3>
                   <div className="font-display text-3xl font-bold text-text-primary mb-1">
-                    $9.99<span className="text-lg font-normal text-text-tertiary">/mo</span>
+                    $29<span className="text-lg font-normal text-text-tertiary">/mo</span>
                   </div>
-                  <p className="text-text-muted text-xs mb-4">or $79/year (save 34%)</p>
+                  <p className="text-text-muted text-xs mb-4">or $199/year (save 43%)</p>
                   <ul className="text-text-secondary text-sm space-y-2 mb-6 text-left">
                     <li className="flex items-center gap-2">
                       <svg

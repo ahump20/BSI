@@ -67,3 +67,11 @@ export type { TeamThemedCardProps } from './TeamThemedCard';
 
 // Live ticker (re-exported from dedicated module)
 export { LiveTicker } from '../live-ticker/LiveTicker';
+
+// Tooltip
+export { Tooltip } from './Tooltip';
+export type { TooltipProps, TooltipPosition } from './Tooltip';
+
+// Breadcrumb
+export { Breadcrumb } from './Breadcrumb';
+export type { BreadcrumbProps, BreadcrumbItem } from './Breadcrumb';

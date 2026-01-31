@@ -75,19 +75,23 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/transfer-portal"
-              className="bg-burnt-orange hover:bg-burnt-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all hover:shadow-glow-sm inline-flex items-center justify-center gap-2"
+              className="bg-burnt-orange hover:bg-burnt-orange/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all hover:shadow-glow-sm inline-flex flex-col items-center justify-center gap-1"
             >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+              <span className="inline-flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                </span>
+                Transfer Portal Tracker
               </span>
-              Enter Transfer Portal
+              <span className="text-sm font-normal text-white/80">Browse D1 transfers</span>
             </Link>
             <Link
               href="/dashboard"
-              className="border border-burnt-orange text-burnt-orange hover:bg-burnt-orange hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+              className="border border-burnt-orange text-burnt-orange hover:bg-burnt-orange hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex flex-col items-center justify-center gap-1"
             >
-              Launch Dashboard
+              <span>My Dashboard</span>
+              <span className="text-sm font-normal opacity-80">Live scores & alerts</span>
             </Link>
           </div>
           <div className="mt-10 flex items-center justify-center gap-3">

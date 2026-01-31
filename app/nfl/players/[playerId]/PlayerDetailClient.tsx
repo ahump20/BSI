@@ -8,12 +8,13 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -127,25 +128,14 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
-            <nav className="flex items-center gap-2 text-sm">
-              <Link
-                href="/nfl"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
-              >
-                NFL
-              </Link>
-              <span className="text-text-tertiary">/</span>
-              <Link
-                href="/nfl/teams"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
-              >
-                Players
-              </Link>
-              <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
-                {loading ? 'Loading...' : player?.fullName || 'Player'}
-              </span>
-            </nav>
+            <Breadcrumb
+              items={[
+                { label: 'NFL', href: '/nfl' },
+                { label: 'Players', href: '/nfl/teams' },
+                { label: loading ? 'Loading...' : player?.fullName || 'Player' },
+              ]}
+              className="mb-0"
+            />
           </Container>
         </Section>
 
@@ -161,17 +151,16 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
         ) : error ? (
           <Section padding="lg">
             <Container>
-              <Card padding="lg" className="text-center">
-                <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Error Loading Player</h3>
-                <p className="text-text-secondary mb-4">{error}</p>
-                <Link
-                  href="/nfl"
-                  className="inline-block px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/90 transition-colors"
-                >
-                  Back to NFL
-                </Link>
-              </Card>
+              <EmptyState
+                icon="error"
+                title="Error Loading Player"
+                description={error}
+                action={{
+                  label: 'Back to NFL',
+                  href: '/nfl',
+                }}
+                size="lg"
+              />
             </Container>
           </Section>
         ) : player ? (
