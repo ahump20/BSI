@@ -131,8 +131,83 @@ export async function onRequest(context) {
 
     const updatedAt = result.results[0]?.updated_at || new Date().toISOString();
 
-    // SEMANTIC VALIDATION: Check minimum density before serving
+    // SEMANTIC VALIDATION: Check minimum density, fall back to ESPN if insufficient
     if (rankings.length < MIN_RANKINGS_REQUIRED) {
+      try {
+        const espnRes = await fetch(
+          'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings',
+          { headers: { 'User-Agent': 'BlazeSportsIntel/1.0', Accept: 'application/json' } }
+        );
+        if (espnRes.ok) {
+          const espnData = await espnRes.json();
+          const poll = espnData.rankings?.[0];
+          if (poll && poll.ranks?.length >= MIN_RANKINGS_REQUIRED) {
+            const espnRankings = poll.ranks.slice(0, limit_param).map((r) => ({
+              rank: r.current,
+              previousRank: r.previous,
+              change: r.previous ? r.previous - r.current : null,
+              team: {
+                id: r.team?.id || null,
+                name: r.team?.nickname
+                  ? `${r.team.location} ${r.team.nickname}`
+                  : r.team?.location || 'Unknown',
+                mascot: r.team?.nickname || null,
+                abbreviation: r.team?.abbreviation || null,
+                conference: r.team?.conferenceId || null,
+                logo: r.team?.logo || null,
+                colors: { primary: null, secondary: null },
+              },
+            }));
+
+            const espnResponse = {
+              data: espnRankings,
+              status: 'ok',
+              source: 'espn-fallback',
+              lastUpdated: new Date().toISOString(),
+              reason: '',
+              meta: {
+                cache: { hit: false, ttlSeconds: 900 },
+                planTier: 'highlightly_pro',
+                quota: { remaining: 0, resetAt: '' },
+              },
+              rankings: espnRankings,
+              source_poll: poll.name || 'ESPN',
+              season: parseInt(season),
+              week: poll.season?.type?.week || 0,
+              count: espnRankings.length,
+            };
+
+            if (env.CACHE) {
+              await env.CACHE.put(
+                cacheKey,
+                JSON.stringify({
+                  rankings: espnRankings,
+                  source: 'espn-fallback',
+                  season: parseInt(season),
+                  week: poll.season?.type?.week || 0,
+                  count: espnRankings.length,
+                  updatedAt: new Date().toISOString(),
+                }),
+                { expirationTtl: 900 }
+              );
+            }
+
+            return new Response(JSON.stringify(espnResponse), {
+              status: 200,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'Cache-Control': 'public, max-age=900, stale-while-revalidate=300',
+                'X-BSI-Status': 'ok',
+                'X-BSI-Source': 'espn-fallback',
+              },
+            });
+          }
+        }
+      } catch (espnErr) {
+        // ESPN fallback failed, continue to return invalid response
+      }
+
       return new Response(
         JSON.stringify({
           data: null,
@@ -147,7 +222,7 @@ export async function onRequest(context) {
           },
         }),
         {
-          status: 200, // 200 with status:'invalid' per contract
+          status: 200,
           headers: {
             ...corsHeaders,
             'Content-Type': 'application/json',

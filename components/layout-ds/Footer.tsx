@@ -197,7 +197,6 @@ const defaultSections: FooterSection[] = [
       { label: 'About', href: '/about' },
       { label: 'Methodology', href: '/methodology' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Blog', href: '/blog' },
     ],
   },
 ];

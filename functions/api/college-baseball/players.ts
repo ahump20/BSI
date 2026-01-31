@@ -252,8 +252,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       });
     }
 
-    // Return just the players array for compatibility with frontend
-    return new Response(JSON.stringify(allPlayers.slice(0, limit)), {
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers,
     });

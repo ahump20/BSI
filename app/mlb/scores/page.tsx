@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { TeamLogo } from '@/components/ui/TeamLogo';
+import { OffSeasonBanner } from '@/components/ui/OffSeasonBanner';
 
 interface Game {
   id: number;
@@ -391,24 +392,29 @@ export default function MLBScoresPage() {
                 </button>
               </Card>
             ) : games.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <p className="text-text-secondary">No games scheduled for this date</p>
-                  <p className="text-text-tertiary text-sm mt-2">Try selecting a different date</p>
-                </div>
-              </Card>
+              <>
+                <OffSeasonBanner sport="mlb" />
+                <Card variant="default" padding="lg">
+                  <div className="text-center py-8">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <p className="text-text-secondary">No games scheduled for this date</p>
+                    <p className="text-text-tertiary text-sm mt-2">
+                      Try selecting a different date
+                    </p>
+                  </div>
+                </Card>
+              </>
             ) : (
               <>
                 {/* Live Games Section */}

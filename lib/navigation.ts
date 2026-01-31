@@ -61,8 +61,6 @@ export const footerNavItems: NavItem[] = [
 export const cfbNavItems: NavItem[] = [
   { label: 'CFB Home', href: '/cfb' },
   { label: 'Transfer Portal', href: '/cfb/transfer-portal' },
-  { label: 'Rankings', href: '/cfb/rankings' },
-  { label: 'Schedules', href: '/cfb/schedules' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Home', href: '/' },
 ];
@@ -74,7 +72,6 @@ export const collegeBaseballNavItems: NavItem[] = [
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
   { label: 'Rankings', href: '/college-baseball/rankings' },
-  { label: 'Schedules', href: '/college-baseball/schedules' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Home', href: '/' },
 ];
@@ -119,11 +116,8 @@ export const secondaryNavConfig: Record<string, NavItem[]> = {
     { label: 'Players', href: '/nba/players' },
   ],
   cfb: [
-    { label: 'Scores', href: '/cfb/scores' },
-    { label: 'Rankings', href: '/cfb/rankings' },
     { label: 'Portal', href: '/cfb/transfer-portal' },
-    { label: 'Schedules', href: '/cfb/schedules' },
-    { label: 'Teams', href: '/cfb/teams' },
+    { label: 'Players', href: '/cfb/players' },
   ],
 };
 

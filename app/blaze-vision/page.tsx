@@ -132,11 +132,11 @@ export default function BlazeVisionPage() {
                   Request Access
                 </Button>
               </a>
-              <Link href="/vision-AI-Intelligence">
+              <a href="mailto:Austin@blazesportsintel.com">
                 <Button variant="secondary" size="lg">
-                  Try Demo
+                  Request Demo
                 </Button>
-              </Link>
+              </a>
             </div>
           </Container>
         </Section>
