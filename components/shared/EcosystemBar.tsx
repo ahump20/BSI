@@ -18,7 +18,11 @@ export function EcosystemBar() {
       .then((data) => {
         if (data?.active) setAgentActive(true);
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.warn('[EcosystemBar] agent-health check failed:', err.message);
+        }
+      });
     return () => controller.abort();
   }, []);
 

@@ -37,6 +37,11 @@ export function HeroVideo() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Static poster fallback behind iframe in case Stream is unreachable */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${POSTER_SRC})` }}
+      />
       <iframe
         src={`${STREAM_SRC}?muted=true&autoplay=true&loop=true&controls=false&poster=${encodeURIComponent(POSTER_SRC)}`}
         className="absolute top-1/2 left-1/2 min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 border-0"

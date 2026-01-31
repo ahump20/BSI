@@ -120,10 +120,7 @@
   --bsi-grizzlies-blue: #5d76a9;
   --bsi-grizzlies-gold: #fdb927;
 
-  /* Typography (mirrors shared tokens, kept for backward compat) */
-  --bsi-font-display: var(--bsi-font-display, 'Bebas Neue', system-ui, sans-serif);
-  --bsi-font-body: var(--bsi-font-body, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
-  --bsi-font-mono: var(--bsi-font-mono, 'JetBrains Mono', 'Fira Code', monospace);
+  /* Typography — defined in bsi-brand.css, no redeclaration needed */
 
   /* Motion Tokens */
   --bsi-duration-instant: 100ms;
