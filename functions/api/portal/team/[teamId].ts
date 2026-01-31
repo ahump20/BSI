@@ -62,6 +62,7 @@ function mapRow(row: Record<string, unknown>): Record<string, unknown> {
     engagement_score: (row.engagement_score as number) || undefined,
     stars: (row.stars as number) || undefined,
     overall_rank: (row.overall_rank as number) || undefined,
+    blaze_index: (row.blaze_index as number) ?? undefined,
     baseball_stats: baseballStats,
     football_stats: footballStats,
     is_partial: Boolean(row.is_partial),

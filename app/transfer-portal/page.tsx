@@ -507,6 +507,122 @@ function FailureBanner({ onRetry }: { onRetry: () => void }) {
 }
 
 // ============================================================================
+// Wire Ticker Component (Phase 3 — live feed)
+// ============================================================================
+
+interface WireEvent {
+  id: string;
+  portal_entry_id: string;
+  change_type: string;
+  description: string;
+  event_timestamp: string;
+  player_name?: string;
+  sport?: string;
+  school_from?: string;
+  school_to?: string;
+  position?: string;
+}
+
+function WireTicker({ sport }: { sport: PortalSport }) {
+  const [events, setEvents] = useState<WireEvent[]>([]);
+  const wireTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastChecked = useRef<string | null>(null);
+
+  const fetchWire = useCallback(async () => {
+    try {
+      const params = new URLSearchParams({ sport, limit: '15' });
+      if (lastChecked.current) params.set('since', lastChecked.current);
+      const res = await fetch(`/api/portal/wire?${params.toString()}`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = (await res.json()) as { events: WireEvent[]; last_checked: string };
+      if (data.events.length > 0) {
+        setEvents((prev) => {
+          const ids = new Set(prev.map((e) => e.id));
+          const fresh = data.events.filter((e) => !ids.has(e.id));
+          return [...fresh, ...prev].slice(0, 30);
+        });
+      }
+      lastChecked.current = data.last_checked;
+    } catch {
+      // Non-critical
+    }
+  }, [sport]);
+
+  useEffect(() => {
+    lastChecked.current = null;
+    setEvents([]);
+    fetchWire();
+  }, [fetchWire]);
+
+  useEffect(() => {
+    if (wireTimer.current) clearInterval(wireTimer.current);
+    wireTimer.current = setInterval(fetchWire, 30_000);
+    return () => {
+      if (wireTimer.current) clearInterval(wireTimer.current);
+    };
+  }, [fetchWire]);
+
+  if (events.length === 0) return null;
+
+  const typeIcon: Record<string, string> = {
+    entered: '→',
+    committed: '✓',
+    signed: '✎',
+    withdrawn: '←',
+    updated: '↻',
+  };
+  const typeColor: Record<string, string> = {
+    entered: 'text-warning',
+    committed: 'text-success',
+    signed: 'text-burnt-orange',
+    withdrawn: 'text-error',
+    updated: 'text-text-secondary',
+  };
+
+  return (
+    <div className="mb-6 rounded-xl bg-charcoal-900/60 border border-border-subtle overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-2 border-b border-border-subtle bg-charcoal-900/80">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ember opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-ember" />
+        </span>
+        <span className="text-xs font-semibold text-text-primary uppercase tracking-wider">
+          Live Wire
+        </span>
+      </div>
+      <div className="max-h-[200px] overflow-y-auto divide-y divide-border-subtle">
+        {events.map((ev) => (
+          <Link
+            key={ev.id}
+            href={`/transfer-portal/${ev.portal_entry_id}`}
+            className="flex items-center gap-3 px-4 py-2 hover:bg-surface/50 transition-colors"
+          >
+            <span className={`text-sm font-bold ${typeColor[ev.change_type] || 'text-text-muted'}`}>
+              {typeIcon[ev.change_type] || '•'}
+            </span>
+            <span className="flex-1 text-sm text-text-primary truncate">
+              {ev.player_name ? (
+                <>
+                  <span className="font-medium">{ev.player_name}</span>
+                  {ev.position && (
+                    <span className="text-text-tertiary"> ({ev.position})</span>
+                  )} — {ev.description}
+                </>
+              ) : (
+                ev.description
+              )}
+            </span>
+            <span className="text-xs text-text-muted shrink-0">
+              {formatTimeAgo(ev.event_timestamp)}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // Main Page Component
 // ============================================================================
 
@@ -757,6 +873,9 @@ export default function TransferPortalHub() {
             <div className="grid lg:grid-cols-[1fr_320px] gap-8">
               {/* Main Column */}
               <div>
+                {/* Live Wire Ticker */}
+                <WireTicker sport={sport} />
+
                 {/* Filters + View Toggle */}
                 <div className="flex items-end justify-between gap-4 mb-8">
                   <PortalFilters
@@ -781,8 +900,8 @@ export default function TransferPortalHub() {
                 {/* Failure Banner — non-alarming, spec requirement */}
                 {fetchFailed && <FailureBanner onRetry={() => fetchEntries(false)} />}
 
-                {/* Entry Grid */}
-                {filteredEntries.length > 0 && (
+                {/* Entry Grid / Table */}
+                {filteredEntries.length > 0 && viewMode === 'cards' && (
                   <PortalCardGrid>
                     {filteredEntries.map((entry) => (
                       <PortalCard
@@ -794,6 +913,15 @@ export default function TransferPortalHub() {
                       />
                     ))}
                   </PortalCardGrid>
+                )}
+
+                {filteredEntries.length > 0 && viewMode === 'table' && (
+                  <PortalTable
+                    entries={sortedEntries}
+                    sort={sortField}
+                    order={sortOrder}
+                    onSort={handleSort}
+                  />
                 )}
 
                 {/* Empty State */}

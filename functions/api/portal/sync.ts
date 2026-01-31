@@ -14,6 +14,8 @@
  *   Highlightly API -> normalize -> D1 upsert -> KV freshness -> R2 snapshot
  */
 
+import { calculateBlazeIndex } from '../../../lib/portal/blaze-index';
+
 interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
@@ -407,6 +409,14 @@ async function upsertEntries(
       .first<{ id: string; status: string; to_team: string | null }>();
 
     if (existing) {
+      const blazeIndex = calculateBlazeIndex({
+        engagement_score: entry.engagement_score,
+        stars: entry.stars,
+        overall_rank: entry.overall_rank,
+        portal_date: entry.portal_date,
+        status: entry.status,
+      });
+
       await db
         .prepare(
           `
@@ -415,7 +425,7 @@ async function upsertEntries(
           commitment_date = ?6, stats_json = ?7, engagement_score = ?8,
           stars = ?9, overall_rank = ?10,
           source_url = ?11, source_confidence = ?12, last_verified_at = ?13,
-          updated_at = ?13
+          updated_at = ?13, blaze_index = ?14
         WHERE id = ?1
       `
         )
@@ -432,7 +442,8 @@ async function upsertEntries(
           entry.overall_rank,
           entry.source_url,
           entry.source_confidence,
-          now
+          now,
+          blazeIndex
         )
         .run();
 
@@ -452,6 +463,14 @@ async function upsertEntries(
       }
       updated++;
     } else {
+      const insertBlazeIndex = calculateBlazeIndex({
+        engagement_score: entry.engagement_score,
+        stars: entry.stars,
+        overall_rank: entry.overall_rank,
+        portal_date: entry.portal_date,
+        status: entry.status,
+      });
+
       await db
         .prepare(
           `
@@ -462,7 +481,8 @@ async function upsertEntries(
           stats_json, engagement_score, stars, overall_rank,
           source_url, source_id, source_name,
           is_partial, needs_review, source_confidence, verified,
-          raw_snapshot_key, last_verified_at, created_at, updated_at
+          raw_snapshot_key, last_verified_at, created_at, updated_at,
+          blaze_index
         ) VALUES (
           ?1, ?2, ?3, ?4, ?5,
           ?6, ?7, ?8, ?9,
@@ -470,7 +490,8 @@ async function upsertEntries(
           ?14, ?15, ?16, ?17,
           ?18, ?19, ?20,
           0, 0, ?21, 0,
-          NULL, ?22, ?22, ?22
+          NULL, ?22, ?22, ?22,
+          ?23
         )
       `
         )
@@ -496,7 +517,8 @@ async function upsertEntries(
           entry.source_id,
           entry.source_name,
           entry.source_confidence,
-          now
+          now,
+          insertBlazeIndex
         )
         .run();
 

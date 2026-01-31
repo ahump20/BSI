@@ -87,6 +87,7 @@ interface D1Row {
   engagement_score: number | null;
   stars: number | null;
   overall_rank: number | null;
+  blaze_index: number | null;
   source_url: string | null;
   source_id: string | null;
   source_name: string;
@@ -118,6 +119,7 @@ function rowToEntry(row: D1Row): Record<string, unknown> {
     engagement_score: row.engagement_score ?? undefined,
     stars: row.stars ?? undefined,
     overall_rank: row.overall_rank ?? undefined,
+    blaze_index: row.blaze_index ?? undefined,
     baseball_stats: row.sport === 'baseball' ? stats : undefined,
     football_stats: row.sport === 'football' ? stats : undefined,
     is_partial: row.is_partial === 1,
