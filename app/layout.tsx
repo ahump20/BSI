@@ -142,6 +142,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`dark ${plusJakarta.variable} ${archivoBlack.variable} ${fraunces.variable} ${jetbrainsMono.variable}`}
     >
       <head>
+        {/* Prevent flash of wrong theme — static string, no user input, XSS-safe */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('bsi_theme');if(t==='light'){document.documentElement.classList.remove('dark');document.documentElement.classList.add('light')}}catch(e){}})()`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

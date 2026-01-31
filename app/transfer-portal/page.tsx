@@ -444,12 +444,19 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
 // Main Page Component
 // ============================================================================
 
+const EXPLAINER_KEY = 'bsi_portal_explainer_dismissed';
+
 export default function TransferPortalHub() {
   const [sport, setSport] = useState<PortalSport>('baseball');
   const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_BASEBALL);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usingFallback, setUsingFallback] = useState(true);
+  const [showExplainer, setShowExplainer] = useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem(EXPLAINER_KEY)) setShowExplainer(true);
+  }, []);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
@@ -560,6 +567,38 @@ export default function TransferPortalHub() {
                 <span className="text-burnt-orange font-medium">The coverage fans deserve.</span>
               </p>
             </div>
+
+            {/* Explainer banner for casual fans */}
+            {showExplainer && (
+              <div className="max-w-2xl mx-auto mb-8 p-4 rounded-xl bg-charcoal-900/60 border border-border-subtle relative">
+                <button
+                  onClick={() => {
+                    localStorage.setItem(EXPLAINER_KEY, 'true');
+                    setShowExplainer(false);
+                  }}
+                  className="absolute top-3 right-3 text-text-muted hover:text-text-secondary transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+                <p className="text-sm text-text-secondary pr-6">
+                  <span className="font-semibold text-text-primary">
+                    New to the Transfer Portal?
+                  </span>{' '}
+                  The Transfer Portal is where college athletes announce they&apos;re looking to
+                  transfer schools — think of it like free agency for college sports.
+                </p>
+              </div>
+            )}
 
             {/* Sport Toggle */}
             <div className="flex justify-center mb-10">

@@ -62,9 +62,9 @@ const config: Config = {
         // Text Colors
         text: {
           primary: '#fafafa',
-          secondary: '#a3a3a3',
-          tertiary: '#737373',
-          muted: '#525252',
+          secondary: '#B0B0B0',
+          tertiary: '#999999',
+          muted: '#888888',
         },
         // Border Colors
         border: {

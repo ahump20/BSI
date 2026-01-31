@@ -80,6 +80,145 @@ function getSportColor(sport: string): string {
 }
 
 // ============================================================================
+// Contextual Suggestions
+// ============================================================================
+
+const CONFERENCE_NAMES = [
+  'sec',
+  'big 12',
+  'big ten',
+  'acc',
+  'pac-12',
+  'big east',
+  'aac',
+  'mountain west',
+];
+
+function getContextualSuggestions(query: string): SearchResult[] {
+  const q = query.toLowerCase().trim();
+
+  if (q.includes('portal') || q.includes('transfer')) {
+    return [
+      {
+        id: 'sug-portal',
+        type: 'team',
+        name: 'Transfer Portal Tracker',
+        sport: 'college_baseball',
+        href: '/transfer-portal',
+        badge: 'LIVE',
+      },
+      {
+        id: 'sug-cb-portal',
+        type: 'team',
+        name: 'College Baseball Portal',
+        sport: 'college_baseball',
+        href: '/college-baseball/transfer-portal',
+        badge: 'NCAA',
+      },
+      {
+        id: 'sug-cfb-portal',
+        type: 'team',
+        name: 'CFB Portal',
+        sport: 'cfb',
+        href: '/cfb/transfer-portal',
+        badge: 'CFB',
+      },
+    ];
+  }
+
+  if (CONFERENCE_NAMES.some((conf) => q.includes(conf))) {
+    return [
+      {
+        id: 'sug-cb-stand',
+        type: 'team',
+        name: 'College Baseball Standings',
+        sport: 'college_baseball',
+        href: '/college-baseball/standings',
+        badge: 'NCAA',
+      },
+      {
+        id: 'sug-cfb-rank',
+        type: 'team',
+        name: 'CFB Rankings',
+        sport: 'cfb',
+        href: '/cfb/rankings',
+        badge: 'CFB',
+      },
+    ];
+  }
+
+  if (q.includes('score') || q.includes('live')) {
+    return [
+      {
+        id: 'sug-scores',
+        type: 'game',
+        name: 'Live Scores',
+        sport: 'mlb',
+        href: '/scores',
+        badge: 'LIVE',
+      },
+      {
+        id: 'sug-cb-scores',
+        type: 'game',
+        name: 'College Baseball Scores',
+        sport: 'college_baseball',
+        href: '/college-baseball/scores',
+        badge: 'NCAA',
+      },
+    ];
+  }
+
+  if (q.includes('rank')) {
+    return [
+      {
+        id: 'sug-cb-rank',
+        type: 'team',
+        name: 'College Baseball Rankings',
+        sport: 'college_baseball',
+        href: '/college-baseball/rankings',
+        badge: 'NCAA',
+      },
+      {
+        id: 'sug-cfb-rank',
+        type: 'team',
+        name: 'CFB Rankings',
+        sport: 'cfb',
+        href: '/cfb/rankings',
+        badge: 'CFB',
+      },
+    ];
+  }
+
+  // Default: suggest trying a team name
+  return [
+    {
+      id: 'sug-cb',
+      type: 'team',
+      name: 'Browse College Baseball',
+      sport: 'college_baseball',
+      href: '/college-baseball',
+      badge: 'NCAA',
+    },
+    {
+      id: 'sug-mlb',
+      type: 'team',
+      name: 'Browse MLB Teams',
+      sport: 'mlb',
+      href: '/mlb/teams',
+      badge: 'MLB',
+    },
+    {
+      id: 'sug-portal',
+      type: 'team',
+      name: 'Transfer Portal',
+      sport: 'college_baseball',
+      href: '/transfer-portal',
+      badge: 'LIVE',
+    },
+  ];
+}
+
+// ============================================================================
 // Search Bar Component
 // ============================================================================
 
@@ -143,37 +282,11 @@ export function SearchBar({
           }
         }
 
-        // Quick links for common searches
+        // Contextual suggestions when no results found
         if (groups.length === 0) {
-          // No results - show quick links
           groups.push({
-            label: 'Quick Links',
-            results: [
-              {
-                id: 'quick-mlb',
-                type: 'team' as const,
-                name: 'Browse MLB Teams',
-                sport: 'mlb',
-                href: '/mlb/teams',
-                badge: 'MLB',
-              },
-              {
-                id: 'quick-nfl',
-                type: 'team' as const,
-                name: 'Browse NFL Teams',
-                sport: 'nfl',
-                href: '/nfl/teams',
-                badge: 'NFL',
-              },
-              {
-                id: 'quick-ncaa',
-                type: 'team' as const,
-                name: 'Browse College Baseball',
-                sport: 'college_baseball',
-                href: '/college-baseball/teams',
-                badge: 'NCAA',
-              },
-            ],
+            label: 'Suggestions',
+            results: getContextualSuggestions(query),
           });
         }
 
@@ -285,7 +398,7 @@ export function SearchBar({
   return (
     <div
       ref={containerRef}
-      className={cn('relative', isNavbar ? 'w-48 lg:w-56' : 'w-full', className)}
+      className={cn('relative', isNavbar ? 'w-56 lg:w-72' : 'w-full', className)}
     >
       {/* Search Input */}
       <div className="relative">
@@ -343,7 +456,7 @@ export function SearchBar({
         <div
           className={cn(
             'absolute top-full mt-2 z-50',
-            isNavbar ? 'right-0 min-w-[360px] w-[360px]' : 'left-0 right-0',
+            isNavbar ? 'right-0 w-[min(360px,calc(100vw-2rem))]' : 'left-0 right-0',
             'bg-midnight border border-border-subtle rounded-lg shadow-xl',
             'max-h-[70vh] overflow-y-auto',
             'animate-in fade-in slide-in-from-top-2 duration-200'
@@ -440,8 +553,9 @@ export function SearchBar({
               )}
             </div>
           ) : (
-            <div className="p-4 text-center text-text-secondary">
-              No results found for "{query}"
+            <div className="p-4 text-center text-text-secondary text-sm">
+              No results for &ldquo;{query}&rdquo;. Try a team name like &ldquo;Texas&rdquo; or
+              &ldquo;Yankees&rdquo;.
             </div>
           )}
 

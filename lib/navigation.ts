@@ -7,23 +7,40 @@ export interface NavItem {
   label: string;
   href: string;
   badge?: string;
+  children?: NavItem[];
 }
 
 /**
- * Main navigation items used in Navbar across all pages
- * Order: Home → Transfer Portal (flagship) → Sports → Dashboard → About → Pricing
+ * Main navigation items — collapsed to 5 top-level items + dropdowns
+ *
+ * [Logo]  Scores  Portal  Sports▼  Tools▼  [Search] [Sign In]
  */
 export const mainNavItems: NavItem[] = [
-  { label: 'Home', href: '/' },
+  { label: 'Scores', href: '/scores' },
   { label: 'Transfer Portal', href: '/transfer-portal', badge: 'LIVE' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
+  {
+    label: 'Sports',
+    href: '#',
+    children: [
+      { label: 'College Baseball', href: '/college-baseball' },
+      { label: 'MLB', href: '/mlb' },
+      { label: 'NFL', href: '/nfl' },
+      { label: 'NBA', href: '/nba' },
+      { label: 'College Football', href: '/cfb' },
+    ],
+  },
+  {
+    label: 'Tools',
+    href: '#',
+    children: [
+      { label: 'Win Probability', href: '/win-probability' },
+      { label: 'Fanbase Explorer', href: '/fanbase' },
+      { label: 'Games', href: '/games' },
+      { label: 'Blaze Vision', href: '/blaze-vision' },
+      { label: 'Developer API', href: '/developers' },
+    ],
+  },
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Games', href: '/games' },
-  { label: 'SEC Fanbases', href: '/fanbase', badge: 'NEW' },
-  { label: 'Pricing', href: '/pricing' },
 ];
 
 /**
@@ -32,6 +49,7 @@ export const mainNavItems: NavItem[] = [
 export const footerNavItems: NavItem[] = [
   { label: 'About', href: '/about' },
   { label: 'Pricing', href: '/pricing' },
+  { label: 'Methodology', href: '/methodology' },
   { label: 'Settings', href: '/settings' },
   { label: 'Privacy', href: '/privacy' },
   { label: 'Terms', href: '/terms' },
@@ -69,13 +87,13 @@ export const secondaryNavConfig: Record<string, NavItem[]> = {
   fanbase: [
     { label: 'Explorer', href: '/fanbase' },
     { label: 'Compare', href: '/fanbase/compare' },
-    { label: 'Triggers', href: '/fanbase/triggers', badge: 'HOT' },
+    { label: 'Triggers', href: '/fanbase/triggers' },
   ],
   'college-baseball': [
     { label: 'Scores', href: '/college-baseball/scores' },
     { label: 'Standings', href: '/college-baseball/standings' },
     { label: 'Rankings', href: '/college-baseball/rankings' },
-    { label: 'Portal', href: '/college-baseball/transfer-portal', badge: 'LIVE' },
+    { label: 'Portal', href: '/college-baseball/transfer-portal' },
     { label: 'Teams', href: '/college-baseball/teams' },
     { label: 'Players', href: '/college-baseball/players' },
   ],
@@ -103,7 +121,7 @@ export const secondaryNavConfig: Record<string, NavItem[]> = {
   cfb: [
     { label: 'Scores', href: '/cfb/scores' },
     { label: 'Rankings', href: '/cfb/rankings' },
-    { label: 'Portal', href: '/cfb/transfer-portal', badge: 'LIVE' },
+    { label: 'Portal', href: '/cfb/transfer-portal' },
     { label: 'Schedules', href: '/cfb/schedules' },
     { label: 'Teams', href: '/cfb/teams' },
   ],
