@@ -285,14 +285,14 @@ export function SearchBar({
   return (
     <div
       ref={containerRef}
-      className={cn('relative', isNavbar ? 'w-full max-w-xs lg:max-w-sm' : 'w-full', className)}
+      className={cn('relative', isNavbar ? 'w-48 lg:w-56' : 'w-full', className)}
     >
       {/* Search Input */}
       <div className="relative">
         <SearchIcon
           className={cn(
-            'absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary',
-            isNavbar ? 'w-4 h-4' : 'w-5 h-5'
+            'absolute top-1/2 -translate-y-1/2 text-text-tertiary pointer-events-none',
+            isNavbar ? 'left-2.5 w-4 h-4' : 'left-3.5 w-5 h-5'
           )}
         />
         <input
@@ -309,7 +309,7 @@ export function SearchBar({
             'text-white placeholder:text-text-tertiary',
             'focus:outline-none focus:border-burnt-orange focus:ring-1 focus:ring-burnt-orange/50',
             'transition-colors',
-            isNavbar ? 'pl-9 pr-4 py-2 text-sm' : 'pl-11 pr-4 py-3 text-base'
+            isNavbar ? 'pl-8 pr-8 py-2 text-sm' : 'pl-11 pr-10 py-3 text-base'
           )}
           aria-label="Search"
           aria-expanded={isOpen}
@@ -318,8 +318,8 @@ export function SearchBar({
           aria-autocomplete="list"
         />
         {isLoading && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <LoadingSpinner className="w-4 h-4" />
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+            <LoadingSpinner className="w-4 h-4 text-text-tertiary" />
           </div>
         )}
         {!isLoading && query.length > 0 && (
@@ -330,10 +330,10 @@ export function SearchBar({
               setIsOpen(false);
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-white transition-colors"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-text-tertiary hover:text-white hover:bg-white/10 rounded transition-colors"
             aria-label="Clear search"
           >
-            <CloseIcon className="w-4 h-4" />
+            <CloseIcon className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
@@ -342,7 +342,8 @@ export function SearchBar({
       {isOpen && (
         <div
           className={cn(
-            'absolute top-full left-0 right-0 mt-2 z-50',
+            'absolute top-full mt-2 z-50',
+            isNavbar ? 'right-0 min-w-[360px] w-[360px]' : 'left-0 right-0',
             'bg-midnight border border-border-subtle rounded-lg shadow-xl',
             'max-h-[70vh] overflow-y-auto',
             'animate-in fade-in slide-in-from-top-2 duration-200'
@@ -376,7 +377,7 @@ export function SearchBar({
                           setQuery('');
                         }}
                         className={cn(
-                          'flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors',
+                          'flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors',
                           isSelected && 'bg-burnt-orange/10'
                         )}
                         role="option"
@@ -385,22 +386,22 @@ export function SearchBar({
                         {/* Result Icon/Logo */}
                         <div
                           className={cn(
-                            'w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold',
+                            'w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0',
                             getSportColor(result.sport)
                           )}
                         >
                           {result.type === 'team' ? (
-                            <TeamIcon className="w-5 h-5" />
+                            <TeamIcon className="w-4 h-4" />
                           ) : result.type === 'player' ? (
-                            <PlayerIcon className="w-5 h-5" />
+                            <PlayerIcon className="w-4 h-4" />
                           ) : (
-                            <GameIcon className="w-5 h-5" />
+                            <GameIcon className="w-4 h-4" />
                           )}
                         </div>
 
                         {/* Result Content */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium truncate">{result.name}</p>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <p className="text-white font-medium text-sm truncate">{result.name}</p>
                           {result.subtitle && (
                             <p className="text-xs text-text-tertiary truncate">{result.subtitle}</p>
                           )}
@@ -410,7 +411,7 @@ export function SearchBar({
                         {result.badge && (
                           <span
                             className={cn(
-                              'px-2 py-0.5 text-xs font-semibold rounded',
+                              'px-2 py-0.5 text-[10px] font-semibold rounded flex-shrink-0',
                               getSportColor(result.sport),
                               'text-white'
                             )}
@@ -430,10 +431,10 @@ export function SearchBar({
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-2 py-2 text-sm text-burnt-orange hover:text-burnt-orange-light transition-colors"
+                    className="flex items-center justify-between gap-2 py-2 text-sm text-burnt-orange hover:text-burnt-orange-light transition-colors"
                   >
-                    View all results for "{query}"
-                    <ChevronRightIcon className="w-4 h-4" />
+                    <span className="truncate">View all results for "{query}"</span>
+                    <ChevronRightIcon className="w-4 h-4 flex-shrink-0" />
                   </Link>
                 </div>
               )}
