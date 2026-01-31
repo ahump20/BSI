@@ -90,7 +90,7 @@
     "@vitest/ui": "^4.0.1",
     "autoprefixer": "^10.4.22",
     "axe-core": "^4.10.2",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -113,7 +113,8 @@
   "pnpm": {
     "overrides": {
       "esbuild": ">=0.25.0",
-      "fast-xml-parser": ">=5.3.4"
+      "fast-xml-parser": ">=5.3.4",
+      "tar": ">=7.5.7"
     },
     "onlyBuiltDependencies": [
       "@pnpm/exe"
