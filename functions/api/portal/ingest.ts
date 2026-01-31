@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /**
  * Transfer Portal Ingestion Endpoint
  *
@@ -87,6 +86,39 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const now = new Date().toISOString();
     const db = env.GAME_DB;
 
+    // Validate entries and dedup by id (keep last occurrence)
+    const validSports = new Set(['baseball', 'football']);
+    const seenIds = new Map<string, number>();
+    const validEntries: IngestEntry[] = [];
+    const rejected: string[] = [];
+
+    for (let i = 0; i < body.entries.length; i++) {
+      const entry = body.entries[i];
+      if (!entry.id || !entry.player_name?.trim() || !validSports.has(entry.sport)) {
+        rejected.push(entry.id || `index-${i}`);
+        continue;
+      }
+      if (!entry.portal_date || !entry.from_team?.trim()) {
+        rejected.push(entry.id);
+        continue;
+      }
+      // Dedup: later entries win
+      const prevIdx = seenIds.get(entry.id);
+      if (prevIdx !== undefined) {
+        validEntries[prevIdx] = entry;
+      } else {
+        seenIds.set(entry.id, validEntries.length);
+        validEntries.push(entry);
+      }
+    }
+
+    if (validEntries.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'No valid entries after validation', rejected }),
+        { status: 400, headers: HEADERS }
+      );
+    }
+
     // Store raw snapshot in R2
     const snapshotKey = `portal/snapshots/ingest-${Date.now()}.json`;
     await env.SPORTS_DATA.put(
@@ -107,7 +139,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
     `);
 
-    for (const entry of body.entries) {
+    for (const entry of validEntries) {
       // Check if entry exists
       const existing = await db
         .prepare('SELECT id, status, to_team FROM transfer_portal WHERE id = ?1')
@@ -226,9 +258,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       }
     }
 
-    // Batch insert changelog events
-    if (changelogBatch.length > 0) {
-      await db.batch(changelogBatch);
+    // Batch insert changelog events (D1 limit: 50 per batch)
+    for (let i = 0; i < changelogBatch.length; i += 50) {
+      await db.batch(changelogBatch.slice(i, i + 50));
     }
 
     // Update KV freshness marker
@@ -240,6 +272,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         inserted,
         updated,
         changelog_events: changelogBatch.length,
+        rejected: rejected.length,
         snapshot_key: snapshotKey,
         timestamp: now,
       }),

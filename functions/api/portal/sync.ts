@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /**
  * Transfer Portal Live Data Sync
  *
@@ -340,7 +339,9 @@ function normalizeRawPlayers(
 
     const toTeamObj =
       raw.toTeam || (raw.destinationSchool ? { name: raw.destinationSchool } : undefined);
-    const toTeam = extractTeamName(toTeamObj) || (raw.destinationSchool as string) || null;
+    const toTeam =
+      extractTeamName(toTeamObj) ||
+      (raw.destinationSchool != null ? String(raw.destinationSchool) : null);
     const status = normalizeStatus(raw.status || raw.transferStatus || raw.portalStatus);
     const portalDate = raw.entryDate || raw.portalDate || now;
     const commitDate = raw.commitDate || raw.commitmentDate || null;

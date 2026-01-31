@@ -1,0 +1,13 @@
+name = "bsi-portal-cron"
+main = "index.ts"
+compatibility_date = "2024-09-23"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+SYNC_URL = "https://blazesportsintel.com/api/portal/sync"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "BSI_SCORES_CACHE"

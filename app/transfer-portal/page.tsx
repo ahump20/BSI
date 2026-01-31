@@ -343,6 +343,146 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
 // Failure Banner (Phase 1B — non-alarming)
 // ============================================================================
 
+// ============================================================================
+// View Toggle Component
+// ============================================================================
+
+type ViewMode = 'cards' | 'table';
+
+function ViewToggle({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode) => void }) {
+  return (
+    <div className="inline-flex rounded-lg bg-charcoal-900/60 border border-border-subtle p-0.5">
+      <button
+        onClick={() => onChange('cards')}
+        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+          mode === 'cards'
+            ? 'bg-burnt-orange text-white'
+            : 'text-text-secondary hover:text-text-primary'
+        }`}
+        aria-label="Card view"
+      >
+        Cards
+      </button>
+      <button
+        onClick={() => onChange('table')}
+        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+          mode === 'table'
+            ? 'bg-burnt-orange text-white'
+            : 'text-text-secondary hover:text-text-primary'
+        }`}
+        aria-label="Table view"
+      >
+        Table
+      </button>
+    </div>
+  );
+}
+
+// ============================================================================
+// Table View Component
+// ============================================================================
+
+type SortField =
+  | 'player_name'
+  | 'position'
+  | 'school_from'
+  | 'school_to'
+  | 'status'
+  | 'portal_date';
+type SortOrder = 'asc' | 'desc';
+
+function PortalTable({
+  entries,
+  sort,
+  order,
+  onSort,
+}: {
+  entries: PortalEntry[];
+  sort: SortField;
+  order: SortOrder;
+  onSort: (field: SortField) => void;
+}) {
+  const arrow = (field: SortField) => (sort === field ? (order === 'asc' ? ' ↑' : ' ↓') : '');
+
+  const headerClass =
+    'px-3 py-2 text-left text-xs font-semibold text-text-tertiary uppercase tracking-wider cursor-pointer hover:text-text-primary transition-colors select-none';
+
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border-subtle">
+      <table className="w-full text-sm">
+        <thead className="bg-charcoal-900/80">
+          <tr>
+            <th className={headerClass} onClick={() => onSort('player_name')}>
+              Player{arrow('player_name')}
+            </th>
+            <th className={headerClass} onClick={() => onSort('position')}>
+              Pos{arrow('position')}
+            </th>
+            <th className={headerClass} onClick={() => onSort('school_from')}>
+              From{arrow('school_from')}
+            </th>
+            <th className={headerClass} onClick={() => onSort('school_to')}>
+              To{arrow('school_to')}
+            </th>
+            <th className={headerClass} onClick={() => onSort('status')}>
+              Status{arrow('status')}
+            </th>
+            <th className={headerClass} onClick={() => onSort('portal_date')}>
+              Date{arrow('portal_date')}
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border-subtle">
+          {entries.map((entry) => (
+            <tr key={entry.id} className="hover:bg-charcoal-900/40 transition-colors">
+              <td className="px-3 py-2.5">
+                <Link
+                  href={`/transfer-portal/${entry.id}`}
+                  className="font-medium text-text-primary hover:text-burnt-orange transition-colors"
+                >
+                  {entry.player_name}
+                </Link>
+                {entry.stars && entry.stars > 0 && (
+                  <span className="ml-1.5 text-xs text-burnt-orange">
+                    {'★'.repeat(entry.stars)}
+                  </span>
+                )}
+              </td>
+              <td className="px-3 py-2.5 text-text-secondary">{entry.position}</td>
+              <td className="px-3 py-2.5 text-text-secondary">{entry.school_from}</td>
+              <td className="px-3 py-2.5 text-text-secondary">{entry.school_to || '—'}</td>
+              <td className="px-3 py-2.5">
+                <span
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    entry.status === 'committed'
+                      ? 'bg-success/20 text-success'
+                      : entry.status === 'in_portal'
+                        ? 'bg-warning/20 text-warning'
+                        : entry.status === 'withdrawn'
+                          ? 'bg-text-muted/20 text-text-muted'
+                          : entry.status === 'signed'
+                            ? 'bg-burnt-orange/20 text-burnt-orange'
+                            : 'bg-charcoal-800 text-text-secondary'
+                  }`}
+                >
+                  {entry.status.replace('_', ' ')}
+                </span>
+              </td>
+              <td className="px-3 py-2.5 text-text-tertiary text-xs">
+                {formatPortalDate(entry.portal_date)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ============================================================================
+// Failure Banner (Phase 1B — non-alarming)
+// ============================================================================
+
 function FailureBanner({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30">
@@ -379,6 +519,9 @@ export default function TransferPortalHub() {
   const [fetchFailed, setFetchFailed] = useState(false);
   const [showExplainer, setShowExplainer] = useState(false);
   const [freshness, setFreshness] = useState<PortalFreshnessResponse | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [sortField, setSortField] = useState<SortField>('portal_date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const lastFetchedAt = useRef<string | null>(null);
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -500,6 +643,28 @@ export default function TransferPortalHub() {
   // Compute stats
   const stats = useMemo(() => computePortalStats(entries), [entries]);
 
+  // Sort entries for table view
+  const sortedEntries = useMemo(() => {
+    if (viewMode !== 'table') return filteredEntries;
+    return [...filteredEntries].sort((a, b) => {
+      const aVal = (a[sortField] as string) || '';
+      const bVal = (b[sortField] as string) || '';
+      const cmp = aVal.localeCompare(bVal);
+      return sortOrder === 'asc' ? cmp : -cmp;
+    });
+  }, [filteredEntries, viewMode, sortField, sortOrder]);
+
+  const handleSort = useCallback((field: SortField) => {
+    setSortField((prev) => {
+      if (prev === field) {
+        setSortOrder((o) => (o === 'asc' ? 'desc' : 'asc'));
+        return field;
+      }
+      setSortOrder('asc');
+      return field;
+    });
+  }, []);
+
   return (
     <>
       <main id="main-content" className="min-h-screen bg-midnight">
@@ -592,15 +757,18 @@ export default function TransferPortalHub() {
             <div className="grid lg:grid-cols-[1fr_320px] gap-8">
               {/* Main Column */}
               <div>
-                {/* Filters */}
-                <PortalFilters
-                  sport={sport}
-                  filters={filters}
-                  onFiltersChange={setFilters}
-                  totalCount={entries.length}
-                  filteredCount={filteredEntries.length}
-                  className="mb-8"
-                />
+                {/* Filters + View Toggle */}
+                <div className="flex items-end justify-between gap-4 mb-8">
+                  <PortalFilters
+                    sport={sport}
+                    filters={filters}
+                    onFiltersChange={setFilters}
+                    totalCount={entries.length}
+                    filteredCount={filteredEntries.length}
+                    className="flex-1"
+                  />
+                  <ViewToggle mode={viewMode} onChange={setViewMode} />
+                </div>
 
                 {/* Loading Indicator - Non-blocking */}
                 {loading && entries.length === 0 && (

@@ -7,29 +7,9 @@
 
 import PortalPlayerClient from './PortalPlayerClient';
 
-// Required for static export with dynamic routes
+// Return empty array — all player pages render client-side via fallback
 export function generateStaticParams() {
-  // Pre-generate pages for known player IDs (in production, fetch from D1)
-  return [
-    { playerId: 'bb-2025-001' },
-    { playerId: 'bb-2025-002' },
-    { playerId: 'bb-2025-003' },
-    { playerId: 'bb-2025-004' },
-    { playerId: 'bb-2025-005' },
-    { playerId: 'bb-2025-006' },
-    { playerId: 'bb-2025-007' },
-    { playerId: 'bb-2025-008' },
-    { playerId: 'bb-2025-009' },
-    { playerId: 'bb-2025-010' },
-    { playerId: 'cfb-2025-001' },
-    { playerId: 'cfb-2025-002' },
-    { playerId: 'cfb-2025-003' },
-    { playerId: 'cfb-2025-004' },
-    { playerId: 'cfb-2025-005' },
-    { playerId: 'cfb-2025-006' },
-    { playerId: 'cfb-2025-007' },
-    { playerId: 'cfb-2025-008' },
-  ];
+  return [];
 }
 
 // Page metadata

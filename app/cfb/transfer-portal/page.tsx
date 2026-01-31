@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { fetchPortalEntries } from '@/lib/portal/api';
 
-// Import shared portal components
 import {
   PortalCard,
   PortalCardGrid,
@@ -17,196 +17,13 @@ import {
   type FilterState,
 } from '@/components/portal';
 
-// Sample CFB portal data with star ratings
-const MOCK_ENTRIES: PortalEntry[] = [
-  {
-    id: 'cfb-2025-001',
-    player_name: 'Jaylen Carter',
-    school_from: 'Georgia',
-    school_to: null,
-    position: 'QB',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-09',
-    engagement_score: 98,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-002',
-    player_name: 'Marcus Williams',
-    school_from: 'Ohio State',
-    school_to: 'Texas',
-    position: 'WR',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 94,
-    stars: 5,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-003',
-    player_name: 'Darius Jackson',
-    school_from: 'Alabama',
-    school_to: null,
-    position: 'RB',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    engagement_score: 87,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-10T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-10T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-004',
-    player_name: 'Tyler Henderson',
-    school_from: 'USC',
-    school_to: 'Colorado',
-    position: 'DB',
-    conference: 'Big 12',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    engagement_score: 82,
-    stars: 3,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-005',
-    player_name: 'Jordan Mitchell',
-    school_from: 'Michigan',
-    school_to: null,
-    position: 'LB',
-    conference: 'Big Ten',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-11',
-    engagement_score: 79,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-11T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-11T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-006',
-    player_name: 'Brandon Thomas',
-    school_from: 'Oklahoma',
-    school_to: null,
-    position: 'OL',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'withdrawn',
-    portal_date: '2025-12-09',
-    engagement_score: 55,
-    stars: 3,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-09T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-09T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-007',
-    player_name: 'Chris Davis',
-    school_from: 'Clemson',
-    school_to: null,
-    position: 'DL',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-12',
-    engagement_score: 91,
-    stars: 5,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-12T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-12T00:00:00Z',
-  },
-  {
-    id: 'cfb-2025-008',
-    player_name: 'DeShawn Brown',
-    school_from: 'Oregon',
-    school_to: 'Tennessee',
-    position: 'QB',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-10',
-    engagement_score: 96,
-    stars: 4,
-    sport: 'football',
-    verified: true,
-    source: 'BSI Mock Data',
-    created_at: '2025-12-10T00:00:00Z',
-    is_partial: false,
-    needs_review: false,
-    source_confidence: 1.0,
-    last_verified_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-12-10T00:00:00Z',
-  },
-];
-
-// Stats card component (page-specific)
 function StatCard({
   label,
   value,
-  change,
   isLive,
 }: {
   label: string;
   value: string | number;
-  change?: string;
   isLive?: boolean;
 }) {
   return (
@@ -223,37 +40,55 @@ function StatCard({
         {label}
       </p>
       <p className="text-2xl md:text-3xl font-display font-bold text-text-primary">{value}</p>
-      {change && (
-        <p
-          className={`text-xs mt-1 ${change.startsWith('+') ? 'text-success-light' : 'text-text-muted'}`}
-        >
-          {change} today
-        </p>
-      )}
     </div>
   );
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries] = useState<PortalEntry[]>(MOCK_ENTRIES);
+  const [entries, setEntries] = useState<PortalEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
     status: '',
     search: '',
   });
+  const [loading, setLoading] = useState(true);
 
-  // Filter entries locally
+  const loadEntries = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchPortalEntries(
+        'football',
+        {
+          position: filters.position || undefined,
+          conference: filters.conference || undefined,
+          status:
+            (filters.status as 'in_portal' | 'committed' | 'withdrawn' | 'signed') || undefined,
+        },
+        { limit: 100 }
+      );
+
+      setEntries(response.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load portal entries');
+    } finally {
+      setLoading(false);
+    }
+  }, [filters.position, filters.conference, filters.status]);
+
+  useEffect(() => {
+    loadEntries();
+  }, [loadEntries]);
+
   const filteredEntries = entries.filter((entry) => {
-    if (filters.position && entry.position !== filters.position) return false;
-    if (filters.conference && entry.conference !== filters.conference) return false;
-    if (filters.status && entry.status !== filters.status) return false;
     if (filters.search && !entry.player_name.toLowerCase().includes(filters.search.toLowerCase()))
       return false;
     return true;
   });
 
-  // Stats calculations
   const stats = {
     total: entries.length,
     inPortal: entries.filter((e) => e.status === 'in_portal').length,
@@ -265,12 +100,8 @@ export default function CFBTransferPortalPage() {
   return (
     <>
       <main id="main-content" className="min-h-screen bg-midnight">
-        {/* Hero section */}
         <Section className="relative pt-24 pb-16 overflow-hidden">
-          {/* Background gradient - football brown tones */}
           <div className="absolute inset-0 bg-gradient-radial from-football/10 via-transparent to-transparent opacity-50" />
-          <div className="absolute inset-0 bg-[url('/images/grain.png')] opacity-[0.02]" />
-
           <Container className="relative">
             <ScrollReveal>
               <div className="text-center max-w-3xl mx-auto">
@@ -288,22 +119,19 @@ export default function CFBTransferPortalPage() {
               </div>
             </ScrollReveal>
 
-            {/* Stats grid */}
             <ScrollReveal delay={0.1}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-                <StatCard label="Total Entries" value={stats.total} change="+47" isLive />
-                <StatCard label="In Portal" value={stats.inPortal} change="+32" />
-                <StatCard label="Committed" value={stats.committed} change="+12" />
-                <StatCard label="Power 4" value={stats.powerFour} change="+28" />
+                <StatCard label="Total Entries" value={stats.total} isLive />
+                <StatCard label="In Portal" value={stats.inPortal} />
+                <StatCard label="Committed" value={stats.committed} />
+                <StatCard label="Power 4" value={stats.powerFour} />
               </div>
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Filters and list */}
         <Section className="py-8 md:py-12">
           <Container>
-            {/* Shared PortalFilters component - with sport="football" */}
             <ScrollReveal>
               <PortalFilters
                 sport="football"
@@ -315,7 +143,24 @@ export default function CFBTransferPortalPage() {
               />
             </ScrollReveal>
 
-            {/* Entry grid using shared components */}
+            {error && (
+              <div className="mb-8 p-4 rounded-xl bg-red-900/20 border border-red-500/30 text-red-400 text-sm">
+                Failed to load portal data: {error}
+                <button
+                  onClick={loadEntries}
+                  className="ml-4 underline hover:text-red-300 transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
+            {loading && entries.length === 0 && (
+              <div className="text-center py-16">
+                <div className="animate-pulse text-text-muted">Loading portal entries...</div>
+              </div>
+            )}
+
             <PortalCardGrid>
               {filteredEntries.map((entry, index) => (
                 <ScrollReveal key={entry.id} delay={index * 0.05}>
@@ -323,14 +168,13 @@ export default function CFBTransferPortalPage() {
                     entry={entry}
                     sport="football"
                     showStats={false}
-                    href={`/cfb/transfer-portal/${entry.id}`}
+                    href={`/transfer-portal/${entry.id}`}
                   />
                 </ScrollReveal>
               ))}
             </PortalCardGrid>
 
-            {/* Empty state */}
-            {filteredEntries.length === 0 && (
+            {!loading && !error && filteredEntries.length === 0 && (
               <div className="text-center py-16">
                 <svg
                   className="w-16 h-16 mx-auto mb-4 text-text-muted"
@@ -347,7 +191,6 @@ export default function CFBTransferPortalPage() {
               </div>
             )}
 
-            {/* Portal window info */}
             <ScrollReveal>
               <div className="mt-12 p-6 rounded-xl bg-gradient-to-br from-football/10 to-transparent border border-football/20">
                 <div className="flex items-start gap-4">
@@ -390,7 +233,6 @@ export default function CFBTransferPortalPage() {
           </Container>
         </Section>
 
-        {/* CTA section */}
         <Section className="py-16 md:py-24 bg-gradient-to-b from-transparent to-charcoal-900/50">
           <Container>
             <ScrollReveal>

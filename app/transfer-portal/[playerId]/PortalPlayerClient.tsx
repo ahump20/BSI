@@ -47,25 +47,56 @@ function StatBlock({
 // Timeline Component
 // ============================================================================
 
-function PortalTimeline({ entry }: { entry: PortalEntry }) {
-  const events = [
-    {
-      date: entry.portal_date,
-      title: 'Entered Portal',
-      description: `Left ${entry.school_from}`,
-      icon: '🚪',
-      active: true,
-    },
-  ];
+function PortalTimeline({ entry, changes }: { entry: PortalEntry; changes: ChangeEvent[] }) {
+  // Build timeline from changelog events if available, otherwise fall back to entry fields
+  let events: { date: string; title: string; description: string; icon: string; active: boolean }[];
 
-  if (entry.commitment_date && entry.school_to) {
-    events.push({
-      date: entry.commitment_date,
-      title: 'Committed',
-      description: `Joining ${entry.school_to}`,
-      icon: '✅',
+  if (changes.length > 0) {
+    events = changes.map((c) => ({
+      date: c.event_timestamp,
+      title:
+        c.change_type === 'entered'
+          ? 'Entered Portal'
+          : c.change_type === 'committed'
+            ? 'Committed'
+            : c.change_type === 'withdrawn'
+              ? 'Withdrawn'
+              : c.change_type === 'signed'
+                ? 'Signed'
+                : 'Updated',
+      description: c.description,
+      icon:
+        c.change_type === 'entered'
+          ? '→'
+          : c.change_type === 'committed'
+            ? '✓'
+            : c.change_type === 'withdrawn'
+              ? '←'
+              : c.change_type === 'signed'
+                ? '✓'
+                : '•',
       active: true,
-    });
+    }));
+  } else {
+    events = [
+      {
+        date: entry.portal_date,
+        title: 'Entered Portal',
+        description: `Left ${entry.school_from}`,
+        icon: '→',
+        active: true,
+      },
+    ];
+
+    if (entry.commitment_date && entry.school_to) {
+      events.push({
+        date: entry.commitment_date,
+        title: 'Committed',
+        description: `Joining ${entry.school_to}`,
+        icon: '✓',
+        active: true,
+      });
+    }
   }
 
   return (
@@ -200,13 +231,23 @@ interface PortalPlayerClientProps {
 // Main Client Component
 // ============================================================================
 
+interface ChangeEvent {
+  id: string;
+  change_type: string;
+  description: string;
+  event_timestamp: string;
+  old_value?: string | null;
+  new_value?: string | null;
+}
+
 interface PlayerAPIResponse {
-  success: boolean;
   data: PortalEntry;
+  changes?: ChangeEvent[];
 }
 
 export default function PortalPlayerClient({ playerId }: PortalPlayerClientProps) {
   const [entry, setEntry] = useState<PortalEntry | null>(null);
+  const [changes, setChanges] = useState<ChangeEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -217,6 +258,7 @@ export default function PortalPlayerClient({ playerId }: PortalPlayerClientProps
         if (!response.ok) throw new Error('Player not found');
         const data: PlayerAPIResponse = await response.json();
         setEntry(data.data);
+        setChanges(data.changes || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load player');
       } finally {
@@ -371,7 +413,7 @@ export default function PortalPlayerClient({ playerId }: PortalPlayerClientProps
           <Container>
             <div className="grid md:grid-cols-2 gap-8">
               <Card padding="lg">
-                <PortalTimeline entry={entry} />
+                <PortalTimeline entry={entry} changes={changes} />
               </Card>
 
               <Card padding="lg">
