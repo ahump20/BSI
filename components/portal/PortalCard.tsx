@@ -178,6 +178,14 @@ export function PortalCard({
                 {entry.stars && sport === 'football' && (
                   <StarRating stars={entry.stars} size="sm" />
                 )}
+                {entry.blaze_index != null && (
+                  <span
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-ember/15 text-ember"
+                    title={`Blaze Index: Composite score (0-100) based on engagement, recency, talent rating, and portal status`}
+                  >
+                    {entry.blaze_index}
+                  </span>
+                )}
               </div>
             </div>
             <StatusBadge

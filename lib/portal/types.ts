@@ -53,6 +53,7 @@ export interface PortalEntry {
   engagement_score?: number; // 0-100 social media activity
   stars?: number; // 1-5 for CFB recruiting rating
   overall_rank?: number; // National rank for CFB
+  blaze_index?: number; // 0-100 BSI composite score
 
   // Stats
   baseball_stats?: BaseballStats;
