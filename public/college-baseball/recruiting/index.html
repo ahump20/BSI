@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 College Baseball Recruiting Rankings | Blaze Sports Intel</title>
+    <meta name="description" content="Track the top 2026 college baseball recruiting classes. Conference breakdowns, commitment tracker, and prospect rankings from Perfect Game.">
+    <meta property="og:title" content="2026 College Baseball Recruiting Rankings | Blaze Sports Intel">
+    <meta property="og:description" content="Track the top 2026 college baseball recruiting classes and commitments.">
+    <link rel="canonical" href="https://blazesportsintel.com/college-baseball/recruiting/">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/bsi-logo-nav.png">
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <style>
+        body {
+            font-family: var(--bsi-font-sans);
+            background: var(--bsi-midnight);
+            color: var(--bsi-text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 120px 0 var(--bsi-space-12);
+            position: relative;
+            background: linear-gradient(135deg, var(--bsi-midnight) 0%, var(--bsi-charcoal) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 20% 30%, rgba(191, 87, 0, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+            margin-bottom: var(--bsi-space-4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb a {
+            color: var(--bsi-burnt-orange);
+            text-decoration: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            background: rgba(191, 87, 0, 0.15);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-full);
+            font-size: var(--bsi-text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .hero-title {
+            font-family: var(--bsi-font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-4);
+        }
+
+        .hero-subtitle {
+            font-size: var(--bsi-text-lg);
+            color: var(--bsi-text-secondary);
+            max-width: 600px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--bsi-space-4);
+            margin-top: var(--bsi-space-8);
+        }
+
+        .stat-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            padding: var(--bsi-space-5);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-3xl);
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+        }
+
+        .stat-label {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+            margin-top: var(--bsi-space-1);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-12) 0;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--bsi-space-6);
+        }
+
+        .section-title {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-2xl);
+            font-weight: 600;
+        }
+
+        .section-badge {
+            font-size: var(--bsi-text-xs);
+            color: var(--bsi-burnt-orange);
+            background: rgba(191, 87, 0, 0.1);
+            padding: var(--bsi-space-2) var(--bsi-space-4);
+            border-radius: var(--bsi-radius-full);
+            font-weight: 600;
+        }
+
+        /* Rankings Table */
+        .rankings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bsi-charcoal);
+            border-radius: var(--bsi-radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--bsi-space-12);
+        }
+
+        .rankings-table th {
+            background: rgba(191, 87, 0, 0.15);
+            padding: var(--bsi-space-4);
+            text-align: left;
+            font-size: var(--bsi-text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--bsi-burnt-orange);
+            font-weight: 700;
+        }
+
+        .rankings-table th:first-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        .rankings-table td {
+            padding: var(--bsi-space-4);
+            border-bottom: 1px solid var(--bsi-border-subtle);
+        }
+
+        .rankings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rankings-table tr:hover {
+            background: var(--bsi-graphite);
+        }
+
+        .rank-number {
+            font-family: var(--bsi-font-display);
+            font-size: var(--bsi-text-xl);
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+            text-align: center;
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+        }
+
+        .team-logo-sm {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .team-name-link {
+            font-weight: 600;
+            color: var(--bsi-text-primary);
+            text-decoration: none;
+        }
+
+        .team-name-link:hover {
+            color: var(--bsi-burnt-orange);
+        }
+
+        .team-conf {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+        }
+
+        .commits-count {
+            font-weight: 700;
+        }
+
+        .rating-stars {
+            color: var(--bsi-gold);
+            letter-spacing: -2px;
+        }
+
+        .change-up {
+            color: var(--bsi-success);
+            font-size: var(--bsi-text-sm);
+            font-weight: 600;
+        }
+
+        .change-down {
+            color: var(--bsi-error);
+            font-size: var(--bsi-text-sm);
+            font-weight: 600;
+        }
+
+        .change-same {
+            color: var(--bsi-text-tertiary);
+            font-size: var(--bsi-text-sm);
+        }
+
+        /* Conference Breakdown */
+        .conf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-12);
+        }
+
+        .conf-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-lg);
+            overflow: hidden;
+        }
+
+        .conf-header {
+            background: rgba(191, 87, 0, 0.1);
+            padding: var(--bsi-space-4) var(--bsi-space-5);
+            border-bottom: 1px solid var(--bsi-border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conf-name {
+            font-weight: 700;
+            font-size: var(--bsi-text-lg);
+        }
+
+        .conf-total {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-burnt-orange);
+            font-weight: 600;
+        }
+
+        .conf-teams {
+            padding: var(--bsi-space-4);
+        }
+
+        .conf-team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--bsi-space-3) var(--bsi-space-2);
+            border-bottom: 1px solid var(--bsi-border-subtle);
+        }
+
+        .conf-team-row:last-child {
+            border-bottom: none;
+        }
+
+        .conf-team-name {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+        }
+
+        .conf-team-rank {
+            color: var(--bsi-burnt-orange);
+            font-weight: 700;
+            font-size: var(--bsi-text-sm);
+            min-width: 30px;
+        }
+
+        /* Recent Commits */
+        .commits-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--bsi-space-3);
+        }
+
+        .commit-card {
+            background: var(--bsi-charcoal);
+            border: 1px solid var(--bsi-border-subtle);
+            border-radius: var(--bsi-radius-md);
+            padding: var(--bsi-space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--bsi-space-4);
+        }
+
+        .commit-info {
+            flex: 1;
+        }
+
+        .commit-name {
+            font-weight: 600;
+            margin-bottom: var(--bsi-space-1);
+        }
+
+        .commit-meta {
+            font-size: var(--bsi-text-sm);
+            color: var(--bsi-text-secondary);
+        }
+
+        .commit-school {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+        }
+
+        .commit-school img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .commit-date {
+            font-size: var(--bsi-text-xs);
+            color: var(--bsi-text-tertiary);
+        }
+
+        /* Source Citation */
+        .source-citation {
+            text-align: center;
+            padding: var(--bsi-space-6);
+            color: var(--bsi-text-tertiary);
+            font-size: var(--bsi-text-sm);
+            border-top: 1px solid var(--bsi-border-subtle);
+        }
+
+        .source-citation a {
+            color: var(--bsi-burnt-orange);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .conf-grid { grid-template-columns: 1fr; }
+            .rankings-table { font-size: var(--bsi-text-sm); }
+            .commit-card { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bsi-nav-placeholder"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span>Recruiting</span>
+            </nav>
+
+            <div class="hero-content">
+                <span class="hero-badge">2026 Class</span>
+                <h1 class="hero-title">College Baseball Recruiting Rankings</h1>
+                <p class="hero-subtitle">Track the top recruiting classes, recent commitments, and conference breakdowns for the 2026 signing class.</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-label">Total Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">300+</div>
+                    <div class="stat-label">D1 Programs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">127</div>
+                    <div class="stat-label">5-Star Prospects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Dec 14</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Top 25 Classes -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Top 25 Recruiting Classes</h2>
+                <span class="section-badge">Perfect Game Rankings</span>
+            </div>
+
+            <table class="rankings-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>School</th>
+                        <th>Commits</th>
+                        <th>5★</th>
+                        <th>4★</th>
+                        <th>Avg Rating</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank-number">1</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/vanderbilt.html" class="team-name-link">Vanderbilt</a>
+                                    <div class="team-conf">SEC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">18</td>
+                        <td>6</td>
+                        <td>8</td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                        <td class="change-same">—</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">2</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/99.png" alt="LSU" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/lsu.html" class="team-name-link">LSU</a>
+                                    <div class="team-conf">SEC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">17</td>
+                        <td>5</td>
+                        <td>7</td>
+                        <td><span class="rating-stars">★★★★★</span></td>
+                        <td class="change-up">▲ 1</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">3</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/154.png" alt="Wake Forest" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/wake-forest.html" class="team-name-link">Wake Forest</a>
+                                    <div class="team-conf">ACC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">16</td>
+                        <td>4</td>
+                        <td>9</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-down">▼ 1</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">4</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png" alt="TCU" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/tcu.html" class="team-name-link">TCU</a>
+                                    <div class="team-conf">Big 12</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">15</td>
+                        <td>4</td>
+                        <td>8</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-same">—</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">5</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/texas.html" class="team-name-link">Texas</a>
+                                    <div class="team-conf">SEC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">14</td>
+                        <td>3</td>
+                        <td>8</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-up">▲ 2</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">6</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/204.png" alt="Oregon State" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/oregon-state.html" class="team-name-link">Oregon State</a>
+                                    <div class="team-conf">Pac-12</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">16</td>
+                        <td>3</td>
+                        <td>7</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-same">—</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">7</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png" alt="Tennessee" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/tennessee.html" class="team-name-link">Tennessee</a>
+                                    <div class="team-conf">SEC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">15</td>
+                        <td>3</td>
+                        <td>6</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-up">▲ 1</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">8</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/258.png" alt="Virginia" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/virginia.html" class="team-name-link">Virginia</a>
+                                    <div class="team-conf">ACC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">14</td>
+                        <td>2</td>
+                        <td>8</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-down">▼ 1</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">9</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/24.png" alt="Stanford" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/stanford.html" class="team-name-link">Stanford</a>
+                                    <div class="team-conf">Pac-12</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">12</td>
+                        <td>3</td>
+                        <td>6</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-same">—</td>
+                    </tr>
+                    <tr>
+                        <td class="rank-number">10</td>
+                        <td>
+                            <div class="team-cell">
+                                <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/245.png" alt="Texas A&M" class="team-logo-sm">
+                                <div>
+                                    <a href="/college-baseball/teams/texas-am.html" class="team-name-link">Texas A&M</a>
+                                    <div class="team-conf">SEC</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="commits-count">14</td>
+                        <td>2</td>
+                        <td>7</td>
+                        <td><span class="rating-stars">★★★★☆</span></td>
+                        <td class="change-up">▲ 2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Conference Breakdown -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Conference Breakdown</h2>
+                <span class="section-badge">Power 5</span>
+            </div>
+
+            <div class="conf-grid">
+                <div class="conf-card">
+                    <div class="conf-header">
+                        <span class="conf-name">SEC</span>
+                        <span class="conf-total">6 teams in Top 25</span>
+                    </div>
+                    <div class="conf-teams">
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#1</span> Vanderbilt</div>
+                            <span>18 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#2</span> LSU</div>
+                            <span>17 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#5</span> Texas</div>
+                            <span>14 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#7</span> Tennessee</div>
+                            <span>15 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#10</span> Texas A&M</div>
+                            <span>14 commits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="conf-card">
+                    <div class="conf-header">
+                        <span class="conf-name">ACC</span>
+                        <span class="conf-total">4 teams in Top 25</span>
+                    </div>
+                    <div class="conf-teams">
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#3</span> Wake Forest</div>
+                            <span>16 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#8</span> Virginia</div>
+                            <span>14 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#12</span> Clemson</div>
+                            <span>13 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#15</span> Florida State</div>
+                            <span>12 commits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="conf-card">
+                    <div class="conf-header">
+                        <span class="conf-name">Big 12</span>
+                        <span class="conf-total">3 teams in Top 25</span>
+                    </div>
+                    <div class="conf-teams">
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#4</span> TCU</div>
+                            <span>15 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#11</span> Oklahoma State</div>
+                            <span>14 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#18</span> Texas Tech</div>
+                            <span>11 commits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="conf-card">
+                    <div class="conf-header">
+                        <span class="conf-name">Pac-12</span>
+                        <span class="conf-total">2 teams in Top 25</span>
+                    </div>
+                    <div class="conf-teams">
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#6</span> Oregon State</div>
+                            <span>16 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#9</span> Stanford</div>
+                            <span>12 commits</span>
+                        </div>
+                        <div class="conf-team-row">
+                            <div class="conf-team-name"><span class="conf-team-rank">#14</span> UCLA</div>
+                            <span>12 commits</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Commits -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Recent Commitments</h2>
+                <span class="section-badge">Last 7 Days</span>
+            </div>
+
+            <div class="commits-list">
+                <div class="commit-card">
+                    <div class="commit-info">
+                        <div class="commit-name">J.R. (RHP) ★★★★★</div>
+                        <div class="commit-meta">IMG Academy • Bradenton, FL • 6'4" 210 lbs</div>
+                    </div>
+                    <div class="commit-school">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/238.png" alt="Vanderbilt">
+                        <span>Vanderbilt</span>
+                    </div>
+                    <div class="commit-date">Dec 12, 2025</div>
+                </div>
+
+                <div class="commit-card">
+                    <div class="commit-info">
+                        <div class="commit-name">M.T. (SS) ★★★★☆</div>
+                        <div class="commit-meta">Barbers Hill HS • Mont Belvieu, TX • 6'1" 175 lbs</div>
+                    </div>
+                    <div class="commit-school">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/251.png" alt="Texas">
+                        <span>Texas</span>
+                    </div>
+                    <div class="commit-date">Dec 11, 2025</div>
+                </div>
+
+                <div class="commit-card">
+                    <div class="commit-info">
+                        <div class="commit-name">C.B. (OF) ★★★★☆</div>
+                        <div class="commit-meta">Catholic HS • Baton Rouge, LA • 6'2" 195 lbs</div>
+                    </div>
+                    <div class="commit-school">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/99.png" alt="LSU">
+                        <span>LSU</span>
+                    </div>
+                    <div class="commit-date">Dec 10, 2025</div>
+                </div>
+
+                <div class="commit-card">
+                    <div class="commit-info">
+                        <div class="commit-name">D.K. (LHP) ★★★★★</div>
+                        <div class="commit-meta">Harvard-Westlake • Los Angeles, CA • 6'3" 200 lbs</div>
+                    </div>
+                    <div class="commit-school">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/24.png" alt="Stanford">
+                        <span>Stanford</span>
+                    </div>
+                    <div class="commit-date">Dec 9, 2025</div>
+                </div>
+
+                <div class="commit-card">
+                    <div class="commit-info">
+                        <div class="commit-name">A.P. (C) ★★★★☆</div>
+                        <div class="commit-meta">Keller HS • Keller, TX • 6'0" 200 lbs</div>
+                    </div>
+                    <div class="commit-school">
+                        <img src="https://a.espncdn.com/i/teamlogos/ncaa/500/2628.png" alt="TCU">
+                        <span>TCU</span>
+                    </div>
+                    <div class="commit-date">Dec 8, 2025</div>
+                </div>
+            </div>
+
+            <p style="color: var(--bsi-text-tertiary); font-size: var(--bsi-text-sm); margin-top: var(--bsi-space-4);">
+                Note: Minor names shown as initials per BSI privacy policy.
+            </p>
+        </section>
+
+        <!-- Source -->
+        <div class="source-citation">
+            <p>Rankings data sourced from <a href="https://www.perfectgame.org" target="_blank" rel="noopener">Perfect Game</a>.</p>
+            <p>Last updated: December 14, 2025 at 9:00 PM CT</p>
+        </div>
+    </main>
+
+    <div id="bsi-footer-placeholder"></div>
+
+    <script src="/js/bsi-components.js"></script>
+</body>
+</html>

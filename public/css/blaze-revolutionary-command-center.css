@@ -1,0 +1,392 @@
+/**
+ * Blaze Revolutionary Command Center CSS
+ * Deep South Sports Authority - Blaze Intelligence
+ * Texas • SEC • Every Player • Every Level
+ */
+
+/* Deep South Authority Brand Colors */
+:root {
+    --deep-south-primary: #BF5700; /* Texas Burnt Orange */
+    --deep-south-secondary: #002244; /* Tennessee Deep Navy */
+    --deep-south-accent: #FFB81C; /* Championship Gold */
+    --sec-crimson: #9E1B32; /* Alabama Crimson */
+    --texas-orange: #FF6600; /* Longhorn Orange */
+    --authority-black: #0A0A0F; /* Command Center Black */
+}
+
+/* Command Center Layout */
+.revolutionary-command-center {
+    background: var(--authority-black);
+    color: white;
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Deep South Authority Header */
+.deep-south-header {
+    background: linear-gradient(135deg, var(--deep-south-primary) 0%, var(--texas-orange) 100%);
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 3px solid var(--deep-south-accent);
+}
+
+.authority-title {
+    font-size: 2.5em;
+    font-weight: 800;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.authority-tagline {
+    font-size: 1.2em;
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* Sports Hierarchy Display */
+.sports-hierarchy {
+    display: flex;
+    justify-content: center;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    margin: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sport-level {
+    display: flex;
+    align-items: center;
+    margin: 0 30px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--deep-south-primary), var(--sec-crimson));
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.sport-level:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(191, 87, 0, 0.3);
+}
+
+.sport-number {
+    font-size: 1.8em;
+    font-weight: 800;
+    color: var(--deep-south-accent);
+    margin-right: 15px;
+}
+
+.sport-name {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* Championship Dashboard Grid */
+.championship-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+    padding: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Widget Base Styles */
+.championship-widget {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.championship-widget:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(191, 87, 0, 0.2);
+    border-color: var(--deep-south-accent);
+}
+
+.championship-widget h3 {
+    color: var(--deep-south-accent);
+    margin: 0 0 20px 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Live Scores Styles */
+.live-scores .sport-games {
+    margin-bottom: 25px;
+}
+
+.live-scores h4 {
+    color: var(--texas-orange);
+    font-size: 1.2em;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--deep-south-primary);
+    padding-bottom: 8px;
+}
+
+.game-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin: 8px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border-left: 4px solid var(--deep-south-accent);
+}
+
+.teams {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.vs {
+    margin: 0 10px;
+    color: var(--deep-south-accent);
+    font-weight: 800;
+}
+
+.score {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: var(--texas-orange);
+}
+
+.status {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Texas Football Rankings */
+.texas-football .team-rank {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.texas-football .team-rank:hover {
+    background: rgba(191, 87, 0, 0.2);
+    transform: translateX(5px);
+}
+
+.texas-football .rank {
+    font-weight: 800;
+    color: var(--deep-south-accent);
+    margin-right: 15px;
+    min-width: 30px;
+}
+
+.texas-football .team {
+    flex: 1;
+    font-weight: 600;
+}
+
+.texas-football .class {
+    color: var(--texas-orange);
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.texas-football .record {
+    font-weight: 700;
+    color: white;
+}
+
+/* Perfect Game Pipeline */
+.perfect-game .prospect {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin: 8px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border-left: 4px solid var(--sec-crimson);
+}
+
+.perfect-game .rank {
+    font-weight: 800;
+    color: var(--deep-south-accent);
+    margin-right: 15px;
+    min-width: 30px;
+}
+
+.perfect-game .name {
+    flex: 1;
+    font-weight: 600;
+}
+
+.perfect-game .position {
+    color: var(--texas-orange);
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.perfect-game .grade {
+    font-weight: 800;
+    color: var(--deep-south-accent);
+    background: rgba(191, 87, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* Championship Predictions */
+.championship-race .sport-prediction {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    border-left: 4px solid var(--deep-south-primary);
+}
+
+.championship-race h4 {
+    color: var(--texas-orange);
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.predictions-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+
+/* Error States */
+.widget-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+.widget-error i {
+    margin-right: 10px;
+    color: #ff6b6b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .championship-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    .sports-hierarchy {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sport-level {
+        margin: 10px 0;
+        width: 80%;
+        justify-content: center;
+    }
+
+    .authority-title {
+        font-size: 2em;
+    }
+
+    .authority-tagline {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .championship-widget {
+        padding: 15px;
+    }
+
+    .game-score {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .teams {
+        margin-bottom: 5px;
+    }
+}
+
+/* Animation Effects */
+@keyframes authorityPulse {
+    0% { box-shadow: 0 0 0 0 rgba(191, 87, 0, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(191, 87, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(191, 87, 0, 0); }
+}
+
+.championship-widget:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+        rgba(191, 87, 0, 0.1) 0%,
+        rgba(255, 184, 28, 0.1) 50%,
+        rgba(158, 27, 50, 0.1) 100%);
+    pointer-events: none;
+    border-radius: 20px;
+}
+
+/* Deep South Authority Footer */
+.authority-footer {
+    background: var(--deep-south-primary);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    border-top: 3px solid var(--deep-south-accent);
+}
+
+.authority-footer p {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Utilities */
+.text-highlight {
+    color: var(--deep-south-accent);
+    font-weight: 700;
+}
+
+.badge-texas {
+    background: var(--texas-orange);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.badge-sec {
+    background: var(--sec-crimson);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+}

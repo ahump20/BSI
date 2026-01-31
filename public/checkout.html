@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Blaze Sports Intel</title>
+    <meta name="description" content="Subscribe to Blaze Sports Intel Pro or Enterprise for advanced sports analytics.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        blaze: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                            950: '#431407',
+                        },
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        terminal: {
+                            bg: '#050505',
+                            panel: '#0a0a0a',
+                            border: '#1f1f1f',
+                            text: '#a1a1aa',
+                            accent: '#f97316',
+                            success: '#10b981',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        header: ['Oswald', 'sans-serif'],
+                    },
+                }
+            }
+        };
+    </script>
+
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        #checkout-container {
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(249, 115, 22, 0.2);
+            border-top: 3px solid #f97316;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tier-badge {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="text-slate-200 font-sans antialiased">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-lg border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blaze-500 to-blaze-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-fire text-white text-lg"></i>
+                </div>
+                <span class="font-header text-xl tracking-wide text-white">BLAZE SPORTS INTEL</span>
+            </a>
+            <a href="/pricing" class="text-slate-400 hover:text-blaze-500 transition-colors text-sm">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Pricing
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-16 px-4 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-2xl">
+            <!-- Order Summary -->
+            <div id="order-summary" class="glass-card rounded-2xl p-6 mb-6 hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-white">Order Summary</h2>
+                    <span id="tier-badge" class="tier-badge text-white"></span>
+                </div>
+                <div class="border-t border-slate-700/50 pt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-slate-400">Subscription</span>
+                        <span id="plan-name" class="text-white font-medium"></span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-slate-400">Billing</span>
+                        <span class="text-white">Monthly</span>
+                    </div>
+                    <div id="trial-info" class="flex justify-between items-center text-terminal-success hidden">
+                        <span>14-day free trial</span>
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Checkout Container -->
+            <div class="glass-card rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-slate-700/50">
+                    <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fas fa-lock text-blaze-500"></i>
+                        Secure Checkout
+                    </h1>
+                    <p class="text-slate-400 mt-2 text-sm">
+                        Powered by Stripe. Your payment information is secure.
+                    </p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="p-12 flex flex-col items-center justify-center">
+                    <div class="loading-spinner mb-4"></div>
+                    <p class="text-slate-400">Loading checkout...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="p-12 hidden">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-white mb-2">Unable to Load Checkout</h3>
+                        <p id="error-message" class="text-slate-400 mb-6">An error occurred while loading the checkout.</p>
+                        <a href="/pricing" class="inline-flex items-center gap-2 px-6 py-3 bg-blaze-500 hover:bg-blaze-600 text-white font-semibold rounded-lg transition-colors">
+                            <i class="fas fa-arrow-left"></i>
+                            Return to Pricing
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stripe Checkout Container -->
+                <div id="checkout-container" class="hidden">
+                    <!-- Stripe Embedded Checkout mounts here -->
+                </div>
+            </div>
+
+            <!-- Security Badges -->
+            <div class="mt-6 flex items-center justify-center gap-6 text-slate-500 text-sm">
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-terminal-success"></i>
+                    SSL Encrypted
+                </span>
+                <span class="flex items-center gap-2">
+                    <i class="fab fa-cc-stripe text-blue-400"></i>
+                    Powered by Stripe
+                </span>
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-lock text-blaze-500"></i>
+                    PCI Compliant
+                </span>
+            </div>
+
+            <!-- Need Help -->
+            <div class="mt-8 text-center">
+                <p class="text-slate-500 text-sm">
+                    Need help? Contact us at
+                    <a href="mailto:support@blazesportsintel.com" class="text-blaze-500 hover:underline">support@blazesportsintel.com</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Checkout Script -->
+    <script>
+        // Configuration - Replace with your publishable key
+        const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RlBWILvpRBk20R2K8sqQVkChQNmI2uIplQkXlwzre0a89T0BitfA56d4igyBYLCdbHJ32FNpYuaGBXixWo9nY6t00AROOs9vh';
+
+        // Get plan from URL params (support both 'plan' and 'tier' for backwards compat)
+        const urlParams = new URLSearchParams(window.location.search);
+        const tier = urlParams.get('plan') || urlParams.get('tier') || 'pro';
+        const email = urlParams.get('email') || '';
+
+        // Check authentication
+        const token = document.cookie.match(/bsi_token=([^;]+)/)?.[1] || localStorage.getItem('bsi_token');
+        if (!token) {
+            window.location.href = `/signup?plan=${tier}`;
+        }
+
+        // Plan details
+        const planDetails = {
+            pro: {
+                name: 'Pro Plan',
+                badge: 'Pro',
+                hasTrial: true
+            },
+            enterprise: {
+                name: 'Enterprise Plan',
+                badge: 'Enterprise',
+                hasTrial: false
+            }
+        };
+
+        // DOM elements
+        const loadingState = document.getElementById('loading-state');
+        const errorState = document.getElementById('error-state');
+        const checkoutContainer = document.getElementById('checkout-container');
+        const orderSummary = document.getElementById('order-summary');
+        const tierBadge = document.getElementById('tier-badge');
+        const planName = document.getElementById('plan-name');
+        const trialInfo = document.getElementById('trial-info');
+        const errorMessage = document.getElementById('error-message');
+
+        // Initialize checkout
+        async function initializeCheckout() {
+            try {
+                // Validate tier
+                if (!['pro', 'enterprise'].includes(tier)) {
+                    throw new Error('Invalid subscription tier');
+                }
+
+                // Update order summary
+                const plan = planDetails[tier];
+                tierBadge.textContent = plan.badge;
+                planName.textContent = plan.name;
+                if (plan.hasTrial) {
+                    trialInfo.classList.remove('hidden');
+                }
+                orderSummary.classList.remove('hidden');
+
+                // Initialize Stripe
+                const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+                // Fetch client secret from backend
+                const response = await fetch('/api/stripe/create-embedded-checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        tier: tier,
+                        email: email || undefined,
+                        mode: 'subscription'
+                    }),
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to create checkout session');
+                }
+
+                const { clientSecret } = await response.json();
+
+                // Initialize embedded checkout
+                const checkout = await stripe.initEmbeddedCheckout({
+                    clientSecret,
+                });
+
+                // Hide loading, show checkout
+                loadingState.classList.add('hidden');
+                checkoutContainer.classList.remove('hidden');
+
+                // Mount checkout
+                checkout.mount('#checkout-container');
+
+            } catch (error) {
+                console.error('Checkout initialization error:', error);
+                showError(error.message);
+            }
+        }
+
+        function showError(message) {
+            loadingState.classList.add('hidden');
+            checkoutContainer.classList.add('hidden');
+            errorMessage.textContent = message;
+            errorState.classList.remove('hidden');
+        }
+
+        // Start initialization
+        initializeCheckout();
+    </script>
+    <!-- Cookie Consent Banner (GDPR/CCPA Compliance) -->
+    <script src="/components/cookie-banner.js"></script>
+  <script src="/js/bsi-components.js"></script>
+</body>
+</html>

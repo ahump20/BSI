@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Data Interface | Blaze Sports Intel</title>
+    <meta name="description" content="Real-time sports data streams across scores, stats, standings, news, and alerts. Live updates with WebSocket integration and comprehensive analytics.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+      <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+        :root {
+            /* Burnt Orange Brand Colors */
+            --blaze-orange: #BF5700;
+            --blaze-ember: #CC6600;
+            --blaze-copper: #D97B38;
+            --blaze-sunset: #E69551;
+            --blaze-dark: #8B3A00;
+
+            /* Dark Theme Base */
+            --bg-primary: #0D0D12;
+            --bg-secondary: #1A1A24;
+            --bg-tertiary: #252532;
+            --bg-elevated: #2D2D3D;
+
+            /* Text Colors */
+            --text-primary: #F5F5F7;
+            --text-secondary: #C0C0C8;
+            --text-tertiary: #8E8E93;
+
+            /* Glass Morphism */
+            --glass-bg: rgba(26, 26, 36, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+
+            /* Status Colors */
+            --status-connected: #28a745;
+            --status-connecting: #ffc107;
+            --status-disconnected: #dc3545;
+            --status-stale: #6c757d;
+
+            /* Data Colors */
+            --data-positive: #28a745;
+            --data-negative: #dc3545;
+            --data-neutral: #6c757d;
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            color: var(--blaze-orange);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-base);
+        }
+
+        .nav-links a:hover {
+            color: var(--blaze-orange);
+        }
+
+        /* Page Container */
+        .page-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-sunset));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-disconnected);
+        }
+
+        .status-dot.connected {
+            background: var(--status-connected);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connecting {
+            background: var(--status-connecting);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Data Type Tabs */
+        .data-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        .data-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .data-tab:hover {
+            background: rgba(191, 87, 0, 0.1);
+            border-color: var(--blaze-orange);
+            color: var(--text-primary);
+        }
+
+        .data-tab.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border-color: var(--blaze-orange);
+            color: white;
+            box-shadow: 0 4px 20px rgba(191, 87, 0, 0.3);
+        }
+
+        /* Controls Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .control-button {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-button:hover {
+            background: rgba(191, 87, 0, 0.1);
+            border-color: var(--blaze-orange);
+            color: var(--text-primary);
+        }
+
+        .control-button.active {
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border-color: var(--blaze-orange);
+            color: white;
+        }
+
+        .search-input {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            min-width: 200px;
+            transition: all var(--transition-base);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--blaze-orange);
+            box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.1);
+        }
+
+        /* Data Grid */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Data Card */
+        .data-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--blaze-orange), var(--blaze-sunset));
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .data-card:hover {
+            border-color: var(--blaze-orange);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(191, 87, 0, 0.2);
+        }
+
+        .data-card:hover::before {
+            opacity: 1;
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .data-card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .data-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .data-card-badge {
+            padding: 0.25rem 0.75rem;
+            background: rgba(191, 87, 0, 0.15);
+            border: 1px solid var(--blaze-orange);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--blaze-orange);
+        }
+
+        .data-card-content {
+            margin-bottom: 1rem;
+        }
+
+        .data-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-stat:last-child {
+            border-bottom: none;
+        }
+
+        .data-stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .data-stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .data-stat-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .data-stat-change.positive {
+            color: var(--data-positive);
+        }
+
+        .data-stat-change.negative {
+            color: var(--data-negative);
+        }
+
+        .data-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-timestamp {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .freshness-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .freshness-indicator.fresh {
+            background: var(--status-connected);
+        }
+
+        .freshness-indicator.stale {
+            background: var(--status-stale);
+        }
+
+        .data-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .data-action-btn {
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .data-action-btn:hover {
+            border-color: var(--blaze-orange);
+            color: var(--blaze-orange);
+        }
+
+        /* Sparkline Chart */
+        .sparkline-container {
+            height: 40px;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-container.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(191, 87, 0, 0.2);
+            border-top-color: var(--blaze-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-description {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state.active {
+            display: block;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Error State */
+        .error-container {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .error-container.active {
+            display: block;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: var(--status-disconnected);
+            margin-bottom: 1.5rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .error-retry-btn {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, var(--blaze-orange), var(--blaze-ember));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .error-retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(191, 87, 0, 0.4);
+        }
+
+        /* Stream Activity Log */
+        .activity-log {
+            margin-top: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .activity-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-log-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .activity-log-clear {
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: color var(--transition-base);
+        }
+
+        .activity-log-clear:hover {
+            color: var(--blaze-orange);
+        }
+
+        .activity-log-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-log-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-log-time {
+            color: var(--text-tertiary);
+            min-width: 80px;
+        }
+
+        .activity-log-type {
+            color: var(--blaze-orange);
+            min-width: 100px;
+            font-weight: 600;
+        }
+
+        .activity-log-message {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .page-container {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .data-tabs {
+                flex-direction: column;
+            }
+
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                flex-direction: column;
+            }
+
+            .search-input {
+                min-width: 100%;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+        <a href="/" class="nav-logo">BLAZE SPORTS INTEL</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/analytics">Analytics</a></li>
+            <li><a href="/copilot">Copilot</a></li>
+            <li><a href="/college-baseball">College Baseball</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1 class="page-title">Live Data Interface</h1>
+            <p class="page-subtitle">Real-time sports data streams with comprehensive analytics and insights</p>
+            <div class="connection-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </header>
+
+        <!-- Data Type Tabs -->
+        <div class="data-tabs">
+            <button class="data-tab active" data-type="all" onclick="filterByType('all')">
+                <i class="fas fa-th"></i> All Data
+            </button>
+            <button class="data-tab" data-type="games" onclick="filterByType('games')">
+                <i class="fas fa-gamepad"></i> Live Games
+            </button>
+            <button class="data-tab" data-type="stats" onclick="filterByType('stats')">
+                <i class="fas fa-chart-bar"></i> Statistics
+            </button>
+            <button class="data-tab" data-type="standings" onclick="filterByType('standings')">
+                <i class="fas fa-list-ol"></i> Standings
+            </button>
+            <button class="data-tab" data-type="news" onclick="filterByType('news')">
+                <i class="fas fa-newspaper"></i> News
+            </button>
+            <button class="data-tab" data-type="alerts" onclick="filterByType('alerts')">
+                <i class="fas fa-bell"></i> Alerts
+            </button>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="control-group">
+                <button class="control-button active" id="autoRefreshBtn" onclick="toggleAutoRefresh()">
+                    <i class="fas fa-sync"></i> Auto-Refresh
+                </button>
+                <button class="control-button" onclick="refreshData()">
+                    <i class="fas fa-redo"></i> Refresh Now
+                </button>
+                <button class="control-button" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+            </div>
+            <div class="control-group">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search data streams..." oninput="handleSearch()">
+                <button class="control-button" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Grid -->
+        <div class="data-grid" id="dataGrid"></div>
+
+        <!-- Loading State -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading Live Data...</div>
+            <div class="loading-description">Establishing connections to data sources</div>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-container" id="errorContainer">
+            <div class="error-icon">⚠️</div>
+            <h2 class="error-title">Connection Error</h2>
+            <p class="error-message" id="errorMessage">Unable to load live data. Please check your connection and try again.</p>
+            <button class="error-retry-btn" onclick="retryConnection()">Retry Connection</button>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📊</div>
+            <h2 class="empty-title">No Data Available</h2>
+            <p class="empty-description">No data streams match your current filters. Try adjusting your filters or check back later.</p>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="activity-log">
+            <div class="activity-log-header">
+                <h3 class="activity-log-title">
+                    <i class="fas fa-stream"></i> Stream Activity Log
+                </h3>
+                <span class="activity-log-clear" onclick="clearActivityLog()">Clear Log</span>
+            </div>
+            <div class="activity-log-items" id="activityLogItems"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentType = 'all';
+        let searchQuery = '';
+        let autoRefresh = true;
+        let refreshInterval = null;
+        let dataStreams = [];
+        let activityLog = [];
+        let websocket = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeConnection();
+            loadInitialData();
+            startAutoRefresh();
+        });
+
+        // Initialize WebSocket Connection
+        function initializeConnection() {
+            updateConnectionStatus('connecting');
+            logActivity('Connection', 'Initializing WebSocket connection...');
+
+            // Simulate WebSocket connection (replace with actual WebSocket URL)
+            setTimeout(() => {
+                updateConnectionStatus('connected');
+                logActivity('Connection', 'Successfully connected to live data stream');
+                simulateDataStream();
+            }, 1500);
+        }
+
+        // Update Connection Status
+        function updateConnectionStatus(status) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            statusDot.className = 'status-dot ' + status;
+
+            switch(status) {
+                case 'connected':
+                    statusText.textContent = 'Connected';
+                    break;
+                case 'connecting':
+                    statusText.textContent = 'Connecting...';
+                    break;
+                case 'disconnected':
+                    statusText.textContent = 'Disconnected';
+                    break;
+            }
+        }
+
+        // Load Initial Data
+        async function loadInitialData() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const dataGrid = document.getElementById('dataGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            loadingContainer.classList.add('active');
+            errorContainer.classList.remove('active');
+            emptyState.classList.remove('active');
+            dataGrid.innerHTML = '';
+
+            try {
+                // Parallel fetch from multiple data sources
+                const [gamesData, statsData, standingsData, newsData, alertsData] = await Promise.allSettled([
+                    fetchLiveGames(),
+                    fetchLiveStats(),
+                    fetchStandings(),
+                    fetchNews(),
+                    fetchAlerts()
+                ]);
+
+                // Combine all data streams
+                dataStreams = [];
+
+                if (gamesData.status === 'fulfilled' && gamesData.value) {
+                    dataStreams.push(...gamesData.value);
+                }
+                if (statsData.status === 'fulfilled' && statsData.value) {
+                    dataStreams.push(...statsData.value);
+                }
+                if (standingsData.status === 'fulfilled' && standingsData.value) {
+                    dataStreams.push(...standingsData.value);
+                }
+                if (newsData.status === 'fulfilled' && newsData.value) {
+                    dataStreams.push(...newsData.value);
+                }
+                if (alertsData.status === 'fulfilled' && alertsData.value) {
+                    dataStreams.push(...alertsData.value);
+                }
+
+                renderDataStreams();
+                logActivity('Data Load', `Loaded ${dataStreams.length} data streams successfully`);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('errorMessage').textContent = error.message;
+                errorContainer.classList.add('active');
+                logActivity('Error', `Failed to load data: ${error.message}`);
+            } finally {
+                loadingContainer.classList.remove('active');
+            }
+        }
+
+        // Fetch Live Games
+        async function fetchLiveGames() {
+            // Simulate API call - replace with actual API endpoints
+            return [
+                {
+                    id: 'game-1',
+                    type: 'games',
+                    sport: 'MLB',
+                    title: 'Cardinals vs Cubs',
+                    status: 'Live',
+                    data: {
+                        homeTeam: 'Cardinals',
+                        awayTeam: 'Cubs',
+                        homeScore: 4,
+                        awayScore: 3,
+                        inning: '7th',
+                        runners: 'Bases Loaded'
+                    },
+                    trend: [3, 3, 4, 4, 4, 4, 4],
+                    timestamp: new Date().toISOString(),
+                    fresh: true
+                },
+                {
+                    id: 'game-2',
+                    type: 'games',
+                    sport: 'NFL',
+                    title: 'Titans vs Texans',
+                    status: 'Live',
+                    data: {
+                        homeTeam: 'Titans',
+                        awayTeam: 'Texans',
+                        homeScore: 21,
+                        awayScore: 17,
+                        quarter: '3rd',
+                        time: '8:45'
+                    },
+                    trend: [7, 14, 21, 21, 21, 21, 21],
+                    timestamp: new Date().toISOString(),
+                    fresh: true
+                }
+            ];
+        }
+
+        // Fetch Live Stats
+        async function fetchLiveStats() {
+            return [
+                {
+                    id: 'stat-1',
+                    type: 'stats',
+                    sport: 'MLB',
+                    title: 'Paul Goldschmidt',
+                    status: 'Active',
+                    data: {
+                        avg: '.312',
+                        hr: 28,
+                        rbi: 89,
+                        ops: '.945'
+                    },
+                    changes: {
+                        avg: '+.008',
+                        hr: '+2',
+                        rbi: '+5'
+                    },
+                    trend: [0.304, 0.306, 0.308, 0.310, 0.310, 0.312, 0.312],
+                    timestamp: new Date(Date.now() - 300000).toISOString(),
+                    fresh: true
+                }
+            ];
+        }
+
+        // Fetch Standings
+        async function fetchStandings() {
+            return [
+                {
+                    id: 'standings-1',
+                    type: 'standings',
+                    sport: 'MLB',
+                    title: 'NL Central Standings',
+                    status: 'Updated',
+                    data: {
+                        first: 'Cardinals (82-61)',
+                        second: 'Brewers (81-62)',
+                        third: 'Cubs (75-68)',
+                        gamesBack: '1.0'
+                    },
+                    trend: [80, 81, 81, 82, 82, 82, 82],
+                    timestamp: new Date(Date.now() - 600000).toISOString(),
+                    fresh: true
+                }
+            ];
+        }
+
+        // Fetch News
+        async function fetchNews() {
+            return [
+                {
+                    id: 'news-1',
+                    type: 'news',
+                    sport: 'MLB',
+                    title: 'Cardinals Acquire Veteran Pitcher',
+                    status: 'Breaking',
+                    data: {
+                        source: 'ESPN',
+                        time: '15 mins ago',
+                        summary: 'St. Louis adds experienced arm before playoff push'
+                    },
+                    timestamp: new Date(Date.now() - 900000).toISOString(),
+                    fresh: true
+                }
+            ];
+        }
+
+        // Fetch Alerts
+        async function fetchAlerts() {
+            return [
+                {
+                    id: 'alert-1',
+                    type: 'alerts',
+                    sport: 'NFL',
+                    title: 'Injury Update',
+                    status: 'Alert',
+                    data: {
+                        team: 'Titans',
+                        player: 'Derrick Henry',
+                        status: 'Questionable',
+                        impact: 'Starting RB'
+                    },
+                    timestamp: new Date(Date.now() - 1200000).toISOString(),
+                    fresh: false
+                }
+            ];
+        }
+
+        // Render Data Streams
+        function renderDataStreams() {
+            const dataGrid = document.getElementById('dataGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            // Filter streams
+            let filteredStreams = dataStreams;
+
+            if (currentType !== 'all') {
+                filteredStreams = filteredStreams.filter(stream => stream.type === currentType);
+            }
+
+            if (searchQuery) {
+                filteredStreams = filteredStreams.filter(stream =>
+                    stream.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    stream.sport.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+
+            // Show empty state if no streams
+            if (filteredStreams.length === 0) {
+                dataGrid.style.display = 'none';
+                emptyState.classList.add('active');
+                return;
+            }
+
+            emptyState.classList.remove('active');
+            dataGrid.style.display = 'grid';
+
+            // Render stream cards
+            dataGrid.innerHTML = filteredStreams.map(stream => {
+                const cardContent = generateCardContent(stream);
+                const sparkline = stream.trend ? generateSparkline(stream.trend) : '';
+
+                return `
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <div>
+                                <h3 class="data-card-title">${escapeHtml(stream.title)}</h3>
+                                <p class="data-card-meta">${escapeHtml(stream.sport)}</p>
+                            </div>
+                            <span class="data-card-badge">${escapeHtml(stream.status)}</span>
+                        </div>
+
+                        ${sparkline}
+
+                        <div class="data-card-content">
+                            ${cardContent}
+                        </div>
+
+                        <div class="data-card-footer">
+                            <div class="data-timestamp">
+                                <span class="freshness-indicator ${stream.fresh ? 'fresh' : 'stale'}"></span>
+                                ${formatTimestamp(stream.timestamp)}
+                            </div>
+                            <div class="data-actions">
+                                <button class="data-action-btn" onclick="viewDetails('${stream.id}')">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </button>
+                                <button class="data-action-btn" onclick="shareStream('${stream.id}')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Generate Card Content Based on Type
+        function generateCardContent(stream) {
+            const data = stream.data;
+
+            switch(stream.type) {
+                case 'games':
+                    return `
+                        <div class="data-stat">
+                            <span class="data-stat-label">${escapeHtml(data.awayTeam)}</span>
+                            <span class="data-stat-value">${data.awayScore}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">${escapeHtml(data.homeTeam)}</span>
+                            <span class="data-stat-value">${data.homeScore}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">Period</span>
+                            <span class="data-stat-value">${escapeHtml(data.inning || data.quarter)}</span>
+                        </div>
+                    `;
+
+                case 'stats':
+                    return Object.entries(data).map(([key, value]) => {
+                        const change = stream.changes && stream.changes[key];
+                        const changeClass = change && change.startsWith('+') ? 'positive' : 'negative';
+                        const changeHtml = change ? `<span class="data-stat-change ${changeClass}">${change}</span>` : '';
+
+                        return `
+                            <div class="data-stat">
+                                <span class="data-stat-label">${key.toUpperCase()}</span>
+                                <span class="data-stat-value">${escapeHtml(String(value))}${changeHtml}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                case 'standings':
+                    return Object.entries(data).map(([key, value]) => `
+                        <div class="data-stat">
+                            <span class="data-stat-label">${key}</span>
+                            <span class="data-stat-value">${escapeHtml(String(value))}</span>
+                        </div>
+                    `).join('');
+
+                case 'news':
+                    return `
+                        <div class="data-stat">
+                            <span class="data-stat-label">Source</span>
+                            <span class="data-stat-value">${escapeHtml(data.source)}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">Time</span>
+                            <span class="data-stat-value">${escapeHtml(data.time)}</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem;">
+                            ${escapeHtml(data.summary)}
+                        </p>
+                    `;
+
+                case 'alerts':
+                    return `
+                        <div class="data-stat">
+                            <span class="data-stat-label">Team</span>
+                            <span class="data-stat-value">${escapeHtml(data.team)}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">Player</span>
+                            <span class="data-stat-value">${escapeHtml(data.player)}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">Status</span>
+                            <span class="data-stat-value">${escapeHtml(data.status)}</span>
+                        </div>
+                        <div class="data-stat">
+                            <span class="data-stat-label">Impact</span>
+                            <span class="data-stat-value">${escapeHtml(data.impact)}</span>
+                        </div>
+                    `;
+
+                default:
+                    return '<p style="color: var(--text-tertiary);">No data available</p>';
+            }
+        }
+
+        // Generate Sparkline SVG
+        function generateSparkline(data) {
+            if (!data || data.length === 0) return '';
+
+            const width = 100;
+            const height = 40;
+            const padding = 2;
+
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
+
+            const points = data.map((value, index) => {
+                const x = (index / (data.length - 1)) * (width - padding * 2) + padding;
+                const y = height - padding - ((value - min) / range) * (height - padding * 2);
+                return `${x},${y}`;
+            }).join(' ');
+
+            return `
+                <div class="sparkline-container">
+                    <svg class="sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                        <polyline
+                            points="${points}"
+                            fill="none"
+                            stroke="var(--blaze-orange)"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </div>
+            `;
+        }
+
+        // Filter by Type
+        function filterByType(type) {
+            currentType = type;
+
+            // Update active tab
+            document.querySelectorAll('.data-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.data-tab[data-type="${type}"]`).classList.add('active');
+
+            renderDataStreams();
+            logActivity('Filter', `Filtered by type: ${type}`);
+        }
+
+        // Handle Search
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            renderDataStreams();
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            currentType = 'all';
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+
+            document.querySelectorAll('.data-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.data-tab[data-type="all"]').classList.add('active');
+
+            renderDataStreams();
+            logActivity('Filter', 'Cleared all filters');
+        }
+
+        // Toggle Auto Refresh
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            const btn = document.getElementById('autoRefreshBtn');
+
+            if (autoRefresh) {
+                btn.classList.add('active');
+                startAutoRefresh();
+                logActivity('Refresh', 'Auto-refresh enabled');
+            } else {
+                btn.classList.remove('active');
+                stopAutoRefresh();
+                logActivity('Refresh', 'Auto-refresh disabled');
+            }
+        }
+
+        // Start Auto Refresh
+        function startAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+
+            refreshInterval = setInterval(() => {
+                refreshData();
+            }, 30000); // 30 seconds
+        }
+
+        // Stop Auto Refresh
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        // Refresh Data
+        async function refreshData() {
+            logActivity('Refresh', 'Refreshing data streams...');
+            await loadInitialData();
+        }
+
+        // Retry Connection
+        function retryConnection() {
+            document.getElementById('errorContainer').classList.remove('active');
+            initializeConnection();
+            loadInitialData();
+        }
+
+        // Export Data
+        function exportData() {
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                timezone: 'America/Chicago',
+                streams: dataStreams,
+                filters: {
+                    type: currentType,
+                    search: searchQuery
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `blaze-live-data-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            logActivity('Export', `Exported ${dataStreams.length} data streams`);
+        }
+
+        // View Details
+        function viewDetails(streamId) {
+            const stream = dataStreams.find(s => s.id === streamId);
+            if (stream) {
+                window.location.href = `/stream/${streamId}`;
+            }
+        }
+
+        // Share Stream
+        function shareStream(streamId) {
+            const url = `${window.location.origin}/stream/${streamId}`;
+            navigator.clipboard.writeText(url).then(() => {
+                logActivity('Share', `Copied stream link: ${streamId}`);
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        // Log Activity
+        function logActivity(type, message) {
+            const timestamp = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'America/Chicago'
+            });
+
+            activityLog.unshift({ timestamp, type, message });
+
+            // Keep only last 50 items
+            if (activityLog.length > 50) {
+                activityLog = activityLog.slice(0, 50);
+            }
+
+            renderActivityLog();
+        }
+
+        // Render Activity Log
+        function renderActivityLog() {
+            const logItems = document.getElementById('activityLogItems');
+
+            logItems.innerHTML = activityLog.map(item => `
+                <div class="activity-log-item">
+                    <span class="activity-log-time">${item.timestamp}</span>
+                    <span class="activity-log-type">${escapeHtml(item.type)}</span>
+                    <span class="activity-log-message">${escapeHtml(item.message)}</span>
+                </div>
+            `).join('');
+        }
+
+        // Clear Activity Log
+        function clearActivityLog() {
+            activityLog = [];
+            renderActivityLog();
+        }
+
+        // Simulate Data Stream Updates
+        function simulateDataStream() {
+            setInterval(() => {
+                if (dataStreams.length > 0 && autoRefresh) {
+                    // Randomly update a stream
+                    const randomIndex = Math.floor(Math.random() * dataStreams.length);
+                    const stream = dataStreams[randomIndex];
+
+                    // Update timestamp
+                    stream.timestamp = new Date().toISOString();
+                    stream.fresh = true;
+
+                    // Update trend data
+                    if (stream.trend && stream.trend.length > 0) {
+                        const lastValue = stream.trend[stream.trend.length - 1];
+                        const change = (Math.random() - 0.5) * 2;
+                        stream.trend.push(Math.max(0, lastValue + change));
+                        if (stream.trend.length > 7) {
+                            stream.trend.shift();
+                        }
+                    }
+
+                    renderDataStreams();
+                    logActivity('Update', `Updated ${stream.title}`);
+                }
+            }, 5000); // Update every 5 seconds
+        }
+
+        // Format Timestamp
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) {
+                return 'Just now';
+            } else if (diff < 3600000) {
+                const mins = Math.floor(diff / 60000);
+                return `${mins} min${mins > 1 ? 's' : ''} ago`;
+            } else if (diff < 86400000) {
+                const hours = Math.floor(diff / 3600000);
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            } else {
+                return date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    timeZone: 'America/Chicago'
+                });
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

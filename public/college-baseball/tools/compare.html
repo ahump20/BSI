@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Comparison Tool | Blaze Sports Intel</title>
+    <meta name="description" content="Compare college baseball players side-by-side. Batting, pitching, and advanced statistics comparison for D1 players.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/bsi-logo-192.png">
+
+    <!-- BSI Design System -->
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bsi-midnight);
+            color: var(--bsi-cream);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--bsi-space-4) var(--bsi-space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-3);
+            text-decoration: none;
+            color: var(--bsi-cream);
+        }
+
+        .nav-logo img { height: 40px; }
+
+        .nav-links {
+            display: flex;
+            gap: var(--bsi-space-6);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--bsi-cream);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--bsi-burnt-orange); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* Header */
+        .page-header {
+            padding: 100px 0 var(--bsi-space-8);
+            background: linear-gradient(135deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%);
+            border-bottom: 2px solid var(--bsi-burnt-orange);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--bsi-space-6);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--bsi-space-2);
+            margin-bottom: var(--bsi-space-4);
+            font-size: 0.875rem;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        .breadcrumb a {
+            color: rgba(250, 248, 245, 0.6);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { color: var(--bsi-burnt-orange); }
+
+        .page-header h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .page-header p {
+            color: rgba(250, 248, 245, 0.7);
+        }
+
+        /* Main Content */
+        main {
+            padding: var(--bsi-space-8) 0;
+        }
+
+        /* Player Selection */
+        .player-selectors {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--bsi-space-6);
+            margin-bottom: var(--bsi-space-8);
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .player-selectors {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .player-selector {
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 12px;
+            padding: var(--bsi-space-5);
+        }
+
+        .selector-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: var(--bsi-space-3);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .player-search {
+            width: 100%;
+            padding: var(--bsi-space-3) var(--bsi-space-4);
+            background: var(--bsi-midnight);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 8px;
+            color: var(--bsi-cream);
+            font-size: 0.875rem;
+        }
+
+        .player-search::placeholder {
+            color: rgba(250, 248, 245, 0.4);
+        }
+
+        .player-search:focus {
+            outline: none;
+            border-color: var(--bsi-burnt-orange);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bsi-charcoal);
+            border: 1px solid rgba(191, 87, 0, 0.3);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 50;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result {
+            padding: var(--bsi-space-3) var(--bsi-space-4);
+            cursor: pointer;
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+            transition: background 0.15s;
+        }
+
+        .search-result:hover {
+            background: rgba(191, 87, 0, 0.1);
+        }
+
+        .search-result:last-child {
+            border-bottom: none;
+        }
+
+        .result-name {
+            font-weight: 500;
+        }
+
+        .result-meta {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        /* Selected Player Card */
+        .selected-player {
+            margin-top: var(--bsi-space-4);
+            padding: var(--bsi-space-4);
+            background: rgba(191, 87, 0, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .selected-player.active {
+            display: flex;
+            gap: var(--bsi-space-4);
+            align-items: center;
+        }
+
+        .selected-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--bsi-midnight);
+            flex-shrink: 0;
+        }
+
+        .selected-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .selected-info h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.125rem;
+        }
+
+        .selected-info p {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        .remove-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: rgba(250, 248, 245, 0.5);
+            cursor: pointer;
+            padding: var(--bsi-space-2);
+        }
+
+        .remove-btn:hover {
+            color: #ef4444;
+        }
+
+        /* VS Badge */
+        .vs-badge {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--bsi-burnt-orange);
+            text-align: center;
+            padding: var(--bsi-space-4);
+        }
+
+        @media (max-width: 768px) {
+            .vs-badge {
+                padding: var(--bsi-space-2);
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            display: none;
+        }
+
+        .comparison-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            color: var(--bsi-burnt-orange);
+            margin-bottom: var(--bsi-space-4);
+            padding-bottom: var(--bsi-space-2);
+            border-bottom: 1px solid rgba(191, 87, 0, 0.2);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--bsi-space-8);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: var(--bsi-space-3) var(--bsi-space-4);
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: var(--bsi-charcoal);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .comparison-table th:first-child {
+            text-align: left;
+            width: 30%;
+        }
+
+        .comparison-table td {
+            border-bottom: 1px solid rgba(191, 87, 0, 0.1);
+        }
+
+        .comparison-table td:first-child {
+            text-align: left;
+            color: rgba(250, 248, 245, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .stat-value.winner {
+            color: var(--bsi-burnt-orange);
+        }
+
+        .stat-value.better {
+            color: #4CAF50;
+        }
+
+        .stat-value.worse {
+            color: rgba(250, 248, 245, 0.5);
+        }
+
+        /* Visual Comparison Bars */
+        .bar-comparison {
+            margin-bottom: var(--bsi-space-6);
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: var(--bsi-space-4);
+            align-items: center;
+            margin-bottom: var(--bsi-space-3);
+        }
+
+        .bar-label {
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        .bar-wrapper {
+            height: 24px;
+            background: var(--bsi-charcoal);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-wrapper.left {
+            direction: rtl;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bsi-burnt-orange), var(--bsi-ember));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+        }
+
+        .bar-wrapper.left .bar-fill {
+            direction: ltr;
+            justify-content: flex-end;
+        }
+
+        .bar-value {
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--bsi-space-12);
+            background: var(--bsi-charcoal);
+            border-radius: 12px;
+        }
+
+        .empty-state h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: var(--bsi-space-2);
+        }
+
+        .empty-state p {
+            color: rgba(250, 248, 245, 0.6);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bsi-charcoal);
+            padding: var(--bsi-space-8) 0;
+            border-top: 1px solid rgba(191, 87, 0, 0.2);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: rgba(250, 248, 245, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <img src="/images/bsi-logo-nav.png" alt="BSI" onerror="this.style.display='none'">
+                <span class="font-display" style="font-size: 1.25rem; font-weight: 600;">BLAZE SPORTS INTEL</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/college-baseball/">College Baseball</a></li>
+                <li><a href="/college-baseball/players/">Players</a></li>
+                <li><a href="/college-baseball/tools/compare.html" class="active">Compare</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span>/</span>
+                <a href="/college-baseball/">College Baseball</a>
+                <span>/</span>
+                <span>Player Comparison</span>
+            </nav>
+
+            <h1>Player <span style="color: var(--bsi-burnt-orange);">Comparison</span> Tool</h1>
+            <p>Compare two college baseball players side-by-side with batting, pitching, and advanced statistics.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Player Selectors -->
+            <div class="player-selectors">
+                <div class="player-selector">
+                    <div class="selector-label">Player 1</div>
+                    <div class="search-wrapper">
+                        <input type="text" class="player-search" id="search1" placeholder="Search players...">
+                        <div class="search-results" id="results1"></div>
+                    </div>
+                    <div class="selected-player" id="selected1">
+                        <div class="selected-photo">
+                            <img id="photo1" src="" alt="">
+                        </div>
+                        <div class="selected-info">
+                            <h3 id="name1"></h3>
+                            <p id="meta1"></p>
+                        </div>
+                        <button class="remove-btn" onclick="clearPlayer(1)">&#10005;</button>
+                    </div>
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <div class="player-selector">
+                    <div class="selector-label">Player 2</div>
+                    <div class="search-wrapper">
+                        <input type="text" class="player-search" id="search2" placeholder="Search players...">
+                        <div class="search-results" id="results2"></div>
+                    </div>
+                    <div class="selected-player" id="selected2">
+                        <div class="selected-photo">
+                            <img id="photo2" src="" alt="">
+                        </div>
+                        <div class="selected-info">
+                            <h3 id="name2"></h3>
+                            <p id="meta2"></p>
+                        </div>
+                        <button class="remove-btn" onclick="clearPlayer(2)">&#10005;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Results -->
+            <div class="comparison-section" id="comparison">
+                <!-- Visual Bars -->
+                <h2 class="section-title">Head-to-Head Comparison</h2>
+                <div class="bar-comparison" id="bars-container"></div>
+
+                <!-- Stats Table -->
+                <h2 class="section-title">Detailed Statistics</h2>
+                <table class="comparison-table" id="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Statistic</th>
+                            <th id="header1">Player 1</th>
+                            <th id="header2">Player 2</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-body"></tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+                <h3>Select Two Players to Compare</h3>
+                <p>Use the search boxes above to find and select players for comparison.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-text">&copy; 2025 Blaze Sports Intel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/player-data.js"></script>
+    <script>
+        let player1 = null;
+        let player2 = null;
+        let searchTimeout = null;
+
+        // Sample players for search (will be replaced with API)
+        const samplePlayers = [
+            { id: '1', name: 'Jac Caglianone', team: 'Florida', position: '1B/P', conference: 'SEC', stats: { avg: .410, hr: 33, rbi: 90, ops: 1.420 }},
+            { id: '2', name: 'Charlie Condon', team: 'Georgia', position: 'OF', conference: 'SEC', stats: { avg: .433, hr: 37, rbi: 78, ops: 1.450 }},
+            { id: '3', name: 'Hagen Smith', team: 'Arkansas', position: 'LHP', conference: 'SEC', stats: { era: 1.82, wins: 14, so: 178, whip: 0.88 }},
+            { id: '4', name: 'Chase Burns', team: 'Wake Forest', position: 'RHP', conference: 'ACC', stats: { era: 2.15, wins: 12, so: 165, whip: 0.92 }},
+            { id: '5', name: 'Braden Montgomery', team: 'Texas A&M', position: 'OF', conference: 'SEC', stats: { avg: .372, hr: 28, rbi: 85, ops: 1.280 }},
+            { id: '6', name: 'Vance Honeycutt', team: 'North Carolina', position: 'OF', conference: 'ACC', stats: { avg: .345, hr: 25, rbi: 72, ops: 1.150 }},
+            { id: '7', name: 'Ryan Waldschmidt', team: 'Kentucky', position: 'OF', conference: 'SEC', stats: { avg: .388, hr: 18, rbi: 68, ops: 1.180 }},
+            { id: '8', name: 'JJ Wetherholt', team: 'West Virginia', position: '2B', conference: 'BIG12', stats: { avg: .418, hr: 12, rbi: 55, ops: 1.220 }},
+            { id: '9', name: 'Blake Burke', team: 'Tennessee', position: '1B', conference: 'SEC', stats: { avg: .362, hr: 30, rbi: 88, ops: 1.320 }},
+            { id: '10', name: 'Drew Beam', team: 'Tennessee', position: 'RHP', conference: 'SEC', stats: { era: 2.45, wins: 11, so: 142, whip: 1.05 }}
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupSearch(1);
+            setupSearch(2);
+            loadPlayersFromAPI();
+        });
+
+        let allPlayers = [...samplePlayers];
+
+        async function loadPlayersFromAPI() {
+            try {
+                const response = await fetch('/api/college-baseball/players?limit=500');
+                if (response.ok) {
+                    const data = await response.json();
+                    const apiPlayers = Array.isArray(data) ? data : (data.players || []);
+                    if (apiPlayers.length > 0) {
+                        allPlayers = apiPlayers.map(p => ({
+                            id: p.espn_id || p.id,
+                            name: p.name || `${p.first_name} ${p.last_name}`,
+                            team: p.team,
+                            position: p.position,
+                            conference: p.conference,
+                            headshot_url: p.headshot_url,
+                            stats: {
+                                avg: p.stats?.batting?.average || 0,
+                                hr: p.stats?.batting?.homeRuns || 0,
+                                rbi: p.stats?.batting?.rbi || 0,
+                                era: p.stats?.pitching?.era || 0,
+                                wins: p.stats?.pitching?.wins || 0,
+                                so: p.stats?.pitching?.strikeouts || 0
+                            }
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.log('Using sample data');
+            }
+        }
+
+        function setupSearch(num) {
+            const input = document.getElementById(`search${num}`);
+            const results = document.getElementById(`results${num}`);
+
+            input.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.toLowerCase();
+
+                if (query.length < 2) {
+                    results.classList.remove('active');
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    const matches = allPlayers.filter(p =>
+                        p.name.toLowerCase().includes(query) ||
+                        p.team.toLowerCase().includes(query)
+                    ).slice(0, 10);
+
+                    if (matches.length > 0) {
+                        results.innerHTML = matches.map(p => `
+                            <div class="search-result" onclick="selectPlayer(${num}, '${p.id}')">
+                                <div class="result-name">${p.name}</div>
+                                <div class="result-meta">${p.position} | ${p.team} (${p.conference})</div>
+                            </div>
+                        `).join('');
+                        results.classList.add('active');
+                    } else {
+                        results.classList.remove('active');
+                    }
+                }, 200);
+            });
+
+            input.addEventListener('blur', function() {
+                setTimeout(() => results.classList.remove('active'), 200);
+            });
+
+            input.addEventListener('focus', function() {
+                if (this.value.length >= 2) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+
+        function selectPlayer(num, id) {
+            const player = allPlayers.find(p => p.id == id);
+            if (!player) return;
+
+            if (num === 1) {
+                player1 = player;
+            } else {
+                player2 = player;
+            }
+
+            // Update UI
+            const selected = document.getElementById(`selected${num}`);
+            const photo = document.getElementById(`photo${num}`);
+            const name = document.getElementById(`name${num}`);
+            const meta = document.getElementById(`meta${num}`);
+            const search = document.getElementById(`search${num}`);
+            const results = document.getElementById(`results${num}`);
+
+            photo.src = player.headshot_url || `https://a.espncdn.com/i/headshots/college-baseball/players/full/${player.id}.png`;
+            photo.onerror = function() { this.src = 'https://a.espncdn.com/i/headshots/nophoto.png'; };
+            name.textContent = player.name;
+            meta.textContent = `${player.position} | ${player.team}`;
+
+            selected.classList.add('active');
+            search.value = '';
+            results.classList.remove('active');
+
+            updateComparison();
+        }
+
+        function clearPlayer(num) {
+            if (num === 1) {
+                player1 = null;
+            } else {
+                player2 = null;
+            }
+
+            document.getElementById(`selected${num}`).classList.remove('active');
+            updateComparison();
+        }
+
+        function updateComparison() {
+            const comparison = document.getElementById('comparison');
+            const emptyState = document.getElementById('empty-state');
+
+            if (!player1 || !player2) {
+                comparison.classList.remove('active');
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            comparison.classList.add('active');
+
+            // Update headers
+            document.getElementById('header1').textContent = player1.name;
+            document.getElementById('header2').textContent = player2.name;
+
+            // Determine if pitchers or batters
+            const isPitcher1 = player1.position.includes('P') || player1.position.includes('HP');
+            const isPitcher2 = player2.position.includes('P') || player2.position.includes('HP');
+
+            let stats = [];
+            let bars = [];
+
+            if (isPitcher1 || isPitcher2) {
+                // Pitching comparison
+                stats = [
+                    { label: 'ERA', key: 'era', lower: true },
+                    { label: 'Wins', key: 'wins', lower: false },
+                    { label: 'Strikeouts', key: 'so', lower: false },
+                    { label: 'WHIP', key: 'whip', lower: true }
+                ];
+                bars = [
+                    { label: 'ERA', key: 'era', max: 5, lower: true },
+                    { label: 'K', key: 'so', max: 200, lower: false },
+                    { label: 'W', key: 'wins', max: 15, lower: false }
+                ];
+            } else {
+                // Batting comparison
+                stats = [
+                    { label: 'Batting Average', key: 'avg', lower: false, format: 'avg' },
+                    { label: 'Home Runs', key: 'hr', lower: false },
+                    { label: 'RBI', key: 'rbi', lower: false },
+                    { label: 'OPS', key: 'ops', lower: false, format: 'avg' }
+                ];
+                bars = [
+                    { label: 'AVG', key: 'avg', max: 0.5, lower: false },
+                    { label: 'HR', key: 'hr', max: 40, lower: false },
+                    { label: 'RBI', key: 'rbi', max: 100, lower: false }
+                ];
+            }
+
+            // Render stats table
+            const tbody = document.getElementById('stats-body');
+            tbody.innerHTML = stats.map(stat => {
+                const val1 = player1.stats[stat.key] || 0;
+                const val2 = player2.stats[stat.key] || 0;
+
+                let class1 = '';
+                let class2 = '';
+
+                if (stat.lower) {
+                    if (val1 < val2) class1 = 'better';
+                    else if (val2 < val1) class2 = 'better';
+                } else {
+                    if (val1 > val2) class1 = 'better';
+                    else if (val2 > val1) class2 = 'better';
+                }
+
+                const format = stat.format === 'avg' ? v => v.toFixed(3) : v => v;
+
+                return `
+                    <tr>
+                        <td>${stat.label}</td>
+                        <td><span class="stat-value ${class1}">${format(val1)}</span></td>
+                        <td><span class="stat-value ${class2}">${format(val2)}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Render visual bars
+            const barsContainer = document.getElementById('bars-container');
+            barsContainer.innerHTML = bars.map(bar => {
+                const val1 = player1.stats[bar.key] || 0;
+                const val2 = player2.stats[bar.key] || 0;
+
+                const pct1 = Math.min((val1 / bar.max) * 100, 100);
+                const pct2 = Math.min((val2 / bar.max) * 100, 100);
+
+                const display1 = bar.key === 'avg' ? val1.toFixed(3) : val1;
+                const display2 = bar.key === 'avg' ? val2.toFixed(3) : val2;
+
+                return `
+                    <div class="bar-row">
+                        <div class="bar-wrapper left">
+                            <div class="bar-fill" style="width: ${pct1}%">
+                                <span class="bar-value">${display1}</span>
+                            </div>
+                        </div>
+                        <div class="bar-label">${bar.label}</div>
+                        <div class="bar-wrapper">
+                            <div class="bar-fill" style="width: ${pct2}%">
+                                <span class="bar-value">${display2}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

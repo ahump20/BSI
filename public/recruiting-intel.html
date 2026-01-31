@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cross-sport recruiting aggregation—class rankings, transfer portal activity, and composite ratings across baseball and football.">
+  <title>Recruiting Intel | Blaze Sports Intel</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --bsi-burnt-orange: #BF5700;
+      --bsi-charcoal: #1A1A1A;
+      --bsi-midnight: #0D0D0D;
+      --bsi-warm-white: #FAFAFA;
+      --bsi-ember: #FF6B35;
+      --bsi-warning: #EAB308;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-ui: 'IBM Plex Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Source Serif 4', Georgia, serif; color: var(--bsi-warm-white); background: var(--bsi-midnight); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(191, 87, 0, 0.2); }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-ui); font-weight: 600; font-size: 1.125rem; }
+    .nav-logo:hover { color: var(--bsi-burnt-orange); }
+    .nav-logo img { height: 36px; }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-link { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); }
+    .nav-link:hover, .nav-link.active { color: var(--bsi-burnt-orange); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    
+    .hero { padding: calc(80px + 4rem) 1.5rem 3rem; background: linear-gradient(180deg, var(--bsi-charcoal) 0%, var(--bsi-midnight) 100%); text-align: center; }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8125rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bsi-warning); padding: 0.25rem 0.75rem; background: rgba(234, 179, 8, 0.1); border-radius: 4px; margin-bottom: 1rem; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.15; margin-bottom: 1rem; }
+    .hero-title .accent { color: var(--bsi-burnt-orange); }
+    .hero-subtitle { font-size: 1.0625rem; color: rgba(250, 250, 250, 0.8); }
+    
+    .portal-section { padding: 3rem 1.5rem; background: var(--bsi-charcoal); border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+    .portal-inner { max-width: 1000px; margin: 0 auto; }
+    .portal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .portal-title { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; color: var(--bsi-burnt-orange); }
+    .portal-filters { display: flex; gap: 0.5rem; }
+    .portal-filter { padding: 0.375rem 0.75rem; font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.7); background: transparent; border: 1px solid rgba(191, 87, 0, 0.2); border-radius: 4px; cursor: pointer; }
+    .portal-filter:hover, .portal-filter.active { color: var(--bsi-burnt-orange); border-color: var(--bsi-burnt-orange); }
+    
+    .portal-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .portal-item { display: grid; grid-template-columns: 1fr 2fr 1fr 1fr; gap: 1rem; align-items: center; padding: 1rem 1.25rem; background: var(--bsi-midnight); border: 1px solid rgba(191, 87, 0, 0.1); border-radius: 8px; }
+    @media (max-width: 700px) { .portal-item { grid-template-columns: 1fr 1fr; } }
+    .portal-player { font-family: var(--font-ui); font-weight: 600; font-size: 0.9375rem; }
+    .portal-details { font-size: 0.875rem; color: rgba(250, 250, 250, 0.7); }
+    .portal-from, .portal-to { font-family: var(--font-mono); font-size: 0.8125rem; }
+    .portal-to { color: var(--bsi-burnt-orange); }
+    
+    .rankings-section { padding: 4rem 1.5rem; background: var(--bsi-midnight); }
+    .rankings-container { max-width: 1000px; margin: 0 auto; }
+    .rankings-title { font-family: var(--font-ui); font-size: 1.125rem; font-weight: 600; color: var(--bsi-burnt-orange); margin-bottom: 1.5rem; }
+    .rankings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .ranking-card { background: var(--bsi-charcoal); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; padding: 1.5rem; }
+    .ranking-card-title { font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(191, 87, 0, 0.15); }
+    .ranking-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .ranking-item { display: flex; align-items: center; gap: 0.75rem; }
+    .ranking-rank { font-family: var(--font-mono); font-size: 0.875rem; width: 1.5rem; color: var(--bsi-burnt-orange); }
+    .ranking-school { font-family: var(--font-ui); font-size: 0.875rem; flex: 1; }
+    .ranking-score { font-family: var(--font-mono); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.6); }
+    
+    .tools-nav { padding: 3rem 1.5rem; background: var(--bsi-charcoal); border-top: 1px solid rgba(191, 87, 0, 0.15); }
+    .tools-nav-inner { max-width: 1000px; margin: 0 auto; }
+    .tools-nav-title { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250, 250, 250, 0.5); text-align: center; margin-bottom: 1.5rem; }
+    .tools-nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .tools-nav-link { display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--bsi-midnight); border: 1px solid rgba(191, 87, 0, 0.15); border-radius: 8px; font-family: var(--font-ui); font-size: 0.875rem; font-weight: 500; color: rgba(250, 250, 250, 0.8); transition: all 0.2s ease; }
+    .tools-nav-link:hover { border-color: var(--bsi-burnt-orange); color: var(--bsi-burnt-orange); }
+    .tools-nav-link.current { border-color: var(--bsi-burnt-orange); background: rgba(191, 87, 0, 0.1); color: var(--bsi-burnt-orange); }
+    
+    .footer { padding: 3rem 1.5rem; background: var(--bsi-midnight); border-top: 1px solid rgba(191, 87, 0, 0.2); text-align: center; }
+    .footer-tagline { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: rgba(250, 250, 250, 0.6); margin-bottom: 0.75rem; }
+    .footer-tagline .accent { color: var(--bsi-burnt-orange); }
+    .footer-copy { font-family: var(--font-ui); font-size: 0.8125rem; color: rgba(250, 250, 250, 0.4); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo"><img src="/images/bsi-logo.png" alt="BSI"><span>Blaze Sports Intel</span></a>
+      <div class="nav-links">
+        <a href="/teams" class="nav-link">Teams</a>
+        <a href="/analytics" class="nav-link active">Analytics</a>
+        <a href="/coverage" class="nav-link">Coverage</a>
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/login" class="nav-link">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Beta</p>
+      <h1 class="hero-title">Recruiting <span class="accent">Intel</span></h1>
+      <p class="hero-subtitle">Cross-sport recruiting aggregation. Class rankings, transfer portal activity, and composite ratings across baseball and football.</p>
+    </div>
+  </section>
+
+  <section class="portal-section">
+    <div class="portal-inner">
+      <div class="portal-header">
+        <h2 class="portal-title">Transfer Portal Activity</h2>
+        <div class="portal-filters">
+          <button class="portal-filter active">Baseball</button>
+          <button class="portal-filter">Football</button>
+        </div>
+      </div>
+      <div class="portal-list">
+        <div class="portal-item">
+          <span class="portal-player">Dylan Crews</span>
+          <span class="portal-details">OF, .426 AVG, 22 HR</span>
+          <span class="portal-from">LSU</span>
+          <span class="portal-to">Declared for Draft</span>
+        </div>
+        <div class="portal-item">
+          <span class="portal-player">Jac Caglianone</span>
+          <span class="portal-details">1B/P, .411 AVG, 31 HR</span>
+          <span class="portal-from">Florida</span>
+          <span class="portal-to">Declared for Draft</span>
+        </div>
+        <div class="portal-item">
+          <span class="portal-player">Travis Bazzana</span>
+          <span class="portal-details">2B, .407 AVG, 28 HR</span>
+          <span class="portal-from">Oregon State</span>
+          <span class="portal-to">Declared for Draft</span>
+        </div>
+        <div class="portal-item">
+          <span class="portal-player">Charlie Condon</span>
+          <span class="portal-details">OF, .433 AVG, 37 HR</span>
+          <span class="portal-from">Georgia</span>
+          <span class="portal-to">Declared for Draft</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rankings-section">
+    <div class="rankings-container">
+      <h2 class="rankings-title">2025 Class Rankings</h2>
+      <div class="rankings-grid">
+        <div class="ranking-card">
+          <h3 class="ranking-card-title">College Baseball</h3>
+          <div class="ranking-list">
+            <div class="ranking-item"><span class="ranking-rank">1</span><span class="ranking-school">LSU</span><span class="ranking-score">312.4</span></div>
+            <div class="ranking-item"><span class="ranking-rank">2</span><span class="ranking-school">Texas</span><span class="ranking-score">298.7</span></div>
+            <div class="ranking-item"><span class="ranking-rank">3</span><span class="ranking-school">Florida</span><span class="ranking-score">287.2</span></div>
+            <div class="ranking-item"><span class="ranking-rank">4</span><span class="ranking-school">Vanderbilt</span><span class="ranking-score">279.8</span></div>
+            <div class="ranking-item"><span class="ranking-rank">5</span><span class="ranking-school">Arkansas</span><span class="ranking-score">271.3</span></div>
+          </div>
+        </div>
+        <div class="ranking-card">
+          <h3 class="ranking-card-title">College Football</h3>
+          <div class="ranking-list">
+            <div class="ranking-item"><span class="ranking-rank">1</span><span class="ranking-school">Georgia</span><span class="ranking-score">324.1</span></div>
+            <div class="ranking-item"><span class="ranking-rank">2</span><span class="ranking-school">Ohio State</span><span class="ranking-score">318.9</span></div>
+            <div class="ranking-item"><span class="ranking-rank">3</span><span class="ranking-school">Texas</span><span class="ranking-score">312.4</span></div>
+            <div class="ranking-item"><span class="ranking-rank">4</span><span class="ranking-school">Alabama</span><span class="ranking-score">308.7</span></div>
+            <div class="ranking-item"><span class="ranking-rank">5</span><span class="ranking-school">Oregon</span><span class="ranking-score">301.2</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools-nav">
+    <div class="tools-nav-inner">
+      <p class="tools-nav-title">Analytics Tools</p>
+      <div class="tools-nav-grid">
+        <a href="/teams" class="tools-nav-link">Teams</a>
+        <a href="/live-scoreboards" class="tools-nav-link">Live Scoreboards</a>
+        <a href="/predictive-models" class="tools-nav-link">Predictive Models</a>
+        <a href="/historical-research" class="tools-nav-link">Historical Research</a>
+        <a href="/recruiting-intel" class="tools-nav-link current">Recruiting Intel</a>
+        <a href="/push-alerts" class="tools-nav-link">Push Alerts</a>
+        <a href="/3d-visualizations" class="tools-nav-link">3D Visualizations</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+        <a href="/nil-valuation" class="tools-nav-link">NIL Valuation</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-tagline"><span class="accent">Born in Memphis.</span> Rooted in Texas soil. Blazing the path less beaten.</p>
+    <p class="footer-copy">2025 Blaze Sports Intel. Built on Cloudflare.</p>
+  </footer>
+  <script src="/js/bsi-components.js"></script>
+</body>
+</html>

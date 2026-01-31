@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Play free sports microgames from Blaze Sports Intel - Blaze Backyard Baseball and Blaze Blitz Football. Quick arcade action on any device.">
+  <meta name="theme-color" content="#BF5700">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Blaze Sports Games | Blaze Sports Intel">
+  <meta property="og:description" content="Free arcade sports games you can play in 60 seconds. Baseball batting challenges, 7-on-7 football, and more.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/games">
+
+  <title>Blaze Sports Games | Blaze Sports Intel</title>
+
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    /* Reset and base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blaze-burnt-orange: #BF5700;
+      --blaze-charcoal: #1A1A1A;
+      --blaze-ember: #FF6B35;
+      --blaze-cream: #FAF8F5;
+      --blaze-gold: #C9A227;
+      --blaze-midnight: #0D0D0D;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--blaze-midnight);
+      color: var(--blaze-cream);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, var(--blaze-charcoal) 0%, var(--blaze-midnight) 100%);
+      padding: 2rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .header-logo a {
+      color: var(--blaze-cream);
+      text-decoration: none;
+      font-size: 0.875rem;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .header-logo a:hover {
+      opacity: 1;
+    }
+
+    .header h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-subtitle {
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Main content */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Games grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Game card */
+    .game-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .game-preview {
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-preview-baseball {
+      background: linear-gradient(135deg, #228B22 0%, #1a6e1a 100%);
+    }
+
+    .game-preview-football {
+      background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+    }
+
+    .game-icon {
+      font-size: 5rem;
+      filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
+    }
+
+    .game-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--blaze-ember);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .game-content {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--blaze-cream);
+    }
+
+    .game-description {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+
+    .game-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .game-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .game-meta-icon {
+      font-size: 1rem;
+    }
+
+    .play-button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--blaze-burnt-orange), var(--blaze-ember));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .play-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(191, 87, 0, 0.4);
+    }
+
+    .play-button:active {
+      transform: translateY(0);
+    }
+
+    /* Coming soon card */
+    .game-card.coming-soon {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .game-card.coming-soon .play-button {
+      background: rgba(255, 255, 255, 0.1);
+      cursor: not-allowed;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--blaze-burnt-orange);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .footer a {
+      color: var(--blaze-burnt-orange);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: var(--blaze-ember);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .game-preview {
+        height: 160px;
+      }
+
+      .game-icon {
+        font-size: 4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo">
+      <a href="/">← Back to Blaze Sports Intel</a>
+    </div>
+    <h1>Blaze Sports Games</h1>
+    <p class="header-subtitle">Free arcade sports games you can play in 60 seconds. No ads, no accounts, just play.</p>
+  </header>
+
+  <main class="main">
+    <p class="section-title">Available Now</p>
+    <div class="games-grid">
+      <!-- Blaze Hot Dog Dash -->
+      <article class="game-card">
+        <div class="game-preview" style="background: linear-gradient(135deg, #8B4513 0%, #DEB887 100%);">
+          <span class="game-icon">🌭</span>
+          <span class="game-badge" style="background: var(--blaze-gold);">Easter Egg</span>
+        </div>
+        <div class="game-content">
+          <h2 class="game-title">Blaze Hot Dog Dash</h2>
+          <p class="game-description">Help Blaze the dachshund catch falling hot dogs! Watch her get progressively chonkier. Golden hot dogs = 5 pts. Power-ups included.</p>
+          <div class="game-meta">
+            <span class="game-meta-item">
+              <span class="game-meta-icon">⏱️</span>
+              45 seconds
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">📱</span>
+              Touch controls
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">🐕</span>
+              Chonk levels
+            </span>
+          </div>
+          <a href="https://blaze-hotdog-dash.pages.dev" class="play-button" target="_blank" rel="noopener">Play Now</a>
+        </div>
+      </article>
+
+      <!-- Blaze Backyard Baseball -->
+      <article class="game-card">
+        <div class="game-preview game-preview-baseball">
+          <span class="game-icon">⚾</span>
+          <span class="game-badge">New</span>
+        </div>
+        <div class="game-content">
+          <h2 class="game-title">Blaze Backyard Baseball</h2>
+          <p class="game-description">A 60-second batting challenge. Time your swings, rack up hits, and chase home runs. Simple to play, hard to master.</p>
+          <div class="game-meta">
+            <span class="game-meta-item">
+              <span class="game-meta-icon">⏱️</span>
+              60 seconds
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">📱</span>
+              Mobile ready
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">🏆</span>
+              Leaderboard
+            </span>
+          </div>
+          <a href="https://blaze-backyard-baseball.pages.dev" class="play-button" target="_blank" rel="noopener">Play Now</a>
+        </div>
+      </article>
+
+      <!-- Blaze Blitz Football -->
+      <article class="game-card">
+        <div class="game-preview game-preview-football">
+          <span class="game-icon">🏈</span>
+          <span class="game-badge">New</span>
+        </div>
+        <div class="game-content">
+          <h2 class="game-title">Blaze Blitz Football</h2>
+          <p class="game-description">7-on-7 arcade football action. Run, juke, and score touchdowns before time runs out. Use turbo wisely.</p>
+          <div class="game-meta">
+            <span class="game-meta-item">
+              <span class="game-meta-icon">⏱️</span>
+              90 seconds
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">📱</span>
+              Touch controls
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">🏆</span>
+              Leaderboard
+            </span>
+          </div>
+          <a href="https://blaze-blitz-football.pages.dev" class="play-button" target="_blank" rel="noopener">Play Now</a>
+        </div>
+      </article>
+
+      <!-- Coming Soon - Basketball -->
+      <article class="game-card coming-soon">
+        <div class="game-preview" style="background: linear-gradient(135deg, #FF8C00 0%, #CC5500 100%);">
+          <span class="game-icon">🏀</span>
+          <span class="game-badge">Coming Soon</span>
+        </div>
+        <div class="game-content">
+          <h2 class="game-title">Blaze Street Hoops</h2>
+          <p class="game-description">3-on-3 streetball action. Coming soon with trick shots, alley-oops, and backyard courts.</p>
+          <div class="game-meta">
+            <span class="game-meta-item">
+              <span class="game-meta-icon">⏱️</span>
+              TBD
+            </span>
+            <span class="game-meta-item">
+              <span class="game-meta-icon">🔧</span>
+              In development
+            </span>
+          </div>
+          <span class="play-button">Coming Soon</span>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>100% Original IP • No ads • <a href="/">Blaze Sports Intel</a></p>
+  </footer>
+</body>
+</html>

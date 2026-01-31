@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLB Team Profile | Blaze Sports Intel</title>
+    <link rel="stylesheet" href="/css/bsi-tokens.css">
+  <style>
+    :root {
+      --bg-dark: #0a0a0a;
+      --bg-card: rgba(26, 26, 26, 0.95);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --accent-orange: #ff6b00;
+      --accent-blue: #8B4513;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --success-green: #00cc66;
+      --error-red: #ff4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .team-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .team-logo {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .team-info h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+
+    .team-info .team-meta {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .quick-stat {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .quick-stat-label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .quick-stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+
+    /* Controls */
+    .controls {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-group label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .control-group input,
+    .control-group select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .control-group button {
+      background: var(--accent-orange);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .control-group button:hover {
+      background: #ff8533;
+      transform: translateY(-1px);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      position: relative;
+      bottom: -2px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      color: var(--accent-orange);
+      border-bottom-color: var(--accent-orange);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Roster Grid */
+    .roster-section {
+      margin-bottom: 30px;
+    }
+
+    .roster-section h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: var(--accent-orange);
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+
+    .player-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.2s;
+    }
+
+    .player-card:hover {
+      border-color: var(--accent-orange);
+      transform: translateY(-2px);
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .player-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--accent-orange);
+    }
+
+    .player-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .player-position {
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .player-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .player-detail {
+      font-size: 12px;
+    }
+
+    .player-detail-label {
+      color: var(--text-secondary);
+    }
+
+    .player-detail-value {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Stats Table */
+    .stats-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stats-container h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: var(--accent-orange);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-card-label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+
+    /* Schedule */
+    .schedule-game {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .game-date {
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .game-teams {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .game-team {
+      font-size: 14px;
+    }
+
+    .game-score {
+      font-size: 20px;
+      font-weight: bold;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .game-winner {
+      color: var(--success-green);
+    }
+
+    .game-status {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .game-status.final {
+      background: rgba(0, 204, 102, 0.2);
+      color: var(--success-green);
+    }
+
+    .game-status.live {
+      background: rgba(255, 107, 0, 0.2);
+      color: var(--accent-orange);
+      animation: pulse 2s infinite;
+    }
+
+    .game-status.preview {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Standings Table */
+    .standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .standings-table th {
+      background: rgba(255, 107, 0, 0.1);
+      color: var(--accent-orange);
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .standings-table td {
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .standings-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .standings-table .team-name {
+      font-weight: 600;
+    }
+
+    .standings-table .division-leader {
+      background: rgba(0, 204, 102, 0.05);
+    }
+
+    .standings-table .current-team {
+      background: rgba(255, 107, 0, 0.1);
+      font-weight: 600;
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--accent-orange);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error State */
+    .error {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid var(--error-red);
+      border-radius: 8px;
+      padding: 20px;
+      color: var(--error-red);
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .team-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .control-group {
+        width: 100%;
+      }
+
+      .tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .roster-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header with Team Info and Quick Stats -->
+    <div class="header" id="teamHeader">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading team data...</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <label for="teamIdInput">Team ID</label>
+        <input type="number" id="teamIdInput" placeholder="138" value="138">
+      </div>
+
+      <div class="control-group">
+        <label for="seasonSelect">Season</label>
+        <select id="seasonSelect">
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="rosterTypeSelect">Roster Type</label>
+        <select id="rosterTypeSelect">
+          <option value="40Man">40-Man Roster</option>
+          <option value="active">Active Roster</option>
+          <option value="fullSeason">Full Season</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>&nbsp;</label>
+        <button onclick="loadTeamData()">Load Team</button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('overview')">Overview</button>
+      <button class="tab" onclick="switchTab('roster')">Roster</button>
+      <button class="tab" onclick="switchTab('stats')">Statistics</button>
+      <button class="tab" onclick="switchTab('schedule')">Schedule</button>
+      <button class="tab" onclick="switchTab('standings')">Standings</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="overviewTab" class="tab-content active">
+      <div id="overviewContent"></div>
+    </div>
+
+    <div id="rosterTab" class="tab-content">
+      <div id="rosterContent"></div>
+    </div>
+
+    <div id="statsTab" class="tab-content">
+      <div id="statsContent"></div>
+    </div>
+
+    <div id="scheduleTab" class="tab-content">
+      <div id="scheduleContent"></div>
+    </div>
+
+    <div id="standingsTab" class="tab-content">
+      <div id="standingsContent"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentData = null;
+
+    // Load team data from API
+    async function loadTeamData() {
+      const teamId = document.getElementById('teamIdInput').value;
+      const season = document.getElementById('seasonSelect').value;
+      const rosterType = document.getElementById('rosterTypeSelect').value;
+
+      if (!teamId) {
+        alert('Please enter a team ID');
+        return;
+      }
+
+      // Show loading state
+      document.getElementById('teamHeader').innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading team data...</p>
+        </div>
+      `;
+
+      try {
+        const response = await fetch(
+          `/api/mlb/teams/${teamId}?season=${season}&include=roster,stats,standings&rosterType=${rosterType}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        currentData = data;
+
+        renderHeader(data);
+        renderOverview(data);
+        renderRoster(data);
+        renderStats(data);
+        renderSchedule(data);
+        renderStandings(data);
+      } catch (error) {
+        console.error('Error loading team data:', error);
+        document.getElementById('teamHeader').innerHTML = `
+          <div class="error">
+            <h3>Error Loading Team Data</h3>
+            <p>${error.message}</p>
+            <p>Please check the team ID and try again.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render team header
+    function renderHeader(data) {
+      const team = data.team;
+      const quickStats = data.quickStats || {};
+
+      const html = `
+        <div class="team-header">
+          <div class="team-logo">${team.abbreviation}</div>
+          <div class="team-info">
+            <h1>${team.name}</h1>
+            <div class="team-meta">
+              ${team.league.name} • ${team.division.name} Division • ${team.venue.name}, ${team.venue.location.city}
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-stats">
+          <div class="quick-stat">
+            <div class="quick-stat-label">Record</div>
+            <div class="quick-stat-value">${quickStats.record || 'N/A'}</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-label">Win %</div>
+            <div class="quick-stat-value">${quickStats.winPct || 'N/A'}</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-label">Games Back</div>
+            <div class="quick-stat-value">${quickStats.gamesBack || '-'}</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-label">Streak</div>
+            <div class="quick-stat-value">${quickStats.streak || 'N/A'}</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-label">Division Rank</div>
+            <div class="quick-stat-value">#${quickStats.divisionRank || 'N/A'}</div>
+          </div>
+          <div class="quick-stat">
+            <div class="quick-stat-label">Run Diff</div>
+            <div class="quick-stat-value">${quickStats.runDifferential > 0 ? '+' : ''}${quickStats.runDifferential || 'N/A'}</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('teamHeader').innerHTML = html;
+    }
+
+    // Render overview
+    function renderOverview(data) {
+      const team = data.team;
+      const stats = data.stats;
+
+      if (!stats) {
+        document.getElementById('overviewContent').innerHTML = `
+          <div class="error">No team statistics available for this season.</div>
+        `;
+        return;
+      }
+
+      const html = `
+        <div class="stats-container">
+          <h2>Team Overview - ${team.season}</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-label">Team Average</div>
+              <div class="stat-card-value">${stats.batting.avg}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Team ERA</div>
+              <div class="stat-card-value">${stats.pitching.era}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Home Runs</div>
+              <div class="stat-card-value">${stats.batting.homeRuns}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Runs Scored</div>
+              <div class="stat-card-value">${stats.batting.runs}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Strikeouts (Pitching)</div>
+              <div class="stat-card-value">${stats.pitching.strikeOuts}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Fielding %</div>
+              <div class="stat-card-value">${stats.fielding.fielding}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-container">
+          <h2>Venue Information</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-label">Stadium</div>
+              <div class="stat-card-value" style="font-size: 20px;">${team.venue.name}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Location</div>
+              <div class="stat-card-value" style="font-size: 20px;">${team.venue.location.city}, ${team.venue.location.stateAbbrev}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Timezone</div>
+              <div class="stat-card-value" style="font-size: 20px;">${team.venue.timeZone.tz}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('overviewContent').innerHTML = html;
+    }
+
+    // Render roster
+    function renderRoster(data) {
+      const roster = data.roster;
+
+      if (!roster) {
+        document.getElementById('rosterContent').innerHTML = `
+          <div class="error">No roster data available.</div>
+        `;
+        return;
+      }
+
+      const positionGroups = [
+        { title: 'Pitchers', players: roster.pitchers },
+        { title: 'Catchers', players: roster.catchers },
+        { title: 'Infielders', players: roster.infielders },
+        { title: 'Outfielders', players: roster.outfielders },
+      ];
+
+      const html = positionGroups.map(group => `
+        <div class="roster-section">
+          <h2>${group.title} (${group.players.length})</h2>
+          <div class="roster-grid">
+            ${group.players.map(player => `
+              <div class="player-card">
+                <div class="player-header">
+                  <div>
+                    <div class="player-name">${player.fullName}</div>
+                    <div class="player-position">${player.primaryPosition.name}</div>
+                  </div>
+                  <div class="player-number">${player.jerseyNumber || player.primaryNumber || '-'}</div>
+                </div>
+                <div class="player-details">
+                  <div class="player-detail">
+                    <span class="player-detail-label">Bats/Throws:</span>
+                    <span class="player-detail-value">${player.batSide.code}/${player.pitchHand?.code || 'R'}</span>
+                  </div>
+                  <div class="player-detail">
+                    <span class="player-detail-label">Age:</span>
+                    <span class="player-detail-value">${player.currentAge || 'N/A'}</span>
+                  </div>
+                  <div class="player-detail">
+                    <span class="player-detail-label">Height:</span>
+                    <span class="player-detail-value">${player.height || 'N/A'}</span>
+                  </div>
+                  <div class="player-detail">
+                    <span class="player-detail-label">Weight:</span>
+                    <span class="player-detail-value">${player.weight ? player.weight + ' lbs' : 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('rosterContent').innerHTML = html;
+    }
+
+    // Render stats
+    function renderStats(data) {
+      const stats = data.stats;
+
+      if (!stats) {
+        document.getElementById('statsContent').innerHTML = `
+          <div class="error">No team statistics available.</div>
+        `;
+        return;
+      }
+
+      const html = `
+        <div class="stats-container">
+          <h2>Batting Statistics</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-label">AVG</div>
+              <div class="stat-card-value">${stats.batting.avg}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">OBP</div>
+              <div class="stat-card-value">${stats.batting.obp}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">SLG</div>
+              <div class="stat-card-value">${stats.batting.slg}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">OPS</div>
+              <div class="stat-card-value">${stats.batting.ops}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Runs</div>
+              <div class="stat-card-value">${stats.batting.runs}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Hits</div>
+              <div class="stat-card-value">${stats.batting.hits}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Home Runs</div>
+              <div class="stat-card-value">${stats.batting.homeRuns}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">RBI</div>
+              <div class="stat-card-value">${stats.batting.rbi}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Stolen Bases</div>
+              <div class="stat-card-value">${stats.batting.stolenBases}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Walks</div>
+              <div class="stat-card-value">${stats.batting.baseOnBalls}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Strikeouts</div>
+              <div class="stat-card-value">${stats.batting.strikeOuts}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">BABIP</div>
+              <div class="stat-card-value">${stats.batting.babip}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-container">
+          <h2>Pitching Statistics</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-label">ERA</div>
+              <div class="stat-card-value">${stats.pitching.era}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">WHIP</div>
+              <div class="stat-card-value">${stats.pitching.whip}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Wins</div>
+              <div class="stat-card-value">${stats.pitching.wins}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Losses</div>
+              <div class="stat-card-value">${stats.pitching.losses}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Saves</div>
+              <div class="stat-card-value">${stats.pitching.saves}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Innings Pitched</div>
+              <div class="stat-card-value">${stats.pitching.inningsPitched}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Strikeouts</div>
+              <div class="stat-card-value">${stats.pitching.strikeOuts}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Walks</div>
+              <div class="stat-card-value">${stats.pitching.baseOnBalls}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Hits Allowed</div>
+              <div class="stat-card-value">${stats.pitching.hits}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">HR Allowed</div>
+              <div class="stat-card-value">${stats.pitching.homeRuns}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">BAA</div>
+              <div class="stat-card-value">${stats.pitching.avg}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Complete Games</div>
+              <div class="stat-card-value">${stats.pitching.completeGames}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-container">
+          <h2>Fielding Statistics</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-card-label">Fielding %</div>
+              <div class="stat-card-value">${stats.fielding.fielding}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Assists</div>
+              <div class="stat-card-value">${stats.fielding.assists}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Putouts</div>
+              <div class="stat-card-value">${stats.fielding.putOuts}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Errors</div>
+              <div class="stat-card-value">${stats.fielding.errors}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">SB Against</div>
+              <div class="stat-card-value">${stats.fielding.stolenBases}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">CS</div>
+              <div class="stat-card-value">${stats.fielding.caughtStealing}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('statsContent').innerHTML = html;
+    }
+
+    // Render schedule (load on demand)
+    async function renderSchedule(data) {
+      const teamId = document.getElementById('teamIdInput').value;
+      const season = document.getElementById('seasonSelect').value;
+
+      document.getElementById('scheduleContent').innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading schedule...</p>
+        </div>
+      `;
+
+      try {
+        const response = await fetch(
+          `/api/mlb/teams/${teamId}?season=${season}&include=schedule`
+        );
+
+        const scheduleData = await response.json();
+        const schedule = scheduleData.schedule;
+
+        if (!schedule || !schedule.games.length) {
+          document.getElementById('scheduleContent').innerHTML = `
+            <div class="error">No games found for this season.</div>
+          `;
+          return;
+        }
+
+        const html = `
+          <div class="stats-container">
+            <h2>Season Schedule (${schedule.totalGames} games)</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+              Record: ${schedule.record.wins}-${schedule.record.losses} (${schedule.record.winPct}) •
+              Home: ${schedule.record.homeRecord} •
+              Away: ${schedule.record.awayRecord} •
+              Last 10: ${schedule.record.lastTenRecord} •
+              Streak: ${schedule.record.streak}
+            </p>
+            <div>
+              ${schedule.games.map(game => {
+                const isHome = game.teams.home.team.id === parseInt(teamId);
+                const opponent = isHome ? game.teams.away : game.teams.home;
+                const teamScore = isHome ? game.teams.home.score : game.teams.away.score;
+                const oppScore = isHome ? game.teams.away.score : game.teams.home.score;
+                const isWinner = isHome ? game.teams.home.isWinner : game.teams.away.isWinner;
+
+                let statusClass = 'preview';
+                if (game.status.abstractGameState === 'Final') statusClass = 'final';
+                if (game.status.abstractGameState === 'Live') statusClass = 'live';
+
+                return `
+                  <div class="schedule-game">
+                    <div>
+                      <div class="game-date">${new Date(game.gameDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                      <div class="game-teams">
+                        <span>${isHome ? 'vs' : '@'}</span>
+                        <span class="game-team">${opponent.team.name}</span>
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                      ${game.status.abstractGameState === 'Final' ? `
+                        <div class="game-score ${isWinner ? 'game-winner' : ''}">${teamScore}-${oppScore}</div>
+                      ` : ''}
+                      <div class="game-status ${statusClass}">${game.status.detailedState}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+
+        document.getElementById('scheduleContent').innerHTML = html;
+      } catch (error) {
+        document.getElementById('scheduleContent').innerHTML = `
+          <div class="error">Failed to load schedule: ${error.message}</div>
+        `;
+      }
+    }
+
+    // Render standings
+    function renderStandings(data) {
+      const standings = data.standings;
+      const teamId = parseInt(document.getElementById('teamIdInput').value);
+
+      if (!standings) {
+        document.getElementById('standingsContent').innerHTML = `
+          <div class="error">No standings data available.</div>
+        `;
+        return;
+      }
+
+      const html = `
+        <div class="stats-container">
+          <h2>${standings.division.name} Standings</h2>
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>W</th>
+                <th>L</th>
+                <th>PCT</th>
+                <th>GB</th>
+                <th>Home</th>
+                <th>Away</th>
+                <th>STRK</th>
+                <th>L10</th>
+                <th>DIFF</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${standings.teamRecords.map(record => {
+                const isCurrentTeam = record.team.id === teamId;
+                const isDivisionLeader = record.divisionLeader;
+                const homeRecord = record.records.splitRecords.find(r => r.type === 'home');
+                const awayRecord = record.records.splitRecords.find(r => r.type === 'away');
+                const lastTen = record.records.splitRecords.find(r => r.type === 'lastTen');
+
+                return `
+                  <tr class="${isDivisionLeader ? 'division-leader' : ''} ${isCurrentTeam ? 'current-team' : ''}">
+                    <td>${record.divisionRank}</td>
+                    <td class="team-name">${record.team.name}</td>
+                    <td>${record.wins}</td>
+                    <td>${record.losses}</td>
+                    <td>${record.winningPercentage}</td>
+                    <td>${record.divisionGamesBack}</td>
+                    <td>${homeRecord ? `${homeRecord.wins}-${homeRecord.losses}` : '-'}</td>
+                    <td>${awayRecord ? `${awayRecord.wins}-${awayRecord.losses}` : '-'}</td>
+                    <td>${record.streak.streakCode}</td>
+                    <td>${lastTen ? `${lastTen.wins}-${lastTen.losses}` : '-'}</td>
+                    <td>${record.runsScored > record.runsAllowed ? '+' : ''}${record.runsScored - record.runsAllowed}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById('standingsContent').innerHTML = html;
+    }
+
+    // Switch tabs
+    function switchTab(tabName) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      // Add active class to selected tab
+      event.target.classList.add('active');
+      document.getElementById(`${tabName}Tab`).classList.add('active');
+    }
+
+    // Auto-load on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const teamId = params.get('id') || '138'; // Default to Cardinals
+
+      document.getElementById('teamIdInput').value = teamId;
+
+      loadTeamData();
+    });
+  </script>
+</body>
+</html>

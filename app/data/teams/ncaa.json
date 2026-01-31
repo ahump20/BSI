@@ -1,0 +1,106 @@
+[
+  {
+    "id": "tex-longhorns",
+    "name": "Texas Longhorns",
+    "league": "NCAA",
+    "stats": {
+      "wins": 12,
+      "losses": 2,
+      "rating": 0.857,
+      "championships": 4,
+      "conference": "SEC",
+      "ranking": 3
+    }
+  },
+  {
+    "id": "ala-crimson",
+    "name": "Alabama Crimson Tide",
+    "league": "NCAA",
+    "stats": {
+      "wins": 12,
+      "losses": 2,
+      "rating": 0.857,
+      "championships": 18,
+      "conference": "SEC",
+      "ranking": 5
+    }
+  },
+  {
+    "id": "osu-buckeyes",
+    "name": "Ohio State Buckeyes",
+    "league": "NCAA",
+    "stats": {
+      "wins": 11,
+      "losses": 2,
+      "rating": 0.846,
+      "championships": 8,
+      "conference": "Big Ten",
+      "ranking": 6
+    }
+  },
+  {
+    "id": "uga-bulldogs",
+    "name": "Georgia Bulldogs",
+    "league": "NCAA",
+    "stats": {
+      "wins": 13,
+      "losses": 1,
+      "rating": 0.929,
+      "championships": 3,
+      "conference": "SEC",
+      "ranking": 1
+    }
+  },
+  {
+    "id": "mich-wolverines",
+    "name": "Michigan Wolverines",
+    "league": "NCAA",
+    "stats": {
+      "wins": 15,
+      "losses": 0,
+      "rating": 1.0,
+      "championships": 12,
+      "conference": "Big Ten",
+      "ranking": 2
+    }
+  },
+  {
+    "id": "fsu-seminoles",
+    "name": "Florida State Seminoles",
+    "league": "NCAA",
+    "stats": {
+      "wins": 13,
+      "losses": 1,
+      "rating": 0.929,
+      "championships": 3,
+      "conference": "ACC",
+      "ranking": 4
+    }
+  },
+  {
+    "id": "ore-ducks",
+    "name": "Oregon Ducks",
+    "league": "NCAA",
+    "stats": {
+      "wins": 12,
+      "losses": 2,
+      "rating": 0.857,
+      "championships": 0,
+      "conference": "Big Ten",
+      "ranking": 7
+    }
+  },
+  {
+    "id": "lsu-tigers",
+    "name": "LSU Tigers",
+    "league": "NCAA",
+    "stats": {
+      "wins": 10,
+      "losses": 4,
+      "rating": 0.714,
+      "championships": 4,
+      "conference": "SEC",
+      "ranking": 12
+    }
+  }
+]
