@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
+
 import { HomeLiveScores } from '@/components/home';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SportIcon } from '@/components/ui/SportIcon';
@@ -54,9 +54,6 @@ export default function HomePage() {
       <OnboardingFlow />
       {/* Hero Section */}
       <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
-        {/* Three.js Ember Particles Background */}
-        <HeroSectionWrapper />
-
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-burnt-orange/20 text-burnt-orange mb-6">
             <span className="w-1.5 h-1.5 bg-burnt-orange rounded-full animate-pulse" />
