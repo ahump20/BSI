@@ -781,8 +781,8 @@ export default function TransferPortalHub() {
                 {/* Failure Banner — non-alarming, spec requirement */}
                 {fetchFailed && <FailureBanner onRetry={() => fetchEntries(false)} />}
 
-                {/* Entry Grid */}
-                {filteredEntries.length > 0 && (
+                {/* Entry Grid / Table */}
+                {filteredEntries.length > 0 && viewMode === 'cards' && (
                   <PortalCardGrid>
                     {filteredEntries.map((entry) => (
                       <PortalCard
@@ -794,6 +794,15 @@ export default function TransferPortalHub() {
                       />
                     ))}
                   </PortalCardGrid>
+                )}
+
+                {filteredEntries.length > 0 && viewMode === 'table' && (
+                  <PortalTable
+                    entries={sortedEntries}
+                    sort={sortField}
+                    order={sortOrder}
+                    onSort={handleSort}
+                  />
                 )}
 
                 {/* Empty State */}
