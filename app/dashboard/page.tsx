@@ -91,12 +91,24 @@ export default function DashboardPage() {
   });
   const [standings, setStandings] = useState<StandingsTeam[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(60);
+  const [coverageCounts, setCoverageCounts] = useState<Record<string, number>>({});
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
+
+  // Countdown timer for auto-refresh
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev <= 1 ? 60 : prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     async function fetchDashboardData() {
       setIsLoading(true);
+      setFetchError(null);
 
       try {
         const apiBase =
@@ -143,15 +155,35 @@ export default function DashboardPage() {
             todaysGames: games.length,
           }));
         }
-      } catch {
-        // Silently handle -- panels show their own error states
+        // Fetch coverage counts from live-scores for pie chart
+        try {
+          const liveRes = await fetch('/api/live-scores');
+          if (liveRes.ok) {
+            const liveData = await liveRes.json() as Record<string, unknown>;
+            const counts: Record<string, number> = {};
+            for (const [key, val] of Object.entries(liveData)) {
+              if (Array.isArray(val)) counts[key] = val.length;
+              else if (typeof val === 'object' && val && 'games' in (val as Record<string, unknown>)) {
+                counts[key] = ((val as Record<string, unknown>).games as unknown[])?.length ?? 0;
+              }
+            }
+            setCoverageCounts(counts);
+          }
+        } catch {
+          // Non-critical, keep hardcoded fallback
+        }
+      } catch (err) {
+        setFetchError(err instanceof Error ? err.message : 'Failed to load dashboard data');
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 60000);
+    const interval = setInterval(() => {
+      fetchDashboardData();
+      setCountdown(60);
+    }, 60000);
     return () => clearInterval(interval);
   }, [activeSport]);
 
@@ -163,10 +195,10 @@ export default function DashboardPage() {
   }));
 
   const sportDistributionData = [
-    { name: 'MLB', value: activeSport === 'mlb' ? 35 : 25, color: '#C41E3A' },
-    { name: 'NFL', value: activeSport === 'nfl' ? 35 : 25, color: '#013369' },
-    { name: 'NBA', value: activeSport === 'nba' ? 35 : 20, color: '#1D428A' },
-    { name: 'NCAA', value: 20, color: '#BF5700' },
+    { name: 'MLB', value: coverageCounts.mlb ?? coverageCounts.baseball ?? 25, color: '#C41E3A' },
+    { name: 'NFL', value: coverageCounts.nfl ?? coverageCounts.football ?? 25, color: '#013369' },
+    { name: 'NBA', value: coverageCounts.nba ?? coverageCounts.basketball ?? 20, color: '#1D428A' },
+    { name: 'NCAA', value: coverageCounts.ncaa ?? coverageCounts['college-baseball'] ?? 20, color: '#BF5700' },
   ];
 
   return (
@@ -214,6 +246,19 @@ export default function DashboardPage() {
             <SportTabsCompact defaultSport={activeSport} onSportChange={setActiveSport} />
           </div>
 
+          {/* Error Banner */}
+          {fetchError && (
+            <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-between">
+              <span className="text-red-400 text-sm">{fetchError}</span>
+              <button
+                onClick={() => { setFetchError(null); setIsLoading(true); }}
+                className="text-xs text-red-400 hover:text-red-300 underline"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {/* KPI Stats Row */}
           <ScrollReveal direction="up" delay={150}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -238,7 +283,7 @@ export default function DashboardPage() {
               <StatCard
                 label="Last Updated"
                 value={timezoneLoaded ? formatDateTime(new Date(stats.lastUpdated)).split(',')[1]?.trim() || 'Now' : 'Now'}
-                subtitle="auto-refresh"
+                subtitle={`refresh in ${countdown}s`}
                 icon={<RefreshIcon />}
               />
             </div>
@@ -250,7 +295,12 @@ export default function DashboardPage() {
               <LiveScoresPanel sport={activeSport} />
             </ScrollReveal>
             <ScrollReveal direction="right" delay={300}>
-              <StandingsTable sport={activeSport} limit={5} />
+              <StandingsTable
+                sport={activeSport}
+                limit={5}
+                groupBy={activeSport === 'nba' ? 'conference' : activeSport === 'nfl' ? 'conference' : 'none'}
+                showLogos={activeSport === 'nba'}
+              />
             </ScrollReveal>
           </div>
 
