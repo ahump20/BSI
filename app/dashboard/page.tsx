@@ -202,7 +202,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <main id="main-content" className="min-h-screen pt-16 md:pt-20">
+    <main id="main-content" className="min-h-screen pt-24 md:pt-28">
       <Section padding="lg" className="pt-8">
         <Container size="wide">
           {/* Header with Logo */}
@@ -234,6 +234,33 @@ export default function DashboardPage() {
                 )}
               </div>
             </div>
+          </ScrollReveal>
+
+          {/* BlazeCraft War Room Card */}
+          <ScrollReveal direction="up" delay={50}>
+            <a
+              href="https://blazecraft.app?source=bsi-dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass-elevated mb-8 p-5 flex items-center justify-between gap-4 group hover:border-[var(--bsi-gold)] transition-all block"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-lg bg-[var(--bsi-gold)]/20 flex items-center justify-center text-2xl">
+                  &#x2694;&#xFE0F;
+                </div>
+                <div>
+                  <h3 className="text-white font-display text-lg uppercase tracking-wide">
+                    Command Center
+                  </h3>
+                  <p className="text-white/50 text-sm">
+                    Open BlazeCraft &mdash; your ops war room, gamified
+                  </p>
+                </div>
+              </div>
+              <span className="text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all text-xl">
+                &rarr;
+              </span>
+            </a>
           </ScrollReveal>
 
           {/* Sport Tabs */}

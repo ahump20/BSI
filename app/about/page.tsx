@@ -702,6 +702,50 @@ export default function AboutPage() {
         </Container>
       </Section>
 
+      {/* See BSI In Action — Video Showcase */}
+      <Section className="py-20 bg-charcoal">
+        <Container>
+          <ScrollReveal>
+            <h2 className="text-3xl md:text-4xl font-display text-white text-center mb-4 uppercase tracking-wide">
+              See BSI In Action
+            </h2>
+            <p className="text-white/50 text-center mb-12 max-w-2xl mx-auto">
+              Real-time analytics across every game that matters.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Primary 16:9 video */}
+              <div className="md:col-span-2">
+                <div className="glass-default overflow-hidden aspect-video">
+                  <iframe
+                    src="https://customer-mpdvoybjqct2pzls.cloudflarestream.com/138facaf760c65e9b4efab3715ae6f50/iframe?poster=https%3A%2F%2Fcustomer-mpdvoybjqct2pzls.cloudflarestream.com%2F138facaf760c65e9b4efab3715ae6f50%2Fthumbnails%2Fthumbnail.jpg%3Fheight%3D600"
+                    className="w-full h-full border-0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    title="Blaze Sports Intel promotional video"
+                  />
+                </div>
+              </div>
+              {/* Square variant */}
+              <div>
+                <div className="glass-default overflow-hidden aspect-square">
+                  <iframe
+                    src="https://customer-mpdvoybjqct2pzls.cloudflarestream.com/138facaf760c65e9b4efab3715ae6f50/iframe?poster=https%3A%2F%2Fcustomer-mpdvoybjqct2pzls.cloudflarestream.com%2F138facaf760c65e9b4efab3715ae6f50%2Fthumbnails%2Fthumbnail.jpg%3Fheight%3D600"
+                    className="w-full h-full border-0"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    title="Blaze Sports Intel promo (square)"
+                  />
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </Container>
+      </Section>
+
       <Footer />
 
       {/* Custom scrollbar hiding */}

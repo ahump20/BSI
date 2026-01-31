@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { HeroVideo } from '@/components/hero/HeroVideo';
 
 const tiers = [
   {
@@ -86,10 +87,18 @@ export default function PricingPage() {
     <>
       <main id="main-content">
         {/* Hero */}
-        <Section padding="lg" className="pt-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
+        <Section padding="lg" className="pt-28 relative overflow-hidden">
+          {/* Ambient video background */}
+          <HeroVideo />
+          <div
+            className="absolute inset-0 z-[1]"
+            style={{
+              background:
+                'linear-gradient(to bottom, rgba(13,13,18,0.92) 0%, rgba(13,13,18,0.8) 50%, rgba(13,13,18,0.95) 100%)',
+            }}
+          />
 
-          <Container center>
+          <Container center className="relative z-10">
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
                 Simple, Transparent Pricing

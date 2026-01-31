@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Oswald, Playfair_Display, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
+import { Inter, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
@@ -7,24 +7,13 @@ import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
+import { EcosystemBar } from '@/components/shared/EcosystemBar';
 import { mainNavItems } from '@/lib/navigation';
 
-// Optimized font loading - eliminates render-blocking
+// 3-font system: Display (Bebas Neue) + Body (Inter) + Mono (JetBrains Mono)
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
-});
-
-const oswald = Oswald({
-  subsets: ['latin'],
-  variable: '--font-oswald',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
   display: 'swap',
 });
 
@@ -103,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${oswald.variable} ${playfair.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${inter.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
@@ -113,6 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="#main-content" className="skip-link">
               Skip to main content
             </a>
+            <EcosystemBar />
             <Navbar items={mainNavItems} />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>

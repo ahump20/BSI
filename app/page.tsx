@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { HeroSectionWrapper } from '@/components/hero/HeroSectionWrapper';
 import { HomeLiveScores } from '@/components/home';
+import { HeroVideo } from '@/components/hero/HeroVideo';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Real-Time Sports Analytics',
@@ -47,44 +47,53 @@ const features = [
 
 export default function HomePage() {
   return (
-    <main id="main-content" className="min-h-screen bg-midnight pt-16 md:pt-20">
-      {/* Hero Section */}
-      <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
-        {/* Three.js Ember Particles Background */}
-        <HeroSectionWrapper />
+    <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
+      {/* Hero Section — Cinematic Video */}
+      <section className="relative pt-8 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
+        {/* Video Background */}
+        <HeroVideo />
 
-        <div className="max-w-7xl mx-auto text-center relative z-10">
+        {/* Gradient overlay for text readability */}
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(13,13,18,0.85) 0%, rgba(13,13,18,0.4) 40%, rgba(13,13,18,0.7) 80%, rgba(13,13,18,1) 100%)',
+          }}
+        />
+
+        <div className="max-w-7xl mx-auto text-center relative z-10 w-full">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary/20 text-primary mb-6">
-            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-            Real-Time Sports Intelligence
+            <span className="live-indicator__dot" style={{ width: 6, height: 6 }} />
+            <span className="live-indicator__label">Real-Time Sports Intelligence</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-display text-white mb-6 tracking-tight uppercase">
             BORN TO BLAZE THE
             <br />
-            <span className="text-primary">PATH LESS BEATEN</span>
+            <span className="text-gradient-brand">PATH LESS BEATEN</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto">
-            Every game matters to someone. MLB, NFL, NBA, College Baseball, NCAA Football—real
+            Every game matters to someone. MLB, NFL, NBA, College Baseball, NCAA Football — real
             analytics, not just scores. Built by a fan who got tired of waiting.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard"
-              className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+              className="btn-primary px-8 py-4 text-lg rounded-lg"
             >
               Launch Dashboard
             </Link>
             <Link
               href="/pricing"
-              className="border border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors"
+              className="btn-secondary px-8 py-4 text-lg rounded-lg"
             >
               View Pricing
             </Link>
           </div>
           <div className="mt-10 flex items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-              LIVE
+            <span className="live-indicator">
+              <span className="live-indicator__dot" />
+              <span className="live-indicator__label">LIVE</span>
             </span>
             <span className="text-white/50 text-sm">Data streaming from official sources</span>
           </div>
@@ -101,11 +110,13 @@ export default function HomePage() {
       {/* Sports Coverage */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-charcoal">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">COVERAGE</h2>
+          <h2 className="text-3xl font-display text-white text-center mb-12 uppercase tracking-wide">
+            COVERAGE
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {sports.map((sport) => (
               <Link key={sport.name} href={sport.href}>
-                <div className="bg-midnight/50 p-6 rounded-lg border border-white/10 hover:border-primary transition-colors text-center h-full relative">
+                <div className="glass-default p-6 hover:border-primary transition-all text-center h-full relative">
                   {sport.comingSoon && (
                     <span className="absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold bg-gold/20 text-gold rounded-full">
                       Coming Soon
@@ -124,13 +135,12 @@ export default function HomePage() {
       {/* Features */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-white text-center mb-12">FEATURES</h2>
+          <h2 className="text-3xl font-display text-white text-center mb-12 uppercase tracking-wide">
+            FEATURES
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-charcoal/50 p-6 rounded-lg border border-white/10"
-              >
+              <div key={feature.title} className="glass-subtle p-6">
                 <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
                   <span className="text-2xl">{feature.icon}</span>
                 </div>
@@ -147,7 +157,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
-              <Link href="/" className="text-xl font-bold text-primary">
+              <Link href="/" className="text-xl font-display text-primary uppercase tracking-wider">
                 Blaze Sports Intel
               </Link>
               <p className="text-gray-500 text-sm mt-2">

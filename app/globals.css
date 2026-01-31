@@ -1,3 +1,5 @@
+@import '../lib/tokens/bsi-brand.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -118,10 +120,10 @@
   --bsi-grizzlies-blue: #5d76a9;
   --bsi-grizzlies-gold: #fdb927;
 
-  /* Typography */
-  --bsi-font-display: 'Bebas Neue', 'Oswald', system-ui, sans-serif;
-  --bsi-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --bsi-font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+  /* Typography (mirrors shared tokens, kept for backward compat) */
+  --bsi-font-display: var(--bsi-font-display, 'Bebas Neue', system-ui, sans-serif);
+  --bsi-font-body: var(--bsi-font-body, 'Inter', -apple-system, BlinkMacSystemFont, sans-serif);
+  --bsi-font-mono: var(--bsi-font-mono, 'JetBrains Mono', 'Fira Code', monospace);
 
   /* Motion Tokens */
   --bsi-duration-instant: 100ms;
@@ -667,8 +669,7 @@ body {
 /* Fonts */
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Oswald', Impact, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-display: 'Bebas Neue', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Cursor */
@@ -1167,25 +1168,26 @@ textarea:focus-visible,
    BSI GLASS MORPHISM UTILITIES
    ======================================== */
 
+/* Legacy glass aliases → 3-tier system from bsi-brand.css */
 .bsi-glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--glass-subtle-bg);
+  backdrop-filter: blur(var(--glass-subtle-blur));
+  -webkit-backdrop-filter: blur(var(--glass-subtle-blur));
+  border: 1px solid var(--glass-subtle-border);
 }
 
 .bsi-glass-raised {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--glass-default-bg);
+  backdrop-filter: blur(var(--glass-default-blur));
+  -webkit-backdrop-filter: blur(var(--glass-default-blur));
+  border: 1px solid var(--glass-default-border);
 }
 
 .bsi-glass-dark {
-  background: rgba(13, 13, 13, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--glass-elevated-bg);
+  backdrop-filter: blur(var(--glass-elevated-blur));
+  -webkit-backdrop-filter: blur(var(--glass-elevated-blur));
+  border: 1px solid var(--glass-elevated-border);
 }
 
 /* ========================================
