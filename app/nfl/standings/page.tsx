@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { OffSeasonBanner } from '@/components/ui/OffSeasonBanner';
 
 interface Team {
   name: string;
@@ -648,14 +649,7 @@ export default function NFLStandingsPage() {
         {/* Standings Tables */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">Off-Season</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  The 2025 NFL season begins in September. Standings shown are placeholder data.
-                </p>
-              </Card>
-            )}
+            {isOffSeason && <OffSeasonBanner sport="nfl" className="mb-6" />}
 
             {loading ? (
               <div className="space-y-6">

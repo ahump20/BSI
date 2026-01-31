@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
+import { OffSeasonBanner } from '@/components/ui/OffSeasonBanner';
 
 // Dynamic import to avoid SSR hydration issues with IntersectionObserver
 const ScrollReveal = dynamic(
@@ -555,14 +556,7 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {!dataFresh && (
-              <Card variant="default" padding="md" className="mb-6 bg-info/10 border-info/30">
-                <p className="text-info font-semibold">Placeholder Data</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  Live standings will populate once the NBA API responds with current data.
-                </p>
-              </Card>
-            )}
+            {!dataFresh && <OffSeasonBanner sport="nba" className="mb-6" />}
 
             {loading ? (
               <Card variant="default" padding="lg">

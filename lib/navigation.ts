@@ -115,10 +115,7 @@ export const secondaryNavConfig: Record<string, NavItem[]> = {
     { label: 'Teams', href: '/nba/teams' },
     { label: 'Players', href: '/nba/players' },
   ],
-  cfb: [
-    { label: 'Portal', href: '/cfb/transfer-portal' },
-    { label: 'Players', href: '/cfb/players' },
-  ],
+  cfb: [{ label: 'Portal', href: '/cfb/transfer-portal' }],
 };
 
 /**

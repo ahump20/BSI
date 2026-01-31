@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { OffSeasonBanner } from '@/components/ui/OffSeasonBanner';
 
 interface StatLeader {
   rank: number;
@@ -259,11 +260,17 @@ export default function NFLStatsPage() {
                 </button>
               </Card>
             ) : currentLeaders.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <p className="text-text-secondary">No data available for this stat.</p>
-                </div>
-              </Card>
+              <>
+                <OffSeasonBanner sport="nfl" className="mb-6" />
+                <Card variant="default" padding="lg">
+                  <div className="text-center py-8">
+                    <p className="text-text-secondary">No stat leaders available</p>
+                    <p className="text-text-tertiary text-sm mt-2">
+                      Check back when the 2026 NFL season begins
+                    </p>
+                  </div>
+                </Card>
+              </>
             ) : (
               <div className="space-y-3">
                 {currentLeaders.map((leader) => (

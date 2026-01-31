@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { OffSeasonBanner } from '@/components/ui/OffSeasonBanner';
 
 interface StatLeader {
   rank: number;
@@ -286,23 +287,17 @@ export default function MLBStatsPage() {
                 </button>
               </Card>
             ) : currentLeaders.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
-                  </svg>
-                  <p className="text-text-secondary">No stat leaders available</p>
-                  <p className="text-text-tertiary text-sm mt-2">
-                    Leaders will be available when the 2025 season begins
-                  </p>
-                </div>
-              </Card>
+              <>
+                <OffSeasonBanner sport="mlb" className="mb-6" />
+                <Card variant="default" padding="lg">
+                  <div className="text-center py-8">
+                    <p className="text-text-secondary">No stat leaders available</p>
+                    <p className="text-text-tertiary text-sm mt-2">
+                      Check back when the 2026 MLB season begins
+                    </p>
+                  </div>
+                </Card>
+              </>
             ) : (
               <ScrollReveal>
                 <Card variant="default" padding="lg">
