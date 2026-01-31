@@ -1924,3 +1924,82 @@ h2 {
     background: Canvas;
   }
 }
+
+/* ========================================================================== */
+/* LIGHT MODE OVERRIDES                                                        */
+/* ========================================================================== */
+
+html.light {
+  --color-midnight: #fafafa;
+  --color-charcoal: #f5f5f5;
+  --color-graphite: #e5e5e5;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #737373;
+  --color-text-muted: #a3a3a3;
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-default: rgba(0, 0, 0, 0.1);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --color-bg-primary: #fafafa;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #ebebeb;
+  --color-bg-elevated: #ffffff;
+}
+
+html.light body {
+  background-color: #fafafa;
+  color: #1a1a1a;
+}
+
+html.light .bg-midnight {
+  background-color: #fafafa;
+}
+
+html.light .bg-midnight\/80 {
+  background-color: rgba(250, 250, 250, 0.8);
+}
+
+html.light .bg-charcoal {
+  background-color: #f5f5f5;
+}
+
+html.light .bg-charcoal\/50 {
+  background-color: rgba(245, 245, 245, 0.5);
+}
+
+html.light .bg-charcoal-900\/50,
+html.light .bg-charcoal-900\/80 {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+html.light .bg-graphite {
+  background-color: #e5e5e5;
+}
+
+html.light .text-white {
+  color: #1a1a1a;
+}
+
+html.light .text-text-primary {
+  color: #1a1a1a;
+}
+
+html.light .text-text-secondary {
+  color: #525252;
+}
+
+html.light .text-text-tertiary {
+  color: #737373;
+}
+
+html.light .text-text-muted {
+  color: #a3a3a3;
+}
+
+html.light .border-border-subtle {
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+html.light .border-gray-700 {
+  border-color: rgba(0, 0, 0, 0.1);
+}

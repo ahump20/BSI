@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { SportIcon } from '@/components/ui/SportIcon';
 
 const conferences = [
   {
@@ -69,55 +68,81 @@ export default function NBAPage() {
           </Container>
         </Section>
 
-        {/* Quick Links */}
+        {/* Features Section */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal>
-              <h2 className="font-display text-2xl font-bold text-white mb-8">Quick Access</h2>
+              <div className="text-center mb-12">
+                <span className="kicker">All 30 Teams</span>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
+                  Complete NBA <span className="text-gradient-blaze">Coverage</span>
+                </h2>
+              </div>
             </ScrollReveal>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <ScrollReveal direction="up" delay={100}>
-                <Link href="/nba/standings" className="block">
-                  <Card variant="hover" padding="lg" className="h-full">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="text-burnt-orange">
-                        <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+            {/* Primary features — 3 large cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                {
+                  href: '/nba/scores',
+                  title: 'Scores',
+                  description: 'Live scores and game results from around the league.',
+                },
+                {
+                  href: '/nba/standings',
+                  title: 'Standings',
+                  description: 'Eastern & Western conference standings with playoff positioning.',
+                },
+                {
+                  href: '/nba/teams',
+                  title: 'Teams',
+                  description: 'Rosters, stats, and schedules for all 30 NBA teams.',
+                },
+              ].map((feature, index) => (
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <Link href={feature.href} className="block group">
+                    <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
+                      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
+                      <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                        {feature.description}
+                      </p>
+                      <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+                        View
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                       </span>
-                      <h3 className="text-xl font-display font-bold text-white">Standings</h3>
-                    </div>
-                    <p className="text-text-secondary text-sm">
-                      Eastern & Western conference standings with playoff positioning and win
-                      percentage.
-                    </p>
-                    <span className="text-burnt-orange text-sm font-semibold mt-4 block">
-                      View Standings →
-                    </span>
-                  </Card>
-                </Link>
-              </ScrollReveal>
-
-              <ScrollReveal direction="up" delay={150}>
-                <Link href="/nba/scores" className="block">
-                  <Card variant="hover" padding="lg" className="h-full">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="text-burnt-orange">
-                        <SportIcon icon="nba" size="lg" />
-                      </span>
-                      <h3 className="text-xl font-display font-bold text-white">Scores</h3>
-                    </div>
-                    <p className="text-text-secondary text-sm">
-                      Live scores and game results from around the league.
-                    </p>
-                    <span className="text-burnt-orange text-sm font-semibold mt-4 block">
-                      View Scores →
-                    </span>
-                  </Card>
-                </Link>
-              </ScrollReveal>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              ))}
             </div>
+
+            {/* Secondary features — compact chip bar */}
+            <ScrollReveal delay={300}>
+              <div className="flex flex-wrap gap-3 justify-center mt-8">
+                {[
+                  { label: 'Players', href: '/nba/players' },
+                  { label: 'Schedule', href: '/nba/schedule' },
+                  { label: 'Stats', href: '/nba/stats' },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="px-4 py-2 text-sm font-medium rounded-full border border-border-subtle text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 hover:bg-burnt-orange/10 transition-all"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </ScrollReveal>
           </Container>
         </Section>
 

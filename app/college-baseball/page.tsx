@@ -28,95 +28,32 @@ export const metadata: Metadata = {
   },
 };
 
-const features = [
+// Primary features — large cards at top of page
+const primaryFeatures = [
   {
-    href: '/baseball/rankings',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-      </svg>
-    ),
-    title: 'Top 25 Rankings',
-    description:
-      'D1Baseball weekly Top 25 rankings updated every Monday during the season. View complete rankings 1-25 with conference affiliations.',
-    badge: 'Updated Weekly',
-    badgeVariant: 'primary' as const,
-  },
-  {
-    href: '/college-baseball/games',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    ),
-    title: 'Live Games & Scores',
-    description:
-      'Real-time updates with complete box scores, play-by-play, and advanced stats for every NCAA Division I game.',
-    badge: 'Live Now',
-    badgeVariant: 'success' as const,
+    href: '/college-baseball/scores',
+    title: 'Live Scores',
+    description: 'Real-time box scores for every D1 game, updated every 30 seconds.',
     isLive: true,
   },
   {
     href: '/college-baseball/standings',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-        <line x1="3" y1="9" x2="21" y2="9" />
-        <line x1="9" y1="21" x2="9" y2="9" />
-      </svg>
-    ),
-    title: 'Conference Standings',
-    description:
-      'Complete conference and national standings with RPI, strength of schedule, and tournament projections.',
-    badge: 'Updated Daily',
-    badgeVariant: 'primary' as const,
+    title: 'Standings',
+    description: 'Conference standings with RPI, strength of schedule, and projections.',
   },
   {
-    href: '/college-baseball/teams',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    title: 'Team Pages & Rosters',
-    description:
-      'Complete team rosters with player positions, stats, and schedules. SEC, ACC, Big 12, Pac-12, and all D1 conferences tracked.',
-    badge: '300+ Teams',
-    badgeVariant: 'warning' as const,
+    href: '/college-baseball/rankings',
+    title: 'Rankings',
+    description: 'D1Baseball Top 25 updated weekly with full conference breakdowns.',
   },
-  {
-    href: '/college-baseball/players',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
-      </svg>
-    ),
-    title: 'Team Analytics',
-    description:
-      'Advanced metrics, player stats, recruiting rankings, and historical performance for all D1 programs.',
-    badge: 'Pro-Level Stats',
-    badgeVariant: 'warning' as const,
-  },
-  {
-    href: '/college-baseball/standings',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
-    title: 'Conference Dashboards',
-    description:
-      'Deep-dive team dashboards with rosters, transfers, draft prospects, schedules, and program history.',
-    badge: 'New',
-    badgeVariant: 'warning' as const,
-  },
+];
+
+// Secondary features — compact chip bar
+const secondaryFeatures = [
+  { label: 'Teams', href: '/college-baseball/teams' },
+  { label: 'Players', href: '/college-baseball/players' },
+  { label: 'Transfer Portal', href: '/college-baseball/transfer-portal' },
+  { label: 'Conferences', href: '/college-baseball/standings' },
 ];
 
 const top5Rankings = [
@@ -238,17 +175,13 @@ export default function CollegeBaseballPage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((feature, index) => (
+            {/* Primary features — 3 large cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {primaryFeatures.map((feature, index) => (
                 <ScrollReveal key={feature.title} delay={index * 100}>
                   <Link href={feature.href} className="block group">
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
-                      {/* Top accent line on hover */}
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
-                        {feature.icon}
-                      </div>
 
                       <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
                       <p className="text-text-tertiary text-sm leading-relaxed mb-4">
@@ -256,11 +189,7 @@ export default function CollegeBaseballPage() {
                       </p>
 
                       <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
-                        {feature.isLive ? (
-                          <LiveBadge />
-                        ) : (
-                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                        )}
+                        {feature.isLive ? <LiveBadge /> : <span />}
                         <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                           View
                           <svg
@@ -279,6 +208,21 @@ export default function CollegeBaseballPage() {
                 </ScrollReveal>
               ))}
             </div>
+
+            {/* Secondary features — compact chip bar */}
+            <ScrollReveal delay={300}>
+              <div className="flex flex-wrap gap-3 justify-center mt-8">
+                {secondaryFeatures.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="px-4 py-2 text-sm font-medium rounded-full border border-border-subtle text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 hover:bg-burnt-orange/10 transition-all"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </ScrollReveal>
           </Container>
         </Section>
 
@@ -294,7 +238,7 @@ export default function CollegeBaseballPage() {
                   <Badge variant="primary">D1Baseball</Badge>
                 </div>
                 <Link
-                  href="/baseball/rankings"
+                  href="/college-baseball/rankings"
                   className="text-burnt-orange text-sm font-semibold flex items-center gap-2 hover:gap-3 transition-all"
                 >
                   Full Rankings

@@ -85,7 +85,7 @@ export default function NotFound() {
                 never existed in the first place.
               </motion.p>
               <motion.div
-                className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+                className="flex flex-col sm:flex-row gap-4 justify-center mb-10"
                 variants={buttonContainerVariants}
               >
                 <motion.div variants={itemVariants}>
@@ -96,17 +96,45 @@ export default function NotFound() {
                   </Link>
                 </motion.div>
                 <motion.div variants={itemVariants}>
-                  <Link href="/transfer-portal">
+                  <Link href="/college-baseball/scores">
                     <Button variant="secondary" size="lg">
-                      Transfer Portal
+                      Live Scores
                     </Button>
                   </Link>
                 </motion.div>
               </motion.div>
-              <motion.div className="border-t border-border-subtle pt-6" variants={itemVariants}>
+
+              {/* Popular links */}
+              <motion.div
+                className="border-t border-border-subtle pt-6 mb-6"
+                variants={itemVariants}
+              >
+                <p className="text-xs text-text-muted uppercase tracking-wider mb-4">
+                  Popular Pages
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    { label: 'Transfer Portal', href: '/transfer-portal' },
+                    { label: 'College Baseball Scores', href: '/college-baseball/scores' },
+                    { label: 'MLB Standings', href: '/mlb' },
+                    { label: 'Rankings', href: '/college-baseball/rankings' },
+                    { label: 'Dashboard', href: '/dashboard' },
+                  ].map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="px-3 py-1.5 text-xs font-medium rounded-full border border-border-subtle text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 transition-all"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
                 <p className="text-sm text-text-muted italic">
                   Fun fact: A passed ball is scored against the catcher, not a wild pitch. Details
-                  matter. That's why we're here.
+                  matter. That&apos;s why we&apos;re here.
                 </p>
               </motion.div>
             </motion.div>

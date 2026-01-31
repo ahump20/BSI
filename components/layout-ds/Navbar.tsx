@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Container } from '../ui/Container';
 import { MobileMenu } from './MobileMenu';
 import { SearchBar } from './SearchBar';
+import { useTheme } from '@/lib/hooks/useTheme';
 
 export interface NavItem {
   label: string;
@@ -36,6 +38,7 @@ export interface NavbarProps {
  * Main site navigation with:
  * - Sticky positioning with blur on scroll
  * - Active route highlighting
+ * - Dropdown menus for grouped items
  * - Mobile menu toggle
  * - Smooth show/hide on scroll
  */
@@ -78,7 +81,14 @@ export function Navbar({
   // Check if link is active
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
+    if (href === '#') return false;
     return pathname.startsWith(href);
+  };
+
+  // Check if any child is active (for dropdown parents)
+  const hasActiveChild = (item: NavItem): boolean => {
+    if (!item.children) return false;
+    return item.children.some((child) => isActive(child.href));
   };
 
   return (
@@ -116,20 +126,27 @@ export function Navbar({
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
-              {items.map((item) => (
-                <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
-              ))}
+              {items.map((item) =>
+                item.children ? (
+                  <NavDropdown key={item.label} item={item} isParentActive={hasActiveChild(item)} />
+                ) : (
+                  <NavLink key={item.href} item={item} isActive={isActive(item.href)} />
+                )
+              )}
             </div>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden md:block">
+            <div className="hidden md:block relative">
               <SearchBar variant="navbar" placeholder="Search teams, players..." />
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-4">
-              {/* Desktop actions */}
-              <div className="hidden lg:flex items-center gap-3">{actions}</div>
+              {/* Theme toggle + Desktop actions */}
+              <div className="hidden lg:flex items-center gap-3">
+                <ThemeToggle />
+                {actions}
+              </div>
 
               {/* Mobile menu button */}
               <button
@@ -167,6 +184,87 @@ export function Navbar({
         actions={actions}
       />
     </>
+  );
+}
+
+// Dropdown menu for nav items with children
+function NavDropdown({ item, isParentActive }: { item: NavItem; isParentActive: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
+  };
+
+  // Close on click outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button
+        className={cn(
+          'group relative px-4 py-2 text-sm font-medium transition-all duration-200 flex items-center gap-1',
+          'hover:text-burnt-orange',
+          isParentActive ? 'text-burnt-orange' : 'text-text-secondary'
+        )}
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+      >
+        <span className="relative z-10">{item.label}</span>
+        <ChevronDownIcon
+          className={cn('w-3.5 h-3.5 transition-transform duration-200', isOpen && 'rotate-180')}
+        />
+        <span
+          className={cn(
+            'absolute inset-0 rounded-md bg-burnt-orange/0 transition-all duration-200',
+            'group-hover:bg-burnt-orange/10'
+          )}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.15 }}
+            className="absolute top-full left-0 mt-1 min-w-[200px] bg-midnight border border-border-subtle rounded-lg shadow-xl overflow-hidden z-dropdown"
+          >
+            {item.children?.map((child) => (
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-2.5 text-sm text-text-secondary hover:text-burnt-orange hover:bg-burnt-orange/10 transition-colors"
+              >
+                {child.label}
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -227,6 +325,76 @@ function SecondaryNavLink({ item, isActive }: { item: NavItem; isActive: boolean
         </span>
       )}
     </Link>
+  );
+}
+
+// Chevron down icon for dropdowns
+function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
+// Theme toggle — sun/moon icon
+function ThemeToggle() {
+  const { theme, toggle, mounted } = useTheme();
+
+  if (!mounted) return <div className="w-9 h-9" />;
+
+  return (
+    <button
+      onClick={toggle}
+      className="p-2 rounded-md text-text-secondary hover:text-burnt-orange hover:bg-burnt-orange/10 transition-colors"
+      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {theme === 'dark' ? (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      ) : (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </button>
   );
 }
 

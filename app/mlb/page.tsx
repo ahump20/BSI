@@ -11,67 +11,29 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 
-const mlbFeatures = [
+const mlbPrimaryFeatures = [
   {
     href: '/mlb/scores',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    ),
     title: 'Live Scores',
-    description:
-      'Real-time scores and game updates for all 30 MLB teams. Box scores, line scores, and play-by-play.',
-    badge: 'Live Now',
-    badgeVariant: 'success' as const,
+    description: 'Real-time scores and game updates for all 30 MLB teams.',
     isLive: true,
   },
   {
     href: '/mlb/standings',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-        <line x1="3" y1="9" x2="21" y2="9" />
-        <line x1="9" y1="21" x2="9" y2="9" />
-      </svg>
-    ),
-    title: 'Division Standings',
-    description:
-      'Complete AL and NL standings with win percentage, games back, run differential, and streak data.',
-    badge: 'Updated Daily',
-    badgeVariant: 'primary' as const,
+    title: 'Standings',
+    description: 'AL and NL standings with win percentage, games back, and streaks.',
   },
   {
     href: '/mlb/teams',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    title: 'Team Profiles',
-    description:
-      'Rosters, schedules, and statistics for all 30 MLB teams across the American and National Leagues.',
-    badge: '30 Teams',
-    badgeVariant: 'warning' as const,
+    title: 'Teams',
+    description: 'Rosters, schedules, and stats for all 30 MLB teams.',
   },
-  {
-    href: '/mlb/stats',
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
-      </svg>
-    ),
-    title: 'Statcast Analytics',
-    description:
-      'Advanced metrics including exit velocity, launch angle, sprint speed, and pitch movement data.',
-    badge: 'Pro-Level',
-    badgeVariant: 'warning' as const,
-  },
+];
+
+const mlbSecondaryFeatures = [
+  { label: 'Statcast Analytics', href: '/mlb/stats' },
+  { label: 'Players', href: '/mlb/players' },
+  { label: 'Schedule', href: '/mlb/schedule' },
 ];
 
 // Division data for future use in expanded team profiles
@@ -404,28 +366,19 @@ export default function MLBPage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {mlbFeatures.map((feature, index) => (
+            {/* Primary features — 3 large cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+              {mlbPrimaryFeatures.map((feature, index) => (
                 <ScrollReveal key={feature.title} delay={index * 100}>
                   <Link href={feature.href} className="block group">
                     <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                      <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
-                        {feature.icon}
-                      </div>
-
                       <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
                       <p className="text-text-tertiary text-sm leading-relaxed mb-4">
                         {feature.description}
                       </p>
-
                       <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
-                        {feature.isLive ? (
-                          <LiveBadge />
-                        ) : (
-                          <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
-                        )}
+                        {feature.isLive ? <LiveBadge /> : <span />}
                         <span className="text-burnt-orange text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
                           View
                           <svg
@@ -444,6 +397,21 @@ export default function MLBPage() {
                 </ScrollReveal>
               ))}
             </div>
+
+            {/* Secondary features — compact chip bar */}
+            <ScrollReveal delay={300}>
+              <div className="flex flex-wrap gap-3 justify-center mb-12">
+                {mlbSecondaryFeatures.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="px-4 py-2 text-sm font-medium rounded-full border border-border-subtle text-text-secondary hover:text-burnt-orange hover:border-burnt-orange/30 hover:bg-burnt-orange/10 transition-all"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </ScrollReveal>
           </Container>
         </Section>
 

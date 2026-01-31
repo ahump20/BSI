@@ -1,11 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from './StatusBadge';
 import { StarRating, EliteBadge } from './StarRating';
 import { PositionIconContainer, type Sport } from './PositionIcon';
 import type { PortalEntry } from '@/lib/portal/types';
+import {
+  BASEBALL_STATS,
+  getStatQuality,
+  getQualityColor,
+  getQualityLabel,
+} from '@/lib/stat-definitions';
 
 // Re-export PortalEntry for backwards compatibility
 export type { PortalEntry } from '@/lib/portal/types';
@@ -50,20 +57,54 @@ function TransferArrow() {
   );
 }
 
-// Stat display
+// Stat display with quality indicator and tooltip
 function StatDisplay({
   label,
   value,
+  numericValue,
   mono = true,
 }: {
   label: string;
   value: string | number;
+  /** Raw numeric value for quality assessment (e.g. 2.87 for ERA) */
+  numericValue?: number;
   mono?: boolean;
 }) {
+  const [showTip, setShowTip] = useState(false);
+  const def = BASEBALL_STATS[label];
+  const quality = numericValue !== undefined && def ? getStatQuality(label, numericValue) : null;
+
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-text-muted">{label}</span>
+    <div className="flex items-center gap-1 relative">
+      <span
+        className="text-text-muted cursor-help flex items-center gap-0.5"
+        onMouseEnter={() => setShowTip(true)}
+        onMouseLeave={() => setShowTip(false)}
+        onTouchStart={() => setShowTip((p) => !p)}
+      >
+        {label}
+        {def && (
+          <svg className="w-2.5 h-2.5 text-text-muted/50" viewBox="0 0 16 16" fill="currentColor">
+            <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
+            <text x="8" y="11.5" textAnchor="middle" fontSize="9" fill="currentColor">
+              ?
+            </text>
+          </svg>
+        )}
+      </span>
       <span className={cn('text-text-primary font-medium', mono && 'font-mono')}>{value}</span>
+      {quality && (
+        <span className={cn('text-[9px] font-semibold uppercase', getQualityColor(quality))}>
+          {getQualityLabel(quality)}
+        </span>
+      )}
+      {/* Tooltip */}
+      {showTip && def && (
+        <div className="absolute bottom-full left-0 mb-2 w-48 p-2 rounded-lg bg-midnight border border-border-subtle shadow-xl z-50 text-xs">
+          <p className="font-semibold text-text-primary mb-1">{def.name}</p>
+          <p className="text-text-tertiary leading-relaxed">{def.description}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -166,7 +207,11 @@ export function PortalCard({
                 {isPitcher ? (
                   <>
                     {entry.baseball_stats.era !== undefined && (
-                      <StatDisplay label="ERA" value={entry.baseball_stats.era.toFixed(2)} />
+                      <StatDisplay
+                        label="ERA"
+                        value={entry.baseball_stats.era.toFixed(2)}
+                        numericValue={entry.baseball_stats.era}
+                      />
                     )}
                     {entry.baseball_stats.wins !== undefined &&
                       entry.baseball_stats.losses !== undefined && (
@@ -182,13 +227,25 @@ export function PortalCard({
                 ) : (
                   <>
                     {entry.baseball_stats.avg !== undefined && (
-                      <StatDisplay label="AVG" value={entry.baseball_stats.avg.toFixed(3)} />
+                      <StatDisplay
+                        label="AVG"
+                        value={entry.baseball_stats.avg.toFixed(3)}
+                        numericValue={entry.baseball_stats.avg}
+                      />
                     )}
                     {entry.baseball_stats.hr !== undefined && (
-                      <StatDisplay label="HR" value={entry.baseball_stats.hr} />
+                      <StatDisplay
+                        label="HR"
+                        value={entry.baseball_stats.hr}
+                        numericValue={entry.baseball_stats.hr}
+                      />
                     )}
                     {entry.baseball_stats.rbi !== undefined && (
-                      <StatDisplay label="RBI" value={entry.baseball_stats.rbi} />
+                      <StatDisplay
+                        label="RBI"
+                        value={entry.baseball_stats.rbi}
+                        numericValue={entry.baseball_stats.rbi}
+                      />
                     )}
                   </>
                 )}

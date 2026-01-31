@@ -128,6 +128,19 @@ export function Footer({
           </div>
         </div>
 
+        {/* Data transparency callout */}
+        <div className="py-4 text-center">
+          <p className="text-xs text-text-muted">
+            All data sourced from official APIs.{' '}
+            <Link
+              href="/methodology"
+              className="text-burnt-orange/70 hover:text-burnt-orange transition-colors"
+            >
+              See our methodology &rarr;
+            </Link>
+          </p>
+        </div>
+
         <Divider variant="subtle" spacing="none" />
 
         {/* Bottom bar */}
@@ -182,6 +195,7 @@ const defaultSections: FooterSection[] = [
     title: 'Company',
     links: [
       { label: 'About', href: '/about' },
+      { label: 'Methodology', href: '/methodology' },
       { label: 'Contact', href: '/contact' },
       { label: 'Blog', href: '/blog' },
     ],
