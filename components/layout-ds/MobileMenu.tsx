@@ -128,14 +128,13 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
     return pathname.startsWith(href);
   };
 
+  if (!isOpen) return null;
+
   return (
     <>
       {/* Backdrop */}
       <div
-        className={cn(
-          'fixed inset-0 bg-midnight/80 backdrop-blur-sm z-modal transition-opacity duration-300',
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        )}
+        className="fixed inset-0 bg-midnight/80 backdrop-blur-sm z-modal animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -151,8 +150,7 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
         className={cn(
           'fixed top-0 right-0 h-full w-full max-w-sm bg-charcoal z-modal',
           'border-l border-border-subtle shadow-2xl',
-          'transition-transform duration-300 ease-out',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          'animate-slide-in-right'
         )}
       >
         {/* Header */}
