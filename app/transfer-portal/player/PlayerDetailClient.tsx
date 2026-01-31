@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -113,7 +113,11 @@ function teamSlug(name: string): string {
 
 export function PlayerDetailClient() {
   const searchParams = useSearchParams();
-  const playerId = searchParams.get('id');
+  const pathname = usePathname();
+  // Support both /transfer-portal/player?id=X and /transfer-portal/X (via 200 rewrite)
+  const pathSegment = pathname.split('/').filter(Boolean).pop();
+  const playerId =
+    searchParams.get('id') || (pathSegment !== 'player' ? pathSegment : null) || null;
 
   const [player, setPlayer] = useState<PortalEntry | null>(null);
   const [changes, setChanges] = useState<ChangeEvent[]>([]);

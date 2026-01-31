@@ -45,7 +45,7 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 # ============================================
 # SPA Fallbacks for Dynamic Routes
 # ============================================
-/transfer-portal/:playerId /transfer-portal/player?id=:playerId 301
+/transfer-portal/* /transfer-portal/player 200
 
 # ============================================
 # Static Asset Rewrites
