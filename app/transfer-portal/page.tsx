@@ -3,13 +3,12 @@
 /**
  * BSI Transfer Portal - Unified Hub
  *
- * THE flagship feature of Blaze Sports Intel.
- * Premium transfer portal tracking for College Baseball and CFB.
- *
- * Design: Dark, cinematic, data-dense. No visual noise—pure intel.
+ * Phase 1 complete: D1-backed data, freshness indicator,
+ * 30s auto-refresh with delta fetches, recent changes strip,
+ * failure banners. Zero placeholder strings.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -24,191 +23,11 @@ import {
   type FilterState,
 } from '@/components/portal';
 import { Footer } from '@/components/layout-ds/Footer';
-import type { PortalSport } from '@/lib/portal/types';
-import { formatPortalDate, computePortalStats, getCurrentPortalWindow } from '@/lib/portal/utils';
+import type { PortalSport, PortalChangeEvent, PortalFreshnessResponse } from '@/lib/portal/types';
+import { formatPortalDate, formatTimeAgo, computePortalStats, getCurrentPortalWindow } from '@/lib/portal/utils';
 
-// ============================================================================
-// Fallback Data - Shown when API unavailable or during initial load
-// ============================================================================
-
-const FALLBACK_BASEBALL: PortalEntry[] = [
-  {
-    id: 'bb-2025-001',
-    player_name: 'Jake Wilson',
-    school_from: 'Texas A&M',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    sport: 'baseball',
-    engagement_score: 95,
-    verified: true,
-    source: 'd1baseball.com',
-    baseball_stats: { era: 2.87, wins: 8, losses: 2, strikeouts: 94, innings: 88.2 },
-    created_at: '2025-12-10T10:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-  {
-    id: 'bb-2025-002',
-    player_name: 'Marcus Johnson',
-    school_from: 'Florida',
-    school_to: 'LSU',
-    position: 'SS',
-    conference: 'SEC',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    commitment_date: '2025-12-22',
-    sport: 'baseball',
-    engagement_score: 88,
-    verified: true,
-    source: 'd1baseball.com',
-    baseball_stats: { avg: 0.312, hr: 14, rbi: 52, sb: 18 },
-    created_at: '2025-12-09T14:00:00Z',
-    updated_at: '2025-12-22T16:00:00Z',
-  },
-  {
-    id: 'bb-2025-003',
-    player_name: 'Tyler Roberts',
-    school_from: 'Oregon State',
-    school_to: null,
-    position: 'OF',
-    conference: 'Pac-12',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-12-11',
-    sport: 'baseball',
-    engagement_score: 72,
-    verified: true,
-    source: 'ncaa.com',
-    baseball_stats: { avg: 0.289, hr: 8, rbi: 38, sb: 12 },
-    created_at: '2025-12-11T09:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-  {
-    id: 'bb-2025-004',
-    player_name: 'Chris Martinez',
-    school_from: 'Miami',
-    school_to: 'Texas',
-    position: 'LHP',
-    conference: 'ACC',
-    class_year: 'Jr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    commitment_date: '2025-12-18',
-    sport: 'baseball',
-    engagement_score: 91,
-    verified: true,
-    source: 'twitter.com',
-    baseball_stats: { era: 3.24, wins: 6, losses: 3, strikeouts: 78, innings: 72.1 },
-    created_at: '2025-12-09T11:00:00Z',
-    updated_at: '2025-12-18T14:00:00Z',
-  },
-  {
-    id: 'bb-2025-005',
-    player_name: 'Ryan Garcia',
-    school_from: 'Texas',
-    school_to: null,
-    position: 'RHP',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    sport: 'baseball',
-    engagement_score: 89,
-    verified: true,
-    source: 'd1baseball.com',
-    baseball_stats: { era: 3.56, wins: 7, losses: 4, strikeouts: 82, innings: 78.0 },
-    created_at: '2025-12-10T12:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-];
-
-const FALLBACK_FOOTBALL: PortalEntry[] = [
-  {
-    id: 'cfb-2025-001',
-    player_name: 'Jaylen Carter',
-    school_from: 'Georgia',
-    school_to: null,
-    position: 'QB',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-09',
-    sport: 'football',
-    engagement_score: 98,
-    stars: 4,
-    overall_rank: 12,
-    verified: true,
-    source: 'on3.com',
-    football_stats: { pass_yards: 2847, pass_td: 24, rush_yards: 412, rush_td: 5 },
-    created_at: '2025-12-09T10:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-  {
-    id: 'cfb-2025-002',
-    player_name: 'Marcus Williams',
-    school_from: 'Ohio State',
-    school_to: 'Texas',
-    position: 'WR',
-    conference: 'Big Ten',
-    class_year: 'Sr',
-    status: 'committed',
-    portal_date: '2025-12-09',
-    commitment_date: '2025-12-20',
-    sport: 'football',
-    engagement_score: 94,
-    stars: 5,
-    overall_rank: 3,
-    verified: true,
-    source: '247sports.com',
-    football_stats: { rec_yards: 1247, rec_td: 11 },
-    created_at: '2025-12-09T12:00:00Z',
-    updated_at: '2025-12-20T15:00:00Z',
-  },
-  {
-    id: 'cfb-2025-003',
-    player_name: 'Darius Jackson',
-    school_from: 'Alabama',
-    school_to: null,
-    position: 'RB',
-    conference: 'SEC',
-    class_year: 'So',
-    status: 'in_portal',
-    portal_date: '2025-12-10',
-    sport: 'football',
-    engagement_score: 87,
-    stars: 4,
-    overall_rank: 28,
-    verified: true,
-    source: 'on3.com',
-    football_stats: { rush_yards: 892, rush_td: 9, rec_yards: 234, rec_td: 2 },
-    created_at: '2025-12-10T09:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-  {
-    id: 'cfb-2025-004',
-    player_name: 'Cameron Davis',
-    school_from: 'Texas A&M',
-    school_to: null,
-    position: 'EDGE',
-    conference: 'SEC',
-    class_year: 'Jr',
-    status: 'in_portal',
-    portal_date: '2025-12-12',
-    sport: 'football',
-    engagement_score: 91,
-    stars: 4,
-    overall_rank: 18,
-    verified: true,
-    source: '247sports.com',
-    football_stats: { tackles: 52, sacks: 9.5 },
-    created_at: '2025-12-12T11:00:00Z',
-    updated_at: '2025-01-15T08:30:00Z',
-  },
-];
+const REFRESH_INTERVAL_MS = 30_000;
+const FETCH_TIMEOUT_MS = 8_000;
 
 // ============================================================================
 // Hero Stats Component
@@ -217,12 +36,10 @@ const FALLBACK_FOOTBALL: PortalEntry[] = [
 function HeroStat({
   label,
   value,
-  change,
   pulse,
 }: {
   label: string;
   value: number | string;
-  change?: string;
   pulse?: boolean;
 }) {
   return (
@@ -243,13 +60,6 @@ function HeroStat({
         <p className="text-2xl md:text-4xl font-display font-bold text-text-primary tabular-nums">
           {value}
         </p>
-        {change && (
-          <p
-            className={`text-xs mt-1.5 ${change.startsWith('+') ? 'text-success' : 'text-text-muted'}`}
-          >
-            {change} today
-          </p>
-        )}
       </div>
     </div>
   );
@@ -293,12 +103,52 @@ function SportToggle({
 }
 
 // ============================================================================
+// Freshness Indicator
+// ============================================================================
+
+function FreshnessIndicator({
+  lastUpdated,
+  status,
+}: {
+  lastUpdated: string | null;
+  status: 'live' | 'delayed' | 'stale';
+}) {
+  const [timeAgo, setTimeAgo] = useState(lastUpdated ? formatTimeAgo(lastUpdated) : 'unknown');
+
+  useEffect(() => {
+    if (!lastUpdated) return;
+    setTimeAgo(formatTimeAgo(lastUpdated));
+    const interval = setInterval(() => setTimeAgo(formatTimeAgo(lastUpdated)), 5000);
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
+
+  const statusConfig = {
+    live: { dot: 'bg-success', text: 'text-success', label: 'Live' },
+    delayed: { dot: 'bg-warning', text: 'text-warning', label: 'Delayed' },
+    stale: { dot: 'bg-text-muted', text: 'text-text-muted', label: 'Stale' },
+  };
+
+  const config = statusConfig[status];
+
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <span className="relative flex h-2 w-2">
+        {status === 'live' && (
+          <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${config.dot} opacity-75`} />
+        )}
+        <span className={`relative inline-flex rounded-full h-2 w-2 ${config.dot}`} />
+      </span>
+      <span className={config.text}>Updated {timeAgo}</span>
+    </div>
+  );
+}
+
+// ============================================================================
 // Portal Window Banner
 // ============================================================================
 
 function PortalWindowBanner({ sport }: { sport: PortalSport }) {
   const window = getCurrentPortalWindow(sport);
-
   if (!window) return null;
 
   return (
@@ -316,15 +166,9 @@ function PortalWindowBanner({ sport }: { sport: PortalSport }) {
           }`}
         >
           {window.active ? (
-            <span className="text-success text-lg">●</span>
+            <span className="text-success text-lg">&#9679;</span>
           ) : (
-            <svg
-              className="w-5 h-5 text-burnt-orange"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
+            <svg className="w-5 h-5 text-burnt-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 6V12L16 14" />
             </svg>
@@ -335,9 +179,46 @@ function PortalWindowBanner({ sport }: { sport: PortalSport }) {
             {window.active ? `${window.name} is OPEN` : `${window.name} Coming Soon`}
           </h3>
           <p className="text-sm text-text-secondary">
-            {formatPortalDate(window.start)} — {formatPortalDate(window.end)}
+            {formatPortalDate(window.start)} &mdash; {formatPortalDate(window.end)}
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Recent Changes Strip (Phase 1B)
+// ============================================================================
+
+function RecentChangesStrip({ changes }: { changes: PortalChangeEvent[] }) {
+  if (changes.length === 0) return null;
+
+  const typeStyles: Record<string, string> = {
+    entered: 'text-warning',
+    committed: 'text-success',
+    signed: 'text-burnt-orange',
+    withdrawn: 'text-error',
+    updated: 'text-text-secondary',
+  };
+
+  return (
+    <div className="p-5 rounded-xl bg-charcoal-900/60 border border-border-subtle">
+      <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
+        Recent Activity
+      </h3>
+      <div className="space-y-2 max-h-[400px] overflow-y-auto">
+        {changes.map((change) => (
+          <div key={change.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-surface/50 transition-colors">
+            <span className={`text-xs font-semibold uppercase mt-0.5 w-20 shrink-0 ${typeStyles[change.change_type] || 'text-text-muted'}`}>
+              {change.change_type}
+            </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-text-primary truncate">{change.description}</p>
+              <p className="text-xs text-text-muted">{formatTimeAgo(change.event_timestamp)}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -378,7 +259,7 @@ function TrendingSidebar({ entries }: { entries: PortalEntry[] }) {
                 {entry.player_name}
               </p>
               <p className="text-xs text-text-tertiary">
-                {entry.position} • {entry.school_from}
+                {entry.position} &bull; {entry.school_from}
               </p>
             </div>
             <span className="text-xs text-success font-mono">{entry.engagement_score}</span>
@@ -408,7 +289,7 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
   return (
     <div className="p-5 rounded-xl bg-charcoal-900/60 border border-border-subtle">
       <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
-        <span className="text-success">✓</span> Recent Commits
+        <span className="text-success">&#10003;</span> Recent Commits
       </h3>
       <div className="space-y-3">
         {commits.map((entry) => (
@@ -422,13 +303,7 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
             </p>
             <p className="text-xs text-text-tertiary flex items-center gap-1.5">
               <span>{entry.school_from}</span>
-              <svg
-                className="w-3 h-3 text-success"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
+              <svg className="w-3 h-3 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" />
               </svg>
               <span className="text-success font-medium">{entry.school_to}</span>
@@ -441,6 +316,27 @@ function RecentCommits({ entries }: { entries: PortalEntry[] }) {
 }
 
 // ============================================================================
+// Failure Banner (Phase 1B — non-alarming)
+// ============================================================================
+
+function FailureBanner({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-warning/10 border border-warning/30">
+      <div className="flex items-center gap-2">
+        <svg className="w-4 h-4 text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" />
+        </svg>
+        <span className="text-sm text-warning">Update delayed, retrying automatically</span>
+      </div>
+      <Button variant="ghost" size="sm" onClick={onRetry}>
+        Retry Now
+      </Button>
+    </div>
+  );
+}
+
+// ============================================================================
 // Main Page Component
 // ============================================================================
 
@@ -448,15 +344,18 @@ const EXPLAINER_KEY = 'bsi_portal_explainer_dismissed';
 
 export default function TransferPortalHub() {
   const [sport, setSport] = useState<PortalSport>('baseball');
-  const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_BASEBALL);
+  const [entries, setEntries] = useState<PortalEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [usingFallback, setUsingFallback] = useState(true);
+  const [fetchFailed, setFetchFailed] = useState(false);
   const [showExplainer, setShowExplainer] = useState(false);
+  const [freshness, setFreshness] = useState<PortalFreshnessResponse | null>(null);
+  const lastFetchedAt = useRef<string | null>(null);
+  const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!localStorage.getItem(EXPLAINER_KEY)) setShowExplainer(true);
   }, []);
+
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
@@ -464,71 +363,92 @@ export default function TransferPortalHub() {
     search: '',
   });
 
-  // Get fallback data for current sport
-  const getFallbackData = useCallback(
-    (s: PortalSport): PortalEntry[] => (s === 'football' ? FALLBACK_FOOTBALL : FALLBACK_BASEBALL),
-    []
-  );
-
-  // Fetch entries with timeout and fallback
-  const fetchEntries = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // Fetch entries from D1-backed API
+  const fetchEntries = useCallback(async (delta = false) => {
+    if (!delta) setLoading(true);
+    setFetchFailed(false);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     try {
       const params = new URLSearchParams({ sport });
       if (filters.position) params.set('position', filters.position);
       if (filters.conference) params.set('conference', filters.conference);
       if (filters.status) params.set('status', filters.status);
-      params.set('limit', '100');
+      params.set('limit', '200');
+      params.set('sort', 'date');
+      params.set('order', 'desc');
+      if (delta && lastFetchedAt.current) {
+        params.set('since', lastFetchedAt.current);
+      }
 
       const response = await fetch(`/api/portal/v2/entries?${params.toString()}`, {
         signal: controller.signal,
+        cache: 'no-store',
       });
-
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const data = (await response.json()) as { data?: PortalEntry[] };
+      const data = await response.json() as { data?: PortalEntry[]; meta?: { last_updated?: string } };
       const apiEntries = data.data || [];
 
-      if (apiEntries.length > 0) {
+      if (delta && lastFetchedAt.current && apiEntries.length > 0) {
+        // Merge delta into existing entries
+        setEntries((prev) => {
+          const map = new Map(prev.map((e) => [e.id, e]));
+          for (const entry of apiEntries) {
+            map.set(entry.id, entry);
+          }
+          return Array.from(map.values());
+        });
+      } else if (!delta) {
         setEntries(apiEntries);
-        setUsingFallback(false);
-      } else {
-        setEntries(getFallbackData(sport));
-        setUsingFallback(true);
       }
-    } catch (err) {
+
+      lastFetchedAt.current = data.meta?.last_updated || new Date().toISOString();
+    } catch {
       clearTimeout(timeoutId);
-      setEntries(getFallbackData(sport));
-      setUsingFallback(true);
-      if (err instanceof Error && err.name !== 'AbortError') {
-        setError(err.message);
-      }
+      setFetchFailed(true);
     } finally {
       setLoading(false);
     }
-  }, [sport, filters.position, filters.conference, filters.status, getFallbackData]);
+  }, [sport, filters.position, filters.conference, filters.status]);
 
-  // Update fallback data when sport changes (instant update)
-  useEffect(() => {
-    if (usingFallback) {
-      setEntries(getFallbackData(sport));
+  // Fetch freshness info
+  const fetchFreshnessInfo = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/portal/freshness?sport=${sport}&limit=20`, { cache: 'no-store' });
+      if (response.ok) {
+        const data = await response.json() as PortalFreshnessResponse;
+        setFreshness(data);
+      }
+    } catch {
+      // Non-critical — freshness display degrades gracefully
     }
-  }, [sport, usingFallback, getFallbackData]);
+  }, [sport]);
 
+  // Initial fetch
   useEffect(() => {
-    fetchEntries();
-  }, [fetchEntries]);
+    lastFetchedAt.current = null;
+    fetchEntries(false);
+    fetchFreshnessInfo();
+  }, [fetchEntries, fetchFreshnessInfo]);
 
-  // Filter entries client-side for search
+  // 30-second auto-refresh with delta fetches
+  useEffect(() => {
+    if (refreshTimer.current) clearInterval(refreshTimer.current);
+    refreshTimer.current = setInterval(() => {
+      fetchEntries(true);
+      fetchFreshnessInfo();
+    }, REFRESH_INTERVAL_MS);
+    return () => {
+      if (refreshTimer.current) clearInterval(refreshTimer.current);
+    };
+  }, [fetchEntries, fetchFreshnessInfo]);
+
+  // Client-side search filter
   const filteredEntries = useMemo(() => {
     if (!filters.search) return entries;
     const query = filters.search.toLowerCase();
@@ -547,12 +467,10 @@ export default function TransferPortalHub() {
       <main id="main-content" className="min-h-screen bg-midnight">
         {/* Hero Section */}
         <Section className="relative pt-24 pb-16 overflow-hidden">
-          {/* Gradient Background */}
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/8 via-transparent to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-burnt-orange/5 via-transparent to-transparent" />
 
           <Container className="relative">
-            {/* Badge + Title */}
             <div className="text-center max-w-4xl mx-auto mb-10">
               <Badge variant="primary" className="mb-4">
                 Winter 2025 Portal Window
@@ -566,6 +484,14 @@ export default function TransferPortalHub() {
                 continuously.{' '}
                 <span className="text-burnt-orange font-medium">The coverage fans deserve.</span>
               </p>
+
+              {/* Freshness Indicator — always visible */}
+              <div className="flex justify-center mt-4">
+                <FreshnessIndicator
+                  lastUpdated={freshness?.last_updated || lastFetchedAt.current}
+                  status={freshness?.status || 'stale'}
+                />
+              </div>
             </div>
 
             {/* Explainer banner for casual fans */}
@@ -579,23 +505,14 @@ export default function TransferPortalHub() {
                   className="absolute top-3 right-3 text-text-muted hover:text-text-secondary transition-colors"
                   aria-label="Dismiss"
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M18 6L6 18M6 6l12 12" />
                   </svg>
                 </button>
                 <p className="text-sm text-text-secondary pr-6">
-                  <span className="font-semibold text-text-primary">
-                    New to the Transfer Portal?
-                  </span>{' '}
+                  <span className="font-semibold text-text-primary">New to the Transfer Portal?</span>{' '}
                   The Transfer Portal is where college athletes announce they&apos;re looking to
-                  transfer schools — think of it like free agency for college sports.
+                  transfer schools &mdash; think of it like free agency for college sports.
                 </p>
               </div>
             )}
@@ -607,10 +524,10 @@ export default function TransferPortalHub() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <HeroStat label="Total Entries" value={stats.total} change="+12" pulse />
-              <HeroStat label="In Portal" value={stats.in_portal} change="+8" />
-              <HeroStat label="Committed" value={stats.committed} change="+3" />
-              <HeroStat label="Withdrawn" value={stats.withdrawn} change="+1" />
+              <HeroStat label="Total Entries" value={stats.total} pulse={freshness?.status === 'live'} />
+              <HeroStat label="In Portal" value={stats.in_portal} />
+              <HeroStat label="Committed" value={stats.committed} />
+              <HeroStat label="Withdrawn" value={stats.withdrawn} />
             </div>
 
             {/* Portal Window Banner */}
@@ -635,44 +552,17 @@ export default function TransferPortalHub() {
                 />
 
                 {/* Loading Indicator - Non-blocking */}
-                {loading && (
+                {loading && entries.length === 0 && (
                   <div className="flex items-center gap-2 mb-4 p-3 rounded-lg bg-burnt-orange/10 border border-burnt-orange/20">
                     <div className="w-4 h-4 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
-                    <span className="text-sm text-text-secondary">Refreshing portal data...</span>
+                    <span className="text-sm text-text-secondary">Loading portal data...</span>
                   </div>
                 )}
 
-                {/* Sample Data Notice - Show when using fallback */}
-                {usingFallback && !loading && (
-                  <div className="flex items-center gap-2 mb-4 p-3 rounded-lg bg-charcoal-800/50 border border-border-subtle">
-                    <svg
-                      className="w-4 h-4 text-text-tertiary"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 16v-4M12 8h.01" />
-                    </svg>
-                    <span className="text-sm text-text-tertiary">
-                      Showing sample entries. Live data updates every 5 minutes during active portal
-                      windows.
-                    </span>
-                  </div>
-                )}
+                {/* Failure Banner — non-alarming, spec requirement */}
+                {fetchFailed && <FailureBanner onRetry={() => fetchEntries(false)} />}
 
-                {/* Error Notice - Non-blocking */}
-                {error && (
-                  <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-error/10 border border-error/30">
-                    <span className="text-sm text-error">{error}</span>
-                    <Button variant="ghost" size="sm" onClick={fetchEntries}>
-                      Retry
-                    </Button>
-                  </div>
-                )}
-
-                {/* Entry Grid - Always render when we have entries */}
+                {/* Entry Grid */}
                 {filteredEntries.length > 0 && (
                   <PortalCardGrid>
                     {filteredEntries.map((entry) => (
@@ -687,22 +577,14 @@ export default function TransferPortalHub() {
                   </PortalCardGrid>
                 )}
 
-                {/* Empty State - Only show if truly empty after filtering */}
-                {filteredEntries.length === 0 && (
+                {/* Empty State */}
+                {filteredEntries.length === 0 && !loading && (
                   <div className="text-center py-16">
-                    <svg
-                      className="w-16 h-16 mx-auto mb-4 text-text-muted"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
+                    <svg className="w-16 h-16 mx-auto mb-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <circle cx="11" cy="11" r="8" />
                       <path d="M21 21L16.65 16.65" />
                     </svg>
-                    <h3 className="text-lg font-medium text-text-secondary mb-2">
-                      No entries found
-                    </h3>
+                    <h3 className="text-lg font-medium text-text-secondary mb-2">No entries found</h3>
                     <p className="text-text-tertiary">Try adjusting your filters or search term</p>
                   </div>
                 )}
@@ -710,6 +592,9 @@ export default function TransferPortalHub() {
 
               {/* Sidebar */}
               <aside className="space-y-6">
+                {/* Recent Changes Strip — Phase 1B */}
+                <RecentChangesStrip changes={freshness?.recent_changes || []} />
+
                 <TrendingSidebar entries={entries} />
                 <RecentCommits entries={entries} />
 
@@ -717,8 +602,7 @@ export default function TransferPortalHub() {
                 <div className="p-5 rounded-xl bg-gradient-to-br from-burnt-orange/15 to-burnt-orange/5 border border-burnt-orange/30">
                   <h3 className="font-semibold text-text-primary mb-2">Get Portal Alerts</h3>
                   <p className="text-sm text-text-secondary mb-4">
-                    Be first to know when players enter or commit. Real-time notifications for Pro
-                    members.
+                    Be first to know when players enter or commit. Real-time notifications for Pro members.
                   </p>
                   <Button href="/pricing" variant="primary" className="w-full">
                     Upgrade to Pro
@@ -728,8 +612,7 @@ export default function TransferPortalHub() {
                 {/* Source Attribution */}
                 <div className="p-4 rounded-lg bg-charcoal-900/40 border border-border-subtle">
                   <p className="text-xs text-text-muted">
-                    Data sources: NCAA Official Portal, D1Baseball, On3, 247Sports. Updated every 5
-                    minutes during active windows.
+                    Data sources: NCAA Official Portal, D1Baseball, On3, 247Sports. Auto-refreshes every 30 seconds.
                   </p>
                 </div>
               </aside>

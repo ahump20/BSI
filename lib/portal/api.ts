@@ -5,7 +5,7 @@
  * Handles caching, error states, and real-time updates.
  */
 
-import type { PortalEntry, PortalFilters, PortalApiResponse, PortalSport } from './types';
+import type { PortalEntry, PortalFilters, PortalApiResponse, PortalFreshnessResponse, PortalSport } from './types';
 
 const API_BASE = '/api/portal';
 
@@ -15,12 +15,12 @@ interface FetchOptions {
 }
 
 /**
- * Fetch portal entries with filters
+ * Fetch portal entries with filters (v2 — reads from D1)
  */
 export async function fetchPortalEntries(
   sport: PortalSport,
   filters: Partial<PortalFilters> = {},
-  options: FetchOptions = {}
+  options: FetchOptions & { since?: string; sort?: string; order?: string; page?: number; limit?: number } = {}
 ): Promise<PortalApiResponse> {
   const params = new URLSearchParams();
   params.set('sport', sport);
@@ -30,18 +30,45 @@ export async function fetchPortalEntries(
   if (filters.status) params.set('status', filters.status);
   if (filters.search) params.set('search', filters.search);
   if (filters.minStars) params.set('minStars', String(filters.minStars));
-  if (filters.verified !== undefined) params.set('verified', String(filters.verified));
+  if (options.since) params.set('since', options.since);
+  if (options.sort) params.set('sort', options.sort);
+  if (options.order) params.set('order', options.order);
+  if (options.page) params.set('page', String(options.page));
+  if (options.limit) params.set('limit', String(options.limit));
 
-  const response = await fetch(`${API_BASE}/entries?${params.toString()}`, {
+  const response = await fetch(`${API_BASE}/v2/entries?${params.toString()}`, {
     signal: options.signal,
-    cache: options.cache ?? 'default',
-    headers: {
-      Accept: 'application/json',
-    },
+    cache: options.cache ?? 'no-store',
+    headers: { Accept: 'application/json' },
   });
 
   if (!response.ok) {
     throw new Error(`Portal API Error: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetch freshness status and recent changes
+ */
+export async function fetchPortalFreshness(
+  sport?: PortalSport,
+  limit = 20,
+  options: FetchOptions = {}
+): Promise<PortalFreshnessResponse> {
+  const params = new URLSearchParams();
+  if (sport) params.set('sport', sport);
+  params.set('limit', String(limit));
+
+  const response = await fetch(`${API_BASE}/freshness?${params.toString()}`, {
+    signal: options.signal,
+    cache: 'no-store',
+    headers: { Accept: 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Freshness API Error: ${response.status}`);
   }
 
   return response.json();

@@ -11,6 +11,31 @@ export type PortalStatus = 'in_portal' | 'committed' | 'withdrawn' | 'signed';
 
 export type PortalWindow = 'spring' | 'summer' | 'winter' | 'fall';
 
+export interface BaseballStats {
+  avg?: number;
+  hr?: number;
+  rbi?: number;
+  sb?: number;
+  era?: number;
+  wins?: number;
+  losses?: number;
+  strikeouts?: number;
+  innings?: number;
+  whip?: number;
+}
+
+export interface FootballStats {
+  pass_yards?: number;
+  pass_td?: number;
+  rush_yards?: number;
+  rush_td?: number;
+  rec_yards?: number;
+  rec_td?: number;
+  tackles?: number;
+  sacks?: number;
+  interceptions?: number;
+}
+
 export interface PortalEntry {
   id: string;
   player_name: string;
@@ -29,40 +54,27 @@ export interface PortalEntry {
   stars?: number; // 1-5 for CFB recruiting rating
   overall_rank?: number; // National rank for CFB
 
-  // Baseball Stats
-  baseball_stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    sb?: number;
-    era?: number;
-    wins?: number;
-    losses?: number;
-    strikeouts?: number;
-    innings?: number;
-    whip?: number;
-  };
-
-  // Football Stats
-  football_stats?: {
-    pass_yards?: number;
-    pass_td?: number;
-    rush_yards?: number;
-    rush_td?: number;
-    rec_yards?: number;
-    rec_td?: number;
-    tackles?: number;
-    sacks?: number;
-    interceptions?: number;
-  };
+  // Stats
+  baseball_stats?: BaseballStats;
+  football_stats?: FootballStats;
 
   // Media
   headshot_url?: string;
   highlight_url?: string;
 
+  // Data quality flags — every record surfaces its trustworthiness
+  is_partial: boolean;
+  needs_review: boolean;
+  source_confidence: number; // 0.0-1.0
+
+  // Source attribution — spec: every record has source_url or source_id
+  source_url?: string;
+  source_id?: string;
+
   // Metadata
   verified: boolean;
   source: string;
+  last_verified_at: string;
   created_at: string;
   updated_at: string;
 }
@@ -90,6 +102,16 @@ export interface PortalStats {
   recent_commits: PortalEntry[];
 }
 
+export interface PortalChangeEvent {
+  id: string;
+  portal_entry_id: string;
+  change_type: 'entered' | 'committed' | 'withdrawn' | 'signed' | 'updated';
+  description: string;
+  event_timestamp: string;
+  player_name?: string;
+  sport?: PortalSport;
+}
+
 export interface PortalApiResponse {
   data: PortalEntry[];
   meta: {
@@ -100,6 +122,13 @@ export interface PortalApiResponse {
     last_updated: string;
     source: string;
   };
+}
+
+export interface PortalFreshnessResponse {
+  last_updated: string;
+  update_count_24h: number;
+  recent_changes: PortalChangeEvent[];
+  status: 'live' | 'delayed' | 'stale';
 }
 
 // Portal Window Dates (2025-2026)
