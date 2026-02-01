@@ -17,14 +17,31 @@ interface LeadPayload {
   sport?: string;
   message?: string;
   source?: string;
+  consent?: boolean;
+}
+
+const ALLOWED_ORIGINS = new Set([
+  'https://blazesportsintel.com',
+  'https://www.blazesportsintel.com',
+  'https://blazesportsintel.pages.dev',
+  'http://localhost:3000',
+]);
+
+/** 90-day TTL for lead data */
+const LEAD_TTL_SECONDS = 90 * 24 * 60 * 60;
+
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get('Origin') ?? '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : '',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
+  };
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
+  const corsHeaders = getCorsHeaders(context.request);
 
   try {
     const lead = (await context.request.json()) as LeadPayload;
@@ -36,10 +53,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    // Store in KV if available
+    if (!lead.consent) {
+      return new Response(
+        JSON.stringify({ error: 'Consent to privacy policy is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Store in KV if available — with TTL for data retention compliance
     if (context.env.KV) {
       const key = `lead:${Date.now()}:${lead.email}`;
-      await context.env.KV.put(key, JSON.stringify(lead), {
+      await context.env.KV.put(key, JSON.stringify({ ...lead, consentedAt: new Date().toISOString() }), {
+        expirationTtl: LEAD_TTL_SECONDS,
         metadata: { timestamp: new Date().toISOString() },
       });
     }
@@ -63,12 +88,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 };
 
-export const onRequestOptions: PagesFunction = async () => {
+export const onRequestOptions: PagesFunction = async (context) => {
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      ...getCorsHeaders(context.request),
       'Access-Control-Max-Age': '86400',
     },
   });

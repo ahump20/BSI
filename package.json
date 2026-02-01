@@ -48,12 +48,6 @@
     "prebuild": "npm run images:optimize || true"
   },
   "dependencies": {
-    "@amplitude/analytics-browser": "^2.31.3",
-    "@amplitude/plugin-session-replay-browser": "^1.23.6",
-    "@aws-sdk/client-s3": "^3.714.0",
-    "@react-three/drei": "^10.0.0",
-    "@react-three/fiber": "^9.0.0",
-    "@sentry/node": "^10.27.0",
     "@stripe/react-stripe-js": "^3.10.0",
     "@stripe/stripe-js": "^5.10.0",
     "@tanstack/react-query": "^5.90.10",
@@ -62,8 +56,6 @@
     "fuse.js": "^7.1.0",
     "lucide-react": "^0.546.0",
     "luxon": "^3.4.4",
-    "node-fetch": "^3.3.2",
-    "pg": "^8.11.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^3.5.1",

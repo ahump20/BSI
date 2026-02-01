@@ -9,15 +9,33 @@ interface Env {
   KV?: KVNamespace;
 }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+interface NewsletterPayload {
+  email: string;
+  consent?: boolean;
+}
+
+const ALLOWED_ORIGINS = new Set([
+  'https://blazesportsintel.com',
+  'https://www.blazesportsintel.com',
+  'https://blazesportsintel.pages.dev',
+  'http://localhost:3000',
+]);
+
+function getCorsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get('Origin') ?? '';
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : '',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
   };
+}
+
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const corsHeaders = getCorsHeaders(context.request);
 
   try {
-    const { email } = (await context.request.json()) as { email: string };
+    const { email, consent } = (await context.request.json()) as NewsletterPayload;
 
     if (!email || !email.includes('@')) {
       return new Response(JSON.stringify({ error: 'Valid email is required' }), {
@@ -26,9 +44,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
+    if (!consent) {
+      return new Response(
+        JSON.stringify({ error: 'Consent to privacy policy is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
     if (context.env.KV) {
       const key = `newsletter:${email.toLowerCase()}`;
-      await context.env.KV.put(key, JSON.stringify({ email, subscribedAt: new Date().toISOString() }));
+      await context.env.KV.put(
+        key,
+        JSON.stringify({
+          email,
+          subscribedAt: new Date().toISOString(),
+          consentedAt: new Date().toISOString(),
+        })
+      );
     }
 
     return new Response(
@@ -43,12 +75,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 };
 
-export const onRequestOptions: PagesFunction = async () => {
+export const onRequestOptions: PagesFunction = async (context) => {
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      ...getCorsHeaders(context.request),
       'Access-Control-Max-Age': '86400',
     },
   });

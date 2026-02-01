@@ -43,17 +43,40 @@ export interface Env {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
-  'Access-Control-Max-Age': '86400',
-};
+const ALLOWED_ORIGINS = new Set([
+  'https://blazesportsintel.com',
+  'https://www.blazesportsintel.com',
+  'https://blazesportsintel.pages.dev',
+  'http://localhost:3000',
+  'http://localhost:8787',
+]);
+
+function corsOrigin(request: Request): string {
+  const origin = request.headers.get('Origin') ?? '';
+  return ALLOWED_ORIGINS.has(origin) ? origin : '';
+}
+
+function corsHeaders(request: Request): Record<string, string> {
+  return {
+    'Access-Control-Allow-Origin': corsOrigin(request),
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
+  };
+}
+
+/** Active request reference — set at the top of fetch() so helpers can derive CORS origin. */
+let _activeRequest: Request | null = null;
+
+function activeCorsHeaders(): Record<string, string> {
+  return _activeRequest ? corsHeaders(_activeRequest) : {};
+}
 
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS, ...extra },
+    headers: { 'Content-Type': 'application/json', ...activeCorsHeaders(), ...extra },
   });
 }
 
@@ -322,23 +345,28 @@ async function handleCollegeBaseballScores(
 ): Promise<Response> {
   const date = url.searchParams.get('date') || undefined;
   const cacheKey = `cb:scores:${date || 'today'}`;
+  const empty = { data: [], totalCount: 0 };
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
-  const result = await client.getMatches('NCAA', date);
+  try {
+    const client = getClient(env);
+    const result = await client.getMatches('NCAA', date);
 
-  if (result.success && result.data) {
-    await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
+    if (result.success && result.data) {
+      await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
+    }
+
+    return json(result.data ?? empty, result.success ? 200 : 200, {
+      ...dataHeaders(result.timestamp),
+      'X-Cache': 'MISS',
+    });
+  } catch {
+    return json(empty, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
-
-  return json(result.data ?? { data: [], totalCount: 0 }, result.success ? 200 : 502, {
-    ...dataHeaders(result.timestamp),
-    'X-Cache': 'MISS',
-  });
 }
 
 async function handleCollegeBaseballStandings(
@@ -374,17 +402,21 @@ async function handleCollegeBaseballRankings(env: Env): Promise<Response> {
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
-  const result = await client.getRankings();
+  try {
+    const client = getClient(env);
+    const result = await client.getRankings();
 
-  if (result.success && result.data) {
-    await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.rankings);
+    if (result.success && result.data) {
+      await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.rankings);
+    }
+
+    return json(result.data ?? [], result.success ? 200 : 200, {
+      ...dataHeaders(result.timestamp),
+      'X-Cache': 'MISS',
+    });
+  } catch {
+    return json([], 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
-
-  return json(result.data ?? [], result.success ? 200 : 502, {
-    ...dataHeaders(result.timestamp),
-    'X-Cache': 'MISS',
-  });
 }
 
 async function handleCollegeBaseballTeam(
@@ -398,25 +430,29 @@ async function handleCollegeBaseballTeam(
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
-  const [teamResult, playersResult] = await Promise.all([
-    client.getTeam(parseInt(teamId, 10)),
-    client.getTeamPlayers(parseInt(teamId, 10)),
-  ]);
+  try {
+    const client = getClient(env);
+    const [teamResult, playersResult] = await Promise.all([
+      client.getTeam(parseInt(teamId, 10)),
+      client.getTeamPlayers(parseInt(teamId, 10)),
+    ]);
 
-  const payload = {
-    team: teamResult.data ?? null,
-    roster: playersResult.data?.data ?? [],
-  };
+    const payload = {
+      team: teamResult.data ?? null,
+      roster: playersResult.data?.data ?? [],
+    };
 
-  if (teamResult.success) {
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    if (teamResult.success) {
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    }
+
+    return json(payload, 200, {
+      ...dataHeaders(teamResult.timestamp),
+      'X-Cache': 'MISS',
+    });
+  } catch {
+    return json({ team: null, roster: [] }, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
-
-  return json(payload, teamResult.success ? 200 : 502, {
-    ...dataHeaders(teamResult.timestamp),
-    'X-Cache': 'MISS',
-  });
 }
 
 async function handleCollegeBaseballPlayer(
@@ -430,25 +466,29 @@ async function handleCollegeBaseballPlayer(
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
-  const [playerResult, statsResult] = await Promise.all([
-    client.getPlayer(parseInt(playerId, 10)),
-    client.getPlayerStatistics(parseInt(playerId, 10)),
-  ]);
+  try {
+    const client = getClient(env);
+    const [playerResult, statsResult] = await Promise.all([
+      client.getPlayer(parseInt(playerId, 10)),
+      client.getPlayerStatistics(parseInt(playerId, 10)),
+    ]);
 
-  const payload = {
-    player: playerResult.data ?? null,
-    statistics: statsResult.data ?? null,
-  };
+    const payload = {
+      player: playerResult.data ?? null,
+      statistics: statsResult.data ?? null,
+    };
 
-  if (playerResult.success) {
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    if (playerResult.success) {
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    }
+
+    return json(payload, 200, {
+      ...dataHeaders(playerResult.timestamp),
+      'X-Cache': 'MISS',
+    });
+  } catch {
+    return json({ player: null, statistics: null }, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
-
-  return json(payload, playerResult.success ? 200 : 502, {
-    ...dataHeaders(playerResult.timestamp),
-    'X-Cache': 'MISS',
-  });
 }
 
 async function handleCollegeBaseballGame(
@@ -562,11 +602,11 @@ async function handleGameAsset(
   const object = await env.ASSETS_BUCKET.get(assetPath);
 
   if (!object) {
-    return new Response('Asset not found', { status: 404, headers: CORS_HEADERS });
+    return new Response('Asset not found', { status: 404, headers: activeCorsHeaders() });
   }
 
   const headers: Record<string, string> = {
-    ...CORS_HEADERS,
+    ...activeCorsHeaders(),
     'Cache-Control': 'public, max-age=86400, immutable',
     'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
   };
@@ -773,12 +813,13 @@ async function proxyToPages(request: Request, env: Env): Promise<Response> {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    _activeRequest = request;
     const url = new URL(request.url);
     const { pathname } = url;
 
     // CORS preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: CORS_HEADERS });
+      return new Response(null, { headers: corsHeaders(request) });
     }
 
     try {
