@@ -90,3 +90,17 @@ export function DataDisclaimer() {
     </p>
   );
 }
+
+export function CitationFooter({ sources, className = "" }: { sources?: DataSource[]; className?: string }) {
+  if (!sources || sources.length === 0) return null;
+  return (
+    <footer className={`border-t border-white/10 pt-4 mt-8 ${className}`}>
+      <p className="text-xs text-white/30 mb-2">Sources</p>
+      <div className="flex flex-wrap gap-2">
+        {sources.map((s) => (
+          <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors">{s.name}</a>
+        ))}
+      </div>
+    </footer>
+  );
+}

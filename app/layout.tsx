@@ -8,6 +8,7 @@ import { PageTransition, MotionProvider } from '@/components/motion';
 import { Navbar } from '@/components/layout-ds/Navbar';
 import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
 import { EcosystemBar } from '@/components/shared/EcosystemBar';
+import { FeedbackButton } from '@/components/ui/FeedbackModal';
 import { mainNavItems } from '@/lib/navigation';
 
 // 3-font system: Display (Bebas Neue) + Body (Inter) + Mono (JetBrains Mono)
@@ -106,6 +107,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar items={mainNavItems} />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>
+            <FeedbackButton />
             {/* Mobile Bottom Navigation - hidden on desktop */}
             <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
           </MotionProvider>

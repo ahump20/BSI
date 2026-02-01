@@ -29,6 +29,7 @@
     "test:integration": "vitest run tests/integration",
     "test:validation": "vitest run tests/validation",
     "test:all": "npm run test:api && npm run test:integration && npm run test:validation",
+    "test:routes": "playwright test tests/routes/",
     "test:a11y": "playwright test --config=playwright.config.ts",
     "test:a11y:ui": "playwright test --config=playwright.config.ts --ui",
     "test:a11y:report": "playwright show-report",

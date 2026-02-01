@@ -27,15 +27,38 @@ id = "b666864ae6fe4576a7cb94277d6ef4f2"
 preview_id = "314e25f60fbd436e8ba3af4d34b8351c"
 
 # ---------------------------------------------------------------------------
+# D1 Database
+# ---------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+# ---------------------------------------------------------------------------
+# R2 Buckets
+# ---------------------------------------------------------------------------
+[[r2_buckets]]
+binding = "ASSETS_BUCKET"
+bucket_name = "bsi-game-assets"
+
+# ---------------------------------------------------------------------------
 # Durable Objects
 # ---------------------------------------------------------------------------
 [[durable_objects.bindings]]
 name = "CACHE"
 class_name = "CacheObject"
 
+[[durable_objects.bindings]]
+name = "PORTAL_POLLER"
+class_name = "PortalPoller"
+
 [[migrations]]
 tag = "v1"
 new_classes = ["CacheObject"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["PortalPoller"]
 
 # ---------------------------------------------------------------------------
 # Environment Variables
@@ -51,6 +74,7 @@ PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
 # NOTION_TOKEN
 # STRIPE_SECRET_KEY
 # AMPLITUDE_API_KEY
+# RAPIDAPI_KEY
 
 # ---------------------------------------------------------------------------
 # Development

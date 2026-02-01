@@ -115,7 +115,7 @@ export default function CollegeBaseballRankingsPage() {
 
     try {
       // Use the unified NCAA API with sport=baseball parameter
-      const response = await fetch(`/api/ncaa/rankings?sport=baseball`);
+      const response = await fetch(`/api/college-baseball/rankings`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

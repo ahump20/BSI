@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { SearchBar } from './SearchBar';
 
 interface NavItem {
   label: string;
@@ -30,6 +31,7 @@ export function Navbar({ items }: NavbarProps) {
                 {item.label}
               </Link>
             ))}
+            <SearchBar />
           </div>
         </div>
       </div>

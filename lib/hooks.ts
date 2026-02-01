@@ -54,3 +54,5 @@ export function useUserSettings(): UserSettings {
 
   return { formatDateTime, formatDate, formatTime, isLoaded };
 }
+
+export { useTeamPreferences } from "@/components/settings/TeamPreferenceSelector";
