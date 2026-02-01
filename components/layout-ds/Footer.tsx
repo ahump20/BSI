@@ -162,7 +162,7 @@ const defaultSections: FooterSection[] = [
     links: [
       { label: 'Transfer Portal', href: '/transfer-portal' },
       { label: 'College Baseball', href: '/college-baseball' },
-      { label: 'College Football', href: '/college-football' },
+      { label: 'College Football', href: '/cfb' },
       { label: 'MLB', href: '/mlb' },
       { label: 'NFL', href: '/nfl' },
     ],

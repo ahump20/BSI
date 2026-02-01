@@ -13,16 +13,17 @@ import { cn } from '@/lib/utils';
 import { useReducedMotion } from './hooks';
 import { fadeInUp, cardHover, easing } from './variants';
 
-export interface AnimatedCardProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  | 'children'
-  | 'onDrag'
-  | 'onDragStart'
-  | 'onDragEnd'
-  | 'onAnimationStart'
-  | 'onAnimationEnd'
-  | 'onAnimationIteration'
-> {
+export interface AnimatedCardProps
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    | 'children'
+    | 'onDrag'
+    | 'onDragStart'
+    | 'onDragEnd'
+    | 'onAnimationStart'
+    | 'onAnimationEnd'
+    | 'onAnimationIteration'
+  > {
   children: ReactNode;
   /** Stagger index for grid animations */
   index?: number;
