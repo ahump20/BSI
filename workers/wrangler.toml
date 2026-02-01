@@ -23,8 +23,8 @@ routes = [
 # ---------------------------------------------------------------------------
 [[kv_namespaces]]
 binding = "KV"
-id = "b666864ae6fe4576a7cb94277d6ef4f2"
-preview_id = "314e25f60fbd436e8ba3af4d34b8351c"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
 
 # ---------------------------------------------------------------------------
 # D1 Database

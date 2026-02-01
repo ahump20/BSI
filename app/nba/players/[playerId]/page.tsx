@@ -8,7 +8,7 @@ export const dynamicParams = false;
 export async function generateStaticParams() {
   // Return empty array - pages will be generated on-demand at runtime
   // This allows client-side data fetching while satisfying static export requirements
-  return [];
+  return [{ playerId: 'placeholder' }];
 }
 
 interface PageProps {

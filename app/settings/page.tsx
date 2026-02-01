@@ -20,6 +20,10 @@ export default function SettingsPage() {
   const { settings, resetSettings, isLoaded: timezoneLoaded } = useUserSettings();
   const { clearPreferences: clearTeams, isLoaded: teamsLoaded } = useTeamPreferences();
 
+  if (!settings) {
+    return null;
+  }
+
   const handleResetAll = () => {
     if (confirm('Are you sure you want to reset all settings to defaults?')) {
       resetSettings();
