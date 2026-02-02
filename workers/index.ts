@@ -26,6 +26,9 @@ import type {
   HighlightlyPlayerStats,
   HighlightlyBoxScore,
 } from '../lib/api-clients/highlightly-api';
+import { NcaaApiClient, createNcaaClient } from '../lib/api-clients/ncaa-api';
+import { Tank01ApiClient, createTank01Client } from '../lib/api-clients/tank01-api';
+import type { Tank01Response } from '../lib/api-clients/tank01-api';
 
 export interface Env {
   KV: KVNamespace;
@@ -49,6 +52,8 @@ const ALLOWED_ORIGINS = new Set([
   'https://blazesportsintel.pages.dev',
   'http://localhost:3000',
   'http://localhost:8787',
+  'https://blazecraft.app',
+  'https://www.blazecraft.app',
 ]);
 
 function corsOrigin(request: Request): string {
@@ -66,7 +71,12 @@ function corsHeaders(request: Request): Record<string, string> {
   };
 }
 
-/** Active request reference — set at the top of fetch() so helpers can derive CORS origin. */
+/**
+ * Request-scoped CORS headers. Set at the top of fetch() via requestScopedJson().
+ * Using a module-level var is safe here because Workers execute fetch() to completion
+ * before processing the next request on the same isolate — but we reset it per-request
+ * to avoid stale references.
+ */
 let _activeRequest: Request | null = null;
 
 function activeCorsHeaders(): Record<string, string> {
@@ -278,6 +288,9 @@ function handleReadiness(): Response {
   });
 }
 
+/** 90-day TTL for lead data — aligns with privacy policy retention period */
+const LEAD_TTL_SECONDS = 90 * 24 * 60 * 60;
+
 async function handleLead(request: Request, env: Env): Promise<Response> {
   try {
     const lead = (await request.json()) as {
@@ -287,21 +300,31 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
       sport?: string;
       message?: string;
       source?: string;
+      consent?: boolean;
     };
 
     if (!lead.name || !lead.email) {
       return json({ error: 'Name and email are required' }, 400);
     }
 
+    if (lead.consent !== true) {
+      return json({ error: 'Consent to privacy policy is required' }, 400);
+    }
+
+    const consentedAt = new Date().toISOString();
+
     if (env.KV) {
       const key = `lead:${Date.now()}:${lead.email}`;
-      await env.KV.put(key, JSON.stringify(lead), {
-        metadata: { timestamp: new Date().toISOString() },
+      await env.KV.put(key, JSON.stringify({ ...lead, consentedAt }), {
+        expirationTtl: LEAD_TTL_SECONDS,
+        metadata: { timestamp: consentedAt },
       });
     }
 
     if (env.DB) {
       try {
+        // NOTE: Run migration to add consented_at column:
+        //   ALTER TABLE leads ADD COLUMN consented_at TEXT;
         await env.DB
           .prepare(
             `INSERT INTO leads (name, email, organization, sport, message, source, created_at)
@@ -335,6 +358,17 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
 // College Baseball API handlers (Highlightly proxy with KV cache)
 // ---------------------------------------------------------------------------
 
+/** NCAA API client for college baseball — replaces Highlightly (no API key needed) */
+function getCollegeClient(): NcaaApiClient {
+  return createNcaaClient();
+}
+
+/** Tank01 client for MLB/NFL/NBA pro sports */
+function getProClient(env: Env): Tank01ApiClient {
+  return createTank01Client(env.RAPIDAPI_KEY);
+}
+
+/** @deprecated — Highlightly client kept for fallback only */
 function getClient(env: Env): HighlightlyApiClient {
   return createHighlightlyClient(env.RAPIDAPI_KEY);
 }
@@ -353,19 +387,19 @@ async function handleCollegeBaseballScores(
   }
 
   try {
-    const client = getClient(env);
+    const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
 
     if (result.success && result.data) {
       await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
     }
 
-    return json(result.data ?? empty, result.success ? 200 : 200, {
+    return json(result.data ?? empty, result.success ? 200 : 502, {
       ...dataHeaders(result.timestamp),
       'X-Cache': 'MISS',
     });
   } catch {
-    return json(empty, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json(empty, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -381,7 +415,7 @@ async function handleCollegeBaseballStandings(
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
+  const client = getCollegeClient();
   const result = await client.getStandings(conference);
 
   if (result.success && result.data) {
@@ -403,19 +437,19 @@ async function handleCollegeBaseballRankings(env: Env): Promise<Response> {
   }
 
   try {
-    const client = getClient(env);
+    const client = getCollegeClient();
     const result = await client.getRankings();
 
     if (result.success && result.data) {
       await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.rankings);
     }
 
-    return json(result.data ?? [], result.success ? 200 : 200, {
+    return json(result.data ?? [], result.success ? 200 : 502, {
       ...dataHeaders(result.timestamp),
       'X-Cache': 'MISS',
     });
   } catch {
-    return json([], 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json([], 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -431,7 +465,7 @@ async function handleCollegeBaseballTeam(
   }
 
   try {
-    const client = getClient(env);
+    const client = getCollegeClient();
     const [teamResult, playersResult] = await Promise.all([
       client.getTeam(parseInt(teamId, 10)),
       client.getTeamPlayers(parseInt(teamId, 10)),
@@ -451,7 +485,7 @@ async function handleCollegeBaseballTeam(
       'X-Cache': 'MISS',
     });
   } catch {
-    return json({ team: null, roster: [] }, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json({ team: null, roster: [] }, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -467,7 +501,7 @@ async function handleCollegeBaseballPlayer(
   }
 
   try {
-    const client = getClient(env);
+    const client = getCollegeClient();
     const [playerResult, statsResult] = await Promise.all([
       client.getPlayer(parseInt(playerId, 10)),
       client.getPlayerStatistics(parseInt(playerId, 10)),
@@ -487,7 +521,7 @@ async function handleCollegeBaseballPlayer(
       'X-Cache': 'MISS',
     });
   } catch {
-    return json({ player: null, statistics: null }, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json({ player: null, statistics: null }, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -502,7 +536,7 @@ async function handleCollegeBaseballGame(
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
+  const client = getCollegeClient();
   const [matchResult, boxResult] = await Promise.all([
     client.getMatch(parseInt(gameId, 10)),
     client.getBoxScore(parseInt(gameId, 10)),
@@ -536,7 +570,7 @@ async function handleCollegeBaseballSchedule(
     return json(cached, 200, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getClient(env);
+  const client = getCollegeClient();
   const result = await client.getSchedule(date, range);
 
   if (result.success && result.data) {
@@ -558,7 +592,7 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   }
 
   // Trending is computed from recent scores — fetch today's games and derive
-  const client = getClient(env);
+  const client = getCollegeClient();
   const result = await client.getMatches('NCAA');
 
   if (!result.success || !result.data) {
@@ -589,6 +623,362 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
 
   return json(payload, 200, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
+}
+
+// ---------------------------------------------------------------------------
+// Pro Sports API handlers (Tank01)
+// ---------------------------------------------------------------------------
+
+/** Helper: format date as YYYYMMDD for Tank01 */
+function toTank01Date(dateStr?: string | null): string {
+  if (!dateStr) {
+    const d = new Date();
+    return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+  }
+  // Accept YYYY-MM-DD → YYYYMMDD
+  return dateStr.replace(/-/g, '');
+}
+
+/** Wrap Tank01 response in a consistent envelope for the frontend */
+function tank01Json<T>(result: Tank01Response<{ body: T }>, fallback: T): Response {
+  if (result.success && result.data) {
+    return json({
+      ...result.data.body,
+      meta: { lastUpdated: result.timestamp, dataSource: result.source },
+    });
+  }
+  return json({ ...fallback, meta: { error: result.error, dataSource: result.source } }, 502);
+}
+
+// --- MLB ---
+
+async function handleMLBScores(url: URL, env: Env): Promise<Response> {
+  const date = toTank01Date(url.searchParams.get('date'));
+  const cacheKey = `mlb:scores:${date}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getMLBScores(date);
+
+  if (result.success && result.data) {
+    const payload = { games: result.data.body, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-mlb' } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ games: [], meta: { error: result.error } }, 502);
+}
+
+async function handleMLBStandings(env: Env): Promise<Response> {
+  const cacheKey = 'mlb:standings';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getMLBStandings();
+
+  if (result.success && result.data) {
+    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ standings: [], meta: { error: result.error } }, 502);
+}
+
+async function handleMLBGame(gameId: string, env: Env): Promise<Response> {
+  const cacheKey = `mlb:game:${gameId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getMLBBoxScore(gameId);
+
+  if (result.success && result.data) {
+    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ boxScore: null, meta: { error: result.error } }, 502);
+}
+
+async function handleMLBPlayer(playerId: string, env: Env): Promise<Response> {
+  const cacheKey = `mlb:player:${playerId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getMLBPlayer(playerId);
+
+  if (result.success && result.data) {
+    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ player: null, meta: { error: result.error } }, 502);
+}
+
+async function handleMLBTeam(teamAbv: string, env: Env): Promise<Response> {
+  const cacheKey = `mlb:team:${teamAbv}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const [rosterResult, scheduleResult] = await Promise.all([
+    client.getMLBTeamRoster(teamAbv),
+    client.getMLBTeamSchedule(teamAbv),
+  ]);
+
+  const payload = {
+    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
+    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
+    meta: { lastUpdated: new Date().toISOString() },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return json(payload, 200, { 'X-Cache': 'MISS' });
+}
+
+async function handleMLBNews(env: Env): Promise<Response> {
+  const cacheKey = 'mlb:news';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getMLBNews();
+
+  if (result.success && result.data) {
+    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ articles: [], meta: { error: result.error } }, 502);
+}
+
+// --- NFL ---
+
+async function handleNFLScores(url: URL, env: Env): Promise<Response> {
+  const week = url.searchParams.get('week') || '1';
+  const season = url.searchParams.get('season') || undefined;
+  const cacheKey = `nfl:scores:${season || 'current'}:${week}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNFLScores(week, season);
+
+  if (result.success && result.data) {
+    const payload = { games: result.data.body, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-nfl' } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ games: [], meta: { error: result.error } }, 502);
+}
+
+async function handleNFLStandings(env: Env): Promise<Response> {
+  const cacheKey = 'nfl:standings';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNFLStandings();
+
+  if (result.success && result.data) {
+    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ standings: [], meta: { error: result.error } }, 502);
+}
+
+async function handleNFLGame(gameId: string, env: Env): Promise<Response> {
+  const cacheKey = `nfl:game:${gameId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNFLBoxScore(gameId);
+
+  if (result.success && result.data) {
+    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ boxScore: null, meta: { error: result.error } }, 502);
+}
+
+async function handleNFLPlayer(playerId: string, env: Env): Promise<Response> {
+  const cacheKey = `nfl:player:${playerId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNFLPlayer(playerId);
+
+  if (result.success && result.data) {
+    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ player: null, meta: { error: result.error } }, 502);
+}
+
+async function handleNFLTeam(teamAbv: string, env: Env): Promise<Response> {
+  const cacheKey = `nfl:team:${teamAbv}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const [rosterResult, scheduleResult] = await Promise.all([
+    client.getNFLTeamRoster(teamAbv),
+    client.getNFLTeamSchedule(teamAbv),
+  ]);
+
+  const payload = {
+    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
+    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
+    meta: { lastUpdated: new Date().toISOString() },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return json(payload, 200, { 'X-Cache': 'MISS' });
+}
+
+async function handleNFLNews(env: Env): Promise<Response> {
+  const cacheKey = 'nfl:news';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNFLNews();
+
+  if (result.success && result.data) {
+    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ articles: [], meta: { error: result.error } }, 502);
+}
+
+// --- NBA ---
+
+async function handleNBAScores(url: URL, env: Env): Promise<Response> {
+  const date = toTank01Date(url.searchParams.get('date'));
+  const cacheKey = `nba:scores:${date}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNBAScores(date);
+
+  if (result.success && result.data) {
+    const payload = { games: result.data.body, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-nba' } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ games: [], meta: { error: result.error } }, 502);
+}
+
+async function handleNBAStandings(env: Env): Promise<Response> {
+  const cacheKey = 'nba:standings';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNBAStandings();
+
+  if (result.success && result.data) {
+    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ standings: [], meta: { error: result.error } }, 502);
+}
+
+async function handleNBAGame(gameId: string, env: Env): Promise<Response> {
+  const cacheKey = `nba:game:${gameId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNBABoxScore(gameId);
+
+  if (result.success && result.data) {
+    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ boxScore: null, meta: { error: result.error } }, 502);
+}
+
+async function handleNBAPlayer(playerId: string, env: Env): Promise<Response> {
+  const cacheKey = `nba:player:${playerId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNBAPlayer(playerId);
+
+  if (result.success && result.data) {
+    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ player: null, meta: { error: result.error } }, 502);
+}
+
+async function handleNBATeam(teamAbv: string, env: Env): Promise<Response> {
+  const cacheKey = `nba:team:${teamAbv}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const [rosterResult, scheduleResult] = await Promise.all([
+    client.getNBATeamRoster(teamAbv),
+    client.getNBATeamSchedule(teamAbv),
+  ]);
+
+  const payload = {
+    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
+    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
+    meta: { lastUpdated: new Date().toISOString() },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return json(payload, 200, { 'X-Cache': 'MISS' });
+}
+
+async function handleNBANews(env: Env): Promise<Response> {
+  const cacheKey = 'nba:news';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
+
+  const client = getProClient(env);
+  const result = await client.getNBANews();
+
+  if (result.success && result.data) {
+    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    return json(payload, 200, { 'X-Cache': 'MISS' });
+  }
+  return json({ articles: [], meta: { error: result.error } }, 502);
 }
 
 // ---------------------------------------------------------------------------
@@ -631,8 +1021,8 @@ async function handleSearch(url: URL, env: Env): Promise<Response> {
   const lowerQuery = query.toLowerCase();
   const results: Array<{ type: string; id: string; name: string; url: string }> = [];
 
-  // Scan KV for matching team/player entries
-  const teamList = await env.KV.list({ prefix: 'cb:team:' });
+  // Scan KV for matching team/player entries (capped to avoid full-scan)
+  const teamList = await env.KV.list({ prefix: 'cb:team:', limit: 50 });
   for (const key of teamList.keys) {
     const data = await kvGet<{ team: { name: string; id: number } }>(env.KV, key.name);
     if (data?.team?.name?.toLowerCase().includes(lowerQuery)) {
@@ -698,11 +1088,10 @@ async function handleFeedback(request: Request, env: Env): Promise<Response> {
 async function handleAdminHealth(env: Env): Promise<Response> {
   const checks: Record<string, unknown> = {};
 
-  // KV check
+  // KV check (read-only — avoids write cost on every health poll)
   try {
-    await env.KV.put('health:check', 'ok', { expirationTtl: 60 });
-    const val = await env.KV.get('health:check');
-    checks.kv = { status: val === 'ok' ? 'healthy' : 'degraded' };
+    await env.KV.get('health:check');
+    checks.kv = { status: 'healthy' };
   } catch (e) {
     checks.kv = { status: 'unhealthy', error: e instanceof Error ? e.message : 'Unknown' };
   }
@@ -715,24 +1104,38 @@ async function handleAdminHealth(env: Env): Promise<Response> {
     checks.d1 = { status: 'unhealthy', error: e instanceof Error ? e.message : 'Unknown' };
   }
 
-  // Highlightly check
+  // NCAA API check (college baseball)
+  try {
+    const ncaaClient = getCollegeClient();
+    const ncaaHealth = await ncaaClient.healthCheck();
+    checks.ncaa = {
+      status: ncaaHealth.healthy ? 'healthy' : 'unhealthy',
+      latency_ms: ncaaHealth.latency_ms,
+    };
+  } catch (e) {
+    checks.ncaa = {
+      status: 'unhealthy',
+      error: e instanceof Error ? e.message : 'Unknown',
+    };
+  }
+
+  // Tank01 check (pro sports)
   if (env.RAPIDAPI_KEY) {
     try {
-      const client = getClient(env);
-      const health = await client.healthCheck();
-      checks.highlightly = {
-        status: health.healthy ? 'healthy' : 'unhealthy',
-        latency_ms: health.latency_ms,
-        rateLimitRemaining: health.rateLimitRemaining,
+      const proClient = getProClient(env);
+      const proHealth = await proClient.healthCheck('mlb');
+      checks.tank01 = {
+        status: proHealth.healthy ? 'healthy' : 'unhealthy',
+        latency_ms: proHealth.latency_ms,
       };
     } catch (e) {
-      checks.highlightly = {
+      checks.tank01 = {
         status: 'unhealthy',
         error: e instanceof Error ? e.message : 'Unknown',
       };
     }
   } else {
-    checks.highlightly = { status: 'unconfigured', error: 'RAPIDAPI_KEY not set' };
+    checks.tank01 = { status: 'unconfigured', error: 'RAPIDAPI_KEY not set' };
   }
 
   // Error count (last 24h)
@@ -767,6 +1170,9 @@ function handleWebSocket(): Response {
       clearInterval(interval);
     }
   }, 5000);
+
+  server.addEventListener('close', () => clearInterval(interval));
+  server.addEventListener('error', () => clearInterval(interval));
 
   server.addEventListener('message', (event) => {
     try {
@@ -808,6 +1214,293 @@ async function proxyToPages(request: Request, env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// MCP Protocol handler (JSON-RPC 2.0 over HTTP)
+// ---------------------------------------------------------------------------
+
+const MCP_SERVER_INFO = {
+  name: 'bsi-sports',
+  version: '1.0.0',
+};
+
+const MCP_TOOLS = [
+  {
+    name: 'bsi_college_baseball_scores',
+    description: 'Get live and recent college baseball scores. Optionally filter by date (YYYY-MM-DD).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        date: { type: 'string', description: 'Date in YYYY-MM-DD format (default: today)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_college_baseball_standings',
+    description: 'Get college baseball standings, optionally filtered by conference.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        conference: { type: 'string', description: 'Conference name (default: NCAA)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_college_baseball_rankings',
+    description: 'Get current college baseball rankings (top 25).',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+  {
+    name: 'bsi_college_baseball_team',
+    description: 'Get team details and roster by team ID.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        team_id: { type: 'string', description: 'Numeric team ID' },
+      },
+      required: ['team_id'],
+    },
+  },
+  {
+    name: 'bsi_college_baseball_game',
+    description: 'Get game details and box score by game ID.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        game_id: { type: 'string', description: 'Numeric game ID' },
+      },
+      required: ['game_id'],
+    },
+  },
+  {
+    name: 'bsi_college_baseball_player',
+    description: 'Get player info and statistics by player ID.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        player_id: { type: 'string', description: 'Numeric player ID' },
+      },
+      required: ['player_id'],
+    },
+  },
+  {
+    name: 'bsi_college_baseball_schedule',
+    description: 'Get the college baseball schedule for a date range.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        date: { type: 'string', description: 'Start date YYYY-MM-DD (default: today)' },
+        range: { type: 'string', description: '"day" or "week" (default: week)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_mlb_scores',
+    description: 'Get MLB scores for a given date.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        date: { type: 'string', description: 'Date in YYYY-MM-DD format (default: today)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_mlb_standings',
+    description: 'Get current MLB standings.',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+  {
+    name: 'bsi_nfl_scores',
+    description: 'Get NFL scores by week.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        week: { type: 'string', description: 'Week number (default: 1)' },
+        season: { type: 'string', description: 'Season year (default: current)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_nfl_standings',
+    description: 'Get current NFL standings.',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+  {
+    name: 'bsi_nba_scores',
+    description: 'Get NBA scores for a given date.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        date: { type: 'string', description: 'Date in YYYY-MM-DD format (default: today)' },
+      },
+    },
+  },
+  {
+    name: 'bsi_nba_standings',
+    description: 'Get current NBA standings.',
+    inputSchema: { type: 'object' as const, properties: {} },
+  },
+];
+
+function mcpJsonRpc(id: unknown, result: unknown): Response {
+  return new Response(
+    JSON.stringify({ jsonrpc: '2.0', id, result }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    }
+  );
+}
+
+function mcpError(id: unknown, code: number, message: string): Response {
+  return new Response(
+    JSON.stringify({ jsonrpc: '2.0', id, error: { code, message } }),
+    {
+      status: 200, // JSON-RPC errors still use 200
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    }
+  );
+}
+
+/** Extract JSON body from an internal Response object */
+async function responseToJson(res: Response): Promise<unknown> {
+  try {
+    return await res.json();
+  } catch {
+    return { error: 'Failed to parse upstream response' };
+  }
+}
+
+async function handleMcpRequest(request: Request, env: Env): Promise<Response> {
+  // CORS preflight for MCP
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
+  let body: { jsonrpc?: string; id?: unknown; method?: string; params?: Record<string, unknown> };
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    return mcpError(null, -32700, 'Parse error');
+  }
+
+  const { id, method, params } = body;
+
+  if (method === 'initialize') {
+    return mcpJsonRpc(id, {
+      protocolVersion: '2024-11-05',
+      capabilities: { tools: {} },
+      serverInfo: MCP_SERVER_INFO,
+    });
+  }
+
+  if (method === 'tools/list') {
+    return mcpJsonRpc(id, { tools: MCP_TOOLS });
+  }
+
+  if (method === 'tools/call') {
+    const toolName = (params as Record<string, unknown>)?.name as string;
+    const args = ((params as Record<string, unknown>)?.arguments ?? {}) as Record<string, string>;
+
+    // Build a synthetic URL for handlers that need query params
+    const base = new URL(request.url);
+
+    let result: unknown;
+
+    try {
+      switch (toolName) {
+        case 'bsi_college_baseball_scores': {
+          const u = new URL(`${base.origin}/api/college-baseball/scores`);
+          if (args.date) u.searchParams.set('date', args.date);
+          result = await responseToJson(await handleCollegeBaseballScores(u, env));
+          break;
+        }
+        case 'bsi_college_baseball_standings': {
+          const u = new URL(`${base.origin}/api/college-baseball/standings`);
+          if (args.conference) u.searchParams.set('conference', args.conference);
+          result = await responseToJson(await handleCollegeBaseballStandings(u, env));
+          break;
+        }
+        case 'bsi_college_baseball_rankings':
+          result = await responseToJson(await handleCollegeBaseballRankings(env));
+          break;
+        case 'bsi_college_baseball_team':
+          result = await responseToJson(await handleCollegeBaseballTeam(args.team_id, env));
+          break;
+        case 'bsi_college_baseball_game':
+          result = await responseToJson(await handleCollegeBaseballGame(args.game_id, env));
+          break;
+        case 'bsi_college_baseball_player':
+          result = await responseToJson(await handleCollegeBaseballPlayer(args.player_id, env));
+          break;
+        case 'bsi_college_baseball_schedule': {
+          const u = new URL(`${base.origin}/api/college-baseball/schedule`);
+          if (args.date) u.searchParams.set('date', args.date);
+          if (args.range) u.searchParams.set('range', args.range);
+          result = await responseToJson(await handleCollegeBaseballSchedule(u, env));
+          break;
+        }
+        case 'bsi_mlb_scores': {
+          const u = new URL(`${base.origin}/api/mlb/scores`);
+          if (args.date) u.searchParams.set('date', args.date);
+          result = await responseToJson(await handleMLBScores(u, env));
+          break;
+        }
+        case 'bsi_mlb_standings':
+          result = await responseToJson(await handleMLBStandings(env));
+          break;
+        case 'bsi_nfl_scores': {
+          const u = new URL(`${base.origin}/api/nfl/scores`);
+          if (args.week) u.searchParams.set('week', args.week);
+          if (args.season) u.searchParams.set('season', args.season);
+          result = await responseToJson(await handleNFLScores(u, env));
+          break;
+        }
+        case 'bsi_nfl_standings':
+          result = await responseToJson(await handleNFLStandings(env));
+          break;
+        case 'bsi_nba_scores': {
+          const u = new URL(`${base.origin}/api/nba/scores`);
+          if (args.date) u.searchParams.set('date', args.date);
+          result = await responseToJson(await handleNBAScores(u, env));
+          break;
+        }
+        case 'bsi_nba_standings':
+          result = await responseToJson(await handleNBAStandings(env));
+          break;
+        default:
+          return mcpError(id, -32602, `Unknown tool: ${toolName}`);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Tool execution failed';
+      return mcpJsonRpc(id, {
+        content: [{ type: 'text', text: JSON.stringify({ error: msg }) }],
+        isError: true,
+      });
+    }
+
+    return mcpJsonRpc(id, {
+      content: [{ type: 'text', text: JSON.stringify(result) }],
+    });
+  }
+
+  return mcpError(id, -32601, `Method not found: ${method}`);
+}
+
+// ---------------------------------------------------------------------------
 // Main fetch handler
 // ---------------------------------------------------------------------------
 
@@ -823,6 +1516,9 @@ export default {
     }
 
     try {
+      // ----- MCP Protocol -----
+      if (pathname === '/mcp') return handleMcpRequest(request, env);
+
       // ----- Health / status -----
       if (pathname === '/api/health' || pathname === '/health') return handleHealth(env);
       if (pathname === '/api/admin/health') return handleAdminHealth(env);
@@ -852,6 +1548,50 @@ export default {
 
       const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId');
       if (gameMatch) return handleCollegeBaseballGame(gameMatch.params.gameId, env);
+
+      // ----- MLB data routes (Tank01) -----
+      if (pathname === '/api/mlb/scores') return handleMLBScores(url, env);
+      if (pathname === '/api/mlb/standings') return handleMLBStandings(env);
+      if (pathname === '/api/mlb/news') return handleMLBNews(env);
+
+      const mlbGameMatch = matchRoute(pathname, '/api/mlb/game/:gameId');
+      if (mlbGameMatch) return handleMLBGame(mlbGameMatch.params.gameId, env);
+
+      const mlbPlayerMatch = matchRoute(pathname, '/api/mlb/players/:playerId');
+      if (mlbPlayerMatch) return handleMLBPlayer(mlbPlayerMatch.params.playerId, env);
+
+      const mlbTeamMatch = matchRoute(pathname, '/api/mlb/teams/:teamId');
+      if (mlbTeamMatch) return handleMLBTeam(mlbTeamMatch.params.teamId, env);
+
+      // ----- NFL data routes (Tank01) -----
+      if (pathname === '/api/nfl/scores') return handleNFLScores(url, env);
+      if (pathname === '/api/nfl/standings') return handleNFLStandings(env);
+      if (pathname === '/api/nfl/news') return handleNFLNews(env);
+
+      const nflGameMatch = matchRoute(pathname, '/api/nfl/game/:gameId');
+      if (nflGameMatch) return handleNFLGame(nflGameMatch.params.gameId, env);
+
+      const nflPlayerMatch = matchRoute(pathname, '/api/nfl/players/:playerId');
+      if (nflPlayerMatch) return handleNFLPlayer(nflPlayerMatch.params.playerId, env);
+
+      const nflTeamMatch = matchRoute(pathname, '/api/nfl/teams/:teamId');
+      if (nflTeamMatch) return handleNFLTeam(nflTeamMatch.params.teamId, env);
+
+      // ----- NBA data routes (Tank01) -----
+      if (pathname === '/api/nba/scores' || pathname === '/api/nba/scoreboard') {
+        return handleNBAScores(url, env);
+      }
+      if (pathname === '/api/nba/standings') return handleNBAStandings(env);
+      if (pathname === '/api/nba/news') return handleNBANews(env);
+
+      const nbaGameMatch = matchRoute(pathname, '/api/nba/game/:gameId');
+      if (nbaGameMatch) return handleNBAGame(nbaGameMatch.params.gameId, env);
+
+      const nbaPlayerMatch = matchRoute(pathname, '/api/nba/players/:playerId');
+      if (nbaPlayerMatch) return handleNBAPlayer(nbaPlayerMatch.params.playerId, env);
+
+      const nbaTeamMatch = matchRoute(pathname, '/api/nba/teams/:teamId');
+      if (nbaTeamMatch) return handleNBATeam(nbaTeamMatch.params.teamId, env);
 
       // ----- R2 Game assets -----
       const assetPath = matchWildcardRoute(pathname, '/api/games/assets/');
@@ -1006,7 +1746,8 @@ export class PortalPoller {
 
       // Re-arm for next poll in 30 seconds
       await this.state.storage.setAlarm(Date.now() + 30_000);
-    } catch {
+    } catch (err) {
+      console.error('[PortalPoller] alarm error:', err instanceof Error ? err.message : err);
       // Re-arm even on failure to maintain polling cadence
       await this.state.storage.setAlarm(Date.now() + 30_000);
     }

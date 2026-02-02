@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { HotdogGenieSystem } from './dynamics/HotdogGenieSystem.js';
 
 const KONAMI_CODE = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
 
@@ -50,6 +51,7 @@ const POWERUP_TYPES = {
   DOUBLE: { emoji: '✖️2', color: '#9B59B6', duration: 6000, description: 'Double Points!' },
   SLOW: { emoji: '🐌', color: '#3498DB', duration: 5000, description: 'Slow Motion!' },
   TINY: { emoji: '🤏', color: '#2ECC71', duration: 4000, description: 'Diet Mode!' },
+  BLAZE: { emoji: '🔥', color: '#BF5700', duration: 5000, description: 'Blaze Power! Invincible!' },
 };
 
 // Particle creator
@@ -724,6 +726,8 @@ export default function BlazeHotDogDash() {
   // Power-ups
   const [activePowerUps, setActivePowerUps] = useState({});
   const [powerUpNotif, setPowerUpNotif] = useState(null);
+  const [isInvincible, setIsInvincible] = useState(false);
+  const [fireTrail, setFireTrail] = useState([]);
   
   // Refs for smooth animation
   const blazeXRef = useRef(50);
@@ -735,6 +739,24 @@ export default function BlazeHotDogDash() {
   const frameRef = useRef(null);
   const keysPressed = useRef({ left: false, right: false });
   const lastFrameTime = useRef(0);
+  const genieRef = useRef(new HotdogGenieSystem());
+  const [ghostPredictions, setGhostPredictions] = useState([]);
+
+  /** Submit score to arcade leaderboard (non-critical) */
+  const submitToLeaderboard = async (finalScore) => {
+    try {
+      await fetch('/api/mini-games/leaderboard/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gameId: 'hotdog-dash',
+          playerName: 'Blaze Fan',
+          score: finalScore,
+          metadata: { maxCombo },
+        }),
+      });
+    } catch { /* leaderboard is non-critical */ }
+  };
 
   const chonkFactor = Math.min(1.8, 1.0 + (score * 0.012));
   const currentChonkLevel = getChonkLevel(score);
@@ -823,6 +845,14 @@ export default function BlazeHotDogDash() {
       blazeXRef.current += (targetXRef.current - blazeXRef.current) * 0.2;
       setBlazeX(blazeXRef.current);
       setIsMoving(Math.abs(blazeXRef.current - prevX) > 0.3);
+
+      // Fire trail when Blaze power-up active
+      if (activePowerUps.BLAZE) {
+        setFireTrail(prev => {
+          const newTrail = [...prev, { x: blazeXRef.current, y: 78, life: 1, id: Date.now() + Math.random() }];
+          return newTrail.slice(-15);
+        });
+      }
       
       // Magnet effect - pull nearby hotdogs
       if (hasMagnet) {
@@ -864,6 +894,9 @@ export default function BlazeHotDogDash() {
                 });
               }, powerUp.duration);
             } else {
+              // Observe catch for Genie
+              genieRef.current.observeCatch(dog.x, dog.isGolden);
+
               // Score points
               let points = dog.isGolden ? 5 : 1;
               const comboBonus = Math.floor(combo / 5);
@@ -894,7 +927,7 @@ export default function BlazeHotDogDash() {
               setIsCatching(true);
               setTimeout(() => setIsCatching(false), 150);
               
-              if (combo > 0 && combo % 10 === 9) {
+              if (combo > 0 && combo % 10 === 0) {
                 setScreenShake(3);
               }
             }
@@ -917,7 +950,7 @@ export default function BlazeHotDogDash() {
           vy: p.vy + 0.12,
           life: p.life - 0.025,
           rotation: p.rotation + 4,
-        })).filter(p => p.life > 0)
+        })).filter(p => p.life > 0).slice(-200)
       );
       
       // Update floating texts
@@ -926,9 +959,12 @@ export default function BlazeHotDogDash() {
           ...t,
           y: t.y - 0.4,
           life: t.life - 0.02,
-        })).filter(t => t.life > 0)
+        })).filter(t => t.life > 0).slice(-100)
       );
       
+      // Fire trail life decay
+      setFireTrail(prev => prev.map(t => ({ ...t, life: t.life - 0.06 })).filter(t => t.life > 0));
+
       // Screen shake decay
       setScreenShake(s => Math.max(0, s - 0.3));
       
@@ -938,7 +974,7 @@ export default function BlazeHotDogDash() {
     lastFrameTime.current = performance.now();
     frameRef.current = requestAnimationFrame(gameLoop);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [gameStarted, chonkFactor, hasMagnet, hasDouble, hasSlow, hasTiny, combo]);
+  }, [gameStarted, chonkFactor, hasMagnet, hasDouble, hasSlow, hasTiny, combo, isInvincible, fireTrail]);
 
   // Spawn hot dogs
   useEffect(() => {
@@ -960,10 +996,17 @@ export default function BlazeHotDogDash() {
         speed: 0.6 + Math.random() * 0.3 + Math.min(score * 0.003, 0.3),
         isGolden: !isPowerUp && Math.random() < 0.18,
         isPowerUp,
-        powerUpType: isPowerUp ? Object.keys(POWERUP_TYPES)[Math.floor(Math.random() * 4)] : null,
+        powerUpType: isPowerUp ? (() => {
+          const types = Object.keys(POWERUP_TYPES).filter(k => k !== 'BLAZE' || score >= 1000);
+          return types[Math.floor(Math.random() * types.length)];
+        })() : null,
         rotation: Math.random() * 20 - 10,
         rotationSpeed: (Math.random() - 0.5) * 1.5,
       };
+      // Observe spawn for Genie dynamics
+      genieRef.current.observeSpawn(newDog.x, newDog.isGolden, newDog.isPowerUp, newDog.powerUpType);
+      setGhostPredictions(genieRef.current.getGhostPredictions());
+
       setHotDogs(prev => [...prev, newDog]);
     }, interval);
 
@@ -979,6 +1022,8 @@ export default function BlazeHotDogDash() {
         if (prev <= 1) {
           setGameStarted(false);
           setHighScore(h => Math.max(h, score));
+          // Submit to arcade leaderboard
+          submitToLeaderboard(score);
           return 0;
         }
         return prev - 1;
@@ -1004,7 +1049,11 @@ export default function BlazeHotDogDash() {
     setLastChonkIndex(0);
     setLevelUpNotif(null);
     setScreenShake(0);
+    setFireTrail([]);
+    setIsInvincible(false);
     keysPressed.current = { left: false, right: false };
+    genieRef.current.reset();
+    setGhostPredictions([]);
   };
 
   const closeGame = () => {
@@ -1171,6 +1220,36 @@ export default function BlazeHotDogDash() {
         {/* Combo Display */}
         <ComboDisplay combo={combo} />
 
+        {/* Ghost Predictions (spawn prediction trails) */}
+        {gameStarted && ghostPredictions.map((ghost, i) => (
+          <div key={`ghost-${i}`} style={{
+            position: 'absolute',
+            left: `${ghost.x}%`,
+            top: '5%',
+            width: '2px',
+            height: '60%',
+            background: `linear-gradient(180deg, ${
+              ghost.isPowerUp ? 'rgba(155,89,182,0.3)' :
+              ghost.isGolden ? 'rgba(255,215,0,0.25)' :
+              'rgba(191,87,0,0.2)'
+            } 0%, transparent 100%)`,
+            opacity: ghost.probability,
+            pointerEvents: 'none',
+            transform: 'translateX(-50%)',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '-12px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              fontSize: '14px',
+              opacity: ghost.probability * 0.6,
+            }}>
+              {ghost.isPowerUp ? '?' : ghost.isGolden ? '✨' : '🌭'}
+            </div>
+          </div>
+        ))}
+
         {/* Hot Dogs */}
         {hotDogs.map(dog => (
           <HotDog 
@@ -1190,6 +1269,22 @@ export default function BlazeHotDogDash() {
         
         {/* Floating Texts */}
         {floatingTexts.map(t => <FloatingText key={t.id} item={t} />)}
+
+        {/* Fire trail during Blaze power-up */}
+        {fireTrail.map((t, i) => (
+          <div key={t.id} style={{
+            position: 'absolute',
+            left: `${t.x}%`,
+            bottom: `${4 + i * 0.3}%`,
+            width: `${12 - i * 0.5}px`,
+            height: `${12 - i * 0.5}px`,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, #FF6B35 0%, #BF5700 50%, rgba(191,87,0,0) 100%)`,
+            opacity: t.life * (1 - i / 15),
+            pointerEvents: 'none',
+            transform: 'translateX(-50%)',
+          }} />
+        ))}
 
         {/* Blaze */}
         <div style={{
@@ -1289,6 +1384,9 @@ export default function BlazeHotDogDash() {
             <p style={{ color: '#555', fontSize: '11px', marginTop: '16px' }}>
               ← → Arrow keys or touch to move
             </p>
+            <a href="/mini-games" style={{ color: '#888', fontSize: '11px', marginTop: '10px', display: 'inline-block', textDecoration: 'none' }}>
+              ← Back to Arcade
+            </a>
           </div>
         )}
       </div>

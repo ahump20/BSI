@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import type { Sport } from './SportTabs';
 
@@ -45,7 +45,7 @@ const sportConfigs: Record<Sport, SportLeadersConfig> = {
       return leaders.slice(0, 5).map((p) => ({
         name: (p.name || p.displayName || '') as string,
         team: (p.team || p.teamAbbreviation || '') as string,
-        value: p.value || p.stat || p.yards || 0,
+        value: (p.value || p.stat || p.yards || 0) as number | string,
         position: (p.position || 'QB') as string,
       }));
     },
@@ -60,7 +60,7 @@ const sportConfigs: Record<Sport, SportLeadersConfig> = {
       return leaders.slice(0, 5).map((p) => ({
         name: (p.name || p.displayName || '') as string,
         team: (p.team || p.teamAbbreviation || '') as string,
-        value: p.value || p.stat || p.ppg || 0,
+        value: (p.value || p.stat || p.ppg || 0) as number | string,
         position: p.position as string | undefined,
       }));
     },
@@ -75,7 +75,7 @@ const sportConfigs: Record<Sport, SportLeadersConfig> = {
       return leaders.slice(0, 5).map((p) => ({
         name: (p.name || p.displayName || '') as string,
         team: (p.team || p.school || '') as string,
-        value: p.avg || p.battingAverage || p.value || 0,
+        value: (p.avg || p.battingAverage || p.value || 0) as number | string,
         position: p.position as string | undefined,
       }));
     },
@@ -90,7 +90,7 @@ interface SportLeadersProps {
 export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   const [leaders, setLeaders] = useState<Leader[]>([]);
   const [loading, setLoading] = useState(true);
-  const config = sportConfigs[sport];
+  const config = useMemo(() => sportConfigs[sport], [sport]);
 
   useEffect(() => {
     async function fetchLeaders() {

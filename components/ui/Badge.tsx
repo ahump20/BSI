@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 
-interface BadgeProps {
+export interface BadgeProps {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
+  size?: 'sm' | 'md';
   className?: string;
 }
 
@@ -14,10 +15,15 @@ const variantClasses: Record<string, string> = {
   error: 'bg-red-600/20 text-red-400 border-red-500/30',
 };
 
-export function Badge({ children, variant = 'primary', className = '' }: BadgeProps) {
+const sizeClasses: Record<string, string> = {
+  sm: 'px-2 py-0.5 text-[10px]',
+  md: 'px-3 py-1 text-xs',
+};
+
+export function Badge({ children, variant = 'primary', size = 'md', className = '' }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center rounded-full font-semibold border ${sizeClasses[size] ?? sizeClasses.md} ${variantClasses[variant] ?? variantClasses.secondary} ${className}`}
     >
       {children}
     </span>

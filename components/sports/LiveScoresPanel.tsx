@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Sport } from './SportTabs';
 
 interface GameScore {
@@ -19,21 +19,23 @@ interface LiveScoresPanelProps {
 }
 
 function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[] {
-  const rawGames = (data.games || data.scoreboard?.games || []) as Record<string, unknown>[];
+  const scoreboard = data.scoreboard as Record<string, unknown> | undefined;
+  const rawGames = (data.games || scoreboard?.games || []) as Record<string, unknown>[];
   return rawGames.map((g: Record<string, unknown>, i: number) => {
     const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
     const status = g.status as Record<string, unknown> | string | undefined;
+    const statusType = typeof status === 'object' ? (status?.type as Record<string, unknown> | undefined) : undefined;
 
     const isLive = typeof status === 'object'
-      ? status?.type?.state === 'in' || status?.isLive === true
+      ? statusType?.state === 'in' || status?.isLive === true
       : typeof status === 'string' && status.toLowerCase().includes('in progress');
 
     const isFinal = typeof status === 'object'
-      ? status?.isFinal === true || status?.type?.state === 'post'
+      ? status?.isFinal === true || statusType?.state === 'post'
       : typeof status === 'string' && status.toLowerCase().includes('final');
 
     const statusText = typeof status === 'object'
-      ? (status?.detailedState as string) || (status?.type?.description as string) || 'Scheduled'
+      ? (status?.detailedState as string) || (statusType?.description as string) || 'Scheduled'
       : (status as string) || 'Scheduled';
 
     return {
@@ -52,7 +54,7 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
       isLive: Boolean(isLive),
       isFinal: Boolean(isFinal),
       detail: typeof status === 'object' && status?.inning
-        ? `${status.inningState} ${status.inning}`
+        ? `${status?.inningState ?? ''} ${status.inning}`
         : undefined,
     };
   });
@@ -62,6 +64,8 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
   const [games, setGames] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const gamesRef = useRef(games);
+  gamesRef.current = games;
 
   useEffect(() => {
     let cancelled = false;
@@ -88,7 +92,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
     }
 
     fetchScores();
-    const hasLive = games.some((g) => g.isLive);
+    const hasLive = gamesRef.current.some((g) => g.isLive);
     const interval = setInterval(fetchScores, hasLive ? 30000 : 60000);
 
     return () => {

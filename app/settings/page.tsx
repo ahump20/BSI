@@ -18,7 +18,7 @@ import { useTeamPreferences } from '@/lib/hooks';
 
 export default function SettingsPage() {
   const { settings, resetSettings, isLoaded: timezoneLoaded } = useUserSettings();
-  const { clearPreferences: clearTeams, isLoaded: teamsLoaded } = useTeamPreferences();
+  const { prefs: teamPrefs, clearPreferences: clearTeams, isLoaded: teamsLoaded } = useTeamPreferences();
 
   if (!settings) {
     return null;
@@ -44,7 +44,7 @@ export default function SettingsPage() {
           {/* Current Settings Summary */}
           <div className="flex flex-wrap items-center gap-3 mt-4">
             {timezoneLoaded && <TimezoneBadge />}
-            {teamsLoaded && <FavoriteTeamsBadge />}
+            {teamsLoaded && <FavoriteTeamsBadge teams={teamPrefs?.teams ?? []} />}
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function SettingsPage() {
             <span className="text-2xl">🕐</span>
             Time & Date
           </h2>
-          <TimezoneSelector showSaveButton={false} />
+          <TimezoneSelector />
           <p className="text-xs text-white/40 mt-3">
             All game times and timestamps will be displayed in your selected timezone. BSI API data
             is stored in America/Chicago (Central Time).

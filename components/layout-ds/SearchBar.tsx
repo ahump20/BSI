@@ -16,16 +16,25 @@ export function SearchBar() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const abortRef = useRef<AbortController | null>(null);
 
   const search = useCallback(async (q: string) => {
     if (q.length < 2) { setResults([]); return; }
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setLoading(true);
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: controller.signal });
+      if (!res.ok) { setResults([]); return; }
       const data = await res.json() as { results?: SearchResult[] };
       setResults(data.results ?? []);
-    } catch { setResults([]); } finally { setLoading(false); }
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      setResults([]);
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => {
