@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
+import { Bricolage_Grotesque, Unbounded, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
@@ -11,17 +11,17 @@ import { EcosystemBar } from '@/components/shared/EcosystemBar';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
 import { mainNavItems } from '@/lib/navigation';
 
-// 3-font system: Display (Bebas Neue) + Body (Inter) + Mono (JetBrains Mono)
-const inter = Inter({
+// 3-font system: Display (Unbounded) + Body (Bricolage Grotesque) + Mono (JetBrains Mono)
+const bodyFont = Bricolage_Grotesque({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-body',
   display: 'swap',
 });
 
-const bebasNeue = Bebas_Neue({
-  weight: '400',
+const displayFont = Unbounded({
+  weight: ['400', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-bebas',
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -93,7 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${bodyFont.variable} ${displayFont.variable} ${jetbrainsMono.variable}`}
     >
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />

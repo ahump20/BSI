@@ -6,6 +6,23 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#0D0D0D] py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="glass-default p-6 mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40">Stay in the loop</p>
+            <h3 className="text-2xl font-display text-white mt-2">Deploy the command layer</h3>
+            <p className="text-white/60 text-sm mt-2">
+              Get updates when new analytics modules and league coverage roll out.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <a href="mailto:ahump20@outlook.com" className="btn-secondary px-4 py-2 rounded-full text-xs">
+              Contact
+            </a>
+            <a href="/pricing" className="btn-primary px-4 py-2 rounded-full text-xs">
+              View Plans
+            </a>
+          </div>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Sports</h4>
