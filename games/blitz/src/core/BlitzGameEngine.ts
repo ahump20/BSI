@@ -26,6 +26,7 @@ import {
   DefaultRenderingPipeline,
   GlowLayer,
   SceneLoader,
+  DynamicTexture,
 } from '@babylonjs/core';
 
 import { FootballField, FIELD_CONFIG } from './Field';
@@ -158,6 +159,13 @@ export class BlitzGameEngine {
   private turfSpray: ParticleSystem | null = null;
   private speedLines: ParticleSystem | null = null;
   private pipeline: DefaultRenderingPipeline | null = null;
+  private skyDome: Mesh | null = null;
+
+  // Camera effects
+  private cameraShakeDuration = 0;
+  private cameraShakeTimeRemaining = 0;
+  private cameraShakeIntensity = 0;
+  private cameraBaseRotationOffset = 180;
 
   // Cleanup tracking
   private resizeHandler: (() => void) | null = null;
@@ -238,6 +246,7 @@ export class BlitzGameEngine {
   private async initialize(): Promise<void> {
     this.setupCamera();
     this.setupLighting();
+    this.createSkyDome();
     this.setupPostProcessing();
     this.createField();
     this.createPlayers();
@@ -287,6 +296,7 @@ export class BlitzGameEngine {
     this.camera.rotationOffset = 180;
     this.camera.cameraAcceleration = 0.1;
     this.camera.maxCameraSpeed = 20;
+    this.cameraBaseRotationOffset = this.camera.rotationOffset;
 
     // Initial target (will be updated)
     const targetMesh = MeshBuilder.CreateBox('cameraTarget', { size: 0.1 }, this.scene);
@@ -329,10 +339,57 @@ export class BlitzGameEngine {
     rimLight.intensity = 0.4;
     rimLight.diffuse = Color3.FromHexString('#FFF5E0');
 
+    const fieldGlow = new HemisphericLight('fieldGlow', new Vector3(0, 1, 1), this.scene);
+    fieldGlow.intensity = 0.2;
+    fieldGlow.diffuse = Color3.FromHexString('#FFB870');
+    fieldGlow.groundColor = new Color3(0.1, 0.1, 0.12);
+
     // Exponential fog
     this.scene.fogMode = Scene.FOGMODE_EXP2;
     this.scene.fogDensity = 0.0008;
     this.scene.fogColor = new Color3(0.05, 0.05, 0.1);
+  }
+
+  private createSkyDome(): void {
+    const dome = MeshBuilder.CreateSphere(
+      'skyDome',
+      { diameter: 500, segments: 32 },
+      this.scene
+    );
+    const skyMat = new StandardMaterial('skyMat', this.scene);
+    skyMat.backFaceCulling = false;
+    skyMat.disableLighting = true;
+
+    const texture = new DynamicTexture(
+      'skyTexture',
+      { width: 512, height: 512 },
+      this.scene,
+      true
+    );
+    const ctx = texture.getContext() as CanvasRenderingContext2D;
+    const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+    gradient.addColorStop(0, '#0B1020');
+    gradient.addColorStop(0.5, '#141B2D');
+    gradient.addColorStop(1, '#1B2235');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 512, 512);
+
+    for (let i = 0; i < 120; i++) {
+      const x = Math.random() * 512;
+      const y = Math.random() * 256;
+      const radius = Math.random() * 1.5 + 0.5;
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.8})`;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    texture.update();
+    skyMat.diffuseTexture = texture;
+    skyMat.emissiveColor = new Color3(0.4, 0.45, 0.6);
+    dome.material = skyMat;
+    dome.isPickable = false;
+    this.skyDome = dome;
   }
 
   private setupPostProcessing(): void {
@@ -810,8 +867,26 @@ export class BlitzGameEngine {
         (this.camera.lockedTarget as Mesh).position = pos;
       }
 
-      // Track turbo yards
-      if (this.playerController.isTurboOn()) {
+      const targetRadius = 34 + Math.min(10, speed * 0.6);
+      const targetHeight = 24 + Math.min(8, speed * 0.4);
+      let radius = targetRadius;
+      let height = targetHeight;
+
+      if (this.cameraShakeTimeRemaining > 0) {
+        this.cameraShakeTimeRemaining = Math.max(0, this.cameraShakeTimeRemaining - deltaTime);
+        const intensityScale = this.cameraShakeDuration > 0
+          ? this.cameraShakeTimeRemaining / this.cameraShakeDuration
+          : 0;
+        const jitter = (Math.random() * 2 - 1) * this.cameraShakeIntensity * intensityScale;
+        radius += jitter * 0.6;
+        height += jitter * 0.4;
+        this.camera.rotationOffset = this.cameraBaseRotationOffset + jitter;
+      } else {
+        this.camera.rotationOffset = this.cameraBaseRotationOffset;
+      }
+
+      this.camera.radius = radius;
+      this.camera.heightOffset = height;
         const velocity = this.playerController.getVelocity();
         const yardsThisFrame = velocity.length() * deltaTime;
         if (velocity.z > 0) { // Moving forward
@@ -1012,6 +1087,7 @@ export class BlitzGameEngine {
     }
 
     this.gameState.tacklesMade++;
+    this.triggerCameraShake(1.2, 350);
     this.endPlay(false);
   }
 
@@ -1024,6 +1100,7 @@ export class BlitzGameEngine {
     // Play touchdown fanfare
     this.audioManager?.playSFX('touchdown');
     this.audioManager?.setCrowdIntensity(3);
+    this.triggerCameraShake(1.6, 600);
 
     // Touchdown particles
     const tdPos = this.getBallCarrierPosition() || new Vector3(0, 0, 100);
@@ -1057,6 +1134,12 @@ export class BlitzGameEngine {
     this.pendingIntervals.add(flickerInterval);
 
     this.endGame('touchdown');
+  }
+
+  private triggerCameraShake(intensity: number, durationMs: number): void {
+    this.cameraShakeIntensity = intensity;
+    this.cameraShakeDuration = durationMs / 1000;
+    this.cameraShakeTimeRemaining = this.cameraShakeDuration;
   }
 
   private endPlay(isIncomplete: boolean): void {

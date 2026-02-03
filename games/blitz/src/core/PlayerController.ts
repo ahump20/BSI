@@ -30,6 +30,8 @@ export interface PlayerControlConfig {
   maxStamina: number;        // Total stamina pool
   staminaDrainRate: number;  // Stamina drain per second when turbo
   staminaRegenRate: number;  // Stamina regen per second when not turbo
+  fatigueSpeedFloor: number; // Min speed multiplier at zero stamina
+  cutbackPenalty: number;    // Speed loss on sharp cuts (0-1)
   tackleRadius: number;      // How close to tackle
   tackleImpulse: number;     // Knockback force on tackle
   lateHitWindow: number;     // Seconds after whistle tackles still work
@@ -42,6 +44,8 @@ const DEFAULT_CONFIG: PlayerControlConfig = {
   maxStamina: 100,
   staminaDrainRate: 25,     // 4 seconds of full turbo
   staminaRegenRate: 15,     // Slower regen
+  fatigueSpeedFloor: 0.84,  // Fatigue slows top speed at low stamina
+  cutbackPenalty: 0.28,     // Momentum loss on sharp cuts
   tackleRadius: 1.5,        // 1.5 yard tackle range
   tackleImpulse: 8,         // Knockback force
   lateHitWindow: 1.5,       // 1.5 seconds of late-hit drama
@@ -220,6 +224,20 @@ export class PlayerController {
     let targetSpeed = this.config.baseSpeed;
     if (this.isTurboActive) {
       targetSpeed *= this.config.turboMultiplier;
+    }
+
+    const staminaRatio = this.config.maxStamina > 0
+      ? Math.max(0, Math.min(1, this.stamina / this.config.maxStamina))
+      : 1;
+    const fatigueFactor = this.config.fatigueSpeedFloor
+      + (1 - this.config.fatigueSpeedFloor) * staminaRatio;
+    targetSpeed *= fatigueFactor;
+
+    if (inputDir.length() > 0 && this.velocity.length() > 0.5) {
+      const currentDir = this.velocity.clone().normalize();
+      const alignment = Math.max(-1, Math.min(1, Vector3.Dot(currentDir, inputDir)));
+      const turnIntensity = Math.min(1, (1 - alignment) / 2);
+      targetSpeed *= 1 - turnIntensity * this.config.cutbackPenalty;
     }
 
     // Target velocity
