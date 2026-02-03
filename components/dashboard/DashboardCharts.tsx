@@ -37,20 +37,30 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
   return (
     <ResponsiveContainer width="100%" height={260}>
       <BarChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+        <defs>
+          <linearGradient id="winsGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FF6B35" />
+            <stop offset="100%" stopColor="#BF5700" />
+          </linearGradient>
+          <linearGradient id="lossesGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.1)" />
+          </linearGradient>
+        </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
         <XAxis dataKey="name" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} />
         <YAxis tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid rgba(255,255,255,0.1)',
+            backgroundColor: '#0d0d12',
+            border: '1px solid rgba(255,255,255,0.15)',
             borderRadius: '8px',
             color: '#fff',
             fontSize: 12,
           }}
         />
-        <Bar dataKey="wins" fill="#BF5700" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="losses" fill="rgba(255,255,255,0.15)" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="wins" fill="url(#winsGradient)" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="losses" fill="url(#lossesGradient)" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -85,8 +95,8 @@ export function SportCoveragePieChart({ data }: SportCoveragePieChartProps) {
         </Pie>
         <Tooltip
           contentStyle={{
-            backgroundColor: '#1A1A1A',
-            border: '1px solid rgba(255,255,255,0.1)',
+            backgroundColor: '#0d0d12',
+            border: '1px solid rgba(255,255,255,0.15)',
             borderRadius: '8px',
             color: '#fff',
             fontSize: 12,

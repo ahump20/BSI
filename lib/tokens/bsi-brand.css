@@ -24,9 +24,9 @@
   --bsi-primary-900: #3f1c00;
 
   /* ---- Typography ---- */
-  --bsi-font-display: 'Bebas Neue', system-ui, sans-serif;
-  --bsi-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --bsi-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --bsi-font-display: var(--font-display), 'Unbounded', system-ui, sans-serif;
+  --bsi-font-body: var(--font-body), 'Bricolage Grotesque', system-ui, sans-serif;
+  --bsi-font-mono: var(--font-mono), 'JetBrains Mono', 'Fira Code', monospace;
 
   /* ---- Spacing Scale (4px base) ---- */
   --bsi-space-1: 0.25rem;

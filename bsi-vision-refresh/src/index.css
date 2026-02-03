@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=Unbounded:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --ink: #0b0b10;
+  --ember: #ff6a00;
+  --gold: #fdb913;
+  --cyan: #2de2e6;
+  --ice: #dff7ff;
+}
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background: var(--ink);
+}
+
+.font-display {
+  font-family: 'Unbounded', sans-serif;
+}
+
+.bg-ink {
+  background: radial-gradient(circle at 20% 20%, #1a0f0a 0%, #0b0b10 55%, #07070c 100%);
+}
+
+.bg-hero {
+  background: radial-gradient(circle at 70% 20%, rgba(255, 106, 0, 0.15), transparent 55%),
+    radial-gradient(circle at 10% 80%, rgba(45, 226, 230, 0.12), transparent 60%);
+}
+
+.bg-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.25;
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, #ff6a00, #fdb913, #2de2e6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold;
+  background: linear-gradient(120deg, #ff6a00, #fdb913);
+  color: #050505;
+  box-shadow: 0 12px 30px rgba(255, 106, 0, 0.25);
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold border;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em];
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.glass-panel {
+  background: rgba(12, 12, 18, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(24px);
+}
+
+.card-edge {
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(140deg, rgba(19, 19, 28, 0.9), rgba(9, 9, 14, 0.9));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--cyan);
+  box-shadow: 0 0 0 0 rgba(45, 226, 230, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(45, 226, 230, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(45, 226, 230, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(45, 226, 230, 0);
+  }
+}
+
+.text-ember {
+  color: var(--ember);
+}
+
+.bg-ember {
+  background-color: rgba(255, 106, 0, 0.12);
+}
+
+.border-ember {
+  border-color: rgba(255, 106, 0, 0.35);
+}
+
+.from-ember {
+  --tw-gradient-from: #ff6a00;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 106, 0, 0));
+}
+
+.via-gold {
+  --tw-gradient-stops: var(--tw-gradient-from), #fdb913, var(--tw-gradient-to, rgba(253, 185, 19, 0));
+}
+
+.to-cyan {
+  --tw-gradient-to: #2de2e6;
+}

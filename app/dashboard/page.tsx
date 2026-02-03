@@ -201,8 +201,11 @@ export default function DashboardPage() {
     { name: 'NCAA', value: coverageCounts.ncaa ?? coverageCounts['college-baseball'] ?? 20, color: '#BF5700' },
   ];
 
+  const sportTheme =
+    activeSport === 'ncaa' ? 'college-baseball' : activeSport;
+
   return (
-    <main id="main-content" className="min-h-screen pt-24 md:pt-28">
+    <main id="main-content" className="min-h-screen pt-24 md:pt-28" data-sport={sportTheme}>
       <Section padding="lg" className="pt-8">
         <Container size="wide">
           {/* Header with Logo */}
