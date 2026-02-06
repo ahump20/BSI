@@ -1657,9 +1657,11 @@ export default {
       // ----- Everything else → proxy to Pages -----
       return await proxyToPages(request, env);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Internal server error';
-      await logError(env.KV, message, pathname);
-      return json({ error: message }, 500);
+      const detail = err instanceof Error ? err.message : 'Internal server error';
+      await logError(env.KV, detail, pathname);
+      // Don't leak internal error details to clients in production
+      const publicMessage = env.ENVIRONMENT === 'production' ? 'Internal server error' : detail;
+      return json({ error: publicMessage }, 500);
     }
   },
 };
