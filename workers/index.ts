@@ -2091,7 +2091,7 @@ const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const RATE_LIMIT_MAX = 120; // requests per window per IP
 const _rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(ip: string): boolean {
+function checkInMemoryRateLimit(ip: string): boolean {
   const now = Date.now();
   const entry = _rateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
@@ -2129,7 +2129,7 @@ export default {
     if (pathname.startsWith('/api/')) {
       const ip = request.headers.get('cf-connecting-ip') || 'unknown';
       maybeCleanupRateLimit();
-      if (!checkRateLimit(ip)) {
+      if (!checkInMemoryRateLimit(ip)) {
         return json({ error: 'Rate limit exceeded. Try again shortly.' }, 429);
       }
     }
