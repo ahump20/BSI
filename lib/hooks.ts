@@ -4,10 +4,18 @@ import { useState, useEffect, useCallback } from 'react';
 
 const TIMEZONE = 'America/Chicago';
 
+interface SettingsState {
+  theme: 'dark' | 'light';
+  timeFormat: '12h' | '24h';
+  timezone: string;
+}
+
 interface UserSettings {
   formatDateTime: (date: Date) => string;
   formatDate: (date: Date) => string;
   formatTime: (date: Date) => string;
+  settings: SettingsState;
+  resetSettings: () => void;
   isLoaded: boolean;
 }
 
@@ -52,7 +60,12 @@ export function useUserSettings(): UserSettings {
     );
   }, []);
 
-  return { formatDateTime, formatDate, formatTime, isLoaded };
+  const settings: SettingsState = { theme: 'dark', timeFormat: '12h', timezone: TIMEZONE };
+  const resetSettings = useCallback(() => {
+    // Settings are currently hardcoded defaults; reset is a no-op
+  }, []);
+
+  return { formatDateTime, formatDate, formatTime, settings, resetSettings, isLoaded };
 }
 
 export { useTeamPreferences } from "@/components/settings/TeamPreferenceSelector";

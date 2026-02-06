@@ -1,12 +1,15 @@
 export interface MLBTeamInfo {
   id: string;
   name: string;
+  shortName?: string;
   abbreviation: string;
+  abbrev?: string;
   city: string;
   league: 'AL' | 'NL';
   division: 'East' | 'Central' | 'West';
   slug: string;
   primaryColor: string;
+  venue?: string;
 }
 
 export const MLB_TEAMS: MLBTeamInfo[] = [

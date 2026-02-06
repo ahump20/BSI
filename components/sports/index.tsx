@@ -83,24 +83,44 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
   );
 }
 
-export function DataDisclaimer() {
-  return (
-    <p className="text-xs text-white/20 text-center mt-4">
-      Data provided for informational purposes. Statistics sourced from official league APIs and public sources.
-    </p>
-  );
-}
 
-export function CitationFooter({ sources, className = "" }: { sources?: DataSource[]; className?: string }) {
-  if (!sources || sources.length === 0) return null;
+export function CitationFooter({ sources, source, fetchedAt, additionalSources, showFreshness, className = "" }: {
+  sources?: DataSource[];
+  source?: string;
+  fetchedAt?: string;
+  additionalSources?: string[];
+  showFreshness?: boolean;
+  className?: string;
+}) {
+  // Build sources array from shorthand props if sources not provided directly
+  const resolvedSources = sources ?? (source ? [{ name: source, url: '', fetchedAt: fetchedAt ?? '' }] : []);
+  if (resolvedSources.length === 0) return null;
   return (
     <footer className={`border-t border-white/10 pt-4 mt-8 ${className}`}>
       <p className="text-xs text-white/30 mb-2">Sources</p>
       <div className="flex flex-wrap gap-2">
-        {sources.map((s) => (
-          <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors">{s.name}</a>
+        {resolvedSources.map((s) => (
+          s.url ? (
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors">{s.name}</a>
+          ) : (
+            <span key={s.name} className="text-xs text-white/40">{s.name}</span>
+          )
+        ))}
+        {additionalSources?.map((s) => (
+          <span key={s} className="text-xs text-white/40">{s}</span>
         ))}
       </div>
+      {showFreshness && fetchedAt && (
+        <p className="text-[10px] text-white/20 mt-1">Last updated: {fetchedAt}</p>
+      )}
     </footer>
+  );
+}
+
+export function DataDisclaimer({ className = '' }: { className?: string }) {
+  return (
+    <p className={`text-[10px] text-white/20 ${className}`}>
+      Data is provided for informational purposes only. Stats may be delayed or incomplete.
+    </p>
   );
 }

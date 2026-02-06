@@ -2,8 +2,27 @@
 
 import { Badge } from '@/components/ui/Badge';
 
+export interface PortalEntry {
+  id: string;
+  player_name: string;
+  position?: string;
+  school?: string;
+  destination?: string;
+  status: 'in_portal' | 'committed' | 'withdrawn';
+  stars?: number;
+  [key: string]: unknown;
+}
+
+export interface FilterState {
+  sport?: string;
+  position?: string;
+  status?: string;
+  [key: string]: string | undefined;
+}
+
 interface StatusBadgeProps {
   status: string;
+  size?: string;
   className?: string;
 }
 
@@ -13,7 +32,11 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
 }
 
 interface PortalCardProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  entry?: PortalEntry;
+  sport?: string;
+  showStats?: boolean;
+  href?: string;
   className?: string;
 }
 
@@ -26,7 +49,13 @@ export function PortalCardGrid({ children, className = '' }: { children: React.R
 }
 
 interface PortalFiltersProps {
+  sport?: string;
+  filters?: FilterState;
+  onFiltersChange?: (filters: FilterState) => void;
   onFilterChange?: (filters: Record<string, string>) => void;
+  totalCount?: number;
+  filteredCount?: number;
+  className?: string;
 }
 
 export function PortalFilters({ onFilterChange }: PortalFiltersProps) {
