@@ -89,10 +89,19 @@ function activeCorsHeaders(): Record<string, string> {
   return (_activeRequest && _activeEnv) ? corsHeaders(_activeRequest, _activeEnv) : {};
 }
 
+/** Standard security headers applied to all API responses */
+const SECURITY_HEADERS: Record<string, string> = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+};
+
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...activeCorsHeaders(), ...extra },
+    headers: { 'Content-Type': 'application/json', ...SECURITY_HEADERS, ...activeCorsHeaders(), ...extra },
   });
 }
 
@@ -119,6 +128,31 @@ function matchWildcardRoute(
   if (!pathname.startsWith(prefix)) return null;
   const rest = pathname.slice(prefix.length);
   return rest || null;
+}
+
+// ---------------------------------------------------------------------------
+// Rate limiting (simple KV-based sliding window)
+// ---------------------------------------------------------------------------
+
+const RATE_LIMIT_WINDOW = 60; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 30; // max POST requests per IP per minute
+
+async function checkRateLimit(kv: KVNamespace, ip: string): Promise<boolean> {
+  const key = `rl:${ip}:${Math.floor(Date.now() / (RATE_LIMIT_WINDOW * 1000))}`;
+  const count = parseInt((await kv.get(key)) || '0', 10);
+  if (count >= RATE_LIMIT_MAX_REQUESTS) return false;
+  await kv.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW * 2 });
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Input validation helpers
+// ---------------------------------------------------------------------------
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmail(email: string): boolean {
+  return typeof email === 'string' && email.length <= 254 && EMAIL_RE.test(email);
 }
 
 // ---------------------------------------------------------------------------
@@ -313,8 +347,22 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
       return json({ error: 'Name and email are required' }, 400);
     }
 
+    if (!isValidEmail(lead.email)) {
+      return json({ error: 'Invalid email address' }, 400);
+    }
+
+    if (lead.name.length > 200 || (lead.message && lead.message.length > 5000)) {
+      return json({ error: 'Input exceeds maximum length' }, 400);
+    }
+
     if (lead.consent !== true) {
       return json({ error: 'Consent to privacy policy is required' }, 400);
+    }
+
+    // Rate limit POST endpoints
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+    if (env.KV && !(await checkRateLimit(env.KV, clientIP))) {
+      return json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const consentedAt = new Date().toISOString();
@@ -1062,6 +1110,16 @@ async function handleFeedback(request: Request, env: Env): Promise<Response> {
       return json({ error: 'Feedback text is required' }, 400);
     }
 
+    if (body.text.length > 5000) {
+      return json({ error: 'Feedback text exceeds maximum length' }, 400);
+    }
+
+    // Rate limit feedback submissions
+    const fbIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+    if (env.KV && !(await checkRateLimit(env.KV, fbIP))) {
+      return json({ error: 'Too many requests. Please try again later.' }, 429);
+    }
+
     if (env.DB) {
       try {
         await env.DB
@@ -1209,6 +1267,11 @@ async function proxyToPages(request: Request, env: Env): Promise<Response> {
 
   const response = new Response(pagesResponse.body, pagesResponse);
 
+  // Apply security headers to all proxied responses
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+
   if (
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.match(/\.(js|css|woff2?|ttf|eot|ico|png|jpg|jpeg|gif|svg|webp|avif)$/)
@@ -1346,15 +1409,23 @@ const MCP_TOOLS = [
   },
 ];
 
+function mcpCorsHeaders(): Record<string, string> {
+  // MCP uses the same origin-restricted CORS as the rest of the API
+  return {
+    ...activeCorsHeaders(),
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
+
 function mcpJsonRpc(id: unknown, result: unknown): Response {
   return new Response(
     JSON.stringify({ jsonrpc: '2.0', id, result }),
     {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        ...SECURITY_HEADERS,
+        ...mcpCorsHeaders(),
       },
     }
   );
@@ -1367,9 +1438,8 @@ function mcpError(id: unknown, code: number, message: string): Response {
       status: 200, // JSON-RPC errors still use 200
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        ...SECURITY_HEADERS,
+        ...mcpCorsHeaders(),
       },
     }
   );
@@ -1387,13 +1457,7 @@ async function responseToJson(res: Response): Promise<unknown> {
 async function handleMcpRequest(request: Request, env: Env): Promise<Response> {
   // CORS preflight for MCP
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
+    return new Response(null, { headers: mcpCorsHeaders() });
   }
 
   let body: { jsonrpc?: string; id?: unknown; method?: string; params?: Record<string, unknown> };

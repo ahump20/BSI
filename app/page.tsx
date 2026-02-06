@@ -161,7 +161,7 @@ export default function HomePage() {
                 Blaze Sports Intel
               </Link>
               <p className="text-gray-500 text-sm mt-2">
-                &copy; 2025 Blaze Sports Intel. All rights reserved.
+                &copy; {new Date().getFullYear()} Blaze Sports Intel. All rights reserved.
               </p>
             </div>
             <div className="flex gap-8">

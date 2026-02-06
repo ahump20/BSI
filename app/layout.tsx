@@ -91,12 +91,44 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+/** Structured data (JSON-LD) for SEO — Organization + WebSite */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+      logo: 'https://blazesportsintel.com/images/logo/blaze-logo.png',
+      founder: { '@type': 'Person', name: 'Austin Humphrey' },
+      description:
+        'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics.',
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://blazesportsintel.com/search?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`dark ${inter.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
         <CustomCursor />
