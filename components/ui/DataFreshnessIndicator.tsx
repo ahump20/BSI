@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 
 interface DataFreshnessIndicatorProps {
-  lastUpdated: Date;
+  /** Date of last data update. Defaults to now if omitted. */
+  lastUpdated?: Date;
+  /** Data source label (e.g. "ESPN") */
+  source?: string;
+  /** Auto-refresh interval in seconds — display only */
+  refreshInterval?: number;
   isRefreshing?: boolean;
   onRefresh?: () => void;
 }
@@ -13,19 +18,13 @@ function getTimeAgo(date: Date): string {
   const now = new Date();
   const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (secondsAgo < 60) {
-    return 'just now';
-  }
+  if (secondsAgo < 60) return 'just now';
 
   const minutesAgo = Math.floor(secondsAgo / 60);
-  if (minutesAgo < 60) {
-    return `${minutesAgo}m ago`;
-  }
+  if (minutesAgo < 60) return `${minutesAgo}m ago`;
 
   const hoursAgo = Math.floor(minutesAgo / 60);
-  if (hoursAgo < 24) {
-    return `${hoursAgo}h ago`;
-  }
+  if (hoursAgo < 24) return `${hoursAgo}h ago`;
 
   const daysAgo = Math.floor(hoursAgo / 24);
   return `${daysAgo}d ago`;
@@ -46,24 +45,41 @@ function getStatusColor(
 
 export function DataFreshnessIndicator({
   lastUpdated,
+  source,
+  refreshInterval,
   isRefreshing = false,
   onRefresh,
 }: DataFreshnessIndicatorProps) {
-  const [timeAgo, setTimeAgo] = useState<string>(getTimeAgo(lastUpdated));
-  const statusColor = getStatusColor(lastUpdated);
+  // Safe default — always a valid Date even during SSR prerender
+  const safeDate = lastUpdated instanceof Date ? lastUpdated : new Date();
+
+  const [timeAgo, setTimeAgo] = useState<string>(() => getTimeAgo(safeDate));
+  const [statusColor, setStatusColor] = useState<string>(() =>
+    getStatusColor(safeDate)
+  );
 
   useEffect(() => {
+    // Recalculate immediately on mount (fixes SSR hydration drift)
+    setTimeAgo(getTimeAgo(safeDate));
+    setStatusColor(getStatusColor(safeDate));
+
     const interval = setInterval(() => {
-      setTimeAgo(getTimeAgo(lastUpdated));
-    }, 30000); // Update every 30 seconds
+      setTimeAgo(getTimeAgo(safeDate));
+      setStatusColor(getStatusColor(safeDate));
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, [lastUpdated]);
+  }, [safeDate]);
 
   return (
-    <div className="flex items-center gap-2 text-xs text-white/60">
+    <div className="flex items-center justify-center gap-2 text-xs text-white/60">
       <span className={`w-2 h-2 rounded-full ${statusColor}`} />
-      <span>Data updated {timeAgo}</span>
+      <span>
+        {source ? `${source} data` : 'Data'} updated {timeAgo}
+      </span>
+      {refreshInterval && (
+        <span className="text-white/30">· {refreshInterval}s refresh</span>
+      )}
       {onRefresh && (
         <button
           onClick={onRefresh}
