@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 interface SectionProps {
   children: ReactNode;
+  id?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   background?: 'default' | 'charcoal' | 'midnight' | 'cream';
   borderTop?: boolean;
@@ -25,6 +26,7 @@ const bgClasses: Record<string, string> = {
 
 export function Section({
   children,
+  id,
   padding = 'md',
   background = 'default',
   borderTop,
@@ -32,6 +34,7 @@ export function Section({
 }: SectionProps) {
   return (
     <section
+      id={id}
       className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-white/10' : ''} ${className}`}
     >
       {children}

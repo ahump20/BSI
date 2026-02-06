@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 export interface BadgeProps {
   children: ReactNode;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'outline' | 'default' | 'info' | 'accent';
   size?: 'sm' | 'md';
+  style?: React.CSSProperties;
   className?: string;
 }
 
@@ -13,6 +14,10 @@ const variantClasses: Record<string, string> = {
   success: 'bg-green-600/20 text-green-400 border-green-500/30',
   warning: 'bg-yellow-600/20 text-yellow-400 border-yellow-500/30',
   error: 'bg-red-600/20 text-red-400 border-red-500/30',
+  outline: 'bg-transparent text-white/70 border-white/30',
+  default: 'bg-white/10 text-white/70 border-white/20',
+  info: 'bg-blue-600/20 text-blue-400 border-blue-500/30',
+  accent: 'bg-[#BF5700]/20 text-[#FF6B35] border-[#BF5700]/30',
 };
 
 const sizeClasses: Record<string, string> = {
@@ -20,10 +25,11 @@ const sizeClasses: Record<string, string> = {
   md: 'px-3 py-1 text-xs',
 };
 
-export function Badge({ children, variant = 'primary', size = 'md', className = '' }: BadgeProps) {
+export function Badge({ children, variant = 'primary', size = 'md', style, className = '' }: BadgeProps) {
   return (
     <span
       className={`inline-flex items-center rounded-full font-semibold border ${sizeClasses[size] ?? sizeClasses.md} ${variantClasses[variant] ?? variantClasses.secondary} ${className}`}
+      style={style}
     >
       {children}
     </span>

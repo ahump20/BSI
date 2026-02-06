@@ -10,7 +10,13 @@ interface SearchResult {
   subtitle: string;
 }
 
-export function SearchBar() {
+interface SearchBarProps {
+  variant?: 'default' | 'page';
+  placeholder?: string;
+  autoFocus?: boolean;
+}
+
+export function SearchBar({ variant = 'default', placeholder = 'Search teams, players...', autoFocus = false }: SearchBarProps = {}) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [open, setOpen] = useState(false);
@@ -51,7 +57,7 @@ export function SearchBar() {
 
   return (
     <div ref={ref} className="relative">
-      <input type="search" value={query} onChange={(e) => { setQuery(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} placeholder="Search teams, players..." aria-label="Search teams and players" className="w-48 lg:w-64 px-3 py-1.5 rounded-lg bg-charcoal border border-border-subtle text-white text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors" />
+      <input type="search" value={query} onChange={(e) => { setQuery(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} autoFocus={autoFocus} placeholder={placeholder} aria-label="Search teams and players" className={`${variant === 'page' ? 'w-full px-4 py-3 text-base' : 'w-48 lg:w-64 px-3 py-1.5 text-sm'} rounded-lg bg-charcoal border border-border-subtle text-white placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors`} />
       {open && query.length >= 2 && (
         <div className="absolute top-full mt-1 left-0 right-0 bg-[#1A1A1A] border border-border-subtle rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto">
           {loading ? (

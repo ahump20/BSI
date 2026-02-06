@@ -15,8 +15,8 @@ export function EcosystemBar() {
     const controller = new AbortController();
     fetch('/api/agent-health', { signal: controller.signal })
       .then((r) => r.ok && r.json())
-      .then((data) => {
-        if (data?.active) setAgentActive(true);
+      .then((data: Record<string, unknown> | false) => {
+        if (data && (data as Record<string, unknown>).active) setAgentActive(true);
       })
       .catch((err) => {
         if (err.name !== 'AbortError') {
