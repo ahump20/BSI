@@ -5,4 +5,5 @@ export const mainNavItems = [
   { label: 'NBA', href: '/nba' },
   { label: 'CFB', href: '/cfb' },
   { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'Arcade', href: '/arcade' },
 ];

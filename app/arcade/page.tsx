@@ -1,137 +1,206 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { HeroVideo } from '@/components/hero/HeroVideo';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/Card';
+import { Container } from '@/components/ui/Container';
+import { Section } from '@/components/ui/Section';
+import { Footer } from '@/components/layout-ds/Footer';
+
+interface LeaderboardEntry {
+  name: string;
+  score: number;
+  avatar: string;
+  game_id: string;
+  updated_at: string;
+}
+
+const GAMES = [
+  {
+    id: 'blitz',
+    title: 'Blitz',
+    description: 'Call plays and drive downfield in this fast-paced football strategy game.',
+    color: '#013369',
+    icon: '🏈',
+    url: '/games/blitz/',
+    deployed: true,
+  },
+  {
+    id: 'blaze-field',
+    title: 'Blaze Field',
+    description: 'Step up to the plate. Timing-based baseball hitting challenge.',
+    color: '#C41E3A',
+    icon: '⚾',
+    url: '/games/blaze-field/',
+    deployed: true,
+  },
+  {
+    id: 'sandlot-sluggers',
+    title: 'Sandlot Sluggers',
+    description: 'Backyard baseball action — swing for the fences in sandbox mode.',
+    color: '#BF5700',
+    icon: '🥎',
+    url: '/games/sandlot-sluggers/',
+    deployed: true,
+  },
+  {
+    id: 'blazecraft',
+    title: 'BlazeCraft',
+    description: 'Your BSI ops command center, gamified. Manage live data agents and deploy intelligence.',
+    color: '#FDB913',
+    icon: '⚔️',
+    url: 'https://blazecraft.app?source=bsi-arcade',
+    deployed: true,
+    external: true,
+  },
+];
 
 export default function ArcadePage() {
-  const router = useRouter();
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/multiplayer/leaderboard?limit=15')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: { leaderboard?: LeaderboardEntry[] }) => {
+        setLeaderboard(data.leaderboard || []);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingLeaderboard(false));
+  }, []);
 
   return (
     <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
-      {/* BlazeCraft Gateway Hero */}
-      <section className="relative min-h-[70vh] flex items-center overflow-hidden">
-        {/* Ambient video background */}
-        <HeroVideo />
-        <div
-          className="absolute inset-0 z-[1]"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(13,13,18,0.9) 0%, rgba(13,13,18,0.5) 50%, rgba(13,13,18,0.95) 100%)',
-          }}
-        />
-
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <span
-            className="inline-block mb-4 px-3 py-1 rounded text-xs font-display uppercase tracking-widest"
-            style={{ background: 'rgba(253, 185, 19, 0.15)', color: '#FDB913' }}
-          >
-            BlazeCraft
-          </span>
-          <h1 className="text-5xl md:text-7xl font-display text-white uppercase tracking-tight mb-6">
-            Command Center
-          </h1>
-          <p className="text-xl text-white/60 max-w-2xl mx-auto mb-10">
-            Your BSI ops command center, gamified. Manage live data agents, monitor game pipelines,
-            and deploy intelligence — all from a Warcraft III-inspired war room.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://blazecraft.app?source=bsi-arcade"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary px-10 py-4 text-lg rounded-lg"
-              style={{ background: '#FDB913', color: '#0D0D12' }}
-            >
-              Launch BlazeCraft
-            </a>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="btn-secondary px-10 py-4 text-lg rounded-lg"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Mini games hub */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-display text-white uppercase tracking-wide">
-                Arcade Mini Games
-              </h2>
-              <p className="text-white/60 mt-3 max-w-2xl">
-                Jump into Blaze mini games built for quick competitive sessions, optimized for any
-                device.
-              </p>
-            </div>
-            <Link
-              href="/arcade/games"
-              className="btn-primary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
-              style={{ background: '#FF6B35', color: '#0D0D12' }}
-            >
-              View All Games
-            </Link>
+      <Section padding="lg" className="pt-8">
+        <Container size="wide">
+          {/* Header */}
+          <div className="mb-10">
+            <span className="inline-block mb-3 px-3 py-1 rounded text-xs font-display uppercase tracking-widest bg-[#BF5700]/15 text-[#BF5700]">
+              Arcade
+            </span>
+            <h1 className="text-4xl md:text-5xl font-display text-white uppercase tracking-tight mb-3">
+              Games Hub
+            </h1>
+            <p className="text-white/60 max-w-xl">
+              Play sports mini-games, compete for high scores, and climb the leaderboard.
+            </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              {
-                title: 'Blaze Blitz Football',
-                description: 'Arcade football with explosive drives and highlight plays.',
-                href: '/arcade/games/blitz',
-              },
-              {
-                title: 'Hotdog Dash',
-                description: 'Sprint, dodge, and out-run the pack in a quick arcade dash.',
-                href: '/arcade/games/hotdog-dash',
-              },
-              {
-                title: 'Sandlot Sluggers',
-                description: 'Step into the batter’s box for a quick-fire baseball showdown.',
-                href: '/arcade/games/sandlot-sluggers',
-              },
-            ].map((game) => (
-              <div
-                key={game.title}
-                className="glass-elevated rounded-xl p-6 flex flex-col justify-between"
+          {/* Games Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+            {GAMES.map((game) => (
+              <a
+                key={game.id}
+                href={game.url}
+                target={game.external ? '_blank' : undefined}
+                rel={game.external ? 'noopener noreferrer' : undefined}
+                className="group block"
               >
-                <div>
-                  <h3 className="text-xl font-display text-white mb-2">{game.title}</h3>
-                  <p className="text-white/60">{game.description}</p>
-                </div>
-                <Link
-                  href={game.href}
-                  className="mt-6 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold uppercase tracking-wide"
-                  style={{ background: 'rgba(255,255,255,0.12)', color: '#FFFFFF' }}
-                >
-                  Enter Game
-                </Link>
-              </div>
+                <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-white/20">
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                    style={{ background: `${game.color}20` }}
+                  >
+                    {game.icon}
+                  </div>
+                  <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
+                    {game.title}
+                  </h3>
+                  <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-400" />
+                    <span className="text-xs text-green-400/80">Live</span>
+                    {game.external && <span className="text-[10px] text-white/20 ml-auto">External</span>}
+                  </div>
+                </Card>
+              </a>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Preview iframe */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-display text-white uppercase tracking-wide text-center mb-8">
-            Preview
-          </h2>
-          <div className="glass-elevated overflow-hidden rounded-xl aspect-video">
-            <iframe
-              src="https://blazecraft.app?embed=true&source=bsi-arcade"
-              className="w-full h-full border-0"
-              loading="lazy"
-              title="BlazeCraft Command Center preview"
-            />
+          {/* Leaderboard */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div className="lg:col-span-2">
+              <Card padding="lg">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-display text-xl text-white uppercase tracking-wide">Leaderboard</h2>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setActiveGame(null)}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${!activeGame ? 'bg-[#BF5700] text-white' : 'bg-white/5 text-white/50 hover:text-white'}`}
+                    >
+                      All
+                    </button>
+                    {GAMES.filter((g) => !g.external).map((g) => (
+                      <button
+                        key={g.id}
+                        onClick={() => setActiveGame(g.id)}
+                        className={`px-3 py-1 rounded text-xs font-medium transition-colors ${activeGame === g.id ? 'bg-[#BF5700] text-white' : 'bg-white/5 text-white/50 hover:text-white'}`}
+                      >
+                        {g.icon}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {loadingLeaderboard ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
+                    ))}
+                  </div>
+                ) : leaderboard.length === 0 ? (
+                  <p className="text-center text-white/40 py-8">No scores yet. Be the first to play!</p>
+                ) : (
+                  <div className="space-y-2">
+                    {leaderboard
+                      .filter((e) => !activeGame || e.game_id === activeGame)
+                      .map((entry, i) => (
+                        <div
+                          key={`${entry.name}-${entry.game_id}-${i}`}
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/[0.02] hover:bg-white/5 transition-colors"
+                        >
+                          <span className={`w-6 text-center font-bold text-sm ${i < 3 ? 'text-[#BF5700]' : 'text-white/30'}`}>
+                            {i + 1}
+                          </span>
+                          <span className="text-lg">{entry.avatar}</span>
+                          <span className="flex-1 text-sm text-white font-medium truncate">{entry.name}</span>
+                          <span className="text-xs text-white/30 uppercase">{entry.game_id}</span>
+                          <span className="text-sm font-bold text-[#BF5700] tabular-nums">{entry.score.toLocaleString()}</span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </Card>
+            </div>
+
+            {/* How to Play */}
+            <Card padding="lg">
+              <h3 className="font-display text-lg text-white uppercase tracking-wide mb-4">How It Works</h3>
+              <div className="space-y-4">
+                <Step num={1} text="Pick a game from the hub above" />
+                <Step num={2} text="Play and score points" />
+                <Step num={3} text="Your high score posts to the global leaderboard" />
+                <Step num={4} text="Compete against other BSI users" />
+              </div>
+              <div className="mt-6 pt-4 border-t border-white/5">
+                <p className="text-xs text-white/30">Scores persist across sessions. Only your highest score per game counts.</p>
+              </div>
+            </Card>
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
+      <Footer />
     </main>
+  );
+}
+
+function Step({ num, text }: { num: number; text: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="w-6 h-6 rounded-full bg-[#BF5700]/20 text-[#BF5700] flex items-center justify-center text-xs font-bold shrink-0">
+        {num}
+      </span>
+      <p className="text-sm text-white/60">{text}</p>
+    </div>
   );
 }

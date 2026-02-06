@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
@@ -17,8 +17,8 @@ import {
   type FilterState,
 } from '@/components/portal';
 
-// Sample CFB portal data with star ratings
-const MOCK_ENTRIES: PortalEntry[] = [
+// Fallback data shown until the API returns real entries
+const FALLBACK_ENTRIES: PortalEntry[] = [
   {
     id: 'cfb-2025-001',
     player_name: 'Jaylen Carter',
@@ -163,13 +163,26 @@ function StatCard({
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries] = useState<PortalEntry[]>(MOCK_ENTRIES);
+  const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_ENTRIES);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
     status: '',
     search: '',
   });
+
+  useEffect(() => {
+    fetch('/api/cfb/transfer-portal')
+      .then((r) => r.json())
+      .then((data: { entries?: PortalEntry[] }) => {
+        if (data.entries && data.entries.length > 0) {
+          setEntries(data.entries);
+        }
+      })
+      .catch(() => {
+        // Keep fallback data on fetch failure
+      });
+  }, []);
 
   // Filter entries locally
   const filteredEntries = entries.filter((entry) => {
