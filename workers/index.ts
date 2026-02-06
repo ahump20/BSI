@@ -46,24 +46,29 @@ export interface Env {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const ALLOWED_ORIGINS = new Set([
+const PROD_ORIGINS = new Set([
   'https://blazesportsintel.com',
   'https://www.blazesportsintel.com',
   'https://blazesportsintel.pages.dev',
-  'http://localhost:3000',
-  'http://localhost:8787',
   'https://blazecraft.app',
   'https://www.blazecraft.app',
 ]);
 
-function corsOrigin(request: Request): string {
+const DEV_ORIGINS = new Set([
+  'http://localhost:3000',
+  'http://localhost:8787',
+]);
+
+function corsOrigin(request: Request, env: Env): string {
   const origin = request.headers.get('Origin') ?? '';
-  return ALLOWED_ORIGINS.has(origin) ? origin : '';
+  if (PROD_ORIGINS.has(origin)) return origin;
+  if (env.ENVIRONMENT !== 'production' && DEV_ORIGINS.has(origin)) return origin;
+  return '';
 }
 
-function corsHeaders(request: Request): Record<string, string> {
+function corsHeaders(request: Request, env: Env): Record<string, string> {
   return {
-    'Access-Control-Allow-Origin': corsOrigin(request),
+    'Access-Control-Allow-Origin': corsOrigin(request, env),
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Request-ID',
     'Access-Control-Max-Age': '86400',
@@ -78,9 +83,10 @@ function corsHeaders(request: Request): Record<string, string> {
  * to avoid stale references.
  */
 let _activeRequest: Request | null = null;
+let _activeEnv: Env | null = null;
 
 function activeCorsHeaders(): Record<string, string> {
-  return _activeRequest ? corsHeaders(_activeRequest) : {};
+  return (_activeRequest && _activeEnv) ? corsHeaders(_activeRequest, _activeEnv) : {};
 }
 
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
@@ -992,7 +998,7 @@ async function handleGameAsset(
   const object = await env.ASSETS_BUCKET.get(assetPath);
 
   if (!object) {
-    return new Response('Asset not found', { status: 404, headers: activeCorsHeaders() });
+    return json({ error: 'Asset not found' }, 404);
   }
 
   const headers: Record<string, string> = {
@@ -1507,12 +1513,13 @@ async function handleMcpRequest(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     _activeRequest = request;
+    _activeEnv = env;
     const url = new URL(request.url);
     const { pathname } = url;
 
     // CORS preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders(request) });
+      return new Response(null, { headers: corsHeaders(request, env) });
     }
 
     try {
