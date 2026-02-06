@@ -263,7 +263,7 @@ export default function MLBStatsPage() {
                   <div className="space-y-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                       <div key={i} className="flex items-center gap-4 p-4 bg-graphite rounded-lg">
-                        <Skeleton variant="rect" width={40} height={40} className="rounded-full" />
+                        <Skeleton variant="rectangular" width={40} height={40} className="rounded-full" />
                         <div className="flex-1">
                           <Skeleton variant="text" width={150} height={18} />
                           <Skeleton variant="text" width={100} height={14} className="mt-1" />

@@ -548,7 +548,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
                     <div key={i} className="flex items-center gap-4 p-4 bg-graphite rounded-lg">
-                      <Skeleton variant="rect" width={56} height={56} className="rounded-lg" />
+                      <Skeleton variant="rectangular" width={56} height={56} className="rounded-lg" />
                       <div className="flex-1">
                         <Skeleton variant="text" width={150} height={18} />
                         <Skeleton variant="text" width={100} height={14} className="mt-2" />

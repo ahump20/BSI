@@ -138,7 +138,7 @@ export default function DashboardPage() {
         if (scoresRes.ok) {
           const scoresData = await scoresRes.json() as {
             games?: Array<{ status?: { type?: { state?: string }; isLive?: boolean } | string }>;
-            scoreboard?: { games?: Array<{ status?: { type?: { state?: string } } | string }> };
+            scoreboard?: { games?: Array<{ status?: { type?: { state?: string }; isLive?: boolean } | string }> };
           };
           const games = scoresData.games || scoresData.scoreboard?.games || [];
 

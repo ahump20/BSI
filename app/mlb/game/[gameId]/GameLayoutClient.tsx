@@ -254,8 +254,8 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
             <Container>
               <div className="space-y-6">
                 <Skeleton variant="text" width={300} height={40} />
-                <Skeleton variant="rect" width="100%" height={150} />
-                <Skeleton variant="rect" width="100%" height={400} />
+                <Skeleton variant="rectangular" width="100%" height={150} />
+                <Skeleton variant="rectangular" width="100%" height={400} />
               </div>
             </Container>
           </Section>

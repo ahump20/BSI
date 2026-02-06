@@ -50,7 +50,7 @@ export default function PlayerDetailClient() {
       try {
         const res = await fetch(`/api/college-baseball/players/${playerId}`);
         const json = await res.json();
-        setData(json);
+        setData(json as PlayerData);
         setLastUpdated(res.headers.get('X-Last-Updated') || new Date().toISOString());
       } catch {
         setData(null);

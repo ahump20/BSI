@@ -186,7 +186,7 @@ export default function CFBTransferPortalPage() {
     total: entries.length,
     inPortal: entries.filter((e) => e.status === 'in_portal').length,
     committed: entries.filter((e) => e.status === 'committed').length,
-    powerFour: entries.filter((e) => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference))
+    powerFour: entries.filter((e) => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference as string))
       .length,
   };
 
