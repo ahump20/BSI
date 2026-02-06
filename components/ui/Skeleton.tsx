@@ -3,9 +3,10 @@ interface SkeletonProps {
   width?: number | string;
   height?: number | string;
   className?: string;
+  shimmer?: boolean;
 }
 
-export function Skeleton({ variant = 'rectangular', width, height, className = '' }: SkeletonProps) {
+export function Skeleton({ variant = 'rectangular', width, height, className = '', shimmer = true }: SkeletonProps) {
   const style: React.CSSProperties = {};
   if (width) style.width = typeof width === 'number' ? `${width}px` : width;
   if (height) style.height = typeof height === 'number' ? `${height}px` : height;
@@ -15,8 +16,9 @@ export function Skeleton({ variant = 'rectangular', width, height, className = '
 
   return (
     <div
-      className={`bg-white/10 animate-pulse ${variantClass} ${className}`}
+      className={`bg-white/10 ${shimmer ? 'bsi-shimmer' : 'animate-pulse'} ${variantClass} ${className}`}
       style={style}
+      aria-hidden="true"
     />
   );
 }
@@ -35,7 +37,7 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
 
 export function SkeletonScoreCard() {
   return (
-    <div className="bg-white/5 rounded-lg p-4 animate-pulse">
+    <div className="bg-white/5 rounded-lg p-4">
       <div className="flex justify-between items-center mb-3">
         <Skeleton variant="text" width={120} height={16} />
         <Skeleton variant="text" width={40} height={24} />
@@ -44,6 +46,22 @@ export function SkeletonScoreCard() {
         <Skeleton variant="text" width={120} height={16} />
         <Skeleton variant="text" width={40} height={24} />
       </div>
+    </div>
+  );
+}
+
+export function ScoreCardSkeletonList({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          style={{ animationDelay: `${i * 100}ms` }}
+          className="animate-fadeIn"
+        >
+          <SkeletonScoreCard />
+        </div>
+      ))}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 
 interface RankedTeam {
   rank: number;
@@ -188,8 +189,9 @@ export default function CollegeBaseballPage() {
   ];
 
   return (
-    <>
-      <main id="main-content">
+    <div className="bsi-theme-baseball">
+      <>
+        <main id="main-content">
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-[#BF5700]/15 via-transparent to-transparent pointer-events-none" />
@@ -204,6 +206,12 @@ export default function CollegeBaseballPage() {
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
                 NCAA Division I <span className="text-gradient-blaze">Baseball</span>
               </h1>
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={120}>
+              <DataFreshnessIndicator
+                source="ESPN"
+                refreshInterval={30}
+              />
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
               <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-4">
@@ -479,7 +487,8 @@ export default function CollegeBaseballPage() {
           </Container>
         </Section>
       </main>
-      <Footer />
-    </>
+        <Footer />
+      </>
+    </div>
   );
 }

@@ -11,7 +11,6 @@ export function EcosystemBar() {
   const [agentActive, setAgentActive] = useState(false);
 
   useEffect(() => {
-    // Lightweight health check — fire-and-forget, silent fail
     const controller = new AbortController();
     fetch('/api/agent-health', { signal: controller.signal })
       .then((r) => r.ok && r.json())
@@ -28,7 +27,7 @@ export function EcosystemBar() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 z-[1090] h-8 flex items-center px-4"
+      className="fixed top-0 left-0 right-0 z-[1090] h-6 sm:h-8 flex items-center px-3 sm:px-4"
       style={{
         background: 'rgba(13, 13, 18, 0.75)',
         backdropFilter: 'blur(8px)',
@@ -41,16 +40,16 @@ export function EcosystemBar() {
           href="https://blazecraft.app?source=bsi-ecosystem"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors"
         >
           {agentActive && (
             <span className="live-indicator__dot" style={{ width: 6, height: 6 }} />
           )}
-          <span className="font-display tracking-wider uppercase text-[0.625rem]">
+          <span className="font-display tracking-wider uppercase text-[0.5rem] sm:text-[0.625rem]">
             BlazeCraft Command Center
           </span>
         </a>
-        <span className="text-white/30 text-[0.5625rem] tracking-wide uppercase hidden sm:inline">
+        <span className="text-white/30 text-[0.5rem] sm:text-[0.5625rem] tracking-wide uppercase hidden sm:inline">
           Blaze Sports Intel Ecosystem
         </span>
       </div>

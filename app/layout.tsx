@@ -9,6 +9,8 @@ import { Navbar } from '@/components/layout-ds/Navbar';
 import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
 import { EcosystemBar } from '@/components/shared/EcosystemBar';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
+import { NewsTicker } from '@/components/shared/NewsTicker';
+import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { mainNavItems } from '@/lib/navigation';
 
 // 3-font system: Display (Bebas Neue) + Body (Inter) + Mono (JetBrains Mono)
@@ -104,10 +106,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Skip to main content
             </a>
             <EcosystemBar />
+            <NewsTicker />
             <Navbar items={mainNavItems} />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>
             <FeedbackButton />
+            <ScrollToTopButton />
             {/* Mobile Bottom Navigation - hidden on desktop */}
             <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
           </MotionProvider>

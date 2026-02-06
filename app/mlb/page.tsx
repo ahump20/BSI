@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 
 const mlbFeatures = [
   {
@@ -309,8 +310,9 @@ export default function MLBPage() {
   ];
 
   return (
-    <>
-      <main id="main-content">
+    <div className="bsi-theme-baseball">
+      <>
+        <main id="main-content">
         {/* Hero Section */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
@@ -327,6 +329,13 @@ export default function MLBPage() {
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
                 MLB <span className="text-gradient-blaze">Intelligence</span>
               </h1>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={120}>
+              <DataFreshnessIndicator
+                source="ESPN"
+                refreshInterval={30}
+              />
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
@@ -840,7 +849,8 @@ export default function MLBPage() {
         </Section>
       </main>
 
-      <Footer />
-    </>
+        <Footer />
+      </>
+    </div>
   );
 }

@@ -1,8 +1,13 @@
+'use client';
+
 export { SportTabs, SportTabsCompact } from './SportTabs';
 export type { Sport } from './SportTabs';
 export { LiveScoresPanel } from './LiveScoresPanel';
 export { StandingsTable } from './StandingsTable';
 export { SportLeaders } from './SportLeaders';
+
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 // Data attribution components
 
@@ -70,13 +75,33 @@ export const DEFAULT_NAV_ITEMS: BottomNavItem[] = [
 ];
 
 export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; className?: string }) {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname.startsWith(href);
+  };
+
   return (
-    <nav className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-white/10 ${className}`}>
+    <nav
+      className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-white/10 ${className}`}
+      role="navigation"
+      aria-label="Bottom navigation"
+    >
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
         {items.map((item) => (
-          <a key={item.href} href={item.href} className="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex flex-col items-center gap-1 transition-colors ${
+              isActive(item.href)
+                ? 'text-[#BF5700]'
+                : 'text-white/40 hover:text-white'
+            }`}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
             <span className="text-xs font-medium">{item.label}</span>
-          </a>
+          </Link>
         ))}
       </div>
     </nav>
@@ -92,7 +117,6 @@ export function CitationFooter({ sources, source, fetchedAt, additionalSources, 
   showFreshness?: boolean;
   className?: string;
 }) {
-  // Build sources array from shorthand props if sources not provided directly
   const resolvedSources = sources ?? (source ? [{ name: source, url: '', fetchedAt: fetchedAt ?? '' }] : []);
   if (resolvedSources.length === 0) return null;
   return (
