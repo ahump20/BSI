@@ -59,6 +59,9 @@ export class AudioManager {
   // Ambient sound references
   private _ambientNoise: AudioBufferSourceNode | null = null;
   private _ambientLfo: OscillatorNode | null = null;
+  private _crowdSources: Array<{ noise: AudioBufferSourceNode; lfo: OscillatorNode; panner: PannerNode }> | null = null;
+  private _crowdGain: GainNode | null = null;
+  private _convolver: ConvolverNode | null = null;
 
   constructor(scene: Scene, config: Partial<AudioConfig> = {}) {
     this.scene = scene;
@@ -72,6 +75,11 @@ export class AudioManager {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     } catch (e) {
       console.warn('Web Audio API not supported');
+    }
+
+    // Create synthetic reverb impulse response
+    if (this.audioContext) {
+      this.createReverbConvolver();
     }
   }
 
@@ -229,6 +237,7 @@ export class AudioManager {
 
     osc.connect(oscGain);
     oscGain.connect(ctx.destination);
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 0.1);
   }
@@ -268,6 +277,7 @@ export class AudioManager {
 
     osc.connect(oscGain);
     oscGain.connect(ctx.destination);
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 0.2);
 
@@ -346,6 +356,14 @@ export class AudioManager {
 
     osc.connect(gain);
     gain.connect(ctx.destination);
+    if (this._convolver) {
+      const wetGain = ctx.createGain();
+      wetGain.gain.value = 0.3;
+      gain.connect(this._convolver);
+      this._convolver.connect(wetGain);
+      wetGain.connect(ctx.destination);
+    }
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 0.35);
   }
@@ -372,6 +390,7 @@ export class AudioManager {
     lfoGain.gain.value = 200;
     lfo.connect(lfoGain);
     lfoGain.connect(filter.frequency);
+    lfo.detune.value = Math.random() * 400 - 200;
     lfo.start(now);
     lfo.stop(now + duration);
 
@@ -433,6 +452,7 @@ export class AudioManager {
 
       osc.connect(gain);
       gain.connect(ctx.destination);
+      osc.detune.value = Math.random() * 400 - 200;
       osc.start(now + delays[i]);
       osc.stop(now + delays[i] + 1.2);
     });
@@ -460,6 +480,7 @@ export class AudioManager {
 
       osc.connect(gain);
       gain.connect(ctx.destination);
+      osc.detune.value = Math.random() * 400 - 200;
       osc.start(startTime);
       osc.stop(startTime + 0.25);
     });
@@ -514,6 +535,7 @@ export class AudioManager {
     osc.connect(filter);
     filter.connect(gain);
     gain.connect(ctx.destination);
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 0.7);
 
@@ -543,6 +565,7 @@ export class AudioManager {
     osc.connect(filter);
     filter.connect(gain);
     gain.connect(ctx.destination);
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 1.1);
   }
@@ -618,6 +641,7 @@ export class AudioManager {
     osc.connect(filter);
     filter.connect(gain);
     gain.connect(ctx.destination);
+    osc.detune.value = Math.random() * 400 - 200;
     osc.start(now);
     osc.stop(now + 0.35);
 
@@ -676,6 +700,23 @@ export class AudioManager {
     noise.start(now);
   }
 
+  private createReverbConvolver(): void {
+    const ctx = this.audioContext!;
+    const sampleRate = ctx.sampleRate;
+    const length = sampleRate * 1.5; // 1.5s reverb
+    const impulse = ctx.createBuffer(2, length, sampleRate);
+
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sampleRate * 0.4));
+      }
+    }
+
+    this._convolver = ctx.createConvolver();
+    this._convolver.buffer = impulse;
+  }
+
   /** Create white noise buffer */
   private createNoiseBuffer(duration: number): AudioBuffer {
     const ctx = this.audioContext!;
@@ -691,54 +732,82 @@ export class AudioManager {
     return buffer;
   }
 
-  /** Start ambient crowd noise loop */
+  /** Start ambient crowd noise loop with spatial 4-corner sources */
   public startAmbientCrowd(): void {
     if (!this.audioContext || !this.isUnlocked) return;
+    this.stopAmbientCrowd();
 
     const ctx = this.audioContext;
     const volume = this.config.masterVolume * this.config.ambientVolume;
 
-    // Create continuous filtered noise
-    const bufferSize = ctx.sampleRate * 2;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
+    // Create master gain for crowd
+    this._crowdGain = ctx.createGain();
+    this._crowdGain.gain.value = volume * 0.25;
+    this._crowdGain.connect(ctx.destination);
 
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.5;
-    }
+    // 4 spatial sources at stadium corners
+    const positions: Array<[number, number, number]> = [
+      [-1, 0, -1], [1, 0, -1], [-1, 0, 1], [1, 0, 1],
+    ];
 
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
+    this._crowdSources = positions.map((pos, i) => {
+      const bufferSize = ctx.sampleRate * 2;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let j = 0; j < bufferSize; j++) {
+        data[j] = (Math.random() * 2 - 1) * 0.5;
+      }
 
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 800;
-    filter.Q.value = 0.3;
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
 
-    // Subtle modulation
-    const lfo = ctx.createOscillator();
-    lfo.frequency.value = 0.2;
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.value = 100;
-    lfo.connect(lfoGain);
-    lfoGain.connect(filter.frequency);
-    lfo.start();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 600 + i * 150;
+      filter.Q.value = 0.4;
 
-    const gain = ctx.createGain();
-    gain.gain.value = volume * 0.25;
+      const panner = ctx.createPanner();
+      panner.positionX.value = pos[0];
+      panner.positionY.value = pos[1];
+      panner.positionZ.value = pos[2];
+      panner.panningModel = 'HRTF';
+      panner.distanceModel = 'inverse';
+      panner.refDistance = 1;
+      panner.maxDistance = 10;
 
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    noise.start();
+      // Individual LFO for organic feel
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.15 + Math.random() * 0.2;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 80;
+      lfo.connect(lfoGain);
+      lfoGain.connect(filter.frequency);
+      lfo.start();
 
-    this._ambientNoise = noise;
-    this._ambientLfo = lfo;
+      noise.connect(filter);
+      filter.connect(panner);
+      panner.connect(this._crowdGain!);
+      noise.start();
+
+      return { noise, lfo, panner };
+    });
   }
 
   /** Stop ambient crowd */
   public stopAmbientCrowd(): void {
+    if (this._crowdSources) {
+      this._crowdSources.forEach(s => {
+        s.noise.stop();
+        s.lfo.stop();
+      });
+      this._crowdSources = null;
+    }
+    if (this._crowdGain) {
+      this._crowdGain.disconnect();
+      this._crowdGain = null;
+    }
+    // Legacy cleanup
     if (this._ambientNoise) {
       this._ambientNoise.stop();
       this._ambientNoise = null;
@@ -747,6 +816,16 @@ export class AudioManager {
       this._ambientLfo.stop();
       this._ambientLfo = null;
     }
+  }
+
+  /** Set crowd intensity level (1.0 = normal, >1 = louder) */
+  public setCrowdIntensity(level: number): void {
+    if (!this._crowdGain || !this.audioContext) return;
+    const ctx = this.audioContext;
+    const baseVolume = this.config.masterVolume * this.config.ambientVolume * 0.25;
+    this._crowdGain.gain.cancelScheduledValues(ctx.currentTime);
+    this._crowdGain.gain.setValueAtTime(this._crowdGain.gain.value, ctx.currentTime);
+    this._crowdGain.gain.linearRampToValueAtTime(baseVolume * level, ctx.currentTime + 0.5);
   }
 
   /** Set master volume */

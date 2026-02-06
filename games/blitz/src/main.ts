@@ -6,6 +6,10 @@
 
 import { BlitzGameEngine, BlitzGameState, BlitzGameResult } from '@core/BlitzGameEngine';
 import { FIREBIRDS, SHADOW_WOLVES, getPlayableTeams, BlitzTeam } from '@data/teams';
+import { PlaybookSystem, type FormationType, type EnhancedOffensivePlay, type GameSituation } from '@core/PlaybookSystem';
+import { DriveSystem } from '@core/DriveSystem';
+import { InputSystem } from '@core/InputSystem';
+import { ScoreSystem } from '@core/ScoreSystem';
 
 /** Player ID management */
 function getPlayerId(): string {
@@ -82,6 +86,23 @@ const elements = {
   saveNameBtn: document.getElementById('saveNameBtn')!,
   shareXBtn: document.getElementById('shareXBtn') as HTMLAnchorElement,
   copyLinkBtn: document.getElementById('copyLinkBtn')!,
+
+  // New HUD elements
+  playClock: document.getElementById('playClock')!,
+  playClockText: document.getElementById('playClockText')!,
+  scoreTicker: document.getElementById('scoreTicker')!,
+  homeTeamName: document.getElementById('homeTeamName')!,
+  homeTeamScore: document.getElementById('homeTeamScore')!,
+  awayTeamScore: document.getElementById('awayTeamScore')!,
+  awayTeamName: document.getElementById('awayTeamName')!,
+  quarterDisplay: document.getElementById('quarterDisplay')!,
+  playCallOverlay: document.getElementById('playCallOverlay')!,
+  formationPicker: document.getElementById('formationPicker')!,
+  playPicker: document.getElementById('playPicker')!,
+  moveIndicators: document.getElementById('moveIndicators')!,
+  jukeReady: document.getElementById('jukeReady')!,
+  spinReady: document.getElementById('spinReady')!,
+  truckReady: document.getElementById('truckReady')!,
 };
 
 /** Game state */
@@ -89,6 +110,128 @@ let gameEngine: BlitzGameEngine | null = null;
 let selectedTeam: BlitzTeam = FIREBIRDS;
 let lastFeedback: string = '';
 let feedbackTimeout: number | null = null;
+const playbook = new PlaybookSystem();
+let inputSystem: InputSystem | null = null;
+let scoreSystem: ScoreSystem | null = null;
+let cooldownRaf: number | null = null;
+let selectedFormation: FormationType = 'shotgun';
+let playClockInterval: number | null = null;
+let playClockSeconds = 25;
+
+// ── Play Call UI ──
+
+function renderFormationPicker(): void {
+  const container = elements.formationPicker;
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  const formations: Array<{ id: FormationType; label: string }> = [
+    { id: 'shotgun', label: 'Shotgun' },
+    { id: 'iform', label: 'I-Form' },
+    { id: 'trips', label: 'Trips' },
+    { id: 'spread', label: 'Spread' },
+    { id: 'singleback', label: 'Singleback' },
+  ];
+
+  for (const f of formations) {
+    const btn = document.createElement('button');
+    btn.textContent = f.label;
+    btn.style.cssText = `font-family:'Russo One',sans-serif;font-size:0.75rem;padding:0.375rem 0.75rem;border:2px solid ${f.id === selectedFormation ? 'var(--arcade-neon-green)' : 'rgba(255,255,255,0.2)'};background:${f.id === selectedFormation ? 'rgba(57,255,20,0.15)' : 'rgba(255,255,255,0.05)'};color:${f.id === selectedFormation ? 'var(--arcade-neon-green)' : 'rgba(255,255,255,0.6)'};cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;transition:all 0.15s;`;
+    btn.addEventListener('click', () => {
+      selectedFormation = f.id;
+      renderFormationPicker();
+      renderPlayPicker();
+    });
+    container.appendChild(btn);
+  }
+}
+
+function renderPlayPicker(): void {
+  const container = elements.playPicker;
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  const plays = playbook.getPlaysForFormation(selectedFormation);
+
+  for (const play of plays) {
+    const card = document.createElement('button');
+    card.style.cssText = `display:flex;flex-direction:column;align-items:center;padding:0.5rem 0.75rem;border:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);cursor:pointer;transition:all 0.15s;min-width:90px;`;
+    const name = document.createElement('span');
+    name.textContent = play.name;
+    name.style.cssText = `font-family:'Russo One',sans-serif;font-size:0.6875rem;color:var(--arcade-yellow);text-transform:uppercase;`;
+    const desc = document.createElement('span');
+    desc.textContent = play.description ?? '';
+    desc.style.cssText = `font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:2px;`;
+    card.appendChild(name);
+    card.appendChild(desc);
+
+    card.addEventListener('mouseenter', () => {
+      card.style.borderColor = 'var(--arcade-yellow)';
+      card.style.background = 'rgba(255,215,0,0.1)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.borderColor = 'rgba(255,255,255,0.15)';
+      card.style.background = 'rgba(255,255,255,0.05)';
+    });
+    card.addEventListener('click', () => {
+      selectPlay(play);
+    });
+
+    container.appendChild(card);
+  }
+}
+
+function selectPlay(play: EnhancedOffensivePlay): void {
+  elements.playCallOverlay.style.display = 'none';
+  if (gameEngine) {
+    gameEngine.setSelectedPlay(play);
+    gameEngine.triggerSnap();
+  }
+  stopPlayClock();
+}
+
+function showPlayCallUI(): void {
+  renderFormationPicker();
+  renderPlayPicker();
+  elements.playCallOverlay.style.display = 'flex';
+  resetPlayClock();
+}
+
+function hidePlayCallUI(): void {
+  elements.playCallOverlay.style.display = 'none';
+  stopPlayClock();
+}
+
+function resetPlayClock(): void {
+  playClockSeconds = 25;
+  elements.playClockText.textContent = '25';
+  elements.playClock.style.display = 'block';
+  stopPlayClock();
+  playClockInterval = window.setInterval(() => {
+    playClockSeconds--;
+    elements.playClockText.textContent = String(playClockSeconds);
+    if (playClockSeconds <= 5) {
+      elements.playClockText.style.color = 'var(--arcade-hot-pink)';
+    }
+    if (playClockSeconds <= 0) {
+      stopPlayClock();
+      // Auto-select recommended play
+      const situation: GameSituation = { down: 1, yardsToGo: 10, yardLine: 75, scoreDiff: 0, timeRemaining: 120, quarter: 1 };
+      const recs = playbook.getPlayRecommendations(situation, 1);
+      if (recs.length > 0) selectPlay(recs[0]);
+    }
+  }, 1000);
+}
+
+function startPlayClock(): void {
+  // Clock already running from showPlayCallUI
+}
+
+function stopPlayClock(): void {
+  if (playClockInterval !== null) {
+    clearInterval(playClockInterval);
+    playClockInterval = null;
+  }
+  elements.playClockText.style.color = 'var(--arcade-yellow)';
+}
 
 /** Initialize the application */
 async function init(): Promise<void> {
@@ -104,6 +247,15 @@ async function init(): Promise<void> {
   // Hide loading, show menu
   elements.loadingScreen.style.display = 'none';
   elements.menuScreen.style.display = 'flex';
+
+  // Add "Back to Arcade" link
+  const arcadeLink = document.createElement('a');
+  arcadeLink.href = '/mini-games';
+  arcadeLink.textContent = '\u2190 Back to Arcade';
+  arcadeLink.style.cssText = 'position:fixed;top:8px;left:12px;color:#888;font-size:12px;text-decoration:none;z-index:9999;font-family:sans-serif;';
+  arcadeLink.addEventListener('mouseenter', () => { arcadeLink.style.color = '#bf5700'; });
+  arcadeLink.addEventListener('mouseleave', () => { arcadeLink.style.color = '#888'; });
+  document.body.appendChild(arcadeLink);
 }
 
 /** Populate team selection grid */
@@ -277,6 +429,20 @@ async function startGame(): Promise<void> {
   elements.gameUI.style.display = 'flex';
   elements.driveInfo.style.display = 'block';
   elements.staminaBar.style.display = 'block';
+  elements.scoreTicker.style.display = 'block';
+  elements.moveIndicators.style.display = 'flex';
+
+  // Set team names in score ticker
+  elements.homeTeamName.textContent = selectedTeam.shortName;
+  elements.awayTeamName.textContent = 'WOLVES';
+  elements.homeTeamScore.textContent = '0';
+  elements.awayTeamScore.textContent = '0';
+  elements.quarterDisplay.textContent = 'Q1';
+
+  // Dispose existing systems
+  if (inputSystem) { inputSystem.dispose(); inputSystem = null; }
+  if (cooldownRaf !== null) { cancelAnimationFrame(cooldownRaf); cooldownRaf = null; }
+  scoreSystem = new ScoreSystem({ quarterLengthSec: 120, playClockSec: 25 });
 
   // Dispose existing engine if any
   if (gameEngine) {
@@ -290,6 +456,7 @@ async function startGame(): Promise<void> {
     awayTeam: SHADOW_WOLVES,
     onGameStateChange: handleGameStateChange,
     onGameOver: handleGameOver,
+    onPlayFeedback: (text, style) => showFeedback(text, `feedback-${style}`),
   });
 
   // Unlock audio (requires user interaction - we have it from button click)
@@ -297,6 +464,45 @@ async function startGame(): Promise<void> {
 
   // Start the game
   gameEngine.startGame();
+
+  // Create InputSystem after engine so canvas is sized
+  inputSystem = new InputSystem(elements.renderCanvas);
+  inputSystem.setPhase('pre_snap');
+
+  // Wire InputSystem events → engine
+  // throw/select_receiver still handled by engine's own polling in updatePlayActive.
+  // Special moves use new public methods on the engine.
+  inputSystem.on('juke', (e) => gameEngine?.performJuke(e.direction));
+  inputSystem.on('spin', () => gameEngine?.performSpin());
+  inputSystem.on('truck', () => gameEngine?.performTruck());
+  inputSystem.on('dive', (e) => gameEngine?.performDive(e.direction));
+  inputSystem.on('audible', () => gameEngine?.callAudible());
+  inputSystem.on('pump_fake', () => gameEngine?.pumpFake());
+  inputSystem.on('throw_away', () => gameEngine?.throwAway());
+  inputSystem.on('hot_route_out', (e) => gameEngine?.setHotRoute(e.receiverIndex ?? 0, 'out'));
+  inputSystem.on('hot_route_in', (e) => gameEngine?.setHotRoute(e.receiverIndex ?? 0, 'in'));
+  inputSystem.on('hot_route_streak', (e) => gameEngine?.setHotRoute(e.receiverIndex ?? 0, 'streak'));
+  inputSystem.on('hot_route_curl', (e) => gameEngine?.setHotRoute(e.receiverIndex ?? 0, 'curl'));
+
+  // Cooldown indicator loop
+  let lastTime = performance.now();
+  const updateCooldowns = () => {
+    const now = performance.now();
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    if (inputSystem) {
+      inputSystem.update(dt);
+
+      // Update cooldown indicators
+      elements.jukeReady.style.opacity = inputSystem.isOnCooldown('juke') ? '0.3' : '1';
+      elements.spinReady.style.opacity = inputSystem.isOnCooldown('spin') ? '0.3' : '1';
+      elements.truckReady.style.opacity = inputSystem.isOnCooldown('truck') ? '0.3' : '1';
+    }
+
+    cooldownRaf = requestAnimationFrame(updateCooldowns);
+  };
+  cooldownRaf = requestAnimationFrame(updateCooldowns);
 }
 
 /** Handle game state changes */
@@ -321,6 +527,36 @@ function handleGameStateChange(state: BlitzGameState): void {
   const sideText = yardLine <= 50 ? 'OWN' : 'OPP';
   const displayYardLine = yardLine <= 50 ? yardLine : 100 - yardLine;
   elements.driveText.textContent = `${downText} & ${state.yardsToGo} at ${sideText} ${displayYardLine}`;
+
+  // Update score ticker
+  elements.homeTeamScore.textContent = state.score.toString();
+
+  // Update quarter from ScoreSystem if available
+  if (scoreSystem) {
+    const clock = scoreSystem.getClock();
+    elements.quarterDisplay.textContent = clock.isOvertime ? 'OT' : `Q${clock.quarter}`;
+  }
+
+  // Sync input phase with game phase
+  if (inputSystem) {
+    if (state.phase === 'pre_snap') inputSystem.setPhase('pre_snap');
+    else if (state.phase === 'play_active') inputSystem.setPhase('pocket');
+    // ball_carrier phase set by engine when catch happens
+  }
+
+  // Show/hide play call overlay based on phase
+  if (state.phase === 'pre_snap') {
+    showPlayCallUI();
+  } else {
+    hidePlayCallUI();
+  }
+
+  // Move indicators - show during play_active when ball carrier
+  if (state.phase === 'play_active') {
+    elements.moveIndicators.style.display = 'flex';
+  } else {
+    elements.moveIndicators.style.display = 'none';
+  }
 
   // Show feedback for events
   if (state.touchdowns > 0 && lastFeedback !== 'touchdown') {
@@ -359,6 +595,14 @@ async function handleGameOver(result: BlitzGameResult): Promise<void> {
   elements.driveInfo.style.display = 'none';
   elements.staminaBar.style.display = 'none';
   elements.renderCanvas.style.display = 'none';
+  elements.scoreTicker.style.display = 'none';
+  elements.playClock.style.display = 'none';
+  elements.moveIndicators.style.display = 'none';
+  hidePlayCallUI();
+
+  // Tear down input loop
+  if (inputSystem) { inputSystem.dispose(); inputSystem = null; }
+  if (cooldownRaf !== null) { cancelAnimationFrame(cooldownRaf); cooldownRaf = null; }
 
   // Update high score
   saveHighScore(result.finalScore);
@@ -375,37 +619,41 @@ async function handleGameOver(result: BlitzGameResult): Promise<void> {
   elements.gameOverResult.textContent = resultText;
   elements.finalScore.textContent = result.finalScore.toLocaleString();
 
-  // Populate stats
-  elements.gameStats.innerHTML = `
-    <div class="stat-row">
-      <span class="label">Total Yards</span>
-      <span class="value">${result.yardsGained}</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">Touchdowns</span>
-      <span class="value">${result.touchdowns}</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">First Downs</span>
-      <span class="value">${result.firstDowns}</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">Big Plays (20+ yds)</span>
-      <span class="value">${result.bigPlays}</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">Longest Play</span>
-      <span class="value">${result.longestPlay} yds</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">Turbo Yards</span>
-      <span class="value">${result.turboYards}</span>
-    </div>
-    <div class="stat-row">
-      <span class="label">Duration</span>
-      <span class="value">${result.durationSeconds}s</span>
-    </div>
-  `;
+  // Populate stats — enhanced with ScoreSystem data when available
+  const ss = gameEngine?.getScoreSystem();
+  const homeStats = ss?.getStats('home');
+  const passerRating = homeStats?.passing.passerRating ?? 0;
+  const compPct = homeStats && homeStats.passing.attempts > 0
+    ? Math.round((homeStats.passing.completions / homeStats.passing.attempts) * 100)
+    : 0;
+
+  // Build stat rows using safe DOM construction
+  const statsContainer = elements.gameStats;
+  statsContainer.textContent = '';
+  const statRows: [string, string][] = [
+    ['Total Yards', String(result.yardsGained)],
+    ['Touchdowns', String(result.touchdowns)],
+    ['First Downs', String(result.firstDowns)],
+    ['Completion %', `${compPct}%`],
+    ['Passer Rating', passerRating.toFixed(1)],
+    ['Big Plays (20+ yds)', String(result.bigPlays)],
+    ['Longest Play', `${result.longestPlay} yds`],
+    ['Turbo Yards', String(result.turboYards)],
+    ['Duration', `${result.durationSeconds}s`],
+  ];
+  for (const [label, value] of statRows) {
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    const labelEl = document.createElement('span');
+    labelEl.className = 'label';
+    labelEl.textContent = label;
+    const valueEl = document.createElement('span');
+    valueEl.className = 'value';
+    valueEl.textContent = value;
+    row.appendChild(labelEl);
+    row.appendChild(valueEl);
+    statsContainer.appendChild(row);
+  }
 
   // Submit score
   try {
