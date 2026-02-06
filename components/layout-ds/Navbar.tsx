@@ -81,7 +81,7 @@ export function Navbar({ items }: NavbarProps) {
       {/* Mobile Drawer */}
       <MobileMenuDrawer
         items={items}
-        isOpen={menuOpen}
+        open={menuOpen}
         onClose={() => setMenuOpen(false)}
       />
     </>
