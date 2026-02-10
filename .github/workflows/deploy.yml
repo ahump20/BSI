@@ -1,0 +1,186 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site to deploy'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - blazesportsintel
+          - blazecraft
+
+permissions:
+  contents: read
+  deployments: write
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      blazesportsintel: ${{ steps.changes.outputs.blazesportsintel }}
+      blazecraft: ${{ steps.changes.outputs.blazecraft }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Detect changed paths
+        id: changes
+        env:
+          INPUT_SITE: ${{ inputs.site }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$INPUT_SITE" = "all" ] || [ "$INPUT_SITE" = "blazesportsintel" ]; then
+              echo "blazesportsintel=true" >> $GITHUB_OUTPUT
+            else
+              echo "blazesportsintel=false" >> $GITHUB_OUTPUT
+            fi
+            if [ "$INPUT_SITE" = "all" ] || [ "$INPUT_SITE" = "blazecraft" ]; then
+              echo "blazecraft=true" >> $GITHUB_OUTPUT
+            else
+              echo "blazecraft=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
+
+            if echo "$CHANGED_FILES" | grep -qE "^(app|components|functions|hooks|lib|public|src|styles)/|^package\\.json|^pnpm-lock\\.yaml|^wrangler\\.toml|^next\\.config\\.|^tailwind\\.config\\.|^tsconfig\\.json"; then
+              echo "blazesportsintel=true" >> $GITHUB_OUTPUT
+            else
+              echo "blazesportsintel=false" >> $GITHUB_OUTPUT
+            fi
+
+            if echo "$CHANGED_FILES" | grep -q "^games/blazecraft/"; then
+              echo "blazecraft=true" >> $GITHUB_OUTPUT
+            else
+              echo "blazecraft=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  deploy-blazesportsintel:
+    name: Deploy BlazeSportsIntel
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.blazesportsintel == 'true' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Copy Functions and lib to output
+        run: |
+          cp -r functions out/functions
+          cp -r lib out/lib
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy out --project-name=blazesportsintel --branch=${{ github.ref_name }} --commit-dirty=true
+
+      - name: Wait for propagation
+        if: github.ref == 'refs/heads/main'
+        run: sleep 30
+
+      - name: Verify API Health
+        if: github.ref == 'refs/heads/main'
+        run: |
+          HEALTH_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://blazesportsintel.com/api/health" || echo "000")
+          if [ "$HEALTH_CODE" = "200" ]; then
+            echo "API Health: Healthy"
+          else
+            echo "API Health check returned: $HEALTH_CODE"
+          fi
+        continue-on-error: true
+
+  deploy-blazecraft:
+    name: Deploy BlazeCraft
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.blazecraft == 'true' || github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: games/blazecraft
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: games/blazecraft/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: games/blazecraft
+          command: pages deploy dist --project-name=blazecraft --branch=${{ github.ref_name }} --commit-dirty=true
+
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [deploy-blazesportsintel, deploy-blazecraft]
+    if: always()
+    steps:
+      - name: Summary
+        env:
+          BSI_RESULT: ${{ needs.deploy-blazesportsintel.result }}
+          BC_RESULT: ${{ needs.deploy-blazecraft.result }}
+          ACTOR: ${{ github.actor }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "# Cloudflare Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Site | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| BlazeSportsIntel | $BSI_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| BlazeCraft | $BC_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** $ACTOR" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** $COMMIT_SHA" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(TZ='America/Chicago' date '+%Y-%m-%d %H:%M:%S CT')" >> $GITHUB_STEP_SUMMARY
