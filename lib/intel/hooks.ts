@@ -565,7 +565,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        return { sport: s, ...scoreQueryResults[index]! };
       }),
     [sportsToFetch, scoreQueryResults],
   );
