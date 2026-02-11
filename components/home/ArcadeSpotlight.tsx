@@ -52,7 +52,7 @@ export function ArcadeSpotlight() {
   const featured = GAMES[new Date().getDate() % GAMES.length];
 
   useEffect(() => {
-    fetch('/api/multiplayer/leaderboard?limit=50')
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/multiplayer/leaderboard?limit=50`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data: { leaderboard?: LeaderboardEntry[] }) => {
         setLeaderboard(data.leaderboard || []);
