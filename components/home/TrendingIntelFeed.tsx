@@ -52,7 +52,7 @@ export function TrendingIntelFeed() {
 
     async function fetchIntel() {
       try {
-        const res = await fetch('/api/intel/news?sport=all');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news?sport=all`);
         if (!res.ok) return;
         const data = (await res.json()) as { results?: IntelResult[] };
         if (cancelled) return;

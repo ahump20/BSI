@@ -74,8 +74,9 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       setLoading(true);
       setError(null);
 
+      const origin = process.env.NEXT_PUBLIC_API_BASE || '';
       const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
-      const endpoint = sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`;
+      const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
 
       try {
         const res = await fetch(endpoint);

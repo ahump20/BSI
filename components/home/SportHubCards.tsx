@@ -83,9 +83,11 @@ function normalizeGames(sport: string, data: Record<string, unknown>): GameScore
   });
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
+
 function getEndpoint(sport: string): string {
   const base = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
-  return sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`;
+  return `${API_BASE}${sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`}`;
 }
 
 // TODO (Austin): This is where you decide how to display the "next matchup"
