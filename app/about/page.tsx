@@ -122,8 +122,9 @@ export default function AboutPage() {
 
                 {/* Credential Badges */}
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                  <Badge variant="secondary">UT Austin 18</Badge>
-                  <Badge variant="secondary">Full Sail MS</Badge>
+                  <Badge variant="secondary">UT Austin &apos;18</Badge>
+                  <Badge variant="secondary">MS Entertainment Business</Badge>
+                  <Badge variant="secondary">McCombs AI/ML</Badge>
                   <Badge variant="secondary">Top 10% NW Mutual</Badge>
                   <Badge variant="secondary">Perfect Game Pitched</Badge>
                 </div>
@@ -353,13 +354,26 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  UT Austin grad — International Relations with minors in European Studies,
-                  Political Science, and Economics. Full Sail gave me an MS in Entertainment
-                  Business. I made top 10% nationally at Northwestern Mutual before I got tired of
-                  waiting.
+                  After UT — International Relations, with minors in European Studies, Political
+                  Science, and Economics — the plan was supposed to be straightforward. Get the
+                  degree, enter the professional world, climb.
                 </p>
-                <p className="leading-relaxed font-semibold text-white">
-                  Waiting for someone else to fix sports coverage.
+                <p className="leading-relaxed">
+                  Northwestern Mutual proved I could do the work. Top 10% nationally is not
+                  something that happens by accident. But the financial services world was not where
+                  I belonged, and I knew it.
+                </p>
+                <p className="leading-relaxed">
+                  Full Sail&apos;s M.S. in Entertainment Business — Sports Management concentration —
+                  was the deliberate pivot. The degree gave me the business language for what I had
+                  always understood instinctively: sports coverage was broken, and the people in
+                  charge were not going to fix it.
+                </p>
+                <p className="leading-relaxed">
+                  Now I am earning a Post-Graduate Certificate in AI &amp; Machine Learning from the
+                  McCombs School of Business at UT Austin. Because the coverage gap is not just an
+                  editorial problem — it is a data problem. And machine learning is how you solve
+                  data problems at scale.
                 </p>
                 <p className="leading-relaxed">
                   ESPN treats college baseball like an afterthought. Try finding a box score for a
@@ -367,8 +381,8 @@ export default function AboutPage() {
                   standings without clicking through 15 pages. Try getting real analytics instead of
                   just scores.
                 </p>
-                <p className="leading-relaxed text-xl" style={{ color: colors.ember }}>
-                  Fans deserve better. So I built it myself.
+                <p className="leading-relaxed text-xl font-semibold" style={{ color: colors.ember }}>
+                  So I built it myself.
                 </p>
               </div>
             </div>

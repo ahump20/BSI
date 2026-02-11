@@ -265,7 +265,7 @@ export default function NBAPlayersPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2024-25 Season
+                2025-26 Season
               </Badge>
             </ScrollReveal>
 

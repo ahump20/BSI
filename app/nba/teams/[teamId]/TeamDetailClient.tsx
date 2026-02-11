@@ -361,7 +361,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       >
                         {team.abbreviation}
                       </Badge>
-                      <span className="text-text-secondary">2024-25 Season</span>
+                      <span className="text-text-secondary">2025-26 Season</span>
                     </div>
 
                     {/* Record Stats */}

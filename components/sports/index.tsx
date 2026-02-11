@@ -83,6 +83,14 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
   );
 }
 
+export function CitationFooter() {
+  return (
+    <p className="text-xs text-white/20 text-center mt-2">
+      Sources cited where available. Data via ESPN public API.
+    </p>
+  );
+}
+
 export function DataDisclaimer() {
   return (
     <p className="text-xs text-white/20 text-center mt-4">

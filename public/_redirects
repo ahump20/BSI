@@ -12,3 +12,6 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 /register /auth/signup 301
 /subscribe /pricing 301
 /plans /pricing 301
+
+# Games consolidation
+/games/blaze-field/* /games/sandlot-sluggers/ 301

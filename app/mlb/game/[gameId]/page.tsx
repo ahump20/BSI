@@ -6,7 +6,7 @@ export const dynamicParams = false;
 // Generate static params for static export
 export async function generateStaticParams() {
   // Return empty array - game pages are client-rendered with dynamic data
-  return [];
+  return [{ gameId: 'placeholder' }];
 }
 
 export default function GameSummaryPage() {

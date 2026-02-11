@@ -42,385 +42,11 @@ function formatTimestamp(): string {
   );
 }
 
-// Static data for display
-const staticStandings: Conference[] = [
-  {
-    name: 'Eastern Conference',
-    teams: [
-      {
-        name: 'Boston Celtics',
-        abbreviation: 'BOS',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Milwaukee Bucks',
-        abbreviation: 'MIL',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Cleveland Cavaliers',
-        abbreviation: 'CLE',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'New York Knicks',
-        abbreviation: 'NYK',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Philadelphia 76ers',
-        abbreviation: 'PHI',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Orlando Magic',
-        abbreviation: 'ORL',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Indiana Pacers',
-        abbreviation: 'IND',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Miami Heat',
-        abbreviation: 'MIA',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Chicago Bulls',
-        abbreviation: 'CHI',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Atlanta Hawks',
-        abbreviation: 'ATL',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Brooklyn Nets',
-        abbreviation: 'BKN',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Toronto Raptors',
-        abbreviation: 'TOR',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Charlotte Hornets',
-        abbreviation: 'CHA',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Washington Wizards',
-        abbreviation: 'WAS',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Detroit Pistons',
-        abbreviation: 'DET',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-    ],
-  },
-  {
-    name: 'Western Conference',
-    teams: [
-      {
-        name: 'Oklahoma City Thunder',
-        abbreviation: 'OKC',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Denver Nuggets',
-        abbreviation: 'DEN',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Minnesota Timberwolves',
-        abbreviation: 'MIN',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Los Angeles Clippers',
-        abbreviation: 'LAC',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Dallas Mavericks',
-        abbreviation: 'DAL',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Phoenix Suns',
-        abbreviation: 'PHX',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'New Orleans Pelicans',
-        abbreviation: 'NOP',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Sacramento Kings',
-        abbreviation: 'SAC',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Los Angeles Lakers',
-        abbreviation: 'LAL',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Golden State Warriors',
-        abbreviation: 'GSW',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Houston Rockets',
-        abbreviation: 'HOU',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Memphis Grizzlies',
-        abbreviation: 'MEM',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Utah Jazz',
-        abbreviation: 'UTA',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'San Antonio Spurs',
-        abbreviation: 'SAS',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-      {
-        name: 'Portland Trail Blazers',
-        abbreviation: 'POR',
-        wins: 0,
-        losses: 0,
-        pct: 0,
-        gb: '-',
-        home: '0-0',
-        away: '0-0',
-        last10: '0-0',
-        streak: '-',
-      },
-    ],
-  },
-];
-
 export default function NBAStandingsPage() {
-  const [standings, setStandings] = useState<Conference[]>(staticStandings);
+  const [standings, setStandings] = useState<Conference[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedConference, setSelectedConference] = useState<string>('Eastern Conference');
-  const [dataFresh, setDataFresh] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchStandings = async () => {
@@ -430,11 +56,14 @@ export default function NBAStandingsPage() {
           const data = (await res.json()) as { standings?: Conference[] };
           if (data.standings && data.standings.length > 0) {
             setStandings(data.standings);
-            setDataFresh(true);
+          } else {
+            setError(true);
           }
+        } else {
+          setError(true);
         }
-      } catch (err) {
-        // Use static data
+      } catch {
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -471,7 +100,7 @@ export default function NBAStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2024-25 Season
+                2025-26 Season
               </Badge>
             </ScrollReveal>
 
@@ -513,11 +142,11 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {!dataFresh && (
-              <Card variant="default" padding="md" className="mb-6 bg-info/10 border-info/30">
-                <p className="text-info font-semibold">Placeholder Data</p>
+            {error && (
+              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
+                <p className="text-warning font-semibold">Unable to load standings</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  Live standings will populate once the NBA API responds with current data.
+                  Live data is temporarily unavailable. Please try again shortly.
                 </p>
               </Card>
             )}
