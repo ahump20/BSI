@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { HomeLiveScores } from '@/components/home';
+import { HomeLiveScores, SportHubCards, TrendingIntelFeed, ArcadeSpotlight } from '@/components/home';
 import { HeroVideo } from '@/components/hero/HeroVideo';
 
 export const metadata = {
@@ -8,57 +8,18 @@ export const metadata = {
     'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics. Live scores, predictions, and data-driven insights.',
 };
 
-const sports = [
-  {
-    name: 'College Baseball',
-    icon: '🎓',
-    href: '/college-baseball',
-    description: 'D1 standings, rankings & box scores',
-  },
-  { name: 'MLB', icon: '⚾', href: '/mlb', description: 'Live scores, standings & Statcast' },
-  { name: 'NFL', icon: '🏈', href: '/nfl', description: 'Live scores & standings' },
-  { name: 'NBA', icon: '🏀', href: '/nba', description: 'Live scores & standings' },
-  {
-    name: 'CFB',
-    icon: '🏟️',
-    href: '/cfb',
-    description: 'College football analytics',
-    comingSoon: true,
-  },
-];
-
-const features = [
-  {
-    icon: '📊',
-    title: 'Real-Time Data',
-    description: 'Live scores updated every 30 seconds. Never miss a play.',
-  },
-  {
-    icon: '🎯',
-    title: 'College Baseball Focus',
-    description: 'ESPN treats it like an afterthought. We built what fans deserve.',
-  },
-  {
-    icon: '📱',
-    title: 'Mobile-First',
-    description: 'Designed for mobile devices first. Access your analytics anywhere.',
-  },
-];
-
 export default function HomePage() {
   return (
     <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
-      {/* Hero Section — Cinematic Video */}
-      <section className="relative pt-8 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[80vh] flex items-center">
-        {/* Video Background */}
+      {/* Hero Section — Cinematic Video (compact) */}
+      <section className="relative pt-8 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[50vh] flex items-center">
         <HeroVideo />
 
-        {/* Gradient overlay for text readability */}
         <div
           className="absolute inset-0 z-[1]"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(13,13,18,0.85) 0%, rgba(13,13,18,0.4) 40%, rgba(13,13,18,0.7) 80%, rgba(13,13,18,1) 100%)',
+              'linear-gradient(to bottom, rgba(13,13,18,0.85) 0%, rgba(13,13,18,0.4) 40%, rgba(13,13,18,0.7) 85%, rgba(13,13,18,1) 100%)',
           }}
         />
 
@@ -100,55 +61,37 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Live Scores Hub - Defaults to College Baseball */}
+      {/* Live Scores Hub */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-charcoal/50">
         <div className="max-w-7xl mx-auto">
           <HomeLiveScores />
         </div>
       </section>
 
-      {/* Sports Coverage */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-charcoal">
+      {/* Sports Hub + Trending Intel */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-display text-white text-center mb-12 uppercase tracking-wide">
-            COVERAGE
+          <h2 className="text-3xl font-display text-white mb-10 uppercase tracking-wide">
+            <span className="text-gradient-brand">Sports Hub</span>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {sports.map((sport) => (
-              <Link key={sport.name} href={sport.href}>
-                <div className="glass-default p-6 hover:border-primary transition-all text-center h-full relative">
-                  {sport.comingSoon && (
-                    <span className="absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold bg-gold/20 text-gold rounded-full">
-                      Coming Soon
-                    </span>
-                  )}
-                  <span className="text-5xl mb-4 block">{sport.icon}</span>
-                  <h3 className="text-xl font-semibold text-white mb-2">{sport.name}</h3>
-                  <p className="text-gray-400 text-sm">{sport.description}</p>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <SportHubCards />
+            </div>
+            <div className="lg:col-span-1">
+              <TrendingIntelFeed />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      {/* Arcade Spotlight */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-charcoal/50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-display text-white text-center mb-12 uppercase tracking-wide">
-            FEATURES
+          <h2 className="text-3xl font-display text-white mb-10 uppercase tracking-wide">
+            <span className="text-gradient-brand">Arcade</span>
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature) => (
-              <div key={feature.title} className="glass-subtle p-6">
-                <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
-                  <span className="text-2xl">{feature.icon}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+          <ArcadeSpotlight />
         </div>
       </section>
 
