@@ -45,8 +45,8 @@
     "db:migrate:production": "wrangler d1 execute blazesports-historical --remote --file=schema/003_migration_drop_and_recreate.sql",
     "db:seed:production": "wrangler d1 execute blazesports-historical --remote --file=scripts/insert-test-teams-fixed.sql",
     "build:arcade": "cd games/blitz && npm run build && cd ../hotdog-dash && npm run build && cd ../.. && npm run arcade:copy",
-    "arcade:copy": "cp -r games/blitz/dist blazecraft-app/mini-games/games/blitz && cp -r games/hotdog-dash/dist blazecraft-app/mini-games/games/hotdog-dash && cp -r games/sandlot-sluggers/dist blazecraft-app/mini-games/games/sandlot-sluggers",
-    "deploy:arcade": "wrangler pages deploy blazecraft-app --project-name bsi-agentforge",
+    "arcade:copy": "echo 'Games are self-hosted in public/games/ -- no copy needed'",
+    "deploy:arcade": "echo 'Games deploy with Pages -- use deploy:pages'",
     "deploy:arcade-api": "wrangler deploy --config workers/mini-games-api/wrangler.toml"
   },
   "dependencies": {

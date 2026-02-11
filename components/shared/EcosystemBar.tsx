@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react';
 
 /**
- * 32px ecosystem bar linking BSI <-> BlazeCraft.
- * On BSI: shows BlazeCraft link with agent pulse dot.
- * On BlazeCraft: shows BSI link with live score count.
+ * 32px ecosystem bar at top of page.
+ * Shows BSI Command Center link with agent pulse dot.
  */
 export function EcosystemBar() {
   const [agentActive, setAgentActive] = useState(false);
@@ -37,16 +36,14 @@ export function EcosystemBar() {
     >
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between text-xs">
         <a
-          href="https://blazecraft.app?source=bsi-ecosystem"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/arcade"
           className="flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors"
         >
           {agentActive && (
             <span className="live-indicator__dot" style={{ width: 6, height: 6 }} />
           )}
           <span className="font-display tracking-wider uppercase text-[0.5rem] sm:text-[0.625rem]">
-            BlazeCraft Command Center
+            BSI Command Center
           </span>
         </a>
         <span className="text-white/30 text-[0.5rem] sm:text-[0.5625rem] tracking-wide uppercase hidden sm:inline">

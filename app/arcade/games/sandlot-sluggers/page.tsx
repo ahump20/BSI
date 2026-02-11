@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-const GAME_URL = 'https://blazecraft.app/mini-games/games/sandlot-sluggers';
+const GAME_URL = '/games/sandlot-sluggers/';
 
 export default function SandlotSluggersPage() {
   return (
@@ -12,30 +12,30 @@ export default function SandlotSluggersPage() {
           <div>
             <span
               className="inline-block mb-3 px-3 py-1 rounded text-xs font-display uppercase tracking-widest"
-              style={{ background: 'rgba(255, 255, 255, 0.15)', color: '#FFFFFF' }}
+              style={{ background: 'rgba(191, 87, 0, 0.2)', color: '#BF5700' }}
             >
               Sandlot Sluggers
             </span>
             <h1 className="text-3xl md:text-4xl font-display text-white uppercase tracking-wide">
-              Sandlot Sluggers Route
+              Sandlot Sluggers
             </h1>
             <p className="text-white/60 mt-3 max-w-2xl">
-              Lock in your timing and stack hits in a fast-paced baseball showdown.
+              Time your swing to crush pitches. Build streaks and chase the leaderboard.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
-              href="/arcade/games"
+              href="/arcade"
               className="btn-secondary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
             >
-              Back to Games
+              Back to Arcade
             </Link>
             <a
-              href={`${GAME_URL}?source=bsi-arcade`}
+              href={GAME_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
-              style={{ background: '#FFFFFF', color: '#0D0D12' }}
+              style={{ background: '#BF5700', color: '#FFFFFF' }}
             >
               Open Fullscreen
             </a>
@@ -43,10 +43,11 @@ export default function SandlotSluggersPage() {
         </div>
         <div className="glass-elevated overflow-hidden rounded-2xl aspect-video">
           <iframe
-            src={`${GAME_URL}?embed=true&source=bsi-arcade`}
+            src={GAME_URL}
             className="w-full h-full border-0"
             loading="lazy"
             title="Sandlot Sluggers"
+            allow="autoplay"
           />
         </div>
       </section>

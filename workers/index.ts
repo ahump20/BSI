@@ -27,20 +27,24 @@ import type {
   HighlightlyBoxScore,
 } from '../lib/api-clients/highlightly-api';
 import { NcaaApiClient, createNcaaClient } from '../lib/api-clients/ncaa-api';
-import { Tank01ApiClient, createTank01Client } from '../lib/api-clients/tank01-api';
-import type { Tank01Response } from '../lib/api-clients/tank01-api';
 import {
-  computeBattingAdvanced,
-  computePitchingAdvanced,
-  aggregateTeamBatting,
-  aggregateTeamPitching,
-  compareBatters,
-  comparePitchers,
-  type BattingAdvanced,
-  type PitchingAdvanced,
-  type TeamAnalytics,
-} from '../lib/analytics/sabermetrics';
-import { parseTank01Batting, parseTank01Pitching, parseRoster } from '../lib/analytics/tank01-parser';
+  getScoreboard,
+  getStandings,
+  getTeams as espnGetTeams,
+  getTeamDetail,
+  getTeamRoster,
+  getGameSummary,
+  getAthlete,
+  getNews,
+  transformStandings,
+  transformScoreboard,
+  transformTeams,
+  transformTeamDetail,
+  transformAthlete,
+  transformNews,
+  transformGameSummary,
+  type ESPNSport,
+} from '../lib/api-clients/espn-api';
 
 export interface Env {
   KV: KVNamespace;
@@ -51,7 +55,6 @@ export interface Env {
   ENVIRONMENT: string;
   API_VERSION: string;
   PAGES_ORIGIN: string;
-  RAPIDAPI_KEY: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -62,8 +65,6 @@ const PROD_ORIGINS = new Set([
   'https://blazesportsintel.com',
   'https://www.blazesportsintel.com',
   'https://blazesportsintel.pages.dev',
-  'https://blazecraft.app',
-  'https://www.blazecraft.app',
 ]);
 
 const DEV_ORIGINS = new Set([
@@ -257,239 +258,69 @@ function handleHealth(env: Env): Response {
 }
 
 /**
- * /api/kpi — Team sabermetric KPIs for a given MLB team.
- * Query: ?team=NYY (default: NYY)
- * Returns: team-level OPS, wOBA, ERA, FIP, WHIP, K/9 from the roster.
+ * /api/kpi — Team sabermetric KPIs (temporarily unavailable during data source migration).
  */
-async function handleKPI(url: URL, env: Env): Promise<Response> {
+async function handleKPI(url: URL, _env: Env): Promise<Response> {
   const teamAbv = url.searchParams.get('team') || 'NYY';
-  const cacheKey = `analytics:kpi:${teamAbv}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
-  const client = getProClient(env);
-  const result = await client.getMLBTeamRoster(teamAbv, true);
-
-  if (!result.success || !result.data) {
-    return json({ error: 'Unable to fetch roster', team: teamAbv }, 502);
-  }
-
-  const roster = Array.isArray(result.data.body) ? result.data.body : [];
-  const { batters, pitchers } = parseRoster(roster as unknown as Record<string, unknown>[]);
-  const battingAdvanced = batters.map(computeBattingAdvanced);
-  const pitchingAdvanced = pitchers.map(computePitchingAdvanced);
-  const teamBatting = aggregateTeamBatting(battingAdvanced);
-  const teamPitching = aggregateTeamPitching(pitchingAdvanced);
-
-  const hasStats = batters.length > 0 || pitchers.length > 0;
-  const payload = {
+  return json({
     team: teamAbv,
-    batting: teamBatting,
-    pitching: teamPitching,
-    rosterSize: { batters: batters.length, pitchers: pitchers.length },
-    ...(hasStats ? {} : { notice: 'No season stats available — MLB season may not be active' }),
+    notice: 'Sabermetric analytics temporarily unavailable — data source migration in progress',
     timestamp: new Date().toISOString(),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return json(payload, 200, { 'X-Cache': 'MISS' });
+  });
 }
 
 /**
- * /api/analytics/accuracy — Player comparison: batting advanced metrics for two players.
- * Query: ?p1=playerID1&p2=playerID2
- * Returns: side-by-side sabermetric comparison with advantage indicators.
+ * /api/analytics/accuracy — Player comparison (temporarily unavailable during data source migration).
  */
-async function handleAccuracy(url: URL, env: Env): Promise<Response> {
-  const p1Id = url.searchParams.get('p1');
-  const p2Id = url.searchParams.get('p2');
-
-  if (!p1Id || !p2Id) {
-    return json({
-      error: 'Provide ?p1=playerID&p2=playerID for player comparison',
-      example: '/api/analytics/accuracy?p1=660271&p2=545361',
-    }, 400);
-  }
-
-  const cacheKey = `analytics:compare:${p1Id}:${p2Id}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
-  const client = getProClient(env);
-  const [r1, r2] = await Promise.all([
-    client.getMLBPlayer(p1Id),
-    client.getMLBPlayer(p2Id),
-  ]);
-
-  if (!r1.success || !r1.data || !r2.success || !r2.data) {
-    return json({ error: 'Unable to fetch one or both players' }, 502);
-  }
-
-  const raw1 = r1.data.body as unknown as Record<string, unknown>;
-  const raw2 = r2.data.body as unknown as Record<string, unknown>;
-
-  const bat1 = parseTank01Batting(raw1);
-  const bat2 = parseTank01Batting(raw2);
-  const pit1 = parseTank01Pitching(raw1);
-  const pit2 = parseTank01Pitching(raw2);
-
-  let comparison: unknown;
-  if (bat1 && bat2) {
-    comparison = compareBatters(computeBattingAdvanced(bat1), computeBattingAdvanced(bat2));
-  } else if (pit1 && pit2) {
-    comparison = comparePitchers(computePitchingAdvanced(pit1), computePitchingAdvanced(pit2));
-  } else {
-    return json({ error: 'Players must both be batters or both be pitchers for comparison' }, 400);
-  }
-
-  const payload = { comparison, timestamp: new Date().toISOString() };
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return json(payload, 200, { 'X-Cache': 'MISS' });
+async function handleAccuracy(url: URL, _env: Env): Promise<Response> {
+  return json({
+    notice: 'Player comparison analytics temporarily unavailable — data source migration in progress',
+    timestamp: new Date().toISOString(),
+  });
 }
 
 /**
- * /api/alerts/buckets — Team roster sabermetric tiers.
- * Buckets players into Elite / Above Avg / Average / Below Avg by OPS (batters) or FIP (pitchers).
- * Query: ?team=NYY&type=batting|pitching
+ * /api/alerts/buckets — Sabermetric tiers (temporarily unavailable during data source migration).
  */
-async function handleAlertBuckets(url: URL, env: Env): Promise<Response> {
+async function handleAlertBuckets(url: URL, _env: Env): Promise<Response> {
   const teamAbv = url.searchParams.get('team') || 'NYY';
-  const statType = url.searchParams.get('type') || 'batting';
-  const cacheKey = `analytics:buckets:${teamAbv}:${statType}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
-  const client = getProClient(env);
-  const result = await client.getMLBTeamRoster(teamAbv, true);
-
-  if (!result.success || !result.data) {
-    return json({ error: 'Unable to fetch roster' }, 502);
-  }
-
-  const roster = Array.isArray(result.data.body) ? result.data.body : [];
-  const { batters, pitchers } = parseRoster(roster as unknown as Record<string, unknown>[]);
-
-  let payload: unknown;
-
-  if (statType === 'pitching') {
-    const advanced = pitchers.map(computePitchingAdvanced);
-    const buckets = {
-      elite: advanced.filter(p => p.fip < 3.0),
-      aboveAvg: advanced.filter(p => p.fip >= 3.0 && p.fip < 3.75),
-      average: advanced.filter(p => p.fip >= 3.75 && p.fip < 4.5),
-      belowAvg: advanced.filter(p => p.fip >= 4.5),
-    };
-    payload = {
-      team: teamAbv, type: 'pitching', metric: 'FIP',
-      labels: ['Elite (<3.00)', 'Above Avg (3.00-3.75)', 'Average (3.75-4.50)', 'Below Avg (4.50+)'],
-      counts: [buckets.elite.length, buckets.aboveAvg.length, buckets.average.length, buckets.belowAvg.length],
-      buckets,
-      timestamp: new Date().toISOString(),
-    };
-  } else {
-    const advanced = batters.map(computeBattingAdvanced);
-    const buckets = {
-      elite: advanced.filter(b => b.ops >= 0.900),
-      aboveAvg: advanced.filter(b => b.ops >= 0.750 && b.ops < 0.900),
-      average: advanced.filter(b => b.ops >= 0.650 && b.ops < 0.750),
-      belowAvg: advanced.filter(b => b.ops < 0.650),
-    };
-    payload = {
-      team: teamAbv, type: 'batting', metric: 'OPS',
-      labels: ['Elite (.900+)', 'Above Avg (.750-.900)', 'Average (.650-.750)', 'Below Avg (<.650)'],
-      counts: [buckets.elite.length, buckets.aboveAvg.length, buckets.average.length, buckets.belowAvg.length],
-      buckets,
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return json(payload, 200, { 'X-Cache': 'MISS' });
+  return json({
+    team: teamAbv,
+    notice: 'Sabermetric tiers temporarily unavailable — data source migration in progress',
+    timestamp: new Date().toISOString(),
+  });
 }
 
 /**
- * /api/teams/:league — Pull real standings data for the requested league.
- * Falls back to cached data. MLB uses Tank01 standings with win/loss;
- * NFL/NBA also from Tank01; NCAA from Highlightly.
+ * /api/teams/:league — Pull team list from ESPN for the requested league.
  */
 async function handleTeams(league: string, env: Env): Promise<Response> {
   const key = league.toUpperCase();
-  const cacheKey = `teams:list:${key}`;
+  const sportMap: Record<string, ESPNSport> = { MLB: 'mlb', NFL: 'nfl', NBA: 'nba' };
+  const sport = sportMap[key];
 
+  if (!sport) return json([], 200);
+
+  const cacheKey = `teams:list:${key}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
 
   try {
-    if (key === 'MLB') {
-      const client = getProClient(env);
-      const result = await client.getMLBStandings();
-      if (result.success && result.data) {
-        const teams = (Array.isArray(result.data.body) ? result.data.body : []).map((t: Record<string, unknown>) => ({
-          id: t.teamAbv ?? t.teamID,
-          name: t.teamName ?? t.teamCity,
-          league: 'MLB',
-          stats: {
-            wins: parseInt(String(t.wins ?? 0)),
-            losses: parseInt(String(t.losses ?? 0)),
-            winPct: parseFloat(String(t.winPercentage ?? '0')),
-            division: t.division,
-            conference: t.conference,
-            gamesBack: t.gamesBack,
-            streak: t.streak,
-          },
-        }));
-        await kvPut(env.KV, cacheKey, teams, CACHE_TTL.standings);
-        return json(teams, 200, { 'X-Cache': 'MISS' });
-      }
-    } else if (key === 'NFL') {
-      const client = getProClient(env);
-      const result = await client.getNFLStandings();
-      if (result.success && result.data) {
-        const teams = (Array.isArray(result.data.body) ? result.data.body : []).map((t: Record<string, unknown>) => ({
-          id: t.teamAbv ?? t.teamID,
-          name: t.teamName,
-          league: 'NFL',
-          stats: {
-            wins: parseInt(String(t.wins ?? 0)),
-            losses: parseInt(String(t.losses ?? 0)),
-            ties: parseInt(String(t.ties ?? 0)),
-            division: t.division,
-            conference: t.conference,
-            pointsFor: parseInt(String(t.pointsFor ?? 0)),
-            pointsAgainst: parseInt(String(t.pointsAgainst ?? 0)),
-          },
-        }));
-        await kvPut(env.KV, cacheKey, teams, CACHE_TTL.standings);
-        return json(teams, 200, { 'X-Cache': 'MISS' });
-      }
-    } else if (key === 'NBA') {
-      const client = getProClient(env);
-      const result = await client.getNBAStandings();
-      if (result.success && result.data) {
-        const teams = (Array.isArray(result.data.body) ? result.data.body : []).map((t: Record<string, unknown>) => ({
-          id: t.teamAbv ?? t.teamID,
-          name: t.teamName,
-          league: 'NBA',
-          stats: {
-            wins: parseInt(String(t.wins ?? 0)),
-            losses: parseInt(String(t.losses ?? 0)),
-            division: t.division,
-            conference: t.conference,
-            gamesBack: t.gamesBack,
-            streak: t.streak,
-          },
-        }));
-        await kvPut(env.KV, cacheKey, teams, CACHE_TTL.standings);
-        return json(teams, 200, { 'X-Cache': 'MISS' });
-      }
-    }
+    const raw = await espnGetTeams(sport);
+    const { teams } = transformTeams(raw);
+    const result = teams.map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      league: key,
+      abbreviation: t.abbreviation,
+      logos: t.logos,
+      color: t.color,
+    }));
+    await kvPut(env.KV, cacheKey, result, CACHE_TTL.standings);
+    return json(result, 200, { 'X-Cache': 'MISS' });
   } catch {
-    // Fall through to empty response
+    return json([], 200);
   }
-
-  return json([], 200);
 }
 
 /**
@@ -553,109 +384,25 @@ async function handleLeaderboardSubmit(request: Request, env: Env): Promise<Resp
 }
 
 /**
- * /api/analytics/yearly-trend — Full roster advanced stat leaders for a team.
- * Query: ?team=NYY
- * Returns: top batters by wOBA and top pitchers by FIP for the roster.
+ * /api/analytics/yearly-trend — Roster stat leaders (temporarily unavailable during data source migration).
  */
-async function handleYearlyTrend(url: URL, env: Env): Promise<Response> {
+async function handleYearlyTrend(url: URL, _env: Env): Promise<Response> {
   const teamAbv = url.searchParams.get('team') || 'NYY';
-  const cacheKey = `analytics:leaders:${teamAbv}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
-  const client = getProClient(env);
-  const result = await client.getMLBTeamRoster(teamAbv, true);
-
-  if (!result.success || !result.data) {
-    return json({ error: 'Unable to fetch roster' }, 502);
-  }
-
-  const roster = Array.isArray(result.data.body) ? result.data.body : [];
-  const { batters, pitchers } = parseRoster(roster as unknown as Record<string, unknown>[]);
-
-  const battingLeaders = batters
-    .map(computeBattingAdvanced)
-    .filter(b => b.pa >= 50)
-    .sort((a, b) => b.woba - a.woba)
-    .slice(0, 10);
-
-  const pitchingLeaders = pitchers
-    .map(computePitchingAdvanced)
-    .filter(p => p.ip >= 20)
-    .sort((a, b) => a.fip - b.fip)
-    .slice(0, 10);
-
-  const payload = {
+  return json({
     team: teamAbv,
-    battingLeaders,
-    pitchingLeaders,
-    metadata: {
-      battingMetric: 'wOBA (weighted on-base average)',
-      pitchingMetric: 'FIP (fielding independent pitching)',
-      minPA: 50,
-      minIP: 20,
-    },
+    notice: 'Roster analytics temporarily unavailable — data source migration in progress',
     timestamp: new Date().toISOString(),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return json(payload, 200, { 'X-Cache': 'MISS' });
+  });
 }
 
 /**
- * /api/readiness — Team power rankings based on composite sabermetric score.
- * Query: ?teams=NYY,LAD,HOU,ATL (comma-separated, default top teams)
- * Returns: composite score per team from batting (OPS, wOBA) and pitching (FIP, K/9).
+ * /api/readiness — Power rankings (temporarily unavailable during data source migration).
  */
-async function handleReadiness(url: URL, env: Env): Promise<Response> {
-  const teamsParam = url.searchParams.get('teams') || 'NYY,LAD,HOU,ATL';
-  const teamList = teamsParam.split(',').map(t => t.trim().toUpperCase()).slice(0, 8);
-  const cacheKey = `analytics:readiness:${teamList.join(',')}`;
-
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) return json(cached, 200, { 'X-Cache': 'HIT' });
-
-  const client = getProClient(env);
-  const rankings: Array<{ team: string; composite: number; batting: ReturnType<typeof aggregateTeamBatting>; pitching: ReturnType<typeof aggregateTeamPitching> }> = [];
-
-  for (const teamAbv of teamList) {
-    try {
-      const result = await client.getMLBTeamRoster(teamAbv, true);
-      if (!result.success || !result.data) continue;
-
-      const roster = Array.isArray(result.data.body) ? result.data.body : [];
-      const { batters, pitchers } = parseRoster(roster as unknown as Record<string, unknown>[]);
-      const batting = aggregateTeamBatting(batters.map(computeBattingAdvanced));
-      const pitching = aggregateTeamPitching(pitchers.map(computePitchingAdvanced));
-
-      // Composite: normalize OPS (0-1.2 range), wOBA (0-0.5), invert FIP (lower=better)
-      const composite = Math.round(
-        (batting.avgOps / 1.2) * 30 +
-        (batting.avgWoba / 0.5) * 30 +
-        (1 - pitching.avgFip / 6) * 25 +
-        (pitching.avgKPer9 / 15) * 15
-      );
-
-      rankings.push({ team: teamAbv, composite, batting, pitching });
-    } catch {
-      // Skip failed teams
-    }
-  }
-
-  rankings.sort((a, b) => b.composite - a.composite);
-
-  const payload = {
-    rankings,
-    metadata: {
-      formula: '30% OPS + 30% wOBA + 25% inverse-FIP + 15% K/9',
-      scale: '0-100',
-    },
+async function handleReadiness(url: URL, _env: Env): Promise<Response> {
+  return json({
+    notice: 'Power rankings temporarily unavailable — data source migration in progress',
     timestamp: new Date().toISOString(),
-  };
-
-  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-  return json(payload, 200, { 'X-Cache': 'MISS' });
+  });
 }
 
 /** 90-day TTL for lead data — aligns with privacy policy retention period */
@@ -747,14 +494,9 @@ function getCollegeClient(): NcaaApiClient {
   return createNcaaClient();
 }
 
-/** Tank01 client for MLB/NFL/NBA pro sports */
-function getProClient(env: Env): Tank01ApiClient {
-  return createTank01Client(env.RAPIDAPI_KEY);
-}
-
 /** @deprecated — Highlightly client kept for fallback only */
-function getClient(env: Env): HighlightlyApiClient {
-  return createHighlightlyClient(env.RAPIDAPI_KEY);
+function getClient(_env: Env): HighlightlyApiClient {
+  return createHighlightlyClient('');
 }
 
 async function handleCollegeBaseballScores(
@@ -1027,32 +769,11 @@ async function handleCFBTransferPortal(env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
-// Pro Sports API handlers (Tank01)
+// Pro Sports API handlers (ESPN)
 // ---------------------------------------------------------------------------
 
-/** Helper: format date as YYYYMMDD for Tank01 */
-function toTank01Date(dateStr?: string | null): string {
-  if (!dateStr) {
-    const d = new Date();
-    return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
-  }
-  // Accept YYYY-MM-DD → YYYYMMDD
-  return dateStr.replace(/-/g, '');
-}
-
-/** Wrap Tank01 response in a consistent envelope for the frontend */
-function tank01Json<T>(result: Tank01Response<{ body: T }>, fallback: T): Response {
-  if (result.success && result.data) {
-    return json({
-      ...result.data.body,
-      meta: { lastUpdated: result.timestamp, dataSource: result.source },
-    });
-  }
-  return json({ ...fallback, meta: { error: result.error, dataSource: result.source } }, 502);
-}
-
-/** Safe wrapper for Tank01 handlers — catches crashes and returns 502 JSON instead of 1101 */
-async function safeTank01<T>(
+/** Safe wrapper for ESPN handlers — catches crashes and returns 502 JSON */
+async function safeESPN(
   handler: () => Promise<Response>,
   fallbackKey: string,
   fallbackValue: unknown,
@@ -1061,35 +782,34 @@ async function safeTank01<T>(
   try {
     return await handler();
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Unknown Tank01 error';
-    await logError(env.KV, msg, `tank01:${fallbackKey}`);
+    const msg = err instanceof Error ? err.message : 'Unknown ESPN error';
+    await logError(env.KV, msg, `espn:${fallbackKey}`);
     return json(
-      { [fallbackKey]: fallbackValue, meta: { error: msg, dataSource: 'tank01' } },
+      { [fallbackKey]: fallbackValue, meta: { error: msg, dataSource: 'espn' } },
       502,
     );
   }
 }
 
-// --- MLB ---
+/** Helper: format date as YYYYMMDD */
+function toDateString(dateStr?: string | null): string | undefined {
+  if (!dateStr) return undefined;
+  return dateStr.replace(/-/g, '');
+}
+
+// --- MLB (ESPN) ---
 
 async function handleMLBScores(url: URL, env: Env): Promise<Response> {
-  const date = toTank01Date(url.searchParams.get('date'));
-  const cacheKey = `mlb:scores:${date}`;
+  const date = toDateString(url.searchParams.get('date'));
+  const cacheKey = `mlb:scores:${date || 'today'}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getMLBScores(date);
-
-  if (result.success && result.data) {
-    const body = result.data.body;
-    const games = Array.isArray(body) ? body : [];
-    const payload = { games, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-mlb' } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
-    return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
-  }
-  return json({ games: [], meta: { error: result.error } }, 502);
+  const raw = await getScoreboard('mlb', date);
+  const payload = transformScoreboard(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+  return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
 }
 
 async function handleMLBStandings(env: Env): Promise<Response> {
@@ -1098,15 +818,10 @@ async function handleMLBStandings(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getMLBStandings();
-
-  if (result.success && result.data) {
-    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
-  }
-  return json({ standings: [], meta: { error: result.error } }, 502);
+  const raw = await getStandings('mlb');
+  const payload = transformStandings(raw, 'mlb');
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
 }
 
 async function handleMLBGame(gameId: string, env: Env): Promise<Response> {
@@ -1115,15 +830,10 @@ async function handleMLBGame(gameId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getMLBBoxScore(gameId);
-
-  if (result.success && result.data) {
-    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
-    return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
-  }
-  return json({ boxScore: null, meta: { error: result.error } }, 502);
+  const raw = await getGameSummary('mlb', gameId);
+  const payload = transformGameSummary(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+  return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
 }
 
 async function handleMLBPlayer(playerId: string, env: Env): Promise<Response> {
@@ -1132,35 +842,36 @@ async function handleMLBPlayer(playerId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getMLBPlayer(playerId);
-
-  if (result.success && result.data) {
-    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
-    return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
-  }
-  return json({ player: null, meta: { error: result.error } }, 502);
+  const raw = await getAthlete('mlb', playerId);
+  const payload = transformAthlete(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+  return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
 }
 
-async function handleMLBTeam(teamAbv: string, env: Env): Promise<Response> {
-  const cacheKey = `mlb:team:${teamAbv}`;
+async function handleMLBTeam(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `mlb:team:${teamId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const [rosterResult, scheduleResult] = await Promise.all([
-    client.getMLBTeamRoster(teamAbv, true),
-    client.getMLBTeamSchedule(teamAbv),
+  const [teamRaw, rosterRaw] = await Promise.all([
+    getTeamDetail('mlb', teamId),
+    getTeamRoster('mlb', teamId),
   ]);
 
-  const payload = {
-    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
-    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
-    meta: { lastUpdated: new Date().toISOString() },
-  };
+  const payload = transformTeamDetail(teamRaw, rosterRaw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
+}
 
+async function handleMLBTeamsList(env: Env): Promise<Response> {
+  const cacheKey = 'mlb:teams:list';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+
+  const raw = await espnGetTeams('mlb');
+  const payload = transformTeams(raw);
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
   return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
 }
@@ -1171,38 +882,25 @@ async function handleMLBNews(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getMLBNews();
-
-  if (result.success && result.data) {
-    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  }
-  return json({ articles: [], meta: { error: result.error } }, 502);
+  const raw = await getNews('mlb');
+  const payload = transformNews(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+  return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
 }
 
-// --- NFL ---
+// --- NFL (ESPN) ---
 
 async function handleNFLScores(url: URL, env: Env): Promise<Response> {
-  const week = url.searchParams.get('week') || '1';
-  const season = url.searchParams.get('season') || undefined;
-  const cacheKey = `nfl:scores:${season || 'current'}:${week}`;
+  const date = toDateString(url.searchParams.get('date'));
+  const cacheKey = `nfl:scores:${date || 'today'}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNFLScores(week, season);
-
-  if (result.success && result.data) {
-    const body = result.data.body;
-    const games = Array.isArray(body) ? body : [];
-    const payload = { games, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-nfl' } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
-    return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
-  }
-  return json({ games: [], meta: { error: result.error } }, 502);
+  const raw = await getScoreboard('nfl', date);
+  const payload = transformScoreboard(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+  return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
 }
 
 async function handleNFLStandings(env: Env): Promise<Response> {
@@ -1211,15 +909,10 @@ async function handleNFLStandings(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNFLStandings();
-
-  if (result.success && result.data) {
-    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
-  }
-  return json({ standings: [], meta: { error: result.error } }, 502);
+  const raw = await getStandings('nfl');
+  const payload = transformStandings(raw, 'nfl');
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
 }
 
 async function handleNFLGame(gameId: string, env: Env): Promise<Response> {
@@ -1228,15 +921,10 @@ async function handleNFLGame(gameId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNFLBoxScore(gameId);
-
-  if (result.success && result.data) {
-    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
-    return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
-  }
-  return json({ boxScore: null, meta: { error: result.error } }, 502);
+  const raw = await getGameSummary('nfl', gameId);
+  const payload = transformGameSummary(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+  return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
 }
 
 async function handleNFLPlayer(playerId: string, env: Env): Promise<Response> {
@@ -1245,35 +933,36 @@ async function handleNFLPlayer(playerId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNFLPlayer(playerId);
-
-  if (result.success && result.data) {
-    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
-    return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
-  }
-  return json({ player: null, meta: { error: result.error } }, 502);
+  const raw = await getAthlete('nfl', playerId);
+  const payload = transformAthlete(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+  return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
 }
 
-async function handleNFLTeam(teamAbv: string, env: Env): Promise<Response> {
-  const cacheKey = `nfl:team:${teamAbv}`;
+async function handleNFLTeam(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `nfl:team:${teamId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const [rosterResult, scheduleResult] = await Promise.all([
-    client.getNFLTeamRoster(teamAbv),
-    client.getNFLTeamSchedule(teamAbv),
+  const [teamRaw, rosterRaw] = await Promise.all([
+    getTeamDetail('nfl', teamId),
+    getTeamRoster('nfl', teamId),
   ]);
 
-  const payload = {
-    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
-    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
-    meta: { lastUpdated: new Date().toISOString() },
-  };
+  const payload = transformTeamDetail(teamRaw, rosterRaw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
+}
 
+async function handleNFLTeamsList(env: Env): Promise<Response> {
+  const cacheKey = 'nfl:teams:list';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+
+  const raw = await espnGetTeams('nfl');
+  const payload = transformTeams(raw);
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
   return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
 }
@@ -1284,37 +973,25 @@ async function handleNFLNews(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNFLNews();
-
-  if (result.success && result.data) {
-    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  }
-  return json({ articles: [], meta: { error: result.error } }, 502);
+  const raw = await getNews('nfl');
+  const payload = transformNews(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+  return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
 }
 
-// --- NBA ---
+// --- NBA (ESPN) ---
 
 async function handleNBAScores(url: URL, env: Env): Promise<Response> {
-  const date = toTank01Date(url.searchParams.get('date'));
-  const cacheKey = `nba:scores:${date}`;
+  const date = toDateString(url.searchParams.get('date'));
+  const cacheKey = `nba:scores:${date || 'today'}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNBAScores(date);
-
-  if (result.success && result.data) {
-    const body = result.data.body;
-    const games = Array.isArray(body) ? body : [];
-    const payload = { games, meta: { lastUpdated: result.timestamp, dataSource: 'tank01-nba' } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
-    return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
-  }
-  return json({ games: [], meta: { error: result.error } }, 502);
+  const raw = await getScoreboard('nba', date);
+  const payload = transformScoreboard(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+  return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
 }
 
 async function handleNBAStandings(env: Env): Promise<Response> {
@@ -1323,15 +1000,10 @@ async function handleNBAStandings(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNBAStandings();
-
-  if (result.success && result.data) {
-    const payload = { standings: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
-    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
-  }
-  return json({ standings: [], meta: { error: result.error } }, 502);
+  const raw = await getStandings('nba');
+  const payload = transformStandings(raw, 'nba');
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
 }
 
 async function handleNBAGame(gameId: string, env: Env): Promise<Response> {
@@ -1340,15 +1012,10 @@ async function handleNBAGame(gameId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.game, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNBABoxScore(gameId);
-
-  if (result.success && result.data) {
-    const payload = { boxScore: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
-    return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
-  }
-  return json({ boxScore: null, meta: { error: result.error } }, 502);
+  const raw = await getGameSummary('nba', gameId);
+  const payload = transformGameSummary(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+  return cachedJson(payload, 200, HTTP_CACHE.game, { 'X-Cache': 'MISS' });
 }
 
 async function handleNBAPlayer(playerId: string, env: Env): Promise<Response> {
@@ -1357,35 +1024,36 @@ async function handleNBAPlayer(playerId: string, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNBAPlayer(playerId);
-
-  if (result.success && result.data) {
-    const payload = { player: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
-    return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
-  }
-  return json({ player: null, meta: { error: result.error } }, 502);
+  const raw = await getAthlete('nba', playerId);
+  const payload = transformAthlete(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+  return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
 }
 
-async function handleNBATeam(teamAbv: string, env: Env): Promise<Response> {
-  const cacheKey = `nba:team:${teamAbv}`;
+async function handleNBATeam(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `nba:team:${teamId}`;
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const [rosterResult, scheduleResult] = await Promise.all([
-    client.getNBATeamRoster(teamAbv),
-    client.getNBATeamSchedule(teamAbv),
+  const [teamRaw, rosterRaw] = await Promise.all([
+    getTeamDetail('nba', teamId),
+    getTeamRoster('nba', teamId),
   ]);
 
-  const payload = {
-    roster: rosterResult.success && rosterResult.data ? rosterResult.data.body : [],
-    schedule: scheduleResult.success && scheduleResult.data ? scheduleResult.data.body : [],
-    meta: { lastUpdated: new Date().toISOString() },
-  };
+  const payload = transformTeamDetail(teamRaw, rosterRaw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
+}
 
+async function handleNBATeamsList(env: Env): Promise<Response> {
+  const cacheKey = 'nba:teams:list';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+
+  const raw = await espnGetTeams('nba');
+  const payload = transformTeams(raw);
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
   return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
 }
@@ -1396,15 +1064,10 @@ async function handleNBANews(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
 
-  const client = getProClient(env);
-  const result = await client.getNBANews();
-
-  if (result.success && result.data) {
-    const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
-    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
-  }
-  return json({ articles: [], meta: { error: result.error } }, 502);
+  const raw = await getNews('nba');
+  const payload = transformNews(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+  return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
 }
 
 // ---------------------------------------------------------------------------
@@ -1690,26 +1353,22 @@ async function handleAdminHealth(env: Env): Promise<Response> {
     };
   }
 
-  // Tank01 check (pro sports — check each sport independently)
-  if (env.RAPIDAPI_KEY) {
-    const proClient = getProClient(env);
-    for (const sport of ['mlb', 'nfl', 'nba'] as const) {
-      try {
-        const proHealth = await proClient.healthCheck(sport);
-        checks[`tank01_${sport}`] = {
-          status: proHealth.healthy ? 'healthy' : 'unhealthy',
-          latency_ms: proHealth.latency_ms,
-          ...(proHealth.error ? { error: proHealth.error } : {}),
-        };
-      } catch (e) {
-        checks[`tank01_${sport}`] = {
-          status: 'unhealthy',
-          error: e instanceof Error ? e.message : 'Unknown',
-        };
-      }
+  // ESPN check (pro sports — lightweight scoreboard ping)
+  for (const sport of ['mlb', 'nfl', 'nba'] as const) {
+    const startMs = Date.now();
+    try {
+      await getScoreboard(sport);
+      checks[`espn_${sport}`] = {
+        status: 'healthy',
+        latency_ms: Date.now() - startMs,
+      };
+    } catch (e) {
+      checks[`espn_${sport}`] = {
+        status: 'unhealthy',
+        latency_ms: Date.now() - startMs,
+        error: e instanceof Error ? e.message : 'Unknown',
+      };
     }
-  } else {
-    checks.tank01 = { status: 'unconfigured', error: 'RAPIDAPI_KEY not set' };
   }
 
   // Error count (last 24h)
@@ -2535,66 +2194,72 @@ export default {
       const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId');
       if (gameMatch) return handleCollegeBaseballGame(gameMatch.params.gameId, env);
 
-      // ----- MLB data routes (Tank01) -----
+      // ----- MLB data routes (ESPN) -----
       if (pathname === '/api/mlb/scores')
-        return safeTank01(() => handleMLBScores(url, env), 'games', [], env);
+        return safeESPN(() => handleMLBScores(url, env), 'games', [], env);
       if (pathname === '/api/mlb/standings')
-        return safeTank01(() => handleMLBStandings(env), 'standings', [], env);
+        return safeESPN(() => handleMLBStandings(env), 'standings', [], env);
       if (pathname === '/api/mlb/news')
-        return safeTank01(() => handleMLBNews(env), 'articles', [], env);
+        return safeESPN(() => handleMLBNews(env), 'articles', [], env);
+      if (pathname === '/api/mlb/teams')
+        return safeESPN(() => handleMLBTeamsList(env), 'teams', [], env);
 
       const mlbGameMatch = matchRoute(pathname, '/api/mlb/game/:gameId');
       if (mlbGameMatch)
-        return safeTank01(() => handleMLBGame(mlbGameMatch.params.gameId, env), 'boxScore', null, env);
+        return safeESPN(() => handleMLBGame(mlbGameMatch.params.gameId, env), 'game', null, env);
 
       const mlbPlayerMatch = matchRoute(pathname, '/api/mlb/players/:playerId');
       if (mlbPlayerMatch)
-        return safeTank01(() => handleMLBPlayer(mlbPlayerMatch.params.playerId, env), 'player', null, env);
+        return safeESPN(() => handleMLBPlayer(mlbPlayerMatch.params.playerId, env), 'player', null, env);
 
       const mlbTeamMatch = matchRoute(pathname, '/api/mlb/teams/:teamId');
       if (mlbTeamMatch)
-        return safeTank01(() => handleMLBTeam(mlbTeamMatch.params.teamId, env), 'team', null, env);
+        return safeESPN(() => handleMLBTeam(mlbTeamMatch.params.teamId, env), 'team', null, env);
 
-      // ----- NFL data routes (Tank01) -----
+      // ----- NFL data routes (ESPN) -----
       if (pathname === '/api/nfl/scores')
-        return safeTank01(() => handleNFLScores(url, env), 'games', [], env);
+        return safeESPN(() => handleNFLScores(url, env), 'games', [], env);
       if (pathname === '/api/nfl/standings')
-        return safeTank01(() => handleNFLStandings(env), 'standings', [], env);
+        return safeESPN(() => handleNFLStandings(env), 'standings', [], env);
       if (pathname === '/api/nfl/news')
-        return safeTank01(() => handleNFLNews(env), 'articles', [], env);
+        return safeESPN(() => handleNFLNews(env), 'articles', [], env);
+      if (pathname === '/api/nfl/teams')
+        return safeESPN(() => handleNFLTeamsList(env), 'teams', [], env);
 
       const nflGameMatch = matchRoute(pathname, '/api/nfl/game/:gameId');
       if (nflGameMatch)
-        return safeTank01(() => handleNFLGame(nflGameMatch.params.gameId, env), 'boxScore', null, env);
+        return safeESPN(() => handleNFLGame(nflGameMatch.params.gameId, env), 'game', null, env);
 
       const nflPlayerMatch = matchRoute(pathname, '/api/nfl/players/:playerId');
       if (nflPlayerMatch)
-        return safeTank01(() => handleNFLPlayer(nflPlayerMatch.params.playerId, env), 'player', null, env);
+        return safeESPN(() => handleNFLPlayer(nflPlayerMatch.params.playerId, env), 'player', null, env);
 
       const nflTeamMatch = matchRoute(pathname, '/api/nfl/teams/:teamId');
       if (nflTeamMatch)
-        return safeTank01(() => handleNFLTeam(nflTeamMatch.params.teamId, env), 'team', null, env);
+        return safeESPN(() => handleNFLTeam(nflTeamMatch.params.teamId, env), 'team', null, env);
 
-      // ----- NBA data routes (Tank01) -----
+      // ----- NBA data routes (ESPN) -----
       if (pathname === '/api/nba/scores' || pathname === '/api/nba/scoreboard') {
-        return safeTank01(() => handleNBAScores(url, env), 'games', [], env);
+        return safeESPN(() => handleNBAScores(url, env), 'games', [], env);
       }
       if (pathname === '/api/nba/standings')
-        return safeTank01(() => handleNBAStandings(env), 'standings', [], env);
+        return safeESPN(() => handleNBAStandings(env), 'standings', [], env);
       if (pathname === '/api/nba/news')
-        return safeTank01(() => handleNBANews(env), 'articles', [], env);
+        return safeESPN(() => handleNBANews(env), 'articles', [], env);
+      if (pathname === '/api/nba/teams')
+        return safeESPN(() => handleNBATeamsList(env), 'teams', [], env);
 
       const nbaGameMatch = matchRoute(pathname, '/api/nba/game/:gameId');
       if (nbaGameMatch)
-        return safeTank01(() => handleNBAGame(nbaGameMatch.params.gameId, env), 'boxScore', null, env);
+        return safeESPN(() => handleNBAGame(nbaGameMatch.params.gameId, env), 'game', null, env);
 
       const nbaPlayerMatch = matchRoute(pathname, '/api/nba/players/:playerId');
       if (nbaPlayerMatch)
-        return safeTank01(() => handleNBAPlayer(nbaPlayerMatch.params.playerId, env), 'player', null, env);
+        return safeESPN(() => handleNBAPlayer(nbaPlayerMatch.params.playerId, env), 'player', null, env);
 
       const nbaTeamMatch = matchRoute(pathname, '/api/nba/teams/:teamId');
       if (nbaTeamMatch)
-        return safeTank01(() => handleNBATeam(nbaTeamMatch.params.teamId, env), 'team', null, env);
+        return safeESPN(() => handleNBATeam(nbaTeamMatch.params.teamId, env), 'team', null, env);
 
       // ----- R2 Game assets -----
       const assetPath = matchWildcardRoute(pathname, '/api/games/assets/');
@@ -2636,15 +2301,15 @@ export default {
 
       // ----- Existing API endpoints -----
       if (pathname === '/api/kpi' || pathname === '/kpi')
-        return safeTank01(() => handleKPI(url, env), 'error', 'KPI fetch failed', env);
+        return handleKPI(url, env);
       if (pathname === '/api/analytics/accuracy' || pathname === '/analytics/accuracy')
-        return safeTank01(() => handleAccuracy(url, env), 'error', 'Comparison fetch failed', env);
+        return handleAccuracy(url, env);
       if (pathname === '/api/alerts/buckets' || pathname === '/alerts/buckets')
-        return safeTank01(() => handleAlertBuckets(url, env), 'error', 'Buckets fetch failed', env);
+        return handleAlertBuckets(url, env);
       if (pathname === '/api/analytics/yearly-trend' || pathname === '/analytics/yearly-trend')
-        return safeTank01(() => handleYearlyTrend(url, env), 'error', 'Leaders fetch failed', env);
+        return handleYearlyTrend(url, env);
       if (pathname === '/api/readiness' || pathname === '/readiness')
-        return safeTank01(() => handleReadiness(url, env), 'error', 'Readiness fetch failed', env);
+        return handleReadiness(url, env);
       if (
         pathname === '/api/multiplayer/leaderboard' ||
         pathname === '/multiplayer/leaderboard'
@@ -2656,7 +2321,7 @@ export default {
       const teamsMatch =
         matchRoute(pathname, '/api/teams/:league') || matchRoute(pathname, '/teams/:league');
       if (teamsMatch)
-        return safeTank01(() => handleTeams(teamsMatch.params.league, env), 'teams', [], env);
+        return safeESPN(() => handleTeams(teamsMatch.params.league, env), 'teams', [], env);
 
       // Lead capture (POST)
       if (

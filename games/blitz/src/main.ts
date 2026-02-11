@@ -1,5 +1,5 @@
 /**
- * Blaze Blitz Football - Main Entry Point
+ * Blaze Blitz - Main Entry Point
  *
  * Initializes the game and handles UI interactions
  */
@@ -357,23 +357,36 @@ async function handleSaveName(): Promise<void> {
 
     // Refresh leaderboard to show updated name
     const response = await fetch('/api/blitz/leaderboard?limit=5');
-    const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
+    if (response.ok) {
+      const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
 
-    if (data.success && data.entries) {
-      elements.leaderboard.innerHTML = `
-        <div class="leaderboard-title">Top Scores</div>
-        ${data.entries
-          .map(
-            (entry: { rank: number; playerName: string; score: number }) => `
-          <div class="leaderboard-entry">
-            <span class="rank">#${entry.rank}</span>
-            <span class="player">${entry.playerName || 'Anonymous'}</span>
-            <span class="lb-score">${entry.score.toLocaleString()}</span>
-          </div>
-        `
-          )
-          .join('')}
-      `;
+      if (data.success && data.entries) {
+        const container = elements.leaderboard;
+        container.textContent = '';
+
+        const title = document.createElement('div');
+        title.className = 'leaderboard-title';
+        title.textContent = 'Top Scores';
+        container.appendChild(title);
+
+        for (const entry of data.entries) {
+          const row = document.createElement('div');
+          row.className = 'leaderboard-entry';
+          const rank = document.createElement('span');
+          rank.className = 'rank';
+          rank.textContent = `#${entry.rank}`;
+          const player = document.createElement('span');
+          player.className = 'player';
+          player.textContent = entry.playerName || 'Anonymous';
+          const score = document.createElement('span');
+          score.className = 'lb-score';
+          score.textContent = entry.score.toLocaleString();
+          row.appendChild(rank);
+          row.appendChild(player);
+          row.appendChild(score);
+          container.appendChild(row);
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to save name:', error);
@@ -442,7 +455,7 @@ async function startGame(): Promise<void> {
   // Dispose existing systems
   if (inputSystem) { inputSystem.dispose(); inputSystem = null; }
   if (cooldownRaf !== null) { cancelAnimationFrame(cooldownRaf); cooldownRaf = null; }
-  scoreSystem = new ScoreSystem({ quarterLengthSec: 120, playClockSec: 25 });
+  scoreSystem = new ScoreSystem({ quarterLengthSec: 90, playClockSec: 25 });
 
   // Dispose existing engine if any
   if (gameEngine) {
@@ -655,6 +668,29 @@ async function handleGameOver(result: BlitzGameResult): Promise<void> {
     statsContainer.appendChild(row);
   }
 
+  // Set up X/Twitter share link
+  const shareText = `Just scored ${result.finalScore.toLocaleString()} points in Blaze Blitz! 🏈 ${result.touchdowns} TDs, ${result.yardsGained} yards. Can you beat my score?`;
+  const shareUrl = 'https://blazesportsintel.com/games/blitz/';
+  elements.shareXBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+
+  // Pre-fill name input if saved
+  const savedName = getPlayerName();
+  if (savedName) {
+    elements.playerNameInput.value = savedName;
+  }
+
+  // Show game over screen IMMEDIATELY — before any async network calls
+  elements.gameOverScreen.style.display = 'flex';
+
+  // Reset feedback tracking
+  lastFeedback = '';
+
+  // Fire-and-forget: submit score and fetch leaderboard (non-blocking)
+  submitScoreAndLeaderboard(result).catch(() => {});
+}
+
+/** Submit score and fetch leaderboard — fire-and-forget, never blocks game-over UI */
+async function submitScoreAndLeaderboard(result: BlitzGameResult): Promise<void> {
   // Submit score
   try {
     const response = await fetch('/api/blitz/submit-score', {
@@ -681,57 +717,56 @@ async function handleGameOver(result: BlitzGameResult): Promise<void> {
       }),
     });
 
-    const data = (await response.json()) as { success: boolean; data?: { isHighScore?: boolean } };
-
-    if (data.success && data.data?.isHighScore) {
-      elements.gameOverResult.textContent += ' NEW HIGH SCORE!';
+    if (response.ok) {
+      const data = (await response.json()) as { success: boolean; data?: { isHighScore?: boolean } };
+      if (data.success && data.data?.isHighScore) {
+        elements.gameOverResult.textContent += ' NEW HIGH SCORE!';
+      }
     }
-  } catch (error) {
-    console.error('Failed to submit score:', error);
+  } catch {
+    // Leaderboard not available
   }
 
-  // Fetch leaderboard
+  // Fetch leaderboard (safe DOM construction)
   try {
     const response = await fetch('/api/blitz/leaderboard?limit=5');
+    if (!response.ok) return;
     const data = (await response.json()) as { success: boolean; entries?: Array<{ rank: number; playerName: string; score: number }> };
 
     if (data.success && data.entries) {
-      elements.leaderboard.innerHTML = `
-        <div class="leaderboard-title">Top Scores</div>
-        ${data.entries
-          .map(
-            (entry: { rank: number; playerName: string; score: number }) => `
-          <div class="leaderboard-entry ${entry.rank === 1 ? '' : ''}">
-            <span class="rank">#${entry.rank}</span>
-            <span class="player">${entry.playerName || 'Anonymous'}</span>
-            <span class="lb-score">${entry.score.toLocaleString()}</span>
-          </div>
-        `
-          )
-          .join('')}
-      `;
+      const container = elements.leaderboard;
+      container.textContent = '';
+
+      const title = document.createElement('div');
+      title.className = 'leaderboard-title';
+      title.textContent = 'Top Scores';
+      container.appendChild(title);
+
+      for (const entry of data.entries) {
+        const row = document.createElement('div');
+        row.className = 'leaderboard-entry';
+
+        const rank = document.createElement('span');
+        rank.className = 'rank';
+        rank.textContent = `#${entry.rank}`;
+
+        const player = document.createElement('span');
+        player.className = 'player';
+        player.textContent = entry.playerName || 'Anonymous';
+
+        const score = document.createElement('span');
+        score.className = 'lb-score';
+        score.textContent = entry.score.toLocaleString();
+
+        row.appendChild(rank);
+        row.appendChild(player);
+        row.appendChild(score);
+        container.appendChild(row);
+      }
     }
-  } catch (error) {
-    console.error('Failed to fetch leaderboard:', error);
-    elements.leaderboard.innerHTML = '';
+  } catch {
+    // Leaderboard not available
   }
-
-  // Set up X/Twitter share link
-  const shareText = `Just scored ${result.finalScore.toLocaleString()} points in Blaze Blitz Football! 🏈 ${result.touchdowns} TDs, ${result.yardsGained} yards. Can you beat my score?`;
-  const shareUrl = 'https://blaze-blitz-football.pages.dev';
-  elements.shareXBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-
-  // Pre-fill name input if saved
-  const savedName = getPlayerName();
-  if (savedName) {
-    elements.playerNameInput.value = savedName;
-  }
-
-  // Show game over screen
-  elements.gameOverScreen.style.display = 'flex';
-
-  // Reset feedback tracking
-  lastFeedback = '';
 }
 
 /** Show main menu */

@@ -17,40 +17,39 @@ interface LeaderboardEntry {
 const GAMES = [
   {
     id: 'blitz',
-    title: 'Blitz',
+    title: 'Blaze Blitz',
     description: 'Call plays and drive downfield in this fast-paced football strategy game.',
-    color: '#013369',
+    color: '#FF6B35',
     icon: '🏈',
     url: '/games/blitz/',
     deployed: true,
   },
   {
-    id: 'blaze-field',
-    title: 'Blaze Field',
-    description: 'Step up to the plate. Timing-based baseball hitting challenge.',
-    color: '#C41E3A',
-    icon: '⚾',
-    url: '/games/blaze-field/',
-    deployed: true,
-  },
-  {
     id: 'sandlot-sluggers',
     title: 'Sandlot Sluggers',
-    description: 'Backyard baseball action — swing for the fences in sandbox mode.',
+    description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
     color: '#BF5700',
-    icon: '🥎',
+    icon: '⚾',
     url: '/games/sandlot-sluggers/',
     deployed: true,
   },
   {
-    id: 'blazecraft',
-    title: 'BlazeCraft',
-    description: 'Your BSI ops command center, gamified. Manage live data agents and deploy intelligence.',
+    id: 'downtown-doggies',
+    title: 'Downtown Doggies',
+    description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
     color: '#FDB913',
-    icon: '⚔️',
-    url: 'https://blazecraft.app?source=bsi-arcade',
+    icon: '🏀',
+    url: '/games/downtown-doggies/',
     deployed: true,
-    external: true,
+  },
+  {
+    id: 'hotdog-dash',
+    title: 'Blaze Hot Dog',
+    description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
+    color: '#CD5C5C',
+    icon: '🌭',
+    url: '/games/hotdog-dash/',
+    deployed: true,
   },
 ];
 
@@ -92,8 +91,6 @@ export default function ArcadePage() {
               <a
                 key={game.id}
                 href={game.url}
-                target={game.external ? '_blank' : undefined}
-                rel={game.external ? 'noopener noreferrer' : undefined}
                 className="group block"
               >
                 <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-white/20">
@@ -110,7 +107,6 @@ export default function ArcadePage() {
                   <div className="mt-4 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-400" />
                     <span className="text-xs text-green-400/80">Live</span>
-                    {game.external && <span className="text-[10px] text-white/20 ml-auto">External</span>}
                   </div>
                 </Card>
               </a>
@@ -130,7 +126,7 @@ export default function ArcadePage() {
                     >
                       All
                     </button>
-                    {GAMES.filter((g) => !g.external).map((g) => (
+                    {GAMES.map((g) => (
                       <button
                         key={g.id}
                         onClick={() => setActiveGame(g.id)}

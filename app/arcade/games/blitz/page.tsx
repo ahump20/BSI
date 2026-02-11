@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-const GAME_URL = 'https://blazecraft.app/mini-games/games/blitz';
+const GAME_URL = '/games/blitz/';
 
 export default function BlitzGamePage() {
   return (
@@ -17,22 +17,21 @@ export default function BlitzGamePage() {
               Blaze Blitz Football
             </span>
             <h1 className="text-3xl md:text-4xl font-display text-white uppercase tracking-wide">
-              Blitz Arcade Route
+              Blitz Football
             </h1>
             <p className="text-white/60 mt-3 max-w-2xl">
-              Arcade football built for quick sessions, optimized for mobile controls and high
-              impact plays.
+              Arcade football built for quick sessions. Call plays, dodge defenders, and score touchdowns.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
-              href="/arcade/games"
+              href="/arcade"
               className="btn-secondary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
             >
-              Back to Games
+              Back to Arcade
             </Link>
             <a
-              href={`${GAME_URL}?source=bsi-arcade`}
+              href={GAME_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary px-6 py-3 rounded-lg text-sm font-semibold uppercase tracking-wide"
@@ -44,10 +43,11 @@ export default function BlitzGamePage() {
         </div>
         <div className="glass-elevated overflow-hidden rounded-2xl aspect-video">
           <iframe
-            src={`${GAME_URL}?embed=true&source=bsi-arcade`}
+            src={GAME_URL}
             className="w-full h-full border-0"
             loading="lazy"
             title="Blaze Blitz Football"
+            allow="autoplay"
           />
         </div>
       </section>

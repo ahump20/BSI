@@ -187,7 +187,7 @@ export class BlitzGameEngine {
   private config: BlitzGameConfig;
   private gameStartTime: number = 0;
   private isGameOver: boolean = false;
-  private readonly GAME_DURATION_MS = 60000; // 60 seconds
+  private readonly GAME_DURATION_MS = 90000; // 90 seconds
 
   // Play state
   private selectedPlay: OffensivePlay | null = null;
@@ -219,7 +219,7 @@ export class BlitzGameEngine {
     this.driveSystem = new DriveSystem({ startingYardLine: 20 });
     this.playbookSystem = new PlaybookSystem();
     this.aiSystem = new AISystem();
-    this.scoreSystem = new ScoreSystem({ quarterLengthSec: 120 });
+    this.scoreSystem = new ScoreSystem({ quarterLengthSec: 90 });
 
     // Initialize game state
     this.gameState = {
@@ -400,25 +400,25 @@ export class BlitzGameEngine {
       [this.camera]
     );
 
-    // Bloom for arcade glow
+    // Bloom — toned down so player colors stay visible
     pipeline.bloomEnabled = true;
-    pipeline.bloomThreshold = 0.6;
-    pipeline.bloomWeight = 0.5;
+    pipeline.bloomThreshold = 0.8;
+    pipeline.bloomWeight = 0.3;
     pipeline.bloomKernel = 64;
 
-    // Glow layer for UI elements
+    // Glow layer for ball carrier highlight only
     this.glowLayer = new GlowLayer('glow', this.scene);
-    this.glowLayer.intensity = 0.8;
+    this.glowLayer.intensity = 0.6;
 
     // Anti-aliasing
     pipeline.fxaaEnabled = true;
     pipeline.samples = 4;
 
     pipeline.chromaticAberrationEnabled = true;
-    pipeline.chromaticAberration.aberrationAmount = 0.3;
+    pipeline.chromaticAberration.aberrationAmount = 0.15;
 
     pipeline.grainEnabled = true;
-    pipeline.grain.intensity = 8;
+    pipeline.grain.intensity = 3;
     pipeline.grain.animated = true;
 
     this.pipeline = pipeline;
@@ -487,10 +487,11 @@ export class BlitzGameEngine {
       this.scene
     );
 
-    // Team color material
+    // Team color material — emissive ensures visibility under stadium lights
     const mat = new StandardMaterial(`playerMat_${id}`, this.scene);
     mat.diffuseColor = Color3.FromHexString(team.primaryColor);
     mat.specularColor = Color3.FromHexString(team.secondaryColor);
+    mat.emissiveColor = Color3.FromHexString(team.primaryColor).scale(0.3);
     body.material = mat;
 
     // Helmet (sphere on top)
@@ -513,7 +514,11 @@ export class BlitzGameEngine {
       this.shadowGenerator.addShadowCaster(body);
     }
 
-    // Glow will be managed dynamically for ball carrier
+    // Exclude players from global glow — only ball carrier gets glow dynamically
+    if (this.glowLayer) {
+      this.glowLayer.addExcludedMesh(body);
+      this.glowLayer.addExcludedMesh(helmet);
+    }
 
     // Initial position off-field
     body.position.y = 1;
@@ -824,12 +829,14 @@ export class BlitzGameEngine {
   private update(): void {
     if (this.isGameOver) return;
 
-    const deltaTime = this.engine.getDeltaTime() / 1000;
+    // Clamp deltaTime to prevent huge jumps (e.g. tab throttling, canvas hidden→visible)
+    const rawDelta = this.engine.getDeltaTime() / 1000;
+    const deltaTime = Math.min(rawDelta, 0.1);
 
-    // Tick ScoreSystem clock (replaces raw elapsed-based timer)
+    // Tick ScoreSystem clock — arcade mode: game ends when Q1 expires
     if (this.gameState.phase === 'play_active') {
-      const quarterEnded = this.scoreSystem.tick(deltaTime);
-      if (quarterEnded && this.scoreSystem.getClock().isGameOver) {
+      this.scoreSystem.tick(deltaTime);
+      if (this.scoreSystem.getClock().timeRemainingSec <= 0) {
         this.endGame('timeout');
         return;
       }
@@ -867,6 +874,7 @@ export class BlitzGameEngine {
         (this.camera.lockedTarget as Mesh).position = pos;
       }
 
+      const speed = this.playerController.getVelocity().length();
       const targetRadius = 34 + Math.min(10, speed * 0.6);
       const targetHeight = 24 + Math.min(8, speed * 0.4);
       let radius = targetRadius;
@@ -887,6 +895,9 @@ export class BlitzGameEngine {
 
       this.camera.radius = radius;
       this.camera.heightOffset = height;
+
+      // Turbo tracking
+      if (this.playerController.isTurboOn()) {
         const velocity = this.playerController.getVelocity();
         const yardsThisFrame = velocity.length() * deltaTime;
         if (velocity.z > 0) { // Moving forward
@@ -1095,7 +1106,7 @@ export class BlitzGameEngine {
     this.gameState.touchdowns++;
     this.gameState.score += SCORING.touchdown;
     this.scoreSystem.scoreTouchdown('home');
-    this.field?.updateJumbotron(this.gameState.score, 0);
+    this.field?.updateJumbotron(null, this.gameState.score, 0);
 
     // Play touchdown fanfare
     this.audioManager?.playSFX('touchdown');
@@ -1243,7 +1254,7 @@ export class BlitzGameEngine {
     this.submitToLeaderboard(gameResult);
   }
 
-  /** Submit final score to BlazeCraft Arcade leaderboard */
+  /** Submit final score to leaderboard */
   private async submitToLeaderboard(result: BlitzGameResult): Promise<void> {
     try {
       const playerName = this.config.homeTeam?.name || 'Anonymous';
@@ -1436,7 +1447,7 @@ export class BlitzGameEngine {
       mascotRoot.scaling = new Vector3(2, 2, 2);
 
       // Position at end zone center
-      const startZ = FIELD_CONFIG.totalLength / 2 + 5;
+      const startZ = (FIELD_CONFIG.length + FIELD_CONFIG.endZoneDepth * 2) / 2 + 5;
       mascotRoot.position = new Vector3(0, 0, startZ);
 
       // Animate running across end zone over 3 seconds

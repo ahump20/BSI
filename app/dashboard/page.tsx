@@ -236,24 +236,22 @@ export default function DashboardPage() {
             </div>
           </ScrollReveal>
 
-          {/* BlazeCraft War Room Card */}
+          {/* BSI Arcade Card */}
           <ScrollReveal direction="up" delay={50}>
             <a
-              href="https://blazecraft.app?source=bsi-dashboard"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/arcade"
               className="glass-elevated mb-8 p-5 flex items-center justify-between gap-4 group hover:border-[var(--bsi-gold)] transition-all block"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-lg bg-[var(--bsi-gold)]/20 flex items-center justify-center text-2xl">
-                  &#x2694;&#xFE0F;
+                  &#x1F3AE;
                 </div>
                 <div>
                   <h3 className="text-white font-display text-lg uppercase tracking-wide">
-                    Command Center
+                    BSI Arcade
                   </h3>
                   <p className="text-white/50 text-sm">
-                    Open BlazeCraft &mdash; your ops war room, gamified
+                    Play sports mini-games and compete on the leaderboard
                   </p>
                 </div>
               </div>
