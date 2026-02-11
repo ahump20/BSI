@@ -223,6 +223,7 @@ export function transformStandings(
           streak: stat('streak') || '-',
         });
       }
+      teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct);
       standings.push({ name: group.name || 'Unknown', teams });
     }
     return { standings, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
@@ -272,30 +273,54 @@ export function transformStandings(
           last10: stat('Last Ten Games') || stat('L10') || '-',
         });
       } else {
-        // NFL
+        // NFL — collect flat, then group below
         const div = NFL_DIVISIONS[abbr] || {
           conference: leagueName.includes('American') ? 'AFC' : 'NFC',
           division: 'Unknown',
         };
         standings.push({
-          teamName: teamData.displayName || teamData.name || 'Unknown',
+          name: teamData.displayName || teamData.name || 'Unknown',
           abbreviation: abbr,
           id: teamData.id,
           logo: teamData.logos?.[0]?.href,
           wins,
           losses,
           ties: Number(stat('ties')) || 0,
-          winPercentage: winPct,
+          pct: winPct,
+          pf: Number(stat('pointsFor')) || 0,
+          pa: Number(stat('pointsAgainst')) || 0,
+          diff: (Number(stat('pointsFor')) || 0) - (Number(stat('pointsAgainst')) || 0),
+          streak: stat('streak') || '-',
+          divisionRecord: stat('divisionRecord') || stat('Division') || '-',
+          confRecord: stat('conferenceRecord') || stat('Conference') || '-',
           conference: div.conference,
           division: div.division,
-          pointsFor: Number(stat('pointsFor')) || 0,
-          pointsAgainst: Number(stat('pointsAgainst')) || 0,
-          streak: stat('streak') || '-',
-          home: stat('Home') || stat('home') || '-',
-          away: stat('Road') || stat('road') || '-',
         });
       }
     }
+  }
+
+  // NFL: group flat teams into Conference → Division hierarchy
+  if (sport === 'nfl') {
+    const confMap: Record<string, Record<string, any[]>> = {};
+    for (const team of standings) {
+      const conf = team.conference || 'Unknown';
+      const div = team.division || 'Unknown';
+      const divKey = `${conf} ${div}`;
+      if (!confMap[conf]) confMap[conf] = {};
+      if (!confMap[conf][divKey]) confMap[conf][divKey] = [];
+      confMap[conf][divKey].push(team);
+    }
+    const nested = ['AFC', 'NFC'].map((conf) => ({
+      name: conf,
+      divisions: Object.entries(confMap[conf] || {})
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([divName, teams]) => ({
+          name: divName,
+          teams: teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct),
+        })),
+    }));
+    return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
   }
 
   return {
