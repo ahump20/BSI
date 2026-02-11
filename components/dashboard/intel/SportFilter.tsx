@@ -10,7 +10,7 @@ interface SportFilterProps {
   className?: string;
 }
 
-const SPORTS: IntelSport[] = ['all', 'nfl', 'nba', 'mlb', 'ncaafb', 'cbb'];
+const SPORTS: IntelSport[] = ['all', 'nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'ncaabsb'];
 
 export function SportFilter({ value, onChange, className }: SportFilterProps) {
   return (

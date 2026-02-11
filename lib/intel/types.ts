@@ -1,6 +1,6 @@
 export type IntelMode = 'coach' | 'scout' | 'fan';
 
-export type IntelSport = 'all' | 'nfl' | 'nba' | 'mlb' | 'ncaafb' | 'cbb';
+export type IntelSport = 'all' | 'nfl' | 'nba' | 'mlb' | 'ncaafb' | 'cbb' | 'ncaabsb';
 
 export type GameTier = 'hero' | 'marquee' | 'standard';
 
@@ -76,6 +76,7 @@ export const SPORT_API_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
   nba: '/api/nba',
   ncaafb: '/api/nfl', // CFB uses same ESPN pattern
   cbb: '/api/nba',    // CBB uses same ESPN pattern
+  ncaabsb: '/api/college-baseball',
 };
 
 export const SPORT_LABELS: Record<IntelSport, string> = {
@@ -85,6 +86,7 @@ export const SPORT_LABELS: Record<IntelSport, string> = {
   mlb: 'MLB',
   ncaafb: 'CFB',
   cbb: 'CBB',
+  ncaabsb: 'CBSB',
 };
 
 export const SPORT_ACCENT: Record<IntelSport, string> = {
@@ -94,6 +96,7 @@ export const SPORT_ACCENT: Record<IntelSport, string> = {
   mlb: '#BF5700',
   ncaafb: '#f59e0b',
   cbb: '#dc2626',
+  ncaabsb: '#14b8a6',
 };
 
 export const PRIORITY_ACCENT: Record<SignalPriority, string> = {
@@ -125,12 +128,14 @@ export interface NewsItem {
   published?: string;
 }
 
+// Worker-proxied news endpoints (ESPN/Tank01 upstream, cached in Worker KV).
 export const ESPN_NEWS_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
-  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news',
-  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news',
-  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
-  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
-  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+  nfl: '/api/nfl/news',
+  nba: '/api/nba/news',
+  mlb: '/api/mlb/news',
+  ncaafb: '/api/cfb/news',
+  cbb: '/api/cbb/news',
+  ncaabsb: '/api/college-baseball/news',
 };
 
 // ─── Command Palette ──────────────────────────────────────────────────────
