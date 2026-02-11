@@ -907,7 +907,13 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     if (standingsSport === 'd1bb' && Array.isArray(standingsQuery.data)) {
       return normalizeCollegeBaseballStandings(standingsQuery.data as unknown as Record<string, unknown>).slice(0, 15);
     }
-    return normalizeStandings(standingsQuery.data).slice(0, 15);
+    const all = normalizeStandings(standingsQuery.data);
+    all.sort((a, b) => {
+      const pctA = a.winPct ?? a.wins / Math.max(a.wins + a.losses, 1);
+      const pctB = b.winPct ?? b.wins / Math.max(b.wins + b.losses, 1);
+      return pctB - pctA;
+    });
+    return all.slice(0, 15);
   }, [standingsQuery.data, standingsSport]);
 
   // Derive all unique teams for team lens picker
