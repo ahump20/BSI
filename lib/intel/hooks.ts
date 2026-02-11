@@ -732,6 +732,70 @@ function generateSignals(
     }
   }
 
+  // ─── Baseball Pitching & Workload Signals (CV Survey: pitcher biomechanics) ─
+  // High-scoring baseball games imply bullpen stress — a proxy for pitcher
+  // fatigue that the CV survey identifies as a key injury-prevention signal.
+  // These signals surface for coach (game-plan) and scout (prospect evaluation)
+  // modes across MLB and college baseball.
+  for (const game of games) {
+    const isBaseball = game.sport === 'mlb' || game.sport === 'd1bb';
+    if (!isBaseball) continue;
+
+    const totalRuns = game.home.score + game.away.score;
+
+    // High-scoring game → bullpen taxed
+    if (game.status === 'final' && totalRuns >= 15) {
+      signals.push({
+        id: `sig-bullpen-${game.id}`,
+        text: `Bullpen alert: ${game.away.abbreviation || game.away.name} @ ${game.home.abbreviation || game.home.name} combined for ${totalRuns} runs. Both staffs taxed — monitor tomorrow's arms.`,
+        sport: game.sport,
+        priority: 'medium',
+        type: 'INJURY',
+        modes: ['coach', 'scout'],
+        gameId: game.id,
+        teamTags: [game.home.abbreviation, game.away.abbreviation].filter(Boolean),
+        timestamp: 'Final',
+      });
+      idx++;
+    }
+
+    // Extra innings → workload spike (live or final)
+    if (game.statusDetail && /extra|1[0-9]th|2[0-9]th/i.test(game.statusDetail)) {
+      signals.push({
+        id: `sig-extras-${game.id}`,
+        text: `Extra innings: ${game.away.abbreviation || game.away.name} @ ${game.home.abbreviation || game.home.name} (${game.statusDetail}). Extended workload for both pitching staffs.`,
+        sport: game.sport,
+        priority: 'medium',
+        type: 'INJURY',
+        modes: ['coach', 'scout'],
+        gameId: game.id,
+        teamTags: [game.home.abbreviation, game.away.abbreviation].filter(Boolean),
+        timestamp: game.status === 'live' ? 'Live' : 'Final',
+      });
+      idx++;
+    }
+
+    // Shutout → dominant pitching performance (scout interest)
+    if (game.status === 'final') {
+      const loser = game.home.score < game.away.score ? game.home : game.away;
+      const winner = game.home.score < game.away.score ? game.away : game.home;
+      if (loser.score === 0 && winner.score > 0) {
+        signals.push({
+          id: `sig-shutout-${game.id}`,
+          text: `Shutout: ${winner.abbreviation || winner.name} blanks ${loser.abbreviation || loser.name} ${winner.score}-0. Staff dominance worth scouting.`,
+          sport: game.sport,
+          priority: 'medium',
+          type: 'PROSPECT',
+          modes: ['scout', 'fan'],
+          gameId: game.id,
+          teamTags: [winner.abbreviation, loser.abbreviation].filter(Boolean),
+          timestamp: 'Final',
+        });
+        idx++;
+      }
+    }
+  }
+
   // Standings-based signals
   for (const team of standings.slice(0, 3)) {
     const pct = team.winPct ?? (team.wins / Math.max(team.wins + team.losses, 1));

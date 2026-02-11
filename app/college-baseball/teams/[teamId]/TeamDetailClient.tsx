@@ -345,7 +345,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <>
                 {/* AI Season Preview */}
                 <ScrollReveal direction="up" className="mb-8">
-                  <AITeamPreview teamId={teamId} teamName={team.name} />
+                  <AITeamPreview teamId={teamId} teamName={team.name} stats={team.stats} conference={team.conference} />
                 </ScrollReveal>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
