@@ -65,3 +65,40 @@ export function ScoreCardSkeletonList({ count = 6 }: { count?: number }) {
     </div>
   );
 }
+
+export function SkeletonPageHeader() {
+  return (
+    <div className="space-y-3 animate-pulse">
+      <Skeleton variant="text" width={200} height={28} />
+      <div className="flex gap-2">
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
+        <Skeleton variant="rectangular" width={80} height={32} className="rounded-md" />
+      </div>
+    </div>
+  );
+}
+
+export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
+  return (
+    <div className="bg-white/5 rounded-lg p-4 animate-pulse">
+      <Skeleton variant="text" width={140} height={20} className="mb-4" />
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-white/10">
+            {Array.from({ length: columns }).map((_, i) => (
+              <th key={i} className="pb-2 px-2">
+                <Skeleton variant="text" height={14} />
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: rows }).map((_, i) => (
+            <SkeletonTableRow key={i} columns={columns} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

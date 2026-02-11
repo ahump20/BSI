@@ -13,6 +13,7 @@ export interface TeamInfo {
   abbreviation: string;
   score: number;
   logo?: string;
+  rank?: number;
   record?: string;
 }
 
@@ -25,6 +26,7 @@ export interface IntelGame {
   statusDetail?: string;
   venue?: string;
   startTime?: string;
+  headline?: string;
   tier: GameTier;
   signalCount: number;
   winProbability?: { home: number; away: number };
@@ -52,6 +54,8 @@ export interface IntelSignal {
 export interface StandingsTeam {
   teamName: string;
   abbreviation?: string;
+  logo?: string;
+  rank?: number;
   wins: number;
   losses: number;
   winPct?: number;
@@ -89,7 +93,7 @@ export const SPORT_ACCENT: Record<IntelSport, string> = {
   nba: '#3b82f6',
   mlb: '#BF5700',
   ncaafb: '#f59e0b',
-  cbb: '#a855f7',
+  cbb: '#dc2626',
 };
 
 export const PRIORITY_ACCENT: Record<SignalPriority, string> = {
@@ -109,3 +113,32 @@ export const MODE_DESCRIPTIONS: Record<IntelMode, string> = {
   scout: 'Availability, usage, role projections',
   fan: 'Narratives, moments, why it matters',
 };
+
+// ─── News ────────────────────────────────────────────────────────────────
+
+export interface NewsItem {
+  id: string;
+  headline: string;
+  description?: string;
+  link: string;
+  image?: string;
+  published?: string;
+}
+
+export const ESPN_NEWS_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
+  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news',
+  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news',
+  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
+  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
+  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+};
+
+// ─── Command Palette ──────────────────────────────────────────────────────
+
+export interface CommandPaletteItem {
+  id: string;
+  label: string;
+  type: 'game' | 'signal' | 'team';
+  sport?: Exclude<IntelSport, 'all'>;
+  data: IntelGame | IntelSignal | string;
+}
