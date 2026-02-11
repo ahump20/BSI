@@ -366,7 +366,7 @@ function submitScore(){
   const name=localStorage.getItem('bsi_player_name')||'Player';
   const avatar=localStorage.getItem('bsi_player_avatar')||'\uD83C\uDF2D';
   fetch('/api/multiplayer/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({game_id:'hotdog-dash',name,avatar,score})}).catch(()=>{});
+    body:JSON.stringify({game:'hotdog-dash',name,avatar,score})}).catch(()=>{});
 }
 
 document.addEventListener('keydown',e=>{

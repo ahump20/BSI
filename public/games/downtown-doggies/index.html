@@ -304,7 +304,7 @@ function submitScore(){
   const name=localStorage.getItem('bsi_player_name')||'Player';
   const avatar=localStorage.getItem('bsi_player_avatar')||'\uD83C\uDFC0';
   fetch('/api/multiplayer/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({game_id:'downtown-doggies',name,avatar,score})}).catch(()=>{});
+    body:JSON.stringify({game:'downtown-doggies',name,avatar,score})}).catch(()=>{});
 }
 
 document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();shoot();}});

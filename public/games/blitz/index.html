@@ -467,7 +467,7 @@ function submitScore(){
   const name=localStorage.getItem('bsi_player_name')||'Player';
   const avatar=localStorage.getItem('bsi_player_avatar')||'\uD83C\uDFC8';
   fetch('/api/multiplayer/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({game_id:'blitz',name,avatar,score})}).catch(()=>{});
+    body:JSON.stringify({game:'blitz',name,avatar,score})}).catch(()=>{});
 }
 </script>
 </body>
