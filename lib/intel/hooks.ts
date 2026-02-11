@@ -12,7 +12,6 @@ import type {
   CommandPaletteItem,
   NewsItem,
 } from './types';
-import { ESPN_NEWS_MAP } from './types';
 import { SIGNAL_TYPES_BY_MODE } from './sample-data';
 
 // ─── Clock ──────────────────────────────────────────────────────────────────
@@ -77,6 +76,10 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
   const base = sportApiBase(sport);
   return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
+}
+
+function intelNewsEndpoint(sport: Exclude<IntelSport, 'all'>): string {
+  return `/api/intel/news/${sport}`;
 }
 
 async function fetchJson<T = unknown>(url: string): Promise<T> {
@@ -562,7 +565,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        return { sport: s, ...scoreQueryResults[index]! };
       }),
     [sportsToFetch, scoreQueryResults],
   );
@@ -637,7 +640,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     queryFn: async () => Promise.all(
       newsSports.map(async (s) => {
         try {
-          const data = await fetchJson<Record<string, unknown>>(ESPN_NEWS_MAP[s]);
+          const data = await fetchJson<Record<string, unknown>>(intelNewsEndpoint(s));
           return { sport: s, data };
         } catch {
           return { sport: s, data: { articles: [] } as Record<string, unknown> };

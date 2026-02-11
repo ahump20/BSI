@@ -130,6 +130,20 @@ const HTTP_CACHE: Record<string, number> = {
   news: 120,
 };
 
+type IntelNewsSport = 'nfl' | 'nba' | 'mlb' | 'ncaafb' | 'cbb';
+
+const ESPN_NEWS_PROXY_MAP: Record<IntelNewsSport, string> = {
+  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news',
+  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news',
+  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
+  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
+  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+};
+
+function isIntelNewsSport(value: string): value is IntelNewsSport {
+  return value in ESPN_NEWS_PROXY_MAP;
+}
+
 function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {
   return json(data, status, { 'Cache-Control': `public, max-age=${maxAge}`, ...extra });
 }
@@ -198,6 +212,7 @@ const CACHE_TTL: Record<string, number> = {
   games: 60,
   schedule: 300,    // 5 min
   trending: 300,
+  news: 300,
 };
 
 async function kvGet<T>(kv: KVNamespace, key: string): Promise<T | null> {
@@ -1027,6 +1042,82 @@ async function handleCFBTransferPortal(env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// Intel ESPN news proxy (KV-cached)
+// ---------------------------------------------------------------------------
+
+async function handleIntelEspnNews(sport: string, env: Env): Promise<Response> {
+  const normalizedSport = sport.toLowerCase();
+  if (!isIntelNewsSport(normalizedSport)) {
+    return json(
+      {
+        error: `Unsupported intel news sport: ${sport}`,
+        supportedSports: Object.keys(ESPN_NEWS_PROXY_MAP),
+      },
+      400,
+    );
+  }
+
+  const cacheKey = `intel:news:${normalizedSport}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.news, {
+      'X-Cache': 'HIT',
+      'X-Data-Source': 'espn-news-proxy',
+    });
+  }
+
+  try {
+    const response = await fetch(ESPN_NEWS_PROXY_MAP[normalizedSport], {
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`ESPN news request failed (${response.status})`);
+    }
+
+    const rawPayload = await response.json();
+    const basePayload =
+      typeof rawPayload === 'object' && rawPayload !== null
+        ? (rawPayload as Record<string, unknown>)
+        : { articles: [] };
+
+    const payload = {
+      ...basePayload,
+      meta: {
+        fetchedAt: new Date().toISOString(),
+        dataSource: 'espn-news-proxy',
+        sport: normalizedSport,
+      },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
+
+    return cachedJson(payload, 200, HTTP_CACHE.news, {
+      'X-Cache': 'MISS',
+      'X-Data-Source': 'espn-news-proxy',
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch ESPN news';
+    await logError(env.KV, message, `intel:news:${normalizedSport}`);
+    return json(
+      {
+        articles: [],
+        meta: {
+          error: message,
+          dataSource: 'espn-news-proxy',
+          sport: normalizedSport,
+        },
+      },
+      502,
+      {
+        'X-Cache': 'ERROR',
+        'X-Data-Source': 'espn-news-proxy',
+      },
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Pro Sports API handlers (Tank01)
 // ---------------------------------------------------------------------------
 
@@ -1176,7 +1267,7 @@ async function handleMLBNews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
@@ -1289,7 +1380,7 @@ async function handleNFLNews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
@@ -1401,7 +1492,7 @@ async function handleNBANews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
@@ -2162,6 +2253,12 @@ export default {
       // CFB Transfer Portal
       if (pathname === '/api/cfb/transfer-portal') {
         return handleCFBTransferPortal(env);
+      }
+
+      // Intel ESPN news proxy (KV-cached by sport)
+      const intelNewsMatch = matchRoute(pathname, '/api/intel/news/:sport');
+      if (intelNewsMatch) {
+        return handleIntelEspnNews(intelNewsMatch.params.sport, env);
       }
 
       const teamMatch = matchRoute(pathname, '/api/college-baseball/teams/:teamId');
