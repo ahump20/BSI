@@ -54,10 +54,18 @@ export function TrendingIntelFeed() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news?sport=all`);
         if (!res.ok) return;
-        const data = (await res.json()) as { results?: IntelResult[] };
+        const raw = await res.json();
         if (cancelled) return;
 
-        const flat: FlatArticle[] = (data.results || []).flatMap((r) =>
+        // API returns array of { sport, data: { articles } } or { results: [...] }
+        const entries: IntelResult[] = Array.isArray(raw)
+          ? raw.map((r: { sport: string; data?: { articles?: Article[] }; articles?: Article[] }) => ({
+              sport: r.sport,
+              articles: r.data?.articles || r.articles || [],
+            }))
+          : (raw as { results?: IntelResult[] }).results || [];
+
+        const flat: FlatArticle[] = entries.flatMap((r) =>
           r.articles.map((a) => ({
             sport: r.sport,
             headline: a.headline,
