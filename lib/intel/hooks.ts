@@ -762,9 +762,6 @@ function generateSignals(
 
 const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'd1bb'];
 
-/** Sports that use the standard ESPN/Tank01 normalizer (non-college-baseball) */
-const ESPN_SPORTS: Exclude<IntelSport, 'all' | 'd1bb'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb'];
-
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
