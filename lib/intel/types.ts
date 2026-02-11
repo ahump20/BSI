@@ -147,12 +147,12 @@ export const ESPN_SCORES_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
 };
 
 export const ESPN_STANDINGS_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
-  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/standings',
-  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/standings',
-  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/standings',
-  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/standings',
-  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/standings',
-  d1bb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/standings',
+  nfl: 'https://site.api.espn.com/apis/v2/sports/football/nfl/standings',
+  nba: 'https://site.api.espn.com/apis/v2/sports/basketball/nba/standings',
+  mlb: 'https://site.api.espn.com/apis/v2/sports/baseball/mlb/standings',
+  ncaafb: 'https://site.api.espn.com/apis/v2/sports/football/college-football/standings',
+  cbb: 'https://site.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings',
+  d1bb: 'https://site.api.espn.com/apis/v2/sports/baseball/college-baseball/standings',
 };
 
 // ─── Command Palette ──────────────────────────────────────────────────────
