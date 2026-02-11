@@ -12,7 +12,7 @@ import type {
   CommandPaletteItem,
   NewsItem,
 } from './types';
-import { ESPN_NEWS_MAP } from './types';
+import { ESPN_NEWS_MAP, SPORT_API_MAP } from './types';
 import { SIGNAL_TYPES_BY_MODE } from './sample-data';
 
 // ─── Clock ──────────────────────────────────────────────────────────────────
@@ -64,17 +64,11 @@ export function usePinnedBriefing() {
 // ─── API Fetching ───────────────────────────────────────────────────────────
 
 function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
-  const map: Record<typeof sport, string> = {
-    mlb: '/api/mlb',
-    nfl: '/api/nfl',
-    nba: '/api/nba',
-    ncaafb: '/api/nfl', // CFB shares ESPN pattern
-    cbb: '/api/nba',
-  };
-  return map[sport];
+  return SPORT_API_MAP[sport];
 }
 
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
+  if (sport === 'ncaabsb') return `${sportApiBase(sport)}/schedule`;
   const base = sportApiBase(sport);
   return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
 }
@@ -90,8 +84,16 @@ async function fetchJson<T = unknown>(url: string): Promise<T> {
 function parseStatus(status: unknown): { gameStatus: GameStatus; detail?: string } {
   if (typeof status === 'string') {
     const low = status.toLowerCase();
-    if (low.includes('in progress') || low.includes('in ')) return { gameStatus: 'live', detail: status };
-    if (low.includes('final')) return { gameStatus: 'final', detail: status };
+    if (
+      low === 'live' ||
+      low.includes('in progress') ||
+      low.includes('in ') ||
+      low.includes('inning') ||
+      low.includes('q')
+    ) {
+      return { gameStatus: 'live', detail: status };
+    }
+    if (low.includes('final') || low.includes('complete')) return { gameStatus: 'final', detail: status };
     return { gameStatus: 'scheduled', detail: status };
   }
   if (typeof status === 'object' && status) {
@@ -150,6 +152,20 @@ function parseRecordSummary(record?: string): { wins: number; losses: number } |
 function extractRecordSummary(raw: Record<string, unknown>): string {
   const direct = dig(raw, 'record', 'team.record');
   if (typeof direct === 'string' && direct.trim()) return direct.trim();
+  if (typeof direct === 'object' && direct !== null) {
+    const directObj = direct as Record<string, unknown>;
+    if (typeof directObj.summary === 'string' && directObj.summary.trim()) return directObj.summary.trim();
+    const wins = asNumber(directObj.wins);
+    const losses = asNumber(directObj.losses);
+    if (wins !== undefined && losses !== undefined) return `${wins}-${losses}`;
+  }
+
+  const overallRecord = asObject(dig(raw, 'overallRecord', 'team.overallRecord'));
+  if (overallRecord) {
+    const wins = asNumber(dig(overallRecord, 'wins', 'w'));
+    const losses = asNumber(dig(overallRecord, 'losses', 'l'));
+    if (wins !== undefined && losses !== undefined) return `${wins}-${losses}`;
+  }
 
   const records = asArray(dig(raw, 'records', 'team.records'));
   const normalized = records
@@ -176,14 +192,20 @@ function normalizeTeam(raw: Record<string, unknown>, fallbackName: string): Inte
         raw,
         'displayName',
         'name',
+        'shortName',
         'team.displayName',
         'team.name',
+        'team.shortName',
         'team.shortDisplayName',
         'abbreviation',
       ) || fallbackName,
     ).trim();
 
-  const abbreviation = String(dig(raw, 'abbreviation', 'team.abbreviation') || '').trim().toUpperCase();
+  const abbreviation = String(
+    dig(raw, 'abbreviation', 'shortName', 'team.abbreviation', 'team.shortName') || '',
+  )
+    .trim()
+    .toUpperCase();
   const score = asNumber(dig(raw, 'score', 'team.score')) ?? 0;
   const logo = String(dig(raw, 'team.logo', 'logo', 'team.logos.0.href', 'logos.0.href') || '').trim();
 
@@ -216,6 +238,8 @@ function homeEdgeBySport(sport: Exclude<IntelSport, 'all'>): number {
     case 'nba':
     case 'cbb':
       return 0.04;
+    case 'ncaabsb':
+      return 0.035;
     case 'ncaafb':
       return 0.045;
     case 'nfl':
@@ -245,8 +269,9 @@ function estimatePregameWinProbability(
 }
 
 function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<string, unknown>): IntelGame[] {
-  const sb = data.scoreboard as Record<string, unknown> | undefined;
-  const raw = (data.games || sb?.games || []) as Record<string, unknown>[];
+  const raw = asArray(dig(data, 'games', 'data', 'scoreboard.games', 'scoreboard.events', 'events', 'data.games'))
+    .map((g) => asObject(g))
+    .filter((g): g is Record<string, unknown> => g !== null);
 
   return raw.map((g, i) => {
     const teams = asObject(g.teams) as Record<string, Record<string, unknown>> | null;
@@ -275,7 +300,7 @@ function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<s
     const home = normalizeTeam(homeRaw, 'Home');
     const { gameStatus, detail } = parseStatus(g.status || competition.status);
     const headline = String(
-      dig(g, 'competitions.0.notes.0.headline', 'notes.0.headline', 'headline', 'shortDetail') || '',
+      dig(g, 'competitions.0.notes.0.headline', 'notes.0.headline', 'headline', 'shortDetail', 'situation') || '',
     ).trim();
     const venue = String(
       dig(g, 'venue', 'competitions.0.venue.fullName', 'competitions.0.venue.address.city') || '',
@@ -307,10 +332,13 @@ function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<s
 function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
   const normalized: StandingsTeam[] = [];
 
-  const directList = asArray(dig(data, 'standings', 'teams', 'entries'));
+  const directList = asArray(dig(data, 'standings', 'teams', 'entries', 'data'));
+  const rootArray = Array.isArray(data) ? data : [];
   const blocks = directList.length > 0
     ? directList
-    : asArray(dig(data, 'standings.children', 'children'));
+    : asArray(dig(data, 'standings.children', 'children')).length > 0
+      ? asArray(dig(data, 'standings.children', 'children'))
+      : rootArray;
 
   function parseEntry(entryRaw: unknown, conference?: string, division?: string) {
     const entry = asObject(entryRaw);
@@ -325,7 +353,7 @@ function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
 
     if (!teamName) return;
 
-    const abbreviation = String(dig(team, 'abbreviation', 'abbrev') || '').trim().toUpperCase() || undefined;
+    const abbreviation = String(dig(team, 'abbreviation', 'abbrev', 'shortName') || '').trim().toUpperCase() || undefined;
     const logo = String(dig(team, 'logo', 'logos.0.href') || '').trim() || undefined;
     const rankValue = asNumber(dig(entry, 'curatedRank.current', 'team.curatedRank.current', 'seed'));
 
@@ -347,10 +375,17 @@ function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
 
     const summary = statDisplay('overall', 'record');
     const parsedSummary = parseRecordSummary(summary);
-    const wins = statNumber('wins', 'w') ?? parsedSummary?.wins ?? asNumber(entry.wins) ?? 0;
-    const losses = statNumber('losses', 'l') ?? parsedSummary?.losses ?? asNumber(entry.losses) ?? 0;
+    const overallRecord = asObject(dig(entry, 'overallRecord'));
+    const overallWins = asNumber(dig(overallRecord ?? {}, 'wins', 'w'));
+    const overallLosses = asNumber(dig(overallRecord ?? {}, 'losses', 'l'));
+    const wins = statNumber('wins', 'w') ?? parsedSummary?.wins ?? overallWins ?? asNumber(entry.wins) ?? 0;
+    const losses =
+      statNumber('losses', 'l') ?? parsedSummary?.losses ?? overallLosses ?? asNumber(entry.losses) ?? 0;
     const winPct = statNumber('winpercent', 'winpercentage', 'winpct', 'pct') ?? asNumber(entry.winPct);
     const netRating = statNumber('netrating', 'netrtg', 'pointdifferential', 'pointdiff') ?? asNumber(entry.netRating);
+    const explicitConference =
+      String(dig(entry, 'conference', 'team.conference', 'conferenceRecord.conference') || '').trim() || undefined;
+    const explicitDivision = String(dig(entry, 'division', 'team.division') || '').trim() || undefined;
 
     normalized.push({
       teamName,
@@ -359,10 +394,10 @@ function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
       rank: rankValue && rankValue > 0 ? rankValue : undefined,
       wins,
       losses,
-      winPct: winPct ?? undefined,
+      winPct: winPct ?? (wins + losses > 0 ? wins / (wins + losses) : undefined),
       netRating: netRating ?? undefined,
-      conference,
-      division,
+      conference: explicitConference ?? conference,
+      division: explicitDivision ?? division,
     });
   }
 
@@ -408,16 +443,26 @@ function normalizeNews(
   payloads: Array<{ sport: Exclude<IntelSport, 'all'>; data: Record<string, unknown> }>,
 ): NewsItem[] {
   const allArticles = payloads.flatMap(({ sport, data }) => {
-    const items = asArray(dig(data, 'articles', 'news')).map((a) => asObject(a)).filter((a): a is Record<string, unknown> => a !== null);
+    const nestedItems = asArray(dig(data, 'articles', 'news'));
+    const items = (nestedItems.length > 0 ? nestedItems : asArray(data))
+      .map((a) => asObject(a))
+      .filter((a): a is Record<string, unknown> => a !== null);
     return items.map((a, i) => {
       const images = asArray(a.images).map((img) => asObject(img)).filter((img): img is Record<string, unknown> => img !== null);
-      const published = String(a.published || a.lastModified || '');
+      const headline = String(a.headline || a.title || '').trim();
+      const description = String(a.description || a.summary || '').trim();
+      const published = String(a.published || a.publishedAt || a.lastModified || '');
+      const link = String(dig(a, 'links.web.href', 'links.mobile.href', 'link', 'url') || '#').trim();
+      const image = String(
+        dig(a, 'image', 'images.0.url', 'images.0.href') ||
+        (images[0] ? images[0].url || images[0].href || '' : ''),
+      ).trim();
       return {
         id: `${sport}-${String(a.id ?? i)}`,
-        headline: String(a.headline || ''),
-        description: String(a.description || ''),
-        link: String(dig(a, 'links.web.href', 'links.mobile.href', 'link') || '#'),
-        image: images[0] ? String(images[0].url || images[0].href || '') || undefined : undefined,
+        headline,
+        description,
+        link,
+        image: image || undefined,
         published: published || undefined,
       };
     });
@@ -543,10 +588,18 @@ function generateSignals(
 
 // ─── Main Hook ──────────────────────────────────────────────────────────────
 
-const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb'];
+const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'ncaabsb'];
+
+interface ScoreQueryView {
+  sport: Exclude<IntelSport, 'all'>;
+  data?: Record<string, unknown>;
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+}
 
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
-  const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
+  const sportsToFetch: Exclude<IntelSport, 'all'>[] = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
   // Fetch scores with stable hook ordering for all supported sports.
   const scoreQueryResults = useQueries({
@@ -558,11 +611,18 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     })),
   });
 
-  const scoreQueries = useMemo(
+  const scoreQueries = useMemo<ScoreQueryView[]>(
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        const query = scoreQueryResults[index];
+        return {
+          sport: s,
+          data: query?.data as Record<string, unknown> | undefined,
+          isLoading: query?.isLoading ?? false,
+          isFetching: query?.isFetching ?? false,
+          isError: query?.isError ?? false,
+        };
       }),
     [sportsToFetch, scoreQueryResults],
   );
@@ -631,7 +691,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   }, [games, signals]);
 
   // Fetch news for selected sport(s)
-  const newsSports = sport === 'all' ? ACTIVE_SPORTS : [sport];
+  const newsSports: Exclude<IntelSport, 'all'>[] = sport === 'all' ? ACTIVE_SPORTS : [sport];
   const newsQuery = useQuery({
     queryKey: ['intel-news', sport],
     queryFn: async () => Promise.all(

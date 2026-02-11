@@ -4,7 +4,7 @@
  * This is the apex Worker that sits in front of blazesportsintel.com.
  * It handles:
  *   1. Dynamic API routes (/api/*)       — processed directly by this Worker
- *   2. College baseball data (/api/college-baseball/*) — proxied to Highlightly
+ *   2. College baseball data (/api/college-baseball/*) — proxied to NCAA/ESPN
  *   3. Game assets (/api/games/assets/*) — served from R2
  *   4. WebSocket connections (/ws)        — real-time leaderboard & scores
  *   5. Static assets & pages (everything else) — proxied to Cloudflare Pages
@@ -198,6 +198,7 @@ const CACHE_TTL: Record<string, number> = {
   games: 60,
   schedule: 300,    // 5 min
   trending: 300,
+  news: 300,
 };
 
 async function kvGet<T>(kv: KVNamespace, key: string): Promise<T | null> {
@@ -240,6 +241,120 @@ function dataHeaders(lastUpdated: string): Record<string, string> {
     'X-Last-Updated': lastUpdated,
     'X-Data-Source': 'highlightly',
   };
+}
+
+type EspnNewsSport = 'mlb' | 'nfl' | 'nba' | 'ncaafb' | 'cbb' | 'ncaabsb';
+
+const ESPN_NEWS_ENDPOINTS: Record<EspnNewsSport, string> = {
+  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
+  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news',
+  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news',
+  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
+  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+  ncaabsb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news',
+};
+
+function toRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+}
+
+function toArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function asStringValue(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+function normalizeEspnArticle(articleRaw: unknown, fallbackId: string): Record<string, unknown> {
+  const article = toRecord(articleRaw) ?? {};
+  const links = toRecord(article.links);
+  const webLink = toRecord(links?.web);
+  const mobileLink = toRecord(links?.mobile);
+  const sourceObj = toRecord(article.source);
+  const images = toArray(article.images)
+    .map((img) => toRecord(img))
+    .filter((img): img is Record<string, unknown> => img !== null);
+
+  const id = asStringValue(article.id) ?? fallbackId;
+  const headline = asStringValue(article.headline) ?? asStringValue(article.title) ?? 'Untitled';
+  const description = asStringValue(article.description) ?? asStringValue(article.summary) ?? '';
+  const link =
+    asStringValue(webLink?.href) ??
+    asStringValue(mobileLink?.href) ??
+    asStringValue(article.link) ??
+    asStringValue(article.url) ??
+    '#';
+  const image = asStringValue(images[0]?.url) ?? asStringValue(images[0]?.href);
+  const published =
+    asStringValue(article.published) ??
+    asStringValue(article.lastModified) ??
+    asStringValue(article.publishedAt) ??
+    new Date().toISOString();
+  const source = asStringValue(sourceObj?.name) ?? asStringValue(article.source) ?? 'ESPN';
+
+  return {
+    id,
+    headline,
+    title: headline,
+    description,
+    summary: description,
+    link,
+    url: link,
+    image,
+    published,
+    publishedAt: published,
+    source,
+    category: 'general',
+  };
+}
+
+async function handleEspnNewsProxy(sport: EspnNewsSport, env: Env): Promise<Response> {
+  const cacheKey = `news:${sport}:espn`;
+  const endpoint = ESPN_NEWS_ENDPOINTS[sport];
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const response = await fetch(endpoint, {
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`ESPN news upstream ${response.status}`);
+    }
+
+    const payload = (await response.json()) as Record<string, unknown>;
+    const articlesRaw = toArray(payload.articles ?? payload.news);
+    const articles = articlesRaw.map((item, i) => normalizeEspnArticle(item, `${sport}-${i}`));
+    const normalized = {
+      articles,
+      meta: {
+        lastUpdated: new Date().toISOString(),
+        dataSource: 'espn',
+        sport,
+      },
+    };
+
+    await kvPut(env.KV, cacheKey, normalized, CACHE_TTL.news);
+    return cachedJson(normalized, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch ESPN news';
+    return json(
+      {
+        articles: [],
+        meta: {
+          error: message,
+          dataSource: 'espn',
+          sport,
+        },
+      },
+      502,
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -2149,6 +2264,9 @@ export default {
       if (pathname === '/api/college-baseball/standings') {
         return handleCollegeBaseballStandings(url, env);
       }
+      if (pathname === '/api/college-baseball/news') {
+        return handleEspnNewsProxy('ncaabsb', env);
+      }
       if (pathname === '/api/college-baseball/rankings') {
         return handleCollegeBaseballRankings(env);
       }
@@ -2160,8 +2278,14 @@ export default {
       }
 
       // CFB Transfer Portal
+      if (pathname === '/api/cfb/news') {
+        return handleEspnNewsProxy('ncaafb', env);
+      }
       if (pathname === '/api/cfb/transfer-portal') {
         return handleCFBTransferPortal(env);
+      }
+      if (pathname === '/api/cbb/news') {
+        return handleEspnNewsProxy('cbb', env);
       }
 
       const teamMatch = matchRoute(pathname, '/api/college-baseball/teams/:teamId');
