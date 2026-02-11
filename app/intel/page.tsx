@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { IntelGame, IntelMode, IntelSport } from '@/lib/intel/types';
 import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
+import { loadPrefs, savePrefs } from '@/lib/intel/user-prefs';
 import { IntelHeader } from '@/components/dashboard/intel/IntelHeader';
 import { SportFilter } from '@/components/dashboard/intel/SportFilter';
 import { IntelSearch } from '@/components/dashboard/intel/IntelSearch';
@@ -33,14 +34,33 @@ const CommandPalette = dynamic(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function IntelDashboard() {
-  // State
+  // State — hydrate from localStorage on mount
   const [sport, setSport] = useState<IntelSport>('all');
   const [mode, setMode] = useState<IntelMode>('fan');
   const [teamLens, setTeamLens] = useState<string | null>(null);
   const [selectedGame, setSelectedGame] = useState<IntelGame | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Load preferences on mount
+  useEffect(() => {
+    const prefs = loadPrefs();
+    setSport(prefs.sport);
+    setMode(prefs.mode);
+    setTeamLens(prefs.teamLens);
+    setPrefsLoaded(true);
+  }, []);
+
+  // Save preferences on change (debounced)
+  useEffect(() => {
+    if (!prefsLoaded) return;
+    const timeout = setTimeout(() => {
+      savePrefs({ sport, mode, teamLens });
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [sport, mode, teamLens, prefsLoaded]);
 
   // Hooks
   const {
