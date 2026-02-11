@@ -2272,6 +2272,69 @@ async function handleMcpRequest(request: Request, env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// Intel News Proxy — CORS-safe ESPN news with KV caching
+// ---------------------------------------------------------------------------
+
+/** ESPN news URL map — mirrors the frontend ESPN_NEWS_MAP */
+const INTEL_ESPN_NEWS: Record<string, string> = {
+  nfl: 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/news',
+  nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news',
+  mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
+  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
+  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+  d1bb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news',
+};
+
+async function handleIntelNews(url: URL, env: Env): Promise<Response> {
+  const sportParam = url.searchParams.get('sport') || 'all';
+
+  // Determine which sports to fetch news for
+  const sportsToFetch = sportParam === 'all'
+    ? Object.keys(INTEL_ESPN_NEWS)
+    : sportParam.split(',').filter((s) => s in INTEL_ESPN_NEWS);
+
+  if (sportsToFetch.length === 0) {
+    return json({ articles: [], error: 'Invalid sport parameter' }, 400);
+  }
+
+  const results: Array<{ sport: string; data: Record<string, unknown> }> = [];
+
+  for (const sport of sportsToFetch) {
+    const cacheKey = `intel:news:${sport}`;
+
+    // Check KV cache first
+    const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+    if (cached) {
+      results.push({ sport, data: cached });
+      continue;
+    }
+
+    // Fetch from ESPN
+    try {
+      const espnUrl = INTEL_ESPN_NEWS[sport];
+      if (!espnUrl) continue;
+
+      const res = await fetch(espnUrl, {
+        headers: { Accept: 'application/json' },
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as Record<string, unknown>;
+        // Cache in KV for 2 minutes
+        await kvPut(env.KV, cacheKey, data, 120);
+        results.push({ sport, data });
+      } else {
+        results.push({ sport, data: { articles: [] } });
+      }
+    } catch {
+      results.push({ sport, data: { articles: [] } });
+    }
+  }
+
+  return cachedJson(results, 200, HTTP_CACHE.news);
+}
+
+// ---------------------------------------------------------------------------
 // Main fetch handler
 // ---------------------------------------------------------------------------
 
@@ -2332,6 +2395,11 @@ export default {
       // ----- Health / status -----
       if (pathname === '/api/health' || pathname === '/health') return handleHealth(env);
       if (pathname === '/api/admin/health') return handleAdminHealth(env);
+
+      // ----- Intel news proxy (ESPN → Worker → client, CORS-safe + KV cached) -----
+      if (pathname === '/api/intel/news') {
+        return handleIntelNews(url, env);
+      }
 
       // ----- College Baseball data routes (Highlightly proxy) -----
       if (pathname === '/api/college-baseball/scores') {

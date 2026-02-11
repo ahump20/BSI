@@ -70,12 +70,14 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
     nba: '/api/nba',
     ncaafb: '/api/nfl', // CFB shares ESPN pattern
     cbb: '/api/nba',
+    d1bb: '/api/college-baseball',
   };
   return map[sport];
 }
 
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
   const base = sportApiBase(sport);
+  if (sport === 'd1bb') return `${base}/scores`;
   return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
 }
 
@@ -220,6 +222,8 @@ function homeEdgeBySport(sport: Exclude<IntelSport, 'all'>): number {
       return 0.045;
     case 'nfl':
       return 0.03;
+    case 'd1bb':
+      return 0.035; // College baseball has a notable home-field advantage
     case 'mlb':
     default:
       return 0.025;
@@ -302,6 +306,186 @@ function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<s
         : undefined,
     };
   });
+}
+
+// ─── Normalize College Baseball (Highlightly/NCAA) → IntelGame ──────────────
+
+function normalizeCollegeBaseballGames(data: Record<string, unknown>): IntelGame[] {
+  // The /api/college-baseball/scores endpoint returns { data: Match[], totalCount }
+  const matches = asArray(data.data || data.games || data.matches || []);
+
+  return matches.map((m, i) => {
+    const match = asObject(m);
+    if (!match) {
+      return null;
+    }
+
+    const homeTeam = asObject(match.homeTeam) ?? {};
+    const awayTeam = asObject(match.awayTeam) ?? {};
+    const status = asObject(match.status) ?? {};
+
+    const homeScore = asNumber(match.homeScore) ?? 0;
+    const awayScore = asNumber(match.awayScore) ?? 0;
+
+    // Parse status
+    const statusType = String(status.type || '').toLowerCase();
+    let gameStatus: GameStatus = 'scheduled';
+    let statusDetail = String(status.description || '');
+    if (statusType === 'inprogress' || statusType === 'in_progress') {
+      gameStatus = 'live';
+      const inning = asNumber(match.currentInning);
+      const half = String(match.currentInningHalf || '').toLowerCase();
+      if (inning) {
+        statusDetail = `${half === 'top' ? 'Top' : 'Bot'} ${inning}`;
+      }
+    } else if (statusType === 'finished' || statusType === 'final') {
+      gameStatus = 'final';
+      statusDetail = 'Final';
+    } else if (statusType === 'postponed') {
+      gameStatus = 'scheduled';
+      statusDetail = 'Postponed';
+    }
+
+    // Team info
+    const homeRecord = asObject(homeTeam.record);
+    const awayRecord = asObject(awayTeam.record);
+    const homeRecordStr = homeRecord
+      ? `${asNumber(homeRecord.wins) ?? 0}-${asNumber(homeRecord.losses) ?? 0}`
+      : undefined;
+    const awayRecordStr = awayRecord
+      ? `${asNumber(awayRecord.wins) ?? 0}-${asNumber(awayRecord.losses) ?? 0}`
+      : undefined;
+
+    const home: IntelGame['home'] = {
+      name: String(homeTeam.name || homeTeam.shortName || 'Home').trim(),
+      abbreviation: String(homeTeam.shortName || homeTeam.slug || '').trim().toUpperCase().slice(0, 6),
+      score: homeScore,
+      logo: typeof homeTeam.logo === 'string' ? homeTeam.logo : undefined,
+      rank: asNumber(homeTeam.ranking) ?? undefined,
+      record: homeRecordStr,
+    };
+
+    const away: IntelGame['away'] = {
+      name: String(awayTeam.name || awayTeam.shortName || 'Away').trim(),
+      abbreviation: String(awayTeam.shortName || awayTeam.slug || '').trim().toUpperCase().slice(0, 6),
+      score: awayScore,
+      logo: typeof awayTeam.logo === 'string' ? awayTeam.logo : undefined,
+      rank: asNumber(awayTeam.ranking) ?? undefined,
+      record: awayRecordStr,
+    };
+
+    // Venue
+    const venue = asObject(match.venue);
+    const venueName = venue ? String(venue.name || venue.city || '').trim() : undefined;
+
+    // Start time
+    const startTimestamp = asNumber(match.startTimestamp);
+    const startTime = startTimestamp
+      ? new Date(startTimestamp * 1000).toISOString()
+      : undefined;
+
+    // Innings for scoring breakdown
+    const innings = asArray(match.innings);
+    const scoring = innings.length > 0
+      ? innings.map((inn) => {
+          const inning = asObject(inn);
+          if (!inning) return {};
+          return {
+            inning: asNumber(inning.inning) ?? 0,
+            away: asNumber(inning.awayRuns) ?? 0,
+            home: asNumber(inning.homeRuns) ?? 0,
+          };
+        })
+      : undefined;
+
+    // Conference info for headline
+    const homeConf = asObject(homeTeam.conference);
+    const awayConf = asObject(awayTeam.conference);
+    const confNote =
+      homeConf && awayConf && homeConf.name === awayConf.name
+        ? String(homeConf.shortName || homeConf.name || '')
+        : '';
+    const headline = confNote ? `${confNote} matchup` : undefined;
+
+    // Win probability for pregame
+    const isPregame = gameStatus === 'scheduled' && homeScore === 0 && awayScore === 0;
+    const winProbability = isPregame
+      ? estimatePregameWinProbability('d1bb', homeRecordStr, awayRecordStr)
+      : undefined;
+
+    return {
+      id: `d1bb-${String(match.id ?? i)}`,
+      sport: 'd1bb' as const,
+      away,
+      home,
+      status: gameStatus,
+      statusDetail: statusDetail || undefined,
+      headline,
+      venue: venueName || undefined,
+      startTime,
+      tier: 'standard' as const,
+      signalCount: 0,
+      winProbability,
+      scoring: scoring as IntelGame['scoring'],
+    };
+  }).filter(Boolean) as IntelGame[];
+}
+
+// ─── Normalize College Baseball Standings → StandingsTeam[] ─────────────────
+
+function normalizeCollegeBaseballStandings(data: Record<string, unknown>): StandingsTeam[] {
+  const result: StandingsTeam[] = [];
+
+  // The /api/college-baseball/standings returns conference-grouped data
+  // Shape: HighlightlyStandings[] = [{ conference, teams: [...] }]
+  const conferences = asArray(data);
+
+  // If the top-level isn't an array, check for nested data
+  const standingsArray = conferences.length > 0
+    ? conferences
+    : asArray(data.standings || data.data || []);
+
+  for (const confRaw of standingsArray) {
+    const conf = asObject(confRaw);
+    if (!conf) continue;
+
+    const confInfo = asObject(conf.conference);
+    const confName = confInfo ? String(confInfo.name || confInfo.shortName || '') : undefined;
+    const teams = asArray(conf.teams);
+
+    for (const teamRaw of teams) {
+      const t = asObject(teamRaw);
+      if (!t) continue;
+
+      const teamInfo = asObject(t.team) ?? {};
+      const teamName = String(teamInfo.name || t.name || '').trim();
+      if (!teamName) continue;
+
+      result.push({
+        teamName,
+        abbreviation: String(teamInfo.shortName || teamInfo.slug || '').trim().toUpperCase().slice(0, 6) || undefined,
+        logo: typeof teamInfo.logo === 'string' ? teamInfo.logo : undefined,
+        rank: asNumber(teamInfo.ranking || t.rank) ?? undefined,
+        wins: asNumber(t.wins) ?? 0,
+        losses: asNumber(t.losses) ?? 0,
+        winPct: asNumber(t.winPercentage) ?? undefined,
+        netRating: asNumber(t.runDifferential) ?? undefined,
+        conference: confName || undefined,
+      });
+    }
+  }
+
+  return result
+    .sort((a, b) => {
+      // Sort by rank first, then win percentage
+      if (a.rank && b.rank) return a.rank - b.rank;
+      if (a.rank) return -1;
+      if (b.rank) return 1;
+      const aPct = a.winPct ?? a.wins / Math.max(a.wins + a.losses, 1);
+      const bPct = b.winPct ?? b.wins / Math.max(b.wins + b.losses, 1);
+      return bPct - aPct;
+    })
+    .slice(0, 20);
 }
 
 function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
@@ -466,8 +650,14 @@ function generateSignals(
     const leader = game.home.score >= game.away.score ? game.home : game.away;
     const trailer = game.home.score >= game.away.score ? game.away : game.home;
 
+    // Sport-specific thresholds: baseball uses tighter margins than basketball
+    const isBaseball = game.sport === 'mlb' || game.sport === 'd1bb';
+    const clutchThreshold = isBaseball ? 2 : 5;
+    const blowoutThreshold = isBaseball ? 8 : 20;
+    const nailbiterThreshold = isBaseball ? 1 : 3;
+
     // Live game, close score → clutch time
-    if (game.status === 'live' && diff <= 5) {
+    if (game.status === 'live' && diff <= clutchThreshold) {
       signals.push({
         id: `sig-clutch-${game.id}`,
         text: `${leader.abbreviation || leader.name} leads ${trailer.abbreviation || trailer.name} by ${diff}. Clutch time.`,
@@ -483,7 +673,7 @@ function generateSignals(
     }
 
     // Blowout
-    if (game.status === 'live' && diff >= 20) {
+    if (game.status === 'live' && diff >= blowoutThreshold) {
       signals.push({
         id: `sig-blowout-${game.id}`,
         text: `${leader.abbreviation || leader.name} up ${diff} over ${trailer.abbreviation || trailer.name}. Blowout territory.`,
@@ -499,7 +689,7 @@ function generateSignals(
     }
 
     // Final game with narrow margin
-    if (game.status === 'final' && diff <= 3) {
+    if (game.status === 'final' && diff <= nailbiterThreshold) {
       signals.push({
         id: `sig-nail-${game.id}`,
         text: `${leader.abbreviation || leader.name} edged ${trailer.abbreviation || trailer.name} ${leader.score}-${trailer.score}. Nail-biter.`,
@@ -512,6 +702,33 @@ function generateSignals(
         timestamp: 'Final',
       });
       idx++;
+    }
+
+    // College baseball ranked team upset alert
+    if (game.sport === 'd1bb' && game.status === 'final') {
+      const rankedHome = game.home.rank && game.home.rank <= 25;
+      const rankedAway = game.away.rank && game.away.rank <= 25;
+      const homeWon = game.home.score > game.away.score;
+      const upsetOccurred =
+        (rankedHome && !rankedAway && !homeWon) ||
+        (rankedAway && !rankedHome && homeWon);
+
+      if (upsetOccurred) {
+        const upset = homeWon ? game.home : game.away;
+        const favorite = homeWon ? game.away : game.home;
+        signals.push({
+          id: `sig-upset-${game.id}`,
+          text: `UPSET: ${upset.name} takes down #${favorite.rank} ${favorite.name} ${upset.score}-${favorite.score}.`,
+          sport: game.sport,
+          priority: 'high',
+          type: 'UPSET ALERT',
+          modes: ['coach', 'fan', 'scout'],
+          gameId: game.id,
+          teamTags: [upset.abbreviation, favorite.abbreviation].filter(Boolean),
+          timestamp: 'Final',
+        });
+        idx++;
+      }
     }
   }
 
@@ -543,7 +760,7 @@ function generateSignals(
 
 // ─── Main Hook ──────────────────────────────────────────────────────────────
 
-const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb'];
+const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'd1bb'];
 
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
@@ -562,7 +779,14 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        const result = scoreQueryResults[index];
+        return {
+          sport: s,
+          data: result?.data as Record<string, unknown> | undefined,
+          isLoading: result?.isLoading ?? false,
+          isFetching: result?.isFetching ?? false,
+          isError: result?.isError ?? false,
+        };
       }),
     [sportsToFetch, scoreQueryResults],
   );
@@ -580,7 +804,11 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     const allGames: IntelGame[] = [];
     for (const q of scoreQueries) {
       if (q.data) {
-        allGames.push(...normalizeToIntelGames(q.sport, q.data));
+        if (q.sport === 'd1bb') {
+          allGames.push(...normalizeCollegeBaseballGames(q.data));
+        } else {
+          allGames.push(...normalizeToIntelGames(q.sport, q.data));
+        }
       }
     }
     // Apply team lens
@@ -597,8 +825,11 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   // Extract standings
   const standings = useMemo<StandingsTeam[]>(() => {
     if (!standingsQuery.data) return [];
+    if (standingsSport === 'd1bb') {
+      return normalizeCollegeBaseballStandings(standingsQuery.data).slice(0, 15);
+    }
     return normalizeStandings(standingsQuery.data).slice(0, 15);
-  }, [standingsQuery.data]);
+  }, [standingsQuery.data, standingsSport]);
 
   // Derive all unique teams for team lens picker
   const allTeams = useMemo(() => {
@@ -630,20 +861,35 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     return games.map((g) => ({ ...g, signalCount: counts.get(g.id) ?? 0 }));
   }, [games, signals]);
 
-  // Fetch news for selected sport(s)
-  const newsSports = sport === 'all' ? ACTIVE_SPORTS : [sport];
+  // Fetch news via Workers proxy (CORS-safe, KV-cached)
+  const newsSportParam = sport === 'all' ? 'all' : sport;
   const newsQuery = useQuery({
-    queryKey: ['intel-news', sport],
-    queryFn: async () => Promise.all(
-      newsSports.map(async (s) => {
-        try {
-          const data = await fetchJson<Record<string, unknown>>(ESPN_NEWS_MAP[s]);
-          return { sport: s, data };
-        } catch {
-          return { sport: s, data: { articles: [] } as Record<string, unknown> };
-        }
-      }),
-    ),
+    queryKey: ['intel-news', newsSportParam],
+    queryFn: async () => {
+      try {
+        const data = await fetchJson<Array<{ sport: string; data: Record<string, unknown> }>>(
+          `/api/intel/news?sport=${newsSportParam}`,
+        );
+        // Normalize to the shape normalizeNews expects
+        return data.map((entry) => ({
+          sport: entry.sport as Exclude<IntelSport, 'all'>,
+          data: entry.data,
+        }));
+      } catch {
+        // Fallback: try direct ESPN fetch if Worker proxy unavailable
+        const newsSports = sport === 'all' ? ACTIVE_SPORTS : [sport];
+        return Promise.all(
+          newsSports.map(async (s) => {
+            try {
+              const espnData = await fetchJson<Record<string, unknown>>(ESPN_NEWS_MAP[s]);
+              return { sport: s, data: espnData };
+            } catch {
+              return { sport: s, data: { articles: [] } as Record<string, unknown> };
+            }
+          }),
+        );
+      }
+    },
     refetchInterval: 120_000,
     retry: 1,
   });
