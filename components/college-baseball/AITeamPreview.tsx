@@ -157,7 +157,7 @@ function computeGrades(stats: TeamStats): ScoutingGrade[] {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export function AITeamPreview({ teamId, teamName, stats, conference }: AITeamPreviewProps) {
+export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _conference }: AITeamPreviewProps) {
   const grades = useMemo(() => (stats ? computeGrades(stats) : []), [stats]);
 
   const analysis = useMemo(() => {
