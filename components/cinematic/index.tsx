@@ -17,6 +17,13 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
     const el = ref.current;
     if (!el) return;
 
+    // If already in/near viewport on mount, reveal immediately
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 50 && rect.bottom > -50) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -24,11 +31,18 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
           observer.unobserve(el);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0, rootMargin: '50px' }
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Safety: never leave content permanently hidden
+    const fallback = setTimeout(() => setIsVisible(true), 3000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, []);
 
   const translateMap: Record<string, string> = {

@@ -145,62 +145,162 @@ export async function getNews(sport: ESPNSport): Promise<unknown> {
 // Transformation helpers — reshape ESPN responses into BSI contracts
 // ---------------------------------------------------------------------------
 
-/** Transform ESPN standings into BSI standings contract */
+// Division lookup tables — ESPN standings only group by league/conference,
+// so we map team abbreviations to their division.
+const MLB_DIVISIONS: Record<string, { league: string; division: string }> = {
+  NYY: { league: 'AL', division: 'East' }, BOS: { league: 'AL', division: 'East' },
+  TOR: { league: 'AL', division: 'East' }, TB: { league: 'AL', division: 'East' },
+  BAL: { league: 'AL', division: 'East' },
+  CLE: { league: 'AL', division: 'Central' }, MIN: { league: 'AL', division: 'Central' },
+  DET: { league: 'AL', division: 'Central' }, CWS: { league: 'AL', division: 'Central' }, CHW: { league: 'AL', division: 'Central' },
+  KC: { league: 'AL', division: 'Central' },
+  HOU: { league: 'AL', division: 'West' }, TEX: { league: 'AL', division: 'West' },
+  SEA: { league: 'AL', division: 'West' }, LAA: { league: 'AL', division: 'West' },
+  OAK: { league: 'AL', division: 'West' }, ATH: { league: 'AL', division: 'West' },
+  ATL: { league: 'NL', division: 'East' }, PHI: { league: 'NL', division: 'East' },
+  NYM: { league: 'NL', division: 'East' }, MIA: { league: 'NL', division: 'East' },
+  WSH: { league: 'NL', division: 'East' },
+  CHC: { league: 'NL', division: 'Central' }, STL: { league: 'NL', division: 'Central' },
+  MIL: { league: 'NL', division: 'Central' }, CIN: { league: 'NL', division: 'Central' },
+  PIT: { league: 'NL', division: 'Central' },
+  LAD: { league: 'NL', division: 'West' }, SD: { league: 'NL', division: 'West' },
+  SF: { league: 'NL', division: 'West' }, ARI: { league: 'NL', division: 'West' },
+  COL: { league: 'NL', division: 'West' },
+};
+
+const NFL_DIVISIONS: Record<string, { conference: string; division: string }> = {
+  NE: { conference: 'AFC', division: 'East' }, BUF: { conference: 'AFC', division: 'East' },
+  MIA: { conference: 'AFC', division: 'East' }, NYJ: { conference: 'AFC', division: 'East' },
+  BAL: { conference: 'AFC', division: 'North' }, PIT: { conference: 'AFC', division: 'North' },
+  CLE: { conference: 'AFC', division: 'North' }, CIN: { conference: 'AFC', division: 'North' },
+  HOU: { conference: 'AFC', division: 'South' }, TEN: { conference: 'AFC', division: 'South' },
+  IND: { conference: 'AFC', division: 'South' }, JAX: { conference: 'AFC', division: 'South' },
+  KC: { conference: 'AFC', division: 'West' }, LAC: { conference: 'AFC', division: 'West' },
+  DEN: { conference: 'AFC', division: 'West' }, LV: { conference: 'AFC', division: 'West' },
+  PHI: { conference: 'NFC', division: 'East' }, DAL: { conference: 'NFC', division: 'East' },
+  WSH: { conference: 'NFC', division: 'East' }, NYG: { conference: 'NFC', division: 'East' },
+  DET: { conference: 'NFC', division: 'North' }, MIN: { conference: 'NFC', division: 'North' },
+  GB: { conference: 'NFC', division: 'North' }, CHI: { conference: 'NFC', division: 'North' },
+  ATL: { conference: 'NFC', division: 'South' }, TB: { conference: 'NFC', division: 'South' },
+  NO: { conference: 'NFC', division: 'South' }, CAR: { conference: 'NFC', division: 'South' },
+  SF: { conference: 'NFC', division: 'West' }, SEA: { conference: 'NFC', division: 'West' },
+  LAR: { conference: 'NFC', division: 'West' }, ARI: { conference: 'NFC', division: 'West' },
+};
+
+/** Transform ESPN standings into BSI standings contract.
+ *  MLB/NFL: returns flat array with league/division or conference/division fields.
+ *  NBA: returns nested groups (the NBA frontend was built for that format). */
 export function transformStandings(
   raw: any,
   sport: ESPNSport,
 ): { standings: any[]; meta: { lastUpdated: string; dataSource: string } } {
-  const standings: any[] = [];
-
-  // ESPN returns { children: [ { name: "Eastern Conference", standings: { entries: [...] } } ] }
   const groups = raw?.children || [];
 
-  for (const group of groups) {
-    const teams: any[] = [];
-    const entries = group?.standings?.entries || [];
+  if (sport === 'nba') {
+    // NBA: keep nested format — the NBA frontend expects { standings: [{ name, teams }] }
+    const standings: any[] = [];
+    for (const group of groups) {
+      const teams: any[] = [];
+      for (const entry of group?.standings?.entries || []) {
+        const teamData = entry?.team || {};
+        const stats = entry?.stats || [];
+        const stat = (name: string): any => {
+          const s = stats.find((s: any) => s.name === name || s.abbreviation === name);
+          return s?.displayValue ?? s?.value ?? '-';
+        };
+        teams.push({
+          name: teamData.displayName || teamData.name || 'Unknown',
+          abbreviation: teamData.abbreviation || '???',
+          id: teamData.id,
+          logo: teamData.logos?.[0]?.href,
+          wins: Number(stat('wins')) || 0,
+          losses: Number(stat('losses')) || 0,
+          pct: parseFloat(stat('winPercent')) || 0,
+          gb: stat('gamesBehind') || '-',
+          home: stat('Home') || stat('home') || '-',
+          away: stat('Road') || stat('road') || '-',
+          last10: stat('Last Ten Games') || stat('L10') || '-',
+          streak: stat('streak') || '-',
+        });
+      }
+      standings.push({ name: group.name || 'Unknown', teams });
+    }
+    return { standings, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+  }
 
-    for (const entry of entries) {
+  // MLB and NFL: return flat array with division/league fields
+  const standings: any[] = [];
+
+  for (const group of groups) {
+    const leagueName = group.name || '';
+    for (const entry of group?.standings?.entries || []) {
       const teamData = entry?.team || {};
       const stats = entry?.stats || [];
+      const abbr = teamData.abbreviation || '???';
 
       const stat = (name: string): any => {
         const s = stats.find((s: any) => s.name === name || s.abbreviation === name);
         return s?.displayValue ?? s?.value ?? '-';
       };
 
-      teams.push({
-        name: teamData.displayName || teamData.name || 'Unknown',
-        abbreviation: teamData.abbreviation || '???',
-        id: teamData.id,
-        logo: teamData.logos?.[0]?.href,
-        wins: Number(stat('wins')) || 0,
-        losses: Number(stat('losses')) || 0,
-        pct: parseFloat(stat('winPercent') || stat('winPct') || stat('gamesBehind') ? '0' : '0') ||
-             parseFloat(stat('winPercent')) || 0,
-        gb: stat('gamesBehind') || stat('GB') || '-',
-        home: stat('Home') || stat('home') || '-',
-        away: stat('Road') || stat('Away') || stat('road') || stat('away') || '-',
-        last10: stat('Last Ten') || stat('L10') || '-',
-        streak: stat('streak') || stat('Streak') || '-',
-        // NFL-specific
-        ...(sport === 'nfl' ? {
-          ties: Number(stat('ties')) || 0,
-          pointsFor: stat('pointsFor') || stat('PF') || '-',
-          pointsAgainst: stat('pointsAgainst') || stat('PA') || '-',
-          division: group.name,
-        } : {}),
-      });
-    }
+      const wins = Number(stat('wins')) || 0;
+      const losses = Number(stat('losses')) || 0;
+      const total = wins + losses;
+      const winPct = total > 0 ? wins / total : 0;
 
-    standings.push({
-      name: group.name || 'Unknown',
-      teams,
-    });
+      if (sport === 'mlb') {
+        const div = MLB_DIVISIONS[abbr] || {
+          league: leagueName.includes('American') ? 'AL' : 'NL',
+          division: 'Unknown',
+        };
+        standings.push({
+          teamName: teamData.displayName || teamData.name || 'Unknown',
+          abbreviation: abbr,
+          id: teamData.id,
+          logo: teamData.logos?.[0]?.href,
+          wins,
+          losses,
+          winPercentage: winPct,
+          gamesBack: stat('gamesBehind') === '-' ? 0 : parseFloat(stat('gamesBehind')) || 0,
+          league: div.league,
+          division: div.division,
+          runsScored: Number(stat('pointsFor')) || 0,
+          runsAllowed: Number(stat('pointsAgainst')) || 0,
+          streakCode: stat('streak') || '-',
+          home: stat('Home') || stat('home') || '-',
+          away: stat('Road') || stat('road') || '-',
+          last10: stat('Last Ten Games') || stat('L10') || '-',
+        });
+      } else {
+        // NFL
+        const div = NFL_DIVISIONS[abbr] || {
+          conference: leagueName.includes('American') ? 'AFC' : 'NFC',
+          division: 'Unknown',
+        };
+        standings.push({
+          teamName: teamData.displayName || teamData.name || 'Unknown',
+          abbreviation: abbr,
+          id: teamData.id,
+          logo: teamData.logos?.[0]?.href,
+          wins,
+          losses,
+          ties: Number(stat('ties')) || 0,
+          winPercentage: winPct,
+          conference: div.conference,
+          division: div.division,
+          pointsFor: Number(stat('pointsFor')) || 0,
+          pointsAgainst: Number(stat('pointsAgainst')) || 0,
+          streak: stat('streak') || '-',
+          home: stat('Home') || stat('home') || '-',
+          away: stat('Road') || stat('road') || '-',
+        });
+      }
+    }
   }
 
   return {
     standings,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' },
   };
 }
 
