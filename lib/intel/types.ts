@@ -1,6 +1,6 @@
 export type IntelMode = 'coach' | 'scout' | 'fan';
 
-export type IntelSport = 'all' | 'nfl' | 'nba' | 'mlb' | 'ncaafb' | 'cbb' | 'd1bb';
+export type IntelSport = 'all' | 'nfl' | 'nba' | 'mlb' | 'ncaafb' | 'cbb' | 'college-baseball';
 
 export type GameTier = 'hero' | 'marquee' | 'standard';
 
@@ -76,7 +76,7 @@ export const SPORT_API_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
   nba: '/api/nba',
   ncaafb: '/api/nfl', // CFB uses same ESPN pattern
   cbb: '/api/nba',    // CBB uses same ESPN pattern
-  d1bb: '/api/college-baseball', // D1 Baseball — Highlightly/NCAA API
+  'college-baseball': '/api/college-baseball',
 };
 
 export const SPORT_LABELS: Record<IntelSport, string> = {
@@ -86,7 +86,7 @@ export const SPORT_LABELS: Record<IntelSport, string> = {
   mlb: 'MLB',
   ncaafb: 'CFB',
   cbb: 'CBB',
-  d1bb: 'D1 BB',
+  'college-baseball': 'NCAABB',
 };
 
 export const SPORT_ACCENT: Record<IntelSport, string> = {
@@ -96,7 +96,7 @@ export const SPORT_ACCENT: Record<IntelSport, string> = {
   mlb: '#BF5700',
   ncaafb: '#f59e0b',
   cbb: '#dc2626',
-  d1bb: '#c2410c', // burnt orange — college baseball
+  'college-baseball': '#C75B12',
 };
 
 export const PRIORITY_ACCENT: Record<SignalPriority, string> = {
@@ -134,7 +134,7 @@ export const ESPN_NEWS_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
   mlb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news',
   ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
   cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
-  d1bb: 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news',
+  'college-baseball': 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news',
 };
 
 // ─── Command Palette ──────────────────────────────────────────────────────

@@ -165,14 +165,20 @@ export default function IntelDashboard() {
             standard={standard}
             isLoading={false}
             onSelectGame={handleSelectGame}
+            sport={sport}
             heroCard={hero ? <GameCardHero game={hero} onClick={() => handleSelectGame(hero)} /> : undefined}
             marqueeCards={
               marquee.length > 0 ? (
-                <>
+                <div
+                  className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory scroll-smooth"
+                  style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+                >
                   {marquee.map((g) => (
-                    <GameCardMarquee key={g.id} game={g} onClick={() => handleSelectGame(g)} />
+                    <div key={g.id} className="min-w-[260px] flex-1 snap-start">
+                      <GameCardMarquee game={g} onClick={() => handleSelectGame(g)} />
+                    </div>
                   ))}
-                </>
+                </div>
               ) : undefined
             }
           />
