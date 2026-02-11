@@ -2,6 +2,8 @@
 
 import type { IntelGame } from '@/lib/intel/types';
 import { SPORT_ACCENT } from '@/lib/intel/types';
+import { WinProbGauge } from './WinProbGauge';
+import { isPregameNoScore, rankPrefix, scoreColor } from './game-card-utils';
 
 interface GameCardStandardProps {
   game: IntelGame;
@@ -9,11 +11,12 @@ interface GameCardStandardProps {
 }
 
 export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
-  const accent = SPORT_ACCENT[game.sport];
+  const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[game.sport]})`;
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
-  const awayWinning = (isLive || isFinal) && game.away.score > game.home.score;
-  const homeWinning = (isLive || isFinal) && game.home.score > game.away.score;
+  const showPregameGauge = isPregameNoScore(game);
+  const awayScoreColor = scoreColor(game, 'away', accent);
+  const homeScoreColor = scoreColor(game, 'home', accent);
 
   return (
     <button
@@ -30,12 +33,12 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
                 <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
               )}
               <span className="font-mono text-[12px] text-white/80 truncate">
-                {game.away.abbreviation || game.away.name}
+                {rankPrefix(game.away.rank)}{game.away.abbreviation || game.away.name}
               </span>
             </div>
             <span
               className="font-mono text-sm font-semibold tabular-nums shrink-0"
-              style={{ color: awayWinning ? accent : 'white' }}
+              style={{ color: awayScoreColor }}
             >
               {game.away.score}
             </span>
@@ -46,17 +49,23 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
                 <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
               )}
               <span className="font-mono text-[12px] text-white/80 truncate">
-                {game.home.abbreviation || game.home.name}
+                {rankPrefix(game.home.rank)}{game.home.abbreviation || game.home.name}
               </span>
             </div>
             <span
               className="font-mono text-sm font-semibold tabular-nums shrink-0"
-              style={{ color: homeWinning ? accent : 'white' }}
+              style={{ color: homeScoreColor }}
             >
               {game.home.score}
             </span>
           </div>
         </div>
+
+        {showPregameGauge && (
+          <div className="shrink-0">
+            <WinProbGauge probability={game.winProbability?.home ?? 50} label="Home %" size={52} />
+          </div>
+        )}
 
         {/* Status */}
         <div className="shrink-0 text-right">

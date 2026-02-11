@@ -13,6 +13,7 @@ import { BSI_CHART_COLORS, tooltipProps } from '@/lib/chart-theme';
 import type { IntelGame } from '@/lib/intel/types';
 import { SPORT_ACCENT } from '@/lib/intel/types';
 import { WinProbGauge } from './WinProbGauge';
+import { isPregameNoScore, rankPrefix, scoreColor } from './game-card-utils';
 
 interface GameCardHeroProps {
   game: IntelGame;
@@ -20,12 +21,12 @@ interface GameCardHeroProps {
 }
 
 export function GameCardHero({ game, onClick }: GameCardHeroProps) {
-  const accent = SPORT_ACCENT[game.sport];
+  const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[game.sport]})`;
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
-  const isScheduled = game.status === 'scheduled';
-  const awayWinning = (isLive || isFinal) && game.away.score > game.home.score;
-  const homeWinning = (isLive || isFinal) && game.home.score > game.away.score;
+  const showPregameGauge = isPregameNoScore(game);
+  const awayScoreColor = scoreColor(game, 'away', accent);
+  const homeScoreColor = scoreColor(game, 'home', accent);
 
   const winProbData = generateWinProbCurve(game);
 
@@ -67,7 +68,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
 
       {/* Headline */}
       {game.headline && (
-        <div className="font-mono text-[11px] text-white/40 mb-3 truncate">{game.headline}</div>
+        <div className="font-mono text-[11px] italic text-white/45 mb-3 truncate">{game.headline}</div>
       )}
 
       {/* Matchup: Away vs Home */}
@@ -79,9 +80,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
           )}
           <div>
             <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
-              {game.away.rank && (
-                <span className="font-mono text-[10px] text-white/40 mr-1">#{game.away.rank}</span>
-              )}
+              {rankPrefix(game.away.rank)}
               {game.away.name}
             </div>
             <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
@@ -90,21 +89,21 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
 
         {/* Scores or Pre-game gauge */}
         <div className="text-center">
-          {isScheduled ? (
+          {showPregameGauge ? (
             <WinProbGauge probability={game.winProbability?.home ?? 50} label="Home %" size={72} />
           ) : (
             <>
               <div className="flex items-center gap-3">
                 <span
                   className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
-                  style={{ color: awayWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+                  style={{ color: awayScoreColor }}
                 >
                   {game.away.score}
                 </span>
                 <span className="text-white/20 text-sm">—</span>
                 <span
                   className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
-                  style={{ color: homeWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+                  style={{ color: homeScoreColor }}
                 >
                   {game.home.score}
                 </span>
@@ -120,9 +119,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
         <div className="flex items-center justify-end gap-3">
           <div className="text-right">
             <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
-              {game.home.rank && (
-                <span className="font-mono text-[10px] text-white/40 mr-1">#{game.home.rank}</span>
-              )}
+              {rankPrefix(game.home.rank)}
               {game.home.name}
             </div>
             <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>

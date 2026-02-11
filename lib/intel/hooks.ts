@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import type {
   IntelGame,
   IntelMode,
@@ -548,16 +548,24 @@ const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaaf
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
-  // Fetch scores for each selected sport
-  const scoreQueries = sportsToFetch.map((s) => ({
-    sport: s,
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    ...useQuery({
+  // Fetch scores with stable hook ordering for all supported sports.
+  const scoreQueryResults = useQueries({
+    queries: ACTIVE_SPORTS.map((s) => ({
       queryKey: ['intel-scores', s],
       queryFn: () => fetchJson<Record<string, unknown>>(scoresEndpoint(s)),
       refetchInterval: 30_000,
-    }),
-  }));
+      enabled: sport === 'all' || sport === s,
+    })),
+  });
+
+  const scoreQueries = useMemo(
+    () =>
+      sportsToFetch.map((s) => {
+        const index = ACTIVE_SPORTS.indexOf(s);
+        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+      }),
+    [sportsToFetch, scoreQueryResults],
+  );
 
   // Fetch standings for the primary sport (or NBA by default)
   const standingsSport = sport === 'all' ? 'nba' : sport;
@@ -584,8 +592,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
           g.away.name.includes(teamLens))
       : allGames;
     return assignTiers(filtered);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scoreQueries.map((q) => q.dataUpdatedAt).join(','), teamLens]);
+  }, [scoreQueries, teamLens]);
 
   // Extract standings
   const standings = useMemo<StandingsTeam[]>(() => {
@@ -646,8 +653,8 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     return normalizeNews(newsQuery.data);
   }, [newsQuery.data]);
 
-  const isLoading = scoreQueries.some((q) => q.isLoading);
-  const isError = scoreQueries.every((q) => q.isError);
+  const isLoading = scoreQueries.some((q) => q.isLoading || q.isFetching);
+  const isError = scoreQueries.length > 0 && scoreQueries.every((q) => q.isError);
 
   const hero = useMemo(() => enrichedGames.find((g) => g.tier === 'hero'), [enrichedGames]);
   const marquee = useMemo(() => enrichedGames.filter((g) => g.tier === 'marquee'), [enrichedGames]);
