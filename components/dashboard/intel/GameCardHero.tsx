@@ -9,9 +9,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { BSI_CHART_COLORS, tooltipProps, xAxisProps, yAxisProps } from '@/lib/chart-theme';
+import { BSI_CHART_COLORS, tooltipProps } from '@/lib/chart-theme';
 import type { IntelGame } from '@/lib/intel/types';
 import { SPORT_ACCENT } from '@/lib/intel/types';
+import { WinProbGauge } from './WinProbGauge';
 
 interface GameCardHeroProps {
   game: IntelGame;
@@ -22,8 +23,10 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
   const accent = SPORT_ACCENT[game.sport];
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
+  const isScheduled = game.status === 'scheduled';
+  const awayWinning = (isLive || isFinal) && game.away.score > game.home.score;
+  const homeWinning = (isLive || isFinal) && game.home.score > game.away.score;
 
-  // Generate synthetic win probability curve from score differential
   const winProbData = generateWinProbCurve(game);
 
   return (
@@ -62,42 +65,75 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
         )}
       </div>
 
+      {/* Headline */}
+      {game.headline && (
+        <div className="font-mono text-[11px] text-white/40 mb-3 truncate">{game.headline}</div>
+      )}
+
       {/* Matchup: Away vs Home */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-4">
         {/* Away */}
-        <div>
-          <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
-            {game.away.name}
+        <div className="flex items-center gap-3">
+          {game.away.logo && (
+            <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+          )}
+          <div>
+            <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
+              {game.away.rank && (
+                <span className="font-mono text-[10px] text-white/40 mr-1">#{game.away.rank}</span>
+              )}
+              {game.away.name}
+            </div>
+            <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
           </div>
-          <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
         </div>
 
-        {/* Scores */}
+        {/* Scores or Pre-game gauge */}
         <div className="text-center">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-2xl md:text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
-              {game.away.score}
-            </span>
-            <span className="text-white/20 text-sm">—</span>
-            <span className="font-mono text-2xl md:text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
-              {game.home.score}
-            </span>
-          </div>
-          {game.statusDetail && (
-            <div className="font-mono text-[10px] text-white/40 mt-0.5">{game.statusDetail}</div>
+          {isScheduled ? (
+            <WinProbGauge probability={game.winProbability?.home ?? 50} label="Home %" size={72} />
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                <span
+                  className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
+                  style={{ color: awayWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+                >
+                  {game.away.score}
+                </span>
+                <span className="text-white/20 text-sm">—</span>
+                <span
+                  className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
+                  style={{ color: homeWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+                >
+                  {game.home.score}
+                </span>
+              </div>
+              {game.statusDetail && (
+                <div className="font-mono text-[10px] text-white/40 mt-0.5">{game.statusDetail}</div>
+              )}
+            </>
           )}
         </div>
 
         {/* Home */}
-        <div className="text-right">
-          <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
-            {game.home.name}
+        <div className="flex items-center justify-end gap-3">
+          <div className="text-right">
+            <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
+              {game.home.rank && (
+                <span className="font-mono text-[10px] text-white/40 mr-1">#{game.home.rank}</span>
+              )}
+              {game.home.name}
+            </div>
+            <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
           </div>
-          <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
+          {game.home.logo && (
+            <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+          )}
         </div>
       </div>
 
-      {/* Win probability mini chart */}
+      {/* Win probability mini chart (live/final only) */}
       {winProbData.length > 0 && (
         <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2">
           <div className="flex items-center gap-1 mb-1">
@@ -141,14 +177,12 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
   );
 }
 
-// Generate a simple win probability curve based on score differential
 function generateWinProbCurve(game: IntelGame): Array<{ t: string; home: number; away: number }> {
   if (game.status === 'scheduled') return [];
 
   const diff = game.home.score - game.away.score;
   const homeBase = 50 + Math.min(Math.max(diff * 3, -40), 40);
 
-  // Create a simple 5-point curve that trends toward the current state
   return [
     { t: '0%', home: 50, away: 50 },
     { t: '25%', home: 50 + (homeBase - 50) * 0.3, away: 50 - (homeBase - 50) * 0.3 },

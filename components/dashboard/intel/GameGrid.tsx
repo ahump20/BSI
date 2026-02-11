@@ -33,7 +33,7 @@ export function GameGrid({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle size="sm" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" style={{ color: 'var(--bsi-cyan, #06B6D4)' }} />
+            <Activity className="h-4 w-4" style={{ color: 'var(--bsi-intel-accent, var(--bsi-cyan, #06B6D4))' }} />
             Slate
           </CardTitle>
           <Badge variant="outline" className="text-[10px] font-mono">

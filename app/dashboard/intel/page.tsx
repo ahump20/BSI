@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { IntelHeader } from '@/components/dashboard/intel/IntelHeader';
@@ -8,7 +8,7 @@ import { SportFilter } from '@/components/dashboard/intel/SportFilter';
 import { GameGrid } from '@/components/dashboard/intel/GameGrid';
 import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
 import type { IntelMode, IntelSport, IntelGame } from '@/lib/intel/types';
-import { SPORT_LABELS } from '@/lib/intel/types';
+import { SPORT_ACCENT, SPORT_LABELS } from '@/lib/intel/types';
 
 // Lazy-loaded Phase 3 + 4 components
 import dynamic from 'next/dynamic';
@@ -37,6 +37,10 @@ const ModelHealth = dynamic(
   () => import('@/components/dashboard/intel/ModelHealth').then((m) => m.ModelHealth),
   { ssr: false },
 );
+const NewsFeed = dynamic(
+  () => import('@/components/dashboard/intel/NewsFeed').then((m) => m.NewsFeed),
+  { ssr: false },
+);
 const GameDetailSheet = dynamic(
   () => import('@/components/dashboard/intel/GameDetailSheet').then((m) => m.GameDetailSheet),
   { ssr: false },
@@ -58,6 +62,8 @@ export default function IntelDashboardPage() {
     prioritySignals,
     standings,
     allTeams,
+    news,
+    newsLoading,
     isLoading,
   } = useIntelDashboard(sport, mode, teamLens);
 
@@ -79,6 +85,14 @@ export default function IntelDashboardPage() {
     const lens = teamLens ? ` · Lens: ${teamLens}` : '';
     return `${sportLabel} · ${live} live · ${upcoming} upcoming · ${finals} final · ${prioritySignals.length} priority${lens}`;
   }, [games, sport, teamLens, prioritySignals.length]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT[sport]);
+    return () => {
+      root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT.all);
+    };
+  }, [sport]);
 
   return (
     <main id="main-content" className="min-h-screen pt-24 md:pt-28">
@@ -129,6 +143,7 @@ export default function IntelDashboardPage() {
                   </div>
                 ) : undefined}
               />
+              <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
             </div>
 
             {/* Right column: Signals + Standings + Charts */}

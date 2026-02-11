@@ -12,11 +12,12 @@ import {
 } from 'recharts';
 import { BSI_CHART_COLORS, tooltipProps } from '@/lib/chart-theme';
 import { Sheet, SheetHeader, SheetBody } from '@/components/ui/Sheet';
-import { Badge } from '@/components/ui/Badge';
 import { Separator } from '@/components/ui/Separator';
 import type { IntelGame } from '@/lib/intel/types';
 import { SPORT_ACCENT } from '@/lib/intel/types';
 import { MatchupRadar } from './MatchupRadar';
+import { WinProbGauge } from './WinProbGauge';
+import { isPregameNoScore, rankPrefix, scoreColor } from './game-card-utils';
 
 interface GameDetailSheetProps {
   game: IntelGame | null;
@@ -27,9 +28,12 @@ interface GameDetailSheetProps {
 export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
   if (!game) return null;
 
-  const accent = SPORT_ACCENT[game.sport];
+  const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[game.sport]})`;
   const isLive = game.status === 'live';
+  const showPregameGauge = isPregameNoScore(game);
   const explainData = game.explain ?? generateExplainData(game);
+  const awayScoreColor = scoreColor(game, 'away', accent);
+  const homeScoreColor = scoreColor(game, 'home', accent);
 
   return (
     <Sheet open={open} onClose={onClose} side="right">
@@ -67,27 +71,44 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           <div className="font-display text-sm uppercase tracking-wide text-white/50 mb-2">
             {game.venue}
           </div>
+          {game.headline && (
+            <div className="mb-2 font-mono text-[11px] italic text-white/45">{game.headline}</div>
+          )}
           <div className="flex items-center justify-center gap-6">
-            <div className="text-right">
-              <div className="font-display text-base font-semibold uppercase text-white/80">
-                {game.away.name}
+            <div className="flex items-center gap-2 text-right">
+              {game.away.logo && (
+                <img src={game.away.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" />
+              )}
+              <div>
+                <div className="font-display text-base font-semibold uppercase text-white/80">
+                  {rankPrefix(game.away.rank)}{game.away.name}
+                </div>
+                <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
               </div>
-              <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
-                {game.away.score}
-              </span>
-              <span className="text-white/15">—</span>
-              <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
-                {game.home.score}
-              </span>
-            </div>
-            <div className="text-left">
-              <div className="font-display text-base font-semibold uppercase text-white/80">
-                {game.home.name}
+            {showPregameGauge ? (
+              <WinProbGauge probability={game.winProbability?.home ?? 50} label="Home %" size={86} />
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: awayScoreColor }}>
+                  {game.away.score}
+                </span>
+                <span className="text-white/15">—</span>
+                <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: homeScoreColor }}>
+                  {game.home.score}
+                </span>
               </div>
-              <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
+            )}
+            <div className="flex items-center gap-2 text-left">
+              <div>
+                <div className="font-display text-base font-semibold uppercase text-white/80">
+                  {rankPrefix(game.home.rank)}{game.home.name}
+                </div>
+                <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
+              </div>
+              {game.home.logo && (
+                <img src={game.home.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" />
+              )}
             </div>
           </div>
           {game.statusDetail && (

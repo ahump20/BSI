@@ -12,7 +12,7 @@ interface StandingsTableProps {
 }
 
 export function StandingsTable({ standings, sport }: StandingsTableProps) {
-  const accent = SPORT_ACCENT[sport];
+  const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[sport]})`;
   const rows = standings.slice(0, 10);
 
   if (rows.length === 0) return null;
@@ -48,15 +48,23 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
                 const pct = team.winPct ?? team.wins / Math.max(team.wins + team.losses, 1);
                 const netRtg = team.netRating ?? Math.round((pct - 0.5) * 30 * 10) / 10;
                 const shortName = team.abbreviation || team.teamName.split(' ').pop() || team.teamName;
+                const displayRank = team.rank ?? i + 1;
 
                 return (
                   <tr
                     key={team.teamName}
                     className="border-b border-white/5 last:border-0 transition-colors hover:bg-white/[0.03]"
                   >
-                    <td className="py-1.5 pr-2 text-white/30">{i + 1}</td>
-                    <td className="py-1.5 pr-3 text-white/80 font-medium truncate max-w-[100px]">
-                      {shortName}
+                    <td className="py-1.5 pr-2 text-white/30">{displayRank}</td>
+                    <td className="py-1.5 pr-3 text-white/80 font-medium truncate max-w-[140px]">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {team.logo && (
+                          <img src={team.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                        )}
+                        <span className="truncate">
+                          {team.rank ? `#${team.rank} ` : ''}{shortName}
+                        </span>
+                      </div>
                     </td>
                     <td className="py-1.5 px-2 text-center text-white/60">{team.wins}</td>
                     <td className="py-1.5 px-2 text-center text-white/60">{team.losses}</td>

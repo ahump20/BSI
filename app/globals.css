@@ -162,6 +162,7 @@
   --bsi-border-base: rgba(255, 255, 255, 0.1);
   --bsi-border-strong: rgba(255, 255, 255, 0.15);
   --bsi-border-accent: rgba(191, 87, 0, 0.4);
+  --bsi-intel-accent: var(--bsi-primary, #bf5700);
 }
 
 /* ========================================================================== */

@@ -17,6 +17,8 @@ import { ModelHealth } from '@/components/dashboard/intel/ModelHealth';
 import { NetRatingBar } from '@/components/dashboard/intel/NetRatingBar';
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
+import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
+import { SPORT_ACCENT } from '@/lib/intel/types';
 
 // Code-split overlays — only loaded on interaction
 const GameDetailSheet = dynamic(
@@ -50,6 +52,8 @@ export default function IntelDashboard() {
     prioritySignals,
     standings,
     allTeams,
+    news,
+    newsLoading,
     isLoading,
     isError,
   } = useIntelDashboard(sport, mode, teamLens);
@@ -75,6 +79,14 @@ export default function IntelDashboard() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT[sport]);
+    return () => {
+      root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT.all);
+    };
+  }, [sport]);
 
   // Derived
   const liveCount = useMemo(() => games.filter((g) => g.status === 'live').length, [games]);
@@ -164,6 +176,7 @@ export default function IntelDashboard() {
               ) : undefined
             }
           />
+          <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
         </main>
 
         <IntelSidebar>

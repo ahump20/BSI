@@ -11,6 +11,9 @@ interface GameCardMarqueeProps {
 export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
   const accent = SPORT_ACCENT[game.sport];
   const isLive = game.status === 'live';
+  const isFinal = game.status === 'final';
+  const awayWinning = (isLive || isFinal) && game.away.score > game.home.score;
+  const homeWinning = (isLive || isFinal) && game.home.score > game.away.score;
 
   return (
     <button
@@ -45,19 +48,35 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
 
       {/* Teams + scores */}
       <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[12px] text-white/80 truncate flex-1">
-            {game.away.abbreviation || game.away.name}
-          </span>
-          <span className="font-mono text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {game.away.logo && (
+              <img src={game.away.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
+            )}
+            <span className="font-mono text-[12px] text-white/80 truncate">
+              {game.away.rank ? `#${game.away.rank} ` : ''}{game.away.abbreviation || game.away.name}
+            </span>
+          </div>
+          <span
+            className="font-mono text-sm font-bold tabular-nums shrink-0"
+            style={{ color: awayWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+          >
             {game.away.score}
           </span>
         </div>
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[12px] text-white/80 truncate flex-1">
-            {game.home.abbreviation || game.home.name}
-          </span>
-          <span className="font-mono text-sm font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {game.home.logo && (
+              <img src={game.home.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
+            )}
+            <span className="font-mono text-[12px] text-white/80 truncate">
+              {game.home.rank ? `#${game.home.rank} ` : ''}{game.home.abbreviation || game.home.name}
+            </span>
+          </div>
+          <span
+            className="font-mono text-sm font-bold tabular-nums shrink-0"
+            style={{ color: homeWinning ? accent : 'var(--bsi-gold, #FDB913)' }}
+          >
             {game.home.score}
           </span>
         </div>

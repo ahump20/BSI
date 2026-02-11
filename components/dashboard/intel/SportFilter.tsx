@@ -17,7 +17,6 @@ export function SportFilter({ value, onChange, className }: SportFilterProps) {
     <div className={clsx('flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 mb-6', className)}>
       {SPORTS.map((s) => {
         const active = value === s;
-        const accent = SPORT_ACCENT[s];
         return (
           <button
             key={s}
@@ -29,9 +28,9 @@ export function SportFilter({ value, onChange, className }: SportFilterProps) {
             style={
               active
                 ? {
-                    color: accent,
-                    borderColor: `color-mix(in srgb, ${accent} 30%, transparent)`,
-                    background: `color-mix(in srgb, ${accent} 10%, transparent)`,
+                    color: `var(--bsi-intel-accent, ${SPORT_ACCENT[s]})`,
+                    borderColor: `color-mix(in srgb, var(--bsi-intel-accent, ${SPORT_ACCENT[s]}) 30%, transparent)`,
+                    background: `color-mix(in srgb, var(--bsi-intel-accent, ${SPORT_ACCENT[s]}) 10%, transparent)`,
                   }
                 : undefined
             }

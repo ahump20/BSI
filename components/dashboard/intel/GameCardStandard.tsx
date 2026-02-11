@@ -12,6 +12,8 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
   const accent = SPORT_ACCENT[game.sport];
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
+  const awayWinning = (isLive || isFinal) && game.away.score > game.home.score;
+  const homeWinning = (isLive || isFinal) && game.home.score > game.away.score;
 
   return (
     <button
@@ -22,19 +24,35 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
       <div className="flex items-center justify-between gap-3">
         {/* Teams + Scores */}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[12px] text-white/80 truncate">
-              {game.away.abbreviation || game.away.name}
-            </span>
-            <span className="font-mono text-sm font-semibold text-white tabular-nums">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {game.away.logo && (
+                <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+              )}
+              <span className="font-mono text-[12px] text-white/80 truncate">
+                {game.away.abbreviation || game.away.name}
+              </span>
+            </div>
+            <span
+              className="font-mono text-sm font-semibold tabular-nums shrink-0"
+              style={{ color: awayWinning ? accent : 'white' }}
+            >
               {game.away.score}
             </span>
           </div>
-          <div className="flex items-center justify-between mt-0.5">
-            <span className="font-mono text-[12px] text-white/80 truncate">
-              {game.home.abbreviation || game.home.name}
-            </span>
-            <span className="font-mono text-sm font-semibold text-white tabular-nums">
+          <div className="flex items-center justify-between gap-2 mt-0.5">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {game.home.logo && (
+                <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+              )}
+              <span className="font-mono text-[12px] text-white/80 truncate">
+                {game.home.abbreviation || game.home.name}
+              </span>
+            </div>
+            <span
+              className="font-mono text-sm font-semibold tabular-nums shrink-0"
+              style={{ color: homeWinning ? accent : 'white' }}
+            >
               {game.home.score}
             </span>
           </div>
