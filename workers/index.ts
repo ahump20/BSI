@@ -198,6 +198,7 @@ const CACHE_TTL: Record<string, number> = {
   games: 60,
   schedule: 300,    // 5 min
   trending: 300,
+  news: 300,
 };
 
 async function kvGet<T>(kv: KVNamespace, key: string): Promise<T | null> {
@@ -1024,6 +1025,54 @@ async function handleCFBTransferPortal(env: Env): Promise<Response> {
     }
   }
   return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
+}
+
+const ESPN_NEWS_ENDPOINTS: Record<'ncaafb' | 'cbb', string> = {
+  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/news',
+  cbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/news',
+};
+
+async function handleESPNNewsProxy(
+  sport: keyof typeof ESPN_NEWS_ENDPOINTS,
+  env: Env,
+): Promise<Response> {
+  const cacheKey = `espn:${sport}:news`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
+  try {
+    const upstream = await fetch(ESPN_NEWS_ENDPOINTS[sport], {
+      headers: {
+        // Improves compatibility with some upstream anti-bot layers.
+        'User-Agent': 'BlazeSportsIntel/1.0 (+https://blazesportsintel.com)',
+      },
+    });
+
+    if (!upstream.ok) {
+      return json(
+        { articles: [], meta: { error: `${upstream.status} ${upstream.statusText}`, dataSource: 'espn' } },
+        502,
+        { 'X-Cache': 'ERROR' },
+      );
+    }
+
+    const data = await upstream.json() as Record<string, unknown>;
+    const payload = {
+      articles: Array.isArray(data.articles) ? data.articles : [],
+      meta: {
+        lastUpdated: new Date().toISOString(),
+        dataSource: 'espn',
+      },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
+    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : 'Unknown ESPN proxy error';
+    await logError(env.KV, detail, `espn-news:${sport}`);
+    return json({ articles: [], meta: { error: detail, dataSource: 'espn' } }, 502, { 'X-Cache': 'ERROR' });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -2162,6 +2211,12 @@ export default {
       // CFB Transfer Portal
       if (pathname === '/api/cfb/transfer-portal') {
         return handleCFBTransferPortal(env);
+      }
+      if (pathname === '/api/ncaafb/news') {
+        return handleESPNNewsProxy('ncaafb', env);
+      }
+      if (pathname === '/api/cbb/news') {
+        return handleESPNNewsProxy('cbb', env);
       }
 
       const teamMatch = matchRoute(pathname, '/api/college-baseball/teams/:teamId');

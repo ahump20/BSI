@@ -12,7 +12,6 @@ import type {
   CommandPaletteItem,
   NewsItem,
 } from './types';
-import { ESPN_NEWS_MAP } from './types';
 import { SIGNAL_TYPES_BY_MODE } from './sample-data';
 
 // ─── Clock ──────────────────────────────────────────────────────────────────
@@ -77,6 +76,17 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
   const base = sportApiBase(sport);
   return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
+}
+
+function newsEndpoint(sport: Exclude<IntelSport, 'all'>): string {
+  const map: Record<typeof sport, string> = {
+    mlb: '/api/mlb/news',
+    nfl: '/api/nfl/news',
+    nba: '/api/nba/news',
+    ncaafb: '/api/ncaafb/news',
+    cbb: '/api/cbb/news',
+  };
+  return map[sport];
 }
 
 async function fetchJson<T = unknown>(url: string): Promise<T> {
@@ -408,23 +418,61 @@ function normalizeNews(
   payloads: Array<{ sport: Exclude<IntelSport, 'all'>; data: Record<string, unknown> }>,
 ): NewsItem[] {
   const allArticles = payloads.flatMap(({ sport, data }) => {
-    const items = asArray(dig(data, 'articles', 'news')).map((a) => asObject(a)).filter((a): a is Record<string, unknown> => a !== null);
+    const items = asArray(dig(data, 'articles', 'news', 'headlines'))
+      .map((a) => asObject(a))
+      .filter((a): a is Record<string, unknown> => a !== null);
+
     return items.map((a, i) => {
-      const images = asArray(a.images).map((img) => asObject(img)).filter((img): img is Record<string, unknown> => img !== null);
-      const published = String(a.published || a.lastModified || '');
+      const images = asArray(a.images)
+        .map((img) => asObject(img))
+        .filter((img): img is Record<string, unknown> => img !== null);
+      const image = String(
+        dig(
+          a,
+          'images.0.url',
+          'images.0.href',
+          'image',
+          'imageUrl',
+          'thumbnail',
+        ) || '',
+      ).trim();
+      const published = String(
+        dig(
+          a,
+          'published',
+          'publishedAt',
+          'lastModified',
+          'createdAt',
+          'date',
+        ) || '',
+      ).trim();
+      const link = String(
+        dig(a, 'links.web.href', 'links.mobile.href', 'link', 'url') || '',
+      ).trim();
+      const headline = String(dig(a, 'headline', 'title', 'newsTitle') || '').trim();
+      const description = String(
+        dig(a, 'description', 'summary', 'subheadline', 'subtitle') || '',
+      ).trim();
+
       return {
-        id: `${sport}-${String(a.id ?? i)}`,
-        headline: String(a.headline || ''),
-        description: String(a.description || ''),
-        link: String(dig(a, 'links.web.href', 'links.mobile.href', 'link') || '#'),
-        image: images[0] ? String(images[0].url || images[0].href || '') || undefined : undefined,
+        id: `${sport}-${String(dig(a, 'id', 'guid', 'uuid') || link || i)}`,
+        headline,
+        description: description || undefined,
+        link,
+        image: image || (images[0] ? String(images[0].url || images[0].href || '').trim() || undefined : undefined),
         published: published || undefined,
       };
     });
   });
 
+  const seenLinks = new Set<string>();
   return allArticles
     .filter((a) => a.headline && a.link)
+    .filter((a) => {
+      if (seenLinks.has(a.link)) return false;
+      seenLinks.add(a.link);
+      return true;
+    })
     .sort((a, b) => {
       const ta = a.published ? Date.parse(a.published) : 0;
       const tb = b.published ? Date.parse(b.published) : 0;
@@ -562,7 +610,14 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        const result = scoreQueryResults[index];
+        return {
+          sport: s,
+          data: result?.data as Record<string, unknown> | undefined,
+          isLoading: result?.isLoading ?? false,
+          isFetching: result?.isFetching ?? false,
+          isError: result?.isError ?? false,
+        };
       }),
     [sportsToFetch, scoreQueryResults],
   );
@@ -637,7 +692,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     queryFn: async () => Promise.all(
       newsSports.map(async (s) => {
         try {
-          const data = await fetchJson<Record<string, unknown>>(ESPN_NEWS_MAP[s]);
+          const data = await fetchJson<Record<string, unknown>>(newsEndpoint(s));
           return { sport: s, data };
         } catch {
           return { sport: s, data: { articles: [] } as Record<string, unknown> };
