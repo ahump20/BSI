@@ -67,7 +67,7 @@ class DataCache {
         timestamp: Date.now(),
       });
     } catch (error) {
-      console.error(`Cache revalidation failed for ${key}:`, error);
+      // handled by UI state
     }
   }
 

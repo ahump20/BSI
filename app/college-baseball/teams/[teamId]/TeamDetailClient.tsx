@@ -109,7 +109,6 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         const data = (await response.json()) as TeamApiResponse;
         setTeam(data.team || (data as unknown as Team));
       } catch (err) {
-        console.error('Error loading team:', err);
         setError(err instanceof Error ? err.message : 'Failed to load team');
       } finally {
         setLoading(false);

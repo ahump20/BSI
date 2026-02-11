@@ -125,7 +125,6 @@ export default function CollegeBaseballRankingsPage() {
       const transformed = transformESPNRankings(data);
       setRankings(transformed);
     } catch (err) {
-      console.error('Error loading rankings:', err);
       setError(err instanceof Error ? err.message : 'Failed to load rankings');
     } finally {
       setLoading(false);

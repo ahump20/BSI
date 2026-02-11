@@ -12,7 +12,6 @@ async function loadJSON<T>(path: string): Promise<T> {
     }
     return await response.json();
   } catch (error) {
-    console.error(`Error loading file ${path}:`, error);
     throw error;
   }
 }
@@ -48,8 +47,8 @@ export async function preloadStaticData(): Promise<void> {
       loadJSON('teams/nba.json'),
       loadJSON('portfolio.json'),
     ]);
-    console.log('Static data preloaded successfully');
+    // preload complete
   } catch (error) {
-    console.warn('Failed to preload some static data:', error);
+    // handled by UI state
   }
 }

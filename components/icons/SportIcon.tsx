@@ -45,7 +45,7 @@ function GraduationCapIcon({ className }: { className?: string }) {
   );
 }
 
-const ICONS: Record<SportKey, (props: { className?: string }) => JSX.Element> = {
+const ICONS: Record<SportKey, (props: { className?: string }) => React.JSX.Element> = {
   mlb: BaseballIcon,
   nfl: FootballIcon,
   nba: BasketballIcon,

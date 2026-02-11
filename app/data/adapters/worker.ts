@@ -226,7 +226,6 @@ export async function getBatchData<T extends Record<string, () => Promise<any>>>
     if (result.status === 'fulfilled') {
       data[key] = result.value;
     } else {
-      console.error(`Batch request failed for ${key}:`, result.reason);
       data[key] = null;
     }
   });

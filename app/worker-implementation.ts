@@ -258,7 +258,6 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
           )
           .run();
       } catch (dbError) {
-        console.error('Database error:', dbError);
         // Continue even if DB fails - we can still send to other services
       }
     }
@@ -286,7 +285,6 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
       }
     );
   } catch (error) {
-    console.error('Lead processing error:', error);
     return new Response(JSON.stringify({ error: 'Failed to process lead' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -371,7 +369,6 @@ export default {
         // Handle client messages
         server.addEventListener('message', (event) => {
           const data = JSON.parse(event.data as string);
-          console.log('Received:', data);
         });
 
         return new Response(null, {
@@ -383,7 +380,6 @@ export default {
 
       return new Response('Not Found', { status: 404, headers });
     } catch (error: any) {
-      console.error('Worker error:', error);
       return new Response(
         JSON.stringify({
           error: error.message || 'Internal Server Error',

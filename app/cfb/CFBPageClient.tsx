@@ -10,83 +10,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { CFBGamesList, CFBArticleList } from '@/components/cfb';
 
-const plannedFeatures = [
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    ),
-    title: 'Live Scores',
-    description:
-      'Real-time scores and game updates for all FBS teams. Quarter-by-quarter scoring during game days.',
-    status: 'Coming Soon',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-        <line x1="3" y1="9" x2="21" y2="9" />
-        <line x1="9" y1="21" x2="9" y2="9" />
-      </svg>
-    ),
-    title: 'Conference Standings',
-    description:
-      'Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences with win percentage and conference records.',
-    status: 'Coming Soon',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-      </svg>
-    ),
-    title: 'AP Top 25 Rankings',
-    description:
-      'Weekly AP Poll and Coaches Poll rankings updated throughout the season with movement tracking.',
-    status: 'Coming Soon',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    title: 'Team Profiles',
-    description:
-      'Rosters, schedules, and statistics for all 134 FBS teams across Power 4 and Group of 5 conferences.',
-    status: 'Coming Soon',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
-      </svg>
-    ),
-    title: 'Advanced Analytics',
-    description:
-      'SP+ ratings, EPA metrics, and advanced statistics for teams and players across all FBS programs.',
-    status: 'Coming Soon',
-  },
-  {
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
-    title: 'Playoff Projections',
-    description:
-      'College Football Playoff predictions and bracket projections based on current standings and remaining schedules.',
-    status: 'Coming Soon',
-  },
-];
 
 const conferences = [
   { name: 'SEC', teams: 16, description: 'Southeastern Conference' },
@@ -276,41 +199,77 @@ export default function CFBPageClient() {
           </Container>
         </Section>
 
-        {/* Features Coming Soon Section */}
+        {/* Live Data Section */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
             <ScrollReveal>
               <div className="text-center mb-12">
-                <span className="kicker">In Development</span>
+                <span className="kicker">Live Coverage</span>
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display mt-2">
-                  Planned <span className="text-gradient-blaze">Features</span>
+                  CFB <span className="text-gradient-blaze">Data Hub</span>
                 </h2>
                 <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
-                  College football coverage is under active development. Here&apos;s what we&apos;re
-                  building.
+                  Live scores, conference standings, and rankings powered by ESPN.
                 </p>
               </div>
             </ScrollReveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {plannedFeatures.map((feature, index) => (
-                <ScrollReveal key={feature.title} delay={index * 100}>
-                  <Card variant="default" padding="lg" className="h-full relative overflow-hidden">
+              <ScrollReveal delay={0}>
+                <Link href="/cfb/scores">
+                  <Card variant="hover" padding="lg" className="h-full">
                     <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
-                      {feature.icon}
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
                     </div>
-
-                    <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
+                    <h3 className="text-lg font-semibold text-white mb-3">Live Scores</h3>
                     <p className="text-text-tertiary text-sm leading-relaxed mb-4">
-                      {feature.description}
+                      Real-time scores and game updates for all FBS teams.
                     </p>
-
                     <div className="flex items-center pt-4 border-t border-border-subtle">
-                      <Badge variant="warning">{feature.status}</Badge>
+                      <Badge variant="success">Live</Badge>
                     </div>
                   </Card>
-                </ScrollReveal>
-              ))}
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={100}>
+                <Link href="/cfb/standings">
+                  <Card variant="hover" padding="lg" className="h-full">
+                    <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="9" y1="21" x2="9" y2="9" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-3">Conference Standings</h3>
+                    <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                      Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences.
+                    </p>
+                    <div className="flex items-center pt-4 border-t border-border-subtle">
+                      <Badge variant="success">Live</Badge>
+                    </div>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={200}>
+                <Card variant="default" padding="lg" className="h-full">
+                  <div className="w-12 h-12 mb-5 bg-burnt-orange/15 rounded-xl flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-3">Rankings & Analytics</h3>
+                  <p className="text-text-tertiary text-sm leading-relaxed mb-4">
+                    AP Top 25, playoff projections, and advanced analytics coming soon.
+                  </p>
+                  <div className="flex items-center pt-4 border-t border-border-subtle">
+                    <Badge variant="warning">Coming Soon</Badge>
+                  </div>
+                </Card>
+              </ScrollReveal>
             </div>
           </Container>
         </Section>

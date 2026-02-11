@@ -570,7 +570,7 @@ export default function VisionAIIntelligencePage() {
           setMicPermission('prompt');
         }
       } catch (err) {
-        console.warn('Permission check failed:', err);
+        // handled by UI state
       }
     };
 
@@ -586,7 +586,7 @@ export default function VisionAIIntelligencePage() {
         const sessions = await loadSessions();
         setRecordedSessions(sessions.sort((a, b) => b.createdAt - a.createdAt));
       } catch (err) {
-        console.warn('Failed to load sessions:', err);
+        // handled by UI state
       }
     };
 
@@ -608,7 +608,7 @@ export default function VisionAIIntelligencePage() {
           }
         }
       } catch (err) {
-        console.warn('Failed to load baseline from API:', err);
+        // handled by UI state
       }
     };
 
@@ -670,7 +670,6 @@ export default function VisionAIIntelligencePage() {
         setStatus('Ready');
         addLog('System', 'MoveNet model loaded successfully');
       } catch (err) {
-        console.error('Model load error:', err);
         setStatus('Model load failed - using simulated data');
         setModelLoaded(false);
         addLog('Error', 'Model failed to load. Using simulated signals.');
@@ -728,7 +727,6 @@ export default function VisionAIIntelligencePage() {
         setRecordedSessions((prev) => [session, ...prev]);
         addLog('Recording', `Session saved with ${frameCountRef.current} frames`);
       } catch (err) {
-        console.error('Failed to save session:', err);
         addLog('Error', 'Failed to save recording');
       }
     }
@@ -754,7 +752,7 @@ export default function VisionAIIntelligencePage() {
       audioCtxRef.current = ctx;
       analyserRef.current = analyser;
     } catch (err) {
-      console.warn('Audio init failed:', err);
+      // handled by UI state
     }
   };
 
@@ -848,7 +846,6 @@ export default function VisionAIIntelligencePage() {
             name: Object.keys(KEYPOINTS).find((k) => KEYPOINTS[k] === i),
           }));
         } catch (err) {
-          console.warn('Inference error:', err);
           useSimulated = true;
         }
       }
@@ -1079,7 +1076,7 @@ export default function VisionAIIntelligencePage() {
           };
 
           // Save frame async (don't await to maintain performance)
-          saveFrame(frame).catch((err) => console.warn('Failed to save frame:', err));
+          saveFrame(frame).catch(() => {});
         }
 
         // Update chart data (every 10th frame)
@@ -1122,7 +1119,6 @@ export default function VisionAIIntelligencePage() {
       setStatus('Ready');
       addLog('System', 'Permissions granted');
     } catch (err) {
-      console.error('Permission request failed:', err);
       setCameraPermission('denied');
       setMicPermission('denied');
       setStatus('Permissions denied');
@@ -1188,7 +1184,6 @@ export default function VisionAIIntelligencePage() {
       runningRef.current = true;
       runLoop();
     } catch (err) {
-      console.error('Camera error:', err);
       setStatus('Camera access denied');
       addLog('Error', 'Camera permission denied');
       setCameraPermission('denied');
@@ -1231,7 +1226,6 @@ export default function VisionAIIntelligencePage() {
 
         addLog('Playback', `Loaded session with ${frames.length} frames`);
       } catch (err) {
-        console.error('Failed to load session:', err);
         addLog('Error', 'Failed to load recording');
       }
     },
@@ -1389,7 +1383,6 @@ export default function VisionAIIntelligencePage() {
         addLog('Error', `Failed to save baseline: ${error}`);
       }
     } catch (err) {
-      console.error('Failed to save baseline:', err);
       addLog('Error', 'Network error saving baseline');
     } finally {
       setSavingBaseline(false);

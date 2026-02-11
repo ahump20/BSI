@@ -27,9 +27,22 @@ export default function TransferPortalPage() {
   const perPage = 25;
 
   useEffect(() => {
-    // Portal data comes from KV via the PortalPoller DO
-    // For now, show empty state until data source is connected
-    setLoading(false);
+    async function fetchPortalEntries() {
+      try {
+        const res = await fetch('/api/college-baseball/transfer-portal');
+        if (res.ok) {
+          const data = await res.json() as { entries?: PortalEntry[] };
+          setEntries(data.entries || []);
+        }
+      } catch {
+        // Fall through to empty state
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPortalEntries();
+    const interval = setInterval(fetchPortalEntries, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   function relativeTime(dateStr: string): string {

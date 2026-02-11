@@ -64,7 +64,6 @@ export function CFBArticleClient() {
         const data: ArticleResponse = await response.json();
         setArticle(data.article);
       } catch (err) {
-        console.error('Error fetching article:', err);
         setError(err instanceof Error ? err.message : 'Failed to load article');
       } finally {
         setLoading(false);

@@ -167,7 +167,6 @@ function SearchContent() {
           throw new Error('Search failed');
         }
       } catch (err) {
-        console.error('Search error:', err);
         setError('Failed to fetch search results. Please try again.');
         setTeams([]);
       } finally {

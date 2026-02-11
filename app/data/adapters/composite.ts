@@ -38,7 +38,7 @@ class CompositeAdapter {
         return await source.adapter[method](...args);
       } catch (error) {
         lastError = error as Error;
-        console.warn(`Source failed for ${method}:`, error);
+        // source failed, try next
 
         if (!source.fallback) {
           throw error;

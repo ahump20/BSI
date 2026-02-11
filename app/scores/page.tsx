@@ -96,7 +96,7 @@ export default function ScoresHubPage() {
           );
           setTotalLive((prev) => prev + mlbLive);
         }
-      } catch (e) {
+      } catch {
         // Ignore errors, show default state
       }
 
@@ -121,7 +121,51 @@ export default function ScoresHubPage() {
           );
           setTotalLive((prev) => prev + cbLive);
         }
-      } catch (e) {
+      } catch {
+        // Ignore errors
+      }
+
+      // Fetch NFL game count
+      try {
+        const nflRes = await fetch('/api/nfl/scores');
+        if (nflRes.ok) {
+          const nflData = (await nflRes.json()) as { games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> };
+          const nflGames = nflData.games || [];
+          const nflLive = nflGames.filter((g) => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
+          const nflTotal = nflGames.length;
+
+          setSports((prev) =>
+            prev.map((s) =>
+              s.id === 'nfl'
+                ? { ...s, liveCount: nflLive, todayCount: nflTotal, isActive: nflTotal > 0 }
+                : s
+            )
+          );
+          setTotalLive((prev) => prev + nflLive);
+        }
+      } catch {
+        // Ignore errors
+      }
+
+      // Fetch NBA game count
+      try {
+        const nbaRes = await fetch('/api/nba/scoreboard');
+        if (nbaRes.ok) {
+          const nbaData = (await nbaRes.json()) as { games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> };
+          const nbaGames = nbaData.games || [];
+          const nbaLive = nbaGames.filter((g) => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
+          const nbaTotal = nbaGames.length;
+
+          setSports((prev) =>
+            prev.map((s) =>
+              s.id === 'nba'
+                ? { ...s, liveCount: nbaLive, todayCount: nbaTotal, isActive: nbaTotal > 0 }
+                : s
+            )
+          );
+          setTotalLive((prev) => prev + nbaLive);
+        }
+      } catch {
         // Ignore errors
       }
 

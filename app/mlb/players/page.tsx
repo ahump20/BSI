@@ -184,7 +184,6 @@ export default function MLBPlayersPage() {
       setMeta(data.meta);
       setPagination(data.pagination);
     } catch (err) {
-      console.error('Error loading players:', err);
       setError(err instanceof Error ? err.message : 'Failed to load players');
     } finally {
       setLoading(false);

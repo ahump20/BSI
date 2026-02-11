@@ -151,7 +151,6 @@ export default function CollegeBaseballPlayersPage() {
       const data = (await response.json()) as PlayersApiResponse;
       setPlayers(data.players || []);
     } catch (err) {
-      console.error('Error loading players:', err);
       setError(err instanceof Error ? err.message : 'Failed to load players');
     } finally {
       setLoading(false);

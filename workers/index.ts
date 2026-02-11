@@ -36,6 +36,8 @@ import {
   getGameSummary,
   getAthlete,
   getNews,
+  getLeaders,
+  getTeamSchedule,
   transformStandings,
   transformScoreboard,
   transformTeams,
@@ -1068,6 +1070,286 @@ async function handleNBANews(env: Env): Promise<Response> {
   const payload = transformNews(raw);
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
   return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+}
+
+// --- CFB (ESPN) ---
+
+async function handleCFBScores(url: URL, env: Env): Promise<Response> {
+  const date = toDateString(url.searchParams.get('date'));
+  const cacheKey = `cfb:scores:${date || 'today'}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, { 'X-Cache': 'HIT' });
+
+  const raw = await getScoreboard('cfb', date);
+  const payload = transformScoreboard(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+  return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });
+}
+
+async function handleCFBStandings(env: Env): Promise<Response> {
+  const cacheKey = 'cfb:standings';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  const raw = await getStandings('cfb');
+  const payload = transformStandings(raw, 'cfb');
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+}
+
+async function handleCFBNews(env: Env): Promise<Response> {
+  const cacheKey = 'cfb:news';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
+  const raw = await getNews('cfb');
+  const payload = transformNews(raw);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+  return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+}
+
+// --- CFB Articles (from D1) ---
+
+async function handleCFBArticle(slug: string, env: Env): Promise<Response> {
+  const cacheKey = `cfb:article:${slug}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
+  try {
+    const row = await env.DB.prepare(
+      `SELECT * FROM articles WHERE slug = ? AND sport = 'college-football' LIMIT 1`
+    ).bind(slug).first();
+
+    if (!row) {
+      return json({ error: 'Article not found' }, 404);
+    }
+
+    const payload = {
+      article: row,
+      meta: { source: 'BSI D1', timezone: 'America/Chicago' },
+    };
+    await kvPut(env.KV, cacheKey, payload, 900);
+    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+  } catch {
+    return json({ error: 'Article not found' }, 404);
+  }
+}
+
+async function handleCFBArticlesList(url: URL, env: Env): Promise<Response> {
+  const type = url.searchParams.get('type') || 'all';
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);
+  const cacheKey = `cfb:articles:${type}:${limit}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
+  try {
+    const whereClause = type !== 'all'
+      ? `WHERE sport = 'college-football' AND article_type = ?`
+      : `WHERE sport = 'college-football'`;
+    const bindings = type !== 'all' ? [type, limit] : [limit];
+
+    const { results } = await env.DB.prepare(
+      `SELECT id, article_type, title, slug, summary, home_team_name, away_team_name,
+              game_date, conference, published_at
+       FROM articles ${whereClause}
+       ORDER BY published_at DESC LIMIT ?`
+    ).bind(...bindings).all();
+
+    const payload = { articles: results || [], meta: { source: 'BSI D1' } };
+    await kvPut(env.KV, cacheKey, payload, 300);
+    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+  } catch {
+    return json({ articles: [], meta: { source: 'BSI D1' } }, 200);
+  }
+}
+
+// --- NBA team detail with schedule ---
+
+async function handleNBATeamFull(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `nba:team-full:${teamId}`;
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+
+  const [teamRaw, rosterRaw, scheduleRaw] = await Promise.all([
+    getTeamDetail('nba', teamId),
+    getTeamRoster('nba', teamId),
+    getTeamSchedule('nba', teamId),
+  ]);
+
+  const { team, roster } = transformTeamDetail(teamRaw, rosterRaw);
+
+  // Extract schedule events
+  const events = (scheduleRaw as any)?.events || [];
+  const schedule = events.map((e: any) => ({
+    id: e.id,
+    date: e.date,
+    name: e.name || '',
+    shortName: e.shortName || '',
+    competitions: e.competitions?.map((c: any) => ({
+      competitors: c.competitors?.map((comp: any) => ({
+        id: comp.id,
+        homeAway: comp.homeAway,
+        team: {
+          id: comp.team?.id,
+          displayName: comp.team?.displayName || '',
+          abbreviation: comp.team?.abbreviation || '',
+          logo: comp.team?.logo || comp.team?.logos?.[0]?.href || '',
+        },
+        score: comp.score?.displayValue || comp.score,
+        winner: comp.winner,
+      })) || [],
+      status: c.status || {},
+    })) || [],
+  }));
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    team: {
+      ...team,
+      record: {
+        overall: team.record || '',
+        wins: 0,
+        losses: 0,
+        winPercent: 0,
+        home: '-',
+        away: '-',
+      },
+    },
+    roster,
+    schedule,
+    meta: {
+      dataSource: 'espn',
+      lastUpdated: new Date().toISOString(),
+      season: '2024-25',
+    },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+  return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
+}
+
+// --- NFL Players/Leaders ---
+
+async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
+  const teamId = url.searchParams.get('teamId');
+
+  if (teamId) {
+    // Single team roster
+    const cacheKey = `nfl:roster:${teamId}`;
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
+
+    const [teamRaw, rosterRaw] = await Promise.all([
+      getTeamDetail('nfl', teamId),
+      getTeamRoster('nfl', teamId),
+    ]);
+
+    const { team, roster } = transformTeamDetail(teamRaw, rosterRaw);
+    const payload = {
+      timestamp: new Date().toISOString(),
+      team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: team.logos?.[0]?.href },
+      players: roster.map((p: any) => ({
+        ...p,
+        team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: team.logos?.[0]?.href },
+      })),
+      meta: { dataSource: 'espn', lastUpdated: new Date().toISOString(), totalPlayers: roster.length },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+    return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
+  }
+
+  // All players — aggregate a few popular teams
+  const cacheKey = 'nfl:players:all';
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
+
+  const popularTeamIds = ['12', '6', '21', '8', '34', '25', '2', '33']; // KC, DAL, PHI, DET, HOU, SF, BUF, BAL
+  const allPlayers: any[] = [];
+
+  const results = await Promise.allSettled(
+    popularTeamIds.map(async (id) => {
+      const [teamRaw, rosterRaw] = await Promise.all([
+        getTeamDetail('nfl', id),
+        getTeamRoster('nfl', id),
+      ]);
+      return transformTeamDetail(teamRaw, rosterRaw);
+    })
+  );
+
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      const { team, roster } = result.value;
+      for (const p of roster) {
+        allPlayers.push({
+          ...p,
+          team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: team.logos?.[0]?.href },
+        });
+      }
+    }
+  }
+
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '200'), 500);
+  const payload = {
+    timestamp: new Date().toISOString(),
+    players: allPlayers.slice(0, limit),
+    meta: { dataSource: 'espn', lastUpdated: new Date().toISOString(), totalPlayers: allPlayers.length },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+  return cachedJson(payload, 200, HTTP_CACHE.player, { 'X-Cache': 'MISS' });
+}
+
+async function handleNFLLeaders(env: Env): Promise<Response> {
+  const cacheKey = 'nfl:leaders';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  const raw = await getLeaders('nfl') as any;
+
+  const categories = (raw?.leaders || []).map((cat: any) => ({
+    name: cat.name || cat.displayName || '',
+    abbreviation: cat.abbreviation || '',
+    leaders: (cat.leaders || []).slice(0, 10).map((leader: any) => ({
+      name: leader.athlete?.displayName || '',
+      id: leader.athlete?.id,
+      team: leader.athlete?.team?.abbreviation || '',
+      teamId: leader.athlete?.team?.id,
+      headshot: leader.athlete?.headshot?.href || '',
+      value: leader.displayValue || leader.value || '',
+      stat: cat.abbreviation || cat.name || '',
+    })),
+  }));
+
+  const payload = {
+    categories,
+    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+  };
+
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+}
+
+// --- College Baseball Transfer Portal ---
+
+async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> {
+  const raw = await env.KV.get('portal:college-baseball:entries', 'text');
+  if (raw) {
+    try {
+      const data = JSON.parse(raw);
+      return cachedJson(data, 200, HTTP_CACHE.trending);
+    } catch {
+      // Corrupt KV entry — fall through
+    }
+  }
+  return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
 }
 
 // ---------------------------------------------------------------------------
@@ -2185,6 +2467,35 @@ export default {
         return handleCFBTransferPortal(env);
       }
 
+      // ----- CFB data routes (ESPN) -----
+      if (pathname === '/api/ncaa/scores' && url.searchParams.get('sport') === 'football') {
+        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
+      }
+      if (pathname === '/api/ncaa/standings' && url.searchParams.get('sport') === 'football') {
+        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
+      }
+      if (pathname === '/api/cfb/scores') {
+        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
+      }
+      if (pathname === '/api/cfb/standings') {
+        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
+      }
+      if (pathname === '/api/cfb/news') {
+        return safeESPN(() => handleCFBNews(env), 'articles', [], env);
+      }
+
+      // CFB Articles (D1)
+      if (pathname === '/api/college-football/articles') {
+        return handleCFBArticlesList(url, env);
+      }
+      const cfbArticleMatch = matchRoute(pathname, '/api/college-football/articles/:slug');
+      if (cfbArticleMatch) return handleCFBArticle(cfbArticleMatch.params.slug, env);
+
+      // College Baseball Transfer Portal
+      if (pathname === '/api/college-baseball/transfer-portal') {
+        return handleCollegeBaseballTransferPortal(env);
+      }
+
       const teamMatch = matchRoute(pathname, '/api/college-baseball/teams/:teamId');
       if (teamMatch) return handleCollegeBaseballTeam(teamMatch.params.teamId, env);
 
@@ -2225,6 +2536,10 @@ export default {
         return safeESPN(() => handleNFLNews(env), 'articles', [], env);
       if (pathname === '/api/nfl/teams')
         return safeESPN(() => handleNFLTeamsList(env), 'teams', [], env);
+      if (pathname === '/api/nfl/players')
+        return safeESPN(() => handleNFLPlayers(url, env), 'players', [], env);
+      if (pathname === '/api/nfl/leaders')
+        return safeESPN(() => handleNFLLeaders(env), 'categories', [], env);
 
       const nflGameMatch = matchRoute(pathname, '/api/nfl/game/:gameId');
       if (nflGameMatch)
@@ -2259,7 +2574,7 @@ export default {
 
       const nbaTeamMatch = matchRoute(pathname, '/api/nba/teams/:teamId');
       if (nbaTeamMatch)
-        return safeESPN(() => handleNBATeam(nbaTeamMatch.params.teamId, env), 'team', null, env);
+        return safeESPN(() => handleNBATeamFull(nbaTeamMatch.params.teamId, env), 'team', null, env);
 
       // ----- R2 Game assets -----
       const assetPath = matchWildcardRoute(pathname, '/api/games/assets/');

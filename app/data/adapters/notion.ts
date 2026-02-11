@@ -159,7 +159,7 @@ class NotionAdapter {
         return data;
       }
     } catch (error) {
-      console.error('Failed to parse cached portfolio:', error);
+      // invalid cache, will re-fetch
     }
 
     return null;
@@ -180,7 +180,7 @@ export async function getPortfolio(): Promise<PortfolioItem[]> {
     const portfolio = await notion.getPortfolio();
     return schema.portfolio(portfolio);
   } catch (error) {
-    console.error('Failed to fetch portfolio from Notion:', error);
+    // Notion fetch failed, falling back to static file
 
     // Final fallback to static file
     const response = await fetch('/data/portfolio-fallback.json');

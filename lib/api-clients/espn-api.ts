@@ -7,12 +7,13 @@
  * Base: https://site.api.espn.com/apis/site/v2/sports/{category}/{league}
  */
 
-export type ESPNSport = 'mlb' | 'nfl' | 'nba';
+export type ESPNSport = 'mlb' | 'nfl' | 'nba' | 'cfb';
 
 const SPORT_PATHS: Record<ESPNSport, string> = {
   mlb: 'baseball/mlb',
   nfl: 'football/nfl',
   nba: 'basketball/nba',
+  cfb: 'football/college-football',
 };
 
 const BASE = 'https://site.api.espn.com/apis/site/v2/sports';
@@ -139,6 +140,23 @@ export async function getAthlete(
 export async function getNews(sport: ESPNSport): Promise<unknown> {
   const sportPath = SPORT_PATHS[sport];
   return espnFetch(`${sportPath}/news`);
+}
+
+// ---------------------------------------------------------------------------
+// Leaders / Season stats
+// ---------------------------------------------------------------------------
+
+export async function getLeaders(sport: ESPNSport): Promise<unknown> {
+  const sportPath = SPORT_PATHS[sport];
+  return espnFetch(`${sportPath}/leaders`);
+}
+
+export async function getTeamSchedule(
+  sport: ESPNSport,
+  teamId: string,
+): Promise<unknown> {
+  const sportPath = SPORT_PATHS[sport];
+  return espnFetch(`${sportPath}/teams/${teamId}/schedule`);
 }
 
 // ---------------------------------------------------------------------------
@@ -272,6 +290,23 @@ export function transformStandings(
           away: stat('Road') || stat('road') || '-',
           last10: stat('Last Ten Games') || stat('L10') || '-',
         });
+      } else if (sport === 'cfb') {
+        // CFB — conference comes from the group name
+        standings.push({
+          name: teamData.displayName || teamData.name || 'Unknown',
+          abbreviation: abbr,
+          id: teamData.id,
+          logo: teamData.logos?.[0]?.href,
+          wins,
+          losses,
+          pct: winPct,
+          pf: Number(stat('pointsFor')) || 0,
+          pa: Number(stat('pointsAgainst')) || 0,
+          diff: (Number(stat('pointsFor')) || 0) - (Number(stat('pointsAgainst')) || 0),
+          streak: stat('streak') || '-',
+          confRecord: stat('conferenceRecord') || stat('Conference') || '-',
+          conference: leagueName || 'FBS',
+        });
       } else {
         // NFL — collect flat, then group below
         const div = NFL_DIVISIONS[abbr] || {
@@ -320,6 +355,23 @@ export function transformStandings(
           teams: teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct),
         })),
     }));
+    return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+  }
+
+  // CFB: group by conference like NFL
+  if (sport === 'cfb') {
+    const confMap: Record<string, any[]> = {};
+    for (const team of standings) {
+      const conf = team.conference || 'Independent';
+      if (!confMap[conf]) confMap[conf] = [];
+      confMap[conf].push(team);
+    }
+    const nested = Object.entries(confMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([confName, teams]) => ({
+        name: confName,
+        teams: teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct),
+      }));
     return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
   }
 
