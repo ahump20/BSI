@@ -36,7 +36,22 @@ function normalizeGames(sport: string, data: Record<string, unknown>): GameScore
   const scoreboard = data.scoreboard as Record<string, unknown> | undefined;
   const rawGames = (data.games || scoreboard?.games || []) as Record<string, unknown>[];
   return rawGames.map((g: Record<string, unknown>, i: number) => {
-    const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
+    // ESPN returns teams as array with homeAway field, or as { home, away } object
+    const rawTeams = g.teams as Record<string, unknown>[] | Record<string, Record<string, unknown>> | undefined;
+    let homeEntry: Record<string, unknown> | undefined;
+    let awayEntry: Record<string, unknown> | undefined;
+
+    if (Array.isArray(rawTeams)) {
+      homeEntry = rawTeams.find((t) => t.homeAway === 'home');
+      awayEntry = rawTeams.find((t) => t.homeAway === 'away');
+    } else if (rawTeams) {
+      homeEntry = rawTeams.home as Record<string, unknown> | undefined;
+      awayEntry = rawTeams.away as Record<string, unknown> | undefined;
+    }
+
+    const homeTeam = (homeEntry?.team as Record<string, unknown>) || homeEntry || {};
+    const awayTeam = (awayEntry?.team as Record<string, unknown>) || awayEntry || {};
+
     const status = g.status as Record<string, unknown> | string | undefined;
     const statusType =
       typeof status === 'object' ? (status?.type as Record<string, unknown> | undefined) : undefined;
@@ -57,19 +72,19 @@ function normalizeGames(sport: string, data: Record<string, unknown>): GameScore
         : (status as string) || 'Scheduled';
 
     const startTime =
-      typeof status === 'object' ? (status?.startTime as string) || (status?.shortDetail as string) : undefined;
+      typeof status === 'object' ? (status?.startTime as string) || (statusType?.shortDetail as string) : undefined;
 
     return {
       id: (g.id as string | number) || i,
       away: {
-        name: (teams?.away?.name as string) || ((g.awayTeam as Record<string, unknown>)?.name as string) || 'Away',
-        abbreviation: (teams?.away?.abbreviation as string) || '',
-        score: Number(teams?.away?.score ?? (g.awayTeam as Record<string, unknown>)?.score ?? 0),
+        name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
+        abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
+        score: Number(awayEntry?.score ?? 0),
       },
       home: {
-        name: (teams?.home?.name as string) || ((g.homeTeam as Record<string, unknown>)?.name as string) || 'Home',
-        abbreviation: (teams?.home?.abbreviation as string) || '',
-        score: Number(teams?.home?.score ?? (g.homeTeam as Record<string, unknown>)?.score ?? 0),
+        name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
+        abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
+        score: Number(homeEntry?.score ?? 0),
       },
       status: statusText,
       isLive: Boolean(isLive),
