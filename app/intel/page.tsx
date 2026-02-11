@@ -10,7 +10,7 @@ import { IntelSearch } from '@/components/dashboard/intel/IntelSearch';
 import { PrioritySignals } from '@/components/dashboard/intel/PrioritySignals';
 import { GameGrid } from '@/components/dashboard/intel/GameGrid';
 import { GameCardHero } from '@/components/dashboard/intel/GameCardHero';
-import { GameCardMarquee } from '@/components/dashboard/intel/GameCardMarquee';
+import { MarqueeCarousel } from '@/components/dashboard/intel/MarqueeCarousel';
 import { SignalFeed } from '@/components/dashboard/intel/SignalFeed';
 import { StandingsTable } from '@/components/dashboard/intel/StandingsTable';
 import { ModelHealth } from '@/components/dashboard/intel/ModelHealth';
@@ -169,11 +169,7 @@ export default function IntelDashboard() {
             heroCard={hero ? <GameCardHero game={hero} onClick={() => handleSelectGame(hero)} /> : undefined}
             marqueeCards={
               marquee.length > 0 ? (
-                <>
-                  {marquee.map((g) => (
-                    <GameCardMarquee key={g.id} game={g} onClick={() => handleSelectGame(g)} />
-                  ))}
-                </>
+                <MarqueeCarousel games={marquee} onSelectGame={handleSelectGame} />
               ) : undefined
             }
           />

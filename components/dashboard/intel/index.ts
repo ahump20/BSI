@@ -7,6 +7,7 @@ export { GameCardMarquee } from './GameCardMarquee';
 export { GameCardStandard } from './GameCardStandard';
 export { GameDetailSheet } from './GameDetailSheet';
 export { GameGrid } from './GameGrid';
+export { MarqueeCarousel } from './MarqueeCarousel';
 export { IntelHeader } from './IntelHeader';
 export { IntelSearch } from './IntelSearch';
 export { IntelSidebar } from './IntelSidebar';
