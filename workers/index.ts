@@ -1832,9 +1832,9 @@ async function handleModelHealth(env: Env): Promise<Response> {
   try {
     const result = await env.DB
       .prepare(
-        `SELECT week, accuracy, sport, recorded_at as recordedAt
+        `SELECT week, accuracy, sport, created_at as recordedAt
          FROM model_health
-         ORDER BY recorded_at DESC
+         ORDER BY created_at DESC
          LIMIT 12`
       )
       .all();

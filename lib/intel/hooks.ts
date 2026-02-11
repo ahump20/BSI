@@ -12,7 +12,7 @@ import type {
   CommandPaletteItem,
   NewsItem,
 } from './types';
-import { ESPN_NEWS_MAP } from './types';
+import { ESPN_NEWS_MAP, ESPN_SCORES_MAP, ESPN_STANDINGS_MAP } from './types';
 import { SIGNAL_TYPES_BY_MODE } from './sample-data';
 
 // ─── Clock ──────────────────────────────────────────────────────────────────
@@ -830,10 +830,17 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
   // Fetch scores with stable hook ordering for all supported sports.
+  // Tries local API proxy first, falls back to ESPN direct if unavailable.
   const scoreQueryResults = useQueries({
     queries: ACTIVE_SPORTS.map((s) => ({
       queryKey: ['intel-scores', s],
-      queryFn: () => fetchJson<Record<string, unknown>>(scoresEndpoint(s)),
+      queryFn: async () => {
+        try {
+          return await fetchJson<Record<string, unknown>>(scoresEndpoint(s));
+        } catch {
+          return fetchJson<Record<string, unknown>>(ESPN_SCORES_MAP[s]);
+        }
+      },
       refetchInterval: 30_000,
       enabled: sport === 'all' || sport === s,
     })),
@@ -859,7 +866,13 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const standingsSport = sport === 'all' ? 'nba' : sport;
   const standingsQuery = useQuery({
     queryKey: ['intel-standings', standingsSport],
-    queryFn: () => fetchJson<Record<string, unknown>>(`${sportApiBase(standingsSport)}/standings`),
+    queryFn: async () => {
+      try {
+        return await fetchJson<Record<string, unknown>>(`${sportApiBase(standingsSport)}/standings`);
+      } catch {
+        return fetchJson<Record<string, unknown>>(ESPN_STANDINGS_MAP[standingsSport]);
+      }
+    },
     refetchInterval: 60_000,
   });
 
@@ -868,7 +881,9 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     const allGames: IntelGame[] = [];
     for (const q of scoreQueries) {
       if (q.data) {
-        if (q.sport === 'd1bb') {
+        // College baseball: use Highlightly normalizer if data has that shape,
+        // otherwise fall through to ESPN normalizer (shared format).
+        if (q.sport === 'd1bb' && (q.data.data || q.data.matches)) {
           allGames.push(...normalizeCollegeBaseballGames(q.data));
         } else {
           allGames.push(...normalizeToIntelGames(q.sport, q.data));
@@ -889,8 +904,9 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   // Extract standings
   const standings = useMemo<StandingsTeam[]>(() => {
     if (!standingsQuery.data) return [];
-    if (standingsSport === 'd1bb') {
-      return normalizeCollegeBaseballStandings(standingsQuery.data).slice(0, 15);
+    // College baseball: use Highlightly normalizer if data has that shape
+    if (standingsSport === 'd1bb' && Array.isArray(standingsQuery.data)) {
+      return normalizeCollegeBaseballStandings(standingsQuery.data as unknown as Record<string, unknown>).slice(0, 15);
     }
     return normalizeStandings(standingsQuery.data).slice(0, 15);
   }, [standingsQuery.data, standingsSport]);

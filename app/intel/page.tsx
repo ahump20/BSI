@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import type { IntelGame, IntelMode, IntelSport } from '@/lib/intel/types';
+import type { IntelGame } from '@/lib/intel/types';
 import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
 import { useIntelPreferences } from '@/lib/intel/use-preferences';
 import { useOutcomeTracker } from '@/lib/intel/outcome-tracker';
@@ -21,7 +21,6 @@ import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
 import { SPORT_ACCENT } from '@/lib/intel/types';
-import { loadPrefs, savePrefs } from '@/lib/intel/user-prefs';
 
 // Code-split overlays — only loaded on interaction
 const GameDetailSheet = dynamic(
