@@ -1267,7 +1267,7 @@ async function handleMLBNews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
@@ -1380,7 +1380,7 @@ async function handleNFLNews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
@@ -1492,7 +1492,7 @@ async function handleNBANews(env: Env): Promise<Response> {
 
   if (result.success && result.data) {
     const payload = { articles: result.data.body, meta: { lastUpdated: result.timestamp } };
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.news);
     return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
   }
   return json({ articles: [], meta: { error: result.error } }, 502);
