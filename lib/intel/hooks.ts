@@ -584,8 +584,7 @@ function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
   }
 
   return normalized
-    .filter((t) => t.teamName && Number.isFinite(t.wins) && Number.isFinite(t.losses))
-    .slice(0, 20);
+    .filter((t) => t.teamName && Number.isFinite(t.wins) && Number.isFinite(t.losses));
 }
 
 function normalizeNews(
