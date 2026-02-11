@@ -16,25 +16,26 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
 
   return (
     <div
-      className="rounded-xl border p-3 mb-6"
+      className="intel-panel p-3"
       style={{
         borderColor: 'color-mix(in srgb, var(--bsi-ember, #FF6B35) 20%, transparent)',
-        background: 'color-mix(in srgb, var(--bsi-ember, #FF6B35) 5%, transparent)',
       }}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2">
+        <div className="intel-section-label">
           <Flame className="h-4 w-4" style={{ color: 'var(--bsi-ember, #FF6B35)' }} />
-          <span className="font-mono text-[12px] text-white">Priority signals</span>
-          <Badge variant="warning" className="text-[10px] font-mono">
+          Priority Signals
+          <Badge variant="warning" className="text-[10px]" style={{ fontFamily: 'var(--intel-mono)' }}>
             {signals.length}
           </Badge>
         </div>
-        <span className="hidden md:block font-mono text-[11px] text-white/30">
+        <span className="hidden md:block intel-caption">
           Click to pin
         </span>
       </div>
+
+      <hr className="intel-rule mb-3" />
 
       {/* Signal cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -45,13 +46,13 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
             <button
               key={s.id}
               onClick={() => onTogglePin(s.id)}
-              className="group rounded-lg border bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.06]"
+              className="group intel-panel-elevated p-3 text-left transition-all hover:bg-[var(--intel-bg-elevated)]"
               style={{ borderColor: `color-mix(in srgb, ${accent} 20%, transparent)` }}
             >
               <div className="flex items-center justify-between gap-2 mb-1.5">
                 <div className="flex items-center gap-2">
                   <span
-                    className="inline-block rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+                    className="intel-sport-tag"
                     style={{
                       color: accent,
                       background: `color-mix(in srgb, ${accent} 12%, transparent)`,
@@ -61,20 +62,20 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
                     {s.sport.toUpperCase()}
                   </span>
                   <span
-                    className="font-mono text-[10px] uppercase tracking-wider"
-                    style={{ color: PRIORITY_ACCENT[s.priority] }}
+                    className="text-[10px] uppercase tracking-wider"
+                    style={{ fontFamily: 'var(--intel-mono)', color: PRIORITY_ACCENT[s.priority] }}
                   >
                     {s.type}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="font-mono text-[10px] text-white/30">{s.timestamp}</span>
+                  <span className="intel-caption">{s.timestamp}</span>
                   <span className="opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: pinState ? 'var(--bsi-ember, #FF6B35)' : 'white' }}>
                     {pinState ? <Pin className="h-3.5 w-3.5" /> : <PinOff className="h-3.5 w-3.5" />}
                   </span>
                 </div>
               </div>
-              <p className="text-[12px] leading-snug text-white/70">{s.text}</p>
+              <p className="text-[12px] leading-snug" style={{ color: 'var(--intel-text-body)' }}>{s.text}</p>
             </button>
           );
         })}

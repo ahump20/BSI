@@ -2,7 +2,6 @@
 
 import { Sparkles, Pin, PinOff } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import type { IntelSignal } from '@/lib/intel/types';
 import { SPORT_ACCENT, PRIORITY_ACCENT } from '@/lib/intel/types';
@@ -15,23 +14,25 @@ interface SignalFeedProps {
 
 export function SignalFeed({ signals, isPinned, onTogglePin }: SignalFeedProps) {
   return (
-    <Card variant="default" padding="none">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle size="sm" className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4" style={{ color: 'var(--bsi-ember, #FF6B35)' }} />
-            Signals
-          </CardTitle>
-          <Badge variant="outline" className="text-[10px] font-mono">
-            {signals.length}
-          </Badge>
+    <div className="intel-panel">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 pb-0">
+        <div className="intel-section-label">
+          <Sparkles className="h-4 w-4" style={{ color: 'var(--bsi-ember, #FF6B35)' }} />
+          Signals
         </div>
-      </CardHeader>
-      <CardContent className="px-4 pb-4">
+        <Badge variant="outline" className="text-[10px]" style={{ fontFamily: 'var(--intel-mono)' }}>
+          {signals.length}
+        </Badge>
+      </div>
+
+      <hr className="intel-rule mx-4 mt-3" />
+
+      <div className="px-4 pb-4 pt-3">
         <ScrollArea maxHeight="380px">
           <div className="space-y-2 pr-2">
             {signals.length === 0 ? (
-              <p className="py-6 text-center text-sm text-white/30">No signals for this filter.</p>
+              <p className="py-6 text-center text-sm" style={{ color: 'var(--intel-text-caption)' }}>No signals for this filter.</p>
             ) : (
               signals.map((s) => (
                 <SignalCard
@@ -44,8 +45,8 @@ export function SignalFeed({ signals, isPinned, onTogglePin }: SignalFeedProps) 
             )}
           </div>
         </ScrollArea>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -62,7 +63,7 @@ function SignalCard({
 
   return (
     <div
-      className="group rounded-lg border bg-white/[0.03] p-3 transition-all hover:bg-white/[0.05]"
+      className="group intel-panel-elevated p-3 transition-all hover:bg-[var(--intel-bg-elevated)]"
       style={{
         borderColor: `color-mix(in srgb, ${accent} 15%, transparent)`,
         borderLeftWidth: '3px',
@@ -74,7 +75,7 @@ function SignalCard({
           {/* Badges row */}
           <div className="flex items-center gap-2 mb-1.5">
             <span
-              className="inline-block rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+              className="intel-sport-tag"
               style={{
                 color: accent,
                 background: `color-mix(in srgb, ${accent} 12%, transparent)`,
@@ -83,16 +84,16 @@ function SignalCard({
               {signal.sport.toUpperCase()}
             </span>
             <span
-              className="font-mono text-[10px] uppercase tracking-wider"
-              style={{ color: PRIORITY_ACCENT[signal.priority] }}
+              className="text-[10px] uppercase tracking-wider"
+              style={{ fontFamily: 'var(--intel-mono)', color: PRIORITY_ACCENT[signal.priority] }}
             >
               {signal.type}
             </span>
-            <span className="font-mono text-[10px] text-white/25">{signal.timestamp}</span>
+            <span className="intel-caption">{signal.timestamp}</span>
           </div>
 
           {/* Signal text */}
-          <p className="text-[12px] leading-snug text-white/60">{signal.text}</p>
+          <p className="text-[12px] leading-snug" style={{ color: 'var(--intel-text-body)' }}>{signal.text}</p>
 
           {/* Evidence */}
           {signal.evidence && signal.evidence.length > 0 && (
@@ -100,10 +101,16 @@ function SignalCard({
               {signal.evidence.map((e) => (
                 <span
                   key={e.label}
-                  className="inline-flex gap-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px]"
+                  className="inline-flex gap-1 px-1.5 py-0.5 text-[10px]"
+                  style={{
+                    fontFamily: 'var(--intel-mono)',
+                    background: 'var(--intel-bg-primary)',
+                    border: '1px solid var(--intel-border-rule)',
+                    borderRadius: '1px',
+                  }}
                 >
-                  <span className="text-white/40">{e.label}:</span>
-                  <span className="text-white/70">{e.value}</span>
+                  <span style={{ color: 'var(--intel-text-caption)' }}>{e.label}:</span>
+                  <span style={{ color: 'var(--intel-text-data)' }}>{e.value}</span>
                 </span>
               ))}
             </div>

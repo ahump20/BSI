@@ -1,0 +1,178 @@
+/* ─── Intel Editorial War Room ──────────────────────────────────────────────
+   Route-scoped tokens + utility classes for the editorial redesign.
+   All rules scoped under .intel-editorial to avoid global bleed.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.intel-editorial {
+  /* Typography */
+  --intel-display: var(--font-oswald), 'Oswald', 'Arial Narrow', sans-serif;
+  --intel-serif: var(--font-cormorant), 'Cormorant Garamond', 'Georgia', serif;
+  --intel-mono: var(--font-ibm-plex), 'IBM Plex Mono', 'Consolas', monospace;
+
+  /* Editorial palette — high contrast dark */
+  --intel-bg-primary: #08080c;
+  --intel-bg-panel: #0e0e14;
+  --intel-bg-elevated: #14141e;
+  --intel-border-rule: rgba(255, 255, 255, 0.08);
+  --intel-border-accent: rgba(191, 87, 0, 0.35);
+  --intel-text-headline: #f0ece6;
+  --intel-text-body: rgba(255, 255, 255, 0.65);
+  --intel-text-caption: rgba(255, 255, 255, 0.35);
+  --intel-text-data: rgba(255, 255, 255, 0.85);
+
+  /* Motion */
+  --intel-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --intel-duration-fast: 150ms;
+  --intel-duration-normal: 250ms;
+
+  /* Layout */
+  --intel-rule-weight: 1px;
+
+  background: var(--intel-bg-primary);
+  color: var(--intel-text-body);
+}
+
+/* ─── Masthead ────────────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-masthead {
+  font-family: var(--intel-display);
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--intel-text-headline);
+}
+
+.intel-editorial .intel-masthead-rule {
+  height: var(--intel-rule-weight);
+  background: linear-gradient(
+    90deg,
+    var(--intel-border-accent) 0%,
+    var(--intel-border-rule) 50%,
+    transparent 100%
+  );
+}
+
+/* ─── Section label ───────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-section-label {
+  font-family: var(--intel-display);
+  font-weight: 600;
+  font-size: 0.7rem;
+  line-height: 1;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--intel-text-headline);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.intel-editorial .intel-section-label::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: var(--bsi-intel-accent, var(--intel-border-accent));
+  border-radius: 1px;
+}
+
+/* ─── Data cell (scores, stats, timestamps) ───────────────────────────────── */
+
+.intel-editorial .intel-data-cell {
+  font-family: var(--intel-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--intel-text-data);
+}
+
+/* ─── Narrative (headlines, model edge) ───────────────────────────────────── */
+
+.intel-editorial .intel-narrative {
+  font-family: var(--intel-serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--intel-text-body);
+}
+
+/* ─── Horizontal rule divider ─────────────────────────────────────────────── */
+
+.intel-editorial .intel-rule {
+  height: var(--intel-rule-weight);
+  border: none;
+  background: linear-gradient(
+    90deg,
+    var(--intel-border-rule) 0%,
+    var(--intel-border-rule) 60%,
+    transparent 100%
+  );
+  margin: 0;
+}
+
+/* ─── Panel card ──────────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-panel {
+  background: var(--intel-bg-panel);
+  border: var(--intel-rule-weight) solid var(--intel-border-rule);
+  border-radius: 2px;
+}
+
+.intel-editorial .intel-panel-elevated {
+  background: var(--intel-bg-elevated);
+  border: var(--intel-rule-weight) solid var(--intel-border-rule);
+  border-radius: 2px;
+}
+
+/* ─── Sport tag pill ──────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-sport-tag {
+  font-family: var(--intel-display);
+  font-weight: 600;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1px;
+}
+
+/* ─── Team name ───────────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-team-name {
+  font-family: var(--intel-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--intel-text-headline);
+}
+
+/* ─── Score display ───────────────────────────────────────────────────────── */
+
+.intel-editorial .intel-score {
+  font-family: var(--intel-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.intel-editorial .intel-score-lg {
+  font-size: 1.5rem;
+}
+
+.intel-editorial .intel-score-sm {
+  font-size: 0.875rem;
+}
+
+/* ─── Caption / timestamp ─────────────────────────────────────────────────── */
+
+.intel-editorial .intel-caption {
+  font-family: var(--intel-mono);
+  font-size: 0.65rem;
+  color: var(--intel-text-caption);
+}
+
+/* ─── Hover states (editorial — restrained) ──────────────────────────────── */
+
+.intel-editorial .intel-panel:hover {
+  background: var(--intel-bg-elevated);
+  transition: background var(--intel-duration-fast) var(--intel-ease);
+}

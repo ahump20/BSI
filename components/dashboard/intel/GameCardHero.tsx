@@ -33,7 +33,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
   return (
     <button
       onClick={onClick}
-      className="group w-full rounded-xl border bg-white/[0.04] p-4 md:p-5 text-left transition-all hover:bg-white/[0.06] hover:shadow-[var(--bsi-glow-sm)]"
+      className="group w-full intel-panel p-4 md:p-5 text-left transition-all hover:bg-[var(--intel-bg-elevated)]"
       style={{
         borderColor: `color-mix(in srgb, ${accent} 25%, transparent)`,
       }}
@@ -42,7 +42,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span
-            className="rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+            className="intel-sport-tag"
             style={{
               color: accent,
               background: `color-mix(in srgb, ${accent} 12%, transparent)`,
@@ -52,23 +52,23 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
             {game.sport.toUpperCase()}
           </span>
           {isLive && (
-            <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 bg-green-500/15 text-green-400 font-mono text-[10px]">
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-green-500/15 text-green-400 text-[10px]" style={{ fontFamily: 'var(--intel-mono)', borderRadius: '1px' }}>
               <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
               LIVE
             </span>
           )}
           {isFinal && (
-            <span className="font-mono text-[10px] text-white/30 uppercase">Final</span>
+            <span className="intel-caption uppercase">Final</span>
           )}
         </div>
         {game.venue && (
-          <span className="font-mono text-[10px] text-white/25 hidden sm:block">{game.venue}</span>
+          <span className="intel-caption hidden sm:block">{game.venue}</span>
         )}
       </div>
 
       {/* Headline */}
       {game.headline && (
-        <div className="font-mono text-[11px] italic text-white/45 mb-3 truncate">{game.headline}</div>
+        <div className="intel-narrative text-[0.85rem] mb-3 truncate">{game.headline}</div>
       )}
 
       {/* Matchup: Away vs Home */}
@@ -79,11 +79,11 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
             <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
           )}
           <div>
-            <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
+            <div className="intel-team-name text-sm md:text-base truncate">
               {rankPrefix(game.away.rank)}
               {game.away.name}
             </div>
-            <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
+            <div className="intel-caption">{game.away.record}</div>
           </div>
         </div>
 
@@ -95,21 +95,21 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
             <>
               <div className="flex items-center gap-3">
                 <span
-                  className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
+                  className="intel-score intel-score-lg"
                   style={{ color: awayScoreColor }}
                 >
                   {game.away.score}
                 </span>
                 <span className="text-white/20 text-sm">—</span>
                 <span
-                  className="font-mono text-2xl md:text-3xl font-bold tabular-nums"
+                  className="intel-score intel-score-lg"
                   style={{ color: homeScoreColor }}
                 >
                   {game.home.score}
                 </span>
               </div>
               {game.statusDetail && (
-                <div className="font-mono text-[10px] text-white/40 mt-0.5">{game.statusDetail}</div>
+                <div className="intel-caption mt-0.5">{game.statusDetail}</div>
               )}
             </>
           )}
@@ -118,11 +118,11 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
         {/* Home */}
         <div className="flex items-center justify-end gap-3">
           <div className="text-right">
-            <div className="font-display text-sm md:text-base font-semibold uppercase tracking-wide text-white/80 truncate">
+            <div className="intel-team-name text-sm md:text-base truncate">
               {rankPrefix(game.home.rank)}
               {game.home.name}
             </div>
-            <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
+            <div className="intel-caption">{game.home.record}</div>
           </div>
           {game.home.logo && (
             <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
@@ -132,10 +132,10 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
 
       {/* Win probability mini chart (live/final only) */}
       {winProbData.length > 0 && (
-        <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2">
+        <div className="intel-panel-elevated p-2">
           <div className="flex items-center gap-1 mb-1">
             <TrendingUp className="h-3 w-3 text-white/30" />
-            <span className="font-mono text-[10px] text-white/30 uppercase tracking-wider">Win Probability</span>
+            <span className="intel-caption uppercase tracking-wider">Win Probability</span>
           </div>
           <div className="h-[60px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -166,7 +166,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
 
       {/* Model edge hint */}
       {game.modelEdge && (
-        <div className="mt-2 font-mono text-[11px] text-white/40">
+        <div className="intel-narrative text-[0.75rem] mt-2 opacity-60">
           {game.modelEdge}
         </div>
       )}

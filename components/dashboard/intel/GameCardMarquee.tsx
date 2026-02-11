@@ -20,15 +20,17 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
   return (
     <button
       onClick={onClick}
-      className="group w-full rounded-xl border bg-white/[0.04] p-3 text-left transition-all hover:bg-white/[0.06] hover:border-white/20"
+      className="group w-full intel-panel p-3 text-left transition-all hover:bg-[var(--intel-bg-elevated)]"
       style={{
         borderColor: `color-mix(in srgb, ${accent} 20%, transparent)`,
+        borderLeftWidth: '3px',
+        borderLeftColor: isLive ? '#10b981' : `color-mix(in srgb, ${accent} 40%, transparent)`,
       }}
     >
       {/* Sport tag + status */}
       <div className="flex items-center justify-between mb-2">
         <span
-          className="rounded px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider"
+          className="intel-sport-tag"
           style={{
             color: accent,
             background: `color-mix(in srgb, ${accent} 10%, transparent)`,
@@ -37,19 +39,19 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
           {game.sport.toUpperCase()}
         </span>
         {isLive ? (
-          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-green-400">
+          <span className="inline-flex items-center gap-1 text-[10px] text-green-400" style={{ fontFamily: 'var(--intel-mono)' }}>
             <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
             LIVE
           </span>
         ) : (
-          <span className="font-mono text-[10px] text-white/30">
+          <span className="intel-caption">
             {game.status === 'final' ? 'Final' : game.startTime || 'TBD'}
           </span>
         )}
       </div>
 
       {game.headline && (
-        <div className="mb-2 font-mono text-[10px] italic text-white/45 truncate">{game.headline}</div>
+        <div className="intel-narrative mb-2 text-[0.75rem] truncate">{game.headline}</div>
       )}
 
       {/* Teams + scores */}
@@ -59,12 +61,12 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
             {game.away.logo && (
               <img src={game.away.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
             )}
-            <span className="font-mono text-[12px] text-white/80 truncate">
+            <span className="intel-team-name text-[0.75rem] truncate">
               {rankPrefix(game.away.rank)}{game.away.abbreviation || game.away.name}
             </span>
           </div>
           <span
-            className="font-mono text-sm font-bold tabular-nums shrink-0"
+            className="intel-score intel-score-sm shrink-0"
             style={{ color: awayScoreColor }}
           >
             {game.away.score}
@@ -75,12 +77,12 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
             {game.home.logo && (
               <img src={game.home.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
             )}
-            <span className="font-mono text-[12px] text-white/80 truncate">
+            <span className="intel-team-name text-[0.75rem] truncate">
               {rankPrefix(game.home.rank)}{game.home.abbreviation || game.home.name}
             </span>
           </div>
           <span
-            className="font-mono text-sm font-bold tabular-nums shrink-0"
+            className="intel-score intel-score-sm shrink-0"
             style={{ color: homeScoreColor }}
           >
             {game.home.score}
@@ -89,14 +91,14 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
       </div>
 
       {showPregameGauge && (
-        <div className="mt-2 rounded-md border border-white/10 bg-white/[0.03] py-1">
+        <div className="mt-2 intel-panel-elevated py-1">
           <WinProbGauge probability={game.winProbability?.home ?? 50} label="Home %" size={62} />
         </div>
       )}
 
       {/* Model edge hint */}
       {game.modelEdge && (
-        <div className="mt-2 font-mono text-[10px] text-white/30 truncate">
+        <div className="intel-narrative mt-2 text-[0.65rem] truncate opacity-50">
           {game.modelEdge}
         </div>
       )}

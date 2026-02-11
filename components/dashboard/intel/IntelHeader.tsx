@@ -42,19 +42,27 @@ export function IntelHeader({
   const { time, date } = useChicagoClock();
 
   return (
-    <header className="mb-6">
+    <header className="mb-4">
       {/* Top row: logo + title + clock */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
           <div
-            className="grid h-10 w-10 place-items-center rounded-lg border border-white/10"
-            style={{ background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary, #BF5700)), var(--bsi-ember, #FF6B35))' }}
+            className="grid h-10 w-10 place-items-center border border-white/10"
+            style={{
+              background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary, #BF5700)), var(--bsi-ember, #FF6B35))',
+              borderRadius: '2px',
+            }}
           >
-            <span className="font-mono text-[11px] font-bold tracking-widest text-white">BSI</span>
+            <span
+              className="text-[11px] font-bold tracking-widest text-white"
+              style={{ fontFamily: 'var(--intel-mono)' }}
+            >
+              BSI
+            </span>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-white">
+              <h1 className="intel-masthead text-xl md:text-[2.25rem]">
                 Intel Briefing
               </h1>
               <LiveBadge />
@@ -64,7 +72,7 @@ export function IntelHeader({
                 </Badge>
               )}
             </div>
-            <p className="font-mono text-[11px] text-white/40">
+            <p className="intel-caption mt-0.5">
               {briefingLine}
             </p>
           </div>
@@ -77,7 +85,8 @@ export function IntelHeader({
               variant="secondary"
               size="sm"
               onClick={onOpenPalette}
-              className="gap-2 font-mono text-[11px]"
+              className="gap-2 text-[11px]"
+              style={{ fontFamily: 'var(--intel-mono)' }}
             >
               <Command className="h-4 w-4" />
               <span className="hidden lg:inline">⌘K</span>
@@ -86,10 +95,13 @@ export function IntelHeader({
 
           {/* Clock */}
           <div className="text-right hidden sm:block">
-            <div className="font-mono text-sm font-semibold" style={{ color: 'var(--bsi-intel-accent, var(--bsi-primary, #BF5700))' }}>
+            <div
+              className="text-sm font-semibold"
+              style={{ fontFamily: 'var(--intel-mono)', color: 'var(--bsi-intel-accent, var(--bsi-primary, #BF5700))' }}
+            >
               {time}
             </div>
-            <div className="font-mono text-[10px] text-white/40">
+            <div className="intel-caption">
               {date} CST
             </div>
           </div>
@@ -108,7 +120,7 @@ export function IntelHeader({
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
           <span className="inline-flex items-center gap-1 text-white/30">
             <Info className="h-3.5 w-3.5" />
-            <span className="font-mono text-[10px]">{MODE_LABELS[mode]}</span>
+            <span className="intel-caption">{MODE_LABELS[mode]}</span>
           </span>
         </Tooltip>
 
@@ -116,9 +128,11 @@ export function IntelHeader({
         {teamLens ? (
           <button
             onClick={() => onTeamLensChange(null)}
-            className="inline-flex items-center gap-1 rounded-md border px-2 py-1 font-mono text-[11px] transition-colors hover:border-white/30"
+            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-white/30"
             style={{
-              borderColor: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 30%, transparent)',
+              fontFamily: 'var(--intel-mono)',
+              borderRadius: '2px',
+              border: `1px solid color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 30%, transparent)`,
               background: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 10%, transparent)',
               color: 'var(--bsi-intel-accent, var(--bsi-ember, #FF6B35))',
             }}
@@ -129,7 +143,8 @@ export function IntelHeader({
           <select
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
-            className="h-8 rounded-md border border-white/10 bg-white/5 px-2 font-mono text-[11px] text-white/60 outline-none focus:border-white/30"
+            className="h-8 border border-white/10 bg-white/5 px-2 text-[11px] text-white/60 outline-none focus:border-white/30"
+            style={{ fontFamily: 'var(--intel-mono)', borderRadius: '2px' }}
           >
             <option value="">Team lens...</option>
             {allTeams.map((t) => (

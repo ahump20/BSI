@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import type { IntelGame } from '@/lib/intel/types';
+import type { IntelGame, IntelMode, IntelSport } from '@/lib/intel/types';
 import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
 import { useIntelPreferences } from '@/lib/intel/use-preferences';
 import { useOutcomeTracker } from '@/lib/intel/outcome-tracker';
@@ -21,6 +21,7 @@ import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
 import { SPORT_ACCENT } from '@/lib/intel/types';
+import { loadPrefs, savePrefs } from '@/lib/intel/user-prefs';
 
 // Code-split overlays — only loaded on interaction
 const GameDetailSheet = dynamic(
@@ -127,12 +128,12 @@ export default function IntelDashboard() {
         return (
                 <div className="flex min-h-[60vh] items-center justify-center">
                         <div className="text-center">
-                                  <p className="font-display text-lg text-white/60">Unable to load intel data</p>p>
+                                  <p className="font-display text-lg text-white/60">Unable to load intel data</p>
                                   <p className="mt-1 font-mono text-[12px] text-white/30">
                                               Check network connection or try refreshing
-                                  </p>p>
-                        </div>div>
-                </div>div>
+                                  </p>
+                        </div>
+                </div>
               );
   }
   
@@ -148,13 +149,15 @@ export default function IntelDashboard() {
                           liveCount={liveCount}
                           briefingLine={briefingLine}
                         />
-          
+
+                <hr className="intel-masthead-rule" />
+
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                         <SportFilter value={sport} onChange={setSport} />
                         <div ref={searchRef} className="flex-1 min-w-[200px]">
                                   <IntelSearch query={searchQuery} onChange={setSearchQuery} />
-                        </div>div>
-                </div>div>
+                        </div>
+                </div>
           
             {/* Priority signals banner */}
             {prioritySignals.length > 0 && (
@@ -164,7 +167,7 @@ export default function IntelDashboard() {
                                             isPinned={isPinned}
                                             onTogglePin={togglePin}
                                           />
-                    </div>div>
+                    </div>
                 )}
           
             {/* Main grid: content + sidebar */}
@@ -191,22 +194,22 @@ export default function IntelDashboard() {
                                                                                     {marquee.map((g) => (
                                                                                                                           <div key={g.id} className="min-w-[260px] flex-1 snap-start">
                                                                                                                                                 <GameCardMarquee game={g} onClick={() => handleSelectGame(g)} />
-                                                                                                                            </div>div>
+                                                                                                                            </div>
                                                                                                                         ))}
-                                                                                  </div>div>
+                                                                                  </div>
                                                                                 ) : undefined
                                                 }
                                               />
                                   <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
-                        </main>main>
+                        </main>
                 
-                        <IntelSidebar>
+                        <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
                                   <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />
                                   <StandingsTable standings={standings} sport={sport} />
                                   <ModelHealth />
                                   <NetRatingBar standings={standings} />
-                        </IntelSidebar>IntelSidebar>
-                </div>div>
+                        </IntelSidebar>
+                </div>
           
             {/* Overlays */}
                 <GameDetailSheet game={selectedGame} open={!!selectedGame} onClose={handleCloseSheet} />
@@ -222,6 +225,6 @@ export default function IntelDashboard() {
                           }}
                           onSelectTeam={handleSelectTeamFromPalette}
                         />
-          </div>div>
+          </div>
         );
-}</div>
+}

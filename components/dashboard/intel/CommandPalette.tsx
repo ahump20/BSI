@@ -18,9 +18,9 @@ interface CommandPaletteProps {
 }
 
 const SECTION_ICONS: Record<CommandPaletteItem['type'], React.ReactNode> = {
-  game: <Gamepad2 className="h-3.5 w-3.5 text-white/30" />,
-  signal: <Radio className="h-3.5 w-3.5 text-white/30" />,
-  team: <Users className="h-3.5 w-3.5 text-white/30" />,
+  game: <Gamepad2 className="h-3.5 w-3.5" style={{ color: 'var(--intel-text-caption)' }} />,
+  signal: <Radio className="h-3.5 w-3.5" style={{ color: 'var(--intel-text-caption)' }} />,
+  team: <Users className="h-3.5 w-3.5" style={{ color: 'var(--intel-text-caption)' }} />,
 };
 
 export function CommandPalette({
@@ -96,7 +96,8 @@ export function CommandPalette({
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 backdrop-blur-sm"
+            style={{ background: 'rgba(8, 8, 12, 0.75)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -104,15 +105,23 @@ export function CommandPalette({
           />
           {/* Palette */}
           <motion.div
-            className="fixed left-1/2 top-[15%] z-50 w-[90vw] max-w-lg -translate-x-1/2 overflow-hidden rounded-xl border border-white/10 bg-[#0a0a0a] shadow-2xl"
+            className="fixed left-1/2 top-[15%] z-50 w-[90vw] max-w-lg -translate-x-1/2 overflow-hidden shadow-2xl"
+            style={{
+              background: 'var(--intel-bg-panel)',
+              border: '1px solid var(--intel-border-rule)',
+              borderRadius: '2px',
+            }}
             initial={{ opacity: 0, y: -20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.15 }}
           >
             {/* Search input */}
-            <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-              <Search className="h-4 w-4 text-white/30" />
+            <div
+              className="flex items-center gap-2 px-4 py-3"
+              style={{ borderBottom: '1px solid var(--intel-border-rule)' }}
+            >
+              <Search className="h-4 w-4" style={{ color: 'var(--intel-text-caption)' }} />
               <input
                 ref={inputRef}
                 type="text"
@@ -123,9 +132,22 @@ export function CommandPalette({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search games, signals, teams..."
-                className="flex-1 bg-transparent font-mono text-[13px] text-white/90 placeholder:text-white/30 outline-none"
+                className="flex-1 bg-transparent text-[13px] outline-none"
+                style={{
+                  fontFamily: 'var(--intel-mono)',
+                  color: 'var(--intel-text-data)',
+                }}
               />
-              <kbd className="hidden sm:inline-flex items-center rounded border border-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/30">
+              <kbd
+                className="hidden sm:inline-flex items-center px-1.5 py-0.5"
+                style={{
+                  fontFamily: 'var(--intel-mono)',
+                  fontSize: '10px',
+                  color: 'var(--intel-text-caption)',
+                  border: '1px solid var(--intel-border-rule)',
+                  borderRadius: '1px',
+                }}
+              >
                 ESC
               </kbd>
             </div>
@@ -133,12 +155,12 @@ export function CommandPalette({
             {/* Results */}
             <div ref={listRef} className="max-h-[50vh] overflow-y-auto py-2">
               {paletteItems.length === 0 && query.length > 0 && (
-                <p className="px-4 py-6 text-center font-mono text-[12px] text-white/30">
+                <p className="px-4 py-6 text-center intel-caption">
                   No results for &ldquo;{query}&rdquo;
                 </p>
               )}
               {paletteItems.length === 0 && query.length === 0 && (
-                <p className="px-4 py-6 text-center font-mono text-[12px] text-white/30">
+                <p className="px-4 py-6 text-center intel-caption">
                   Start typing to search...
                 </p>
               )}
@@ -151,12 +173,16 @@ export function CommandPalette({
                     data-index={i}
                     onClick={() => handleSelect(item)}
                     onMouseEnter={() => setActiveIndex(i)}
-                    className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors ${
-                      isActive ? 'bg-white/[0.07]' : 'hover:bg-white/[0.04]'
-                    }`}
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left transition-colors"
+                    style={{
+                      background: isActive ? 'var(--intel-bg-elevated)' : 'transparent',
+                    }}
                   >
                     {SECTION_ICONS[item.type]}
-                    <span className="flex-1 truncate font-mono text-[12px] text-white/80">
+                    <span
+                      className="flex-1 truncate text-[12px]"
+                      style={{ fontFamily: 'var(--intel-display)', color: 'var(--intel-text-headline)' }}
+                    >
                       {item.label}
                     </span>
                     {accent && (
@@ -165,7 +191,10 @@ export function CommandPalette({
                         style={{ backgroundColor: accent }}
                       />
                     )}
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-white/20">
+                    <span
+                      className="text-[10px] uppercase tracking-wider"
+                      style={{ fontFamily: 'var(--intel-mono)', color: 'var(--intel-text-caption)' }}
+                    >
                       {item.type}
                     </span>
                   </button>
