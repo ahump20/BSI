@@ -117,6 +117,12 @@ npm run deploy:worker        # Default worker
 npm run deploy:hybrid        # Both
 ```
 
+## Code Rules
+
+- Assume Cloudflare Workers + KV/R2/D1 exist; any touch is production unless stated.
+- Prefer reuse; no new resources, renames, deletes, or migrations unless asked.
+- Ask permission before any stateful or destructive operation.
+
 ## Gotchas
 
 - `next.config.ts` skips TypeScript and ESLint errors during build (CI handles them separately)
