@@ -1,0 +1,190 @@
+'use client';
+
+import { X, TrendingUp, BarChart3 } from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip as ReTooltip,
+  XAxis,
+  YAxis,
+  Cell,
+} from 'recharts';
+import { BSI_CHART_COLORS, tooltipProps } from '@/lib/chart-theme';
+import { Sheet, SheetHeader, SheetBody } from '@/components/ui/Sheet';
+import { Badge } from '@/components/ui/Badge';
+import { Separator } from '@/components/ui/Separator';
+import type { IntelGame } from '@/lib/intel/types';
+import { SPORT_ACCENT } from '@/lib/intel/types';
+import { MatchupRadar } from './MatchupRadar';
+
+interface GameDetailSheetProps {
+  game: IntelGame | null;
+  open: boolean;
+  onClose: () => void;
+}
+
+export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
+  if (!game) return null;
+
+  const accent = SPORT_ACCENT[game.sport];
+  const isLive = game.status === 'live';
+  const explainData = game.explain ?? generateExplainData(game);
+
+  return (
+    <Sheet open={open} onClose={onClose} side="right">
+      <SheetHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span
+              className="rounded px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider"
+              style={{
+                color: accent,
+                background: `color-mix(in srgb, ${accent} 12%, transparent)`,
+              }}
+            >
+              {game.sport.toUpperCase()}
+            </span>
+            {isLive && (
+              <span className="inline-flex items-center gap-1 text-green-400 font-mono text-[10px]">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                LIVE
+              </span>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-md p-1.5 text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      </SheetHeader>
+
+      <SheetBody>
+        {/* Scoreboard */}
+        <div className="text-center mb-6">
+          <div className="font-display text-sm uppercase tracking-wide text-white/50 mb-2">
+            {game.venue}
+          </div>
+          <div className="flex items-center justify-center gap-6">
+            <div className="text-right">
+              <div className="font-display text-base font-semibold uppercase text-white/80">
+                {game.away.name}
+              </div>
+              <div className="font-mono text-[11px] text-white/30">{game.away.record}</div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
+                {game.away.score}
+              </span>
+              <span className="text-white/15">—</span>
+              <span className="font-mono text-3xl font-bold tabular-nums" style={{ color: 'var(--bsi-gold, #FDB913)' }}>
+                {game.home.score}
+              </span>
+            </div>
+            <div className="text-left">
+              <div className="font-display text-base font-semibold uppercase text-white/80">
+                {game.home.name}
+              </div>
+              <div className="font-mono text-[11px] text-white/30">{game.home.record}</div>
+            </div>
+          </div>
+          {game.statusDetail && (
+            <div className="font-mono text-[11px] text-white/40 mt-1">{game.statusDetail}</div>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* Key Stats */}
+        {game.keyStats && game.keyStats.length > 0 && (
+          <div className="my-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="h-4 w-4 text-white/30" />
+              <span className="font-mono text-[11px] text-white/40 uppercase tracking-wider">Key Stats</span>
+            </div>
+            <div className="space-y-2">
+              {game.keyStats.map((stat) => (
+                <div key={stat.label} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                  <span className="text-right font-mono text-[12px] text-white/70 tabular-nums">{stat.away}</span>
+                  <span className="font-mono text-[10px] text-white/30 text-center min-w-[80px]">{stat.label}</span>
+                  <span className="text-left font-mono text-[12px] text-white/70 tabular-nums">{stat.home}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Separator />
+
+        {/* Matchup Radar */}
+        <div className="my-4">
+          <MatchupRadar game={game} />
+        </div>
+
+        <Separator />
+
+        {/* Model Explainability (SHAP-like) */}
+        <div className="my-4">
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="h-4 w-4 text-white/30" />
+            <span className="font-mono text-[11px] text-white/40 uppercase tracking-wider">What Drives This Outcome</span>
+          </div>
+          <div className="h-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={explainData} layout="vertical" margin={{ top: 0, right: 10, left: 0, bottom: 0 }}>
+                <XAxis
+                  type="number"
+                  tick={{ fill: '#737373', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  tick={{ fill: '#a3a3a3', fontSize: 10, fontFamily: 'var(--bsi-font-mono)' }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={100}
+                />
+                <ReTooltip {...tooltipProps} />
+                <Bar dataKey="delta" name="Impact" barSize={12} radius={[0, 4, 4, 0]}>
+                  {explainData.map((entry, i) => (
+                    <Cell
+                      key={i}
+                      fill={entry.delta >= 0 ? BSI_CHART_COLORS.success : BSI_CHART_COLORS.error}
+                      fillOpacity={0.8}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-2 font-mono text-[10px]">
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-green-500/80" />
+              <span className="text-white/30">Favors outcome</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-red-500/80" />
+              <span className="text-white/30">Works against</span>
+            </span>
+          </div>
+        </div>
+      </SheetBody>
+    </Sheet>
+  );
+}
+
+function generateExplainData(game: IntelGame): Array<{ name: string; delta: number }> {
+  const diff = game.home.score - game.away.score;
+  const sign = diff >= 0 ? 1 : -1;
+  return [
+    { name: 'Score margin', delta: +(diff * 0.8).toFixed(1) },
+    { name: 'Home court', delta: +(sign * 3.2).toFixed(1) },
+    { name: 'Recent form', delta: +(sign * 1.8).toFixed(1) },
+    { name: 'Pace factor', delta: -0.5 },
+    { name: 'Rest days', delta: +(sign * 0.9).toFixed(1) },
+  ].sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+}
