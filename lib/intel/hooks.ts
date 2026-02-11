@@ -160,10 +160,10 @@ function extractRecordSummary(raw: Record<string, unknown>): string {
     if (wins !== undefined && losses !== undefined) return `${wins}-${losses}`;
   }
 
-  const overall = asObject(dig(raw, 'overallRecord', 'team.overallRecord'));
-  if (overall) {
-    const wins = asNumber(dig(overall, 'wins', 'w'));
-    const losses = asNumber(dig(overall, 'losses', 'l'));
+  const overallRecord = asObject(dig(raw, 'overallRecord', 'team.overallRecord'));
+  if (overallRecord) {
+    const wins = asNumber(dig(overallRecord, 'wins', 'w'));
+    const losses = asNumber(dig(overallRecord, 'losses', 'l'));
     if (wins !== undefined && losses !== undefined) return `${wins}-${losses}`;
   }
 
@@ -590,8 +590,16 @@ function generateSignals(
 
 const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'ncaabsb'];
 
+interface ScoreQueryView {
+  sport: Exclude<IntelSport, 'all'>;
+  data?: Record<string, unknown>;
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+}
+
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
-  const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
+  const sportsToFetch: Exclude<IntelSport, 'all'>[] = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
   // Fetch scores with stable hook ordering for all supported sports.
   const scoreQueryResults = useQueries({
@@ -603,11 +611,18 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     })),
   });
 
-  const scoreQueries = useMemo(
+  const scoreQueries = useMemo<ScoreQueryView[]>(
     () =>
       sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
-        return { sport: s, ...(scoreQueryResults[index] ?? {}) };
+        const query = scoreQueryResults[index];
+        return {
+          sport: s,
+          data: query?.data as Record<string, unknown> | undefined,
+          isLoading: query?.isLoading ?? false,
+          isFetching: query?.isFetching ?? false,
+          isError: query?.isError ?? false,
+        };
       }),
     [sportsToFetch, scoreQueryResults],
   );
@@ -676,7 +691,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   }, [games, signals]);
 
   // Fetch news for selected sport(s)
-  const newsSports = sport === 'all' ? ACTIVE_SPORTS : [sport];
+  const newsSports: Exclude<IntelSport, 'all'>[] = sport === 'all' ? ACTIVE_SPORTS : [sport];
   const newsQuery = useQuery({
     queryKey: ['intel-news', sport],
     queryFn: async () => Promise.all(
