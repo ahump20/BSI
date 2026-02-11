@@ -55,6 +55,26 @@ const analyticsTools = [
     href: '/mlb/players',
   },
   {
+    id: 'abs-tracker',
+    name: 'Robot Umpire Tracker',
+    description:
+      'Track MLB\'s Automated Ball-Strike System: challenge success rates by role, umpire accuracy vs. Hawk-Eye, and ABS impact on pitcher-batter dynamics.',
+    icon: '🤖',
+    sport: 'MLB',
+    status: 'available',
+    href: '/mlb/abs',
+  },
+  {
+    id: 'scouting-intel',
+    name: 'Scouting Intelligence',
+    description:
+      'Pro-style 20-80 scouting grades for college baseball teams. Pythagorean projections, run differential analysis, and conference-play breakdowns.',
+    icon: '🔬',
+    sport: 'NCAA',
+    status: 'available',
+    href: '/college-baseball/teams',
+  },
+  {
     id: 'monte-carlo',
     name: 'Season Simulator',
     description:
