@@ -12,7 +12,13 @@ interface StandingsTableProps {
 
 export function StandingsTable({ standings, sport }: StandingsTableProps) {
   const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[sport]})`;
-  const rows = standings.slice(0, 10);
+  const rows = [...standings]
+    .sort((a, b) => {
+      const pctA = a.winPct ?? a.wins / Math.max(a.wins + a.losses, 1);
+      const pctB = b.winPct ?? b.wins / Math.max(b.wins + b.losses, 1);
+      return pctB - pctA;
+    })
+    .slice(0, 10);
 
   if (rows.length === 0) return null;
 
