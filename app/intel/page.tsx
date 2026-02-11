@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import type { IntelGame, IntelMode, IntelSport } from '@/lib/intel/types';
-import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
+import type { IntelGame } from '@/lib/intel/types';
+import { useIntelDashboard, usePinnedBriefing, useIntelPreferences } from '@/lib/intel/hooks';
 import { IntelHeader } from '@/components/dashboard/intel/IntelHeader';
 import { SportFilter } from '@/components/dashboard/intel/SportFilter';
 import { IntelSearch } from '@/components/dashboard/intel/IntelSearch';
@@ -33,10 +33,10 @@ const CommandPalette = dynamic(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function IntelDashboard() {
-  // State
-  const [sport, setSport] = useState<IntelSport>('all');
-  const [mode, setMode] = useState<IntelMode>('fan');
-  const [teamLens, setTeamLens] = useState<string | null>(null);
+  // Persisted preferences
+  const { sport, setSport, mode, setMode, teamLens, setTeamLens } = useIntelPreferences();
+
+  // Transient UI state
   const [selectedGame, setSelectedGame] = useState<IntelGame | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [paletteOpen, setPaletteOpen] = useState(false);

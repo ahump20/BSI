@@ -61,6 +61,69 @@ export function usePinnedBriefing() {
   return { pinned, toggle, isPinned };
 }
 
+// ─── User Preferences (localStorage) ────────────────────────────────────────
+
+const PREFS_KEY = 'bsi-intel-prefs';
+
+interface IntelPreferences {
+  sport: IntelSport;
+  mode: IntelMode;
+  teamLens: string | null;
+}
+
+const DEFAULT_PREFS: IntelPreferences = {
+  sport: 'all',
+  mode: 'fan',
+  teamLens: null,
+};
+
+function loadPrefs(): IntelPreferences {
+  if (typeof window === 'undefined') return DEFAULT_PREFS;
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return DEFAULT_PREFS;
+    const parsed = JSON.parse(raw) as Partial<IntelPreferences>;
+    return {
+      sport: parsed.sport ?? DEFAULT_PREFS.sport,
+      mode: parsed.mode ?? DEFAULT_PREFS.mode,
+      teamLens: parsed.teamLens ?? DEFAULT_PREFS.teamLens,
+    };
+  } catch {
+    return DEFAULT_PREFS;
+  }
+}
+
+function savePrefs(prefs: IntelPreferences): void {
+  try {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+  } catch {
+    // Non-fatal — localStorage may be unavailable
+  }
+}
+
+export function useIntelPreferences() {
+  const [sport, setSportState] = useState<IntelSport>(() => loadPrefs().sport);
+  const [mode, setModeState] = useState<IntelMode>(() => loadPrefs().mode);
+  const [teamLens, setTeamLensState] = useState<string | null>(() => loadPrefs().teamLens);
+
+  const setSport = useCallback((s: IntelSport) => {
+    setSportState(s);
+    savePrefs({ sport: s, mode, teamLens });
+  }, [mode, teamLens]);
+
+  const setMode = useCallback((m: IntelMode) => {
+    setModeState(m);
+    savePrefs({ sport, mode: m, teamLens });
+  }, [sport, teamLens]);
+
+  const setTeamLens = useCallback((t: string | null) => {
+    setTeamLensState(t);
+    savePrefs({ sport, mode, teamLens: t });
+  }, [sport, mode]);
+
+  return { sport, setSport, mode, setMode, teamLens, setTeamLens };
+}
+
 // ─── API Fetching ───────────────────────────────────────────────────────────
 
 function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
