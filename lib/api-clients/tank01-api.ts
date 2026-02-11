@@ -7,7 +7,11 @@
  * This client conforms to the Tank01Response interface so the worker router
  * needs zero changes — only the underlying data source changes.
  */
-import type { ProviderHealth } from '../../src/types/api-envelope';
+interface ProviderHealth {
+  healthy: boolean;
+  latencyMs: number;
+  error?: string;
+}
 
 export interface Tank01Response<T> {
   success: boolean;

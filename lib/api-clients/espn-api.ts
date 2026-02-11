@@ -307,7 +307,7 @@ export function transformStandings(
 /** Transform ESPN scoreboard into BSI games contract */
 export function transformScoreboard(
   raw: any,
-): { games: any[]; meta: { lastUpdated: string; dataSource: string } } {
+): { games: any[]; timestamp: string; date: string; meta: { lastUpdated: string; dataSource: string } } {
   const events = raw?.events || [];
   const games = events.map((event: any) => {
     const competition = event.competitions?.[0] || {};

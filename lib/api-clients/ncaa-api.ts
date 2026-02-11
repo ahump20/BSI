@@ -10,7 +10,11 @@
  *   - site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/standings
  *   - site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/rankings (if available)
  */
-import type { ProviderHealth } from '../../src/types/api-envelope';
+interface ProviderHealth {
+  healthy: boolean;
+  latencyMs: number;
+  error?: string;
+}
 
 export interface NcaaApiResponse<T> {
   success: boolean;

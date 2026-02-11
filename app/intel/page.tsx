@@ -205,8 +205,8 @@ export default function IntelDashboard() {
                 
                         <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
                                   <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />
-                                  {(sport === 'mlb' || sport === 'college-baseball') && (
-                                    <PitcherFatigue sport={sport as 'mlb' | 'college-baseball'} />
+                                  {(sport === 'mlb' || sport === 'd1bb') && (
+                                    <PitcherFatigue sport={sport === 'd1bb' ? 'college-baseball' : sport} />
                                   )}
                                   <StandingsTable standings={standings} sport={sport} />
                                   <ModelHealth />
