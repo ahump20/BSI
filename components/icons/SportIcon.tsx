@@ -1,3 +1,5 @@
+import React from 'react';
+
 type SportKey = 'mlb' | 'nfl' | 'nba' | 'ncaa' | 'cfb';
 
 interface SportIconProps {

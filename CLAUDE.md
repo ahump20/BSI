@@ -1,4 +1,8 @@
-# CLAUDE.md — Blaze Sports Intel (BSI)
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# Blaze Sports Intel (BSI)
 
 ## What This Is
 
@@ -27,6 +31,7 @@ npm run lint             # ESLint
 npm run lint:fix         # ESLint autofix
 npm run format           # Prettier check
 npm run format:fix       # Prettier write
+vitest run tests/path/to/file.test.ts  # Run a single test file
 npm run deploy:production  # Build + deploy to Cloudflare Pages (main)
 npm run deploy:worker    # Deploy Cloudflare Worker
 npm run deploy:hybrid    # Deploy both Pages + Worker
@@ -116,6 +121,14 @@ npm run deploy:preview       # Pages (preview branch)
 npm run deploy:worker        # Default worker
 npm run deploy:hybrid        # Both
 ```
+
+## Code Style
+
+Prettier enforces: single quotes, semicolons, trailing commas, 100-char print width, 2-space indent, LF line endings.
+
+## Tests
+
+Test files live in `tests/` (not colocated with source). Subdirectories: `api/`, `intel/`, `integration/`, `validation/`, `a11y/`, `routes/`, `workers/`, `cv/`, `arcade/`, `performance/`, `visual/`, `analytics/`, `mcp/`, `intelligence/`. Note: `tsconfig.json` excludes `**/*.test.ts` — test files are not part of the `typecheck` pass.
 
 ## Code Rules
 

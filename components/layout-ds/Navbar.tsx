@@ -8,12 +8,12 @@ import { Menu, X } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
 
-interface NavItem {
+export interface NavItem {
   label: string;
   href: string;
 }
 
-interface NavbarProps {
+export interface NavbarProps {
   items: NavItem[];
 }
 

@@ -14,6 +14,7 @@ interface UserSettings {
   formatDateTime: (date: Date) => string;
   formatDate: (date: Date) => string;
   formatTime: (date: Date) => string;
+  formatGame: (startTime: string) => string;
   settings: SettingsState;
   resetSettings: () => void;
   isLoaded: boolean;
@@ -65,7 +66,12 @@ export function useUserSettings(): UserSettings {
     // Settings are currently hardcoded defaults; reset is a no-op
   }, []);
 
-  return { formatDateTime, formatDate, formatTime, settings, resetSettings, isLoaded };
+  const formatGame = useCallback((startTime: string): string => {
+    return formatTime(new Date(startTime));
+  }, [formatTime]);
+
+  return { formatDateTime, formatDate, formatTime, formatGame, settings, resetSettings, isLoaded };
 }
 
 export { useTeamPreferences } from "@/components/settings/TeamPreferenceSelector";
+export { useGameDetail } from "@/lib/hooks/useGameDetail";

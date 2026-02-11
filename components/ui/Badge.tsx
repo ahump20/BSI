@@ -45,6 +45,25 @@ export function LiveBadge({ className = '' }: { className?: string }) {
   );
 }
 
+export type GameStatus = 'scheduled' | 'live' | 'final' | 'postponed' | 'cancelled';
+
+const statusConfig: Record<GameStatus, { label: string; variant: BadgeProps['variant'] }> = {
+  scheduled: { label: 'Scheduled', variant: 'secondary' },
+  live: { label: 'LIVE', variant: 'success' },
+  final: { label: 'Final', variant: 'default' },
+  postponed: { label: 'PPD', variant: 'warning' },
+  cancelled: { label: 'Cancelled', variant: 'error' },
+};
+
+export function GameStatusBadge({ status, className = '' }: { status: GameStatus; className?: string }) {
+  const config = statusConfig[status] ?? statusConfig.scheduled;
+  return (
+    <Badge variant={config.variant} className={className}>
+      {config.label}
+    </Badge>
+  );
+}
+
 interface DataSourceBadgeProps {
   source: string;
   timestamp: string;
