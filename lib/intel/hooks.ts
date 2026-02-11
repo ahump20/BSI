@@ -70,13 +70,16 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
     nba: '/api/nba',
     ncaafb: '/api/nfl', // CFB shares ESPN pattern
     cbb: '/api/nba',
+    college_baseball: '/api/college-baseball',
   };
   return map[sport];
 }
 
 function scoresEndpoint(sport: Exclude<IntelSport, 'all'>): string {
   const base = sportApiBase(sport);
-  return sport === 'nba' || sport === 'cbb' ? `${base}/scoreboard` : `${base}/scores`;
+  if (sport === 'nba' || sport === 'cbb') return `${base}/scoreboard`;
+  if (sport === 'college_baseball') return `${base}/scores`;
+  return `${base}/scores`;
 }
 
 async function fetchJson<T = unknown>(url: string): Promise<T> {
@@ -220,6 +223,8 @@ function homeEdgeBySport(sport: Exclude<IntelSport, 'all'>): number {
       return 0.045;
     case 'nfl':
       return 0.03;
+    case 'college_baseball':
+      return 0.03; // College baseball home field advantage is moderate
     case 'mlb':
     default:
       return 0.025;
@@ -302,6 +307,156 @@ function normalizeToIntelGames(sport: Exclude<IntelSport, 'all'>, data: Record<s
         : undefined,
     };
   });
+}
+
+// ─── Normalize College Baseball Data → IntelGame ─────────────────────────────
+
+function normalizeCollegeBaseballGames(data: Record<string, unknown>): IntelGame[] {
+  // College baseball scores endpoint returns { data: [...matches], totalCount }
+  const matches = asArray(data.data || data.games || data.matches || []);
+
+  return matches.map((m, i) => {
+    const match = asObject(m) ?? {};
+
+    // Extract teams — Highlightly format
+    const homeTeamRaw = asObject(match.homeTeam) ?? {};
+    const awayTeamRaw = asObject(match.awayTeam) ?? {};
+
+    const homeName = String(
+      homeTeamRaw.name || homeTeamRaw.displayName || homeTeamRaw.shortName || 'Home',
+    ).trim();
+    const awayName = String(
+      awayTeamRaw.name || awayTeamRaw.displayName || awayTeamRaw.shortName || 'Away',
+    ).trim();
+
+    const homeAbbr = String(
+      homeTeamRaw.abbreviation || homeTeamRaw.shortName || homeName.slice(0, 3),
+    ).trim().toUpperCase();
+    const awayAbbr = String(
+      awayTeamRaw.abbreviation || awayTeamRaw.shortName || awayName.slice(0, 3),
+    ).trim().toUpperCase();
+
+    const homeScore = asNumber(match.homeScore) ?? 0;
+    const awayScore = asNumber(match.awayScore) ?? 0;
+
+    const homeLogo = String(homeTeamRaw.logo || homeTeamRaw.logoUrl || '').trim() || undefined;
+    const awayLogo = String(awayTeamRaw.logo || awayTeamRaw.logoUrl || '').trim() || undefined;
+
+    const homeRankRaw = asNumber(homeTeamRaw.ranking || homeTeamRaw.rank);
+    const awayRankRaw = asNumber(awayTeamRaw.ranking || awayTeamRaw.rank);
+
+    const homeRecord = asObject(homeTeamRaw.record);
+    const awayRecord = asObject(awayTeamRaw.record);
+    const homeRecordStr = homeRecord
+      ? `${homeRecord.wins ?? 0}-${homeRecord.losses ?? 0}`
+      : undefined;
+    const awayRecordStr = awayRecord
+      ? `${awayRecord.wins ?? 0}-${awayRecord.losses ?? 0}`
+      : undefined;
+
+    // Status — Highlightly uses { type: 'notstarted' | 'inprogress' | 'finished' | ... }
+    const statusObj = asObject(match.status);
+    const statusType = String(statusObj?.type || match.status || '').toLowerCase();
+    let gameStatus: GameStatus = 'scheduled';
+    let statusDetail = '';
+
+    if (statusType.includes('inprogress') || statusType === 'in' || statusType === 'live') {
+      gameStatus = 'live';
+      const inning = asNumber(match.currentInning);
+      const half = String(match.currentInningHalf || '').toLowerCase();
+      statusDetail = inning ? `${half === 'bottom' ? 'Bot' : 'Top'} ${inning}` : 'In Progress';
+    } else if (statusType.includes('finished') || statusType === 'final' || statusType === 'post') {
+      gameStatus = 'final';
+      statusDetail = 'Final';
+    } else {
+      gameStatus = 'scheduled';
+      statusDetail = statusObj?.description as string || 'Scheduled';
+    }
+
+    const venue = String(
+      (asObject(match.venue) as Record<string, unknown> | null)?.name || match.venue || '',
+    ).trim();
+
+    const startTime = String(match.startTimestamp || match.startTime || match.date || '').trim();
+
+    const isPregameNoScore = gameStatus === 'scheduled' && homeScore === 0 && awayScore === 0;
+
+    return {
+      id: `cb-${String(match.id ?? i)}`,
+      sport: 'college_baseball' as const,
+      away: {
+        name: awayName,
+        abbreviation: awayAbbr,
+        score: awayScore,
+        logo: awayLogo,
+        rank: awayRankRaw && awayRankRaw > 0 ? awayRankRaw : undefined,
+        record: awayRecordStr,
+      },
+      home: {
+        name: homeName,
+        abbreviation: homeAbbr,
+        score: homeScore,
+        logo: homeLogo,
+        rank: homeRankRaw && homeRankRaw > 0 ? homeRankRaw : undefined,
+        record: homeRecordStr,
+      },
+      status: gameStatus,
+      statusDetail: statusDetail || undefined,
+      venue: venue || undefined,
+      startTime: startTime || undefined,
+      tier: 'standard' as const,
+      signalCount: 0,
+      winProbability: isPregameNoScore
+        ? estimatePregameWinProbability('college_baseball', homeRecordStr, awayRecordStr)
+        : undefined,
+    };
+  });
+}
+
+function normalizeCollegeBaseballStandings(data: Record<string, unknown>): StandingsTeam[] {
+  // The standings endpoint returns data in various shapes depending on
+  // whether Highlightly or NCAA adapter is used
+  const rawStandings = asArray(data.data || data.standings || data.teams || []);
+
+  return rawStandings
+    .map((s) => {
+      const entry = asObject(s);
+      if (!entry) return null;
+
+      const teamObj = asObject(entry.team) ?? entry;
+      const teamName = String(
+        teamObj.name || teamObj.displayName || entry.teamName || '',
+      ).trim();
+      if (!teamName) return null;
+
+      const abbreviation = String(
+        teamObj.abbreviation || teamObj.shortName || '',
+      ).trim().toUpperCase() || undefined;
+      const logo = String(teamObj.logo || teamObj.logoUrl || '').trim() || undefined;
+      const rank = asNumber(teamObj.ranking || teamObj.rank || entry.rank);
+
+      const wins = asNumber(entry.wins ?? entry.overallWins) ?? 0;
+      const losses = asNumber(entry.losses ?? entry.overallLosses) ?? 0;
+      const winPct = asNumber(entry.winPct ?? entry.pct) ??
+        (wins + losses > 0 ? wins / (wins + losses) : undefined);
+
+      const conference = String(
+        entry.conference || teamObj.conference || '',
+      ).trim() || undefined;
+
+      return {
+        teamName,
+        abbreviation,
+        logo,
+        rank: rank && rank > 0 ? rank : undefined,
+        wins,
+        losses,
+        winPct,
+        conference,
+      } as StandingsTeam;
+    })
+    .filter((t): t is StandingsTeam => t !== null)
+    .slice(0, 20);
 }
 
 function normalizeStandings(data: Record<string, unknown>): StandingsTeam[] {
@@ -482,8 +637,10 @@ function generateSignals(
       idx++;
     }
 
-    // Blowout
-    if (game.status === 'live' && diff >= 20) {
+    // Blowout — threshold varies by sport (baseball scores are lower)
+    const blowoutThreshold =
+      game.sport === 'college_baseball' || game.sport === 'mlb' ? 8 : 20;
+    if (game.status === 'live' && diff >= blowoutThreshold) {
       signals.push({
         id: `sig-blowout-${game.id}`,
         text: `${leader.abbreviation || leader.name} up ${diff} over ${trailer.abbreviation || trailer.name}. Blowout territory.`,
@@ -543,7 +700,7 @@ function generateSignals(
 
 // ─── Main Hook ──────────────────────────────────────────────────────────────
 
-const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb'];
+const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'college_baseball'];
 
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
@@ -580,7 +737,11 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     const allGames: IntelGame[] = [];
     for (const q of scoreQueries) {
       if (q.data) {
-        allGames.push(...normalizeToIntelGames(q.sport, q.data));
+        if (q.sport === 'college_baseball') {
+          allGames.push(...normalizeCollegeBaseballGames(q.data));
+        } else {
+          allGames.push(...normalizeToIntelGames(q.sport, q.data));
+        }
       }
     }
     // Apply team lens
@@ -597,8 +758,11 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   // Extract standings
   const standings = useMemo<StandingsTeam[]>(() => {
     if (!standingsQuery.data) return [];
+    if (standingsSport === 'college_baseball') {
+      return normalizeCollegeBaseballStandings(standingsQuery.data).slice(0, 15);
+    }
     return normalizeStandings(standingsQuery.data).slice(0, 15);
-  }, [standingsQuery.data]);
+  }, [standingsQuery.data, standingsSport]);
 
   // Derive all unique teams for team lens picker
   const allTeams = useMemo(() => {
