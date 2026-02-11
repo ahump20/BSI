@@ -195,7 +195,7 @@ export function AITeamPreview({ teamId, teamName, stats, conference }: AITeamPre
     const rapg = stats.runsAllowed / games;
     if (rpg > rapg + 1.5) {
       bullets.push(`Offense-first identity: scoring ${rpg.toFixed(1)} R/G while allowing ${rapg.toFixed(1)}. Likely bullpen-dependent in close games.`);
-    } else if (rapg < rpg - 1.5) {
+    } else if (rapg <= 4 && (rpg - rapg) <= 0.5) {
       bullets.push(`Pitching-dominant: allowing just ${rapg.toFixed(1)} R/G. Run prevention carries this team.`);
     } else {
       bullets.push(`Balanced approach: ${rpg.toFixed(1)} R/G scored, ${rapg.toFixed(1)} allowed. No single phase dominates.`);
