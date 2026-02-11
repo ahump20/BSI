@@ -287,6 +287,56 @@ export default function CFBPage() {
             )}
           </Container>
         </Section>
+        {/* Live Data Hub */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="text-center mb-12">
+                <Badge variant="primary" className="mb-4">Live Coverage</Badge>
+                <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide mt-2">
+                  CFB <span className="text-gradient-blaze">Data Hub</span>
+                </h2>
+                <p className="text-white/60 mt-4 max-w-2xl mx-auto">
+                  Live scores, conference standings, and rankings powered by ESPN.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ScrollReveal delay={0}>
+                <Link href="/cfb/scores">
+                  <Card variant="hover" padding="lg" className="h-full">
+                    <h3 className="text-lg font-semibold text-white mb-3">Live Scores</h3>
+                    <p className="text-white/40 text-sm leading-relaxed mb-4">
+                      Real-time scores and game updates for all FBS teams.
+                    </p>
+                    <Badge variant="success">Live</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={100}>
+                <Link href="/cfb/standings">
+                  <Card variant="hover" padding="lg" className="h-full">
+                    <h3 className="text-lg font-semibold text-white mb-3">Conference Standings</h3>
+                    <p className="text-white/40 text-sm leading-relaxed mb-4">
+                      Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences.
+                    </p>
+                    <Badge variant="success">Live</Badge>
+                  </Card>
+                </Link>
+              </ScrollReveal>
+              <ScrollReveal delay={200}>
+                <Card variant="default" padding="lg" className="h-full">
+                  <h3 className="text-lg font-semibold text-white mb-3">Rankings & Analytics</h3>
+                  <p className="text-white/40 text-sm leading-relaxed mb-4">
+                    AP Top 25, playoff projections, and advanced analytics.
+                  </p>
+                  <Badge variant="warning">Coming Soon</Badge>
+                </Card>
+              </ScrollReveal>
+            </div>
+          </Container>
+        </Section>
       </main>
       <Footer />
     </>
