@@ -92,10 +92,7 @@ function computeGrades(stats: TeamStats): ScoutingGrade[] {
   const games = stats.wins + stats.losses;
   if (games === 0) return [];
 
-  const winPct = stats.wins / games;
   const runDiff = stats.runsScored - stats.runsAllowed;
-  const runDiffPerGame = runDiff / games;
-  const pythWinPct = pythagoreanWinPct(stats.runsScored, stats.runsAllowed);
 
   // Grade batting (batting avg relative to D1 average)
   const battingPercentile = Math.min(100, Math.max(0,
