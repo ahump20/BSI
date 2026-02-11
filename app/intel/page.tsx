@@ -18,7 +18,7 @@ import { NetRatingBar } from '@/components/dashboard/intel/NetRatingBar';
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
-import { SPORT_ACCENT } from '@/lib/intel/types';
+import { SPORT_ACCENT, SPORT_LABELS } from '@/lib/intel/types';
 
 // Code-split overlays — only loaded on interaction
 const GameDetailSheet = dynamic(
@@ -91,12 +91,13 @@ export default function IntelDashboard() {
   // Derived
   const liveCount = useMemo(() => games.filter((g) => g.status === 'live').length, [games]);
   const briefingLine = useMemo(() => {
-    const parts: string[] = [];
-    if (games.length > 0) parts.push(`${games.length} games tracked`);
-    if (liveCount > 0) parts.push(`${liveCount} live`);
-    if (signals.length > 0) parts.push(`${signals.length} signals`);
-    return parts.join(' / ') || 'Waiting for data...';
-  }, [games.length, liveCount, signals.length]);
+    const upcoming = games.filter((g) => g.status === 'scheduled').length;
+    const finals = games.filter((g) => g.status === 'final').length;
+    const live = liveCount;
+    const sportLabel = SPORT_LABELS[sport];
+    const lens = teamLens ? ` · Lens: ${teamLens}` : '';
+    return `${sportLabel} · ${live} live · ${upcoming} upcoming · ${finals} final · ${prioritySignals.length} priority${lens}`;
+  }, [games, liveCount, sport, teamLens, prioritySignals.length]);
 
   // Handlers
   const handleSelectGame = useCallback((game: IntelGame) => setSelectedGame(game), []);
@@ -126,7 +127,7 @@ export default function IntelDashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
+    <main id="main-content" className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
       <IntelHeader
         mode={mode}
         onModeChange={setMode}
@@ -209,6 +210,6 @@ export default function IntelDashboard() {
         }}
         onSelectTeam={handleSelectTeamFromPalette}
       />
-    </div>
+    </main>
   );
 }
