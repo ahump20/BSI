@@ -20,6 +20,7 @@ import { NetRatingBar } from '@/components/dashboard/intel/NetRatingBar';
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
+import { PitcherFatigue } from '@/components/dashboard/intel/PitcherFatigue';
 import { SPORT_ACCENT } from '@/lib/intel/types';
 import { loadPrefs, savePrefs } from '@/lib/intel/user-prefs';
 
@@ -205,6 +206,9 @@ export default function IntelDashboard() {
                 
                         <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
                                   <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />
+                                  {(sport === 'mlb' || sport === 'college-baseball') && (
+                                    <PitcherFatigue sport={sport as 'mlb' | 'college-baseball'} />
+                                  )}
                                   <StandingsTable standings={standings} sport={sport} />
                                   <ModelHealth />
                                   <NetRatingBar standings={standings} />
