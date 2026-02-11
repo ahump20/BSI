@@ -1,6 +1,7 @@
 'use client';
 
 import { Activity } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -16,6 +17,13 @@ interface GameGridProps {
   heroCard?: React.ReactNode;
   marqueeCards?: React.ReactNode;
 }
+
+const fadeSlide = {
+  initial: { opacity: 0, y: 8 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -6 },
+  transition: { duration: 0.2, ease: 'easeOut' as const },
+};
 
 export function GameGrid({
   hero,
@@ -51,37 +59,57 @@ export function GameGrid({
             </div>
           </div>
         ) : totalGames === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-8 text-center">
+          <motion.div
+            key="empty"
+            {...fadeSlide}
+            className="rounded-xl border border-white/10 bg-white/[0.03] p-8 text-center"
+          >
             <p className="text-sm text-white/50">No games found for this filter.</p>
             <p className="mt-1 font-mono text-[11px] text-white/30">Try switching the sport or clearing the team lens.</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="space-y-3">
-            {/* Hero card */}
-            {heroCard || (hero && (
-              <GameCardStandard game={hero} onClick={() => onSelectGame(hero)} />
-            ))}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={hero?.sport ?? 'grid'}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="space-y-3"
+            >
+              {/* Hero card */}
+              {heroCard || (hero && (
+                <GameCardStandard game={hero} onClick={() => onSelectGame(hero)} />
+              ))}
 
-            {/* Marquee cards */}
-            {marqueeCards || (marquee.length > 0 && (
-              <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
-                {marquee.map((g) => (
-                  <div key={g.id} className="min-w-[240px] flex-1">
-                    <GameCardStandard game={g} onClick={() => onSelectGame(g)} />
-                  </div>
-                ))}
-              </div>
-            ))}
+              {/* Marquee cards */}
+              {marqueeCards || (marquee.length > 0 && (
+                <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
+                  {marquee.map((g) => (
+                    <div key={g.id} className="min-w-[240px] flex-1">
+                      <GameCardStandard game={g} onClick={() => onSelectGame(g)} />
+                    </div>
+                  ))}
+                </div>
+              ))}
 
-            {/* Standard cards */}
-            {standard.length > 0 && (
-              <div className="space-y-2">
-                {standard.map((g) => (
-                  <GameCardStandard key={g.id} game={g} onClick={() => onSelectGame(g)} />
-                ))}
-              </div>
-            )}
-          </div>
+              {/* Standard cards */}
+              {standard.length > 0 && (
+                <div className="space-y-2">
+                  {standard.map((g, i) => (
+                    <motion.div
+                      key={g.id}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.18, delay: i * 0.03, ease: 'easeOut' }}
+                    >
+                      <GameCardStandard game={g} onClick={() => onSelectGame(g)} />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         )}
       </CardContent>
     </Card>

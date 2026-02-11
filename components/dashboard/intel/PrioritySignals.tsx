@@ -1,6 +1,7 @@
 'use client';
 
 import { Flame, Pin, PinOff } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
 import type { IntelSignal } from '@/lib/intel/types';
 import { SPORT_ACCENT, PRIORITY_ACCENT } from '@/lib/intel/types';
@@ -38,16 +39,22 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
 
       {/* Signal cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {signals.map((s) => {
-          const accent = SPORT_ACCENT[s.sport];
-          const pinState = isPinned(s.id);
-          return (
-            <button
-              key={s.id}
-              onClick={() => onTogglePin(s.id)}
-              className="group rounded-lg border bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.06]"
-              style={{ borderColor: `color-mix(in srgb, ${accent} 20%, transparent)` }}
-            >
+        <AnimatePresence mode="popLayout">
+          {signals.map((s, i) => {
+            const accent = SPORT_ACCENT[s.sport];
+            const pinState = isPinned(s.id);
+            return (
+              <motion.button
+                key={s.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.18, delay: i * 0.04, ease: 'easeOut' }}
+                layout
+                onClick={() => onTogglePin(s.id)}
+                className="group rounded-lg border bg-white/[0.03] p-3 text-left transition-all hover:bg-white/[0.06]"
+                style={{ borderColor: `color-mix(in srgb, ${accent} 20%, transparent)` }}
+              >
               <div className="flex items-center justify-between gap-2 mb-1.5">
                 <div className="flex items-center gap-2">
                   <span
@@ -75,9 +82,10 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
                 </div>
               </div>
               <p className="text-[12px] leading-snug text-white/70">{s.text}</p>
-            </button>
-          );
-        })}
+              </motion.button>
+            );
+          })}
+        </AnimatePresence>
       </div>
     </div>
   );

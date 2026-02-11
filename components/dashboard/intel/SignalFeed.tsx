@@ -1,6 +1,7 @@
 'use client';
 
 import { Sparkles, Pin, PinOff } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -30,18 +31,36 @@ export function SignalFeed({ signals, isPinned, onTogglePin }: SignalFeedProps) 
       <CardContent className="px-4 pb-4">
         <ScrollArea maxHeight="380px">
           <div className="space-y-2 pr-2">
-            {signals.length === 0 ? (
-              <p className="py-6 text-center text-sm text-white/30">No signals for this filter.</p>
-            ) : (
-              signals.map((s) => (
-                <SignalCard
-                  key={s.id}
-                  signal={s}
-                  pinned={isPinned(s.id)}
-                  onTogglePin={() => onTogglePin(s.id)}
-                />
-              ))
-            )}
+            <AnimatePresence mode="popLayout">
+              {signals.length === 0 ? (
+                <motion.p
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="py-6 text-center text-sm text-white/30"
+                >
+                  No signals for this filter.
+                </motion.p>
+              ) : (
+                signals.map((s, i) => (
+                  <motion.div
+                    key={s.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 8 }}
+                    transition={{ duration: 0.18, delay: i * 0.02, ease: 'easeOut' }}
+                    layout
+                  >
+                    <SignalCard
+                      signal={s}
+                      pinned={isPinned(s.id)}
+                      onTogglePin={() => onTogglePin(s.id)}
+                    />
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
           </div>
         </ScrollArea>
       </CardContent>
