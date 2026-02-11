@@ -1,0 +1,896 @@
+{
+  "numStartups": 190,
+  "installMethod": "native",
+  "autoUpdates": false,
+  "theme": "dark-daltonized",
+  "preferredNotifChannel": "kitty",
+  "verbose": true,
+  "hasSeenTasksHint": true,
+  "customApiKeyResponses": {
+    "approved": [
+      "_ZuqsUZsjqw-SHIVnwAA"
+    ],
+    "rejected": []
+  },
+  "tipsHistory": {
+    "new-user-warmup": 7,
+    "default-permission-mode-config": 1,
+    "memory-command": 190,
+    "theme-command": 188,
+    "colorterm-truecolor": 182,
+    "status-line": 177,
+    "stickers-command": 63,
+    "enter-to-steer-in-relatime": 190,
+    "todo-list": 173,
+    "install-github-app": 90,
+    "install-slack-app": 188,
+    "drag-and-drop-images": 188,
+    "paste-images-mac": 188,
+    "double-esc-code-restore": 188,
+    "continue": 188,
+    "shift-tab": 188,
+    "image-paste": 173,
+    "desktop-app": 190,
+    "web-app": 176,
+    "mobile-app": 178,
+    "guest-passes": 188,
+    "shift-enter": 187,
+    "frontend-design-plugin": 188,
+    "custom-agents": 190,
+    "permissions": 188,
+    "rename-conversation": 190,
+    "custom-commands": 190,
+    "terminal-setup": 186,
+    "agent-flag": 182,
+    "ide-upsell-external-terminal": 147,
+    "shift-enter-setup": 162,
+    "overage-promo": 176,
+    "git-worktrees": 190
+  },
+  "promptQueueUseCount": 1455,
+  "autoConnectIde": true,
+  "cachedStatsigGates": {
+    "tengu_prompt_suggestion": true,
+    "tengu_streaming_tool_execution2": false,
+    "tengu_vscode_review_upsell": false,
+    "tengu_vscode_onboarding": false,
+    "tengu_disable_bypass_permissions_mode": false
+  },
+  "cachedDynamicConfigs": {
+    "tengu_1p_event_batch_config": {
+      "scheduledDelayMillis": 5000,
+      "maxExportBatchSize": 200,
+      "maxQueueSize": 8192
+    }
+  },
+  "cachedGrowthBookFeatures": {
+    "tengu_1p_event_batch_config": {
+      "scheduledDelayMillis": 5000,
+      "maxExportBatchSize": 200,
+      "maxQueueSize": 8192
+    },
+    "tengu_mcp_tool_search": true,
+    "tengu_scratch": false,
+    "tengu_disable_bypass_permissions_mode": false,
+    "tengu_log_segment_events": false,
+    "tengu_log_datadog_events": true,
+    "tengu_event_sampling_config": {},
+    "tengu_tool_pear": false,
+    "tengu_c4w_usage_limit_notifications_enabled": true,
+    "tengu_thinkback": false,
+    "tengu_pid_based_version_locking": true,
+    "tengu_sumi": true,
+    "tengu-top-of-feed-tip": {
+      "tip": "",
+      "color": ""
+    },
+    "tengu_react_vulnerability_warning": false,
+    "tengu_code_diff_cli": true,
+    "tengu_tool_search_unsupported_models": [
+      "haiku"
+    ],
+    "tengu_ant_attribution_header_new": true,
+    "enhanced_telemetry_beta": false,
+    "tengu_post_compact_survey": false,
+    "tengu_streaming_tool_execution2": true,
+    "tengu_session_memory": false,
+    "tengu_chrome_auto_enable": false,
+    "strawberry_granite_flag": "N/A",
+    "persimmon_marble_flag": "N/A",
+    "tengu_bash_haiku_prefetch": true,
+    "tengu_plan_mode_interview_phase": false,
+    "tengu_prompt_suggestion": true,
+    "tengu_sm_compact": false,
+    "tengu_compact_streaming_retry": false,
+    "tengu_claudeai_mcp_connectors": true,
+    "tengu_keybinding_customization": false,
+    "tengu_attribution_header": true,
+    "tengu_vscode_review_upsell": false,
+    "tengu_vscode_onboarding": false,
+    "tengu_plank_river_frost": "user_intent",
+    "tengu_permission_explainer": true,
+    "tengu_brass_pebble": false,
+    "tengu_scarf_coffee": false,
+    "tengu_keybinding_customization_release": true,
+    "tengu_marble_kite": false,
+    "tengu_kv7_prompt_sort": true,
+    "tengu_cache_plum_violet": true,
+    "tengu_marble_anvil": true,
+    "tengu_pr_status_cli": true,
+    "tengu_system_prompt_global_cache": false,
+    "tengu_workout": false,
+    "tengu_coral_fern": false,
+    "tengu_cork_m4q": true,
+    "tengu_plum_vx3": true,
+    "tengu_compact_cache_prefix": true,
+    "tengu_oboe": false,
+    "tengu_chomp_inflection": true,
+    "tengu_copper_lantern": true,
+    "tengu_marble_lantern_disabled": false,
+    "tengu_workout2": true,
+    "tengu_vinteuil_phrase": true,
+    "tengu_silver_lantern": true,
+    "tengu_file_write_optimization": true,
+    "tengu_tst_kx7": false,
+    "tengu_penguins_enabled": true,
+    "tengu_mcp_elicitation": false,
+    "tengu_penguins_off": null,
+    "tengu_copper_lantern_config": {
+      "meridian": "2026-02-05T07:59:00Z"
+    },
+    "tengu_quiet_fern": true,
+    "tengu_tst_names_in_messages": false,
+    "tengu_copper_bridge": true,
+    "tengu_snippet_save": false,
+    "tengu_bergotte_lantern": false
+  },
+  "userID": "99a7b3ae9154466b83a108654ecd59c2461836263210384f14cc8eda2a1f992c",
+  "projects": {
+    "/Users/AustinHumphrey": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {
+        "unrealMCP": {
+          "command": "uv",
+          "args": [
+            "--directory",
+            "/Users/AustinHumphrey/mcp-tools/unreal-mcp/Python",
+            "run",
+            "unreal_mcp_server.py"
+          ]
+        },
+        "unityMCP": {
+          "command": "uv",
+          "args": [
+            "--directory",
+            "/Users/AustinHumphrey/mcp-tools/unity-mcp/Server",
+            "run",
+            "mcp-for-unity"
+          ]
+        },
+        "context7": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "-y",
+            "@upstash/context7-mcp@latest"
+          ],
+          "env": {}
+        },
+        "cloudflare": {
+          "type": "stdio",
+          "command": "npx",
+          "args": [
+            "-y",
+            "@cloudflare/mcp-server-cloudflare@latest",
+            "run",
+            "a12cb329d84130460eed99b816e4d0d3"
+          ],
+          "env": {}
+        }
+      },
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "hasCompletedProjectOnboarding": true,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFiles": [
+        "index.ts",
+        "page.tsx",
+        "EcosystemBar.tsx",
+        "Field.ts",
+        "BlitzGameEngine.ts"
+      ],
+      "exampleFilesGeneratedAt": 1770750699291,
+      "lastCost": 56.14977805000002,
+      "lastAPIDuration": 9804213,
+      "lastAPIDurationWithoutRetries": 9803443,
+      "lastToolDuration": 5772004,
+      "lastDuration": 20731529,
+      "lastLinesAdded": 1452,
+      "lastLinesRemoved": 1159,
+      "lastTotalInputTokens": 316911,
+      "lastTotalOutputTokens": 389868,
+      "lastTotalCacheCreationInputTokens": 2250669,
+      "lastTotalCacheReadInputTokens": 90462044,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 308694,
+          "outputTokens": 119015,
+          "cacheReadInputTokens": 13071398,
+          "cacheCreationInputTokens": 1127109,
+          "webSearchRequests": 0,
+          "costUSD": 3.61979505
+        },
+        "claude-opus-4-6": {
+          "inputTokens": 8217,
+          "outputTokens": 270853,
+          "cacheReadInputTokens": 77390646,
+          "cacheCreationInputTokens": 1123560,
+          "webSearchRequests": 0,
+          "costUSD": 52.52998299999997
+        }
+      },
+      "lastSessionId": "ebf9e544-4f72-44be-b6d6-62acf10487d0",
+      "disabledMcpServers": [
+        "plugin:figma:figma-desktop",
+        "plugin:slack:slack",
+        "plugin:gitlab:gitlab",
+        "plugin:firebase:firebase",
+        "plugin:pinecone:pinecone",
+        "plugin:supabase:supabase",
+        "plugin:sentry:sentry",
+        "plugin:linear:linear",
+        "plugin:asana:asana",
+        "plugin:atlassian:atlassian",
+        "plugin:Notion:notion",
+        "plugin:circleback:circleback",
+        "plugin:huggingface-skills:huggingface",
+        "plugin:agent-sdk-dev:agent-sdk-dev",
+        "plugin:pyright-lsp:pyright-lsp",
+        "plugin:gopls-lsp:gopls-lsp",
+        "plugin:csharp-lsp:csharp-lsp",
+        "plugin:php-lsp:php-lsp",
+        "plugin:jdtls-lsp:jdtls-lsp",
+        "plugin:clangd-lsp:clangd-lsp",
+        "plugin:swift-lsp:swift-lsp",
+        "plugin:lua-lsp:lua-lsp",
+        "plugin:kotlin-lsp:kotlin-lsp",
+        "plugin:rust-analyzer-lsp:rust-analyzer-lsp",
+        "plugin:ralph-loop:ralph-loop",
+        "plugin:explanatory-output-style:explanatory-output-style",
+        "plugin:code-simplifier:code-simplifier",
+        "plugin:security-guidance:security-guidance",
+        "plugin:hookify:hookify",
+        "plugin:plugin-dev:plugin-dev",
+        "plugin:pr-review-toolkit:pr-review-toolkit",
+        "plugin:laravel-boost:laravel-boost",
+        "plugin:stripe:stripe",
+        "plugin:figma:figma",
+        "plugin:github:github",
+        "plugin:serena:serena",
+        "claude.ai Fellow.ai"
+      ],
+      "lastFpsAverage": 7.99,
+      "lastFpsLow1Pct": 19.41,
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 165474,
+        "frame_duration_ms_min": 0.045541999861598015,
+        "frame_duration_ms_max": 157908.4133750014,
+        "frame_duration_ms_avg": 24.152747370862283,
+        "frame_duration_ms_p50": 2.2417085003107786,
+        "frame_duration_ms_p95": 7.860595550038802,
+        "frame_duration_ms_p99": 43.96103018005376
+      }
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/bold-kalam": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "Game.jsx",
+        "main.ts",
+        "PlayerController.ts",
+        "BallPhysics.ts",
+        "BackyardGameEngine.ts"
+      ],
+      "exampleFilesGeneratedAt": 1768778433074
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/lucid-moser": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "page.tsx",
+        "worker.js",
+        "StandingsTable.tsx",
+        "[[route]].ts",
+        "layout.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1769047819874
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 4,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "tank01-api.ts",
+        "workers/index.ts",
+        "page.tsx",
+        "Navbar.tsx",
+        "EcosystemBar.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1770752179881,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 21064754,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {},
+      "lastSessionId": "c1495cc8-dfd7-400f-a660-8b02be9c6ed6",
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 138,
+        "frame_duration_ms_min": 0.23079099999995378,
+        "frame_duration_ms_max": 22.5182500006631,
+        "frame_duration_ms_avg": 2.2360136014353884,
+        "frame_duration_ms_p50": 1.3535000000001673,
+        "frame_duration_ms_p95": 5.730829500012806,
+        "frame_duration_ms_p99": 15.008268580000726
+      },
+      "disabledMcpServers": [
+        "claude.ai Playwright MCP"
+      ],
+      "lastFpsAverage": 0.01,
+      "lastFpsLow1Pct": 64.65
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/blazecraft": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "renderer.js",
+        "ui-panels.js",
+        "main.js",
+        "map.js",
+        "assets.js"
+      ],
+      "exampleFilesGeneratedAt": 1769071406878
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/vigorous-albattani": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "page.tsx",
+        "worker.js",
+        "StandingsTable.tsx",
+        "[[route]].ts",
+        "layout.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1769125945178,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "hasCompletedProjectOnboarding": true
+    },
+    "/Users/AustinHumphrey/.codex/worktrees/e5ae/BSI": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "index.ts",
+        "page.tsx",
+        "layout.tsx",
+        "BlitzGameEngine.ts",
+        "SearchBar.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1770074540761,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Users/AustinHumphrey/Documents/Sandlot-Sluggers": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "GameEngine.ts",
+        "AdvancedRenderer.ts",
+        "[playerId].ts",
+        "README.md",
+        "wrangler.toml"
+      ],
+      "exampleFilesGeneratedAt": 1770087582783,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      }
+    },
+    "/Users/AustinHumphrey/.codex/worktrees/6116/BSI": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "index.ts",
+        "page.tsx",
+        "layout.tsx",
+        "BlitzGameEngine.ts",
+        "SearchBar.tsx"
+      ],
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFilesGeneratedAt": 1770088668824
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/pensive-antonelli": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/upbeat-bardeen": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "tank01-api.ts",
+        "index.ts",
+        "page.tsx",
+        "Navbar.tsx",
+        "Badge.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1770406267603
+    },
+    "/Users/AustinHumphrey/.codex/worktrees/6161/BSI": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "GameCardHero.tsx",
+        "hooks.ts",
+        "StandingsTable.tsx",
+        "page.tsx",
+        "GameGrid.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1770811386853,
+      "lastCost": 39.96505274999998,
+      "lastAPIDuration": 7299912,
+      "lastAPIDurationWithoutRetries": 7299520,
+      "lastToolDuration": 4990891,
+      "lastDuration": 10377893,
+      "lastLinesAdded": 3327,
+      "lastLinesRemoved": 401,
+      "lastTotalInputTokens": 225882,
+      "lastTotalOutputTokens": 346477,
+      "lastTotalCacheCreationInputTokens": 2765057,
+      "lastTotalCacheReadInputTokens": 62510257,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 9.21,
+      "lastFpsLow1Pct": 9.5,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 218968,
+          "outputTokens": 187651,
+          "cacheReadInputTokens": 16483425,
+          "cacheCreationInputTokens": 1428151,
+          "webSearchRequests": 0,
+          "costUSD": 4.590754249999996
+        },
+        "claude-opus-4-6": {
+          "inputTokens": 6914,
+          "outputTokens": 158826,
+          "cacheReadInputTokens": 46026832,
+          "cacheCreationInputTokens": 1336906,
+          "webSearchRequests": 0,
+          "costUSD": 35.37429849999996
+        }
+      },
+      "lastSessionId": "d8fa1619-7aa9-4da1-8d66-6691626e6831",
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 95485,
+        "frame_duration_ms_min": 0.07354100001975894,
+        "frame_duration_ms_max": 840.113875000272,
+        "frame_duration_ms_avg": 5.716867123400048,
+        "frame_duration_ms_p50": 2.7624374995939434,
+        "frame_duration_ms_p95": 7.663881300319906,
+        "frame_duration_ms_p99": 75.88746443019416
+      }
+    },
+    "/Users/AustinHumphrey/.codex/worktrees/7ae0/BSI": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [
+        "hooks.ts",
+        "StandingsTable.tsx",
+        "types.ts",
+        "GameGrid.tsx",
+        "SportFilter.tsx"
+      ],
+      "exampleFilesGeneratedAt": 1770823192390,
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 20284634,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalWebSearchRequests": 0,
+      "lastModelUsage": {},
+      "lastSessionId": "d8fa1619-7aa9-4da1-8d66-6691626e6831",
+      "lastFpsAverage": 0.04,
+      "lastFpsLow1Pct": 34.26,
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 767,
+        "frame_duration_ms_min": 0.14633300004061311,
+        "frame_duration_ms_max": 327.9233330003917,
+        "frame_duration_ms_avg": 3.5731172464143452,
+        "frame_duration_ms_p50": 1.5110839996486902,
+        "frame_duration_ms_p95": 9.460758999362554,
+        "frame_duration_ms_p99": 28.68577322017404
+      }
+    }
+  },
+  "lastPlanModeUse": 1770842467123,
+  "autoUpdatesProtectedForNative": true,
+  "lastReleaseNotesSeen": "2.1.39",
+  "changelogLastFetched": 1770803897050,
+  "firstStartTime": "2026-01-17T23:03:09.895Z",
+  "sonnet45MigrationComplete": true,
+  "opus45MigrationComplete": true,
+  "opusProMigrationComplete": true,
+  "thinkingMigrationComplete": true,
+  "cachedChromeExtensionInstalled": true,
+  "claudeCodeFirstTokenDate": "2025-06-28T10:03:49.519836Z",
+  "appleTerminalSetupInProgress": false,
+  "appleTerminalBackupPath": "/Users/AustinHumphrey/Library/Preferences/com.apple.Terminal.plist.bak",
+  "optionAsMetaKeyInstalled": true,
+  "hasCompletedOnboarding": true,
+  "lastOnboardingVersion": "2.1.27",
+  "githubRepoPaths": {
+    "ahump20/bsi": [
+      "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/output/sora_ad",
+      "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/output/sora_ad/clips",
+      "/Users/AustinHumphrey/.codex",
+      "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI",
+      "/Users/AustinHumphrey/.codex/worktrees/6116/BSI",
+      "/Users/AustinHumphrey/.codex/worktrees/e5ae/BSI",
+      "/Users/AustinHumphrey/Library/Mobile Documents/com~apple~CloudDocs/BSI/BSI/vigorous-albattani",
+      "/Users/AustinHumphrey"
+    ],
+    "ahump20/sandlot-sluggers": [
+      "/Users/AustinHumphrey/Documents/Sandlot-Sluggers"
+    ]
+  },
+  "groveConfigCache": {
+    "aa751d02-dd7a-4eec-af1e-25acc3094a09": {
+      "grove_enabled": true,
+      "timestamp": 1770840674049
+    },
+    "afea00a8-04b6-4216-a3a4-5fa311e8491d": {
+      "grove_enabled": true,
+      "timestamp": 1769579019224
+    }
+  },
+  "bypassPermissionsModeAccepted": true,
+  "hasShownOpus45Notice": {
+    "7613321f-aa97-4c1f-8685-2f3fc98a0fbd": true,
+    "8504174a-1065-4e50-81bf-9947cac4129a": true,
+    "03c9aa5b-e801-45dd-93dd-033b1fea778d": true
+  },
+  "s1mAccessCache": {
+    "7613321f-aa97-4c1f-8685-2f3fc98a0fbd": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1770840674387
+    },
+    "03c9aa5b-e801-45dd-93dd-033b1fea778d": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1769579019151
+    },
+    "8504174a-1065-4e50-81bf-9947cac4129a": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1769817718190
+    }
+  },
+  "passesEligibilityCache": {
+    "7613321f-aa97-4c1f-8685-2f3fc98a0fbd": {
+      "eligible": true,
+      "referral_code_details": {
+        "code": "jzOozoDq6A",
+        "campaign": "claude_code_guest_pass",
+        "referral_link": "https://claude.ai/referral/jzOozoDq6A"
+      },
+      "referrer_reward": null,
+      "remaining_passes": 2,
+      "timestamp": 1770844437096
+    }
+  },
+  "officialMarketplaceAutoInstallAttempted": true,
+  "officialMarketplaceAutoInstalled": true,
+  "subscriptionNoticeCount": 0,
+  "hasAvailableSubscription": false,
+  "passesUpsellSeenCount": 8,
+  "skillUsage": {
+    "blender-master": {
+      "usageCount": 8,
+      "lastUsedAt": 1769970814920
+    },
+    "game-dev-master": {
+      "usageCount": 4,
+      "lastUsedAt": 1769986860910
+    },
+    "statusline": {
+      "usageCount": 1,
+      "lastUsedAt": 1769303221728
+    },
+    "remotion-best-practices": {
+      "usageCount": 2,
+      "lastUsedAt": 1769307376852
+    },
+    "superpowers:brainstorm": {
+      "usageCount": 7,
+      "lastUsedAt": 1770074552088
+    },
+    "superpowers:write-plan": {
+      "usageCount": 3,
+      "lastUsedAt": 1769854849747
+    },
+    "superpowers:writing-plans": {
+      "usageCount": 3,
+      "lastUsedAt": 1769883599297
+    },
+    "superpowers:brainstorming": {
+      "usageCount": 18,
+      "lastUsedAt": 1770836257967
+    },
+    "superpowers:executing-plans": {
+      "usageCount": 8,
+      "lastUsedAt": 1770001406039
+    },
+    "superpowers:finishing-a-development-branch": {
+      "usageCount": 2,
+      "lastUsedAt": 1769589948501
+    },
+    "plugin-dev:create-plugin": {
+      "usageCount": 1,
+      "lastUsedAt": 1769579166608
+    },
+    "vercel:deploy": {
+      "usageCount": 2,
+      "lastUsedAt": 1770838026039
+    },
+    "brainstorming": {
+      "usageCount": 1,
+      "lastUsedAt": 1769878625084
+    },
+    "hookify:hookify": {
+      "usageCount": 1,
+      "lastUsedAt": 1769883309756
+    },
+    "hookify:list": {
+      "usageCount": 1,
+      "lastUsedAt": 1769883318570
+    },
+    "hookify:configure": {
+      "usageCount": 2,
+      "lastUsedAt": 1770002940364
+    },
+    "agent-sdk-dev:new-sdk-app": {
+      "usageCount": 1,
+      "lastUsedAt": 1769883449738
+    },
+    "frontend-design": {
+      "usageCount": 9,
+      "lastUsedAt": 1770832661782
+    },
+    "claude-md-management:revise-claude-md": {
+      "usageCount": 1,
+      "lastUsedAt": 1769891074521
+    },
+    "plugin-dev:plugin-structure": {
+      "usageCount": 1,
+      "lastUsedAt": 1769893997596
+    },
+    "commit-commands:commit": {
+      "usageCount": 1,
+      "lastUsedAt": 1769898577916
+    },
+    "ui-ux-pro-max": {
+      "usageCount": 3,
+      "lastUsedAt": 1769987762427
+    },
+    "superpowers:using-git-worktrees": {
+      "usageCount": 1,
+      "lastUsedAt": 1769905318869
+    },
+    "unrealMCP:info (MCP)": {
+      "usageCount": 3,
+      "lastUsedAt": 1769986849469
+    },
+    "feature-dev:feature-dev": {
+      "usageCount": 1,
+      "lastUsedAt": 1769985433024
+    },
+    "frontend-design:frontend-design": {
+      "usageCount": 1,
+      "lastUsedAt": 1770800457472
+    },
+    "claude-automation-recommender": {
+      "usageCount": 2,
+      "lastUsedAt": 1770843291263
+    },
+    "using-superpowers": {
+      "usageCount": 1,
+      "lastUsedAt": 1770825990884
+    },
+    "playground": {
+      "usageCount": 1,
+      "lastUsedAt": 1770826020945
+    },
+    "finishing-a-development-branch": {
+      "usageCount": 1,
+      "lastUsedAt": 1770840989439
+    },
+    "systematic-debugging": {
+      "usageCount": 1,
+      "lastUsedAt": 1770842399742
+    },
+    "claude-md-improver": {
+      "usageCount": 1,
+      "lastUsedAt": 1770843711239
+    }
+  },
+  "hasUsedBackslashReturn": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1770784276028
+  },
+  "claudeInChromeDefaultEnabled": true,
+  "hasCompletedClaudeInChromeOnboarding": true,
+  "anonymousId": "claudecode.v1.f9ba38a0-5cd7-477b-b399-95155b652394",
+  "s1mNonSubscriberAccessCache": {
+    "8504174a-1065-4e50-81bf-9947cac4129a": {
+      "hasAccess": false,
+      "timestamp": 1769818658171
+    }
+  },
+  "hasAcknowledgedCostThreshold": true,
+  "githubActionSetupCount": 2,
+  "hasIdeOnboardingBeenShown": {
+    "xterm-256color": true
+  },
+  "hasShownOpus46Notice": {
+    "7613321f-aa97-4c1f-8685-2f3fc98a0fbd": true
+  },
+  "penguinModeOrgEnabled": true,
+  "hasVisitedPasses": false,
+  "passesLastSeenRemaining": 2,
+  "showSpinnerTree": false,
+  "opus46FeedSeenCount": 9,
+  "hasVisitedExtraUsage": true,
+  "oauthAccount": {
+    "accountUuid": "aa751d02-dd7a-4eec-af1e-25acc3094a09",
+    "emailAddress": "humphrey.austin20@gmail.com",
+    "organizationUuid": "7613321f-aa97-4c1f-8685-2f3fc98a0fbd",
+    "hasExtraUsageEnabled": true,
+    "billingType": "apple_subscription",
+    "accountCreatedAt": "2025-02-06T01:48:04.560208Z",
+    "subscriptionCreatedAt": "2025-02-12T05:28:50.843096Z",
+    "displayName": "Austin"
+  },
+  "chromeExtension": {
+    "pairedDeviceId": "1527df80-f5b6-42ce-bb84-767639e4902a",
+    "pairedDeviceName": "laptop"
+  }
+}
