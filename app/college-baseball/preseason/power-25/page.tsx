@@ -411,14 +411,7 @@ const conferenceBreakdown = [
 export default function Power25Page() {
   const texasTeams = power25.filter((t) => t.isTexas);
   const eliteTeams = power25.filter((t) => t.tier === 'elite');
-  const lastUpdated = new Date().toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  const lastUpdated = 'February 2026';
 
   const getRankChange = (team: RankedTeam) => {
     if (team.lastRank === null) return { icon: Star, color: 'text-gold', label: 'New' };

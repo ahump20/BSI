@@ -37,10 +37,15 @@ interface CalendarViewProps {
 }
 
 export function CalendarView({ initialDate }: CalendarViewProps) {
-  const [currentDate, setCurrentDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
+  // Use a stable build-safe default (2026-02-11) for SSR; update to real date on mount
+  const [currentDate, setCurrentDate] = useState(initialDate || '2026-02-11');
   const [games, setGames] = useState<CalendarGame[]>([]);
   const [loading, setLoading] = useState(true);
   const weekDates = getWeekDates(currentDate);
+
+  useEffect(() => {
+    if (!initialDate) setCurrentDate(new Date().toISOString().split('T')[0]);
+  }, [initialDate]);
 
   useEffect(() => {
     setLoading(true);

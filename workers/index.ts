@@ -330,6 +330,8 @@ async function handleTeams(league: string, env: Env): Promise<Response> {
  * Query: ?game=blitz&limit=25 (default: all games, top 25)
  */
 async function handleLeaderboard(url: URL, env: Env): Promise<Response> {
+  if (!env.DB) return json({ error: 'Database not configured' }, 503);
+
   const gameId = url.searchParams.get('game');
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25'), 100);
 
@@ -362,6 +364,8 @@ async function handleLeaderboard(url: URL, env: Env): Promise<Response> {
  * Body: { name: string, score: number, game: string, avatar?: string }
  */
 async function handleLeaderboardSubmit(request: Request, env: Env): Promise<Response> {
+  if (!env.DB) return json({ error: 'Database not configured' }, 503);
+
   const body = await request.json() as { name?: string; score?: number; game?: string; avatar?: string };
 
   if (!body.name || typeof body.score !== 'number' || !body.game) {
@@ -758,6 +762,8 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
 // ---------------------------------------------------------------------------
 
 async function handleCFBTransferPortal(env: Env): Promise<Response> {
+  if (!env.KV) return json({ entries: [], message: 'KV store not configured' }, 503);
+
   const raw = await env.KV.get('portal:cfb:entries', 'text');
   if (raw) {
     try {
@@ -2546,6 +2552,15 @@ export default {
         return proxyApiToPages(request, env, `/api/cfb/${mapped}`);
       }
 
+      // NCAA baseball routes — rewrite to college-baseball handlers
+      if (pathname.startsWith('/api/ncaa/') && url.searchParams.get('sport') === 'baseball') {
+        const suffix = pathname.replace('/api/ncaa/', '');
+        if (suffix === 'rankings') return handleCollegeBaseballRankings(env);
+        if (suffix === 'standings') return handleCollegeBaseballStandings(url, env);
+        if (suffix === 'scores') return handleCollegeBaseballScores(url, env);
+        if (suffix === 'schedule') return handleCollegeBaseballSchedule(url, env);
+      }
+
       if (pathname.startsWith('/api/cfb-espn/')) {
         return proxyApiToPages(request, env, pathname.replace('/api/cfb-espn', '/api/cfb'));
       }
@@ -2589,6 +2604,9 @@ export default {
         return proxyApiToPages(request, env);
       }
       if (pathname === '/api/cfb/news') {
+        return proxyApiToPages(request, env);
+      }
+      if (pathname === '/api/cfb/teams') {
         return proxyApiToPages(request, env);
       }
 

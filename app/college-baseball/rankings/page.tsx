@@ -435,7 +435,7 @@ export default function CollegeBaseballRankingsPage() {
               <p>
                 Rankings sourced from official polls and D1Baseball. Updated weekly during season.
               </p>
-              <p className="mt-1">
+              <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT
               </p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { getRelativeTime } from '@/lib/utils/timezone';
 
@@ -39,26 +39,23 @@ export function DataFreshnessIndicator({
   isRefreshing = false,
   onRefresh,
 }: DataFreshnessIndicatorProps) {
-  // Safe default — always a valid Date even during SSR prerender
-  const safeDate = lastUpdated instanceof Date ? lastUpdated : new Date();
-
-  const [timeAgo, setTimeAgo] = useState<string>(() => getTimeAgo(safeDate));
-  const [statusColor, setStatusColor] = useState<string>(() =>
-    getStatusColor(safeDate)
-  );
+  // Stable defaults for SSR — defer date-dependent values to useEffect
+  const [timeAgo, setTimeAgo] = useState<string>('just now');
+  const [statusColor, setStatusColor] = useState<string>('text-green-400');
+  const fallbackDate = useRef(new Date());
 
   useEffect(() => {
-    // Recalculate immediately on mount (fixes SSR hydration drift)
-    setTimeAgo(getTimeAgo(safeDate));
-    setStatusColor(getStatusColor(safeDate));
+    const date = lastUpdated instanceof Date ? lastUpdated : fallbackDate.current;
+    setTimeAgo(getTimeAgo(date));
+    setStatusColor(getStatusColor(date));
 
     const interval = setInterval(() => {
-      setTimeAgo(getTimeAgo(safeDate));
-      setStatusColor(getStatusColor(safeDate));
+      setTimeAgo(getTimeAgo(date));
+      setStatusColor(getStatusColor(date));
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [safeDate]);
+  }, [lastUpdated]);
 
   return (
     <div className="flex items-center justify-center gap-2 text-xs text-white/60">

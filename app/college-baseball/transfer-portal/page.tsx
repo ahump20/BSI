@@ -133,7 +133,7 @@ export default function TransferPortalPage() {
               </>
             )}
 
-            <DataAttribution lastUpdated={new Date().toISOString()} source="BSI Portal Tracker" className="mt-6" />
+            <DataAttribution lastUpdated="" source="BSI Portal Tracker" className="mt-6" />
           </Container>
         </Section>
       </main>

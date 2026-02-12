@@ -97,9 +97,9 @@ export default function CollegeBaseballPage() {
       if (!res.ok) throw new Error('Failed to fetch rankings');
       const data = await res.json() as { rankings?: RankedTeam[]; meta?: { lastUpdated?: string } };
       if (data.rankings?.length) setRankings(data.rankings);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch {
-      // Keep default rankings
+      setLastUpdated(data.meta?.lastUpdated || '');
+    } catch (err) {
+      console.error('[BSI:college-baseball] Rankings fetch failed:', err);
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,7 @@ export default function CollegeBaseballPage() {
       if (!res.ok) throw new Error('Failed to fetch standings');
       const data = await res.json() as { standings?: StandingsTeam[]; teams?: StandingsTeam[]; meta?: { lastUpdated?: string } };
       setStandings((data.standings || data.teams || []) as StandingsTeam[]);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
+      setLastUpdated(data.meta?.lastUpdated || '');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -149,7 +149,7 @@ export default function CollegeBaseballPage() {
       });
       setGames(normalized);
       setHasLiveGames(normalized.some((g) => g.isLive));
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
+      setLastUpdated(data.meta?.lastUpdated || '');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

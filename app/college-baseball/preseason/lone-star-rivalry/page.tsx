@@ -56,14 +56,7 @@ const keyDates = [
 ];
 
 export default function LoneStarRivalryPage() {
-  const lastUpdated = new Date().toLocaleString('en-US', {
-    timeZone: 'America/Chicago',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  const lastUpdated = 'February 2026';
 
   return (
     <>

@@ -182,7 +182,7 @@ export default function ConferencesHubPage() {
                 Rankings data sourced from D1Baseball preseason poll. Conference membership reflects
                 2024-25 realignment.
               </p>
-              <p className="mt-1">
+              <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT
               </p>
