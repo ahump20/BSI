@@ -75,7 +75,7 @@ export default function PricingPage() {
       if (data.clientSecret) {
         window.location.href = `/checkout?client_secret=${data.clientSecret}`;
       }
-    } catch (error) {
+    } catch (_error) {
       alert('Failed to start checkout. Please try again.');
     } finally {
       setLoading(null);

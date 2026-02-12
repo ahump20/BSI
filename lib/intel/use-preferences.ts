@@ -51,7 +51,6 @@ export function useIntelPreferences() {
 
   // Hydrate from localStorage on mount — SSR renders DEFAULTS,
   // then this effect runs client-side to pick up persisted values.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setPrefs(loadPrefs()); setHydrated(true); }, []);
 
   // Save on change (skip initial mount)

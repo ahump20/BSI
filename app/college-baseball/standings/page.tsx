@@ -66,7 +66,7 @@ export default function CollegeBaseballStandingsPage() {
         } else {
           setError(result.message || 'Failed to fetch standings');
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to load standings. Please try again.');
       } finally {
         setLoading(false);

@@ -28,7 +28,7 @@ interface PitchDataResult {
 
 export function usePitchData(
   gamePk: number | null,
-  options?: PitchDataOptions
+  _options?: PitchDataOptions
 ): PitchDataResult {
   return {
     atBats: [],

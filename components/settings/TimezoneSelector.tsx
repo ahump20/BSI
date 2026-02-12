@@ -1,6 +1,7 @@
 'use client';
 
-import { useUserSettings } from '@/lib/hooks';
+// useUserSettings will be wired in when settings persistence lands
+// import { useUserSettings } from '@/lib/hooks';
 
 interface TimezoneSelectorProps {
   value?: string;

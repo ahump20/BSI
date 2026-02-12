@@ -50,7 +50,7 @@ const MLBAnalyticsEngine = () => {
         setTeamData(mockTeamData[selectedTeam]);
         setLoading(false);
       }, 500);
-    } catch (error) {
+    } catch (_error) {
       setLoading(false);
     }
   };
@@ -72,7 +72,7 @@ const MLBAnalyticsEngine = () => {
         );
         setLoading(false);
       }, 1500);
-    } catch (error) {
+    } catch (_error) {
       setLoading(false);
     }
   };

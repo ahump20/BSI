@@ -547,7 +547,6 @@ export default function VisionAIIntelligencePage() {
         // Check camera permission
         if ('permissions' in navigator) {
           try {
-            // eslint-disable-next-line no-undef -- PermissionName is a valid DOM type
             const camera = await navigator.permissions.query({ name: 'camera' as PermissionName });
             setCameraPermission(camera.state as PermissionStatus);
             camera.onchange = () => setCameraPermission(camera.state as PermissionStatus);
@@ -557,7 +556,6 @@ export default function VisionAIIntelligencePage() {
           }
 
           try {
-            // eslint-disable-next-line no-undef -- PermissionName is a valid DOM type
             const mic = await navigator.permissions.query({ name: 'microphone' as PermissionName });
             setMicPermission(mic.state as PermissionStatus);
             mic.onchange = () => setMicPermission(mic.state as PermissionStatus);
@@ -569,7 +567,7 @@ export default function VisionAIIntelligencePage() {
           setCameraPermission('prompt');
           setMicPermission('prompt');
         }
-      } catch (err) {
+      } catch (_err) {
         // handled by UI state
       }
     };
@@ -585,7 +583,7 @@ export default function VisionAIIntelligencePage() {
       try {
         const sessions = await loadSessions();
         setRecordedSessions(sessions.sort((a, b) => b.createdAt - a.createdAt));
-      } catch (err) {
+      } catch (_err) {
         // handled by UI state
       }
     };
@@ -607,7 +605,7 @@ export default function VisionAIIntelligencePage() {
             setCalibrated(true);
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // handled by UI state
       }
     };
@@ -669,7 +667,7 @@ export default function VisionAIIntelligencePage() {
         setModelLoaded(true);
         setStatus('Ready');
         addLog('System', 'MoveNet model loaded successfully');
-      } catch (err) {
+      } catch (_err) {
         setStatus('Model load failed - using simulated data');
         setModelLoaded(false);
         addLog('Error', 'Model failed to load. Using simulated signals.');
@@ -726,7 +724,7 @@ export default function VisionAIIntelligencePage() {
         await saveSession(session);
         setRecordedSessions((prev) => [session, ...prev]);
         addLog('Recording', `Session saved with ${frameCountRef.current} frames`);
-      } catch (err) {
+      } catch (_err) {
         addLog('Error', 'Failed to save recording');
       }
     }
@@ -751,7 +749,7 @@ export default function VisionAIIntelligencePage() {
       src.connect(analyser);
       audioCtxRef.current = ctx;
       analyserRef.current = analyser;
-    } catch (err) {
+    } catch (_err) {
       // handled by UI state
     }
   };
@@ -845,7 +843,7 @@ export default function VisionAIIntelligencePage() {
             score: kp[2],
             name: Object.keys(KEYPOINTS).find((k) => KEYPOINTS[k] === i),
           }));
-        } catch (err) {
+        } catch (_err) {
           useSimulated = true;
         }
       }
@@ -1118,7 +1116,7 @@ export default function VisionAIIntelligencePage() {
       setShowPermissionPrompt(false);
       setStatus('Ready');
       addLog('System', 'Permissions granted');
-    } catch (err) {
+    } catch (_err) {
       setCameraPermission('denied');
       setMicPermission('denied');
       setStatus('Permissions denied');
@@ -1183,7 +1181,7 @@ export default function VisionAIIntelligencePage() {
       // Start loop (we use runningRef in runLoop)
       runningRef.current = true;
       runLoop();
-    } catch (err) {
+    } catch (_err) {
       setStatus('Camera access denied');
       addLog('Error', 'Camera permission denied');
       setCameraPermission('denied');
@@ -1225,7 +1223,7 @@ export default function VisionAIIntelligencePage() {
         }
 
         addLog('Playback', `Loaded session with ${frames.length} frames`);
-      } catch (err) {
+      } catch (_err) {
         addLog('Error', 'Failed to load recording');
       }
     },
@@ -1382,7 +1380,7 @@ export default function VisionAIIntelligencePage() {
         const error = await res.text();
         addLog('Error', `Failed to save baseline: ${error}`);
       }
-    } catch (err) {
+    } catch (_err) {
       addLog('Error', 'Network error saving baseline');
     } finally {
       setSavingBaseline(false);

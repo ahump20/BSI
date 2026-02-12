@@ -44,7 +44,7 @@ export interface NcaaApiClient {
 }
 
 const ESPN_BASE = 'https://site.api.espn.com';
-const ESPN_CORE = 'https://sports.core.api.espn.com';
+const _ESPN_CORE = 'https://sports.core.api.espn.com';
 const SPORT_PATH = 'baseball/college-baseball';
 
 /** Format date as YYYYMMDD for ESPN */

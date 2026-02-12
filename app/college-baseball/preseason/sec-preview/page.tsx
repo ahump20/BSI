@@ -421,7 +421,7 @@ export default function SECPreviewPage() {
               </h2>
 
               <div className="grid gap-4">
-                {secTeams.map((team, index) => (
+                {secTeams.map((team) => (
                   <Card
                     key={team.id}
                     padding="lg"

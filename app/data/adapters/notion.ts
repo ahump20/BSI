@@ -158,7 +158,7 @@ class NotionAdapter {
       if (age < 3600000) {
         return data;
       }
-    } catch (error) {
+    } catch (_error) {
       // invalid cache, will re-fetch
     }
 
@@ -179,7 +179,7 @@ export async function getPortfolio(): Promise<PortfolioItem[]> {
   try {
     const portfolio = await notion.getPortfolio();
     return schema.portfolio(portfolio);
-  } catch (error) {
+  } catch (_error) {
     // Notion fetch failed, falling back to static file
 
     // Final fallback to static file

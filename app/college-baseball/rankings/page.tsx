@@ -282,7 +282,7 @@ export default function CollegeBaseballRankingsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {rankings.teams.map((team, index) => {
+                        {rankings.teams.map((team) => {
                           const change = getRankChange(team.rank, team.previousRank);
                           const isTopTen = team.rank <= 10;
 

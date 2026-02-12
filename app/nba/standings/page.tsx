@@ -420,7 +420,7 @@ export default function NBAStandingsPage() {
             setDataFresh(true);
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Use static data
       } finally {
         setLoading(false);

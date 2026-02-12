@@ -10,7 +10,7 @@ interface Env {
   KV?: KVNamespace;
 }
 
-export const onRequestGet: PagesFunction<Env> = async (context) => {
+export const onRequestGet: PagesFunction<Env> = async (_context) => {
   return new Response(
     JSON.stringify({
       status: 'ok',

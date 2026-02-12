@@ -71,7 +71,7 @@ export const cache = async (env, key, fetcher, ttl = 300) => {
         return parsed.data;
       }
     }
-  } catch (error) {
+  } catch {
     // Cache miss - fetch fresh data
   }
 
@@ -86,7 +86,7 @@ export const cache = async (env, key, fetcher, ttl = 300) => {
       }),
       { expirationTtl: ttl }
     );
-  } catch (error) {
+  } catch {
     // Cache write failure - non-critical, continue with fresh data
   }
 
@@ -243,7 +243,7 @@ export const rateLimit = async (env, request, maxRequests = 100, windowMs = 6000
       remaining: maxRequests - count - 1,
       resetAt: new Date((windowKey + 1) * windowMs),
     };
-  } catch (error) {
+  } catch {
     return { allowed: true, remaining: maxRequests, resetAt: null };
   }
 };

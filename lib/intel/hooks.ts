@@ -170,7 +170,7 @@ function extractRecordSummary(raw: Record<string, unknown>): string {
 }
 
 function normalizeTeam(raw: Record<string, unknown>, fallbackName: string): IntelGame['home'] {
-  const team = asObject(raw.team) ?? {};
+  const _team = asObject(raw.team) ?? {};
 
   const displayName =
     String(

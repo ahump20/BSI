@@ -20,7 +20,7 @@ export async function getTeams(league: string): Promise<Team[]> {
   try {
     const data = await loadJSON<any>(`teams/${league.toLowerCase()}.json`);
     return schema.teams(data);
-  } catch (error) {
+  } catch (_error) {
     // Fallback to all teams if specific league not found
     const allTeams = await loadJSON<any>('teams/all.json');
     const filtered = allTeams.filter((t: any) => t.league === league);
@@ -48,7 +48,7 @@ export async function preloadStaticData(): Promise<void> {
       loadJSON('portfolio.json'),
     ]);
     // preload complete
-  } catch (error) {
+  } catch (_error) {
     // handled by UI state
   }
 }

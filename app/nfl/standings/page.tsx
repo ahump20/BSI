@@ -555,7 +555,7 @@ export default function NFLStandingsPage() {
             setIsOffSeason(false);
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Use static data
       } finally {
         setLoading(false);

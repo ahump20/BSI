@@ -31,7 +31,7 @@ interface StandingsTableProps {
 
 function parseStandingsResponse(
   data: Record<string, unknown>,
-  sport: Sport
+  _sport: Sport
 ): StandingsGroup[] {
   const raw = (data.standings ?? data.teams ?? []) as Record<string, unknown>[];
 

@@ -75,7 +75,7 @@ const WOBA_1B = 0.888;
 const WOBA_2B = 1.271;
 const WOBA_3B = 1.616;
 const WOBA_HR = 2.101;
-const WOBA_SCALE = 1.226;
+const _WOBA_SCALE = 1.226;
 
 // FIP constant (league-adjusted, approximate for 2024)
 const FIP_CONSTANT = 3.17;

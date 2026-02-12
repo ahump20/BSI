@@ -50,7 +50,7 @@ class DataCache {
     }
   }
 
-  private async fetch<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<T> {
+  private async fetch<T>(key: string, fetcher: () => Promise<T>, _ttl: number): Promise<T> {
     const data = await fetcher();
     this.cache.set(key, {
       data,
@@ -59,14 +59,14 @@ class DataCache {
     return data;
   }
 
-  private async revalidate<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<void> {
+  private async revalidate<T>(key: string, fetcher: () => Promise<T>, _ttl: number): Promise<void> {
     try {
       const data = await fetcher();
       this.cache.set(key, {
         data,
         timestamp: Date.now(),
       });
-    } catch (error) {
+    } catch (_error) {
       // handled by UI state
     }
   }

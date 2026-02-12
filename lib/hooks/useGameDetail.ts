@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import type {
   UnifiedSportKey,
   UnifiedGame,
@@ -32,7 +32,7 @@ interface GameDetailState {
 
 export function useGameDetail(
   gameId: string | null,
-  sport: UnifiedSportKey
+  _sport: UnifiedSportKey
 ): GameDetailState {
   const [activeTab, setActiveTab] = useState<GameDetailTab>('gamecast');
 

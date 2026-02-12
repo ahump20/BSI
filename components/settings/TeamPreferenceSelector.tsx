@@ -46,7 +46,7 @@ interface TeamPreferenceSelectorProps {
   onChange?: (teams: string[]) => void;
 }
 
-export function TeamPreferenceSelector({ selected = [], onChange }: TeamPreferenceSelectorProps) {
+export function TeamPreferenceSelector({ selected = [], onChange: _onChange }: TeamPreferenceSelectorProps) {
   return (
     <div>
       <label className="block text-sm font-medium text-text-secondary mb-2">Favorite Teams</label>

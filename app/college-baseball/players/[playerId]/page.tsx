@@ -12,6 +12,6 @@ interface PageProps {
 }
 
 export default async function PlayerDetailPage({ params }: PageProps) {
-  const { playerId } = await params;
+  const { playerId: _playerId } = await params;
   return <PlayerDetailClient />;
 }

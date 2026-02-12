@@ -5,12 +5,6 @@
  */
 
 export {
-  UniversalBoxScore,
-  UniversalBoxScoreSkeleton,
-  type UniversalBoxScoreProps,
-} from './UniversalBoxScore';
-
-export {
   BoxScoreTable,
   BoxScoreTableSkeleton,
   type BoxScoreTableProps,

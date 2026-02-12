@@ -158,7 +158,7 @@ export default function PreseasonHubPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {featuredStories
                   .filter((story) => !story.featured)
-                  .map((story, index) => (
+                  .map((story) => (
                     <Link key={story.id} href={`/college-baseball/preseason/${story.id}`}>
                       <Card
                         padding="lg"

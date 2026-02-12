@@ -83,7 +83,7 @@ const SchedulingOptimizerPanel: React.FC<SchedulingOptimizerPanelProps> = ({
         const storedTier = window.localStorage.getItem('bsi.diamondPro');
         setIsDiamondPro(storedTier === 'true');
       }
-    } catch (storageError) {
+    } catch (_storageError) {
       // Storage access can fail in private browsing; Diamond Pro defaults to false
     }
   }, []);

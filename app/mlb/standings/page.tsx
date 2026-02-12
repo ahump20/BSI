@@ -268,7 +268,7 @@ export default function MLBStandingsPage() {
     </div>
   );
 
-  const WildCardTable = ({ teams, league }: { teams: Team[]; league: string }) => {
+  const WildCardTable = ({ teams, league: _league }: { teams: Team[]; league: string }) => {
     // Filter non-division leaders and sort by WC position
     const divisionLeaders = new Set<string>();
     const divisions = ['East', 'Central', 'West'];

@@ -1,8 +1,104 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { StrikeZone } from './StrikeZone';
-import { PitchList } from './PitchList';
+// ---------------------------------------------------------------------------
+// Inline stubs — StrikeZone and PitchList were planned but never created.
+// These minimal implementations keep the component functional until the full
+// pitch-visualization work lands.
+// ---------------------------------------------------------------------------
+
+interface ZonePitch {
+  id: string;
+  type: string;
+  speed: number;
+  result: string;
+  coordinates?: { x: number; y: number };
+  isSelected?: boolean;
+}
+
+function StrikeZone({
+  pitches,
+  selectedPitchId,
+  onPitchClick,
+  batterSide: _batterSide,
+  size: _size,
+}: {
+  pitches: ZonePitch[];
+  selectedPitchId?: string;
+  onPitchClick: (id: string | null) => void;
+  showSequence?: boolean;
+  batterSide?: 'L' | 'R';
+  size?: string;
+}) {
+  return (
+    <div className="relative w-48 h-60 bg-charcoal rounded-lg border border-white/10">
+      {/* Zone outline */}
+      <div className="absolute inset-6 border border-white/20 rounded" />
+      {/* Pitch dots */}
+      {pitches.map((p) => {
+        const x = p.coordinates ? (p.coordinates.x / 250) * 100 : 50;
+        const y = p.coordinates ? (p.coordinates.y / 250) * 100 : 50;
+        const isStrike = p.result.toLowerCase().includes('strike') || p.result.toLowerCase().includes('foul');
+        return (
+          <button
+            key={p.id}
+            onClick={() => onPitchClick(p.id === selectedPitchId ? null : p.id)}
+            className={`absolute w-3 h-3 rounded-full -translate-x-1/2 -translate-y-1/2 transition-all ${
+              p.isSelected ? 'ring-2 ring-white scale-150' : ''
+            } ${isStrike ? 'bg-burnt-orange' : 'bg-white/40'}`}
+            style={{ left: `${x}%`, top: `${y}%` }}
+            title={`${p.type} — ${p.speed} mph — ${p.result}`}
+          />
+        );
+      })}
+      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-white/30">
+        Strike Zone
+      </span>
+    </div>
+  );
+}
+
+interface PitchListPitch {
+  id: string;
+  pitchNumber: number;
+  type: string;
+  speed: number;
+  result: string;
+  spinRate?: number;
+  breakAngle?: number;
+  breakLength?: number;
+}
+
+function PitchList({
+  pitches,
+  selectedPitchId,
+  onPitchSelect,
+  showAdvanced: _showAdvanced,
+}: {
+  pitches: PitchListPitch[];
+  selectedPitchId?: string;
+  onPitchSelect: (id: string | null) => void;
+  showAdvanced?: boolean;
+}) {
+  return (
+    <div className="space-y-1 max-h-80 overflow-y-auto">
+      {pitches.map((p) => (
+        <button
+          key={p.id}
+          onClick={() => onPitchSelect(p.id === selectedPitchId ? null : p.id)}
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+            p.id === selectedPitchId ? 'bg-burnt-orange/20 text-white' : 'hover:bg-white/5 text-white/70'
+          }`}
+        >
+          <span className="text-xs text-white/40 w-4 font-mono">{p.pitchNumber}</span>
+          <span className="flex-1 text-sm">{p.type}</span>
+          <span className="text-xs font-mono text-burnt-orange">{p.speed} mph</span>
+          <span className="text-xs text-white/50 w-16 text-right truncate">{p.result}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export interface AtBat {
   atBatIndex: number;

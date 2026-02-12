@@ -5,5 +5,3 @@
  */
 
 export { PitchTracker, type AtBat, type Pitch } from './PitchTracker';
-export { StrikeZone, StrikeZoneMini } from './StrikeZone';
-export { PitchList, PitchSequence } from './PitchList';

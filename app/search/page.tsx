@@ -166,7 +166,7 @@ function SearchContent() {
         } else {
           throw new Error('Search failed');
         }
-      } catch (err) {
+      } catch (_err) {
         setError('Failed to fetch search results. Please try again.');
         setTeams([]);
       } finally {

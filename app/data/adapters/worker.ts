@@ -250,7 +250,7 @@ export async function healthCheck(): Promise<{
       cache: cache.getStats(),
       metrics: metrics.getStats(),
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       status: 'unhealthy',
       latency: Date.now() - start,

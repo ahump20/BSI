@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { IntelGame, GameStatus } from './types';
+import type { IntelGame } from './types';
 
 const OUTCOMES_KEY = 'bsi-game-outcomes';
 const MAX_STORED = 500; // Cap storage to prevent bloat

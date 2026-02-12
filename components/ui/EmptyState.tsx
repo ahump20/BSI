@@ -33,7 +33,7 @@ const emptyStateConfig = {
   },
 };
 
-export function EmptyState({ type, sport, onRetry }: EmptyStateProps) {
+export function EmptyState({ type, sport: _sport, onRetry }: EmptyStateProps) {
   const config = emptyStateConfig[type];
   const Icon = config.Icon;
 
