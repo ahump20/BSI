@@ -6,6 +6,12 @@
     <title>Intangible Leadership Capital Index | BSI</title>
     <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to Ulrich LCI, ISO 30431, and MLQ 5X transformational frameworks.">
 
+    <!-- Open Graph -->
+    <meta property="og:title" content="Intangible Leadership Capital Index | BSI">
+    <meta property="og:description" content="23 intangible leadership metrics mapped to 5 validated academic frameworks. Quantify the It Factor.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Blaze Sports Intel">
+
     <!-- Fonts: BSI brand system -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -599,11 +605,114 @@
             .framework-tag { display: none; }
         }
 
+        /* ---- Score Color Coding ---- */
+        .score-badge.score-low { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
+        .score-badge.score-mid { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+        .score-badge.score-high { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+
+        /* ---- KPI Interpretation Label ---- */
+        .kpi-interpretation {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0.4rem;
+            font-weight: 600;
+        }
+        .kpi-interpretation.tier-developing { color: #f87171; }
+        .kpi-interpretation.tier-competent { color: #fbbf24; }
+        .kpi-interpretation.tier-strong { color: #4ade80; }
+        .kpi-interpretation.tier-elite { color: var(--bsi-accent); }
+
+        /* ---- KPI Number Transition ---- */
+        .kpi-number {
+            transition: color 0.3s;
+        }
+
+        /* ---- Preset Buttons ---- */
+        .preset-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .preset-btn {
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
+            border-radius: 100px;
+            padding: 0.5rem 1.2rem;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--bsi-text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .preset-btn:hover {
+            background: rgba(191, 87, 0, 0.15);
+            border-color: rgba(191, 87, 0, 0.3);
+            color: var(--bsi-accent);
+        }
+        .preset-btn.active {
+            background: rgba(191, 87, 0, 0.2);
+            border-color: var(--bsi-primary);
+            color: var(--bsi-accent);
+        }
+
+        /* ---- Export/Import Bar ---- */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tool-btn {
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
+            border-radius: 8px;
+            padding: 0.4rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--bsi-text-tertiary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover {
+            background: rgba(191, 87, 0, 0.1);
+            color: var(--bsi-text-secondary);
+        }
+        .tool-btn i { font-size: 0.65rem; }
+
+        /* ---- Bar Chart Container ---- */
+        .bar-chart-row {
+            margin-top: 1.5rem;
+        }
+
         /* ---- Reduced motion ---- */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 transition-duration: 0.01ms !important;
             }
+        }
+
+        /* ---- Print ---- */
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .container { border: none; background: white; backdrop-filter: none; }
+            .header-banner { background: #BF5700 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .card, .kpi-panel, .chart-card, .methodology { background: #f5f5f5; border: 1px solid #ddd; backdrop-filter: none; }
+            .btn, .btn-reset, .preset-btn, .tool-btn { display: none; }
+            input[type=range] { display: none; }
+            .methodology-content { display: block !important; }
+            canvas { max-height: 250px; }
         }
     </style>
 </head>
@@ -635,6 +744,20 @@
         <span class="pill"><i class="fas fa-arrow-right"></i> Trust (ISO 30431) &#8594; Empathy, Sentiment, Feedback</span>
         <span class="pill"><i class="fas fa-arrow-right"></i> Intellectual Stimulation (MLQ) &#8594; Cognitive Efficiency, Flow, Elasticity</span>
         <span class="pill"><i class="fas fa-arrow-right"></i> Charismatic Tactics (Antonakis) &#8594; Storytelling, Narrative, Influence</span>
+    </div>
+
+    <!-- ============================================================
+         PRESET PROFILES + TOOLBAR
+         ============================================================ -->
+    <div class="preset-bar" id="presetBar">
+        <button class="preset-btn" data-preset="visionary"><i class="fas fa-eye"></i> The Visionary</button>
+        <button class="preset-btn" data-preset="executor"><i class="fas fa-gears"></i> The Executor</button>
+        <button class="preset-btn" data-preset="connector"><i class="fas fa-handshake"></i> The Connector</button>
+    </div>
+    <div class="toolbar">
+        <button class="tool-btn" id="exportBtn"><i class="fas fa-download"></i> Export JSON</button>
+        <button class="tool-btn" id="importBtn"><i class="fas fa-upload"></i> Import JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none">
     </div>
 
     <!-- ============================================================
@@ -684,24 +807,28 @@
         <div class="kpi-panel">
             <div class="kpi-title">Ulrich LCI</div>
             <div class="kpi-number" id="kpi-ulrich">&#8212;</div>
+            <div class="kpi-interpretation" id="interp-ulrich"></div>
             <div class="kpi-label">Individual + Organizational composite</div>
             <span class="kpi-tag">10-factor weighted</span>
         </div>
         <div class="kpi-panel">
             <div class="kpi-title">ISO 30431</div>
             <div class="kpi-number" id="kpi-iso">&#8212;</div>
+            <div class="kpi-interpretation" id="interp-iso"></div>
             <div class="kpi-label">Trust &#183; Development &#183; Span</div>
             <span class="kpi-tag">3-pillar cluster</span>
         </div>
         <div class="kpi-panel">
             <div class="kpi-title">MLQ Transformational</div>
             <div class="kpi-number" id="kpi-mlq">&#8212;</div>
+            <div class="kpi-interpretation" id="interp-mlq"></div>
             <div class="kpi-label">Bass &amp; Avolio 5-factor</div>
             <span class="kpi-tag">IIA &#183; IIB &#183; IM &#183; IS &#183; IC</span>
         </div>
         <div class="kpi-panel kpi-it-factor">
             <div class="kpi-title">It Factor</div>
             <div class="kpi-number" id="kpi-it">&#8212;</div>
+            <div class="kpi-interpretation" id="interp-it"></div>
             <div class="kpi-label">Predictive intangible power</div>
             <span class="kpi-tag">neural + narrative + influence + presence</span>
         </div>
@@ -726,6 +853,20 @@
             </div>
             <canvas id="radarMLQ"></canvas>
             <p class="chart-note">Idealized Influence (Attributed + Behavioral), Inspirational Motivation, Intellectual Stimulation, Individualized Consideration per Bass &amp; Avolio (2004).</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         IT FACTOR CLUSTER BREAKDOWN — Horizontal Bar Chart
+         ============================================================ -->
+    <div class="bar-chart-row">
+        <div class="chart-card">
+            <div class="chart-header">
+                <span><i class="fas fa-crown" style="color:var(--bsi-accent);"></i> It Factor Cluster Breakdown</span>
+                <span class="card-sub">4 clusters</span>
+            </div>
+            <canvas id="barItClusters"></canvas>
+            <p class="chart-note">Neural (30%) + Narrative (25%) + Influence (25%) + Presence (20%) = composite "It Factor" score. Neural metrics get highest weight as the least observable leadership qualities.</p>
         </div>
     </div>
 
@@ -786,15 +927,32 @@
             </ul>
             <p>Neural/cognitive metrics receive the highest weight because they represent the least observable and most "intangible" leadership qualities &#8212; flow states (Csikszentmihalyi, 1990), cognitive flexibility, and neural adaptability are the components that separate leaders described as having "it" from those who are merely competent. Antonakis et al. (2011) demonstrated that charismatic influence can be decomposed into 12 trainable tactics, validating the narrative and influence clusters. Petrides &amp; Furnham confirmed trait emotional intelligence as a temporally stable predictor of leadership emergence.</p>
 
+            <h5 class="method-heading">Sports Leadership Foundations</h5>
+            <p>While the core frameworks above derive from organizational psychology, BSI&#8217;s application targets athletic leadership specifically. The following sports-specific research validates the metric domains:</p>
+            <ul>
+                <li><strong>Coaching Leadership Behaviors</strong> &#8592; Chelladurai &amp; Saleh (1980) identified 5 dimensions of sports leadership &#8212; Training/Instruction, Democratic Behavior, Autocratic Behavior, Social Support, and Positive Feedback &#8212; directly mapping to our Communication, Empathy, and Influence metrics.</li>
+                <li><strong>Athlete Leadership as Shared Process</strong> &#8592; Fransen et al. (2014) demonstrated that leadership in sports teams is distributed, not concentrated in the captain. Their 4-role classification (task, motivational, social, external leader) validates our cross-mentorship, inter-team feedback, and influence dynamics metrics.</li>
+                <li><strong>Flow in Athletic Performance</strong> &#8592; Jackson &amp; Csikszentmihalyi (1999) applied flow theory specifically to sport, identifying conditions for optimal athletic experience. This grounds our Neural Flow Access, Cognitive Elasticity, and Neural Adaptability metrics in sports science rather than purely organizational psychology.</li>
+                <li><strong>Coaching Psychological Attributes</strong> &#8592; Hodgson et al. (2017) identified 9 elite coaching attributes including resilience, confidence, focus, and emotional awareness/management. These map directly to our Resilience Coefficient, Cognitive Efficiency, and Empathy Index.</li>
+                <li><strong>Transformational Leadership in Sports Teams</strong> &#8592; Mach et al. (2022) confirmed that transformational leadership indirectly drives objective team performance through cohesion, validating our MLQ-based scoring approach for athletic contexts.</li>
+                <li><strong>Shared &amp; Distributed Leadership</strong> &#8592; Cotterill &amp; Fransen (2016) reviewed the athlete leadership literature, establishing that leadership quality in sports teams depends on distributed capabilities across the roster &#8212; supporting our organizational metrics cluster (mentoring, feedback, challenges).</li>
+            </ul>
+
             <h5 class="method-heading">References</h5>
-            <div class="citation">Antonakis, J., Fenley, M., &amp; Liechti, S. (2011). Can charisma be taught? Tests of two interventions. Academy of Management Learning &amp; Education, 10(3), 374&#8211;396.</div>
-            <div class="citation">Bass, B.M., &amp; Avolio, B.J. (2004). Multifactor Leadership Questionnaire Manual and Sampler Set (3rd ed.). Mind Garden.</div>
-            <div class="citation">Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. Harper &amp; Row.</div>
+            <div class="citation">Antonakis, J., Fenley, M., &amp; Liechti, S. (2011). Can charisma be taught? Tests of two interventions. <em>Academy of Management Learning &amp; Education</em>, 10(3), 374&#8211;396. doi:10.5465/amle.2010.0012</div>
+            <div class="citation">Bass, B.M., &amp; Avolio, B.J. (2004). <em>Multifactor Leadership Questionnaire Manual and Sampler Set</em> (3rd ed.). Mind Garden.</div>
+            <div class="citation">Chelladurai, P., &amp; Saleh, S.D. (1980). Dimensions of leader behavior in sports: Development of a leadership scale. <em>Journal of Sport Psychology</em>, 2(1), 34&#8211;45.</div>
+            <div class="citation">Cotterill, S.T., &amp; Fransen, K. (2016). Athlete leadership in sport teams: Current understanding and future directions. <em>International Review of Sport and Exercise Psychology</em>, 9(1), 116&#8211;133. doi:10.1080/1750984X.2015.1124443</div>
+            <div class="citation">Csikszentmihalyi, M. (1990). <em>Flow: The Psychology of Optimal Experience</em>. Harper &amp; Row.</div>
+            <div class="citation">Fransen, K., Vanbeselaere, N., De Cuyper, B., Vande Broek, G., &amp; Boen, F. (2014). The myth of the team captain as principal leader: Extending the athlete leadership classification within sport teams. <em>Journal of Sports Sciences</em>, 32(14), 1389&#8211;1397. doi:10.1080/02640414.2014.891291</div>
+            <div class="citation">Hodgson, L., Butt, J., &amp; Maynard, I. (2017). Exploring the psychological attributes underpinning elite sports coaching. <em>International Journal of Sports Science &amp; Coaching</em>, 12(4), 439&#8211;451. doi:10.1177/1747954117718017</div>
             <div class="citation">ISO (2021). ISO/TS 30431:2021 &#8212; Human resource management &#8212; Leadership metrics cluster. ISO TC 260.</div>
-            <div class="citation">Petrides, K.V., &amp; Furnham, A. (2003). Trait emotional intelligence: Behavioural validation in two studies of emotion recognition and reactivity to mood induction. European Journal of Personality, 17, 39&#8211;57.</div>
-            <div class="citation">Ulrich, D. (2015). The Leadership Capital Index: Realizing the Market Value of Leadership. Berrett-Koehler Publishers.</div>
-            <div class="citation">Wong, C.S., &amp; Law, K.S. (2002). The effects of leader and follower emotional intelligence on performance and attitude. The Leadership Quarterly, 13(3), 243&#8211;274.</div>
-            <div class="citation">Zadorozhny, K., &amp; Petrides, K.V. (2025). Predicting leadership status through trait emotional intelligence and cognitive ability. Behavioral Sciences, 15(3), 365.</div>
+            <div class="citation">Jackson, S.A., &amp; Csikszentmihalyi, M. (1999). <em>Flow in Sports: The Keys to Optimal Experiences and Performances</em>. Human Kinetics.</div>
+            <div class="citation">Mach, M., Ferreira, A.I., &amp; Abrantes, A.C. (2022). Transformational leadership and team performance in sports teams: A conditional indirect model. <em>Applied Psychology</em>, 71(2), 662&#8211;694. doi:10.1111/apps.12342</div>
+            <div class="citation">Petrides, K.V., &amp; Furnham, A. (2003). Trait emotional intelligence: Behavioural validation in two studies of emotion recognition and reactivity to mood induction. <em>European Journal of Personality</em>, 17, 39&#8211;57.</div>
+            <div class="citation">Ulrich, D. (2015). <em>The Leadership Capital Index: Realizing the Market Value of Leadership</em>. Berrett-Koehler Publishers.</div>
+            <div class="citation">Wong, C.S., &amp; Law, K.S. (2002). The effects of leader and follower emotional intelligence on performance and attitude. <em>The Leadership Quarterly</em>, 13(3), 243&#8211;274.</div>
+            <div class="citation">Zadorozhny, K., &amp; Petrides, K.V. (2025). Predicting leadership status through trait emotional intelligence and cognitive ability. <em>Behavioral Sciences</em>, 15(3), 365.</div>
         </div>
     </div>
 
@@ -803,7 +961,7 @@
          ============================================================ -->
     <div class="footer">
         <p>Blaze Sports Intel &#8212; Intangible Leadership Capital Index Prototype</p>
-        <p>23 metrics mapped to Ulrich LCI (2015), ISO/TS 30431, Bass &amp; Avolio MLQ 5X, TEIQue, and Antonakis CLTs.</p>
+        <p>23 metrics mapped to Ulrich LCI, ISO 30431, MLQ 5X, TEIQue, Antonakis CLTs, and sports leadership research (Chelladurai, Fransen, Jackson, Hodgson, Mach).</p>
         <p style="margin-top:0.5rem;">Conceptual validation tool &#8212; not a substitute for psychometric assessment.</p>
     </div>
 
@@ -852,6 +1010,52 @@
     ];
 
     // ================================================================
+    // PRESET PROFILES — Three leadership archetypes
+    // ================================================================
+
+    var PRESETS = {
+        visionary: {
+            label: 'The Visionary',
+            desc: 'High strategic + narrative, moderate execution',
+            values: {
+                'cognitive-efficiency': 68, 'strategic-impact': 92, 'resilience-coefficient': 70,
+                'empathy-index': 65, 'communication': 78, 'influence-dynamics': 85,
+                'visionary-leadership': 95, 'neural-flow': 72, 'cognitive-elasticity': 74,
+                'neural-adaptability': 66, 'narrative-intelligence': 88, 'leadership-storytelling': 90,
+                'shadowing': 55, 'okrs': 60, 'team-sentiment': 62, 'leadership-challenge': 58,
+                'leadership-simulation': 64, 'skill-badges': 50, 'cross-mentorship': 65,
+                'reverse-mentoring': 60, 'inter-team-feedback': 58, 'micro-skills': 55, 'habit-tracker': 52
+            }
+        },
+        executor: {
+            label: 'The Executor',
+            desc: 'High operational + accountability, moderate vision',
+            values: {
+                'cognitive-efficiency': 85, 'strategic-impact': 70, 'resilience-coefficient': 82,
+                'empathy-index': 60, 'communication': 88, 'influence-dynamics': 68,
+                'visionary-leadership': 62, 'neural-flow': 55, 'cognitive-elasticity': 58,
+                'neural-adaptability': 78, 'narrative-intelligence': 55, 'leadership-storytelling': 50,
+                'shadowing': 80, 'okrs': 92, 'team-sentiment': 72, 'leadership-challenge': 85,
+                'leadership-simulation': 82, 'skill-badges': 88, 'cross-mentorship': 75,
+                'reverse-mentoring': 70, 'inter-team-feedback': 85, 'micro-skills': 90, 'habit-tracker': 95
+            }
+        },
+        connector: {
+            label: 'The Connector',
+            desc: 'High empathy + trust + mentorship, moderate cognitive',
+            values: {
+                'cognitive-efficiency': 62, 'strategic-impact': 65, 'resilience-coefficient': 75,
+                'empathy-index': 95, 'communication': 90, 'influence-dynamics': 80,
+                'visionary-leadership': 68, 'neural-flow': 60, 'cognitive-elasticity': 58,
+                'neural-adaptability': 72, 'narrative-intelligence': 78, 'leadership-storytelling': 82,
+                'shadowing': 75, 'okrs': 65, 'team-sentiment': 92, 'leadership-challenge': 70,
+                'leadership-simulation': 68, 'skill-badges': 72, 'cross-mentorship': 95,
+                'reverse-mentoring': 90, 'inter-team-feedback': 88, 'micro-skills': 75, 'habit-tracker': 70
+            }
+        }
+    };
+
+    // ================================================================
     // STORAGE HELPERS
     // ================================================================
 
@@ -879,9 +1083,45 @@
     }
 
     function setVal(id, val) {
+        var v = Math.max(0, Math.min(100, parseInt(val, 10) || 0));
         var state = loadState();
-        state[id] = val;
+        state[id] = v;
         saveState(state);
+    }
+
+    // ================================================================
+    // SCORE INTERPRETATION
+    // ================================================================
+
+    function getInterpretation100(score) {
+        if (score < 40) return { label: 'Developing', tier: 'developing' };
+        if (score < 60) return { label: 'Emerging', tier: 'competent' };
+        if (score < 80) return { label: 'Strong', tier: 'strong' };
+        return { label: 'Elite', tier: 'elite' };
+    }
+
+    function getInterpretation10(score) {
+        if (score < 3) return { label: 'Developing', tier: 'developing' };
+        if (score < 6) return { label: 'Competent', tier: 'competent' };
+        if (score < 8) return { label: 'Strong', tier: 'strong' };
+        return { label: 'Elite', tier: 'elite' };
+    }
+
+    function updateInterpretation(elId, interp) {
+        var el = document.getElementById(elId);
+        if (!el) return;
+        el.textContent = interp.label;
+        el.className = 'kpi-interpretation tier-' + interp.tier;
+    }
+
+    // ================================================================
+    // SCORE COLOR CODING
+    // ================================================================
+
+    function getScoreClass(val) {
+        if (val < 40) return 'score-low';
+        if (val < 70) return 'score-mid';
+        return 'score-high';
     }
 
     // ================================================================
@@ -937,7 +1177,7 @@
             slider.setAttribute('aria-label', metric.name);
 
             var badge = document.createElement('span');
-            badge.className = 'score-badge';
+            badge.className = 'score-badge ' + getScoreClass(val);
             badge.setAttribute('data-score-id', metric.id);
             badge.textContent = String(val);
 
@@ -945,6 +1185,7 @@
                 return function () {
                     var v = parseInt(this.value, 10);
                     badgeRef.textContent = String(v);
+                    badgeRef.className = 'score-badge ' + getScoreClass(v);
                     setVal(metricId, v);
                     recalculate();
                 };
@@ -1091,6 +1332,7 @@
 
     var ulrichChart = null;
     var mlqChart = null;
+    var itBarChart = null;
 
     function initCharts() {
         var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
@@ -1143,6 +1385,59 @@
             },
             options: commonRadarOpts
         });
+
+        // --- It Factor Cluster Bar Chart ---
+        var barCtx = document.getElementById('barItClusters').getContext('2d');
+        itBarChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Neural (30%)', 'Narrative (25%)', 'Influence (25%)', 'Presence (20%)'],
+                datasets: [{
+                    label: 'Cluster Score',
+                    data: [50, 50, 50, 50],
+                    backgroundColor: [
+                        'rgba(191, 87, 0, 0.6)',
+                        'rgba(253, 185, 19, 0.6)',
+                        'rgba(255, 107, 53, 0.6)',
+                        'rgba(139, 69, 19, 0.6)'
+                    ],
+                    borderColor: [
+                        '#BF5700',
+                        '#FDB913',
+                        '#FF6B35',
+                        '#8B4513'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            color: chartColors.tick,
+                            font: { family: "'JetBrains Mono'", size: 10 }
+                        },
+                        grid: { color: chartColors.grid }
+                    },
+                    y: {
+                        ticks: {
+                            color: chartColors.label,
+                            font: { family: "'Inter'", size: 12, weight: 500 }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
     }
 
     function updateCharts(ulrichFactors, mlqFactors) {
@@ -1188,8 +1483,30 @@
         unitSpan.textContent = '/10';
         itEl.appendChild(unitSpan);
 
-        // Update charts
+        // Update interpretation labels
+        updateInterpretation('interp-ulrich', getInterpretation100(ulrich.lci));
+        updateInterpretation('interp-iso', getInterpretation100(iso));
+        updateInterpretation('interp-mlq', getInterpretation100(mlq.score));
+        updateInterpretation('interp-it', getInterpretation10(itFactor));
+
+        // Update radar charts
         updateCharts(ulrich.factors, mlq.factors);
+
+        // Update bar chart — compute raw cluster values
+        var neural    = avg('neural-flow', 'cognitive-elasticity', 'neural-adaptability');
+        var narrative = avg('narrative-intelligence', 'leadership-storytelling');
+        var influence = avg('influence-dynamics', 'visionary-leadership');
+        var presence  = avg('empathy-index', 'team-sentiment', 'shadowing');
+
+        if (itBarChart) {
+            itBarChart.data.datasets[0].data = [
+                Math.round(neural * 10) / 10,
+                Math.round(narrative * 10) / 10,
+                Math.round(influence * 10) / 10,
+                Math.round(presence * 10) / 10
+            ];
+            itBarChart.update('none');
+        }
     }
 
     // ================================================================
@@ -1218,6 +1535,80 @@
     }
 
     // ================================================================
+    // PRESET APPLICATION
+    // ================================================================
+
+    function applyPreset(presetKey) {
+        var preset = PRESETS[presetKey];
+        if (!preset) return;
+
+        // Save all preset values
+        var state = {};
+        var keys = Object.keys(preset.values);
+        for (var i = 0; i < keys.length; i++) {
+            state[keys[i]] = preset.values[keys[i]];
+        }
+        saveState(state);
+
+        // Re-render sliders with new values
+        renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
+        renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
+        recalculate();
+
+        // Update active button state
+        var btns = document.querySelectorAll('.preset-btn');
+        for (var j = 0; j < btns.length; j++) {
+            btns[j].classList.toggle('active', btns[j].getAttribute('data-preset') === presetKey);
+        }
+    }
+
+    // ================================================================
+    // EXPORT / IMPORT
+    // ================================================================
+
+    function exportConfig() {
+        var state = loadState();
+        var all = INDIVIDUAL_METRICS.concat(ORGANIZATIONAL_METRICS);
+        var config = { version: 1, tool: 'bsi-leadership-capital', metrics: {} };
+        for (var i = 0; i < all.length; i++) {
+            config.metrics[all[i].id] = state[all[i].id] !== undefined ? state[all[i].id] : all[i].base;
+        }
+        var blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'leadership-capital-config.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importConfig(file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                var config = JSON.parse(e.target.result);
+                if (!config.metrics || typeof config.metrics !== 'object') return;
+                var state = {};
+                var keys = Object.keys(config.metrics);
+                for (var i = 0; i < keys.length; i++) {
+                    var v = parseInt(config.metrics[keys[i]], 10);
+                    if (!isNaN(v)) state[keys[i]] = Math.max(0, Math.min(100, v));
+                }
+                saveState(state);
+                renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
+                renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
+                recalculate();
+                // Clear active preset
+                var btns = document.querySelectorAll('.preset-btn');
+                for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+            } catch (err) {
+                // Invalid JSON — silently ignore
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // ================================================================
     // INIT
     // ================================================================
 
@@ -1230,6 +1621,27 @@
 
         document.getElementById('recalcBtn').addEventListener('click', recalculate);
         document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+        // Preset buttons
+        var presetBtns = document.querySelectorAll('.preset-btn');
+        for (var i = 0; i < presetBtns.length; i++) {
+            presetBtns[i].addEventListener('click', (function (btn) {
+                return function () { applyPreset(btn.getAttribute('data-preset')); };
+            })(presetBtns[i]));
+        }
+
+        // Export/Import
+        document.getElementById('exportBtn').addEventListener('click', exportConfig);
+        var importFileEl = document.getElementById('importFile');
+        document.getElementById('importBtn').addEventListener('click', function () {
+            importFileEl.click();
+        });
+        importFileEl.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                importConfig(this.files[0]);
+                this.value = '';
+            }
+        });
     }
 
     // Wait for DOM
