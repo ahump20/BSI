@@ -47,7 +47,7 @@ npm install
 Create a `.env` file at the project root:
 
 ```
-SPORTSDATAIO_API_KEY=your_key_here
+SPORTS_DATA_IO_API_KEY=4353bc28a8004b569f51d2222392ba17
 ```
 
 Optional:
