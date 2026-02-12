@@ -97,7 +97,7 @@ export async function onRequestGet(context) {
       meta: {
         dataSource: 'SportsDataIO',
         lastUpdated: new Date().toISOString(),
-        timezone: 'America/Chicago',
+        timezone: 'America/New_York',
         cached: false,
         totalTeams: standings.length,
       },

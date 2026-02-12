@@ -49,7 +49,8 @@
     "deploy:arcade": "echo 'Games deploy with Pages -- use deploy:pages'",
     "deploy:arcade-api": "wrangler deploy --config workers/mini-games-api/wrangler.toml",
     "deploy:safe": "bash scripts/pre-deploy-check.sh && wrangler pages deploy out --project-name blazesportsintel --branch main --commit-dirty=true",
-    "deploy:all": "npm run deploy:safe && npm run deploy:worker:production"
+    "deploy:all": "npm run deploy:safe && npm run deploy:worker:production",
+    "sportsdataio:dry-run": "node scripts/sportsdataio-dry-run.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3",
