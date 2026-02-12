@@ -460,27 +460,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Authorization check - require X-Admin-Secret header
   const adminSecret = request.headers.get('X-Admin-Secret');
-  if (!adminSecret || !env.ADMIN_SECRET) {
+  
+  // Return generic 401 to avoid leaking configuration state
+  if (!adminSecret || !env.ADMIN_SECRET || adminSecret !== env.ADMIN_SECRET) {
     return new Response(
       JSON.stringify({
         error: 'Unauthorized',
-        message: 'X-Admin-Secret header required. Set ADMIN_SECRET environment variable.',
+        message: 'Invalid or missing authorization credentials',
       }),
       {
         status: 401,
-        headers: HEADERS,
-      }
-    );
-  }
-
-  if (adminSecret !== env.ADMIN_SECRET) {
-    return new Response(
-      JSON.stringify({
-        error: 'Forbidden',
-        message: 'Invalid admin secret',
-      }),
-      {
-        status: 403,
         headers: HEADERS,
       }
     );
