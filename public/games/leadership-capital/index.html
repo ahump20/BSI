@@ -1434,11 +1434,14 @@
     var ulrichChart = null;
     var mlqChart = null;
     var itBarChart = null;
+    var chartErrorShown = false;
 
     // ================================================================
     // CHART ERROR HANDLING
     // ================================================================
     function showChartError() {
+        if (chartErrorShown) return;
+        chartErrorShown = true;
         var chartContainers = [
             document.getElementById('radarUlrich'),
             document.getElementById('radarMLQ'),
