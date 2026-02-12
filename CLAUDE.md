@@ -242,7 +242,7 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 ## Gotchas
 
 - Repo lives on iCloud Drive — `git status`, pre-commit hooks, and ripgrep searches may hang. Use `--no-verify` on commits if hooks stall. If git hangs, check for stale `.git/index.lock` and remove it.
-- `next.config.ts` skips TS/ESLint errors during build — CI handles them separately
+- `next.config.ts` is configured to skip TypeScript build errors — ESLint errors are handled separately in CI
 - `tsconfig.json` excludes `workers/**/*` — workers have their own configs
 - Legacy paths excluded: `lib/api/v1/**/*`, `lib/adapters/*`
 - ESPN dates labeled UTC are actually ET — always verify timezone
