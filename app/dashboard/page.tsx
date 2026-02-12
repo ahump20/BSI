@@ -87,7 +87,7 @@ export default function DashboardPage() {
     liveGames: 0,
     todaysGames: 0,
     totalTeams: 30,
-    lastUpdated: new Date().toISOString(),
+    lastUpdated: '',
   });
   const [standings, setStandings] = useState<StandingsTeam[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +96,9 @@ export default function DashboardPage() {
   const [coverageCounts, setCoverageCounts] = useState<Record<string, number>>({});
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
+  const lastUpdatedLabel = stats.lastUpdated && timezoneLoaded
+    ? formatDateTime(new Date(stats.lastUpdated)).split(',')[1]?.trim() || 'Now'
+    : 'Now';
 
   // Countdown timer for auto-refresh
   useEffect(() => {
@@ -307,7 +310,7 @@ export default function DashboardPage() {
               />
               <StatCard
                 label="Last Updated"
-                value={timezoneLoaded ? formatDateTime(new Date(stats.lastUpdated)).split(',')[1]?.trim() || 'Now' : 'Now'}
+                value={lastUpdatedLabel}
                 subtitle={`refresh in ${countdown}s`}
                 icon={<RefreshIcon />}
               />
