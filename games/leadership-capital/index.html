@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intangible Leadership Capital Index | BSI</title>
+    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to Ulrich LCI, ISO 30431, and MLQ 5X transformational frameworks.">
+
+    <!-- Fonts: BSI brand system -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js 4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        /* ================================================================
+           BSI BRAND TOKENS — Dark Theme + Glass-Morphism
+           Derived from lib/tokens/bsi-brand.css
+           ================================================================ */
+        :root {
+            --bsi-primary: #BF5700;
+            --bsi-accent: #FF6B35;
+            --bsi-surface: #0D0D12;
+            --bsi-gold: #FDB913;
+            --bsi-text: #FAFAFA;
+            --bsi-text-secondary: #a3a3a3;
+            --bsi-text-tertiary: #737373;
+            --bsi-texas-soil: #8B4513;
+            --bsi-charcoal: #1A1A1A;
+            --bsi-midnight: #0D0D12;
+
+            --glass-subtle-bg: rgba(255, 255, 255, 0.04);
+            --glass-subtle-border: rgba(255, 255, 255, 0.06);
+            --glass-default-bg: rgba(255, 255, 255, 0.08);
+            --glass-default-border: rgba(255, 255, 255, 0.12);
+            --glass-elevated-bg: rgba(255, 255, 255, 0.12);
+            --glass-elevated-border: rgba(255, 255, 255, 0.18);
+
+            --bsi-glow-sm: 0 0 20px rgba(191, 87, 0, 0.3);
+            --bsi-glow-md: 0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2);
+
+            --font-display: 'Oswald', system-ui, sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bsi-midnight);
+            font-family: var(--font-body);
+            color: var(--bsi-text);
+            padding: 1.5rem;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---- Layout ---- */
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: var(--glass-elevated-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-elevated-border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        /* ---- Header Banner ---- */
+        .header-banner {
+            background: linear-gradient(135deg, var(--bsi-primary), var(--bsi-texas-soil));
+            border-radius: 16px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-banner h1 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(1.4rem, 2.5vw, 2rem);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(4px);
+            padding: 0.45rem 1rem;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-family: var(--font-mono);
+            font-weight: 500;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .badge i { color: var(--bsi-gold); }
+
+        /* ---- Framework Mapping Pills ---- */
+        .mapping-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .pill {
+            background: rgba(191, 87, 0, 0.12);
+            border: 1px solid rgba(191, 87, 0, 0.25);
+            padding: 0.3rem 0.9rem;
+            border-radius: 100px;
+            color: var(--bsi-accent);
+            font-weight: 500;
+        }
+
+        .pill i { margin-right: 4px; color: var(--bsi-primary); }
+
+        /* ---- Grid System ---- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ---- Cards (Glass) ---- */
+        .card {
+            background: var(--glass-default-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-default-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(191, 87, 0, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-header h2 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i { color: var(--bsi-primary); }
+
+        .card-sub {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--bsi-text-secondary);
+            background: var(--glass-subtle-bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            border: 1px solid var(--glass-subtle-border);
+        }
+
+        .card-desc {
+            color: var(--bsi-text-tertiary);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ---- Metric Rows ---- */
+        .metric-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .metric-item:last-child { border-bottom: none; }
+
+        .metric-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .metric-icon {
+            width: 28px;
+            text-align: center;
+            color: var(--bsi-primary);
+            flex-shrink: 0;
+        }
+
+        .metric-name {
+            font-weight: 500;
+            font-size: 0.88rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .framework-tag {
+            background: rgba(191, 87, 0, 0.15);
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            padding: 2px 7px;
+            border-radius: 100px;
+            color: var(--bsi-accent);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            width: 180px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--bsi-primary);
+            border-radius: 50%;
+            border: 2px solid var(--bsi-text);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(191, 87, 0, 0.4);
+            transition: transform 0.15s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--bsi-primary);
+            border-radius: 50%;
+            border: 2px solid var(--bsi-text);
+            cursor: pointer;
+        }
+
+        .score-badge {
+            min-width: 40px;
+            height: 30px;
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--bsi-text);
+        }
+
+        /* ---- Section Divider ---- */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0.5rem 0 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-divider h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-divider h3 i { color: var(--bsi-gold); }
+
+        /* ---- Buttons ---- */
+        .btn {
+            background: var(--bsi-primary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 0.65rem 1.6rem;
+            border-radius: 100px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--bsi-accent);
+            box-shadow: var(--bsi-glow-sm);
+            transform: translateY(-1px);
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--bsi-text-secondary);
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: none;
+            color: var(--bsi-text);
+        }
+
+        /* ---- KPI Panels ---- */
+        .kpi-panel {
+            background: var(--glass-default-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-default-border);
+            border-radius: 16px;
+            padding: 1.4rem;
+            text-align: center;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .kpi-panel:hover {
+            border-color: rgba(191, 87, 0, 0.3);
+        }
+
+        .kpi-title {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--bsi-text-secondary);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .kpi-number {
+            font-family: var(--font-mono);
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--bsi-text);
+        }
+
+        .kpi-unit {
+            font-size: 1.2rem;
+            color: var(--bsi-text-secondary);
+        }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            color: var(--bsi-text-tertiary);
+            margin-top: 0.3rem;
+        }
+
+        .kpi-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            background: rgba(191, 87, 0, 0.2);
+            color: var(--bsi-accent);
+            padding: 3px 10px;
+            border-radius: 100px;
+            margin-top: 0.5rem;
+        }
+
+        /* IT Factor special glow */
+        .kpi-it-factor {
+            border-color: rgba(191, 87, 0, 0.4);
+            box-shadow: var(--bsi-glow-sm);
+            background: linear-gradient(145deg, rgba(191, 87, 0, 0.08), var(--glass-default-bg));
+        }
+
+        .kpi-it-factor:hover {
+            box-shadow: var(--bsi-glow-md);
+        }
+
+        .kpi-it-factor .kpi-number {
+            color: var(--bsi-accent);
+        }
+
+        /* ---- Chart Containers ---- */
+        .chart-card {
+            background: var(--glass-default-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-default-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .chart-card canvas {
+            max-height: 320px;
+            width: 100% !important;
+        }
+
+        .chart-note {
+            font-size: 0.75rem;
+            color: var(--bsi-text-tertiary);
+            margin-top: 0.75rem;
+            font-style: italic;
+        }
+
+        /* ---- Methodology Panel ---- */
+        .methodology {
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
+            border-left: 4px solid var(--bsi-primary);
+            border-radius: 12px;
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .methodology-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--bsi-text);
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+        }
+
+        .methodology-toggle:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .methodology-toggle .chevron {
+            transition: transform 0.3s;
+        }
+
+        .methodology-toggle[aria-expanded="true"] .chevron {
+            transform: rotate(180deg);
+        }
+
+        .methodology-content {
+            padding: 0 1.5rem 1.5rem;
+            display: none;
+            color: var(--bsi-text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .methodology-content.open {
+            display: block;
+        }
+
+        .method-heading {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            color: var(--bsi-text);
+            margin: 1.25rem 0 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .method-heading:first-child {
+            margin-top: 0;
+        }
+
+        .methodology-content code {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            background: rgba(191, 87, 0, 0.1);
+            padding: 1px 6px;
+            border-radius: 4px;
+            color: var(--bsi-accent);
+        }
+
+        .methodology-content ul {
+            padding-left: 1.5rem;
+            margin: 0.4rem 0;
+        }
+
+        .methodology-content li {
+            margin: 0.25rem 0;
+        }
+
+        .citation {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--bsi-text-tertiary);
+            padding: 0.5rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ---- Footer ---- */
+        .footer {
+            text-align: center;
+            padding: 1.5rem 0 0.5rem;
+            font-size: 0.72rem;
+            color: var(--bsi-text-tertiary);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            margin-top: 2rem;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 1000px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 0.75rem; }
+            .container { padding: 1rem; border-radius: 16px; }
+            .header-banner { padding: 1.25rem; }
+            .grid-4 { grid-template-columns: 1fr; }
+            .metric-item { flex-wrap: wrap; gap: 0.5rem; }
+            .slider-group { width: 100%; }
+            .framework-tag { display: none; }
+        }
+
+        /* ---- Reduced motion ---- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ============================================================
+         HEADER BANNER
+         ============================================================ -->
+    <div class="header-banner">
+        <h1>
+            <i class="fas fa-chart-line"></i>
+            Intangible Leadership Capital Index
+        </h1>
+        <div class="badge-group">
+            <span class="badge"><i class="fas fa-flask"></i> Ulrich LCI 2015</span>
+            <span class="badge"><i class="fas fa-certificate"></i> ISO/TS 30431</span>
+            <span class="badge"><i class="fas fa-brain"></i> Bass &amp; Avolio MLQ</span>
+            <span class="badge"><i class="fas fa-heart-pulse"></i> TEIQue</span>
+            <span class="badge"><i class="fas fa-bolt"></i> Antonakis CLTs</span>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FRAMEWORK MAPPING PILLS
+         ============================================================ -->
+    <div class="mapping-pills">
+        <span class="pill"><i class="fas fa-arrow-right"></i> Personal Proficiency &#8594; Resilience, Neural Adaptability (Ulrich)</span>
+        <span class="pill"><i class="fas fa-arrow-right"></i> Trust (ISO 30431) &#8594; Empathy, Sentiment, Feedback</span>
+        <span class="pill"><i class="fas fa-arrow-right"></i> Intellectual Stimulation (MLQ) &#8594; Cognitive Efficiency, Flow, Elasticity</span>
+        <span class="pill"><i class="fas fa-arrow-right"></i> Charismatic Tactics (Antonakis) &#8594; Storytelling, Narrative, Influence</span>
+    </div>
+
+    <!-- ============================================================
+         METRICS GRID — Two-Column (Individual + Organizational)
+         ============================================================ -->
+    <div class="grid-2">
+        <!-- LEFT: Individual Leadership Capital -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-user-astronaut"></i> Individual Capital</h2>
+                <span class="card-sub">Ulrich Individual + MLQ + TEIQue</span>
+            </div>
+            <div class="card-desc">
+                <i class="fas fa-microchip"></i> Personal proficiency, strategist, executor, talent brand
+            </div>
+            <div id="individual-metrics"></div>
+        </div>
+
+        <!-- RIGHT: Organizational & ISO Cluster -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-building-columns"></i> Organizational Cluster</h2>
+                <span class="card-sub">Ulrich Org + ISO 30431</span>
+            </div>
+            <div class="card-desc">
+                <i class="fas fa-people-arrows"></i> Culture, trust, talent flow, accountability, work practices
+            </div>
+            <div id="organizational-metrics"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SECTION DIVIDER
+         ============================================================ -->
+    <div class="section-divider">
+        <h3><i class="fas fa-crown"></i> The "It" Factor: Quantifying the Unquantifiable</h3>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn" id="recalcBtn"><i class="fas fa-rotate"></i> Recalculate</button>
+            <button class="btn btn-reset" id="resetBtn"><i class="fas fa-arrow-rotate-left"></i> Reset All</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         KPI DASHBOARD — 4 Panels
+         ============================================================ -->
+    <div class="grid-4">
+        <div class="kpi-panel">
+            <div class="kpi-title">Ulrich LCI</div>
+            <div class="kpi-number" id="kpi-ulrich">&#8212;</div>
+            <div class="kpi-label">Individual + Organizational composite</div>
+            <span class="kpi-tag">10-factor weighted</span>
+        </div>
+        <div class="kpi-panel">
+            <div class="kpi-title">ISO 30431</div>
+            <div class="kpi-number" id="kpi-iso">&#8212;</div>
+            <div class="kpi-label">Trust &#183; Development &#183; Span</div>
+            <span class="kpi-tag">3-pillar cluster</span>
+        </div>
+        <div class="kpi-panel">
+            <div class="kpi-title">MLQ Transformational</div>
+            <div class="kpi-number" id="kpi-mlq">&#8212;</div>
+            <div class="kpi-label">Bass &amp; Avolio 5-factor</div>
+            <span class="kpi-tag">IIA &#183; IIB &#183; IM &#183; IS &#183; IC</span>
+        </div>
+        <div class="kpi-panel kpi-it-factor">
+            <div class="kpi-title">It Factor</div>
+            <div class="kpi-number" id="kpi-it">&#8212;</div>
+            <div class="kpi-label">Predictive intangible power</div>
+            <span class="kpi-tag">neural + narrative + influence + presence</span>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         RADAR CHARTS — Ulrich 10-Factor + MLQ 5-Factor
+         ============================================================ -->
+    <div class="grid-2">
+        <div class="chart-card">
+            <div class="chart-header">
+                <span><i class="fas fa-chart-pie" style="color:var(--bsi-primary);"></i> Ulrich LCI Audit Profile</span>
+                <span class="card-sub">10 dimensions</span>
+            </div>
+            <canvas id="radarUlrich"></canvas>
+            <p class="chart-note">5 Individual (Personal, Strategic, Execution, People, Brand) + 5 Organizational (Culture, Talent Flow, Accountability, Information, Work Practices) per Ulrich (2015).</p>
+        </div>
+        <div class="chart-card">
+            <div class="chart-header">
+                <span><i class="fas fa-diagram-project" style="color:var(--bsi-primary);"></i> MLQ Transformational Profile</span>
+                <span class="card-sub">5 factors</span>
+            </div>
+            <canvas id="radarMLQ"></canvas>
+            <p class="chart-note">Idealized Influence (Attributed + Behavioral), Inspirational Motivation, Intellectual Stimulation, Individualized Consideration per Bass &amp; Avolio (2004).</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         METHODOLOGY — Expandable Panel
+         ============================================================ -->
+    <div class="methodology">
+        <button class="methodology-toggle" id="methodToggle" aria-expanded="false">
+            <span><i class="fas fa-book-open" style="color:var(--bsi-primary); margin-right:8px;"></i> Methodology &amp; Academic Validation</span>
+            <i class="fas fa-chevron-down chevron"></i>
+        </button>
+        <div class="methodology-content" id="methodContent">
+
+            <h5 class="method-heading">Conceptual Framework</h5>
+            <p>This prototype maps 23 intangible leadership metrics to five validated academic and industry frameworks. The mapping is <strong>conceptual</strong> &#8212; it bridges novel metrics to established constructs based on shared theoretical domains, not direct psychometric equivalence. The goal is to demonstrate that these intangible qualities have legitimate measurement foundations, not to claim factor-analytic identity with existing instruments.</p>
+
+            <h5 class="method-heading">Ulrich Leadership Capital Index (2015)</h5>
+            <p>Dave Ulrich's LCI provides a 10-factor model (5 individual + 5 organizational) for assessing leadership quality. Research shows 25&#8211;30% of investment decisions weigh leadership intangibles. Our 23 metrics distribute across all 10 factors:</p>
+            <ul>
+                <li><strong>Personal Proficiency</strong> &#8592; Cognitive Efficiency, Resilience, Neural Flow Access, Cognitive Elasticity</li>
+                <li><strong>Strategic Proficiency</strong> &#8592; Strategic Impact, Visionary Leadership</li>
+                <li><strong>Execution Proficiency</strong> &#8592; Communication Effectiveness, Neural Adaptability</li>
+                <li><strong>People Proficiency</strong> &#8592; Empathy Index</li>
+                <li><strong>Leadership Brand</strong> &#8592; Influence Dynamics, Narrative Intelligence, Leadership Storytelling</li>
+                <li><strong>Culture Capability</strong> &#8592; Real-Time Sentiment, Reverse Mentoring</li>
+                <li><strong>Talent Flow</strong> &#8592; Skill Badges, Cross-Mentorship, Micro-Skills Curriculum</li>
+                <li><strong>Performance Accountability</strong> &#8592; Dynamic Goal Setting, Leadership Habit Tracker</li>
+                <li><strong>Information</strong> &#8592; Shadowing &amp; Observational Data, Inter-Team Feedback</li>
+                <li><strong>Work Practices</strong> &#8592; Leadership Challenge, Leadership Simulation</li>
+            </ul>
+            <p>Composite: <code>LCI = avg(5 individual factors) x 0.5 + avg(5 organizational factors) x 0.5</code></p>
+
+            <h5 class="method-heading">ISO/TS 30431:2021 &#8212; Leadership Metrics</h5>
+            <p>Part of ISO 30414 human capital reporting standards. The leadership cluster measures three pillars:</p>
+            <ul>
+                <li><strong>Trust (40%)</strong> &#8592; Empathy, Communication, Real-Time Sentiment, Reverse Mentoring, Inter-Team Feedback</li>
+                <li><strong>Leadership Development (40%)</strong> &#8592; Shadowing, Challenge, Simulation, Skill Badges, Micro-Skills</li>
+                <li><strong>Span of Control (20%)</strong> &#8592; Cross-Mentorship, Influence Dynamics, Dynamic Goal Setting</li>
+            </ul>
+
+            <h5 class="method-heading">Bass &amp; Avolio MLQ 5X &#8212; Transformational Leadership</h5>
+            <p>The Multifactor Leadership Questionnaire (1985, revised 2004) identifies five transformational factors:</p>
+            <ul>
+                <li><strong>Idealized Influence (Attributed)</strong> &#8592; Visionary Leadership, Resilience Coefficient</li>
+                <li><strong>Idealized Influence (Behavioral)</strong> &#8592; Influence Dynamics, Leadership Storytelling</li>
+                <li><strong>Inspirational Motivation</strong> &#8592; Strategic Impact, Communication, Narrative Intelligence</li>
+                <li><strong>Intellectual Stimulation</strong> &#8592; Cognitive Efficiency, Neural Flow Access, Cognitive Elasticity</li>
+                <li><strong>Individualized Consideration</strong> &#8592; Empathy Index, Cross-Mentorship, Reverse Mentoring</li>
+            </ul>
+
+            <h5 class="method-heading">The "It" Factor Algorithm</h5>
+            <p>The "It Factor Quotient" isolates the highest-loading intangible dimensions &#8212; the metrics that resist conventional measurement:</p>
+            <ul>
+                <li><strong>Neural Cluster (30%)</strong>: Neural Flow Access, Cognitive Elasticity, Neural Adaptability</li>
+                <li><strong>Narrative Cluster (25%)</strong>: Narrative Intelligence, Leadership Storytelling</li>
+                <li><strong>Influence Cluster (25%)</strong>: Influence Dynamics, Visionary Leadership</li>
+                <li><strong>Presence Cluster (20%)</strong>: Empathy Index, Real-Time Sentiment, Shadowing</li>
+            </ul>
+            <p>Neural/cognitive metrics receive the highest weight because they represent the least observable and most "intangible" leadership qualities &#8212; flow states (Csikszentmihalyi, 1990), cognitive flexibility, and neural adaptability are the components that separate leaders described as having "it" from those who are merely competent. Antonakis et al. (2011) demonstrated that charismatic influence can be decomposed into 12 trainable tactics, validating the narrative and influence clusters. Petrides &amp; Furnham confirmed trait emotional intelligence as a temporally stable predictor of leadership emergence.</p>
+
+            <h5 class="method-heading">References</h5>
+            <div class="citation">Antonakis, J., Fenley, M., &amp; Liechti, S. (2011). Can charisma be taught? Tests of two interventions. Academy of Management Learning &amp; Education, 10(3), 374&#8211;396.</div>
+            <div class="citation">Bass, B.M., &amp; Avolio, B.J. (2004). Multifactor Leadership Questionnaire Manual and Sampler Set (3rd ed.). Mind Garden.</div>
+            <div class="citation">Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. Harper &amp; Row.</div>
+            <div class="citation">ISO (2021). ISO/TS 30431:2021 &#8212; Human resource management &#8212; Leadership metrics cluster. ISO TC 260.</div>
+            <div class="citation">Petrides, K.V., &amp; Furnham, A. (2003). Trait emotional intelligence: Behavioural validation in two studies of emotion recognition and reactivity to mood induction. European Journal of Personality, 17, 39&#8211;57.</div>
+            <div class="citation">Ulrich, D. (2015). The Leadership Capital Index: Realizing the Market Value of Leadership. Berrett-Koehler Publishers.</div>
+            <div class="citation">Wong, C.S., &amp; Law, K.S. (2002). The effects of leader and follower emotional intelligence on performance and attitude. The Leadership Quarterly, 13(3), 243&#8211;274.</div>
+            <div class="citation">Zadorozhny, K., &amp; Petrides, K.V. (2025). Predicting leadership status through trait emotional intelligence and cognitive ability. Behavioral Sciences, 15(3), 365.</div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <div class="footer">
+        <p>Blaze Sports Intel &#8212; Intangible Leadership Capital Index Prototype</p>
+        <p>23 metrics mapped to Ulrich LCI (2015), ISO/TS 30431, Bass &amp; Avolio MLQ 5X, TEIQue, and Antonakis CLTs.</p>
+        <p style="margin-top:0.5rem;">Conceptual validation tool &#8212; not a substitute for psychometric assessment.</p>
+    </div>
+
+</div>
+
+<!-- ================================================================
+     JAVASCRIPT — Scoring Engine + Chart Rendering
+     All DOM construction uses safe methods (createElement/textContent).
+     No innerHTML — all content derives from hardcoded metric arrays.
+     ================================================================ -->
+<script>
+(function () {
+    'use strict';
+
+    // ================================================================
+    // METRIC DATA — 23 metrics with framework tags and default values
+    // ================================================================
+
+    var INDIVIDUAL_METRICS = [
+        { id: 'cognitive-efficiency',     name: 'Cognitive Efficiency',         icon: 'fa-brain',                    base: 72, tag: 'Ulrich: Personal' },
+        { id: 'strategic-impact',         name: 'Strategic Impact',             icon: 'fa-bullseye',                 base: 78, tag: 'MLQ: Inspirational' },
+        { id: 'resilience-coefficient',   name: 'Resilience Coefficient',       icon: 'fa-shield-halved',            base: 70, tag: 'TEIQue: Well-being' },
+        { id: 'empathy-index',            name: 'Empathy Index',                icon: 'fa-heart',                    base: 65, tag: 'ISO: Trust' },
+        { id: 'communication',            name: 'Communication Effectiveness',  icon: 'fa-comments',                 base: 80, tag: 'Antonakis CLTs' },
+        { id: 'influence-dynamics',       name: 'Influence Dynamics',           icon: 'fa-people-group',             base: 73, tag: 'MLQ: Idealized (B)' },
+        { id: 'visionary-leadership',     name: 'Visionary Leadership',         icon: 'fa-eye',                      base: 82, tag: 'Ulrich: Strategist' },
+        { id: 'neural-flow',             name: 'Neural Flow Access',           icon: 'fa-wave-square',              base: 58, tag: 'Flow: Csikszentmihalyi' },
+        { id: 'cognitive-elasticity',     name: 'Cognitive Elasticity',         icon: 'fa-arrow-right-arrow-left',   base: 61, tag: 'MLQ: Intellectual Stim.' },
+        { id: 'neural-adaptability',      name: 'Neural Adaptability',          icon: 'fa-microchip',                base: 66, tag: 'TEIQue: Adaptability' },
+        { id: 'narrative-intelligence',   name: 'Narrative Intelligence',       icon: 'fa-book-open',                base: 69, tag: 'Antonakis: Metaphor' },
+        { id: 'leadership-storytelling',  name: 'Leadership Storytelling',      icon: 'fa-star',                     base: 71, tag: 'Ulrich: Brand' }
+    ];
+
+    var ORGANIZATIONAL_METRICS = [
+        { id: 'shadowing',               name: 'Shadowing & Observational Data', icon: 'fa-clipboard',              base: 64, tag: 'ISO: Development' },
+        { id: 'okrs',                    name: 'Dynamic Goal Setting (OKRs)',    icon: 'fa-flag',                   base: 75, tag: 'Ulrich: Accountability' },
+        { id: 'team-sentiment',          name: 'Real-Time Team Sentiment',       icon: 'fa-face-smile',             base: 67, tag: 'ISO: Trust' },
+        { id: 'leadership-challenge',    name: 'Leadership Challenge',           icon: 'fa-puzzle-piece',           base: 62, tag: 'Ulrich: Work Practices' },
+        { id: 'leadership-simulation',   name: 'Leadership Simulation',          icon: 'fa-gamepad',                base: 68, tag: 'Ulrich: Work Practices' },
+        { id: 'skill-badges',            name: 'Skill Badges & Leaderboards',    icon: 'fa-medal',                  base: 60, tag: 'Ulrich: Talent Flow' },
+        { id: 'cross-mentorship',        name: 'Cross-Mentorship Program',       icon: 'fa-people-arrows',          base: 76, tag: 'ISO: Span' },
+        { id: 'reverse-mentoring',       name: 'Reverse Mentoring',              icon: 'fa-rotate',                 base: 73, tag: 'ISO: Trust' },
+        { id: 'inter-team-feedback',     name: 'Inter-Team Feedback Sessions',   icon: 'fa-arrows-turn-to-dots',    base: 70, tag: 'Ulrich: Information' },
+        { id: 'micro-skills',            name: 'Micro-Skills Curriculum',         icon: 'fa-graduation-cap',         base: 66, tag: 'ISO: Development' },
+        { id: 'habit-tracker',           name: 'Leadership Habit Tracker',        icon: 'fa-calendar-check',         base: 59, tag: 'Ulrich: Accountability' }
+    ];
+
+    // ================================================================
+    // STORAGE HELPERS
+    // ================================================================
+
+    var STORAGE_KEY = 'bsi-leadership-capital';
+
+    function loadState() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : {};
+        } catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function getVal(id) {
+        var state = loadState();
+        if (state[id] !== undefined) return state[id];
+        var all = INDIVIDUAL_METRICS.concat(ORGANIZATIONAL_METRICS);
+        for (var i = 0; i < all.length; i++) {
+            if (all[i].id === id) return all[i].base;
+        }
+        return 50;
+    }
+
+    function setVal(id, val) {
+        var state = loadState();
+        state[id] = val;
+        saveState(state);
+    }
+
+    // ================================================================
+    // RENDER METRIC SLIDERS — Safe DOM construction, no innerHTML
+    // ================================================================
+
+    function renderMetrics(containerId, metrics) {
+        var container = document.getElementById(containerId);
+        // Clear existing children
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+
+        metrics.forEach(function (metric) {
+            var val = getVal(metric.id);
+
+            // Row container
+            var row = document.createElement('div');
+            row.className = 'metric-item';
+
+            // Left: metric info
+            var infoDiv = document.createElement('div');
+            infoDiv.className = 'metric-info';
+
+            var iconWrap = document.createElement('div');
+            iconWrap.className = 'metric-icon';
+            var icon = document.createElement('i');
+            icon.className = 'fas ' + metric.icon;
+            iconWrap.appendChild(icon);
+
+            var nameSpan = document.createElement('span');
+            nameSpan.className = 'metric-name';
+            nameSpan.textContent = metric.name;
+
+            var tagSpan = document.createElement('span');
+            tagSpan.className = 'framework-tag';
+            tagSpan.textContent = metric.tag;
+
+            infoDiv.appendChild(iconWrap);
+            infoDiv.appendChild(nameSpan);
+            infoDiv.appendChild(tagSpan);
+
+            // Right: slider + score badge
+            var sliderDiv = document.createElement('div');
+            sliderDiv.className = 'slider-group';
+
+            var slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = '0';
+            slider.max = '100';
+            slider.value = String(val);
+            slider.setAttribute('data-metric-id', metric.id);
+            slider.setAttribute('aria-label', metric.name);
+
+            var badge = document.createElement('span');
+            badge.className = 'score-badge';
+            badge.setAttribute('data-score-id', metric.id);
+            badge.textContent = String(val);
+
+            slider.addEventListener('input', (function (badgeRef, metricId) {
+                return function () {
+                    var v = parseInt(this.value, 10);
+                    badgeRef.textContent = String(v);
+                    setVal(metricId, v);
+                    recalculate();
+                };
+            })(badge, metric.id));
+
+            sliderDiv.appendChild(slider);
+            sliderDiv.appendChild(badge);
+
+            row.appendChild(infoDiv);
+            row.appendChild(sliderDiv);
+            container.appendChild(row);
+        });
+    }
+
+    // ================================================================
+    // SCORING ALGORITHMS
+    // ================================================================
+
+    function avg() {
+        var ids = Array.prototype.slice.call(arguments);
+        var sum = 0;
+        for (var i = 0; i < ids.length; i++) {
+            sum += getVal(ids[i]);
+        }
+        return sum / ids.length;
+    }
+
+    function computeUlrich() {
+        // 5 Individual factors
+        var personal  = avg('cognitive-efficiency', 'resilience-coefficient', 'neural-flow', 'cognitive-elasticity');
+        var strategic = avg('strategic-impact', 'visionary-leadership');
+        var execution = avg('communication', 'neural-adaptability');
+        var people    = avg('empathy-index');
+        var brand     = avg('influence-dynamics', 'narrative-intelligence', 'leadership-storytelling');
+
+        // 5 Organizational factors
+        var culture        = avg('team-sentiment', 'reverse-mentoring');
+        var talentFlow     = avg('skill-badges', 'cross-mentorship', 'micro-skills');
+        var accountability = avg('okrs', 'habit-tracker');
+        var information    = avg('shadowing', 'inter-team-feedback');
+        var workPractices  = avg('leadership-challenge', 'leadership-simulation');
+
+        var indAvg = (personal + strategic + execution + people + brand) / 5;
+        var orgAvg = (culture + talentFlow + accountability + information + workPractices) / 5;
+
+        var lci = indAvg * 0.5 + orgAvg * 0.5;
+
+        return {
+            lci: Math.round(lci * 10) / 10,
+            factors: {
+                personal: Math.round(personal * 10) / 10,
+                strategic: Math.round(strategic * 10) / 10,
+                execution: Math.round(execution * 10) / 10,
+                people: Math.round(people * 10) / 10,
+                brand: Math.round(brand * 10) / 10,
+                culture: Math.round(culture * 10) / 10,
+                talentFlow: Math.round(talentFlow * 10) / 10,
+                accountability: Math.round(accountability * 10) / 10,
+                information: Math.round(information * 10) / 10,
+                workPractices: Math.round(workPractices * 10) / 10
+            }
+        };
+    }
+
+    function computeISO() {
+        var trust = avg('empathy-index', 'communication', 'team-sentiment', 'reverse-mentoring', 'inter-team-feedback');
+        var dev   = avg('shadowing', 'leadership-challenge', 'leadership-simulation', 'skill-badges', 'micro-skills');
+        var span  = avg('cross-mentorship', 'influence-dynamics', 'okrs');
+
+        var score = trust * 0.4 + dev * 0.4 + span * 0.2;
+        return Math.round(score * 10) / 10;
+    }
+
+    function computeMLQ() {
+        var iia = avg('visionary-leadership', 'resilience-coefficient');
+        var iib = avg('influence-dynamics', 'leadership-storytelling');
+        var im  = avg('strategic-impact', 'communication', 'narrative-intelligence');
+        var is_ = avg('cognitive-efficiency', 'neural-flow', 'cognitive-elasticity');
+        var ic  = avg('empathy-index', 'cross-mentorship', 'reverse-mentoring');
+
+        var score = (iia + iib + im + is_ + ic) / 5;
+        return {
+            score: Math.round(score * 10) / 10,
+            factors: {
+                iia: Math.round(iia * 10) / 10,
+                iib: Math.round(iib * 10) / 10,
+                im: Math.round(im * 10) / 10,
+                is: Math.round(is_ * 10) / 10,
+                ic: Math.round(ic * 10) / 10
+            }
+        };
+    }
+
+    // --- THE "IT" FACTOR --- 4-cluster weighted composite
+    function computeItFactor() {
+        var neural    = avg('neural-flow', 'cognitive-elasticity', 'neural-adaptability');
+        var narrative = avg('narrative-intelligence', 'leadership-storytelling');
+        var influence = avg('influence-dynamics', 'visionary-leadership');
+        var presence  = avg('empathy-index', 'team-sentiment', 'shadowing');
+
+        var raw = (neural * 0.30) + (narrative * 0.25) + (influence * 0.25) + (presence * 0.20);
+        return Math.round((raw / 10) * 10) / 10; // scaled to 0-10
+    }
+
+    // ================================================================
+    // CHART.JS CONFIGURATION
+    // ================================================================
+
+    var chartColors = {
+        fill: 'rgba(191, 87, 0, 0.15)',
+        border: '#BF5700',
+        point: '#FF6B35',
+        pointBorder: '#FAFAFA',
+        grid: 'rgba(255, 255, 255, 0.06)',
+        label: '#a3a3a3',
+        tick: '#737373'
+    };
+
+    var commonRadarOpts = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            r: {
+                min: 0,
+                max: 100,
+                ticks: {
+                    stepSize: 20,
+                    color: chartColors.tick,
+                    backdropColor: 'transparent',
+                    font: { family: "'JetBrains Mono'", size: 10 }
+                },
+                pointLabels: {
+                    color: chartColors.label,
+                    font: { family: "'Inter'", size: 11, weight: 500 }
+                },
+                grid: { color: chartColors.grid },
+                angleLines: { color: chartColors.grid }
+            }
+        }
+    };
+
+    var ulrichChart = null;
+    var mlqChart = null;
+
+    function initCharts() {
+        var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
+        ulrichChart = new Chart(ulrichCtx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Personal Prof.', 'Strategic Prof.', 'Execution Prof.',
+                    'People Prof.', 'Leadership Brand',
+                    'Culture Cap.', 'Talent Flow', 'Performance Acc.',
+                    'Information', 'Work Practices'
+                ],
+                datasets: [{
+                    label: 'Ulrich LCI',
+                    data: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+                    backgroundColor: chartColors.fill,
+                    borderColor: chartColors.border,
+                    borderWidth: 2,
+                    pointBackgroundColor: chartColors.point,
+                    pointBorderColor: chartColors.pointBorder,
+                    pointBorderWidth: 1,
+                    pointRadius: 4
+                }]
+            },
+            options: commonRadarOpts
+        });
+
+        var mlqCtx = document.getElementById('radarMLQ').getContext('2d');
+        mlqChart = new Chart(mlqCtx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Idealized Infl. (A)',
+                    'Idealized Infl. (B)',
+                    'Inspirational Motivation',
+                    'Intellectual Stimulation',
+                    'Individualized Consid.'
+                ],
+                datasets: [{
+                    label: 'MLQ 5X Transformational',
+                    data: [50, 50, 50, 50, 50],
+                    backgroundColor: 'rgba(253, 185, 19, 0.12)',
+                    borderColor: '#FDB913',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#FDB913',
+                    pointBorderColor: chartColors.pointBorder,
+                    pointBorderWidth: 1,
+                    pointRadius: 4
+                }]
+            },
+            options: commonRadarOpts
+        });
+    }
+
+    function updateCharts(ulrichFactors, mlqFactors) {
+        if (ulrichChart) {
+            ulrichChart.data.datasets[0].data = [
+                ulrichFactors.personal, ulrichFactors.strategic, ulrichFactors.execution,
+                ulrichFactors.people, ulrichFactors.brand,
+                ulrichFactors.culture, ulrichFactors.talentFlow, ulrichFactors.accountability,
+                ulrichFactors.information, ulrichFactors.workPractices
+            ];
+            ulrichChart.update('none');
+        }
+
+        if (mlqChart) {
+            mlqChart.data.datasets[0].data = [
+                mlqFactors.iia, mlqFactors.iib, mlqFactors.im, mlqFactors.is, mlqFactors.ic
+            ];
+            mlqChart.update('none');
+        }
+    }
+
+    // ================================================================
+    // RECALCULATE — ties everything together
+    // ================================================================
+
+    function recalculate() {
+        var ulrich = computeUlrich();
+        var iso = computeISO();
+        var mlq = computeMLQ();
+        var itFactor = computeItFactor();
+
+        // Update KPI numbers using safe textContent
+        document.getElementById('kpi-ulrich').textContent = String(ulrich.lci);
+        document.getElementById('kpi-iso').textContent = String(iso);
+        document.getElementById('kpi-mlq').textContent = String(mlq.score);
+
+        // It Factor: build number + unit span safely
+        var itEl = document.getElementById('kpi-it');
+        while (itEl.firstChild) itEl.removeChild(itEl.firstChild);
+        itEl.appendChild(document.createTextNode(String(itFactor)));
+        var unitSpan = document.createElement('span');
+        unitSpan.className = 'kpi-unit';
+        unitSpan.textContent = '/10';
+        itEl.appendChild(unitSpan);
+
+        // Update charts
+        updateCharts(ulrich.factors, mlq.factors);
+    }
+
+    // ================================================================
+    // RESET — clear localStorage and restore defaults
+    // ================================================================
+
+    function resetAll() {
+        localStorage.removeItem(STORAGE_KEY);
+        renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
+        renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
+        recalculate();
+    }
+
+    // ================================================================
+    // METHODOLOGY TOGGLE
+    // ================================================================
+
+    function initMethodologyToggle() {
+        var toggle = document.getElementById('methodToggle');
+        var content = document.getElementById('methodContent');
+
+        toggle.addEventListener('click', function () {
+            var isOpen = content.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', String(isOpen));
+        });
+    }
+
+    // ================================================================
+    // INIT
+    // ================================================================
+
+    function init() {
+        renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
+        renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
+        initCharts();
+        recalculate();
+        initMethodologyToggle();
+
+        document.getElementById('recalcBtn').addEventListener('click', recalculate);
+        document.getElementById('resetBtn').addEventListener('click', resetAll);
+    }
+
+    // Wait for DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
+</body>
+</html>
