@@ -22,11 +22,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // Skip ESLint during build (handled by CI separately)
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
 };
 
 export default nextConfig;
