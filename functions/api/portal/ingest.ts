@@ -168,10 +168,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           )
           .run();
 
-        // Invalidate player cache on update
-        const playerCacheKey = `portal:player:${entry.id}`;
-        await env.KV.delete(playerCacheKey);
-        invalidatedCacheKeys.push(playerCacheKey);
+        // Track cache key for batch invalidation
+        invalidatedCacheKeys.push(`portal:player:${entry.id}`);
 
         // Detect status change for changelog
         if (existing.status !== entry.status) {
@@ -259,6 +257,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Batch insert changelog events
     if (changelogBatch.length > 0) {
       await db.batch(changelogBatch);
+    }
+
+    // Batch invalidate cache keys in parallel
+    if (invalidatedCacheKeys.length > 0) {
+      await Promise.all(invalidatedCacheKeys.map((key) => env.KV.delete(key)));
     }
 
     // Update KV freshness marker
