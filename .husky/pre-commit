@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# BSI Pre-Commit Hook — Secret Scanning
+# Blocks commits that contain API keys, private keys, or tokens in staged diffs.
+
+STAGED_DIFF=$(git diff --cached --diff-filter=ACM)
+
+if [ -z "$STAGED_DIFF" ]; then
+  exit 0
+fi
+
+# Patterns that should never appear in committed code
+PATTERNS=(
+  'sk_live_[a-zA-Z0-9]+'
+  'pk_live_[a-zA-Z0-9]+'
+  'ghp_[a-zA-Z0-9]+'
+  'gho_[a-zA-Z0-9]+'
+  '-----BEGIN.*PRIVATE KEY'
+  'AKIA[0-9A-Z]{16}'
+  'api[_-]?key\s*[:=]\s*['\''"][a-zA-Z0-9]{20,}'
+  'bearer\s+[a-zA-Z0-9._\-]{20,}'
+)
+
+FOUND=0
+
+for PATTERN in "${PATTERNS[@]}"; do
+  MATCHES=$(echo "$STAGED_DIFF" | grep -iEn "$PATTERN" | grep '^[0-9]*:+' || true)
+  if [ -n "$MATCHES" ]; then
+    if [ "$FOUND" -eq 0 ]; then
+      echo ""
+      echo "🚫 Secret scanning found potential credentials in staged changes:"
+      echo ""
+    fi
+    echo "  Pattern: $PATTERN"
+    echo "$MATCHES" | head -3 | sed 's/^/    /'
+    echo ""
+    FOUND=1
+  fi
+done
+
+if [ "$FOUND" -eq 1 ]; then
+  echo "Commit blocked. Remove secrets before committing."
+  echo "If this is a false positive, use: git commit --no-verify"
+  echo ""
+  exit 1
+fi

@@ -1,0 +1,20 @@
+# BSI Synthetic Monitor — Cron Worker
+# Checks critical endpoints every 5 minutes, stores results in KV.
+#
+# Deploy: wrangler deploy --config workers/synthetic-monitor/wrangler.toml
+
+name = "bsi-synthetic-monitor"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+
+# Run every 5 minutes
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "MONITOR_KV"
+id = "" # Create via: wrangler kv namespace create BSI_MONITOR_KV
+
+# Optional: Discord/Slack webhook for failure alerts
+# [vars]
+# ALERT_WEBHOOK_URL = ""
