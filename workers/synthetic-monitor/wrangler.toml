@@ -13,7 +13,7 @@ crons = ["*/5 * * * *"]
 
 [[kv_namespaces]]
 binding = "MONITOR_KV"
-id = "" # Create via: wrangler kv namespace create BSI_MONITOR_KV
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
 
 # Optional: Discord/Slack webhook for failure alerts
 # [vars]

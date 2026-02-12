@@ -13,7 +13,7 @@ compatibility_date = "2025-01-01"
 
 [[kv_namespaces]]
 binding = "ERROR_LOG"
-id = "" # Create via: wrangler kv namespace create BSI_ERROR_LOG
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 
 # Optional: Discord/Slack webhook for alerting
 # [vars]
