@@ -34,12 +34,12 @@ class DataCache {
 
     // Stale-while-revalidate
     if (cached && options.staleWhileRevalidate) {
-      this.revalidate(key, fetcher, ttl);
+      this.revalidate(key, fetcher);
       return cached.data;
     }
 
     // Fetch new data
-    const promise = this.fetch(key, fetcher, ttl);
+    const promise = this.fetch(key, fetcher);
     this.pending.set(key, promise);
 
     try {
@@ -50,7 +50,7 @@ class DataCache {
     }
   }
 
-  private async fetch<T>(key: string, fetcher: () => Promise<T>, _ttl: number): Promise<T> {
+  private async fetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
     const data = await fetcher();
     this.cache.set(key, {
       data,
@@ -59,7 +59,7 @@ class DataCache {
     return data;
   }
 
-  private async revalidate<T>(key: string, fetcher: () => Promise<T>, _ttl: number): Promise<void> {
+  private async revalidate<T>(key: string, fetcher: () => Promise<T>): Promise<void> {
     try {
       const data = await fetcher();
       this.cache.set(key, {

@@ -366,11 +366,6 @@ export default {
           }
         }, 5000);
 
-        // Handle client messages
-        server.addEventListener('message', (event) => {
-          const _data = JSON.parse(event.data as string);
-        });
-
         return new Response(null, {
           status: 101,
           webSocket: client,

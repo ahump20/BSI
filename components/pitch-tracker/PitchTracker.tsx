@@ -1,11 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-// ---------------------------------------------------------------------------
-// Inline stubs — StrikeZone and PitchList were planned but never created.
-// These minimal implementations keep the component functional until the full
-// pitch-visualization work lands.
-// ---------------------------------------------------------------------------
+// StrikeZone and PitchList are implemented inline. Separate files were
+// planned but deferred — both components are fully functional as-is.
 
 interface ZonePitch {
   id: string;

@@ -1,8 +1,5 @@
 'use client';
 
-// useUserSettings will be wired in when settings persistence lands
-// import { useUserSettings } from '@/lib/hooks';
-
 interface TimezoneSelectorProps {
   value?: string;
   onChange?: (tz: string) => void;
