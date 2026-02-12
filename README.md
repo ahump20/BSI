@@ -2,13 +2,15 @@
   <img src="public/images/brand/logo-full.webp" alt="Blaze Sports Intel" width="280" />
 </p>
 
-<h3 align="center">Sports intelligence platform — college baseball coverage ESPN won't build.</h3>
+<h3 align="center">Sports intelligence platform for undercovered programs, plus AI coaching for high-stakes communication.</h3>
 
 ---
 
 ## What is BSI?
 
-Blaze Sports Intel is a mobile-first sports intelligence platform. The flagship product is complete college baseball coverage — full box scores, live game tracking, standings, and rankings — filling the gap ESPN leaves wide open. The platform also covers MLB, NFL, NBA, college football (with transfer portal tracking), and NIL valuation tools.
+Blaze Sports Intel is a mobile-first sports intelligence platform. The flagship product is complete college baseball coverage - full box scores, live game tracking, standings, and rankings - filling the gap ESPN leaves wide open. The platform also covers MLB, NFL, NBA, college football (with transfer portal tracking), and NIL valuation tools.
+
+BSI now includes a separate coaching product surface: **Presence Coach**. It is intentionally distinct from sports pages and focuses on real-time communication delivery (posture, gaze, and voice), starting with seated video-call optimization.
 
 Built as a fully static Next.js 16 site deployed to Cloudflare Pages, with Cloudflare Workers powering backend data pipelines.
 
@@ -19,8 +21,14 @@ Built as a fully static Next.js 16 site deployed to Cloudflare Pages, with Cloud
 - **NFL & NBA** — Live data powered by SportsDataIO
 - **College Football** — Scores, standings, and transfer portal tracking
 - **NIL Valuation** — Analytics tools for name/image/likeness deals
+- **Presence Coach** — Staged coaching surface for posture/gaze/voice guidance in live sessions
 - **Cross-Sport Scoreboard** — Unified live scores view
 - **Arcade** — Browser-based sports games (including Sandlot Sluggers)
+
+## Product Areas
+
+- **Sports Analytics Pages (`/mlb`, `/nfl`, `/nba`, `/cfb`, `/college-baseball`, etc.)** - Team and player intelligence sourced from external data providers.
+- **Presence Coach (`/presence-coach`)** - Human communication coaching loop for on-camera delivery, with progressive cues and staged capture logic.
 
 ## Tech Stack
 
@@ -54,6 +62,7 @@ Optional:
 
 ```
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_ENABLE_PRESENCE_COACH=false
 ```
 
 Start the dev server:
@@ -89,6 +98,7 @@ app/                    # Next.js App Router pages
   nba/                  #   NBA coverage
   cfb/                  #   College football + transfer portal
   nil-valuation/        #   NIL analytics tools
+  presence-coach/       #   Coaching product area (landing + session shell)
   arcade/               #   Browser games
   scores/               #   Cross-sport scoreboard
 components/             # Shared React components
@@ -103,6 +113,12 @@ docs/                   # Infrastructure and operations docs
 ```
 
 Path alias: `@/*` maps to the project root.
+
+## Typography Note
+
+- Runtime display font is **Oswald** (`font-display` token).
+- Body text uses **Inter**.
+- Data/mono surfaces use **JetBrains Mono**.
 
 ## Deployment
 

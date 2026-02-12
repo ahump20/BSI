@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
@@ -13,17 +13,17 @@ import { NewsTicker } from '@/components/shared/NewsTicker';
 import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { mainNavItems } from '@/lib/navigation';
 
-// 3-font system: Display (Bebas Neue) + Body (Inter) + Mono (JetBrains Mono)
+// 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const bebasNeue = Bebas_Neue({
-  weight: '400',
+const oswald = Oswald({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-bebas',
+  variable: '--font-oswald',
   display: 'swap',
 });
 
@@ -121,7 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <script

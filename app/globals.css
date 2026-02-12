@@ -667,7 +667,7 @@ body {
 /* Fonts */
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Bebas Neue', system-ui, sans-serif;
+  --font-display: var(--font-oswald), 'Oswald', Impact, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Cursor */

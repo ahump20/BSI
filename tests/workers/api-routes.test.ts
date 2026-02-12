@@ -137,6 +137,25 @@ describe('Worker SportsDataIO route proxy', () => {
     expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
   });
 
+  it('denies camera and microphone permissions by default on standard API routes', async () => {
+    mockPagesResponse({ games: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/mlb/scores');
+    const res = await worker.fetch(req, env);
+
+    expect(res.headers.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
+  });
+
+  it('allows same-origin camera and microphone on presence coach trends endpoint', async () => {
+    const req = new Request('https://blazesportsintel.com/api/presence-coach/users/test-user/trends');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Permissions-Policy')).toBe(
+      'camera=(self), microphone=(self), geolocation=()',
+    );
+  });
+
   it('proxies NFL news to Pages Functions', async () => {
     mockPagesResponse({ articles: [] });
 
