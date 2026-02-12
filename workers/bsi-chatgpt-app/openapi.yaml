@@ -609,6 +609,9 @@ components:
           type: integer
         recentCommitments:
           type: integer
+        cached:
+          type: boolean
+          description: Whether this response was served from cache
 
     TransferPortalEntry:
       type: object
