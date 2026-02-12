@@ -49,8 +49,11 @@ export function ArcadeSpotlight() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [featured, setFeatured] = useState(GAMES[0]);
 
-  const featured = GAMES[new Date().getDate() % GAMES.length];
+  useEffect(() => {
+    setFeatured(GAMES[new Date().getDate() % GAMES.length]);
+  }, []);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/multiplayer/leaderboard?limit=50`)
