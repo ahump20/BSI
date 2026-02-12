@@ -12,6 +12,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Team {
   teamName: string;
@@ -43,18 +44,6 @@ const DIVISION_ORDER = [
   'AFC East', 'AFC North', 'AFC South', 'AFC West',
   'NFC East', 'NFC North', 'NFC South', 'NFC West',
 ];
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    }) + ' CT'
-  );
-}
-
 export default function NFLPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
   const [standings, setStandings] = useState<Team[]>([]);

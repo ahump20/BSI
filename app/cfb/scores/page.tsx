@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface ESPNGame {
   id: string;
@@ -51,19 +52,6 @@ function formatDate(dateString: string): string {
   });
 }
 
-function formatTimestamp(iso?: string): string {
-  const d = iso ? new Date(iso) : new Date();
-  return (
-    d.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 function GameCard({ game }: { game: ESPNGame }) {
   const home = game.teams.find((t) => t.homeAway === 'home');

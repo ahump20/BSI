@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { HomeLiveScores, SportHubCards, TrendingIntelFeed, ArcadeSpotlight } from '@/components/home';
 import { HeroVideo } from '@/components/hero/HeroVideo';
+import { Footer } from '@/components/layout-ds/Footer';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Real-Time Sports Analytics',
@@ -95,41 +96,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 px-4 border-t border-white/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-center md:text-left">
-              <Link href="/" className="text-xl font-display text-primary uppercase tracking-wider">
-                Blaze Sports Intel
-              </Link>
-              <p className="text-gray-500 text-sm mt-2">
-                &copy; {new Date().getFullYear()} Blaze Sports Intel. All rights reserved.
-              </p>
-            </div>
-            <div className="flex gap-8">
-              <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
-                About
-              </Link>
-              <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">
-                Pricing
-              </Link>
-              <a
-                href="mailto:ahump20@outlook.com"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Contact
-              </a>
-              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
-                Privacy
-              </Link>
-              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
-                Terms
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

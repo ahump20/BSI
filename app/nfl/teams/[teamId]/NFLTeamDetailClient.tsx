@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 // All 32 NFL teams with full data
 export const NFL_TEAMS: Record<
@@ -322,19 +323,6 @@ interface TeamStats {
   streak: number;
 }
 
-function formatTimestamp(): string {
-  return (
-    new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 interface NFLTeamDetailClientProps {
   teamId: string;

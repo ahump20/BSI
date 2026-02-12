@@ -48,16 +48,22 @@ const GAMES = [
 export function ArcadeSpotlight() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const featured = GAMES[new Date().getDate() % GAMES.length];
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/multiplayer/leaderboard?limit=50`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((r) => {
+        if (!r.ok) throw new Error('Leaderboard unavailable');
+        return r.json();
+      })
       .then((data: { leaderboard?: LeaderboardEntry[] }) => {
         setLeaderboard(data.leaderboard || []);
       })
-      .catch(() => {})
+      .catch(() => {
+        setError(true);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -115,6 +121,10 @@ export function ArcadeSpotlight() {
                 <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
               ))}
             </div>
+          ) : error ? (
+            <p className="text-sm text-white/40 py-6 text-center">
+              Leaderboard unavailable — play a game to get started!
+            </p>
           ) : topEntries.length === 0 ? (
             <p className="text-sm text-white/30 py-6 text-center">
               No scores yet — be the first!

@@ -12,6 +12,8 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { RefreshIndicator } from '@/components/ui/RefreshIndicator';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface RankedTeam {
   rank: number;
@@ -78,18 +80,6 @@ const conferenceList = [
   { name: 'AAC', teams: 11, href: '/college-baseball/standings?conference=aac' },
   { name: 'All Conferences', teams: 32, href: '/college-baseball/standings' },
 ];
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    }) + ' CT'
-  );
-}
-
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
   const [rankings, setRankings] = useState<RankedTeam[]>(defaultRankings);
@@ -409,8 +399,11 @@ export default function CollegeBaseballPage() {
                     <Card variant="default" padding="lg">
                       <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                          <span>Today&apos;s Games</span>
-                          {hasLiveGames && <LiveBadge />}
+                          <div className="flex items-center gap-3">
+                            <span>Today&apos;s Games</span>
+                            {hasLiveGames && <LiveBadge />}
+                          </div>
+                          <RefreshIndicator active={hasLiveGames} intervalSeconds={30} />
                         </CardTitle>
                       </CardHeader>
                       <CardContent>

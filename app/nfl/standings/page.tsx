@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Team {
   name: string;
@@ -34,20 +35,6 @@ interface Conference {
   divisions: Division[];
 }
 
-function formatTimestamp(): string {
-  const date = new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 // Static data for off-season display
 const staticStandings: Conference[] = [

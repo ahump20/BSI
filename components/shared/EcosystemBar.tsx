@@ -16,10 +16,8 @@ export function EcosystemBar() {
       .then((data: Record<string, unknown> | false) => {
         if (data && (data as Record<string, unknown>).active) setAgentActive(true);
       })
-      .catch((err) => {
-        if (err.name !== 'AbortError') {
-          console.warn('[EcosystemBar] agent-health check failed:', err.message);
-        }
+      .catch(() => {
+        // Agent health check is non-critical; silently ignore failures
       });
     return () => controller.abort();
   }, []);

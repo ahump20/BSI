@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface NewsItem {
   id: string;
@@ -25,22 +26,6 @@ interface NewsItem {
 interface NewsApiResponse {
   articles?: NewsItem[];
 }
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
 function getRelativeTime(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();

@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface NewsItem {
   sport: string;
@@ -31,20 +32,6 @@ interface NewsResponse {
   };
 }
 
-function formatTimestamp(): string {
-  const date = new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 function getRelativeTime(dateString: string): string {
   const date = new Date(dateString);

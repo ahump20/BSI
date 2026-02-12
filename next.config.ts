@@ -27,13 +27,6 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Experimental features
-  experimental: {
-    // Enable server actions for future use
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
-  },
 };
 
 export default nextConfig;

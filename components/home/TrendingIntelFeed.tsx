@@ -46,6 +46,7 @@ const SPORT_COLORS: Record<string, string> = {
 export function TrendingIntelFeed() {
   const [articles, setArticles] = useState<FlatArticle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,9 +54,10 @@ export function TrendingIntelFeed() {
     async function fetchIntel() {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news?sport=all`);
-        if (!res.ok) return;
+        if (!res.ok) throw new Error('Intel fetch failed');
         const raw = await res.json();
         if (cancelled) return;
+        setError(false);
 
         // API returns array of { sport, data: { articles } } or { results: [...] }
         const entries: IntelResult[] = Array.isArray(raw)
@@ -78,7 +80,7 @@ export function TrendingIntelFeed() {
         flat.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
         setArticles(flat.slice(0, 8));
       } catch {
-        // silent — feed is supplementary
+        if (!cancelled) setError(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -106,6 +108,8 @@ export function TrendingIntelFeed() {
               <div className="h-4 bg-white/5 rounded w-full" />
             </div>
           ))
+        ) : error ? (
+          <p className="text-sm text-white/40 py-4 text-center">Intel feed temporarily unavailable.</p>
         ) : articles.length === 0 ? (
           <p className="text-sm text-white/30 py-4 text-center">No intel available right now.</p>
         ) : (

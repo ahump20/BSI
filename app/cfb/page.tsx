@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface RankedTeam {
   rank: number;
@@ -18,6 +19,15 @@ interface RankedTeam {
   conference: string;
   record?: string;
   previousRank?: number;
+}
+
+interface PortalEntry {
+  name: string;
+  position: string;
+  fromSchool: string;
+  toSchool?: string;
+  rating?: number;
+  status?: string;
 }
 
 type TabType = 'rankings' | 'conferences' | 'portal' | 'analytics';
@@ -32,24 +42,15 @@ const conferences = [
   { name: 'AAC', teams: 14, description: 'American Athletic Conference' },
   { name: 'Sun Belt', teams: 14, description: 'Sun Belt Conference' },
 ];
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    }) + ' CT'
-  );
-}
-
 export default function CFBPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
   const [rankings, setRankings] = useState<RankedTeam[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [portalEntries, setPortalEntries] = useState<PortalEntry[]>([]);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
 
   const fetchRankings = useCallback(async () => {
     setLoading(true);
@@ -95,9 +96,26 @@ export default function CFBPage() {
     }
   }, []);
 
+  const fetchPortalData = useCallback(async () => {
+    if (portalEntries.length > 0) return;
+    setPortalLoading(true);
+    setPortalError(null);
+    try {
+      const res = await fetch('/api/cfb/transfer-portal');
+      if (!res.ok) throw new Error('Failed to fetch transfer portal data');
+      const data = await res.json() as { entries?: PortalEntry[]; players?: PortalEntry[] };
+      setPortalEntries(data.entries || data.players || []);
+    } catch (err) {
+      setPortalError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setPortalLoading(false);
+    }
+  }, [portalEntries.length]);
+
   useEffect(() => {
     if (activeTab === 'rankings') fetchRankings();
-  }, [activeTab, fetchRankings]);
+    if (activeTab === 'portal') fetchPortalData();
+  }, [activeTab, fetchRankings, fetchPortalData]);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'rankings', label: 'Rankings' },
@@ -250,12 +268,63 @@ export default function CFBPage() {
             {/* Transfer Portal Tab */}
             {activeTab === 'portal' && (
               <Card variant="default" padding="lg">
-                <CardHeader><CardTitle>Transfer Portal</CardTitle></CardHeader>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Transfer Portal</span>
+                    <Link href="/cfb/transfer-portal">
+                      <Button variant="secondary" size="sm">Full Portal</Button>
+                    </Link>
+                  </CardTitle>
+                </CardHeader>
                 <CardContent>
-                  <p className="text-white/60 mb-4">Track player movement across all FBS programs.</p>
-                  <Link href="/cfb/transfer-portal">
-                    <Button variant="primary">View Transfer Portal</Button>
-                  </Link>
+                  {portalLoading ? (
+                    <div className="space-y-3">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
+                      ))}
+                    </div>
+                  ) : portalError ? (
+                    <div className="text-center py-8">
+                      <p className="text-white/60 mb-4">Unable to load transfer portal data.</p>
+                      <Link href="/cfb/transfer-portal">
+                        <Button variant="primary">View Transfer Portal Page</Button>
+                      </Link>
+                    </div>
+                  ) : portalEntries.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-white/60 mb-4">No transfer portal entries available yet.</p>
+                      <Link href="/cfb/transfer-portal">
+                        <Button variant="primary">View Transfer Portal</Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b-2 border-[#BF5700]">
+                            {['Player', 'Pos', 'From', 'To', 'Status'].map((h) => (
+                              <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {portalEntries.slice(0, 25).map((entry, i) => (
+                            <tr key={`${entry.name}-${i}`} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                              <td className="p-3 font-semibold text-white">{entry.name}</td>
+                              <td className="p-3 text-white/60">{entry.position}</td>
+                              <td className="p-3 text-white/60">{entry.fromSchool}</td>
+                              <td className="p-3 text-white/60">{entry.toSchool || 'Undecided'}</td>
+                              <td className="p-3">
+                                <Badge variant={entry.toSchool ? 'success' : 'warning'}>
+                                  {entry.status || (entry.toSchool ? 'Committed' : 'In Portal')}
+                                </Badge>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

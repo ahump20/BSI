@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Game {
   GameKey: string;
@@ -46,22 +47,6 @@ interface ScoresResponse {
     liveGames?: number;
   };
 }
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
 export default function NFLGamesPage() {
   const [scores, setScores] = useState<ScoresResponse | null>(null);
   const [loading, setLoading] = useState(true);

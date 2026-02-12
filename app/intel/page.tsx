@@ -15,8 +15,14 @@ import { GameCardHero } from '@/components/dashboard/intel/GameCardHero';
 import { GameCardMarquee } from '@/components/dashboard/intel/GameCardMarquee';
 import { SignalFeed } from '@/components/dashboard/intel/SignalFeed';
 import { StandingsTable } from '@/components/dashboard/intel/StandingsTable';
-import { ModelHealth } from '@/components/dashboard/intel/ModelHealth';
-import { NetRatingBar } from '@/components/dashboard/intel/NetRatingBar';
+const ModelHealth = dynamic(
+  () => import('@/components/dashboard/intel/ModelHealth').then((m) => m.ModelHealth),
+  { ssr: false }
+);
+const NetRatingBar = dynamic(
+  () => import('@/components/dashboard/intel/NetRatingBar').then((m) => m.NetRatingBar),
+  { ssr: false }
+);
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';

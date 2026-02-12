@@ -17,7 +17,7 @@
     "deploy": "npm run build && wrangler pages deploy out --project-name blazesportsintel --branch main",
     "deploy:production": "npm run build && wrangler pages deploy out --project-name blazesportsintel --branch main --commit-dirty=true",
     "deploy:preview": "npm run build && wrangler pages deploy out --project-name blazesportsintel --branch preview",
-    "deploy:worker": "wrangler deploy --config workers/wrangler.toml",
+    "deploy:worker": "wrangler deploy --config workers/wrangler.toml --env production",
     "deploy:worker:production": "wrangler deploy --config workers/wrangler.toml --env production",
     "deploy:hybrid": "npm run deploy:production && npm run deploy:worker:production",
     "dev:worker": "wrangler dev --config workers/wrangler.toml",
@@ -47,7 +47,9 @@
     "build:arcade": "cd games/blitz && npm run build && cd ../hotdog-dash && npm run build && cd ../.. && npm run arcade:copy",
     "arcade:copy": "echo 'Games are self-hosted in public/games/ -- no copy needed'",
     "deploy:arcade": "echo 'Games deploy with Pages -- use deploy:pages'",
-    "deploy:arcade-api": "wrangler deploy --config workers/mini-games-api/wrangler.toml"
+    "deploy:arcade-api": "wrangler deploy --config workers/mini-games-api/wrangler.toml",
+    "deploy:safe": "bash scripts/pre-deploy-check.sh && wrangler pages deploy out --project-name blazesportsintel --branch main --commit-dirty=true",
+    "deploy:all": "npm run deploy:safe && npm run deploy:worker:production"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3",
@@ -55,6 +57,8 @@
     "@stripe/stripe-js": "^5.10.0",
     "@tanstack/react-query": "^5.90.20",
     "clsx": "^2.1.1",
+    "dependencies": "^0.0.1",
+    "fantasydata-node-client": "^1.8.2",
     "framer-motion": "^12.29.2",
     "fuse.js": "^7.1.0",
     "lucide-react": "^0.546.0",

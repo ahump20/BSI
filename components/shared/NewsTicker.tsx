@@ -15,9 +15,31 @@ const DEFAULT_ITEMS: NewsItem[] = [
 ];
 
 export function NewsTicker() {
-  const [items] = useState<NewsItem[]>(DEFAULT_ITEMS);
+  const [items, setItems] = useState<NewsItem[]>(DEFAULT_ITEMS);
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/news/ticker`, {
+      signal: controller.signal,
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error('Ticker fetch failed');
+        return r.json();
+      })
+      .then((data: { items?: NewsItem[] }) => {
+        if (data.items && data.items.length > 0) {
+          setItems(data.items);
+        }
+      })
+      .catch(() => {
+        // Keep defaults on failure
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -31,6 +53,8 @@ export function NewsTicker() {
 
   if (items.length === 0) return null;
 
+  const current = items[currentIndex];
+
   return (
     <div
       className="bg-charcoal/80 border-b border-white/5 py-1.5 px-4 text-center overflow-hidden"
@@ -38,9 +62,15 @@ export function NewsTicker() {
       aria-live="polite"
       aria-label="News ticker"
     >
-      <p className="text-xs text-white/50 truncate">
-        {items[currentIndex]?.text}
-      </p>
+      {current?.href ? (
+        <a href={current.href} className="text-xs text-white/50 hover:text-white/70 truncate block transition-colors">
+          {current.text}
+        </a>
+      ) : (
+        <p className="text-xs text-white/50 truncate">
+          {current?.text}
+        </p>
+      )}
     </div>
   );
 }

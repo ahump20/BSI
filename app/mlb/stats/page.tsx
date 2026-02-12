@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface StatLeader {
   rank: number;
@@ -30,22 +31,6 @@ interface DataMeta {
 
 type CategoryType = 'batting' | 'pitching';
 type StatType = string;
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
 const battingStats = [
   { id: 'avg', label: 'Batting Average', format: (v: number) => v.toFixed(3).replace('0.', '.') },
   { id: 'hr', label: 'Home Runs', format: (v: number) => v.toString() },

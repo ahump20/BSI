@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import React from 'react';
 
-interface Tab {
+export interface Tab {
   id: string;
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
@@ -79,7 +79,6 @@ export function TabBar({
 
       if (newIndex !== activeIndex) {
         onChange(tabs[newIndex].id);
-        // Focus the newly activated tab
         setTimeout(() => {
           const button = document.querySelector(
             `[data-tab-id="${tabs[newIndex].id}"]`
@@ -94,6 +93,7 @@ export function TabBar({
   return (
     <div
       role="tablist"
+      aria-orientation="horizontal"
       className={`${variantStyle.container} overflow-x-auto`}
       onKeyDown={handleKeyDown}
     >
@@ -105,7 +105,10 @@ export function TabBar({
           <button
             key={tab.id}
             role="tab"
+            id={`tab-${tab.id}`}
             aria-selected={isActive}
+            aria-controls={`tabpanel-${tab.id}`}
+            tabIndex={isActive ? 0 : -1}
             data-tab-id={tab.id}
             onClick={() => onChange(tab.id)}
             className={`
@@ -126,6 +129,22 @@ export function TabBar({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+interface TabPanelProps {
+  id: string;
+  activeTab: string;
+  children: React.ReactNode;
+}
+
+export function TabPanel({ id, activeTab, children }: TabPanelProps) {
+  if (activeTab !== id) return null;
+
+  return (
+    <div role="tabpanel" id={`tabpanel-${id}`} aria-labelledby={`tab-${id}`} tabIndex={0}>
+      {children}
     </div>
   );
 }

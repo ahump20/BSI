@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { getRelativeTime } from '@/lib/utils/timezone';
 
 interface DataFreshnessIndicatorProps {
   /** Date of last data update. Defaults to now if omitted. */
@@ -15,19 +16,7 @@ interface DataFreshnessIndicatorProps {
 }
 
 function getTimeAgo(date: Date): string {
-  const now = new Date();
-  const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  if (secondsAgo < 60) return 'just now';
-
-  const minutesAgo = Math.floor(secondsAgo / 60);
-  if (minutesAgo < 60) return `${minutesAgo}m ago`;
-
-  const hoursAgo = Math.floor(minutesAgo / 60);
-  if (hoursAgo < 24) return `${hoursAgo}h ago`;
-
-  const daysAgo = Math.floor(hoursAgo / 24);
-  return `${daysAgo}d ago`;
+  return getRelativeTime(date);
 }
 
 function getStatusColor(
