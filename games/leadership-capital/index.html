@@ -875,11 +875,11 @@
          METHODOLOGY — Expandable Panel
          ============================================================ -->
     <div class="methodology">
-        <button class="methodology-toggle" id="methodToggle" aria-expanded="false">
+        <button class="methodology-toggle" id="methodToggle" aria-expanded="false" aria-controls="methodContent">
             <span><i class="fas fa-book-open" style="color:var(--bsi-primary); margin-right:8px;"></i> Methodology &amp; Academic Validation</span>
             <i class="fas fa-chevron-down chevron"></i>
         </button>
-        <div class="methodology-content" id="methodContent">
+        <div class="methodology-content" id="methodContent" aria-hidden="true">
 
             <h5 class="method-heading">Conceptual Framework</h5>
             <p>This prototype maps 23 intangible leadership metrics to five validated academic and industry frameworks. The mapping is <strong>conceptual</strong> &#8212; it bridges novel metrics to established constructs based on shared theoretical domains, not direct psychometric equivalence. The goal is to demonstrate that these intangible qualities have legitimate measurement foundations, not to claim factor-analytic identity with existing instruments.</p>
@@ -1635,6 +1635,7 @@
         toggle.addEventListener('click', function () {
             var isOpen = content.classList.toggle('open');
             toggle.setAttribute('aria-expanded', String(isOpen));
+            content.setAttribute('aria-hidden', String(!isOpen));
         });
     }
 
