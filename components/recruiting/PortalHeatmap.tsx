@@ -61,6 +61,67 @@ interface HeatmapData {
 
 type VisualizationType = 'force' | 'chord' | 'matrix';
 
+/** D3 simulation node — ConferenceNode augmented with simulation position fields */
+interface SimNode extends ConferenceNode {
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+}
+
+/** D3 simulation link after the simulation resolves source/target from ids to node refs */
+interface SimLink {
+  source: SimNode;
+  target: SimNode;
+  count: number;
+  avgNILDelta: number;
+}
+
+/** D3 chord group datum */
+interface ChordGroup {
+  index: number;
+  startAngle: number;
+  endAngle: number;
+  value: number;
+  angle?: number;
+}
+
+/** D3 chord datum with source/target sub-groups */
+interface ChordDatum {
+  source: ChordGroup;
+  target: ChordGroup;
+}
+
+/** D3 drag event shape used in force-graph callbacks */
+interface DragEvent {
+  active: number;
+  x: number;
+  y: number;
+  subject: SimNode;
+}
+
+/** Minimal shape for D3 pointer events that carry pageX/pageY */
+interface D3PointerEvent {
+  pageX: number;
+  pageY: number;
+}
+
+/** API response shape consumed by transformToHeatmapData */
+interface PortalApiResponse {
+  entries: Array<{
+    previousConference: string;
+    newConference?: string;
+    status?: string;
+    nilValuation?: { estimatedValue: number };
+  }>;
+  conferenceFlows: Array<{
+    from: string;
+    to: string;
+    count: number;
+    avgNILDelta: number;
+  }>;
+}
+
 // ============================================================================
 // Portal Heatmap Component
 // ============================================================================
@@ -94,7 +155,7 @@ export function PortalHeatmap() {
       const response = await fetch('/api/recruiting/portal-activity');
       if (!response.ok) throw new Error('Failed to fetch heatmap data');
 
-      const result = await response.json();
+      const result: PortalApiResponse = await response.json();
 
       // Transform API data to heatmap format
       const heatmapData = transformToHeatmapData(result);
@@ -106,7 +167,7 @@ export function PortalHeatmap() {
     }
   };
 
-  const transformToHeatmapData = (apiData: any): HeatmapData => {
+  const transformToHeatmapData = (apiData: PortalApiResponse): HeatmapData => {
     // Aggregate by conference
     const conferenceStats: Record<
       string,
@@ -117,7 +178,7 @@ export function PortalHeatmap() {
       }
     > = {};
 
-    apiData.entries.forEach((entry: any) => {
+    apiData.entries.forEach((entry) => {
       // Previous conference
       if (!conferenceStats[entry.previousConference]) {
         conferenceStats[entry.previousConference] = {
@@ -163,7 +224,7 @@ export function PortalHeatmap() {
     });
 
     // Create flows from API conference flows
-    const flows: TransferFlow[] = apiData.conferenceFlows.map((flow: any) => ({
+    const flows: TransferFlow[] = apiData.conferenceFlows.map((flow) => ({
       source: flow.from,
       target: flow.to,
       count: flow.count,
@@ -203,12 +264,12 @@ export function PortalHeatmap() {
 
     // Create simulation
     const simulation = d3
-      .forceSimulation(data.nodes as any)
+      .forceSimulation(data.nodes as unknown as SimNode[])
       .force(
         'link',
         d3
           .forceLink(data.flows)
-          .id((d: any) => d.id)
+          .id((d: unknown) => (d as SimNode).id)
           .distance(150)
           .strength(0.5)
       )
@@ -226,9 +287,9 @@ export function PortalHeatmap() {
           [width, height],
         ])
         .scaleExtent([0.5, 4])
-        .on('zoom', (event) => {
+        .on('zoom', (event: { transform: string }) => {
           g.attr('transform', event.transform);
-        }) as any
+        }) as unknown
     );
 
     // Create arrow markers
@@ -273,7 +334,7 @@ export function PortalHeatmap() {
           .drag<SVGGElement, ConferenceNode>()
           .on('start', dragstarted)
           .on('drag', dragged)
-          .on('end', dragended) as any
+          .on('end', dragended) as unknown
       );
 
     // Node circles
@@ -310,27 +371,30 @@ export function PortalHeatmap() {
     // Update positions on simulation tick
     simulation.on('tick', () => {
       link
-        .attr('x1', (d: any) => d.source.x)
-        .attr('y1', (d: any) => d.source.y)
-        .attr('x2', (d: any) => d.target.x)
-        .attr('y2', (d: any) => d.target.y);
+        .attr('x1', (d: unknown) => (d as SimLink).source.x)
+        .attr('y1', (d: unknown) => (d as SimLink).source.y)
+        .attr('x2', (d: unknown) => (d as SimLink).target.x)
+        .attr('y2', (d: unknown) => (d as SimLink).target.y);
 
-      node.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+      node.attr('transform', (d: unknown) => {
+        const n = d as SimNode;
+        return `translate(${n.x},${n.y})`;
+      });
     });
 
     // Drag functions
-    function dragstarted(event: any) {
+    function dragstarted(event: DragEvent) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
 
-    function dragged(event: any) {
+    function dragged(event: DragEvent) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
 
-    function dragended(event: any) {
+    function dragended(event: DragEvent) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
       event.subject.fy = null;
@@ -377,12 +441,12 @@ export function PortalHeatmap() {
 
     group
       .append('path')
-      .style('fill', (d: any) => data.nodes[d.index].color)
+      .style('fill', (d: unknown) => data.nodes[(d as ChordGroup).index].color)
       .style('stroke', '#ffffff')
-      .attr('d', d3.arc<any>().innerRadius(innerRadius).outerRadius(outerRadius))
-      .on('mouseover', function (event, d: any) {
+      .attr('d', d3.arc<unknown>().innerRadius(innerRadius).outerRadius(outerRadius))
+      .on('mouseover', function (event: D3PointerEvent, d: unknown) {
         d3.select(this).style('opacity', 1);
-        showTooltip(event, data.nodes[d.index]);
+        showTooltip(event, data.nodes[(d as ChordGroup).index]);
       })
       .on('mouseout', function () {
         d3.select(this).style('opacity', 0.8);
@@ -392,19 +456,21 @@ export function PortalHeatmap() {
     // Draw labels
     group
       .append('text')
-      .each((d: any) => {
-        d.angle = (d.startAngle + d.endAngle) / 2;
+      .each(function (d: unknown) {
+        (d as ChordGroup).angle = ((d as ChordGroup).startAngle + (d as ChordGroup).endAngle) / 2;
       })
       .attr('dy', '.35em')
       .attr(
         'transform',
-        (d: any) =>
-          `rotate(${(d.angle * 180) / Math.PI - 90})
+        (d: unknown) => {
+          const g = d as ChordGroup;
+          return `rotate(${((g.angle ?? 0) * 180) / Math.PI - 90})
          translate(${outerRadius + 10})
-         ${d.angle > Math.PI ? 'rotate(180)' : ''}`
+         ${(g.angle ?? 0) > Math.PI ? 'rotate(180)' : ''}`;
+        }
       )
-      .attr('text-anchor', (d: any) => (d.angle > Math.PI ? 'end' : 'start'))
-      .text((d: any) => data.nodes[d.index].name)
+      .attr('text-anchor', (d: unknown) => ((d as ChordGroup).angle ?? 0) > Math.PI ? 'end' : 'start')
+      .text((d: unknown) => data.nodes[(d as ChordGroup).index].name)
       .attr('fill', '#ffffff')
       .attr('font-size', '12px');
 
@@ -416,14 +482,15 @@ export function PortalHeatmap() {
       .enter()
       .append('path')
       .attr('d', ribbon)
-      .style('fill', (d: any) => data.nodes[d.source.index].color)
+      .style('fill', (d: unknown) => data.nodes[(d as ChordDatum).source.index].color)
       .style('stroke', '#ffffff')
       .style('stroke-width', 0.5)
-      .on('mouseover', function (event, d: any) {
+      .on('mouseover', function (event: D3PointerEvent, d: unknown) {
         d3.select(this).style('fill-opacity', 1);
+        const cd = d as ChordDatum;
         const flow = data.flows.find(
           (f) =>
-            f.source === data.nodes[d.source.index].id && f.target === data.nodes[d.target.index].id
+            f.source === data.nodes[cd.source.index].id && f.target === data.nodes[cd.target.index].id
         );
         if (flow) {
           showFlowTooltip(event, flow);
@@ -583,7 +650,7 @@ export function PortalHeatmap() {
   // Tooltip Functions
   // ============================================================================
 
-  const showTooltip = (event: any, node: ConferenceNode) => {
+  const showTooltip = (event: D3PointerEvent, node: ConferenceNode) => {
     const tooltip = d3
       .select('body')
       .append('div')
@@ -608,7 +675,7 @@ export function PortalHeatmap() {
     tooltip.style('left', `${event.pageX + 10}px`).style('top', `${event.pageY - 10}px`);
   };
 
-  const showFlowTooltip = (event: any, flow: TransferFlow) => {
+  const showFlowTooltip = (event: D3PointerEvent, flow: TransferFlow) => {
     const tooltip = d3
       .select('body')
       .append('div')
@@ -631,7 +698,7 @@ export function PortalHeatmap() {
     tooltip.style('left', `${event.pageX + 10}px`).style('top', `${event.pageY - 10}px`);
   };
 
-  const showMatrixTooltip = (event: any, from: string, to: string, count: number) => {
+  const showMatrixTooltip = (event: D3PointerEvent, from: string, to: string, count: number) => {
     const tooltip = d3
       .select('body')
       .append('div')

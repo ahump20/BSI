@@ -48,7 +48,7 @@ class NotionAdapter {
       throw new Error('Notion database ID not configured');
     }
 
-    const data = await this.request<any>(`/databases/${this.config.databaseId}/query`, {
+    const data = await this.request<Record<string, unknown>>(`/databases/${this.config.databaseId}/query`, {
       method: 'POST',
       body: JSON.stringify({
         filter: {
@@ -66,16 +66,16 @@ class NotionAdapter {
       }),
     });
 
-    return this.transformNotionResults(data.results);
+    return this.transformNotionResults(data.results as Record<string, unknown>[]);
   }
 
-  private transformNotionResults(results: any[]): PortfolioItem[] {
+  private transformNotionResults(results: Record<string, unknown>[]): PortfolioItem[] {
     return results
       .map((page) => {
-        const props = page.properties;
+        const props = page.properties as Record<string, Record<string, unknown> | undefined>;
 
         return {
-          id: page.id,
+          id: page.id as string,
           title: this.getTextProperty(props.Title || props.Name),
           description: this.getTextProperty(props.Description),
           url: this.getUrlProperty(props.URL) || this.getTextProperty(props.Link),
@@ -87,43 +87,50 @@ class NotionAdapter {
       .filter((item) => item.title && item.url);
   }
 
-  private getTextProperty(prop: any): string {
+  private getTextProperty(prop: Record<string, unknown> | undefined): string {
     if (!prop) return '';
 
     if (prop.type === 'title') {
-      return prop.title?.[0]?.plain_text || '';
+      const titleArr = prop.title as Record<string, unknown>[] | undefined;
+      return (titleArr?.[0]?.plain_text as string) || '';
     }
 
     if (prop.type === 'rich_text') {
-      return prop.rich_text?.[0]?.plain_text || '';
+      const richTextArr = prop.rich_text as Record<string, unknown>[] | undefined;
+      return (richTextArr?.[0]?.plain_text as string) || '';
     }
 
     return '';
   }
 
-  private getUrlProperty(prop: any): string {
+  private getUrlProperty(prop: Record<string, unknown> | undefined): string {
     if (!prop || prop.type !== 'url') return '';
-    return prop.url || '';
+    return (prop.url as string) || '';
   }
 
-  private getSelectProperty(prop: any): string {
+  private getSelectProperty(prop: Record<string, unknown> | undefined): string {
     if (!prop || prop.type !== 'select') return '';
-    return prop.select?.name || '';
+    const select = prop.select as Record<string, unknown> | undefined;
+    return (select?.name as string) || '';
   }
 
-  private getMultiSelectProperty(prop: any): string[] {
+  private getMultiSelectProperty(prop: Record<string, unknown> | undefined): string[] {
     if (!prop || prop.type !== 'multi_select') return [];
-    return prop.multi_select?.map((item: any) => item.name) || [];
+    const items = prop.multi_select as Record<string, unknown>[] | undefined;
+    return items?.map((item: Record<string, unknown>) => item.name as string) || [];
   }
 
-  private getFilesProperty(prop: any): string | undefined {
+  private getFilesProperty(prop: Record<string, unknown> | undefined): string | undefined {
     if (!prop || prop.type !== 'files') return undefined;
-    const file = prop.files?.[0];
+    const filesArr = prop.files as Record<string, unknown>[] | undefined;
+    const file = filesArr?.[0];
     if (file?.type === 'external') {
-      return file.external?.url;
+      const external = file.external as Record<string, unknown> | undefined;
+      return external?.url as string | undefined;
     }
     if (file?.type === 'file') {
-      return file.file?.url;
+      const fileData = file.file as Record<string, unknown> | undefined;
+      return fileData?.url as string | undefined;
     }
     return undefined;
   }

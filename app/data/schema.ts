@@ -65,7 +65,7 @@ class ValidationError extends Error {
   constructor(
     public field: string,
     public expected: string,
-    public received: any
+    public received: unknown
   ) {
     super(`Validation failed for ${field}: expected ${expected}, got ${typeof received}`);
     this.name = 'ValidationError';
@@ -73,26 +73,26 @@ class ValidationError extends Error {
 }
 
 const validators = {
-  isNum: (x: any): x is number => typeof x === 'number' && Number.isFinite(x),
-  isInt: (x: any): x is number => Number.isInteger(x),
-  isStr: (x: any): x is string => typeof x === 'string',
-  isArr: (x: any): x is any[] => Array.isArray(x),
-  isObj: (x: any): x is Record<string, unknown> =>
+  isNum: (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x),
+  isInt: (x: unknown): x is number => Number.isInteger(x),
+  isStr: (x: unknown): x is string => typeof x === 'string',
+  isArr: (x: unknown): x is unknown[] => Array.isArray(x),
+  isObj: (x: unknown): x is Record<string, unknown> =>
     x !== null && typeof x === 'object' && !Array.isArray(x),
-  isUrl: (x: any): x is string => {
+  isUrl: (x: unknown): x is string => {
     try {
-      new URL(x);
-      return true;
+      new URL(x as string);
+      return typeof x === 'string';
     } catch {
       return false;
     }
   },
-  isEmail: (x: any): x is string => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x),
-  isDate: (x: any): x is string => !isNaN(Date.parse(x)),
+  isEmail: (x: unknown): x is string => typeof x === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x),
+  isDate: (x: unknown): x is string => typeof x === 'string' && !isNaN(Date.parse(x)),
 };
 
 export const schema = {
-  kpi(raw: any): KPIData {
+  kpi(raw: unknown): KPIData {
     if (!validators.isObj(raw)) throw new ValidationError('kpi', 'object', raw);
     if (!validators.isInt(raw.predictionsToday))
       throw new ValidationError('predictionsToday', 'integer', raw.predictionsToday);
@@ -112,7 +112,7 @@ export const schema = {
     };
   },
 
-  accuracySeries(raw: any): SeriesData {
+  accuracySeries(raw: unknown): SeriesData {
     if (!validators.isObj(raw)) throw new ValidationError('accuracySeries', 'object', raw);
     if (!validators.isArr(raw.labels)) throw new ValidationError('labels', 'array', raw.labels);
     if (!validators.isArr(raw.values)) throw new ValidationError('values', 'array', raw.values);
@@ -127,13 +127,13 @@ export const schema = {
       throw new ValidationError('values', 'number[]', raw.values);
 
     return {
-      labels: raw.labels,
-      values: raw.values,
-      metadata: raw.metadata,
+      labels: raw.labels as string[],
+      values: raw.values as number[],
+      metadata: raw.metadata as SeriesData['metadata'],
     };
   },
 
-  alertBuckets(raw: any): AlertBucket {
+  alertBuckets(raw: unknown): AlertBucket {
     if (!validators.isObj(raw)) throw new ValidationError('alertBuckets', 'object', raw);
     if (!validators.isArr(raw.labels)) throw new ValidationError('labels', 'array', raw.labels);
     if (!validators.isArr(raw.counts)) throw new ValidationError('counts', 'array', raw.counts);
@@ -154,9 +154,9 @@ export const schema = {
     };
   },
 
-  teams(raw: any): Team[] {
+  teams(raw: unknown): Team[] {
     if (!validators.isArr(raw)) throw new ValidationError('teams', 'array', raw);
-    return raw.map((t: any, i: number) => {
+    return raw.map((t: unknown, i: number) => {
       if (!validators.isObj(t)) throw new ValidationError(`teams[${i}]`, 'object', t);
       if (!validators.isStr(t.id)) throw new ValidationError(`teams[${i}].id`, 'string', t.id);
       if (!validators.isStr(t.name))
@@ -165,17 +165,17 @@ export const schema = {
         throw new ValidationError(`teams[${i}].league`, 'string', t.league);
 
       return {
-        id: t.id,
-        name: t.name,
-        league: t.league,
-        stats: t.stats,
+        id: t.id as string,
+        name: t.name as string,
+        league: t.league as string,
+        stats: t.stats as Team['stats'],
       };
     });
   },
 
-  leaderboard(raw: any): Player[] {
+  leaderboard(raw: unknown): Player[] {
     if (!validators.isArr(raw)) throw new ValidationError('leaderboard', 'array', raw);
-    return raw.map((p: any, i: number) => {
+    return raw.map((p: unknown, i: number) => {
       if (!validators.isObj(p)) throw new ValidationError(`player[${i}]`, 'object', p);
       if (!validators.isStr(p.name))
         throw new ValidationError(`player[${i}].name`, 'string', p.name);
@@ -193,9 +193,9 @@ export const schema = {
     });
   },
 
-  portfolio(raw: any): PortfolioItem[] {
+  portfolio(raw: unknown): PortfolioItem[] {
     if (!validators.isArr(raw)) throw new ValidationError('portfolio', 'array', raw);
-    return raw.map((item: any, i: number) => {
+    return raw.map((item: unknown, i: number) => {
       if (!validators.isObj(item)) throw new ValidationError(`portfolio[${i}]`, 'object', item);
       if (!validators.isStr(item.title))
         throw new ValidationError(`portfolio[${i}].title`, 'string', item.title);

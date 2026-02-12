@@ -315,7 +315,7 @@ export default {
       }
 
       // Route handlers for GET requests
-      const routes: Record<string, (params?: any) => any> = {
+      const routes: Record<string, (params?: Record<string, string>) => unknown> = {
         '/health': () => ({
           status: 'ok',
           timestamp: new Date().toISOString(),
@@ -374,10 +374,10 @@ export default {
       }
 
       return new Response('Not Found', { status: 404, headers });
-    } catch (error: any) {
+    } catch (error: unknown) {
       return new Response(
         JSON.stringify({
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
           timestamp: new Date().toISOString(),
         }),
         { status: 500, headers }
@@ -389,7 +389,7 @@ export default {
 // Durable Object for caching (optional)
 export class CacheObject {
   state: DurableObjectState;
-  cache: Map<string, { data: any; expires: number }>;
+  cache: Map<string, { data: unknown; expires: number }>;
 
   constructor(state: DurableObjectState) {
     this.state = state;

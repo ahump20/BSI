@@ -167,6 +167,198 @@ export async function getTeamSchedule(
 // Transformation helpers — reshape ESPN responses into BSI contracts
 // ---------------------------------------------------------------------------
 
+// Interfaces for transformed standings teams
+interface NbaStandingTeam {
+  name: string;
+  abbreviation: string;
+  id: string | undefined;
+  logo: string | undefined;
+  wins: number;
+  losses: number;
+  pct: number;
+  gb: string | number;
+  home: string | number;
+  away: string | number;
+  last10: string | number;
+  streak: string | number;
+}
+
+interface MlbStandingTeam {
+  teamName: string;
+  abbreviation: string;
+  id: string | undefined;
+  logo: string | undefined;
+  wins: number;
+  losses: number;
+  winPercentage: number;
+  gamesBack: number;
+  league: string;
+  division: string;
+  runsScored: number;
+  runsAllowed: number;
+  streakCode: string | number;
+  home: string | number;
+  away: string | number;
+  last10: string | number;
+}
+
+interface NflStandingTeam {
+  name: string;
+  abbreviation: string;
+  id: string | undefined;
+  logo: string | undefined;
+  wins: number;
+  losses: number;
+  ties: number;
+  pct: number;
+  pf: number;
+  pa: number;
+  diff: number;
+  streak: string | number;
+  divisionRecord: string | number;
+  confRecord: string | number;
+  conference: string;
+  division: string;
+}
+
+interface CfbStandingTeam {
+  name: string;
+  abbreviation: string;
+  id: string | undefined;
+  logo: string | undefined;
+  wins: number;
+  losses: number;
+  pct: number;
+  pf: number;
+  pa: number;
+  diff: number;
+  streak: string | number;
+  confRecord: string | number;
+  conference: string;
+}
+
+type StandingTeam = NbaStandingTeam | MlbStandingTeam | NflStandingTeam | CfbStandingTeam;
+
+interface NbaStandingsGroup {
+  name: string;
+  teams: NbaStandingTeam[];
+}
+
+interface NflStandingsGroup {
+  name: string;
+  divisions: { name: string; teams: NflStandingTeam[] }[];
+}
+
+interface CfbStandingsGroup {
+  name: string;
+  teams: CfbStandingTeam[];
+}
+
+type StandingsGroup = NbaStandingsGroup | NflStandingsGroup | CfbStandingsGroup;
+
+interface TransformedGame {
+  id: string | undefined;
+  name: string;
+  shortName: string;
+  date: string | undefined;
+  status: Record<string, unknown>;
+  teams: TransformedCompetitor[];
+  venue: unknown;
+  broadcasts: unknown;
+  odds: unknown;
+}
+
+interface TransformedCompetitor {
+  id: string | undefined;
+  team: {
+    id: string;
+    displayName: string;
+    abbreviation: string;
+    shortDisplayName: string;
+    logo: string;
+    logos: unknown[];
+    color: string | undefined;
+  };
+  score: string | undefined;
+  homeAway: string | undefined;
+  winner: boolean | undefined;
+  records: unknown;
+}
+
+interface TransformedTeam {
+  id: string | undefined;
+  name: string;
+  abbreviation: string;
+  shortDisplayName: string;
+  color: string | undefined;
+  logos: unknown[];
+  location: string;
+}
+
+interface TransformedTeamDetail {
+  id: string | undefined;
+  name: string;
+  abbreviation: string;
+  color: string | undefined;
+  logos: unknown[];
+  location: string;
+  record: string;
+}
+
+interface TransformedRosterEntry {
+  id: string | undefined;
+  name: string;
+  jersey: string;
+  position: string;
+  height: string;
+  weight: string;
+  headshot: string;
+  age: number | undefined;
+}
+
+interface TransformedPlayer {
+  id: string | undefined;
+  name: string;
+  jersey: string;
+  position: string;
+  height: string;
+  weight: string;
+  age: number | undefined;
+  birthDate: string | undefined;
+  birthPlace: string;
+  headshot: string;
+  team: {
+    id: string | undefined;
+    name: string;
+    abbreviation: string;
+  };
+  stats: unknown[];
+}
+
+interface TransformedArticle {
+  headline: string;
+  description: string;
+  link: string;
+  published: string;
+  images: unknown[];
+  categories: unknown[];
+}
+
+interface TransformedGameSummary {
+  id: string | undefined;
+  status: Record<string, unknown>;
+  competitors: unknown[];
+  boxscore: Record<string, unknown>;
+  leaders: unknown[];
+  plays: unknown[];
+  winProbability: unknown[];
+}
+
+interface ApiMeta {
+  lastUpdated: string;
+  dataSource: string;
+}
+
 // Division lookup tables — ESPN standings only group by league/conference,
 // so we map team abbreviations to their division.
 const MLB_DIVISIONS: Record<string, { league: string; division: string }> = {
@@ -213,31 +405,34 @@ const NFL_DIVISIONS: Record<string, { conference: string; division: string }> = 
  *  MLB/NFL: returns flat array with league/division or conference/division fields.
  *  NBA: returns nested groups (the NBA frontend was built for that format). */
 export function transformStandings(
-  raw: any,
+  raw: Record<string, unknown>,
   sport: ESPNSport,
-): { standings: any[]; meta: { lastUpdated: string; dataSource: string } } {
-  const groups = raw?.children || [];
+): { standings: StandingTeam[] | StandingsGroup[]; meta: ApiMeta } {
+  const groups = (raw?.children || []) as Record<string, unknown>[];
 
   if (sport === 'nba') {
     // NBA: keep nested format — the NBA frontend expects { standings: [{ name, teams }] }
-    const standings: any[] = [];
+    const standings: StandingsGroup[] = [];
     for (const group of groups) {
-      const teams: any[] = [];
-      for (const entry of group?.standings?.entries || []) {
-        const teamData = entry?.team || {};
-        const stats = entry?.stats || [];
-        const stat = (name: string): any => {
-          const s = stats.find((s: any) => s.name === name || s.abbreviation === name);
-          return s?.displayValue ?? s?.value ?? '-';
+      const teams: NbaStandingTeam[] = [];
+      const standingsData = group?.standings as Record<string, unknown> | undefined;
+      const entries = (standingsData?.entries || []) as Record<string, unknown>[];
+      for (const entry of entries) {
+        const teamData = (entry?.team || {}) as Record<string, unknown>;
+        const stats = (entry?.stats || []) as Record<string, unknown>[];
+        const stat = (name: string): string | number => {
+          const s = stats.find((s: Record<string, unknown>) => s.name === name || s.abbreviation === name);
+          return (s?.displayValue ?? s?.value ?? '-') as string | number;
         };
+        const logos = teamData.logos as Record<string, unknown>[] | undefined;
         teams.push({
-          name: teamData.displayName || teamData.name || 'Unknown',
-          abbreviation: teamData.abbreviation || '???',
-          id: teamData.id,
-          logo: teamData.logos?.[0]?.href,
+          name: (teamData.displayName || teamData.name || 'Unknown') as string,
+          abbreviation: (teamData.abbreviation || '???') as string,
+          id: teamData.id as string | undefined,
+          logo: logos?.[0]?.href as string | undefined,
           wins: Number(stat('wins')) || 0,
           losses: Number(stat('losses')) || 0,
-          pct: parseFloat(stat('winPercent')) || 0,
+          pct: parseFloat(String(stat('winPercent'))) || 0,
           gb: stat('gamesBehind') || '-',
           home: stat('Home') || stat('home') || '-',
           away: stat('Road') || stat('road') || '-',
@@ -245,25 +440,27 @@ export function transformStandings(
           streak: stat('streak') || '-',
         });
       }
-      teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct);
-      standings.push({ name: group.name || 'Unknown', teams });
+      teams.sort((a: NbaStandingTeam, b: NbaStandingTeam) => b.wins - a.wins || b.pct - a.pct);
+      standings.push({ name: (group.name || 'Unknown') as string, teams });
     }
     return { standings, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
   }
 
   // MLB and NFL: return flat array with division/league fields
-  const standings: any[] = [];
+  const standings: StandingTeam[] = [];
 
   for (const group of groups) {
-    const leagueName = group.name || '';
-    for (const entry of group?.standings?.entries || []) {
-      const teamData = entry?.team || {};
-      const stats = entry?.stats || [];
-      const abbr = teamData.abbreviation || '???';
+    const leagueName = (group.name || '') as string;
+    const standingsData = group?.standings as Record<string, unknown> | undefined;
+    const entries = (standingsData?.entries || []) as Record<string, unknown>[];
+    for (const entry of entries) {
+      const teamData = (entry?.team || {}) as Record<string, unknown>;
+      const stats = (entry?.stats || []) as Record<string, unknown>[];
+      const abbr = (teamData.abbreviation || '???') as string;
 
-      const stat = (name: string): any => {
-        const s = stats.find((s: any) => s.name === name || s.abbreviation === name);
-        return s?.displayValue ?? s?.value ?? '-';
+      const stat = (name: string): string | number => {
+        const s = stats.find((s: Record<string, unknown>) => s.name === name || s.abbreviation === name);
+        return (s?.displayValue ?? s?.value ?? '-') as string | number;
       };
 
       const wins = Number(stat('wins')) || 0;
@@ -271,20 +468,22 @@ export function transformStandings(
       const total = wins + losses;
       const winPct = total > 0 ? wins / total : 0;
 
+      const teamLogos = teamData.logos as Record<string, unknown>[] | undefined;
+
       if (sport === 'mlb') {
         const div = MLB_DIVISIONS[abbr] || {
           league: leagueName.includes('American') ? 'AL' : 'NL',
           division: 'Unknown',
         };
         standings.push({
-          teamName: teamData.displayName || teamData.name || 'Unknown',
+          teamName: (teamData.displayName || teamData.name || 'Unknown') as string,
           abbreviation: abbr,
-          id: teamData.id,
-          logo: teamData.logos?.[0]?.href,
+          id: teamData.id as string | undefined,
+          logo: teamLogos?.[0]?.href as string | undefined,
           wins,
           losses,
           winPercentage: winPct,
-          gamesBack: stat('gamesBehind') === '-' ? 0 : parseFloat(stat('gamesBehind')) || 0,
+          gamesBack: stat('gamesBehind') === '-' ? 0 : parseFloat(String(stat('gamesBehind'))) || 0,
           league: div.league,
           division: div.division,
           runsScored: Number(stat('pointsFor')) || 0,
@@ -297,10 +496,10 @@ export function transformStandings(
       } else if (sport === 'cfb') {
         // CFB — conference comes from the group name
         standings.push({
-          name: teamData.displayName || teamData.name || 'Unknown',
+          name: (teamData.displayName || teamData.name || 'Unknown') as string,
           abbreviation: abbr,
-          id: teamData.id,
-          logo: teamData.logos?.[0]?.href,
+          id: teamData.id as string | undefined,
+          logo: teamLogos?.[0]?.href as string | undefined,
           wins,
           losses,
           pct: winPct,
@@ -318,10 +517,10 @@ export function transformStandings(
           division: 'Unknown',
         };
         standings.push({
-          name: teamData.displayName || teamData.name || 'Unknown',
+          name: (teamData.displayName || teamData.name || 'Unknown') as string,
           abbreviation: abbr,
-          id: teamData.id,
-          logo: teamData.logos?.[0]?.href,
+          id: teamData.id as string | undefined,
+          logo: teamLogos?.[0]?.href as string | undefined,
           wins,
           losses,
           ties: Number(stat('ties')) || 0,
@@ -341,8 +540,8 @@ export function transformStandings(
 
   // NFL: group flat teams into Conference → Division hierarchy
   if (sport === 'nfl') {
-    const confMap: Record<string, Record<string, any[]>> = {};
-    for (const team of standings) {
+    const confMap: Record<string, Record<string, NflStandingTeam[]>> = {};
+    for (const team of standings as NflStandingTeam[]) {
       const conf = team.conference || 'Unknown';
       const div = team.division || 'Unknown';
       const divKey = `${conf} ${div}`;
@@ -356,7 +555,7 @@ export function transformStandings(
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([divName, teams]) => ({
           name: divName,
-          teams: teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct),
+          teams: teams.sort((a: NflStandingTeam, b: NflStandingTeam) => b.wins - a.wins || b.pct - a.pct),
         })),
     }));
     return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
@@ -364,8 +563,8 @@ export function transformStandings(
 
   // CFB: group by conference like NFL
   if (sport === 'cfb') {
-    const confMap: Record<string, any[]> = {};
-    for (const team of standings) {
+    const confMap: Record<string, CfbStandingTeam[]> = {};
+    for (const team of standings as CfbStandingTeam[]) {
       const conf = team.conference || 'Independent';
       if (!confMap[conf]) confMap[conf] = [];
       confMap[conf].push(team);
@@ -374,7 +573,7 @@ export function transformStandings(
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([confName, teams]) => ({
         name: confName,
-        teams: teams.sort((a: any, b: any) => b.wins - a.wins || b.pct - a.pct),
+        teams: teams.sort((a: CfbStandingTeam, b: CfbStandingTeam) => b.wins - a.wins || b.pct - a.pct),
       }));
     return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
   }
@@ -387,64 +586,72 @@ export function transformStandings(
 
 /** Transform ESPN scoreboard into BSI games contract */
 export function transformScoreboard(
-  raw: any,
-): { games: any[]; timestamp: string; date: string; meta: { lastUpdated: string; dataSource: string } } {
-  const events = raw?.events || [];
-  const games = events.map((event: any) => {
-    const competition = event.competitions?.[0] || {};
-    const competitors = competition.competitors || [];
+  raw: Record<string, unknown>,
+): { games: TransformedGame[]; timestamp: string; date: string; meta: ApiMeta } {
+  const events = (raw?.events || []) as Record<string, unknown>[];
+  const games: TransformedGame[] = events.map((event: Record<string, unknown>) => {
+    const competitions = event.competitions as Record<string, unknown>[] | undefined;
+    const competition = competitions?.[0] || {};
+    const competitors = ((competition as Record<string, unknown>).competitors || []) as Record<string, unknown>[];
 
     return {
-      id: event.id,
-      name: event.name || '',
-      shortName: event.shortName || '',
-      date: event.date,
-      status: competition.status || event.status || {},
-      teams: competitors.map((c: any) => ({
-        id: c.id,
-        team: {
-          id: c.team?.id || c.id,
-          displayName: c.team?.displayName || c.team?.name || '',
-          abbreviation: c.team?.abbreviation || '',
-          shortDisplayName: c.team?.shortDisplayName || '',
-          logo: c.team?.logo || c.team?.logos?.[0]?.href || '',
-          logos: c.team?.logos || [],
-          color: c.team?.color,
-        },
-        score: c.score,
-        homeAway: c.homeAway,
-        winner: c.winner,
-        records: c.records,
-      })),
-      venue: competition.venue,
-      broadcasts: competition.broadcasts,
-      odds: competition.odds,
+      id: event.id as string | undefined,
+      name: (event.name || '') as string,
+      shortName: (event.shortName || '') as string,
+      date: event.date as string | undefined,
+      status: ((competition as Record<string, unknown>).status || event.status || {}) as Record<string, unknown>,
+      teams: competitors.map((c: Record<string, unknown>) => {
+        const cTeam = (c.team || {}) as Record<string, unknown>;
+        const cTeamLogos = cTeam.logos as Record<string, unknown>[] | undefined;
+        return {
+          id: c.id as string | undefined,
+          team: {
+            id: (cTeam.id || c.id) as string,
+            displayName: (cTeam.displayName || cTeam.name || '') as string,
+            abbreviation: (cTeam.abbreviation || '') as string,
+            shortDisplayName: (cTeam.shortDisplayName || '') as string,
+            logo: (cTeam.logo || cTeamLogos?.[0]?.href || '') as string,
+            logos: (cTeam.logos || []) as unknown[],
+            color: cTeam.color as string | undefined,
+          },
+          score: c.score as string | undefined,
+          homeAway: c.homeAway as string | undefined,
+          winner: c.winner as boolean | undefined,
+          records: c.records as unknown,
+        };
+      }),
+      venue: (competition as Record<string, unknown>).venue as unknown,
+      broadcasts: (competition as Record<string, unknown>).broadcasts as unknown,
+      odds: (competition as Record<string, unknown>).odds as unknown,
     };
   });
 
+  const day = raw?.day as Record<string, unknown> | undefined;
   return {
     games,
     timestamp: new Date().toISOString(),
-    date: raw?.day?.date || new Date().toISOString().slice(0, 10),
+    date: (day?.date || new Date().toISOString().slice(0, 10)) as string,
     meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
   };
 }
 
 /** Transform ESPN teams list into BSI teams contract */
 export function transformTeams(
-  raw: any,
-): { teams: any[]; meta: { lastUpdated: string; dataSource: string } } {
-  const groups = raw?.sports?.[0]?.leagues?.[0]?.teams || [];
-  const teams = groups.map((entry: any) => {
-    const t = entry.team || entry;
+  raw: Record<string, unknown>,
+): { teams: TransformedTeam[]; meta: ApiMeta } {
+  const sports = raw?.sports as Record<string, unknown>[] | undefined;
+  const leagues = (sports?.[0] as Record<string, unknown> | undefined)?.leagues as Record<string, unknown>[] | undefined;
+  const groups = ((leagues?.[0] as Record<string, unknown> | undefined)?.teams || []) as Record<string, unknown>[];
+  const teams: TransformedTeam[] = groups.map((entry: Record<string, unknown>) => {
+    const t = (entry.team || entry) as Record<string, unknown>;
     return {
-      id: t.id,
-      name: t.displayName || t.name || '',
-      abbreviation: t.abbreviation || '',
-      shortDisplayName: t.shortDisplayName || '',
-      color: t.color,
-      logos: t.logos || [],
-      location: t.location || '',
+      id: t.id as string | undefined,
+      name: (t.displayName || t.name || '') as string,
+      abbreviation: (t.abbreviation || '') as string,
+      shortDisplayName: (t.shortDisplayName || '') as string,
+      color: t.color as string | undefined,
+      logos: (t.logos || []) as unknown[],
+      location: (t.location || '') as string,
     };
   });
 
@@ -456,34 +663,39 @@ export function transformTeams(
 
 /** Transform ESPN team detail + roster into BSI team contract */
 export function transformTeamDetail(
-  teamRaw: any,
-  rosterRaw: any,
-): { team: any; roster: any[]; meta: { lastUpdated: string; dataSource: string } } {
-  const t = teamRaw?.team || {};
-  const team = {
-    id: t.id,
-    name: t.displayName || t.name || '',
-    abbreviation: t.abbreviation || '',
-    color: t.color,
-    logos: t.logos || [],
-    location: t.location || '',
-    record: t.record?.items?.[0]?.summary || '',
+  teamRaw: Record<string, unknown>,
+  rosterRaw: Record<string, unknown>,
+): { team: TransformedTeamDetail; roster: TransformedRosterEntry[]; meta: ApiMeta } {
+  const t = (teamRaw?.team || {}) as Record<string, unknown>;
+  const tRecord = t.record as Record<string, unknown> | undefined;
+  const tRecordItems = tRecord?.items as Record<string, unknown>[] | undefined;
+  const team: TransformedTeamDetail = {
+    id: t.id as string | undefined,
+    name: (t.displayName || t.name || '') as string,
+    abbreviation: (t.abbreviation || '') as string,
+    color: t.color as string | undefined,
+    logos: (t.logos || []) as unknown[],
+    location: (t.location || '') as string,
+    record: (tRecordItems?.[0]?.summary || '') as string,
   };
 
-  const athletes = rosterRaw?.athletes || [];
-  const roster: any[] = [];
+  const athletes = (rosterRaw?.athletes || []) as Record<string, unknown>[];
+  const roster: TransformedRosterEntry[] = [];
 
   for (const group of athletes) {
-    for (const player of group.items || []) {
+    const items = (group.items || []) as Record<string, unknown>[];
+    for (const player of items) {
+      const position = player.position as Record<string, unknown> | undefined;
+      const headshot = player.headshot as Record<string, unknown> | undefined;
       roster.push({
-        id: player.id,
-        name: player.displayName || player.fullName || '',
-        jersey: player.jersey || '',
-        position: player.position?.abbreviation || group.position || '',
-        height: player.displayHeight || '',
-        weight: player.displayWeight || player.weight?.toString() || '',
-        headshot: player.headshot?.href || '',
-        age: player.age,
+        id: player.id as string | undefined,
+        name: (player.displayName || player.fullName || '') as string,
+        jersey: (player.jersey || '') as string,
+        position: (position?.abbreviation || group.position || '') as string,
+        height: (player.displayHeight || '') as string,
+        weight: (player.displayWeight || player.weight?.toString() || '') as string,
+        headshot: (headshot?.href || '') as string,
+        age: player.age as number | undefined,
       });
     }
   }
@@ -497,29 +709,33 @@ export function transformTeamDetail(
 
 /** Transform ESPN athlete into BSI player contract */
 export function transformAthlete(
-  raw: any,
-): { player: any; meta: { lastUpdated: string; dataSource: string } } {
-  const athlete = raw?.athlete || raw || {};
+  raw: Record<string, unknown>,
+): { player: TransformedPlayer; meta: ApiMeta } {
+  const athlete = (raw?.athlete || raw || {}) as Record<string, unknown>;
+  const position = athlete.position as Record<string, unknown> | undefined;
+  const headshot = athlete.headshot as Record<string, unknown> | undefined;
+  const birthPlace = athlete.birthPlace as Record<string, unknown> | undefined;
+  const athleteTeam = athlete.team as Record<string, unknown> | undefined;
   return {
     player: {
-      id: athlete.id,
-      name: athlete.displayName || athlete.fullName || '',
-      jersey: athlete.jersey || '',
-      position: athlete.position?.abbreviation || '',
-      height: athlete.displayHeight || '',
-      weight: athlete.displayWeight || athlete.weight?.toString() || '',
-      age: athlete.age,
-      birthDate: athlete.dateOfBirth,
-      birthPlace: athlete.birthPlace
-        ? `${athlete.birthPlace.city}, ${athlete.birthPlace.state || athlete.birthPlace.country}`
+      id: athlete.id as string | undefined,
+      name: (athlete.displayName || athlete.fullName || '') as string,
+      jersey: (athlete.jersey || '') as string,
+      position: (position?.abbreviation || '') as string,
+      height: (athlete.displayHeight || '') as string,
+      weight: (athlete.displayWeight || athlete.weight?.toString() || '') as string,
+      age: athlete.age as number | undefined,
+      birthDate: athlete.dateOfBirth as string | undefined,
+      birthPlace: birthPlace
+        ? `${birthPlace.city}, ${birthPlace.state || birthPlace.country}`
         : '',
-      headshot: athlete.headshot?.href || '',
+      headshot: (headshot?.href || '') as string,
       team: {
-        id: athlete.team?.id,
-        name: athlete.team?.displayName || '',
-        abbreviation: athlete.team?.abbreviation || '',
+        id: athleteTeam?.id as string | undefined,
+        name: (athleteTeam?.displayName || '') as string,
+        abbreviation: (athleteTeam?.abbreviation || '') as string,
       },
-      stats: athlete.statistics || [],
+      stats: (athlete.statistics || []) as unknown[],
     },
     meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
   };
@@ -527,16 +743,21 @@ export function transformAthlete(
 
 /** Transform ESPN news into BSI news contract */
 export function transformNews(
-  raw: any,
-): { articles: any[]; meta: { lastUpdated: string; dataSource: string } } {
-  const articles = (raw?.articles || []).map((a: any) => ({
-    headline: a.headline || a.title || '',
-    description: a.description || '',
-    link: a.links?.web?.href || a.link || '',
-    published: a.published || '',
-    images: a.images || [],
-    categories: a.categories || [],
-  }));
+  raw: Record<string, unknown>,
+): { articles: TransformedArticle[]; meta: ApiMeta } {
+  const rawArticles = (raw?.articles || []) as Record<string, unknown>[];
+  const articles: TransformedArticle[] = rawArticles.map((a: Record<string, unknown>) => {
+    const links = a.links as Record<string, unknown> | undefined;
+    const web = links?.web as Record<string, unknown> | undefined;
+    return {
+      headline: (a.headline || a.title || '') as string,
+      description: (a.description || '') as string,
+      link: (web?.href || a.link || '') as string,
+      published: (a.published || '') as string,
+      images: (a.images || []) as unknown[],
+      categories: (a.categories || []) as unknown[],
+    };
+  });
 
   return {
     articles,
@@ -546,21 +767,22 @@ export function transformNews(
 
 /** Transform ESPN game summary into BSI game contract */
 export function transformGameSummary(
-  raw: any,
-): { game: any; meta: { lastUpdated: string; dataSource: string } } {
-  const header = raw?.header || {};
-  const boxscore = raw?.boxscore || {};
-  const competition = header?.competitions?.[0] || {};
+  raw: Record<string, unknown>,
+): { game: TransformedGameSummary; meta: ApiMeta } {
+  const header = (raw?.header || {}) as Record<string, unknown>;
+  const boxscore = (raw?.boxscore || {}) as Record<string, unknown>;
+  const competitions = header?.competitions as Record<string, unknown>[] | undefined;
+  const competition = (competitions?.[0] || {}) as Record<string, unknown>;
 
   return {
     game: {
-      id: header.id || raw?.gameId,
-      status: competition.status || {},
-      competitors: competition.competitors || [],
+      id: (header.id || raw?.gameId) as string | undefined,
+      status: (competition.status || {}) as Record<string, unknown>,
+      competitors: (competition.competitors || []) as unknown[],
       boxscore: boxscore,
-      leaders: raw?.leaders || [],
-      plays: raw?.plays || [],
-      winProbability: raw?.winprobability || [],
+      leaders: (raw?.leaders || []) as unknown[],
+      plays: (raw?.plays || []) as unknown[],
+      winProbability: (raw?.winprobability || []) as unknown[],
     },
     meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
   };

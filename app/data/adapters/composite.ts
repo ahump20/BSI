@@ -7,7 +7,7 @@ import type { Team, PortfolioItem } from '../schema';
 
 interface DataSource {
   priority: number;
-  adapter: any;
+  adapter: Record<string, unknown>;
   fallback?: boolean;
 }
 
@@ -21,7 +21,7 @@ class CompositeAdapter {
     this.sources.set(method, existing);
   }
 
-  async execute<T>(method: string, ...args: any[]): Promise<T> {
+  async execute<T>(method: string, ...args: unknown[]): Promise<T> {
     const sources = this.sources.get(method);
     if (!sources || sources.length === 0) {
       throw new Error(`No data source registered for method: ${method}`);
@@ -31,11 +31,12 @@ class CompositeAdapter {
 
     for (const source of sources) {
       try {
-        if (typeof source.adapter[method] !== 'function') {
+        const fn = source.adapter[method];
+        if (typeof fn !== 'function') {
           continue;
         }
 
-        return await source.adapter[method](...args);
+        return await (fn as (...args: unknown[]) => Promise<T>)(...args);
       } catch (error) {
         lastError = error as Error;
         // source failed, try next
