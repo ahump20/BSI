@@ -93,10 +93,13 @@ const DEV_ORIGINS = new Set([
   'http://localhost:8787',
 ]);
 
+/** Only BSI-owned Pages projects — not the entire .pages.dev namespace */
+const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev'];
+
 function corsOrigin(request: Request, env: Env): string {
   const origin = request.headers.get('Origin') ?? '';
   if (PROD_ORIGINS.has(origin)) return origin;
-  if (origin.endsWith('.pages.dev')) return origin;
+  if (ALLOWED_PAGES_DOMAINS.some(d => origin === `https://${d}` || origin.endsWith(`.${d}`))) return origin;
   if (env.ENVIRONMENT !== 'production' && DEV_ORIGINS.has(origin)) return origin;
   return '';
 }
@@ -131,6 +134,18 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: https: blob:",
+    "font-src 'self' https://fonts.gstatic.com",
+    "connect-src 'self' https://*.posthog.com https://us.i.posthog.com https://api.stripe.com",
+    "frame-src 'self' https://*.cloudflarestream.com https://js.stripe.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join('; '),
 };
 
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {

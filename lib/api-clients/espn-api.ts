@@ -7,6 +7,8 @@
  * Base: https://site.api.espn.com/apis/site/v2/sports/{category}/{league}
  */
 
+import { EspnScoreboardSchema, EspnStandingsSchema, validateApiResponse } from './schemas';
+
 export type ESPNSport = 'mlb' | 'nfl' | 'nba' | 'cfb';
 
 const SPORT_PATHS: Record<ESPNSport, string> = {
@@ -52,7 +54,8 @@ export async function getScoreboard(
 ): Promise<unknown> {
   const sportPath = SPORT_PATHS[sport];
   const qs = date ? `?dates=${date.replace(/-/g, '')}` : '';
-  return espnFetch(`${sportPath}/scoreboard${qs}`);
+  const raw = await espnFetch(`${sportPath}/scoreboard${qs}`);
+  return validateApiResponse(EspnScoreboardSchema, raw, 'espn', `${sport}/scoreboard`);
 }
 
 // ---------------------------------------------------------------------------
@@ -71,7 +74,8 @@ export async function getStandings(sport: ESPNSport): Promise<unknown> {
       signal: controller.signal,
     });
     if (!res.ok) throw new Error(`ESPN standings ${res.status}: ${res.statusText}`);
-    return (await res.json()) as unknown;
+    const raw = await res.json();
+    return validateApiResponse(EspnStandingsSchema, raw, 'espn', `${sport}/standings`);
   } finally {
     clearTimeout(timer);
   }

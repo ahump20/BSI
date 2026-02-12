@@ -132,7 +132,7 @@ export function useTicker({
             setItems((prev) => [newItem, ...prev.slice(0, maxItems - 1)]);
           }
         } catch (e) {
-          logger.warn({ error: e }, 'Failed to parse ticker message');
+          logger.warn('Failed to parse ticker message', { error: String(e) });
         }
       };
 
@@ -147,10 +147,10 @@ export function useTicker({
       };
 
       wsRef.current.onerror = (error) => {
-        logger.warn({ error }, 'Ticker WebSocket error');
+        logger.warn('Ticker WebSocket error', { error: String(error) });
       };
     } catch (error) {
-      logger.warn({ error }, 'Failed to connect to ticker');
+      logger.warn('Failed to connect to ticker', { error: String(error) });
       reconnectTimeoutRef.current = setTimeout(connect, 3000);
     }
   }, [url, maxItems]);

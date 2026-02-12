@@ -133,7 +133,7 @@ function getCurrentDateCST(): string {
   const now = new Date();
   const cstOffset = -6 * 60;
   const cstTime = new Date(now.getTime() + (cstOffset - now.getTimezoneOffset()) * 60000);
-  return cstTime.toISOString().split('T')[0];
+  return cstTime.toISOString().split('T')[0] ?? '';
 }
 
 function getCurrentTimestampCST(): string {
