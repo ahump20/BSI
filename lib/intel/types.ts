@@ -74,8 +74,8 @@ export const SPORT_API_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
   mlb: '/api/mlb',
   nfl: '/api/nfl',
   nba: '/api/nba',
-  ncaafb: '/api/nfl', // CFB uses same ESPN pattern
-  cbb: '/api/nba',    // CBB uses same ESPN pattern
+  ncaafb: '/api/cfb',
+  cbb: '/api/cbb',
   'd1bb': '/api/college-baseball',
 };
 

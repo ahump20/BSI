@@ -327,7 +327,7 @@ export default function ScoresHubPage() {
 
             {/* Data Attribution */}
             <CitationFooter
-              source="MLB Stats API"
+              source="SportsDataIO"
               fetchedAt={new Date().toISOString()}
               additionalSources={['ESPN', 'NCAA.org', 'D1Baseball']}
               showFreshness={false}

@@ -155,7 +155,7 @@ export default function NFLPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={120}>
               <DataFreshnessIndicator
-                source="ESPN"
+                source="SportsDataIO"
                 refreshInterval={30}
               />
             </ScrollReveal>
@@ -166,7 +166,7 @@ export default function NFLPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
               <p className="text-white/60 text-center max-w-2xl mx-auto mb-8">
-                Live scores, conference standings, and analytics for all 32 teams -- pulled from ESPN and official NFL data.
+                Live scores, conference standings, and analytics for all 32 teams.
               </p>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={250}>
@@ -285,7 +285,7 @@ export default function NFLPage() {
                             </table>
                           </div>
                           <div className="mt-4 pt-4 border-t border-white/10">
-                            <DataSourceBadge source="ESPN / NFL" timestamp={formatTimestamp(lastUpdated)} />
+                            <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
                           </div>
                         </CardContent>
                       </Card>
@@ -353,7 +353,7 @@ export default function NFLPage() {
                           ))}
                         </div>
                         <div className="mt-4 pt-4 border-t border-white/10">
-                          <DataSourceBadge source="ESPN / NFL" timestamp={formatTimestamp(lastUpdated)} />
+                          <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
                           {hasLiveGames && <span className="text-xs text-white/30 ml-4">Auto-refreshing every 30 seconds</span>}
                         </div>
                       </CardContent>

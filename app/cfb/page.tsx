@@ -56,10 +56,38 @@ export default function CFBPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/ncaa/rankings?sport=football');
+      const res = await fetch('/api/cfb/teams');
       if (!res.ok) throw new Error('Failed to fetch rankings');
-      const data = await res.json() as { rankings?: RankedTeam[]; meta?: { lastUpdated?: string } };
-      setRankings(data.rankings || []);
+      const data = await res.json() as {
+        teams?: Array<{
+          school?: string;
+          name?: string;
+          conference?: string;
+          apRank?: number | null;
+          coachesRank?: number | null;
+        }>;
+        meta?: { lastUpdated?: string };
+      };
+
+      const ranked = (data.teams || [])
+        .filter((team) => {
+          const ap = team.apRank ?? 0;
+          const coaches = team.coachesRank ?? 0;
+          return ap > 0 || coaches > 0;
+        })
+        .sort((a, b) => {
+          const aRank = a.apRank && a.apRank > 0 ? a.apRank : (a.coachesRank || 999);
+          const bRank = b.apRank && b.apRank > 0 ? b.apRank : (b.coachesRank || 999);
+          return aRank - bRank;
+        })
+        .slice(0, 25)
+        .map((team, idx) => ({
+          rank: team.apRank && team.apRank > 0 ? team.apRank : idx + 1,
+          team: team.school || team.name || 'Unknown Team',
+          conference: team.conference || 'Independent',
+        }));
+
+      setRankings(ranked);
       setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -240,7 +268,7 @@ export default function CFBPage() {
                           </table>
                         </div>
                         <div className="mt-4 pt-4 border-t border-white/10">
-                          <DataSourceBadge source="AP Poll / ESPN" timestamp={formatTimestamp(lastUpdated)} />
+                          <DataSourceBadge source="SportsDataIO (Derived Rankings)" timestamp={formatTimestamp(lastUpdated)} />
                           {error && <span className="text-xs text-yellow-400 ml-4">Using cached/preseason data</span>}
                         </div>
                       </CardContent>

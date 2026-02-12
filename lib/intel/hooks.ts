@@ -68,8 +68,8 @@ function sportApiBase(sport: Exclude<IntelSport, 'all'>): string {
     mlb: '/api/mlb',
     nfl: '/api/nfl',
     nba: '/api/nba',
-    ncaafb: '/api/nfl', // CFB shares ESPN pattern
-    cbb: '/api/nba',
+    ncaafb: '/api/cfb',
+    cbb: '/api/cbb',
     d1bb: '/api/college-baseball',
   };
   return map[sport];
@@ -829,7 +829,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
 
   // Fetch scores with stable hook ordering for all supported sports.
-  // Tries local API proxy first, falls back to ESPN direct if unavailable.
+  // SportsDataIO leagues do not fall back to ESPN.
   const scoreQueryResults = useQueries({
     queries: ACTIVE_SPORTS.map((s) => ({
       queryKey: ['intel-scores', s],
@@ -837,7 +837,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
         try {
           return await fetchJson<Record<string, unknown>>(scoresEndpoint(s));
         } catch {
-          return fetchJson<Record<string, unknown>>(ESPN_SCORES_MAP[s]);
+          if (s === 'd1bb') {
+            return fetchJson<Record<string, unknown>>(ESPN_SCORES_MAP[s]);
+          }
+          throw new Error(`Score feed unavailable for ${s}`);
         }
       },
       refetchInterval: 30_000,
@@ -869,7 +872,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
       try {
         return await fetchJson<Record<string, unknown>>(`${sportApiBase(standingsSport)}/standings`);
       } catch {
-        return fetchJson<Record<string, unknown>>(ESPN_STANDINGS_MAP[standingsSport]);
+        if (standingsSport === 'd1bb') {
+          return fetchJson<Record<string, unknown>>(ESPN_STANDINGS_MAP[standingsSport]);
+        }
+        throw new Error(`Standings feed unavailable for ${standingsSport}`);
       }
     },
     refetchInterval: 60_000,
@@ -961,10 +967,13 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
           data: entry.data,
         }));
       } catch {
-        // Fallback: try direct ESPN fetch if Worker proxy unavailable
+        // Fallback: only college baseball (d1bb) uses direct ESPN.
         const newsSports = sport === 'all' ? ACTIVE_SPORTS : [sport];
         return Promise.all(
           newsSports.map(async (s) => {
+            if (s !== 'd1bb') {
+              return { sport: s, data: { articles: [] } as Record<string, unknown> };
+            }
             try {
               const espnData = await fetchJson<Record<string, unknown>>(ESPN_NEWS_MAP[s]);
               return { sport: s, data: espnData };

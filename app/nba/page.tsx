@@ -147,7 +147,7 @@ export default function NBAPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={120}>
               <DataFreshnessIndicator
-                source="ESPN"
+                source="SportsDataIO"
                 refreshInterval={30}
               />
             </ScrollReveal>
@@ -266,7 +266,7 @@ export default function NBAPage() {
                               </table>
                             </div>
                             <div className="mt-4 pt-4 border-t border-white/10">
-                              <DataSourceBadge source="NBA.com / ESPN" timestamp={formatTimestamp(lastUpdated)} />
+                              <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
                             </div>
                           </CardContent>
                         </Card>
@@ -330,7 +330,7 @@ export default function NBAPage() {
                           ))}
                         </div>
                         <div className="mt-4 pt-4 border-t border-white/10">
-                          <DataSourceBadge source="NBA.com / ESPN" timestamp={formatTimestamp(lastUpdated)} />
+                          <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
                           {hasLiveGames && <span className="text-xs text-white/30 ml-4">Auto-refreshing every 30 seconds</span>}
                         </div>
                       </CardContent>

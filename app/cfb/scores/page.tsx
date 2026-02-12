@@ -235,7 +235,7 @@ export default function CFBScoresPage() {
             )}
 
             <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataSourceBadge source="ESPN CFB" timestamp={formatTimestamp(lastUpdated)} />
+              <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
               {hasLive && <span className="text-xs text-text-tertiary ml-4">Auto-refreshing every 30s</span>}
             </div>
           </Container>

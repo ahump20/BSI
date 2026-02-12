@@ -95,6 +95,7 @@ name = "PORTAL_POLLER"
 class_name = "PortalPoller"
 
 # Secrets (set via `wrangler secret put --env production`):
+# SPORTS_DATA_IO_API_KEY (required for canonical SportsDataIO routes)
 # RAPIDAPI_KEY
 # NOTION_TOKEN
 # STRIPE_SECRET_KEY
