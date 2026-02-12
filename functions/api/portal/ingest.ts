@@ -125,6 +125,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     let inserted = 0;
     let updated = 0;
     const changelogBatch: D1PreparedStatement[] = [];
+    const invalidatedCacheKeys: string[] = [];
 
     const changeStmt = db.prepare(`
       INSERT INTO transfer_portal_changelog (id, portal_entry_id, change_type, description, old_value, new_value, event_timestamp, created_at)
@@ -166,6 +167,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             snapshotKey
           )
           .run();
+
+        // Invalidate player cache on update
+        const playerCacheKey = `portal:player:${entry.id}`;
+        await env.KV.delete(playerCacheKey);
+        invalidatedCacheKeys.push(playerCacheKey);
 
         // Detect status change for changelog
         if (existing.status !== entry.status) {
@@ -264,6 +270,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         inserted,
         updated,
         changelog_events: changelogBatch.length,
+        cache_invalidated: invalidatedCacheKeys.length,
         snapshot_key: snapshotKey,
         timestamp: now,
       }),
