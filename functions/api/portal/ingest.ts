@@ -125,7 +125,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     let inserted = 0;
     let updated = 0;
     const changelogBatch: D1PreparedStatement[] = [];
-    const invalidatedCacheKeys: string[] = [];
+    const invalidatedCacheKeys = new Set<string>();
 
     const changeStmt = db.prepare(`
       INSERT INTO transfer_portal_changelog (id, portal_entry_id, change_type, description, old_value, new_value, event_timestamp, created_at)
@@ -169,7 +169,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           .run();
 
         // Track cache key for batch invalidation
-        invalidatedCacheKeys.push(`portal:player:${entry.id}`);
+        invalidatedCacheKeys.add(`portal:player:${entry.id}`);
 
         // Detect status change for changelog
         if (existing.status !== entry.status) {
@@ -260,8 +260,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // Batch invalidate cache keys in parallel
-    if (invalidatedCacheKeys.length > 0) {
-      await Promise.all(invalidatedCacheKeys.map((key) => env.KV.delete(key)));
+    if (invalidatedCacheKeys.size > 0) {
+      await Promise.all(Array.from(invalidatedCacheKeys).map((key) => env.KV.delete(key)));
     }
 
     // Update KV freshness marker
@@ -273,7 +273,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         inserted,
         updated,
         changelog_events: changelogBatch.length,
-        cache_invalidated: invalidatedCacheKeys.length,
+        cache_invalidated: invalidatedCacheKeys.size,
         snapshot_key: snapshotKey,
         timestamp: now,
       }),
