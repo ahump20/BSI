@@ -454,9 +454,9 @@ function constantTimeCompare(a: string | null | undefined, b: string | null | un
   if (a == null || b == null || a === '' || b === '') {
     // Still perform dummy comparison to maintain constant time
     const dummy = (a ?? '') + (b ?? '');
-    let _ = 0;
+    let dummyResult = 0;
     for (let i = 0; i < dummy.length; i++) {
-      _ |= dummy.charCodeAt(i);
+      dummyResult |= dummy.charCodeAt(i);
     }
     return false;
   }
