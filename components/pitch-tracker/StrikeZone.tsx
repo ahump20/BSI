@@ -40,7 +40,7 @@ export function StrikeZone({
   width = 300,
   height = 400,
 }: StrikeZoneProps) {
-  const handleClick = onPitchClick || onPitchSelect;
+  const handlePitchClick = onPitchClick || onPitchSelect;
   
   return (
     <div className="strike-zone" style={{ width, height }}>
@@ -54,6 +54,9 @@ export function StrikeZone({
       )}
       <div className="text-xs text-gray-400 mt-2">
         Visualization coming soon
+        {handlePitchClick && selectedPitchId && (
+          <span className="ml-2">(Selected: {selectedPitchId})</span>
+        )}
       </div>
     </div>
   );
