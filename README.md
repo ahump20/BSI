@@ -79,6 +79,13 @@ npm run dev
 | `npm run deploy:worker` | Deploy Cloudflare Worker |
 | `npm run deploy:hybrid` | Deploy both Pages + Worker |
 
+Playwright CLI quick capture:
+
+```bash
+# Uses the Playwright binary shipped by @playwright/mcp.
+npx --yes --package @playwright/mcp playwright screenshot https://playwright.dev output/playwright/playwright-dev.png
+```
+
 ## Project Structure
 
 ```
