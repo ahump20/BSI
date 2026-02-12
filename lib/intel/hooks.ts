@@ -826,8 +826,6 @@ function generateSignals(
 const ACTIVE_SPORTS: Exclude<IntelSport, 'all'>[] = ['nfl', 'nba', 'mlb', 'ncaafb', 'cbb', 'd1bb'];
 
 export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: string | null) {
-  const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
-
   // Fetch scores with stable hook ordering for all supported sports.
   // SportsDataIO leagues do not fall back to ESPN.
   const scoreQueryResults = useQueries({
@@ -849,8 +847,9 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   });
 
   const scoreQueries = useMemo(
-    () =>
-      sportsToFetch.map((s) => {
+    () => {
+      const sportsToFetch = sport === 'all' ? ACTIVE_SPORTS : [sport];
+      return sportsToFetch.map((s) => {
         const index = ACTIVE_SPORTS.indexOf(s);
         const result = scoreQueryResults[index];
         return {
@@ -860,8 +859,9 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
           isFetching: result?.isFetching ?? false,
           isError: result?.isError ?? false,
         };
-      }),
-    [sportsToFetch, scoreQueryResults],
+      });
+    },
+    [sport, scoreQueryResults],
   );
 
   // Fetch standings for the primary sport (or NBA by default)

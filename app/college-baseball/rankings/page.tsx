@@ -129,7 +129,7 @@ export default function CollegeBaseballRankingsPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedPoll]);
+  }, []);
 
   useEffect(() => {
     loadRankings();
