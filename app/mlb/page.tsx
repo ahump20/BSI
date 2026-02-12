@@ -320,7 +320,7 @@ export default function MLBPage() {
 
             <ScrollReveal direction="up" delay={120}>
               <DataFreshnessIndicator
-                source="ESPN"
+                source="SportsDataIO"
                 refreshInterval={30}
               />
             </ScrollReveal>
