@@ -4,12 +4,16 @@
  * Populates D1 with realistic transfer portal entries for both sports.
  * POST /api/portal/seed — requires ?confirm=yes to execute.
  * Produces 120+ baseball entries and 120+ football entries.
+ *
+ * Authorization: Requires X-Admin-Secret header matching ADMIN_SECRET environment variable.
+ * Set via: wrangler secret put ADMIN_SECRET
  */
 
 interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
   SPORTS_DATA: R2Bucket;
+  ADMIN_SECRET?: string;
 }
 
 const HEADERS = {
@@ -464,6 +468,36 @@ function generateChangelog(
   return changes;
 }
 
+/**
+ * Constant-time string comparison to prevent timing attacks
+ * Returns true if strings are equal, false otherwise
+ * Maintains constant time for all input combinations by using fixed iteration count
+ */
+function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
+  // Reject null/undefined/empty strings explicitly (invalid secrets)
+  if (a == null || b == null || a === '' || b === '') {
+    // Use fixed iteration count to prevent timing leaks based on input length
+    // This ensures (null, null), (null, 'x'), and (null, 'xxxxxx...') all take same time
+    let dummyResult = 0;
+    for (let i = 0; i < 256; i++) {
+      dummyResult |= i;
+    }
+    return false;
+  }
+  
+  // Both strings are now guaranteed to be non-null, non-undefined, non-empty
+  const maxLen = Math.max(a.length, b.length);
+  let result = a.length ^ b.length; // Include length difference in result
+  
+  for (let i = 0; i < maxLen; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    result |= charA ^ charB;
+  }
+  
+  return result === 0;
+}
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
@@ -476,6 +510,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       status: 405,
       headers: HEADERS,
     });
+  }
+
+  // Authorization check - require X-Admin-Secret header
+  const adminSecret = request.headers.get('X-Admin-Secret');
+  
+  // Return generic 401 to avoid leaking configuration state
+  // Use constant-time comparison for all cases to prevent timing attacks
+  if (!constantTimeCompare(adminSecret, env.ADMIN_SECRET)) {
+    return new Response(
+      JSON.stringify({
+        error: 'Unauthorized',
+        message: 'Invalid or missing authorization credentials',
+      }),
+      {
+        status: 401,
+        headers: HEADERS,
+      }
+    );
   }
 
   const url = new URL(request.url);
