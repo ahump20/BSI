@@ -239,7 +239,7 @@ interface NILValuationResponse {
 interface TransferPortalEntry {
   entryId: string;
   athleteName: string;
-  sport: 'football' | 'basketball' | 'baseball';
+  sport: 'football' | 'baseball';
   position: string;
   formerSchool: string;
   formerConference: string;
@@ -1356,15 +1356,15 @@ paths:
     get:
       operationId: getTransferPortalLatest
       summary: Get latest transfer portal entries
-      description: Returns the latest transfer portal entries across football, basketball, and baseball. Optionally filter by sport.
+      description: Returns the latest transfer portal entries across football and baseball. Optionally filter by sport.
       parameters:
         - name: sport
           in: query
           required: false
-          description: Filter by sport (football, basketball, baseball)
+          description: Filter by sport (football, baseball)
           schema:
             type: string
-            enum: [football, basketball, baseball]
+            enum: [football, baseball]
       responses:
         '200':
           description: Successful response with transfer portal data

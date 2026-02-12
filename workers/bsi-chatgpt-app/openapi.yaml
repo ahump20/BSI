@@ -187,8 +187,20 @@ paths:
       summary: Get latest transfer portal entries
       description: |
         Returns the most recent college athlete transfer portal entries and
-        commitments across all sports, with a focus on football and basketball.
+        commitments, with support for football and baseball.
         Includes player info, previous school, and destination if committed.
+      parameters:
+        - name: sport
+          in: query
+          required: false
+          description: |
+            Sport to filter transfer portal entries by.
+            Allowed values are 'football' and 'baseball'.
+          schema:
+            type: string
+            enum:
+              - football
+              - baseball
       responses:
         '200':
           description: Transfer portal data
