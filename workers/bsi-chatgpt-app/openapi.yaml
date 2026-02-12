@@ -192,7 +192,7 @@ paths:
       parameters:
         - name: sport
           in: query
-          required: true
+          required: false
           description: |
             Sport to filter transfer portal entries by.
             Allowed values are 'football' and 'baseball'.
