@@ -257,6 +257,7 @@ export function formatGameTime(input: string | Date, timezone: string = BSI_TIME
  * Drop-in replacement for the inline formatTimestamp that was copy-pasted across 26 pages.
  */
 export function formatTimestamp(isoString?: string): string {
+  if (isoString === '') return '';
   const date = isoString ? new Date(isoString) : new Date();
   if (isNaN(date.getTime())) return 'Invalid date';
   return (
