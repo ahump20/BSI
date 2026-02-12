@@ -13,9 +13,6 @@ import { corsHeaders, getSportsDataApiKey } from '../_utils';
 
 interface Env {
   SPORTS_DATA_IO_API_KEY?: string;
-  SPORTSDATAIO_API_KEY?: string;
-  SPORTSDATAIO_KEY?: string;
-  SPORTSDATA_API_KEY?: string;
   KV: KVNamespace;
 }
 
@@ -103,7 +100,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           totalTeams: teams.length,
           dataSource: 'SportsDataIO',
           lastUpdated: new Date().toISOString(),
-          timezone: 'America/Chicago',
+          timezone: 'America/New_York',
           cached: false,
         },
       }),
