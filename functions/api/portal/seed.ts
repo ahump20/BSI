@@ -447,16 +447,25 @@ function generateChangelog(
 /**
  * Constant-time string comparison to prevent timing attacks
  * Returns true if strings are equal, false otherwise
+ * Maintains constant time even for null/undefined and length mismatches
  */
 function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
-  if (!a || !b) return false;
-  if (a.length !== b.length) return false;
+  // Use dummy values for null/undefined to maintain constant time
+  const strA = a || '';
+  const strB = b || '';
   
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  // Compare up to the longer length to avoid early returns
+  const maxLen = Math.max(strA.length, strB.length);
+  let result = strA.length ^ strB.length; // Include length difference in result
+  
+  for (let i = 0; i < maxLen; i++) {
+    const charA = i < strA.length ? strA.charCodeAt(i) : 0;
+    const charB = i < strB.length ? strB.charCodeAt(i) : 0;
+    result |= charA ^ charB;
   }
-  return result === 0;
+  
+  // Also check that both strings were non-null/non-empty
+  return result === 0 && !!a && !!b;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
