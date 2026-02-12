@@ -20,6 +20,11 @@ binding = "KV"
 id = "e6cb68e815cd45babeee0e10460dbfee"
 preview_id = "e6cb68e815cd45babeee0e10460dbfee"
 
+[[kv_namespaces]]
+binding = "PROD_CACHE"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "bsi-prod-db"
@@ -75,6 +80,10 @@ PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
 
 [[env.production.kv_namespaces]]
 binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[env.production.kv_namespaces]]
+binding = "PROD_CACHE"
 id = "e6cb68e815cd45babeee0e10460dbfee"
 
 [[env.production.d1_databases]]

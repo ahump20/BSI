@@ -1,0 +1,106 @@
+{
+  "startedAt": "2026-02-12T17:21:25.403Z",
+  "completedAt": "2026-02-12T17:21:25.923Z",
+  "baseUrl": "https://blazesportsintel.com",
+  "overallPass": true,
+  "results": [
+    {
+      "date": "2026-02-14",
+      "pass": true,
+      "thresholds": {
+        "maxCountDelta": 3,
+        "minOverlapRatio": 0.9
+      },
+      "counts": {
+        "internal": 120,
+        "espn": 120,
+        "delta": 0
+      },
+      "overlapRatio": 1,
+      "sampled": {
+        "internalIds": [
+          "401848062",
+          "401853203",
+          "401851118",
+          "401848134",
+          "401847667",
+          "401847986",
+          "401847577",
+          "401847296",
+          "401853390",
+          "401858076"
+        ],
+        "espnIds": [
+          "401848062",
+          "401853203",
+          "401851118",
+          "401848134",
+          "401847667",
+          "401847986",
+          "401847577",
+          "401847296",
+          "401853390",
+          "401858076"
+        ]
+      }
+    },
+    {
+      "date": "2026-02-20",
+      "pass": true,
+      "thresholds": {
+        "maxCountDelta": 3,
+        "minOverlapRatio": 0.9
+      },
+      "counts": {
+        "internal": 103,
+        "espn": 103,
+        "delta": 0
+      },
+      "overlapRatio": 1,
+      "sampled": {
+        "internalIds": [
+          "401852764",
+          "401847430",
+          "401850142",
+          "401847907",
+          "401860443",
+          "401854136",
+          "401851994",
+          "401848461",
+          "401857976",
+          "401853660"
+        ],
+        "espnIds": [
+          "401852764",
+          "401847430",
+          "401850142",
+          "401847907",
+          "401860443",
+          "401854136",
+          "401851994",
+          "401848461",
+          "401857976",
+          "401853660"
+        ]
+      }
+    },
+    {
+      "date": "2026-02-12",
+      "pass": true,
+      "thresholds": {
+        "maxCountDelta": 3,
+        "minOverlapRatio": 0.9
+      },
+      "counts": {
+        "internal": 0,
+        "espn": 0,
+        "delta": 0
+      },
+      "overlapRatio": 1,
+      "sampled": {
+        "internalIds": [],
+        "espnIds": []
+      }
+    }
+  ]
+}

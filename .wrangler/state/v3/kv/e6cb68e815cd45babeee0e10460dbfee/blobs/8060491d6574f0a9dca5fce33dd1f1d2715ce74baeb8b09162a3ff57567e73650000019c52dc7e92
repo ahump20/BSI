@@ -1,0 +1,674 @@
+{
+  "meta": {
+    "source": [
+      "University of Texas Athletics schedule PDF (captured February 12, 2026)",
+      "Texas 2025 season stats PDF (as of June 2, 2025)",
+      "Texas 2026 roster PDF (captured February 12, 2026)"
+    ],
+    "fetched_at": "2026-02-12T16:59:38.846Z",
+    "timezone": "America/Chicago",
+    "generated_by": "scripts/ingest-texas-pdfs.mjs"
+  },
+  "schedule": {
+    "openingWeekendGames": [
+      {
+        "date": "Feb 13 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 14 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 15 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      }
+    ],
+    "keyEarlyGames": [
+      {
+        "date": "Feb 13 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 14 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 15 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 20 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 21 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 22 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 27 (Fri)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Coastal Carolina",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Feb 28 (Sat)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Baylor",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Mar 1 (Sun)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Ohio State",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Apr 10 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 11 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 12 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 14 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Texas A&M - Corpus",
+        "location": "Christi Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 24 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn."
+      },
+      {
+        "date": "Apr 25 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn"
+      },
+      {
+        "date": "Apr 26 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn"
+      },
+      {
+        "date": "May 8 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      },
+      {
+        "date": "May 9 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      },
+      {
+        "date": "May 10 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      }
+    ],
+    "allParsedGames": [
+      {
+        "date": "Feb 13 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 14 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 15 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UC Davis",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 17 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Lamar",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 20 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 21 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 22 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Michigan State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 24 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UTRGV",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Feb 27 (Fri)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Coastal Carolina",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Feb 28 (Sat)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Baylor",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Mar 1 (Sun)",
+        "timeCT": "TBD",
+        "at": "Neutral",
+        "opponent": "Ohio State",
+        "location": "Houston, Texas (Daikin Park) BRUCE BOLT College",
+        "tournament": "Classic"
+      },
+      {
+        "date": "Mar 3 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Houston Christian",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 6 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "USC Upstate",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 7 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "USC Upstate",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 8 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "USC Upstate",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 10 (Tue)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas State",
+        "location": "San Marcos, Texas"
+      },
+      {
+        "date": "Mar 13 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Ole Miss",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 14 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Ole Miss",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 15 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Ole Miss",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 17 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Tarleton State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 20 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Auburn",
+        "location": "Auburn, Ala."
+      },
+      {
+        "date": "Mar 21 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Auburn",
+        "location": "Auburn, Ala."
+      },
+      {
+        "date": "Mar 22 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Auburn",
+        "location": "Auburn, Ala."
+      },
+      {
+        "date": "Mar 24 (Tue)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Houston",
+        "location": "Houston, Texas"
+      },
+      {
+        "date": "Mar 26 (Thu)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Oklahoma",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 27 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Oklahoma",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 28 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Oklahoma",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Mar 31 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Texas State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 2 (Thu)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "South Carolina",
+        "location": "Columbia, SC."
+      },
+      {
+        "date": "Apr 3 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "South Carolina",
+        "location": "Columbia, SC."
+      },
+      {
+        "date": "Apr 4 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "South Carolina",
+        "location": "Columbia, SC."
+      },
+      {
+        "date": "Apr 7 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Incarnate Word",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 10 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 11 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 12 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Texas A&M",
+        "location": "College Station, Texas"
+      },
+      {
+        "date": "Apr 14 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Texas A&M - Corpus",
+        "location": "Christi Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 17 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Alabama",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 18 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Alabama",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 19 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Alabama",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 21 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Air Force",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "Apr 24 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn."
+      },
+      {
+        "date": "Apr 25 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn"
+      },
+      {
+        "date": "Apr 26 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Vanderbilt",
+        "location": "Nashville, Tenn"
+      },
+      {
+        "date": "Apr 28 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Sam Houston",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 1 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Mississippi State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 2 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Mississippi State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 3 (Sun)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Mississippi State",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 5 (Tue)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "UTSA",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 8 (Fri)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      },
+      {
+        "date": "May 9 (Sat)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      },
+      {
+        "date": "May 10 (Sun)",
+        "timeCT": "TBD",
+        "at": "Away",
+        "opponent": "Tennessee",
+        "location": "Knoxville, Tenn"
+      },
+      {
+        "date": "May 14 (Thu)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Missouri",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 15 (Fri)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Missouri",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      },
+      {
+        "date": "May 16 (Sat)",
+        "timeCT": "TBD",
+        "at": "Home",
+        "opponent": "Missouri",
+        "location": "Austin, Texas (UFCU Disch-Falk Field)"
+      }
+    ]
+  },
+  "season2025Summary": {
+    "overallRecord": "44-14",
+    "homeRecord": "28-7",
+    "awayRecord": "11-5",
+    "neutralRecord": "5-2",
+    "conferenceRecord": "22-8",
+    "battingLeaders": [
+      {
+        "name": "Ethan Mendoza",
+        "battingAverage": ".333"
+      },
+      {
+        "name": "Adrian Rodriguez",
+        "battingAverage": ".313"
+      },
+      {
+        "name": "Kimble Schuessler",
+        "battingAverage": ".312"
+      },
+      {
+        "name": "Rylan Galvan",
+        "battingAverage": ".296"
+      },
+      {
+        "name": "Casey Borba",
+        "battingAverage": ".278"
+      },
+      {
+        "name": "Jonah Williams",
+        "battingAverage": ".327"
+      }
+    ]
+  },
+  "rosterNotables": [
+    {
+      "number": "5",
+      "name": "Ethan Mendoza",
+      "position": "INF",
+      "batsThrows": "R/R",
+      "height": "5' 10''",
+      "weight": "200",
+      "year": "Jr.",
+      "hometown": "Bedford, Texas",
+      "highSchool": "Southlake Carroll"
+    },
+    {
+      "number": "8",
+      "name": "Carson Tinney",
+      "position": "C",
+      "batsThrows": "R/R",
+      "height": "6' 4''",
+      "weight": "240",
+      "year": "Jr.",
+      "hometown": "Castle Pines, Colo.",
+      "highSchool": "Valor Christian"
+    },
+    {
+      "number": "9",
+      "name": "Jonah Williams",
+      "position": "OF",
+      "batsThrows": "L/L",
+      "height": "6' 3''",
+      "weight": "210",
+      "year": "So.",
+      "hometown": "Galveston, Texas",
+      "highSchool": "Ball"
+    },
+    {
+      "number": "12",
+      "name": "Haiden Leffew",
+      "position": "LHP",
+      "batsThrows": "R/L",
+      "height": "6' 1''",
+      "weight": "235",
+      "year": "Jr.",
+      "hometown": "Kannapolis, N.C.",
+      "highSchool": "South Rowan"
+    },
+    {
+      "number": "13",
+      "name": "Ruger Riojas",
+      "position": "RHP",
+      "batsThrows": "R/R",
+      "height": "6' 0''",
+      "weight": "195",
+      "year": "Sr.",
+      "hometown": "Wimberley, Texas",
+      "highSchool": "Wimberley"
+    },
+    {
+      "number": "24",
+      "name": "Adrian Rodriguez",
+      "position": "INF",
+      "batsThrows": "S/B",
+      "height": "6' 2''",
+      "weight": "200",
+      "year": "So.",
+      "hometown": "Flower Mound, Texas",
+      "highSchool": "Flower Mound"
+    },
+    {
+      "number": "31",
+      "name": "Casey Borba",
+      "position": "INF",
+      "batsThrows": "R/R",
+      "height": "6' 1''",
+      "weight": "210",
+      "year": "Jr.",
+      "hometown": "Santa Ana, Calif.",
+      "highSchool": "Orange Lutheran"
+    }
+  ],
+  "historicalContext": {
+    "programTimelineEvidence": "https://texaslonghorns.com/sports/baseball/schedule/1896",
+    "conservativeClaim": "Texas baseball schedule pages are available from 1896 forward via texaslonghorns.com."
+  }
+}

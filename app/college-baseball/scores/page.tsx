@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -10,270 +10,303 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import {
+  filterGamesByConference,
+  findNextGameDate,
+  formatDatePill,
+  groupGamesByStatus,
+  normalizeSchedulePayload,
+  shiftIsoDate,
+  toIsoDate,
+  type NormalizedSchedulePayload,
+  type PowerConference,
+  type ScheduleGame,
+  type ScheduleMeta,
+} from '@/lib/college-baseball/schedule-utils';
 
-interface Game {
-  id: string;
-  date: string;
-  time: string;
-  status: 'scheduled' | 'live' | 'final' | 'postponed' | 'canceled';
-  inning?: number;
-  homeTeam: {
-    id: string;
-    name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
+const conferences: PowerConference[] = ['All P4', 'SEC', 'ACC', 'Big 12', 'Big Ten'];
+
+function getRelativeDateLabel(isoDate: string): string {
+  const today = toIsoDate(new Date());
+  if (isoDate === today) return 'Today';
+  if (isoDate === shiftIsoDate(today, -1)) return 'Yesterday';
+  if (isoDate === shiftIsoDate(today, 1)) return 'Tomorrow';
+  return formatDatePill(isoDate);
+}
+
+function parseScheduleMeta(
+  payload: unknown,
+  normalized: NormalizedSchedulePayload,
+  headers: Headers
+): ScheduleMeta {
+  const bodyMeta =
+    payload && typeof payload === 'object' && 'meta' in payload
+      ? (payload.meta as Record<string, unknown>)
+      : undefined;
+
+  const bodySource = typeof bodyMeta?.dataSource === 'string' ? bodyMeta.dataSource : undefined;
+  const bodyLastUpdated =
+    typeof bodyMeta?.lastUpdated === 'string' ? bodyMeta.lastUpdated : undefined;
+
+  return {
+    dataSource: bodySource || headers.get('x-data-source') || normalized.meta.dataSource || 'NCAA/ESPN',
+    lastUpdated:
+      bodyLastUpdated ||
+      headers.get('x-last-updated') ||
+      normalized.meta.lastUpdated ||
+      new Date().toISOString(),
+    timezone: 'America/Chicago',
   };
-  awayTeam: {
-    id: string;
-    name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
-  };
-  venue: string;
-  tv?: string;
-  situation?: string;
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
-}
+function GameCard({ game }: { game: ScheduleGame }) {
+  const isLive = game.status === 'live';
+  const isFinal = game.status === 'final';
+  const isScheduled = game.status === 'scheduled';
+  const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
+  const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
 
-interface ScoresApiResponse {
-  success?: boolean;
-  data?: Game[];
-  games?: Game[];
-  live?: boolean;
-  meta?: DataMeta;
-  message?: string;
-  timestamp?: string;
-}
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
-
-const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
-
-export default function CollegeBaseballScoresPage() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [hasLiveGames, setHasLiveGames] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
-  const [selectedConference, setSelectedConference] = useState('All');
-
-  const fetchScores = useCallback(async (date: string, conference: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const confParam = conference !== 'All' ? `&conference=${conference}` : '';
-      const res = await fetch(`/api/college-baseball/schedule?date=${date}${confParam}`);
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch scores');
-      }
-
-      const data = (await res.json()) as ScoresApiResponse;
-
-      if (data.success && data.data) {
-        setGames(data.data);
-        setHasLiveGames(data.data.some((g: Game) => g.status === 'live'));
-        setMeta({
-          dataSource: 'ESPN College Baseball API',
-          lastUpdated: data.timestamp || new Date().toISOString(),
-          timezone: 'America/Chicago',
-        });
-      } else if (data.games) {
-        setGames(data.games);
-        setHasLiveGames(data.live || false);
-        if (data.meta) setMeta(data.meta);
-      } else {
-        setError(data.message || 'No games found');
-        setGames([]);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchScores(selectedDate, selectedConference);
-  }, [selectedDate, selectedConference, fetchScores]);
-
-  // Auto-refresh for live games
-  useEffect(() => {
-    if (hasLiveGames) {
-      const interval = setInterval(() => fetchScores(selectedDate, selectedConference), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [hasLiveGames, selectedDate, selectedConference, fetchScores]);
-
-  // Date navigation
-  const dateOptions = [
-    { offset: -2, label: formatDate(getDateOffset(-2)) },
-    { offset: -1, label: 'Yesterday' },
-    { offset: 0, label: 'Today' },
-    { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: formatDate(getDateOffset(2)) },
-  ];
-
-  const GameCard = ({ game }: { game: Game }) => {
-    const isLive = game.status === 'live';
-    const isFinal = game.status === 'final';
-    const isScheduled = game.status === 'scheduled';
-    const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
-    const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
-
-    return (
-      <Link href={`/college-baseball/game/${game.id}`} className="block">
+  return (
+    <Link href={`/college-baseball/game/${game.id}`} className="block">
+      <div
+        className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+          isLive ? 'border-success' : 'border-border-subtle'
+        }`}
+      >
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
-            isLive ? 'border-success' : 'border-border-subtle'
+          className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+            isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
           }`}
         >
-          {/* Game Status Bar */}
-          <div
-            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+          <span
+            className={`text-xs font-semibold uppercase ${
+              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
             }`}
           >
-            <span
-              className={`text-xs font-semibold uppercase ${
-                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
-              }`}
-            >
-              {isLive ? (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                  {game.inning ? `Inning ${game.inning}` : 'Live'}
-                </span>
-              ) : isFinal ? (
-                'Final'
-              ) : game.status === 'postponed' ? (
-                'Postponed'
-              ) : (
-                game.time
-              )}
-            </span>
-            <Badge variant="default" className="text-xs">
-              {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
-            </Badge>
-          </div>
-
-          {/* Teams */}
-          <div className="p-4 space-y-3">
-            {/* Away Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
-                </div>
-                <div>
-                  <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
-                    {game.awayTeam.name}
-                  </p>
-                  {game.awayTeam.record && (
-                    <p className="text-xs text-text-tertiary">
-                      {game.awayTeam.record.wins}-{game.awayTeam.record.losses}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {awayWon && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : awayWon
-                        ? 'text-white'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
-                </span>
-              </div>
-            </div>
-
-            {/* Home Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
-                </div>
-                <div>
-                  <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
-                    {game.homeTeam.name}
-                  </p>
-                  {game.homeTeam.record && (
-                    <p className="text-xs text-text-tertiary">
-                      {game.homeTeam.record.wins}-{game.homeTeam.record.losses}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {homeWon && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : homeWon
-                        ? 'text-white'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Venue Footer */}
-          {game.venue && game.venue !== 'TBD' && (
-            <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
-              {game.venue}
-              {game.tv && <span className="ml-2 text-burnt-orange">• {game.tv}</span>}
-            </div>
-          )}
+            {isLive ? (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                {game.situation || 'Live'}
+              </span>
+            ) : isFinal ? (
+              'Final'
+            ) : game.status === 'postponed' ? (
+              'Postponed'
+            ) : game.status === 'canceled' ? (
+              'Canceled'
+            ) : (
+              game.time
+            )}
+          </span>
+          <Badge variant="default" className="text-xs">
+            {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
+          </Badge>
         </div>
-      </Link>
-    );
-  };
+
+        <div className="p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
+              </div>
+              <div>
+                <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
+                  {game.awayTeam.name}
+                </p>
+                <p className="text-xs text-text-tertiary">
+                  {game.awayTeam.record.wins}-{game.awayTeam.record.losses}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {awayWon && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : awayWon
+                      ? 'text-white'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
+              </div>
+              <div>
+                <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
+                  {game.homeTeam.name}
+                </p>
+                <p className="text-xs text-text-tertiary">
+                  {game.homeTeam.record.wins}-{game.homeTeam.record.losses}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {homeWon && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : homeWon
+                      ? 'text-white'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {game.venue && game.venue !== 'TBD' && (
+          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            {game.venue}
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+export default function CollegeBaseballScoresPage() {
+  const [games, setGames] = useState<ScheduleGame[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<ScheduleMeta | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(toIsoDate(new Date()));
+  const [selectedConference, setSelectedConference] = useState<PowerConference>('All P4');
+  const [scheduleInitialized, setScheduleInitialized] = useState(false);
+  const cacheRef = useRef<Map<string, NormalizedSchedulePayload>>(new Map());
+
+  const loadScheduleForDate = useCallback(async (date: string): Promise<NormalizedSchedulePayload> => {
+    const cached = cacheRef.current.get(date);
+    if (cached) return cached;
+
+    const res = await fetch(`/api/college-baseball/schedule?date=${date}`);
+    if (!res.ok) throw new Error('Failed to fetch scores');
+
+    const payload = (await res.json()) as unknown;
+    const normalized = normalizeSchedulePayload(payload, res.headers);
+    const finalMeta = parseScheduleMeta(payload, normalized, res.headers);
+
+    const result: NormalizedSchedulePayload = {
+      ...normalized,
+      meta: finalMeta,
+    };
+
+    cacheRef.current.set(date, result);
+    return result;
+  }, []);
+
+  const fetchScores = useCallback(async (date: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const payload = await loadScheduleForDate(date);
+      setGames(payload.games);
+      setMeta(payload.meta);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      setGames([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadScheduleForDate]);
+
+  useEffect(() => {
+    if (scheduleInitialized) return;
+
+    let mounted = true;
+    const initialize = async () => {
+      const today = toIsoDate(new Date());
+
+      try {
+        const nextDate = await findNextGameDate({
+          startDate: today,
+          maxDays: 7,
+          loadGamesForDate: async (candidateDate) => {
+            const payload = await loadScheduleForDate(candidateDate);
+            return filterGamesByConference(payload.games, selectedConference);
+          },
+        });
+
+        if (!mounted) return;
+        setSelectedDate(nextDate);
+      } catch (err) {
+        if (!mounted) return;
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        if (!mounted) return;
+        setScheduleInitialized(true);
+      }
+    };
+
+    initialize();
+
+    return () => {
+      mounted = false;
+    };
+  }, [loadScheduleForDate, scheduleInitialized, selectedConference]);
+
+  useEffect(() => {
+    if (!scheduleInitialized) return;
+    fetchScores(selectedDate);
+  }, [fetchScores, scheduleInitialized, selectedDate]);
+
+  const filteredGames = useMemo(
+    () => filterGamesByConference(games, selectedConference),
+    [games, selectedConference]
+  );
+
+  const groupedGames = useMemo(
+    () => groupGamesByStatus(filteredGames),
+    [filteredGames]
+  );
+
+  const hasLiveGames = groupedGames.live.length > 0;
+
+  useEffect(() => {
+    if (!hasLiveGames || !scheduleInitialized) return;
+
+    const interval = setInterval(async () => {
+      cacheRef.current.delete(selectedDate);
+      await fetchScores(selectedDate);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [fetchScores, hasLiveGames, scheduleInitialized, selectedDate]);
+
+  const dateOptions = useMemo(
+    () =>
+      [-2, -1, 0, 1, 2].map((offset) => {
+        const date = shiftIsoDate(selectedDate, offset);
+        return {
+          date,
+          label: getRelativeDateLabel(date),
+        };
+      }),
+    [selectedDate]
+  );
 
   return (
     <>
       <main id="main-content">
-        {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
@@ -289,7 +322,6 @@ export default function CollegeBaseballScoresPage() {
           </Container>
         </Section>
 
-        {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
 
@@ -319,15 +351,13 @@ export default function CollegeBaseballScoresPage() {
           </Container>
         </Section>
 
-        {/* Filters & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
-                onClick={() => setSelectedDate(getDateOffset(-3))}
+                onClick={() => setSelectedDate(shiftIsoDate(selectedDate, -1))}
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
-                aria-label="Previous days"
+                aria-label="Previous day"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -340,29 +370,24 @@ export default function CollegeBaseballScoresPage() {
                 </svg>
               </button>
 
-              {dateOptions.map((option) => {
-                const dateValue = getDateOffset(option.offset);
-                const isSelected = selectedDate === dateValue;
-
-                return (
-                  <button
-                    key={option.offset}
-                    onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
+              {dateOptions.map((option) => (
+                <button
+                  key={option.date}
+                  onClick={() => setSelectedDate(option.date)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                    selectedDate === option.date
+                      ? 'bg-burnt-orange text-white'
+                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
 
               <button
-                onClick={() => setSelectedDate(getDateOffset(3))}
+                onClick={() => setSelectedDate(shiftIsoDate(selectedDate, 1))}
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
-                aria-label="Next days"
+                aria-label="Next day"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -376,7 +401,6 @@ export default function CollegeBaseballScoresPage() {
               </button>
             </div>
 
-            {/* Conference Filter */}
             <div className="flex flex-wrap gap-2 mb-8">
               {conferences.map((conf) => (
                 <button
@@ -393,7 +417,6 @@ export default function CollegeBaseballScoresPage() {
               ))}
             </div>
 
-            {/* Games Grid */}
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -408,13 +431,13 @@ export default function CollegeBaseballScoresPage() {
                   for live games.
                 </p>
                 <button
-                  onClick={() => fetchScores(selectedDate, selectedConference)}
+                  onClick={() => fetchScores(selectedDate)}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
                 </button>
               </Card>
-            ) : games.length === 0 ? (
+            ) : filteredGames.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
                   <svg
@@ -437,67 +460,55 @@ export default function CollegeBaseballScoresPage() {
               </Card>
             ) : (
               <>
-                {/* Live Games Section */}
-                {games.some((g) => g.status === 'live') && (
+                {groupedGames.live.length > 0 && (
                   <div className="mb-8">
                     <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'live')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
+                      {groupedGames.live.map((game) => (
+                        <ScrollReveal key={game.id}>
+                          <GameCard game={game} />
+                        </ScrollReveal>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Final Games */}
-                {games.some((g) => g.status === 'final') && (
+                {groupedGames.final.length > 0 && (
                   <div className="mb-8">
                     <h2 className="text-lg font-semibold text-white mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'final')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
+                      {groupedGames.final.map((game) => (
+                        <ScrollReveal key={game.id}>
+                          <GameCard game={game} />
+                        </ScrollReveal>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Scheduled Games */}
-                {games.some((g) => g.status === 'scheduled') && (
+                {groupedGames.upcoming.length > 0 && (
                   <div>
                     <h2 className="text-lg font-semibold text-white mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {games
-                        .filter((g) => g.status === 'scheduled')
-                        .map((game) => (
-                          <ScrollReveal key={game.id}>
-                            <GameCard game={game} />
-                          </ScrollReveal>
-                        ))}
+                      {groupedGames.upcoming.map((game) => (
+                        <ScrollReveal key={game.id}>
+                          <GameCard game={game} />
+                        </ScrollReveal>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {/* Data Source Footer */}
                 <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
                   <DataSourceBadge
-                    source={meta?.dataSource || 'ESPN College Baseball API'}
+                    source={meta?.dataSource || 'NCAA/ESPN'}
                     timestamp={formatTimestamp(meta?.lastUpdated)}
                   />
                   {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">
-                      Auto-refreshing every 30 seconds
-                    </span>
+                    <span className="text-xs text-text-tertiary">Auto-refreshing every 30 seconds</span>
                   )}
                 </div>
               </>

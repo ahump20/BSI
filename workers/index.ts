@@ -47,9 +47,11 @@ import {
   transformGameSummary,
   type ESPNSport,
 } from '../lib/api-clients/espn-api';
+import texasOpeningWeekSeed from '../data/college-baseball/texas/2026-opening-week.json';
 
 export interface Env {
   KV: KVNamespace;
+  PROD_CACHE?: KVNamespace;
   CACHE: DurableObjectNamespace;
   PORTAL_POLLER: DurableObjectNamespace;
   DB: D1Database;
@@ -203,6 +205,10 @@ const CACHE_TTL: Record<string, number> = {
   trending: 300,
 };
 
+const COLLEGE_BASEBALL_SOURCE = 'NCAA/ESPN';
+const COLLEGE_BASEBALL_TIMEZONE = 'America/Chicago' as const;
+const TEXAS_OPENING_WEEK_KEY = 'cb:texas:opening-week:2026';
+
 async function kvGet<T>(kv: KVNamespace, key: string): Promise<T | null> {
   const raw = await kv.get(key, 'text');
   if (!raw) return null;
@@ -235,13 +241,130 @@ async function logError(kv: KVNamespace, error: string, context: string): Promis
 }
 
 // ---------------------------------------------------------------------------
-// Highlightly data headers
+// College baseball source headers + additive payload metadata
 // ---------------------------------------------------------------------------
 
-function dataHeaders(lastUpdated: string): Record<string, string> {
+function dataHeaders(
+  lastUpdated: string,
+  dataSource = COLLEGE_BASEBALL_SOURCE
+): Record<string, string> {
   return {
     'X-Last-Updated': lastUpdated,
-    'X-Data-Source': 'highlightly',
+    'X-Data-Source': dataSource,
+  };
+}
+
+interface CollegeBaseballMeta {
+  dataSource: string;
+  lastUpdated: string;
+  timezone: typeof COLLEGE_BASEBALL_TIMEZONE;
+}
+
+function buildCollegeBaseballMeta(
+  lastUpdated?: string,
+  dataSource = COLLEGE_BASEBALL_SOURCE
+): CollegeBaseballMeta {
+  return {
+    dataSource,
+    lastUpdated: lastUpdated || new Date().toISOString(),
+    timezone: COLLEGE_BASEBALL_TIMEZONE,
+  };
+}
+
+function normalizeCollegeBaseballPayload(
+  payload: unknown,
+  lastUpdated?: string,
+  dataSource = COLLEGE_BASEBALL_SOURCE
+): Record<string, unknown> {
+  const raw =
+    payload && typeof payload === 'object'
+      ? (payload as Record<string, unknown>)
+      : {};
+  const games = Array.isArray(raw.data)
+    ? raw.data
+    : Array.isArray(raw.games)
+      ? raw.games
+      : [];
+  const existingMeta =
+    raw.meta && typeof raw.meta === 'object'
+      ? (raw.meta as Record<string, unknown>)
+      : {};
+
+  const normalizedMeta = buildCollegeBaseballMeta(
+    typeof existingMeta.lastUpdated === 'string'
+      ? existingMeta.lastUpdated
+      : lastUpdated,
+    typeof existingMeta.dataSource === 'string'
+      ? existingMeta.dataSource
+      : dataSource
+  );
+
+  return {
+    ...raw,
+    data: Array.isArray(raw.data) ? raw.data : games,
+    totalCount:
+      typeof raw.totalCount === 'number' ? raw.totalCount : games.length,
+    meta: normalizedMeta,
+  };
+}
+
+function payloadMetaLastUpdated(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== 'object') return undefined;
+  const raw = payload as Record<string, unknown>;
+  if (!raw.meta || typeof raw.meta !== 'object') return undefined;
+  const meta = raw.meta as Record<string, unknown>;
+  return typeof meta.lastUpdated === 'string' ? meta.lastUpdated : undefined;
+}
+
+interface EditorialTexasOpeningWeekPayload {
+  meta: {
+    source: string[] | string;
+    fetched_at: string;
+    timezone: string;
+    generated_by?: string;
+    [key: string]: unknown;
+  };
+  schedule: {
+    openingWeekendGames: unknown[];
+    keyEarlyGames: unknown[];
+    allParsedGames?: unknown[];
+    [key: string]: unknown;
+  };
+  season2025Summary: Record<string, unknown>;
+  rosterNotables: unknown[];
+  historicalContext: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+function withEditorialMeta(
+  payload: unknown,
+  sourceFallback: string
+): EditorialTexasOpeningWeekPayload {
+  const raw =
+    payload && typeof payload === 'object'
+      ? (payload as Record<string, unknown>)
+      : {};
+
+  const rawMeta =
+    raw.meta && typeof raw.meta === 'object'
+      ? (raw.meta as Record<string, unknown>)
+      : {};
+
+  return {
+    ...(raw as EditorialTexasOpeningWeekPayload),
+    meta: {
+      ...rawMeta,
+      source: Array.isArray(rawMeta.source)
+        ? rawMeta.source
+        : typeof rawMeta.source === 'string'
+          ? [rawMeta.source]
+          : [sourceFallback],
+      fetched_at:
+        typeof rawMeta.fetched_at === 'string'
+          ? rawMeta.fetched_at
+          : new Date().toISOString(),
+      timezone: COLLEGE_BASEBALL_TIMEZONE,
+    },
   };
 }
 
@@ -492,7 +615,7 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
-// College Baseball API handlers (Highlightly proxy with KV cache)
+// College Baseball API handlers (NCAA/ESPN with KV cache)
 // ---------------------------------------------------------------------------
 
 /** NCAA API client for college baseball — replaces Highlightly (no API key needed) */
@@ -515,23 +638,41 @@ async function handleCollegeBaseballScores(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.scores, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    const normalized = normalizeCollegeBaseballPayload(
+      cached,
+      payloadMetaLastUpdated(cached)
+    );
+    const meta = normalized.meta as CollegeBaseballMeta;
+    return cachedJson(normalized, 200, HTTP_CACHE.scores, {
+      ...dataHeaders(meta.lastUpdated, meta.dataSource),
+      'X-Cache': 'HIT',
+    });
   }
 
   try {
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
+    const normalized = normalizeCollegeBaseballPayload(
+      result.data ?? empty,
+      result.timestamp
+    );
+    const meta = normalized.meta as CollegeBaseballMeta;
 
     if (result.success && result.data) {
-      await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
+      await kvPut(env.KV, cacheKey, normalized, CACHE_TTL.scores);
     }
 
-    return cachedJson(result.data ?? empty, result.success ? 200 : 502, HTTP_CACHE.scores, {
-      ...dataHeaders(result.timestamp),
+    return cachedJson(normalized, result.success ? 200 : 502, HTTP_CACHE.scores, {
+      ...dataHeaders(meta.lastUpdated, meta.dataSource),
       'X-Cache': 'MISS',
     });
   } catch {
-    return json(empty, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    const normalized = normalizeCollegeBaseballPayload(empty, new Date().toISOString());
+    const meta = normalized.meta as CollegeBaseballMeta;
+    return json(normalized, 502, {
+      ...dataHeaders(meta.lastUpdated, meta.dataSource),
+      'X-Cache': 'ERROR',
+    });
   }
 }
 
@@ -699,19 +840,65 @@ async function handleCollegeBaseballSchedule(
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    const normalized = normalizeCollegeBaseballPayload(
+      cached,
+      payloadMetaLastUpdated(cached)
+    );
+    const meta = normalized.meta as CollegeBaseballMeta;
+    return cachedJson(normalized, 200, HTTP_CACHE.schedule, {
+      ...dataHeaders(meta.lastUpdated, meta.dataSource),
+      'X-Cache': 'HIT',
+    });
   }
 
   const client = getCollegeClient();
   const result = await client.getSchedule(date, range);
+  const normalized = normalizeCollegeBaseballPayload(
+    result.data ?? { data: [], totalCount: 0 },
+    result.timestamp
+  );
+  const meta = normalized.meta as CollegeBaseballMeta;
 
   if (result.success && result.data) {
-    await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.schedule);
+    await kvPut(env.KV, cacheKey, normalized, CACHE_TTL.schedule);
   }
 
-  return cachedJson(result.data ?? { data: [], totalCount: 0 }, result.success ? 200 : 502, HTTP_CACHE.schedule, {
-    ...dataHeaders(result.timestamp),
+  return cachedJson(normalized, result.success ? 200 : 502, HTTP_CACHE.schedule, {
+    ...dataHeaders(meta.lastUpdated, meta.dataSource),
     'X-Cache': 'MISS',
+  });
+}
+
+async function handleCollegeBaseballTexasOpeningWeekEditorial(
+  env: Env
+): Promise<Response> {
+  const cache = env.PROD_CACHE ?? env.KV;
+  const cacheLabel = env.PROD_CACHE ? 'BSI_PROD_CACHE' : 'KV';
+
+  try {
+    const cached = await kvGet<unknown>(cache, TEXAS_OPENING_WEEK_KEY);
+    if (cached) {
+      const payload = withEditorialMeta(
+        cached,
+        `Texas opening-week seed (${cacheLabel})`
+      );
+      return cachedJson(payload, 200, HTTP_CACHE.schedule, {
+        ...dataHeaders(payload.meta.fetched_at, 'BSI/Texas ingest'),
+        'X-Cache': 'HIT',
+      });
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown KV read error';
+    await logError(env.KV, message, 'cb:editorial:texas-opening-week');
+  }
+
+  const fallback = withEditorialMeta(
+    texasOpeningWeekSeed,
+    'Texas opening-week seed (local fallback)'
+  );
+  return cachedJson(fallback, 200, HTTP_CACHE.schedule, {
+    ...dataHeaders(fallback.meta.fetched_at, 'BSI/Texas ingest'),
+    'X-Cache': 'FALLBACK',
   });
 }
 
@@ -2503,7 +2690,7 @@ export default {
         return handleIntelNews(url, env);
       }
 
-      // ----- College Baseball data routes (Highlightly proxy) -----
+      // ----- College Baseball data routes (NCAA/ESPN + editorial seed) -----
       if (pathname === '/api/college-baseball/scores') {
         return handleCollegeBaseballScores(url, env);
       }
@@ -2518,6 +2705,9 @@ export default {
       }
       if (pathname === '/api/college-baseball/trending') {
         return handleCollegeBaseballTrending(env);
+      }
+      if (pathname === '/api/college-baseball/editorial/texas-opening-week') {
+        return handleCollegeBaseballTexasOpeningWeekEditorial(env);
       }
 
       // CFB Transfer Portal

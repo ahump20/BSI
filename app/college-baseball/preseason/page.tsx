@@ -11,6 +11,19 @@ import { Star, TrendingUp, Calendar, Users, ChevronRight } from 'lucide-react';
 
 const featuredStories = [
   {
+    id: 'week-1-preview',
+    href: '/college-baseball/editorial/week-1-preview',
+    title: 'Opening Weekend Preview: Week 1 Power Moves',
+    subtitle: 'Texas, the Shriner\'s spotlight, and 118-game Opening Day stakes',
+    description:
+      'Opening weekend is here. We connect the national board to the Texas dossier with matchup tiers, breakout names, and upset volatility to track from first pitch.',
+    category: 'Editorial',
+    readTime: '10 min read',
+    featured: false,
+    teams: ['Texas', 'SEC', 'ACC', 'Big 12', 'Big Ten'],
+    imageGradient: 'from-[#BF5700] to-[#1A1A1A]',
+  },
+  {
     id: 'lone-star-rivalry',
     title: 'The Lone Star Rivalry Enters the SEC',
     subtitle: "Texas and Texas A&M: #1 vs #2 in Baseball's Biggest Stage",
@@ -48,14 +61,21 @@ const featuredStories = [
   },
 ];
 
-const quickStats = [
-  { label: 'Days Until Opening Day', value: '42', icon: Calendar },
-  { label: 'Ranked Texas Teams', value: '4', icon: Star },
-  { label: 'SEC Teams in Top 25', value: '4', icon: TrendingUp },
-  { label: 'Conference Realignment Teams', value: '8', icon: Users },
-];
-
 export default function PreseasonHubPage() {
+  const openingDay = new Date('2026-02-14T00:00:00-06:00');
+  const today = new Date();
+  const daysUntil = Math.max(
+    0,
+    Math.ceil((openingDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+  );
+
+  const quickStats = [
+    { label: 'Days Until Opening Day', value: String(daysUntil), icon: Calendar },
+    { label: 'Ranked Texas Teams', value: '4', icon: Star },
+    { label: 'SEC Teams in Top 25', value: '12', icon: TrendingUp },
+    { label: 'Conference Realignment Teams', value: '8', icon: Users },
+  ];
+
   return (
     <>
       <main id="main-content">
@@ -114,7 +134,7 @@ export default function PreseasonHubPage() {
               {featuredStories
                 .filter((story) => story.featured)
                 .map((story) => (
-                  <Link key={story.id} href={`/college-baseball/preseason/${story.id}`}>
+                  <Link key={story.id} href={story.href || `/college-baseball/preseason/${story.id}`}>
                     <Card
                       padding="none"
                       className="overflow-hidden hover:border-burnt-orange/50 transition-all cursor-pointer group"
@@ -158,8 +178,8 @@ export default function PreseasonHubPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 {featuredStories
                   .filter((story) => !story.featured)
-                  .map((story, index) => (
-                    <Link key={story.id} href={`/college-baseball/preseason/${story.id}`}>
+                  .map((story) => (
+                    <Link key={story.id} href={story.href || `/college-baseball/preseason/${story.id}`}>
                       <Card
                         padding="lg"
                         className="h-full hover:border-burnt-orange/50 transition-all cursor-pointer group"
