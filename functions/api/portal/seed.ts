@@ -447,16 +447,16 @@ function generateChangelog(
 /**
  * Constant-time string comparison to prevent timing attacks
  * Returns true if strings are equal, false otherwise
- * Maintains constant time even for null/undefined and length mismatches
+ * Maintains constant time for all input combinations by using fixed iteration count
  */
 function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
   // Reject null/undefined/empty strings explicitly (invalid secrets)
   if (a == null || b == null || a === '' || b === '') {
-    // Still perform dummy comparison to maintain constant time
-    const dummy = (a ?? '') + (b ?? '');
+    // Use fixed iteration count to prevent timing leaks based on input length
+    // This ensures (null, null), (null, 'x'), and (null, 'xxxxxx...') all take same time
     let dummyResult = 0;
-    for (let i = 0; i < dummy.length; i++) {
-      dummyResult |= dummy.charCodeAt(i);
+    for (let i = 0; i < 256; i++) {
+      dummyResult |= i;
     }
     return false;
   }
