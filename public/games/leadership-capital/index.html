@@ -1436,6 +1436,17 @@
     var itBarChart = null;
 
     function initCharts() {
+        // Guard against Chart.js CDN failure
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js failed to load from CDN');
+            var chartContainers = document.querySelectorAll('.chart-panel');
+            for (var i = 0; i < chartContainers.length; i++) {
+                var container = chartContainers[i];
+                container.innerHTML = '<div style="padding:2rem;text-align:center;color:#FF6B35;background:rgba(255,107,53,0.1);border-radius:8px;"><i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:1rem;"></i><p style="font-family:Inter,sans-serif;margin:0;">Chart visualization unavailable. Please check your connection or disable content blockers.</p></div>';
+            }
+            return;
+        }
+
         var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
         ulrichChart = new Chart(ulrichCtx, {
             type: 'radar',
