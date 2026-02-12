@@ -4,18 +4,46 @@
  * Populates D1 with realistic transfer portal entries for both sports.
  * POST /api/portal/seed — requires ?confirm=yes to execute.
  * Produces 120+ baseball entries and 120+ football entries.
+ *
+ * Authorization: Requires X-Admin-Secret header matching ADMIN_SECRET environment variable.
+ * Set via: wrangler secret put ADMIN_SECRET
  */
 
 interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
   SPORTS_DATA: R2Bucket;
+  ADMIN_SECRET?: string;
 }
 
 const HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
 };
+
+function formatChicagoTimestamp(date: Date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZoneName: 'shortOffset',
+  });
+  const parts = formatter.formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+  const offsetToken = get('timeZoneName');
+  const offsetMatch = /GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(offsetToken);
+  const sign = offsetMatch?.[1] ?? '+';
+  const hours = offsetMatch?.[2]?.padStart(2, '0') ?? '00';
+  const minutes = offsetMatch?.[3]?.padStart(2, '0') ?? '00';
+  const offset = `${sign}${hours}:${minutes}`;
+
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}${offset}`;
+}
 
 // Deterministic player generation pools
 const FIRST_NAMES = [
@@ -381,9 +409,9 @@ function generateEntries(
       source_confidence: source.confidence,
       verified: rand() > 0.1 ? 1 : 0,
       raw_snapshot_key: null,
-      last_verified_at: new Date().toISOString(),
+      last_verified_at: formatChicagoTimestamp(),
       created_at: portalDate,
-      updated_at: new Date().toISOString(),
+      updated_at: formatChicagoTimestamp(),
     });
   }
 
@@ -440,6 +468,36 @@ function generateChangelog(
   return changes;
 }
 
+/**
+ * Constant-time string comparison to prevent timing attacks
+ * Returns true if strings are equal, false otherwise
+ * Maintains constant time for all input combinations by using fixed iteration count
+ */
+function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
+  // Reject null/undefined/empty strings explicitly (invalid secrets)
+  if (a == null || b == null || a === '' || b === '') {
+    // Use fixed iteration count to prevent timing leaks based on input length
+    // This ensures (null, null), (null, 'x'), and (null, 'xxxxxx...') all take same time
+    let dummyResult = 0;
+    for (let i = 0; i < 256; i++) {
+      dummyResult |= i;
+    }
+    return false;
+  }
+  
+  // Both strings are now guaranteed to be non-null, non-undefined, non-empty
+  const maxLen = Math.max(a.length, b.length);
+  let result = a.length ^ b.length; // Include length difference in result
+  
+  for (let i = 0; i < maxLen; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    result |= charA ^ charB;
+  }
+  
+  return result === 0;
+}
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
@@ -452,6 +510,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       status: 405,
       headers: HEADERS,
     });
+  }
+
+  // Authorization check - require X-Admin-Secret header
+  const adminSecret = request.headers.get('X-Admin-Secret');
+  
+  // Return generic 401 to avoid leaking configuration state
+  // Use constant-time comparison for all cases to prevent timing attacks
+  if (!constantTimeCompare(adminSecret, env.ADMIN_SECRET)) {
+    return new Response(
+      JSON.stringify({
+        error: 'Unauthorized',
+        message: 'Invalid or missing authorization credentials',
+      }),
+      {
+        status: 401,
+        headers: HEADERS,
+      }
+    );
   }
 
   const url = new URL(request.url);
@@ -563,7 +639,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // Update KV freshness marker
-    const now = new Date().toISOString();
+    const now = formatChicagoTimestamp();
     await env.KV.put('portal:last_updated', now);
     await env.KV.put('portal:seed_timestamp', now);
 

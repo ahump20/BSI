@@ -596,6 +596,7 @@ components:
             $ref: '#/components/schemas/TransferPortalEntry'
         timestamp:
           type: string
+          format: date-time
         timezone:
           type: string
           example: America/Chicago
@@ -621,7 +622,7 @@ components:
           type: string
         sport:
           type: string
-          enum: [football, baseball, basketball]
+          enum: [football, baseball]
         position:
           type: string
         formerSchool:
