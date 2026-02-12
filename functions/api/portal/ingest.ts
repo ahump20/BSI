@@ -124,7 +124,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     let inserted = 0;
     let updated = 0;
-    // eslint-disable-next-line no-undef
     const changelogBatch: D1PreparedStatement[] = [];
 
     const changeStmt = db.prepare(`
