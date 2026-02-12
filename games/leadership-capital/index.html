@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Intangible Leadership Capital Index | BSI</title>
-    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to 5 validated frameworks: Ulrich LCI, ISO 30431, MLQ 5X, TEIQue, and Antonakis charismatic leadership tactics.">
+    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to 5 validated academic frameworks: Ulrich LCI, ISO 30431, MLQ 5X transformational, TEIQue, and Antonakis CLTs.">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Intangible Leadership Capital Index | BSI">
@@ -12,10 +12,10 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Blaze Sports Intel">
 
-    <!-- Fonts: BSI brand system -->
+    <!-- Fonts: BSI brand system (Bebas Neue display) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -25,8 +25,7 @@
 
     <style>
         /* ================================================================
-           BSI BRAND TOKENS — Dark Theme + Glass-Morphism
-           Derived from lib/tokens/bsi-brand.css
+           BSI BRAND TOKENS — Instrument Panel Theme
            ================================================================ */
         :root {
             --bsi-primary: #BF5700;
@@ -50,9 +49,11 @@
             --bsi-glow-sm: 0 0 20px rgba(191, 87, 0, 0.3);
             --bsi-glow-md: 0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2);
 
-            --font-display: 'Oswald', system-ui, sans-serif;
+            --font-display: 'Bebas Neue', system-ui, sans-serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+            --gauge-arc: 471.24;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -78,89 +79,372 @@
             padding: 2rem;
         }
 
-        /* ---- Header Banner ---- */
-        .header-banner {
-            background: linear-gradient(135deg, var(--bsi-primary), var(--bsi-texas-soil));
-            border-radius: 16px;
-            padding: 1.75rem 2rem;
-            margin-bottom: 1.5rem;
+        /* ================================================================
+           HEADER — Slim, branded, controls inline
+           ================================================================ */
+        .header {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--glass-default-border);
+            margin-bottom: 2rem;
         }
 
-        .header-banner h1 {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: clamp(1.4rem, 2.5vw, 2rem);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .header-brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .badge-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+        .header-brand i {
+            color: var(--bsi-primary);
+            font-size: 1.4rem;
         }
 
-        .badge {
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(4px);
-            padding: 0.45rem 1rem;
-            border-radius: 100px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            font-family: var(--font-mono);
-            font-weight: 500;
-            font-size: 0.75rem;
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .badge i { color: var(--bsi-gold); }
-
-        /* ---- Framework Mapping Pills ---- */
-        .mapping-pills {
-            display: flex;
+            gap: 1rem;
             flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-bottom: 2rem;
-            font-size: 0.8rem;
         }
 
-        .pill {
-            background: rgba(191, 87, 0, 0.12);
-            border: 1px solid rgba(191, 87, 0, 0.25);
-            padding: 0.3rem 0.9rem;
+        .preset-group {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .preset-btn {
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
             border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: var(--bsi-text-tertiary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(191, 87, 0, 0.15);
+            border-color: rgba(191, 87, 0, 0.3);
             color: var(--bsi-accent);
-            font-weight: 500;
         }
 
-        .pill i { margin-right: 4px; color: var(--bsi-primary); }
+        .preset-btn.active {
+            background: rgba(191, 87, 0, 0.2);
+            border-color: var(--bsi-primary);
+            color: var(--bsi-accent);
+        }
 
-        /* ---- Grid System ---- */
-        .grid-2 {
+        .tool-group {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-subtle-bg);
+            border: 1px solid var(--glass-subtle-border);
+            border-radius: 8px;
+            color: var(--bsi-text-tertiary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(191, 87, 0, 0.12);
+            color: var(--bsi-text-secondary);
+            border-color: rgba(191, 87, 0, 0.25);
+        }
+
+        .fw-badges {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            width: 100%;
+        }
+
+        .fw-badge {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(191, 87, 0, 0.1);
+            border: 1px solid rgba(191, 87, 0, 0.2);
+            border-radius: 8px;
+            color: var(--bsi-primary);
+            font-size: 0.75rem;
+            cursor: default;
+            transition: background 0.2s;
+        }
+
+        .fw-badge:hover {
+            background: rgba(191, 87, 0, 0.2);
+        }
+
+        /* ================================================================
+           HERO GAUGE — The It Factor center stage
+           ================================================================ */
+        .hero-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.5rem 0 2rem;
+        }
+
+        .gauge-wrapper {
+            position: relative;
+            width: 260px;
+            height: 260px;
+            flex-shrink: 0;
+        }
+
+        .gauge-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        #gaugeFill {
+            filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.5));
+        }
+
+        .gauge-center {
+            position: absolute;
+            top: 48%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .gauge-score {
+            font-family: var(--font-mono);
+            font-size: 3.8rem;
+            font-weight: 700;
+            color: var(--bsi-accent);
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .gauge-unit {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            color: var(--bsi-text-tertiary);
+        }
+
+        .gauge-label {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: var(--bsi-text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .gauge-interp {
+            margin-top: 0.15rem;
+        }
+
+        .satellite-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .satellite-panel.left {
+            align-items: flex-end;
+        }
+
+        .satellite-panel.right {
+            align-items: flex-start;
+        }
+
+        .sat-readout {
+            text-align: center;
+        }
+
+        .sat-value {
+            font-family: var(--font-mono);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--bsi-text);
+            display: block;
+            line-height: 1.1;
+        }
+
+        .sat-label {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--bsi-text-tertiary);
+            display: block;
+            margin-top: 0.15rem;
+        }
+
+        /* ================================================================
+           TRUST ALERT — Amber warning strip
+           ================================================================ */
+        .trust-alert {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #fbbf24;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .trust-alert i {
+            font-size: 0.9rem;
+        }
+
+        /* ================================================================
+           KPI RIBBON — 3 framework scores horizontal
+           ================================================================ */
+        .kpi-ribbon {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
             margin-bottom: 2rem;
         }
 
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
-            margin-bottom: 2rem;
+        .kpi-card {
+            background: var(--glass-default-bg);
+            border: 1px solid var(--glass-default-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: border-color 0.2s;
         }
 
-        /* ---- Cards (Glass) ---- */
+        .kpi-card:hover {
+            border-color: rgba(191, 87, 0, 0.3);
+        }
+
+        .kpi-card-label {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--bsi-text-secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .kpi-card-score {
+            font-family: var(--font-mono);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--bsi-text);
+            line-height: 1.1;
+        }
+
+        .kpi-bar-track {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            margin: 0.5rem 0 0.4rem;
+            overflow: hidden;
+        }
+
+        .kpi-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--bsi-primary), var(--bsi-accent));
+            width: 0%;
+            transition: width 0.6s ease-out;
+        }
+
+        .kpi-card-interp {
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+        }
+
+        .kpi-card-sub {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--bsi-text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* ================================================================
+           TAB SYSTEM — Individual / Organizational
+           ================================================================ */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--glass-default-border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.8rem 1.5rem;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            color: var(--bsi-text-tertiary);
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--bsi-text-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--bsi-accent);
+            border-bottom-color: var(--bsi-primary);
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ================================================================
+           METRIC CARDS + ITEMS + SLIDERS
+           ================================================================ */
         .card {
             background: var(--glass-default-bg);
             backdrop-filter: blur(16px);
@@ -168,61 +452,27 @@
             border: 1px solid var(--glass-default-border);
             border-radius: 16px;
             padding: 1.5rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            border-color: rgba(191, 87, 0, 0.3);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .card-header h2 {
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-header h2 i { color: var(--bsi-primary); }
-
-        .card-sub {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--bsi-text-secondary);
-            background: var(--glass-subtle-bg);
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
-            border: 1px solid var(--glass-subtle-border);
+            margin-bottom: 2rem;
         }
 
         .card-desc {
             color: var(--bsi-text-tertiary);
             font-size: 0.85rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* ---- Metric Rows ---- */
+        .card-desc i {
+            color: var(--bsi-primary);
+        }
+
         .metric-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.7rem 0;
+            padding: 0.8rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
@@ -269,42 +519,50 @@
             align-items: center;
             gap: 12px;
             flex-shrink: 0;
-            width: 180px;
+            width: 220px;
         }
 
         input[type=range] {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
             outline: none;
+            cursor: pointer;
         }
 
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             background: var(--bsi-primary);
             border-radius: 50%;
             border: 2px solid var(--bsi-text);
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(191, 87, 0, 0.4);
-            transition: transform 0.15s;
+            transition: transform 0.15s, box-shadow 0.15s;
         }
 
         input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
+            transform: scale(1.2);
+            box-shadow: 0 2px 16px rgba(191, 87, 0, 0.6);
         }
 
         input[type=range]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             background: var(--bsi-primary);
             border-radius: 50%;
             border: 2px solid var(--bsi-text);
             cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-progress {
+            background: rgba(191, 87, 0, 0.7);
+            border-radius: 3px;
+            height: 6px;
         }
 
         .score-badge {
@@ -322,137 +580,21 @@
             color: var(--bsi-text);
         }
 
-        /* ---- Section Divider ---- */
-        .section-divider {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 0.5rem 0 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+        /* ---- Score Color Coding ---- */
+        .score-badge.score-low { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
+        .score-badge.score-mid { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+        .score-badge.score-high { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+
+        /* ================================================================
+           CHART CONTAINERS
+           ================================================================ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .section-divider h3 {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-divider h3 i { color: var(--bsi-gold); }
-
-        /* ---- Buttons ---- */
-        .btn {
-            background: var(--bsi-primary);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 0.65rem 1.6rem;
-            border-radius: 100px;
-            font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--bsi-accent);
-            box-shadow: var(--bsi-glow-sm);
-            transform: translateY(-1px);
-        }
-
-        .btn-reset {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: var(--bsi-text-secondary);
-        }
-
-        .btn-reset:hover {
-            background: rgba(255, 255, 255, 0.06);
-            box-shadow: none;
-            color: var(--bsi-text);
-        }
-
-        /* ---- KPI Panels ---- */
-        .kpi-panel {
-            background: var(--glass-default-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-default-border);
-            border-radius: 16px;
-            padding: 1.4rem;
-            text-align: center;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .kpi-panel:hover {
-            border-color: rgba(191, 87, 0, 0.3);
-        }
-
-        .kpi-title {
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--bsi-text-secondary);
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-
-        .kpi-number {
-            font-family: var(--font-mono);
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 700;
-            line-height: 1.1;
-            color: var(--bsi-text);
-        }
-
-        .kpi-unit {
-            font-size: 1.2rem;
-            color: var(--bsi-text-secondary);
-        }
-
-        .kpi-label {
-            font-size: 0.75rem;
-            color: var(--bsi-text-tertiary);
-            margin-top: 0.3rem;
-        }
-
-        .kpi-tag {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            background: rgba(191, 87, 0, 0.2);
-            color: var(--bsi-accent);
-            padding: 3px 10px;
-            border-radius: 100px;
-            margin-top: 0.5rem;
-        }
-
-        /* IT Factor special glow */
-        .kpi-it-factor {
-            border-color: rgba(191, 87, 0, 0.4);
-            box-shadow: var(--bsi-glow-sm);
-            background: linear-gradient(145deg, rgba(191, 87, 0, 0.08), var(--glass-default-bg));
-        }
-
-        .kpi-it-factor:hover {
-            box-shadow: var(--bsi-glow-md);
-        }
-
-        .kpi-it-factor .kpi-number {
-            color: var(--bsi-accent);
-        }
-
-        /* ---- Chart Containers ---- */
         .chart-card {
             background: var(--glass-default-bg);
             backdrop-filter: blur(16px);
@@ -464,9 +606,7 @@
 
         .chart-header {
             font-family: var(--font-display);
-            font-weight: 600;
             font-size: 1rem;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 0.75rem;
             display: flex;
@@ -474,6 +614,21 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 0.5rem;
+        }
+
+        .chart-header i {
+            color: var(--bsi-primary);
+            margin-right: 6px;
+        }
+
+        .chart-sub {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--bsi-text-secondary);
+            background: var(--glass-subtle-bg);
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            border: 1px solid var(--glass-subtle-border);
         }
 
         .chart-card canvas {
@@ -488,13 +643,15 @@
             font-style: italic;
         }
 
-        /* ---- Methodology Panel ---- */
+        /* ================================================================
+           METHODOLOGY — Expandable panel with accent border
+           ================================================================ */
         .methodology {
             background: var(--glass-subtle-bg);
             border: 1px solid var(--glass-subtle-border);
             border-left: 4px solid var(--bsi-primary);
             border-radius: 12px;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             overflow: hidden;
         }
 
@@ -505,8 +662,6 @@
             color: var(--bsi-text);
             font-family: var(--font-display);
             font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 1.25rem 1.5rem;
             cursor: pointer;
@@ -543,7 +698,6 @@
         .method-heading {
             font-family: var(--font-display);
             font-size: 0.95rem;
-            text-transform: uppercase;
             color: var(--bsi-text);
             margin: 1.25rem 0 0.5rem;
             letter-spacing: 0.5px;
@@ -579,7 +733,9 @@
             border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
-        /* ---- Footer ---- */
+        /* ================================================================
+           FOOTER
+           ================================================================ */
         .footer {
             text-align: center;
             padding: 1.5rem 0 0.5rem;
@@ -589,129 +745,139 @@
             margin-top: 2rem;
         }
 
-        /* ---- Responsive ---- */
-        @media (max-width: 1000px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-4 { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 640px) {
-            body { padding: 0.75rem; }
-            .container { padding: 1rem; border-radius: 16px; }
-            .header-banner { padding: 1.25rem; }
-            .grid-4 { grid-template-columns: 1fr; }
-            .metric-item { flex-wrap: wrap; gap: 0.5rem; }
-            .slider-group { width: 100%; }
-            .framework-tag { display: none; }
-        }
-
-        /* ---- Score Color Coding ---- */
-        .score-badge.score-low { color: #f87171; border-color: rgba(248, 113, 113, 0.3); }
-        .score-badge.score-mid { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
-        .score-badge.score-high { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
-
-        /* ---- KPI Interpretation Label ---- */
+        /* ================================================================
+           INTERPRETATION TIERS
+           ================================================================ */
         .kpi-interpretation {
             font-family: var(--font-display);
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-top: 0.4rem;
-            font-weight: 600;
-        }
-        .kpi-interpretation.tier-developing { color: #f87171; }
-        .kpi-interpretation.tier-competent { color: #fbbf24; }
-        .kpi-interpretation.tier-strong { color: #4ade80; }
-        .kpi-interpretation.tier-elite { color: var(--bsi-accent); }
-
-        /* ---- KPI Number Transition ---- */
-        .kpi-number {
-            transition: color 0.3s;
+            font-weight: 400;
         }
 
-        /* ---- Preset Buttons ---- */
-        .preset-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .preset-btn {
-            background: var(--glass-subtle-bg);
-            border: 1px solid var(--glass-subtle-border);
-            border-radius: 100px;
-            padding: 0.5rem 1.2rem;
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--bsi-text-secondary);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .preset-btn:hover {
-            background: rgba(191, 87, 0, 0.15);
-            border-color: rgba(191, 87, 0, 0.3);
-            color: var(--bsi-accent);
-        }
-        .preset-btn.active {
-            background: rgba(191, 87, 0, 0.2);
-            border-color: var(--bsi-primary);
-            color: var(--bsi-accent);
+        .tier-developing { color: #f87171; }
+        .tier-competent { color: #fbbf24; }
+        .tier-strong { color: #4ade80; }
+        .tier-elite { color: var(--bsi-accent); }
+
+        /* ================================================================
+           REVEAL ANIMATION — Staggered entrance
+           ================================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
 
-        /* ---- Export/Import Bar ---- */
-        .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .tool-btn {
-            background: var(--glass-subtle-bg);
-            border: 1px solid var(--glass-subtle-border);
-            border-radius: 8px;
-            padding: 0.4rem 0.9rem;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--bsi-text-tertiary);
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
-        }
-        .tool-btn:hover {
-            background: rgba(191, 87, 0, 0.1);
-            color: var(--bsi-text-secondary);
-        }
-        .tool-btn i { font-size: 0.65rem; }
-
-        /* ---- Bar Chart Container ---- */
-        .bar-chart-row {
-            margin-top: 1.5rem;
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
         }
 
-        /* ---- Reduced motion ---- */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                transition-duration: 0.01ms !important;
+        /* ================================================================
+           RESPONSIVE
+           ================================================================ */
+        @media (max-width: 1000px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                justify-items: center;
+                text-align: center;
+            }
+
+            .satellite-panel.left,
+            .satellite-panel.right {
+                flex-direction: row;
+                gap: 2.5rem;
+                align-items: center;
+            }
+
+            .satellite-panel.left { order: 2; }
+            .gauge-wrapper { order: 1; }
+            .satellite-panel.right { order: 3; }
+
+            .gauge-wrapper {
+                width: 220px;
+                height: 220px;
+            }
+
+            .gauge-score {
+                font-size: 3rem;
             }
         }
 
-        /* ---- Print ---- */
+        @media (max-width: 640px) {
+            body { padding: 0.75rem; }
+            .container { padding: 1rem; border-radius: 16px; }
+
+            .header { gap: 0.75rem; }
+            .header-brand h1 { font-size: 1.3rem; }
+
+            .preset-group { width: 100%; justify-content: flex-start; }
+            .preset-btn { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
+
+            .kpi-ribbon { grid-template-columns: 1fr; }
+
+            .tab-btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+
+            .metric-item { flex-wrap: wrap; gap: 0.5rem; }
+            .slider-group { width: 100%; }
+            .framework-tag { display: none; }
+
+            .gauge-wrapper {
+                width: 200px;
+                height: 200px;
+            }
+
+            .gauge-score { font-size: 2.6rem; }
+            .gauge-label { font-size: 0.75rem; letter-spacing: 2px; }
+            .sat-value { font-size: 1.3rem; }
+        }
+
+        /* ================================================================
+           REDUCED MOTION
+           ================================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            .tab-panel.active {
+                animation: none;
+            }
+
+            #gaugeFill {
+                transition: none !important;
+            }
+
+            *, *::before, *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+
+        /* ================================================================
+           PRINT
+           ================================================================ */
         @media print {
             body { background: white; color: black; padding: 0; }
             .container { border: none; background: white; backdrop-filter: none; }
-            .header-banner { background: #BF5700 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .card, .kpi-panel, .chart-card, .methodology { background: #f5f5f5; border: 1px solid #ddd; backdrop-filter: none; }
-            .btn, .btn-reset, .preset-btn, .tool-btn { display: none; }
+            .header { border-bottom: 2px solid #BF5700; }
+            .card, .kpi-card, .chart-card, .methodology { background: #f5f5f5; border: 1px solid #ddd; backdrop-filter: none; }
+            .preset-btn, .icon-btn { display: none; }
             input[type=range] { display: none; }
             .methodology-content { display: block !important; }
+            .trust-alert { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .tab-panel { display: block !important; }
+            .tab-nav { display: none; }
+            .reveal { opacity: 1; transform: none; }
             canvas { max-height: 250px; }
         }
     </style>
@@ -720,151 +886,187 @@
 <div class="container">
 
     <!-- ============================================================
-         HEADER BANNER
+         HEADER — Slim branded bar with inline controls
          ============================================================ -->
-    <div class="header-banner">
-        <h1>
+    <header class="header reveal">
+        <div class="header-brand">
             <i class="fas fa-chart-line"></i>
-            Intangible Leadership Capital Index
-        </h1>
-        <div class="badge-group">
-            <span class="badge"><i class="fas fa-flask"></i> Ulrich LCI 2015</span>
-            <span class="badge"><i class="fas fa-certificate"></i> ISO/TS 30431</span>
-            <span class="badge"><i class="fas fa-brain"></i> Bass &amp; Avolio MLQ</span>
-            <span class="badge"><i class="fas fa-heart-pulse"></i> TEIQue</span>
-            <span class="badge"><i class="fas fa-bolt"></i> Antonakis CLTs</span>
+            <h1>Leadership Capital Index</h1>
         </div>
-    </div>
-
-    <!-- ============================================================
-         FRAMEWORK MAPPING PILLS
-         ============================================================ -->
-    <div class="mapping-pills">
-        <span class="pill"><i class="fas fa-arrow-right"></i> Personal Proficiency &#8594; Cognitive Efficiency, Resilience, Neural Adaptability (Ulrich)</span>
-        <span class="pill"><i class="fas fa-arrow-right"></i> Trust (ISO 30431) &#8594; Empathy, Communication, Sentiment, Feedback</span>
-        <span class="pill"><i class="fas fa-arrow-right"></i> Synergy Model &#8594; Geometric mean of 4 pillars penalizes weak links</span>
-        <span class="pill"><i class="fas fa-arrow-right"></i> Trust Cap &#8594; Low trust score constrains &#8220;It Factor&#8221; ceiling</span>
-    </div>
-
-    <!-- ============================================================
-         PRESET PROFILES + TOOLBAR
-         ============================================================ -->
-    <div class="preset-bar" id="presetBar">
-        <button class="preset-btn" data-preset="visionary"><i class="fas fa-eye"></i> The Visionary</button>
-        <button class="preset-btn" data-preset="executor"><i class="fas fa-gears"></i> The Executor</button>
-        <button class="preset-btn" data-preset="connector"><i class="fas fa-handshake"></i> The Connector</button>
-    </div>
-    <div class="toolbar">
-        <button class="tool-btn" id="exportBtn"><i class="fas fa-download"></i> Export JSON</button>
-        <button class="tool-btn" id="importBtn"><i class="fas fa-upload"></i> Import JSON</button>
-        <input type="file" id="importFile" accept=".json" style="display:none">
-    </div>
-
-    <!-- ============================================================
-         METRICS GRID — Two-Column (Individual + Organizational)
-         ============================================================ -->
-    <div class="grid-2">
-        <!-- LEFT: Individual Leadership Capital -->
-        <div class="card">
-            <div class="card-header">
-                <h2><i class="fas fa-user-astronaut"></i> Individual Capital</h2>
-                <span class="card-sub">Ulrich Individual + MLQ + TEIQue</span>
+        <div class="header-controls">
+            <div class="preset-group" id="presetBar">
+                <button class="preset-btn" data-preset="visionary"><i class="fas fa-eye"></i> Visionary</button>
+                <button class="preset-btn" data-preset="executor"><i class="fas fa-gears"></i> Executor</button>
+                <button class="preset-btn" data-preset="connector"><i class="fas fa-handshake"></i> Connector</button>
             </div>
-            <div class="card-desc">
-                <i class="fas fa-microchip"></i> Personal proficiency, strategist, executor, talent brand
+            <div class="tool-group">
+                <button class="icon-btn" id="recalcBtn" title="Recalculate"><i class="fas fa-rotate"></i></button>
+                <button class="icon-btn" id="resetBtn" title="Reset All"><i class="fas fa-arrow-rotate-left"></i></button>
+                <button class="icon-btn" id="exportBtn" title="Export JSON"><i class="fas fa-download"></i></button>
+                <button class="icon-btn" id="importBtn" title="Import JSON"><i class="fas fa-upload"></i></button>
+                <input type="file" id="importFile" accept=".json" style="display:none">
             </div>
-            <div id="individual-metrics"></div>
+        </div>
+        <div class="fw-badges">
+            <span class="fw-badge" title="Ulrich LCI 2015"><i class="fas fa-flask"></i></span>
+            <span class="fw-badge" title="ISO/TS 30431"><i class="fas fa-certificate"></i></span>
+            <span class="fw-badge" title="Bass &amp; Avolio MLQ 5X"><i class="fas fa-brain"></i></span>
+            <span class="fw-badge" title="TEIQue"><i class="fas fa-heart-pulse"></i></span>
+            <span class="fw-badge" title="Antonakis CLTs"><i class="fas fa-bolt"></i></span>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         HERO GAUGE — It Factor center stage
+         ============================================================ -->
+    <section class="hero-section reveal">
+        <div class="satellite-panel left">
+            <div class="sat-readout">
+                <span class="sat-value" id="sat-synergy">&#8212;</span>
+                <span class="sat-label">Synergy</span>
+            </div>
         </div>
 
-        <!-- RIGHT: Organizational & ISO Cluster -->
-        <div class="card">
-            <div class="card-header">
-                <h2><i class="fas fa-building-columns"></i> Organizational Cluster</h2>
-                <span class="card-sub">Ulrich Org + ISO 30431</span>
+        <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 280 280" aria-hidden="true">
+                <defs>
+                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#BF5700"/>
+                        <stop offset="100%" stop-color="#FF6B35"/>
+                    </linearGradient>
+                </defs>
+                <!-- Background track: 270-degree arc -->
+                <circle cx="140" cy="140" r="100"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.08)"
+                    stroke-width="12"
+                    stroke-dasharray="471.24 157.08"
+                    transform="rotate(135, 140, 140)"
+                    stroke-linecap="round"/>
+                <!-- Fill arc: animated -->
+                <circle id="gaugeFill" cx="140" cy="140" r="100"
+                    fill="none"
+                    stroke="url(#gaugeGrad)"
+                    stroke-width="12"
+                    stroke-dasharray="471.24 628.32"
+                    stroke-dashoffset="471.24"
+                    transform="rotate(135, 140, 140)"
+                    stroke-linecap="round"/>
+            </svg>
+            <div class="gauge-center">
+                <div class="gauge-score" id="gauge-it-score">&#8212;</div>
+                <div class="gauge-unit">/ 10</div>
+                <div class="gauge-label">IT FACTOR</div>
+                <div class="gauge-interp kpi-interpretation" id="interp-it"></div>
             </div>
-            <div class="card-desc">
-                <i class="fas fa-people-arrows"></i> Culture, trust, talent flow, accountability, work practices
+        </div>
+
+        <div class="satellite-panel right">
+            <div class="sat-readout">
+                <span class="sat-value" id="sat-coherence">&#8212;</span>
+                <span class="sat-label">Coherence</span>
             </div>
-            <div id="organizational-metrics"></div>
+            <div class="sat-readout">
+                <span class="sat-value" id="sat-trustcap">&#8212;</span>
+                <span class="sat-label">Trust Cap</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         TRUST CAP ALERT — Amber warning when active
+         ============================================================ -->
+    <div class="trust-alert" id="trustAlert">
+        <i class="fas fa-triangle-exclamation"></i>
+        Trust cap active &#8212; ceiling limited to <span id="trustAlertCap">6.0</span>/10
+    </div>
+
+    <!-- ============================================================
+         KPI RIBBON — 3 framework scores
+         ============================================================ -->
+    <div class="kpi-ribbon reveal">
+        <div class="kpi-card">
+            <div class="kpi-card-label">Ulrich LCI</div>
+            <div class="kpi-card-score" id="kpi-ulrich">&#8212;</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-ulrich"></div></div>
+            <div class="kpi-card-interp kpi-interpretation" id="interp-ulrich"></div>
+            <div class="kpi-card-sub">10-factor weighted</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-card-label">ISO 30431</div>
+            <div class="kpi-card-score" id="kpi-iso">&#8212;</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-iso"></div></div>
+            <div class="kpi-card-interp kpi-interpretation" id="interp-iso"></div>
+            <div class="kpi-card-sub">3-pillar cluster</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-card-label">MLQ Transformational</div>
+            <div class="kpi-card-score" id="kpi-mlq">&#8212;</div>
+            <div class="kpi-bar-track"><div class="kpi-bar-fill" id="bar-mlq"></div></div>
+            <div class="kpi-card-interp kpi-interpretation" id="interp-mlq"></div>
+            <div class="kpi-card-sub">Bass &amp; Avolio 5-factor</div>
         </div>
     </div>
 
     <!-- ============================================================
-         SECTION DIVIDER
+         TABBED METRICS — Individual / Organizational
          ============================================================ -->
-    <div class="section-divider">
-        <h3><i class="fas fa-crown"></i> The "It" Factor: Quantifying the Unquantifiable</h3>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button class="btn" id="recalcBtn"><i class="fas fa-rotate"></i> Recalculate</button>
-            <button class="btn btn-reset" id="resetBtn"><i class="fas fa-arrow-rotate-left"></i> Reset All</button>
+    <div class="metrics-section reveal">
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="individual">
+                <i class="fas fa-user-astronaut"></i> Individual Capital
+            </button>
+            <button class="tab-btn" data-tab="organizational">
+                <i class="fas fa-building-columns"></i> Organizational Cluster
+            </button>
+        </div>
+        <div class="tab-content">
+            <div class="tab-panel active" id="panel-individual">
+                <div class="card">
+                    <div class="card-desc">
+                        <i class="fas fa-microchip"></i> Personal proficiency, strategist, executor, talent brand
+                    </div>
+                    <div id="individual-metrics"></div>
+                </div>
+            </div>
+            <div class="tab-panel" id="panel-organizational">
+                <div class="card">
+                    <div class="card-desc">
+                        <i class="fas fa-people-arrows"></i> Culture, trust, talent flow, accountability, work practices
+                    </div>
+                    <div id="organizational-metrics"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ============================================================
-         KPI DASHBOARD — 4 Panels
+         CHARTS — Radar + Bar
          ============================================================ -->
-    <div class="grid-4">
-        <div class="kpi-panel">
-            <div class="kpi-title">Ulrich LCI</div>
-            <div class="kpi-number" id="kpi-ulrich">&#8212;</div>
-            <div class="kpi-interpretation" id="interp-ulrich"></div>
-            <div class="kpi-label">Individual + Organizational composite</div>
-            <span class="kpi-tag">10-factor weighted</span>
-        </div>
-        <div class="kpi-panel">
-            <div class="kpi-title">ISO 30431</div>
-            <div class="kpi-number" id="kpi-iso">&#8212;</div>
-            <div class="kpi-interpretation" id="interp-iso"></div>
-            <div class="kpi-label">Trust &#183; Development &#183; Span</div>
-            <span class="kpi-tag">3-pillar cluster</span>
-        </div>
-        <div class="kpi-panel">
-            <div class="kpi-title">MLQ Transformational</div>
-            <div class="kpi-number" id="kpi-mlq">&#8212;</div>
-            <div class="kpi-interpretation" id="interp-mlq"></div>
-            <div class="kpi-label">Bass &amp; Avolio 5-factor</div>
-            <span class="kpi-tag">IIA &#183; IIB &#183; IM &#183; IS &#183; IC</span>
-        </div>
-        <div class="kpi-panel kpi-it-factor">
-            <div class="kpi-title">It Factor</div>
-            <div class="kpi-number" id="kpi-it">&#8212;</div>
-            <div class="kpi-interpretation" id="interp-it"></div>
-            <div class="kpi-label">Synergy &#215; coherence, trust-capped</div>
-            <span class="kpi-tag">synergy + coherence &#183; trust-aware</span>
-            <div id="it-composition" class="kpi-composition" style="font-family:var(--font-mono);font-size:0.65rem;color:var(--bsi-text-tertiary);margin-top:0.3rem;letter-spacing:0.5px;"></div>
-        </div>
-    </div>
-
-    <!-- ============================================================
-         RADAR CHARTS — Ulrich 10-Factor + MLQ 5-Factor
-         ============================================================ -->
-    <div class="grid-2">
+    <div class="charts-grid reveal">
         <div class="chart-card">
             <div class="chart-header">
-                <span><i class="fas fa-chart-pie" style="color:var(--bsi-primary);"></i> Ulrich LCI Audit Profile</span>
-                <span class="card-sub">10 dimensions</span>
+                <span><i class="fas fa-chart-pie"></i> Ulrich LCI Audit Profile</span>
+                <span class="chart-sub">10 dimensions</span>
             </div>
             <canvas id="radarUlrich"></canvas>
             <p class="chart-note">5 Individual (Personal, Strategic, Execution, People, Brand) + 5 Organizational (Culture, Talent Flow, Accountability, Information, Work Practices) per Ulrich (2015).</p>
         </div>
         <div class="chart-card">
             <div class="chart-header">
-                <span><i class="fas fa-diagram-project" style="color:var(--bsi-primary);"></i> MLQ Transformational Profile</span>
-                <span class="card-sub">5 factors</span>
+                <span><i class="fas fa-diagram-project"></i> MLQ Transformational Profile</span>
+                <span class="chart-sub">5 factors</span>
             </div>
             <canvas id="radarMLQ"></canvas>
             <p class="chart-note">Idealized Influence (Attributed + Behavioral), Inspirational Motivation, Intellectual Stimulation, Individualized Consideration per Bass &amp; Avolio (2004).</p>
         </div>
     </div>
 
-    <!-- ============================================================
-         IT FACTOR CLUSTER BREAKDOWN — Horizontal Bar Chart
-         ============================================================ -->
-    <div class="bar-chart-row">
+    <div class="reveal" style="margin-bottom:1.5rem;">
         <div class="chart-card">
             <div class="chart-header">
                 <span><i class="fas fa-crown" style="color:var(--bsi-accent);"></i> It Factor Pillar Breakdown</span>
-                <span class="card-sub">synergy + coherence</span>
+                <span class="chart-sub">synergy + coherence</span>
             </div>
             <canvas id="barItClusters"></canvas>
             <p class="chart-note">Four research-backed pillars feed a synergy + coherence model. The geometric mean penalizes imbalance (one weak pillar drags the score); the coherence bonus rewards consistency across all four. A trust-aware cap constrains the ceiling when the ISO trust proxy falls below threshold.</p>
@@ -875,11 +1077,11 @@
          METHODOLOGY — Expandable Panel
          ============================================================ -->
     <div class="methodology">
-        <button class="methodology-toggle" id="methodToggle" aria-expanded="false">
+        <button class="methodology-toggle" id="methodToggle" aria-expanded="false" aria-controls="methodContent">
             <span><i class="fas fa-book-open" style="color:var(--bsi-primary); margin-right:8px;"></i> Methodology &amp; Academic Validation</span>
             <i class="fas fa-chevron-down chevron"></i>
         </button>
-        <div class="methodology-content" id="methodContent">
+        <div class="methodology-content" id="methodContent" aria-hidden="true">
 
             <h5 class="method-heading">Conceptual Framework</h5>
             <p>This prototype maps 23 intangible leadership metrics to five validated academic and industry frameworks. The mapping is <strong>conceptual</strong> &#8212; it bridges novel metrics to established constructs based on shared theoretical domains, not direct psychometric equivalence. The goal is to demonstrate that these intangible qualities have legitimate measurement foundations, not to claim factor-analytic identity with existing instruments.</p>
@@ -1001,7 +1203,7 @@
 </div>
 
 <!-- ================================================================
-     JAVASCRIPT — Scoring Engine + Chart Rendering
+     JAVASCRIPT — Scoring Engine + Gauge + Animations
      All DOM construction uses safe methods (createElement/textContent).
      No innerHTML — all content derives from hardcoded metric arrays.
      ================================================================ -->
@@ -1123,6 +1325,14 @@
     }
 
     // ================================================================
+    // UTILITY HELPERS
+    // ================================================================
+
+    function prefersReducedMotion() {
+        return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    // ================================================================
     // SCORE INTERPRETATION
     // ================================================================
 
@@ -1158,12 +1368,20 @@
     }
 
     // ================================================================
+    // SLIDER TRAIL — filled gradient on range input
+    // ================================================================
+
+    function updateSliderTrail(slider) {
+        var pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+        slider.style.background = 'linear-gradient(to right, rgba(191,87,0,0.7) 0%, rgba(191,87,0,0.7) ' + pct + '%, rgba(255,255,255,0.08) ' + pct + '%, rgba(255,255,255,0.08) 100%)';
+    }
+
+    // ================================================================
     // RENDER METRIC SLIDERS — Safe DOM construction, no innerHTML
     // ================================================================
 
     function renderMetrics(containerId, metrics) {
         var container = document.getElementById(containerId);
-        // Clear existing children
         while (container.firstChild) {
             container.removeChild(container.firstChild);
         }
@@ -1171,11 +1389,9 @@
         metrics.forEach(function (metric) {
             var val = getVal(metric.id);
 
-            // Row container
             var row = document.createElement('div');
             row.className = 'metric-item';
 
-            // Left: metric info
             var infoDiv = document.createElement('div');
             infoDiv.className = 'metric-info';
 
@@ -1197,7 +1413,6 @@
             infoDiv.appendChild(nameSpan);
             infoDiv.appendChild(tagSpan);
 
-            // Right: slider + score badge
             var sliderDiv = document.createElement('div');
             sliderDiv.className = 'slider-group';
 
@@ -1214,15 +1429,18 @@
             badge.setAttribute('data-score-id', metric.id);
             badge.textContent = String(val);
 
-            slider.addEventListener('input', (function (badgeRef, metricId) {
+            updateSliderTrail(slider);
+
+            slider.addEventListener('input', (function (badgeRef, metricId, sliderRef) {
                 return function () {
                     var v = parseInt(this.value, 10);
                     badgeRef.textContent = String(v);
                     badgeRef.className = 'score-badge ' + getScoreClass(v);
                     setVal(metricId, v);
-                    recalculate();
+                    updateSliderTrail(sliderRef);
+                    recalculate(false);
                 };
-            })(badge, metric.id));
+            })(badge, metric.id, slider));
 
             sliderDiv.appendChild(slider);
             sliderDiv.appendChild(badge);
@@ -1234,7 +1452,7 @@
     }
 
     // ================================================================
-    // SCORING ALGORITHMS
+    // SCORING ALGORITHMS — Unchanged
     // ================================================================
 
     function avg() {
@@ -1246,8 +1464,6 @@
         return sum / ids.length;
     }
 
-    // Geometric mean — penalizes weak-link pillars
-    // If one pillar is 20 while others are 80, gmean ≈ 52 vs arithmetic mean 65
     function gmean(values) {
         var eps = 0.001;
         var logSum = 0;
@@ -1257,7 +1473,6 @@
         return Math.exp(logSum / values.length);
     }
 
-    // Standard deviation of an array of numbers
     function stddev(values) {
         if (values.length < 2) return 0;
         var m = 0;
@@ -1271,14 +1486,12 @@
     }
 
     function computeUlrich() {
-        // 5 Individual factors — research crosswalk (many-to-many mapping)
         var personal  = avg('cognitive-efficiency', 'resilience-coefficient', 'neural-flow', 'cognitive-elasticity', 'neural-adaptability');
         var strategic = avg('strategic-impact', 'visionary-leadership', 'narrative-intelligence');
         var execution = avg('communication', 'influence-dynamics', 'okrs', 'habit-tracker');
         var people    = avg('empathy-index', 'team-sentiment', 'cross-mentorship', 'reverse-mentoring', 'inter-team-feedback', 'micro-skills');
         var brand     = avg('leadership-storytelling', 'visionary-leadership', 'narrative-intelligence');
 
-        // 5 Organizational factors — research crosswalk
         var culture        = avg('team-sentiment', 'leadership-storytelling', 'leadership-challenge', 'inter-team-feedback');
         var talentFlow     = avg('cross-mentorship', 'reverse-mentoring', 'micro-skills', 'leadership-simulation', 'skill-badges');
         var accountability = avg('okrs', 'habit-tracker', 'inter-team-feedback');
@@ -1308,12 +1521,9 @@
     }
 
     function computeISO() {
-        // ISO/TS 30431 trust pillar — core trust-building metrics
         var trust = avg('empathy-index', 'communication', 'team-sentiment', 'inter-team-feedback');
-        // ISO/TS 30431 leadership development pillar — growth and capability building
         var dev = avg('micro-skills', 'leadership-simulation', 'cross-mentorship',
                       'reverse-mentoring', 'skill-badges', 'habit-tracker', 'shadowing');
-        // Span of control — organizational reach proxy
         var span = avg('cross-mentorship', 'influence-dynamics', 'okrs');
 
         var score = trust * 0.4 + dev * 0.4 + span * 0.2;
@@ -1344,12 +1554,7 @@
         };
     }
 
-    // --- THE "IT" FACTOR --- Synergy + Coherence + Trust Cap
-    // Based on latent construct methodology: geometric mean penalizes
-    // weak-link pillars, coherence rewards consistency, trust cap
-    // prevents "charisma without trust" scoring inflation.
     function computeItFactor() {
-        // 4 research-backed pillars (0-100 each)
         var adaptability = avg('cognitive-efficiency', 'neural-flow', 'cognitive-elasticity',
                               'neural-adaptability', 'resilience-coefficient');
         var trustInfluence = avg('empathy-index', 'communication', 'influence-dynamics',
@@ -1360,20 +1565,14 @@
 
         var pillars = [adaptability, trustInfluence, meaningNarrative, executionAlignment];
 
-        // Synergy: geometric mean (weak-link penalization)
         var synergy = gmean(pillars);
 
-        // Coherence: inverse of dispersion (consistency bonus)
-        // 1.35 scaling factor chosen so 1 std dev of ~25 points gives meaningful penalty
         var dispersion = stddev(pillars);
         var coherence = Math.max(0, Math.min(100, 100 - (dispersion * 1.35)));
 
-        // Trust-aware cap: charisma without trust is manipulation
-        // Uses ISO trust proxy metrics directly
         var isoTrust = avg('empathy-index', 'communication', 'team-sentiment', 'inter-team-feedback');
         var trustCap = isoTrust < 45 ? 6.0 : (isoTrust < 60 ? 8.0 : 10.0);
 
-        // Composite: 70% synergy + 30% coherence, scaled to 0-10, capped by trust
         var raw = 10 * ((0.7 * synergy + 0.3 * coherence) / 100);
         var it = Math.min(raw, trustCap);
 
@@ -1392,14 +1591,82 @@
     }
 
     // ================================================================
-    // CHART.JS CONFIGURATION
+    // GAUGE RENDERER — SVG arc animation
+    // ================================================================
+
+    var GAUGE_ARC = 471.24;
+
+    function updateGauge(score) {
+        var fill = document.getElementById('gaugeFill');
+        if (!fill) return;
+        var clamped = Math.max(0, Math.min(10, score));
+        var offset = GAUGE_ARC * (1 - clamped / 10);
+
+        if (prefersReducedMotion()) {
+            fill.style.transition = 'none';
+        } else {
+            fill.style.transition = 'stroke-dashoffset 0.6s ease-out';
+        }
+        fill.style.strokeDashoffset = String(offset);
+    }
+
+    // ================================================================
+    // COUNT-UP ANIMATION — Smooth number transitions
+    // ================================================================
+
+    function animateValue(el, target, duration) {
+        if (!el) return;
+        if (prefersReducedMotion() || !duration) {
+            el.textContent = target.toFixed(1);
+            return;
+        }
+        var startVal = parseFloat(el.textContent) || 0;
+        var startTime = null;
+
+        function step(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = startVal + (target - startVal) * eased;
+            el.textContent = current.toFixed(1);
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    // ================================================================
+    // TAB SWITCHING
+    // ================================================================
+
+    function initTabs() {
+        var tabBtns = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < tabBtns.length; i++) {
+            tabBtns[i].addEventListener('click', function () {
+                var target = this.getAttribute('data-tab');
+
+                var btns = document.querySelectorAll('.tab-btn');
+                for (var j = 0; j < btns.length; j++) {
+                    btns[j].classList.toggle('active', btns[j] === this);
+                }
+
+                var panels = document.querySelectorAll('.tab-panel');
+                for (var k = 0; k < panels.length; k++) {
+                    panels[k].classList.toggle('active', panels[k].id === 'panel-' + target);
+                }
+            });
+        }
+    }
+
+    // ================================================================
+    // CHART.JS CONFIGURATION — Instrument panel theme
     // ================================================================
 
     var chartColors = {
-        fill: 'rgba(191, 87, 0, 0.15)',
+        fill: 'rgba(191, 87, 0, 0.2)',
         border: '#BF5700',
         point: '#FF6B35',
-        pointBorder: '#FAFAFA',
+        pointBorder: '#0D0D12',
         grid: 'rgba(255, 255, 255, 0.06)',
         label: '#a3a3a3',
         tick: '#737373'
@@ -1437,6 +1704,10 @@
 
     function initCharts() {
         var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
+        var ulrichGrad = ulrichCtx.createLinearGradient(0, 0, 0, 320);
+        ulrichGrad.addColorStop(0, 'rgba(191, 87, 0, 0.3)');
+        ulrichGrad.addColorStop(1, 'rgba(191, 87, 0, 0.05)');
+
         ulrichChart = new Chart(ulrichCtx, {
             type: 'radar',
             data: {
@@ -1449,19 +1720,24 @@
                 datasets: [{
                     label: 'Ulrich LCI',
                     data: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
-                    backgroundColor: chartColors.fill,
+                    backgroundColor: ulrichGrad,
                     borderColor: chartColors.border,
                     borderWidth: 2,
                     pointBackgroundColor: chartColors.point,
                     pointBorderColor: chartColors.pointBorder,
-                    pointBorderWidth: 1,
-                    pointRadius: 4
+                    pointBorderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
                 }]
             },
             options: commonRadarOpts
         });
 
         var mlqCtx = document.getElementById('radarMLQ').getContext('2d');
+        var mlqGrad = mlqCtx.createLinearGradient(0, 0, 0, 320);
+        mlqGrad.addColorStop(0, 'rgba(253, 185, 19, 0.25)');
+        mlqGrad.addColorStop(1, 'rgba(253, 185, 19, 0.05)');
+
         mlqChart = new Chart(mlqCtx, {
             type: 'radar',
             data: {
@@ -1475,19 +1751,19 @@
                 datasets: [{
                     label: 'MLQ 5X Transformational',
                     data: [50, 50, 50, 50, 50],
-                    backgroundColor: 'rgba(253, 185, 19, 0.12)',
+                    backgroundColor: mlqGrad,
                     borderColor: '#FDB913',
                     borderWidth: 2,
                     pointBackgroundColor: '#FDB913',
                     pointBorderColor: chartColors.pointBorder,
-                    pointBorderWidth: 1,
-                    pointRadius: 4
+                    pointBorderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
                 }]
             },
             options: commonRadarOpts
         });
 
-        // --- It Factor Cluster Bar Chart ---
         var barCtx = document.getElementById('barItClusters').getContext('2d');
         itBarChart = new Chart(barCtx, {
             type: 'bar',
@@ -1497,10 +1773,10 @@
                     label: 'Cluster Score',
                     data: [50, 50, 50, 50],
                     backgroundColor: [
-                        'rgba(191, 87, 0, 0.6)',
-                        'rgba(253, 185, 19, 0.6)',
-                        'rgba(255, 107, 53, 0.6)',
-                        'rgba(139, 69, 19, 0.6)'
+                        'rgba(191, 87, 0, 0.7)',
+                        'rgba(253, 185, 19, 0.7)',
+                        'rgba(255, 107, 53, 0.7)',
+                        'rgba(139, 69, 19, 0.7)'
                     ],
                     borderColor: [
                         '#BF5700',
@@ -1509,7 +1785,9 @@
                         '#8B4513'
                     ],
                     borderWidth: 1,
-                    borderRadius: 6
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    barPercentage: 0.7
                 }]
             },
             options: {
@@ -1561,47 +1839,61 @@
     }
 
     // ================================================================
-    // RECALCULATE — ties everything together
+    // RECALCULATE — Ties everything together
     // ================================================================
 
-    function recalculate() {
+    function recalculate(animate) {
         var ulrich = computeUlrich();
-        var iso = computeISO();         // now returns { score, trust, dev }
+        var iso = computeISO();
         var mlq = computeMLQ();
-        var itResult = computeItFactor(); // now returns { score, pillars, synergy, coherence, trustCap }
+        var itResult = computeItFactor();
 
-        // Update KPI numbers using safe textContent
-        document.getElementById('kpi-ulrich').textContent = String(ulrich.lci);
-        document.getElementById('kpi-iso').textContent = String(iso.score);
-        document.getElementById('kpi-mlq').textContent = String(mlq.score);
+        // Hero Gauge
+        updateGauge(itResult.score);
 
-        // It Factor: build number + unit span safely
-        var itEl = document.getElementById('kpi-it');
-        while (itEl.firstChild) itEl.removeChild(itEl.firstChild);
-        itEl.appendChild(document.createTextNode(String(itResult.score)));
-        var unitSpan = document.createElement('span');
-        unitSpan.className = 'kpi-unit';
-        unitSpan.textContent = '/10';
-        itEl.appendChild(unitSpan);
-
-        // Update interpretation labels
-        updateInterpretation('interp-ulrich', getInterpretation100(ulrich.lci));
-        updateInterpretation('interp-iso', getInterpretation100(iso.score));
-        updateInterpretation('interp-mlq', getInterpretation100(mlq.score));
-        updateInterpretation('interp-it', getInterpretation10(itResult.score));
-
-        // Update synergy/coherence/trust-cap breakdown display
-        var compositionEl = document.getElementById('it-composition');
-        if (compositionEl) {
-            compositionEl.textContent = 'Syn=' + itResult.synergy +
-                ' \u00B7 Coh=' + itResult.coherence +
-                ' \u00B7 Cap=' + itResult.trustCap.toFixed(1);
+        var gaugeScoreEl = document.getElementById('gauge-it-score');
+        if (animate && !prefersReducedMotion()) {
+            animateValue(gaugeScoreEl, itResult.score, 600);
+        } else {
+            if (gaugeScoreEl) gaugeScoreEl.textContent = itResult.score.toFixed(1);
         }
 
-        // Update radar charts
+        updateInterpretation('interp-it', getInterpretation10(itResult.score));
+
+        // Satellite Readouts
+        var synEl = document.getElementById('sat-synergy');
+        var cohEl = document.getElementById('sat-coherence');
+        var capEl = document.getElementById('sat-trustcap');
+
+        if (animate && !prefersReducedMotion()) {
+            animateValue(synEl, itResult.synergy, 400);
+            animateValue(cohEl, itResult.coherence, 400);
+        } else {
+            if (synEl) synEl.textContent = itResult.synergy.toFixed(1);
+            if (cohEl) cohEl.textContent = itResult.coherence.toFixed(1);
+        }
+        if (capEl) capEl.textContent = itResult.trustCap.toFixed(1);
+
+        // Trust Cap Alert
+        var alertEl = document.getElementById('trustAlert');
+        if (alertEl) {
+            if (itResult.trustCap < 10) {
+                alertEl.style.display = 'flex';
+                var capSpan = document.getElementById('trustAlertCap');
+                if (capSpan) capSpan.textContent = itResult.trustCap.toFixed(1);
+            } else {
+                alertEl.style.display = 'none';
+            }
+        }
+
+        // KPI Ribbon
+        updateKPI('kpi-ulrich', 'bar-ulrich', 'interp-ulrich', ulrich.lci, animate);
+        updateKPI('kpi-iso', 'bar-iso', 'interp-iso', iso.score, animate);
+        updateKPI('kpi-mlq', 'bar-mlq', 'interp-mlq', mlq.score, animate);
+
+        // Charts
         updateCharts(ulrich.factors, mlq.factors);
 
-        // Update bar chart — 4 research-backed pillars
         if (itBarChart) {
             itBarChart.data.datasets[0].data = [
                 itResult.pillars.adaptability,
@@ -1613,15 +1905,34 @@
         }
     }
 
+    function updateKPI(scoreId, barId, interpId, score, animate) {
+        var scoreEl = document.getElementById(scoreId);
+        if (scoreEl) {
+            if (animate && !prefersReducedMotion()) {
+                animateValue(scoreEl, score, 400);
+            } else {
+                scoreEl.textContent = score.toFixed(1);
+            }
+        }
+
+        var barEl = document.getElementById(barId);
+        if (barEl) barEl.style.width = (score / 100 * 100) + '%';
+
+        updateInterpretation(interpId, getInterpretation100(score));
+    }
+
     // ================================================================
-    // RESET — clear localStorage and restore defaults
+    // RESET
     // ================================================================
 
     function resetAll() {
         localStorage.removeItem(STORAGE_KEY);
         renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
         renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
-        recalculate();
+        recalculate(true);
+
+        var btns = document.querySelectorAll('.preset-btn');
+        for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
     }
 
     // ================================================================
@@ -1646,7 +1957,6 @@
         var preset = PRESETS[presetKey];
         if (!preset) return;
 
-        // Save all preset values
         var state = {};
         var keys = Object.keys(preset.values);
         for (var i = 0; i < keys.length; i++) {
@@ -1654,12 +1964,10 @@
         }
         saveState(state);
 
-        // Re-render sliders with new values
         renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
         renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
-        recalculate();
+        recalculate(true);
 
-        // Update active button state
         var btns = document.querySelectorAll('.preset-btn');
         for (var j = 0; j < btns.length; j++) {
             btns[j].classList.toggle('active', btns[j].getAttribute('data-preset') === presetKey);
@@ -1701,8 +2009,7 @@
                 saveState(state);
                 renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
                 renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
-                recalculate();
-                // Clear active preset
+                recalculate(true);
                 var btns = document.querySelectorAll('.preset-btn');
                 for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
             } catch (err) {
@@ -1713,6 +2020,23 @@
     }
 
     // ================================================================
+    // STAGGERED REVEAL — Page load entrance animation
+    // ================================================================
+
+    function revealSequence() {
+        var items = document.querySelectorAll('.reveal');
+        if (prefersReducedMotion()) {
+            for (var i = 0; i < items.length; i++) items[i].classList.add('visible');
+            return;
+        }
+        for (var j = 0; j < items.length; j++) {
+            (function (el, delay) {
+                setTimeout(function () { el.classList.add('visible'); }, delay);
+            })(items[j], j * 150);
+        }
+    }
+
+    // ================================================================
     // INIT
     // ================================================================
 
@@ -1720,10 +2044,13 @@
         renderMetrics('individual-metrics', INDIVIDUAL_METRICS);
         renderMetrics('organizational-metrics', ORGANIZATIONAL_METRICS);
         initCharts();
-        recalculate();
+        recalculate(true);
         initMethodologyToggle();
+        initTabs();
 
-        document.getElementById('recalcBtn').addEventListener('click', recalculate);
+        document.getElementById('recalcBtn').addEventListener('click', function () {
+            recalculate(true);
+        });
         document.getElementById('resetBtn').addEventListener('click', resetAll);
 
         // Preset buttons
@@ -1746,9 +2073,11 @@
                 this.value = '';
             }
         });
+
+        // Staggered entrance
+        revealSequence();
     }
 
-    // Wait for DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
