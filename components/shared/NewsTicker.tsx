@@ -42,6 +42,7 @@ export function NewsTicker() {
   }, []);
 
   useEffect(() => {
+    setCurrentIndex(0);
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 5000);
@@ -58,7 +59,6 @@ export function NewsTicker() {
   return (
     <div
       className="bg-charcoal/80 border-b border-white/5 py-1.5 px-4 text-center overflow-hidden"
-      role="marquee"
       aria-live="polite"
       aria-label="News ticker"
     >

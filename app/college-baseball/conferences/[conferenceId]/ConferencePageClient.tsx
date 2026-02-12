@@ -1675,7 +1675,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Data Attribution */}
             <div className="mt-10 text-center text-xs text-text-tertiary">
               <p>Rankings data sourced from D1Baseball preseason poll (2026).</p>
-              <p className="mt-1">
+              <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT
               </p>

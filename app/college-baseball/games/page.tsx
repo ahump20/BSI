@@ -28,7 +28,7 @@ export default function CollegeBaseballGamesPage() {
 
             <CalendarView />
 
-            <DataAttribution lastUpdated={new Date().toISOString()} className="mt-6" />
+            <DataAttribution lastUpdated="" className="mt-6" />
           </Container>
         </Section>
       </main>

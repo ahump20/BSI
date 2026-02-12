@@ -576,7 +576,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
               <p>Team data sourced from official NCAA statistics.</p>
-              <p className="mt-1">
+              <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT
               </p>

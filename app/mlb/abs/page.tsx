@@ -431,7 +431,7 @@ export default function ABSTrackerPage() {
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
                 source="MLB / Hawk-Eye / UmpScorecards"
-                timestamp={`Updated ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                timestamp=""
               />
             </div>
           </Container>

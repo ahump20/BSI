@@ -330,6 +330,8 @@ async function handleTeams(league: string, env: Env): Promise<Response> {
  * Query: ?game=blitz&limit=25 (default: all games, top 25)
  */
 async function handleLeaderboard(url: URL, env: Env): Promise<Response> {
+  if (!env.DB) return json({ error: 'Database not configured' }, 503);
+
   const gameId = url.searchParams.get('game');
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25'), 100);
 
@@ -362,6 +364,8 @@ async function handleLeaderboard(url: URL, env: Env): Promise<Response> {
  * Body: { name: string, score: number, game: string, avatar?: string }
  */
 async function handleLeaderboardSubmit(request: Request, env: Env): Promise<Response> {
+  if (!env.DB) return json({ error: 'Database not configured' }, 503);
+
   const body = await request.json() as { name?: string; score?: number; game?: string; avatar?: string };
 
   if (!body.name || typeof body.score !== 'number' || !body.game) {
@@ -758,6 +762,8 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
 // ---------------------------------------------------------------------------
 
 async function handleCFBTransferPortal(env: Env): Promise<Response> {
+  if (!env.KV) return json({ entries: [], message: 'KV store not configured' }, 503);
+
   const raw = await env.KV.get('portal:cfb:entries', 'text');
   if (raw) {
     try {
@@ -2546,6 +2552,15 @@ export default {
         return proxyApiToPages(request, env, `/api/cfb/${mapped}`);
       }
 
+      // NCAA baseball routes — rewrite to college-baseball handlers
+      if (pathname.startsWith('/api/ncaa/') && url.searchParams.get('sport') === 'baseball') {
+        const suffix = pathname.replace('/api/ncaa/', '');
+        if (suffix === 'rankings') return handleCollegeBaseballRankings(env);
+        if (suffix === 'standings') return handleCollegeBaseballStandings(url, env);
+        if (suffix === 'scores') return handleCollegeBaseballScores(url, env);
+        if (suffix === 'schedule') return handleCollegeBaseballSchedule(url, env);
+      }
+
       if (pathname.startsWith('/api/cfb-espn/')) {
         return proxyApiToPages(request, env, pathname.replace('/api/cfb-espn', '/api/cfb'));
       }
@@ -2575,21 +2590,24 @@ export default {
         return proxyApiToPages(request, env);
       }
 
-      // ----- CFB data routes (ESPN) -----
+      // ----- CFB data routes (SportsDataIO via Pages Functions) -----
       if (pathname === '/api/ncaa/scores' && url.searchParams.get('sport') === 'football') {
-        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
+        return proxyApiToPages(request, env, '/api/cfb/scores');
       }
       if (pathname === '/api/ncaa/standings' && url.searchParams.get('sport') === 'football') {
-        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
+        return proxyApiToPages(request, env, '/api/cfb/standings');
       }
       if (pathname === '/api/cfb/scores') {
-        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
+        return proxyApiToPages(request, env);
       }
       if (pathname === '/api/cfb/standings') {
-        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
+        return proxyApiToPages(request, env);
       }
       if (pathname === '/api/cfb/news') {
-        return safeESPN(() => handleCFBNews(env), 'articles', [], env);
+        return proxyApiToPages(request, env);
+      }
+      if (pathname === '/api/cfb/teams') {
+        return proxyApiToPages(request, env);
       }
 
       // CFB Articles (D1)
@@ -2613,76 +2631,112 @@ export default {
       const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId');
       if (gameMatch) return handleCollegeBaseballGame(gameMatch.params.gameId, env);
 
-      // ----- MLB data routes (ESPN) -----
+      // ----- MLB data routes (SportsDataIO via Pages Functions) -----
       if (pathname === '/api/mlb/scores')
-        return safeESPN(() => handleMLBScores(url, env), 'games', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/mlb/standings')
-        return safeESPN(() => handleMLBStandings(env), 'standings', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/mlb/news')
-        return safeESPN(() => handleMLBNews(env), 'articles', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/mlb/teams')
-        return safeESPN(() => handleMLBTeamsList(env), 'teams', [], env);
+        return proxyApiToPages(request, env);
 
       const mlbGameMatch = matchRoute(pathname, '/api/mlb/game/:gameId');
       if (mlbGameMatch)
-        return safeESPN(() => handleMLBGame(mlbGameMatch.params.gameId, env), 'game', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/mlb/game/${encodeURIComponent(mlbGameMatch.params.gameId)}`
+        );
 
       const mlbPlayerMatch = matchRoute(pathname, '/api/mlb/players/:playerId');
       if (mlbPlayerMatch)
-        return safeESPN(() => handleMLBPlayer(mlbPlayerMatch.params.playerId, env), 'player', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/mlb/players/${encodeURIComponent(mlbPlayerMatch.params.playerId)}`
+        );
 
       const mlbTeamMatch = matchRoute(pathname, '/api/mlb/teams/:teamId');
       if (mlbTeamMatch)
-        return safeESPN(() => handleMLBTeam(mlbTeamMatch.params.teamId, env), 'team', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/mlb/teams/${encodeURIComponent(mlbTeamMatch.params.teamId)}`
+        );
 
-      // ----- NFL data routes (ESPN) -----
+      // ----- NFL data routes (SportsDataIO via Pages Functions for scores/standings) -----
       if (pathname === '/api/nfl/scores')
-        return safeESPN(() => handleNFLScores(url, env), 'games', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nfl/standings')
-        return safeESPN(() => handleNFLStandings(env), 'standings', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nfl/news')
-        return safeESPN(() => handleNFLNews(env), 'articles', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nfl/teams')
-        return safeESPN(() => handleNFLTeamsList(env), 'teams', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nfl/players')
-        return safeESPN(() => handleNFLPlayers(url, env), 'players', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nfl/leaders')
-        return safeESPN(() => handleNFLLeaders(env), 'categories', [], env);
+        return proxyApiToPages(request, env);
 
       const nflGameMatch = matchRoute(pathname, '/api/nfl/game/:gameId');
       if (nflGameMatch)
-        return safeESPN(() => handleNFLGame(nflGameMatch.params.gameId, env), 'game', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nfl/game/${encodeURIComponent(nflGameMatch.params.gameId)}`
+        );
 
       const nflPlayerMatch = matchRoute(pathname, '/api/nfl/players/:playerId');
       if (nflPlayerMatch)
-        return safeESPN(() => handleNFLPlayer(nflPlayerMatch.params.playerId, env), 'player', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nfl/players/${encodeURIComponent(nflPlayerMatch.params.playerId)}`
+        );
 
       const nflTeamMatch = matchRoute(pathname, '/api/nfl/teams/:teamId');
       if (nflTeamMatch)
-        return safeESPN(() => handleNFLTeam(nflTeamMatch.params.teamId, env), 'team', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nfl/teams/${encodeURIComponent(nflTeamMatch.params.teamId)}`
+        );
 
-      // ----- NBA data routes (ESPN) -----
+      // ----- NBA data routes (SportsDataIO via Pages Functions) -----
       if (pathname === '/api/nba/scores' || pathname === '/api/nba/scoreboard') {
-        return safeESPN(() => handleNBAScores(url, env), 'games', [], env);
+        return proxyApiToPages(request, env, '/api/nba/scoreboard');
       }
       if (pathname === '/api/nba/standings')
-        return safeESPN(() => handleNBAStandings(env), 'standings', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nba/news')
-        return safeESPN(() => handleNBANews(env), 'articles', [], env);
+        return proxyApiToPages(request, env);
       if (pathname === '/api/nba/teams')
-        return safeESPN(() => handleNBATeamsList(env), 'teams', [], env);
+        return proxyApiToPages(request, env);
 
       const nbaGameMatch = matchRoute(pathname, '/api/nba/game/:gameId');
       if (nbaGameMatch)
-        return safeESPN(() => handleNBAGame(nbaGameMatch.params.gameId, env), 'game', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nba/games/${encodeURIComponent(nbaGameMatch.params.gameId)}`
+        );
 
       const nbaPlayerMatch = matchRoute(pathname, '/api/nba/players/:playerId');
       if (nbaPlayerMatch)
-        return safeESPN(() => handleNBAPlayer(nbaPlayerMatch.params.playerId, env), 'player', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nba/players/${encodeURIComponent(nbaPlayerMatch.params.playerId)}`
+        );
 
       const nbaTeamMatch = matchRoute(pathname, '/api/nba/teams/:teamId');
       if (nbaTeamMatch)
-        return safeESPN(() => handleNBATeamFull(nbaTeamMatch.params.teamId, env), 'team', null, env);
+        return proxyApiToPages(
+          request,
+          env,
+          `/api/nba/teams/${encodeURIComponent(nbaTeamMatch.params.teamId)}`
+        );
 
       // ----- R2 Game assets -----
       const assetPath = matchWildcardRoute(pathname, '/api/games/assets/');

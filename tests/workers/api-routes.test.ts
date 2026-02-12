@@ -136,4 +136,40 @@ describe('Worker SportsDataIO route proxy', () => {
     expect(res.headers.get('X-BSI-API-Proxy')).toBe('pages-functions');
     expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
   });
+
+  it('proxies NFL news to Pages Functions', async () => {
+    mockPagesResponse({ articles: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/nfl/news');
+    await worker.fetch(req, env);
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://test.pages.dev/api/nfl/news',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('rewrites /api/nba/game/:id to /api/nba/games/:id', async () => {
+    mockPagesResponse({ game: {} });
+
+    const req = new Request('https://blazesportsintel.com/api/nba/game/12345');
+    await worker.fetch(req, env);
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://test.pages.dev/api/nba/games/12345',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('proxies NFL leaders to Pages Functions', async () => {
+    mockPagesResponse({ categories: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/nfl/leaders?season=2024');
+    await worker.fetch(req, env);
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://test.pages.dev/api/nfl/leaders?season=2024',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
 });
