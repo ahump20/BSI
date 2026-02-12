@@ -187,7 +187,7 @@ paths:
       summary: Get latest transfer portal entries
       description: |
         Returns the most recent college athlete transfer portal entries and
-        commitments across all sports, with a focus on football and basketball.
+        commitments, with support for football and baseball.
         Includes player info, previous school, and destination if committed.
       responses:
         '200':
