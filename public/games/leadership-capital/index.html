@@ -20,8 +20,8 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Chart.js 4 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Chart.js 4 (self-hosted) -->
+    <script src="./chart.umd.js" defer></script>
 
     <style>
         /* ================================================================
@@ -1435,7 +1435,36 @@
     var mlqChart = null;
     var itBarChart = null;
 
+    // ================================================================
+    // CHART ERROR HANDLING
+    // ================================================================
+    function showChartError() {
+        var chartContainers = [
+            document.getElementById('radarUlrich'),
+            document.getElementById('radarMLQ'),
+            document.getElementById('barItClusters')
+        ];
+
+        for (var i = 0; i < chartContainers.length; i++) {
+            var canvas = chartContainers[i];
+            if (canvas && canvas.parentElement) {
+                var errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'padding: 2rem; text-align: center; color: var(--bsi-text-secondary); background: var(--glass-subtle-bg); border: 1px solid var(--glass-subtle-border); border-radius: 8px;';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: var(--bsi-accent); font-size: 2rem; margin-bottom: 1rem; display: block;"></i>' +
+                    '<strong style="display: block; margin-bottom: 0.5rem; color: var(--bsi-text);">Chart visualization unavailable</strong>' +
+                    '<p style="margin: 0; font-size: 0.875rem;">Chart.js failed to load. Your scores are still calculated and displayed above.</p>';
+                canvas.parentElement.replaceChild(errorDiv, canvas);
+            }
+        }
+    }
+
     function initCharts() {
+        // Runtime guard: Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+            showChartError();
+            return;
+        }
+
         var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
         ulrichChart = new Chart(ulrichCtx, {
             type: 'radar',
