@@ -4,7 +4,7 @@
  * BoxScoreTable — renders batting and pitching box score tables for MLB games.
  */
 
-interface BattingLine {
+export interface BattingLine {
   player: { id: string; name: string; position?: string };
   ab: number;
   r: number;
@@ -15,7 +15,7 @@ interface BattingLine {
   avg?: string;
 }
 
-interface PitchingLine {
+export interface PitchingLine {
   player: { id: string; name: string };
   decision?: string;
   ip: string;
@@ -29,14 +29,14 @@ interface PitchingLine {
   era?: string;
 }
 
-interface TeamInfo {
+export interface TeamInfo {
   name: string;
   abbreviation: string;
   score: number;
   isWinner?: boolean;
 }
 
-interface LinescoreData {
+export interface Linescore {
   innings: Array<{ away: number | null; home: number | null }>;
   totals: {
     away: { runs: number; hits: number; errors: number };
@@ -44,12 +44,14 @@ interface LinescoreData {
   };
 }
 
-interface BoxScoreTableProps {
-  linescore?: LinescoreData;
-  boxscore: {
-    away: { batting: BattingLine[]; pitching: PitchingLine[] };
-    home: { batting: BattingLine[]; pitching: PitchingLine[] };
-  };
+export interface BoxScoreData {
+  away: { batting: BattingLine[]; pitching: PitchingLine[] };
+  home: { batting: BattingLine[]; pitching: PitchingLine[] };
+}
+
+export interface BoxScoreTableProps {
+  linescore?: Linescore;
+  boxscore: BoxScoreData;
   awayTeam: TeamInfo;
   homeTeam: TeamInfo;
   variant?: 'compact' | 'full';
