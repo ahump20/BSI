@@ -386,11 +386,5 @@ export const validateNBARecord = (team) => {
  */
 export const getSportsDataApiKey = (env) => {
   if (!env || typeof env !== 'object') return null;
-  return (
-    env.SPORTS_DATA_IO_API_KEY ||
-    env.SPORTSDATAIO_KEY ||
-    env.SPORTSDATAIO_API_KEY ||
-    env.SPORTSDATA_API_KEY ||
-    null
-  );
+  return env.SPORTS_DATA_IO_API_KEY || null;
 };
