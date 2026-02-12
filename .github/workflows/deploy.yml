@@ -128,7 +128,7 @@ jobs:
     name: Deploy BlazeCraft
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.blazecraft == 'true' || github.event_name == 'pull_request'
+    if: needs.detect-changes.outputs.blazecraft == 'true'
     defaults:
       run:
         working-directory: games/blazecraft
