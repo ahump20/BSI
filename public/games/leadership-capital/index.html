@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intangible Leadership Capital Index | BSI</title>
-    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to 5 validated academic frameworks: Ulrich LCI, ISO 30431, MLQ 5X transformational, TEIQue, and Antonakis CLTs.">
+    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to Ulrich LCI, ISO 30431, and MLQ 5X transformational frameworks.">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Intangible Leadership Capital Index | BSI">
@@ -20,8 +20,8 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Chart.js 4 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Chart.js 4 (self-hosted) -->
+    <script src="/js/chart.umd.min.js" defer></script>
 
     <style>
         /* ================================================================
@@ -488,6 +488,28 @@
             font-style: italic;
         }
 
+        .chart-error {
+            display: none;
+            background: rgba(255, 107, 53, 0.15);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: var(--bsi-text);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .chart-error.active {
+            display: block;
+        }
+
+        .chart-error i {
+            color: var(--bsi-accent);
+            margin-right: 0.5rem;
+        }
+
         /* ---- Methodology Panel ---- */
         .methodology {
             background: var(--glass-subtle-bg);
@@ -838,6 +860,10 @@
     <!-- ============================================================
          RADAR CHARTS — Ulrich 10-Factor + MLQ 5-Factor
          ============================================================ -->
+    <div id="chart-error-message" class="chart-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Chart visualization unavailable.</strong> The scoring calculations are still working, but charts cannot be displayed. Please refresh the page or check your connection.
+    </div>
     <div class="grid-2">
         <div class="chart-card">
             <div class="chart-header">
@@ -875,11 +901,11 @@
          METHODOLOGY — Expandable Panel
          ============================================================ -->
     <div class="methodology">
-        <button class="methodology-toggle" id="methodToggle" aria-expanded="false" aria-controls="methodContent">
+        <button class="methodology-toggle" id="methodToggle" aria-expanded="false">
             <span><i class="fas fa-book-open" style="color:var(--bsi-primary); margin-right:8px;"></i> Methodology &amp; Academic Validation</span>
             <i class="fas fa-chevron-down chevron"></i>
         </button>
-        <div class="methodology-content" id="methodContent" aria-hidden="true">
+        <div class="methodology-content" id="methodContent">
 
             <h5 class="method-heading">Conceptual Framework</h5>
             <p>This prototype maps 23 intangible leadership metrics to five validated academic and industry frameworks. The mapping is <strong>conceptual</strong> &#8212; it bridges novel metrics to established constructs based on shared theoretical domains, not direct psychometric equivalence. The goal is to demonstrate that these intangible qualities have legitimate measurement foundations, not to claim factor-analytic identity with existing instruments.</p>
@@ -1436,8 +1462,19 @@
     var itBarChart = null;
 
     function initCharts() {
-        var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
-        ulrichChart = new Chart(ulrichCtx, {
+        // Runtime guard: Check if Chart.js is available
+        if (typeof window.Chart === 'undefined') {
+            console.error('Chart.js library failed to load. Charts will not be displayed.');
+            var errorEl = document.getElementById('chart-error-message');
+            if (errorEl) {
+                errorEl.classList.add('active');
+            }
+            return; // Exit gracefully - scoring will still work
+        }
+
+        try {
+            var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
+            ulrichChart = new Chart(ulrichCtx, {
             type: 'radar',
             data: {
                 labels: [
@@ -1539,6 +1576,14 @@
                 }
             }
         });
+        } catch (error) {
+            console.error('Error initializing charts:', error);
+            var errorEl = document.getElementById('chart-error-message');
+            if (errorEl) {
+                errorEl.classList.add('active');
+            }
+            // Charts failed but scoring still works
+        }
     }
 
     function updateCharts(ulrichFactors, mlqFactors) {
