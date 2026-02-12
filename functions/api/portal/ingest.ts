@@ -259,9 +259,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       await db.batch(changelogBatch);
     }
 
-    // Batch invalidate cache keys in parallel
+    // Batch invalidate cache keys in parallel (use allSettled to prevent failures from breaking ingest)
     if (invalidatedCacheKeys.size > 0) {
-      await Promise.all(Array.from(invalidatedCacheKeys).map((key) => env.KV.delete(key)));
+      await Promise.allSettled(Array.from(invalidatedCacheKeys).map((key) => env.KV.delete(key)));
     }
 
     // Update KV freshness marker
