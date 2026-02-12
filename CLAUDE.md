@@ -1,12 +1,21 @@
-# CLAUDE.md — Blaze Sports Intel
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# Blaze Sports Intel
 
 ## The Work
 
-BSI covers what mainstream sports media won't. College baseball doesn't have ESPN box scores — BSI does. That gap is the product. Equal coverage across MLB, NFL, NCAA football, NBA, and college basketball, built by one person on Cloudflare infrastructure.
+BSI covers what mainstream sports media overlook: the athletes, programs, and markets outside the East and West Coast spotlight. The gap between interest in college and amateur sports and access to meaningful analytics is the product — old-school scouting instinct fused with new-school sabermetrics, powered by AI tooling that makes the depth accessible. Major platforms paint a black-and-white picture — LeBron vs. MJ, Yankees or Dodgers, Cowboys or nothing — and BSI exists to leave that binary behind. The real game lives between the poles: what actual fans, players, and professionals care about but can't find covered at depth. BSI's coverage spans MLB, NFL, NBA, NCAA football, NCAA baseball, and NCAA basketball, built to go where prestige platforms won't and match their standard when it gets there.
 
-**Repository:** `github.com/ahump20/BSI`
-**Production:** `blazesportsintel.com`
-**System Health:** `blazecraft.app`
+**Source Code:**
+- `github.com/ahump20/BSI` — Primary repo (site + workers)
+- `github.com/Blaze-sports-Intel/blazecraft.git` — BlazeCraft system health UI
+
+**Production (deployed):**
+- `blazesportsintel.com` — Cloudflare Pages (static export) + Workers (backend logic)
+- `blazecraft.app` — Cloudflare Pages (Warcraft 3: Frozen Throne–style system health dashboard)
+
 **Owner:** Austin Humphrey — `Austin@BlazeSportsIntel.com`
 
 ## How to Think About This Codebase
@@ -23,7 +32,9 @@ The best coaching philosophy for this work comes from Augie Garrido: you control
 
 ## Architecture
 
-Next.js 16 static export on Cloudflare Pages. All backend logic runs in Cloudflare Workers. No AWS, no Vercel, no external databases. This constraint is intentional — it forces simplicity and keeps the entire platform debuggable by one person.
+GitHub holds the source. Cloudflare runs the product. The repos (`ahump20/BSI` and `Blaze-sports-Intel/blazecraft`) are where code is written and versioned. Deployment targets are Cloudflare Pages (static frontends) and Cloudflare Workers (all backend logic, APIs, data pipelines). No AWS, no Vercel, no external databases. This constraint is intentional — it forces simplicity and keeps the entire platform debuggable by one person.
+
+To verify what's actually deployed, use `wrangler` or the Cloudflare MCP tools. The repo is the map; Cloudflare is the territory.
 
 ### Stack
 
@@ -36,6 +47,18 @@ Next.js 16 static export on Cloudflare Pages. All backend logic runs in Cloudfla
 ### Static Export Constraint
 
 Every dynamic route needs `generateStaticParams()`. No SSR. Data reaches the UI through Workers or client-side fetches. Components using hooks or browser APIs need `'use client'`.
+
+### Data Flow
+
+```
+External APIs (Highlightly, SportsDataIO, ESPN)
+  → Cloudflare Workers (fetch, transform, cache)
+  → KV / D1 / R2 (storage layer)
+  → Pages Functions (functions/api/*) or client-side fetches
+  → Static Next.js UI
+```
+
+Workers are the only code that talks to external APIs. The static site never calls third-party APIs directly — it hits Pages Functions or Workers, which return cached/transformed data with `meta` attribution.
 
 ### Path Alias
 
@@ -50,11 +73,10 @@ All data is fetched dynamically. Never hardcode teams, players, scores, standing
 | Source | Base URL | Auth | Role |
 |--------|----------|------|------|
 | **Highlightly Pro** | `api.highlightly.net` | `x-api-key` | Primary pipeline — use first for all baseball and football |
-| ESPN Site API | `site.api.espn.com` | None | College baseball/football fallback |
-| MLB StatsAPI | `statsapi.mlb.com` | None | MLB |
-| SportsDataIO | `api.sportsdata.io` | `Ocp-Apim-Subscription-Key` | NFL, NBA |
+| **SportsDataIO** | `api.sportsdata.io` | `Ocp-Apim-Subscription-Key` | NFL, NBA, MLB, CFB, CBB, Golf, GRid |
+| ESPN Site API | `site.api.espn.com` | None | College baseball only (BSI flagship) |
 
-Highlightly Pro (via RapidAPI) is canonical. Wire new integrations there before falling back to other sources.
+Highlightly Pro (via RapidAPI) is canonical. Wire new integrations there before falling back to other sources. SportsDataIO covers all major/college sports via `lib/adapters/sportsdataio.ts`. ESPN is retained only for college baseball where SportsDataIO lacks coverage.
 
 ### Every API Response Includes
 
@@ -157,17 +179,27 @@ docs/                   # Infrastructure and operations docs
 ## Commands
 
 ```bash
-npm run dev              # Dev server
-npm run build            # Static export
+npm run dev              # Next.js dev server
+npm run dev:worker       # Worker dev server (wrangler)
+npm run dev:hybrid       # Both in parallel
+npm run build            # Static export to out/
 npm run test             # Vitest (watch)
-npm run test:all         # Full test suite
-npm run test:routes      # Playwright routes
-npm run test:a11y        # Playwright accessibility
+npm run test:all         # Full test suite (API + integration + validation)
+npm run test:routes      # Playwright route tests
+npm run test:a11y        # Playwright accessibility tests
 npm run typecheck        # tsc --noEmit
 npm run lint             # ESLint
+
+# Single test file
+vitest run tests/api/some-file.test.ts
+
+# Deploy
 npm run deploy:production  # Cloudflare Pages (main)
-npm run deploy:worker    # Worker deploy
-npm run deploy:hybrid    # Both
+npm run deploy:worker      # Default worker
+npm run deploy:hybrid      # Both
+
+# Deploy a specific worker
+wrangler deploy --config workers/bsi-news-ticker/wrangler.toml
 ```
 
 ## Conventions
@@ -212,7 +244,7 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 - Repo lives on iCloud Drive — `git status`, pre-commit hooks, and ripgrep searches may hang. Use `--no-verify` on commits if hooks stall. If git hangs, check for stale `.git/index.lock` and remove it.
 - `next.config.ts` skips TS/ESLint errors during build — CI handles them separately
 - `tsconfig.json` excludes `workers/**/*` — workers have their own configs
-- Legacy paths excluded: `lib/api/v1/**/*`, `lib/adapters/*`
+- Legacy paths excluded: `lib/api/v1/**/*` — but `lib/adapters/sportsdataio.ts` is active (referenced by Sources table)
 - ESPN dates labeled UTC are actually ET — always verify timezone
 - `external/` projects have their own CLAUDE.md and build systems
 - Husky handles git hooks via `prepare` script
