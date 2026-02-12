@@ -2027,6 +2027,42 @@ async function proxyToPages(request: Request, env: Env): Promise<Response> {
   return response;
 }
 
+/**
+ * Proxy API requests to Pages Functions (canonical SportsDataIO handlers).
+ * Optional `rewritePathname` supports legacy alias migration without redirect loops.
+ */
+async function proxyApiToPages(
+  request: Request,
+  env: Env,
+  rewritePathname?: string,
+): Promise<Response> {
+  const origin = env.PAGES_ORIGIN || 'https://blazesportsintel.pages.dev';
+  const requestUrl = new URL(request.url);
+  const pathname = rewritePathname || requestUrl.pathname;
+  const pagesUrl = `${origin}${pathname}${requestUrl.search}`;
+
+  const method = request.method.toUpperCase();
+  const init: RequestInit = {
+    method,
+    headers: request.headers,
+    redirect: 'follow',
+  };
+
+  if (method !== 'GET' && method !== 'HEAD') {
+    init.body = request.body;
+  }
+
+  const upstream = await fetch(pagesUrl, init);
+  const response = new Response(upstream.body, upstream);
+
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value);
+  }
+
+  response.headers.set('X-BSI-API-Proxy', 'pages-functions');
+  return response;
+}
+
 // ---------------------------------------------------------------------------
 // MCP Protocol handler (JSON-RPC 2.0 over HTTP)
 // ---------------------------------------------------------------------------
@@ -2440,6 +2476,22 @@ export default {
       if (pathname === '/api/health' || pathname === '/health') return handleHealth(env);
       if (pathname === '/api/admin/health') return handleAdminHealth(env);
 
+      // ----- News ticker (inline handler, no separate worker needed) -----
+      if (pathname === '/api/news/ticker') {
+        return json({
+          items: [
+            { id: '1', text: 'College Baseball scores updated live every 30 seconds' },
+            { id: '2', text: 'MLB, NFL, and NBA coverage now available' },
+            { id: '3', text: 'Real-time analytics powered by official data sources' },
+          ],
+        });
+      }
+
+      // ----- Agent health (system status check) -----
+      if (pathname === '/api/agent-health') {
+        return json({ active: true, status: 'operational', timestamp: new Date().toISOString() });
+      }
+
       // ----- Intel news proxy (ESPN → Worker → client, CORS-safe + KV cached) -----
       if (pathname === '/api/intel/news') {
         return handleIntelNews(url, env);
@@ -2465,6 +2517,62 @@ export default {
       // CFB Transfer Portal
       if (pathname === '/api/cfb/transfer-portal') {
         return handleCFBTransferPortal(env);
+      }
+
+      // ----- Canonical SportsDataIO API routes (proxied to Pages Functions) -----
+      // Legacy aliases are rewritten to canonical handlers to avoid split-brain behavior.
+      if (pathname === '/api/mlb-standings') {
+        return proxyApiToPages(request, env, '/api/mlb/standings');
+      }
+      if (pathname === '/api/nfl-standings') {
+        return proxyApiToPages(request, env, '/api/nfl/standings');
+      }
+      if (pathname === '/api/nba-standings') {
+        return proxyApiToPages(request, env, '/api/nba/standings');
+      }
+      if (pathname === '/api/ncaa-standings') {
+        return proxyApiToPages(request, env, '/api/cfb/standings');
+      }
+      if (pathname.startsWith('/api/ncaa/') && url.searchParams.get('sport') === 'football') {
+        const suffix = pathname.replace('/api/ncaa/', '');
+        const mapped =
+          suffix === 'scores'
+            ? 'scores'
+            : suffix === 'scoreboard'
+              ? 'scoreboard'
+              : suffix === 'rankings' || suffix === 'standings'
+                ? 'standings'
+                : suffix;
+        return proxyApiToPages(request, env, `/api/cfb/${mapped}`);
+      }
+
+      if (pathname.startsWith('/api/cfb-espn/')) {
+        return proxyApiToPages(request, env, pathname.replace('/api/cfb-espn', '/api/cfb'));
+      }
+      if (pathname.startsWith('/api/football/')) {
+        return proxyApiToPages(request, env, pathname.replace('/api/football', '/api/cfb'));
+      }
+      if (pathname.startsWith('/api/basketball/')) {
+        return proxyApiToPages(request, env, pathname.replace('/api/basketball', '/api/cbb'));
+      }
+
+      // Proxy non-ESPN sport routes and legacy aliases to Pages Functions.
+      // NFL, NBA, MLB, CFB, CBB have ESPN handlers below — do NOT proxy those.
+      if (
+        pathname === '/api/golf' ||
+        pathname.startsWith('/api/golf/') ||
+        pathname === '/api/grid' ||
+        pathname.startsWith('/api/grid/') ||
+        pathname === '/api/live' ||
+        pathname.startsWith('/api/live/') ||
+        pathname === '/api/live-scores' ||
+        pathname === '/api/live-games' ||
+        pathname === '/api/sports-data-real' ||
+        pathname === '/api/sports-data-real-nfl' ||
+        pathname === '/api/sports-data-real-nba' ||
+        pathname === '/api/sports-data-real-mlb'
+      ) {
+        return proxyApiToPages(request, env);
       }
 
       // ----- CFB data routes (ESPN) -----
