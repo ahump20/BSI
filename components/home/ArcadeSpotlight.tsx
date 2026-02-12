@@ -73,7 +73,7 @@ export function ArcadeSpotlight() {
   const topEntries = leaderboard.filter((e) => e.game_id === featured.id).slice(0, 3);
 
   return (
-    <div className="glass-card-hover p-6 lg:p-8">
+    <div className="glass-default rounded-2xl p-6 lg:p-8 hover:shadow-glow-sm transition-shadow duration-300">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Featured game */}
         <div className="lg:w-2/5 flex flex-col gap-4">
@@ -99,9 +99,9 @@ export function ArcadeSpotlight() {
             </div>
           </div>
 
-          <a href={featured.url} className="btn-primary px-6 py-3 text-sm rounded-lg mt-2 w-fit">
+          <Link href={featured.url} className="btn-primary px-6 py-3 text-sm rounded-lg mt-2 w-fit">
             PLAY NOW
-          </a>
+          </Link>
         </div>
 
         {/* Leaderboard preview */}

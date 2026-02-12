@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono, Oswald } from 'next/font/google';
+import { Inter, JetBrains_Mono, Oswald, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
@@ -30,6 +30,12 @@ const oswald = Oswald({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
   display: 'swap',
 });
 
@@ -121,7 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
     >
       <head>
         <script

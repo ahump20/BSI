@@ -1,4 +1,9 @@
+export { HeroSection } from './HeroSection';
 export { HomeLiveScores } from './HomeLiveScores';
 export { SportHubCards } from './SportHubCards';
 export { TrendingIntelFeed } from './TrendingIntelFeed';
 export { ArcadeSpotlight } from './ArcadeSpotlight';
+export { StatsBand } from './StatsBand';
+export { OriginStory } from './OriginStory';
+export { CovenantValues } from './CovenantValues';
+export { CtaSection } from './CtaSection';

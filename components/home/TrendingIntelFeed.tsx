@@ -95,7 +95,7 @@ export function TrendingIntelFeed() {
   }, []);
 
   return (
-    <div className="glass-card-hover p-5 h-full flex flex-col">
+    <div className="glass-default rounded-2xl p-6 h-full flex flex-col hover:shadow-glow-sm transition-shadow duration-300">
       <h3 className="font-display text-lg text-white uppercase tracking-wide mb-4">
         Trending Intel
       </h3>

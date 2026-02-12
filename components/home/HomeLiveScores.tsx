@@ -21,21 +21,32 @@ export function HomeLiveScores() {
   const [activeSport, setActiveSport] = useState<Sport>('ncaa');
 
   return (
-    <div className="w-full">
-      {/* Sport Tabs */}
+    <div className="glass-elevated rounded-2xl p-6 md:p-8 relative overflow-hidden">
+      {/* Gradient top accent border */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(90deg, transparent, #BF5700, #FF6B35, #FDB913, transparent)' }}
+      />
+
+      {/* Sport Tabs — Raycast pill style */}
       <div className="flex flex-wrap gap-2 mb-6">
         {sports.map((sport) => (
           <button
             key={sport.id}
             onClick={() => setActiveSport(sport.id)}
             className={`
-              flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
+              flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200
               ${
                 activeSport === sport.id
-                  ? 'bg-primary text-white'
-                  : 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white'
+                  ? 'text-white shadow-glow-sm'
+                  : 'glass-subtle text-white/60 hover:text-white hover:bg-white/10'
               }
             `}
+            style={
+              activeSport === sport.id
+                ? { background: 'linear-gradient(135deg, #BF5700, #FF6B35)' }
+                : undefined
+            }
             aria-pressed={activeSport === sport.id}
           >
             <span>{sport.icon}</span>

@@ -105,12 +105,7 @@ function getEndpoint(sport: string): string {
   return `${API_BASE}${sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`}`;
 }
 
-// TODO (Austin): This is where you decide how to display the "next matchup"
-// when there are no live games. Options to consider:
-// - Show the next scheduled game's teams + start time
-// - Show "No games today" in off-season
-// - Show last final score as a fallback
-// The function signature and data are ready — just fill in the display logic.
+/** Returns "AWAY vs HOME" for the next upcoming (non-live, non-final) game. */
 function getNextMatchup(games: GameScore[]): string | null {
   const upcoming = games.find((g) => !g.isLive && !g.isFinal);
   if (!upcoming) return null;
@@ -168,14 +163,19 @@ export function SportHubCards() {
   }, [fetchAll]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {hubs.map((hub) => {
         const liveCount = hub.games.filter((g) => g.isLive).length;
         const nextMatchup = getNextMatchup(hub.games);
+        const isFlag = hub.key === 'ncaa'; // Flagship gets wider card
 
         return (
-          <Link key={hub.key} href={hub.href} className="group">
-            <div className="glass-card-hover p-5 h-full flex flex-col gap-3">
+          <Link
+            key={hub.key}
+            href={hub.href}
+            className={`group ${isFlag ? 'sm:col-span-2 lg:col-span-2' : ''}`}
+          >
+            <div className="glass-default rounded-2xl p-6 h-full flex flex-col gap-3 hover:shadow-glow-sm hover:border-[rgba(191,87,0,0.25)] transition-all duration-300 hover:scale-[1.02]">
               {/* Icon + name */}
               <div className="flex items-center gap-3">
                 <div
@@ -184,9 +184,16 @@ export function SportHubCards() {
                 >
                   <SportIcon sport={hub.key} className="w-6 h-6" />
                 </div>
-                <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
-                  {hub.name}
-                </h3>
+                <div>
+                  <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">
+                    {hub.name}
+                  </h3>
+                  {isFlag && (
+                    <span className="text-[10px] uppercase tracking-widest text-[#BF5700]/70 font-medium">
+                      Flagship
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Status */}
@@ -229,7 +236,7 @@ export function SportHubCards() {
       })}
 
       {/* CFB — Coming Soon */}
-      <div className="glass-card-hover p-5 h-full flex flex-col gap-3 opacity-60">
+      <div className="glass-default rounded-2xl p-6 h-full flex flex-col gap-3 opacity-50">
         <div className="flex items-center gap-3">
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center"
