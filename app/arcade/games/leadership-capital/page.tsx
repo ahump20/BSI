@@ -49,6 +49,7 @@ export default function LeadershipCapitalPage() {
             className="w-full h-full border-0"
             loading="lazy"
             title="Intangible Leadership Capital Index"
+            allow="autoplay"
           />
         </div>
         <div className="mt-6 flex flex-wrap gap-3">

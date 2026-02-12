@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Intangible Leadership Capital Index | BSI</title>
-    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to Ulrich LCI, ISO 30431, and MLQ 5X transformational frameworks.">
+    <meta name="description" content="Quantify the unquantifiable — 23 intangible leadership metrics mapped to 5 validated academic frameworks: Ulrich LCI, ISO 30431, MLQ 5X, TEIQue, and Antonakis CLTs.">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Intangible Leadership Capital Index | BSI">
@@ -875,11 +875,11 @@
          METHODOLOGY — Expandable Panel
          ============================================================ -->
     <div class="methodology">
-        <button class="methodology-toggle" id="methodToggle" aria-expanded="false">
+        <button class="methodology-toggle" id="methodToggle" aria-expanded="false" aria-controls="methodContent">
             <span><i class="fas fa-book-open" style="color:var(--bsi-primary); margin-right:8px;"></i> Methodology &amp; Academic Validation</span>
             <i class="fas fa-chevron-down chevron"></i>
         </button>
-        <div class="methodology-content" id="methodContent">
+        <div class="methodology-content" id="methodContent" aria-hidden="true">
 
             <h5 class="method-heading">Conceptual Framework</h5>
             <p>This prototype maps 23 intangible leadership metrics to five validated academic and industry frameworks. The mapping is <strong>conceptual</strong> &#8212; it bridges novel metrics to established constructs based on shared theoretical domains, not direct psychometric equivalence. The goal is to demonstrate that these intangible qualities have legitimate measurement foundations, not to claim factor-analytic identity with existing instruments.</p>
@@ -1436,6 +1436,17 @@
     var itBarChart = null;
 
     function initCharts() {
+        // Guard against missing Chart.js CDN
+        if (typeof Chart === 'undefined') {
+            var chartContainers = document.querySelectorAll('#radarUlrich, #radarMLQ, #barItClusters');
+            for (var i = 0; i < chartContainers.length; i++) {
+                var canvas = chartContainers[i];
+                var parent = canvas.parentElement;
+                parent.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:300px;color:var(--bsi-accent);font-family:var(--font-body);text-align:center;padding:2rem;"><div><i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:1rem;"></i><div>Chart.js failed to load. Please check your internet connection and refresh the page.</div></div></div>';
+            }
+            return;
+        }
+
         var ulrichCtx = document.getElementById('radarUlrich').getContext('2d');
         ulrichChart = new Chart(ulrichCtx, {
             type: 'radar',
@@ -1635,6 +1646,7 @@
         toggle.addEventListener('click', function () {
             var isOpen = content.classList.toggle('open');
             toggle.setAttribute('aria-expanded', String(isOpen));
+            content.setAttribute('aria-hidden', String(!isOpen));
         });
     }
 
