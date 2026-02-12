@@ -97,10 +97,8 @@ jobs:
       - name: Build project
         run: pnpm build
 
-      - name: Copy Functions and lib to output
-        run: |
-          cp -r functions out/functions
-          cp -r lib out/lib
+      - name: Copy lib to output
+        run: cp -r lib out/lib
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
