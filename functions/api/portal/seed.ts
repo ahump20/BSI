@@ -450,9 +450,9 @@ function generateChangelog(
  * Maintains constant time even for null/undefined and length mismatches
  */
 function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
-  // Use dummy values for null/undefined to maintain constant time
-  const strA = a || '';
-  const strB = b || '';
+  // Use nullish coalescing to only replace null/undefined, not empty strings
+  const strA = a ?? '';
+  const strB = b ?? '';
   
   // Compare up to the longer length to avoid early returns
   const maxLen = Math.max(strA.length, strB.length);
@@ -464,8 +464,8 @@ function constantTimeCompare(a: string | null | undefined, b: string | null | un
     result |= charA ^ charB;
   }
   
-  // Also check that both strings were non-null/non-empty
-  return result === 0 && !!a && !!b;
+  // Use nullish checks to avoid treating empty strings as invalid
+  return result === 0 && a != null && b != null;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -486,8 +486,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const adminSecret = request.headers.get('X-Admin-Secret');
   
   // Return generic 401 to avoid leaking configuration state
-  // Use constant-time comparison to prevent timing attacks
-  if (!adminSecret || !env.ADMIN_SECRET || !constantTimeCompare(adminSecret, env.ADMIN_SECRET)) {
+  // Use constant-time comparison for all cases to prevent timing attacks
+  if (!constantTimeCompare(adminSecret, env.ADMIN_SECRET)) {
     return new Response(
       JSON.stringify({
         error: 'Unauthorized',
