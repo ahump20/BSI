@@ -233,6 +233,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     return new Response(response, { headers });
   } catch (error) {
+    console.error('Portal player API error:', error);
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers,
