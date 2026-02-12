@@ -10,7 +10,7 @@
     "build:functions": "tsc -p tsconfig.functions.json && npm run copy:lib",
     "copy:lib": "cp -r lib dist/",
     "copy:web-vitals": "cp node_modules/web-vitals/dist/web-vitals.attribution.js public/js/web-vitals.min.js",
-    "copy:functions": "mkdir -p out/functions && rsync -a functions/ out/functions/ || true",
+    "copy:functions": "rm -rf out/functions && cp -R functions out/functions",
     "build": "next build && npm run copy:functions",
     "build:vite": "npm run copy:web-vitals && vite build && npm run build:functions",
     "preview": "vite preview",

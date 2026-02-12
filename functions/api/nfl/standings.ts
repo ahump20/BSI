@@ -9,7 +9,6 @@
  * Data Source: SportsDataIO NFL API
  */
 
-import { createSportsDataIOAdapter } from '../../../lib/adapters/sportsdataio';
 import { corsHeaders, getSportsDataApiKey } from '../_utils';
 
 interface Env {
@@ -20,8 +19,19 @@ interface Env {
   KV: KVNamespace;
 }
 
+async function fetchNFLStandings(apiKey: string, season: number) {
+  const url = `https://api.sportsdata.io/v3/nfl/scores/json/Standings/${season}`;
+  const res = await fetch(url, {
+    headers: { 'Ocp-Apim-Subscription-Key': apiKey },
+  });
+  if (!res.ok) {
+    return { success: false, data: null, error: `SportsDataIO ${res.status}`, source: { provider: 'SportsDataIO', endpoint: url, cacheHit: false, fetchedAt: new Date().toISOString() } };
+  }
+  const data = await res.json();
+  return { success: true, data, source: { provider: 'SportsDataIO', endpoint: url, cacheHit: false, fetchedAt: new Date().toISOString() } };
+}
+
 export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
-  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -45,14 +55,12 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-    const adapter = createSportsDataIOAdapter(apiKey);
 
-    // Fetch standings from SportsDataIO — fall back to previous year if current season is empty
-    let response = await adapter.getNFLStandings(season);
     let effectiveSeason = season || new Date().getFullYear();
+    let response = await fetchNFLStandings(apiKey, effectiveSeason);
     if (!season && response.success && Array.isArray(response.data) && response.data.length === 0) {
       effectiveSeason = new Date().getFullYear() - 1;
-      response = await adapter.getNFLStandings(effectiveSeason);
+      response = await fetchNFLStandings(apiKey, effectiveSeason);
     }
 
     if (!response.success || !response.data) {
@@ -71,8 +79,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
 
     const raw = response.data;
 
-    // Flat array the UI consumes directly (Team interface)
-    const teams = raw.map((t: any) => ({
+    const teams = (raw as any[]).map((t: any) => ({
       teamName: t.City ? `${t.City} ${t.Name}` : t.Name,
       wins: t.Wins,
       losses: t.Losses,
@@ -97,7 +104,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
           dataSource: 'SportsDataIO',
           lastUpdated: new Date().toISOString(),
           timezone: 'America/Chicago',
-          cached: response.source.cacheHit,
+          cached: false,
         },
       }),
       {
@@ -105,7 +112,7 @@ export const onRequest: PagesFunction<Env> = async ({ request, env }) => {
         headers: {
           ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=300', // 5 minutes
+          'Cache-Control': 'public, max-age=300',
         },
       }
     );

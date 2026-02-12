@@ -51,6 +51,15 @@ const GAMES = [
     url: '/games/hotdog-dash/',
     deployed: true,
   },
+  {
+    id: 'leadership-capital',
+    title: 'Leadership Capital Index',
+    description: '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
+    color: '#BF5700',
+    icon: '📊',
+    url: '/games/leadership-capital/',
+    deployed: true,
+  },
 ];
 
 export default function ArcadePage() {
