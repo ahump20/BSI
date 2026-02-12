@@ -4,12 +4,16 @@
  * Populates D1 with realistic transfer portal entries for both sports.
  * POST /api/portal/seed — requires ?confirm=yes to execute.
  * Produces 120+ baseball entries and 120+ football entries.
+ *
+ * Authorization: Requires X-Admin-Secret header matching ADMIN_SECRET environment variable.
+ * Set via: wrangler secret put ADMIN_SECRET
  */
 
 interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
   SPORTS_DATA: R2Bucket;
+  ADMIN_SECRET?: string;
 }
 
 const HEADERS = {
@@ -452,6 +456,34 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       status: 405,
       headers: HEADERS,
     });
+  }
+
+  // Authorization check - require X-Admin-Secret header
+  const adminSecret = request.headers.get('X-Admin-Secret');
+  if (!adminSecret || !env.ADMIN_SECRET) {
+    return new Response(
+      JSON.stringify({
+        error: 'Unauthorized',
+        message: 'X-Admin-Secret header required. Set ADMIN_SECRET environment variable.',
+      }),
+      {
+        status: 401,
+        headers: HEADERS,
+      }
+    );
+  }
+
+  if (adminSecret !== env.ADMIN_SECRET) {
+    return new Response(
+      JSON.stringify({
+        error: 'Forbidden',
+        message: 'Invalid admin secret',
+      }),
+      {
+        status: 403,
+        headers: HEADERS,
+      }
+    );
   }
 
   const url = new URL(request.url);
