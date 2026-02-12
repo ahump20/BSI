@@ -92,6 +92,7 @@ export default function CollegeBaseballPage() {
 
   const fetchRankings = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch('/api/ncaa/rankings?sport=baseball');
       if (!res.ok) throw new Error('Failed to fetch rankings');
@@ -99,7 +100,7 @@ export default function CollegeBaseballPage() {
       if (data.rankings?.length) setRankings(data.rankings);
       setLastUpdated(data.meta?.lastUpdated || '');
     } catch (err) {
-      console.error('[BSI:college-baseball] Rankings fetch failed:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }
