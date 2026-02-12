@@ -46,6 +46,7 @@ function formatChicagoTimestamp(date: Date = new Date()): string {
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
+    hourCycle: 'h23',
     timeZoneName: 'shortOffset',
   });
   const parts = formatter.formatToParts(date);
