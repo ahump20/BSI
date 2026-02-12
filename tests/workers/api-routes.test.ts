@@ -135,6 +135,7 @@ describe('Worker SportsDataIO route proxy', () => {
     );
     expect(res.headers.get('X-BSI-API-Proxy')).toBe('pages-functions');
     expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
+    expect(res.headers.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
   });
 
   it('proxies NFL news to Pages Functions', async () => {
@@ -171,5 +172,31 @@ describe('Worker SportsDataIO route proxy', () => {
       'https://test.pages.dev/api/nfl/leaders?season=2024',
       expect.objectContaining({ method: 'GET' }),
     );
+  });
+
+  it('allows camera/microphone only for /api/v1/vision/baselines', async () => {
+    mockPagesResponse({ baselines: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/v1/vision/baselines');
+    const res = await worker.fetch(req, env);
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://test.pages.dev/api/v1/vision/baselines',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(res.headers.get('Permissions-Policy')).toBe('camera=(self), microphone=(self), geolocation=()');
+  });
+
+  it('keeps restrictive permissions policy for near-miss vision routes', async () => {
+    mockPagesResponse({ ok: true });
+
+    const req = new Request('https://blazesportsintel.com/api/v1/vision/other');
+    const res = await worker.fetch(req, env);
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://test.pages.dev/api/v1/vision/other',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(res.headers.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
   });
 });

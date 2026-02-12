@@ -104,19 +104,49 @@ function activeCorsHeaders(): Record<string, string> {
   return (_activeRequest && _activeEnv) ? corsHeaders(_activeRequest, _activeEnv) : {};
 }
 
-/** Standard security headers applied to all API responses */
-const SECURITY_HEADERS: Record<string, string> = {
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
-};
+const DEFAULT_PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=()';
+const PRESENCE_COACH_PERMISSIONS_POLICY = 'camera=(self), microphone=(self), geolocation=()';
+
+// Exact-route allowlist for presence coach endpoints that need same-origin media access.
+const PRESENCE_COACH_PERMISSIONS_ALLOWLIST = new Set([
+  '/api/v1/vision/baselines',
+]);
+
+function isPresenceCoachAllowedPath(pathname: string): boolean {
+  return PRESENCE_COACH_PERMISSIONS_ALLOWLIST.has(pathname);
+}
+
+function buildSecurityHeaders(request?: Request): Record<string, string> {
+  let pathname = '';
+  if (request) {
+    try {
+      pathname = new URL(request.url).pathname;
+    } catch {
+      pathname = '';
+    }
+  }
+
+  const permissionsPolicy = isPresenceCoachAllowedPath(pathname)
+    ? PRESENCE_COACH_PERMISSIONS_POLICY
+    : DEFAULT_PERMISSIONS_POLICY;
+
+  return {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': permissionsPolicy,
+    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+  };
+}
+
+function activeSecurityHeaders(): Record<string, string> {
+  return buildSecurityHeaders(_activeRequest ?? undefined);
+}
 
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...SECURITY_HEADERS, ...activeCorsHeaders(), ...extra },
+    headers: { 'Content-Type': 'application/json', ...activeSecurityHeaders(), ...activeCorsHeaders(), ...extra },
   });
 }
 
@@ -2018,8 +2048,8 @@ async function proxyToPages(request: Request, env: Env): Promise<Response> {
 
   const response = new Response(pagesResponse.body, pagesResponse);
 
-  // Apply security headers to all proxied responses
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+  // Apply request-aware security headers to all proxied responses
+  for (const [key, value] of Object.entries(buildSecurityHeaders(request))) {
     response.headers.set(key, value);
   }
 
@@ -2061,7 +2091,7 @@ async function proxyApiToPages(
   const upstream = await fetch(pagesUrl, init);
   const response = new Response(upstream.body, upstream);
 
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+  for (const [key, value] of Object.entries(buildSecurityHeaders(request))) {
     response.headers.set(key, value);
   }
 
@@ -2211,7 +2241,7 @@ function mcpJsonRpc(id: unknown, result: unknown): Response {
     {
       headers: {
         'Content-Type': 'application/json',
-        ...SECURITY_HEADERS,
+        ...activeSecurityHeaders(),
         ...mcpCorsHeaders(),
       },
     }
@@ -2225,7 +2255,7 @@ function mcpError(id: unknown, code: number, message: string): Response {
       status: 200, // JSON-RPC errors still use 200
       headers: {
         'Content-Type': 'application/json',
-        ...SECURITY_HEADERS,
+        ...activeSecurityHeaders(),
         ...mcpCorsHeaders(),
       },
     }
