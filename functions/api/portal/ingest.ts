@@ -7,15 +7,17 @@
  *
  * POST /api/portal/ingest
  * Body: { entries: PortalIngestEntry[] }
+ * Header: X-Ingest-Secret (required for authentication)
  *
  * Called by scheduled workers or webhook handlers.
- * Not public-facing — should be gated by auth header in production.
+ * Protected by shared secret authentication.
  */
 
 interface Env {
   GAME_DB: D1Database;
   KV: KVNamespace;
   SPORTS_DATA: R2Bucket;
+  INGEST_SECRET: string;
 }
 
 const HEADERS = {
@@ -88,6 +90,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   }
 
+  // Authentication check
+  const authHeader = request.headers.get('X-Ingest-Secret');
+  if (!authHeader || authHeader !== env.INGEST_SECRET) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: HEADERS,
+    });
+  }
+
   try {
     const body = (await request.json()) as { entries?: IngestEntry[] };
     if (!body.entries || !Array.isArray(body.entries) || body.entries.length === 0) {
@@ -113,6 +124,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     let inserted = 0;
     let updated = 0;
+    // eslint-disable-next-line no-undef
     const changelogBatch: D1PreparedStatement[] = [];
 
     const changeStmt = db.prepare(`

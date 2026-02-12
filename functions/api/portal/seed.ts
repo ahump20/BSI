@@ -21,6 +21,30 @@ const HEADERS = {
   'Access-Control-Allow-Origin': '*',
 };
 
+function formatChicagoTimestamp(date: Date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Chicago',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZoneName: 'shortOffset',
+  });
+  const parts = formatter.formatToParts(date);
+  const get = (type: string) => parts.find((part) => part.type === type)?.value ?? '';
+  const offsetToken = get('timeZoneName');
+  const offsetMatch = /GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(offsetToken);
+  const sign = offsetMatch?.[1] ?? '+';
+  const hours = offsetMatch?.[2]?.padStart(2, '0') ?? '00';
+  const minutes = offsetMatch?.[3]?.padStart(2, '0') ?? '00';
+  const offset = `${sign}${hours}:${minutes}`;
+
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}${offset}`;
+}
+
 // Deterministic player generation pools
 const FIRST_NAMES = [
   'Jake',
@@ -385,9 +409,9 @@ function generateEntries(
       source_confidence: source.confidence,
       verified: rand() > 0.1 ? 1 : 0,
       raw_snapshot_key: null,
-      last_verified_at: new Date().toISOString(),
+      last_verified_at: formatChicagoTimestamp(),
       created_at: portalDate,
-      updated_at: new Date().toISOString(),
+      updated_at: formatChicagoTimestamp(),
     });
   }
 
@@ -615,7 +639,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     // Update KV freshness marker
-    const now = new Date().toISOString();
+    const now = formatChicagoTimestamp();
     await env.KV.put('portal:last_updated', now);
     await env.KV.put('portal:seed_timestamp', now);
 
