@@ -450,7 +450,18 @@ function generateChangelog(
  * Maintains constant time even for null/undefined and length mismatches
  */
 function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
-  // Use nullish coalescing to only replace null/undefined, not empty strings
+  // Reject empty strings explicitly (invalid secrets)
+  if (a === '' || b === '' || a == null || b == null) {
+    // Still perform dummy comparison to maintain constant time
+    const dummy = (a ?? '') + (b ?? '');
+    let _ = 0;
+    for (let i = 0; i < dummy.length; i++) {
+      _ |= dummy.charCodeAt(i);
+    }
+    return false;
+  }
+  
+  // Use nullish coalescing for actual comparison
   const strA = a ?? '';
   const strB = b ?? '';
   
@@ -464,8 +475,7 @@ function constantTimeCompare(a: string | null | undefined, b: string | null | un
     result |= charA ^ charB;
   }
   
-  // Use nullish checks to avoid treating empty strings as invalid
-  return result === 0 && a != null && b != null;
+  return result === 0;
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
