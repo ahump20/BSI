@@ -5,7 +5,18 @@
 // Data Source: SportsDataIO MLB API
 
 import { ok, err, rateLimit, rateLimitError, getSportsDataApiKey } from '../_utils.js';
-import { createSportsDataIOAdapter } from '../../../lib/adapters/sportsdataio.ts';
+
+async function fetchMLBStandings(apiKey, season) {
+  const url = `https://api.sportsdata.io/v3/mlb/scores/json/Standings/${season}`;
+  const res = await fetch(url, {
+    headers: { 'Ocp-Apim-Subscription-Key': apiKey },
+  });
+  if (!res.ok) {
+    return { success: false, data: null, error: `SportsDataIO ${res.status}`, source: { provider: 'SportsDataIO', endpoint: url, cacheHit: false, fetchedAt: new Date().toISOString() } };
+  }
+  const data = await res.json();
+  return { success: true, data, source: { provider: 'SportsDataIO', endpoint: url, cacheHit: false, fetchedAt: new Date().toISOString() } };
+}
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -27,12 +38,12 @@ export async function onRequestGet(context) {
     if (!apiKey) {
       return err(new Error('Missing SPORTS_DATA_IO_API_KEY configuration'), 500);
     }
-    const adapter = createSportsDataIOAdapter(apiKey);
-    let response = await adapter.getMLBStandings(season);
+
     let effectiveSeason = season || new Date().getFullYear();
+    let response = await fetchMLBStandings(apiKey, effectiveSeason);
     if (!season && response.success && Array.isArray(response.data) && response.data.length === 0) {
       effectiveSeason = new Date().getFullYear() - 1;
-      response = await adapter.getMLBStandings(effectiveSeason);
+      response = await fetchMLBStandings(apiKey, effectiveSeason);
     }
 
     if (!response.success || !response.data) {
@@ -59,7 +70,6 @@ export async function onRequestGet(context) {
       last10: t.LastTenGamesWins != null ? `${t.LastTenGamesWins}-${t.LastTenGamesLosses}` : '-',
     }));
 
-    // Filter by league
     if (leagueFilter) {
       standings = standings.filter((t) => {
         if (leagueFilter === 'AL') return t.league === 'AL' || t.league === 'American';
@@ -68,14 +78,12 @@ export async function onRequestGet(context) {
       });
     }
 
-    // Filter by division
     if (divisionFilter) {
       standings = standings.filter(
         (t) => t.division && t.division.includes(divisionFilter.replace('_', ' '))
       );
     }
 
-    // Sort by league, division, wins desc
     standings.sort((a, b) => {
       if (a.league !== b.league) return a.league < b.league ? -1 : 1;
       if (a.division !== b.division) return a.division < b.division ? -1 : 1;
@@ -90,7 +98,7 @@ export async function onRequestGet(context) {
         dataSource: 'SportsDataIO',
         lastUpdated: new Date().toISOString(),
         timezone: 'America/Chicago',
-        cached: response.source.cacheHit,
+        cached: false,
         totalTeams: standings.length,
       },
     });
