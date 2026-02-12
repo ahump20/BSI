@@ -85,6 +85,36 @@ const analyticsTools = [
     href: '#',
   },
   {
+    id: 'statcast',
+    name: 'Statcast Advanced',
+    description:
+      'Exit velocity, launch angle, barrel rate, sprint speed, bat speed, and expected stats from MLB\'s Hawk-Eye tracking system.',
+    icon: '📡',
+    sport: 'MLB',
+    status: 'available',
+    href: '/mlb/statcast',
+  },
+  {
+    id: 'biomechanics',
+    name: 'Pitcher Biomechanics',
+    description:
+      'Arm slot, hip-shoulder separation, velocity trends, mechanical drift, and injury risk indicators via KinaTrax / PitcherNet.',
+    icon: '🦴',
+    sport: 'MLB',
+    status: 'coming-soon',
+    href: '#',
+  },
+  {
+    id: 'broadcast-tracking',
+    name: 'Broadcast Tracking',
+    description:
+      'SkillCorner CV-derived player speed, distance, and sprint data from standard broadcast video. No stadium cameras required.',
+    icon: '📺',
+    sport: 'NCAA',
+    status: 'coming-soon',
+    href: '#',
+  },
+  {
     id: 'historical',
     name: 'Historical Analysis',
     description:

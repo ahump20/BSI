@@ -12,7 +12,7 @@
  * early 2026 regular-season aggregates.
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -20,6 +20,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import {
+  createSportradarABSClient,
+  type ABSSeasonAggregates,
+  type ABSGameSummary,
+} from '@/lib/api-clients/sportradar-abs';
+
+// ─── Sportradar ABS Client (uses seed data when no API key configured) ──────
+const absClient = createSportradarABSClient();
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -86,19 +94,66 @@ type ViewMode = 'overview' | 'challenges' | 'accuracy' | 'timeline';
 
 export default function ABSTrackerPage() {
   const [view, setView] = useState<ViewMode>('overview');
+  const [aggregates, setAggregates] = useState<ABSSeasonAggregates | null>(null);
+  const [games, setGames] = useState<ABSGameSummary[]>([]);
+  const [dataSourceLabel, setDataSourceLabel] = useState('Loading...');
+
+  // Fetch from Sportradar adapter (falls back to seed data automatically)
+  const loadData = useCallback(async () => {
+    const [aggResult, gamesResult] = await Promise.all([
+      absClient.getSeasonAggregates(2026),
+      absClient.getGameChallenges(),
+    ]);
+    if (aggResult.success && aggResult.data) {
+      setAggregates(aggResult.data);
+      setDataSourceLabel(
+        aggResult.source === 'seed'
+          ? 'MLB / Hawk-Eye / UmpScorecards (seed)'
+          : 'Sportradar MLB ABS Feed'
+      );
+    }
+    if (gamesResult.success && gamesResult.data) {
+      setGames(gamesResult.data);
+    }
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  // Use adapter data, fall back to inline constants
+  const roleStats = aggregates?.byRole || CHALLENGE_BY_ROLE.map((r) => ({
+    role: r.role as 'catcher' | 'hitter' | 'pitcher',
+    totalChallenges: r.challenges,
+    overturned: r.overturned,
+    upheld: r.challenges - r.overturned,
+    successRate: r.successRate,
+  }));
+
+  const umpireAccuracy = aggregates?.umpireAccuracy || UMPIRE_ACCURACY;
+
+  const recentGames = games.length > 0
+    ? games.map((g) => ({
+        gameId: g.gameId,
+        date: g.date,
+        away: g.awayTeam.abbreviation,
+        home: g.homeTeam.abbreviation,
+        totalChallenges: g.totalChallenges,
+        overturned: g.overturned,
+        avgChallengeTime: g.avgReviewTime,
+      }))
+    : RECENT_GAMES;
 
   const totals = useMemo(() => {
-    const challenges = CHALLENGE_BY_ROLE.reduce((sum, r) => sum + r.challenges, 0);
-    const overturned = CHALLENGE_BY_ROLE.reduce((sum, r) => sum + r.overturned, 0);
-    const gamesTracked = RECENT_GAMES.length;
-    const avgPerGame = (
-      RECENT_GAMES.reduce((sum, g) => sum + g.totalChallenges, 0) / gamesTracked
-    ).toFixed(1);
-    const avgTime = (
-      RECENT_GAMES.reduce((sum, g) => sum + g.avgChallengeTime, 0) / gamesTracked
-    ).toFixed(1);
+    const challenges = roleStats.reduce((sum, r) => sum + r.totalChallenges, 0);
+    const overturned = roleStats.reduce((sum, r) => sum + r.overturned, 0);
+    const gamesTracked = recentGames.length;
+    const avgPerGame = gamesTracked > 0
+      ? (recentGames.reduce((sum, g) => sum + g.totalChallenges, 0) / gamesTracked).toFixed(1)
+      : '0';
+    const avgTime = gamesTracked > 0
+      ? (recentGames.reduce((sum, g) => sum + g.avgChallengeTime, 0) / gamesTracked).toFixed(1)
+      : '0';
     return { challenges, overturned, successRate: ((overturned / challenges) * 100).toFixed(1), avgPerGame, avgTime };
-  }, []);
+  }, [roleStats, recentGames]);
 
   return (
     <>
@@ -212,7 +267,7 @@ export default function ABSTrackerPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {RECENT_GAMES.map((game) => (
+                          {recentGames.map((game) => (
                             <tr key={game.gameId} className="border-b border-border-subtle hover:bg-charcoal/50 transition-colors">
                               <td className="py-3 px-4 text-text-secondary text-sm">{game.date}</td>
                               <td className="py-3 px-4 text-white font-semibold text-sm">{game.away} @ {game.home}</td>
@@ -289,7 +344,7 @@ export default function ABSTrackerPage() {
             {view === 'challenges' && (
               <ScrollReveal>
                 <div className="grid gap-6 md:grid-cols-3">
-                  {CHALLENGE_BY_ROLE.map((role) => (
+                  {roleStats.map((role) => (
                     <Card key={role.role} variant="default" padding="lg">
                       <div className="text-center mb-4">
                         <Badge variant={role.role === 'catcher' ? 'primary' : role.role === 'hitter' ? 'info' : 'warning'}>
@@ -303,7 +358,7 @@ export default function ABSTrackerPage() {
                       <div className="mt-6 space-y-3">
                         <div className="flex justify-between text-sm">
                           <span className="text-text-tertiary">Total Challenges</span>
-                          <span className="text-white font-mono">{role.challenges.toLocaleString()}</span>
+                          <span className="text-white font-mono">{role.totalChallenges.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-text-tertiary">Overturned</span>
@@ -311,7 +366,7 @@ export default function ABSTrackerPage() {
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-text-tertiary">Upheld</span>
-                          <span className="text-text-secondary font-mono">{(role.challenges - role.overturned).toLocaleString()}</span>
+                          <span className="text-text-secondary font-mono">{role.upheld.toLocaleString()}</span>
                         </div>
                       </div>
                       {/* Visual bar */}
@@ -348,7 +403,7 @@ export default function ABSTrackerPage() {
                     <CardTitle>Accuracy Comparison: Human vs. ABS</CardTitle>
                   </CardHeader>
                   <div className="space-y-6 mt-4">
-                    {UMPIRE_ACCURACY.map((entry) => (
+                    {umpireAccuracy.map((entry) => (
                       <div key={entry.label}>
                         <div className="flex justify-between items-baseline mb-2">
                           <span className="text-white font-semibold text-sm">{entry.label}</span>
@@ -430,7 +485,7 @@ export default function ABSTrackerPage() {
             {/* Data Source */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge
-                source="MLB / Hawk-Eye / UmpScorecards"
+                source={dataSourceLabel}
                 timestamp={`Updated ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
               />
             </div>

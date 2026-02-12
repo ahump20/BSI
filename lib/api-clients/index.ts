@@ -34,3 +34,38 @@ export type {
   HighlightlyRanking,
   HighlightlyResponse,
 } from './highlightly-adapter';
+
+// ─── Sportradar ABS Client ─────────────────────────────────────────────────
+export { SportradarABSClient, createSportradarABSClient } from './sportradar-abs';
+export type {
+  SportradarABSConfig,
+  SportradarABSResponse,
+  ABSChallenge,
+  ABSGameSummary,
+  ABSRoleStats,
+  ABSUmpireAccuracy,
+  ABSSeasonAggregates,
+  ChallengeRole,
+  ChallengeOutcome,
+} from './sportradar-abs';
+
+// ─── SkillCorner Broadcast Tracking Client ──────────────────────────────────
+export { SkillCornerClient, createSkillCornerClient } from './skillcorner';
+export type {
+  SkillCornerConfig,
+  SkillCornerResponse,
+  MatchTrackingSummary,
+  TeamTrackingData,
+  PlayerTrackingData,
+  PlayerSpeedProfile,
+} from './skillcorner';
+
+// ─── PitcherNet / Biomechanics Client ───────────────────────────────────────
+export { BiomechanicsClient, createBiomechanicsClient } from './pitchernet-biomechanics';
+export type {
+  BiomechanicsConfig,
+  BiomechanicsProfile,
+  BiomechanicsResponse,
+  PitchBiomechanics,
+} from './pitchernet-biomechanics';
+export { MLB_BENCHMARKS, D1_BENCHMARKS } from './pitchernet-biomechanics';
