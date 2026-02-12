@@ -444,6 +444,21 @@ function generateChangelog(
   return changes;
 }
 
+/**
+ * Constant-time string comparison to prevent timing attacks
+ * Returns true if strings are equal, false otherwise
+ */
+function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
@@ -462,7 +477,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const adminSecret = request.headers.get('X-Admin-Secret');
   
   // Return generic 401 to avoid leaking configuration state
-  if (!adminSecret || !env.ADMIN_SECRET || adminSecret !== env.ADMIN_SECRET) {
+  // Use constant-time comparison to prevent timing attacks
+  if (!adminSecret || !env.ADMIN_SECRET || !constantTimeCompare(adminSecret, env.ADMIN_SECRET)) {
     return new Response(
       JSON.stringify({
         error: 'Unauthorized',
