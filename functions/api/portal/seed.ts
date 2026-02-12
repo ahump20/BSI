@@ -450,8 +450,8 @@ function generateChangelog(
  * Maintains constant time even for null/undefined and length mismatches
  */
 function constantTimeCompare(a: string | null | undefined, b: string | null | undefined): boolean {
-  // Reject empty strings explicitly (invalid secrets)
-  if (a === '' || b === '' || a == null || b == null) {
+  // Reject null/undefined/empty strings explicitly (invalid secrets)
+  if (a == null || b == null || a === '' || b === '') {
     // Still perform dummy comparison to maintain constant time
     const dummy = (a ?? '') + (b ?? '');
     let _ = 0;
@@ -461,17 +461,13 @@ function constantTimeCompare(a: string | null | undefined, b: string | null | un
     return false;
   }
   
-  // Use nullish coalescing for actual comparison
-  const strA = a ?? '';
-  const strB = b ?? '';
-  
-  // Compare up to the longer length to avoid early returns
-  const maxLen = Math.max(strA.length, strB.length);
-  let result = strA.length ^ strB.length; // Include length difference in result
+  // Both strings are now guaranteed to be non-null, non-undefined, non-empty
+  const maxLen = Math.max(a.length, b.length);
+  let result = a.length ^ b.length; // Include length difference in result
   
   for (let i = 0; i < maxLen; i++) {
-    const charA = i < strA.length ? strA.charCodeAt(i) : 0;
-    const charB = i < strB.length ? strB.charCodeAt(i) : 0;
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
     result |= charA ^ charB;
   }
   
