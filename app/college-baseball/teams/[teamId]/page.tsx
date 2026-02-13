@@ -23,6 +23,7 @@ export async function generateStaticParams() {
     'south-carolina',
     'kentucky',
     'missouri',
+    'oklahoma',
     'wake-forest',
     'virginia',
     'nc-state',

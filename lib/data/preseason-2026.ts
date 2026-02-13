@@ -268,6 +268,17 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     conference: 'Big Ten',
     editorialLink: '/college-baseball/editorial/national-opening-weekend',
   },
+  'ole-miss': {
+    rank: 23,
+    tier: 'bubble',
+    record2025: '42-23',
+    postseason2025: 'Regional',
+    keyPlayers: ['Jackson Kimbrell (OF)', 'Jack Dougherty (RHP)', 'Kemp Alderman (1B)'],
+    outlook:
+      'Bianco has been here before. The Rebels have the bats to compete with anyone and pitch well enough to stay in games.',
+    conference: 'SEC',
+    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+  },
   california: {
     rank: 24,
     tier: 'bubble',
@@ -279,19 +290,6 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     conference: 'ACC',
     editorialLink: '/college-baseball/editorial/acc-opening-weekend',
   },
-  // Evansville and Dallas Baptist are mid-majors without team detail pages — included for completeness
-  // but editorialLink routes to the national preview
-  'ole-miss': {
-    rank: 24,
-    tier: 'bubble',
-    record2025: '42-23',
-    postseason2025: 'Regional',
-    keyPlayers: ['Jackson Kimbrell (OF)', 'Jack Dougherty (RHP)', 'Kemp Alderman (1B)'],
-    outlook:
-      'Bianco has been here before. The Rebels have the bats to compete with anyone and pitch well enough to stay in games.',
-    conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
-  },
   'oklahoma-state': {
     rank: 25,
     tier: 'bubble',
@@ -300,17 +298,6 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     keyPlayers: ['Nolan Schubart (OF)', 'Justin Campbell (RHP)', 'Aidan Meola (C)'],
     outlook:
       'Cowboys load up for a Big 12 run. Pitching depth is improved and the lineup has pop.',
-    conference: 'Big 12',
-    editorialLink: '/college-baseball/editorial/big-12-opening-weekend',
-  },
-  arizona: {
-    rank: 25,
-    tier: 'bubble',
-    record2025: '41-22',
-    postseason2025: 'Regional',
-    keyPlayers: ['Daniel Susac (C)', 'Dawson Netz (RHP)', 'Garen Caulfield (OF)'],
-    outlook:
-      "Hale's squad joins the Big 12 with plenty of talent. Susac is one of the best catchers in the country.",
     conference: 'Big 12',
     editorialLink: '/college-baseball/editorial/big-12-opening-weekend',
   },
