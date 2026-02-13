@@ -219,9 +219,9 @@ export default function Texas2026EditorialPage() {
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <span className="text-white/40">
                 Editorial
-              </Link>
+              </span>
               <span className="text-white/20">/</span>
               <span className="text-white">Texas 2026 Preview</span>
             </nav>
