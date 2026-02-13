@@ -46,7 +46,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'The Aggies return the core of a 53-win team that reached Omaha. Elite defense, contact-oriented hitting, and a knack for developing arms.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/texas-am-2026',
   },
   florida: {
     rank: 3,
@@ -57,7 +57,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       "Jac Caglianone is the best two-way player in college baseball. If he stays healthy, the Gators have a legitimate Omaha ceiling. O'Sullivan knows how to peak in June.",
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/florida-2026',
   },
   'wake-forest': {
     rank: 4,
@@ -79,7 +79,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       "Defending national champions lost key pieces but Skenes returns. Tommy White continues to mash. This is still LSU — they'll be in the conversation come May.",
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/lsu-2026',
   },
   virginia: {
     rank: 6,
@@ -101,7 +101,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       "Van Horn's program is a machine. The Hogs reload every year with elite talent and compete for SEC titles. This team has the arms to pitch deep into June.",
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/arkansas-2026',
   },
   tennessee: {
     rank: 8,
@@ -112,7 +112,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       "Vitello has built Tennessee into a legitimate power. The Vols bring back a potent lineup and one of the SEC's best arms in Drew Beam.",
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/tennessee-2026',
   },
   stanford: {
     rank: 9,
@@ -145,7 +145,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'Corbin always reloads. Bradfield Jr. is electric and the pitching staff is underrated. Vanderbilt has too much talent in the pipeline.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/vanderbilt-2026',
   },
   tcu: {
     rank: 12,
@@ -189,7 +189,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       "Mingione has built something real in Lexington. Consistent depth and sound fundamental baseball. Don't sleep on the Cats.",
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/kentucky-2026',
   },
   georgia: {
     rank: 16,
@@ -200,7 +200,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'Charlie Condon is the best pure hitter in college baseball. If the pitching catches up, Georgia could surprise.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/georgia-2026',
   },
   oklahoma: {
     rank: 17,
@@ -211,7 +211,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'SEC debut. Skip Johnson has the arms to compete in the best conference in the country. A dark horse for the Tournament.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/oklahoma-2026',
   },
   'south-carolina': {
     rank: 18,
@@ -222,7 +222,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'Monte Lee has the Gamecocks back in the conversation. Pitching staff has real depth and the lineup is improving.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/south-carolina-2026',
   },
   'florida-state': {
     rank: 19,
@@ -255,7 +255,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'Vaughn has Alabama trending upward. The Tide are finally becoming a factor in SEC baseball with improved pitching and a solid lineup.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/alabama-2026',
   },
   ucla: {
     rank: 22,
@@ -290,7 +290,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     outlook:
       'Bianco has been here before. The Rebels have the bats to compete with anyone and pitch well enough to stay in games.',
     conference: 'SEC',
-    editorialLink: '/college-baseball/editorial/sec-opening-weekend',
+    editorialLink: '/college-baseball/editorial/ole-miss-2026',
   },
   'oklahoma-state': {
     rank: 25,
@@ -313,5 +313,38 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
       "Hale's squad joins the Big 12 with plenty of talent. Susac is one of the best catchers in the country.",
     conference: 'Big 12',
     editorialLink: '/college-baseball/editorial/big-12-opening-weekend',
+  },
+  auburn: {
+    rank: 30,
+    tier: 'bubble',
+    record2025: '32-26',
+    postseason2025: 'None',
+    keyPlayers: ['Bobby Peirce (INF)', 'Trace Bright (RHP)', 'Cole Foster (SS)'],
+    outlook:
+      'Butch Thompson has a young roster with upside. The pitching development pipeline produced arms nobody saw coming. The Tigers are building toward something.',
+    conference: 'SEC',
+    editorialLink: '/college-baseball/editorial/auburn-2026',
+  },
+  'mississippi-state': {
+    rank: 28,
+    tier: 'bubble',
+    record2025: '33-25',
+    postseason2025: 'None',
+    keyPlayers: ['Kellum Clark (1B)', 'Cade Smith (RHP)', 'Slate Alford (RHP)'],
+    outlook:
+      'Lemonis won a national title in 2021 and has spent two years rebuilding. The pieces are starting to fall into place. Dudy Noble is still one of the loudest stadiums in the country.',
+    conference: 'SEC',
+    editorialLink: '/college-baseball/editorial/mississippi-state-2026',
+  },
+  missouri: {
+    rank: 35,
+    tier: 'bubble',
+    record2025: '28-29',
+    postseason2025: 'None',
+    keyPlayers: ['Ross Lovich (OF)', 'Luke Sinnard (RHP)'],
+    outlook:
+      "Kerrick Jackson is building. The portal brought pedigree, and the young pitching staff is developing. Missouri is a year away — but the foundation is being laid.",
+    conference: 'SEC',
+    editorialLink: '/college-baseball/editorial/missouri-2026',
   },
 };
