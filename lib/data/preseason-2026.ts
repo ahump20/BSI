@@ -26,8 +26,8 @@ export function getTierLabel(tier: PreseasonTeamData['tier']): string {
  * Source: D1Baseball preseason poll + BSI Week 1 updated rankings.
  * Updated: February 12, 2026.
  * 
- * Note: Includes teams ranked 1-26 plus select bubble teams (27-35) with
- * dedicated editorial coverage. All teams outside top 25 are marked tier: 'bubble'.
+ * Note: Includes teams ranked 1-29 (sequential). Teams ranked 26-29 are bubble teams
+ * with dedicated editorial coverage and are marked tier: 'bubble'.
  */
 export const preseason2026: Record<string, PreseasonTeamData> = {
   texas: {
