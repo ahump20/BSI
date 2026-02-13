@@ -837,6 +837,54 @@ export default function MLBPage() {
             )}
           </Container>
         </Section>
+
+        {/* Statcast & Vision AI Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                    </svg>
+                  </div>
+                  <div>
+                    <CardTitle size="md">Statcast &amp; Vision AI</CardTitle>
+                    <p className="text-text-tertiary text-xs mt-0.5">How MLB tracks everything</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-sm text-text-secondary">
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">12 Hawk-Eye cameras</strong> per ballpark track ball trajectory, bat path, and 18 skeletal keypoints at 30fps</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">225+ metrics per pitch</strong> — Statcast generates ~7TB of tracking data per game</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Bat tracking</strong> now operational across all 30 parks — exit velocity, sweet-spot rate, and attack angle</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">ABS deployed for 2026</strong> — robot umpire system using pose-tracking cameras for batter-specific strike zones</span>
+                  </li>
+                </ul>
+                <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-white/5">
+                  <Link href="/mlb/abs">
+                    <Button variant="outline" size="sm">ABS Challenge Tracker</Button>
+                  </Link>
+                  <Link href="/vision-ai">
+                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
+                  </Link>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
       </main>
 
         <Footer />

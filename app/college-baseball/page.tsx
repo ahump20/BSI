@@ -719,6 +719,55 @@ export default function CollegeBaseballPage() {
             )}
           </Container>
         </Section>
+
+        {/* Scouting Technology Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                  </div>
+                  <div>
+                    <CardTitle size="md">Scouting Technology</CardTitle>
+                    <p className="text-text-tertiary text-xs mt-0.5">The tracking gap in college baseball</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-sm text-text-secondary">
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">No league-wide tracking</strong> — unlike MLB&apos;s Statcast, college baseball has no standardized optical tracking infrastructure</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">KinaTrax at 7 NCAA programs</strong> (~$500K per install) — markerless 3D motion capture for pitching biomechanics</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Rapsodo units at mid-tier programs</strong> ($3K-$5K vs TrackMan at $20K+) — pitch tracking becoming accessible</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Synergy Sports covers ~90% of D1 baseball</strong> — comprehensive play-type tagging from game film</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">SkillCorner + broadcast-derived tracking</strong> emerging — could bring positional data to any streamed game</span>
+                  </li>
+                </ul>
+                <div className="mt-5 pt-4 border-t border-white/5">
+                  <Link href="/vision-ai">
+                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
+                  </Link>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
       </main>
         <Footer />
       </>

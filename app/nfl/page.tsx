@@ -405,6 +405,50 @@ export default function NFLPage() {
             )}
           </Container>
         </Section>
+
+        {/* Tracking & Player Safety Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <CardTitle size="md">Tracking &amp; Player Safety</CardTitle>
+                    <p className="text-text-tertiary text-xs mt-0.5">How the NFL uses tracking technology</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-sm text-text-secondary">
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Next Gen Stats</strong> uses Zebra UWB RFID tags (not camera CV) — 10Hz positional data for every player</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">NFL Digital Athlete:</strong> 38 cameras, 5K video, enabling 83x faster helmet impact detection</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">17% concussion reduction</strong> in 2024 — material harm reduction powered by computer vision</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">SkillCorner</strong> + broadcast-derived tracking emerging for speed, separation, and get-off time</span>
+                  </li>
+                </ul>
+                <div className="mt-5 pt-4 border-t border-white/5">
+                  <Link href="/vision-ai">
+                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
+                  </Link>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
       </main>
         <Footer />
       </>

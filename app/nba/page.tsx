@@ -376,6 +376,52 @@ export default function NBAPage() {
             )}
           </Container>
         </Section>
+
+        {/* Court Vision Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <rect x="2" y="3" width="20" height="14" rx="2" />
+                      <line x1="8" y1="21" x2="16" y2="21" />
+                      <line x1="12" y1="17" x2="12" y2="21" />
+                    </svg>
+                  </div>
+                  <div>
+                    <CardTitle size="md">Court Vision</CardTitle>
+                    <p className="text-text-tertiary text-xs mt-0.5">How the NBA tracks the game</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-sm text-text-secondary">
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Hawk-Eye: 12 cameras</strong> per arena tracking 29 skeletal keypoints per player in real-time</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Second Spectrum</strong> (Genius Sports) provides the analytics layer — play-type classification, matchup data, shot quality</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Play-type classification:</strong> pick-and-roll, isolation, spot-up, transition — every possession tagged automatically</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Shot tracking</strong> with real-time arc, distance, and defender proximity metrics</span>
+                  </li>
+                </ul>
+                <div className="mt-5 pt-4 border-t border-white/5">
+                  <Link href="/vision-ai">
+                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
+                  </Link>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
       </main>
         <Footer />
       </>
