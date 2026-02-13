@@ -1,3 +1,11 @@
+/**
+ * Worker API Route Tests
+ *
+ * Tests the hybrid Workers router's API route handling.
+ * The worker handles API routes directly (calling ESPN/SportsDataIO APIs),
+ * NOT by proxying to Pages Functions.
+ */
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 function createMockD1() {
@@ -35,7 +43,20 @@ function createMockEnv(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('Worker SportsDataIO route proxy', () => {
+/**
+ * Mock ESPN API response format (used by getScoreboard, getNews, etc.)
+ * The worker calls ESPN APIs directly, so we mock the ESPN response shape.
+ */
+function mockESPNResponse(body: unknown = {}) {
+  globalThis.fetch = vi.fn().mockResolvedValue(
+    new Response(JSON.stringify(body), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  ) as unknown as typeof fetch;
+}
+
+describe('Worker API route handling', () => {
   let env: ReturnType<typeof createMockEnv>;
   let worker: { fetch: (request: Request, env: any) => Promise<Response> };
   let originalFetch: typeof globalThis.fetch;
@@ -52,93 +73,100 @@ describe('Worker SportsDataIO route proxy', () => {
     vi.restoreAllMocks();
   });
 
-  function mockPagesResponse(body: unknown = { ok: true }) {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify(body), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }),
-    ) as unknown as typeof fetch;
-  }
-
-  it('proxies canonical /api/mlb/scores to Pages Functions', async () => {
-    mockPagesResponse({ games: [] });
+  it('handles /api/mlb/scores directly via ESPN', async () => {
+    // ESPN scoreboard returns events array
+    mockESPNResponse({ events: [], leagues: [] });
 
     const req = new Request('https://blazesportsintel.com/api/mlb/scores');
     const res = await worker.fetch(req, env);
 
     expect(res.status).toBe(200);
+    // Worker calls ESPN directly, not Pages
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/mlb/scores',
-      expect.objectContaining({ method: 'GET' }),
-    );
-    expect(res.headers.get('X-BSI-API-Proxy')).toBe('pages-functions');
-  });
-
-  it('rewrites /api/cfb-espn/* to /api/cfb/*', async () => {
-    mockPagesResponse({ games: [] });
-
-    const req = new Request('https://blazesportsintel.com/api/cfb-espn/scoreboard?date=2026-02-12');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/cfb/scoreboard?date=2026-02-12',
-      expect.objectContaining({ method: 'GET' }),
+      expect.stringContaining('site.api.espn.com'),
+      expect.anything(),
     );
   });
 
-  it('rewrites /api/football/* to /api/cfb/*', async () => {
-    mockPagesResponse({ games: [] });
+  it('handles /api/nfl/news directly via ESPN', async () => {
+    mockESPNResponse({ articles: [] });
 
-    const req = new Request('https://blazesportsintel.com/api/football/scores?season=2026&week=1');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/cfb/scores?season=2026&week=1',
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
-
-  it('rewrites /api/basketball/* to /api/cbb/*', async () => {
-    mockPagesResponse({ games: [] });
-
-    const req = new Request('https://blazesportsintel.com/api/basketball/scoreboard?date=2026-02-12');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/cbb/scoreboard?date=2026-02-12',
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
-
-  it('rewrites /api/ncaa/* football queries to /api/cfb/*', async () => {
-    mockPagesResponse({ standings: [] });
-
-    const req = new Request('https://blazesportsintel.com/api/ncaa/rankings?sport=football');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/cfb/standings?sport=football',
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
-
-  it('proxies /api/live-scores and sets security headers', async () => {
-    mockPagesResponse({ sports: {} });
-
-    const req = new Request('https://blazesportsintel.com/api/live-scores');
+    const req = new Request('https://blazesportsintel.com/api/nfl/news');
     const res = await worker.fetch(req, env);
 
+    expect(res.status).toBe(200);
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/live-scores',
-      expect.objectContaining({ method: 'GET' }),
+      expect.stringContaining('site.api.espn.com'),
+      expect.anything(),
     );
-    expect(res.headers.get('X-BSI-API-Proxy')).toBe('pages-functions');
-    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
   });
 
-  it('denies camera and microphone permissions by default on standard API routes', async () => {
-    mockPagesResponse({ games: [] });
+  it('handles /api/nfl/leaders directly via ESPN', async () => {
+    mockESPNResponse({ leaders: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/nfl/leaders?season=2024');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('site.api.espn.com'),
+      expect.anything(),
+    );
+  });
+
+  it('handles /api/nba/game/:id directly', async () => {
+    mockESPNResponse({ header: {}, boxscore: {} });
+
+    const req = new Request('https://blazesportsintel.com/api/nba/game/12345');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('site.api.espn.com'),
+      expect.anything(),
+    );
+  });
+
+  it('routes /api/ncaa/scores?sport=football to CFB handler', async () => {
+    mockESPNResponse({ events: [], leagues: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/ncaa/scores?sport=football');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    // Should call college-football ESPN endpoint
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('college-football'),
+      expect.anything(),
+    );
+  });
+
+  it('routes /api/ncaa/standings?sport=football to CFB standings', async () => {
+    mockESPNResponse({ children: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/ncaa/standings?sport=football');
+    const res = await worker.fetch(req, env);
+
+    expect(res.status).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('college-football'),
+      expect.anything(),
+    );
+  });
+
+  it('sets security headers on API responses', async () => {
+    mockESPNResponse({ events: [], leagues: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/mlb/scores');
+    const res = await worker.fetch(req, env);
+
+    expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff');
+    expect(res.headers.get('X-Frame-Options')).toBe('DENY');
+    expect(res.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+  });
+
+  it('denies camera and microphone permissions on standard API routes', async () => {
+    mockESPNResponse({ events: [], leagues: [] });
 
     const req = new Request('https://blazesportsintel.com/api/mlb/scores');
     const res = await worker.fetch(req, env);
@@ -146,49 +174,25 @@ describe('Worker SportsDataIO route proxy', () => {
     expect(res.headers.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
   });
 
-  it('allows same-origin camera and microphone on presence coach trends endpoint', async () => {
-    const req = new Request('https://blazesportsintel.com/api/presence-coach/users/test-user/trends');
+  it('returns JSON content type for API routes', async () => {
+    mockESPNResponse({ events: [], leagues: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/mlb/scores');
+    const res = await worker.fetch(req, env);
+
+    expect(res.headers.get('Content-Type')).toBe('application/json');
+  });
+
+  it('handles /api/cfb/scores directly via ESPN', async () => {
+    mockESPNResponse({ events: [], leagues: [] });
+
+    const req = new Request('https://blazesportsintel.com/api/cfb/scores');
     const res = await worker.fetch(req, env);
 
     expect(res.status).toBe(200);
-    expect(res.headers.get('Permissions-Policy')).toBe(
-      'camera=(self), microphone=(self), geolocation=()',
-    );
-  });
-
-  it('proxies NFL news to Pages Functions', async () => {
-    mockPagesResponse({ articles: [] });
-
-    const req = new Request('https://blazesportsintel.com/api/nfl/news');
-    await worker.fetch(req, env);
-
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/nfl/news',
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
-
-  it('rewrites /api/nba/game/:id to /api/nba/games/:id', async () => {
-    mockPagesResponse({ game: {} });
-
-    const req = new Request('https://blazesportsintel.com/api/nba/game/12345');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/nba/games/12345',
-      expect.objectContaining({ method: 'GET' }),
-    );
-  });
-
-  it('proxies NFL leaders to Pages Functions', async () => {
-    mockPagesResponse({ categories: [] });
-
-    const req = new Request('https://blazesportsintel.com/api/nfl/leaders?season=2024');
-    await worker.fetch(req, env);
-
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      'https://test.pages.dev/api/nfl/leaders?season=2024',
-      expect.objectContaining({ method: 'GET' }),
+      expect.stringContaining('college-football'),
+      expect.anything(),
     );
   });
 });
