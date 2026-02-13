@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -142,8 +140,8 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
                 Season Highlights
               </h3>
               <div className="space-y-2">
-                {data.seasonHighlights.map((highlight, i) => (
-                  <div key={i} className="flex items-start gap-3">
+                {data.seasonHighlights.map((highlight) => (
+                  <div key={highlight} className="flex items-start gap-3">
                     <span className="text-[#BF5700] mt-1 text-sm">&#9670;</span>
                     <p className="text-white/60 text-sm leading-relaxed">{highlight}</p>
                   </div>
@@ -292,8 +290,8 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
             </ScrollReveal>
 
             <div className="space-y-3">
-              {data.scheduleHighlights.map((game, i) => (
-                <ScrollReveal key={i} direction="up">
+              {data.scheduleHighlights.map((game) => (
+                <ScrollReveal key={`${game.dates}-${game.opponent}`} direction="up">
                   <Card variant="default" padding="md">
                     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
                       <span className="font-mono text-sm text-white/40 md:w-32 flex-shrink-0">{game.dates}</span>
