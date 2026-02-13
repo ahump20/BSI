@@ -69,3 +69,35 @@ export type {
   PitchBiomechanics,
 } from './pitchernet-biomechanics';
 export { MLB_BENCHMARKS, D1_BENCHMARKS } from './pitchernet-biomechanics';
+
+// ─── Driveline Open Biomechanics (real data, no key required) ──────────────
+export {
+  fetchDrivelineData,
+  computeDrivelineBenchmarks,
+  getDrivelinePitcherSession,
+  getDrivelineSessions,
+  drivelineSessionToProfile,
+} from './driveline-biomechanics';
+export type { DrivelineBenchmarks } from './driveline-biomechanics';
+
+// ─── Baseball Savant / Statcast CSV (public, no key required) ──────────────
+export {
+  fetchStatcastPitches,
+  fetchPitcherStatcast,
+  fetchStatcastLeaderboard,
+} from './baseball-savant';
+export type {
+  StatcastPitch,
+  StatcastPitcherSummary,
+  SavantLeaderEntry,
+  SavantResponse,
+} from './baseball-savant';
+
+// ─── SkillCorner Open Data (real tracking, no key required) ────────────────
+export {
+  fetchOpenMatchTracking,
+  fetchMatchInfo,
+  fetchTrackingData,
+  getAvailableMatches,
+  AVAILABLE_MATCHES,
+} from './skillcorner-opendata';

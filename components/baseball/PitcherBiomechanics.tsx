@@ -18,10 +18,12 @@
  *   <PitcherBiomechanics level="D1" /> // renders benchmark profile
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/Badge';
 import type { BiomechanicsProfile } from '@/lib/api-clients/pitchernet-biomechanics';
 import { MLB_BENCHMARKS, D1_BENCHMARKS } from '@/lib/api-clients/pitchernet-biomechanics';
+import { computeDrivelineBenchmarks } from '@/lib/api-clients/driveline-biomechanics';
+import type { DrivelineBenchmarks } from '@/lib/api-clients/driveline-biomechanics';
 
 interface PitcherBiomechanicsProps {
   profile?: BiomechanicsProfile | null;
@@ -72,7 +74,31 @@ function metricPercentile(
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function PitcherBiomechanics({ profile, level = 'MLB', compact = false }: PitcherBiomechanicsProps) {
-  const benchmarks = level === 'MLB' ? MLB_BENCHMARKS : D1_BENCHMARKS;
+  const staticBenchmarks = level === 'MLB' ? MLB_BENCHMARKS : D1_BENCHMARKS;
+  const [drivelineBench, setDrivelineBench] = useState<DrivelineBenchmarks | null>(null);
+
+  // Fetch real Driveline benchmarks (open-source, no key needed)
+  useEffect(() => {
+    computeDrivelineBenchmarks()
+      .then(setDrivelineBench)
+      .catch(() => {}); // Silent fallback to static benchmarks
+  }, []);
+
+  // Merge: prefer Driveline real data when available, fall back to static
+  const benchmarks = useMemo(() => {
+    if (!drivelineBench) return staticBenchmarks;
+    return {
+      armSlotDegrees: { avg: drivelineBench.armSlot.mean, p10: drivelineBench.armSlot.p10, p90: drivelineBench.armSlot.p90 },
+      hipShoulderSeparationDegrees: { avg: drivelineBench.hipShoulderSep.mean, p10: drivelineBench.hipShoulderSep.p10, p90: drivelineBench.hipShoulderSep.p90 },
+      strideLengthPctHeight: { avg: drivelineBench.strideLength.mean, p10: drivelineBench.strideLength.p10, p90: drivelineBench.strideLength.p90 },
+      shoulderExternalRotationDegrees: { avg: drivelineBench.shoulderER.mean, p10: drivelineBench.shoulderER.p10, p90: drivelineBench.shoulderER.p90 },
+      pelvisRotationSpeedDegSec: { avg: drivelineBench.pelvisRotSpeed.mean, p10: drivelineBench.pelvisRotSpeed.p10, p90: drivelineBench.pelvisRotSpeed.p90 },
+      trunkRotationSpeedDegSec: { avg: drivelineBench.torsoRotSpeed.mean, p10: drivelineBench.torsoRotSpeed.p10, p90: drivelineBench.torsoRotSpeed.p90 },
+      avgFastballVelocityMph: { avg: drivelineBench.fastballVelo.mean, p10: drivelineBench.fastballVelo.p10, p90: drivelineBench.fastballVelo.p90 },
+      spinRateRpm: staticBenchmarks.spinRateRpm, // Not in Driveline POI data
+      extensionFt: staticBenchmarks.extensionFt,  // Not in Driveline POI data
+    };
+  }, [drivelineBench, staticBenchmarks]);
 
   const mechanicsGrades = useMemo(() => {
     if (!profile) return [];
@@ -289,7 +315,7 @@ export function PitcherBiomechanics({ profile, level = 'MLB', compact = false }:
       {/* Attribution */}
       <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
         <span className="text-text-tertiary text-[10px]">
-          {profile.dataSource} | Benchmarks: {level === 'MLB' ? 'KinaTrax / Statcast' : 'Rapsodo / D1 aggregate'}
+          {profile.dataSource} | Benchmarks: {drivelineBench ? 'Driveline Open Biomechanics' : level === 'MLB' ? 'KinaTrax / Statcast' : 'Rapsodo / D1 aggregate'}
         </span>
         <span className="text-text-tertiary text-[10px]">
           {profile.injuryRisk.workloadConcern ? 'WORKLOAD FLAG' : 'Normal workload'}

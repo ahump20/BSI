@@ -23,6 +23,8 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { fetchStatcastLeaderboard } from '@/lib/api-clients/baseball-savant';
+import type { SavantLeaderEntry } from '@/lib/api-clients/baseball-savant';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -194,15 +196,44 @@ export default function StatcastPage() {
     setLoading(true);
     setError(null);
     try {
+      // Try Worker proxy first
       const res = await fetch(`/api/mlb/statcast/leaderboard/${selectedMetric}?season=${new Date().getFullYear()}&limit=15`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json() as { leaders?: StatcastLeader[]; meta?: { dataSource?: string } };
       if (data.leaders && data.leaders.length > 0) {
         setLeaders((prev) => ({ ...prev, [selectedMetric]: data.leaders! }));
         setDataSource(data.meta?.dataSource || 'MLB Statcast');
+        return;
       }
+      throw new Error('No data from Worker');
     } catch {
-      // Silently fall back to seed data — no error shown to user
+      // Fallback: try Baseball Savant CSV endpoint directly
+      try {
+        const validSavantMetrics = ['exit_velocity', 'sprint_speed', 'barrel_rate', 'hard_hit_pct', 'spin_rate', 'whiff_rate', 'extension'] as const;
+        type SavantMetric = typeof validSavantMetrics[number];
+        if (validSavantMetrics.includes(selectedMetric as SavantMetric)) {
+          const savantResult = await fetchStatcastLeaderboard(
+            selectedMetric as SavantMetric,
+            { season: new Date().getFullYear(), limit: 15 }
+          );
+          if (savantResult.success && savantResult.data && savantResult.data.length > 0) {
+            const mapped: StatcastLeader[] = savantResult.data.map((e: SavantLeaderEntry) => ({
+              rank: e.rank,
+              playerId: e.playerId,
+              playerName: e.playerName,
+              team: e.team,
+              value: e.value,
+              supportingStats: e.supportingStats,
+            }));
+            setLeaders((prev) => ({ ...prev, [selectedMetric]: mapped }));
+            setDataSource('Baseball Savant (CSV)');
+            return;
+          }
+        }
+      } catch {
+        // Savant also failed — fall through to seed data
+      }
+
       if (!leaders[selectedMetric]) {
         setError('Statcast API unavailable. Showing benchmark data.');
       }
