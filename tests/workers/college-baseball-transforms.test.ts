@@ -556,10 +556,9 @@ describe('College Baseball Transforms', () => {
       const body = await res.json() as any;
 
       expect(body.statistics).toBeDefined();
-      if (body.statistics?.batting) {
-        expect(body.statistics.batting.games).toBe(50);
-        expect(body.statistics.batting.battingAverage).toBe(0.350);
-      }
+      expect(body.statistics.batting).toBeDefined();
+      expect(body.statistics.batting.games).toBe(50);
+      expect(body.statistics.batting.battingAverage).toBe(0.350);
     });
   });
 
@@ -668,6 +667,79 @@ describe('College Baseball Transforms', () => {
 
       expect(res.status).toBe(502);
       expect(body.player).toBeNull();
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Edge cases (from PR test analysis)
+  // -----------------------------------------------------------------------
+
+  describe('edge cases', () => {
+    it('tied final game sets both isWinner to false', async () => {
+      const tiedMatch = { ...HIGHLIGHTLY_MATCH, homeScore: 5, awayScore: 5 };
+      globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+        const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+        if (urlStr.includes('/matches/')) return new Response(JSON.stringify(tiedMatch), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        if (urlStr.includes('/box-scores/')) return new Response(JSON.stringify(HIGHLIGHTLY_BOXSCORE), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }) as unknown as typeof fetch;
+
+      const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
+      const res = await worker.fetch(req, env);
+      const body = await res.json() as any;
+
+      expect(body.game.teams.home.isWinner).toBe(false);
+      expect(body.game.teams.away.isWinner).toBe(false);
+    });
+
+    it('in-progress game transforms to isLive=true, isFinal=false', async () => {
+      const liveMatch = { ...HIGHLIGHTLY_MATCH, status: { code: 50, type: 'inprogress' as const, description: 'Top 5th' }, homeScore: 3, awayScore: 2 };
+      globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+        const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+        if (urlStr.includes('/matches/')) return new Response(JSON.stringify(liveMatch), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        if (urlStr.includes('/box-scores/')) return new Response(JSON.stringify(HIGHLIGHTLY_BOXSCORE), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }) as unknown as typeof fetch;
+
+      const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
+      const res = await worker.fetch(req, env);
+      const body = await res.json() as any;
+
+      expect(body.game.status.isLive).toBe(true);
+      expect(body.game.status.isFinal).toBe(false);
+      expect(body.game.status.state).toBe('in');
+    });
+
+    it('game without box score returns game without boxscore field', async () => {
+      globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+        const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+        if (urlStr.includes('/matches/')) return new Response(JSON.stringify(HIGHLIGHTLY_MATCH), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        if (urlStr.includes('/box-scores/')) return new Response('Not Found', { status: 404 });
+        return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }) as unknown as typeof fetch;
+
+      const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
+      const res = await worker.fetch(req, env);
+      const body = await res.json() as any;
+
+      expect(res.status).toBe(200);
+      expect(body.game).toBeDefined();
+      expect(body.game.teams.home.name).toBe('Texas Longhorns');
+      // Linescore may still exist from match.innings, but boxscore batting/pitching should be absent
+    });
+
+    it('transfer portal with valid JSON but missing entries key returns empty', async () => {
+      env.KV._store.set('portal:college-baseball:entries', JSON.stringify({ foo: 'bar' }));
+      globalThis.fetch = mockFetchForHighlightly();
+
+      const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
+      const res = await worker.fetch(req, env);
+      const body = await res.json() as any;
+
+      expect(res.status).toBe(200);
+      expect(body.entries).toEqual([]);
+      expect(body.totalEntries).toBe(0);
+      expect(body.meta.dataSource).toBe('portal-sync');
     });
   });
 });
