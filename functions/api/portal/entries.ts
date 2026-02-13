@@ -119,7 +119,7 @@ export async function onRequestGet(context: { request: Request; env: Env }): Pro
 
   try {
     // Check KV cache first
-    const cacheKey = `portal:entries:${position}:${conference}:${status}:${limit}:${offset}`;
+    const cacheKey = `portal:entries:${sport}:${position}:${conference}:${status}:${limit}:${offset}`;
     const cached = await env.KV?.get(cacheKey);
 
     if (cached) {

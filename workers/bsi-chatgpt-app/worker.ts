@@ -957,21 +957,7 @@ async function fetchNILValuation(env: Env, athleteId: string): Promise<NILValuat
 
 async function fetchTransferPortal(env: Env, sport?: string): Promise<TransferPortalResponse> {
   const baseUrl = env.PORTAL_API_BASE || 'https://blazesportsintel.com';
-  const url = new URL('/api/portal/v2/entries', baseUrl);
-  if (sport) {
-    url.searchParams.set('sport', sport.toLowerCase());
-  }
-  url.searchParams.set('limit', '100');
-
-  const response = await fetch(url.toString(), {
-    headers: { 'Accept': 'application/json' },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Portal API error ${response.status}: ${response.statusText}`);
-  }
-
-  const payload = (await response.json()) as {
+  type PortalApiPayload = {
     data?: Array<{
       id: string;
       player_name: string;
@@ -993,7 +979,29 @@ async function fetchTransferPortal(env: Env, sport?: string): Promise<TransferPo
     }>;
   };
 
-  const mappedEntries: TransferPortalEntry[] = (payload.data || [])
+  const fetchPortalEntries = async (sportFilter: 'baseball' | 'football'): Promise<PortalApiPayload> => {
+    const url = new URL('/api/portal/v2/entries', baseUrl);
+    url.searchParams.set('sport', sportFilter);
+    url.searchParams.set('limit', '100');
+
+    const response = await fetch(url.toString(), {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Portal API error ${response.status}: ${response.statusText}`);
+    }
+
+    return (await response.json()) as PortalApiPayload;
+  };
+
+  const payloads = sport
+    ? [await fetchPortalEntries(sport.toLowerCase() as 'baseball' | 'football')]
+    : await Promise.all([fetchPortalEntries('baseball'), fetchPortalEntries('football')]);
+
+  const combinedEntries = payloads.flatMap((payload) => payload.data || []);
+
+  const mappedEntries: TransferPortalEntry[] = combinedEntries
     .filter((entry) => entry.sport === 'baseball' || entry.sport === 'football')
     .map((entry) => {
       const stats =
