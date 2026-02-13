@@ -31,6 +31,7 @@ check_pattern 'sk_live_[a-zA-Z0-9]+'
 check_pattern 'pk_live_[a-zA-Z0-9]+'
 check_pattern 'ghp_[a-zA-Z0-9]+'
 check_pattern 'gho_[a-zA-Z0-9]+'
+# Pattern split to avoid triggering the hook on its own diff
 BEGIN_PAT="-----BEG""IN.*PRIVATE KEY"
 check_pattern "$BEGIN_PAT"
 check_pattern 'AKIA[0-9A-Z]{16}'

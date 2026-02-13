@@ -196,7 +196,7 @@ export function BoxScoreTable({
                 </h4>
                 <table className="w-full text-xs text-white/70">
                   <thead>
-                    <tr className="text-white/40 uppercase" role="row">
+                    <tr className="text-white/40 uppercase">
                       <th role="columnheader" className="text-left py-1">Batter</th>
                       <th role="columnheader" className="text-center py-1">AB</th>
                       <th role="columnheader" className="text-center py-1">R</th>
