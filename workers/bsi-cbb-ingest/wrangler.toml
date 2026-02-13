@@ -1,0 +1,25 @@
+# BSI College Baseball Ingest — Cron Worker
+# Pre-caches scores, standings, and rankings into KV so the main worker
+# serves cached data instantly instead of fetching on-demand.
+#
+# Deploy: wrangler deploy --config workers/bsi-cbb-ingest/wrangler.toml
+
+name = "bsi-cbb-ingest"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+# Multiple cron triggers:
+#   - Every 2 minutes: live scores (during baseball season Feb-Jun)
+#   - Every 15 minutes: standings + rankings
+[triggers]
+crons = ["*/2 * * * *", "*/15 * * * *"]
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
+
+# RAPIDAPI_KEY must be set via: wrangler secret put RAPIDAPI_KEY --config workers/bsi-cbb-ingest/wrangler.toml
+
+[dev]
+port = 8791
