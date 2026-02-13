@@ -5,9 +5,14 @@
  * section navigation, cross-links, and child components.
  */
 
-import { describe, it, expect } from 'vitest';
+import { beforeAll, describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import VisionAIHub from '@/app/vision-ai/page';
+
+// jsdom doesn't implement scrollTo — mock it to suppress noise
+beforeAll(() => {
+  window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
+});
 
 describe('Vision AI Hub Page', () => {
   it('renders the hero headline', () => {

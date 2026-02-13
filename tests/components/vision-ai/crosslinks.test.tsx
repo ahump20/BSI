@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 
 // Import sport pages
 import MLBPage from '@/app/mlb/page';
@@ -23,44 +23,68 @@ function getLinks(container: HTMLElement): string[] {
 }
 
 describe('Sport page cross-links to Vision AI', () => {
-  it('MLB page links to /vision-ai', () => {
-    const { container } = render(<MLBPage />);
+  it('MLB page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<MLBPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('NFL page links to /vision-ai', () => {
-    const { container } = render(<NFLPage />);
+  it('NFL page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<NFLPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('NBA page links to /vision-ai', () => {
-    const { container } = render(<NBAPage />);
+  it('NBA page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<NBAPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('College Baseball page links to /vision-ai', () => {
-    const { container } = render(<CollegeBaseballPage />);
+  it('College Baseball page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<CollegeBaseballPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('CFB page links to /vision-ai', () => {
-    const { container } = render(<CFBPage />);
+  it('CFB page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<CFBPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('ABS page links to /vision-ai', () => {
-    const { container } = render(<ABSPage />);
+  it('ABS page links to /vision-ai', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<ABSPage />));
+    });
     expect(getLinks(container)).toContain('/vision-ai');
   });
 
-  it('ABS page renders the StrikeZoneModel SVG', () => {
-    const { container } = render(<ABSPage />);
+  it('ABS page renders the StrikeZoneModel SVG', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<ABSPage />));
+    });
     const svg = container.querySelector('svg[aria-label*="ABS Strike Zone Model"]');
     expect(svg).not.toBeNull();
   });
 
-  it('MLB page links to /mlb/abs from CV section', () => {
-    const { container } = render(<MLBPage />);
+  it('MLB page links to /mlb/abs from CV section', async () => {
+    let container!: HTMLElement;
+    await act(async () => {
+      ({ container } = render(<MLBPage />));
+    });
     expect(getLinks(container)).toContain('/mlb/abs');
   });
 });

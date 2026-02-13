@@ -66,9 +66,9 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
   const collegeNone = TRACKING_DATA.filter((r) => r.college.level === 'none').length;
 
   return (
-    <div className={className}>
+    <div className={className} role="region" aria-label="Pro vs college tracking infrastructure comparison">
       {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-4 mb-6" role="group" aria-label="Coverage summary">
         <div className="text-center p-3 bg-green-500/5 rounded-lg border border-green-500/10">
           <p className="text-2xl font-bold font-mono text-green-400">{proFull}/{TRACKING_DATA.length}</p>
           <p className="text-[10px] text-text-tertiary uppercase tracking-wider mt-1">Pro: Full Coverage</p>

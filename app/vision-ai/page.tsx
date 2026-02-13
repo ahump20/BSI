@@ -11,7 +11,7 @@
  * Data is structured from BSI's research survey — no live API calls.
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -253,15 +253,47 @@ const OPEN_SOURCE_TOOLS = [
 
 export default function VisionAIPage() {
   const [activeSection, setActiveSection] = useState<SectionId>('overview');
+  const isScrolling = useRef(false);
+
+  // Sync nav highlight with manual scrolling via IntersectionObserver
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    const sectionIds = NAV_SECTIONS.map((s) => s.id);
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isScrolling.current) return;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id as SectionId);
+            break;
+          }
+        }
+      },
+      { rootMargin: '-160px 0px -60% 0px', threshold: 0 },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   function scrollToSection(id: SectionId) {
     setActiveSection(id);
+    isScrolling.current = true;
     const el = document.getElementById(id);
     if (el) {
       const offset = 140; // account for sticky nav
       const y = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
+    // Release scroll lock after animation
+    setTimeout(() => { isScrolling.current = false; }, 800);
   }
 
   return (

@@ -74,11 +74,12 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
   return (
     <div className={className}>
       {/* Sport filter */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4" role="group" aria-label="Filter by sport">
         {SPORTS.map((sport) => (
           <button
             key={sport}
             onClick={() => setActiveSport(sport)}
+            aria-pressed={activeSport === sport}
             className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
               activeSport === sport
                 ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
@@ -91,9 +92,10 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
       </div>
 
       {/* Maturity filter */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6" role="group" aria-label="Filter by maturity">
         <button
           onClick={() => setActiveMaturity('all')}
+          aria-pressed={activeMaturity === 'all'}
           className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
             activeMaturity === 'all'
               ? 'bg-white/10 text-white border-white/20'
@@ -106,6 +108,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
           <button
             key={m}
             onClick={() => setActiveMaturity(m)}
+            aria-pressed={activeMaturity === m}
             className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
               activeMaturity === m
                 ? `bg-white/10 text-white border-white/20`
@@ -118,7 +121,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
       </div>
 
       {/* Results */}
-      <div className="space-y-6">
+      <div className="space-y-6" aria-live="polite">
         {Object.entries(grouped).map(([domain, entries]) => (
           <div key={domain}>
             <h4 className="text-xs uppercase tracking-wider text-text-tertiary font-semibold mb-3 flex items-center gap-2">
