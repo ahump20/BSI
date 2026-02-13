@@ -21,9 +21,13 @@ export function getTierLabel(tier: PreseasonTeamData['tier']): string {
 }
 
 /**
- * BSI 2026 Preseason Power 25 — keyed by teamId slug matching generateStaticParams.
+ * BSI 2026 Preseason Rankings — Top 25 + Select Bubble Teams
+ * Keyed by teamId slug matching generateStaticParams.
  * Source: D1Baseball preseason poll + BSI Week 1 updated rankings.
  * Updated: February 12, 2026.
+ * 
+ * Note: Includes teams ranked 1-29 (sequential). Teams ranked 26-29 are bubble teams
+ * with dedicated editorial coverage and are marked tier: 'bubble'.
  */
 export const preseason2026: Record<string, PreseasonTeamData> = {
   texas: {
@@ -269,7 +273,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     editorialLink: '/college-baseball/editorial/national-opening-weekend',
   },
   california: {
-    rank: 24,
+    rank: 23,
     tier: 'bubble',
     record2025: '37-21',
     postseason2025: 'Regional',
@@ -304,7 +308,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     editorialLink: '/college-baseball/editorial/big-12-opening-weekend',
   },
   arizona: {
-    rank: 25,
+    rank: 26,
     tier: 'bubble',
     record2025: '41-22',
     postseason2025: 'Regional',
@@ -315,7 +319,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     editorialLink: '/college-baseball/editorial/big-12-opening-weekend',
   },
   auburn: {
-    rank: 30,
+    rank: 27,
     tier: 'bubble',
     record2025: '32-26',
     postseason2025: 'None',
@@ -337,7 +341,7 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     editorialLink: '/college-baseball/editorial/mississippi-state-2026',
   },
   missouri: {
-    rank: 35,
+    rank: 29,
     tier: 'bubble',
     record2025: '28-29',
     postseason2025: 'None',
