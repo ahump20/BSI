@@ -682,7 +682,7 @@ export default function Texas2026EditorialPage() {
                 timestamp="Feb 12, 2026 CT"
               />
               <div className="flex gap-4">
-                <Link href="/college-baseball/editorial" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <Link href="/college-baseball" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
                   More Editorial →
                 </Link>
                 <Link href="/college-baseball/preseason/lone-star-rivalry" className="text-sm text-white/40 hover:text-white transition-colors">
