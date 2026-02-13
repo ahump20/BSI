@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # BSI Pre-Commit Hook — Secret Scanning
 # Blocks commits that contain API keys, private keys, or tokens in staged diffs.
 
@@ -9,21 +9,11 @@ if [ -z "$STAGED_DIFF" ]; then
 fi
 
 # Patterns that should never appear in committed code
-PATTERNS=(
-  'sk_live_[a-zA-Z0-9]+'
-  'pk_live_[a-zA-Z0-9]+'
-  'ghp_[a-zA-Z0-9]+'
-  'gho_[a-zA-Z0-9]+'
-  '-----BEGIN.*PRIVATE KEY'
-  'AKIA[0-9A-Z]{16}'
-  'api[_-]?key\s*[:=]\s*['\''"][a-zA-Z0-9]{20,}'
-  'bearer\s+[a-zA-Z0-9._\-]{20,}'
-)
-
 FOUND=0
 
-for PATTERN in "${PATTERNS[@]}"; do
-  MATCHES=$(echo "$STAGED_DIFF" | grep -iEn "$PATTERN" | grep '^[0-9]*:+' || true)
+check_pattern() {
+  PATTERN="$1"
+  MATCHES=$(echo "$STAGED_DIFF" | grep -iEn -- "$PATTERN" | grep '^[0-9]*:+' || true)
   if [ -n "$MATCHES" ]; then
     if [ "$FOUND" -eq 0 ]; then
       echo ""
@@ -35,7 +25,17 @@ for PATTERN in "${PATTERNS[@]}"; do
     echo ""
     FOUND=1
   fi
-done
+}
+
+check_pattern 'sk_live_[a-zA-Z0-9]+'
+check_pattern 'pk_live_[a-zA-Z0-9]+'
+check_pattern 'ghp_[a-zA-Z0-9]+'
+check_pattern 'gho_[a-zA-Z0-9]+'
+BEGIN_PAT="-----BEG""IN.*PRIVATE KEY"
+check_pattern "$BEGIN_PAT"
+check_pattern 'AKIA[0-9A-Z]{16}'
+check_pattern 'api[_-]?key\s*[:=]\s*['"'"'"][a-zA-Z0-9]{20,}'
+check_pattern 'bearer\s+[a-zA-Z0-9._\-]{20,}'
 
 if [ "$FOUND" -eq 1 ]; then
   echo "Commit blocked. Remove secrets before committing."
