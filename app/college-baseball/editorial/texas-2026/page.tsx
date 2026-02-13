@@ -667,12 +667,7 @@ export default function Texas2026EditorialPage() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <DataSourceBadge
                 source="texaslonghorns.com / ESPN / SportsDataIO"
-                timestamp={new Date().toLocaleDateString('en-US', {
-                  timeZone: 'America/Chicago',
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                }) + ' CT'}
+                timestamp="Feb 12, 2026 CT"
               />
               <div className="flex gap-4">
                 <Link href="/college-baseball/editorial" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
