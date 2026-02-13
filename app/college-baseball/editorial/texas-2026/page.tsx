@@ -5,7 +5,19 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import type { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Texas Baseball 2026 Outlook & Roster Breakdown | College Baseball Editorial',
+  description:
+    'In-depth 2026 Texas Longhorns baseball preview with key returnees, roster analysis, and what it means for the College World Series race.',
+  openGraph: {
+    title: 'Texas Baseball 2026 Outlook & Roster Breakdown',
+    description:
+      'Deep dive on the 2026 Texas Longhorns baseball roster, impact returnees, and their path to Omaha.',
+    type: 'article',
+  },
+};
 /* ─── Data ────────────────────────────────────────────────────────────────── */
 
 const keyReturnees = [
