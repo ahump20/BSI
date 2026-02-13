@@ -291,7 +291,7 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
 
             <div className="space-y-3">
               {data.scheduleHighlights.map((game) => (
-                <ScrollReveal key={`${game.dates}-${game.opponent}`} direction="up">
+                <ScrollReveal key={`${game.dates}-${game.opponent}-${game.location}`} direction="up">
                   <Card variant="default" padding="md">
                     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
                       <span className="font-mono text-sm text-white/40 md:w-32 flex-shrink-0">{game.dates}</span>
