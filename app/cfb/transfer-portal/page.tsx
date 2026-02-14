@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { usePortalData } from '@/lib/hooks';
 
 // Import shared portal components
 import {
@@ -163,26 +164,16 @@ function StatCard({
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_ENTRIES);
+  const { entries } = usePortalData('/api/cfb/transfer-portal', {
+    initialEntries: FALLBACK_ENTRIES,
+    keepInitialOnError: true,
+  });
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
     status: '',
     search: '',
   });
-
-  useEffect(() => {
-    fetch('/api/cfb/transfer-portal')
-      .then((r) => r.json())
-      .then((data: { entries?: PortalEntry[] }) => {
-        if (data.entries && data.entries.length > 0) {
-          setEntries(data.entries);
-        }
-      })
-      .catch(() => {
-        // Keep fallback data on fetch failure
-      });
-  }, []);
 
   // Filter entries locally
   const filteredEntries = entries.filter((entry) => {
