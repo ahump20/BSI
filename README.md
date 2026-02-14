@@ -46,6 +46,14 @@ Built as a fully static Next.js 16 site deployed to Cloudflare Pages, with Cloud
 
 ## Getting Started
 
+### Quick Start with GitHub Codespaces
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ahump20/BSI?quickstart=1)
+
+Click the badge above to create a pre-configured cloud development environment. Everything is set up automatically—Node.js, dependencies, Wrangler CLI, and VS Code extensions. See [`.github/CODESPACES.md`](.github/CODESPACES.md) for details.
+
+### Local Development
+
 ```bash
 git clone <repo-url>
 cd BSI
