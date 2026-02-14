@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
 import { Footer } from '@/components/layout-ds/Footer';
+import { usePortalData } from '@/lib/hooks';
+import { relativeTime } from '@/lib/utils';
 
 interface PortalEntry {
   id: string;
@@ -21,38 +23,9 @@ interface PortalEntry {
 }
 
 export default function TransferPortalPage() {
-  const [entries, setEntries] = useState<PortalEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { entries, loading } = usePortalData('/api/college-baseball/transfer-portal');
   const [page, setPage] = useState(0);
   const perPage = 25;
-
-  useEffect(() => {
-    async function fetchPortalEntries() {
-      try {
-        const res = await fetch('/api/college-baseball/transfer-portal');
-        if (res.ok) {
-          const data = await res.json() as { entries?: PortalEntry[] };
-          setEntries(data.entries || []);
-        }
-      } catch {
-        // Fall through to empty state
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPortalEntries();
-    const interval = setInterval(fetchPortalEntries, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  function relativeTime(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
-  }
 
   const displayed = entries.slice(page * perPage, (page + 1) * perPage);
   const totalPages = Math.ceil(entries.length / perPage);

@@ -10,6 +10,8 @@ import {
   CtaSection,
 } from '@/components/home';
 import { Footer } from '@/components/layout-ds/Footer';
+import { Section } from '@/components/ui/Section';
+import { Container } from '@/components/ui/Container';
 
 export const metadata = {
   title: 'Blaze Sports Intel | Real-Time Sports Analytics',
@@ -24,15 +26,15 @@ export default function HomePage() {
       <HeroSection />
 
       {/* 2. Live Scores Hub */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <Section padding="lg">
+        <Container>
           <HomeLiveScores />
-        </div>
-      </section>
+        </Container>
+      </Section>
 
       {/* 3. Sports Hub + Trending Intel — bento layout */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <Section padding="xl">
+        <Container>
           <h2 className="text-3xl font-display text-white mb-10 uppercase tracking-wide">
             <span className="text-gradient-brand">Sports Hub</span>
           </h2>
@@ -44,8 +46,8 @@ export default function HomePage() {
               <TrendingIntelFeed />
             </div>
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
       {/* 4. Stats Band — trust metrics */}
       <StatsBand />
@@ -57,14 +59,14 @@ export default function HomePage() {
       <CovenantValues />
 
       {/* 7. Arcade Spotlight */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <Section padding="xl">
+        <Container>
           <h2 className="text-3xl font-display text-white mb-10 uppercase tracking-wide">
             <span className="text-gradient-brand">Arcade</span>
           </h2>
           <ArcadeSpotlight />
-        </div>
-      </section>
+        </Container>
+      </Section>
 
       {/* 8. Final CTA */}
       <CtaSection />
