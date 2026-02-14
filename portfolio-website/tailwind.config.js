@@ -1,15 +1,16 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
         'burnt-orange': '#BF5700',
-        'texas-soil': '#703A0F', // WCAG AA compliant - 4.52:1 contrast on sand
+        'texas-soil': '#8B4513',
         'charcoal': '#1A1A1A',
         'midnight': '#0D0D0D',
         'sand': '#F4EEE7',
         'ember': '#FF6B35',
+        'bone': '#F5F0EB',
+        'warm-gray': '#A89F95',
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'Georgia', 'serif'],
