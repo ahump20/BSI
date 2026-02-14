@@ -1,0 +1,32 @@
+# BSI College Baseball Daily — Cron Pipeline Worker
+# Assembles daily digest bundles (pregame slate + prior-night recap),
+# generates Claude API matchup takes, and archives to KV + R2.
+#
+# Deploy: wrangler deploy --config workers/bsi-college-baseball-daily/wrangler.toml
+# Secrets: wrangler secret put RAPIDAPI_KEY --config workers/bsi-college-baseball-daily/wrangler.toml
+#          wrangler secret put ANTHROPIC_API_KEY --config workers/bsi-college-baseball-daily/wrangler.toml
+
+name = "bsi-college-baseball-daily"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+# Two daily cron triggers:
+#   11:00 UTC = 5:00 AM CT (CDT) / 6:00 AM CT (CST) — Morning edition (pregame + recap)
+#   05:00 UTC = 11:00 PM CT (CDT) / 12:00 AM CT (CST) — Evening recap
+[triggers]
+crons = ["0 11 * * *", "0 5 * * *"]
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[r2_buckets]]
+binding = "DIGEST_BUCKET"
+bucket_name = "blaze-sports-data-lake"
+
+# RAPIDAPI_KEY — Highlightly Pro API (set via wrangler secret put)
+# ANTHROPIC_API_KEY — Claude API for matchup takes (set via wrangler secret put)
+
+[dev]
+port = 8792

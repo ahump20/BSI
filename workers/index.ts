@@ -1573,6 +1573,48 @@ async function handleCollegeBaseballNews(env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// College Baseball Daily Digest handler
+// ---------------------------------------------------------------------------
+
+async function handleCollegeBaseballDaily(url: URL, env: Env): Promise<Response> {
+  const edition = url.searchParams.get('edition') ?? 'latest';
+  const date = url.searchParams.get('date');
+
+  // Resolve KV key: either specific edition+date, or latest
+  let kvKey: string;
+  if (edition === 'latest' || (!date && edition === 'latest')) {
+    kvKey = 'cb:daily:latest';
+  } else {
+    const resolvedDate = date ?? new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+    kvKey = `cb:daily:${edition}:${resolvedDate}`;
+  }
+
+  const cached = await kvGet<unknown>(env.KV, kvKey);
+  if (cached) {
+    return cachedJson(cached, 200, 300, {
+      ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
+      'X-Cache': 'HIT',
+    });
+  }
+
+  // Fallback to latest if specific key not found
+  if (kvKey !== 'cb:daily:latest') {
+    const latest = await kvGet<unknown>(env.KV, 'cb:daily:latest');
+    if (latest) {
+      return cachedJson(latest, 200, 300, {
+        ...dataHeaders(new Date().toISOString(), 'bsi-college-baseball-daily'),
+        'X-Cache': 'FALLBACK',
+      });
+    }
+  }
+
+  return json({
+    error: 'Daily digest not yet generated. The pipeline runs at 5 AM and 11 PM CT.',
+    meta: { source: 'bsi-college-baseball-daily', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  }, 404);
+}
+
+// ---------------------------------------------------------------------------
 // College Baseball Players list handler
 // ---------------------------------------------------------------------------
 
@@ -3675,6 +3717,9 @@ export default {
       }
       if (pathname === '/api/college-baseball/players') {
         return handleCollegeBaseballPlayersList(url, env);
+      }
+      if (pathname === '/api/college-baseball/daily') {
+        return handleCollegeBaseballDaily(url, env);
       }
 
       // CFB Transfer Portal
