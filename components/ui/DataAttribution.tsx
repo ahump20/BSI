@@ -10,8 +10,11 @@ interface DataAttributionProps {
 
 export function DataAttribution({ lastUpdated, source = 'Highlightly', className = '' }: DataAttributionProps) {
   const [relative, setRelative] = useState('');
+  const isValidDate = lastUpdated && !isNaN(new Date(lastUpdated).getTime());
 
   useEffect(() => {
+    if (!isValidDate) return;
+
     function update() {
       const diff = Date.now() - new Date(lastUpdated).getTime();
       const secs = Math.floor(diff / 1000);
@@ -23,7 +26,15 @@ export function DataAttribution({ lastUpdated, source = 'Highlightly', className
     update();
     const id = setInterval(update, 10000);
     return () => clearInterval(id);
-  }, [lastUpdated]);
+  }, [lastUpdated, isValidDate]);
+
+  if (!isValidDate) {
+    return source ? (
+      <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>
+        <span>Powered by {source}</span>
+      </div>
+    ) : null;
+  }
 
   return (
     <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>

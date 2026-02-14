@@ -43,6 +43,8 @@ interface StandingsApiResponse {
   message?: string;
 }
 
+const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
   const [standings, setStandings] = useState<TeamStanding[]>([]);
@@ -100,7 +102,7 @@ export default function CollegeBaseballStandingsPage() {
                   Conference <span className="text-gradient-blaze">Standings</span>
                 </h1>
                 <p className="text-text-secondary mt-2">
-                  2025 NCAA Division I baseball conference standings
+                  {seasonYear} NCAA Division I baseball conference standings
                 </p>
               </div>
             </ScrollReveal>
@@ -132,7 +134,7 @@ export default function CollegeBaseballStandingsPage() {
                     <h2 className="font-display text-2xl font-bold text-white">
                       {currentConf?.fullName}
                     </h2>
-                    <p className="text-text-tertiary text-sm mt-1">2025 Conference Standings</p>
+                    <p className="text-text-tertiary text-sm mt-1">{seasonYear} Conference Standings</p>
                   </div>
                   <Badge variant="primary">Updated Daily</Badge>
                 </div>
