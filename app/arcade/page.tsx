@@ -22,7 +22,7 @@ const GAMES = [
     color: '#FF6B35',
     icon: '🏈',
     url: '/games/blitz/',
-    deployed: true,
+    isDeployed: true,
   },
   {
     id: 'sandlot-sluggers',
@@ -31,7 +31,7 @@ const GAMES = [
     color: '#BF5700',
     icon: '⚾',
     url: '/games/sandlot-sluggers/',
-    deployed: true,
+    isDeployed: true,
   },
   {
     id: 'downtown-doggies',
@@ -40,7 +40,7 @@ const GAMES = [
     color: '#FDB913',
     icon: '🏀',
     url: '/games/downtown-doggies/',
-    deployed: true,
+    isDeployed: true,
   },
   {
     id: 'hotdog-dash',
@@ -49,7 +49,7 @@ const GAMES = [
     color: '#CD5C5C',
     icon: '🌭',
     url: '/games/hotdog-dash/',
-    deployed: true,
+    isDeployed: true,
   },
   {
     id: 'leadership-capital',
@@ -58,7 +58,7 @@ const GAMES = [
     color: '#BF5700',
     icon: '📊',
     url: '/games/leadership-capital/',
-    deployed: true,
+    isDeployed: true,
   },
 ];
 

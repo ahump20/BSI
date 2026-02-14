@@ -129,12 +129,12 @@ export default function CFBPage() {
     setPortalLoading(true);
     setPortalError(null);
     try {
-      const res = await fetch('/api/cfb/transfer-portal');
-      if (!res.ok) throw new Error('Failed to fetch transfer portal data');
-      const data = await res.json() as { entries?: PortalEntry[]; players?: PortalEntry[] };
+      const portalResponse = await fetch('/api/cfb/transfer-portal');
+      if (!portalResponse.ok) throw new Error('Failed to fetch transfer portal data');
+      const data = await portalResponse.json() as { entries?: PortalEntry[]; players?: PortalEntry[] };
       setPortalEntries(data.entries || data.players || []);
-    } catch (err) {
-      setPortalError(err instanceof Error ? err.message : 'Unknown error');
+    } catch (portalError) {
+      setPortalError(portalError instanceof Error ? portalError.message : 'Unknown error');
     } finally {
       setPortalLoading(false);
     }
