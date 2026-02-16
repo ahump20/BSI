@@ -335,18 +335,10 @@ export default function YardSalePage() {
               {categories.map((cat) => (
                 <div
                   key={cat.name}
-                  className="flex-shrink-0 px-6 py-5 rounded cursor-pointer transition-all duration-200 hover:border-[rgba(196,112,63,0.6)]"
+                  className="flex-shrink-0 px-6 py-5 rounded transition-all duration-200"
                   style={{
                     border: '1px solid rgba(245,240,232,0.08)',
                     background: 'rgba(245,240,232,0.03)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = colors.clay;
-                    e.currentTarget.style.background = 'rgba(196,112,63,0.08)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(245,240,232,0.08)';
-                    e.currentTarget.style.background = 'rgba(245,240,232,0.03)';
                   }}
                 >
                   <div
