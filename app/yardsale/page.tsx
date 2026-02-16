@@ -106,7 +106,7 @@ export default function YardSalePage() {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: colors.midnight, color: colors.chalk }}>
+    <main id="main-content" className="min-h-screen" style={{ background: colors.midnight, color: colors.chalk }}>
       {/* ═══ HERO ═══ */}
       <Section className="relative min-h-screen flex flex-col justify-center overflow-hidden" padding="none">
         {/* Background gradients */}
