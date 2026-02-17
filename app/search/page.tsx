@@ -24,18 +24,13 @@ import { SearchBar } from '@/components/layout-ds/SearchBar';
 // Types
 // ============================================================================
 
-interface TeamResult {
+interface SearchResultItem {
+  type: 'team' | 'player' | 'article' | 'game' | 'page';
   id: string;
   name: string;
-  abbreviation: string;
-  conference: string;
-  division?: string;
-  sport: string;
-  logo?: string;
-  record?: string;
-  ranking?: number;
-  city?: string;
-  state?: string;
+  url: string;
+  sport?: string;
+  score: number;
 }
 
 interface SearchFilters {
@@ -83,26 +78,6 @@ function getSportColor(sport: string): string {
   return SPORT_COLORS[sport.toLowerCase()] || 'bg-gray-600';
 }
 
-function buildTeamHref(sport: string, teamId: string): string {
-  const sportLower = sport.toLowerCase();
-  switch (sportLower) {
-    case 'mlb':
-      return `/mlb/teams/${teamId}`;
-    case 'nfl':
-      return `/nfl/teams/${teamId}`;
-    case 'nba':
-      return `/nba/teams/${teamId}`;
-    case 'college_baseball':
-      return `/college-baseball/teams/${teamId}`;
-    case 'cfb':
-      return `/college-football/teams/${teamId}`;
-    case 'cbb':
-      return `/college-basketball/teams/${teamId}`;
-    default:
-      return `/teams/${teamId}`;
-  }
-}
-
 // ============================================================================
 // Loading Fallback
 // ============================================================================
@@ -132,7 +107,7 @@ function SearchContent() {
   const initialQuery = searchParams.get('q') || '';
 
   const [_query, setQuery] = useState(initialQuery);
-  const [teams, setTeams] = useState<TeamResult[]>([]);
+  const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({
@@ -146,7 +121,7 @@ function SearchContent() {
 
   useEffect(() => {
     if (!initialQuery || initialQuery.length < 2) {
-      setTeams([]);
+      setResults([]);
       return;
     }
 
@@ -157,18 +132,18 @@ function SearchContent() {
       try {
         const sportParam = filters.sport ? `&sport=${filters.sport}` : '';
         const res = await fetch(
-          `/api/teams/search?q=${encodeURIComponent(initialQuery)}&limit=50${sportParam}`
+          `/api/search?q=${encodeURIComponent(initialQuery)}${sportParam}`
         );
 
         if (res.ok) {
-          const data = await res.json();
-          setTeams(Array.isArray(data) ? data : []);
+          const data = await res.json() as { results?: SearchResultItem[] };
+          setResults(data.results ?? []);
         } else {
           throw new Error('Search failed');
         }
       } catch (_err) {
         setError('Failed to fetch search results. Please try again.');
-        setTeams([]);
+        setResults([]);
       } finally {
         setIsLoading(false);
       }
@@ -182,20 +157,20 @@ function SearchContent() {
     setQuery(initialQuery);
   }, [initialQuery]);
 
-  // Filter teams by sport if filter is applied
-  const filteredTeams = filters.sport
-    ? teams.filter((t) => t.sport.toLowerCase() === filters.sport.toLowerCase())
-    : teams;
+  // Filter results by sport if filter is applied
+  const filteredResults = filters.sport
+    ? results.filter((r) => r.sport?.toLowerCase() === filters.sport.toLowerCase())
+    : results;
 
-  // Group teams by sport
-  const teamsBySport = filteredTeams.reduce(
-    (acc, team) => {
-      const sport = team.sport.toLowerCase();
+  // Group results by sport
+  const resultsBySport = filteredResults.reduce(
+    (acc, item) => {
+      const sport = (item.sport || item.type).toLowerCase();
       if (!acc[sport]) acc[sport] = [];
-      acc[sport].push(team);
+      acc[sport].push(item);
       return acc;
     },
-    {} as Record<string, TeamResult[]>
+    {} as Record<string, SearchResultItem[]>
   );
 
   // ========================================================================
@@ -261,7 +236,7 @@ function SearchContent() {
             {/* Results Count */}
             {!isLoading && initialQuery && (
               <p className="text-text-secondary mb-6">
-                Found {filteredTeams.length} team{filteredTeams.length !== 1 ? 's' : ''}
+                Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
             )}
@@ -287,12 +262,12 @@ function SearchContent() {
             )}
 
             {/* No Results */}
-            {!isLoading && !error && initialQuery && filteredTeams.length === 0 && (
+            {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="text-6xl mb-4">🔍</div>
                 <h2 className="text-xl font-semibold text-white mb-2">No Results Found</h2>
                 <p className="text-text-secondary mb-6">
-                  We couldn't find any teams matching "{initialQuery}"
+                  No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
@@ -356,9 +331,9 @@ function SearchContent() {
             )}
 
             {/* Results - Grouped by Sport */}
-            {!isLoading && !error && filteredTeams.length > 0 && (
+            {!isLoading && !error && filteredResults.length > 0 && (
               <div className="space-y-8">
-                {Object.entries(teamsBySport).map(([sport, sportTeams]) => (
+                {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
                     <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                       <span
@@ -366,53 +341,40 @@ function SearchContent() {
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="text-text-tertiary font-normal">({sportTeams.length})</span>
+                      <span className="text-text-tertiary font-normal">({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {sportTeams.map((team) => (
-                        <ScrollReveal key={team.id}>
-                          <Link href={buildTeamHref(team.sport, team.id)} className="block group">
+                      {items.map((item) => (
+                        <ScrollReveal key={`${item.type}-${item.id}`}>
+                          <Link href={item.url} className="block group">
                             <Card
                               variant="default"
                               padding="md"
                               className="h-full transition-all group-hover:border-burnt-orange"
                             >
                               <div className="flex items-center gap-4">
-                                {/* Team Logo/Badge */}
+                                {/* Type Badge */}
                                 <div
-                                  className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-sm ${getSportColor(team.sport)} group-hover:scale-105 transition-transform`}
+                                  className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
                                 >
-                                  {team.abbreviation || team.name.substring(0, 2).toUpperCase()}
+                                  {item.name.substring(0, 2).toUpperCase()}
                                 </div>
 
-                                {/* Team Info */}
+                                {/* Info */}
                                 <div className="flex-1 min-w-0">
                                   <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
-                                    {team.name}
+                                    {item.name}
                                   </p>
-                                  <p className="text-xs text-text-tertiary truncate">
-                                    {team.conference}
-                                    {team.division && ` • ${team.division}`}
+                                  <p className="text-xs text-text-tertiary truncate capitalize">
+                                    {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
-                                  {team.record && (
-                                    <p className="text-sm text-text-secondary mt-0.5 font-mono">
-                                      {team.record}
-                                    </p>
-                                  )}
                                 </div>
-
-                                {/* Ranking Badge */}
-                                {team.ranking && (
-                                  <div className="px-2 py-1 bg-gold/20 text-gold rounded text-xs font-bold">
-                                    #{team.ranking}
-                                  </div>
-                                )}
 
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors"
+                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors shrink-0"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"

@@ -599,13 +599,7 @@ export default function MLBPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-6 h-6 text-burnt-orange"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                     MLB Teams
@@ -613,22 +607,29 @@ export default function MLBPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-text-secondary mb-6">
-                    Browse all 30 MLB teams with rosters, schedules, and statistics.
+                    Browse all 30 MLB teams — rosters, schedules, and statistics across the American and National Leagues.
                   </p>
-                  <div className="bg-graphite rounded-lg p-8 text-center">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-16 h-16 text-burnt-orange mx-auto mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 8v4l3 3" />
-                    </svg>
-                    <p className="text-text-secondary">
-                      Team rosters and detailed statistics available in the Standings tab
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Link href="/mlb/teams" className="group block">
+                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">All 30 Teams</h3>
+                        <p className="text-text-tertiary text-sm">Full team directory with profiles, rosters, and season stats.</p>
+                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                          Browse Teams
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/mlb/standings" className="group block">
+                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Division Standings</h3>
+                        <p className="text-text-tertiary text-sm">AL &amp; NL standings with win percentage, games back, and streaks.</p>
+                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                          View Standings
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
@@ -639,34 +640,37 @@ export default function MLBPage() {
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-6 h-6 text-burnt-orange"
-                      fill="currentColor"
-                    >
-                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
                     </svg>
                     Player Statistics
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-text-secondary mb-6">
-                    Click on teams in the Standings tab to see rosters
+                    Player profiles, advanced Statcast metrics, and performance data across the league.
                   </p>
-                  <div className="bg-graphite rounded-lg p-8 text-center">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-16 h-16 text-burnt-orange mx-auto mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    >
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <p className="text-text-secondary">
-                      Exit velocity, launch angle, sprint speed—still wiring this up. Ping me if you
-                      need something specific.
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Link href="/mlb/players" className="group block">
+                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Browse Players</h3>
+                        <p className="text-text-tertiary text-sm">Search and explore player profiles with batting, pitching, and fielding stats.</p>
+                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                          View Players
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </Link>
+                    <Link href="/mlb/stats" className="group block">
+                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Statcast Analytics</h3>
+                        <p className="text-text-tertiary text-sm">Exit velocity, launch angle, sprint speed, and pitch movement data.</p>
+                        <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
+                          View Analytics
+                          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                        </span>
+                      </div>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>

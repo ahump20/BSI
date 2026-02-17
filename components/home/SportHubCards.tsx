@@ -4,17 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { SportIcon } from '@/components/icons/SportIcon';
 import { isInSeason, getReturnMonth, type SportKey } from '@/lib/season';
-
-interface GameScore {
-  id: string | number;
-  away: { name: string; abbreviation?: string; score: number; rank?: number };
-  home: { name: string; abbreviation?: string; score: number; rank?: number };
-  status: string;
-  isLive: boolean;
-  isFinal: boolean;
-  detail?: string;
-  startTime?: string;
-}
+import { normalizeGames, type GameScore } from '@/lib/scores/normalize';
 
 interface SportHub {
   key: SportKey;
@@ -33,119 +23,6 @@ const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error' | 'inSeason'>[]
   { key: 'nfl', name: 'NFL', href: '/nfl', accent: '#013369' },
   { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' },
 ];
-
-/**
- * Normalize game data from multiple API formats.
- * Handles: { games: [...] }, { scoreboard: { games: [...] } }, { data: [...events] }
- */
-function normalizeGames(sport: string, data: Record<string, unknown>): GameScore[] {
-  const scoreboard = data.scoreboard as Record<string, unknown> | undefined;
-
-  // College baseball raw ESPN format: { data: [...events] }
-  const rawData = data.data as Record<string, unknown>[] | undefined;
-  if (Array.isArray(rawData) && rawData.length > 0 && rawData[0].competitions) {
-    return rawData.map((event, i) => {
-      const competitions = event.competitions as Record<string, unknown>[] | undefined;
-      const comp = competitions?.[0] as Record<string, unknown> | undefined;
-      const competitors = (comp?.competitors || []) as Record<string, unknown>[];
-
-      const homeComp = competitors.find((c) => c.homeAway === 'home');
-      const awayComp = competitors.find((c) => c.homeAway === 'away');
-      const homeTeam = (homeComp?.team || {}) as Record<string, unknown>;
-      const awayTeam = (awayComp?.team || {}) as Record<string, unknown>;
-
-      const homeCurated = (homeComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
-      const awayCurated = (awayComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
-
-      const status = (comp?.status || event.status || {}) as Record<string, unknown>;
-      const statusType = status?.type as Record<string, unknown> | undefined;
-
-      return {
-        id: (event.id as string | number) || i,
-        away: {
-          name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
-          abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
-          score: Number(awayComp?.score ?? 0),
-          rank: awayCurated && awayCurated <= 25 ? awayCurated : undefined,
-        },
-        home: {
-          name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
-          abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
-          score: Number(homeComp?.score ?? 0),
-          rank: homeCurated && homeCurated <= 25 ? homeCurated : undefined,
-        },
-        status: (statusType?.shortDetail as string) || (statusType?.description as string) || 'Scheduled',
-        isLive: statusType?.state === 'in',
-        isFinal: statusType?.state === 'post' || statusType?.completed === true,
-        detail: undefined,
-        startTime: (statusType?.shortDetail as string) || undefined,
-      };
-    });
-  }
-
-  // Transformed/scoreboard format
-  const rawGames = (data.games || scoreboard?.games || []) as Record<string, unknown>[];
-  return rawGames.map((g: Record<string, unknown>, i: number) => {
-    const rawTeams = g.teams as Record<string, unknown>[] | Record<string, Record<string, unknown>> | undefined;
-    let homeEntry: Record<string, unknown> | undefined;
-    let awayEntry: Record<string, unknown> | undefined;
-
-    if (Array.isArray(rawTeams)) {
-      homeEntry = rawTeams.find((t) => t.homeAway === 'home');
-      awayEntry = rawTeams.find((t) => t.homeAway === 'away');
-    } else if (rawTeams) {
-      homeEntry = rawTeams.home as Record<string, unknown> | undefined;
-      awayEntry = rawTeams.away as Record<string, unknown> | undefined;
-    }
-
-    const homeTeam = (homeEntry?.team as Record<string, unknown>) || homeEntry || {};
-    const awayTeam = (awayEntry?.team as Record<string, unknown>) || awayEntry || {};
-
-    const status = g.status as Record<string, unknown> | string | undefined;
-    const statusType =
-      typeof status === 'object' ? (status?.type as Record<string, unknown> | undefined) : undefined;
-
-    const isLive =
-      typeof status === 'object'
-        ? statusType?.state === 'in' || status?.isLive === true
-        : typeof status === 'string' && status.toLowerCase().includes('in progress');
-
-    const isFinal =
-      typeof status === 'object'
-        ? status?.isFinal === true || statusType?.state === 'post'
-        : typeof status === 'string' && status.toLowerCase().includes('final');
-
-    const statusText =
-      typeof status === 'object'
-        ? (status?.detailedState as string) || (statusType?.description as string) || 'Scheduled'
-        : (status as string) || 'Scheduled';
-
-    const startTime =
-      typeof status === 'object' ? (status?.startTime as string) || (statusType?.shortDetail as string) : undefined;
-
-    return {
-      id: (g.id as string | number) || i,
-      away: {
-        name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
-        abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
-        score: Number(awayEntry?.score ?? 0),
-      },
-      home: {
-        name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
-        abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
-        score: Number(homeEntry?.score ?? 0),
-      },
-      status: statusText,
-      isLive: Boolean(isLive),
-      isFinal: Boolean(isFinal),
-      detail:
-        typeof status === 'object' && status?.inning
-          ? `${status?.inningState ?? ''} ${status.inning}`
-          : undefined,
-      startTime: startTime || undefined,
-    };
-  });
-}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
@@ -288,7 +165,7 @@ export function SportHubCards() {
                   <>
                     {liveCount > 0 ? (
                       <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" role="status" aria-label={`${liveCount} ${hub.name} game${liveCount !== 1 ? 's' : ''} in progress`} />
                         <span className="text-sm font-semibold text-green-400">
                           {liveCount} LIVE
                         </span>

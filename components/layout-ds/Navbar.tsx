@@ -95,12 +95,13 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl py-1 z-50">
+        <div className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
+              role="menuitem"
               className="block px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
             >
               {item.label}
