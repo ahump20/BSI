@@ -104,6 +104,26 @@ const analyticsTools = [
     status: 'available',
     href: '/nil-valuation',
   },
+  {
+    id: 'havf',
+    name: 'HAV-F Score',
+    description:
+      'Proprietary composite player evaluation (0–100). Combines Hitting, At-Bat Quality, Velocity proxy, and Fielding into one percentile-ranked metric.',
+    icon: '🎯',
+    sport: 'All',
+    status: 'available',
+    href: '/analytics/havf',
+  },
+  {
+    id: 'mmi',
+    name: 'Momentum Index (MMI)',
+    description:
+      'Real-time game momentum metric (−100 to +100). Tracks score differential, recent scoring runs, game phase, and base situation to quantify who has the edge.',
+    icon: '⚡',
+    sport: 'All',
+    status: 'available',
+    href: '/analytics/mmi',
+  },
 ];
 
 const quickStats = [

@@ -14,6 +14,8 @@ import {
   HighlightlyApiClient,
   type HighlightlyMatch,
 } from '../../lib/api-clients/highlightly-api';
+import { computeMMI, type MMIInput } from '../../lib/analytics/mmi';
+import { fetchLiveGames, isValidSport, type Sport, type RawLiveGame } from './sources';
 
 // =============================================================================
 // Types
@@ -22,6 +24,7 @@ import {
 interface Env {
   LIVE_SCORES: DurableObjectNamespace;
   RAPIDAPI_KEY: string;
+  SPORTSDATAIO_KEY?: string;
   ENVIRONMENT: string;
 }
 
@@ -53,17 +56,20 @@ interface LiveGame {
   };
   startTime: string;
   venue: string;
+  mmi?: number;
 }
 
 interface WsMessage {
   type: 'score_update' | 'game_start' | 'game_end' | 'connected' | 'error' | 'heartbeat';
   games?: LiveGame[];
+  mmi?: Record<string, number>;
   message?: string;
   timestamp: string;
   meta?: {
     source: string;
     connectedClients: number;
     pollIntervalMs: number;
+    sport?: string;
   };
 }
 
@@ -380,6 +386,26 @@ export class LiveScoresBroadcaster {
       currentSnapshot.set(game.id, game);
     }
 
+    // Compute MMI for in-progress baseball games
+    const mmiMap: Record<string, number> = {};
+    for (const [id, game] of currentSnapshot) {
+      if (game.status === 'in' && game.inning != null) {
+        const mmiInput: MMIInput = {
+          homeScore: game.homeTeam.score,
+          awayScore: game.awayTeam.score,
+          inning: game.inning,
+          inningHalf: game.inningHalf ?? 'top',
+          totalInnings: 9,
+          recentHomeRuns: 0,
+          recentAwayRuns: 0,
+          baseSituation: 'empty',
+        };
+        const mmiValue = computeMMI(mmiInput);
+        mmiMap[id] = mmiValue;
+        game.mmi = mmiValue;
+      }
+    }
+
     // Delta detection
     const delta = computeDelta(this.previousSnapshot, currentSnapshot);
 
@@ -388,6 +414,7 @@ export class LiveScoresBroadcaster {
       this.broadcast({
         type: 'game_start',
         games: delta.started,
+        mmi: mmiMap,
         timestamp: new Date().toISOString(),
       });
     }
@@ -406,6 +433,7 @@ export class LiveScoresBroadcaster {
       this.broadcast({
         type: 'score_update',
         games: delta.changed,
+        mmi: mmiMap,
         timestamp: new Date().toISOString(),
       });
     }
@@ -483,16 +511,19 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // WebSocket upgrade -> route to Durable Object
+    // Resolve sport from query param (default: college-baseball)
+    const sport = url.searchParams.get('sport') || 'college-baseball';
+
+    // WebSocket upgrade -> route to sport-specific DO instance
     if (url.pathname === '/ws') {
-      const id = env.LIVE_SCORES.idFromName('college-baseball');
+      const id = env.LIVE_SCORES.idFromName(sport);
       const stub = env.LIVE_SCORES.get(id);
       return stub.fetch(request);
     }
 
-    // Control endpoints -> route to Durable Object
+    // Control endpoints -> route to sport-specific DO instance
     if (['/start', '/stop', '/status'].includes(url.pathname)) {
-      const id = env.LIVE_SCORES.idFromName('college-baseball');
+      const id = env.LIVE_SCORES.idFromName(sport);
       const stub = env.LIVE_SCORES.get(id);
       const res = await stub.fetch(request);
       // Add CORS to control responses

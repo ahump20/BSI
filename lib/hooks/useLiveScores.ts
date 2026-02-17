@@ -32,12 +32,14 @@ export interface LiveGame {
 interface WsMessage {
   type: 'score_update' | 'game_start' | 'game_end' | 'connected' | 'error' | 'heartbeat';
   games?: LiveGame[];
+  mmi?: Record<string, number>;
   message?: string;
   timestamp: string;
   meta?: {
     source: string;
     connectedClients: number;
     pollIntervalMs: number;
+    sport?: string;
   };
 }
 
@@ -52,6 +54,8 @@ interface LiveScoresState {
 }
 
 interface UseLiveScoresOptions {
+  /** Sport to subscribe to (default: 'college-baseball') */
+  sport?: 'college-baseball' | 'mlb' | 'nfl' | 'nba';
   /** Polling fallback interval in ms (default: 30000) */
   pollingInterval?: number;
   /** WebSocket URL (default: auto-detect from environment) */
@@ -68,19 +72,21 @@ const DEFAULT_POLL_INTERVAL = 30_000;
 const MAX_RECONNECT_DELAY = 30_000;
 const INITIAL_RECONNECT_DELAY = 1_000;
 
-/** Resolve WebSocket URL based on environment. */
-function resolveWsUrl(override?: string): string {
+/** Resolve WebSocket URL based on environment and sport. */
+function resolveWsUrl(override?: string, sport = 'college-baseball'): string {
   if (override) return override;
   if (typeof window === 'undefined') return '';
+
+  const sportParam = sport !== 'college-baseball' ? `?sport=${sport}` : '';
 
   // In production, connect to the live-scores worker
   const hostname = window.location.hostname;
   if (hostname === 'blazesportsintel.com' || hostname === 'www.blazesportsintel.com') {
-    return 'wss://live.blazesportsintel.com/ws';
+    return `wss://live.blazesportsintel.com/ws${sportParam}`;
   }
 
   // Dev: assume live-scores worker runs on port 8790
-  return 'ws://localhost:8790/ws';
+  return `ws://localhost:8790/ws${sportParam}`;
 }
 
 // =============================================================================
@@ -91,6 +97,7 @@ export function useLiveScores(
   options: UseLiveScoresOptions = {}
 ): LiveScoresState & { retry: () => void } {
   const {
+    sport = 'college-baseball',
     pollingInterval = DEFAULT_POLL_INTERVAL,
     wsUrl: wsUrlOverride,
     pollingOnly = false,
@@ -222,7 +229,7 @@ export function useLiveScores(
   const connectWebSocket = useCallback(() => {
     if (!mountedRef.current || pollingOnly) return;
 
-    const url = resolveWsUrl(wsUrlOverride);
+    const url = resolveWsUrl(wsUrlOverride, sport);
     if (!url) {
       startPolling();
       return;

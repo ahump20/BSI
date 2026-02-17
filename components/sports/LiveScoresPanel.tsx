@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Sport } from './SportTabs';
 import { normalizeGames, sortGames, type GameScore } from '@/lib/scores/normalize';
+import { useLiveScoresAsGameScores } from '@/lib/hooks/useLiveScoresAdapter';
+import { ConnectionIndicator } from '@/components/ui/ConnectionIndicator';
 
 interface LiveScoresPanelProps {
   sport: Sport;
@@ -15,13 +17,39 @@ function getYesterdayDateString(): string {
   return d.toISOString().slice(0, 10);
 }
 
+/**
+ * NCAA (college baseball) uses WebSocket-first via useLiveScores.
+ * Other sports use HTTP polling until the DO is extended for multi-sport.
+ */
+function useNCAAWebSocketScores() {
+  return useLiveScoresAsGameScores({ pollingInterval: 30_000 });
+}
+
 export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps) {
+  // For NCAA: use WebSocket hook
+  const wsData = useNCAAWebSocketScores();
+  const useWebSocket = sport === 'ncaa';
+
   const [games, setGames] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isYesterday, setIsYesterday] = useState(false);
   const gamesRef = useRef(games);
   gamesRef.current = games;
+
+  // When using WebSocket for NCAA, sync from the hook
+  useEffect(() => {
+    if (!useWebSocket) return;
+    if (wsData.games.length > 0) {
+      setGames(sortGames(wsData.games));
+      setLoading(false);
+      setError(wsData.error);
+      setIsYesterday(false);
+    } else if (wsData.error) {
+      setError(wsData.error);
+      setLoading(false);
+    }
+  }, [useWebSocket, wsData.games, wsData.error]);
 
   const buildEndpoint = useCallback((dateParam?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_BASE || '';
@@ -30,7 +58,9 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
     return dateParam ? `${endpoint}?date=${dateParam}` : endpoint;
   }, [sport]);
 
+  // HTTP polling for non-NCAA sports
   useEffect(() => {
+    if (useWebSocket) return;
     let cancelled = false;
 
     async function fetchScores() {
@@ -39,7 +69,6 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       setIsYesterday(false);
 
       try {
-        // Try today first
         const res = await fetch(buildEndpoint());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
@@ -49,7 +78,6 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
           if (todayGames.length > 0) {
             setGames(sortGames(todayGames));
           } else {
-            // No games today — try yesterday as fallback
             try {
               const yRes = await fetch(buildEndpoint(getYesterdayDateString()));
               if (yRes.ok) {
@@ -84,7 +112,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       cancelled = true;
       clearInterval(interval);
     };
-  }, [sport, buildEndpoint]);
+  }, [sport, buildEndpoint, useWebSocket]);
 
   return (
     <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
@@ -92,7 +120,10 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
         <h3 className="text-lg font-semibold text-white">
           {isYesterday ? "Yesterday's Results" : 'Live Scores'}
         </h3>
-        <span className="text-xs text-white/40 uppercase tracking-wider">{sport.toUpperCase()}</span>
+        <span className="flex items-center gap-3">
+          {useWebSocket && <ConnectionIndicator status={wsData.connectionStatus} />}
+          <span className="text-xs text-white/40 uppercase tracking-wider">{sport.toUpperCase()}</span>
+        </span>
       </div>
       <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
         {loading ? (

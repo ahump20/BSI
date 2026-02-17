@@ -61,6 +61,58 @@ export async function handleLeaderboardSubmit(request: Request, env: Env): Promi
   }
 }
 
+/**
+ * GET /api/arcade/stats — Aggregate play stats across all games.
+ */
+export async function handleArcadeStats(env: Env): Promise<Response> {
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT game_id, COUNT(*) as total_plays, COUNT(DISTINCT player_name) as unique_players,
+              MAX(score) as high_score, ROUND(AVG(score), 1) as avg_score
+       FROM arcade_sessions GROUP BY game_id ORDER BY total_plays DESC`
+    ).all();
+
+    return json({
+      games: results ?? [],
+      meta: { source: 'arcade-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'D1 error';
+    if (msg.includes('no such table')) return json({ games: [] });
+    return json({ error: msg }, 500);
+  }
+}
+
+/**
+ * GET /api/arcade/leaderboard/:gameId?period=daily|weekly|all&limit=25
+ * Per-game leaderboard with optional time filtering.
+ */
+export async function handleGameLeaderboard(gameId: string, url: URL, env: Env): Promise<Response> {
+  const period = url.searchParams.get('period') || 'all';
+  const limit = Math.min(parseInt(url.searchParams.get('limit') || '25'), 100);
+
+  try {
+    let dateFilter = '';
+    if (period === 'daily') {
+      dateFilter = `AND updated_at >= datetime('now', '-1 day')`;
+    } else if (period === 'weekly') {
+      dateFilter = `AND updated_at >= datetime('now', '-7 days')`;
+    }
+
+    const { results } = await env.DB.prepare(
+      `SELECT player_name as name, score, avatar, game_id, updated_at
+       FROM leaderboard WHERE game_id = ? ${dateFilter}
+       ORDER BY score DESC LIMIT ?`
+    ).bind(gameId, limit).all();
+
+    return json(results ?? []);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'D1 error';
+    if (msg.includes('no such table')) return json([]);
+    return json({ error: msg }, 500);
+  }
+}
+
 export async function handleGameAsset(
   assetPath: string,
   env: Env

@@ -90,7 +90,15 @@ import {
   handleCVInjuryAlerts,
   handleCVAdoption,
 } from './handlers/cv';
-import { handleLeaderboard, handleLeaderboardSubmit, handleGameAsset } from './handlers/games';
+import {
+  handleHAVFPlayer,
+  handleHAVFLeaderboard,
+  handleHAVFCompare,
+  handleMMILive,
+  handleMMIGame,
+  handleMMITrending,
+} from './handlers/analytics';
+import { handleLeaderboard, handleLeaderboardSubmit, handleGameAsset, handleArcadeStats, handleGameLeaderboard } from './handlers/games';
 import {
   handleTeams,
   handleLead,
@@ -307,6 +315,16 @@ app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c
 app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
 app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
 
+// --- HAV-F Analytics ---
+app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));
+app.get('/api/analytics/havf/compare/:p1/:p2', (c) => handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env));
+app.get('/api/analytics/havf/player/:playerId', (c) => handleHAVFPlayer(c.req.param('playerId'), c.env));
+
+// --- MMI (Momentum Magnitude Index) ---
+app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));
+app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gameId'), c.env));
+app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(new URL(c.req.url), c.env));
+
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
 
@@ -334,6 +352,10 @@ app.get('/api/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.u
 app.post('/api/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c.env));
 app.get('/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));
 app.post('/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c.env));
+
+// --- Arcade ---
+app.get('/api/arcade/stats', (c) => handleArcadeStats(c.env));
+app.get('/api/arcade/leaderboard/:gameId', (c) => handleGameLeaderboard(c.req.param('gameId'), new URL(c.req.url), c.env));
 
 // --- Teams ---
 app.get('/api/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
