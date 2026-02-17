@@ -343,34 +343,50 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
     }
     setLoading(true);
     try {
-      // Try to fetch from standings API
+      // Fetch from BSI standings API (returns nested conference/division/team structure)
       const response = await fetch('/api/nfl/standings');
       if (response.ok) {
         const data = (await response.json()) as {
-          success?: boolean;
-          rawData?: Array<{
-            Team: string;
-            Wins?: number;
-            Losses?: number;
-            Ties?: number;
-            PointsFor?: number;
-            PointsAgainst?: number;
-            Streak?: number;
+          standings?: Array<{
+            name: string;
+            divisions?: Array<{
+              name: string;
+              teams: Array<{
+                abbreviation: string;
+                wins: number;
+                losses: number;
+                ties: number;
+                pf: number;
+                pa: number;
+                streak: string;
+              }>;
+            }>;
           }>;
         };
-        if (data.success && data.rawData) {
-          const teamData = data.rawData.find(
-            (t: { Team: string }) => t.Team?.toUpperCase() === team.abbreviation.toUpperCase()
-          );
-          if (teamData) {
-            setStats({
-              wins: teamData.Wins || 0,
-              losses: teamData.Losses || 0,
-              ties: teamData.Ties || 0,
-              pointsFor: teamData.PointsFor || 0,
-              pointsAgainst: teamData.PointsAgainst || 0,
-              streak: teamData.Streak || 0,
-            });
+        if (data.standings) {
+          // Walk conference -> division -> team to find matching team
+          for (const conf of data.standings) {
+            for (const div of conf.divisions || []) {
+              const match = div.teams.find(
+                (t) => t.abbreviation?.toUpperCase() === team.abbreviation.toUpperCase()
+              );
+              if (match) {
+                const streakNum = typeof match.streak === 'string'
+                  ? (match.streak.startsWith('W') ? parseInt(match.streak.slice(1), 10) || 0
+                    : match.streak.startsWith('L') ? -(parseInt(match.streak.slice(1), 10) || 0)
+                    : 0)
+                  : 0;
+                setStats({
+                  wins: match.wins || 0,
+                  losses: match.losses || 0,
+                  ties: match.ties || 0,
+                  pointsFor: match.pf || 0,
+                  pointsAgainst: match.pa || 0,
+                  streak: streakNum,
+                });
+                break;
+              }
+            }
           }
         }
       }
@@ -475,7 +491,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary">
-                2025 Season · {team.conference} {team.division}
+                {(() => { const now = new Date(); const y = now.getFullYear(); return now.getMonth() < 2 ? y - 1 : y; })()} Season · {team.conference} {team.division}
               </p>
             </ScrollReveal>
           </Container>
