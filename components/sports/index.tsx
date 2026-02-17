@@ -60,19 +60,12 @@ export function DataSourcePanel({ sources, lastUpdated, refreshInterval, classNa
 }
 
 // Bottom navigation for mobile
-interface BottomNavItem {
+export interface BottomNavItem {
   label: string;
   href: string;
-  icon?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  onPress?: () => void;
 }
-
-export const DEFAULT_NAV_ITEMS: BottomNavItem[] = [
-  { label: 'Home', href: '/' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'More', href: '/dashboard' },
-];
 
 export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; className?: string }) {
   const pathname = usePathname();
@@ -85,24 +78,45 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
   return (
     <nav
       className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-white/10 ${className}`}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="navigation"
       aria-label="Bottom navigation"
     >
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              isActive(item.href)
-                ? 'text-[#BF5700]'
-                : 'text-white/40 hover:text-white'
-            }`}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            <span className="text-xs font-medium">{item.label}</span>
-          </Link>
-        ))}
+        {items.map((item) => {
+          const active = isActive(item.href);
+          const Icon = item.icon;
+
+          // Items with onPress are buttons (e.g., "More"), not links
+          if (item.onPress) {
+            return (
+              <button
+                key={item.label}
+                onClick={item.onPress}
+                className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
+                  active ? 'text-[#BF5700]' : 'text-white/40'
+                }`}
+              >
+                {Icon && <Icon className="w-5 h-5" />}
+                <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+              </button>
+            );
+          }
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
+                active ? 'text-[#BF5700]' : 'text-white/40 hover:text-white'
+              }`}
+              aria-current={active ? 'page' : undefined}
+            >
+              {Icon && <Icon className="w-5 h-5" />}
+              <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );

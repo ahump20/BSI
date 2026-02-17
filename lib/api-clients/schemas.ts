@@ -10,7 +10,7 @@
  */
 
 import { z } from 'zod';
-import { logger } from '@/lib/utils/logger';
+import { logger } from '../utils/logger';
 
 // ---------------------------------------------------------------------------
 // ESPN Schemas

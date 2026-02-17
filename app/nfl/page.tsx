@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -46,78 +47,54 @@ const DIVISION_ORDER = [
 ];
 export default function NFLPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
-  const [standings, setStandings] = useState<Team[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
-  const [hasLiveGames, setHasLiveGames] = useState(false);
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/nfl/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json() as { standings?: Team[]; teams?: Team[]; meta?: { lastUpdated?: string } };
-      setStandings((data.standings || data.teams || []) as Team[]);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Standings — fetched when standings or teams tab is active
+  const standingsUrl = (activeTab === 'standings' || activeTab === 'teams') ? '/api/nfl/standings' : null;
+  const { data: standingsRaw, loading: standingsLoading, error: standingsError, retry: retryStandings } =
+    useSportData<{ standings?: Team[]; teams?: Team[]; meta?: { lastUpdated?: string } }>(standingsUrl);
+  const standings = (standingsRaw?.standings || standingsRaw?.teams || []) as Team[];
 
-  const fetchScores = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/nfl/scores');
-      if (!res.ok) throw new Error('Failed to fetch scores');
-      const data = await res.json() as { games?: Record<string, unknown>[]; meta?: { lastUpdated?: string } };
-      const rawGames = data.games || [];
-      const normalized: Game[] = rawGames.map((g, i) => {
-        const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
-        const status = g.status as Record<string, unknown> | string | undefined;
-        const isLive = typeof status === 'object'
-          ? (status?.type as Record<string, unknown>)?.state === 'in' || status?.isLive === true
-          : typeof status === 'string' && status.toLowerCase().includes('in progress');
-        const isFinal = typeof status === 'object'
-          ? status?.isFinal === true
-          : typeof status === 'string' && status.toLowerCase().includes('final');
-        return {
-          id: (g.id as string | number) || i,
-          away: { name: (teams?.away?.name as string) || 'Away', score: Number(teams?.away?.score ?? 0) },
-          home: { name: (teams?.home?.name as string) || 'Home', score: Number(teams?.home?.score ?? 0) },
-          status: typeof status === 'object' ? ((status?.detailedState as string) || 'Scheduled') : ((status as string) || 'Scheduled'),
-          isLive: Boolean(isLive),
-          isFinal: Boolean(isFinal),
-          detail: typeof status === 'object' && status?.period ? `Q${status.period}` : undefined,
-          venue: (g.venue as Record<string, unknown>)?.name as string || undefined,
-        };
-      });
-      setGames(normalized);
-      setHasLiveGames(normalized.some((g) => g.isLive));
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Scores — fetched when scores tab is active, auto-refreshes when live
+  const scoresUrl = activeTab === 'scores' ? '/api/nfl/scores' : null;
+  const { data: scoresRaw, loading: scoresLoading, error: scoresError, retry: retryScores } =
+    useSportData<{ games?: Record<string, unknown>[]; meta?: { lastUpdated?: string } }>(scoresUrl, {
+      refreshInterval: 30000,
+      refreshWhen: liveGamesDetected,
+    });
 
-  useEffect(() => {
-    if (activeTab === 'standings' || activeTab === 'teams') fetchStandings();
-    else if (activeTab === 'scores') fetchScores();
-  }, [activeTab, fetchStandings, fetchScores]);
+  // Normalize raw API games into typed Game[]
+  const games = useMemo(() => {
+    const rawGames = scoresRaw?.games || [];
+    return rawGames.map((g, i) => {
+      const teams = g.teams as Record<string, Record<string, unknown>> | undefined;
+      const status = g.status as Record<string, unknown> | string | undefined;
+      const isLive = typeof status === 'object'
+        ? (status?.type as Record<string, unknown>)?.state === 'in' || status?.isLive === true
+        : typeof status === 'string' && status.toLowerCase().includes('in progress');
+      const isFinal = typeof status === 'object'
+        ? status?.isFinal === true
+        : typeof status === 'string' && status.toLowerCase().includes('final');
+      return {
+        id: (g.id as string | number) || i,
+        away: { name: (teams?.away?.name as string) || 'Away', score: Number(teams?.away?.score ?? 0) },
+        home: { name: (teams?.home?.name as string) || 'Home', score: Number(teams?.home?.score ?? 0) },
+        status: typeof status === 'object' ? ((status?.detailedState as string) || 'Scheduled') : ((status as string) || 'Scheduled'),
+        isLive: Boolean(isLive),
+        isFinal: Boolean(isFinal),
+        detail: typeof status === 'object' && status?.period ? `Q${status.period}` : undefined,
+        venue: (g.venue as Record<string, unknown>)?.name as string || undefined,
+      } as Game;
+    });
+  }, [scoresRaw]);
 
-  useEffect(() => {
-    if (activeTab === 'scores' && hasLiveGames) {
-      const interval = setInterval(fetchScores, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, hasLiveGames, fetchScores]);
+  const hasLiveGames = useMemo(() => games.some((g) => g.isLive), [games]);
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+
+  // Derived shared state
+  const loading = standingsLoading || scoresLoading;
+  const error = standingsError || scoresError;
+  const lastUpdated = standingsRaw?.meta?.lastUpdated || scoresRaw?.meta?.lastUpdated || '';
 
   const standingsByDivision: Record<string, Team[]> = {};
   standings.forEach((team) => {
@@ -239,7 +216,7 @@ export default function NFLPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={fetchStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors">Retry</button>
+                    <button onClick={retryStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors">Retry</button>
                   </Card>
                 ) : standings.length === 0 ? (
                   <Card variant="default" padding="lg">
@@ -304,7 +281,7 @@ export default function NFLPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={fetchScores} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors">Retry</button>
+                    <button onClick={retryScores} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors">Retry</button>
                   </Card>
                 ) : games.length === 0 ? (
                   <Card variant="default" padding="lg">

@@ -32,11 +32,11 @@ export default function ACCOpeningWeekendPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/20">/</span>
@@ -47,7 +47,7 @@ export default function ACCOpeningWeekendPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#FF6B35]/10 via-transparent to-[#BF5700]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-ember/10 via-transparent to-burnt-orange/5 pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -81,19 +81,19 @@ export default function ACCOpeningWeekendPage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-[#BF5700]">8</div>
+                  <div className="font-mono text-3xl font-bold text-burnt-orange">8</div>
                   <div className="text-white/30 text-xs mt-1">Ranked Teams</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-[#BF5700]">5</div>
+                  <div className="font-mono text-3xl font-bold text-burnt-orange">5</div>
                   <div className="text-white/30 text-xs mt-1">In Top 20</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-[#BF5700]">2</div>
+                  <div className="font-mono text-3xl font-bold text-burnt-orange">2</div>
                   <div className="text-white/30 text-xs mt-1">New Members</div>
                 </Card>
                 <Card variant="default" padding="md" className="text-center">
-                  <div className="font-mono text-3xl font-bold text-[#BF5700]">1</div>
+                  <div className="font-mono text-3xl font-bold text-burnt-orange">1</div>
                   <div className="text-white/30 text-xs mt-1">CWS Finalist</div>
                 </Card>
               </div>
@@ -115,14 +115,14 @@ export default function ACCOpeningWeekendPage() {
               {accTeams.map((team) => (
                 <ScrollReveal key={team.rank} direction="up">
                   <Card variant="default" padding="md" className={
-                    team.rank <= 6 ? 'border-[#BF5700]/30 bg-[#BF5700]/5' : ''
+                    team.rank <= 6 ? 'border-burnt-orange/30 bg-burnt-orange/5' : ''
                   }>
                     <div className="flex flex-col md:flex-row md:items-start gap-4">
                       <div className="flex items-center gap-3 md:w-48 flex-shrink-0">
-                        <span className="font-display text-2xl font-bold text-[#BF5700]">#{team.rank}</span>
+                        <span className="font-display text-2xl font-bold text-burnt-orange">#{team.rank}</span>
                         <div>
                           {team.slug ? (
-                            <Link href={`/college-baseball/teams/${team.slug}`} className="font-display text-lg font-bold text-white uppercase hover:text-[#BF5700] transition-colors">
+                            <Link href={`/college-baseball/teams/${team.slug}`} className="font-display text-lg font-bold text-white uppercase hover:text-burnt-orange transition-colors">
                               {team.team}
                             </Link>
                           ) : (
@@ -163,7 +163,7 @@ export default function ACCOpeningWeekendPage() {
               {storylines.map((story) => (
                 <ScrollReveal key={story.title} direction="up">
                   <Card variant="default" padding="lg" className="h-full">
-                    <h3 className="font-display text-lg font-bold uppercase tracking-wide text-[#BF5700] mb-3">
+                    <h3 className="font-display text-lg font-bold uppercase tracking-wide text-burnt-orange mb-3">
                       {story.title}
                     </h3>
                     <p className="text-white/50 text-sm leading-relaxed">{story.description}</p>
@@ -186,7 +186,7 @@ export default function ACCOpeningWeekendPage() {
                 }) + ' CT'}
               />
               <div className="flex gap-4">
-                <Link href="/college-baseball/editorial" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <Link href="/college-baseball/editorial" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                   More Editorial →
                 </Link>
                 <Link href="/college-baseball/editorial/sec-opening-weekend" className="text-sm text-white/40 hover:text-white transition-colors">

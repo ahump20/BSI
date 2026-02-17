@@ -7,41 +7,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-function createMockD1() {
-  return {
-    prepare: vi.fn().mockReturnValue({
-      first: vi.fn().mockResolvedValue(null),
-      all: vi.fn().mockResolvedValue({ results: [] }),
-      bind: vi.fn().mockReturnThis(),
-      run: vi.fn().mockResolvedValue({ success: true }),
-    }),
-  };
-}
-
-function createMockKV() {
-  const store = new Map<string, string>();
-  return {
-    put: vi.fn(async (key: string, value: string) => store.set(key, value)),
-    get: vi.fn(async (key: string) => store.get(key) ?? null),
-    delete: vi.fn(async (key: string) => store.delete(key)),
-    list: vi.fn(async () => ({ keys: [] })),
-  };
-}
-
-function createMockEnv(overrides: Record<string, unknown> = {}) {
-  return {
-    DB: createMockD1(),
-    KV: createMockKV(),
-    CACHE: {} as any,
-    PORTAL_POLLER: {} as any,
-    ASSETS_BUCKET: {} as any,
-    ENVIRONMENT: 'test',
-    API_VERSION: '1.0.0-test',
-    PAGES_ORIGIN: 'https://test.pages.dev',
-    ...overrides,
-  };
-}
+import { createMockEnv } from '../utils/mocks';
 
 /**
  * Mock ESPN API response format (used by getScoreboard, getNews, etc.)

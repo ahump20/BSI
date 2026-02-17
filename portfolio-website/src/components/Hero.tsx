@@ -105,7 +105,7 @@ export default function Hero() {
             >
               Blaze Sports Intel
             </a>
-            <a href="/Austin_Humphrey_Resume_Executive_v2.pdf" download className="btn-outline">
+            <a href="/Austin_Humphrey_Resume.pdf" download className="btn-outline">
               Resume
             </a>
           </div>

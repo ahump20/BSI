@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -44,39 +45,18 @@ interface StandingsApiResponse {
 }
 
 const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+const currentMonth = new Date().getMonth(); // 0-indexed: Jan=0, Feb=1, ..., Jun=5
+const isInSeason = currentMonth >= 1 && currentMonth <= 5; // Feb through June
 
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
-  const [standings, setStandings] = useState<TeamStanding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchStandings() {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          '/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference)
-        );
-        const result = (await response.json()) as StandingsApiResponse;
-
-        if (result.success && result.data) {
-          setStandings(result.data);
-          setLastUpdated(result.timestamp || result.cacheTime || new Date().toISOString());
-          setError(null);
-        } else {
-          setError(result.message || 'Failed to fetch standings');
-        }
-      } catch (_err) {
-        setError('Failed to load standings. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchStandings();
-  }, [selectedConference]);
+  const { data: rawData, loading, error: fetchError } = useSportData<StandingsApiResponse>(
+    `/api/college-baseball/standings?conference=${encodeURIComponent(selectedConference)}`
+  );
+  const standings = rawData?.success && rawData?.data ? rawData.data : [];
+  const lastUpdated = rawData?.timestamp || rawData?.cacheTime || null;
+  const error = fetchError || (rawData && !rawData.success ? (rawData.message || 'Failed to fetch standings') : null);
 
   const currentConf = conferences.find((c) => c.id === selectedConference);
 
@@ -154,8 +134,9 @@ export default function CollegeBaseballStandingsPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-warning mb-4">{error}</p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Standings will be available
-                  during the season.
+                  {isInSeason
+                    ? 'Standings data is updating — check back shortly.'
+                    : 'College baseball returns in February.'}
                 </p>
               </Card>
             )}
@@ -167,8 +148,15 @@ export default function CollegeBaseballStandingsPage() {
                   No standings data available for {currentConf?.name}.
                 </p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Check back during the season.
+                  {isInSeason
+                    ? 'Conference play may not have started yet. Overall records update daily.'
+                    : 'College baseball returns in February.'}
                 </p>
+                {isInSeason && (
+                  <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block">
+                    Browse preseason editorial previews →
+                  </Link>
+                )}
               </Card>
             )}
 
@@ -177,25 +165,25 @@ export default function CollegeBaseballStandingsPage() {
               <ScrollReveal direction="up" delay={200}>
                 <Card padding="none" className="overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full" aria-label="College baseball standings by conference">
                       <thead>
                         <tr className="bg-charcoal border-b border-border-subtle">
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Rank
                           </th>
-                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Team
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Conf
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Overall
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
                             Win%
                           </th>
-                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             RPI
                           </th>
                         </tr>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -9,144 +9,61 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
+import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
+import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { useSportData } from '@/lib/hooks/useSportData';
 
-interface Team {
-  id: string;
-  name: string;
-  abbreviation: string;
-  mascot: string;
-  conference: string;
-  division: string;
-  logo?: string;
-  location: {
-    city: string;
-    state: string;
-    stadium?: string;
-    capacity?: number;
-  };
-  contact?: {
-    website?: string;
-    twitter?: string;
-    phone?: string;
-  };
-  colors?: {
-    primary: string;
-    secondary: string;
-  };
-  stats?: {
-    wins: number;
-    losses: number;
-    confWins: number;
-    confLosses: number;
-    rpi: number;
-    streak?: string;
-    runsScored: number;
-    runsAllowed: number;
-    battingAvg: number;
-    era: number;
-  };
-  schedule?: Game[];
-  roster?: Player[];
-}
-
-interface Game {
-  id: string;
-  date: string;
-  opponent: string;
-  location: 'home' | 'away' | 'neutral';
-  result?: {
-    score: string;
-    won: boolean;
-  };
-  time?: string;
-}
-
-interface Player {
-  id: string;
-  name: string;
-  number: string;
-  position: string;
-  year: string;
-  stats?: {
-    avg?: number;
-    hr?: number;
-    rbi?: number;
-    era?: number;
-    wins?: number;
-    so?: number;
-  };
+interface LiveStats {
+  wins: number;
+  losses: number;
+  confWins: number;
+  confLosses: number;
+  rpi: number;
+  streak?: string;
+  runsScored: number;
+  runsAllowed: number;
+  battingAvg: number;
+  era: number;
 }
 
 interface TeamDetailClientProps {
   teamId: string;
 }
 
-interface TeamApiResponse {
-  team?: Team;
-}
-
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
-  const [team, setTeam] = useState<Team | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'roster' | 'schedule'>('overview');
+  const [logoError, setLogoError] = useState(false);
 
-  useEffect(() => {
-    const loadTeam = async () => {
-      setLoading(true);
-      setError(null);
+  const meta = teamMetadata[teamId];
+  const preseason = preseason2026[teamId];
 
-      try {
-        const response = await fetch(`/api/college-baseball/teams/${teamId}`);
+  // Background API fetch — non-blocking enhancement
+  const { data: teamData, error: statsError } = useSportData<Record<string, unknown>>(
+    `/api/college-baseball/teams/${teamId}`,
+    { timeout: 10000 }
+  );
 
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Team not found');
-          }
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+  const liveStats = useMemo(() => {
+    if (!teamData) return null;
+    const teamObj = teamData.team as Record<string, unknown> | undefined;
+    const stats = (teamObj?.stats ?? teamData.stats) as LiveStats | undefined;
+    return stats?.wins !== undefined && stats?.losses !== undefined ? stats : null;
+  }, [teamData]);
 
-        const data = (await response.json()) as TeamApiResponse;
-        setTeam(data.team || (data as unknown as Team));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load team');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const statsUnavailable = !!statsError;
 
-    if (teamId) {
-      loadTeam();
-    }
-  }, [teamId]);
-
-  if (loading) {
+  // ─── No metadata → error state ──────────────────────────────────────────────
+  if (!meta) {
     return (
       <>
-        <main className="min-h-screen pt-24">
+        <main className="min-h-screen pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
           <Container>
-            <div className="text-center py-16">
-              <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
-              <p className="text-text-secondary">Loading team information...</p>
-            </div>
-          </Container>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  if (error || !team) {
-    return (
-      <>
-        <main className="min-h-screen pt-24">
-          <Container>
-            <Card padding="lg" className="text-center">
-              <div className="text-error text-4xl mb-4">!</div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                {error === 'Team not found' ? 'Team Not Found' : 'Error Loading Team'}
-              </h3>
-              <p className="text-text-secondary mb-4">{error}</p>
+            <Card padding="lg" className="text-center mt-12">
+              <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
+              <h3 className="text-xl font-semibold text-white mb-2">Team Not Found</h3>
+              <p className="text-white/50 mb-6">
+                No data available for &ldquo;{teamId}&rdquo;.
+              </p>
               <Link
                 href="/college-baseball/teams"
                 className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
@@ -161,150 +78,129 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     );
   }
 
-  const POWER_5 = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
-  const isPower5 = POWER_5.some((p5) => team.conference?.includes(p5));
+  const logoUrl = getLogoUrl(meta.espnId);
+  const hasPreseason = !!preseason;
+
+  // Parse the 2025 record for display (e.g. "44-14 (22-8 SEC)")
+  const overallRecord = preseason?.record2025?.split(' (')[0] || null;
+  const confRecord = preseason?.record2025?.match(/\(([^)]+)\)/)?.[1] || null;
 
   return (
     <>
       <main id="main-content">
-        {/* Hero Section */}
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-midnight">
+        {/* ─── Hero Section ─────────────────────────────────────────────────── */}
+        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
           <Container>
             <ScrollReveal direction="up">
               {/* Breadcrumb */}
-              <div className="flex items-center gap-3 mb-6">
+              <nav className="flex items-center gap-3 mb-8 text-sm">
                 <Link
                   href="/college-baseball"
-                  className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                  className="text-white/30 hover:text-burnt-orange transition-colors"
                 >
                   College Baseball
                 </Link>
-                <span className="text-text-tertiary">/</span>
+                <span className="text-white/20">/</span>
                 <Link
                   href="/college-baseball/teams"
-                  className="text-text-tertiary hover:text-burnt-orange transition-colors"
+                  className="text-white/30 hover:text-burnt-orange transition-colors"
                 >
                   Teams
                 </Link>
-                <span className="text-text-tertiary">/</span>
-                <span className="text-white">{team.name}</span>
-              </div>
+                <span className="text-white/20">/</span>
+                <span className="text-white/60">{meta.shortName}</span>
+              </nav>
 
               {/* Team Header */}
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-charcoal flex items-center justify-center overflow-hidden border-4 border-burnt-orange/30">
-                  {team.logo ? (
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8">
+                {/* Logo */}
+                <div
+                  className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white/5 flex items-center justify-center overflow-hidden shrink-0"
+                  style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: `${meta.colors.primary}40` }}
+                >
+                  {!logoError ? (
                     <img
-                      src={team.logo}
-                      alt={`${team.name} logo`}
+                      src={logoUrl}
+                      alt={`${meta.name} logo`}
                       className="w-20 h-20 md:w-24 md:h-24 object-contain"
+                      loading="eager"
+                      onError={() => setLogoError(true)}
                     />
                   ) : (
                     <span className="font-display text-burnt-orange font-bold text-3xl md:text-4xl">
-                      {team.abbreviation || team.name.substring(0, 2)}
+                      {meta.abbreviation}
                     </span>
                   )}
                 </div>
 
-                <div className="flex-1">
+                {/* Info */}
+                <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-3 mb-2">
-                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white">
-                      {team.name}
+                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white uppercase tracking-wide">
+                      {meta.name}
                     </h1>
-                    {isPower5 && <Badge variant="primary">Power 5</Badge>}
                   </div>
 
-                  <p className="text-text-secondary text-lg mb-3">
-                    {team.mascot} - {team.conference || 'Independent'}
-                  </p>
-
-                  <div className="flex flex-wrap gap-4 text-sm text-text-tertiary">
-                    {team.location && (
-                      <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path
-                            fillRule="evenodd"
-                            d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        {team.location.city}, {team.location.state}
-                      </span>
-                    )}
-                    {team.location?.stadium && (
-                      <span className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                        </svg>
-                        {team.location.stadium}
-                      </span>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <Badge variant="secondary">{meta.conference}</Badge>
+                    {hasPreseason && (
+                      <>
+                        <Badge variant="primary">#{preseason.rank} Preseason</Badge>
+                        <Badge variant="accent">{getTierLabel(preseason.tier)}</Badge>
+                      </>
                     )}
                   </div>
 
-                  {/* External Links */}
-                  {(team.contact?.website || team.contact?.twitter) && (
-                    <div className="flex gap-4 mt-4">
-                      {team.contact.website && (
-                        <a
-                          href={team.contact.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm flex items-center gap-1"
-                        >
-                          Official Website
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                            />
-                          </svg>
-                        </a>
-                      )}
-                      {team.contact.twitter && (
-                        <a
-                          href={`https://twitter.com/${team.contact.twitter}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm flex items-center gap-1"
-                        >
-                          @{team.contact.twitter}
-                        </a>
-                      )}
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-4 text-sm text-white/40">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {meta.location.city}, {meta.location.state}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                      </svg>
+                      {meta.location.stadium}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Season Stats Summary */}
-                {team.stats && (
-                  <div className="flex flex-wrap gap-4 md:gap-6">
+                {/* Record Stats */}
+                {hasPreseason && (
+                  <div className="flex flex-wrap gap-4 md:gap-6 shrink-0">
+                    {overallRecord && (
+                      <div className="text-center">
+                        <div className="font-mono text-2xl md:text-3xl font-bold text-burnt-orange">
+                          {overallRecord}
+                        </div>
+                        <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                          2025 Record
+                        </div>
+                      </div>
+                    )}
+                    {confRecord && (
+                      <div className="text-center">
+                        <div className="font-mono text-2xl md:text-3xl font-bold text-white">
+                          {confRecord}
+                        </div>
+                        <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                          Conference
+                        </div>
+                      </div>
+                    )}
                     <div className="text-center">
-                      <div className="font-display text-3xl md:text-4xl font-bold text-burnt-orange">
-                        {team.stats.wins}-{team.stats.losses}
+                      <div className="font-mono text-2xl md:text-3xl font-bold text-green-400">
+                        #{preseason.rank}
                       </div>
-                      <div className="text-text-tertiary text-xs uppercase tracking-wider">
-                        Overall
+                      <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                        BSI Rank
                       </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-display text-3xl md:text-4xl font-bold text-white">
-                        {team.stats.confWins}-{team.stats.confLosses}
-                      </div>
-                      <div className="text-text-tertiary text-xs uppercase tracking-wider">
-                        Conference
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-display text-3xl md:text-4xl font-bold text-success">
-                        #{team.stats.rpi}
-                      </div>
-                      <div className="text-text-tertiary text-xs uppercase tracking-wider">RPI</div>
                     </div>
                   </div>
                 )}
@@ -313,10 +209,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           </Container>
         </Section>
 
-        {/* Tabs Navigation */}
+        {/* ─── Tabs Navigation ──────────────────────────────────────────────── */}
         <Section
           padding="none"
-          className="bg-charcoal border-b border-border-subtle sticky top-16 z-30"
+          className="bg-charcoal border-b border-white/10 sticky top-16 z-30"
         >
           <Container>
             <div className="flex gap-1">
@@ -327,7 +223,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors ${
                     activeTab === tab
                       ? 'text-burnt-orange border-b-2 border-burnt-orange'
-                      : 'text-text-tertiary hover:text-white'
+                      : 'text-white/30 hover:text-white/60'
                   }`}
                 >
                   {tab}
@@ -337,249 +233,252 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           </Container>
         </Section>
 
-        {/* Tab Content */}
-        <Section padding="lg">
+        {/* ─── Tab Content ──────────────────────────────────────────────────── */}
+        <Section padding="lg" className="bg-[#0D0D0D]">
           <Container>
             {activeTab === 'overview' && (
               <>
-                {/* AI Season Preview */}
-                <ScrollReveal direction="up" className="mb-8">
-                  <AITeamPreview teamId={teamId} teamName={team.name} stats={team.stats} conference={team.conference} />
-                </ScrollReveal>
+                {/* Preseason Intel Grid */}
+                {hasPreseason && (
+                  <ScrollReveal direction="up" className="mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">
+                          2025 Record
+                        </div>
+                        <div className="mt-1 text-xl font-mono text-white">
+                          {preseason.record2025}
+                        </div>
+                      </Card>
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">
+                          Postseason
+                        </div>
+                        <div className="mt-1 text-xl font-mono text-burnt-orange">
+                          {preseason.postseason2025}
+                        </div>
+                      </Card>
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">
+                          BSI Tier
+                        </div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-white">
+                          {getTierLabel(preseason.tier)}
+                        </div>
+                      </Card>
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">
+                          Conference
+                        </div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-white">
+                          {preseason.conference}
+                        </div>
+                      </Card>
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* Editorial Preview CTA */}
+                {preseason?.editorialLink && (
+                  <ScrollReveal direction="up" className="mb-8">
+                    <Link href={preseason.editorialLink}>
+                      <Card
+                        variant="hover"
+                        padding="lg"
+                        className="group flex items-center justify-between"
+                      >
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-burnt-orange font-semibold mb-1">
+                            Full Preview Available
+                          </div>
+                          <div className="text-white font-display text-lg uppercase tracking-wide">
+                            {meta.shortName} 2026 Season Preview
+                          </div>
+                          <div className="text-white/40 text-sm mt-1">
+                            Deep-dive scouting report, roster breakdown, schedule analysis, and projection
+                          </div>
+                        </div>
+                        <svg
+                          className="w-6 h-6 text-burnt-orange group-hover:translate-x-1 transition-transform shrink-0 ml-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </Card>
+                    </Link>
+                  </ScrollReveal>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Team Stats */}
-                  <ScrollReveal direction="up">
-                    <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-white mb-6">
-                        Season Statistics
-                      </h2>
-                      {team.stats ? (
-                        <div className="grid grid-cols-2 gap-6">
-                          <div>
-                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                              Runs Scored
-                            </span>
-                            <p className="font-display text-2xl font-bold text-burnt-orange">
-                              {team.stats.runsScored}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                              Runs Allowed
-                            </span>
-                            <p className="font-display text-2xl font-bold text-white">
-                              {team.stats.runsAllowed}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                              Team AVG
-                            </span>
-                            <p className="font-display text-2xl font-bold text-burnt-orange">
-                              {team.stats.battingAvg.toFixed(3)}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                              Team ERA
-                            </span>
-                            <p className="font-display text-2xl font-bold text-white">
-                              {team.stats.era.toFixed(2)}
-                            </p>
-                          </div>
-                          {team.stats.streak && (
-                            <div className="col-span-2">
-                              <span className="text-text-tertiary text-xs uppercase tracking-wider">
-                                Current Streak
-                              </span>
-                              <p className="font-display text-2xl font-bold text-success">
-                                {team.stats.streak}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="text-text-tertiary">
-                          Season stats populate once conference play starts. Check back when the
-                          schedule heats up.
-                        </p>
-                      )}
-                    </Card>
-                  </ScrollReveal>
+                  {/* Key Players */}
+                  {hasPreseason && preseason.keyPlayers.length > 0 && (
+                    <ScrollReveal direction="up">
+                      <Card padding="lg">
+                        <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">
+                          Key Players
+                        </h2>
+                        <div className="space-y-4">
+                          {preseason.keyPlayers.map((player) => {
+                            // Parse "Name (stat)" format
+                            const match = player.match(/^(.+?)\s*\((.+)\)$/);
+                            const name = match ? match[1] : player;
+                            const stat = match ? match[2] : null;
 
-                  {/* Quick Info */}
-                  <ScrollReveal direction="up" delay={100}>
-                    <Card padding="lg">
-                      <h2 className="font-display text-xl font-bold text-white mb-6">
-                        Team Information
-                      </h2>
-                      <div className="space-y-4">
-                        <div className="flex justify-between">
-                          <span className="text-text-tertiary">Conference</span>
-                          <span className="text-white font-semibold">
-                            {team.conference || 'Independent'}
-                          </span>
+                            return (
+                              <div
+                                key={player}
+                                className="flex items-center justify-between py-2 border-b border-white/5 last:border-0"
+                              >
+                                <span className="text-white font-semibold">{name}</span>
+                                {stat && (
+                                  <span className="font-mono text-sm text-burnt-orange">{stat}</span>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-text-tertiary">Division</span>
-                          <span className="text-white font-semibold">{team.division || 'D1'}</span>
-                        </div>
-                        {team.location?.stadium && (
-                          <div className="flex justify-between">
-                            <span className="text-text-tertiary">Stadium</span>
-                            <span className="text-white font-semibold">
-                              {team.location.stadium}
-                            </span>
-                          </div>
-                        )}
-                        {team.location?.capacity && (
-                          <div className="flex justify-between">
-                            <span className="text-text-tertiary">Capacity</span>
-                            <span className="text-white font-semibold">
-                              {team.location.capacity.toLocaleString()}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </Card>
-                  </ScrollReveal>
-                </div>
-              </>
-            )}
-
-            {activeTab === 'roster' && (
-              <ScrollReveal direction="up">
-                <Card padding="none" className="overflow-hidden">
-                  {team.roster && team.roster.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="bg-charcoal border-b border-border-subtle">
-                            <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              #
-                            </th>
-                            <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              Name
-                            </th>
-                            <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              Pos
-                            </th>
-                            <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              Year
-                            </th>
-                            <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              AVG/ERA
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {team.roster.map((player) => (
-                            <tr
-                              key={player.id}
-                              className="border-b border-border-subtle hover:bg-charcoal/50 transition-colors"
-                            >
-                              <td className="py-4 px-4 font-semibold text-burnt-orange">
-                                {player.number}
-                              </td>
-                              <td className="py-4 px-4 font-semibold text-white">{player.name}</td>
-                              <td className="py-4 px-4 text-text-secondary">{player.position}</td>
-                              <td className="py-4 px-4 text-text-secondary">{player.year}</td>
-                              <td className="py-4 px-4 text-center font-mono text-burnt-orange">
-                                {player.stats?.avg
-                                  ? player.stats.avg.toFixed(3)
-                                  : player.stats?.era
-                                    ? player.stats.era.toFixed(2)
-                                    : '-'}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="p-8 text-center">
-                      <p className="text-text-secondary">
-                        Roster data loading or not yet available.
-                      </p>
-                      <p className="text-text-tertiary text-sm mt-2">
-                        College rosters finalize after fall ball. We'll have every name, number, and
-                        position once the program posts it.
-                      </p>
-                    </div>
+                      </Card>
+                    </ScrollReveal>
                   )}
-                </Card>
-              </ScrollReveal>
+
+                  {/* BSI Outlook */}
+                  {hasPreseason && (
+                    <ScrollReveal direction="up" delay={100}>
+                      <Card padding="lg">
+                        <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-4">
+                          BSI Outlook
+                        </h2>
+                        <Badge
+                          variant="accent"
+                          className="mb-4"
+                        >
+                          {getTierLabel(preseason.tier)}
+                        </Badge>
+                        <p className="text-white/60 leading-relaxed">
+                          {preseason.outlook}
+                        </p>
+                      </Card>
+                    </ScrollReveal>
+                  )}
+
+                  {/* Team Info (always show) */}
+                  {!hasPreseason && (
+                    <ScrollReveal direction="up">
+                      <Card padding="lg">
+                        <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">
+                          Team Information
+                        </h2>
+                        <div className="space-y-4">
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Conference</span>
+                            <span className="text-white font-semibold">{meta.conference}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Stadium</span>
+                            <span className="text-white font-semibold">{meta.location.stadium}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/40">Location</span>
+                            <span className="text-white font-semibold">
+                              {meta.location.city}, {meta.location.state}
+                            </span>
+                          </div>
+                        </div>
+                      </Card>
+                    </ScrollReveal>
+                  )}
+                </div>
+
+                {/* Scouting Intelligence */}
+                <ScrollReveal direction="up" className="mt-8">
+                  <AITeamPreview
+                    teamId={teamId}
+                    teamName={meta.name}
+                    stats={liveStats ?? undefined}
+                    conference={meta.conference}
+                  />
+                </ScrollReveal>
+              </>
             )}
 
             {activeTab === 'schedule' && (
               <ScrollReveal direction="up">
-                <Card padding="none" className="overflow-hidden">
-                  {team.schedule && team.schedule.length > 0 ? (
-                    <div className="divide-y divide-border-subtle">
-                      {team.schedule.map((game) => (
-                        <div
-                          key={game.id}
-                          className="p-4 flex items-center justify-between hover:bg-charcoal/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="text-center w-16">
-                              <div className="text-xs text-text-tertiary uppercase">
-                                {new Date(game.date).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                })}
-                              </div>
-                              <div className="font-display text-2xl font-bold text-white">
-                                {new Date(game.date).getDate()}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="font-semibold text-white">
-                                {game.location === 'home' ? 'vs' : '@'} {game.opponent}
-                              </div>
-                              <div className="text-xs text-text-tertiary">
-                                {game.location === 'home'
-                                  ? 'Home'
-                                  : game.location === 'away'
-                                    ? 'Away'
-                                    : 'Neutral'}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            {game.result ? (
-                              <div
-                                className={`font-display text-xl font-bold ${game.result.won ? 'text-success' : 'text-error'}`}
-                              >
-                                {game.result.won ? 'W' : 'L'} {game.result.score}
-                              </div>
-                            ) : (
-                              <div className="text-text-secondary">{game.time || 'TBD'}</div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                <Card padding="lg" className="text-center">
+                  <div className="py-8">
+                    <div className="text-burnt-orange text-4xl mb-4 font-display">2026</div>
+                    <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
+                      Season Schedule
+                    </h3>
+                    <p className="text-white/50 max-w-md mx-auto mb-6">
+                      The 2026 college baseball season opens February 14. Game-by-game schedule
+                      and results will populate here once the season is underway.
+                    </p>
+                    {preseason?.editorialLink && (
+                      <Link
+                        href={preseason.editorialLink}
+                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                      >
+                        View Schedule Preview
+                      </Link>
+                    )}
+                  </div>
+                </Card>
+              </ScrollReveal>
+            )}
+
+            {activeTab === 'roster' && (
+              <ScrollReveal direction="up">
+                <Card padding="lg" className="text-center">
+                  <div className="py-8">
+                    <div className="text-burnt-orange text-4xl mb-4 font-display font-bold">
+                      {meta.abbreviation}
                     </div>
-                  ) : (
-                    <div className="p-8 text-center">
-                      <p className="text-text-secondary">Schedule not yet released.</p>
-                      <p className="text-text-tertiary text-sm mt-2">
-                        Most programs drop their full schedule in late fall. We'll have every game
-                        the minute it's official—conference and non-con alike.
-                      </p>
-                    </div>
-                  )}
+                    <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
+                      {meta.shortName} Roster
+                    </h3>
+                    <p className="text-white/50 max-w-md mx-auto mb-6">
+                      Full roster data populates once the season is underway. For a complete
+                      breakdown of key returnees and transfer additions, check the editorial preview.
+                    </p>
+                    {preseason?.editorialLink && (
+                      <Link
+                        href={preseason.editorialLink}
+                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                      >
+                        View Full Breakdown
+                      </Link>
+                    )}
+                  </div>
                 </Card>
               </ScrollReveal>
             )}
 
             {/* Data Attribution */}
-            <div className="mt-12 text-center text-xs text-text-tertiary">
-              <p>Team data sourced from official NCAA statistics.</p>
-              <p className="mt-1" suppressHydrationWarning>
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
-                CT
-              </p>
+            <div className="mt-12 pt-6 border-t border-white/5 text-center">
+              <div className="flex items-center justify-center gap-2 text-xs text-white/20">
+                <span>BSI Preseason Intelligence</span>
+                <span>|</span>
+                <span>NCAA / D1Baseball</span>
+                {liveStats && (
+                  <>
+                    <span>|</span>
+                    <Badge variant="success" size="sm">Live Stats Active</Badge>
+                  </>
+                )}
+                {statsUnavailable && !liveStats && (
+                  <>
+                    <span>|</span>
+                    <span className="text-yellow-500/60 text-xs">Live stats temporarily unavailable</span>
+                  </>
+                )}
+              </div>
             </div>
           </Container>
         </Section>

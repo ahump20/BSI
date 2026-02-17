@@ -29,7 +29,7 @@ export default function FanbaseComparePage() {
     try {
       const res = await fetch(`/api/fanbase/compare?teamA=${encodeURIComponent(teamA)}&teamB=${encodeURIComponent(teamB)}`);
       if (!res.ok) throw new Error('Comparison not available');
-      const data = await res.json();
+      const data = await res.json() as CompareResult;
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to compare');

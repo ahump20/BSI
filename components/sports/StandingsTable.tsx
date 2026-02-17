@@ -157,14 +157,14 @@ export function StandingsTable({
                   </span>
                 </div>
               )}
-              <table className="w-full">
+              <table className="w-full" aria-label={`${group.label || sport} standings`}>
                 <thead>
                   <tr className="border-b border-white/10">
-                    <th className="text-left p-3 text-xs text-white/40 font-semibold">#</th>
-                    <th className="text-left p-3 text-xs text-white/40 font-semibold">Team</th>
-                    <th className="text-left p-3 text-xs text-white/40 font-semibold">W</th>
-                    <th className="text-left p-3 text-xs text-white/40 font-semibold">L</th>
-                    <th className="text-left p-3 text-xs text-white/40 font-semibold">PCT</th>
+                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">#</th>
+                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">Team</th>
+                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">W</th>
+                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">L</th>
+                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">PCT</th>
                   </tr>
                 </thead>
                 <tbody>

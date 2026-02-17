@@ -4,10 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 
 interface SearchResult {
-  type: 'team' | 'player';
+  type: 'team' | 'player' | 'article' | 'game' | 'page';
   id: string;
   name: string;
-  subtitle: string;
+  subtitle?: string;
+  url?: string;
+  sport?: string;
 }
 
 interface SearchBarProps {
@@ -66,11 +68,11 @@ export function SearchBar({ variant = 'default', placeholder = 'Search teams, pl
             <div className="px-3 py-4 text-text-tertiary text-sm text-center">No results</div>
           ) : (
             results.map((r) => (
-              <Link key={`${r.type}-${r.id}`} href={r.type === 'team' ? `/college-baseball/teams/${r.id}` : `/college-baseball/players/${r.id}`} onClick={() => { setOpen(false); setQuery(''); }} className="flex items-center gap-3 px-3 py-2.5 hover:bg-charcoal transition-colors border-b border-border-subtle last:border-0">
-                <span className="text-[10px] uppercase tracking-wider text-text-tertiary w-12">{r.type}</span>
+              <Link key={`${r.type}-${r.id}`} href={r.url || `/${r.type}s/${r.id}`} onClick={() => { setOpen(false); setQuery(''); }} className="flex items-center gap-3 px-3 py-2.5 hover:bg-charcoal transition-colors border-b border-border-subtle last:border-0">
+                <span className="text-[10px] uppercase tracking-wider text-text-tertiary w-12">{r.sport || r.type}</span>
                 <div>
                   <div className="text-white text-sm font-medium">{r.name}</div>
-                  <div className="text-text-tertiary text-xs">{r.subtitle}</div>
+                  {r.subtitle && <div className="text-text-tertiary text-xs">{r.subtitle}</div>}
                 </div>
               </Link>
             ))

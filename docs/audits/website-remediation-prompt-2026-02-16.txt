@@ -1,0 +1,27 @@
+You are a senior web engineer and technical SEO specialist. Execute same-day remediation for blazesportsintel.com and austinhumphrey.com.
+
+Execution constraints:
+1) Work in small commits by issue category.
+2) Capture before/after proof (route checks, headers, Lighthouse snapshots).
+3) Deploy only after route smoke tests and rollback notes.
+4) Prioritize broken links -> indexability -> security headers -> speed -> conversion tracking.
+
+Required actions:
+A) Crawl complete route inventory from sitemap + internal links.
+B) Fix all 4xx/5xx URLs with either restore, redirect, or link update.
+C) Ensure every indexable page has unique title, meta description, canonical, and exactly one H1.
+D) Add/verify OG tags and structured data (Organization/WebSite/Person/Article where relevant).
+E) Enforce HTTPS canonicalization and global security headers (HSTS, CSP, X-Content-Type-Options, Referrer-Policy).
+F) Optimize LCP/CLS/INP on top templates; compress images and defer non-critical JS.
+G) Validate analytics events, forms, CTA links, and thank-you page tracking.
+H) Re-run crawl and confirm: 0 internal broken links + metadata completeness + header coverage.
+
+Crawl-based checklist:
+Site: https://blazesportsintel.com\n- Pages scanned: 248\n- Top issues: Missing canonical (181), Missing meta description (66), HTTP 404 (63), Missing H1 (63), Missing <title> (62), Meta description length off-range (40), Title too long (19), Missing CSP header (1)\n- Critical actions: Fix 63 broken URL(s) returning 404.\n- High-priority actions: Resolve "Missing canonical" on 181 page(s) via shared templates/components. Resolve "Missing meta description" on 66 page(s) via shared templates/components. Resolve "Missing H1" on 63 page(s) via shared templates/components. Resolve "Missing <title>" on 62 page(s) via shared templates/components. Set CSP globally (1 checks).
+Site: https://austinhumphrey.com\n- Pages scanned: 1\n- Top issues: Missing H1 (1), Title too long (1), Meta description length off-range (1), Missing HSTS header (1), Missing CSP header (1)\n- Critical actions: None detected in sample.\n- High-priority actions: Resolve "Missing H1" on 1 page(s) via shared templates/components. Set HSTS globally (1 checks). Set CSP globally (1 checks).
+
+Definition of done:
+- 0 internal broken links.
+- 100% metadata coverage (title/meta/canonical/H1) for indexable pages.
+- Security headers present on all HTML responses.
+- Documented CWV/Lighthouse improvement and change log.

@@ -433,6 +433,15 @@ body {
 }
 
 @layer utilities {
+  /* Hide scrollbar but keep scrollability */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Z-index utilities */
   .z-fixed {
     z-index: 1030;
@@ -1699,6 +1708,32 @@ textarea:focus-visible,
 }
 
 /* ========================================
+   CARD ACCENT LINE (Sport Hub hover)
+   ======================================== */
+
+.card-accent-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-accent-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card-accent, #bf5700);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.card-accent-line:hover::before {
+  opacity: 1;
+}
+
+/* ========================================
    BSI SMOOTH SCROLL
    ======================================== */
 
@@ -1721,5 +1756,13 @@ html {
     opacity: 1;
     transform: none;
     animation: none;
+  }
+
+  .card-accent-line:hover::before {
+    opacity: 0;
+  }
+
+  .card-accent-line:hover {
+    transform: none;
   }
 }

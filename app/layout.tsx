@@ -5,13 +5,14 @@ import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
-import { EcosystemBar } from '@/components/shared/EcosystemBar';
+import { NavbarWrapper } from '@/components/layout-ds/NavbarWrapper';
+import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
-import { NewsTicker } from '@/components/shared/NewsTicker';
 import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
-import { mainNavItems } from '@/lib/navigation';
+import { ScrollProgress } from '@/components/ui/ScrollProgress';
+import { StickyLeagueBar } from '@/components/sports/StickyLeagueBar';
+import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
+import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 
 // 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
 const inter = Inter({
@@ -86,6 +87,9 @@ export const metadata: Metadata = {
     description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
     images: ['/images/og-image.jpg'],
   },
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,
@@ -130,6 +134,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
     >
       <head>
+        {/* Preconnect to Cloudflare Stream for hero video poster/playback */}
+        <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
+        {/* Static JSON-LD for SEO — hardcoded content, no user input */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -143,15 +150,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="#main-content" className="skip-link">
               Skip to main content
             </a>
-            <EcosystemBar />
-            <NewsTicker />
-            <Navbar items={mainNavItems} />
+            <NavbarWrapper />
+            <ScrollProgress />
+            <StickyLeagueBar />
+            <BreadcrumbBar />
+            <CommandPalette />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>
             <FeedbackButton />
             <ScrollToTopButton />
             {/* Mobile Bottom Navigation - hidden on desktop */}
-            <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
+            <BottomNavWrapper />
           </MotionProvider>
         </Providers>
       </body>

@@ -12,6 +12,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["*.ts", "src/**/*.ts", "../lib/api-clients/**/*.ts", "../lib/adapters/**/*.ts", "../lib/sportsdata/**/*.ts"],
+  "include": ["*.ts", "shared/**/*.ts", "handlers/**/*.ts", "../lib/api-clients/**/*.ts", "../lib/adapters/**/*.ts", "../lib/sportsdata/**/*.ts"],
   "exclude": ["node_modules"]
 }

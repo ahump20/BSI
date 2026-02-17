@@ -36,11 +36,11 @@ export default function Week1PreviewPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/20">/</span>
@@ -51,7 +51,7 @@ export default function Week1PreviewPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/10 via-transparent to-[#FF6B35]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/10 via-transparent to-ember/5 pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -76,7 +76,7 @@ export default function Week1PreviewPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Six Series to Watch
               </h2>
             </ScrollReveal>
@@ -101,7 +101,7 @@ export default function Week1PreviewPage() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Pitching Duels
               </h2>
             </ScrollReveal>
@@ -109,7 +109,7 @@ export default function Week1PreviewPage() {
               {pitchingDuels.map((d, i) => (
                 <ScrollReveal key={d.starter} direction="up" delay={i * 80}>
                   <Card variant="default" padding="md" className="h-full">
-                    <div className="font-display text-xs uppercase tracking-wider text-[#BF5700] mb-2">{d.day}</div>
+                    <div className="font-display text-xs uppercase tracking-wider text-burnt-orange mb-2">{d.day}</div>
                     <div className="font-display text-sm font-bold uppercase tracking-wide text-white mb-1">{d.starter}</div>
                     <div className="font-mono text-[10px] text-white/30 mb-3">vs {d.opponent}</div>
                     <p className="font-serif text-sm text-white/50 leading-relaxed">{d.note}</p>
@@ -124,14 +124,14 @@ export default function Week1PreviewPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 The Storylines
               </h2>
             </ScrollReveal>
             <div className="space-y-8">
               {storylines.map((s, i) => (
                 <ScrollReveal key={s.title} direction="up" delay={i * 60}>
-                  <div className="border-l-[3px] border-[#BF5700]/40 pl-6">
+                  <div className="border-l-[3px] border-burnt-orange/40 pl-6">
                     <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-2">{s.title}</h3>
                     <p className="font-serif text-base text-white/60 leading-relaxed">{s.description}</p>
                   </div>
@@ -142,12 +142,12 @@ export default function Week1PreviewPage() {
         </Section>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-[#BF5700]/10">
+        <Section padding="md" className="border-t border-burnt-orange/10">
           <Container size="narrow">
             <div className="space-y-4">
               <DataSourceBadge source="D1Baseball / ESPN / BSI Projections" timestamp="February 11, 2026 CT" />
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-[#BF5700] hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   All Editorial &rarr;
                 </Link>
               </div>

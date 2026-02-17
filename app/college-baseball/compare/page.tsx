@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Footer } from '@/components/layout-ds/Footer';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
+import { teamMetadata } from '@/lib/data/team-metadata';
 
 export const metadata: Metadata = {
   title: 'Compare Teams — BSI Head-to-Head | College Baseball',
@@ -26,12 +27,10 @@ const featuredRivalries: { teams: [string, string]; label: string }[] = [
   { teams: ['tennessee', 'arkansas'], label: 'SEC Slugfest' },
   { teams: ['stanford', 'california'], label: 'Bay Area Rivals' },
 ];
-
 function teamDisplayName(slug: string): string {
-  return slug
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  const meta = teamMetadata[slug];
+  if (meta) return meta.name;
+  return slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
 export default function CompareHubPage() {
@@ -44,7 +43,7 @@ export default function CompareHubPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
@@ -55,7 +54,7 @@ export default function CompareHubPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/10 via-transparent to-[#FF6B35]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/10 via-transparent to-ember/5 pointer-events-none" />
           <Container center>
             <Badge variant="primary" className="mb-4">Head-to-Head</Badge>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
@@ -81,7 +80,7 @@ export default function CompareHubPage() {
                 return (
                   <Link key={`${a}-${b}`} href={`/college-baseball/compare/${a}/${b}`}>
                     <Card variant="hover" padding="md" className="h-full text-center">
-                      <div className="text-xs text-[#BF5700] uppercase tracking-wider mb-2">{label}</div>
+                      <div className="text-xs text-burnt-orange uppercase tracking-wider mb-2">{label}</div>
                       <div className="font-display text-lg font-bold text-white uppercase">
                         #{teamA.rank} {teamDisplayName(a)}
                       </div>
@@ -105,17 +104,21 @@ export default function CompareHubPage() {
             </h2>
             <p className="text-white/40 text-sm mb-6">Pick any team to see available matchups</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {teams.map(([slug, data]) => (
-                <Link key={slug} href={`/college-baseball/compare/${slug}/texas`}>
+              {teams.map(([slug, data], i) => {
+                // Pick a different team as opponent — next in rankings, wrapping to first
+                const opponent = teams[(i + 1) % teams.length][0];
+                return (
+                <Link key={slug} href={`/college-baseball/compare/${slug}/${opponent}`}>
                   <Card variant="hover" padding="sm" className="text-center">
-                    <div className="font-display text-sm font-bold text-[#BF5700]">#{data.rank}</div>
+                    <div className="font-display text-sm font-bold text-burnt-orange">#{data.rank}</div>
                     <div className="font-display text-sm font-bold text-white uppercase mt-0.5 truncate">
                       {teamDisplayName(slug)}
                     </div>
                     <div className="text-[10px] text-white/30 mt-0.5">{data.conference} · {getTierLabel(data.tier)}</div>
                   </Card>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </Container>
         </Section>

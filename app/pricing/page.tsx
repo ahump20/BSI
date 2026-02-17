@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -8,49 +9,15 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { HeroVideo } from '@/components/hero/HeroVideo';
+import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
 
-const tiers = [
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: 29,
-    period: 'month',
-    description: 'For fans, fantasy players, and amateur coaches who want the edge.',
-    features: [
-      'Live scores across MLB, NFL, NBA, NCAA',
-      'Real-time game updates every 30 seconds',
-      'Complete box scores with batting/pitching lines',
-      'Game predictions & win probability',
-      'Player comparison tools',
-      'Conference standings and rankings',
-      'Basic analytics dashboard',
-      '14-day free trial',
-    ],
-    cta: 'Start Free Trial',
-    popular: false,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 199,
-    period: 'month',
-    description: 'For college programs, scouts, and media who need professional-grade intel.',
-    features: [
-      'Everything in Pro',
-      'Advanced player analytics with AI insights',
-      'Historical data access (5+ years)',
-      'Season projections & Monte Carlo simulations',
-      'Custom data exports (CSV, JSON)',
-      'API access for integrations',
-      'Priority support',
-      'Team collaboration tools',
-      'Custom dashboards',
-    ],
-    cta: 'Get Started',
-    popular: true,
-  },
-];
+// Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
+const HeroVideo = dynamic(
+  () => import('@/components/hero/HeroVideo').then((mod) => ({ default: mod.HeroVideo })),
+  { ssr: false }
+);
+
+const tiers = PRICING_TIERS;
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);

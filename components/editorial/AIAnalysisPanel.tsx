@@ -61,11 +61,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({ error: 'Request failed' }));
+        const data = await res.json().catch(() => ({ error: 'Request failed' })) as { error?: string };
         throw new Error(data.error || `HTTP ${res.status}`);
       }
 
-      const data = await res.json();
+      const data = await res.json() as { analysis: string };
       setResponse(data.analysis);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');

@@ -63,7 +63,7 @@ export default function LoneStarRivalryPage() {
       <main id="main-content">
         {/* Hero */}
         <Section padding="none" className="relative">
-          <div className="bg-gradient-to-br from-[#BF5700] via-[#5C0F0F] to-[#500000] relative overflow-hidden">
+          <div className="bg-gradient-to-br from-burnt-orange via-[#5C0F0F] to-[#500000] relative overflow-hidden">
             <div className="absolute inset-0 bg-black/40" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_black_100%)] opacity-60" />
             <Container className="relative z-10 py-16 md:py-24">
@@ -99,12 +99,12 @@ export default function LoneStarRivalryPage() {
                 {/* Texas Card */}
                 <Card
                   padding="lg"
-                  className="border-[#BF5700]/30 hover:border-[#BF5700]/60 transition-colors"
+                  className="border-burnt-orange/30 hover:border-burnt-orange/60 transition-colors"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[#BF5700] font-display text-4xl font-bold">
+                        <span className="text-burnt-orange font-display text-4xl font-bold">
                           #{texasStats.ranking}
                         </span>
                         <Badge variant="primary">Preseason</Badge>
@@ -113,7 +113,7 @@ export default function LoneStarRivalryPage() {
                         Texas Longhorns
                       </h2>
                     </div>
-                    <div className="w-16 h-16 bg-[#BF5700] rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 bg-burnt-orange rounded-lg flex items-center justify-center">
                       <span className="font-display text-2xl font-bold text-white">UT</span>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export default function LoneStarRivalryPage() {
 
                   <Link
                     href="/college-baseball/teams/texas"
-                    className="mt-4 inline-flex items-center text-[#BF5700] font-medium hover:text-white transition-colors"
+                    className="mt-4 inline-flex items-center text-burnt-orange font-medium hover:text-white transition-colors"
                   >
                     Full Team Profile <ArrowRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -315,7 +315,7 @@ export default function LoneStarRivalryPage() {
                             <span
                               className={
                                 game.winner === 'Texas'
-                                  ? 'text-[#BF5700] font-medium'
+                                  ? 'text-burnt-orange font-medium'
                                   : 'text-[#500000] font-medium'
                               }
                             >
@@ -348,7 +348,7 @@ export default function LoneStarRivalryPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link href="/college-baseball/teams/texas">
-                    <span className="inline-flex items-center px-6 py-3 bg-[#BF5700] text-white font-medium rounded-lg hover:bg-[#BF5700]/80 transition-colors">
+                    <span className="inline-flex items-center px-6 py-3 bg-burnt-orange text-white font-medium rounded-lg hover:bg-burnt-orange/80 transition-colors">
                       Texas Longhorns
                     </span>
                   </Link>

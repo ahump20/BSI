@@ -274,6 +274,30 @@ export function formatTimestamp(isoString?: string): string {
 }
 
 /**
+ * Format a date string (YYYY-MM-DD) for display as "Mon, Feb 14" etc.
+ * Appends T12:00:00 to avoid date-shift from timezone offset.
+ */
+export function formatScheduleDate(dateString: string): string {
+  const date = new Date(dateString + 'T12:00:00');
+  return date.toLocaleDateString('en-US', {
+    timeZone: BSI_TIMEZONE,
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+/**
+ * Get a YYYY-MM-DD date string offset from today by N days.
+ * Positive = future, negative = past, 0 = today.
+ */
+export function getDateOffset(offset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().split('T')[0];
+}
+
+/**
  * Get relative time description (e.g., "in 2 hours", "yesterday")
  */
 export function getRelativeTime(input: string | Date, timezone: string = BSI_TIMEZONE): string {

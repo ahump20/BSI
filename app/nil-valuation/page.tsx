@@ -286,6 +286,10 @@ export default function NILValuationPage() {
               </ScrollReveal>
             ))}
           </div>
+
+          <p className="text-center text-xs text-gray-500 mt-8">
+            Illustrative estimates based on public reporting. Live NIL analytics coming soon.
+          </p>
         </Container>
       </Section>
 

@@ -106,11 +106,11 @@ export default async function ComparisonPage({ params }: PageProps) {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/compare" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/compare" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Compare
               </Link>
               <span className="text-white/20">/</span>
@@ -121,7 +121,7 @@ export default async function ComparisonPage({ params }: PageProps) {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#BF5700]/10 via-transparent to-[#BF5700]/10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-burnt-orange/10 via-transparent to-burnt-orange/10 pointer-events-none" />
           <Container center>
             <Badge variant="primary" className="mb-4">Head-to-Head</Badge>
             <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-2">
@@ -140,10 +140,10 @@ export default async function ComparisonPage({ params }: PageProps) {
           <Container>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Team A */}
-              <Card variant="default" padding="lg" className={higher === 'left' ? 'border-[#BF5700]/40' : ''}>
+              <Card variant="default" padding="lg" className={higher === 'left' ? 'border-burnt-orange/40' : ''}>
                 <div className="text-center mb-6">
-                  <div className="font-display text-5xl font-bold text-[#BF5700] mb-2">#{a.rank}</div>
-                  <Link href={`/college-baseball/teams/${team1}`} className="font-display text-2xl font-bold text-white uppercase hover:text-[#BF5700] transition-colors">
+                  <div className="font-display text-5xl font-bold text-burnt-orange mb-2">#{a.rank}</div>
+                  <Link href={`/college-baseball/teams/${team1}`} className="font-display text-2xl font-bold text-white uppercase hover:text-burnt-orange transition-colors">
                     {nameA}
                   </Link>
                   <div className="text-white/40 text-sm mt-1">{a.conference}</div>
@@ -177,10 +177,10 @@ export default async function ComparisonPage({ params }: PageProps) {
               </Card>
 
               {/* Team B */}
-              <Card variant="default" padding="lg" className={higher === 'right' ? 'border-[#BF5700]/40' : ''}>
+              <Card variant="default" padding="lg" className={higher === 'right' ? 'border-burnt-orange/40' : ''}>
                 <div className="text-center mb-6">
-                  <div className="font-display text-5xl font-bold text-[#BF5700] mb-2">#{b.rank}</div>
-                  <Link href={`/college-baseball/teams/${team2}`} className="font-display text-2xl font-bold text-white uppercase hover:text-[#BF5700] transition-colors">
+                  <div className="font-display text-5xl font-bold text-burnt-orange mb-2">#{b.rank}</div>
+                  <Link href={`/college-baseball/teams/${team2}`} className="font-display text-2xl font-bold text-white uppercase hover:text-burnt-orange transition-colors">
                     {nameB}
                   </Link>
                   <div className="text-white/40 text-sm mt-1">{b.conference}</div>
@@ -215,8 +215,8 @@ export default async function ComparisonPage({ params }: PageProps) {
             </div>
 
             {/* Verdict */}
-            <Card variant="default" padding="lg" className="mt-8 border-[#BF5700]/20">
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-[#BF5700] mb-3 text-center">
+            <Card variant="default" padding="lg" className="mt-8 border-burnt-orange/20">
+              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-burnt-orange mb-3 text-center">
                 BSI Verdict
               </h2>
               <div className="text-center">
@@ -236,7 +236,7 @@ export default async function ComparisonPage({ params }: PageProps) {
                 )}
               </div>
               <div className="mt-6 flex justify-center gap-4">
-                <Link href="/college-baseball/compare" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <Link href="/college-baseball/compare" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                   Compare Other Teams
                 </Link>
                 <Link href="/college-baseball" className="text-sm text-white/40 hover:text-white transition-colors">

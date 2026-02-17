@@ -347,4 +347,92 @@ export const preseason2026: Record<string, PreseasonTeamData> = {
     conference: 'SEC',
     editorialLink: '/college-baseball/editorial/missouri-2026',
   },
+  usc: {
+    rank: 30,
+    tier: 'contender',
+    record2025: '37-23 (18-12 Big Ten)',
+    postseason2025: 'NCAA Tournament',
+    keyPlayers: [
+      'Rhylan Thomas (.318, 14 HR)',
+      'Jagger Haynes (3.34 ERA, 101 K)',
+      'Chase Davis (.301, 18 HR — from Arizona)',
+    ],
+    outlook:
+      "Chase Davis, Tommy Troy, and Landon Marceaux change the math. Haynes and Tredwell give USC an ace-closer combination that can win a regional. Davis and Thomas give them an offensive ceiling that can win a super. Year 3 under Stankiewicz is where results need to follow the talent.",
+    conference: 'Big Ten',
+    editorialLink: '/college-baseball/editorial/usc-2026',
+  },
+  'arizona-state': {
+    rank: 32,
+    tier: 'sleeper',
+    record2025: '36-22 (15-15 Big 12)',
+    postseason2025: 'None',
+    keyPlayers: [
+      'Joe Lampe (.311, 12 HR)',
+      'Jacob Aguayo (3.92 ERA, 91 K)',
+      'Conor Davis (.289, 13 HR — from Auburn)',
+    ],
+    outlook:
+      "More national titles than any Big 12 program. Lampe is a legitimate All-American candidate. The portal brought SEC power, Pac-12 defense, and Big 12 speed. If Aguayo tightens his command and Peery makes the sophomore jump, a Regional host is the ceiling.",
+    conference: 'Big 12',
+    editorialLink: '/college-baseball/editorial/arizona-state-2026',
+  },
+  baylor: {
+    rank: 36,
+    tier: 'bubble',
+    record2025: '30-27 (12-18 Big 12)',
+    postseason2025: 'None',
+    keyPlayers: [
+      'Tyler Thomas (3.64 ERA, 94 K)',
+      'Kolby Branch (.291, 8 HR)',
+      'Blake Wright (.293, 14 HR — from Mississippi State)',
+    ],
+    outlook:
+      "Tyler Thomas gives them a Friday ace who can beat anyone. Blake Wright from the portal gives them a cleanup hitter they didn't have. The margin in the Big 12 is razor-thin — if Helton takes the step and the bullpen holds leads, this team can compete for an NCAA bid.",
+    conference: 'Big 12',
+    editorialLink: '/college-baseball/editorial/baylor-2026',
+  },
+  'west-virginia': {
+    rank: 38,
+    tier: 'bubble',
+    record2025: '29-27 (12-18 Big 12)',
+    postseason2025: 'None',
+    keyPlayers: [
+      'Grant Wetherholt (.312, 6 HR, 14 SB)',
+      'Ben Hampton (3.28 ERA, 76 K)',
+    ],
+    outlook:
+      "A Friday ace in Hampton, a breakout sophomore in Wetherholt, and portal additions that bring power-conference experience. If Montgomery stays healthy and Wetherholt takes the sophomore leap, the Mountaineers can push into the upper half of the Big 12.",
+    conference: 'Big 12',
+    editorialLink: '/college-baseball/editorial/west-virginia-2026',
+  },
+  'kansas-state': {
+    rank: 40,
+    tier: 'bubble',
+    record2025: '26-29 (11-19 Big 12)',
+    postseason2025: 'None',
+    keyPlayers: [
+      'Nick Goodwin (.308, 9 HR, 18 SB)',
+      'Owen Dew (3.42 ERA, 71 K)',
+    ],
+    outlook:
+      "Pete Hughes has a real Friday starter and a legitimate center-field bat. The portal addressed specific weaknesses. A .500 Big 12 record would be a breakthrough — getting there requires the back of the rotation and the bottom of the lineup to produce.",
+    conference: 'Big 12',
+    editorialLink: '/college-baseball/editorial/kansas-state-2026',
+  },
+  'texas-tech': {
+    rank: 42,
+    tier: 'bubble',
+    record2025: '20-33 (8-22 Big 12)',
+    postseason2025: 'None',
+    keyPlayers: [
+      'Zane Petty (3.78 ERA)',
+      'Logan Britt (.302, 13 HR — from NC State)',
+      'Jett Williams (.284, 8 HR — from Mississippi State)',
+    ],
+    outlook:
+      "Twenty wins was an aberration for Tadlock, not the new normal. Britt anchors the lineup, Williams upgrades shortstop, and Southisene gives the rotation a reliable arm. Tadlock rebuilt before — he took Tech to the CWS Finals in 2019 after a down stretch. Thirty-five wins and an NCAA bid would be a successful season.",
+    conference: 'Big 12',
+    editorialLink: '/college-baseball/editorial/texas-tech-2026',
+  },
 };

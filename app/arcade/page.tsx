@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 interface LeaderboardEntry {
   name: string;
@@ -21,7 +22,7 @@ const GAMES = [
     description: 'Call plays and drive downfield in this fast-paced football strategy game.',
     color: '#FF6B35',
     icon: '🏈',
-    url: '/games/blitz/',
+    url: '/arcade/games/blitz',
     deployed: true,
   },
   {
@@ -30,7 +31,7 @@ const GAMES = [
     description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
     color: '#BF5700',
     icon: '⚾',
-    url: '/games/sandlot-sluggers/',
+    url: '/arcade/games/sandlot-sluggers',
     deployed: true,
   },
   {
@@ -39,7 +40,7 @@ const GAMES = [
     description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
     color: '#FDB913',
     icon: '🏀',
-    url: '/games/downtown-doggies/',
+    url: '/arcade/games/downtown-doggies',
     deployed: true,
   },
   {
@@ -48,7 +49,7 @@ const GAMES = [
     description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
     color: '#CD5C5C',
     icon: '🌭',
-    url: '/games/hotdog-dash/',
+    url: '/arcade/games/hotdog-dash',
     deployed: true,
   },
   {
@@ -57,25 +58,25 @@ const GAMES = [
     description: '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
     color: '#BF5700',
     icon: '📊',
-    url: '/games/leadership-capital/',
+    url: '/arcade/games/leadership-capital',
     deployed: true,
   },
 ];
 
 export default function ArcadePage() {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [activeGame, setActiveGame] = useState<string | null>(null);
-  const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/multiplayer/leaderboard?limit=15')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data: { leaderboard?: LeaderboardEntry[] }) => {
-        setLeaderboard(data.leaderboard || []);
-      })
-      .catch(() => {})
-      .finally(() => setLoadingLeaderboard(false));
-  }, []);
+  const {
+    data: leaderboardData,
+    loading: loadingLeaderboard,
+    error: leaderboardError,
+    retry: retryLeaderboard,
+  } = useSportData<{ leaderboard?: LeaderboardEntry[] }>(
+    '/api/multiplayer/leaderboard?limit=15',
+    { timeout: 5000 }
+  );
+
+  const leaderboard = leaderboardData?.leaderboard || [];
 
   return (
     <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
@@ -152,6 +153,16 @@ export default function ArcadePage() {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
                     ))}
+                  </div>
+                ) : leaderboardError ? (
+                  <div className="text-center py-8">
+                    <p className="text-white/40 mb-3">Leaderboard unavailable</p>
+                    <button
+                      onClick={retryLeaderboard}
+                      className="px-4 py-2 text-sm bg-[#BF5700]/20 text-[#BF5700] rounded hover:bg-[#BF5700]/30 transition-colors"
+                    >
+                      Retry
+                    </button>
                   </div>
                 ) : leaderboard.length === 0 ? (
                   <p className="text-center text-white/40 py-8">No scores yet. Be the first to play!</p>

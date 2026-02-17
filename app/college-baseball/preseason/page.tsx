@@ -20,7 +20,7 @@ const featuredStories = [
     readTime: '8 min read',
     featured: true,
     teams: ['Texas', 'Texas A&M'],
-    imageGradient: 'from-[#BF5700] to-[#500000]',
+    imageGradient: 'from-burnt-orange to-[#500000]',
   },
   {
     id: 'sec-preview',
@@ -32,7 +32,7 @@ const featuredStories = [
     readTime: '12 min read',
     featured: false,
     teams: ['SEC'],
-    imageGradient: 'from-[#500000] to-[#1A1A1A]',
+    imageGradient: 'from-[#500000] to-charcoal',
   },
   {
     id: 'power-25',
@@ -44,7 +44,7 @@ const featuredStories = [
     readTime: '15 min read',
     featured: false,
     teams: ['All'],
-    imageGradient: 'from-[#FF6B35] to-[#1A1A1A]',
+    imageGradient: 'from-ember to-charcoal',
   },
 ];
 
