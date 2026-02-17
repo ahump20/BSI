@@ -1353,3 +1353,226 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
     message: 'No portal data available yet',
   }, 200);
 }
+
+// ---------------------------------------------------------------------------
+// Enhanced News Aggregation — unified feed with deduplication
+// ---------------------------------------------------------------------------
+
+/**
+ * Simple title similarity check using normalized overlap.
+ * Returns true if two titles are similar enough to be considered duplicates.
+ */
+function titlesSimilar(a: string, b: string): boolean {
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+  const wordsA = new Set(normalize(a).split(/\s+/));
+  const wordsB = new Set(normalize(b).split(/\s+/));
+  if (wordsA.size === 0 || wordsB.size === 0) return false;
+
+  let overlap = 0;
+  for (const w of wordsA) {
+    if (wordsB.has(w)) overlap++;
+  }
+
+  const similarity = overlap / Math.min(wordsA.size, wordsB.size);
+  return similarity > 0.7;
+}
+
+interface EnhancedNewsArticle {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  url: string;
+  publishedAt: string;
+  category: string;
+  team?: string;
+  conference?: string;
+}
+
+export async function handleCollegeBaseballNewsEnhanced(
+  env: Env,
+  category?: string,
+): Promise<Response> {
+  const allArticles: EnhancedNewsArticle[] = [];
+
+  // 1. Fetch from ESPN college baseball news endpoint
+  try {
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news';
+    const espnRes = await fetch(espnUrl, { headers: { Accept: 'application/json' } });
+    if (espnRes.ok) {
+      const espnData = (await espnRes.json()) as Record<string, unknown>;
+      const articles = (espnData.articles || []) as Record<string, unknown>[];
+      for (const article of articles) {
+        allArticles.push({
+          id: `espn-${article.dataSourceId || article.id || String(Date.now())}`,
+          title: (article.headline || article.title || '') as string,
+          summary: (article.description || article.summary || '') as string,
+          source: 'ESPN',
+          url: ((article.links as Record<string, unknown>)?.web as Record<string, unknown>)?.href as string || '',
+          publishedAt: (article.published || new Date().toISOString()) as string,
+          category: 'general',
+        });
+      }
+    }
+  } catch {
+    // ESPN fetch failed — continue with other sources
+  }
+
+  // 2. Fetch from KV cache for BSI editorial content
+  try {
+    const bsiRaw = await kvGet<{ articles: EnhancedNewsArticle[] }>(env.KV, 'college-baseball:editorial:feed');
+    if (bsiRaw?.articles) {
+      for (const article of bsiRaw.articles) {
+        allArticles.push({
+          ...article,
+          source: article.source || 'BSI',
+          id: article.id || `bsi-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        });
+      }
+    }
+  } catch {
+    // KV fetch failed — continue
+  }
+
+  // 3. Deduplicate by title similarity
+  const deduped: EnhancedNewsArticle[] = [];
+  for (const article of allArticles) {
+    const isDuplicate = deduped.some((existing) => titlesSimilar(existing.title, article.title));
+    if (!isDuplicate) {
+      deduped.push(article);
+    }
+  }
+
+  // 4. Filter by category if specified
+  let feed = deduped;
+  if (category && category !== 'all') {
+    feed = deduped.filter((a) => a.category === category);
+  }
+
+  // Sort by publish date descending
+  feed.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  const payload = {
+    articles: feed,
+    totalArticles: feed.length,
+    meta: {
+      source: 'espn+bsi-editorial',
+      fetched_at: new Date().toISOString(),
+      timezone: 'America/Chicago' as const,
+      category: category || 'all',
+    },
+  };
+
+  return cachedJson(payload, 200, HTTP_CACHE.trending, dataHeaders(new Date().toISOString(), 'espn+bsi-editorial'));
+}
+
+// ---------------------------------------------------------------------------
+// College Baseball Search — teams, players, conferences, articles
+// ---------------------------------------------------------------------------
+
+interface SearchResult {
+  type: 'team' | 'player' | 'article';
+  id: string;
+  label: string;
+  subtitle?: string;
+  url?: string;
+}
+
+export async function handleCollegeBaseballSearch(
+  query: string,
+  env: Env,
+): Promise<Response> {
+  const q = (query || '').toLowerCase().trim();
+
+  if (q.length < 2) {
+    return json({ teams: [], players: [], articles: [] }, 200);
+  }
+
+  const teams: SearchResult[] = [];
+  const players: SearchResult[] = [];
+  const articles: SearchResult[] = [];
+
+  // Search teams from teamMetadata
+  for (const [id, meta] of Object.entries(teamMetadata)) {
+    const name = meta.name.toLowerCase();
+    const shortName = meta.shortName.toLowerCase();
+    const conference = meta.conference.toLowerCase();
+
+    if (name.includes(q) || shortName.includes(q) || conference.includes(q)) {
+      teams.push({
+        type: 'team',
+        id,
+        label: meta.name,
+        subtitle: meta.conference,
+        url: `/college-baseball/teams/${id}`,
+      });
+    }
+
+    if (teams.length >= 5) break;
+  }
+
+  // Search KV for cached player data
+  try {
+    const playerCache = await kvGet<{ players: Record<string, unknown>[] }>(env.KV, 'college-baseball:players:index');
+    if (playerCache?.players) {
+      for (const player of playerCache.players) {
+        const playerName = ((player.name || player.displayName || '') as string).toLowerCase();
+        const playerTeam = ((player.team || '') as string).toLowerCase();
+
+        if (playerName.includes(q) || playerTeam.includes(q)) {
+          players.push({
+            type: 'player',
+            id: String(player.id || ''),
+            label: (player.name || player.displayName || '') as string,
+            subtitle: (player.team || '') as string,
+            url: player.id ? `/college-baseball/players/${player.id}` : undefined,
+          });
+        }
+
+        if (players.length >= 5) break;
+      }
+    }
+  } catch {
+    // Player search failed — continue
+  }
+
+  // Search KV for articles
+  try {
+    const articleCache = await kvGet<{ articles: Record<string, unknown>[] }>(env.KV, 'college-baseball:articles:index');
+    if (articleCache?.articles) {
+      for (const article of articleCache.articles) {
+        const title = ((article.title || article.headline || '') as string).toLowerCase();
+        const summary = ((article.summary || article.description || '') as string).toLowerCase();
+
+        if (title.includes(q) || summary.includes(q)) {
+          articles.push({
+            type: 'article',
+            id: String(article.id || ''),
+            label: (article.title || article.headline || '') as string,
+            subtitle: (article.source || '') as string,
+            url: (article.url || '') as string || undefined,
+          });
+        }
+
+        if (articles.length >= 5) break;
+      }
+    }
+  } catch {
+    // Article search failed — continue
+  }
+
+  const payload = {
+    teams,
+    players,
+    articles,
+    meta: {
+      source: 'kv-search',
+      fetched_at: new Date().toISOString(),
+      timezone: 'America/Chicago' as const,
+      query: q,
+      totalResults: teams.length + players.length + articles.length,
+    },
+  };
+
+  return json(payload, 200);
+}

@@ -1,0 +1,29 @@
+# BSI Live Scores — WebSocket Worker with Durable Objects
+# Real-time college baseball score updates via WebSocket connections.
+# LiveScoresDO maintains connected clients and broadcasts score deltas
+# every 15 seconds from the ESPN college baseball scoreboard API.
+#
+# Deploy: wrangler deploy --config workers/bsi-live-scores/wrangler.toml
+
+name = "bsi-live-scores"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+
+[durable_objects]
+bindings = [
+  { name = "LIVE_SCORES", class_name = "LiveScoresDO" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["LiveScoresDO"]
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
+
+[vars]
+TIMEZONE = "America/Chicago"
+
+[dev]
+port = 8795
