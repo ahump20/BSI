@@ -6,105 +6,7 @@
  * season awareness, and both cron paths (2-min scores, 15-min standings).
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-// ---------------------------------------------------------------------------
-// Mock KV
-// ---------------------------------------------------------------------------
-
-function createMockKV() {
-  const store = new Map<string, string>();
-  return {
-    put: vi.fn(async (key: string, value: string) => { store.set(key, value); }),
-    get: vi.fn(async (key: string) => store.get(key) ?? null),
-    delete: vi.fn(async (key: string) => { store.delete(key); }),
-    list: vi.fn(async () => ({ keys: [] })),
-    _store: store,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// API response fixtures
-// ---------------------------------------------------------------------------
-
-const HIGHLIGHTLY_SCORES = {
-  data: [
-    { id: 1, homeTeam: { name: 'Texas' }, awayTeam: { name: 'A&M' }, homeScore: 7, awayScore: 3, status: { type: 'finished' } },
-    { id: 2, homeTeam: { name: 'LSU' }, awayTeam: { name: 'Ole Miss' }, homeScore: 4, awayScore: 4, status: { type: 'inprogress' } },
-  ],
-  totalCount: 2,
-};
-
-const ESPN_SCOREBOARD = {
-  events: [
-    { id: '101', name: 'Texas vs A&M', status: { type: { state: 'post' } } },
-    { id: '102', name: 'LSU vs Ole Miss', status: { type: { state: 'in' } } },
-  ],
-};
-
-const HIGHLIGHTLY_STANDINGS = {
-  data: [{ conference: 'SEC', teams: [{ name: 'Texas', wins: 30, losses: 10 }] }],
-};
-
-const ESPN_STANDINGS = {
-  children: [
-    { name: 'Southeastern Conference', standings: { entries: [] } },
-    { name: 'Big 12 Conference', standings: { entries: [] } },
-    { name: 'Atlantic Coast Conference', standings: { entries: [] } },
-  ],
-};
-
-const HIGHLIGHTLY_RANKINGS = {
-  data: [{ rank: 1, team: 'Texas' }, { rank: 2, team: 'LSU' }],
-};
-
-const ESPN_RANKINGS = {
-  rankings: [{ name: 'D1 Baseball Top 25', ranks: [{ current: 1, team: { displayName: 'Texas' } }] }],
-};
-
-// ---------------------------------------------------------------------------
-// Fetch mocks
-// ---------------------------------------------------------------------------
-
-function mockHighlightlySuccess() {
-  return vi.fn(async (url: string | URL | Request) => {
-    const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
-
-    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/matches')) {
-      return new Response(JSON.stringify(HIGHLIGHTLY_SCORES), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/standings')) {
-      return new Response(JSON.stringify(HIGHLIGHTLY_STANDINGS), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/rankings')) {
-      return new Response(JSON.stringify(HIGHLIGHTLY_RANKINGS), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    return new Response(JSON.stringify({}), { status: 200 });
-  }) as unknown as typeof fetch;
-}
-
-function mockEspnFallback() {
-  return vi.fn(async (url: string | URL | Request) => {
-    const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
-
-    // Highlightly fails
-    if (urlStr.includes('mlb-college-baseball-api')) {
-      return new Response('Error', { status: 500 });
-    }
-    // ESPN scoreboard
-    if (urlStr.includes('espn.com') && urlStr.includes('/scoreboard')) {
-      return new Response(JSON.stringify(ESPN_SCOREBOARD), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    // ESPN standings
-    if (urlStr.includes('espn.com') && urlStr.includes('/standings')) {
-      return new Response(JSON.stringify(ESPN_STANDINGS), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    // ESPN rankings
-    if (urlStr.includes('espn.com') && urlStr.includes('/rankings')) {
-      return new Response(JSON.stringify(ESPN_RANKINGS), { status: 200, headers: { 'Content-Type': 'application/json' } });
-    }
-    return new Response(JSON.stringify({}), { status: 200 });
-  }) as unknown as typeof fetch;
-}
+import { createMockKV, mockHighlightlySuccess, mockEspnFallback } from '../utils/mocks';
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -269,8 +171,8 @@ describe('BSI CBB Ingest Worker', () => {
 
       vi.useRealTimers();
 
-      // ESPN writes NCAA-level standings
-      expect(env.KV._store.has('cb:standings:NCAA')).toBe(true);
+      // ESPN writes NCAA-level standings (v2 key format)
+      expect(env.KV._store.has('cb:standings:v2:NCAA')).toBe(true);
     });
   });
 

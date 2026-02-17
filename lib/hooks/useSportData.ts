@@ -9,6 +9,8 @@ interface UseSportDataOptions {
   refreshWhen?: boolean;
   /** Skip the initial fetch (useful for conditional fetching). */
   skip?: boolean;
+  /** Max fetch duration in ms before aborting (0 = no timeout). Defaults to 10000. */
+  timeout?: number;
 }
 
 interface UseSportDataReturn<T> {
@@ -25,7 +27,7 @@ export function useSportData<T>(
   url: string | null,
   options: UseSportDataOptions = {}
 ): UseSportDataReturn<T> {
-  const { refreshInterval = 0, refreshWhen = true, skip = false } = options;
+  const { refreshInterval = 0, refreshWhen = true, skip = false, timeout = 10000 } = options;
 
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(!skip && !!url);
@@ -42,6 +44,10 @@ export function useSportData<T>(
       abortRef.current?.abort();
       const controller = new AbortController();
       abortRef.current = controller;
+
+      const timeoutId = timeout > 0
+        ? setTimeout(() => controller.abort(), timeout)
+        : undefined;
 
       if (isRefresh) {
         setIsRefreshing(true);
@@ -60,14 +66,18 @@ export function useSportData<T>(
         setLastUpdated(new Date());
         hasFetchedRef.current = true;
       } catch (err) {
-        if ((err as Error).name === 'AbortError') return;
+        if ((err as Error).name === 'AbortError') {
+          setError('Request timed out');
+          return;
+        }
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
+        if (timeoutId) clearTimeout(timeoutId);
         setLoading(false);
         setIsRefreshing(false);
       }
     },
-    [url, skip]
+    [url, skip, timeout]
   );
 
   // Initial fetch

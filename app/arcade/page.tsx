@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useSportData } from '@/lib/hooks/useSportData';
 
 interface LeaderboardEntry {
   name: string;
@@ -63,19 +64,19 @@ const GAMES = [
 ];
 
 export default function ArcadePage() {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [activeGame, setActiveGame] = useState<string | null>(null);
-  const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/multiplayer/leaderboard?limit=15')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data: { leaderboard?: LeaderboardEntry[] }) => {
-        setLeaderboard(data.leaderboard || []);
-      })
-      .catch(() => {})
-      .finally(() => setLoadingLeaderboard(false));
-  }, []);
+  const {
+    data: leaderboardData,
+    loading: loadingLeaderboard,
+    error: leaderboardError,
+    retry: retryLeaderboard,
+  } = useSportData<{ leaderboard?: LeaderboardEntry[] }>(
+    '/api/multiplayer/leaderboard?limit=15',
+    { timeout: 5000 }
+  );
+
+  const leaderboard = leaderboardData?.leaderboard || [];
 
   return (
     <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
@@ -152,6 +153,16 @@ export default function ArcadePage() {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
                     ))}
+                  </div>
+                ) : leaderboardError ? (
+                  <div className="text-center py-8">
+                    <p className="text-white/40 mb-3">Leaderboard unavailable</p>
+                    <button
+                      onClick={retryLeaderboard}
+                      className="px-4 py-2 text-sm bg-[#BF5700]/20 text-[#BF5700] rounded hover:bg-[#BF5700]/30 transition-colors"
+                    >
+                      Retry
+                    </button>
                   </div>
                 ) : leaderboard.length === 0 ? (
                   <p className="text-center text-white/40 py-8">No scores yet. Be the first to play!</p>

@@ -44,6 +44,8 @@ export async function generateStaticParams() {
     'arizona-state',
     'ucla',
     'usc',
+    'oklahoma',
+    'california',
   ];
 
   return teams.map((teamId) => ({ teamId }));

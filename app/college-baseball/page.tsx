@@ -355,14 +355,15 @@ export default function CollegeBaseballPage() {
                 </div>
               </Link>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Link href="/college-baseball/editorial/week-1-preview">
+                <Link href="/college-baseball/editorial/week-1-recap">
                   <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-[#BF5700]/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div>
+                        <Badge variant="secondary" className="mb-1">New</Badge>
                         <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
-                          Opening Weekend Preview
+                          Week 1 Recap
                         </h4>
-                        <p className="text-white/40 text-xs mt-0.5">118 games. The season starts now.</p>
+                        <p className="text-white/40 text-xs mt-0.5">Three grand slams. One record book.</p>
                       </div>
                       <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/20 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />

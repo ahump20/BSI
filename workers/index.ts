@@ -1,17 +1,12 @@
 /**
- * Blaze Sports Intel — Hybrid Workers Router
+ * Blaze Sports Intel — Hybrid Workers Router (Hono)
  *
  * This is the apex Worker that sits in front of blazesportsintel.com.
- * It handles:
- *   1. Dynamic API routes (/api/*)       — processed directly by this Worker
- *   2. College baseball data (/api/college-baseball/*) — proxied to Highlightly
- *   3. Game assets (/api/games/assets/*) — served from R2
- *   4. WebSocket connections (/ws)        — real-time leaderboard & scores
- *   5. Static assets & pages (everything else) — proxied to Cloudflare Pages
- *
- * The Pages project ("blazesportsintel") serves the Next.js static export.
+ * Routes are declared via Hono; cross-cutting concerns (CORS, rate limiting,
+ * security headers, redirects) are handled by middleware.
  */
 
+import { Hono } from 'hono';
 import {
   HighlightlyApiClient,
   createHighlightlyClient,
@@ -114,20 +109,7 @@ function corsHeaders(request: Request, env: Env): Record<string, string> {
   };
 }
 
-/**
- * Request-scoped CORS headers. Set at the top of fetch() via requestScopedJson().
- * Using a module-level var is safe here because Workers execute fetch() to completion
- * before processing the next request on the same isolate — but we reset it per-request
- * to avoid stale references.
- */
-let _activeRequest: Request | null = null;
-let _activeEnv: Env | null = null;
-
-function activeCorsHeaders(): Record<string, string> {
-  return (_activeRequest && _activeEnv) ? corsHeaders(_activeRequest, _activeEnv) : {};
-}
-
-/** Standard security headers applied to all API responses */
+/** Standard security headers applied to all responses via Hono middleware */
 const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
@@ -151,7 +133,7 @@ const SECURITY_HEADERS: Record<string, string> = {
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...SECURITY_HEADERS, ...activeCorsHeaders(), ...extra },
+    headers: { 'Content-Type': 'application/json', ...extra },
   });
 }
 
@@ -1498,6 +1480,8 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
+// College Baseball Daily Bundle handler (pregame + recap from verified data)
+// ---------------------------------------------------------------------------
 // College Baseball News handler (ESPN college-baseball/news)
 // ---------------------------------------------------------------------------
 
@@ -2613,7 +2597,6 @@ async function handleGameAsset(
   }
 
   const headers: Record<string, string> = {
-    ...activeCorsHeaders(),
     'Cache-Control': 'public, max-age=86400, immutable',
     'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
   };
@@ -3401,9 +3384,8 @@ const MCP_TOOLS = [
 ];
 
 function mcpCorsHeaders(): Record<string, string> {
-  // MCP uses the same origin-restricted CORS as the rest of the API
+  // MCP CORS headers — origin restriction handled by Hono CORS middleware
   return {
-    ...activeCorsHeaders(),
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
@@ -3625,15 +3607,13 @@ async function handleIntelNews(url: URL, env: Env): Promise<Response> {
 }
 
 // ---------------------------------------------------------------------------
-// Main fetch handler
+// Hono App — routes + middleware
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// Simple per-IP rate limiter (sliding window, per Worker isolate)
-// ---------------------------------------------------------------------------
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 120; // requests per window per IP
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 120;
 const _rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+let _rateLimitCleanupCounter = 0;
 
 function checkInMemoryRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -3646,8 +3626,6 @@ function checkInMemoryRateLimit(ip: string): boolean {
   return entry.count <= RATE_LIMIT_MAX;
 }
 
-// Periodic cleanup to prevent memory growth (runs every 500 requests)
-let _rateLimitCleanupCounter = 0;
 function maybeCleanupRateLimit() {
   if (++_rateLimitCleanupCounter < 500) return;
   _rateLimitCleanupCounter = 0;
@@ -3657,273 +3635,206 @@ function maybeCleanupRateLimit() {
   }
 }
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    _activeRequest = request;
-    _activeEnv = env;
-    const url = new URL(request.url);
-    const { pathname } = url;
-
-    // CORS preflight
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders(request, env) });
-    }
-
-    // Rate limit API routes
-    if (pathname.startsWith('/api/')) {
-      const ip = request.headers.get('cf-connecting-ip') || 'unknown';
-      maybeCleanupRateLimit();
-      if (!checkInMemoryRateLimit(ip)) {
-        return json({ error: 'Rate limit exceeded. Try again shortly.' }, 429);
-      }
-    }
-
-    try {
-      // ----- MCP Protocol -----
-      if (pathname === '/mcp') return handleMcpRequest(request, env);
-
-      // ----- Auth stubs (backend not yet implemented) -----
-      if (pathname === '/api/auth/login' || pathname === '/api/auth/signup') {
-        return json({ error: 'Authentication is not yet available.' }, 501);
-      }
-
-      // ----- Health / status -----
-      if (pathname === '/api/health' || pathname === '/health') return handleHealth(env);
-      if (pathname === '/api/admin/health') return handleAdminHealth(env);
-
-      // ----- Intel news proxy (ESPN → Worker → client, CORS-safe + KV cached) -----
-      if (pathname === '/api/intel/news') {
-        return handleIntelNews(url, env);
-      }
-
-      // ----- College Baseball data routes (Highlightly proxy) -----
-      if (pathname === '/api/college-baseball/scores') {
-        return handleCollegeBaseballScores(url, env);
-      }
-      if (pathname === '/api/college-baseball/standings') {
-        return handleCollegeBaseballStandings(url, env);
-      }
-      if (pathname === '/api/college-baseball/rankings') {
-        return handleCollegeBaseballRankings(env);
-      }
-      if (pathname === '/api/college-baseball/schedule') {
-        return handleCollegeBaseballSchedule(url, env);
-      }
-      if (pathname === '/api/college-baseball/trending') {
-        return handleCollegeBaseballTrending(env);
-      }
-      if (pathname === '/api/college-baseball/news') {
-        return handleCollegeBaseballNews(env);
-      }
-      if (pathname === '/api/college-baseball/players') {
-        return handleCollegeBaseballPlayersList(url, env);
-      }
-      if (pathname === '/api/college-baseball/daily') {
-        return handleCollegeBaseballDaily(url, env);
-      }
-
-      // CFB Transfer Portal
-      if (pathname === '/api/cfb/transfer-portal') {
-        return handleCFBTransferPortal(env);
-      }
-
-      // ----- CFB data routes (ESPN) -----
-      if (pathname === '/api/ncaa/scores' && url.searchParams.get('sport') === 'football') {
-        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
-      }
-      if (pathname === '/api/ncaa/standings' && url.searchParams.get('sport') === 'football') {
-        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
-      }
-      if (pathname === '/api/cfb/scores') {
-        return safeESPN(() => handleCFBScores(url, env), 'games', [], env);
-      }
-      if (pathname === '/api/cfb/standings') {
-        return safeESPN(() => handleCFBStandings(env), 'standings', [], env);
-      }
-      if (pathname === '/api/cfb/news') {
-        return safeESPN(() => handleCFBNews(env), 'articles', [], env);
-      }
-
-      // CFB Articles (D1)
-      if (pathname === '/api/college-football/articles') {
-        return handleCFBArticlesList(url, env);
-      }
-      const cfbArticleMatch = matchRoute(pathname, '/api/college-football/articles/:slug');
-      if (cfbArticleMatch) return handleCFBArticle(cfbArticleMatch.params.slug, env);
-
-      // College Baseball Transfer Portal
-      if (pathname === '/api/college-baseball/transfer-portal') {
-        return handleCollegeBaseballTransferPortal(env);
-      }
-
-      const teamMatch = matchRoute(pathname, '/api/college-baseball/teams/:teamId');
-      if (teamMatch) return handleCollegeBaseballTeam(teamMatch.params.teamId, env);
-
-      const playerMatch = matchRoute(pathname, '/api/college-baseball/players/:playerId');
-      if (playerMatch) return handleCollegeBaseballPlayer(playerMatch.params.playerId, env);
-
-      // Singular form — what the frontend actually fetches
-      const gameSingularMatch = matchRoute(pathname, '/api/college-baseball/game/:gameId');
-      if (gameSingularMatch) return handleCollegeBaseballGame(gameSingularMatch.params.gameId, env);
-
-      // Plural form — kept for backward compat (MCP tools, external consumers)
-      const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId');
-      if (gameMatch) return handleCollegeBaseballGame(gameMatch.params.gameId, env);
-
-      // ----- MLB data routes (ESPN) -----
-      if (pathname === '/api/mlb/scores')
-        return safeESPN(() => handleMLBScores(url, env), 'games', [], env);
-      if (pathname === '/api/mlb/standings')
-        return safeESPN(() => handleMLBStandings(env), 'standings', [], env);
-      if (pathname === '/api/mlb/news')
-        return safeESPN(() => handleMLBNews(env), 'articles', [], env);
-      if (pathname === '/api/mlb/teams')
-        return safeESPN(() => handleMLBTeamsList(env), 'teams', [], env);
-
-      const mlbGameMatch = matchRoute(pathname, '/api/mlb/game/:gameId');
-      if (mlbGameMatch)
-        return safeESPN(() => handleMLBGame(mlbGameMatch.params.gameId, env), 'game', null, env);
-
-      const mlbPlayerMatch = matchRoute(pathname, '/api/mlb/players/:playerId');
-      if (mlbPlayerMatch)
-        return safeESPN(() => handleMLBPlayer(mlbPlayerMatch.params.playerId, env), 'player', null, env);
-
-      const mlbTeamMatch = matchRoute(pathname, '/api/mlb/teams/:teamId');
-      if (mlbTeamMatch)
-        return safeESPN(() => handleMLBTeam(mlbTeamMatch.params.teamId, env), 'team', null, env);
-
-      // ----- NFL data routes (ESPN) -----
-      if (pathname === '/api/nfl/scores')
-        return safeESPN(() => handleNFLScores(url, env), 'games', [], env);
-      if (pathname === '/api/nfl/standings')
-        return safeESPN(() => handleNFLStandings(env), 'standings', [], env);
-      if (pathname === '/api/nfl/news')
-        return safeESPN(() => handleNFLNews(env), 'articles', [], env);
-      if (pathname === '/api/nfl/teams')
-        return safeESPN(() => handleNFLTeamsList(env), 'teams', [], env);
-      if (pathname === '/api/nfl/players')
-        return safeESPN(() => handleNFLPlayers(url, env), 'players', [], env);
-      if (pathname === '/api/nfl/leaders')
-        return safeESPN(() => handleNFLLeaders(env), 'categories', [], env);
-
-      const nflGameMatch = matchRoute(pathname, '/api/nfl/game/:gameId');
-      if (nflGameMatch)
-        return safeESPN(() => handleNFLGame(nflGameMatch.params.gameId, env), 'game', null, env);
-
-      const nflPlayerMatch = matchRoute(pathname, '/api/nfl/players/:playerId');
-      if (nflPlayerMatch)
-        return safeESPN(() => handleNFLPlayer(nflPlayerMatch.params.playerId, env), 'player', null, env);
-
-      const nflTeamMatch = matchRoute(pathname, '/api/nfl/teams/:teamId');
-      if (nflTeamMatch)
-        return safeESPN(() => handleNFLTeam(nflTeamMatch.params.teamId, env), 'team', null, env);
-
-      // ----- NBA data routes (ESPN) -----
-      if (pathname === '/api/nba/scores' || pathname === '/api/nba/scoreboard') {
-        return safeESPN(() => handleNBAScores(url, env), 'games', [], env);
-      }
-      if (pathname === '/api/nba/standings')
-        return safeESPN(() => handleNBAStandings(env), 'standings', [], env);
-      if (pathname === '/api/nba/news')
-        return safeESPN(() => handleNBANews(env), 'articles', [], env);
-      if (pathname === '/api/nba/teams')
-        return safeESPN(() => handleNBATeamsList(env), 'teams', [], env);
-
-      const nbaGameMatch = matchRoute(pathname, '/api/nba/game/:gameId');
-      if (nbaGameMatch)
-        return safeESPN(() => handleNBAGame(nbaGameMatch.params.gameId, env), 'game', null, env);
-
-      const nbaPlayerMatch = matchRoute(pathname, '/api/nba/players/:playerId');
-      if (nbaPlayerMatch)
-        return safeESPN(() => handleNBAPlayer(nbaPlayerMatch.params.playerId, env), 'player', null, env);
-
-      const nbaTeamMatch = matchRoute(pathname, '/api/nba/teams/:teamId');
-      if (nbaTeamMatch)
-        return safeESPN(() => handleNBATeamFull(nbaTeamMatch.params.teamId, env), 'team', null, env);
-
-      // ----- R2 Game assets -----
-      const assetPath = matchWildcardRoute(pathname, '/api/games/assets/');
-      if (assetPath) return handleGameAsset(assetPath, env);
-
-      // ----- CV Intelligence Routes -----
-      const cvPitcherMatch = matchRoute(pathname, '/api/cv/pitcher/:playerId/mechanics');
-      if (cvPitcherMatch) return handleCVPitcherMechanics(cvPitcherMatch.params.playerId, env);
-
-      const cvPitcherHistoryMatch = matchRoute(pathname, '/api/cv/pitcher/:playerId/mechanics/history');
-      if (cvPitcherHistoryMatch) return handleCVPitcherHistory(cvPitcherHistoryMatch.params.playerId, url, env);
-
-      if (pathname === '/api/cv/alerts/injury-risk') return handleCVInjuryAlerts(url, env);
-
-      if (pathname === '/api/cv/adoption') return handleCVAdoption(url, env);
-
-      // ----- Search -----
-      if (pathname === '/api/search') return handleSearch(url, env);
-
-      // ----- ESPN News proxy -----
-      const newsMatch = matchRoute(pathname, '/api/news/:sport');
-      if (newsMatch) return handleESPNNews(newsMatch.params.sport, env);
-
-      // ----- Model Health -----
-      if (pathname === '/api/model-health') return handleModelHealth(env);
-
-      // ----- Predictions -----
-      if (request.method === 'POST' && pathname === '/api/predictions') {
-        return handlePredictionSubmit(request, env);
-      }
-      if (pathname === '/api/predictions/accuracy') {
-        return handlePredictionAccuracy(env);
-      }
-
-      // ----- Feedback -----
-      if (request.method === 'POST' && pathname === '/api/feedback') {
-        return handleFeedback(request, env);
-      }
-
-      if (
-        pathname === '/api/multiplayer/leaderboard' ||
-        pathname === '/multiplayer/leaderboard'
-      ) {
-        if (request.method === 'POST') return handleLeaderboardSubmit(request, env);
-        return handleLeaderboard(url, env);
-      }
-
-      const teamsMatch =
-        matchRoute(pathname, '/api/teams/:league') || matchRoute(pathname, '/teams/:league');
-      if (teamsMatch)
-        return safeESPN(() => handleTeams(teamsMatch.params.league, env), 'teams', [], env);
-
-      // Lead capture (POST)
-      if (
-        request.method === 'POST' &&
-        (pathname === '/api/lead' || pathname === '/api/leads')
-      ) {
-        return handleLead(request, env);
-      }
-
-      // WebSocket
-      if (pathname === '/ws') {
-        if (request.headers.get('Upgrade') !== 'websocket') {
-          return json({ error: 'Expected websocket upgrade' }, 400);
-        }
-        return handleWebSocket();
-      }
-
-      // Redirect
-      if (pathname === '/coverage') {
-        return Response.redirect(url.origin + '/analytics', 301);
-      }
-
-      // ----- Everything else → proxy to Pages -----
-      return await proxyToPages(request, env);
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : 'Internal server error';
-      await logError(env.KV, detail, pathname);
-      // Don't leak internal error details to clients in production
-      const publicMessage = env.ENVIRONMENT === 'production' ? 'Internal server error' : detail;
-      return json({ error: publicMessage }, 500);
-    }
-  },
+const GHOST_REDIRECTS: Record<string, string> = {
+  '/coverage': '/analytics',
+  '/daily': '/',
+  '/hourly': '/',
+  '/dashboard/daily': '/dashboard',
+  '/mlb/daily': '/mlb',
+  '/mlb/standings/daily': '/mlb',
+  '/nfl/daily': '/nfl',
+  '/nba/daily': '/nba',
+  '/cfb/daily': '/cfb',
+  '/college-baseball/daily/latest': '/college-baseball',
+  '/scores/daily': '/scores',
+  '/baseball/rankings': '/college-baseball/rankings',
 };
+
+const app = new Hono<{ Bindings: Env }>();
+
+// --- Middleware: CORS ---
+app.use('*', async (c, next) => {
+  if (c.req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders(c.req.raw, c.env) });
+  }
+  await next();
+  const origin = corsOrigin(c.req.raw, c.env);
+  c.res.headers.set('Access-Control-Allow-Origin', origin);
+  c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+  c.res.headers.set('Access-Control-Max-Age', '86400');
+  c.res.headers.set('Vary', 'Origin');
+});
+
+// --- Middleware: Security headers ---
+app.use('*', async (c, next) => {
+  await next();
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    c.res.headers.set(key, value);
+  }
+});
+
+// --- Middleware: Rate limiting on /api/* ---
+app.use('/api/*', async (c, next) => {
+  const ip = c.req.header('cf-connecting-ip') || 'unknown';
+  maybeCleanupRateLimit();
+  if (!checkInMemoryRateLimit(ip)) {
+    return c.json({ error: 'Rate limit exceeded. Try again shortly.' }, 429);
+  }
+  await next();
+});
+
+// --- Middleware: Ghost route redirects ---
+app.use('*', async (c, next) => {
+  const redirect = GHOST_REDIRECTS[c.req.path];
+  if (redirect) {
+    const url = new URL(c.req.url);
+    return new Response(null, {
+      status: 301,
+      headers: { Location: url.origin + redirect },
+    });
+  }
+  await next();
+});
+
+// --- Error handler ---
+app.onError(async (err, c) => {
+  const detail = err instanceof Error ? err.message : 'Internal server error';
+  await logError(c.env.KV, detail, c.req.path);
+  const publicMessage = c.env.ENVIRONMENT === 'production' ? 'Internal server error' : detail;
+  return c.json({ error: publicMessage }, 500);
+});
+
+// --- MCP Protocol ---
+app.all('/mcp', (c) => handleMcpRequest(c.req.raw, c.env));
+
+// --- Auth stubs ---
+app.all('/api/auth/login', (c) => c.json({ error: 'Authentication is not yet available.' }, 501));
+app.all('/api/auth/signup', (c) => c.json({ error: 'Authentication is not yet available.' }, 501));
+
+// --- Health ---
+app.get('/health', (c) => handleHealth(c.env));
+app.get('/api/health', (c) => handleHealth(c.env));
+app.get('/api/admin/health', (c) => handleAdminHealth(c.env));
+
+// --- Intel news ---
+app.get('/api/intel/news', (c) => handleIntelNews(new URL(c.req.url), c.env));
+
+// --- College Baseball ---
+app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
+app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
+app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
+app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
+app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
+app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
+app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
+
+// --- CFB ---
+app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
+app.get('/api/cfb/scores', (c) => safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/cfb/standings', (c) => safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env));
+app.get('/api/cfb/news', (c) => safeESPN(() => handleCFBNews(c.env), 'articles', [], c.env));
+app.get('/api/ncaa/scores', (c) => {
+  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env);
+  return c.json({ error: 'Specify ?sport=football' }, 400);
+});
+app.get('/api/ncaa/standings', (c) => {
+  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env);
+  return c.json({ error: 'Specify ?sport=football' }, 400);
+});
+app.get('/api/college-football/articles', (c) => handleCFBArticlesList(new URL(c.req.url), c.env));
+app.get('/api/college-football/articles/:slug', (c) => handleCFBArticle(c.req.param('slug'), c.env));
+
+// --- MLB ---
+app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
+app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
+app.get('/api/mlb/teams', (c) => safeESPN(() => handleMLBTeamsList(c.env), 'teams', [], c.env));
+app.get('/api/mlb/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
+app.get('/api/mlb/players/:playerId', (c) => safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
+app.get('/api/mlb/teams/:teamId', (c) => safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
+
+// --- NFL ---
+app.get('/api/nfl/scores', (c) => safeESPN(() => handleNFLScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/nfl/standings', (c) => safeESPN(() => handleNFLStandings(c.env), 'standings', [], c.env));
+app.get('/api/nfl/news', (c) => safeESPN(() => handleNFLNews(c.env), 'articles', [], c.env));
+app.get('/api/nfl/teams', (c) => safeESPN(() => handleNFLTeamsList(c.env), 'teams', [], c.env));
+app.get('/api/nfl/players', (c) => safeESPN(() => handleNFLPlayers(new URL(c.req.url), c.env), 'players', [], c.env));
+app.get('/api/nfl/leaders', (c) => safeESPN(() => handleNFLLeaders(c.env), 'categories', [], c.env));
+app.get('/api/nfl/game/:gameId', (c) => safeESPN(() => handleNFLGame(c.req.param('gameId'), c.env), 'game', null, c.env));
+app.get('/api/nfl/players/:playerId', (c) => safeESPN(() => handleNFLPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
+app.get('/api/nfl/teams/:teamId', (c) => safeESPN(() => handleNFLTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
+
+// --- NBA ---
+app.get('/api/nba/scores', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/nba/scoreboard', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/nba/standings', (c) => safeESPN(() => handleNBAStandings(c.env), 'standings', [], c.env));
+app.get('/api/nba/news', (c) => safeESPN(() => handleNBANews(c.env), 'articles', [], c.env));
+app.get('/api/nba/teams', (c) => safeESPN(() => handleNBATeamsList(c.env), 'teams', [], c.env));
+app.get('/api/nba/game/:gameId', (c) => safeESPN(() => handleNBAGame(c.req.param('gameId'), c.env), 'game', null, c.env));
+app.get('/api/nba/players/:playerId', (c) => safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
+app.get('/api/nba/teams/:teamId', (c) => safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env));
+
+// --- R2 Game assets ---
+app.get('/api/games/assets/*', (c) => {
+  const path = c.req.path.replace('/api/games/assets/', '');
+  return path ? handleGameAsset(path, c.env) : c.json({ error: 'Asset path required' }, 400);
+});
+
+// --- CV Intelligence ---
+app.get('/api/cv/pitcher/:playerId/mechanics/history', (c) => handleCVPitcherHistory(c.req.param('playerId'), new URL(c.req.url), c.env));
+app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c.req.param('playerId'), c.env));
+app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
+app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
+
+// --- Search ---
+app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
+
+// --- ESPN News proxy ---
+app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
+
+// --- Model Health ---
+app.get('/api/model-health', (c) => handleModelHealth(c.env));
+
+// --- Predictions ---
+app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
+app.get('/api/predictions/accuracy', (c) => handlePredictionAccuracy(c.env));
+
+// --- Feedback ---
+app.post('/api/feedback', (c) => handleFeedback(c.req.raw, c.env));
+
+// --- Leaderboard ---
+app.get('/api/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));
+app.post('/api/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c.env));
+app.get('/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));
+app.post('/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c.env));
+
+// --- Teams ---
+app.get('/api/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
+app.get('/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
+
+// --- Lead capture ---
+app.post('/api/lead', (c) => handleLead(c.req.raw, c.env));
+app.post('/api/leads', (c) => handleLead(c.req.raw, c.env));
+
+// --- WebSocket ---
+app.get('/ws', (c) => {
+  if (c.req.header('Upgrade') !== 'websocket') {
+    return c.json({ error: 'Expected websocket upgrade' }, 400);
+  }
+  return handleWebSocket();
+});
+
+// --- Fallback: proxy to Cloudflare Pages ---
+app.all('*', (c) => proxyToPages(c.req.raw, c.env));
+
+export default app;
 
 // ---------------------------------------------------------------------------
 // Durable Object — CacheObject
