@@ -1576,3 +1576,412 @@ export async function handleCollegeBaseballSearch(
 
   return json(payload, 200);
 }
+
+// --- College Baseball Player Compare ---
+
+export async function handleCollegeBaseballPlayerCompare(
+  player1Id: string,
+  player2Id: string,
+  env: Env,
+): Promise<Response> {
+  const cacheKey = `compare:college-baseball:players:${player1Id}:${player2Id}`;
+  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.player, {
+      ...dataHeaders(new Date().toISOString(), 'cache'),
+      'X-Cache': 'HIT',
+    });
+  }
+
+  // Attempt Highlightly first, then fall back to ESPN
+  const highlightly = getHighlightlyClient(env);
+
+  let player1Data: Record<string, unknown> | null = null;
+  let player2Data: Record<string, unknown> | null = null;
+  let source = 'highlightly';
+
+  try {
+    const [p1, p2] = await Promise.all([
+      highlightly.getPlayer(player1Id) as Promise<Record<string, unknown> | null>,
+      highlightly.getPlayer(player2Id) as Promise<Record<string, unknown> | null>,
+    ]);
+    player1Data = p1;
+    player2Data = p2;
+  } catch {
+    // Highlightly unavailable — try ESPN
+    source = 'espn';
+  }
+
+  if (!player1Data || !player2Data) {
+    // Fall back to ESPN site API
+    source = 'espn';
+    try {
+      const espn = getCollegeClient(env);
+      const [p1, p2] = await Promise.all([
+        espn.getPlayer(player1Id) as Promise<Record<string, unknown> | null>,
+        espn.getPlayer(player2Id) as Promise<Record<string, unknown> | null>,
+      ]);
+      player1Data = p1;
+      player2Data = p2;
+    } catch {
+      return json(
+        {
+          error: 'Failed to fetch player data from all sources',
+          meta: {
+            source: 'none',
+            fetched_at: new Date().toISOString(),
+            timezone: 'America/Chicago',
+          },
+        },
+        502,
+      );
+    }
+  }
+
+  if (!player1Data || !player2Data) {
+    return json(
+      {
+        error: 'One or both players not found',
+        player1: player1Data ? 'found' : 'not_found',
+        player2: player2Data ? 'found' : 'not_found',
+        meta: {
+          source,
+          fetched_at: new Date().toISOString(),
+          timezone: 'America/Chicago',
+        },
+      },
+      404,
+    );
+  }
+
+  // Normalize comparison data
+  const normalizePlayer = (raw: Record<string, unknown>) => {
+    const stats = raw.statistics as Record<string, unknown> | undefined;
+    const player = raw.player as Record<string, unknown> | undefined;
+    const team = (player?.team ?? raw.team) as Record<string, unknown> | undefined;
+
+    return {
+      id: String(player?.id ?? raw.id ?? ''),
+      name: String(player?.name ?? raw.name ?? raw.displayName ?? ''),
+      team: String(team?.name ?? team?.displayName ?? ''),
+      position: String(player?.position ?? raw.position ?? ''),
+      conference: String(
+        (team?.conference as Record<string, unknown>)?.name ?? '',
+      ),
+      statistics: {
+        batting: stats?.batting ?? null,
+        pitching: stats?.pitching ?? null,
+      },
+    };
+  };
+
+  const payload = {
+    player1: normalizePlayer(player1Data),
+    player2: normalizePlayer(player2Data),
+    meta: {
+      source,
+      fetched_at: new Date().toISOString(),
+      timezone: 'America/Chicago',
+    },
+  };
+
+  // Cache for 5 minutes
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+
+  return cachedJson(payload, 200, HTTP_CACHE.player, {
+    ...dataHeaders(new Date().toISOString(), source),
+    'X-Cache': 'MISS',
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Historical Trends & Monte Carlo Simulations
+// ---------------------------------------------------------------------------
+
+/**
+ * handleCollegeBaseballTrends — Query bsi-historical-db D1 for win/loss
+ * trends, scoring averages, and ranking movement over time.
+ *
+ * Returns structured JSON consumed by /college-baseball/trends page:
+ *   - conferencePowerRankings: ranked conferences with RPI trend lines
+ *   - topMovers: teams with largest ranking changes + scoring trends
+ *   - seasonProjections: projected records with CWS / conf-champ probabilities
+ */
+export async function handleCollegeBaseballTrends(env: Env): Promise<Response> {
+  const cacheKey = 'trends:college-baseball:dashboard';
+  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.standings, dataHeaders(new Date().toISOString(), 'bsi-historical-db'));
+  }
+
+  try {
+    // Conference power rankings — average RPI and aggregate record per conference
+    const confQuery = `
+      SELECT
+        conference,
+        ROUND(AVG(rpi), 1) AS avg_rpi,
+        SUM(wins) AS total_wins,
+        SUM(losses) AS total_losses
+      FROM team_season_stats
+      WHERE season = strftime('%Y', 'now')
+      GROUP BY conference
+      ORDER BY AVG(rpi) ASC
+      LIMIT 20
+    `;
+    const confResults = await env.DB.prepare(confQuery).all();
+
+    const conferencePowerRankings = (confResults.results ?? []).map(
+      (row: Record<string, unknown>, idx: number) => ({
+        rank: idx + 1,
+        conference: String(row.conference ?? ''),
+        avgRPI: Number(row.avg_rpi ?? 0),
+        record: `${row.total_wins ?? 0}-${row.total_losses ?? 0}`,
+        trend: [] as { date: string; value: number; label?: string }[],
+      })
+    );
+
+    // Trend lines — weekly RPI snapshots per conference
+    const trendQuery = `
+      SELECT conference, snapshot_date, ROUND(AVG(rpi), 1) AS avg_rpi
+      FROM weekly_rpi_snapshots
+      WHERE season = strftime('%Y', 'now')
+      GROUP BY conference, snapshot_date
+      ORDER BY snapshot_date ASC
+    `;
+    try {
+      const trendResults = await env.DB.prepare(trendQuery).all();
+      const trendMap: Record<string, { date: string; value: number }[]> = {};
+      for (const row of (trendResults.results ?? []) as Record<string, unknown>[]) {
+        const conf = String(row.conference ?? '');
+        if (!trendMap[conf]) trendMap[conf] = [];
+        trendMap[conf].push({
+          date: String(row.snapshot_date ?? ''),
+          value: Number(row.avg_rpi ?? 0),
+        });
+      }
+      for (const ranking of conferencePowerRankings) {
+        ranking.trend = trendMap[ranking.conference] ?? [];
+      }
+    } catch {
+      // weekly_rpi_snapshots table may not exist yet — trends stay empty
+    }
+
+    // Top movers — teams with largest ranking changes
+    const moversQuery = `
+      SELECT
+        team_name,
+        conference,
+        previous_rank,
+        current_rank,
+        (previous_rank - current_rank) AS change
+      FROM team_season_stats
+      WHERE season = strftime('%Y', 'now')
+        AND previous_rank IS NOT NULL
+        AND current_rank IS NOT NULL
+      ORDER BY ABS(previous_rank - current_rank) DESC
+      LIMIT 12
+    `;
+    let topMovers: Record<string, unknown>[] = [];
+    try {
+      const moversResults = await env.DB.prepare(moversQuery).all();
+      topMovers = (moversResults.results ?? []).map((row: Record<string, unknown>) => ({
+        team: String(row.team_name ?? ''),
+        conference: String(row.conference ?? ''),
+        previousRank: Number(row.previous_rank ?? 0),
+        currentRank: Number(row.current_rank ?? 0),
+        change: Number(row.change ?? 0),
+        scoringTrend: [],
+      }));
+    } catch {
+      // Table may not have ranking columns yet
+    }
+
+    // Season projections — from pre-computed projection table
+    let seasonProjections: Record<string, unknown>[] = [];
+    const projQuery = `
+      SELECT
+        team_name,
+        conference,
+        projected_wins,
+        projected_losses,
+        cws_probability,
+        conf_champ_probability
+      FROM season_projections
+      WHERE season = strftime('%Y', 'now')
+      ORDER BY cws_probability DESC
+      LIMIT 25
+    `;
+    try {
+      const projResults = await env.DB.prepare(projQuery).all();
+      seasonProjections = (projResults.results ?? []).map((row: Record<string, unknown>) => ({
+        team: String(row.team_name ?? ''),
+        conference: String(row.conference ?? ''),
+        projectedWins: Number(row.projected_wins ?? 0),
+        projectedLosses: Number(row.projected_losses ?? 0),
+        cwsProbability: Number(row.cws_probability ?? 0),
+        conferenceChampProbability: Number(row.conf_champ_probability ?? 0),
+        simulations: [
+          { outcome: 'Make CWS', probability: Number(row.cws_probability ?? 0) },
+          { outcome: 'Win Conference', probability: Number(row.conf_champ_probability ?? 0) },
+          { outcome: 'NCAA Tournament', probability: Math.min(1, Number(row.cws_probability ?? 0) * 3) },
+          { outcome: 'Super Regional', probability: Math.min(1, Number(row.cws_probability ?? 0) * 2) },
+        ],
+      }));
+    } catch {
+      // season_projections table may not exist yet
+    }
+
+    const payload = {
+      conferencePowerRankings,
+      topMovers,
+      seasonProjections,
+      meta: {
+        source: 'bsi-historical-db',
+        fetched_at: new Date().toISOString(),
+        timezone: 'America/Chicago',
+      },
+    };
+
+    // Cache for the standings TTL duration
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+
+    return cachedJson(payload, 200, HTTP_CACHE.standings, dataHeaders(new Date().toISOString(), 'bsi-historical-db'));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return json(
+      {
+        error: 'Failed to fetch trends data',
+        detail: message,
+        conferencePowerRankings: [],
+        topMovers: [],
+        seasonProjections: [],
+        meta: {
+          source: 'bsi-historical-db',
+          fetched_at: new Date().toISOString(),
+          timezone: 'America/Chicago',
+        },
+      },
+      500
+    );
+  }
+}
+
+/**
+ * handleCollegeBaseballSimulations — Read Monte Carlo simulation results
+ * from the blaze-sports-data-lake R2 bucket.
+ *
+ * Simulation files are stored as JSON at:
+ *   college-baseball/simulations/{season}/latest.json
+ *
+ * Returns probability distributions for each team's season outcomes.
+ */
+export async function handleCollegeBaseballSimulations(env: Env): Promise<Response> {
+  const cacheKey = 'sims:college-baseball:latest';
+  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.standings, dataHeaders(new Date().toISOString(), 'blaze-sports-data-lake'));
+  }
+
+  try {
+    const season = new Date().getFullYear().toString();
+    const objectKey = `college-baseball/simulations/${season}/latest.json`;
+
+    const r2Object = await env.ASSETS_BUCKET.get(objectKey);
+
+    if (!r2Object) {
+      return json(
+        {
+          simulations: [],
+          meta: {
+            source: 'blaze-sports-data-lake',
+            fetched_at: new Date().toISOString(),
+            timezone: 'America/Chicago',
+          },
+          message: 'No simulation data available for current season',
+        },
+        200
+      );
+    }
+
+    const raw = await r2Object.text();
+    const simData = JSON.parse(raw) as Record<string, unknown>;
+
+    const payload = {
+      ...simData,
+      meta: {
+        source: 'blaze-sports-data-lake',
+        fetched_at: new Date().toISOString(),
+        timezone: 'America/Chicago',
+        r2_key: objectKey,
+        r2_uploaded: r2Object.uploaded?.toISOString() ?? null,
+      },
+    };
+
+    // Cache simulation data (doesn't change frequently)
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+
+    return cachedJson(payload, 200, HTTP_CACHE.standings, dataHeaders(new Date().toISOString(), 'blaze-sports-data-lake'));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return json(
+      {
+        error: 'Failed to fetch simulation data',
+        detail: message,
+        simulations: [],
+        meta: {
+          source: 'blaze-sports-data-lake',
+          fetched_at: new Date().toISOString(),
+          timezone: 'America/Chicago',
+        },
+      },
+      500
+    );
+  }
+}
+
+// --- College Baseball Editorial (AI-generated daily digests) ---
+
+export async function handleCollegeBaseballEditorial(
+  env: Env,
+  date?: string,
+): Promise<Response> {
+  const targetDate = date || new Date().toISOString().slice(0, 10);
+  const cacheKey = `editorial:cbb:${targetDate}`;
+
+  // Check KV cache first
+  const cached = await kvGet(env.BSI_PROD_CACHE, cacheKey);
+  if (cached) return json(cached);
+
+  // Try R2 for full content
+  try {
+    const obj = await env.BSI_DATA_LAKE?.get(`editorial/cbb/${targetDate}.md`);
+    if (obj) {
+      const content = await obj.text();
+      const result = {
+        date: targetDate,
+        content,
+        meta: { source: 'r2', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+      };
+      await kvPut(env.BSI_PROD_CACHE, cacheKey, JSON.stringify(result), 3600);
+      return json(result);
+    }
+  } catch { /* R2 not available */ }
+
+  return json({ date: targetDate, content: null, meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } });
+}
+
+export async function handleCollegeBaseballEditorialList(
+  env: Env,
+): Promise<Response> {
+  // List recent editorials from KV
+  const list = await env.BSI_PROD_CACHE?.list({ prefix: 'editorial:cbb:' });
+  const editorials = (list?.keys ?? []).map(k => ({
+    date: k.name.replace('editorial:cbb:', ''),
+    key: k.name,
+  })).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30);
+
+  return json({
+    editorials,
+    meta: { source: 'kv', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  });
+}
