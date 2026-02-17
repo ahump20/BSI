@@ -233,11 +233,12 @@ export function SportHubCards() {
             className={`group ${isFlag ? 'sm:col-span-2 lg:col-span-2' : ''}`}
           >
             <div
-              className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] ${
+              className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
                 hub.inSeason
                   ? 'hover:shadow-glow-sm'
                   : 'opacity-60'
               }`}
+              style={{ '--card-accent': hub.accent } as React.CSSProperties}
             >
               {/* Icon + name */}
               <div className="flex items-center gap-3">
@@ -305,9 +306,10 @@ export function SportHubCards() {
       {/* CFB */}
       <Link href="/cfb" className="group">
         <div
-          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] ${
+          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
             isInSeason('cfb') ? 'hover:shadow-glow-sm' : 'opacity-60'
           }`}
+          style={{ '--card-accent': '#8B4513' } as React.CSSProperties}
         >
           <div className="flex items-center gap-3">
             <div

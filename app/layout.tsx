@@ -9,6 +9,7 @@ import { NavbarWrapper } from '@/components/layout-ds/NavbarWrapper';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
 import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
+import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 
 // 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
@@ -146,6 +147,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Skip to main content
             </a>
             <NavbarWrapper />
+            <ScrollProgress />
             <CommandPalette />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>
