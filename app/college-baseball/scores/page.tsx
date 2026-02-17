@@ -97,8 +97,14 @@ export default function CollegeBaseballScoresPage() {
     const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
     const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
 
+    const gameHref = isLive
+      ? `/college-baseball/game/${game.id}/live`
+      : isFinal
+        ? `/college-baseball/game/${game.id}/box-score`
+        : `/college-baseball/game/${game.id}`;
+
     return (
-      <Link href={`/college-baseball/game/${game.id}`} className="block">
+      <Link href={gameHref} className="block">
         <div
           className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
             isLive ? 'border-success' : 'border-border-subtle'

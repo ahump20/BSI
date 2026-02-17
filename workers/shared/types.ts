@@ -10,6 +10,8 @@ export interface Env {
   SPORTS_DATA_IO_API_KEY?: string;
   RAPIDAPI_KEY?: string;
   ERROR_LOG?: KVNamespace;
+  TURNSTILE_SECRET_KEY?: string;
+  OPS_EVENTS?: AnalyticsEngineDataset;
 }
 
 export interface PredictionPayload {

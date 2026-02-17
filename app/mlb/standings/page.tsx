@@ -154,6 +154,7 @@ export default function MLBStandingsPage() {
     className?: string;
   }) => (
     <th
+      scope="col"
       className={`text-left p-3 text-copper font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
     >
@@ -176,22 +177,22 @@ export default function MLBStandingsPage() {
     showDivision?: boolean;
   }) => (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[700px]">
+      <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr className="border-b-2 border-burnt-orange">
-            <th className="text-left p-3 text-copper font-semibold w-8">#</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold w-8">#</th>
             <SortableHeader column="team" label="Team" className="sticky left-0 bg-charcoal z-10" />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th className="text-left p-3 text-copper font-semibold">HOME</th>
-            <th className="text-left p-3 text-copper font-semibold">AWAY</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">HOME</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th className="text-left p-3 text-copper font-semibold">STRK</th>
-            <th className="text-left p-3 text-copper font-semibold">L10</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -268,17 +269,17 @@ export default function MLBStandingsPage() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
+        <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr className="border-b-2 border-burnt-orange">
-              <th className="text-left p-3 text-copper font-semibold w-8">WC</th>
-              <th className="text-left p-3 text-copper font-semibold">Team</th>
-              <th className="text-left p-3 text-copper font-semibold">W</th>
-              <th className="text-left p-3 text-copper font-semibold">L</th>
-              <th className="text-left p-3 text-copper font-semibold">PCT</th>
-              <th className="text-left p-3 text-copper font-semibold">WCGB</th>
-              <th className="text-left p-3 text-copper font-semibold">STRK</th>
-              <th className="text-left p-3 text-copper font-semibold">L10</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold w-8">WC</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">Team</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">W</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">L</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">PCT</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">WCGB</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -434,7 +435,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} className="text-left p-3 text-copper font-semibold">
+                                <th key={h} scope="col" className="text-left p-3 text-copper font-semibold">
                                   {h}
                                 </th>
                               ))}

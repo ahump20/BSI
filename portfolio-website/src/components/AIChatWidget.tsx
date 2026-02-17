@@ -10,17 +10,17 @@ const knowledge: { keywords: string[]; response: string }[] = [
   {
     keywords: ['bsi', 'blaze', 'sports intel', 'platform'],
     response:
-      'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. It runs on 53 Cloudflare Workers, 12 D1 databases, 45 KV namespaces, and 18 R2 buckets — all built and maintained by Austin.',
+      'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. It runs on 14 Cloudflare Workers, 5 D1 databases, 9 KV namespaces, and 18 R2 buckets — all built and maintained by Austin.',
   },
   {
     keywords: ['college baseball', 'flagship'],
     response:
-      'College baseball is BSI\'s flagship coverage area. The platform provides real-time scores, standings, rankings, and AI-powered editorial for programs outside the usual media spotlight.',
+      'College baseball is BSI\'s flagship coverage area. The platform provides real-time scores, standings, rankings, and 58+ editorial deep-dives for programs outside the usual media spotlight — covering SEC, Big 12, and Big Ten conferences.',
   },
   {
     keywords: ['cloudflare', 'worker', 'infrastructure', 'architecture', 'stack', 'tech'],
     response:
-      'BSI\'s entire stack runs on Cloudflare: Pages for the frontend, Workers (Hono framework) for all backend logic, D1 for SQL, KV for caching, and R2 for storage. No AWS, no Vercel, no external databases.',
+      'BSI\'s entire stack runs on Cloudflare: Pages for the frontend, Workers (Hono framework) for all backend logic, D1 for SQL, KV for caching, and R2 for storage. 14 Workers, 5 D1 databases, 9 KV namespaces, 18 R2 buckets. No AWS, no Vercel, no external databases.',
   },
   {
     keywords: ['texas', 'soil', 'origin', 'born', 'memphis'],
@@ -38,6 +38,16 @@ const knowledge: { keywords: string[]; response: string }[] = [
       'BSI uses Claude AI for editorial generation and deep analysis, plus machine learning models for predictive intelligence — grounded in historical data, matchup dynamics, and contextual factors rather than hype cycles.',
   },
   {
+    keywords: ['editorial', 'writing', 'article', 'content'],
+    response:
+      'BSI has published 58+ editorial deep-dives covering SEC, Big 12, and Big Ten college baseball programs. Conference previews, weekly recaps, and scouting analysis — all written with the same analytical depth that prestige platforms give only to the top 10 programs.',
+  },
+  {
+    keywords: ['project', 'blazecraft', 'sandlot', 'game', 'arcade'],
+    response:
+      'Beyond BSI, Austin built BlazeCraft (blazecraft.app) — a Warcraft 3–style system health dashboard — and Sandlot Sluggers, a browser-based baseball game in the BSI Arcade. All deployed on Cloudflare.',
+  },
+  {
     keywords: ['contact', 'email', 'hire', 'reach'],
     response:
       'You can reach Austin at Austin@BlazeSportsIntel.com, on LinkedIn at linkedin.com/in/ahump20, or on X at @BlazeSportsIntel. He\'s based in San Antonio, Texas.',
@@ -46,6 +56,11 @@ const knowledge: { keywords: string[]; response: string }[] = [
     keywords: ['experience', 'work', 'spectrum', 'northwestern', 'job'],
     response:
       'Austin\'s career spans: Founder of BSI (2023-present), Advertising Account Executive at Spectrum Reach (2022-2025), Financial Representative at Northwestern Mutual (2020-2022) where he earned the "Power of 10" Award for top 10% nationally.',
+  },
+  {
+    keywords: ['resume', 'cv', 'download'],
+    response:
+      'You can download Austin\'s resume from the contact section of this site, or directly at austinhumphrey.com/Austin_Humphrey_Resume.pdf.',
   },
 ];
 
@@ -56,7 +71,7 @@ function getResponse(input: string): string {
       return entry.response;
     }
   }
-  return 'I can answer questions about Austin\'s background, Blaze Sports Intel, his tech stack, education, experience, or how to get in touch. What would you like to know?';
+  return 'I can answer questions about Austin\'s background, Blaze Sports Intel, his projects, editorial work, tech stack, education, experience, or how to get in touch. What would you like to know?';
 }
 
 export default function AIChatWidget() {
