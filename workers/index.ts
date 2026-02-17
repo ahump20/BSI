@@ -82,6 +82,7 @@ import {
 } from './handlers/cfb';
 
 import { handleSearch } from './handlers/search';
+import { handleCreateEmbeddedCheckout } from './handlers/stripe';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -362,6 +363,9 @@ app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env)
 
 // --- Intel Weekly Brief ---
 app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
+
+// --- Stripe ---
+app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));

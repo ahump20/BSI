@@ -1,0 +1,88 @@
+/**
+ * Stripe handlers for Blaze Sports Intel
+ *
+ * POST /api/stripe/create-embedded-checkout
+ *   Creates a Stripe Embedded Checkout session and returns the client_secret.
+ *   The client uses this secret to render the Stripe-hosted checkout UI.
+ *
+ * Required secrets (set via `wrangler secret put --env production`):
+ *   STRIPE_SECRET_KEY      — Stripe secret key (sk_live_* / sk_test_*)
+ *   STRIPE_PRICE_PRO       — Stripe Price ID for the Pro monthly plan
+ *   STRIPE_PRICE_ENTERPRISE — Stripe Price ID for the Enterprise monthly plan
+ */
+
+import type { Env } from '../shared/types';
+import { json } from '../shared/helpers';
+
+interface ExtendedEnv extends Env {
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_PRICE_PRO?: string;
+  STRIPE_PRICE_ENTERPRISE?: string;
+}
+
+const STRIPE_API = 'https://api.stripe.com/v1';
+const RETURN_URL = 'https://blazesportsintel.com/checkout?session_id={CHECKOUT_SESSION_ID}';
+
+export async function handleCreateEmbeddedCheckout(
+  request: Request,
+  env: ExtendedEnv,
+): Promise<Response> {
+  const { STRIPE_SECRET_KEY, STRIPE_PRICE_PRO, STRIPE_PRICE_ENTERPRISE } = env;
+
+  if (!STRIPE_SECRET_KEY) {
+    return json({ error: 'Stripe is not configured.' }, 503);
+  }
+
+  let body: { tier?: string };
+  try {
+    body = await request.json() as { tier?: string };
+  } catch {
+    return json({ error: 'Invalid request body.' }, 400);
+  }
+
+  const { tier } = body;
+  if (tier !== 'pro' && tier !== 'enterprise') {
+    return json({ error: 'Invalid tier. Must be "pro" or "enterprise".' }, 400);
+  }
+
+  const priceId = tier === 'pro' ? STRIPE_PRICE_PRO : STRIPE_PRICE_ENTERPRISE;
+  if (!priceId) {
+    return json({ error: `Price not configured for tier: ${tier}` }, 503);
+  }
+
+  // Build form-encoded body for Stripe API (no SDK needed in Workers runtime)
+  const params = new URLSearchParams({
+    'mode': 'subscription',
+    'ui_mode': 'embedded',
+    'line_items[0][price]': priceId,
+    'line_items[0][quantity]': '1',
+    'return_url': RETURN_URL,
+  });
+
+  try {
+    const res = await fetch(`${STRIPE_API}/checkout/sessions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
+
+    if (!res.ok) {
+      const err = (await res.json()) as { error?: { message?: string } };
+      const msg = err?.error?.message ?? 'Stripe session creation failed.';
+      return json({ error: msg }, res.status as 400 | 402 | 500);
+    }
+
+    const session = (await res.json()) as { client_secret?: string };
+    if (!session.client_secret) {
+      return json({ error: 'No client_secret returned from Stripe.' }, 502);
+    }
+
+    return json({ clientSecret: session.client_secret });
+  } catch (err) {
+    console.error('[stripe] checkout session error:', err);
+    return json({ error: 'Failed to create checkout session.' }, 502);
+  }
+}

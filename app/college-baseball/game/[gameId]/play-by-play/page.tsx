@@ -1,10 +1,11 @@
 import CollegePlayByPlayClient from './CollegePlayByPlayClient';
-// Force static generation with dynamic params disabled
+import { cbbGameParams } from '@/lib/generate-static-params';
+
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  return [{ gameId: 'placeholder' }];
+  return cbbGameParams();
 }
 
 export default function CollegePlayByPlayPage() {
