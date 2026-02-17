@@ -77,16 +77,6 @@ const mlbFeatures = [
   },
 ];
 
-// Division data for future use in expanded team profiles
-const _divisions = [
-  { name: 'AL East', teams: ['Yankees', 'Red Sox', 'Blue Jays', 'Rays', 'Orioles'] },
-  { name: 'AL Central', teams: ['Guardians', 'Twins', 'Tigers', 'White Sox', 'Royals'] },
-  { name: 'AL West', teams: ['Astros', 'Rangers', 'Mariners', 'Angels', 'Athletics'] },
-  { name: 'NL East', teams: ['Braves', 'Phillies', 'Mets', 'Marlins', 'Nationals'] },
-  { name: 'NL Central', teams: ['Cubs', 'Cardinals', 'Brewers', 'Reds', 'Pirates'] },
-  { name: 'NL West', teams: ['Dodgers', 'Padres', 'Giants', 'D-backs', 'Rockies'] },
-];
-
 interface Team {
   teamName: string;
   wins: number;
