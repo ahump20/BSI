@@ -96,11 +96,43 @@ const stats = [
 export default function YardSalePage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!email.trim()) return;
-    setSubmitted(true);
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) return;
+
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'YardSale Waitlist Signup',
+          email: normalizedEmail,
+          sport: 'softball',
+          source: 'YardSale Waitlist',
+          message: 'Submitted from /yardsale waitlist form',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Lead capture failed with status ${response.status}`);
+      }
+
+      setSubmitted(true);
+    } catch (_error) {
+      setSubmitError('Something went wrong while saving your signup. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+
     setEmail('');
   };
 
@@ -288,6 +320,7 @@ export default function YardSalePage() {
                   id="yardsale-email"
                   type="email"
                   required
+                  disabled={isSubmitting}
                   aria-label="Email address"
                   placeholder="Enter your email"
                   value={email}
@@ -297,13 +330,18 @@ export default function YardSalePage() {
                     '--tw-ring-color': colors.clay,
                   } as React.CSSProperties}
                 />
-                <Button type="submit" size="lg" className="h-12 px-8">
-                  Join Waitlist
+                <Button type="submit" size="lg" className="h-12 px-8" disabled={isSubmitting}>
+                  {isSubmitting ? 'Joining…' : 'Join Waitlist'}
                 </Button>
               </div>
               <p className="text-xs text-gray-400 text-center mt-4">
                 No spam. Just launch updates, early access, and occasional product drops.
               </p>
+              {submitError ? (
+                <p className="text-sm text-center mt-4" style={{ color: colors.hotCoral }}>
+                  {submitError}
+                </p>
+              ) : null}
               {submitted ? (
                 <p className="text-sm text-center mt-4" style={{ color: colors.chalk }}>
                   Thanks — you&apos;re on the list.
