@@ -228,10 +228,25 @@ export default function DataSourcesPage() {
                 </div>
               </section>
 
+              {/* Cross-link to expanded methodology */}
+              <div className="bg-[#BF5700]/5 border border-[#BF5700]/20 rounded-xl p-5 sm:p-6 mb-12">
+                <p className="text-sm text-white/50 leading-relaxed">
+                  For cross-reference methodology, API response times, and freshness guarantees,
+                  see the expanded{' '}
+                  <Link href="/models/data-quality" className="text-[#BF5700] hover:text-[#FF6B35] font-semibold transition-colors">
+                    Data Quality & Sources
+                  </Link>{' '}
+                  page in the Models hub.
+                </p>
+              </div>
+
               {/* Back links */}
               <div className="flex flex-wrap gap-4 text-sm text-white/30">
                 <Link href="/dashboard" className="hover:text-white/60 transition-colors">
-                  ← Dashboard
+                  &#8592; Dashboard
+                </Link>
+                <Link href="/models" className="hover:text-white/60 transition-colors">
+                  Models & Methodology
                 </Link>
                 <Link href="/about" className="hover:text-white/60 transition-colors">
                   About BSI

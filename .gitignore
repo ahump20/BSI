@@ -11,3 +11,6 @@ dist/
 .env.*.local
 .worktrees/
 .vercel
+.wrangler/
+workers/**/.wrangler/
+app/.wrangler/

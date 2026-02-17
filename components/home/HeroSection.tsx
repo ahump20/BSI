@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { isInSeason, SPORT_LABELS, type SportKey } from '@/lib/season';
 import { HeroScoreStrip } from './HeroScoreStrip';
+import { ProofChips } from '@/components/ui/ProofChips';
 
 const ALL_SPORTS: SportKey[] = ['ncaa', 'mlb', 'nfl', 'nba', 'cfb'];
 
@@ -67,6 +68,17 @@ export function HeroSection() {
           >
             College Baseball
           </Link>
+          <Link
+            href="/models"
+            className="inline-flex items-center justify-center gap-2 border-2 border-white/10 hover:border-white/30 text-white/60 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+          >
+            See Models
+          </Link>
+        </div>
+
+        {/* Trust signals — proof chips linking to data quality */}
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.6s_forwards]">
+          <ProofChips />
         </div>
 
         {/* Live proof — score strip shows the site has real data */}

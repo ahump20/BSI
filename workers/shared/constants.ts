@@ -27,7 +27,7 @@ export const SECURITY_HEADERS: Record<string, string> = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.posthog.com https://us.i.posthog.com https://api.stripe.com",
+    "connect-src 'self' https://*.posthog.com https://us.i.posthog.com https://api.stripe.com wss://live.blazesportsintel.com",
     "frame-src 'self' https://*.cloudflarestream.com https://js.stripe.com https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",

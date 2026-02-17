@@ -52,8 +52,8 @@ export function TransparencyBlock() {
       </div>
 
       <div className="mt-6 pt-4 border-t border-white/[0.04] flex flex-wrap gap-4 text-xs text-white/30">
-        <Link href="/data-sources" className="hover:text-white/60 transition-colors">
-          All Data Sources
+        <Link href="/models/data-quality" className="hover:text-white/60 transition-colors">
+          Data Quality & Sources
         </Link>
         <span className="text-white/10">|</span>
         <Link href="/legal/accessibility" className="hover:text-white/60 transition-colors">

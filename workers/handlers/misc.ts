@@ -497,6 +497,36 @@ export async function handleAnalyticsEvent(request: Request, env: Env): Promise<
   return new Response(null, { status: 204 });
 }
 
+/**
+ * GET /api/intel/weekly-brief
+ *
+ * Returns the latest weekly brief from KV. Populated manually each week.
+ * Falls back to a framework response if no brief is published yet.
+ */
+export async function handleWeeklyBrief(env: Env): Promise<Response> {
+  const cacheKey = 'intel:weekly-brief:latest';
+  const brief = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+
+  if (brief) {
+    return cachedJson({
+      brief,
+      meta: { source: 'bsi-intel', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    }, 200, 300);
+  }
+
+  // No brief published — return framework structure
+  return json({
+    brief: null,
+    status: 'not_published',
+    message: 'Weekly brief not yet published for this week.',
+    framework: {
+      sections: ['Decision Register', 'Five Feeds', 'ICE Scoring', 'KPIs'],
+      publishSchedule: 'Mondays during the college baseball season',
+    },
+    meta: { source: 'bsi-intel', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  });
+}
+
 export async function handlePredictionAccuracy(env: Env): Promise<Response> {
   const cacheKey = 'predictions:accuracy';
   const cached = await kvGet<unknown>(env.KV, cacheKey);

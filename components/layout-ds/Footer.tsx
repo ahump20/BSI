@@ -21,14 +21,18 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Tools</h4>
             <ul className="space-y-2">
               <li><Link href="/dashboard" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Dashboard</Link></li>
+              <li><Link href="/intel" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Intel</Link></li>
               <li><Link href="/scores" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Live Scores</Link></li>
-              <li><Link href="/search" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Search</Link></li>
+              <li><Link href="/models" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Models</Link></li>
+              <li><Link href="/glossary" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Glossary</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h4>
             <ul className="space-y-2">
               <li><Link href="/about" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">About</Link></li>
+              <li><Link href="/about/methodology" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Methodology</Link></li>
+              <li><Link href="/about/partnerships" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Partnerships</Link></li>
               <li><Link href="/contact" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Contact</Link></li>
               <li><Link href="/pricing" className="text-sm text-white/50 hover:text-[#BF5700] transition-colors">Pricing</Link></li>
             </ul>
