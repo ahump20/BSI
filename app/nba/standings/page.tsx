@@ -525,37 +525,37 @@ export default function NBAStandingsPage() {
                   </h3>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm" aria-label="NBA standings by conference">
                       <thead>
                         <tr className="border-b border-border-subtle">
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
                             #
                           </th>
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold">
                             Team
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             W
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             L
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             PCT
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             GB
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             HOME
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             AWAY
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             L10
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             STRK
                           </th>
                         </tr>
