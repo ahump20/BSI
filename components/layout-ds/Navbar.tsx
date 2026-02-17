@@ -21,35 +21,43 @@ export interface NavbarProps {
 // Inline news ticker (replaces standalone NewsTicker component)
 // ---------------------------------------------------------------------------
 
-const DEFAULT_TICKER = [
+const FALLBACK_TICKER = [
   'College Baseball scores updated live every 30 seconds',
-  'MLB, NFL, and NBA coverage now available',
   'Real-time analytics powered by official data sources',
 ];
 
+interface IntelArticle { headline?: string; description?: string }
+interface IntelBucket { sport: string; data: { articles: IntelArticle[] } }
+
 function useNewsTicker(): string {
-  const [items, setItems] = useState<string[]>(DEFAULT_TICKER);
+  const [items, setItems] = useState<string[]>(FALLBACK_TICKER);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/news/ticker`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ''}/api/intel/news`, {
       signal: controller.signal,
     })
-      .then((r) => r.ok ? r.json() : null)
-      .then((data: { items?: { text: string }[] } | null) => {
-        if (data?.items?.length) {
-          setItems(data.items.map((i) => i.text));
-        }
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: IntelBucket[] | null) => {
+        if (!Array.isArray(data)) return;
+        const headlines = data
+          .flatMap((bucket) =>
+            (bucket.data?.articles ?? []).slice(0, 2).map((a) => a.headline).filter(Boolean)
+          )
+          .slice(0, 8) as string[];
+        if (headlines.length > 0) setItems(headlines);
       })
-      .catch(() => { /* keep defaults */ });
+      .catch(() => {
+        /* keep fallbacks */
+      });
     return () => controller.abort();
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % items.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(timer);
   }, [items.length]);
 
