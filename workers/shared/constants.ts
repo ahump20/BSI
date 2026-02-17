@@ -90,6 +90,7 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/college-baseball/daily/latest': '/college-baseball',
   '/scores/daily': '/scores',
   '/baseball/rankings': '/college-baseball/rankings',
+  '/baseball/rankings/': '/college-baseball/rankings',
 };
 
 export const MCP_SERVER_INFO = {

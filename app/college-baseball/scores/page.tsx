@@ -10,7 +10,7 @@ import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface Game {
   id: string;
@@ -54,26 +54,13 @@ interface ScoresApiResponse {
   message?: string;
   timestamp?: string;
 }
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
+// formatScheduleDate, getDateOffset imported from lib/utils/timezone
 
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
 
 export default function CollegeBaseballScoresPage() {
-  const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
@@ -96,11 +83,11 @@ export default function CollegeBaseballScoresPage() {
 
   // Date navigation
   const dateOptions = [
-    { offset: -2, label: formatDate(getDateOffset(-2)) },
+    { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
     { offset: -1, label: 'Yesterday' },
     { offset: 0, label: 'Today' },
     { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: formatDate(getDateOffset(2)) },
+    { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
   ];
 
   const GameCard = ({ game }: { game: Game }) => {

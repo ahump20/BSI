@@ -8,44 +8,25 @@ export async function generateStaticParams() {
   // Return common team IDs for static generation
   // Additional teams will be handled client-side via the teams API
   const teams = [
-    'texas',
-    'lsu',
-    'texas-am',
-    'florida',
-    'tennessee',
-    'arkansas',
-    'vanderbilt',
-    'ole-miss',
-    'georgia',
-    'auburn',
-    'alabama',
-    'mississippi-state',
-    'south-carolina',
-    'kentucky',
-    'missouri',
-    'wake-forest',
-    'virginia',
-    'nc-state',
-    'clemson',
-    'florida-state',
-    'miami',
-    'louisville',
-    'duke',
-    'north-carolina',
-    'tcu',
-    'texas-tech',
-    'oklahoma-state',
-    'baylor',
-    'west-virginia',
-    'kansas-state',
+    // SEC
+    'texas', 'texas-am', 'lsu', 'florida', 'tennessee', 'arkansas',
+    'vanderbilt', 'ole-miss', 'georgia', 'auburn', 'alabama',
+    'mississippi-state', 'south-carolina', 'kentucky', 'missouri', 'oklahoma',
+    // ACC
+    'wake-forest', 'virginia', 'clemson', 'north-carolina', 'nc-state',
+    'duke', 'louisville', 'miami', 'florida-state', 'stanford', 'california',
+    // Big 12
+    'tcu', 'texas-tech', 'oklahoma-state', 'baylor', 'west-virginia',
+    'kansas-state', 'arizona', 'arizona-state', 'kansas', 'byu', 'ucf',
+    'houston', 'cincinnati', 'utah',
+    // Big Ten
+    'ucla', 'usc', 'indiana', 'maryland', 'michigan', 'ohio-state',
+    'penn-state', 'rutgers', 'nebraska', 'minnesota', 'iowa', 'illinois',
+    'northwestern', 'purdue', 'michigan-state',
+    // Pac-12
     'oregon-state',
-    'stanford',
-    'arizona',
-    'arizona-state',
-    'ucla',
-    'usc',
-    'oklahoma',
-    'california',
+    // Other ranked
+    'oregon', 'washington',
   ];
 
   return teams.map((teamId) => ({ teamId }));

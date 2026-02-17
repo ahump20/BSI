@@ -82,13 +82,13 @@ const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
       { name: 'Kansas State', slug: 'kansas-state', hasPage: true },
       { name: 'Arizona', slug: 'arizona', hasPage: true },
       { name: 'Arizona State', slug: 'arizona-state', hasPage: true },
-      { name: 'Kansas', slug: 'kansas', hasPage: false },
-      { name: 'BYU', slug: 'byu', hasPage: false },
-      { name: 'UCF', slug: 'ucf', hasPage: false },
-      { name: 'Houston', slug: 'houston', hasPage: false },
-      { name: 'Cincinnati', slug: 'cincinnati', hasPage: false },
+      { name: 'Kansas', slug: 'kansas', hasPage: true },
+      { name: 'BYU', slug: 'byu', hasPage: true },
+      { name: 'UCF', slug: 'ucf', hasPage: true },
+      { name: 'Houston', slug: 'houston', hasPage: true },
+      { name: 'Cincinnati', slug: 'cincinnati', hasPage: true },
       { name: 'Colorado', slug: 'colorado', hasPage: false },
-      { name: 'Utah', slug: 'utah', hasPage: false },
+      { name: 'Utah', slug: 'utah', hasPage: true },
     ],
   },
   {
@@ -97,19 +97,19 @@ const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
     teams: [
       { name: 'UCLA', slug: 'ucla', hasPage: true },
       { name: 'USC', slug: 'usc', hasPage: true },
-      { name: 'Indiana', slug: 'indiana', hasPage: false },
-      { name: 'Maryland', slug: 'maryland', hasPage: false },
-      { name: 'Michigan', slug: 'michigan', hasPage: false },
-      { name: 'Ohio State', slug: 'ohio-state', hasPage: false },
-      { name: 'Penn State', slug: 'penn-state', hasPage: false },
-      { name: 'Rutgers', slug: 'rutgers', hasPage: false },
-      { name: 'Nebraska', slug: 'nebraska', hasPage: false },
-      { name: 'Minnesota', slug: 'minnesota', hasPage: false },
-      { name: 'Iowa', slug: 'iowa', hasPage: false },
-      { name: 'Illinois', slug: 'illinois', hasPage: false },
-      { name: 'Northwestern', slug: 'northwestern', hasPage: false },
-      { name: 'Purdue', slug: 'purdue', hasPage: false },
-      { name: 'Michigan State', slug: 'michigan-state', hasPage: false },
+      { name: 'Indiana', slug: 'indiana', hasPage: true },
+      { name: 'Maryland', slug: 'maryland', hasPage: true },
+      { name: 'Michigan', slug: 'michigan', hasPage: true },
+      { name: 'Ohio State', slug: 'ohio-state', hasPage: true },
+      { name: 'Penn State', slug: 'penn-state', hasPage: true },
+      { name: 'Rutgers', slug: 'rutgers', hasPage: true },
+      { name: 'Nebraska', slug: 'nebraska', hasPage: true },
+      { name: 'Minnesota', slug: 'minnesota', hasPage: true },
+      { name: 'Iowa', slug: 'iowa', hasPage: true },
+      { name: 'Illinois', slug: 'illinois', hasPage: true },
+      { name: 'Northwestern', slug: 'northwestern', hasPage: true },
+      { name: 'Purdue', slug: 'purdue', hasPage: true },
+      { name: 'Michigan State', slug: 'michigan-state', hasPage: true },
     ],
   },
   {
@@ -131,7 +131,7 @@ function TeamCard({ team }: { team: TeamEntry }) {
     <Card
       padding="md"
       variant={team.hasPage ? 'hover' : 'default'}
-      className={`text-center transition-all ${team.hasPage ? 'hover:border-[#BF5700]' : 'opacity-40'}`}
+      className={`text-center transition-all ${team.hasPage ? 'hover:border-burnt-orange' : 'opacity-40'}`}
     >
       <div className="flex flex-col items-center gap-2">
         {logoUrl && (

@@ -45,6 +45,8 @@ interface StandingsApiResponse {
 }
 
 const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+const currentMonth = new Date().getMonth(); // 0-indexed: Jan=0, Feb=1, ..., Jun=5
+const isInSeason = currentMonth >= 1 && currentMonth <= 5; // Feb through June
 
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
@@ -132,8 +134,9 @@ export default function CollegeBaseballStandingsPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-warning mb-4">{error}</p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Standings will be available
-                  during the season.
+                  {isInSeason
+                    ? 'Standings data is updating — check back shortly.'
+                    : 'College baseball returns in February.'}
                 </p>
               </Card>
             )}
@@ -145,8 +148,15 @@ export default function CollegeBaseballStandingsPage() {
                   No standings data available for {currentConf?.name}.
                 </p>
                 <p className="text-text-tertiary text-sm">
-                  College baseball season runs February through June. Check back during the season.
+                  {isInSeason
+                    ? 'Conference play may not have started yet. Overall records update daily.'
+                    : 'College baseball returns in February.'}
                 </p>
+                {isInSeason && (
+                  <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block">
+                    Browse preseason editorial previews →
+                  </Link>
+                )}
               </Card>
             )}
 

@@ -15,6 +15,22 @@ import type {
   HighlightlyPlayerStats,
   HighlightlyBoxScore,
 } from '../../lib/api-clients/highlightly-api';
+import { teamMetadata } from '../../lib/data/team-metadata';
+
+/**
+ * ESPN doesn't include conference in scoreboard responses.
+ * Build a lowercase display name → conference lookup from teamMetadata.
+ */
+const conferenceByName: Record<string, string> = {};
+for (const meta of Object.values(teamMetadata)) {
+  conferenceByName[meta.name.toLowerCase()] = meta.conference;
+  conferenceByName[meta.shortName.toLowerCase()] = meta.conference;
+}
+function lookupConference(displayName: string): string {
+  if (!displayName) return '';
+  const lower = displayName.toLowerCase();
+  return conferenceByName[lower] || conferenceByName[lower.replace(/ (university|college)$/i, '')] || '';
+}
 
 // ---------------------------------------------------------------------------
 // Team Detail Transform — Highlightly → Team interface
@@ -945,16 +961,16 @@ export async function handleCollegeBaseballSchedule(
         id: String(homeTeam.id || ''),
         name: (homeTeam.name || '') as string,
         shortName: (homeTeam.abbreviation || '') as string,
-        conference: ((homeTeam.conference || '') as string),
-        score: gameStatus !== 'scheduled' ? Number(e.homeScore ?? 0) : null,
+        conference: (homeTeam.conference as string) || lookupConference((homeTeam.name || '') as string),
+        score: gameStatus !== 'scheduled' ? (e.homeScore ?? null) : null,
         record: (homeTeam.record as { wins: number; losses: number }) ?? { wins: 0, losses: 0 },
       },
       awayTeam: {
         id: String(awayTeam.id || ''),
         name: (awayTeam.name || '') as string,
         shortName: (awayTeam.abbreviation || '') as string,
-        conference: ((awayTeam.conference || '') as string),
-        score: gameStatus !== 'scheduled' ? Number(e.awayScore ?? 0) : null,
+        conference: (awayTeam.conference as string) || lookupConference((awayTeam.name || '') as string),
+        score: gameStatus !== 'scheduled' ? (e.awayScore ?? null) : null,
         record: (awayTeam.record as { wins: number; losses: number }) ?? { wins: 0, losses: 0 },
       },
       venue: venue ? (venue.fullName || venue.name || '') as string : '',

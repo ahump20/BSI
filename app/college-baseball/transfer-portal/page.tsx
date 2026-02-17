@@ -27,12 +27,18 @@ export default function TransferPortalPage() {
   const perPage = 25;
 
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
     async function fetchPortalEntries() {
       try {
         const res = await fetch('/api/college-baseball/transfer-portal');
         if (res.ok) {
           const data = await res.json() as { entries?: PortalEntry[] };
-          setEntries(data.entries || []);
+          const fetched = data.entries || [];
+          setEntries(fetched);
+          // Only poll when there's real data — don't hammer a dead endpoint
+          if (fetched.length > 0 && !interval) {
+            interval = setInterval(fetchPortalEntries, 30000);
+          }
         }
       } catch {
         // Fall through to empty state
@@ -41,8 +47,7 @@ export default function TransferPortalPage() {
       }
     }
     fetchPortalEntries();
-    const interval = setInterval(fetchPortalEntries, 30000);
-    return () => clearInterval(interval);
+    return () => { if (interval) clearInterval(interval); };
   }, []);
 
   function relativeTime(dateStr: string): string {
@@ -63,27 +68,27 @@ export default function TransferPortalPage() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-[#666] hover:text-[#BF5700] transition-colors">College Baseball</Link>
-              <span className="text-[#666]">/</span>
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">College Baseball</Link>
+              <span className="text-white/40">/</span>
               <span className="text-white">Transfer Portal</span>
             </div>
 
             <div className="mb-8">
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
-                Transfer <span className="text-[#BF5700]">Portal</span>
+                Transfer <span className="text-burnt-orange">Portal</span>
               </h1>
-              <p className="text-[#999] mt-2">Real-time NCAA baseball transfer portal activity. Updated every 30 seconds when data source is active.</p>
+              <p className="text-white/60 mt-2">Real-time NCAA baseball transfer portal activity. Updated every 30 seconds when data source is active.</p>
             </div>
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <div className="w-10 h-10 border-4 border-[#BF5700]/30 border-t-[#BF5700] rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-[#BF5700] rounded-full animate-spin" />
               </div>
             ) : entries.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-4xl mb-4">&#9918;</div>
                 <h2 className="text-xl font-bold text-white mb-2">Portal Data Coming Soon</h2>
-                <p className="text-[#999] text-sm max-w-md mx-auto">
+                <p className="text-white/60 text-sm max-w-md mx-auto">
                   Transfer portal data will populate here once the data source is connected.
                   The PortalPoller Durable Object is standing by to poll every 30 seconds.
                 </p>
@@ -94,28 +99,28 @@ export default function TransferPortalPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-[#1A1A1A] border-b border-[#333]">
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-[#666] uppercase">Player</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-[#666] uppercase">Pos</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-[#666] uppercase">From</th>
-                          <th className="text-left py-3 px-4 text-xs font-semibold text-[#666] uppercase">To</th>
-                          <th className="text-center py-3 px-4 text-xs font-semibold text-[#666] uppercase">Status</th>
-                          <th className="text-right py-3 px-4 text-xs font-semibold text-[#666] uppercase">When</th>
+                        <tr className="bg-charcoal border-b border-white/15">
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-white/40 uppercase">Player</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-white/40 uppercase">Pos</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-white/40 uppercase">From</th>
+                          <th className="text-left py-3 px-4 text-xs font-semibold text-white/40 uppercase">To</th>
+                          <th className="text-center py-3 px-4 text-xs font-semibold text-white/40 uppercase">Status</th>
+                          <th className="text-right py-3 px-4 text-xs font-semibold text-white/40 uppercase">When</th>
                         </tr>
                       </thead>
                       <tbody>
                         {displayed.map((entry) => (
-                          <tr key={entry.id} className="border-b border-[#222] hover:bg-[#1A1A1A]/50 transition-colors">
+                          <tr key={entry.id} className="border-b border-white/10 hover:bg-charcoal/50 transition-colors">
                             <td className="py-3 px-4 text-white font-medium text-sm">{entry.playerName}</td>
-                            <td className="py-3 px-4 text-[#999] text-sm">{entry.position}</td>
-                            <td className="py-3 px-4 text-[#999] text-sm">{entry.fromSchool}</td>
-                            <td className="py-3 px-4 text-sm">{entry.toSchool ? <span className="text-[#BF5700]">{entry.toSchool}</span> : <span className="text-[#444]">TBD</span>}</td>
+                            <td className="py-3 px-4 text-white/60 text-sm">{entry.position}</td>
+                            <td className="py-3 px-4 text-white/60 text-sm">{entry.fromSchool}</td>
+                            <td className="py-3 px-4 text-sm">{entry.toSchool ? <span className="text-burnt-orange">{entry.toSchool}</span> : <span className="text-white/30">TBD</span>}</td>
                             <td className="py-3 px-4 text-center">
                               <Badge variant={entry.status === 'committed' ? 'success' : entry.status === 'withdrawn' ? 'error' : 'secondary'} size="sm">
                                 {entry.status}
                               </Badge>
                             </td>
-                            <td className="py-3 px-4 text-right text-xs text-[#666]">{relativeTime(entry.enteredDate)}</td>
+                            <td className="py-3 px-4 text-right text-xs text-white/40">{relativeTime(entry.enteredDate)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -125,9 +130,9 @@ export default function TransferPortalPage() {
 
                 {totalPages > 1 && (
                   <div className="flex items-center justify-center gap-2 mt-6">
-                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-[#222] text-[#999] rounded-lg text-sm disabled:opacity-30">Prev</button>
-                    <span className="text-[#666] text-sm">Page {page + 1} of {totalPages}</span>
-                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-[#222] text-[#999] rounded-lg text-sm disabled:opacity-30">Next</button>
+                    <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0} className="px-3 py-1.5 bg-white/10 text-white/60 rounded-lg text-sm disabled:opacity-30">Prev</button>
+                    <span className="text-white/40 text-sm">Page {page + 1} of {totalPages}</span>
+                    <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 bg-white/10 text-white/60 rounded-lg text-sm disabled:opacity-30">Next</button>
                   </div>
                 )}
               </>

@@ -13,6 +13,9 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { preseason2026 } from '@/lib/data/preseason-2026';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { teamMetadata } from '@/lib/data/team-metadata';
 
 interface RankedTeam {
   rank: number;
@@ -58,33 +61,16 @@ interface ScheduleGame {
 
 type TabType = 'rankings' | 'standings' | 'schedule' | 'teams' | 'players';
 
-const defaultRankings: RankedTeam[] = [
-  { rank: 1, team: 'Texas', conference: 'SEC' },
-  { rank: 2, team: 'Texas A&M', conference: 'SEC' },
-  { rank: 3, team: 'Florida', conference: 'SEC' },
-  { rank: 4, team: 'Wake Forest', conference: 'ACC' },
-  { rank: 5, team: 'LSU', conference: 'SEC' },
-  { rank: 6, team: 'Virginia', conference: 'ACC' },
-  { rank: 7, team: 'Arkansas', conference: 'SEC' },
-  { rank: 8, team: 'Tennessee', conference: 'SEC' },
-  { rank: 9, team: 'Stanford', conference: 'ACC' },
-  { rank: 10, team: 'Oregon State', conference: 'Pac-12' },
-  { rank: 11, team: 'Vanderbilt', conference: 'SEC' },
-  { rank: 12, team: 'TCU', conference: 'Big 12' },
-  { rank: 13, team: 'Clemson', conference: 'ACC' },
-  { rank: 14, team: 'North Carolina', conference: 'ACC' },
-  { rank: 15, team: 'Kentucky', conference: 'SEC' },
-  { rank: 16, team: 'Georgia', conference: 'SEC' },
-  { rank: 17, team: 'Oklahoma', conference: 'SEC' },
-  { rank: 18, team: 'South Carolina', conference: 'SEC' },
-  { rank: 19, team: 'Florida State', conference: 'ACC' },
-  { rank: 20, team: 'NC State', conference: 'ACC' },
-  { rank: 21, team: 'Alabama', conference: 'SEC' },
-  { rank: 22, team: 'UCLA', conference: 'Big Ten' },
-  { rank: 23, team: 'Evansville', conference: 'MVC' },
-  { rank: 24, team: 'Ole Miss', conference: 'SEC' },
-  { rank: 25, team: 'Oklahoma State', conference: 'Big 12' },
-];
+/** Preseason fallback — derived from preseason-2026.ts, never hardcoded. Top 25 only. */
+const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
+  .sort(([, a], [, b]) => a.rank - b.rank)
+  .slice(0, 25)
+  .map(([slug, data]) => ({
+    rank: data.rank,
+    team: teamMetadata[slug]?.shortName || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+    conference: data.conference,
+    record: data.record2025,
+  }));
 
 const conferenceList = [
   { name: 'SEC', teams: 16, href: '/college-baseball/standings?conference=sec' },
@@ -99,36 +85,12 @@ const conferenceList = [
 
 const scheduleConferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
 
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short', day: 'numeric', year: 'numeric',
-      hour: 'numeric', minute: '2-digit', hour12: true,
-    }) + ' CT'
-  );
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString + 'T12:00:00');
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
+// formatTimestamp, formatScheduleDate, getDateOffset imported from lib/utils/timezone
 
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
-  const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const hasAutoAdvanced = useRef(false);
@@ -137,7 +99,7 @@ export default function CollegeBaseballPage() {
   const rankingsUrl = activeTab === 'rankings' ? '/api/ncaa/rankings?sport=baseball' : null;
   const { data: rankingsRaw, loading: rankingsLoading } =
     useSportData<{ rankings?: RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
-  const rankings = rankingsRaw?.rankings?.length ? rankingsRaw.rankings : defaultRankings;
+  const rankings = rankingsRaw?.rankings?.length ? rankingsRaw.rankings : preseasonRankings;
 
   // Standings — fetched when standings tab is active
   const standingsUrl = activeTab === 'standings' ? '/api/college-baseball/standings' : null;
@@ -205,11 +167,11 @@ export default function CollegeBaseballPage() {
       );
 
   const dateOptions = [
-    { offset: -2, label: formatDate(getDateOffset(-2)) },
+    { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
     { offset: -1, label: 'Yesterday' },
     { offset: 0, label: 'Today' },
     { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: formatDate(getDateOffset(2)) },
+    { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
   ];
 
   const tabs: { id: TabType; label: string }[] = [
@@ -226,7 +188,7 @@ export default function CollegeBaseballPage() {
         <main id="main-content">
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-[#BF5700]/15 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
           <Container center>
             <ScrollReveal direction="up">
               <Badge variant="success" className="mb-4">
@@ -241,6 +203,7 @@ export default function CollegeBaseballPage() {
             </ScrollReveal>
             <ScrollReveal direction="up" delay={120}>
               <DataFreshnessIndicator
+                lastUpdated={lastUpdated ? new Date(lastUpdated) : undefined}
                 source={dataSource}
                 refreshInterval={30}
               />
@@ -265,19 +228,19 @@ export default function CollegeBaseballPage() {
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white/5 border border-white/10 rounded-2xl">
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">300+</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">300+</div>
                   <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Division I Teams</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">32</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">32</div>
                   <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Conferences</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">Live</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
                   <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Real-Time Scores</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">RPI</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">RPI</div>
                   <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Advanced Data</div>
                 </div>
               </div>
@@ -290,18 +253,18 @@ export default function CollegeBaseballPage() {
           <Container>
             <div className="space-y-3">
               <Link href="/college-baseball/editorial/texas-2026">
-                <div className="bg-gradient-to-r from-[#BF5700]/20 to-[#500000]/20 border border-[#BF5700]/30 rounded-xl p-4 md:p-6 hover:border-[#BF5700]/60 transition-all group cursor-pointer">
+                <div className="bg-gradient-to-r from-burnt-orange/20 to-[#500000]/20 border border-burnt-orange/30 rounded-xl p-4 md:p-6 hover:border-burnt-orange/60 transition-all group cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div>
                       <Badge variant="primary" className="mb-2">Featured</Badge>
-                      <h3 className="font-display text-lg md:text-xl font-bold text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
+                      <h3 className="font-display text-lg md:text-xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
                         Texas Longhorns: 2026 Season Preview
                       </h3>
                       <p className="text-white/50 text-sm mt-1">
                         3,818 wins. 130 years. The definitive deep dive on the #1 team in college baseball.
                       </p>
                     </div>
-                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#BF5700] flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 18l6-6-6-6" />
                     </svg>
                   </div>
@@ -309,11 +272,11 @@ export default function CollegeBaseballPage() {
               </Link>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Link href="/college-baseball/editorial/week-1-recap">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-[#BF5700]/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div>
                         <Badge variant="secondary" className="mb-1">New</Badge>
-                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
+                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
                           Week 1 Recap
                         </h4>
                         <p className="text-white/40 text-xs mt-0.5">Three grand slams. One record book.</p>
@@ -325,10 +288,10 @@ export default function CollegeBaseballPage() {
                   </div>
                 </Link>
                 <Link href="/college-baseball/editorial/sec-opening-weekend">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-[#BF5700]/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
+                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
                           SEC Conference Preview
                         </h4>
                         <p className="text-white/40 text-xs mt-0.5">13 ranked teams. The deepest conference.</p>
@@ -340,15 +303,15 @@ export default function CollegeBaseballPage() {
                   </div>
                 </Link>
                 <Link href="/college-baseball/compare">
-                  <div className="bg-gradient-to-r from-[#BF5700]/10 to-[#FF6B35]/10 border border-[#BF5700]/20 rounded-xl p-3 md:p-4 hover:border-[#BF5700]/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-gradient-to-r from-burnt-orange/10 to-ember/10 border border-burnt-orange/20 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-display text-sm font-bold text-[#BF5700] uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">
+                        <h4 className="font-display text-sm font-bold text-burnt-orange uppercase tracking-wide group-hover:text-ember transition-colors">
                           Compare Teams
                         </h4>
                         <p className="text-white/40 text-xs mt-0.5">Head-to-head Power 25 rivalry cards.</p>
                       </div>
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#BF5700]/40 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-burnt-orange/40 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
                     </div>
@@ -362,14 +325,29 @@ export default function CollegeBaseballPage() {
         {/* Tabs */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <div className="flex gap-2 mb-8 border-b border-white/10 overflow-x-auto pb-px">
+            <div className="flex gap-2 mb-2 border-b border-white/10 overflow-x-auto pb-px">
               {tabs.map((tab) => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                   className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id ? 'text-[#BF5700] border-[#BF5700]' : 'text-white/40 border-transparent hover:text-white'
+                    activeTab === tab.id ? 'text-burnt-orange border-burnt-orange' : 'text-white/40 border-transparent hover:text-white'
                   }`}>
                   {tab.label}
                 </button>
+              ))}
+            </div>
+            {/* Secondary nav — pages not covered by tabs */}
+            <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
+              {[
+                { label: 'Editorial', href: '/college-baseball/editorial' },
+                { label: 'News', href: '/college-baseball/news' },
+                { label: 'Compare', href: '/college-baseball/compare' },
+                { label: 'Conferences', href: '/college-baseball/conferences' },
+                { label: 'Scores', href: '/college-baseball/scores' },
+              ].map((link) => (
+                <Link key={link.href} href={link.href}
+                  className="px-3 py-1.5 text-xs font-medium text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all whitespace-nowrap">
+                  {link.label}
+                </Link>
               ))}
             </div>
 
@@ -393,7 +371,7 @@ export default function CollegeBaseballPage() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
-                            <tr className="border-b-2 border-[#BF5700]">
+                            <tr className="border-b-2 border-burnt-orange">
                               {['Rank', 'Team', 'Conference', 'Record'].map((h) => (
                                 <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
                               ))}
@@ -402,7 +380,7 @@ export default function CollegeBaseballPage() {
                           <tbody>
                             {rankings.map((team) => (
                               <tr key={team.rank} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                <td className="p-3 text-[#BF5700] font-bold text-lg">{team.rank}</td>
+                                <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
                                 <td className="p-3 font-semibold text-white">{team.team}</td>
                                 <td className="p-3 text-white/60">{team.conference}</td>
                                 <td className="p-3 text-white/60">{team.record || '-'}</td>
@@ -414,7 +392,7 @@ export default function CollegeBaseballPage() {
                     )}
                     <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                       <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
-                      <Link href="/college-baseball/rankings" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                      <Link href="/college-baseball/rankings" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                         Full Rankings →
                       </Link>
                     </div>
@@ -434,7 +412,7 @@ export default function CollegeBaseballPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={retryStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
+                    <button onClick={retryStandings} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg">Retry</button>
                   </Card>
                 ) : standings.length === 0 ? (
                   <div>
@@ -462,7 +440,7 @@ export default function CollegeBaseballPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b-2 border-[#BF5700]">
+                              <tr className="border-b-2 border-burnt-orange">
                                 {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
                                   <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
                                 ))}
@@ -471,7 +449,7 @@ export default function CollegeBaseballPage() {
                             <tbody>
                               {standings.map((team, idx) => (
                                 <tr key={team.teamName} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                  <td className="p-3 text-[#BF5700] font-bold">{idx + 1}</td>
+                                  <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                                   <td className="p-3 font-semibold text-white">{team.teamName}</td>
                                   <td className="p-3 text-white/60">{team.conference || '-'}</td>
                                   <td className="p-3 text-white/60">{team.wins}</td>
@@ -518,7 +496,7 @@ export default function CollegeBaseballPage() {
                         onClick={() => setSelectedDate(dateValue)}
                         className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                           isSelected
-                            ? 'bg-[#BF5700] text-white'
+                            ? 'bg-burnt-orange text-white'
                             : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
                         }`}
                       >
@@ -548,7 +526,7 @@ export default function CollegeBaseballPage() {
                       onClick={() => setSelectedConference(conf)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedConference === conf
-                          ? 'bg-[#BF5700] text-white'
+                          ? 'bg-burnt-orange text-white'
                           : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
                       }`}
                     >
@@ -565,7 +543,7 @@ export default function CollegeBaseballPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{scheduleError}</p>
-                    <button onClick={retrySchedule} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
+                    <button onClick={retrySchedule} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg">Retry</button>
                   </Card>
                 ) : filteredGames.length === 0 ? (
                   <Card variant="default" padding="lg">
@@ -576,7 +554,7 @@ export default function CollegeBaseballPage() {
                         <line x1="8" y1="2" x2="8" y2="6" />
                         <line x1="3" y1="10" x2="21" y2="10" />
                       </svg>
-                      <p className="text-white/60">No games scheduled for {formatDate(selectedDate)}</p>
+                      <p className="text-white/60">No games scheduled for {formatScheduleDate(selectedDate)}</p>
                       <p className="text-white/30 text-sm mt-2">
                         D1 baseball season runs February through June. Try navigating to a game day.
                       </p>
@@ -628,7 +606,7 @@ export default function CollegeBaseballPage() {
                         source={dataSource || 'ESPN College Baseball API'}
                         timestamp={formatTimestamp(lastUpdated)}
                       />
-                      <Link href="/college-baseball/scores" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                      <Link href="/college-baseball/scores" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                         View Full Scoreboard →
                       </Link>
                     </div>
@@ -738,15 +716,15 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
 
   return (
     <Link href={`/college-baseball/game/${game.id}`} className="block">
-      <div className={`bg-white/5 rounded-lg border transition-all hover:border-[#BF5700] hover:bg-white/[0.07] ${
+      <div className={`bg-white/5 rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/[0.07] ${
         isLive ? 'border-green-500/30' : 'border-white/10'
       }`}>
         {/* Status Bar */}
         <div className={`px-3 py-1.5 rounded-t-lg flex items-center justify-between ${
-          isLive ? 'bg-green-500/10' : isFinal ? 'bg-white/5' : 'bg-[#BF5700]/10'
+          isLive ? 'bg-green-500/10' : isFinal ? 'bg-white/5' : 'bg-burnt-orange/10'
         }`}>
           <span className={`text-xs font-semibold uppercase ${
-            isLive ? 'text-green-400' : isFinal ? 'text-white/30' : 'text-[#BF5700]'
+            isLive ? 'text-green-400' : isFinal ? 'text-white/30' : 'text-burnt-orange'
           }`}>
             {isLive ? (
               <span className="flex items-center gap-1.5">
@@ -764,7 +742,7 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
         <div className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-[#BF5700] flex-shrink-0">
+              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
                 {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
               </div>
               <span className={`font-semibold text-sm truncate ${awayWon ? 'text-white' : 'text-white/70'}`}>
@@ -779,7 +757,7 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-[#BF5700] flex-shrink-0">
+              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
                 {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
               </div>
               <span className={`font-semibold text-sm truncate ${homeWon ? 'text-white' : 'text-white/70'}`}>

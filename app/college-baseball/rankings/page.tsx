@@ -20,10 +20,8 @@ function teamSlug(fullName: string): string {
       return slug;
     }
   }
-  // Fallback: derive from first word(s) before the mascot — take the location portion
-  // e.g. "Oregon State Beavers" → "oregon-state"
+  // Fallback: remove last word (mascot) and slugify
   const words = fullName.split(' ');
-  // Remove last word (mascot) and slugify
   if (words.length > 1) {
     return words.slice(0, -1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '');
   }

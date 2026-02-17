@@ -131,8 +131,8 @@ function normalizeEvent(event: Record<string, unknown>): Record<string, unknown>
       conference: extractConference(away),
       record: extractRecord(away),
     },
-    homeScore: Number(home.score ?? 0),
-    awayScore: Number(away.score ?? 0),
+    homeScore: home.score != null ? Number(home.score) : null,
+    awayScore: away.score != null ? Number(away.score) : null,
     status: {
       type: statusType.name,
       state: statusType.state,
