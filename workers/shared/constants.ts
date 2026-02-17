@@ -2,6 +2,10 @@ export const PROD_ORIGINS = new Set([
   'https://blazesportsintel.com',
   'https://www.blazesportsintel.com',
   'https://blazesportsintel.pages.dev',
+  'https://blazecraft.app',
+  'https://bsi-agentforge.pages.dev',
+  'https://austinhumphrey.com',
+  'https://austin-humphrey-professional-resume-portfolio.pages.dev',
 ]);
 
 export const DEV_ORIGINS = new Set([
