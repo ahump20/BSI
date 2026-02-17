@@ -182,11 +182,11 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/20">/</span>
@@ -197,7 +197,7 @@ export default function TexasUCDavisOpener2026Page() {
 
         {/* ── Hero ── */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#8B4513]/12 via-transparent to-[#BF5700]/6 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#8B4513]/12 via-transparent to-burnt-orange/6 pointer-events-none" />
           <div className="absolute -top-24 -right-48 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(191,87,0,0.06)_0%,transparent_70%)] pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
@@ -256,8 +256,8 @@ export default function TexasUCDavisOpener2026Page() {
           <Container>
             <ScrollReveal direction="up" delay={100}>
               <Card variant="default" padding="none">
-                <div className="bg-[#BF5700]/5 text-center py-2">
-                  <span className="font-display text-[10px] uppercase tracking-[3px] text-[#BF5700]">
+                <div className="bg-burnt-orange/5 text-center py-2">
+                  <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
                     Final — 7 Innings (10-Run Rule)
                   </span>
                 </div>
@@ -279,7 +279,7 @@ export default function TexasUCDavisOpener2026Page() {
                         const isTexas = row.team === 'Texas';
                         return (
                           <tr key={row.team} className={`border-t border-white/5 ${isTexas ? '' : ''}`}>
-                            <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-[#BF5700]' : 'text-white/50'}`}>
+                            <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-white/50'}`}>
                               {row.team}
                             </td>
                             {row.innings.map((val, i) => (
@@ -287,7 +287,7 @@ export default function TexasUCDavisOpener2026Page() {
                                 {val}
                               </td>
                             ))}
-                            <td className={`text-center py-3 border-l border-white/5 font-bold text-lg ${isTexas ? 'text-[#BF5700]' : 'text-white/60'}`}>
+                            <td className={`text-center py-3 border-l border-white/5 font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-white/60'}`}>
                               {row.r}
                             </td>
                             <td className="text-center py-3 text-white/40">{row.h}</td>
@@ -335,7 +335,7 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-5 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
                 The Third Inning: Where It Turned
               </h2>
 
@@ -348,7 +348,7 @@ export default function TexasUCDavisOpener2026Page() {
                   Anthony Pack Jr. led off the bottom of the third with a double ripped into the right-center gap. Mendoza grounded out to third, moving Pack to third. Then Adrian Rodriguez — the switch-hitting sophomore who slashed .313 as a freshman in the SEC — laced an RBI single through the left side. Ballgame tied.
                 </p>
 
-                <blockquote className="border-l-[3px] border-[#BF5700] pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
                   &ldquo;Rodriguez delivers, and that ball finds grass like it was always going to end up there. One-one ballgame. And now Robbins steps in — the Notre Dame transfer, the kid Schlossnagle went and got because he believed this lineup needed a presence in the three-hole.&rdquo;
                 </blockquote>
 
@@ -368,7 +368,7 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-5 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
                 The Fifth: When the Dam Broke
               </h2>
 
@@ -400,7 +400,7 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-5 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
                 Grubbs Keeps the Door Shut
               </h2>
 
@@ -420,12 +420,12 @@ export default function TexasUCDavisOpener2026Page() {
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={100}>
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mt-14 mb-5 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mt-14 mb-5 pb-2 border-b border-burnt-orange/15">
                 The Seventh: Mendoza&rsquo;s Punctuation
               </h2>
 
               <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
-                <blockquote className="border-l-[3px] border-[#BF5700] pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
                   &ldquo;Bottom of the seventh. Borba doubles. Duplantier singles him to third. A balk — UC Davis&rsquo;s second of the night — pushes Borba home. 8-2. Becerra singles. 9-2. Pack singles again. And here comes Mendoza with the bases loaded, the run-rule in reach, and Disch-Falk on its feet...&rdquo;
                 </blockquote>
 
@@ -437,7 +437,7 @@ export default function TexasUCDavisOpener2026Page() {
                   Three-run home run. Walk-off. Run-rule. Twelve to two. And the 2026 season opened the way the entire offseason promised it would: with a roster that is deeper, meaner, and more dangerous than anything Schlossnagle has fielded in Austin.
                 </p>
 
-                <blockquote className="border-l-[3px] border-[#BF5700] pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
                   &ldquo;That ball is hit deep to left... and I don&rsquo;t believe — wait, yes I do. I absolutely believe it. Because this is exactly what this team was built to do. Mendoza clears the bases, the Longhorns mob him at the plate, and the first night of the new year ends the only way it could: with a bang.&rdquo;
                 </blockquote>
               </div>
@@ -449,24 +449,24 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Key Performers
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {performers.map((p) => (
                   <div
                     key={p.name}
-                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-[#1A1A1A]/95 border border-[#BF5700]/10 hover:border-[#BF5700]/25 rounded p-5 pl-7 overflow-hidden transition-colors"
+                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded p-5 pl-7 overflow-hidden transition-colors"
                   >
-                    <div className="absolute top-0 left-0 w-[3px] h-full bg-[#BF5700]" />
+                    <div className="absolute top-0 left-0 w-[3px] h-full bg-burnt-orange" />
                     <div className="font-display text-base font-semibold uppercase tracking-wide text-[#FAF7F2] mb-0.5">
                       {p.name}
                     </div>
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-[#BF5700] mb-2">
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-burnt-orange mb-2">
                       {p.pos} &middot; {p.year}
                     </div>
                     <div className="font-mono text-[13px] text-white/40 leading-relaxed">
-                      <span className="text-[#FF6B35] font-medium">{p.line}</span>
+                      <span className="text-ember font-medium">{p.line}</span>
                       <br />
                       {p.context}
                     </div>
@@ -481,13 +481,13 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Full Box Score
               </h2>
 
               {/* Texas Batting */}
               <div className="mb-8">
-                <h3 className="font-display text-sm uppercase tracking-wider text-[#BF5700] mb-3">Texas Batting</h3>
+                <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">Texas Batting</h3>
                 <Card variant="default" padding="none">
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[520px] font-mono text-sm">
@@ -511,17 +511,17 @@ export default function TexasUCDavisOpener2026Page() {
                             <td className="text-center text-white/50">{b.ab}</td>
                             <td className="text-center text-white/50">{b.r}</td>
                             <td className={`text-center ${b.h > 0 ? 'text-white font-medium' : 'text-white/30'}`}>{b.h}</td>
-                            <td className={`text-center ${b.rbi > 0 ? 'text-[#BF5700] font-medium' : 'text-white/30'}`}>{b.rbi}</td>
+                            <td className={`text-center ${b.rbi > 0 ? 'text-burnt-orange font-medium' : 'text-white/30'}`}>{b.rbi}</td>
                             <td className="text-center text-white/50">{b.bb}</td>
                             <td className="text-center text-white/50">{b.so}</td>
                           </tr>
                         ))}
-                        <tr className="border-t-2 border-[#BF5700]/20 font-semibold">
+                        <tr className="border-t-2 border-burnt-orange/20 font-semibold">
                           <td className="py-2 px-3 text-white/50" colSpan={2}>Totals</td>
                           <td className="text-center text-white/60">{sumCol(texasBatting, 'ab')}</td>
-                          <td className="text-center text-[#BF5700]">{sumCol(texasBatting, 'r')}</td>
+                          <td className="text-center text-burnt-orange">{sumCol(texasBatting, 'r')}</td>
                           <td className="text-center text-white">{sumCol(texasBatting, 'h')}</td>
-                          <td className="text-center text-[#BF5700]">{sumCol(texasBatting, 'rbi')}</td>
+                          <td className="text-center text-burnt-orange">{sumCol(texasBatting, 'rbi')}</td>
                           <td className="text-center text-white/60">{sumCol(texasBatting, 'bb')}</td>
                           <td className="text-center text-white/60">{sumCol(texasBatting, 'so')}</td>
                         </tr>
@@ -581,7 +581,7 @@ export default function TexasUCDavisOpener2026Page() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Texas Pitching */}
                 <div>
-                  <h3 className="font-display text-sm uppercase tracking-wider text-[#BF5700] mb-3">Texas Pitching</h3>
+                  <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">Texas Pitching</h3>
                   <Card variant="default" padding="none">
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[400px] font-mono text-sm">
@@ -602,7 +602,7 @@ export default function TexasUCDavisOpener2026Page() {
                             <tr key={p.name} className="border-t border-white/5">
                               <td className="py-2 px-3 text-white/70">
                                 {p.name}
-                                {p.decision && <span className="text-[#BF5700] ml-1 text-xs">({p.decision})</span>}
+                                {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
                               </td>
                               <td className="text-center text-white/60">{p.ip}</td>
                               <td className="text-center text-white/40">{p.h}</td>
@@ -667,7 +667,7 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-5 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
                 What This Game Actually Told Us
               </h2>
 
@@ -716,8 +716,8 @@ export default function TexasUCDavisOpener2026Page() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-[#BF5700]/8 to-[#8B4513]/5 border border-[#BF5700]/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[#0D0D0D] text-[#BF5700] px-3">
+              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-[#8B4513]/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[#0D0D0D] text-burnt-orange px-3">
                   BSI Verdict
                 </div>
                 <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
@@ -741,7 +741,7 @@ export default function TexasUCDavisOpener2026Page() {
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[#BF5700]">Powered by AI</span>
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mt-2">
                   Go Deeper
                 </h2>
@@ -749,16 +749,16 @@ export default function TexasUCDavisOpener2026Page() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
                   onClick={() => openAI('claude')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#BF5700]/10 hover:border-[#BF5700]/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-[#BF5700] mb-1">Claude Analysis</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
                   <div className="text-white/40 text-xs">Anthropic-powered game breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
-                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-[#1A1A1A] border border-[#BF5700]/10 hover:border-[#BF5700]/30 rounded transition-colors text-left"
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
                 >
-                  <div className="font-display text-sm uppercase tracking-wider text-[#BF5700] mb-1">Gemini Analysis</div>
+                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
                   <div className="text-white/40 text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
@@ -789,14 +789,14 @@ export default function TexasUCDavisOpener2026Page() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center mb-6">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-[#BF5700]">Up Next</span>
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Up Next</span>
               </div>
               <Card variant="default" padding="lg">
                 <div className="text-center space-y-3">
                   <h3 className="font-display text-xl uppercase tracking-wider text-white">
                     Game 2: Texas vs. UC Davis
                   </h3>
-                  <div className="font-mono text-sm text-[#BF5700]">
+                  <div className="font-mono text-sm text-burnt-orange">
                     Saturday, February 14 &middot; 12:00 PM CT &middot; UFCU Disch-Falk Field
                   </div>
                   <div className="font-serif text-white/50 text-sm">
@@ -812,7 +812,7 @@ export default function TexasUCDavisOpener2026Page() {
         </Section>
 
         {/* ── Source Attribution ── */}
-        <Section padding="md" className="border-t border-[#BF5700]/10">
+        <Section padding="md" className="border-t border-burnt-orange/10">
           <Container size="narrow">
             <div className="space-y-4">
               <DataSourceBadge
@@ -824,10 +824,10 @@ export default function TexasUCDavisOpener2026Page() {
                 Roster data via BSI Season Preview &amp; D1Baseball.
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-[#BF5700] hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   More Editorial &rarr;
                 </Link>
-                <Link href="/college-baseball/editorial/texas-2026" className="font-display text-[13px] uppercase tracking-widest text-[#BF5700] hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/texas-2026" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   2026 Season Preview &rarr;
                 </Link>
               </div>

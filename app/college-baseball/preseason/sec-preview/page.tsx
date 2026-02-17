@@ -274,7 +274,7 @@ export default function SECPreviewPage() {
       <main id="main-content">
         {/* Hero */}
         <Section padding="none" className="relative">
-          <div className="bg-gradient-to-br from-[#500000] via-[#1A1A1A] to-[#461D7C] relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#500000] via-charcoal to-[#461D7C] relative overflow-hidden">
             <div className="absolute inset-0 bg-black/50" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_black_100%)] opacity-60" />
             <Container className="relative z-10 py-16 md:py-24">

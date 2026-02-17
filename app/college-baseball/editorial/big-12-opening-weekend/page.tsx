@@ -30,11 +30,11 @@ export default function Big12OpeningWeekendPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/20">/</span>
@@ -45,7 +45,7 @@ export default function Big12OpeningWeekendPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/10 via-transparent to-[#FF6B35]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/10 via-transparent to-ember/5 pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
@@ -86,7 +86,7 @@ export default function Big12OpeningWeekendPage() {
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Opening Series to Watch
               </h2>
             </ScrollReveal>
@@ -95,12 +95,12 @@ export default function Big12OpeningWeekendPage() {
                 <ScrollReveal key={m.at} direction="up" delay={Math.min(i * 50, 250)}>
                   <Card variant="default" padding="md" className="h-full">
                     <div className="font-display text-sm font-bold uppercase tracking-wide text-white mb-1">{m.at}</div>
-                    <div className="font-mono text-[10px] uppercase tracking-wider text-[#BF5700] mb-2">
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-burnt-orange mb-2">
                       {m.away} @ {m.at} &middot; {m.date}
                     </div>
                     <p className="font-serif text-sm text-white/60 leading-relaxed mb-3">{m.capsule}</p>
                     <div className="text-[10px] uppercase tracking-wider text-white/30">
-                      Watch for: <span className="text-[#FF6B35]/70">{m.watch}</span>
+                      Watch for: <span className="text-ember/70">{m.watch}</span>
                     </div>
                   </Card>
                 </ScrollReveal>
@@ -113,14 +113,14 @@ export default function Big12OpeningWeekendPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-[#BF5700] mb-6 pb-2 border-b border-[#BF5700]/15">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Four Storylines for the Big 12
               </h2>
             </ScrollReveal>
             <div className="space-y-8">
               {storylines.map((s, i) => (
                 <ScrollReveal key={s.title} direction="up" delay={i * 60}>
-                  <div className="border-l-[3px] border-[#BF5700]/40 pl-6">
+                  <div className="border-l-[3px] border-burnt-orange/40 pl-6">
                     <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-2">{s.title}</h3>
                     <p className="font-serif text-base text-white/60 leading-relaxed">{s.description}</p>
                   </div>
@@ -134,8 +134,8 @@ export default function Big12OpeningWeekendPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-[#BF5700]/8 to-[#8B4513]/5 border border-[#BF5700]/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[#0D0D0D] text-[#BF5700] px-3">
+              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-[#8B4513]/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
                   BSI Verdict
                 </div>
                 <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
@@ -149,15 +149,15 @@ export default function Big12OpeningWeekendPage() {
         </Section>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-[#BF5700]/10">
+        <Section padding="md" className="border-t border-burnt-orange/10">
           <Container size="narrow">
             <div className="space-y-4">
               <DataSourceBadge source="D1Baseball / ESPN / BSI Projections" timestamp="February 12, 2026 CT" />
               <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-[#BF5700] hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   All Editorial &rarr;
                 </Link>
-                <Link href="/college-baseball/editorial/big-12" className="font-display text-[13px] uppercase tracking-widest text-[#BF5700] hover:opacity-70 transition-opacity">
+                <Link href="/college-baseball/editorial/big-12" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   Full Big 12 Preview &rarr;
                 </Link>
               </div>

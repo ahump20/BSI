@@ -32,11 +32,11 @@ export default function SECOpeningWeekendPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
               <span className="text-white/20">/</span>
@@ -47,7 +47,7 @@ export default function SECOpeningWeekendPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#C9A227]/10 via-transparent to-[#BF5700]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#C9A227]/10 via-transparent to-burnt-orange/5 pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">

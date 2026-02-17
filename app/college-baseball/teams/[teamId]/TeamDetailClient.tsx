@@ -56,17 +56,17 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (!meta) {
     return (
       <>
-        <main className="min-h-screen pt-24 bg-gradient-to-b from-[#1A1A1A] to-[#0D0D0D]">
+        <main className="min-h-screen pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
           <Container>
             <Card padding="lg" className="text-center mt-12">
-              <div className="text-[#BF5700] text-4xl mb-4 font-display">?</div>
+              <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
               <h3 className="text-xl font-semibold text-white mb-2">Team Not Found</h3>
               <p className="text-white/50 mb-6">
                 No data available for &ldquo;{teamId}&rdquo;.
               </p>
               <Link
                 href="/college-baseball/teams"
-                className="inline-block px-6 py-2 bg-[#BF5700] text-white font-semibold rounded-lg hover:bg-[#BF5700]/90 transition-colors"
+                className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
               >
                 Back to Teams
               </Link>
@@ -89,21 +89,21 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     <>
       <main id="main-content">
         {/* ─── Hero Section ─────────────────────────────────────────────────── */}
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-[#1A1A1A] to-[#0D0D0D]">
+        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
           <Container>
             <ScrollReveal direction="up">
               {/* Breadcrumb */}
               <nav className="flex items-center gap-3 mb-8 text-sm">
                 <Link
                   href="/college-baseball"
-                  className="text-white/30 hover:text-[#BF5700] transition-colors"
+                  className="text-white/30 hover:text-burnt-orange transition-colors"
                 >
                   College Baseball
                 </Link>
                 <span className="text-white/20">/</span>
                 <Link
                   href="/college-baseball/teams"
-                  className="text-white/30 hover:text-[#BF5700] transition-colors"
+                  className="text-white/30 hover:text-burnt-orange transition-colors"
                 >
                   Teams
                 </Link>
@@ -127,7 +127,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       onError={() => setLogoError(true)}
                     />
                   ) : (
-                    <span className="font-display text-[#BF5700] font-bold text-3xl md:text-4xl">
+                    <span className="font-display text-burnt-orange font-bold text-3xl md:text-4xl">
                       {meta.abbreviation}
                     </span>
                   )}
@@ -176,7 +176,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <div className="flex flex-wrap gap-4 md:gap-6 shrink-0">
                     {overallRecord && (
                       <div className="text-center">
-                        <div className="font-mono text-2xl md:text-3xl font-bold text-[#BF5700]">
+                        <div className="font-mono text-2xl md:text-3xl font-bold text-burnt-orange">
                           {overallRecord}
                         </div>
                         <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
@@ -212,7 +212,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         {/* ─── Tabs Navigation ──────────────────────────────────────────────── */}
         <Section
           padding="none"
-          className="bg-[#1A1A1A] border-b border-white/10 sticky top-16 z-30"
+          className="bg-charcoal border-b border-white/10 sticky top-16 z-30"
         >
           <Container>
             <div className="flex gap-1">
@@ -222,7 +222,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors ${
                     activeTab === tab
-                      ? 'text-[#BF5700] border-b-2 border-[#BF5700]'
+                      ? 'text-burnt-orange border-b-2 border-burnt-orange'
                       : 'text-white/30 hover:text-white/60'
                   }`}
                 >
@@ -254,7 +254,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         <div className="text-xs uppercase tracking-wide text-white/30">
                           Postseason
                         </div>
-                        <div className="mt-1 text-xl font-mono text-[#BF5700]">
+                        <div className="mt-1 text-xl font-mono text-burnt-orange">
                           {preseason.postseason2025}
                         </div>
                       </Card>
@@ -288,7 +288,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         className="group flex items-center justify-between"
                       >
                         <div>
-                          <div className="text-xs uppercase tracking-wide text-[#BF5700] font-semibold mb-1">
+                          <div className="text-xs uppercase tracking-wide text-burnt-orange font-semibold mb-1">
                             Full Preview Available
                           </div>
                           <div className="text-white font-display text-lg uppercase tracking-wide">
@@ -299,7 +299,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                         </div>
                         <svg
-                          className="w-6 h-6 text-[#BF5700] group-hover:translate-x-1 transition-transform shrink-0 ml-4"
+                          className="w-6 h-6 text-burnt-orange group-hover:translate-x-1 transition-transform shrink-0 ml-4"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -338,7 +338,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               >
                                 <span className="text-white font-semibold">{name}</span>
                                 {stat && (
-                                  <span className="font-mono text-sm text-[#BF5700]">{stat}</span>
+                                  <span className="font-mono text-sm text-burnt-orange">{stat}</span>
                                 )}
                               </div>
                             );
@@ -412,7 +412,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <ScrollReveal direction="up">
                 <Card padding="lg" className="text-center">
                   <div className="py-8">
-                    <div className="text-[#BF5700] text-4xl mb-4 font-display">2026</div>
+                    <div className="text-burnt-orange text-4xl mb-4 font-display">2026</div>
                     <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
                       Season Schedule
                     </h3>
@@ -423,7 +423,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     {preseason?.editorialLink && (
                       <Link
                         href={preseason.editorialLink}
-                        className="inline-block px-6 py-2 bg-[#BF5700] text-white font-semibold rounded-lg hover:bg-[#BF5700]/90 transition-colors"
+                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
                       >
                         View Schedule Preview
                       </Link>
@@ -437,7 +437,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <ScrollReveal direction="up">
                 <Card padding="lg" className="text-center">
                   <div className="py-8">
-                    <div className="text-[#BF5700] text-4xl mb-4 font-display font-bold">
+                    <div className="text-burnt-orange text-4xl mb-4 font-display font-bold">
                       {meta.abbreviation}
                     </div>
                     <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
@@ -450,7 +450,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     {preseason?.editorialLink && (
                       <Link
                         href={preseason.editorialLink}
-                        className="inline-block px-6 py-2 bg-[#BF5700] text-white font-semibold rounded-lg hover:bg-[#BF5700]/90 transition-colors"
+                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
                       >
                         View Full Breakdown
                       </Link>

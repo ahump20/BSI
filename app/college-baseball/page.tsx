@@ -61,6 +61,45 @@ interface ScheduleGame {
 
 type TabType = 'rankings' | 'standings' | 'schedule' | 'teams' | 'players';
 
+/** ESPN poll entry — nested under rankings[0].ranks */
+interface ESPNRankEntry {
+  current: number;
+  team: { name: string; location?: string; nickname?: string };
+  recordSummary?: string;
+}
+
+interface ESPNPoll {
+  name: string;
+  ranks: ESPNRankEntry[];
+}
+
+/** Normalize ESPN poll format OR flat RankedTeam[] into a consistent shape. */
+function normalizeRankings(raw: { rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }): {
+  teams: RankedTeam[];
+  pollName: string;
+} {
+  const rankings = raw?.rankings;
+  if (!rankings?.length) return { teams: [], pollName: '' };
+
+  // ESPN wraps polls in { rankings: [{ name, ranks: [...] }] }
+  const first = rankings[0] as unknown as Record<string, unknown>;
+  if ('ranks' in first && Array.isArray(first.ranks)) {
+    const poll = first as unknown as ESPNPoll;
+    return {
+      pollName: poll.name || '',
+      teams: poll.ranks.map((e) => ({
+        rank: e.current,
+        team: e.team?.location ? `${e.team.location} ${e.team.name}` : e.team?.nickname || e.team?.name || 'Unknown',
+        conference: '',
+        record: e.recordSummary || '',
+      })),
+    };
+  }
+
+  // Already flat RankedTeam[] (Highlightly or normalized worker response)
+  return { teams: rankings as RankedTeam[], pollName: '' };
+}
+
 /** Preseason fallback — derived from preseason-2026.ts, never hardcoded. Top 25 only. */
 const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
   .sort(([, a], [, b]) => a.rank - b.rank)
@@ -96,10 +135,12 @@ export default function CollegeBaseballPage() {
   const hasAutoAdvanced = useRef(false);
 
   // Rankings — fetched when rankings tab is active
-  const rankingsUrl = activeTab === 'rankings' ? '/api/ncaa/rankings?sport=baseball' : null;
+  const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
   const { data: rankingsRaw, loading: rankingsLoading } =
-    useSportData<{ rankings?: RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
-  const rankings = rankingsRaw?.rankings?.length ? rankingsRaw.rankings : preseasonRankings;
+    useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
+  const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
+  const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
+  const isLiveRankings = normalized.teams.length > 0;
 
   // Standings — fetched when standings tab is active
   const standingsUrl = activeTab === 'standings' ? '/api/college-baseball/standings' : null;
@@ -252,16 +293,16 @@ export default function CollegeBaseballPage() {
         <Section padding="sm" className="py-4">
           <Container>
             <div className="space-y-3">
-              <Link href="/college-baseball/editorial/texas-2026">
+              <Link href="/college-baseball/editorial/texas-week-1-recap">
                 <div className="bg-gradient-to-r from-burnt-orange/20 to-[#500000]/20 border border-burnt-orange/30 rounded-xl p-4 md:p-6 hover:border-burnt-orange/60 transition-all group cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Badge variant="primary" className="mb-2">Featured</Badge>
+                      <Badge variant="primary" className="mb-2">Texas Weekly</Badge>
                       <h3 className="font-display text-lg md:text-xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
-                        Texas Longhorns: 2026 Season Preview
+                        Texas Week 1: 27 Runs. One Hit Allowed by Volantis.
                       </h3>
                       <p className="text-white/50 text-sm mt-1">
-                        3,818 wins. 130 years. The definitive deep dive on the #1 team in college baseball.
+                        UC Davis swept 27–7. Volantis earns SEC honors. Michigan State — fresh off upsetting No. 8 Louisville — arrives for Weekend 2.
                       </p>
                     </div>
                     <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
@@ -271,13 +312,28 @@ export default function CollegeBaseballPage() {
                 </div>
               </Link>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Link href="/college-baseball/editorial/texas-2026">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                          Texas 2026 Season Preview
+                        </h4>
+                        <p className="text-white/40 text-xs mt-0.5">3,818 wins. 130 years. The definitive deep dive.</p>
+                      </div>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/20 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
                 <Link href="/college-baseball/editorial/week-1-recap">
                   <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div>
                         <Badge variant="secondary" className="mb-1">New</Badge>
                         <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
-                          Week 1 Recap
+                          Week 1 National Recap
                         </h4>
                         <p className="text-white/40 text-xs mt-0.5">Three grand slams. One record book.</p>
                       </div>
@@ -297,21 +353,6 @@ export default function CollegeBaseballPage() {
                         <p className="text-white/40 text-xs mt-0.5">13 ranked teams. The deepest conference.</p>
                       </div>
                       <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/20 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
-                    </div>
-                  </div>
-                </Link>
-                <Link href="/college-baseball/compare">
-                  <div className="bg-gradient-to-r from-burnt-orange/10 to-ember/10 border border-burnt-orange/20 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-display text-sm font-bold text-burnt-orange uppercase tracking-wide group-hover:text-ember transition-colors">
-                          Compare Teams
-                        </h4>
-                        <p className="text-white/40 text-xs mt-0.5">Head-to-head Power 25 rivalry cards.</p>
-                      </div>
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-burnt-orange/40 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
                     </div>
@@ -359,9 +400,13 @@ export default function CollegeBaseballPage() {
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Image src="/icons/baseball.svg" alt="" width={20} height={20} className="opacity-60" />
-                        2026 Preseason Top 25
+                        {isLiveRankings
+                          ? (normalized.pollName || '2026 Top 25')
+                          : '2026 Preseason Top 25'}
                       </div>
-                      <Badge variant="primary">D1Baseball</Badge>
+                      <Badge variant="primary">
+                        {rankingsRaw?.meta?.dataSource === 'espn' ? 'ESPN' : 'D1Baseball'}
+                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>

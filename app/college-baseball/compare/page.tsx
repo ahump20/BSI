@@ -54,7 +54,7 @@ export default function CompareHubPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/10 via-transparent to-[#FF6B35]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/10 via-transparent to-ember/5 pointer-events-none" />
           <Container center>
             <Badge variant="primary" className="mb-4">Head-to-Head</Badge>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">

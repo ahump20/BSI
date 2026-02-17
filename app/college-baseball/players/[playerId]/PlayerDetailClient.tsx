@@ -67,7 +67,7 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-[#BF5700] rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
             </div>
           </Container>
         </Section>
