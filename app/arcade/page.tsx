@@ -22,7 +22,7 @@ const GAMES = [
     description: 'Call plays and drive downfield in this fast-paced football strategy game.',
     color: '#FF6B35',
     icon: '🏈',
-    url: '/games/blitz/',
+    url: '/arcade/games/blitz',
     deployed: true,
   },
   {
@@ -31,7 +31,7 @@ const GAMES = [
     description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
     color: '#BF5700',
     icon: '⚾',
-    url: '/games/sandlot-sluggers/',
+    url: '/arcade/games/sandlot-sluggers',
     deployed: true,
   },
   {
@@ -40,7 +40,7 @@ const GAMES = [
     description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
     color: '#FDB913',
     icon: '🏀',
-    url: '/games/downtown-doggies/',
+    url: '/arcade/games/downtown-doggies',
     deployed: true,
   },
   {
@@ -49,7 +49,7 @@ const GAMES = [
     description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
     color: '#CD5C5C',
     icon: '🌭',
-    url: '/games/hotdog-dash/',
+    url: '/arcade/games/hotdog-dash',
     deployed: true,
   },
   {
@@ -58,7 +58,7 @@ const GAMES = [
     description: '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
     color: '#BF5700',
     icon: '📊',
-    url: '/games/leadership-capital/',
+    url: '/arcade/games/leadership-capital',
     deployed: true,
   },
 ];

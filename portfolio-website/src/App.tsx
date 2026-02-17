@@ -4,7 +4,10 @@ import About from './components/About';
 import Experience from './components/Experience';
 import Education from './components/Education';
 import BSIShowcase from './components/BSIShowcase';
+import Projects from './components/Projects';
+import Writing from './components/Writing';
 import AIFeatures from './components/AIFeatures';
+import MediaShowcase from './components/MediaShowcase';
 import Podcast from './components/Podcast';
 import Philosophy from './components/Philosophy';
 import Contact from './components/Contact';
@@ -19,7 +22,10 @@ function App() {
       <Experience />
       <Education />
       <BSIShowcase />
+      <Projects />
+      <Writing />
       <AIFeatures />
+      <MediaShowcase />
       <Podcast />
       <Philosophy />
       <Contact />

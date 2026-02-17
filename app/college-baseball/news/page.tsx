@@ -1,87 +1,111 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge } from '@/components/ui/Badge';
+import { DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
+import { formatTimestamp } from '@/lib/utils/timezone';
+import { useSportData } from '@/lib/hooks/useSportData';
+import { NewsCard } from '@/components/college-baseball/NewsCard';
 
-interface NewsItem {
+interface EnhancedNewsItem {
   id: string;
   title: string;
-  summary: string;
-  source: string;
+  description: string;
+  source: 'espn' | 'highlightly' | 'bsi';
   url: string;
+  imageUrl?: string;
   publishedAt: string;
-  category: 'recruiting' | 'transfer' | 'game' | 'rankings' | 'analysis' | 'general';
+  category: string;
   team?: string;
-  conference?: string;
 }
 
-interface NewsApiResponse {
-  articles?: NewsItem[];
+interface EnhancedNewsApiResponse {
+  articles?: EnhancedNewsItem[];
+  sources?: { espn: number; highlightly: number; total: number };
+  meta?: { source: string; fetched_at: string; timezone: string };
 }
 
-const categoryColors: Record<string, string> = {
-  recruiting: 'bg-burnt-orange',
-  transfer: 'bg-warning',
-  game: 'bg-success',
-  rankings: 'bg-info',
-  analysis: 'bg-text-secondary',
-  general: 'bg-text-tertiary',
-};
+const CATEGORIES = [
+  { id: 'all', label: 'All' },
+  { id: 'scores', label: 'Scores' },
+  { id: 'transfers', label: 'Transfers' },
+  { id: 'recruiting', label: 'Recruiting' },
+  { id: 'editorial', label: 'Editorial' },
+  { id: 'analysis', label: 'Analysis' },
+  { id: 'rankings', label: 'Rankings' },
+];
+
+const SOURCE_FILTERS = [
+  { id: 'all', label: 'All Sources' },
+  { id: 'espn', label: 'ESPN' },
+  { id: 'highlightly', label: 'Highlightly' },
+  { id: 'bsi', label: 'BSI' },
+];
+
+function getDateGroup(publishedAt: string): string {
+  if (!publishedAt) return 'Older';
+  const pubDate = new Date(publishedAt);
+  if (isNaN(pubDate.getTime())) return 'Older';
+
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterdayStart = new Date(todayStart.getTime() - 86400000);
+  const weekStart = new Date(todayStart.getTime() - 6 * 86400000);
+
+  if (pubDate >= todayStart) return 'Today';
+  if (pubDate >= yesterdayStart) return 'Yesterday';
+  if (pubDate >= weekStart) return 'This Week';
+  return 'Older';
+}
+
+const GROUP_ORDER = ['Today', 'Yesterday', 'This Week', 'Older'];
 
 export default function CollegeBaseballNewsPage() {
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
 
-  useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch('/api/college-baseball/news');
-        if (!res.ok) throw new Error('Failed to fetch news');
-        const data = (await res.json()) as NewsApiResponse;
-        setNews(data.articles || []);
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        setLoading(false);
-      }
-    };
+  const { data, loading, error } = useSportData<EnhancedNewsApiResponse>(
+    '/api/college-baseball/news/enhanced',
+  );
 
-    fetchNews();
-  }, []);
+  const articles = data?.articles || [];
 
-  const filteredNews = filter === 'all' ? news : news.filter((item) => item.category === filter);
+  const filtered = useMemo(() => {
+    return articles.filter((item) => {
+      const matchCategory = categoryFilter === 'all' || item.category === categoryFilter;
+      const matchSource = sourceFilter === 'all' || item.source === sourceFilter;
+      return matchCategory && matchSource;
+    });
+  }, [articles, categoryFilter, sourceFilter]);
 
-  const categories = [
-    { id: 'all', label: 'All News' },
-    { id: 'recruiting', label: 'Recruiting' },
-    { id: 'transfer', label: 'Transfer Portal' },
-    { id: 'game', label: 'Games' },
-    { id: 'rankings', label: 'Rankings' },
-    { id: 'analysis', label: 'Analysis' },
-  ];
+  const grouped = useMemo(() => {
+    const groups = new Map<string, EnhancedNewsItem[]>();
+    for (const item of filtered) {
+      const group = getDateGroup(item.publishedAt);
+      if (!groups.has(group)) groups.set(group, []);
+      groups.get(group)!.push(item);
+    }
+    return GROUP_ORDER
+      .filter((g) => groups.has(g))
+      .map((g) => ({ label: g, items: groups.get(g)! }));
+  }, [filtered]);
+
+  const lastUpdated = data?.meta?.fetched_at || '';
+  const sourceLabel = data?.meta?.source || 'ESPN + Highlightly';
 
   return (
     <>
       <main id="main-content">
-        {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link
-                href="/college-baseball"
-                className="text-text-tertiary hover:text-burnt-orange transition-colors"
-              >
+              <Link href="/college-baseball" className="text-text-tertiary hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-text-tertiary">/</span>
@@ -90,7 +114,6 @@ export default function CollegeBaseballNewsPage() {
           </Container>
         </Section>
 
-        {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
@@ -99,23 +122,27 @@ export default function CollegeBaseballNewsPage() {
                 College Baseball News
               </h1>
               <p className="text-text-secondary max-w-2xl">
-                The transfer portal moves, recruiting wins, and game coverage ESPN won't give you.
+                The transfer portal moves, recruiting wins, and game coverage ESPN won&apos;t give you.
                 All 300+ D1 programs, actually covered.
               </p>
+              {data?.sources && (
+                <p className="text-text-tertiary text-xs mt-2">
+                  {data.sources.total} articles from {data.sources.espn} ESPN + {data.sources.highlightly} Highlightly sources
+                </p>
+              )}
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Filters */}
         <Section padding="sm" background="charcoal" borderTop>
           <Container>
             <div className="flex gap-2 overflow-x-auto pb-2">
-              {categories.map((cat) => (
+              {CATEGORIES.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => setFilter(cat.id)}
+                  onClick={() => setCategoryFilter(cat.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                    filter === cat.id
+                    categoryFilter === cat.id
                       ? 'bg-burnt-orange text-white'
                       : 'bg-graphite text-text-secondary hover:bg-white/10'
                   }`}
@@ -124,19 +151,34 @@ export default function CollegeBaseballNewsPage() {
                 </button>
               ))}
             </div>
+            <div className="flex gap-2 overflow-x-auto pb-2 mt-2">
+              {SOURCE_FILTERS.map((src) => (
+                <button
+                  key={src.id}
+                  onClick={() => setSourceFilter(src.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
+                    sourceFilter === src.id
+                      ? 'bg-white/15 text-white border border-white/20'
+                      : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'
+                  }`}
+                >
+                  {src.label}
+                </button>
+              ))}
+            </div>
           </Container>
         </Section>
 
-        {/* News Feed */}
         <Section padding="lg" background="charcoal">
           <Container>
             {loading ? (
-              <div className="space-y-4">
-                {[1, 2, 3, 4, 5].map((i) => (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <Card key={i} variant="default" padding="md">
-                    <Skeleton variant="text" width="80%" height={24} />
-                    <Skeleton variant="text" width="100%" height={16} className="mt-2" />
-                    <Skeleton variant="text" width="60%" height={16} className="mt-1" />
+                    <Skeleton variant="rectangular" width="100%" height={160} />
+                    <Skeleton variant="text" width="80%" height={20} className="mt-3" />
+                    <Skeleton variant="text" width="100%" height={14} className="mt-2" />
+                    <Skeleton variant="text" width="60%" height={14} className="mt-1" />
                   </Card>
                 ))}
               </div>
@@ -145,85 +187,53 @@ export default function CollegeBaseballNewsPage() {
                 <p className="text-error font-semibold">Unable to Load News</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
               </Card>
-            ) : filteredNews.length === 0 ? (
+            ) : filtered.length === 0 ? (
               <Card variant="default" padding="lg">
                 <div className="text-center py-8">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
+                  <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-tertiary mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10" />
                   </svg>
                   <p className="text-text-secondary">No news in this category right now.</p>
                   <p className="text-text-tertiary text-sm mt-2">
                     The transfer portal can be quiet between waves. Fall ball wraps, portal opens,
-                    then it's chaos. Stay tuned.
+                    then it&apos;s chaos. Stay tuned.
                   </p>
                 </div>
               </Card>
             ) : (
               <ScrollReveal>
-                <div className="space-y-4">
-                  {filteredNews.map((item) => (
-                    <Card
-                      key={item.id}
-                      variant="default"
-                      padding="md"
-                      className="hover:border-burnt-orange transition-all group"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            <Badge
-                              variant="secondary"
-                              className={`${categoryColors[item.category]} text-white`}
-                            >
-                              {item.category}
-                            </Badge>
-                            {item.team && <Badge variant="outline">{item.team}</Badge>}
-                            {item.conference && (
-                              <Badge variant="secondary">{item.conference}</Badge>
-                            )}
-                            <span className="text-text-tertiary text-xs">
-                              {getRelativeTime(item.publishedAt)}
-                            </span>
-                          </div>
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block"
-                          >
-                            <h3 className="text-white font-semibold text-lg group-hover:text-burnt-orange transition-colors">
-                              {item.title}
-                            </h3>
-                            <p className="text-text-secondary text-sm mt-1 line-clamp-2">
-                              {item.summary}
-                            </p>
-                          </a>
-                          <p className="text-text-tertiary text-xs mt-2">via {item.source}</p>
-                        </div>
+                <div className="space-y-8">
+                  {grouped.map((group) => (
+                    <div key={group.label}>
+                      <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-4">
+                        {group.label}
+                      </h2>
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {group.items.map((item) => (
+                          <NewsCard
+                            key={item.id}
+                            title={item.title}
+                            description={item.description}
+                            url={item.url}
+                            imageUrl={item.imageUrl}
+                            source={item.source}
+                            category={item.category}
+                            publishedAt={item.publishedAt}
+                          />
+                        ))}
                       </div>
-                    </Card>
+                    </div>
                   ))}
                 </div>
               </ScrollReveal>
             )}
 
-            {/* Data Source Footer */}
             <div className="mt-8 pt-4 border-t border-border-subtle">
-              <DataSourceBadge
-                source="D1Baseball / NCAA / Official Program Sources"
-                timestamp={formatTimestamp()}
-              />
+              <DataSourceBadge source={sourceLabel} timestamp={formatTimestamp(lastUpdated)} />
             </div>
           </Container>
         </Section>
       </main>
-
       <Footer />
     </>
   );

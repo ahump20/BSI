@@ -87,15 +87,15 @@ export default function BSIShowcase() {
           <div className="reveal">
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="card p-5 text-center">
-                <p className="text-3xl font-bold font-sans text-burnt-orange">53</p>
+                <p className="text-3xl font-bold font-sans text-burnt-orange">14</p>
                 <p className="text-xs font-mono text-warm-gray mt-1">Workers</p>
               </div>
               <div className="card p-5 text-center">
-                <p className="text-3xl font-bold font-sans text-burnt-orange">12</p>
+                <p className="text-3xl font-bold font-sans text-burnt-orange">5</p>
                 <p className="text-xs font-mono text-warm-gray mt-1">D1 Databases</p>
               </div>
               <div className="card p-5 text-center">
-                <p className="text-3xl font-bold font-sans text-burnt-orange">45</p>
+                <p className="text-3xl font-bold font-sans text-burnt-orange">9</p>
                 <p className="text-xs font-mono text-warm-gray mt-1">KV Namespaces</p>
               </div>
               <div className="card p-5 text-center">

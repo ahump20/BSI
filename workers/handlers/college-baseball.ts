@@ -555,8 +555,8 @@ export async function handleCollegeBaseballScores(
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Highlightly failed — fall through to NCAA
+    } catch (err) {
+      console.error('[highlightly] scores fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -610,8 +610,8 @@ export async function handleCollegeBaseballStandings(
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Fall through to NCAA
+    } catch (err) {
+      console.error('[highlightly] standings fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -650,8 +650,8 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.error('[highlightly] rankings fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -735,8 +735,8 @@ export async function handleCollegeBaseballTeam(
           ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.error('[highlightly] team fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -798,8 +798,8 @@ export async function handleCollegeBaseballPlayer(
           ...dataHeaders(playerResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.error('[highlightly] player fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -861,8 +861,8 @@ export async function handleCollegeBaseballGame(
           ...dataHeaders(matchResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
-    } catch {
-      // Highlightly failed — fall through to NCAA/ESPN
+    } catch (err) {
+      console.error('[highlightly] game fallback:', err instanceof Error ? err.message : err);
     }
   }
 
@@ -1329,6 +1329,132 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
   return cachedJson(payload, 200, HTTP_CACHE.player, { ...dataHeaders(new Date().toISOString(), 'espn'), 'X-Cache': roster === cached ? 'HIT' : 'MISS' });
 }
 
+// --- College Baseball Enhanced News (ESPN + Highlightly) ---
+
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  scores: ['score', 'scored', 'final', 'walk-off', 'walkoff', 'shutout', 'no-hitter', 'run-rule', 'sweep', 'swept', 'wins', 'defeats', 'beats', 'rout', 'rally', 'comeback'],
+  transfers: ['transfer', 'portal', 'commit', 'committed', 'decommit', 'enters portal', 'flip', 'destination', 'leaving'],
+  recruiting: ['recruit', 'signee', 'prospect', 'class of', 'signing day', 'nli', 'verbal', 'commitment', 'five-star', 'four-star'],
+  editorial: ['preview', 'column', 'opinion', 'take', 'breakdown', 'deep dive', 'outlook', 'hot take', 'editorial'],
+  analysis: ['analytics', 'stat', 'metric', 'sabermetric', 'rpi', 'sos', 'projection', 'model', 'era', 'whip', 'slugging', 'war'],
+  rankings: ['rank', 'poll', 'top 25', 'ranked', 'power rankings', 'coaches poll', 'usa today', 'preseason', 'postseason'],
+};
+
+function categorizeArticle(title: string, description: string): string {
+  const text = `${title} ${description}`.toLowerCase();
+  let bestCategory = 'general';
+  let bestCount = 0;
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    const count = keywords.filter((kw) => text.includes(kw)).length;
+    if (count > bestCount) {
+      bestCount = count;
+      bestCategory = category;
+    }
+  }
+  return bestCategory;
+}
+
+function titleSimilarity(a: string, b: string): number {
+  const wordsA = new Set(a.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean));
+  const wordsB = new Set(b.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/).filter(Boolean));
+  if (wordsA.size === 0 || wordsB.size === 0) return 0;
+  let overlap = 0;
+  for (const w of wordsA) { if (wordsB.has(w)) overlap++; }
+  return overlap / Math.max(wordsA.size, wordsB.size);
+}
+
+interface EnhancedArticle {
+  id: string;
+  title: string;
+  description: string;
+  source: 'espn' | 'highlightly' | 'bsi';
+  url: string;
+  imageUrl?: string;
+  publishedAt: string;
+  category: string;
+  team?: string;
+}
+
+export async function handleCollegeBaseballNewsEnhanced(env: Env): Promise<Response> {
+  const now = new Date().toISOString();
+  const cacheKey = 'cb:news:enhanced';
+  const cached = await kvGet<string>(env.KV, cacheKey);
+  if (cached) {
+    try {
+      return cachedJson(JSON.parse(cached), 200, HTTP_CACHE.news);
+    } catch { /* corrupted cache — rebuild */ }
+  }
+
+  async function fetchEspnNews(): Promise<EnhancedArticle[]> {
+    try {
+      const resp = await fetch('https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news?limit=30');
+      if (!resp.ok) return [];
+      const data = await resp.json() as { articles?: Array<{ headline?: string; description?: string; links?: { web?: { href?: string } }; images?: Array<{ url?: string }>; published?: string }> };
+      return (data.articles || []).map((a, i) => ({
+        id: `espn-${i}-${Date.now()}`,
+        title: a.headline || '',
+        description: a.description || '',
+        source: 'espn' as const,
+        url: a.links?.web?.href || '#',
+        imageUrl: a.images?.[0]?.url,
+        publishedAt: a.published || now,
+        category: categorizeArticle(a.headline || '', a.description || ''),
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  async function fetchHighlightlyNews(): Promise<EnhancedArticle[]> {
+    const key = env.RAPIDAPI_KEY;
+    if (!key) return [];
+    try {
+      const resp = await fetch('https://highlightly.p.rapidapi.com/baseball/matches?league=NCAA&status=complete&limit=20', {
+        headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'highlightly.p.rapidapi.com' },
+      });
+      if (!resp.ok) return [];
+      const data = await resp.json() as { matches?: Array<{ id?: string; homeTeam?: { name?: string }; awayTeam?: { name?: string }; homeScore?: number; awayScore?: number; date?: string; status?: string }> };
+      return (data.matches || []).map((m, i) => {
+        const home = m.homeTeam?.name || 'Home';
+        const away = m.awayTeam?.name || 'Away';
+        const title = `${away} ${m.awayScore ?? 0} @ ${home} ${m.homeScore ?? 0} — Final`;
+        return {
+          id: `hl-${m.id || i}-${Date.now()}`,
+          title,
+          description: `${away} at ${home} — Final Score ${m.awayScore ?? 0}-${m.homeScore ?? 0}`,
+          source: 'highlightly' as const,
+          url: '#',
+          publishedAt: m.date || now,
+          category: 'scores',
+          team: home,
+        };
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  const [espn, highlightly] = await Promise.all([fetchEspnNews(), fetchHighlightlyNews()]);
+
+  // Deduplicate by title similarity > 70%
+  const merged: EnhancedArticle[] = [...espn];
+  for (const hl of highlightly) {
+    const isDupe = merged.some((existing) => titleSimilarity(existing.title, hl.title) > 0.7);
+    if (!isDupe) merged.push(hl);
+  }
+  merged.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  const payload = {
+    articles: merged,
+    sources: { espn: espn.length, highlightly: highlightly.length, total: merged.length },
+    meta: { source: 'espn+highlightly', fetched_at: now, timezone: 'America/Chicago' },
+  };
+
+  await kvPut(env.KV, cacheKey, JSON.stringify(payload), 120);
+
+  return cachedJson(payload, 200, HTTP_CACHE.news);
+}
+
 // --- College Baseball Transfer Portal ---
 
 export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> {
@@ -1352,4 +1478,268 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
     meta: { dataSource: 'none', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' },
     message: 'No portal data available yet',
   }, 200);
+}
+
+// ---------------------------------------------------------------------------
+// Editorial List handler (D1-backed, KV-cached)
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballEditorialList(env: Env): Promise<Response> {
+  const cacheKey = 'cb:editorial:list';
+  const now = new Date().toISOString();
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.news, {
+      ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT',
+    });
+  }
+
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT id, date, title, preview, teams, word_count, created_at
+       FROM editorials
+       ORDER BY date DESC
+       LIMIT 30`
+    ).all<{
+      id: number;
+      date: string;
+      title: string;
+      preview: string | null;
+      teams: string | null;
+      word_count: number;
+      created_at: string;
+    }>();
+
+    const editorials = (results ?? []).map((row) => ({
+      id: row.id,
+      date: row.date,
+      title: row.title,
+      preview: row.preview ?? '',
+      teams: row.teams ? row.teams.split(',').map((t) => t.trim()) : [],
+      wordCount: row.word_count,
+      createdAt: row.created_at,
+    }));
+
+    const payload = {
+      editorials,
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 300); // 5 min cache
+    return cachedJson(payload, 200, HTTP_CACHE.news, {
+      ...dataHeaders(now, 'bsi-d1'), 'X-Cache': 'MISS',
+    });
+  } catch (err) {
+    console.error('[editorial] D1 query failed:', err instanceof Error ? err.message : err);
+    return json({
+      editorials: [],
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
+      message: 'Editorial content is being set up.',
+    }, 200);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Editorial Content handler (R2-backed)
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballEditorialContent(
+  date: string,
+  env: Env
+): Promise<Response> {
+  const now = new Date().toISOString();
+
+  // Validate date format (YYYY-MM-DD)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return json({
+      error: 'Invalid date format. Use YYYY-MM-DD.',
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+    }, 400);
+  }
+
+  const r2Key = `editorial/cbb/${date}.md`;
+
+  try {
+    const object = await env.ASSETS_BUCKET.get(r2Key);
+
+    if (!object) {
+      return json({
+        content: null,
+        date,
+        meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+        message: `No editorial found for ${date}. Content is generated daily by the digest pipeline.`,
+      }, 404);
+    }
+
+    const content = await object.text();
+
+    return json({
+      content,
+      date,
+      contentType: object.httpMetadata?.contentType ?? 'text/markdown',
+      size: object.size,
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    console.error('[editorial] R2 read failed:', err instanceof Error ? err.message : err);
+    return json({
+      content: null,
+      date,
+      meta: { source: 'bsi-r2', fetched_at: now, timezone: 'America/Chicago' },
+      error: 'Failed to retrieve editorial content from storage.',
+    }, 500);
+  }
+}
+
+// =============================================================================
+// Player Comparison
+// =============================================================================
+
+function computeBattingDifferentials(p1: Record<string, number>, p2: Record<string, number>): Record<string, number> {
+  const stats = ['avg', 'obp', 'slg', 'hr', 'rbi', 'sb', 'runs', 'hits', 'ab', 'bb', 'so'];
+  const result: Record<string, number> = {};
+  for (const s of stats) {
+    if (p1[s] != null && p2[s] != null) {
+      const diff = p1[s] - p2[s];
+      result[`batting_${s}`] = ['avg', 'obp', 'slg'].includes(s) ? Math.round(diff * 1000) / 1000 : Math.round(diff);
+    }
+  }
+  return result;
+}
+
+function computePitchingDifferentials(p1: Record<string, number>, p2: Record<string, number>): Record<string, number> {
+  const stats = ['era', 'whip', 'wins', 'losses', 'saves', 'strikeouts', 'ip', 'k9'];
+  const result: Record<string, number> = {};
+  for (const s of stats) {
+    if (p1[s] != null && p2[s] != null) {
+      const diff = p1[s] - p2[s];
+      result[`pitching_${s}`] = ['era', 'whip', 'k9'].includes(s) ? Math.round(diff * 100) / 100 : Math.round(diff);
+    }
+  }
+  return result;
+}
+
+export async function handleCollegeBaseballPlayerCompare(
+  playerId1: string,
+  playerId2: string,
+  env: Env,
+): Promise<Response> {
+  const now = new Date().toISOString();
+
+  try {
+    const [res1, res2] = await Promise.all([
+      handleCollegeBaseballPlayer(playerId1, env),
+      handleCollegeBaseballPlayer(playerId2, env),
+    ]);
+
+    const [data1, data2] = await Promise.all([res1.json() as Promise<Record<string, unknown>>, res2.json() as Promise<Record<string, unknown>>]);
+
+    if (!data1?.player || !data2?.player) {
+      return json({ error: 'One or both players not found', meta: { source: 'bsi', fetched_at: now, timezone: 'America/Chicago' } }, 404);
+    }
+
+    const p1Stats = (data1.stats ?? {}) as Record<string, Record<string, number>>;
+    const p2Stats = (data2.stats ?? {}) as Record<string, Record<string, number>>;
+
+    const hasBatting = p1Stats.batting && p2Stats.batting;
+    const hasPitching = p1Stats.pitching && p2Stats.pitching;
+    const type = hasBatting && hasPitching ? 'mixed' : hasPitching ? 'pitching' : 'batting';
+
+    const differentials: Record<string, number> = {
+      ...(hasBatting ? computeBattingDifferentials(p1Stats.batting, p2Stats.batting) : {}),
+      ...(hasPitching ? computePitchingDifferentials(p1Stats.pitching, p2Stats.pitching) : {}),
+    };
+
+    return json({
+      player1: data1,
+      player2: data2,
+      comparison: { type, differentials },
+      meta: { source: 'bsi-compare', fetched_at: now, timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'Comparison failed', meta: { source: 'bsi', fetched_at: now, timezone: 'America/Chicago' } }, 500);
+  }
+}
+
+// =============================================================================
+// Historical Trends
+// =============================================================================
+
+function computeTrendSummary(snapshots: Array<{ wins: number; losses: number; ranking: number | null }>) {
+  if (snapshots.length === 0) return { currentStreak: 'N/A', last10: 'N/A', rankingChange: null };
+
+  let streakType = '';
+  let streakCount = 0;
+  for (let i = snapshots.length - 1; i > 0; i--) {
+    const winDiff = snapshots[i].wins - snapshots[i - 1].wins;
+    const lossDiff = snapshots[i].losses - snapshots[i - 1].losses;
+    const dayType = winDiff > 0 ? 'W' : lossDiff > 0 ? 'L' : '';
+    if (i === snapshots.length - 1) { streakType = dayType; streakCount = dayType ? 1 : 0; }
+    else if (dayType === streakType && dayType) streakCount++;
+    else break;
+  }
+
+  const last = snapshots[snapshots.length - 1];
+  const tenAgo = snapshots.length >= 11 ? snapshots[snapshots.length - 11] : snapshots[0];
+  const last10W = last.wins - tenAgo.wins;
+  const last10L = last.losses - tenAgo.losses;
+
+  const firstRank = snapshots.find(s => s.ranking != null)?.ranking ?? null;
+  const lastRank = [...snapshots].reverse().find(s => s.ranking != null)?.ranking ?? null;
+  const rankingChange = firstRank != null && lastRank != null ? firstRank - lastRank : null;
+
+  return {
+    currentStreak: streakCount > 0 ? `${streakType}${streakCount}` : 'N/A',
+    last10: `${last10W}-${last10L}`,
+    rankingChange,
+  };
+}
+
+export async function handleCollegeBaseballTrends(teamId: string, env: Env): Promise<Response> {
+  const now = new Date().toISOString();
+
+  try {
+    const result = await env.DB.prepare(
+      'SELECT * FROM standings_snapshots WHERE team_id = ? ORDER BY snapshot_date DESC LIMIT 30'
+    ).bind(teamId).all();
+
+    const rows = (result?.results ?? []) as Array<{
+      team_id: string; team_name: string; conference: string;
+      wins: number; losses: number; conference_wins: number; conference_losses: number;
+      rpi: number | null; ranking: number | null; run_differential: number; snapshot_date: string;
+    }>;
+
+    const snapshots = rows.reverse().map(r => ({
+      date: r.snapshot_date,
+      wins: r.wins,
+      losses: r.losses,
+      winPct: r.wins + r.losses > 0 ? Math.round((r.wins / (r.wins + r.losses)) * 1000) / 1000 : 0,
+      ranking: r.ranking,
+      rpi: r.rpi,
+      runDifferential: r.run_differential,
+    }));
+
+    const team = rows.length > 0
+      ? { id: rows[0].team_id, name: rows[0].team_name, conference: rows[0].conference }
+      : { id: teamId, name: 'Unknown', conference: 'Unknown' };
+
+    const summary = computeTrendSummary(snapshots.map(s => ({ wins: s.wins, losses: s.losses, ranking: s.ranking })));
+
+    return json({
+      team,
+      snapshots,
+      summary,
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    console.error('[trends] D1 query failed:', err instanceof Error ? err.message : err);
+    return json({
+      team: { id: teamId, name: 'Unknown', conference: 'Unknown' },
+      snapshots: [],
+      summary: { currentStreak: 'N/A', last10: 'N/A', rankingChange: null },
+      message: 'Trend data temporarily unavailable.',
+      meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
+    }, 503);
+  }
 }

@@ -86,6 +86,9 @@ export const metadata: Metadata = {
     description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
     images: ['/images/og-image.jpg'],
   },
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,

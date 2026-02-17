@@ -75,22 +75,22 @@ export default function BaseballRankingsPage() {
             <ScrollReveal direction="up" delay={100}>
               <Card padding="none" className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full">
+                  <table className="w-full" aria-label="College baseball rankings">
                     <thead>
                       <tr className="bg-charcoal border-b border-border-subtle">
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
                           Rank
                         </th>
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                           Team
                         </th>
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden sm:table-cell">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden sm:table-cell">
                           Conference
                         </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                        <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
                           Record
                         </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-20">
+                        <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-20">
                           Change
                         </th>
                       </tr>

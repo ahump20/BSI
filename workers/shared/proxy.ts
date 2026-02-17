@@ -23,6 +23,11 @@ export async function proxyToPages(request: Request, env: Env): Promise<Response
     url.pathname.match(/\.(js|css|woff2?|ttf|eot|ico|png|jpg|jpeg|gif|svg|webp|avif)$/)
   ) {
     response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  } else {
+    const ct = response.headers.get('Content-Type') || '';
+    if (ct.includes('text/html')) {
+      response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+    }
   }
 
   return response;

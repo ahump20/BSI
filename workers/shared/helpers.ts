@@ -41,8 +41,8 @@ export async function logError(env: Env, error: string, context: string): Promis
       JSON.stringify({ error, context, timestamp: new Date().toISOString() }),
       { expirationTtl: 86400 * 7 }
     );
-  } catch {
-    // Non-fatal
+  } catch (err) {
+    console.error('[logError] KV write failed:', err instanceof Error ? err.message : err);
   }
 }
 
