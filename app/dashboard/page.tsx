@@ -93,7 +93,6 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(60);
-  const [coverageCounts, setCoverageCounts] = useState<Record<string, number>>({});
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
   const lastUpdatedLabel = stats.lastUpdated && timezoneLoaded
@@ -158,23 +157,6 @@ export default function DashboardPage() {
             todaysGames: games.length,
           }));
         }
-        // Fetch coverage counts from live-scores for pie chart
-        try {
-          const liveRes = await fetch('/api/live-scores');
-          if (liveRes.ok) {
-            const liveData = await liveRes.json() as Record<string, unknown>;
-            const counts: Record<string, number> = {};
-            for (const [key, val] of Object.entries(liveData)) {
-              if (Array.isArray(val)) counts[key] = val.length;
-              else if (typeof val === 'object' && val && 'games' in (val as Record<string, unknown>)) {
-                counts[key] = ((val as Record<string, unknown>).games as unknown[])?.length ?? 0;
-              }
-            }
-            setCoverageCounts(counts);
-          }
-        } catch {
-          // Non-critical, keep hardcoded fallback
-        }
       } catch (err) {
         setFetchError(err instanceof Error ? err.message : 'Failed to load dashboard data');
       } finally {
@@ -197,11 +179,13 @@ export default function DashboardPage() {
     winPct: team.winPct || team.wins / (team.wins + team.losses) || 0,
   }));
 
+  // Coverage pie chart — show real data only when available
+  const hasCoverageData = false; // No live-scores endpoint wired yet; show empty state
   const sportDistributionData = [
-    { name: 'MLB', value: coverageCounts.mlb ?? coverageCounts.baseball ?? 25, color: '#C41E3A' },
-    { name: 'NFL', value: coverageCounts.nfl ?? coverageCounts.football ?? 25, color: '#013369' },
-    { name: 'NBA', value: coverageCounts.nba ?? coverageCounts.basketball ?? 20, color: '#1D428A' },
-    { name: 'NCAA', value: coverageCounts.ncaa ?? coverageCounts['college-baseball'] ?? 20, color: '#BF5700' },
+    { name: 'MLB', value: 25, color: '#C41E3A' },
+    { name: 'NFL', value: 25, color: '#013369' },
+    { name: 'NBA', value: 25, color: '#1D428A' },
+    { name: 'NCAA', value: 25, color: '#BF5700' },
   ];
 
   return (
@@ -239,31 +223,6 @@ export default function DashboardPage() {
             </div>
           </ScrollReveal>
 
-          {/* BSI Arcade Card */}
-          <ScrollReveal direction="up" delay={50}>
-            <a
-              href="/arcade"
-              className="glass-elevated mb-8 p-5 flex items-center justify-between gap-4 group hover:border-[var(--bsi-gold)] transition-all block"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-lg bg-[var(--bsi-gold)]/20 flex items-center justify-center text-2xl">
-                  &#x1F3AE;
-                </div>
-                <div>
-                  <h3 className="text-white font-display text-lg uppercase tracking-wide">
-                    BSI Arcade
-                  </h3>
-                  <p className="text-white/50 text-sm">
-                    Play sports mini-games and compete on the leaderboard
-                  </p>
-                </div>
-              </div>
-              <span className="text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all text-xl">
-                &rarr;
-              </span>
-            </a>
-          </ScrollReveal>
-
           {/* Sport Tabs */}
           <ScrollReveal direction="up" delay={100}>
             <div className="hidden md:block mb-8">
@@ -290,30 +249,41 @@ export default function DashboardPage() {
           {/* KPI Stats Row */}
           <ScrollReveal direction="up" delay={150}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <StatCard
-                label="Live Games"
-                value={stats.liveGames}
-                trend={stats.liveGames > 0 ? 'live' : undefined}
-                icon={<LiveIcon />}
-              />
-              <StatCard
-                label="Today's Games"
-                value={stats.todaysGames}
-                subtitle={activeSport.toUpperCase()}
-                icon={<CalendarIcon />}
-              />
-              <StatCard
-                label="Teams"
-                value={stats.totalTeams}
-                subtitle="in standings"
-                icon={<TeamIcon />}
-              />
-              <StatCard
-                label="Last Updated"
-                value={lastUpdatedLabel}
-                subtitle={`refresh in ${countdown}s`}
-                icon={<RefreshIcon />}
-              />
+              {isLoading ? (
+                <>
+                  <StatCardSkeleton />
+                  <StatCardSkeleton />
+                  <StatCardSkeleton />
+                  <StatCardSkeleton />
+                </>
+              ) : (
+                <>
+                  <StatCard
+                    label="Live Games"
+                    value={stats.liveGames}
+                    trend={stats.liveGames > 0 ? 'live' : undefined}
+                    icon={<LiveIcon />}
+                  />
+                  <StatCard
+                    label="Today's Games"
+                    value={stats.todaysGames}
+                    subtitle={activeSport.toUpperCase()}
+                    icon={<CalendarIcon />}
+                  />
+                  <StatCard
+                    label="Teams"
+                    value={stats.totalTeams}
+                    subtitle="in standings"
+                    icon={<TeamIcon />}
+                  />
+                  <StatCard
+                    label="Last Updated"
+                    value={lastUpdatedLabel}
+                    subtitle={`${countdown}s`}
+                    icon={<CountdownRing seconds={countdown} total={60} />}
+                  />
+                </>
+              )}
             </div>
           </ScrollReveal>
 
@@ -332,7 +302,7 @@ export default function DashboardPage() {
             </ScrollReveal>
           </div>
 
-          {/* Leaders Section -- all sports */}
+          {/* Leaders Section */}
           <ScrollReveal direction="up" delay={350}>
             <SportLeaders sport={activeSport} className="mb-8" />
           </ScrollReveal>
@@ -355,19 +325,33 @@ export default function DashboardPage() {
                   <h3 className="text-lg font-semibold text-white">Coverage Overview</h3>
                   <span className="text-xs text-white/30 uppercase tracking-wider">All Sports</span>
                 </div>
-                <SportCoveragePieChart data={sportDistributionData} />
+                {hasCoverageData ? (
+                  <SportCoveragePieChart data={sportDistributionData} />
+                ) : (
+                  <div className="h-64 flex items-center justify-center">
+                    <div className="text-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 6v6l4 2" />
+                      </svg>
+                      <p className="text-text-tertiary text-sm">Coverage data unavailable</p>
+                      <p className="text-text-tertiary/60 text-xs mt-1">Live scores integration pending</p>
+                    </div>
+                  </div>
+                )}
               </Card>
             </ScrollReveal>
           </div>
 
-          {/* Quick Links with SVG icons */}
+          {/* Quick Links — 4-column grid with Arcade included */}
           <ScrollReveal direction="up" delay={500}>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <QuickLinkCard href="/mlb" icon="/icons/baseball.svg" title="MLB" subtitle="Scores & Standings" />
               <QuickLinkCard href="/nfl" icon="/icons/football.svg" title="NFL" subtitle="Games & Stats" />
               <QuickLinkCard href="/nba" icon="/icons/basketball.svg" title="NBA" subtitle="Scores & Stats" />
               <QuickLinkCard href="/college-baseball" icon="/icons/baseball.svg" title="NCAA Baseball" subtitle="Rankings & Scores" />
               <QuickLinkCard href="/cfb" icon="/icons/football.svg" title="CFB" subtitle="Rankings & Standings" />
+              <ArcadeQuickLinkCard />
             </div>
           </ScrollReveal>
 
@@ -416,6 +400,21 @@ function StatCard({ label, value, subtitle, trend, icon }: StatCardProps) {
   );
 }
 
+function StatCardSkeleton() {
+  return (
+    <Card className="p-4">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="h-3 w-16 bg-white/10 rounded animate-pulse mb-2" />
+          <div className="h-7 w-12 bg-white/10 rounded animate-pulse mb-1" />
+          <div className="h-3 w-20 bg-white/5 rounded animate-pulse" />
+        </div>
+        <div className="w-6 h-6 bg-white/5 rounded animate-pulse" />
+      </div>
+    </Card>
+  );
+}
+
 interface QuickLinkCardProps {
   href: string;
   icon: string;
@@ -434,6 +433,25 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
         {title}
       </p>
       <p className="text-xs text-white/40">{subtitle}</p>
+    </Link>
+  );
+}
+
+function ArcadeQuickLinkCard() {
+  return (
+    <Link
+      href="/arcade"
+      className="block p-4 bg-white/5 rounded-lg hover:bg-white/8 hover:border-[#BF5700] border border-transparent transition-all group"
+    >
+      <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-[var(--bsi-gold,#D4A843)]" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="2" y="6" width="20" height="12" rx="2" />
+        <circle cx="9" cy="12" r="2" />
+        <path d="M15 10v4M13 12h4" />
+      </svg>
+      <p className="font-semibold text-white group-hover:text-[#BF5700] transition-colors text-sm">
+        Arcade
+      </p>
+      <p className="text-xs text-white/40">Mini-games</p>
     </Link>
   );
 }
@@ -477,6 +495,37 @@ function RefreshIcon() {
       <path d="M23 4v6h-6" />
       <path d="M1 20v-6h6" />
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+    </svg>
+  );
+}
+
+/** Circular countdown ring — fills clockwise as the timer ticks down */
+function CountdownRing({ seconds, total }: { seconds: number; total: number }) {
+  const radius = 10;
+  const circumference = 2 * Math.PI * radius;
+  const progress = seconds / total;
+  const dashOffset = circumference * (1 - progress);
+
+  return (
+    <svg className="w-7 h-7" viewBox="0 0 24 24">
+      {/* Background track */}
+      <circle cx="12" cy="12" r={radius} fill="none" stroke="currentColor" strokeWidth="2" opacity="0.1" />
+      {/* Progress arc */}
+      <circle
+        cx="12" cy="12" r={radius}
+        fill="none"
+        stroke="#BF5700"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        strokeDashoffset={dashOffset}
+        className="transition-[stroke-dashoffset] duration-1000 ease-linear"
+        style={{ transform: 'rotate(-90deg)', transformOrigin: 'center' }}
+      />
+      {/* Center text */}
+      <text x="12" y="12" textAnchor="middle" dominantBaseline="central" fill="currentColor" fontSize="7" fontFamily="monospace">
+        {seconds}
+      </text>
     </svg>
   );
 }
