@@ -27,17 +27,30 @@ import {
 } from '../../lib/api-clients/sportsdataio-api';
 import type { BSIScoreboardResult } from '../../lib/api-clients/espn-types';
 import { fetchWithFallback } from '../../lib/api-clients/data-fetcher';
+import { getSeasonPhase } from '../../lib/season';
+
+/** Map BSI season phase to ESPN seasontype query param. */
+function getESPNSeasonType(date?: Date): number | undefined {
+  const season = getSeasonPhase('mlb', date ?? new Date());
+  switch (season.phase) {
+    case 'preseason': return 1; // Spring Training
+    case 'regular': return 2;
+    case 'postseason': return 3;
+    default: return undefined; // offseason — let ESPN decide
+  }
+}
 
 export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
   const date = url.searchParams.get('date') || undefined;
   const dateKey = date?.replace(/-/g, '') || 'today';
-  const cacheKey = `mlb:scores:${dateKey}`;
+  const seasonType = getESPNSeasonType(date ? new Date(date) : undefined);
+  const cacheKey = `mlb:scores:${dateKey}:st${seasonType ?? 'auto'}`;
   const sdio = getSDIOClient(env);
 
   if (sdio) {
     const result = await fetchWithFallback(
       async () => transformSDIOMLBScores(await sdio.getMLBScores(date)),
-      async () => transformScoreboard(await getScoreboard('mlb', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
+      async () => transformScoreboard(await getScoreboard('mlb', toDateString(date), seasonType) as Record<string, unknown>) as unknown as BSIScoreboardResult,
       cacheKey, env.KV, CACHE_TTL.scores,
     );
     return cachedJson(result.data, 200, HTTP_CACHE.scores, {
@@ -49,7 +62,7 @@ export async function handleMLBScores(url: URL, env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.scores, { 'X-Cache': 'HIT' });
 
-  const raw = await getScoreboard('mlb', toDateString(date));
+  const raw = await getScoreboard('mlb', toDateString(date), seasonType);
   const payload = transformScoreboard(raw as Record<string, unknown>);
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
   return cachedJson(payload, 200, HTTP_CACHE.scores, { 'X-Cache': 'MISS' });

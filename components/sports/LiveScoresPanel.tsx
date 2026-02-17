@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Sport } from './SportTabs';
 
 interface GameScore {
@@ -18,11 +18,62 @@ interface LiveScoresPanelProps {
   className?: string;
 }
 
+/**
+ * Normalize game data from multiple API formats into a flat GameScore array.
+ *
+ * Handles three response shapes:
+ * 1. Transformed: { games: [...] } with flattened teams[] (MLB, NFL, NBA via ESPN transform)
+ * 2. Scoreboard:  { scoreboard: { games: [...] } } (NBA via SportsDataIO)
+ * 3. Raw ESPN:    { data: [...events] } with competitions[].competitors[] (College Baseball)
+ */
 function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[] {
   const scoreboard = data.scoreboard as Record<string, unknown> | undefined;
+
+  // Shape 3: College baseball raw ESPN format — { data: [...events] }
+  const rawData = data.data as Record<string, unknown>[] | undefined;
+  if (Array.isArray(rawData) && rawData.length > 0 && rawData[0].competitions) {
+    return rawData.map((event, i) => {
+      const competitions = event.competitions as Record<string, unknown>[] | undefined;
+      const comp = competitions?.[0] as Record<string, unknown> | undefined;
+      const competitors = (comp?.competitors || []) as Record<string, unknown>[];
+
+      const homeComp = competitors.find((c) => c.homeAway === 'home');
+      const awayComp = competitors.find((c) => c.homeAway === 'away');
+      const homeTeam = (homeComp?.team || {}) as Record<string, unknown>;
+      const awayTeam = (awayComp?.team || {}) as Record<string, unknown>;
+
+      const status = (comp?.status || event.status || {}) as Record<string, unknown>;
+      const statusType = status?.type as Record<string, unknown> | undefined;
+
+      const isLive = statusType?.state === 'in';
+      const isFinal = statusType?.state === 'post' || statusType?.completed === true;
+      const statusText = (statusType?.shortDetail as string)
+        || (statusType?.description as string)
+        || 'Scheduled';
+
+      return {
+        id: (event.id as string | number) || i,
+        away: {
+          name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
+          abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
+          score: Number(awayComp?.score ?? 0),
+        },
+        home: {
+          name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
+          abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
+          score: Number(homeComp?.score ?? 0),
+        },
+        status: statusText,
+        isLive: Boolean(isLive),
+        isFinal: Boolean(isFinal),
+        detail: undefined,
+      };
+    });
+  }
+
+  // Shapes 1 & 2: Transformed/scoreboard format
   const rawGames = (data.games || scoreboard?.games || []) as Record<string, unknown>[];
   return rawGames.map((g: Record<string, unknown>, i: number) => {
-    // ESPN returns teams as array with homeAway field, or as { home, away } object
     const rawTeams = g.teams as Record<string, unknown>[] | Record<string, Record<string, unknown>> | undefined;
     let homeEntry: Record<string, unknown> | undefined;
     let awayEntry: Record<string, unknown> | undefined;
@@ -75,12 +126,26 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
   });
 }
 
+function getYesterdayDateString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
 export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps) {
   const [games, setGames] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isYesterday, setIsYesterday] = useState(false);
   const gamesRef = useRef(games);
   gamesRef.current = games;
+
+  const buildEndpoint = useCallback((dateParam?: string) => {
+    const origin = process.env.NEXT_PUBLIC_API_BASE || '';
+    const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
+    const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
+    return dateParam ? `${endpoint}?date=${dateParam}` : endpoint;
+  }, [sport]);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,17 +153,38 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
     async function fetchScores() {
       setLoading(true);
       setError(null);
-
-      const origin = process.env.NEXT_PUBLIC_API_BASE || '';
-      const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
-      const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
+      setIsYesterday(false);
 
       try {
-        const res = await fetch(endpoint);
+        // Try today first
+        const res = await fetch(buildEndpoint());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        const todayGames = normalizeGames(sport, data as Record<string, unknown>);
+
         if (!cancelled) {
-          setGames(normalizeGames(sport, data as Record<string, unknown>));
+          if (todayGames.length > 0) {
+            setGames(todayGames);
+          } else {
+            // No games today — try yesterday as fallback
+            try {
+              const yRes = await fetch(buildEndpoint(getYesterdayDateString()));
+              if (yRes.ok) {
+                const yData = await yRes.json();
+                const yGames = normalizeGames(sport, yData as Record<string, unknown>);
+                if (yGames.length > 0) {
+                  setGames(yGames);
+                  setIsYesterday(true);
+                } else {
+                  setGames([]);
+                }
+              } else {
+                setGames([]);
+              }
+            } catch {
+              setGames([]);
+            }
+          }
         }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load scores');
@@ -115,12 +201,14 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       cancelled = true;
       clearInterval(interval);
     };
-  }, [sport]);
+  }, [sport, buildEndpoint]);
 
   return (
-    <div className={`bg-white/5 border border-white/10 rounded-xl ${className}`}>
-      <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Live Scores</h3>
+    <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
+      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white">
+          {isYesterday ? "Yesterday's Results" : 'Live Scores'}
+        </h3>
         <span className="text-xs text-white/40 uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
       <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
@@ -137,7 +225,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-white/40 text-sm">No games scheduled today</p>
+            <p className="text-white/40 text-sm">No games scheduled</p>
           </div>
         ) : (
           games.map((game) => (

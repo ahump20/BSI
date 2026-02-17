@@ -7,3 +7,4 @@ export { StatsBand } from './StatsBand';
 export { OriginStory } from './OriginStory';
 export { CovenantValues } from './CovenantValues';
 export { CtaSection } from './CtaSection';
+export { AboutSection } from './AboutSection';

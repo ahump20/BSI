@@ -51,9 +51,13 @@ async function espnFetch<T>(path: string, opts?: FetchOptions): Promise<T> {
 export async function getScoreboard(
   sport: ESPNSport,
   date?: string,
+  seasonType?: number,
 ): Promise<unknown> {
   const sportPath = SPORT_PATHS[sport];
-  const qs = date ? `?dates=${date.replace(/-/g, '')}` : '';
+  const params = new URLSearchParams();
+  if (date) params.set('dates', date.replace(/-/g, ''));
+  if (seasonType) params.set('seasontype', String(seasonType));
+  const qs = params.toString() ? `?${params.toString()}` : '';
   const raw = await espnFetch(`${sportPath}/scoreboard${qs}`);
   return validateApiResponse(EspnScoreboardSchema, raw, 'espn', `${sport}/scoreboard`);
 }

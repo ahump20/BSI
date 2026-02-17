@@ -3,10 +3,7 @@ import {
   HomeLiveScores,
   SportHubCards,
   TrendingIntelFeed,
-  ArcadeSpotlight,
-  StatsBand,
-  OriginStory,
-  CovenantValues,
+  AboutSection,
   CtaSection,
 } from '@/components/home';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -20,10 +17,10 @@ export const metadata = {
 export default function HomePage() {
   return (
     <main id="main-content" className="min-h-screen bg-[#0D0D12]">
-      {/* 1. Hero — cinematic video (desktop) / emblem (mobile) */}
+      {/* 1. Hero — reduced height so live data is visible faster */}
       <HeroSection />
 
-      {/* 2. Live Scores Hub */}
+      {/* 2. Live Scores Hub — season-aware tabs */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <HomeLiveScores />
@@ -47,26 +44,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Stats Band — trust metrics */}
-      <StatsBand />
+      {/* 4. About — merged origin story + values */}
+      <AboutSection />
 
-      {/* 5. Origin Story — editorial */}
-      <OriginStory />
-
-      {/* 6. Covenant / Values */}
-      <CovenantValues />
-
-      {/* 7. Arcade Spotlight */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-display text-white mb-10 uppercase tracking-wide">
-            <span className="text-gradient-brand">Arcade</span>
-          </h2>
-          <ArcadeSpotlight />
-        </div>
-      </section>
-
-      {/* 8. Final CTA */}
+      {/* 5. Final CTA */}
       <CtaSection />
 
       <Footer />

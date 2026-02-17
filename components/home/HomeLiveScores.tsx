@@ -1,23 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LiveScoresPanel } from '@/components/sports/LiveScoresPanel';
 import type { Sport } from '@/components/sports/SportTabs';
+import { getActiveSports, type SportKey } from '@/lib/season';
 
 /**
- * Homepage live scores widget with sport-switching tabs
- * Defaults to NCAA (college baseball) per BSI sports priority
+ * Homepage live scores widget with sport-switching tabs.
+ * Only shows tabs for in-season sports — no empty "No games today" for off-season sports.
  */
 
-const sports: { id: Sport; name: string; icon: string }[] = [
-  { id: 'ncaa', name: 'College Baseball', icon: '🎓' },
-  { id: 'mlb', name: 'MLB', icon: '⚾' },
-  { id: 'nfl', name: 'NFL', icon: '🏈' },
-  { id: 'nba', name: 'NBA', icon: '🏀' },
-];
+const SPORT_MAP: Record<SportKey, { id: Sport; name: string }> = {
+  ncaa: { id: 'ncaa', name: 'College Baseball' },
+  mlb: { id: 'mlb', name: 'MLB' },
+  nfl: { id: 'nfl', name: 'NFL' },
+  nba: { id: 'nba', name: 'NBA' },
+  cfb: { id: 'ncaa', name: 'CFB' }, // CFB doesn't have a separate scoreboard
+};
 
 export function HomeLiveScores() {
-  // Default to college baseball (BSI differentiator)
+  const activeSports = useMemo(() => {
+    const all = getActiveSports();
+    // Only show sports that are in-season and have a scoreboard
+    const inSeason = all
+      .filter((s) => s.phase !== 'offseason' && s.sport !== 'cfb') // CFB shares NCAA endpoint
+      .map((s) => SPORT_MAP[s.sport])
+      .filter(Boolean);
+
+    // Always have at least college baseball + one more
+    if (inSeason.length === 0) {
+      return [SPORT_MAP.ncaa, SPORT_MAP.mlb];
+    }
+
+    // Ensure college baseball is first (BSI flagship)
+    const ncaaIdx = inSeason.findIndex((s) => s.id === 'ncaa');
+    if (ncaaIdx > 0) {
+      const [ncaa] = inSeason.splice(ncaaIdx, 1);
+      inSeason.unshift(ncaa);
+    }
+
+    return inSeason;
+  }, []);
+
+  // Default to college baseball — BSI's flagship sport
   const [activeSport, setActiveSport] = useState<Sport>('ncaa');
 
   return (
@@ -28,9 +53,9 @@ export function HomeLiveScores() {
         style={{ background: 'linear-gradient(90deg, transparent, #BF5700, #FF6B35, #FDB913, transparent)' }}
       />
 
-      {/* Sport Tabs — Raycast pill style */}
+      {/* Sport Tabs — pill style */}
       <div className="flex flex-wrap gap-2 mb-6">
-        {sports.map((sport) => (
+        {activeSports.map((sport) => (
           <button
             key={sport.id}
             onClick={() => setActiveSport(sport.id)}
@@ -49,8 +74,8 @@ export function HomeLiveScores() {
             }
             aria-pressed={activeSport === sport.id}
           >
-            <span>{sport.icon}</span>
             <span className="hidden sm:inline">{sport.name}</span>
+            <span className="sm:hidden">{sport.name === 'College Baseball' ? 'CBB' : sport.name}</span>
           </button>
         ))}
       </div>

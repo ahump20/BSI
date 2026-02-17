@@ -4,26 +4,17 @@ import Link from 'next/link';
 
 /**
  * HeroSection — cinematic landing hero with gradient background.
+ * Reduced from min-h-screen to min-h-[70vh] so live scores are visible faster.
  */
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated gradient background */}
+    <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* Gradient background */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
             'radial-gradient(ellipse at 50% 50%, rgba(191,87,0,0.15) 0%, rgba(13,13,18,1) 70%)',
-        }}
-      />
-
-      {/* Grid pattern overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] z-[1]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
         }}
       />
 

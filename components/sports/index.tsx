@@ -66,11 +66,12 @@ interface BottomNavItem {
   icon?: string;
 }
 
+/** @deprecated Use BottomNavWrapper for season-aware items instead */
 export const DEFAULT_NAV_ITEMS: BottomNavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
+  { label: 'CBB', href: '/college-baseball' },
   { label: 'More', href: '/dashboard' },
 ];
 

@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
+// Navbar is rendered by the root layout — no page-level import needed
 import { Footer } from '@/components/layout-ds/Footer';
 
 const colors = {
@@ -161,7 +161,7 @@ const dataSources = [
 export default function CoveragePage() {
   return (
     <main className="min-h-screen bg-midnight text-cream">
-      <Navbar items={navItems} />
+      {/* Navbar provided by root layout */}
 
       {/* Hero Section */}
       <Section className="pt-32 pb-16 bg-gradient-to-b from-charcoal to-midnight">
