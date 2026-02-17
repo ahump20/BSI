@@ -99,6 +99,8 @@ import {
   handleMMILive,
   handleMMIGame,
   handleMMITrending,
+  handleWinProbExample,
+  handleMonteCarloExample,
 } from './handlers/analytics';
 import {
   handleLeaderboard,
@@ -115,6 +117,7 @@ import {
   handleIntelNews,
   handleESPNNews,
   handleModelHealth,
+  handleWeeklyBrief,
   handlePredictionSubmit,
   handlePredictionAccuracy,
   handleAnalyticsEvent,
@@ -352,6 +355,13 @@ app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
 
 // --- Model Health ---
 app.get('/api/model-health', (c) => handleModelHealth(c.env));
+
+// --- Model Examples ---
+app.get('/api/models/win-probability/example', (c) => handleWinProbExample(c.env));
+app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env));
+
+// --- Intel Weekly Brief ---
+app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
