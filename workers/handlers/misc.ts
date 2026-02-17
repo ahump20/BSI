@@ -75,9 +75,13 @@ export async function handleContact(request: Request, env: Env): Promise<Respons
 
     const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
 
-    // Turnstile verification (optional — only enforced when secret is configured)
+    // Turnstile verification — required when secret is configured
     let turnstileVerified = false;
-    if (env.TURNSTILE_SECRET_KEY && body.turnstileToken) {
+    if (env.TURNSTILE_SECRET_KEY) {
+      if (!body.turnstileToken) {
+        emitOpsEvent(env, 'turnstile_missing', [clientIP, body.site || 'unknown']);
+        return json({ error: 'Bot verification required. Please complete the challenge.' }, 403);
+      }
       turnstileVerified = await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET_KEY, clientIP);
       if (!turnstileVerified) {
         emitOpsEvent(env, 'turnstile_failure', [clientIP, body.site || 'unknown']);

@@ -357,6 +357,20 @@ describe('workers/index.ts route handlers', () => {
       expect(res.status).toBe(200);
       expect(body.success).toBe(true);
     });
+
+    it('rejects missing Turnstile token when secret is configured', async () => {
+      const tsEnv = createMockEnv({ TURNSTILE_SECRET_KEY: 'test-secret' });
+      const req = new Request('https://blazesportsintel.com/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Test', email: 'test@example.com', message: 'Hello' }),
+      });
+      const res = await worker.fetch(req, tsEnv);
+      const body = await res.json() as any;
+
+      expect(res.status).toBe(403);
+      expect(body.error).toContain('Bot verification required');
+    });
   });
 
   // -----------------------------------------------------------------------
