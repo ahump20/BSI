@@ -9,11 +9,9 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Footer } from '@/components/layout-ds/Footer';
 
-const colors = {
-  dirt: '#3E2C1C',
   clay: '#C4703F',
   chalk: '#F5F0E8',
-  field: '#2D5A27',
+  chalkDim: '#E8E0D2',
   midnight: '#111111',
   gold: '#D4A843',
   hotCoral: '#FF4D4D',
