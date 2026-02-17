@@ -1,6 +1,5 @@
 import {
   HeroSection,
-  StatsBand,
   HomeLiveScores,
   SportHubCards,
   TrendingIntelFeed,
@@ -20,9 +19,6 @@ export default function HomePage() {
     <main id="main-content" className="min-h-screen bg-[#0D0D12]">
       {/* 1. Hero — reduced height so live data is visible faster */}
       <HeroSection />
-
-      {/* 1.5. Trust metrics — animated counters */}
-      <StatsBand />
 
       {/* 2. Live Scores Hub — season-aware tabs */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
