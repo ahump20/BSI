@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Dashboard | BSI',
@@ -8,5 +9,17 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  return <div data-sport="dashboard">{children}</div>;
+  return (
+    <div data-sport="dashboard">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://blazesportsintel.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Dashboard' },
+        ],
+      }} />
+      {children}
+    </div>
+  );
 }
