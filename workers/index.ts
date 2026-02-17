@@ -16,7 +16,7 @@ import type { Env } from './shared/types';
 import { SECURITY_HEADERS, GHOST_REDIRECTS } from './shared/constants';
 import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
-import { checkInMemoryRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
+import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
 
 // --- Handlers ---
@@ -33,6 +33,11 @@ import {
   handleCollegeBaseballNews,
   handleCollegeBaseballPlayersList,
   handleCollegeBaseballTransferPortal,
+  handleCollegeBaseballEditorialList,
+  handleCollegeBaseballEditorialContent,
+  handleCollegeBaseballNewsEnhanced,
+  handleCollegeBaseballPlayerCompare,
+  handleCollegeBaseballTrends,
 } from './handlers/college-baseball';
 
 import {
@@ -95,6 +100,9 @@ import {
   handleModelHealth,
   handlePredictionSubmit,
   handlePredictionAccuracy,
+  handleAnalyticsEvent,
+  handleContact,
+  handleCSPReport,
 } from './handlers/misc';
 
 // =============================================================================
@@ -103,6 +111,39 @@ import {
 
 
 const app = new Hono<{ Bindings: Env }>();
+
+// --- Middleware: www → apex canonical redirect ---
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url);
+  if (url.hostname === 'www.blazesportsintel.com') {
+    url.hostname = 'blazesportsintel.com';
+    return new Response(null, { status: 301, headers: { Location: url.toString() } });
+  }
+  await next();
+});
+
+// --- Middleware: Trailing slash normalization (static page paths only) ---
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url);
+  const path = url.pathname;
+  // Only redirect page-like paths — skip API, WebSocket, health, MCP, file extensions
+  if (
+    path === '/' ||
+    path.startsWith('/api/') ||
+    path.startsWith('/_csp/') ||
+    path.startsWith('/_next/') ||
+    path === '/ws' ||
+    path === '/health' ||
+    path === '/mcp' ||
+    path.endsWith('/') ||
+    path.includes('.')
+  ) {
+    await next();
+    return;
+  }
+  url.pathname = path + '/';
+  return new Response(null, { status: 301, headers: { Location: url.toString() } });
+});
 
 // --- Middleware: CORS ---
 app.use('*', async (c, next) => {
@@ -131,7 +172,12 @@ app.use('/api/*', async (c, next) => {
   const ip = c.req.header('cf-connecting-ip') || 'unknown';
   maybeCleanupRateLimit();
   if (!checkInMemoryRateLimit(ip)) {
+    console.warn('[rate-limit]', ip);
     return c.json({ error: 'Rate limit exceeded. Try again shortly.' }, 429);
+  }
+  // Tighter limit for POST endpoints (10/min vs 120/min)
+  if (c.req.method === 'POST' && !checkPostRateLimit(ip)) {
+    return c.json({ error: 'Too many submissions. Try again shortly.' }, 429);
   }
   await next();
 });
@@ -184,13 +230,24 @@ app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c
 app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
 app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
+app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsEnhanced(c.env));
 app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
 app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
+app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
+app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
+app.get('/api/college-baseball/scores/ws', (c) => {
+  if (c.req.header('Upgrade') !== 'websocket') {
+    return c.json({ error: 'Expected websocket upgrade' }, 400);
+  }
+  return c.json({ error: 'WebSocket scores available at bsi-live-scores worker', redirect: true }, 501);
+});
 
 // --- CFB ---
 app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
@@ -263,8 +320,14 @@ app.get('/api/model-health', (c) => handleModelHealth(c.env));
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
 app.get('/api/predictions/accuracy', (c) => handlePredictionAccuracy(c.env));
 
+// --- Analytics ---
+app.post('/api/analytics/event', (c) => handleAnalyticsEvent(c.req.raw, c.env));
+
 // --- Feedback ---
 app.post('/api/feedback', (c) => handleFeedback(c.req.raw, c.env));
+
+// --- CSP Reports ---
+app.post('/_csp/report', (c) => handleCSPReport(c.req.raw, c.env));
 
 // --- Leaderboard ---
 app.get('/api/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));
@@ -276,7 +339,8 @@ app.post('/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c
 app.get('/api/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
 app.get('/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
 
-// --- Lead capture ---
+// --- Contact + Lead capture ---
+app.post('/api/contact', (c) => handleContact(c.req.raw, c.env));
 app.post('/api/lead', (c) => handleLead(c.req.raw, c.env));
 app.post('/api/leads', (c) => handleLead(c.req.raw, c.env));
 

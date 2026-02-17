@@ -3,6 +3,162 @@ import { json, cachedJson, kvGet, kvPut, isValidEmail, checkRateLimit } from '..
 import { HTTP_CACHE, CACHE_TTL, LEAD_TTL_SECONDS, ESPN_NEWS_ENDPOINTS, INTEL_ESPN_NEWS } from '../shared/constants';
 import { getTeams as espnGetTeams, transformTeams, type ESPNSport } from '../../lib/api-clients/espn-api';
 
+// =============================================================================
+// Turnstile verification
+// =============================================================================
+
+const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+
+export async function verifyTurnstile(token: string, secret: string, ip?: string): Promise<boolean> {
+  try {
+    const body: Record<string, string> = { secret, response: token };
+    if (ip) body.remoteip = ip;
+    const res = await fetch(TURNSTILE_VERIFY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(body).toString(),
+    });
+    const result = await res.json() as { success: boolean };
+    return result.success === true;
+  } catch {
+    return false;
+  }
+}
+
+// =============================================================================
+// Analytics Engine helpers
+// =============================================================================
+
+function emitOpsEvent(
+  env: Env,
+  event: string,
+  blobs: string[] = [],
+  doubles: number[] = [],
+): void {
+  if (!env.OPS_EVENTS) return;
+  try {
+    env.OPS_EVENTS.writeDataPoint({
+      indexes: [event],
+      blobs,
+      doubles,
+    });
+  } catch {
+    // Non-fatal — analytics should never break a request
+  }
+}
+
+// =============================================================================
+// Contact form handler (portfolio + general)
+// =============================================================================
+
+export async function handleContact(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = (await request.json()) as {
+      name?: string;
+      email?: string;
+      message?: string;
+      site?: string;
+      turnstileToken?: string;
+    };
+
+    if (!body.name || !body.email || !body.message) {
+      return json({ error: 'Name, email, and message are required' }, 400);
+    }
+
+    if (!isValidEmail(body.email)) {
+      return json({ error: 'Invalid email address' }, 400);
+    }
+
+    if (body.name.length > 200 || body.message.length > 5000) {
+      return json({ error: 'Input exceeds maximum length' }, 400);
+    }
+
+    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+    // Turnstile verification (optional — only enforced when secret is configured)
+    let turnstileVerified = false;
+    if (env.TURNSTILE_SECRET_KEY && body.turnstileToken) {
+      turnstileVerified = await verifyTurnstile(body.turnstileToken, env.TURNSTILE_SECRET_KEY, clientIP);
+      if (!turnstileVerified) {
+        emitOpsEvent(env, 'turnstile_failure', [clientIP, body.site || 'unknown']);
+        return json({ error: 'Bot verification failed. Please try again.' }, 403);
+      }
+    }
+
+    const site = body.site || 'unknown';
+
+    // D1 primary store
+    if (env.DB) {
+      try {
+        await env.DB
+          .prepare(
+            `INSERT INTO contact_submissions (site, name, email, message, ip, turnstile_verified, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+          )
+          .bind(site, body.name, body.email, body.message, clientIP, turnstileVerified ? 1 : 0)
+          .run();
+      } catch {
+        // D1 failure is non-fatal — KV backup below
+      }
+    }
+
+    // KV backup with 90-day TTL
+    if (env.KV) {
+      const key = `contact:${Date.now()}:${body.email}`;
+      await env.KV.put(key, JSON.stringify({
+        site,
+        name: body.name,
+        email: body.email,
+        message: body.message,
+        ip: clientIP,
+        turnstile_verified: turnstileVerified,
+        created_at: new Date().toISOString(),
+      }), { expirationTtl: 90 * 24 * 60 * 60 });
+    }
+
+    emitOpsEvent(env, 'contact_submission', [site, body.email]);
+
+    return json({
+      success: true,
+      message: 'Message received. Austin will get back to you.',
+    });
+  } catch {
+    return json({ error: 'Failed to process contact form' }, 500);
+  }
+}
+
+// =============================================================================
+// CSP report endpoint
+// =============================================================================
+
+export async function handleCSPReport(request: Request, env: Env): Promise<Response> {
+  try {
+    const reportText = await request.text();
+    const userAgent = request.headers.get('User-Agent') || 'unknown';
+    const host = request.headers.get('Host') || 'unknown';
+
+    if (env.DB) {
+      try {
+        await env.DB
+          .prepare(
+            `INSERT INTO csp_reports (site, user_agent, report_json, created_at)
+             VALUES (?, ?, ?, datetime('now'))`
+          )
+          .bind(host, userAgent, reportText)
+          .run();
+      } catch {
+        // Non-fatal
+      }
+    }
+
+    emitOpsEvent(env, 'csp_report', [host, userAgent]);
+  } catch {
+    // CSP reports should never fail the response
+  }
+
+  return new Response(null, { status: 204 });
+}
+
 /**
  * /api/teams/:league — Pull team list from ESPN for the requested league.
  */
@@ -30,7 +186,8 @@ export async function handleTeams(league: string, env: Env): Promise<Response> {
     }));
     await kvPut(env.KV, cacheKey, result, CACHE_TTL.standings);
     return json(result, 200, { 'X-Cache': 'MISS' });
-  } catch {
+  } catch (err) {
+    console.error('[teams] ESPN fetch failed:', err instanceof Error ? err.message : err);
     return json([], 200);
   }
 }
@@ -66,10 +223,12 @@ export async function handleLead(request: Request, env: Env): Promise<Response> 
     // Rate limit POST endpoints
     const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
     if (env.KV && !(await checkRateLimit(env.KV, clientIP))) {
+      console.warn('[rate-limit] lead:', clientIP);
       return json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const consentedAt = new Date().toISOString();
+    emitOpsEvent(env, 'lead_submission', [lead.email, lead.source || 'API']);
 
     if (env.KV) {
       const key = `lead:${Date.now()}:${lead.email}`;
@@ -97,8 +256,8 @@ export async function handleLead(request: Request, env: Env): Promise<Response> 
             lead.source ?? 'API'
           )
           .run();
-      } catch {
-        // KV is the primary store; D1 failure is non-fatal
+      } catch (err) {
+        console.error('[leads] D1 write failed:', err instanceof Error ? err.message : err);
       }
     }
 
@@ -132,6 +291,7 @@ export async function handleFeedback(request: Request, env: Env): Promise<Respon
     // Rate limit feedback submissions
     const fbIP = request.headers.get('CF-Connecting-IP') || 'unknown';
     if (env.KV && !(await checkRateLimit(env.KV, fbIP))) {
+      console.warn('[rate-limit] feedback:', fbIP);
       return json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
@@ -144,15 +304,17 @@ export async function handleFeedback(request: Request, env: Env): Promise<Respon
           )
           .bind(body.rating ?? null, body.category ?? null, body.text, body.page ?? null)
           .run();
-      } catch {
-        // D1 table may not exist yet; fall through to KV
+      } catch (err) {
+        console.error('[feedback] D1 write failed:', err instanceof Error ? err.message : err);
       }
     }
 
-    const key = `feedback:${Date.now()}`;
-    await env.KV.put(key, JSON.stringify({ ...body, timestamp: new Date().toISOString() }), {
-      expirationTtl: 86400 * 90, // 90 days
-    });
+    if (env.KV) {
+      const key = `feedback:${Date.now()}`;
+      await env.KV.put(key, JSON.stringify({ ...body, timestamp: new Date().toISOString() }), {
+        expirationTtl: 86400 * 90, // 90 days
+      });
+    }
 
     return json({ success: true, message: 'Feedback received' });
   } catch {
@@ -274,19 +436,13 @@ export async function handleModelHealth(env: Env): Promise<Response> {
     const payload = { weeks, lastUpdated: new Date().toISOString() };
     await kvPut(env.KV, cacheKey, payload, 600);
     return cachedJson(payload, 200, 600, { 'X-Cache': 'MISS' });
-  } catch {
-    // Return placeholder if table doesn't exist yet
-    const placeholder = {
-      weeks: [
-        { week: 'W1', accuracy: 0.72, sport: 'all', recordedAt: new Date().toISOString() },
-        { week: 'W2', accuracy: 0.74, sport: 'all', recordedAt: new Date().toISOString() },
-        { week: 'W3', accuracy: 0.71, sport: 'all', recordedAt: new Date().toISOString() },
-        { week: 'W4', accuracy: 0.76, sport: 'all', recordedAt: new Date().toISOString() },
-      ],
+  } catch (err) {
+    console.error('[model-health] D1 query failed:', err instanceof Error ? err.message : err);
+    return json({
+      weeks: [],
       lastUpdated: new Date().toISOString(),
-      note: 'Using placeholder data - model_health table not yet initialized',
-    };
-    return json(placeholder, 200);
+      note: 'Model health data temporarily unavailable',
+    }, 503);
   }
 }
 
@@ -311,6 +467,30 @@ export async function handlePredictionSubmit(request: Request, env: Env): Promis
   } catch {
     return json({ error: 'Failed to record prediction' }, 500);
   }
+}
+
+export async function handleAnalyticsEvent(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = await request.json() as { event?: string; properties?: Record<string, unknown> };
+    if (!body?.event) {
+      return new Response(null, { status: 204 });
+    }
+
+    // Prefer Analytics Engine for structured, queryable event tracking
+    if (env.OPS_EVENTS) {
+      emitOpsEvent(env, body.event, [
+        JSON.stringify(body.properties || {}).slice(0, 256),
+      ]);
+    } else {
+      // Fallback to KV if Analytics Engine not bound
+      const date = new Date().toISOString().slice(0, 10);
+      const uid = Math.random().toString(36).slice(2, 10);
+      await kvPut(env.KV, `analytics:${date}:${body.event}:${uid}`, body, 2592000);
+    }
+  } catch (err) {
+    console.error('[analytics]', err instanceof Error ? err.message : err);
+  }
+  return new Response(null, { status: 204 });
 }
 
 export async function handlePredictionAccuracy(env: Env): Promise<Response> {
@@ -360,11 +540,12 @@ export async function handlePredictionAccuracy(env: Env): Promise<Response> {
 
     await kvPut(env.KV, cacheKey, payload, 300);
     return cachedJson(payload, 200, 300, { 'X-Cache': 'MISS' });
-  } catch {
+  } catch (err) {
+    console.error('[predictions] D1 query failed:', err instanceof Error ? err.message : err);
     return json({
       overall: { total: 0, correct: 0, accuracy: 0 },
       bySport: {},
-      note: 'Predictions table not yet initialized or no data available',
-    }, 200);
+      note: 'Predictions data temporarily unavailable',
+    }, 503);
   }
 }
