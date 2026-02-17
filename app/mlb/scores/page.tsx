@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -73,20 +72,47 @@ function getDateOffset(offset: number): string {
 }
 
 export default function MLBScoresPage() {
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<DataMeta | null>(null);
+  const [hasLiveGames, setHasLiveGames] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
-  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const { data: rawData, loading, error, retry } = useSportData<{ games?: Game[]; live?: boolean; meta?: DataMeta }>(
-    `/api/mlb/scores?date=${selectedDate}`,
-    { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
-  );
+  const fetchScores = useCallback(async (date: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/mlb/scores?date=${date}`);
+      if (!res.ok) throw new Error('Failed to fetch scores');
+      const data = (await res.json()) as { games?: Game[]; live?: boolean; meta?: DataMeta };
 
-  const games = useMemo(() => rawData?.games || [], [rawData]);
-  const hasLiveGames = useMemo(() => rawData?.live || games.some((g) => g.status.isLive), [rawData, games]);
-  const meta = rawData?.meta || null;
+      if (data.games) {
+        setGames(data.games);
+        setHasLiveGames(data.live || false);
+      }
+      if (data.meta) {
+        setMeta(data.meta);
+      }
+      setLoading(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      setLoading(false);
+    }
+  }, []);
 
-  // Sync live detection to enable auto-refresh
-  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+  useEffect(() => {
+    fetchScores(selectedDate);
+  }, [selectedDate, fetchScores]);
+
+  // Auto-refresh for live games
+  useEffect(() => {
+    if (hasLiveGames) {
+      const interval = setInterval(() => fetchScores(selectedDate), 30000);
+      return () => clearInterval(interval);
+    }
+  }, [hasLiveGames, selectedDate, fetchScores]);
 
   // Date navigation
   const dateOptions = [
@@ -350,7 +376,7 @@ export default function MLBScoresPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={() => retry()}
+                  onClick={() => fetchScores(selectedDate)}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

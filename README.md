@@ -46,14 +46,6 @@ Built as a fully static Next.js 16 site deployed to Cloudflare Pages, with Cloud
 
 ## Getting Started
 
-### Quick Start with GitHub Codespaces
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ahump20/BSI?quickstart=1)
-
-Click the badge above to create a pre-configured cloud development environment. Everything is set up automatically—Node.js, dependencies, Wrangler CLI, and VS Code extensions. See [`.github/CODESPACES.md`](.github/CODESPACES.md) for details.
-
-### Local Development
-
 ```bash
 git clone <repo-url>
 cd BSI
@@ -72,16 +64,6 @@ Optional:
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_ENABLE_PRESENCE_COACH=false
 ```
-
-Optional provider keys (recommended for advanced data ingest):
-
-```
-SPORTRADAR_API_KEY=replace_with_real_key
-SKILLCORNER_API_KEY=replace_with_real_key
-BIOMECHANICS_API_KEY=replace_with_real_key
-```
-
-Do not commit real values. Configure production keys with `scripts/configure-provider-secrets.sh` instead of storing long-lived secrets in git-tracked files.
 
 Start the dev server:
 
@@ -105,8 +87,6 @@ npm run dev
 | `npm run deploy:production` | Build + deploy to Cloudflare Pages (main) |
 | `npm run deploy:worker` | Deploy Cloudflare Worker |
 | `npm run deploy:hybrid` | Deploy both Pages + Worker |
-| `./scripts/configure-provider-secrets.sh --target pages --env production` | Interactive setup for provider keys in Cloudflare Pages secrets |
-| `./scripts/configure-provider-secrets.sh --target worker --env production` | Interactive setup for provider keys in Worker secrets (`workers/wrangler.toml`) |
 
 ## Project Structure
 
@@ -133,8 +113,6 @@ docs/                   # Infrastructure and operations docs
 ```
 
 Path alias: `@/*` maps to the project root.
-
-Provider setup runbook: `docs/runbooks/provider-keys-and-endpoints.md`
 
 ## Typography Note
 

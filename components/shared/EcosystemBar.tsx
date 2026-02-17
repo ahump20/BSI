@@ -34,7 +34,7 @@ export function EcosystemBar() {
     >
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between text-xs">
         <a
-          href="/arcade"
+          href="/"
           className="flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors"
         >
           {agentActive && (

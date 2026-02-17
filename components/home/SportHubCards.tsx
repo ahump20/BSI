@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { SportIcon } from '@/components/icons/SportIcon';
-import { isInSeason, getReturnMonth, type SportKey } from '@/lib/season';
 
 interface GameScore {
   id: string | number;
@@ -17,70 +16,27 @@ interface GameScore {
 }
 
 interface SportHub {
-  key: SportKey;
+  key: 'ncaa' | 'mlb' | 'nfl' | 'nba';
   name: string;
   href: string;
   accent: string;
   games: GameScore[];
   loading: boolean;
   error: boolean;
-  inSeason: boolean;
 }
 
-const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error' | 'inSeason'>[] = [
+const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error'>[] = [
   { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' },
   { key: 'mlb', name: 'MLB', href: '/mlb', accent: '#C41E3A' },
   { key: 'nfl', name: 'NFL', href: '/nfl', accent: '#013369' },
   { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' },
 ];
 
-/**
- * Normalize game data from multiple API formats.
- * Handles: { games: [...] }, { scoreboard: { games: [...] } }, { data: [...events] }
- */
 function normalizeGames(sport: string, data: Record<string, unknown>): GameScore[] {
   const scoreboard = data.scoreboard as Record<string, unknown> | undefined;
-
-  // College baseball raw ESPN format: { data: [...events] }
-  const rawData = data.data as Record<string, unknown>[] | undefined;
-  if (Array.isArray(rawData) && rawData.length > 0 && rawData[0].competitions) {
-    return rawData.map((event, i) => {
-      const competitions = event.competitions as Record<string, unknown>[] | undefined;
-      const comp = competitions?.[0] as Record<string, unknown> | undefined;
-      const competitors = (comp?.competitors || []) as Record<string, unknown>[];
-
-      const homeComp = competitors.find((c) => c.homeAway === 'home');
-      const awayComp = competitors.find((c) => c.homeAway === 'away');
-      const homeTeam = (homeComp?.team || {}) as Record<string, unknown>;
-      const awayTeam = (awayComp?.team || {}) as Record<string, unknown>;
-
-      const status = (comp?.status || event.status || {}) as Record<string, unknown>;
-      const statusType = status?.type as Record<string, unknown> | undefined;
-
-      return {
-        id: (event.id as string | number) || i,
-        away: {
-          name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
-          abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
-          score: Number(awayComp?.score ?? 0),
-        },
-        home: {
-          name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
-          abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
-          score: Number(homeComp?.score ?? 0),
-        },
-        status: (statusType?.shortDetail as string) || (statusType?.description as string) || 'Scheduled',
-        isLive: statusType?.state === 'in',
-        isFinal: statusType?.state === 'post' || statusType?.completed === true,
-        detail: undefined,
-        startTime: (statusType?.shortDetail as string) || undefined,
-      };
-    });
-  }
-
-  // Transformed/scoreboard format
   const rawGames = (data.games || scoreboard?.games || []) as Record<string, unknown>[];
   return rawGames.map((g: Record<string, unknown>, i: number) => {
+    // ESPN returns teams as array with homeAway field, or as { home, away } object
     const rawTeams = g.teams as Record<string, unknown>[] | Record<string, Record<string, unknown>> | undefined;
     let homeEntry: Record<string, unknown> | undefined;
     let awayEntry: Record<string, unknown> | undefined;
@@ -149,6 +105,12 @@ function getEndpoint(sport: string): string {
   return `${API_BASE}${sport === 'nba' ? `${base}/scoreboard` : `${base}/scores`}`;
 }
 
+// TODO (Austin): This is where you decide how to display the "next matchup"
+// when there are no live games. Options to consider:
+// - Show the next scheduled game's teams + start time
+// - Show "No games today" in off-season
+// - Show last final score as a fallback
+// The function signature and data are ready — just fill in the display logic.
 function getNextMatchup(games: GameScore[]): string | null {
   const upcoming = games.find((g) => !g.isLive && !g.isFinal);
   if (!upcoming) return null;
@@ -158,41 +120,27 @@ function getNextMatchup(games: GameScore[]): string | null {
 }
 
 export function SportHubCards() {
-  const now = new Date();
-
   const [hubs, setHubs] = useState<SportHub[]>(
-    SPORT_CONFIG.map((c) => ({
-      ...c,
-      games: [],
-      loading: isInSeason(c.key, now),
-      error: false,
-      inSeason: isInSeason(c.key, now),
-    }))
+    SPORT_CONFIG.map((c) => ({ ...c, games: [], loading: true, error: false }))
   );
   const hubsRef = useRef(hubs);
   hubsRef.current = hubs;
 
   const fetchAll = useCallback(async () => {
-    // Only fetch scores for in-season sports
-    const inSeasonConfigs = SPORT_CONFIG.filter((c) => isInSeason(c.key));
-
     const results = await Promise.allSettled(
-      inSeasonConfigs.map(async (config) => {
+      SPORT_CONFIG.map(async (config) => {
         const res = await fetch(getEndpoint(config.key));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        return { key: config.key, games: normalizeGames(config.key, data as Record<string, unknown>) };
+        return normalizeGames(config.key, data as Record<string, unknown>);
       })
     );
 
     setHubs((prev) =>
-      prev.map((hub) => {
-        if (!hub.inSeason) return hub;
-        const idx = inSeasonConfigs.findIndex((c) => c.key === hub.key);
-        if (idx === -1) return hub;
-        const result = results[idx];
+      prev.map((hub, i) => {
+        const result = results[i];
         if (result.status === 'fulfilled') {
-          return { ...hub, games: result.value.games, loading: false, error: false };
+          return { ...hub, games: result.value, loading: false, error: false };
         }
         return { ...hub, loading: false, error: true };
       })
@@ -220,25 +168,14 @@ export function SportHubCards() {
   }, [fetchAll]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {hubs.map((hub) => {
         const liveCount = hub.games.filter((g) => g.isLive).length;
         const nextMatchup = getNextMatchup(hub.games);
-        const isFlag = hub.key === 'ncaa';
 
         return (
-          <Link
-            key={hub.key}
-            href={hub.href}
-            className={`group ${isFlag ? 'sm:col-span-2 lg:col-span-2' : ''}`}
-          >
-            <div
-              className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] ${
-                hub.inSeason
-                  ? 'hover:shadow-glow-sm'
-                  : 'opacity-60'
-              }`}
-            >
+          <Link key={hub.key} href={hub.href} className="group">
+            <div className="glass-card-hover p-5 h-full flex flex-col gap-3">
               {/* Icon + name */}
               <div className="flex items-center gap-3">
                 <div
@@ -247,25 +184,14 @@ export function SportHubCards() {
                 >
                   <SportIcon sport={hub.key} className="w-6 h-6" />
                 </div>
-                <div>
-                  <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">
-                    {hub.name}
-                  </h3>
-                  {isFlag && (
-                    <span className="text-[10px] uppercase tracking-widest text-[#BF5700]/70 font-medium">
-                      Flagship
-                    </span>
-                  )}
-                </div>
+                <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
+                  {hub.name}
+                </h3>
               </div>
 
               {/* Status */}
               <div className="flex-1 flex flex-col justify-end gap-1.5">
-                {!hub.inSeason ? (
-                  <span className="text-xs text-white/30">
-                    Returns {getReturnMonth(hub.key)}
-                  </span>
-                ) : hub.loading ? (
+                {hub.loading ? (
                   <div className="space-y-2">
                     <div className="h-4 bg-white/5 rounded w-2/3 animate-pulse" />
                     <div className="h-3 bg-white/5 rounded w-1/2 animate-pulse" />
@@ -302,13 +228,8 @@ export function SportHubCards() {
         );
       })}
 
-      {/* CFB */}
       <Link href="/cfb" className="group">
-        <div
-          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] ${
-            isInSeason('cfb') ? 'hover:shadow-glow-sm' : 'opacity-60'
-          }`}
-        >
+        <div className="glass-card-hover p-5 h-full flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
@@ -316,11 +237,13 @@ export function SportHubCards() {
             >
               <SportIcon sport="cfb" className="w-6 h-6" />
             </div>
-            <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">CFB</h3>
+            <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors">
+              CFB
+            </h3>
           </div>
           <div className="flex-1 flex items-end">
-            <span className="text-xs text-white/30">
-              {isInSeason('cfb') ? 'Scores & Standings' : `Returns ${getReturnMonth('cfb')}`}
+            <span className="px-2 py-0.5 text-xs font-semibold bg-green-500/20 text-green-400 rounded-full">
+              Active
             </span>
           </div>
         </div>

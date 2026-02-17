@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -10,7 +9,8 @@ import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { formatTimestamp } from '@/lib/utils/timezone';
+import { getDateOffset, formatDate, shiftDate, findNextGameDay } from '@/lib/utils/date-helpers';
 
 interface Game {
   id: string;
@@ -54,40 +54,95 @@ interface ScoresApiResponse {
   message?: string;
   timestamp?: string;
 }
-// formatScheduleDate, getDateOffset imported from lib/utils/timezone
-
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
 
 export default function CollegeBaseballScoresPage() {
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<DataMeta | null>(null);
+  const [hasLiveGames, setHasLiveGames] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
-  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
+  const smartInitDone = useRef(false);
 
-  const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
-  const { data: rawData, loading, error, retry } = useSportData<ScoresApiResponse>(
-    `/api/college-baseball/schedule?date=${selectedDate}${confParam}`,
-    { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
-  );
+  const fetchScores = useCallback(async (date: string, conference: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const confParam = conference !== 'All' ? `&conference=${conference}` : '';
+      const res = await fetch(`/api/college-baseball/schedule?date=${date}${confParam}`);
 
-  const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
-  const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
-  const meta: DataMeta | null = useMemo(() => rawData ? {
-    dataSource: rawData.meta?.dataSource || 'ESPN College Baseball API',
-    lastUpdated: rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
-    timezone: rawData.meta?.timezone || 'America/Chicago',
-  } : null, [rawData]);
+      if (!res.ok) {
+        throw new Error('Failed to fetch scores');
+      }
 
-  // Sync live detection to enable auto-refresh
-  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+      const data = (await res.json()) as ScoresApiResponse;
 
-  // Date navigation
+      const games = (data.success && data.data) ? data.data : (data.games || []);
+
+      if (games.length > 0 || (data.success && data.data)) {
+        setGames(games);
+        setHasLiveGames(games.some((g: Game) => g.status === 'live'));
+      } else if (!data.success && !data.games) {
+        setError(data.message || 'No games found');
+        setGames([]);
+      }
+
+      // Prefer body meta (from worker), fall back to constructed
+      if (data.meta) {
+        setMeta(data.meta);
+      } else {
+        setMeta({
+          dataSource: 'ESPN College Baseball',
+          lastUpdated: data.timestamp || new Date().toISOString(),
+          timezone: 'America/Chicago',
+        });
+      }
+      // Smart init: on first load, auto-advance to first day with games
+      if (!smartInitDone.current && games.length > 0) {
+        smartInitDone.current = true;
+        const todayStr = getDateOffset(0);
+        const todayGames = games.filter((g: Game) => g.date === todayStr);
+        if (todayGames.length === 0) {
+          const nextDay = findNextGameDay(games, todayStr, 7);
+          if (nextDay && nextDay !== date) {
+            setSelectedDate(nextDay);
+            return;
+          }
+        }
+      } else if (!smartInitDone.current) {
+        smartInitDone.current = true;
+      }
+
+      setLoading(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchScores(selectedDate, selectedConference);
+  }, [selectedDate, selectedConference, fetchScores]);
+
+  // Auto-refresh for live games
+  useEffect(() => {
+    if (hasLiveGames) {
+      const interval = setInterval(() => fetchScores(selectedDate, selectedConference), 30000);
+      return () => clearInterval(interval);
+    }
+  }, [hasLiveGames, selectedDate, selectedConference, fetchScores]);
+
+  // Date navigation — chips centered on selectedDate, not on today
+  const today = getDateOffset(0);
   const dateOptions = [
-    { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
-    { offset: -1, label: 'Yesterday' },
-    { offset: 0, label: 'Today' },
-    { offset: 1, label: 'Tomorrow' },
-    { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
+    { date: shiftDate(selectedDate, -2), label: formatDate(shiftDate(selectedDate, -2)) },
+    { date: shiftDate(selectedDate, -1), label: shiftDate(selectedDate, -1) === today ? 'Today' : formatDate(shiftDate(selectedDate, -1)) },
+    { date: selectedDate, label: selectedDate === today ? 'Today' : formatDate(selectedDate) },
+    { date: shiftDate(selectedDate, 1), label: shiftDate(selectedDate, 1) === today ? 'Today' : formatDate(shiftDate(selectedDate, 1)) },
+    { date: shiftDate(selectedDate, 2), label: formatDate(shiftDate(selectedDate, 2)) },
   ];
 
   const GameCard = ({ game }: { game: Game }) => {
@@ -97,14 +152,8 @@ export default function CollegeBaseballScoresPage() {
     const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
     const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
 
-    const gameHref = isLive
-      ? `/college-baseball/game/${game.id}/live`
-      : isFinal
-        ? `/college-baseball/game/${game.id}/box-score`
-        : `/college-baseball/game/${game.id}`;
-
     return (
-      <Link href={gameHref} className="block">
+      <Link href={`/college-baseball/game/${game.id}`} className="block">
         <div
           className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
             isLive ? 'border-success' : 'border-border-subtle'
@@ -283,52 +332,44 @@ export default function CollegeBaseballScoresPage() {
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
-                onClick={() => setSelectedDate(getDateOffset(-3))}
+                onClick={() => setSelectedDate(shiftDate(selectedDate, -3))}
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Previous days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
 
-              {dateOptions.map((option) => {
-                const dateValue = getDateOffset(option.offset);
-                const isSelected = selectedDate === dateValue;
+              {dateOptions.map((option) => (
+                <button
+                  key={option.date}
+                  onClick={() => setSelectedDate(option.date)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
+                    selectedDate === option.date
+                      ? 'bg-burnt-orange text-white'
+                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
 
-                return (
-                  <button
-                    key={option.offset}
-                    onClick={() => setSelectedDate(dateValue)}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
+              {selectedDate !== today && (
+                <button
+                  onClick={() => setSelectedDate(today)}
+                  className="px-3 py-2 rounded-lg text-sm font-medium text-burnt-orange hover:bg-burnt-orange/10 transition-colors whitespace-nowrap"
+                >
+                  Today
+                </button>
+              )}
 
               <button
-                onClick={() => setSelectedDate(getDateOffset(3))}
+                onClick={() => setSelectedDate(shiftDate(selectedDate, 3))}
                 className="p-2 text-text-tertiary hover:text-white transition-colors"
                 aria-label="Next days"
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
+                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
@@ -366,7 +407,7 @@ export default function CollegeBaseballScoresPage() {
                   for live games.
                 </p>
                 <button
-                  onClick={() => retry()}
+                  onClick={() => fetchScores(selectedDate, selectedConference)}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

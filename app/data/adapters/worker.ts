@@ -56,14 +56,6 @@ class CircuitBreaker {
 const breaker = new CircuitBreaker();
 
 // Request metrics
-interface RequestStats {
-  count: number;
-  totalTime: number;
-  errors: number;
-  avgTime: number;
-  errorRate: number;
-}
-
 class RequestMetrics {
   private metrics = new Map<string, { count: number; totalTime: number; errors: number }>();
 
@@ -75,7 +67,7 @@ class RequestMetrics {
     this.metrics.set(path, current);
   }
 
-  getStats(path?: string): RequestStats | Record<string, RequestStats> | null {
+  getStats(path?: string): any {
     if (path) {
       const m = this.metrics.get(path);
       if (!m) return null;
@@ -86,7 +78,7 @@ class RequestMetrics {
       };
     }
 
-    const all: Record<string, RequestStats> = {};
+    const all: any = {};
     this.metrics.forEach((m, p) => {
       all[p] = {
         ...m,
@@ -169,7 +161,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 // Public API with caching
 export async function getKPI(): Promise<KPIData> {
-  return cache.get('kpi', () => request<unknown>('/kpi').then(schema.kpi), {
+  return cache.get('kpi', () => request<any>('/kpi').then(schema.kpi), {
     ttl: 30000,
     staleWhileRevalidate: true,
   });
@@ -178,13 +170,13 @@ export async function getKPI(): Promise<KPIData> {
 export async function getAccuracy(): Promise<SeriesData> {
   return cache.get(
     'accuracy',
-    () => request<unknown>('/analytics/accuracy').then(schema.accuracySeries),
+    () => request<any>('/analytics/accuracy').then(schema.accuracySeries),
     { ttl: 60000 }
   );
 }
 
 export async function getAlerts(): Promise<AlertBucket> {
-  return cache.get('alerts', () => request<unknown>('/alerts/buckets').then(schema.alertBuckets), {
+  return cache.get('alerts', () => request<any>('/alerts/buckets').then(schema.alertBuckets), {
     ttl: 30000,
   });
 }
@@ -192,7 +184,7 @@ export async function getAlerts(): Promise<AlertBucket> {
 export async function getTeams(league: string): Promise<Team[]> {
   return cache.get(
     `teams:${league}`,
-    () => request<unknown>(`/teams/${encodeURIComponent(league)}`).then(schema.teams),
+    () => request<any>(`/teams/${encodeURIComponent(league)}`).then(schema.teams),
     { ttl: 300000 } // 5 minutes
   );
 }
@@ -200,14 +192,14 @@ export async function getTeams(league: string): Promise<Team[]> {
 export async function getLeaderboard(): Promise<Player[]> {
   return cache.get(
     'leaderboard',
-    () => request<unknown>('/multiplayer/leaderboard').then(schema.leaderboard),
+    () => request<any>('/multiplayer/leaderboard').then(schema.leaderboard),
     { ttl: 10000 }
   );
 }
 
 export async function simulateMatch(): Promise<Player[]> {
   cache.invalidate('leaderboard');
-  const data = await request<unknown>('/multiplayer/leaderboard/simulate', { method: 'POST' });
+  const data = await request<any>('/multiplayer/leaderboard/simulate', { method: 'POST' });
   const validated = schema.leaderboard(data);
   cache.preload('leaderboard', validated);
   return validated;
@@ -216,19 +208,19 @@ export async function simulateMatch(): Promise<Player[]> {
 export async function getYearlyTrend(): Promise<SeriesData> {
   return cache.get(
     'yearly-trend',
-    () => request<unknown>('/analytics/yearly-trend').then(schema.accuracySeries),
+    () => request<any>('/analytics/yearly-trend').then(schema.accuracySeries),
     { ttl: 300000 }
   );
 }
 
 // Batch operations
-export async function getBatchData<T extends Record<string, () => Promise<unknown>>>(
+export async function getBatchData<T extends Record<string, () => Promise<any>>>(
   requests: T
 ): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> }> {
   const entries = Object.entries(requests);
   const results = await Promise.allSettled(entries.map(([_, fn]) => fn()));
 
-  const data: Record<string, unknown> = {};
+  const data: any = {};
   entries.forEach(([key], index) => {
     const result = results[index];
     if (result.status === 'fulfilled') {
@@ -238,7 +230,7 @@ export async function getBatchData<T extends Record<string, () => Promise<unknow
     }
   });
 
-  return data as { [K in keyof T]: Awaited<ReturnType<T[K]>> };
+  return data;
 }
 
 // Health check
@@ -246,7 +238,7 @@ export async function healthCheck(): Promise<{
   status: 'healthy' | 'degraded' | 'unhealthy';
   latency: number;
   cache: { size: number };
-  metrics: RequestStats | Record<string, RequestStats> | null;
+  metrics: any;
 }> {
   const start = Date.now();
 
@@ -258,7 +250,7 @@ export async function healthCheck(): Promise<{
       cache: cache.getStats(),
       metrics: metrics.getStats(),
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       status: 'unhealthy',
       latency: Date.now() - start,

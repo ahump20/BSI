@@ -414,8 +414,7 @@ body {
   }
 
   /* Text gradient */
-  .text-gradient-brand,
-  .text-gradient-blaze {
+  .text-gradient-brand {
     background: linear-gradient(to right, #bf5700, #ff6b35, #ff7d3c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

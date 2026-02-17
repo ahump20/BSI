@@ -239,7 +239,7 @@ export default function AboutPage() {
                     className="p-3 rounded-lg"
                     style={{ backgroundColor: `${colors.burntOrange}20` }}
                   >
-                    <span className="text-2xl">📊</span>
+                    <span className="text-2xl" role="img" aria-label="Analytics chart icon">📊</span>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-2">
@@ -308,14 +308,14 @@ export default function AboutPage() {
               </h3>
               <div className="grid md:grid-cols-4 gap-4">
                 {[
-                  { sport: 'MLB', teams: '30 Teams', source: 'statsapi.mlb.com', icon: '⚾' },
-                  { sport: 'NFL', teams: '32 Teams', source: 'ESPN API', icon: '🏈' },
-                  { sport: 'NCAA Baseball', teams: '300+ D1', source: 'D1Baseball', icon: '🎓' },
-                  { sport: 'NCAA Football', teams: '134 FBS', source: 'Coming Soon', icon: '🏟️' },
+                  { sport: 'MLB', teams: '30 Teams', source: 'statsapi.mlb.com', icon: '⚾', iconLabel: 'Baseball icon' },
+                  { sport: 'NFL', teams: '32 Teams', source: 'ESPN API', icon: '🏈', iconLabel: 'Football icon' },
+                  { sport: 'NCAA Baseball', teams: '300+ D1', source: 'D1Baseball', icon: '🎓', iconLabel: 'Graduation cap icon' },
+                  { sport: 'NCAA Football', teams: '134 FBS', source: 'Coming Soon', icon: '🏟️', iconLabel: 'Stadium icon' },
                 ].map((item) => (
                   <Card key={item.sport} className="text-center">
                     <CardContent className="p-4">
-                      <span className="text-3xl mb-2 block">{item.icon}</span>
+                      <span className="text-3xl mb-2 block" role="img" aria-label={item.iconLabel}>{item.icon}</span>
                       <h4 className="font-semibold text-white">{item.sport}</h4>
                       <p className="text-sm text-gray-400">{item.teams}</p>
                       <p className="text-xs mt-2" style={{ color: colors.ember }}>
@@ -646,15 +646,10 @@ export default function AboutPage() {
                 </button>
               </div>
 
-              {/* Chapter Title Preview */}
+              {/* Chapter Progress Note */}
               <p className="text-center text-sm text-gray-500 mt-4">
                 {activeChapter < chapters.length - 1 ? (
-                  <>
-                    Next:{' '}
-                    <span style={{ color: colors.texasSoil }}>
-                      {chapters[activeChapter + 1].title}
-                    </span>
-                  </>
+                  <span>Continue scrolling to move through the full origin story.</span>
                 ) : (
                   <span style={{ color: colors.gold }}>You&apos;ve completed the origin story</span>
                 )}
@@ -697,43 +692,6 @@ export default function AboutPage() {
                   Austin@blazesportsintel.com
                 </a>
               </p>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* Resume Section */}
-      <Section className="py-16 bg-midnight">
-        <Container>
-          <ScrollReveal>
-            <div className="max-w-2xl mx-auto text-center">
-              <span className="text-sm tracking-widest text-gray-500 uppercase">The Builder</span>
-              <h2
-                className="text-2xl md:text-3xl font-bold mt-2 mb-4"
-                style={{ fontFamily: 'Georgia, serif' }}
-              >
-                Meet the <span style={{ color: colors.burntOrange }}>Operator</span>
-              </h2>
-              <p className="text-gray-400 mb-8">
-                Three years of data-informed strategy. Two years designing AI workflows from prompt to
-                deployment. One person building everything you see here.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="/Austin_Humphrey_Resume.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="outline" size="lg">
-                    View Resume
-                  </Button>
-                </a>
-                <a href="/Austin_Humphrey_Resume.pdf" download>
-                  <Button size="lg" style={{ backgroundColor: colors.burntOrange }}>
-                    Download Resume
-                  </Button>
-                </a>
-              </div>
             </div>
           </ScrollReveal>
         </Container>

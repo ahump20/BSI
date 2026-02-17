@@ -1,46 +1,59 @@
-'use client';
+import type { ReactNode } from 'react';
 
-import { useState, useEffect } from 'react';
-
-interface DataAttributionProps {
-  lastUpdated: string;
-  source?: string;
-  className?: string;
+export interface DataAttributionSource {
+  name: string;
+  url?: string;
+  timestamp?: string;
+  description?: string;
 }
 
-export function DataAttribution({ lastUpdated, source = 'Highlightly', className = '' }: DataAttributionProps) {
-  const [relative, setRelative] = useState('');
-  const isValidDate = lastUpdated && !isNaN(new Date(lastUpdated).getTime());
+export interface DataAttributionProps {
+  sources?: DataAttributionSource[];
+  className?: string;
+  label?: string;
+  footer?: ReactNode;
+}
 
-  useEffect(() => {
-    if (!isValidDate) return;
-
-    function update() {
-      const diff = Date.now() - new Date(lastUpdated).getTime();
-      const secs = Math.floor(diff / 1000);
-      if (secs < 60) setRelative(`Updated ${secs}s ago`);
-      else if (secs < 3600) setRelative(`Updated ${Math.floor(secs / 60)}m ago`);
-      else if (secs < 86400) setRelative(`Updated ${Math.floor(secs / 3600)}h ago`);
-      else setRelative(`Updated ${Math.floor(secs / 86400)}d ago`);
-    }
-    update();
-    const id = setInterval(update, 10000);
-    return () => clearInterval(id);
-  }, [lastUpdated, isValidDate]);
-
-  if (!isValidDate) {
-    return source ? (
-      <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>
-        <span>Powered by {source}</span>
-      </div>
-    ) : null;
-  }
+export function DataAttribution({
+  sources = [],
+  className = '',
+  label = 'Data Sources',
+  footer,
+}: DataAttributionProps) {
+  if (!sources.length && !footer) return null;
 
   return (
-    <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>
-      <span>{relative}</span>
-      <span className="text-[#444]">·</span>
-      <span>Powered by {source}</span>
-    </div>
+    <section className={`rounded-lg border border-white/10 bg-white/5 p-4 ${className}`.trim()}>
+      {sources.length > 0 && (
+        <>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-white/60">{label}</h3>
+          <ul className="space-y-2 text-sm text-white/75">
+            {sources.map((source) => (
+              <li key={`${source.name}-${source.timestamp || 'none'}`}>
+                {source.url ? (
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-white hover:text-[#FF6B35]"
+                  >
+                    {source.name}
+                  </a>
+                ) : (
+                  <span className="font-medium text-white">{source.name}</span>
+                )}
+                {source.description ? <span className="text-white/50"> — {source.description}</span> : null}
+                {source.timestamp ? (
+                  <div className="text-xs text-white/45">Updated {source.timestamp}</div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {footer ? <div className="mt-3 text-xs text-white/50">{footer}</div> : null}
+    </section>
   );
 }
+
+export default DataAttribution;

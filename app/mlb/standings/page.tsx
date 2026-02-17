@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -40,15 +39,39 @@ interface DataMeta {
 
 type ViewType = 'division' | 'league' | 'wildcard';
 export default function MLBStandingsPage() {
+  const [standings, setStandings] = useState<Team[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [viewType, setViewType] = useState<ViewType>('division');
   const [sortColumn, setSortColumn] = useState<string>('wins');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const { data: rawData, loading, error, retry } = useSportData<{ standings?: Team[]; meta?: DataMeta }>(
-    '/api/mlb/standings'
-  );
-  const standings = rawData?.standings || [];
-  const meta = rawData?.meta || null;
+  const fetchStandings = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/mlb/standings');
+      if (!res.ok) throw new Error('Failed to fetch standings');
+      const data = (await res.json()) as { standings?: Team[]; meta?: DataMeta };
+
+      if (data.standings) {
+        setStandings(data.standings);
+      }
+      if (data.meta) {
+        setMeta(data.meta);
+      }
+      setLoading(false);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStandings();
+  }, [fetchStandings]);
 
   // Sort function
   const sortTeams = (teams: Team[]): Team[] => {
@@ -154,7 +177,6 @@ export default function MLBStandingsPage() {
     className?: string;
   }) => (
     <th
-      scope="col"
       className={`text-left p-3 text-copper font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
     >
@@ -177,22 +199,22 @@ export default function MLBStandingsPage() {
     showDivision?: boolean;
   }) => (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[700px]" aria-label="MLB division standings">
+      <table className="w-full min-w-[700px]">
         <thead>
           <tr className="border-b-2 border-burnt-orange">
-            <th scope="col" className="text-left p-3 text-copper font-semibold w-8">#</th>
+            <th className="text-left p-3 text-copper font-semibold w-8">#</th>
             <SortableHeader column="team" label="Team" className="sticky left-0 bg-charcoal z-10" />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th scope="col" className="text-left p-3 text-copper font-semibold">HOME</th>
-            <th scope="col" className="text-left p-3 text-copper font-semibold">AWAY</th>
+            <th className="text-left p-3 text-copper font-semibold">HOME</th>
+            <th className="text-left p-3 text-copper font-semibold">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
-            <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
+            <th className="text-left p-3 text-copper font-semibold">STRK</th>
+            <th className="text-left p-3 text-copper font-semibold">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -246,7 +268,7 @@ export default function MLBStandingsPage() {
     </div>
   );
 
-  const WildCardTable = ({ teams, league: _league }: { teams: Team[]; league: string }) => {
+  const WildCardTable = ({ teams, league }: { teams: Team[]; league: string }) => {
     // Filter non-division leaders and sort by WC position
     const divisionLeaders = new Set<string>();
     const divisions = ['East', 'Central', 'West'];
@@ -269,17 +291,17 @@ export default function MLBStandingsPage() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
+        <table className="w-full min-w-[600px]">
           <thead>
             <tr className="border-b-2 border-burnt-orange">
-              <th scope="col" className="text-left p-3 text-copper font-semibold w-8">WC</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">Team</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">W</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">L</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">PCT</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">WCGB</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
+              <th className="text-left p-3 text-copper font-semibold w-8">WC</th>
+              <th className="text-left p-3 text-copper font-semibold">Team</th>
+              <th className="text-left p-3 text-copper font-semibold">W</th>
+              <th className="text-left p-3 text-copper font-semibold">L</th>
+              <th className="text-left p-3 text-copper font-semibold">PCT</th>
+              <th className="text-left p-3 text-copper font-semibold">WCGB</th>
+              <th className="text-left p-3 text-copper font-semibold">STRK</th>
+              <th className="text-left p-3 text-copper font-semibold">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -435,7 +457,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} scope="col" className="text-left p-3 text-copper font-semibold">
+                                <th key={h} className="text-left p-3 text-copper font-semibold">
                                   {h}
                                 </th>
                               ))}
@@ -457,7 +479,7 @@ export default function MLBStandingsPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={retry}
+                  onClick={fetchStandings}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

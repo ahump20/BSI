@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -10,53 +11,91 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { HeroVideo } from '@/components/hero/HeroVideo';
 
-const tiers = [
+type PaidTier = 'pro' | 'enterprise';
+
+type PricingTier = {
+  id: 'free' | PaidTier;
+  name: string;
+  priceLabel: string;
+  description: string;
+  audience: string;
+  features: string[];
+  cta: string;
+  featured?: boolean;
+};
+
+const tiers: PricingTier[] = [
+  {
+    id: 'free',
+    name: 'Free',
+    priceLabel: '$0/mo',
+    description: 'Live scores and baseline coverage for daily tracking.',
+    audience: 'Fans and casual analysts',
+    features: [
+      'Basic live scores across MLB, NFL, NBA, and NCAA coverage',
+      'Top-line standings snapshots',
+      'Daily highlights and news stream',
+      'One-click access to team pages',
+    ],
+    cta: 'Start Free',
+  },
   {
     id: 'pro',
     name: 'Pro',
-    price: 29,
-    period: 'month',
-    description: 'For fans, fantasy players, and amateur coaches who want the edge.',
+    priceLabel: '$29/mo',
+    description: 'Full analytics with live context for coaches, scouts, and power users.',
+    audience: 'High-volume analysts and program staff',
     features: [
-      'Live scores across MLB, NFL, NBA, NCAA',
-      'Real-time game updates every 30 seconds',
-      'Complete box scores with batting/pitching lines',
-      'Game predictions & win probability',
-      'Player comparison tools',
-      'Conference standings and rankings',
-      'Basic analytics dashboard',
-      '14-day free trial',
+      'Everything in Free',
+      'Advanced analytics dashboards with matchup context',
+      'API access for internal workflows and exports',
+      'Player comparison, trend tracking, and watchlists',
+      '14-day trial included',
     ],
-    cta: 'Start Free Trial',
-    popular: false,
+    cta: 'Start 14-Day Trial',
+    featured: true,
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: 199,
-    period: 'month',
-    description: 'For college programs, scouts, and media who need professional-grade intel.',
+    priceLabel: '$199/mo',
+    description: 'Custom intelligence workflows for organizations and media teams.',
+    audience: 'Scouting departments and enterprise operations',
     features: [
       'Everything in Pro',
-      'Advanced player analytics with AI insights',
-      'Historical data access (5+ years)',
-      'Season projections & Monte Carlo simulations',
-      'Custom data exports (CSV, JSON)',
-      'API access for integrations',
-      'Priority support',
-      'Team collaboration tools',
-      'Custom dashboards',
+      'Custom dashboards for coaches and scouts',
+      'NIL valuation tooling and organizational reporting',
+      'Priority support with implementation guidance',
+      'Role-based collaboration for multi-user teams',
     ],
-    cta: 'Get Started',
-    popular: true,
+    cta: 'Launch Enterprise',
+  },
+];
+
+const valueProps = [
+  {
+    title: 'Built For Coaches',
+    detail:
+      'Translate game data into weekly prep: matchup splits, role trends, and actionable roster decisions.',
+  },
+  {
+    title: 'Built For Scouts',
+    detail:
+      'Track prospects across conferences with searchable historical context and export-ready data.',
+  },
+  {
+    title: 'Built For Operators',
+    detail:
+      'Consolidate scores, standings, rankings, and NIL intel in one platform instead of stitching five tools together.',
   },
 ];
 
 export default function PricingPage() {
-  const [loading, setLoading] = useState<string | null>(null);
+  const [loadingTier, setLoadingTier] = useState<PaidTier | null>(null);
 
-  const handleCheckout = async (tier: 'pro' | 'enterprise') => {
-    setLoading(tier);
+  const handleCheckout = async (tier: PaidTier) => {
+    setLoadingTier(tier);
+
     try {
       const response = await fetch('/api/stripe/create-embedded-checkout', {
         method: 'POST',
@@ -64,88 +103,77 @@ export default function PricingPage() {
         body: JSON.stringify({ tier }),
       });
 
-      const data = (await response.json()) as { error?: string; clientSecret?: string };
-
-      if (data.error) {
-        alert(data.error);
+      const payload = (await response.json()) as { error?: string; clientSecret?: string };
+      if (payload.error) {
+        window.alert(payload.error);
         return;
       }
 
-      // Redirect to checkout
-      if (data.clientSecret) {
-        window.location.href = `/checkout?client_secret=${data.clientSecret}`;
+      if (payload.clientSecret) {
+        window.location.href = `/checkout?client_secret=${encodeURIComponent(payload.clientSecret)}`;
+      } else {
+        window.location.href = '/checkout';
       }
-    } catch (_error) {
-      alert('Failed to start checkout. Please try again.');
+    } catch {
+      window.alert('Unable to start checkout right now. Please retry.');
     } finally {
-      setLoading(null);
+      setLoadingTier(null);
     }
   };
 
   return (
     <>
       <main id="main-content">
-        {/* Hero */}
         <Section padding="lg" className="pt-28 relative overflow-hidden">
-          {/* Ambient video background */}
           <HeroVideo />
           <div
             className="absolute inset-0 z-[1]"
             style={{
               background:
-                'linear-gradient(to bottom, rgba(13,13,18,0.92) 0%, rgba(13,13,18,0.8) 50%, rgba(13,13,18,0.95) 100%)',
+                'linear-gradient(to bottom, rgba(13,13,18,0.92) 0%, rgba(13,13,18,0.84) 45%, rgba(13,13,18,0.95) 100%)',
             }}
           />
 
           <Container center className="relative z-10">
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                Simple, Transparent Pricing
+                Plans For Every Stage
               </Badge>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-center mb-4">
-                Choose Your <span className="text-gradient-blaze">Plan</span>
+                Pricing That <span className="text-gradient-blaze">Scales With You</span>
               </h1>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto">
-                Professional sports intelligence at every level. Start with a 14-day free trial on
-                Pro, or go straight to Enterprise for the full toolkit.
+              <p className="text-text-secondary text-center max-w-3xl mx-auto mb-6">
+                Start free for core scores, upgrade to Pro for full analytics and API access, or run
+                Enterprise for custom dashboards and NIL tooling.
               </p>
+              <Link
+                href="/checkout"
+                className="inline-flex items-center justify-center rounded-lg bg-burnt-orange px-6 py-3 font-semibold text-white transition-colors hover:bg-ember"
+              >
+                Start Your 14-Day Trial
+              </Link>
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Pricing Cards */}
         <Section padding="lg" background="charcoal">
           <Container>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {tiers.map((tier, index) => (
-                <ScrollReveal key={tier.id} direction="up" delay={index * 100}>
+                <ScrollReveal key={tier.id} direction="up" delay={index * 80}>
                   <Card
                     padding="lg"
-                    className={`relative h-full ${
-                      tier.popular ? 'border-burnt-orange border-2' : ''
-                    }`}
+                    className={`h-full flex flex-col ${tier.featured ? 'border-burnt-orange border-2' : ''}`}
                   >
-                    {tier.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <Badge variant="accent">Most Popular</Badge>
-                      </div>
-                    )}
-
-                    <div className="text-center mb-6">
-                      <h2 className="font-display text-2xl font-bold text-white mb-2">
-                        {tier.name}
-                      </h2>
-                      <p className="text-text-tertiary text-sm">{tier.description}</p>
+                    <div className="mb-6">
+                      {tier.featured && <Badge variant="accent" className="mb-3">Most Popular</Badge>}
+                      <h2 className="font-display text-2xl font-bold text-white mb-1">{tier.name}</h2>
+                      <p className="text-burnt-orange font-semibold">{tier.priceLabel}</p>
+                      <p className="text-text-tertiary mt-2 text-sm">{tier.description}</p>
+                      <p className="text-xs text-text-tertiary mt-2 uppercase tracking-wider">{tier.audience}</p>
                     </div>
 
-                    <div className="text-center mb-8">
-                      <span className="font-display text-5xl font-bold text-burnt-orange">
-                        ${tier.price}
-                      </span>
-                      <span className="text-text-tertiary">/{tier.period}</span>
-                    </div>
-
-                    <ul className="space-y-3 mb-8">
+                    <ul className="space-y-3 mb-8 flex-1">
                       {tier.features.map((feature) => (
                         <li key={feature} className="flex items-start gap-3">
                           <svg
@@ -154,6 +182,7 @@ export default function PricingPage() {
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="2"
+                            aria-hidden="true"
                           >
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
@@ -162,15 +191,23 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    <Button
-                      variant={tier.popular ? 'primary' : 'secondary'}
-                      size="lg"
-                      className="w-full"
-                      onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
-                      disabled={loading !== null}
-                    >
-                      {loading === tier.id ? 'Loading...' : tier.cta}
-                    </Button>
+                    {tier.id === 'free' ? (
+                      <Link href="/dashboard" className="w-full">
+                        <Button variant="secondary" size="lg" className="w-full">
+                          {tier.cta}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button
+                        variant={tier.featured ? 'primary' : 'secondary'}
+                        size="lg"
+                        className="w-full"
+                        onClick={() => handleCheckout(tier.id)}
+                        disabled={loadingTier !== null}
+                      >
+                        {loadingTier === tier.id ? 'Loading...' : tier.cta}
+                      </Button>
+                    )}
                   </Card>
                 </ScrollReveal>
               ))}
@@ -178,61 +215,24 @@ export default function PricingPage() {
           </Container>
         </Section>
 
-        {/* FAQ / Value Props */}
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-3xl font-bold text-center uppercase tracking-display mb-12">
-                Why <span className="text-gradient-blaze">Blaze Sports Intel</span>?
+              <h2 className="font-display text-3xl font-bold text-center uppercase tracking-display mb-10">
+                Why Teams Choose <span className="text-gradient-blaze">BSI</span>
               </h2>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: 'Real Data, Real Sources',
-                  description:
-                    'We pull from official league APIs—MLB, NFL, NBA, NCAA. No scraped garbage, no guesswork.',
-                },
-                {
-                  title: 'Multi-Sport Coverage',
-                  description:
-                    'MLB, NFL, NCAA—all in one platform. Live scores, standings, and analytics across every league we cover. No switching between apps.',
-                },
-                {
-                  title: 'Built by a Fan, for Fans',
-                  description:
-                    'Created by someone who pitched a perfect game and drove to Austin every Thanksgiving for Longhorn football. This is personal.',
-                },
-              ].map((item, index) => (
-                <ScrollReveal key={item.title} direction="up" delay={index * 100}>
-                  <Card padding="lg" className="text-center h-full">
-                    <h3 className="font-semibold text-white text-lg mb-3">{item.title}</h3>
-                    <p className="text-text-tertiary text-sm">{item.description}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {valueProps.map((item, index) => (
+                <ScrollReveal key={item.title} direction="up" delay={index * 80}>
+                  <Card padding="lg" className="h-full">
+                    <h3 className="text-lg font-semibold text-white mb-3">{item.title}</h3>
+                    <p className="text-sm text-text-tertiary">{item.detail}</p>
                   </Card>
                 </ScrollReveal>
               ))}
             </div>
-          </Container>
-        </Section>
-
-        {/* CTA */}
-        <Section padding="lg" background="charcoal">
-          <Container center>
-            <ScrollReveal direction="up">
-              <div className="max-w-xl mx-auto text-center">
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display mb-4">
-                  Questions?
-                </h2>
-                <p className="text-text-secondary mb-6">Reach out anytime. I read every email.</p>
-                <a
-                  href="mailto:Austin@blazesportsintel.com"
-                  className="text-burnt-orange hover:text-ember transition-colors font-semibold"
-                >
-                  Austin@blazesportsintel.com
-                </a>
-              </div>
-            </ScrollReveal>
           </Container>
         </Section>
       </main>

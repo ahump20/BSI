@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -44,21 +43,141 @@ interface StandingsApiResponse {
   message?: string;
 }
 
-const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
-const currentMonth = new Date().getMonth(); // 0-indexed: Jan=0, Feb=1, ..., Jun=5
-const isInSeason = currentMonth >= 1 && currentMonth <= 5; // Feb through June
-
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
+  const [standings, setStandings] = useState<TeamStanding[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'shared' | 'error'>('idle');
+  const [isSharing, setIsSharing] = useState(false);
 
-  const { data: rawData, loading, error: fetchError } = useSportData<StandingsApiResponse>(
-    `/api/college-baseball/standings?conference=${encodeURIComponent(selectedConference)}`
-  );
-  const standings = rawData?.success && rawData?.data ? rawData.data : [];
-  const lastUpdated = rawData?.timestamp || rawData?.cacheTime || null;
-  const error = fetchError || (rawData && !rawData.success ? (rawData.message || 'Failed to fetch standings') : null);
+  useEffect(() => {
+    async function fetchStandings() {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          '/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference)
+        );
+        const result = (await response.json()) as StandingsApiResponse;
+
+        if (result.success && result.data) {
+          setStandings(result.data);
+          setLastUpdated(result.timestamp || result.cacheTime || new Date().toISOString());
+          setError(null);
+        } else {
+          setError(result.message || 'Failed to fetch standings');
+        }
+      } catch (err) {
+        setError('Failed to load standings. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStandings();
+  }, [selectedConference]);
 
   const currentConf = conferences.find((c) => c.id === selectedConference);
+
+  const trackShareEvent = async (
+    event: 'share_clicked' | 'share_completed',
+    sharePath: string
+  ) => {
+    try {
+      await fetch('/api/events/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event,
+          surface: 'college_baseball_standings',
+          conference: selectedConference,
+          path: sharePath,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    } catch {
+      // Share analytics should never block UX.
+    }
+  };
+
+  const buildSharePayload = () => {
+    const sharePath = `/college-baseball/standings?conference=${encodeURIComponent(selectedConference)}`;
+    const origin =
+      typeof window !== 'undefined' ? window.location.origin : 'https://blazesportsintel.com';
+    const topThree = standings
+      .slice(0, 3)
+      .map((standing, index) => `${index + 1}. ${standing.team?.name || 'Unknown Team'}`)
+      .join('\n');
+    const headline = `${selectedConference} college baseball standings are live on Blaze Sports Intel.`;
+    const text = topThree
+      ? `${headline}\n\nTop 3:\n${topThree}\n\n${origin}${sharePath}`
+      : `${headline}\n\n${origin}${sharePath}`;
+
+    return {
+      title: `${selectedConference} College Baseball Standings`,
+      text,
+      url: `${origin}${sharePath}`,
+      sharePath,
+    };
+  };
+
+  const handleShare = async () => {
+    if (isSharing) return;
+
+    setIsSharing(true);
+    setShareStatus('idle');
+
+    const payload = buildSharePayload();
+    void trackShareEvent('share_clicked', payload.sharePath);
+
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+        await navigator.share({
+          title: payload.title,
+          text: payload.text,
+          url: payload.url,
+        });
+
+        setShareStatus('shared');
+        void trackShareEvent('share_completed', payload.sharePath);
+      } else if (
+        typeof navigator !== 'undefined' &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === 'function'
+      ) {
+        await navigator.clipboard.writeText(payload.text);
+        setShareStatus('copied');
+        void trackShareEvent('share_completed', payload.sharePath);
+      } else {
+        setShareStatus('error');
+      }
+    } catch (error: unknown) {
+      const isUserCancelled =
+        error instanceof DOMException && error.name === 'AbortError';
+
+      if (isUserCancelled) {
+        setShareStatus('idle');
+      } else if (
+        typeof navigator !== 'undefined' &&
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === 'function'
+      ) {
+        try {
+          await navigator.clipboard.writeText(payload.text);
+          setShareStatus('copied');
+          void trackShareEvent('share_completed', payload.sharePath);
+        } catch {
+          setShareStatus('error');
+        }
+      } else {
+        setShareStatus('error');
+      }
+    } finally {
+      setIsSharing(false);
+      setTimeout(() => setShareStatus('idle'), 2500);
+    }
+  };
 
   return (
     <>
@@ -82,7 +201,7 @@ export default function CollegeBaseballStandingsPage() {
                   Conference <span className="text-gradient-blaze">Standings</span>
                 </h1>
                 <p className="text-text-secondary mt-2">
-                  {seasonYear} NCAA Division I baseball conference standings
+                  2025 NCAA Division I baseball conference standings
                 </p>
               </div>
             </ScrollReveal>
@@ -114,9 +233,27 @@ export default function CollegeBaseballStandingsPage() {
                     <h2 className="font-display text-2xl font-bold text-white">
                       {currentConf?.fullName}
                     </h2>
-                    <p className="text-text-tertiary text-sm mt-1">{seasonYear} Conference Standings</p>
+                    <p className="text-text-tertiary text-sm mt-1">2025 Conference Standings</p>
                   </div>
-                  <Badge variant="primary">Updated Daily</Badge>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge variant="primary">Updated Daily</Badge>
+                    <button
+                      type="button"
+                      onClick={handleShare}
+                      disabled={isSharing}
+                      className="px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider bg-charcoal text-text-secondary hover:text-white hover:bg-slate transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isSharing
+                        ? 'Sharing...'
+                        : shareStatus === 'shared'
+                          ? 'Shared'
+                          : shareStatus === 'copied'
+                            ? 'Copied'
+                            : shareStatus === 'error'
+                              ? 'Retry Share'
+                              : 'Share Standings'}
+                    </button>
+                  </div>
                 </div>
               </Card>
             </ScrollReveal>
@@ -134,9 +271,8 @@ export default function CollegeBaseballStandingsPage() {
               <Card padding="lg" className="text-center">
                 <p className="text-warning mb-4">{error}</p>
                 <p className="text-text-tertiary text-sm">
-                  {isInSeason
-                    ? 'Standings data is updating — check back shortly.'
-                    : 'College baseball returns in February.'}
+                  College baseball season runs February through June. Standings will be available
+                  during the season.
                 </p>
               </Card>
             )}
@@ -148,15 +284,8 @@ export default function CollegeBaseballStandingsPage() {
                   No standings data available for {currentConf?.name}.
                 </p>
                 <p className="text-text-tertiary text-sm">
-                  {isInSeason
-                    ? 'Conference play may not have started yet. Overall records update daily.'
-                    : 'College baseball returns in February.'}
+                  College baseball season runs February through June. Check back during the season.
                 </p>
-                {isInSeason && (
-                  <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block">
-                    Browse preseason editorial previews →
-                  </Link>
-                )}
               </Card>
             )}
 
@@ -165,25 +294,25 @@ export default function CollegeBaseballStandingsPage() {
               <ScrollReveal direction="up" delay={200}>
                 <Card padding="none" className="overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="w-full" aria-label="College baseball standings by conference">
+                    <table className="w-full">
                       <thead>
                         <tr className="bg-charcoal border-b border-border-subtle">
-                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Rank
                           </th>
-                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Team
                           </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Conf
                           </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             Overall
                           </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
                             Win%
                           </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                          <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                             RPI
                           </th>
                         </tr>

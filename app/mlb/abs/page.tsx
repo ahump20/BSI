@@ -18,10 +18,8 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { StrikeZoneModel } from '@/components/mlb/StrikeZoneModel';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -436,54 +434,6 @@ export default function ABSTrackerPage() {
                 timestamp=""
               />
             </div>
-          </Container>
-        </Section>
-
-        {/* Strike Zone Model */}
-        <Section padding="lg" background="midnight" borderTop>
-          <Container>
-            <ScrollReveal>
-              <Card variant="default" padding="lg">
-                <CardHeader className="px-0 pt-0">
-                  <CardTitle>ABS Strike Zone Model</CardTitle>
-                </CardHeader>
-                <p className="text-text-secondary text-sm mb-6">
-                  Hawk-Eye tracks 18 skeletal keypoints on each batter to generate a personalized strike zone.
-                  The zone top is defined as the midpoint between the shoulders and belt; the zone bottom
-                  is the hollow of the knee. Width is the fixed 17-inch rulebook plate.
-                </p>
-                <div className="max-w-md mx-auto">
-                  <StrikeZoneModel />
-                </div>
-              </Card>
-            </ScrollReveal>
-          </Container>
-        </Section>
-
-        {/* Vision AI Cross-Link */}
-        <Section padding="lg" background="charcoal" borderTop>
-          <Container>
-            <ScrollReveal>
-              <Card variant="default" padding="lg" className="relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember" />
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge variant="accent">Vision AI</Badge>
-                  <Badge variant="secondary">Intelligence Report</Badge>
-                </div>
-                <h3 className="font-display text-xl font-bold uppercase tracking-display text-white mb-2">
-                  Deeper: Vision AI in Sports
-                </h3>
-                <p className="text-text-secondary text-sm mb-4 max-w-2xl">
-                  ABS is one piece of a much larger picture. Computer vision is reshaping every sport —
-                  from biomechanical injury prediction to automated scouting at scale. BSI&apos;s Vision AI
-                  Intelligence Hub covers the full landscape: 8 application areas, 40+ companies,
-                  and the critical gap between pro and college infrastructure.
-                </p>
-                <Link href="/vision-ai">
-                  <Button variant="primary" size="md">Explore the Full Landscape &rarr;</Button>
-                </Link>
-              </Card>
-            </ScrollReveal>
           </Container>
         </Section>
       </main>

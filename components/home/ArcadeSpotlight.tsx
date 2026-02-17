@@ -17,6 +17,7 @@ const GAMES = [
     description: 'Call plays and drive downfield in this fast-paced football strategy game.',
     color: '#FF6B35',
     icon: '🏈',
+    iconLabel: 'Football icon',
     url: '/games/blitz/',
   },
   {
@@ -25,6 +26,7 @@ const GAMES = [
     description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
     color: '#BF5700',
     icon: '⚾',
+    iconLabel: 'Baseball icon',
     url: '/games/sandlot-sluggers/',
   },
   {
@@ -33,6 +35,7 @@ const GAMES = [
     description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
     color: '#FDB913',
     icon: '🏀',
+    iconLabel: 'Basketball icon',
     url: '/games/downtown-doggies/',
   },
   {
@@ -41,9 +44,10 @@ const GAMES = [
     description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
     color: '#CD5C5C',
     icon: '🌭',
+    iconLabel: 'Hot dog icon',
     url: '/games/hotdog-dash/',
   },
-];
+] as const;
 
 export function ArcadeSpotlight() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -73,7 +77,7 @@ export function ArcadeSpotlight() {
   const topEntries = leaderboard.filter((e) => e.game_id === featured.id).slice(0, 3);
 
   return (
-    <div className="glass-default rounded-2xl p-6 lg:p-8 hover:shadow-glow-sm transition-shadow duration-300">
+    <div className="glass-card-hover p-6 lg:p-8">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Featured game */}
         <div className="lg:w-2/5 flex flex-col gap-4">
@@ -89,7 +93,7 @@ export function ArcadeSpotlight() {
               className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl"
               style={{ backgroundColor: `${featured.color}20` }}
             >
-              {featured.icon}
+              <span role="img" aria-label={featured.iconLabel}>{featured.icon}</span>
             </div>
             <div>
               <h3 className="font-display text-2xl text-white uppercase tracking-wide">
@@ -99,9 +103,9 @@ export function ArcadeSpotlight() {
             </div>
           </div>
 
-          <Link href={featured.url} className="btn-primary px-6 py-3 text-sm rounded-lg mt-2 w-fit">
+          <a href={featured.url} className="btn-primary px-6 py-3 text-sm rounded-lg mt-2 w-fit">
             PLAY NOW
-          </Link>
+          </a>
         </div>
 
         {/* Leaderboard preview */}

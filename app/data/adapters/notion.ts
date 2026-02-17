@@ -48,7 +48,7 @@ class NotionAdapter {
       throw new Error('Notion database ID not configured');
     }
 
-    const data = await this.request<Record<string, unknown>>(`/databases/${this.config.databaseId}/query`, {
+    const data = await this.request<any>(`/databases/${this.config.databaseId}/query`, {
       method: 'POST',
       body: JSON.stringify({
         filter: {
@@ -66,16 +66,16 @@ class NotionAdapter {
       }),
     });
 
-    return this.transformNotionResults(data.results as Record<string, unknown>[]);
+    return this.transformNotionResults(data.results);
   }
 
-  private transformNotionResults(results: Record<string, unknown>[]): PortfolioItem[] {
+  private transformNotionResults(results: any[]): PortfolioItem[] {
     return results
       .map((page) => {
-        const props = page.properties as Record<string, Record<string, unknown> | undefined>;
+        const props = page.properties;
 
         return {
-          id: page.id as string,
+          id: page.id,
           title: this.getTextProperty(props.Title || props.Name),
           description: this.getTextProperty(props.Description),
           url: this.getUrlProperty(props.URL) || this.getTextProperty(props.Link),
@@ -87,50 +87,43 @@ class NotionAdapter {
       .filter((item) => item.title && item.url);
   }
 
-  private getTextProperty(prop: Record<string, unknown> | undefined): string {
+  private getTextProperty(prop: any): string {
     if (!prop) return '';
 
     if (prop.type === 'title') {
-      const titleArr = prop.title as Record<string, unknown>[] | undefined;
-      return (titleArr?.[0]?.plain_text as string) || '';
+      return prop.title?.[0]?.plain_text || '';
     }
 
     if (prop.type === 'rich_text') {
-      const richTextArr = prop.rich_text as Record<string, unknown>[] | undefined;
-      return (richTextArr?.[0]?.plain_text as string) || '';
+      return prop.rich_text?.[0]?.plain_text || '';
     }
 
     return '';
   }
 
-  private getUrlProperty(prop: Record<string, unknown> | undefined): string {
+  private getUrlProperty(prop: any): string {
     if (!prop || prop.type !== 'url') return '';
-    return (prop.url as string) || '';
+    return prop.url || '';
   }
 
-  private getSelectProperty(prop: Record<string, unknown> | undefined): string {
+  private getSelectProperty(prop: any): string {
     if (!prop || prop.type !== 'select') return '';
-    const select = prop.select as Record<string, unknown> | undefined;
-    return (select?.name as string) || '';
+    return prop.select?.name || '';
   }
 
-  private getMultiSelectProperty(prop: Record<string, unknown> | undefined): string[] {
+  private getMultiSelectProperty(prop: any): string[] {
     if (!prop || prop.type !== 'multi_select') return [];
-    const items = prop.multi_select as Record<string, unknown>[] | undefined;
-    return items?.map((item: Record<string, unknown>) => item.name as string) || [];
+    return prop.multi_select?.map((item: any) => item.name) || [];
   }
 
-  private getFilesProperty(prop: Record<string, unknown> | undefined): string | undefined {
+  private getFilesProperty(prop: any): string | undefined {
     if (!prop || prop.type !== 'files') return undefined;
-    const filesArr = prop.files as Record<string, unknown>[] | undefined;
-    const file = filesArr?.[0];
+    const file = prop.files?.[0];
     if (file?.type === 'external') {
-      const external = file.external as Record<string, unknown> | undefined;
-      return external?.url as string | undefined;
+      return file.external?.url;
     }
     if (file?.type === 'file') {
-      const fileData = file.file as Record<string, unknown> | undefined;
-      return fileData?.url as string | undefined;
+      return file.file?.url;
     }
     return undefined;
   }
@@ -165,7 +158,7 @@ class NotionAdapter {
       if (age < 3600000) {
         return data;
       }
-    } catch (_error) {
+    } catch (error) {
       // invalid cache, will re-fetch
     }
 
@@ -186,7 +179,7 @@ export async function getPortfolio(): Promise<PortfolioItem[]> {
   try {
     const portfolio = await notion.getPortfolio();
     return schema.portfolio(portfolio);
-  } catch (_error) {
+  } catch (error) {
     // Notion fetch failed, falling back to static file
 
     // Final fallback to static file

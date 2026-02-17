@@ -67,7 +67,7 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-[#BF5700]/30 border-t-[#BF5700] rounded-full animate-spin" />
             </div>
           </Container>
         </Section>
@@ -85,7 +85,7 @@ export default function PlayerDetailClient() {
           <Container>
             <Card padding="lg" className="text-center">
               <h2 className="text-xl font-bold text-white mb-2">Player not found</h2>
-              <Link href="/college-baseball/players" className="text-burnt-orange hover:text-ember">
+              <Link href="/college-baseball/players" className="text-[#BF5700] hover:text-[#FF6B35]">
                 Back to Players
               </Link>
             </Card>
@@ -101,14 +101,14 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-[#666] hover:text-[#BF5700] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/40">/</span>
-              <Link href="/college-baseball/players" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-[#666]">/</span>
+              <Link href="/college-baseball/players" className="text-[#666] hover:text-[#BF5700] transition-colors">
                 Players
               </Link>
-              <span className="text-white/40">/</span>
+              <span className="text-[#666]">/</span>
               <span className="text-white">{player.name}</span>
             </div>
 
@@ -120,7 +120,7 @@ export default function PlayerDetailClient() {
                 {player.position && <Badge variant="primary">{player.position}</Badge>}
                 {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
                 {player.team && (
-                  <Link href={`/college-baseball/teams/${player.team.id}`} className="text-white/60 hover:text-burnt-orange transition-colors text-sm">
+                  <Link href={`/college-baseball/teams/${player.team.id}`} className="text-[#999] hover:text-[#BF5700] transition-colors text-sm">
                     {player.team.name}
                   </Link>
                 )}
@@ -130,37 +130,37 @@ export default function PlayerDetailClient() {
             {/* Bio */}
             <Card padding="lg" className="mb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {player.height && <div><span className="text-xs text-white/40 block">Height</span><span className="text-white font-medium">{player.height}</span></div>}
-                {player.weight && <div><span className="text-xs text-white/40 block">Weight</span><span className="text-white font-medium">{player.weight} lbs</span></div>}
-                {player.dateOfBirth && <div><span className="text-xs text-white/40 block">DOB</span><span className="text-white font-medium">{player.dateOfBirth}</span></div>}
-                {player.team?.conference?.name && <div><span className="text-xs text-white/40 block">Conference</span><span className="text-white font-medium">{player.team.conference.name}</span></div>}
+                {player.height && <div><span className="text-xs text-[#666] block">Height</span><span className="text-white font-medium">{player.height}</span></div>}
+                {player.weight && <div><span className="text-xs text-[#666] block">Weight</span><span className="text-white font-medium">{player.weight} lbs</span></div>}
+                {player.dateOfBirth && <div><span className="text-xs text-[#666] block">DOB</span><span className="text-white font-medium">{player.dateOfBirth}</span></div>}
+                {player.team?.conference?.name && <div><span className="text-xs text-[#666] block">Conference</span><span className="text-white font-medium">{player.team.conference.name}</span></div>}
               </div>
             </Card>
 
             {/* Batting Stats */}
             {stats?.batting && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-white/15">
+                <div className="px-4 py-3 bg-[#1A1A1A] border-b border-[#333]">
                   <h2 className="font-display text-lg font-bold text-white">Batting Statistics</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-white/15">
+                      <tr className="border-b border-[#333]">
                         {['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-center">{h}</th>
+                          <th key={h} className="py-3 px-3 text-xs font-semibold text-[#666] uppercase text-center">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-white/10">
+                      <tr className="border-b border-[#222]">
                         <td className="py-3 px-3 text-center text-white">{stats.batting.games}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.atBats}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.runs}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.hits}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.doubles}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.triples}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold">{stats.batting.homeRuns}</td>
+                        <td className="py-3 px-3 text-center text-[#BF5700] font-bold">{stats.batting.homeRuns}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.rbi}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.walks}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.batting.strikeouts}</td>
@@ -168,7 +168,7 @@ export default function PlayerDetailClient() {
                         <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
                         <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
                         <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
+                        <td className="py-3 px-3 text-center text-[#BF5700] font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -179,20 +179,20 @@ export default function PlayerDetailClient() {
             {/* Pitching Stats */}
             {stats?.pitching && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-white/15">
+                <div className="px-4 py-3 bg-[#1A1A1A] border-b border-[#333]">
                   <h2 className="font-display text-lg font-bold text-white">Pitching Statistics</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-white/15">
+                      <tr className="border-b border-[#333]">
                         {['G', 'GS', 'W', 'L', 'SV', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA', 'WHIP'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-center">{h}</th>
+                          <th key={h} className="py-3 px-3 text-xs font-semibold text-[#666] uppercase text-center">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-white/10">
+                      <tr className="border-b border-[#222]">
                         <td className="py-3 px-3 text-center text-white">{stats.pitching.games}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.pitching.gamesStarted}</td>
                         <td className="py-3 px-3 text-center text-[#2E7D32] font-bold">{stats.pitching.wins}</td>
@@ -203,7 +203,7 @@ export default function PlayerDetailClient() {
                         <td className="py-3 px-3 text-center text-white">{stats.pitching.earnedRuns}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.pitching.walks}</td>
                         <td className="py-3 px-3 text-center text-white">{stats.pitching.strikeouts}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
+                        <td className="py-3 px-3 text-center text-[#BF5700] font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
                         <td className="py-3 px-3 text-center text-white font-mono">{stats.pitching.whip.toFixed(2)}</td>
                       </tr>
                     </tbody>

@@ -14,4 +14,11 @@ test.describe('Homepage', () => {
     await page.waitForLoadState('networkidle');
     expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
   });
+
+  test('navigates from home to live scoreboards', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Live Scoreboards' }).first().click();
+    await expect(page).toHaveURL(/\/live-scoreboards/);
+    await expect(page.getByRole('heading', { name: /Live Scoreboards/i })).toBeVisible();
+  });
 });

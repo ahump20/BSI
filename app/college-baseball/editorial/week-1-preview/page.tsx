@@ -1,34 +1,95 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
-const topMatchups = [
-  { away: 'UC Davis', home: 'No. 3 Texas', date: 'Feb 13–15', network: 'SEC Network+', why: 'Schlossnagle debuts a portal-loaded roster. Riojas on Friday, Harrison on Saturday, Volantis on Sunday. The Longhorns are built to win it all — this is the first data point.' },
-  { away: 'Indiana State', home: 'No. 1 Texas A&M', date: 'Feb 14–16', network: 'SEC Network', why: 'The defending national champions open at Blue Bell Park. Can Schlottman pick up where he left off in Omaha? The most talent-rich roster in America takes the field.' },
-  { away: 'Grambling', home: 'No. 2 LSU', date: 'Feb 14–16', network: 'SEC Network+', why: 'Alex Box Stadium on a Friday night in February is already electric. Johnson on the bump. The Tigers have Omaha tattooed on their eyelids.' },
-  { away: 'William & Mary', home: 'No. 4 Wake Forest', date: 'Feb 14–16', network: 'ACC Network', why: 'One game from a national title last year. Bennett, Wilken, and Hartle return. The Deacs open as the ACC favorite and the second-best team in the country.' },
-  { away: 'Stetson', home: 'No. 5 Florida', date: 'Feb 14–16', network: 'SEC Network+', why: 'Sullivan is the truth. The Gators have the pitching to compete with anyone in the country and Gainesville is already dreaming about June.' },
-  { away: 'San Jose State', home: 'No. 9 Stanford', date: 'Feb 14–16', network: 'ACC Network Extra', why: 'The Cardinal open their ACC era at home. Montgomery and Dowd carry the offense. Esquer has Omaha talent — can it translate in a new conference?' },
+interface TexasDossier {
+  meta?: { source: string; fetched_at: string };
+  schedule?: { date: string; opponent: string; location: string }[];
+  season2025Summary?: Record<string, string>;
+  rosterNotables?: { name: string; position: string; note: string }[];
+  historicalContext?: string;
+  error?: string;
+}
+
+const keyMatchups = [
+  {
+    away: 'UC Davis',
+    home: '#4 Texas',
+    series: '3-game series',
+    note: 'Texas opens 2026 at UFCU Disch-Falk Field. The Aggies won a regional in this park last year. The Longhorns need to set the tone early in their first SEC campaign.',
+    venue: 'UFCU Disch-Falk Field, Austin, TX',
+    date: 'Feb 14-16',
+  },
+  {
+    away: '#2 Florida',
+    home: 'Stetson',
+    series: '3-game series',
+    note: 'Florida brings back the deepest pitching staff in the country. Stetson upset a top-10 team at home last season — this is not a gimme.',
+    venue: 'Stetson, DeLand, FL',
+    date: 'Feb 14-16',
+  },
+  {
+    away: '#1 Texas A&M',
+    home: 'Rice',
+    series: '3-game series',
+    note: 'The preseason #1 opens against a Rice team rebuilding under new leadership. A&M\'s lineup returns 7 starters — they\'re expected to be the class of college baseball.',
+    venue: 'Reckling Park, Houston, TX',
+    date: 'Feb 14-16',
+  },
+  {
+    away: '#3 LSU',
+    home: 'Air Force',
+    series: '3-game series',
+    note: 'LSU rolls into Baton Rouge to open at Alex Box. Pitching depth is the question — the bats won\'t be.',
+    venue: 'Alex Box Stadium, Baton Rouge, LA',
+    date: 'Feb 14-16',
+  },
 ];
 
-const pitchingDuels = [
-  { starter: 'Ruger Riojas (Texas)', opponent: 'Noel Valdez (UC Davis)', day: 'Friday, Feb 13', note: 'Riojas takes the Friday mantle for the Longhorns. Slider-fastball combo, mid-90s. UC Davis counters with Valdez — a crafty lefty with command.' },
-  { starter: 'Josh Hartle (Wake Forest)', opponent: 'TBD (William & Mary)', day: 'Friday, Feb 14', note: 'Hartle is a projected top-10 draft pick. Electric stuff, 97 mph heater. The best Friday night arm in the ACC.' },
-  { starter: 'Jac Caglianone (Florida)', opponent: 'TBD (Stetson)', day: 'Friday, Feb 14', note: 'Two-way star. Throws 100 and hits it 450. The most dynamic player in college baseball opens his junior season.' },
+const breakoutStars = [
+  { name: 'Jace LaViolette', team: 'Texas A&M', position: 'OF', note: 'Projected top-10 draft pick. Switch-hitter with 30+ HR power who could be the best player in college baseball.' },
+  { name: 'Cade Kurland', team: 'Florida', position: 'INF', note: 'Led the Gators in RBI last year. His approach at the plate anchors Florida\'s middle of the order.' },
+  { name: 'Charlie Condon', team: 'Georgia', position: 'INF/OF', note: 'Returned for his junior year after flirting with the draft. 30-homer bat with an elite eye.' },
+  { name: 'Kimble Jensen', team: 'Texas', position: 'RHP', note: 'Sophomore arm with mid-90s velocity and three pitches. Could emerge as the weekend\'s best starter.' },
 ];
 
-const storylines = [
-  { title: 'Transfer Portal Report Cards', description: 'Texas (Robbins, Becerra, Tinney), A&M (selective retention), LSU (ACC poaching), Wake Forest (targeted additions). Opening weekend is the first live look at whether portal rosters have chemistry or just talent.' },
-  { title: 'The SEC Gauntlet Begins', description: '13 ranked teams in one conference. The depth is unprecedented. Opening weekend sets the tone — which programs are ready for the grind and which ones need time to gel.' },
-  { title: 'ACC Realignment, Day One', description: 'Stanford and Cal play their first ACC games. Coast-to-coast conference play begins. The travel, the competition, the culture shock — it all starts this weekend.' },
-  { title: 'Freshman Impact Players', description: 'Every February reveals the freshmen who are ready. Watch the lineup cards carefully — the programs trusting true freshmen in opening weekend are the ones who believe they have special talent.' },
+const conferenceWatchlist = [
+  { conference: 'SEC', note: 'Six teams in the preseason top 25. Texas and Texas A&M enter as the new headliners. The deepest league in college baseball history.' },
+  { conference: 'ACC', note: 'Virginia leads a strong group. Stanford and Cal join the conference — immediate impact expected. Wake Forest and Clemson are dark horses for Omaha.' },
+  { conference: 'Big 12', note: 'Texas Tech, TCU, and Oklahoma State form a competitive top tier. Arizona and Arizona State bring Pac-12 pedigree.' },
+  { conference: 'Big Ten', note: 'UCLA and USC bring West Coast talent into a traditionally underrated baseball conference. Indiana and Maryland are rising programs.' },
 ];
 
 export default function Week1PreviewPage() {
+  const [texasDossier, setTexasDossier] = useState<TexasDossier | null>(null);
+  const [dossierLoading, setDossierLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchDossier() {
+      setDossierLoading(true);
+      try {
+        const res = await fetch('/api/college-baseball/editorial/texas-opening-week');
+        if (res.ok) {
+          const data = await res.json();
+          setTexasDossier(data as TexasDossier);
+        }
+      } catch {
+        // Not critical — editorial content is additive
+      } finally {
+        setDossierLoading(false);
+      }
+    }
+    fetchDossier();
+  }, []);
+
   return (
     <>
       <main id="main-content">
@@ -36,60 +97,63 @@ export default function Week1PreviewPage() {
         <Section padding="sm" className="border-b border-white/10">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-white/40">/</span>
+              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Week 1 Preview</span>
+              <span className="text-white/40">/</span>
+              <span className="text-white font-medium">Week 1 Preview</span>
             </nav>
           </Container>
         </Section>
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/10 via-transparent to-ember/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/20 to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <Badge variant="primary">Weekly Preview</Badge>
-                  <span className="text-white/40 text-sm">February 11, 2026</span>
-                  <span className="text-white/40 text-sm">6 min read</span>
+                <div className="flex items-center gap-3 mb-4">
+                  <Badge variant="primary">Week 1 Preview</Badge>
+                  <span className="text-white/40 text-sm">10 min read</span>
                 </div>
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
-                  Week 1:{' '}
-                  <span className="text-gradient-blaze">What to Watch</span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wide mb-4">
+                  Opening Weekend <span className="text-gradient-blaze">2026</span>
                 </h1>
-                <p className="font-serif text-xl text-white/50 leading-relaxed">
-                  The matchups, pitching duels, and storylines that matter most as 300+ programs open the 2026 college baseball season.
+                <p className="text-white/70 text-lg leading-relaxed">
+                  The most anticipated college baseball season in a generation begins February 14. Realignment has reshuffled the deck. Texas and Texas A&M enter the SEC ranked #1 and #4 in the country. Every game this weekend sets the tone for what comes next.
                 </p>
               </div>
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Top Matchups */}
-        <Section padding="lg" background="charcoal">
+        {/* Key Matchups */}
+        <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
-                Six Series to Watch
+              <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-6">
+                Key <span className="text-[#BF5700]">Matchups</span>
               </h2>
             </ScrollReveal>
-            <div className="space-y-4">
-              {topMatchups.map((m, i) => (
-                <ScrollReveal key={m.home} direction="up" delay={Math.min(i * 50, 250)}>
-                  <Card variant="default" padding="md">
-                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <span className="font-display text-sm font-bold uppercase tracking-wide text-white">{m.away} at {m.home}</span>
-                      <span className="font-mono text-[10px] text-white/30">{m.date}</span>
-                      <Badge variant="outline">{m.network}</Badge>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {keyMatchups.map((matchup, i) => (
+                <ScrollReveal key={i} direction="up" delay={i * 50}>
+                  <Card variant="default" padding="lg" className="h-full">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-sm font-semibold text-white">
+                        {matchup.away} <span className="text-white/30 mx-1">@</span> {matchup.home}
+                      </div>
+                      <Badge variant="secondary">{matchup.series}</Badge>
                     </div>
-                    <p className="font-serif text-sm text-white/60 leading-relaxed">{m.why}</p>
+                    <p className="text-white/60 text-sm mb-3">{matchup.note}</p>
+                    <div className="text-xs text-white/30">
+                      {matchup.date} &middot; {matchup.venue}
+                    </div>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -97,22 +161,29 @@ export default function Week1PreviewPage() {
           </Container>
         </Section>
 
-        {/* Pitching Duels */}
-        <Section padding="lg">
+        {/* Breakout Stars */}
+        <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
-                Pitching Duels
+              <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-6">
+                Breakout <span className="text-[#BF5700]">Stars</span>
               </h2>
             </ScrollReveal>
-            <div className="grid md:grid-cols-3 gap-4">
-              {pitchingDuels.map((d, i) => (
-                <ScrollReveal key={d.starter} direction="up" delay={i * 80}>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {breakoutStars.map((player, i) => (
+                <ScrollReveal key={i} direction="up" delay={i * 50}>
                   <Card variant="default" padding="md" className="h-full">
-                    <div className="font-display text-xs uppercase tracking-wider text-burnt-orange mb-2">{d.day}</div>
-                    <div className="font-display text-sm font-bold uppercase tracking-wide text-white mb-1">{d.starter}</div>
-                    <div className="font-mono text-[10px] text-white/30 mb-3">vs {d.opponent}</div>
-                    <p className="font-serif text-sm text-white/50 leading-relaxed">{d.note}</p>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-[#BF5700]/20 rounded-full flex items-center justify-center text-sm font-bold text-[#BF5700]">
+                        {player.position}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-white">{player.name}</p>
+                        <p className="text-xs text-white/40">{player.team}</p>
+                      </div>
+                    </div>
+                    <p className="text-white/60 text-sm">{player.note}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -120,41 +191,124 @@ export default function Week1PreviewPage() {
           </Container>
         </Section>
 
-        {/* Storylines */}
-        <Section padding="lg" background="charcoal">
+        {/* Conference Watchlist */}
+        <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
-                The Storylines
+              <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-6">
+                Conference <span className="text-[#BF5700]">Watchlist</span>
               </h2>
             </ScrollReveal>
-            <div className="space-y-8">
-              {storylines.map((s, i) => (
-                <ScrollReveal key={s.title} direction="up" delay={i * 60}>
-                  <div className="border-l-[3px] border-burnt-orange/40 pl-6">
-                    <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-2">{s.title}</h3>
-                    <p className="font-serif text-base text-white/60 leading-relaxed">{s.description}</p>
-                  </div>
+
+            <div className="space-y-4">
+              {conferenceWatchlist.map((item, i) => (
+                <ScrollReveal key={i} direction="up" delay={i * 50}>
+                  <Card variant="default" padding="md">
+                    <div className="flex items-start gap-4">
+                      <Badge variant="primary" className="shrink-0 mt-0.5">{item.conference}</Badge>
+                      <p className="text-white/70 text-sm">{item.note}</p>
+                    </div>
+                  </Card>
                 </ScrollReveal>
               ))}
             </div>
           </Container>
         </Section>
 
-        {/* Attribution */}
-        <Section padding="md" className="border-t border-burnt-orange/10">
-          <Container size="narrow">
-            <div className="space-y-4">
-              <DataSourceBadge source="D1Baseball / ESPN / BSI Projections" timestamp="February 11, 2026 CT" />
-              <div className="flex flex-wrap gap-6 pt-2">
-                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
-                  All Editorial &rarr;
-                </Link>
-              </div>
+        {/* Texas Dossier */}
+        <Section padding="lg" borderTop>
+          <Container>
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-bold uppercase tracking-wide mb-2">
+                Texas <span className="text-[#BF5700]">Dossier</span>
+              </h2>
+              <p className="text-white/40 text-sm mb-6">Opening weekend intel from the Texas Athletics data pipeline</p>
+            </ScrollReveal>
+
+            {dossierLoading ? (
+              <Card variant="default" padding="lg">
+                <div className="animate-pulse space-y-3">
+                  <div className="h-4 bg-white/10 rounded w-1/3" />
+                  <div className="h-4 bg-white/10 rounded w-2/3" />
+                  <div className="h-4 bg-white/10 rounded w-1/2" />
+                </div>
+              </Card>
+            ) : texasDossier && !texasDossier.error ? (
+              <ScrollReveal direction="up" delay={100}>
+                <Card variant="default" padding="lg">
+                  <CardHeader>
+                    <CardTitle>Texas Longhorns Opening Week Data</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {texasDossier.schedule && texasDossier.schedule.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="text-sm font-semibold text-white/60 uppercase tracking-wide mb-3">Schedule</h4>
+                        <div className="space-y-2">
+                          {texasDossier.schedule.map((game, i) => (
+                            <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-white/5">
+                              <span className="text-white">{game.opponent}</span>
+                              <span className="text-white/40">{game.date} &middot; {game.location}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {texasDossier.rosterNotables && texasDossier.rosterNotables.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="text-sm font-semibold text-white/60 uppercase tracking-wide mb-3">Roster Notables</h4>
+                        <div className="space-y-2">
+                          {texasDossier.rosterNotables.map((player, i) => (
+                            <div key={i} className="text-sm py-2 border-b border-white/5">
+                              <span className="text-white font-medium">{player.name}</span>
+                              <span className="text-white/40 ml-2">{player.position}</span>
+                              <p className="text-white/50 mt-1">{player.note}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {texasDossier.historicalContext && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-semibold text-white/60 uppercase tracking-wide mb-2">Historical Context</h4>
+                        <p className="text-white/50 text-sm">{texasDossier.historicalContext}</p>
+                      </div>
+                    )}
+
+                    {texasDossier.meta && (
+                      <div className="mt-4 pt-4 border-t border-white/10">
+                        <DataSourceBadge
+                          source={texasDossier.meta.source}
+                          timestamp={formatTimestamp(texasDossier.meta.fetched_at)}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
+            ) : (
+              <Card variant="default" padding="lg">
+                <div className="text-center py-6">
+                  <p className="text-white/40 text-sm">Texas dossier data not yet published. Check back on opening day.</p>
+                </div>
+              </Card>
+            )}
+          </Container>
+        </Section>
+
+        {/* Data Attribution */}
+        <Section padding="md" background="charcoal" borderTop>
+          <Container>
+            <div className="text-center text-xs text-white/30 space-y-1">
+              <p>Rankings: D1Baseball Preseason Poll. Game data: ESPN College Baseball API.</p>
+              <p>Texas dossier: Texas Athletics / texassports.com. Player projections: public draft boards.</p>
+              <p>All data refreshes automatically. Source attribution accompanies every data point.</p>
             </div>
           </Container>
         </Section>
       </main>
+
       <Footer />
     </>
   );

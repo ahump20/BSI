@@ -257,7 +257,7 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
             lead.source || 'API'
           )
           .run();
-      } catch (_dbError) {
+      } catch (dbError) {
         // Continue even if DB fails - we can still send to other services
       }
     }
@@ -284,7 +284,7 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-  } catch (_error) {
+  } catch (error) {
     return new Response(JSON.stringify({ error: 'Failed to process lead' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -315,7 +315,7 @@ export default {
       }
 
       // Route handlers for GET requests
-      const routes: Record<string, (params?: Record<string, string>) => unknown> = {
+      const routes: Record<string, (params?: any) => any> = {
         '/health': () => ({
           status: 'ok',
           timestamp: new Date().toISOString(),
@@ -366,6 +366,11 @@ export default {
           }
         }, 5000);
 
+        // Handle client messages
+        server.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data as string);
+        });
+
         return new Response(null, {
           status: 101,
           webSocket: client,
@@ -374,10 +379,10 @@ export default {
       }
 
       return new Response('Not Found', { status: 404, headers });
-    } catch (error: unknown) {
+    } catch (error: any) {
       return new Response(
         JSON.stringify({
-          error: error instanceof Error ? error.message : 'Internal Server Error',
+          error: error.message || 'Internal Server Error',
           timestamp: new Date().toISOString(),
         }),
         { status: 500, headers }
@@ -389,7 +394,7 @@ export default {
 // Durable Object for caching (optional)
 export class CacheObject {
   state: DurableObjectState;
-  cache: Map<string, { data: unknown; expires: number }>;
+  cache: Map<string, { data: any; expires: number }>;
 
   constructor(state: DurableObjectState) {
     this.state = state;

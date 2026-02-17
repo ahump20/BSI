@@ -13,8 +13,8 @@ interface CacheOptions {
 }
 
 class DataCache {
-  private cache = new Map<string, CacheEntry<unknown>>();
-  private pending = new Map<string, Promise<unknown>>();
+  private cache = new Map<string, CacheEntry<any>>();
+  private pending = new Map<string, Promise<any>>();
   private defaultTTL = 60000; // 1 minute default
 
   async get<T>(key: string, fetcher: () => Promise<T>, options: CacheOptions = {}): Promise<T> {
@@ -23,23 +23,23 @@ class DataCache {
 
     // Check for pending request (dedupe)
     if (this.pending.has(key)) {
-      return this.pending.get(key) as Promise<T>;
+      return this.pending.get(key);
     }
 
     // Check cache
     const cached = this.cache.get(key);
     if (cached && now - cached.timestamp < ttl) {
-      return cached.data as T;
+      return cached.data;
     }
 
     // Stale-while-revalidate
     if (cached && options.staleWhileRevalidate) {
-      this.revalidate(key, fetcher);
-      return cached.data as T;
+      this.revalidate(key, fetcher, ttl);
+      return cached.data;
     }
 
     // Fetch new data
-    const promise = this.fetch(key, fetcher);
+    const promise = this.fetch(key, fetcher, ttl);
     this.pending.set(key, promise);
 
     try {
@@ -50,7 +50,7 @@ class DataCache {
     }
   }
 
-  private async fetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  private async fetch<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<T> {
     const data = await fetcher();
     this.cache.set(key, {
       data,
@@ -59,14 +59,14 @@ class DataCache {
     return data;
   }
 
-  private async revalidate<T>(key: string, fetcher: () => Promise<T>): Promise<void> {
+  private async revalidate<T>(key: string, fetcher: () => Promise<T>, ttl: number): Promise<void> {
     try {
       const data = await fetcher();
       this.cache.set(key, {
         data,
         timestamp: Date.now(),
       });
-    } catch (_error) {
+    } catch (error) {
       // handled by UI state
     }
   }

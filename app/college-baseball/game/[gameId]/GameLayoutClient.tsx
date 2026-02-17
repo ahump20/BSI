@@ -207,7 +207,6 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   // Tab navigation
   const tabs = [
     { id: 'summary', label: 'Summary', href: `/college-baseball/game/${gameId}` },
-    { id: 'live', label: 'Game Day', href: `/college-baseball/game/${gameId}/live` },
     { id: 'box-score', label: 'Box Score', href: `/college-baseball/game/${gameId}/box-score` },
     {
       id: 'play-by-play',
@@ -219,7 +218,6 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   ];
 
   const getActiveTab = () => {
-    if (pathname?.includes('/live')) return 'live';
     if (pathname?.includes('/box-score')) return 'box-score';
     if (pathname?.includes('/play-by-play')) return 'play-by-play';
     if (pathname?.includes('/team-stats')) return 'team-stats';

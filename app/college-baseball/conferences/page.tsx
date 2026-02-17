@@ -1,5 +1,7 @@
 'use client';
 
+// React hooks available if needed for future interactivity
+import { useState as _useState, useEffect as _useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -8,82 +10,74 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Trophy, Users, TrendingUp, MapPin } from 'lucide-react';
-import { preseason2026 } from '@/lib/data/preseason-2026';
-import { teamMetadata } from '@/lib/data/team-metadata';
 
-/** Static conference metadata — membership counts are structural facts. */
-const conferenceInfo: Record<string, { fullName: string; description: string; region: string; teams: number }> = {
-  SEC: {
+const conferences = [
+  {
+    id: 'sec',
+    name: 'SEC',
     fullName: 'Southeastern Conference',
-    description: 'The deepest conference in college baseball — Texas and Texas A&M now call home alongside perennial powers like LSU, Tennessee, and Vanderbilt.',
+    description:
+      'The deepest conference in college baseball—where Texas and Texas A&M now call home alongside perennial powers like LSU, Tennessee, and Vanderbilt.',
+    rankedTeams: 4,
+    topTeam: 'Texas',
+    topRank: 1,
     region: 'South',
     teams: 16,
+    highlight: 'Texas enters at #1 in D1Baseball preseason poll',
   },
-  ACC: {
+  {
+    id: 'acc',
+    name: 'ACC',
     fullName: 'Atlantic Coast Conference',
-    description: 'Massive expansion in 2024 brought Stanford, Cal, and SMU — joining established powers like Florida State, North Carolina, and Wake Forest.',
+    description:
+      'Massive expansion in 2024 brought Stanford, Cal, and SMU—joining established powers like Florida State, North Carolina, and Wake Forest.',
+    rankedTeams: 15,
+    topTeam: 'Stanford',
+    topRank: 3,
     region: 'East Coast',
     teams: 18,
+    highlight: 'Most ranked teams of any conference (15)',
   },
-  'Big 12': {
+  {
+    id: 'big-12',
+    name: 'Big 12',
     fullName: 'Big 12 Conference',
-    description: 'TCU leads a competitive Big 12 that added UCF, Houston, BYU, and others in realignment. Deep pitching across the board.',
+    description:
+      'Oklahoma State leads a competitive Big 12 that added UCF, Houston, BYU, and others in realignment. Deep pitching across the board.',
+    rankedTeams: 6,
+    topTeam: 'Oklahoma State',
+    topRank: 12,
     region: 'Central',
     teams: 16,
+    highlight: 'Six ranked teams in preseason Top 25',
   },
-  'Big Ten': {
+  {
+    id: 'big-ten',
+    name: 'Big Ten',
     fullName: 'Big Ten Conference',
-    description: 'Growing power in the Midwest. USC and UCLA joined in 2024, bringing West Coast talent to the conference.',
+    description:
+      'Growing power in the Midwest. USC and UCLA join in 2024, bringing West Coast talent to the conference.',
+    rankedTeams: 0,
+    topTeam: null,
+    topRank: null,
     region: 'Midwest',
     teams: 18,
+    highlight: 'USC, UCLA additions bring new talent',
   },
-  'Pac-12': {
+  {
+    id: 'pac-12',
+    name: 'Pac-12',
     fullName: 'Pacific-12 Conference',
-    description: 'The Pac-12 is rebuilding after losing major programs. Oregon State remains as an anchor.',
+    description:
+      'The Pac-12 is rebuilding after losing major programs. Oregon State and Washington remain as anchors.',
+    rankedTeams: 0,
+    topTeam: null,
+    topRank: null,
     region: 'West',
     teams: 4,
+    highlight: 'Conference in transition',
   },
-};
-
-/** Derive ranked team counts and top teams from preseason data. */
-function buildConferenceStats() {
-  const confMap: Record<string, { ranked: number; topTeam: string | null; topRank: number | null }> = {};
-  for (const [slug, data] of Object.entries(preseason2026)) {
-    const conf = data.conference;
-    if (!confMap[conf]) confMap[conf] = { ranked: 0, topTeam: null, topRank: null };
-    confMap[conf].ranked++;
-    if (confMap[conf].topRank === null || data.rank < confMap[conf].topRank!) {
-      confMap[conf].topRank = data.rank;
-      confMap[conf].topTeam = teamMetadata[slug]?.shortName || slug;
-    }
-  }
-  return confMap;
-}
-
-const confStats = buildConferenceStats();
-const conferenceOrder = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
-const conferences = conferenceOrder
-  .filter((name) => conferenceInfo[name])
-  .map((name) => {
-    const info = conferenceInfo[name];
-    const stats = confStats[name] || { ranked: 0, topTeam: null, topRank: null };
-    return {
-      id: name.toLowerCase().replace(/\s+/g, '-'),
-      name,
-      fullName: info.fullName,
-      description: info.description,
-      rankedTeams: stats.ranked,
-      topTeam: stats.topTeam,
-      topRank: stats.topRank,
-      region: info.region,
-      teams: info.teams,
-    };
-  });
-
-/** Find conference with the most ranked teams. */
-const mostRankedConf = conferences.reduce((best, c) =>
-  c.rankedTeams > best.rankedTeams ? c : best, conferences[0]);
-const topConf = conferences.find((c) => c.topRank === 1) || conferences[0];
+];
 
 export default function ConferencesHubPage() {
   return (
@@ -130,13 +124,13 @@ export default function ConferencesHubPage() {
                 </Card>
                 <Card padding="md" className="text-center">
                   <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">{topConf.name}</div>
-                  <div className="text-text-tertiary text-sm">#1 Team ({topConf.topTeam})</div>
+                  <div className="font-display text-2xl font-bold text-white">SEC</div>
+                  <div className="text-text-tertiary text-sm">#1 Team (Texas)</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">{mostRankedConf.name}</div>
-                  <div className="text-text-tertiary text-sm">Most Ranked ({mostRankedConf.rankedTeams})</div>
+                  <div className="font-display text-2xl font-bold text-white">ACC</div>
+                  <div className="text-text-tertiary text-sm">Most Ranked (15)</div>
                 </Card>
               </div>
             </ScrollReveal>
@@ -172,12 +166,8 @@ export default function ConferencesHubPage() {
                           </div>
                         </div>
                         <div className="md:text-right">
-                          {conf.topTeam && (
-                            <>
-                              <div className="text-sm text-text-tertiary mb-1">Preseason Leader</div>
-                              <div className="text-white font-medium">#{conf.topRank} {conf.topTeam}</div>
-                            </>
-                          )}
+                          <div className="text-sm text-text-tertiary mb-1">Preseason Highlight</div>
+                          <div className="text-white font-medium">{conf.highlight}</div>
                         </div>
                       </div>
                     </Card>

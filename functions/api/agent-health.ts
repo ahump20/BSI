@@ -1,17 +1,18 @@
-/**
- * Pages Function — /api/agent-health
- *
- * Lightweight agent pulse check for Pages-only deployments.
- */
-
-import { ok, preflight } from './_utils';
+import type { PagesFunction } from '@cloudflare/workers-types';
 
 export const onRequestGet: PagesFunction = async () => {
-  return ok({
-    active: true,
-    status: 'operational',
-    timestamp: new Date().toISOString(),
+  const body = {
+    status: 'ok',
+    service: 'agent-health',
+    checkedAt: new Date().toISOString(),
+    timezone: 'America/Chicago',
+  };
+
+  return new Response(JSON.stringify(body), {
+    status: 200,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'public, max-age=30',
+    },
   });
 };
-
-export const onRequestOptions: PagesFunction = async () => preflight();

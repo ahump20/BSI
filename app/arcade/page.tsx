@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
-import { useSportData } from '@/lib/hooks/useSportData';
 
 interface LeaderboardEntry {
   name: string;
@@ -22,7 +21,9 @@ const GAMES = [
     description: 'Call plays and drive downfield in this fast-paced football strategy game.',
     color: '#FF6B35',
     icon: '🏈',
-    url: '/arcade/games/blitz',
+    iconLabel: 'Football icon',
+    type: 'game',
+    url: '/games/blitz/',
     deployed: true,
   },
   {
@@ -31,7 +32,9 @@ const GAMES = [
     description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
     color: '#BF5700',
     icon: '⚾',
-    url: '/arcade/games/sandlot-sluggers',
+    iconLabel: 'Baseball icon',
+    type: 'game',
+    url: '/games/sandlot-sluggers/',
     deployed: true,
   },
   {
@@ -40,7 +43,9 @@ const GAMES = [
     description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
     color: '#FDB913',
     icon: '🏀',
-    url: '/arcade/games/downtown-doggies',
+    iconLabel: 'Basketball icon',
+    type: 'game',
+    url: '/games/downtown-doggies/',
     deployed: true,
   },
   {
@@ -49,34 +54,38 @@ const GAMES = [
     description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
     color: '#CD5C5C',
     icon: '🌭',
-    url: '/arcade/games/hotdog-dash',
+    iconLabel: 'Hot dog icon',
+    type: 'game',
+    url: '/games/hotdog-dash/',
     deployed: true,
   },
   {
     id: 'leadership-capital',
     title: 'Leadership Capital Index',
-    description: '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
+    description: 'Leadership analytics tool with 23 intangible metrics mapped to five academic frameworks.',
     color: '#BF5700',
     icon: '📊',
-    url: '/arcade/games/leadership-capital',
+    iconLabel: 'Analytics chart icon',
+    type: 'tool',
+    url: '/games/leadership-capital/',
     deployed: true,
   },
-];
+] as const;
 
 export default function ArcadePage() {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
 
-  const {
-    data: leaderboardData,
-    loading: loadingLeaderboard,
-    error: leaderboardError,
-    retry: retryLeaderboard,
-  } = useSportData<{ leaderboard?: LeaderboardEntry[] }>(
-    '/api/multiplayer/leaderboard?limit=15',
-    { timeout: 5000 }
-  );
-
-  const leaderboard = leaderboardData?.leaderboard || [];
+  useEffect(() => {
+    fetch('/api/multiplayer/leaderboard?limit=15')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: { leaderboard?: LeaderboardEntry[] }) => {
+        setLeaderboard(data.leaderboard || []);
+      })
+      .catch(() => {})
+      .finally(() => setLoadingLeaderboard(false));
+  }, []);
 
   return (
     <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
@@ -88,7 +97,7 @@ export default function ArcadePage() {
               Arcade
             </span>
             <h1 className="text-4xl md:text-5xl font-display text-white uppercase tracking-tight mb-3">
-              Games Hub
+              Games &amp; Tools Hub
             </h1>
             <p className="text-white/60 max-w-xl">
               Play sports mini-games, compete for high scores, and climb the leaderboard.
@@ -108,15 +117,19 @@ export default function ArcadePage() {
                     className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
                     style={{ background: `${game.color}20` }}
                   >
-                    {game.icon}
+                    <span role="img" aria-label={game.iconLabel}>{game.icon}</span>
                   </div>
                   <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
                     {game.title}
                   </h3>
                   <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
                   <div className="mt-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-400" />
-                    <span className="text-xs text-green-400/80">Live</span>
+                    <span
+                      className={`w-2 h-2 rounded-full ${game.type === 'tool' ? 'bg-[#BF5700]' : 'bg-green-400'}`}
+                    />
+                    <span className={`text-xs ${game.type === 'tool' ? 'text-[#BF5700]/90' : 'text-green-400/80'}`}>
+                      {game.type === 'tool' ? 'Analytics Tool' : 'Live'}
+                    </span>
                   </div>
                 </Card>
               </a>
@@ -153,16 +166,6 @@ export default function ArcadePage() {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
                     ))}
-                  </div>
-                ) : leaderboardError ? (
-                  <div className="text-center py-8">
-                    <p className="text-white/40 mb-3">Leaderboard unavailable</p>
-                    <button
-                      onClick={retryLeaderboard}
-                      className="px-4 py-2 text-sm bg-[#BF5700]/20 text-[#BF5700] rounded hover:bg-[#BF5700]/30 transition-colors"
-                    >
-                      Retry
-                    </button>
                   </div>
                 ) : leaderboard.length === 0 ? (
                   <p className="text-center text-white/40 py-8">No scores yet. Be the first to play!</p>

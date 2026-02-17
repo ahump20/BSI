@@ -20,7 +20,21 @@ const featuredStories = [
     readTime: '8 min read',
     featured: true,
     teams: ['Texas', 'Texas A&M'],
-    imageGradient: 'from-burnt-orange to-[#500000]',
+    imageGradient: 'from-[#BF5700] to-[#500000]',
+    href: '/college-baseball/preseason/lone-star-rivalry',
+  },
+  {
+    id: 'week-1-preview',
+    title: 'Week 1 Preview: Opening Weekend',
+    subtitle: 'Key Matchups, Power Rankings, and Breakout Stars',
+    description:
+      'The 2026 season opens February 14. We break down the biggest series, the teams primed to make early statements, and the freshmen to watch from day one.',
+    category: 'Preview',
+    readTime: '10 min read',
+    featured: false,
+    teams: ['All'],
+    imageGradient: 'from-[#BF5700] to-[#FF6B35]',
+    href: '/college-baseball/editorial/week-1-preview',
   },
   {
     id: 'sec-preview',
@@ -32,7 +46,8 @@ const featuredStories = [
     readTime: '12 min read',
     featured: false,
     teams: ['SEC'],
-    imageGradient: 'from-[#500000] to-charcoal',
+    imageGradient: 'from-[#500000] to-[#1A1A1A]',
+    href: '/college-baseball/preseason/sec-preview',
   },
   {
     id: 'power-25',
@@ -44,12 +59,20 @@ const featuredStories = [
     readTime: '15 min read',
     featured: false,
     teams: ['All'],
-    imageGradient: 'from-ember to-charcoal',
+    imageGradient: 'from-[#FF6B35] to-[#1A1A1A]',
+    href: '/college-baseball/preseason/power-25',
   },
 ];
 
+function getDaysUntilOpening(): string {
+  const openingDay = new Date('2026-02-14T00:00:00-06:00');
+  const now = new Date();
+  const days = Math.max(0, Math.floor((openingDay.getTime() - now.getTime()) / 86400000));
+  return days.toString();
+}
+
 const quickStats = [
-  { label: 'Days Until Opening Day', value: '42', icon: Calendar },
+  { label: 'Days Until Opening Day', value: getDaysUntilOpening(), icon: Calendar },
   { label: 'Ranked Texas Teams', value: '4', icon: Star },
   { label: 'SEC Teams in Top 25', value: '4', icon: TrendingUp },
   { label: 'Conference Realignment Teams', value: '8', icon: Users },
@@ -114,7 +137,7 @@ export default function PreseasonHubPage() {
               {featuredStories
                 .filter((story) => story.featured)
                 .map((story) => (
-                  <Link key={story.id} href={`/college-baseball/preseason/${story.id}`}>
+                  <Link key={story.id} href={story.href || `/college-baseball/preseason/${story.id}`}>
                     <Card
                       padding="none"
                       className="overflow-hidden hover:border-burnt-orange/50 transition-all cursor-pointer group"
@@ -159,7 +182,7 @@ export default function PreseasonHubPage() {
                 {featuredStories
                   .filter((story) => !story.featured)
                   .map((story) => (
-                    <Link key={story.id} href={`/college-baseball/preseason/${story.id}`}>
+                    <Link key={story.id} href={story.href || `/college-baseball/preseason/${story.id}`}>
                       <Card
                         padding="lg"
                         className="h-full hover:border-burnt-orange/50 transition-all cursor-pointer group"
