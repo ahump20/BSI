@@ -13,7 +13,6 @@ const colors = {
   dirt: '#3E2C1C',
   clay: '#C4703F',
   chalk: '#F5F0E8',
-  chalkDim: '#E8E0D2',
   field: '#2D5A27',
   midnight: '#111111',
   gold: '#D4A843',
