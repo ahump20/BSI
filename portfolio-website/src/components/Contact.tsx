@@ -57,7 +57,7 @@ export default function Contact() {
         </div>
 
         <div className="reveal">
-          <a href="/Austin_Humphrey_Resume_Executive_v2.pdf" download className="btn-primary">
+          <a href="/Austin_Humphrey_Resume.pdf" download className="btn-primary">
             Download Resume
           </a>
           <p className="text-sm font-mono text-warm-gray mt-8">

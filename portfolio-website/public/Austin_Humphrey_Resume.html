@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Resume for Austin Humphrey — sports intelligence founder, product strategist, AI-assisted analytics builder." />
+    <title>Austin Humphrey | Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --burnt-orange: #BF5700;
+        --burnt-orange-dim: rgba(191, 87, 0, 0.12);
+        --texas-soil: #8B4513;
+        --charcoal: #1A1A1A;
+        --midnight: #0D0D0D;
+        --ember: #FF6B35;
+        --sand: #F4EEE7;
+        --paper: #FFFFFF;
+        --ink: #171412;
+        --muted: #6B6560;
+        --line: #E2D8CD;
+        --chip-bg: #FAF5EF;
+        --chip-border: #E8D8C9;
+        --warm-white: #FFF9F3;
+
+        /* Typography scale */
+        --font-display: 'Oswald', 'Avenir Next Condensed', 'Arial Narrow', sans-serif;
+        --font-body: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+        --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+      }
+
+      @page { size: A4; margin: 8mm; }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        background:
+          radial-gradient(ellipse at 6% 3%, rgba(191, 87, 0, 0.09), transparent 36%),
+          radial-gradient(ellipse at 94% 92%, rgba(139, 69, 19, 0.07), transparent 32%),
+          var(--sand);
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* ── PAGE CONTAINER ── */
+      .page {
+        width: min(1040px, calc(100% - 24px));
+        margin: 16px auto;
+        background: var(--paper);
+        border: 1px solid rgba(200, 185, 165, 0.5);
+        border-radius: 20px;
+        box-shadow:
+          0 1px 3px rgba(18, 12, 8, 0.04),
+          0 8px 24px rgba(18, 12, 8, 0.08),
+          0 32px 72px rgba(18, 12, 8, 0.12);
+        overflow: hidden;
+      }
+
+      /* ── HERO HEADER ── */
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 32px 32px 26px;
+        color: #F6EFE8;
+        background:
+          linear-gradient(135deg,
+            rgba(13, 13, 13, 0.97) 0%,
+            rgba(26, 20, 16, 0.96) 45%,
+            rgba(50, 34, 24, 0.95) 80%,
+            rgba(70, 44, 28, 0.94) 100%),
+          radial-gradient(ellipse at 80% 20%, rgba(255, 107, 53, 0.15), transparent 50%),
+          radial-gradient(ellipse at 20% 80%, rgba(191, 87, 0, 0.08), transparent 40%);
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .hero::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+          var(--burnt-orange) 0%,
+          var(--ember) 30%,
+          rgba(255, 200, 140, 0.6) 50%,
+          var(--ember) 70%,
+          var(--burnt-orange) 100%);
+      }
+
+      /* Subtle film grain on hero */
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        pointer-events: none;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      h1 {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 46px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+
+      .hero-title {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255, 200, 150, 0.85);
+        margin-bottom: 14px;
+      }
+
+      .summary {
+        font-size: 15.5px;
+        line-height: 1.65;
+        max-width: 72ch;
+        color: rgba(246, 239, 232, 0.92);
+        font-weight: 400;
+        margin-bottom: 16px;
+      }
+
+      .contact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .contact span,
+      .contact a {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 246, 236, 0.88);
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        font-weight: 400;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: border-color 0.2s, background 0.2s;
+      }
+
+      .contact a:hover {
+        border-color: rgba(255, 180, 130, 0.6);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .contact a:focus-visible {
+        outline: 2px solid var(--ember);
+        outline-offset: 2px;
+      }
+
+      /* ── MAIN GRID ── */
+      .main {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 28px;
+        padding: 22px 28px 24px;
+      }
+
+      /* ── SECTIONS ── */
+      .section {
+        margin-bottom: 18px;
+      }
+
+      .section:last-child {
+        margin-bottom: 0;
+      }
+
+      .section h2 {
+        font-family: var(--font-display);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--burnt-orange);
+        margin-bottom: 8px;
+      }
+
+      .rule {
+        height: 2px;
+        width: 64px;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, var(--burnt-orange), rgba(191, 87, 0, 0.06));
+        border-radius: 1px;
+      }
+
+      /* ── EXPERIENCE CARDS ── */
+      .experience-card {
+        padding: 14px 16px 13px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: linear-gradient(180deg, #FFFFFF 0%, #FDFAF7 100%);
+        margin-bottom: 12px;
+        break-inside: avoid;
+        transition: box-shadow 0.2s;
+      }
+
+      .experience-card:hover {
+        box-shadow: 0 2px 12px rgba(191, 87, 0, 0.06);
+      }
+
+      .role {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--charcoal);
+        margin-bottom: 4px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 4px 12px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        margin-bottom: 10px;
+      }
+
+      /* Prose-style role descriptions */
+      .role-description {
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--ink);
+        margin-bottom: 0;
+      }
+
+      .role-description + .role-description {
+        margin-top: 6px;
+      }
+
+      /* ── IMPACT GRID ── */
+      .impact {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .impact-card {
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, var(--warm-white) 0%, #F8EFE5 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .impact-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--burnt-orange), rgba(191, 87, 0, 0.15));
+        border-radius: 0 2px 2px 0;
+      }
+
+      .impact-card strong {
+        display: block;
+        font-family: var(--font-display);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--texas-soil);
+        margin-bottom: 4px;
+      }
+
+      .impact-card span {
+        display: block;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      /* ── CHIPS ── */
+      .chipset {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chip {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--chip-border);
+        background: var(--chip-bg);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 500;
+        color: #4B4138;
+        letter-spacing: 0.2px;
+      }
+
+      /* ── LIST BOX ── */
+      .list-box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #FFFFFF;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+      }
+
+      .list-box:last-child {
+        margin-bottom: 0;
+      }
+
+      .list-box ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .list-box li {
+        font-size: 13px;
+        line-height: 1.55;
+        margin-bottom: 6px;
+        padding-left: 14px;
+        position: relative;
+        color: var(--ink);
+      }
+
+      .list-box li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--burnt-orange);
+        opacity: 0.5;
+      }
+
+      .list-box li:last-child {
+        margin-bottom: 0;
+      }
+
+      .list-box li strong {
+        color: var(--charcoal);
+        font-weight: 600;
+      }
+
+      /* ── EDUCATION ── */
+      .edu-row {
+        margin-bottom: 10px;
+      }
+
+      .edu-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .edu-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--charcoal);
+        margin-bottom: 2px;
+      }
+
+      .edu-meta {
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        line-height: 1.4;
+      }
+
+      /* ── LEADERSHIP ── */
+      .leadership-item {
+        margin-bottom: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .leadership-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .leadership-item strong {
+        color: var(--charcoal);
+        font-weight: 700;
+      }
+
+      .leadership-item .detail {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      /* ── FOOTER ── */
+      .footer {
+        padding: 10px 28px 14px;
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        letter-spacing: 0.3px;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        .hero { padding: 24px 20px 20px; }
+        h1 { font-size: 36px; }
+        .main {
+          grid-template-columns: 1fr;
+          gap: 16px;
+          padding: 18px 20px;
+        }
+        .impact { grid-template-columns: 1fr; }
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        *, *::before, *::after {
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+        body { background: #fff; }
+        .page {
+          width: 100%;
+          margin: 0;
+          border: none;
+          border-radius: 0;
+          box-shadow: none !important;
+        }
+        .hero {
+          background: #1A1511 !important;
+          color: #FFF7EC;
+          break-inside: avoid;
+        }
+        .hero::after { height: 2px; background: var(--texas-soil); }
+        .hero::before { display: none; }
+        .experience-card,
+        .list-box,
+        .impact-card { background: #fff !important; box-shadow: none !important; }
+        .experience-card:hover { box-shadow: none !important; }
+        .section { break-inside: avoid; }
+        .footer { border-top-color: #e0e0e0; }
+      }
+    </style>
+  </head>
+  <body>
+    <article class="page" aria-label="Resume for Austin Humphrey">
+
+      <!-- ═══ HERO ═══ -->
+      <header class="hero">
+        <div class="hero-inner">
+          <h1>Austin Humphrey</h1>
+          <p class="hero-title">Sports Intelligence · Product Strategy · AI-Assisted Analytics</p>
+          <p class="summary">
+            I build sports intelligence systems that work in production — not pitch decks. Three years leading data-informed strategy across advertising and founder-led product execution, two years designing AI/LLM workflows from prompt to deployment. I turn raw sports data into decisions people can actually use, with equal coverage for the markets and leagues that mainstream media ignores.
+          </p>
+          <div class="contact">
+            <span>Boerne, TX</span>
+            <a href="tel:+12102735538" aria-label="Phone">(210) 273-5538</a>
+            <a href="mailto:ahump20@outlook.com" aria-label="Email">ahump20@outlook.com</a>
+            <a href="https://linkedin.com/in/ahump20" aria-label="LinkedIn" target="_blank" rel="noopener">linkedin.com/in/ahump20</a>
+            <a href="https://austinhumphrey.com" aria-label="Portfolio" target="_blank" rel="noopener">AustinHumphrey.com</a>
+            <a href="https://blazesportsintel.com" aria-label="BSI" target="_blank" rel="noopener">BlazeSportsIntel.com</a>
+          </div>
+        </div>
+      </header>
+
+      <!-- ═══ MAIN CONTENT ═══ -->
+      <main class="main">
+
+        <!-- LEFT COLUMN -->
+        <section>
+
+          <!-- EXPERIENCE -->
+          <section class="section">
+            <h2>Experience</h2>
+            <div class="rule"></div>
+
+            <article class="experience-card">
+              <h3 class="role">Founder & Builder — Blaze Sports Intel</h3>
+              <div class="meta">
+                <span>Boerne, TX</span>
+                <span>2023 – Present</span>
+              </div>
+              <p class="role-description">
+                Designed and operate a production sports intelligence platform covering MLB, NFL, NCAA football, NBA, and college baseball — entirely on Cloudflare infrastructure. The backend runs 53 Workers, 12 D1 databases, 45 KV namespaces, and 18 R2 buckets for multi-sport data aggregation at scale.
+              </p>
+              <p class="role-description">
+                Built real-time ingestion pipelines and mobile-first dashboards with ~30-second live refresh, plus AI-assisted forecasting modules and the BlazeCraft reliability monitoring interface. Own every layer: roadmap, architecture, release ops, content, and stakeholder communication as a solo founder focused on the markets that matter and don't get covered.
+              </p>
+            </article>
+
+            <article class="experience-card">
+              <h3 class="role">Advertising Account Executive — Spectrum Reach</h3>
+              <div class="meta">
+                <span>Austin, TX</span>
+                <span>Nov 2022 – Dec 2025</span>
+              </div>
+              <p class="role-description">
+                Developed data-informed advertising strategies across linear TV, OTT/CTV, streaming, and digital for local and regional clients. Translated campaign performance into insights that drove client renewals and strategic upsells — the kind of work where you learn that data only matters when it changes someone's decision.
+              </p>
+            </article>
+
+            <article class="experience-card">
+              <h3 class="role">Financial Representative — Northwestern Mutual</h3>
+              <div class="meta">
+                <span>San Antonio, TX</span>
+                <span>Dec 2020 – Aug 2022</span>
+              </div>
+              <p class="role-description">
+                Completed a top-5 ranked intern program and converted to a full-time advising role. Earned the "Power of 10" Award — top 10% nationally. Built comprehensive financial plans through structured modeling, prospecting discipline, and consultative client relationships.
+              </p>
+            </article>
+          </section>
+
+          <!-- SELECTED IMPACT -->
+          <section class="section">
+            <h2>What I've Built</h2>
+            <div class="rule"></div>
+            <div class="impact">
+              <div class="impact-card">
+                <strong>Production Platform</strong>
+                <span>53-Worker serverless architecture serving multi-sport analytics across five leagues — from zero to production as a solo builder.</span>
+              </div>
+              <div class="impact-card">
+                <strong>AI + Sports Operations</strong>
+                <span>Two years designing Claude, Gemini, and ChatGPT workflows for sports data ingestion, forecasting, and editorial — not demos, deployed systems.</span>
+              </div>
+              <div class="impact-card">
+                <strong>Data → Story</strong>
+                <span>Turn performance metrics into editorial content for college baseball, FCS football, and other markets mainstream media won't touch.</span>
+              </div>
+              <div class="impact-card">
+                <strong>Full-Stack Execution</strong>
+                <span>Architecture, frontend, content, ops, and stakeholder communication. Every layer, every day, one person.</span>
+              </div>
+            </div>
+          </section>
+
+        </section>
+
+        <!-- RIGHT COLUMN (ASIDE) -->
+        <aside>
+
+          <!-- CORE CAPABILITIES -->
+          <section class="section">
+            <h2>Core Capabilities</h2>
+            <div class="rule"></div>
+            <div class="chipset">
+              <span class="chip">Consultative Sales</span>
+              <span class="chip">Account Strategy</span>
+              <span class="chip">Client Development</span>
+              <span class="chip">Financial Planning</span>
+              <span class="chip">Multi-Platform Campaigns</span>
+              <span class="chip">TypeScript / Node.js / SQL</span>
+              <span class="chip">Cloudflare Workers</span>
+              <span class="chip">API Design</span>
+              <span class="chip">Real-Time Pipelines</span>
+              <span class="chip">Data Visualization</span>
+              <span class="chip">AI/LLM Workflows</span>
+              <span class="chip">Agentic Prompting</span>
+              <span class="chip">Sports Analytics</span>
+              <span class="chip">Editorial Strategy</span>
+              <span class="chip">Product Development</span>
+            </div>
+          </section>
+
+          <!-- TECHNICAL TOOLS -->
+          <section class="section">
+            <h2>Technical Stack</h2>
+            <div class="rule"></div>
+            <div class="list-box">
+              <ul>
+                <li><strong>AI/LLM</strong> — Claude.ai, Claude Code, Gemini, ChatGPT, agentic workflow design (2 years hands-on)</li>
+                <li><strong>Cloud</strong> — Cloudflare Workers, D1, KV, R2, Pages</li>
+                <li><strong>Languages</strong> — TypeScript, Node.js, React, Next.js, Hono, SQL</li>
+                <li><strong>Data</strong> — REST APIs, WebSockets, real-time ingestion pipelines</li>
+                <li><strong>DevOps</strong> — GitHub, Wrangler CLI, CI/CD, Vitest</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- EDUCATION -->
+          <section class="section">
+            <h2>Education</h2>
+            <div class="rule"></div>
+            <div class="list-box">
+              <div class="edu-row">
+                <p class="edu-title">AI & Machine Learning — Postgraduate Certificate</p>
+                <p class="edu-meta">UT Austin McCombs School of Business · In Progress</p>
+              </div>
+              <div class="edu-row">
+                <p class="edu-title">M.S. Entertainment Business — Sports Management</p>
+                <p class="edu-meta">Full Sail University · Feb 2026 · GPA 3.56</p>
+              </div>
+              <div class="edu-row">
+                <p class="edu-title">B.A. International Relations & Global Studies</p>
+                <p class="edu-meta">University of Texas at Austin · 2014 – 2020</p>
+                <p class="edu-meta">Minors: Economics, European Studies</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- LEADERSHIP -->
+          <section class="section">
+            <h2>Leadership</h2>
+            <div class="rule"></div>
+            <div class="list-box">
+              <div class="leadership-item">
+                <strong>Rush Captain & Alumni Relations Chair</strong> — Alpha Tau Omega, UT Austin<br />
+                <span class="detail">Managed ~$100K event budget. Recruited 73 new members across two pledge classes.</span>
+              </div>
+              <div class="leadership-item">
+                <strong>"Power of 10" Award</strong> — Northwestern Mutual<br />
+                <span class="detail">Top 10% nationally in intern program.</span>
+              </div>
+            </div>
+          </section>
+
+        </aside>
+      </main>
+
+      <footer class="footer">
+        References available upon request · Portfolio and live platform at BlazeSportsIntel.com
+      </footer>
+
+    </article>
+  </body>
+</html>
