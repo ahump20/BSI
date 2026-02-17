@@ -90,61 +90,40 @@ meta: { source: string; fetched_at: string; timezone: 'America/Chicago' }
 
 This is what actually exists in Cloudflare right now. Use `wrangler` or the Cloudflare MCP tools to verify current state — don't trust this list if something feels off.
 
-### Workers (53 deployed)
+### Workers (14 deployed)
 
-**Core data pipeline:**
-`bsi-ingest` · `bsi-college-data-sync` · `bsi-cbb-sync` · `bsi-cbb-gateway` · `espn-data-cache` · `bsi-baseball-rankings` · `bsi-prediction-api` · `blazesports-ingest`
+**Site and API (Hono router, 382 lines):**
+`blazesportsintel-worker-prod` · `blazesportsintel-worker` · `blazesportsintel-worker-canary`
 
-**Site and API:**
-`blazesportsintel-worker` · `blazesportsintel-worker-prod` · `blazesportsintel-worker-canary` · `bsi-home` · `bsi-api` · `blaze-sports-api` · `blaze-data-layer-prod` · `blaze-data-layer`
+**Ingest pipeline:**
+`bsi-cbb-ingest` · `bsi-sportradar-ingest` · `bsi-portal-sync` · `bsi-prediction-api`
 
 **Operations:**
-`bsi-ops-bridge` · `bsi-ops-bridge-production` · `bsi-prod-dashboard` · `bsi-news-ticker` · `bsi-ticker` · `bsi-cache-warmer` · `bsi-mcp-server` · `bsi-mcp-deploy`
-
-**Features:**
-`bsi-cfb-ai` · `bsi-fanbase-sentiment` · `bsi-fanbase-updater` · `bsi-nil-sync` · `bsi-portal-agent` · `bsi-chatgpt-app` · `bsi-skills-api` · `bsi-gamebridge` · `bsi-gamebridge-production` · `neural-coach-v2` · `agent-gateway` · `blaze-ai-search-nlweb`
+`bsi-error-tracker` (tail consumer) · `bsi-synthetic-monitor` (cron) · `bsi-news-ticker` · `bsi-ticker`
 
 **BlazeCraft:**
-`blaze-field-site` · `blaze-field-do` · `blazecraft-assets` · `blazecraft-events`
+`blaze-field-site` · `blaze-field-do`
 
-**Games/Arcade:**
-`sandlot-sluggers` · `backyard-baseball-api` · `mini-games-api` · `bsi-blitz-game` · `blaze-blitz` · `bsi-agentforge-game` · `bsi-game-backend` · `bsi-inferno-sprint-leaderboard`
+**Games:**
+`mini-games-api`
 
-**Other:**
-`blazesportsintel-com` · `bsi-mmr-ledger` · `customer-worker-1` · `wrangler` · `wrangler-action`
-
-### D1 Databases (12)
+### D1 Databases (5)
 
 | Name | Size | Purpose |
 |------|------|---------|
 | `bsi-historical-db` | 4.5 MB | Historical archives |
-| `bsi-game-db` | 3.3 MB | Live/recent game data |
-| `bsi-prod-db` | 246 KB | Production data |
+| `bsi-game-db` | 3.3 MB | Live/recent game data (sportradar-ingest) |
+| `bsi-prod-db` | 344 KB | Production data (main worker) |
 | `bsi-fanbase-db` | 197 KB | Fan sentiment |
-| `blazecraft-gateway-db` | 168 KB | BlazeCraft gateway |
-| `blazecraft-db` | 139 KB | BlazeCraft core |
-| `bsi-agentforge-db` | 115 KB | AgentForge game |
-| `bsi-mmr-db` | 74 KB | MMR/ranking |
-| `blazecraft-leaderboards` | 45 KB | Leaderboards |
-| `bsi-game-telemetry` | 37 KB | Game telemetry |
-| `sandlot-sluggers-db` | 12 KB | Sandlot Sluggers |
-| `blazecraft-events-db` | 12 KB | BlazeCraft events |
+| `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
 
-### KV Namespaces (45)
+### KV Namespaces (9)
 
-**Primary caches:** `BSI_SPORTS_CACHE` · `BSI_SCORES_CACHE` · `BSI_CACHE` · `BSI_PROD_CACHE` · `PREDICTION_CACHE` · `BSI_PREVIEW_CACHE`
+**Bound to active workers:**
+`BSI_PROD_CACHE` · `BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
 
-**Operations:** `BSI_OPS_METRICS` · `BSI_OPS_EVENTS` · `BSI_OPS_DELTAS` · `BSI_ANALYTICS_EVENTS` · `BSI_HOME_ANALYTICS`
-
-**Features:** `BSI_FANBASE_CACHE` · `BSI_PORTAL_CACHE` · `BSI_CHATGPT_CACHE` · `BSI_MCP_STATE` · `CFB_CACHE` · `SPORTS_DATA_KV`
-
-**BlazeCraft:** `BLAZECRAFT_CACHE` · `BLAZECRAFT_CONFIG` · `BLAZECRAFT_SESSIONS`
-
-**GameBridge:** `BSI_GAMEBRIDGE_SNAPSHOT` · `BSI_GAMEBRIDGE_DELTAS`
-
-**Games:** `SANDLOT_CACHE` · `HOTDOG_CACHE` · `BLITZ_CACHE` + various game-specific
-
-**Sessions/Rate Limiting:** `BSI_SESSIONS` · `BSI_HOME_SESSIONS` · `RATE_LIMIT`
+**Other:**
+`PREDICTION_CACHE` · `bsi-ticker-cache` · `portfolio-contacts`
 
 ### R2 Buckets (18)
 
@@ -167,12 +146,22 @@ app/                    # Next.js App Router pages
   scores/               # Cross-sport scoreboard
 components/             # Shared React components
 lib/                    # Core logic (api/, utils/, hooks/, tokens/, analytics/)
-workers/                # Cloudflare Workers (each has own wrangler.toml)
+workers/                # Main Hono worker (blazesportsintel-worker-prod)
+  index.ts              # Route declarations + middleware (382 lines)
+  handlers/             # Handler functions by sport/domain
+  shared/               # Types, helpers, constants, cors, rate-limit, proxy
+  wrangler.toml         # Bindings, routes, environments
+workers/bsi-cbb-ingest/ # College baseball ingest pipeline
+workers/sportradar-ingest/ # Sportradar data pipeline
+workers/mini-games-api/ # Arcade leaderboard API
+workers/blaze-field-*/  # BlazeCraft game workers
+workers/error-tracker/  # Tail consumer for error logging
+workers/synthetic-monitor/ # Cron-based uptime checks
 functions/              # Cloudflare Pages Functions
 games/                  # Browser arcade games
 external/               # Standalone projects (Sandlot-Sluggers)
 scripts/                # Build/deploy/data scripts
-tests/                  # Test suites
+tests/                  # Test suites (165 passing)
 docs/                   # Infrastructure and operations docs
 ```
 
