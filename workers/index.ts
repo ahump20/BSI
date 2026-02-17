@@ -81,6 +81,7 @@ import {
   handleCFBArticlesList,
 } from './handlers/cfb';
 
+import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
 import { handleCreateEmbeddedCheckout } from './handlers/stripe';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
@@ -285,6 +286,19 @@ app.get('/api/ncaa/standings', (c) => {
 });
 app.get('/api/college-football/articles', (c) => handleCFBArticlesList(new URL(c.req.url), c.env));
 app.get('/api/college-football/articles/:slug', (c) => handleCFBArticle(c.req.param('slug'), c.env));
+
+// --- Blog Post Feed ---
+app.get('/api/blog-post-feed', (c) =>
+  handleBlogPostFeedList(c.env, {
+    category: c.req.query('category') ?? undefined,
+    featured: c.req.query('featured') === 'true',
+    limit: Math.min(Number(c.req.query('limit') || 20), 50),
+    offset: Number(c.req.query('offset') || 0),
+  })
+);
+app.get('/api/blog-post-feed/:slug', (c) =>
+  handleBlogPostFeedItem(c.req.param('slug'), c.env)
+);
 
 // --- MLB ---
 app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
