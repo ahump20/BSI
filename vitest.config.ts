@@ -39,9 +39,17 @@ export default defineConfig({
     // Global setup
     globals: true,
 
-    // Test file patterns
+    // Test file patterns — exclude Playwright tests (routes, a11y, flows)
     include: [
       'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'
+    ],
+    exclude: [
+      'tests/routes/**',
+      'tests/a11y/**',
+      'tests/flows/**',
+      'tests/resume-quality.spec.ts',
+      'tests/resume-verify.spec.ts',
+      'node_modules/**',
     ],
 
     // Default timeout (10 seconds)
