@@ -7,8 +7,8 @@ import { isInSeason, getReturnMonth, type SportKey } from '@/lib/season';
 
 interface GameScore {
   id: string | number;
-  away: { name: string; abbreviation?: string; score: number };
-  home: { name: string; abbreviation?: string; score: number };
+  away: { name: string; abbreviation?: string; score: number; rank?: number };
+  home: { name: string; abbreviation?: string; score: number; rank?: number };
   status: string;
   isLive: boolean;
   isFinal: boolean;
@@ -54,6 +54,9 @@ function normalizeGames(sport: string, data: Record<string, unknown>): GameScore
       const homeTeam = (homeComp?.team || {}) as Record<string, unknown>;
       const awayTeam = (awayComp?.team || {}) as Record<string, unknown>;
 
+      const homeCurated = (homeComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+      const awayCurated = (awayComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+
       const status = (comp?.status || event.status || {}) as Record<string, unknown>;
       const statusType = status?.type as Record<string, unknown> | undefined;
 
@@ -63,11 +66,13 @@ function normalizeGames(sport: string, data: Record<string, unknown>): GameScore
           name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
           abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
           score: Number(awayComp?.score ?? 0),
+          rank: awayCurated && awayCurated <= 25 ? awayCurated : undefined,
         },
         home: {
           name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
           abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
           score: Number(homeComp?.score ?? 0),
+          rank: homeCurated && homeCurated <= 25 ? homeCurated : undefined,
         },
         status: (statusType?.shortDetail as string) || (statusType?.description as string) || 'Scheduled',
         isLive: statusType?.state === 'in',
@@ -150,10 +155,16 @@ function getEndpoint(sport: string): string {
 }
 
 function getNextMatchup(games: GameScore[]): string | null {
-  const upcoming = games.find((g) => !g.isLive && !g.isFinal);
+  // Prefer a ranked upcoming game for the preview
+  const ranked = games.find((g) => !g.isLive && !g.isFinal && (g.away.rank || g.home.rank));
+  const upcoming = ranked || games.find((g) => !g.isLive && !g.isFinal);
   if (!upcoming) return null;
-  const away = upcoming.away.abbreviation || upcoming.away.name;
-  const home = upcoming.home.abbreviation || upcoming.home.name;
+  const away = upcoming.away.rank
+    ? `#${upcoming.away.rank} ${upcoming.away.abbreviation || upcoming.away.name}`
+    : upcoming.away.abbreviation || upcoming.away.name;
+  const home = upcoming.home.rank
+    ? `#${upcoming.home.rank} ${upcoming.home.abbreviation || upcoming.home.name}`
+    : upcoming.home.abbreviation || upcoming.home.name;
   return `${away} vs ${home}`;
 }
 

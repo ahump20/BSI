@@ -5,11 +5,12 @@ import type { Sport } from './SportTabs';
 
 interface GameScore {
   id: string | number;
-  away: { name: string; abbreviation?: string; score: number };
-  home: { name: string; abbreviation?: string; score: number };
+  away: { name: string; abbreviation?: string; score: number; rank?: number };
+  home: { name: string; abbreviation?: string; score: number; rank?: number };
   status: string;
   isLive: boolean;
   isFinal: boolean;
+  isPostponed?: boolean;
   detail?: string;
 }
 
@@ -42,6 +43,11 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
       const homeTeam = (homeComp?.team || {}) as Record<string, unknown>;
       const awayTeam = (awayComp?.team || {}) as Record<string, unknown>;
 
+      const homeCurated = (homeComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+      const awayCurated = (awayComp?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+      const homeRank = homeCurated && homeCurated <= 25 ? homeCurated : undefined;
+      const awayRank = awayCurated && awayCurated <= 25 ? awayCurated : undefined;
+
       const status = (comp?.status || event.status || {}) as Record<string, unknown>;
       const statusType = status?.type as Record<string, unknown> | undefined;
 
@@ -50,6 +56,8 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
       const statusText = (statusType?.shortDetail as string)
         || (statusType?.description as string)
         || 'Scheduled';
+      const isPostponed = (statusType?.description as string)?.toLowerCase().includes('postponed')
+        || (statusType?.shortDetail as string)?.toLowerCase().includes('postponed');
 
       return {
         id: (event.id as string | number) || i,
@@ -57,15 +65,18 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
           name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
           abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
           score: Number(awayComp?.score ?? 0),
+          rank: awayRank,
         },
         home: {
           name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
           abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
           score: Number(homeComp?.score ?? 0),
+          rank: homeRank,
         },
         status: statusText,
         isLive: Boolean(isLive),
         isFinal: Boolean(isFinal),
+        isPostponed: Boolean(isPostponed),
         detail: undefined,
       };
     });
@@ -104,25 +115,61 @@ function normalizeGames(sport: Sport, data: Record<string, unknown>): GameScore[
       ? (status?.detailedState as string) || (statusType?.description as string) || 'Scheduled'
       : (status as string) || 'Scheduled';
 
+    const homeCurated = (homeEntry?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+    const awayCurated = (awayEntry?.curatedRank as Record<string, unknown>)?.current as number | undefined;
+
+    const isPostponed = typeof status === 'object'
+      ? (status?.detailedState as string)?.toLowerCase().includes('postponed')
+      : typeof status === 'string' && status.toLowerCase().includes('postponed');
+
     return {
       id: (g.id as string | number) || i,
       away: {
         name: (awayTeam.displayName as string) || (awayTeam.name as string) || 'Away',
         abbreviation: (awayTeam.abbreviation as string) || (awayTeam.shortDisplayName as string) || '',
         score: Number(awayEntry?.score ?? 0),
+        rank: awayCurated && awayCurated <= 25 ? awayCurated : undefined,
       },
       home: {
         name: (homeTeam.displayName as string) || (homeTeam.name as string) || 'Home',
         abbreviation: (homeTeam.abbreviation as string) || (homeTeam.shortDisplayName as string) || '',
         score: Number(homeEntry?.score ?? 0),
+        rank: homeCurated && homeCurated <= 25 ? homeCurated : undefined,
       },
       status: statusText,
       isLive: Boolean(isLive),
       isFinal: Boolean(isFinal),
+      isPostponed: Boolean(isPostponed),
       detail: typeof status === 'object' && status?.inning
         ? `${status?.inningState ?? ''} ${status.inning}`
         : undefined,
     };
+  });
+}
+
+/**
+ * Sort priority: live games → ranked matchups → final → scheduled → postponed.
+ * Within each tier, higher-ranked matchups sort first (lower rank number = better).
+ */
+function sortGames(games: GameScore[]): GameScore[] {
+  return [...games].sort((a, b) => {
+    // Tier: live (0) > ranked final (1) > ranked scheduled (2) > unranked final (3) > unranked scheduled (4) > postponed (5)
+    const tier = (g: GameScore) => {
+      if (g.isPostponed) return 5;
+      const hasRank = g.away.rank || g.home.rank;
+      if (g.isLive) return 0;
+      if (g.isFinal && hasRank) return 1;
+      if (!g.isFinal && !g.isLive && hasRank) return 2;
+      if (g.isFinal) return 3;
+      return 4;
+    };
+    const ta = tier(a);
+    const tb = tier(b);
+    if (ta !== tb) return ta - tb;
+
+    // Within same tier, sort by best rank (lower = better)
+    const bestRank = (g: GameScore) => Math.min(g.away.rank ?? 99, g.home.rank ?? 99);
+    return bestRank(a) - bestRank(b);
   });
 }
 
@@ -164,7 +211,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
 
         if (!cancelled) {
           if (todayGames.length > 0) {
-            setGames(todayGames);
+            setGames(sortGames(todayGames));
           } else {
             // No games today — try yesterday as fallback
             try {
@@ -173,7 +220,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
                 const yData = await yRes.json();
                 const yGames = normalizeGames(sport, yData as Record<string, unknown>);
                 if (yGames.length > 0) {
-                  setGames(yGames);
+                  setGames(sortGames(yGames));
                   setIsYesterday(true);
                 } else {
                   setGames([]);
@@ -231,23 +278,46 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
           games.map((game) => (
             <div
               key={game.id}
-              className={`bg-white/5 rounded-lg p-4 border ${
-                game.isLive ? 'border-green-500/30' : 'border-transparent'
+              className={`bg-white/5 rounded-lg p-4 border transition-colors ${
+                game.isLive
+                  ? 'border-green-500/30'
+                  : game.isPostponed
+                    ? 'border-white/[0.03] opacity-50'
+                    : 'border-transparent'
               }`}
             >
               <div className="flex justify-between items-center mb-1.5">
-                <span className="font-semibold text-white text-sm">{game.away.name}</span>
-                <span className="font-bold text-[#BF5700] text-lg">{game.away.score}</span>
+                <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+                  {game.away.rank && (
+                    <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                      #{game.away.rank}
+                    </span>
+                  )}
+                  {game.away.name}
+                </span>
+                <span className="font-bold text-[#BF5700] text-lg tabular-nums">{game.away.score}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-semibold text-white text-sm">{game.home.name}</span>
-                <span className="font-bold text-[#BF5700] text-lg">{game.home.score}</span>
+                <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+                  {game.home.rank && (
+                    <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                      #{game.home.rank}
+                    </span>
+                  )}
+                  {game.home.name}
+                </span>
+                <span className="font-bold text-[#BF5700] text-lg tabular-nums">{game.home.score}</span>
               </div>
               <div className="mt-2 flex items-center gap-2">
                 {game.isLive && (
                   <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
                 )}
-                <span className={`text-xs ${game.isLive ? 'text-green-400' : game.isFinal ? 'text-white/30' : 'text-[#BF5700]'}`}>
+                <span className={`text-xs ${
+                  game.isLive ? 'text-green-400'
+                    : game.isPostponed ? 'text-yellow-500/60'
+                    : game.isFinal ? 'text-white/30'
+                    : 'text-[#BF5700]'
+                }`}>
                   {game.detail || game.status}
                 </span>
               </div>
