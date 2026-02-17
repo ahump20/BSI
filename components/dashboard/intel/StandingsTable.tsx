@@ -38,15 +38,15 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
       <hr className="intel-rule mx-4 mt-3" />
 
       <div className="px-4 pb-4 pt-3 overflow-x-auto">
-        <table className="w-full text-left" style={{ fontFamily: 'var(--intel-mono)', fontSize: '11px' }}>
+        <table className="w-full text-left" aria-label="Dashboard standings" style={{ fontFamily: 'var(--intel-mono)', fontSize: '11px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--intel-border-rule)' }}>
-              <th className="pb-2 pr-2 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>#</th>
-              <th className="pb-2 pr-3 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Team</th>
-              <th className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>W</th>
-              <th className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>L</th>
-              <th className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Pct</th>
-              <th className="pb-2 pl-2 text-right font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>NRtg</th>
+              <th scope="col" className="pb-2 pr-2 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>#</th>
+              <th scope="col" className="pb-2 pr-3 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Team</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>W</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>L</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Pct</th>
+              <th scope="col" className="pb-2 pl-2 text-right font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>NRtg</th>
             </tr>
           </thead>
           <tbody>

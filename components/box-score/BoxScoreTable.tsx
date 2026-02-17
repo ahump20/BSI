@@ -129,18 +129,18 @@ export function BoxScoreTable({
       {/* Linescore */}
       {showLinescore && linescore && (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-white/80">
+          <table className="w-full text-sm text-white/80" aria-label="Linescore">
             <thead>
               <tr className="border-b border-white/10 text-xs text-white/40 uppercase">
-                <th className="text-left px-4 py-2 w-32">Team</th>
+                <th scope="col" className="text-left px-4 py-2 w-32">Team</th>
                 {linescore.innings.map((_, i) => (
-                  <th key={i} className="px-2 py-2 text-center w-8">
+                  <th scope="col" key={i} className="px-2 py-2 text-center w-8">
                     {i + 1}
                   </th>
                 ))}
-                <th className="px-3 py-2 text-center font-bold">R</th>
-                <th className="px-3 py-2 text-center font-bold">H</th>
-                <th className="px-3 py-2 text-center font-bold">E</th>
+                <th scope="col" className="px-3 py-2 text-center font-bold">R</th>
+                <th scope="col" className="px-3 py-2 text-center font-bold">H</th>
+                <th scope="col" className="px-3 py-2 text-center font-bold">E</th>
               </tr>
             </thead>
             <tbody>
@@ -194,20 +194,20 @@ export function BoxScoreTable({
                 <h4 className="text-sm font-display text-white/60 uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
-                <table className="w-full text-xs text-white/70">
+                <table className="w-full text-xs text-white/70" aria-label={`${side.abbr} batting statistics`}>
                   <thead>
                     <tr className="text-white/40 uppercase">
-                      <th role="columnheader" className="text-left py-1">Batter</th>
-                      <th role="columnheader" className="text-center py-1">AB</th>
-                      <th role="columnheader" className="text-center py-1">R</th>
-                      <th role="columnheader" className="text-center py-1">H</th>
-                      <th role="columnheader" className="text-center py-1">RBI</th>
-                      <th role="columnheader" className="text-center py-1">HR</th>
-                      <th role="columnheader" className="text-center py-1">BB</th>
-                      <th role="columnheader" className="text-center py-1">SO</th>
-                      <th role="columnheader" className="text-center py-1">AVG</th>
-                      {!isCompact && <th role="columnheader" className="text-center py-1">OBP</th>}
-                      {!isCompact && <th role="columnheader" className="text-center py-1">SLG</th>}
+                      <th scope="col" className="text-left py-1">Batter</th>
+                      <th scope="col" className="text-center py-1">AB</th>
+                      <th scope="col" className="text-center py-1">R</th>
+                      <th scope="col" className="text-center py-1">H</th>
+                      <th scope="col" className="text-center py-1">RBI</th>
+                      <th scope="col" className="text-center py-1">HR</th>
+                      <th scope="col" className="text-center py-1">BB</th>
+                      <th scope="col" className="text-center py-1">SO</th>
+                      <th scope="col" className="text-center py-1">AVG</th>
+                      {!isCompact && <th scope="col" className="text-center py-1">OBP</th>}
+                      {!isCompact && <th scope="col" className="text-center py-1">SLG</th>}
                     </tr>
                   </thead>
                   <tbody>
@@ -259,17 +259,17 @@ export function BoxScoreTable({
                 <h4 className="text-sm font-display text-white/60 uppercase tracking-wider mb-3">
                   {side.abbr}
                 </h4>
-                <table className="w-full text-xs text-white/70">
+                <table className="w-full text-xs text-white/70" aria-label={`${side.abbr} pitching statistics`}>
                   <thead>
                     <tr className="text-white/40 uppercase">
-                      <th className="text-left py-1">Pitcher</th>
-                      <th className="text-center py-1">IP</th>
-                      <th className="text-center py-1">H</th>
-                      <th className="text-center py-1">R</th>
-                      <th className="text-center py-1">ER</th>
-                      <th className="text-center py-1">BB</th>
-                      <th className="text-center py-1">SO</th>
-                      <th className="text-center py-1">ERA</th>
+                      <th scope="col" className="text-left py-1">Pitcher</th>
+                      <th scope="col" className="text-center py-1">IP</th>
+                      <th scope="col" className="text-center py-1">H</th>
+                      <th scope="col" className="text-center py-1">R</th>
+                      <th scope="col" className="text-center py-1">ER</th>
+                      <th scope="col" className="text-center py-1">BB</th>
+                      <th scope="col" className="text-center py-1">SO</th>
+                      <th scope="col" className="text-center py-1">ERA</th>
                     </tr>
                   </thead>
                   <tbody>
