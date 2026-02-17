@@ -134,6 +134,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
     >
       <head>
+        {/* Preconnect to Cloudflare Stream for hero video poster/playback */}
+        <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
         {/* Static JSON-LD for SEO — hardcoded content, no user input */}
         <script
           type="application/ld+json"

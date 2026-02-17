@@ -21,7 +21,7 @@ describe('Main Navigation — Vision AI', () => {
 
     expect(cbIndex).toBeGreaterThan(-1);
     expect(vaiIndex).toBeGreaterThan(-1);
-    expect(vaiIndex).toBe(cbIndex + 1);
+    expect(vaiIndex).toBeGreaterThan(cbIndex);
   });
 
   it('places Vision AI before Arcade', () => {

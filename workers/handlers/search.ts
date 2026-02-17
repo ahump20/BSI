@@ -280,6 +280,60 @@ async function searchCollegeBaseballIndex(
 }
 
 // ---------------------------------------------------------------------------
+// D1 FTS5 Search
+// ---------------------------------------------------------------------------
+
+/**
+ * Query D1 FTS5 search index. Returns ranked results or null if D1 is
+ * unavailable or the FTS5 table doesn't exist yet.
+ */
+async function searchD1FTS5(
+  query: string,
+  sport: string,
+  env: Env,
+  limit: number,
+): Promise<SearchResult[] | null> {
+  if (!env.DB) return null;
+
+  try {
+    // FTS5 MATCH query — quote the query to handle multi-word input
+    // Using bm25() for relevance ranking (built into FTS5)
+    const ftsQuery = query.replace(/"/g, '""'); // escape double quotes
+    const sportFilter = sport !== 'all' ? ` AND sport = ?` : '';
+
+    const sql = sport !== 'all'
+      ? `SELECT name, type, sport, url, rank FROM search_index WHERE search_index MATCH ? ${sportFilter} ORDER BY rank LIMIT ?`
+      : `SELECT name, type, sport, url, rank FROM search_index WHERE search_index MATCH ? ORDER BY rank LIMIT ?`;
+
+    const stmt = sport !== 'all'
+      ? env.DB.prepare(sql).bind(`"${ftsQuery}"`, sport, limit)
+      : env.DB.prepare(sql).bind(`"${ftsQuery}"`, limit);
+
+    const { results: rows } = await stmt.all<{
+      name: string;
+      type: string;
+      sport: string;
+      url: string;
+      rank: number;
+    }>();
+
+    if (!rows || rows.length === 0) return null;
+
+    return rows.map((row, i) => ({
+      type: row.type as SearchResult['type'],
+      id: row.url,
+      name: row.name.split(' ').slice(0, -1).join(' ') || row.name, // trim appended abbreviation
+      url: row.url,
+      sport: row.sport,
+      score: 100 - i, // normalize rank to descending score
+    }));
+  } catch {
+    // FTS5 table may not exist yet — fall through to static search
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main Search Handler
 // ---------------------------------------------------------------------------
 
@@ -292,6 +346,46 @@ export async function handleSearch(url: URL, env: Env): Promise<Response> {
   const sport = url.searchParams.get('sport') || 'all';
   const normalized = normalizeSearchTerm(query);
   const now = new Date().toISOString();
+
+  // Try D1 FTS5 first — ranked full-text search
+  const ftsResults = await searchD1FTS5(normalized, sport, env, 20);
+  if (ftsResults && ftsResults.length > 0) {
+    // Merge FTS5 results with pro-team static matches for completeness
+    const combined: SearchResult[] = [...ftsResults];
+
+    // Always include pro-team static matches (FTS5 may not index them yet)
+    if (sport === 'all' || sport !== 'college-baseball') {
+      for (const team of PRO_TEAMS) {
+        if (sport !== 'all' && team.sport !== sport) continue;
+        const score = Math.max(
+          computeScore(team.name, normalized),
+          team.abv.toLowerCase() === normalized ? 95 : 0,
+        );
+        if (score > 0) {
+          const teamUrl = `/${team.sport}/teams/${team.slug}`;
+          if (!combined.some((r) => r.url === teamUrl)) {
+            combined.push({
+              type: 'team',
+              id: team.slug,
+              name: team.name,
+              url: teamUrl,
+              sport: team.sport.toUpperCase(),
+              score,
+            });
+          }
+        }
+      }
+    }
+
+    const sorted = combined.sort((a, b) => b.score - a.score).slice(0, 20);
+    return json({
+      results: sorted,
+      query,
+      meta: { source: 'bsi-search-fts5', fetched_at: now, timezone: 'America/Chicago' },
+    });
+  }
+
+  // Fallback: static search (existing behavior)
   const results: SearchResult[] = [];
 
   // College Baseball — enhanced KV-backed index

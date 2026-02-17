@@ -141,7 +141,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
           </p>
         </div>
       )}
-      <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
+      <div className="p-4 space-y-3 min-h-[280px] max-h-[500px] overflow-y-auto">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="bg-white/5 rounded-lg p-4 animate-pulse">

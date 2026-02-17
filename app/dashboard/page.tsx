@@ -404,6 +404,9 @@ export default function DashboardPage() {
             </div>
           </ScrollReveal>
 
+          {/* Provider Health */}
+          <ProviderHealthPanel />
+
           {/* Data Attribution */}
           <DataSourcePanel
             sources={getDashboardSources(activeSport, stats.lastUpdated)}
@@ -412,11 +415,79 @@ export default function DashboardPage() {
             className="mb-6"
           />
           <DataDisclaimer />
+          <div className="mt-4 text-center">
+            <Link
+              href="/data-sources"
+              className="text-xs text-white/30 hover:text-white/50 transition-colors underline underline-offset-2"
+            >
+              View all data sources and refresh cadences →
+            </Link>
+          </div>
         </Container>
       </Section>
 
       <Footer />
     </main>
+  );
+}
+
+// ── Provider Health Panel ────────────────────────────────────────────────────
+
+interface ProviderStatus {
+  status: 'ok' | 'degraded' | 'down';
+  lastSuccessAt?: string;
+  lastCheckAt: string;
+}
+
+interface HealthData {
+  providers: Record<string, ProviderStatus>;
+  checkedAt: string | null;
+  activeSports: string[];
+}
+
+const SPORT_DISPLAY: Record<string, string> = {
+  mlb: 'MLB', nfl: 'NFL', nba: 'NBA', ncaa: 'NCAA', rankings: 'Rankings',
+};
+
+const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
+  ok: { dot: 'bg-green-500', text: 'text-green-400' },
+  degraded: { dot: 'bg-yellow-500', text: 'text-yellow-400' },
+  down: { dot: 'bg-red-500', text: 'text-red-400' },
+};
+
+function ProviderHealthPanel() {
+  const [health, setHealth] = useState<HealthData | null>(null);
+
+  useEffect(() => {
+    fetch('/api/health/providers')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) setHealth(data as HealthData); })
+      .catch(() => {}); // Non-critical — panel hides gracefully
+  }, []);
+
+  if (!health || !health.checkedAt || Object.keys(health.providers).length === 0) return null;
+
+  return (
+    <div className="mb-6 bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs text-white/30 uppercase tracking-wider font-medium">Data Pipeline</span>
+        <span className="text-[10px] text-white/20">
+          Checked {new Date(health.checkedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        {Object.entries(health.providers).map(([key, provider]) => {
+          const colors = STATUS_COLORS[provider.status] || STATUS_COLORS.down;
+          return (
+            <div key={key} className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
+              <span className="text-sm text-white/60">{SPORT_DISPLAY[key] || key}</span>
+              <span className={`text-[10px] ${colors.text}`}>{provider.status}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

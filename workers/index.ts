@@ -82,7 +82,7 @@ import {
 } from './handlers/cfb';
 
 import { handleSearch } from './handlers/search';
-import { handleScheduled, handleCachedScores } from './handlers/cron';
+import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
 import {
@@ -91,6 +91,15 @@ import {
   handleCVInjuryAlerts,
   handleCVAdoption,
 } from './handlers/cv';
+import {
+  handleHAVFLeaderboard,
+  handleHAVFPlayer,
+  handleHAVFCompare,
+  handleHAVFCompute,
+  handleMMILive,
+  handleMMIGame,
+  handleMMITrending,
+} from './handlers/analytics';
 import { handleLeaderboard, handleLeaderboardSubmit, handleGameAsset } from './handlers/games';
 import {
   handleTeams,
@@ -308,11 +317,25 @@ app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c
 app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
 app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
 
+// --- Analytics: HAV-F ---
+app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));
+app.get('/api/analytics/havf/player/:id', (c) => handleHAVFPlayer(c.req.param('id'), c.env));
+app.get('/api/analytics/havf/compare/:p1/:p2', (c) => handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env));
+app.post('/api/analytics/havf/compute', (c) => handleHAVFCompute(c.req.raw, c.env));
+
+// --- Analytics: MMI ---
+app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));
+app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gameId'), c.env));
+app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(c.env));
+
 // --- Cached scores (cron-warmed KV) ---
 app.get('/api/scores/cached', (c) => {
   const sport = new URL(c.req.url).searchParams.get('sport') || 'mlb';
   return handleCachedScores(sport, c.env);
 });
+
+// --- Provider Health (cron-tracked) ---
+app.get('/api/health/providers', (c) => handleHealthProviders(c.env));
 
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));

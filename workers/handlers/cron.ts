@@ -12,6 +12,7 @@ import type { Env } from '../shared/types';
 import { kvGet, kvPut, getSDIOClient, getCollegeClient, getHighlightlyClient, logError } from '../shared/helpers';
 import { CACHE_TTL } from '../shared/constants';
 import { getSeasonPhase, type SportKey } from '../../lib/season';
+import { teamMetadata } from '../../lib/data/team-metadata';
 import {
   getScoreboard,
   transformScoreboard,
@@ -212,6 +213,95 @@ async function cacheRankings(env: Env): Promise<boolean> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Search Index Population
+// ---------------------------------------------------------------------------
+
+/** Static pages to index for search. */
+const INDEXED_PAGES = [
+  { name: 'MLB Baseball', url: '/mlb', sport: 'mlb' },
+  { name: 'NFL Football', url: '/nfl', sport: 'nfl' },
+  { name: 'NBA Basketball', url: '/nba', sport: 'nba' },
+  { name: 'College Football', url: '/cfb', sport: 'cfb' },
+  { name: 'College Baseball', url: '/college-baseball', sport: 'ncaa' },
+  { name: 'Scores', url: '/scores', sport: '' },
+  { name: 'Dashboard', url: '/dashboard', sport: '' },
+  { name: 'Arcade Games', url: '/arcade', sport: '' },
+  { name: 'Data Sources', url: '/data-sources', sport: '' },
+  { name: 'Pricing', url: '/pricing', sport: '' },
+  { name: 'About BSI', url: '/about', sport: '' },
+  { name: 'College Baseball Rankings', url: '/college-baseball/rankings', sport: 'ncaa' },
+  { name: 'College Baseball Standings', url: '/college-baseball/standings', sport: 'ncaa' },
+  { name: 'College Baseball Scores', url: '/college-baseball/scores', sport: 'ncaa' },
+  { name: 'Transfer Portal', url: '/college-baseball/transfer-portal', sport: 'ncaa' },
+];
+
+/**
+ * Populate D1 FTS5 search index. Runs once per day.
+ * Full rebuild: clears the FTS5 table and inserts all known entities.
+ */
+async function populateSearchIndex(env: Env): Promise<void> {
+  if (!env.DB) return; // D1 not bound — skip silently
+
+  // Clear existing FTS5 content for full rebuild
+  await env.DB.prepare('DELETE FROM search_index').run();
+  await env.DB.prepare('DELETE FROM search_index_meta').run();
+
+  const rows: Array<{ name: string; type: string; sport: string; url: string }> = [];
+
+  // College baseball teams from teamMetadata
+  for (const [slug, meta] of Object.entries(teamMetadata)) {
+    rows.push({
+      name: `${meta.name} ${meta.abbreviation} ${meta.shortName}`,
+      type: 'team',
+      sport: 'College Baseball',
+      url: `/college-baseball/teams/${slug}`,
+    });
+  }
+
+  // Static pages
+  for (const page of INDEXED_PAGES) {
+    rows.push({ name: page.name, type: 'page', sport: page.sport, url: page.url });
+  }
+
+  // Articles from KV (if available)
+  try {
+    const newsCached = await kvGet<{ articles?: Array<{ id: string; title: string; url?: string }> }>(env.KV, 'cb:news');
+    if (newsCached?.articles) {
+      for (const article of newsCached.articles) {
+        rows.push({
+          name: article.title,
+          type: 'article',
+          sport: 'College Baseball',
+          url: article.url || '/college-baseball/news',
+        });
+      }
+    }
+  } catch {
+    // Non-fatal — articles are supplementary
+  }
+
+  // Batch insert in chunks of 50 (D1 batch limit considerations)
+  const CHUNK_SIZE = 50;
+  for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
+    const chunk = rows.slice(i, i + CHUNK_SIZE);
+    const stmts = chunk.map((row) =>
+      env.DB.prepare('INSERT INTO search_index (name, type, sport, url) VALUES (?, ?, ?, ?)')
+        .bind(row.name, row.type, row.sport, row.url)
+    );
+    await env.DB.batch(stmts);
+  }
+
+  // Write meta for tracking
+  const metaStmts = rows.map((row) =>
+    env.DB.prepare("INSERT OR REPLACE INTO search_index_meta (url, updated_at) VALUES (?, datetime('now'))")
+      .bind(row.url)
+  );
+  for (let i = 0; i < metaStmts.length; i += CHUNK_SIZE) {
+    await env.DB.batch(metaStmts.slice(i, i + CHUNK_SIZE));
+  }
+}
+
 /**
  * Main cron entry point. Called by the Workers runtime on schedule.
  */
@@ -242,6 +332,48 @@ export async function handleScheduled(env: Env): Promise<void> {
   }
 
   console.log(`[cron] Done: ${scoreSuccesses}/${activeSports.length} scores cached, rankings=${rankingsCached}`);
+
+  // Write provider health summary to KV for the dashboard health panel
+  const now = new Date().toISOString();
+  const providerHealth: Record<string, { status: 'ok' | 'degraded' | 'down'; lastSuccessAt?: string; lastCheckAt: string }> = {};
+
+  for (let i = 0; i < activeSports.length; i++) {
+    const sport = activeSports[i];
+    const result = scoreResults[i];
+    const succeeded = result.status === 'fulfilled' && result.value;
+    providerHealth[sport] = {
+      status: succeeded ? 'ok' : 'degraded',
+      ...(succeeded ? { lastSuccessAt: now } : {}),
+      lastCheckAt: now,
+    };
+  }
+
+  if (ncaaActive) {
+    providerHealth['rankings'] = {
+      status: rankingsCached ? 'ok' : 'degraded',
+      ...(rankingsCached ? { lastSuccessAt: now } : {}),
+      lastCheckAt: now,
+    };
+  }
+
+  await kvPut(env.KV, 'health:providers:latest', {
+    providers: providerHealth,
+    checkedAt: now,
+    activeSports,
+  }, 300); // 5-minute TTL
+
+  // Populate search index once per day (gated by KV timestamp)
+  try {
+    const searchGateKey = `search:index:last-populated`;
+    const lastPopulated = await kvGet<string>(env.KV, searchGateKey);
+    if (!lastPopulated || lastPopulated.slice(0, 10) !== date) {
+      await populateSearchIndex(env);
+      await kvPut(env.KV, searchGateKey, now, 86400);
+      console.log('[cron] Search index populated');
+    }
+  } catch (err) {
+    await logError(env, `cron:search-index: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-search');
+  }
 }
 
 /**
@@ -266,4 +398,30 @@ export async function handleCachedScores(sport: string, env: Env): Promise<Respo
 
   // No cached data — return 204 so client knows to fall back to live endpoint
   return new Response(null, { status: 204 });
+}
+
+/**
+ * Return provider health status from KV. Used by the dashboard health panel.
+ */
+export async function handleHealthProviders(env: Env): Promise<Response> {
+  const health = await kvGet<{
+    providers: Record<string, { status: string; lastSuccessAt?: string; lastCheckAt: string }>;
+    checkedAt: string;
+    activeSports: string[];
+  }>(env.KV, 'health:providers:latest');
+
+  if (health) {
+    return new Response(JSON.stringify(health), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30',
+      },
+    });
+  }
+
+  return new Response(JSON.stringify({ providers: {}, checkedAt: null, activeSports: [] }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
