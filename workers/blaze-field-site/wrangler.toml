@@ -1,0 +1,22 @@
+name = "blaze-field-site"
+main = "index.ts"
+compatibility_date = "2024-08-23"
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "blaze-field-assets"
+
+[dev]
+port = 8791
+local_protocol = "http"
+
+# Production: wrangler deploy --env production
+[env.production]
+name = "blaze-field-site-prod"
+routes = [
+  { pattern = "blazecraft.app/*", zone_name = "blazecraft.app" },
+]
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "blaze-field-assets"
