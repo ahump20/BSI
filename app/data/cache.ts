@@ -13,8 +13,8 @@ interface CacheOptions {
 }
 
 class DataCache {
-  private cache = new Map<string, CacheEntry<any>>();
-  private pending = new Map<string, Promise<any>>();
+  private cache = new Map<string, CacheEntry<unknown>>();
+  private pending = new Map<string, Promise<unknown>>();
   private defaultTTL = 60000; // 1 minute default
 
   async get<T>(key: string, fetcher: () => Promise<T>, options: CacheOptions = {}): Promise<T> {
