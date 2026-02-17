@@ -165,25 +165,56 @@ jobs:
           workingDirectory: games/blazecraft
           command: pages deploy dist --project-name=blazecraft --branch=${{ github.ref_name }} --commit-dirty=true
 
+  deploy-workers:
+    name: Deploy Cloudflare Workers
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy Main Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config workers/wrangler.toml --env production
+
   deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
-    needs: [deploy-blazesportsintel, deploy-blazecraft]
+    needs: [deploy-blazesportsintel, deploy-blazecraft, deploy-workers]
     if: always()
     steps:
       - name: Summary
         env:
           BSI_RESULT: ${{ needs.deploy-blazesportsintel.result }}
           BC_RESULT: ${{ needs.deploy-blazecraft.result }}
+          WORKERS_RESULT: ${{ needs.deploy-workers.result }}
           ACTOR: ${{ github.actor }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
           echo "# Cloudflare Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Site | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| BlazeSportsIntel | $BSI_RESULT |" >> $GITHUB_STEP_SUMMARY
-          echo "| BlazeCraft | $BC_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| BlazeSportsIntel (Pages) | $BSI_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| BlazeCraft (Pages) | $BC_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Workers (Production) | $WORKERS_RESULT |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by:** $ACTOR" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** $COMMIT_SHA" >> $GITHUB_STEP_SUMMARY

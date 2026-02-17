@@ -144,7 +144,21 @@ Provider setup runbook: `docs/runbooks/provider-keys-and-endpoints.md`
 
 ## Deployment
 
-The site deploys as a static export to **Cloudflare Pages**. Workers deploy independently, each with their own `wrangler.toml` in `workers/`.
+The site uses automated GitHub Actions workflows to deploy to Cloudflare infrastructure:
+
+- **Cloudflare Pages** - Static site hosting at `blazesportsintel.com`
+- **Cloudflare Workers** - Backend API and data pipelines
+
+### Automated Deployment
+
+Deployments happen automatically on push to `main`. See [`docs/deployment.md`](docs/deployment.md) for complete details on:
+
+- How the automated workflow works
+- Required GitHub secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`)
+- Manual deployment options
+- Troubleshooting
+
+### Manual Deployment Commands
 
 ```bash
 npm run deploy:production    # Pages (main branch)
@@ -152,6 +166,8 @@ npm run deploy:preview       # Pages (preview branch)
 npm run deploy:worker        # Default worker
 npm run deploy:hybrid        # Both Pages + Worker
 ```
+
+**Note:** Manual deployments require Wrangler authentication. Run `npx wrangler login` first.
 
 ## License
 
