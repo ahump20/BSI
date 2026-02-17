@@ -97,11 +97,44 @@ const stats = [
 export default function YardSalePage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (email.trim()) {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('/api/lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Yard Sale Waitlist Signup',
+          email: trimmedEmail,
+          sport: 'slowpitch-softball',
+          source: 'yardsale-waitlist',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to join waitlist.');
+      }
+
       setSubmitted(true);
+      setEmail('');
+    } catch (_error) {
+      setSubmitError('We could not save your signup. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -467,15 +500,23 @@ export default function YardSalePage() {
                 />
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="px-6 py-4 font-display uppercase text-sm tracking-wider font-semibold border-none cursor-pointer transition-colors hover:opacity-90"
                   style={{
                     background: colors.clay,
                     color: colors.midnight,
+                    opacity: isSubmitting ? 0.7 : 1,
                   }}
                 >
-                  Count Me In
+                  {isSubmitting ? 'Submitting...' : 'Count Me In'}
                 </button>
               </form>
+            )}
+
+            {submitError && (
+              <p className="text-xs mt-3" style={{ color: colors.hotCoral }}>
+                {submitError}
+              </p>
             )}
 
             <p
