@@ -1,0 +1,10 @@
+name = "bsi-notifications"
+main = "index.ts"
+compatibility_date = "2024-12-01"
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "placeholder"
+
+[vars]
+TIMEZONE = "America/Chicago"
