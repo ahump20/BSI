@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-// Turnstile site key — set via VITE_TURNSTILE_SITE_KEY env var or Cloudflare dashboard
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '';
+// Turnstile site key (public — safe to embed in client code)
+const TURNSTILE_SITE_KEY = '0x4AAAAAACernv648AJ4YADA';
 
 const links = [
   { label: 'Email', value: 'Austin@BlazeSportsIntel.com', href: 'mailto:Austin@BlazeSportsIntel.com' },
