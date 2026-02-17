@@ -560,7 +560,29 @@ export async function handleCollegeBaseballScores(
     }
   }
 
-  // NCAA fallback
+  // ESPN college baseball scoreboard fallback
+  try {
+    const espnDate = date ? date.replace(/-/g, '') : undefined;
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard${espnDate ? `?dates=${espnDate}` : ''}`;
+    const espnRes = await fetch(espnUrl, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (espnRes.ok) {
+      const espnRaw = await espnRes.json() as { events?: unknown[] };
+      if (espnRaw.events && espnRaw.events.length > 0) {
+        const espnData = { data: espnRaw.events, totalCount: espnRaw.events.length };
+        await kvPut(env.KV, cacheKey, espnData, CACHE_TTL.scores);
+        return cachedJson(espnData, 200, HTTP_CACHE.scores, {
+          ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[espn] college baseball scores fallback:', err instanceof Error ? err.message : err);
+  }
+
+  // NCAA client fallback
   try {
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);

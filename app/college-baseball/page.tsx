@@ -238,7 +238,7 @@ export default function CollegeBaseballPage() {
 
   // Rankings — fetched when rankings tab is active
   const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
-  const { data: rankingsRaw, loading: rankingsLoading } =
+  const { data: rankingsRaw, loading: rankingsLoading, error: rankingsError, retry: retryRankings } =
     useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
   const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
   const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
@@ -570,6 +570,17 @@ export default function CollegeBaseballPage() {
                   <CardContent>
                     {rankingsLoading ? (
                       <table className="w-full"><tbody>{Array.from({ length: 25 }).map((_, i) => <SkeletonTableRow key={i} columns={4} />)}</tbody></table>
+                    ) : rankingsError ? (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
+                        <p className="text-red-400 font-semibold">Rankings Unavailable</p>
+                        <p className="text-white/60 text-sm mt-1">{rankingsError}</p>
+                        <button onClick={retryRankings} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm font-medium hover:bg-ember transition-colors">
+                          Retry
+                        </button>
+                        {preseasonRankings.length > 0 && (
+                          <p className="text-white/30 text-xs mt-3">Showing preseason rankings as fallback below.</p>
+                        )}
+                      </div>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -594,7 +605,12 @@ export default function CollegeBaseballPage() {
                       </div>
                     )}
                     <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                      <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
+                      <div className="flex items-center gap-3">
+                        <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
+                        {!isLiveRankings && !rankingsLoading && !rankingsError && (
+                          <span className="text-xs text-yellow-400/60 bg-yellow-400/10 px-2 py-0.5 rounded">Using preseason data</span>
+                        )}
+                      </div>
                       <Link href="/college-baseball/rankings" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                         Full Rankings →
                       </Link>

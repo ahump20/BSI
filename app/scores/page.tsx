@@ -20,6 +20,7 @@ interface SportSection {
   todayCount: number;
   season: string;
   isActive: boolean;
+  loaded: boolean;
 }
 
 export default function ScoresHubPage() {
@@ -33,7 +34,8 @@ export default function ScoresHubPage() {
       liveCount: 0,
       todayCount: 0,
       season: 'Feb - Jun',
-      isActive: false, // Will check API
+      isActive: false,
+      loaded: false,
     },
     {
       id: 'mlb',
@@ -45,6 +47,7 @@ export default function ScoresHubPage() {
       todayCount: 0,
       season: 'Mar - Oct',
       isActive: true,
+      loaded: false,
     },
     {
       id: 'nfl',
@@ -56,6 +59,7 @@ export default function ScoresHubPage() {
       todayCount: 0,
       season: 'Sep - Feb',
       isActive: false,
+      loaded: false,
     },
     {
       id: 'nba',
@@ -67,6 +71,7 @@ export default function ScoresHubPage() {
       todayCount: 0,
       season: 'Oct - Jun',
       isActive: false,
+      loaded: false,
     },
   ]);
 
@@ -98,6 +103,8 @@ export default function ScoresHubPage() {
         }
       } catch {
         // Ignore errors, show default state
+      } finally {
+        setSports((prev) => prev.map((s) => s.id === 'mlb' ? { ...s, loaded: true } : s));
       }
 
       try {
@@ -123,6 +130,8 @@ export default function ScoresHubPage() {
         }
       } catch {
         // Ignore errors
+      } finally {
+        setSports((prev) => prev.map((s) => s.id === 'college-baseball' ? { ...s, loaded: true } : s));
       }
 
       // Fetch NFL game count
@@ -145,6 +154,8 @@ export default function ScoresHubPage() {
         }
       } catch {
         // Ignore errors
+      } finally {
+        setSports((prev) => prev.map((s) => s.id === 'nfl' ? { ...s, loaded: true } : s));
       }
 
       // Fetch NBA game count
@@ -167,6 +178,8 @@ export default function ScoresHubPage() {
         }
       } catch {
         // Ignore errors
+      } finally {
+        setSports((prev) => prev.map((s) => s.id === 'nba' ? { ...s, loaded: true } : s));
       }
 
       setLoading(false);
@@ -268,7 +281,7 @@ export default function ScoresHubPage() {
                           View Scores →
                         </span>
 
-                        {loading ? (
+                        {!sport.loaded ? (
                           <span className="text-xs text-text-tertiary">Loading...</span>
                         ) : sport.todayCount > 0 ? (
                           <span className="text-xs text-text-tertiary">
