@@ -48,8 +48,11 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
     } else if (wsData.error) {
       setError(wsData.error);
       setLoading(false);
+    } else if (wsData.connectionStatus === 'connected' || wsData.connectionStatus === 'polling') {
+      // Connected with no active games — show empty state instead of perpetual skeleton
+      setLoading(false);
     }
-  }, [useWebSocket, wsData.games, wsData.error]);
+  }, [useWebSocket, wsData.games, wsData.error, wsData.connectionStatus]);
 
   const buildEndpoint = useCallback((dateParam?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_BASE || '';

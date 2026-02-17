@@ -1,21 +1,19 @@
 /**
  * BSI Live Scores — WebSocket Durable Object Worker
  *
- * Standalone Worker that manages real-time score updates for college baseball
+ * Standalone Worker that manages real-time score updates for multiple sports
  * via a Durable Object (LiveScoresBroadcaster). Clients connect over WebSocket
- * and receive delta-only score updates every 15 seconds.
+ * with a ?sport= param; each sport gets its own isolated DO instance that
+ * fetches from the appropriate source (Highlightly for college baseball,
+ * SportsDataIO for MLB/NFL/NBA). Clients receive delta-only updates every 15s.
  *
  * Deployed separately from the main blazesportsintel-worker.
  *
  * @see workers/handlers/college-baseball.ts for Highlightly API patterns
  */
 
-import {
-  HighlightlyApiClient,
-  type HighlightlyMatch,
-} from '../../lib/api-clients/highlightly-api';
 import { computeMMI, type MMIInput } from '../../lib/analytics/mmi';
-import { fetchLiveGames, isValidSport, type Sport, type RawLiveGame } from './sources';
+import { fetchLiveGames, isValidSport, type RawLiveGame } from './sources';
 
 // =============================================================================
 // Types
@@ -74,50 +72,37 @@ interface WsMessage {
 }
 
 // =============================================================================
-// Transform — Highlightly match -> LiveGame
+// Transform — RawLiveGame -> LiveGame
 // =============================================================================
 
-function matchToLiveGame(match: HighlightlyMatch): LiveGame {
-  const statusType = match.status?.type ?? 'notstarted';
-  const formatRecord = (r?: { wins: number; losses: number }) =>
-    r ? `${r.wins}-${r.losses}` : undefined;
-
+function rawToLiveGame(raw: RawLiveGame): LiveGame {
   return {
-    id: String(match.id),
-    status:
-      statusType === 'inprogress'
-        ? 'in'
-        : statusType === 'finished'
-          ? 'post'
-          : statusType === 'postponed'
-            ? 'postponed'
-            : statusType === 'cancelled'
-              ? 'cancelled'
-              : 'pre',
-    detailedState: match.status?.description ?? statusType,
-    inning: match.currentInning,
-    inningHalf: match.currentInningHalf,
-    outs: match.outs,
+    id: raw.id,
+    status: raw.status,
+    detailedState: raw.detailedState,
+    inning: raw.inning,
+    inningHalf: raw.inningHalf,
+    outs: raw.outs,
     awayTeam: {
-      id: match.awayTeam?.id ?? 0,
-      name: match.awayTeam?.name ?? 'Away',
-      shortName: match.awayTeam?.shortName ?? '',
-      score: match.awayScore ?? 0,
-      record: formatRecord(match.awayTeam?.record),
-      conference: match.awayTeam?.conference?.name ?? '',
-      ranking: match.awayTeam?.ranking,
+      id: raw.awayTeam.id,
+      name: raw.awayTeam.name,
+      shortName: raw.awayTeam.shortName,
+      score: raw.awayTeam.score,
+      record: raw.awayTeam.record,
+      conference: '',
+      ranking: undefined,
     },
     homeTeam: {
-      id: match.homeTeam?.id ?? 0,
-      name: match.homeTeam?.name ?? 'Home',
-      shortName: match.homeTeam?.shortName ?? '',
-      score: match.homeScore ?? 0,
-      record: formatRecord(match.homeTeam?.record),
-      conference: match.homeTeam?.conference?.name ?? '',
-      ranking: match.homeTeam?.ranking,
+      id: raw.homeTeam.id,
+      name: raw.homeTeam.name,
+      shortName: raw.homeTeam.shortName,
+      score: raw.homeTeam.score,
+      record: raw.homeTeam.record,
+      conference: '',
+      ranking: undefined,
     },
-    startTime: new Date(match.startTimestamp * 1000).toISOString(),
-    venue: match.venue?.name ?? 'TBD',
+    startTime: raw.startTime,
+    venue: raw.venue,
   };
 }
 
@@ -218,6 +203,12 @@ export class LiveScoresBroadcaster {
 
     // --- WebSocket upgrade ---
     if (request.headers.get('Upgrade') === 'websocket') {
+      // Persist the sport this DO instance serves so the alarm can fetch correctly
+      const sportParam = url.searchParams.get('sport') || 'college-baseball';
+      if (isValidSport(sportParam)) {
+        await this.state.storage.put('sport', sportParam);
+      }
+
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);
 
@@ -225,14 +216,17 @@ export class LiveScoresBroadcaster {
       this.sessions.add(server);
 
       // Send welcome message
+      const sport = (await this.state.storage.get<string>('sport')) ?? 'college-baseball';
+      const source = sport === 'college-baseball' ? 'highlightly' : 'sportsdataio';
       const welcome: WsMessage = {
         type: 'connected',
         message: 'Connected to BSI Live Scores',
         timestamp: new Date().toISOString(),
         meta: {
-          source: 'highlightly',
+          source,
           connectedClients: this.sessions.size,
           pollIntervalMs: POLL_INTERVAL_MS,
+          sport,
         },
       };
       server.send(JSON.stringify(welcome));
@@ -357,32 +351,17 @@ export class LiveScoresBroadcaster {
   // ---------------------------------------------------------------------------
 
   private async pollAndBroadcast(): Promise<void> {
-    if (!this.env.RAPIDAPI_KEY) {
-      console.error('[LiveScoresBroadcaster] RAPIDAPI_KEY not set');
-      this.broadcast({
-        type: 'error',
-        message: 'Live scores temporarily unavailable',
-        timestamp: new Date().toISOString(),
-      });
-      return;
-    }
+    const storedSport = (await this.state.storage.get<string>('sport')) ?? 'college-baseball';
+    const sport = isValidSport(storedSport) ? storedSport : 'college-baseball';
 
-    const client = new HighlightlyApiClient({ rapidApiKey: this.env.RAPIDAPI_KEY });
-    const result = await client.getMatches('NCAA');
+    const rawGames = await fetchLiveGames(sport, {
+      RAPIDAPI_KEY: this.env.RAPIDAPI_KEY,
+      SPORTSDATAIO_KEY: this.env.SPORTSDATAIO_KEY,
+    });
 
-    if (!result.success || !result.data) {
-      console.error(
-        '[LiveScoresBroadcaster] Highlightly fetch failed:',
-        result.error
-      );
-      return;
-    }
-
-    const matches: HighlightlyMatch[] = result.data.data ?? [];
     const currentSnapshot = new Map<string, LiveGame>();
-
-    for (const match of matches) {
-      const game = matchToLiveGame(match);
+    for (const raw of rawGames) {
+      const game = rawToLiveGame(raw);
       currentSnapshot.set(game.id, game);
     }
 
@@ -393,12 +372,13 @@ export class LiveScoresBroadcaster {
         const mmiInput: MMIInput = {
           homeScore: game.homeTeam.score,
           awayScore: game.awayTeam.score,
-          inning: game.inning,
+          currentInning: game.inning,
           inningHalf: game.inningHalf ?? 'top',
           totalInnings: 9,
           recentHomeRuns: 0,
           recentAwayRuns: 0,
-          baseSituation: 'empty',
+          bases: { first: false, second: false, third: false },
+          outs: game.outs ?? 0,
         };
         const mmiValue = computeMMI(mmiInput);
         mmiMap[id] = mmiValue;
