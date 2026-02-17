@@ -472,11 +472,10 @@ export class PortalPoller {
     const url = new URL(request.url);
 
     if (url.pathname === '/start') {
-      const currentAlarm = await this.state.storage.getAlarm();
-      if (!currentAlarm) {
-        await this.state.storage.setAlarm(Date.now() + 30_000);
-      }
-      return new Response('PortalPoller started');
+      // Alarm disabled until real data source is wired.
+      // When ready: set alarm here with setAlarm(Date.now() + 30_000)
+      // and wire alarm() below to fetch from Highlightly /transfer-portal.
+      return new Response('PortalPoller stub — alarm not active');
     }
 
     if (url.pathname === '/stop') {
@@ -497,12 +496,8 @@ export class PortalPoller {
   }
 
   async alarm(): Promise<void> {
-    try {
-      const now = new Date().toISOString();
-      await this.state.storage.put('lastPoll', now);
-      // TODO: Wire to a real data source when available
-    } catch (err) {
-      console.error('[PortalPoller] alarm error:', err instanceof Error ? err.message : err);
-    }
+    // Stub — no-op until wired to Highlightly /transfer-portal.
+    // When active: fetch portal data, write to env.KV key 'portal:latest',
+    // update lastPoll in storage, and reschedule with setAlarm().
   }
 }
