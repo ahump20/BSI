@@ -269,8 +269,8 @@ app.get('/api/blog-post-feed', (c) =>
   handleBlogPostFeedList(c.env, {
     category: c.req.query('category'),
     featured: c.req.query('featured') === 'true',
-    limit: Number(c.req.query('limit') || 20),
-    offset: Number(c.req.query('offset') || 0),
+    limit: Math.max(1, Math.min(50, parseInt(c.req.query('limit') ?? '', 10) || 20)),
+    offset: Math.max(0, parseInt(c.req.query('offset') ?? '', 10) || 0),
   })
 );
 app.get('/api/blog-post-feed/:slug', (c) => handleBlogPostFeedItem(c.req.param('slug'), c.env));
