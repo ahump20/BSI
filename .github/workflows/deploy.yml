@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'claude/**'
   pull_request:
     branches:
       - main
@@ -59,7 +60,7 @@ jobs:
           else
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
 
-            if echo "$CHANGED_FILES" | grep -qE "^(app|components|functions|hooks|lib|public|src|styles)/|^package\\.json|^pnpm-lock\\.yaml|^wrangler\\.toml|^next\\.config\\.|^tailwind\\.config\\.|^tsconfig\\.json"; then
+            if echo "$CHANGED_FILES" | grep -qE "^(app|components|functions|hooks|lib|public|src|styles|workers|migrations|content)/|^package\\.json|^pnpm-lock\\.yaml|^wrangler\\.toml|^next\\.config\\.|^tailwind\\.config\\.|^tsconfig\\.json"; then
               echo "blazesportsintel=true" >> $GITHUB_OUTPUT
             else
               echo "blazesportsintel=false" >> $GITHUB_OUTPUT
@@ -115,6 +116,79 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy out --project-name=blazesportsintel --branch=${{ github.ref_name }} --commit-dirty=true
+
+      - name: Run D1 Migration - blog_posts schema
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 execute bsi-prod-db --remote --file=migrations/038_blog_posts.sql
+        continue-on-error: true
+
+      - name: Run D1 Seed - blog_posts articles
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 execute bsi-prod-db --remote --file=migrations/039_blog_posts_seed.sql
+        continue-on-error: true
+
+      - name: Upload blog post content to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/texas-baseball-week-1-recap-lamar-preview-michigan-state-series-2026.md --file=content/blog-posts/texas-baseball-week-1-recap-lamar-preview-michigan-state-series-2026.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Upload Cardinals article to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/cardinals-strategic-intelligence-2025.md --file=content/blog-posts/cardinals-strategic-intelligence-2025.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Upload Texas SEC Revenue article to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/texas-longhorns-sec-revenue-transformation.md --file=content/blog-posts/texas-longhorns-sec-revenue-transformation.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Upload Saban article to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/championship-leadership-nick-saban.md --file=content/blog-posts/championship-leadership-nick-saban.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Upload Garrido article to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/augie-garrido-legacy-of-leadership.md --file=content/blog-posts/augie-garrido-legacy-of-leadership.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Upload NIL article to R2
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: r2 object put bsi-game-assets/blog-posts/nil-revolution-college-athletics.md --file=content/blog-posts/nil-revolution-college-athletics.md --content-type=text/markdown
+        continue-on-error: true
+
+      - name: Deploy Worker to production
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/claude/')
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config workers/wrangler.toml --env production
+        continue-on-error: true
 
       - name: Wait for propagation
         if: github.ref == 'refs/heads/main'

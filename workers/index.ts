@@ -82,6 +82,7 @@ import {
 } from './handlers/cfb';
 
 import { handleSearch } from './handlers/search';
+import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -262,6 +263,17 @@ app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(
 app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
 app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
+
+// --- Blog Post Feed ---
+app.get('/api/blog-post-feed', (c) =>
+  handleBlogPostFeedList(c.env, {
+    category: c.req.query('category'),
+    featured: c.req.query('featured') === 'true',
+    limit: Math.max(1, Math.min(50, parseInt(c.req.query('limit') ?? '', 10) || 20)),
+    offset: Math.max(0, parseInt(c.req.query('offset') ?? '', 10) || 0),
+  })
+);
+app.get('/api/blog-post-feed/:slug', (c) => handleBlogPostFeedItem(c.req.param('slug'), c.env));
 app.get('/api/college-baseball/scores/ws', (c) => {
   if (c.req.header('Upgrade') !== 'websocket') {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
