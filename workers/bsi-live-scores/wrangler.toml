@@ -1,0 +1,30 @@
+# BSI Live Scores — WebSocket Durable Object Worker
+# Real-time college baseball scores via Highlightly API.
+# Clients connect over WebSocket and receive delta-only score updates every 15s.
+#
+# Deploy: wrangler deploy --config workers/bsi-live-scores/wrangler.toml
+
+name = "bsi-live-scores"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+routes = [
+  { pattern = "live.blazesportsintel.com/*", zone_name = "blazesportsintel.com" }
+]
+
+[[durable_objects.bindings]]
+name = "LIVE_SCORES"
+class_name = "LiveScoresBroadcaster"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["LiveScoresBroadcaster"]
+
+[vars]
+ENVIRONMENT = "production"
+
+# RAPIDAPI_KEY must be set via:
+# wrangler secret put RAPIDAPI_KEY --config workers/bsi-live-scores/wrangler.toml
+
+[dev]
+port = 8790

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Sport } from './SportTabs';
 import { normalizeGames, sortGames, type GameScore } from '@/lib/scores/normalize';
+import { useLiveScores, type LiveGame } from '@/lib/hooks/useLiveScores';
 
 interface LiveScoresPanelProps {
   sport: Sport;
@@ -15,7 +16,82 @@ function getYesterdayDateString(): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps) {
+/** Map WebSocket LiveGame shape to the GameScore shape used by the panel UI. */
+function liveGameToGameScore(game: LiveGame): GameScore {
+  return {
+    id: game.id,
+    away: {
+      name: game.awayTeam.name,
+      abbreviation: game.awayTeam.shortName,
+      score: game.awayTeam.score,
+      rank: game.awayTeam.ranking,
+    },
+    home: {
+      name: game.homeTeam.name,
+      abbreviation: game.homeTeam.shortName,
+      score: game.homeTeam.score,
+      rank: game.homeTeam.ranking,
+    },
+    status: game.detailedState,
+    isLive: game.status === 'in',
+    isFinal: game.status === 'post',
+    isPostponed: game.status === 'postponed',
+    detail: game.inning
+      ? `${game.inningHalf === 'top' ? 'Top' : 'Bot'} ${game.inning}${game.outs !== undefined ? ` · ${game.outs} out${game.outs !== 1 ? 's' : ''}` : ''}`
+      : undefined,
+    startTime: game.startTime,
+  };
+}
+
+/** College baseball panel powered by WebSocket (with polling fallback). */
+function CollegeBaseballPanel({ className }: { className: string }) {
+  const { games: liveGames, connectionStatus, error, retry } = useLiveScores();
+
+  const games = liveGames.map(liveGameToGameScore);
+  const loading = connectionStatus === 'connecting' && games.length === 0;
+  const hasGames = games.length > 0;
+
+  return (
+    <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
+      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+          Live Scores
+          {connectionStatus === 'connected' && (
+            <span className="w-2 h-2 bg-green-400 rounded-full" title="WebSocket connected" />
+          )}
+          {connectionStatus === 'polling' && (
+            <span className="w-2 h-2 bg-yellow-400 rounded-full" title="Polling fallback" />
+          )}
+        </h3>
+        <span className="text-xs text-white/40 uppercase tracking-wider">NCAA</span>
+      </div>
+      <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white/5 rounded-lg p-4 animate-pulse">
+              <div className="h-4 bg-white/10 rounded w-2/3 mb-2" />
+              <div className="h-4 bg-white/10 rounded w-2/3" />
+            </div>
+          ))
+        ) : error && !hasGames ? (
+          <div className="text-center py-8">
+            <p className="text-red-400 text-sm">{error}</p>
+            <button onClick={retry} className="mt-3 text-xs text-burnt-orange hover:text-ember transition-colors">Retry</button>
+          </div>
+        ) : !hasGames ? (
+          <div className="text-center py-8">
+            <p className="text-white/40 text-sm">No games scheduled</p>
+          </div>
+        ) : (
+          <GameCardList games={games} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** REST-based panel for MLB, NFL, NBA. */
+function RestScoresPanel({ sport, className }: { sport: Sport; className: string }) {
   const [games, setGames] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +101,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
 
   const buildEndpoint = useCallback((dateParam?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_BASE || '';
-    const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
+    const apiBase = `/api/${sport}`;
     const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
     return dateParam ? `${endpoint}?date=${dateParam}` : endpoint;
   }, [sport]);
@@ -39,7 +115,6 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       setIsYesterday(false);
 
       try {
-        // Try today first
         const res = await fetch(buildEndpoint());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
@@ -49,7 +124,6 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
           if (todayGames.length > 0) {
             setGames(sortGames(todayGames));
           } else {
-            // No games today — try yesterday as fallback
             try {
               const yRes = await fetch(buildEndpoint(getYesterdayDateString()));
               if (yRes.ok) {
@@ -111,58 +185,75 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
             <p className="text-white/40 text-sm">No games scheduled</p>
           </div>
         ) : (
-          games.map((game) => (
-            <div
-              key={game.id}
-              role="group"
-              aria-label={`${game.away.name} at ${game.home.name}`}
-              className={`bg-white/5 rounded-lg p-4 border transition-colors ${
-                game.isLive
-                  ? 'border-green-500/30'
-                  : game.isPostponed
-                    ? 'border-white/[0.03] opacity-50'
-                    : 'border-transparent'
-              }`}
-            >
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="font-semibold text-white text-sm flex items-center gap-1.5">
-                  {game.away.rank && (
-                    <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
-                      #{game.away.rank}
-                    </span>
-                  )}
-                  {game.away.name}
-                </span>
-                <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-white text-sm flex items-center gap-1.5">
-                  {game.home.rank && (
-                    <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
-                      #{game.home.rank}
-                    </span>
-                  )}
-                  {game.home.name}
-                </span>
-                <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
-              </div>
-              <div className="mt-2 flex items-center gap-2">
-                {game.isLive && (
-                  <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" role="status" aria-label="Game in progress" />
-                )}
-                <span className={`text-xs ${
-                  game.isLive ? 'text-green-400'
-                    : game.isPostponed ? 'text-yellow-500/60'
-                    : game.isFinal ? 'text-white/30'
-                    : 'text-[#BF5700]'
-                }`}>
-                  {game.detail || game.status}
-                </span>
-              </div>
-            </div>
-          ))
+          <GameCardList games={games} />
         )}
       </div>
     </div>
   );
+}
+
+/** Shared game card rendering. */
+function GameCardList({ games }: { games: GameScore[] }) {
+  return (
+    <>
+      {games.map((game) => (
+        <div
+          key={game.id}
+          role="group"
+          aria-label={`${game.away.name} at ${game.home.name}`}
+          className={`bg-white/5 rounded-lg p-4 border transition-colors ${
+            game.isLive
+              ? 'border-green-500/30'
+              : game.isPostponed
+                ? 'border-white/[0.03] opacity-50'
+                : 'border-transparent'
+          }`}
+        >
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+              {game.away.rank && (
+                <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                  #{game.away.rank}
+                </span>
+              )}
+              {game.away.name}
+            </span>
+            <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+              {game.home.rank && (
+                <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                  #{game.home.rank}
+                </span>
+              )}
+              {game.home.name}
+            </span>
+            <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            {game.isLive && (
+              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" role="status" aria-label="Game in progress" />
+            )}
+            <span className={`text-xs ${
+              game.isLive ? 'text-green-400'
+                : game.isPostponed ? 'text-yellow-500/60'
+                : game.isFinal ? 'text-white/30'
+                : 'text-[#BF5700]'
+            }`}>
+              {game.detail || game.status}
+            </span>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/** Entrypoint: routes college baseball to WebSocket, other sports to REST. */
+export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps) {
+  if (sport === 'ncaa') {
+    return <CollegeBaseballPanel className={className} />;
+  }
+  return <RestScoresPanel sport={sport} className={className} />;
 }

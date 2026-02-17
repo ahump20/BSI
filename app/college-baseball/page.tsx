@@ -238,7 +238,7 @@ export default function CollegeBaseballPage() {
 
   // Rankings — fetched when rankings tab is active
   const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
-  const { data: rankingsRaw, loading: rankingsLoading } =
+  const { data: rankingsRaw, loading: rankingsLoading, error: rankingsError, retry: retryRankings } =
     useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
   const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
   const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
@@ -272,7 +272,7 @@ export default function CollegeBaseballPage() {
 
   // Teams — fetched when teams tab is active
   const teamsUrl = activeTab === 'teams' ? '/api/college-baseball/teams' : null;
-  const { data: teamsRaw, loading: teamsLoading } =
+  const { data: teamsRaw, loading: teamsLoading, error: teamsError, retry: retryTeams } =
     useSportData<{ teams?: TeamListItem[] }>(teamsUrl);
   const allTeams = useMemo(() => teamsRaw?.teams || [], [teamsRaw]);
 
@@ -570,6 +570,13 @@ export default function CollegeBaseballPage() {
                   <CardContent>
                     {rankingsLoading ? (
                       <table className="w-full"><tbody>{Array.from({ length: 25 }).map((_, i) => <SkeletonTableRow key={i} columns={4} />)}</tbody></table>
+                    ) : rankingsError && rankings === preseasonRankings ? (
+                      <div className="py-8 text-center">
+                        <p className="text-red-400 font-semibold">Rankings temporarily unavailable</p>
+                        <p className="text-white/50 text-sm mt-1">{rankingsError}</p>
+                        <button onClick={retryRankings} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-ember transition-colors">Retry</button>
+                        <p className="text-white/30 text-sm mt-3">Showing preseason rankings as fallback</p>
+                      </div>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -857,6 +864,12 @@ export default function CollegeBaseballPage() {
                       </div>
                     ))}
                   </div>
+                ) : teamsError ? (
+                  <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
+                    <p className="text-red-400 font-semibold">Teams data unavailable</p>
+                    <p className="text-white/60 text-sm mt-1">{teamsError}</p>
+                    <button onClick={retryTeams} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm hover:bg-ember transition-colors">Retry</button>
+                  </Card>
                 ) : filteredTeams.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {filteredTeams.map((team) => {

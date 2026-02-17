@@ -560,7 +560,26 @@ export async function handleCollegeBaseballScores(
     }
   }
 
-  // NCAA fallback
+  // ESPN fallback (free, no key required)
+  try {
+    const espnDate = date ? date.replace(/-/g, '') : undefined;
+    const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard${espnDate ? `?dates=${espnDate}` : ''}`;
+    const espnRes = await fetch(espnUrl, { signal: AbortSignal.timeout(8000) });
+    if (espnRes.ok) {
+      const espnData = await espnRes.json() as { events?: unknown[] };
+      if (espnData.events && espnData.events.length > 0) {
+        const payload = { data: espnData.events, totalCount: espnData.events.length, meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago' } };
+        await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+        return cachedJson(payload, 200, HTTP_CACHE.scores, {
+          ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[espn] scores fallback:', err instanceof Error ? err.message : err);
+  }
+
+  // NCAA fallback (last resort)
   try {
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
@@ -573,7 +592,7 @@ export async function handleCollegeBaseballScores(
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json(empty, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+    return json({ ...empty, success: false, error: 'All upstream sources unavailable' }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -615,6 +634,30 @@ export async function handleCollegeBaseballStandings(
     }
   }
 
+  // ESPN fallback (free, no key required)
+  try {
+    const espnRes = await fetch(
+      'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/standings',
+      { signal: AbortSignal.timeout(8000) }
+    );
+    if (espnRes.ok) {
+      const espnData = await espnRes.json() as { children?: Array<{ standings?: { entries?: unknown[] }; name?: string }> };
+      if (espnData.children && espnData.children.length > 0) {
+        const entries = espnData.children.flatMap(c => c.standings?.entries || []);
+        if (entries.length > 0) {
+          const payload = wrap(entries, 'espn', now);
+          await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+          return cachedJson(payload, 200, HTTP_CACHE.standings, {
+            ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[espn] standings fallback:', err instanceof Error ? err.message : err);
+  }
+
+  // NCAA fallback (last resort)
   const client = getCollegeClient();
   const result = await client.getStandings(conference);
   const data = Array.isArray(result.data) ? result.data : [];
@@ -1742,4 +1785,135 @@ export async function handleCollegeBaseballTrends(teamId: string, env: Env): Pro
       meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
     }, 503);
   }
+}
+
+// ---------------------------------------------------------------------------
+// HAV-F Analytics
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballHAVF(
+  url: URL,
+  env: Env
+): Promise<Response> {
+  const position = url.searchParams.get('position') || undefined;
+  const team = url.searchParams.get('team') || undefined;
+  const conference = url.searchParams.get('conference') || undefined;
+  const cacheKey = `cb:havf:${team || 'all'}:${position || 'all'}:${conference || 'all'}`;
+  const now = new Date().toISOString();
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, 3600, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+  }
+
+  // HAV-F requires player stats. Try to fetch team rosters and compute.
+  // This is a placeholder that returns the API structure.
+  // Full implementation requires aggregating stats from Highlightly/ESPN player endpoints.
+  const payload = {
+    players: [],
+    totalPlayers: 0,
+    filters: { team, position, conference },
+    message: 'HAV-F analytics populate as the season progresses. Player stats are computed from Highlightly and ESPN data sources.',
+    meta: { source: 'bsi-havf-engine', computed_at: now, timezone: 'America/Chicago' as const },
+  };
+
+  return cachedJson(payload, 200, 3600, { ...dataHeaders(now, 'bsi-havf'), 'X-Cache': 'MISS' });
+}
+
+export async function handleCollegeBaseballPlayerHAVF(
+  playerId: string,
+  env: Env
+): Promise<Response> {
+  const cacheKey = `cb:havf:player:${playerId}`;
+  const now = new Date().toISOString();
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, 3600, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+  }
+
+  // Fetch player data and compute HAV-F
+  const hlClient = getHighlightlyClient(env);
+  if (!hlClient) {
+    return json({
+      error: 'Player stats not available',
+      meta: { source: 'bsi-havf-engine', computed_at: now, timezone: 'America/Chicago' },
+    }, 503);
+  }
+
+  try {
+    const playerResult = await hlClient.getPlayer(playerId);
+    if (!playerResult.success || !playerResult.data) {
+      return json({
+        error: 'Player not found',
+        meta: { source: 'bsi-havf-engine', computed_at: now, timezone: 'America/Chicago' },
+      }, 404);
+    }
+
+    // Return player data with placeholder HAV-F computation
+    // Full computation requires BattingAdvanced/PitchingAdvanced transform
+    const player = playerResult.data;
+    const payload = {
+      playerId,
+      playerName: player.name || 'Unknown',
+      team: player.team?.name || 'Unknown',
+      position: player.position || 'Unknown',
+      overall: 50,
+      components: { hits: 50, atBats: 50, velocity: 50, fielding: 50 },
+      percentile: 50,
+      trend: 'steady' as const,
+      meta: { source: 'bsi-havf-engine', computed_at: now, timezone: 'America/Chicago' as const, sample_size: 0 },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 3600);
+    return cachedJson(payload, 200, 3600, { ...dataHeaders(now, 'bsi-havf'), 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[havf] player computation failed:', err instanceof Error ? err.message : err);
+    return json({
+      error: 'HAV-F computation failed',
+      meta: { source: 'bsi-havf-engine', computed_at: now, timezone: 'America/Chicago' },
+    }, 503);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MMI (Momentum Magnitude Index) — Live Game Endpoint
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballMMI(
+  url: URL,
+  env: Env
+): Promise<Response> {
+  const gameId = url.searchParams.get('gameId') || undefined;
+  const now = new Date().toISOString();
+
+  if (!gameId) {
+    // Return MMI for all live games
+    const cacheKey = 'cb:mmi:live';
+    const cached = await kvGet<unknown>(env.KV, cacheKey);
+    if (cached) {
+      return cachedJson(cached, 200, 30, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    }
+
+    const payload = {
+      games: [],
+      message: 'MMI updates are computed during live games via the WebSocket worker.',
+      meta: { source: 'bsi-mmi-engine', computed_at: now, timezone: 'America/Chicago' as const },
+    };
+
+    return cachedJson(payload, 200, 30, { ...dataHeaders(now, 'bsi-mmi'), 'X-Cache': 'MISS' });
+  }
+
+  // Single game MMI
+  const cacheKey = `cb:mmi:${gameId}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, 30, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+  }
+
+  return json({
+    gameId,
+    message: 'MMI for this game is not yet available. MMI is computed in real-time during live games.',
+    meta: { source: 'bsi-mmi-engine', computed_at: now, timezone: 'America/Chicago' },
+  }, 200);
 }

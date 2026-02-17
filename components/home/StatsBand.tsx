@@ -4,7 +4,7 @@ import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 
 const STATS = [
   { value: '6', label: 'Sports Covered' },
-  { value: '53', label: 'Live Workers' },
+  { value: '14', label: 'Live Workers' },
   { value: '24/7', label: 'Data Pipeline' },
   { value: '100%', label: 'Independent' },
 ];

@@ -12,13 +12,24 @@ interface AnimatedCounterProps {
  * AnimatedCounter — counts up from 0 to `end` when scrolled into view.
  * Uses IntersectionObserver to trigger once and requestAnimationFrame
  * for smooth 60fps updates. Respects prefers-reduced-motion.
+ *
+ * SSR-safe: renders the final value on the server so crawlers/static
+ * snapshots see real numbers, then hydrates with animation.
  */
 export function AnimatedCounter({ end, suffix = '', duration = 1500 }: AnimatedCounterProps) {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(end);
+  const [hydrated, setHydrated] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
+  // After hydration, reset to 0 so the count-up animation can play
   useEffect(() => {
+    setHydrated(true);
+    setCount(0);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     const el = ref.current;
     if (!el) return;
 
@@ -51,8 +62,20 @@ export function AnimatedCounter({ end, suffix = '', duration = 1500 }: AnimatedC
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [end, duration]);
+
+    // Fallback: if observer hasn't fired after 2s, show final value
+    const fallbackTimer = setTimeout(() => {
+      if (!hasAnimated.current) {
+        hasAnimated.current = true;
+        setCount(end);
+      }
+    }, 2000);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
+  }, [end, duration, hydrated]);
 
   return (
     <span ref={ref}>

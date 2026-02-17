@@ -38,6 +38,9 @@ import {
   handleCollegeBaseballNewsEnhanced,
   handleCollegeBaseballPlayerCompare,
   handleCollegeBaseballTrends,
+  handleCollegeBaseballHAVF,
+  handleCollegeBaseballPlayerHAVF,
+  handleCollegeBaseballMMI,
 } from './handlers/college-baseball';
 
 import {
@@ -240,6 +243,9 @@ app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballP
 app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
 app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
 app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/havf', (c) => handleCollegeBaseballHAVF(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/havf/:playerId', (c) => handleCollegeBaseballPlayerHAVF(c.req.param('playerId'), c.env));
+app.get('/api/college-baseball/mmi', (c) => handleCollegeBaseballMMI(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
 app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
 app.get('/api/college-baseball/scores/ws', (c) => {
