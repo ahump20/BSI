@@ -324,6 +324,9 @@ interface TeamStats {
 }
 
 
+// NFL season spans Sep–Feb; in Jan/Feb it's still the prior year's season
+const nflSeasonYear = new Date().getMonth() <= 1 ? new Date().getFullYear() - 1 : new Date().getFullYear();
+
 interface NFLTeamDetailClientProps {
   teamId: string;
 }
@@ -475,7 +478,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary">
-                2025 Season · {team.conference} {team.division}
+                {nflSeasonYear} Season · {team.conference} {team.division}
               </p>
             </ScrollReveal>
           </Container>

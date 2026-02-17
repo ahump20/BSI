@@ -103,6 +103,9 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
   };
 }
 
+// College baseball season is Feb–Jun; preseason starts Sep
+const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+
 export default function CollegeBaseballRankingsPage() {
   const [rankings, setRankings] = useState<RankingPoll | null>(null);
   const [loading, setLoading] = useState(true);
@@ -212,7 +215,7 @@ export default function CollegeBaseballRankingsPage() {
                       </p>
                     )}
                   </div>
-                  <Badge variant="primary">2025 Season</Badge>
+                  <Badge variant="primary">{seasonYear} Season</Badge>
                 </div>
               </Card>
             </ScrollReveal>
@@ -417,7 +420,7 @@ export default function CollegeBaseballRankingsPage() {
                       Also Receiving Votes
                     </h3>
                     <p className="text-text-secondary text-sm">
-                      Data available during active season. Check back when the 2025 season begins.
+                      Data available during active season. Check back when the {seasonYear} season begins.
                     </p>
                   </Card>
                   <Card padding="md">

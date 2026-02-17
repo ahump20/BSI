@@ -538,6 +538,9 @@ const staticStandings: Conference[] = [
   },
 ];
 
+// NFL season spans Sep–Feb; in Jan/Feb it's still the prior year's season
+const nflSeasonYear = new Date().getMonth() <= 1 ? new Date().getFullYear() - 1 : new Date().getFullYear();
+
 export default function NFLStandingsPage() {
   const [standings, setStandings] = useState<Conference[]>(staticStandings);
   const [loading, setLoading] = useState(true);
@@ -593,7 +596,7 @@ export default function NFLStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                {nflSeasonYear} Season
               </Badge>
             </ScrollReveal>
 
@@ -669,16 +672,16 @@ export default function NFLStandingsPage() {
                       </h3>
 
                       <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-sm" aria-label={`${division.name} standings`}>
                           <thead>
                             <tr className="border-b border-border-subtle">
-                              <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                              <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold">
                                 Team
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                                 W
                               </th>
-                              <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                              <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                                 L
                               </th>
                               <th className="text-center py-2 px-2 text-text-tertiary font-semibold">

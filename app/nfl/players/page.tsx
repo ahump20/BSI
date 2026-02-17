@@ -172,6 +172,9 @@ function PlayerCard({ player }: { player: Player }) {
   );
 }
 
+// NFL season spans Sep–Feb; in Jan/Feb it's still the prior year's season
+const nflSeasonYear = new Date().getMonth() <= 1 ? new Date().getFullYear() - 1 : new Date().getFullYear();
+
 export default function NFLPlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -287,7 +290,7 @@ export default function NFLPlayersPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2024 Season
+                {nflSeasonYear} Season
               </Badge>
             </ScrollReveal>
 

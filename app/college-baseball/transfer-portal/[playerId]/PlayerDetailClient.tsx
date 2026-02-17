@@ -81,6 +81,9 @@ function StatItem({
   );
 }
 
+// College baseball season is Feb–Jun; preseason starts Sep
+const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
+
 export function PlayerDetailClient() {
   const params = useParams();
   const playerId = params.playerId as string;
@@ -276,7 +279,7 @@ export function PlayerDetailClient() {
             <Container>
               <ScrollReveal delay={0.2}>
                 <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
-                  2025 Season Stats
+                  {seasonYear} Season Stats
                 </h2>
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                   {isPitcher ? (

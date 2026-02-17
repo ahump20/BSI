@@ -51,6 +51,9 @@ const pitchingStats = [
   { id: 'ip', label: 'Innings Pitched', format: (v: number) => v.toFixed(1) },
 ];
 
+// MLB season falls within a single calendar year (Apr–Oct)
+const mlbSeasonYear = new Date().getFullYear();
+
 export default function MLBStatsPage() {
   const [leaders, setLeaders] = useState<Record<string, StatLeader[]>>({});
   const [loading, setLoading] = useState(true);
@@ -175,7 +178,7 @@ export default function MLBStatsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                {mlbSeasonYear} Season
               </Badge>
             </ScrollReveal>
 
@@ -284,7 +287,7 @@ export default function MLBStatsPage() {
                   </svg>
                   <p className="text-text-secondary">No stat leaders available</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Leaders will be available when the 2025 season begins
+                    Leaders will be available when the {mlbSeasonYear} season begins
                   </p>
                 </div>
               </Card>

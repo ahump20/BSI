@@ -38,6 +38,10 @@ interface DataMeta {
 }
 
 type ViewType = 'division' | 'league' | 'wildcard';
+
+// MLB season falls within a single calendar year (Apr–Oct)
+const mlbSeasonYear = new Date().getFullYear();
+
 export default function MLBStandingsPage() {
   const [standings, setStandings] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
@@ -199,17 +203,17 @@ export default function MLBStandingsPage() {
     showDivision?: boolean;
   }) => (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[700px]">
+      <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr className="border-b-2 border-burnt-orange">
-            <th className="text-left p-3 text-copper font-semibold w-8">#</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold w-8">#</th>
             <SortableHeader column="team" label="Team" className="sticky left-0 bg-charcoal z-10" />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th className="text-left p-3 text-copper font-semibold">HOME</th>
-            <th className="text-left p-3 text-copper font-semibold">AWAY</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">HOME</th>
+            <th scope="col" className="text-left p-3 text-copper font-semibold">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
@@ -291,17 +295,17 @@ export default function MLBStandingsPage() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
+        <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr className="border-b-2 border-burnt-orange">
-              <th className="text-left p-3 text-copper font-semibold w-8">WC</th>
-              <th className="text-left p-3 text-copper font-semibold">Team</th>
-              <th className="text-left p-3 text-copper font-semibold">W</th>
-              <th className="text-left p-3 text-copper font-semibold">L</th>
-              <th className="text-left p-3 text-copper font-semibold">PCT</th>
-              <th className="text-left p-3 text-copper font-semibold">WCGB</th>
-              <th className="text-left p-3 text-copper font-semibold">STRK</th>
-              <th className="text-left p-3 text-copper font-semibold">L10</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold w-8">WC</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">Team</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">W</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">L</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">PCT</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">WCGB</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
+              <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -391,7 +395,7 @@ export default function MLBStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                {mlbSeasonYear} Season
               </Badge>
             </ScrollReveal>
 
@@ -439,7 +443,7 @@ export default function MLBStandingsPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full" aria-label="MLB league standings">
                           <thead>
                             <tr className="border-b-2 border-burnt-orange">
                               {[
@@ -457,7 +461,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} className="text-left p-3 text-copper font-semibold">
+                                <th key={h} scope="col" className="text-left p-3 text-copper font-semibold">
                                   {h}
                                 </th>
                               ))}
@@ -490,7 +494,7 @@ export default function MLBStandingsPage() {
                 <div className="text-center py-8">
                   <p className="text-text-secondary">No standings data available</p>
                   <p className="text-text-tertiary text-sm mt-2">
-                    Standings will be available when the 2025 season begins
+                    Standings will be available when the {mlbSeasonYear} season begins
                   </p>
                 </div>
               </Card>

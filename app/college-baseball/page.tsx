@@ -437,11 +437,11 @@ export default function CollegeBaseballPage() {
                       <table className="w-full"><tbody>{Array.from({ length: 25 }).map((_, i) => <SkeletonTableRow key={i} columns={4} />)}</tbody></table>
                     ) : (
                       <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full" aria-label="College baseball rankings">
                           <thead>
                             <tr className="border-b-2 border-[#BF5700]">
                               {['Rank', 'Team', 'Conference', 'Record'].map((h) => (
-                                <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                                <th key={h} scope="col" className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -460,7 +460,7 @@ export default function CollegeBaseballPage() {
                     )}
                     <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                       <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
-                      <Link href="/baseball/rankings" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                      <Link href="/college-baseball/rankings" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
                         Full Rankings →
                       </Link>
                     </div>
@@ -506,11 +506,11 @@ export default function CollegeBaseballPage() {
                       <CardHeader><CardTitle>Conference Standings</CardTitle></CardHeader>
                       <CardContent>
                         <div className="overflow-x-auto">
-                          <table className="w-full">
+                          <table className="w-full" aria-label="Conference standings">
                             <thead>
                               <tr className="border-b-2 border-[#BF5700]">
                                 {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
-                                  <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                                  <th key={h} scope="col" className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
                                 ))}
                               </tr>
                             </thead>

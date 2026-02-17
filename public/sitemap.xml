@@ -9,21 +9,36 @@
   <url><loc>https://blazesportsintel.com/college-baseball/players/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://blazesportsintel.com/college-baseball/games/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://blazesportsintel.com/college-baseball/transfer-portal/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://blazesportsintel.com/college-baseball/news/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://blazesportsintel.com/college-baseball/conferences/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://blazesportsintel.com/scores/</loc><changefreq>hourly</changefreq><priority>0.8</priority></url>
   <url><loc>https://blazesportsintel.com/mlb/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/mlb/standings/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/mlb/scores/</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/mlb/news/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/mlb/players/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/mlb/teams/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/mlb/stats/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/mlb/games/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://blazesportsintel.com/nfl/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nfl/standings/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://blazesportsintel.com/nfl/scores/</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nfl/games/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nfl/news/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/nfl/players/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/nfl/teams/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://blazesportsintel.com/nba/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nba/standings/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://blazesportsintel.com/nba/scores/</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nba/games/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/nba/news/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/nba/players/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://blazesportsintel.com/nba/teams/</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
   <url><loc>https://blazesportsintel.com/cfb/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/arcade/</loc><changefreq>daily</changefreq><priority>0.5</priority></url>
   <url><loc>https://blazesportsintel.com/nil-valuation/</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://blazesportsintel.com/coverage/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://blazesportsintel.com/fanbase/</loc><changefreq>daily</changefreq><priority>0.5</priority></url>
   <url><loc>https://blazesportsintel.com/scoring/</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
   <url><loc>https://blazesportsintel.com/search/</loc><changefreq>daily</changefreq><priority>0.5</priority></url>
   <url><loc>https://blazesportsintel.com/about/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
