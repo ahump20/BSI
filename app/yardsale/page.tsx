@@ -321,7 +321,6 @@ export default function YardSalePage() {
                   type="email"
                   required
                   disabled={isSubmitting}
-                  aria-label="Email address"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
