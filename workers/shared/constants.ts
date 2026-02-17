@@ -2,14 +2,18 @@ export const PROD_ORIGINS = new Set([
   'https://blazesportsintel.com',
   'https://www.blazesportsintel.com',
   'https://blazesportsintel.pages.dev',
+  'https://austinhumphrey.com',
+  'https://www.austinhumphrey.com',
+  'https://blazecraft.app',
 ]);
 
 export const DEV_ORIGINS = new Set([
   'http://localhost:3000',
   'http://localhost:8787',
+  'http://localhost:5173',
 ]);
 
-export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev'];
+export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev', 'austinhumphrey.com'];
 
 export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
@@ -19,15 +23,16 @@ export const SECURITY_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'Content-Security-Policy': [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com",
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com https://challenges.cloudflare.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://*.posthog.com https://us.i.posthog.com https://api.stripe.com",
-    "frame-src 'self' https://*.cloudflarestream.com https://js.stripe.com",
+    "frame-src 'self' https://*.cloudflarestream.com https://js.stripe.com https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    "report-uri /_csp/report",
   ].join('; '),
 };
 
