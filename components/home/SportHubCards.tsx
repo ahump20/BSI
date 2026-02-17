@@ -235,23 +235,23 @@ export function SportHubCards() {
         );
       })}
 
-      {/* CFB — Coming Soon */}
-      <div className="glass-default rounded-2xl p-6 h-full flex flex-col gap-3 opacity-50">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center"
-            style={{ backgroundColor: 'rgba(139,69,19,0.2)', color: '#8B4513' }}
-          >
-            <SportIcon sport="cfb" className="w-6 h-6" />
+      {/* CFB */}
+      <Link href="/cfb" className="group">
+        <div className="glass-default rounded-2xl p-6 h-full flex flex-col gap-3 hover:shadow-glow-sm hover:border-[rgba(191,87,0,0.25)] transition-all duration-300 hover:scale-[1.02]">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: 'rgba(139,69,19,0.2)', color: '#8B4513' }}
+            >
+              <SportIcon sport="cfb" className="w-6 h-6" />
+            </div>
+            <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">CFB</h3>
           </div>
-          <h3 className="font-display text-lg text-white uppercase tracking-wide">CFB</h3>
+          <div className="flex-1 flex items-end">
+            <span className="text-xs text-white/30">Scores &amp; Standings</span>
+          </div>
         </div>
-        <div className="flex-1 flex items-end">
-          <span className="px-2 py-0.5 text-xs font-semibold bg-[#FDB913]/20 text-[#FDB913] rounded-full">
-            Coming Soon
-          </span>
-        </div>
-      </div>
+      </Link>
     </div>
   );
 }

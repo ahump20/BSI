@@ -466,12 +466,12 @@ export default function MLBPage() {
                         </CardHeader>
                         <CardContent>
                           <div className="overflow-x-auto">
-                            <table className="w-full">
+                            <table className="w-full" aria-label="MLB standings">
                               <thead>
                                 <tr className="border-b-2 border-burnt-orange">
                                   {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map(
                                     (h) => (
-                                      <th
+                                      <th scope="col"
                                         key={h}
                                         className="text-left p-3 text-copper font-semibold"
                                       >
@@ -532,13 +532,13 @@ export default function MLBPage() {
                           </CardHeader>
                           <CardContent>
                             <div className="overflow-x-auto">
-                              <table className="w-full">
+                              <table className="w-full" aria-label="MLB division standings">
                                 <thead>
                                   <tr className="border-b-2 border-burnt-orange">
-                                    <th className="text-left p-3 text-copper font-semibold">
+                                    <th scope="col" className="text-left p-3 text-copper font-semibold">
                                       Rank
                                     </th>
-                                    <th className="text-left p-3 text-copper font-semibold">
+                                    <th scope="col" className="text-left p-3 text-copper font-semibold">
                                       Team
                                     </th>
                                     <th className="text-left p-3 text-copper font-semibold">W</th>

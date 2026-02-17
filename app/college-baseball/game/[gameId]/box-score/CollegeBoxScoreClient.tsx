@@ -69,17 +69,17 @@ export default function CollegeBoxScoreClient() {
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} batting statistics`}>
               <thead>
                 <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
-                  <th className="text-left p-3 font-medium">Player</th>
-                  <th className="text-center p-3 font-medium w-12">AB</th>
-                  <th className="text-center p-3 font-medium w-12">R</th>
-                  <th className="text-center p-3 font-medium w-12">H</th>
-                  <th className="text-center p-3 font-medium w-12">RBI</th>
-                  <th className="text-center p-3 font-medium w-12">BB</th>
-                  <th className="text-center p-3 font-medium w-12">SO</th>
-                  <th className="text-center p-3 font-medium w-16">AVG</th>
+                  <th scope="col" className="text-left p-3 font-medium">Player</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">RBI</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">SO</th>
+                  <th scope="col" className="text-center p-3 font-medium w-16">AVG</th>
                 </tr>
               </thead>
               <tbody>
@@ -121,17 +121,17 @@ export default function CollegeBoxScoreClient() {
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} pitching statistics`}>
               <thead>
                 <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
-                  <th className="text-left p-3 font-medium">Pitcher</th>
-                  <th className="text-center p-3 font-medium w-14">IP</th>
-                  <th className="text-center p-3 font-medium w-12">H</th>
-                  <th className="text-center p-3 font-medium w-12">R</th>
-                  <th className="text-center p-3 font-medium w-12">ER</th>
-                  <th className="text-center p-3 font-medium w-12">BB</th>
-                  <th className="text-center p-3 font-medium w-12">K</th>
-                  <th className="text-center p-3 font-medium w-16">ERA</th>
+                  <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
+                  <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">ER</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">K</th>
+                  <th scope="col" className="text-center p-3 font-medium w-16">ERA</th>
                 </tr>
               </thead>
               <tbody>
@@ -204,17 +204,17 @@ export default function CollegeBoxScoreClient() {
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} batting statistics`}>
               <thead>
                 <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
-                  <th className="text-left p-3 font-medium">Player</th>
-                  <th className="text-center p-3 font-medium w-12">AB</th>
-                  <th className="text-center p-3 font-medium w-12">R</th>
-                  <th className="text-center p-3 font-medium w-12">H</th>
-                  <th className="text-center p-3 font-medium w-12">RBI</th>
-                  <th className="text-center p-3 font-medium w-12">BB</th>
-                  <th className="text-center p-3 font-medium w-12">SO</th>
-                  <th className="text-center p-3 font-medium w-16">AVG</th>
+                  <th scope="col" className="text-left p-3 font-medium">Player</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">RBI</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">SO</th>
+                  <th scope="col" className="text-center p-3 font-medium w-16">AVG</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,17 +256,17 @@ export default function CollegeBoxScoreClient() {
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} pitching statistics`}>
               <thead>
                 <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
-                  <th className="text-left p-3 font-medium">Pitcher</th>
-                  <th className="text-center p-3 font-medium w-14">IP</th>
-                  <th className="text-center p-3 font-medium w-12">H</th>
-                  <th className="text-center p-3 font-medium w-12">R</th>
-                  <th className="text-center p-3 font-medium w-12">ER</th>
-                  <th className="text-center p-3 font-medium w-12">BB</th>
-                  <th className="text-center p-3 font-medium w-12">K</th>
-                  <th className="text-center p-3 font-medium w-16">ERA</th>
+                  <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
+                  <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">H</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">R</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">ER</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">BB</th>
+                  <th scope="col" className="text-center p-3 font-medium w-12">K</th>
+                  <th scope="col" className="text-center p-3 font-medium w-16">ERA</th>
                 </tr>
               </thead>
               <tbody>

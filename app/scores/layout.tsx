@@ -3,20 +3,20 @@ import type { Metadata } from 'next';
 import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'MLB Analytics | BSI',
-  description: 'Live MLB standings, scores, player stats, and division breakdowns.',
-  openGraph: { title: 'MLB Analytics | BSI', description: 'Live MLB standings, scores, player stats, and division breakdowns.' },
+  title: 'Live Scores | BSI',
+  description: 'Cross-sport live scoreboard.',
+  openGraph: { title: 'Live Scores | BSI', description: 'Cross-sport live scoreboard.' },
 };
 
-export default function MLBLayout({ children }: { children: ReactNode }) {
+export default function ScoresLayout({ children }: { children: ReactNode }) {
   return (
-    <div data-sport="mlb">
+    <div data-page="scores">
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://blazesportsintel.com/' },
-          { '@type': 'ListItem', position: 2, name: 'MLB' },
+          { '@type': 'ListItem', position: 2, name: 'Live Scores' },
         ],
       }} />
       {children}
