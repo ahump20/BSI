@@ -1,0 +1,23 @@
+# BSI Intelligence Stream — Streaming AI analysis via SSE
+# Deploy: wrangler deploy --config workers/bsi-intelligence-stream/wrangler.toml
+# Secrets: wrangler secret put ANTHROPIC_API_KEY --config workers/bsi-intelligence-stream/wrangler.toml
+
+name = "bsi-intelligence-stream"
+main = "index.ts"
+compatibility_date = "2025-03-07"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[[kv_namespaces]]
+binding = "BSI_AI_CACHE"
+id = "e5b7cbfb4cc548ca80ec486bff78bfeb"
+
+[[routes]]
+pattern = "blazesportsintel.com/api/intelligence/*"
+zone_name = "blazesportsintel.com"
+
+[dev]
+port = 8793

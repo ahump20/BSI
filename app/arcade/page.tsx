@@ -6,6 +6,12 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import {
+  ARCADE_GAMES,
+  ARCADE_CATEGORIES,
+  getGamesByCategory,
+  type ArcadeCategory,
+} from '@/lib/data/arcade-games';
 
 interface LeaderboardEntry {
   name: string;
@@ -15,56 +21,11 @@ interface LeaderboardEntry {
   updated_at: string;
 }
 
-const GAMES = [
-  {
-    id: 'blitz',
-    title: 'Blaze Blitz',
-    description: 'Call plays and drive downfield in this fast-paced football strategy game.',
-    color: '#FF6B35',
-    icon: '🏈',
-    url: '/arcade/games/blitz',
-    deployed: true,
-  },
-  {
-    id: 'sandlot-sluggers',
-    title: 'Sandlot Sluggers',
-    description: 'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
-    color: '#BF5700',
-    icon: '⚾',
-    url: '/arcade/games/sandlot-sluggers',
-    deployed: true,
-  },
-  {
-    id: 'downtown-doggies',
-    title: 'Downtown Doggies',
-    description: '3-point contest. 5 racks, 25 shots. Hit the green zone to drain threes.',
-    color: '#FDB913',
-    icon: '🏀',
-    url: '/arcade/games/downtown-doggies',
-    deployed: true,
-  },
-  {
-    id: 'hotdog-dash',
-    title: 'Blaze Hot Dog',
-    description: 'Guide your dachshund through the stadium. Dodge obstacles, collect hot dogs.',
-    color: '#CD5C5C',
-    icon: '🌭',
-    url: '/arcade/games/hotdog-dash',
-    deployed: true,
-  },
-  {
-    id: 'leadership-capital',
-    title: 'Leadership Capital Index',
-    description: '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
-    color: '#BF5700',
-    icon: '📊',
-    url: '/arcade/games/leadership-capital',
-    deployed: true,
-  },
-];
-
 export default function ArcadePage() {
   const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [category, setCategory] = useState<ArcadeCategory | 'all'>('all');
+
+  const filteredGames = getGamesByCategory(category);
 
   const {
     data: leaderboardData,
@@ -95,32 +56,111 @@ export default function ArcadePage() {
             </p>
           </div>
 
+          {/* Category Filter */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            <button
+              onClick={() => setCategory('all')}
+              className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors ${
+                category === 'all' ? 'bg-[#BF5700] text-white' : 'bg-white/5 text-white/50 hover:text-white'
+              }`}
+            >
+              All Games
+            </button>
+            {ARCADE_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategory(cat.id)}
+                className={`px-4 py-2 rounded-lg text-xs font-display uppercase tracking-wider transition-colors ${
+                  category === cat.id ? 'bg-[#BF5700] text-white' : 'bg-white/5 text-white/50 hover:text-white'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+
           {/* Games Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
-            {GAMES.map((game) => (
-              <a
-                key={game.id}
-                href={game.url}
-                className="group block"
-              >
-                <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-white/20">
-                  <div
-                    className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
-                    style={{ background: `${game.color}20` }}
+            {filteredGames.map((game) => {
+              if (game.comingSoon) {
+                return (
+                  <div key={game.id} className="opacity-60">
+                    <Card variant="hover" padding="lg" className="h-full">
+                      <div
+                        className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                        style={{ background: `${game.color}20` }}
+                      >
+                        {game.icon}
+                      </div>
+                      <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2">
+                        {game.title}
+                      </h3>
+                      <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
+                      <div className="mt-4">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/30 uppercase tracking-wider">
+                          Coming Soon
+                        </span>
+                      </div>
+                    </Card>
+                  </div>
+                );
+              }
+
+              if (game.external) {
+                return (
+                  <a
+                    key={game.id}
+                    href={game.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block"
                   >
-                    {game.icon}
-                  </div>
-                  <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
-                    {game.title}
-                  </h3>
-                  <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-400" />
-                    <span className="text-xs text-green-400/80">Live</span>
-                  </div>
-                </Card>
-              </a>
-            ))}
+                    <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-white/20">
+                      <div
+                        className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                        style={{ background: `${game.color}20` }}
+                      >
+                        {game.icon}
+                      </div>
+                      <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
+                        {game.title}
+                      </h3>
+                      <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
+                      <div className="mt-4 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-green-400" />
+                        <span className="text-xs text-green-400/80">Live</span>
+                        <span className="text-xs text-white/30 ml-auto">External</span>
+                      </div>
+                    </Card>
+                  </a>
+                );
+              }
+
+              return (
+                <a
+                  key={game.id}
+                  href={game.url}
+                  className="group block"
+                >
+                  <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-white/20">
+                    <div
+                      className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
+                      style={{ background: `${game.color}20` }}
+                    >
+                      {game.icon}
+                    </div>
+                    <h3 className="font-display text-lg text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
+                      {game.title}
+                    </h3>
+                    <p className="text-sm text-white/50 leading-relaxed">{game.description}</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-green-400" />
+                      <span className="text-xs text-green-400/80">Live</span>
+                    </div>
+                  </Card>
+                </a>
+              );
+            })}
           </div>
 
           {/* Leaderboard */}
@@ -136,7 +176,7 @@ export default function ArcadePage() {
                     >
                       All
                     </button>
-                    {GAMES.map((g) => (
+                    {ARCADE_GAMES.filter((g) => g.deployed && !g.comingSoon).map((g) => (
                       <button
                         key={g.id}
                         onClick={() => setActiveGame(g.id)}

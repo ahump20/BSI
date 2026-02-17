@@ -99,8 +99,17 @@ import {
   handleMMILive,
   handleMMIGame,
   handleMMITrending,
+  handleWinProbExample,
+  handleMonteCarloExample,
 } from './handlers/analytics';
-import { handleLeaderboard, handleLeaderboardSubmit, handleGameAsset } from './handlers/games';
+import {
+  handleLeaderboard,
+  handleLeaderboardSubmit,
+  handleGameAsset,
+  handleArcadeGames,
+  handleArcadeStats,
+  handleArcadeSession,
+} from './handlers/games';
 import {
   handleTeams,
   handleLead,
@@ -108,6 +117,7 @@ import {
   handleIntelNews,
   handleESPNNews,
   handleModelHealth,
+  handleWeeklyBrief,
   handlePredictionSubmit,
   handlePredictionAccuracy,
   handleAnalyticsEvent,
@@ -346,6 +356,13 @@ app.get('/api/news/:sport', (c) => handleESPNNews(c.req.param('sport'), c.env));
 // --- Model Health ---
 app.get('/api/model-health', (c) => handleModelHealth(c.env));
 
+// --- Model Examples ---
+app.get('/api/models/win-probability/example', (c) => handleWinProbExample(c.env));
+app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env));
+
+// --- Intel Weekly Brief ---
+app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
+
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
 app.get('/api/predictions/accuracy', (c) => handlePredictionAccuracy(c.env));
@@ -358,6 +375,11 @@ app.post('/api/feedback', (c) => handleFeedback(c.req.raw, c.env));
 
 // --- CSP Reports ---
 app.post('/_csp/report', (c) => handleCSPReport(c.req.raw, c.env));
+
+// --- Arcade ---
+app.get('/api/arcade/games', (c) => handleArcadeGames(new URL(c.req.url)));
+app.get('/api/arcade/stats', (c) => handleArcadeStats(new URL(c.req.url), c.env));
+app.post('/api/arcade/sessions', (c) => handleArcadeSession(c.req.raw, c.env));
 
 // --- Leaderboard ---
 app.get('/api/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));

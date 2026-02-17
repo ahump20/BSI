@@ -75,6 +75,26 @@ const analyticsTools = [
     href: '/college-baseball/teams',
   },
   {
+    id: 'havf',
+    name: 'HAV-F Player Evaluation',
+    description:
+      'BSI\'s proprietary composite metric: Hitting, At-Bat Quality, Velocity, and Fielding. Percentile-normalized 0-100 scale for every D1 player.',
+    icon: '\uD83C\uDFAF',
+    sport: 'NCAA',
+    status: 'available',
+    href: '/college-baseball/analytics',
+  },
+  {
+    id: 'mmi',
+    name: 'Momentum Index (MMI)',
+    description:
+      'Real-time momentum tracking during live games. Score differential, recent scoring, game phase, and base situation combine into a -100 to +100 momentum gauge.',
+    icon: '\u26A1',
+    sport: 'NCAA',
+    status: 'available',
+    href: '/analytics/mmi',
+  },
+  {
     id: 'monte-carlo',
     name: 'Season Simulator',
     description:

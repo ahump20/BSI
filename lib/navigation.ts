@@ -35,8 +35,9 @@ export function getMainNavItems(date?: Date): {
 
   const primary: MainNavItem[] = [
     { label: 'Live', href: '/scores' },
+    { label: 'Intel', href: '/intel' },
+    { label: 'Models', href: '/models' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'About', href: '/about' },
   ];
 
   // All sports go into the Leagues dropdown, sorted by activity
@@ -62,8 +63,10 @@ export function getMainNavItems(date?: Date): {
 
   const secondary: MainNavItem[] = [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Vision AI', href: '/vision-ai' },
+    { label: 'Glossary', href: '/glossary' },
+    { label: 'Data Sources', href: '/models/data-quality' },
     { label: 'Arcade', href: '/arcade' },
+    { label: 'About', href: '/about' },
     ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
   ];
 
@@ -76,13 +79,15 @@ export function getMainNavItems(date?: Date): {
  */
 export const mainNavItems: MainNavItem[] = [
   { label: 'Live', href: '/scores' },
+  { label: 'Intel', href: '/intel' },
+  { label: 'Models', href: '/models' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
   { label: 'CFB', href: '/cfb' },
   { label: 'College Baseball', href: '/college-baseball' },
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Vision AI', href: '/vision-ai' },
+  { label: 'Glossary', href: '/glossary' },
   ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
   { label: 'Arcade', href: '/arcade' },
   { label: 'Pricing', href: '/pricing' },
