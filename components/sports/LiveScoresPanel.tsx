@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { Sport } from './SportTabs';
 import { normalizeGames, sortGames, type GameScore } from '@/lib/scores/normalize';
+import { getSeasonPhase, type SportKey } from '@/lib/season';
 
 interface LiveScoresPanelProps {
   sport: Sport;
@@ -15,6 +16,14 @@ function getYesterdayDateString(): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** Map Sport tab keys to SportKey for season detection. */
+const SPORT_KEY_MAP: Record<Sport, SportKey> = {
+  mlb: 'mlb',
+  nfl: 'nfl',
+  nba: 'nba',
+  ncaa: 'ncaa',
+};
+
 export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps) {
   const [games, setGames] = useState<GameScore[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,11 +32,27 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
   const gamesRef = useRef(games);
   gamesRef.current = games;
 
+  // Season phase detection for Spring Training banner
+  const seasonPhase = useMemo(() => {
+    const key = SPORT_KEY_MAP[sport];
+    return key ? getSeasonPhase(key) : null;
+  }, [sport]);
+
+  const isPreseason = seasonPhase?.phase === 'preseason';
+  const preseasonLabel = seasonPhase?.label; // e.g., "Spring Training"
+
+  /** Build live endpoint URL. */
   const buildEndpoint = useCallback((dateParam?: string) => {
     const origin = process.env.NEXT_PUBLIC_API_BASE || '';
     const apiBase = sport === 'ncaa' ? '/api/college-baseball' : `/api/${sport}`;
     const endpoint = `${origin}${sport === 'nba' ? `${apiBase}/scoreboard` : `${apiBase}/scores`}`;
     return dateParam ? `${endpoint}?date=${dateParam}` : endpoint;
+  }, [sport]);
+
+  /** Build cached endpoint URL (cron-warmed KV). */
+  const buildCachedEndpoint = useCallback(() => {
+    const origin = process.env.NEXT_PUBLIC_API_BASE || '';
+    return `${origin}/api/scores/cached?sport=${sport}`;
   }, [sport]);
 
   useEffect(() => {
@@ -39,7 +64,21 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       setIsYesterday(false);
 
       try {
-        // Try today first
+        // Try cached endpoint first (sub-10ms from KV)
+        const cachedRes = await fetch(buildCachedEndpoint());
+        if (cachedRes.ok && cachedRes.status === 200) {
+          const cachedData = await cachedRes.json() as { data?: unknown };
+          if (cachedData?.data) {
+            const cachedGames = normalizeGames(sport, cachedData.data as Record<string, unknown>);
+            if (!cancelled && cachedGames.length > 0) {
+              setGames(sortGames(cachedGames));
+              setLoading(false);
+              return;
+            }
+          }
+        }
+
+        // Fall back to live endpoint
         const res = await fetch(buildEndpoint());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
@@ -84,7 +123,7 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
       cancelled = true;
       clearInterval(interval);
     };
-  }, [sport, buildEndpoint]);
+  }, [sport, buildEndpoint, buildCachedEndpoint]);
 
   return (
     <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
@@ -94,6 +133,14 @@ export function LiveScoresPanel({ sport, className = '' }: LiveScoresPanelProps)
         </h3>
         <span className="text-xs text-white/40 uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
+      {/* Preseason banner (e.g., Spring Training) */}
+      {isPreseason && preseasonLabel && (
+        <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+          <p className="text-yellow-400/80 text-xs">
+            {preseasonLabel} — coverage may be limited; some games unavailable until first pitch
+          </p>
+        </div>
+      )}
       <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (

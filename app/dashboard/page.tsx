@@ -17,6 +17,33 @@ const SportCoveragePieChart = dynamic(
 );
 
 function ChartLoadingPlaceholder() {
+  const [timedOut, setTimedOut] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setTimedOut(true), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (timedOut) {
+    return (
+      <div className="h-64 flex items-center justify-center">
+        <div className="text-center">
+          <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          <p className="text-text-tertiary text-sm">No chart data available</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-2 text-xs text-burnt-orange hover:text-burnt-orange/80 underline transition-colors"
+          >
+            Reload page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-64 flex items-center justify-center">
       <div className="flex flex-col items-center gap-2">
@@ -54,22 +81,30 @@ interface StandingsTeam {
 }
 
 function getDashboardSources(sport: Sport, lastUpdated: string): DataSource[] {
+  const sportsDataIO: DataSource = {
+    name: 'SportsDataIO',
+    url: 'https://sportsdata.io',
+    fetchedAt: lastUpdated,
+    description: 'Scores, standings, rosters, and player statistics',
+  };
+  const highlightlyPro: DataSource = {
+    name: 'Highlightly Pro',
+    url: 'https://highlightly.net',
+    fetchedAt: lastUpdated,
+    description: 'Primary data pipeline for baseball and football',
+  };
+  const espnCollegeBaseball: DataSource = {
+    name: 'ESPN',
+    url: 'https://site.api.espn.com',
+    fetchedAt: lastUpdated,
+    description: 'NCAA Division I baseball scores, rankings, and schedules',
+  };
+
   const sources: Record<Sport, DataSource[]> = {
-    mlb: [
-      { name: 'MLB Stats API', url: 'https://statsapi.mlb.com', fetchedAt: lastUpdated, description: 'Official MLB scores, standings, and player statistics' },
-      { name: 'Baseball-Reference', url: 'https://www.baseball-reference.com', fetchedAt: lastUpdated, description: 'Historical stats and advanced metrics' },
-    ],
-    nfl: [
-      { name: 'ESPN API', url: 'https://www.espn.com/nfl', fetchedAt: lastUpdated, description: 'NFL scores, schedules, and team data' },
-      { name: 'Pro-Football-Reference', url: 'https://www.pro-football-reference.com', fetchedAt: lastUpdated, description: 'NFL statistics and historical records' },
-    ],
-    nba: [
-      { name: 'NBA.com', url: 'https://www.nba.com', fetchedAt: lastUpdated, description: 'Official NBA scores and standings' },
-    ],
-    ncaa: [
-      { name: 'D1Baseball', url: 'https://d1baseball.com', fetchedAt: lastUpdated, description: 'NCAA Division I baseball rankings and coverage' },
-      { name: 'NCAA Stats', url: 'https://stats.ncaa.org', fetchedAt: lastUpdated, description: 'Official NCAA statistics' },
-    ],
+    mlb: [sportsDataIO, highlightlyPro],
+    nfl: [sportsDataIO],
+    nba: [sportsDataIO],
+    ncaa: [espnCollegeBaseball, highlightlyPro],
   };
   return sources[sport] || sources.mlb;
 }
@@ -131,7 +166,7 @@ export default function DashboardPage() {
           setStats((prev) => ({
             ...prev,
             totalTeams: teamList.length || SPORT_TEAM_COUNTS[activeSport],
-            lastUpdated: standingsData.meta?.lastUpdated || new Date().toISOString(),
+            lastUpdated: standingsData.meta?.lastUpdated || '',
           }));
         }
 
@@ -315,7 +350,21 @@ export default function DashboardPage() {
                   <h3 className="text-lg font-semibold text-white">Win Distribution</h3>
                   <span className="text-xs text-white/30 uppercase tracking-wider">Top 8 Teams</span>
                 </div>
-                <StandingsBarChart data={standingsChartData} isLoading={isLoading} />
+                {fetchError || (!isLoading && standingsChartData.length === 0) ? (
+                  <div className="h-64 flex items-center justify-center">
+                    <div className="text-center">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <path d="M3 9h18M9 21V9" />
+                      </svg>
+                      <p className="text-text-tertiary text-sm">
+                        {fetchError ? 'Standings data unavailable' : `No standings data for ${activeSport.toUpperCase()}`}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <StandingsBarChart data={standingsChartData} isLoading={isLoading} />
+                )}
               </Card>
             </ScrollReveal>
 

@@ -1,10 +1,10 @@
 import { isPresenceCoachEnabled } from './feature-flags';
 import {
-  getActiveSports,
-  isInSeason,
+  getSeasonPhase,
   SPORT_LABELS,
   SPORT_PATHS,
   type SportKey,
+  type SeasonPhase,
 } from './season';
 
 export interface MainNavItem {
@@ -12,62 +12,79 @@ export interface MainNavItem {
   href: string;
 }
 
-/** Static nav items (always visible). */
-const STATIC_PRIMARY: MainNavItem[] = [
-  { label: 'Dashboard', href: '/dashboard' },
-];
-
-/** Utility / secondary pages — shown in "More" dropdown. */
-const SECONDARY_PAGES: MainNavItem[] = [
-  { label: 'Vision AI', href: '/vision-ai' },
-  { label: 'Arcade', href: '/arcade' },
-  ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
-];
+export interface LeagueNavItem extends MainNavItem {
+  sport: SportKey;
+  phase: SeasonPhase;
+  phaseLabel?: string;
+}
 
 /**
- * Get season-aware primary nav items.
- * In-season sports appear as top-level links; off-season sports go to secondary.
+ * Get restructured nav items.
+ *
+ * Primary:   page links always visible in the top bar.
+ * Leagues:   all sports with season phase, rendered in a dropdown.
+ * Secondary: utility pages in the "More" dropdown.
  */
 export function getMainNavItems(date?: Date): {
   primary: MainNavItem[];
+  leagues: LeagueNavItem[];
   secondary: MainNavItem[];
 } {
   const now = date ?? new Date();
   const allSports: SportKey[] = ['ncaa', 'mlb', 'nfl', 'nba', 'cfb'];
 
-  const primary: MainNavItem[] = [...STATIC_PRIMARY];
-  const secondary: MainNavItem[] = [];
+  const primary: MainNavItem[] = [
+    { label: 'Live', href: '/scores' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'About', href: '/about' },
+  ];
 
-  for (const sport of allSports) {
-    const item: MainNavItem = {
+  // All sports go into the Leagues dropdown, sorted by activity
+  const leagues: LeagueNavItem[] = allSports.map((sport) => {
+    const season = getSeasonPhase(sport, now);
+    return {
       label: SPORT_LABELS[sport],
       href: SPORT_PATHS[sport],
+      sport,
+      phase: season.phase,
+      phaseLabel: season.label,
     };
+  });
 
-    if (isInSeason(sport, now)) {
-      primary.push(item);
-    } else {
-      secondary.push(item);
-    }
-  }
+  // Sort: active sports first (regular > postseason > preseason > offseason)
+  const phaseOrder: Record<SeasonPhase, number> = {
+    regular: 0,
+    postseason: 1,
+    preseason: 2,
+    offseason: 3,
+  };
+  leagues.sort((a, b) => phaseOrder[a.phase] - phaseOrder[b.phase]);
 
-  secondary.push(...SECONDARY_PAGES);
+  const secondary: MainNavItem[] = [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Vision AI', href: '/vision-ai' },
+    { label: 'Arcade', href: '/arcade' },
+    ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
+  ];
 
-  return { primary, secondary };
+  return { primary, leagues, secondary };
 }
 
 /**
  * Legacy export — flat list of all nav items.
- * Used by components that haven't migrated to primary/secondary split yet.
+ * Used by components that haven't migrated to the primary/leagues/secondary split yet.
  */
 export const mainNavItems: MainNavItem[] = [
-  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Live', href: '/scores' },
   { label: 'MLB', href: '/mlb' },
   { label: 'NFL', href: '/nfl' },
   { label: 'NBA', href: '/nba' },
   { label: 'CFB', href: '/cfb' },
   { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'Dashboard', href: '/dashboard' },
   { label: 'Vision AI', href: '/vision-ai' },
   ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),
   { label: 'Arcade', href: '/arcade' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About', href: '/about' },
 ];

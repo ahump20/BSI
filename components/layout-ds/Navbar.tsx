@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, Search } from 'lucide-react';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
+import type { LeagueNavItem } from '@/lib/navigation';
 
 export interface NavItem {
   label: string;
@@ -14,6 +15,7 @@ export interface NavItem {
 
 export interface NavbarProps {
   primary: NavItem[];
+  leagues: LeagueNavItem[];
   secondary: NavItem[];
 }
 
@@ -65,7 +67,95 @@ function useNewsTicker(): string {
 }
 
 // ---------------------------------------------------------------------------
-// More dropdown
+// Leagues dropdown — sport links with season indicators
+// ---------------------------------------------------------------------------
+
+function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Close on Escape
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') setOpen(false);
+  }, []);
+
+  // Check if any league is active
+  const hasActiveSport = items.some(
+    (item) => pathname === item.href || pathname.startsWith(item.href + '/')
+  );
+
+  return (
+    <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+          hasActiveSport
+            ? 'bg-[#BF5700]/15 text-[#FF6B35]'
+            : 'text-white/60 hover:text-white hover:bg-white/5'
+        }`}
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
+        Leagues
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div
+          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl py-1 z-50"
+          role="menu"
+        >
+          {items.map((item) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + '/');
+            const isActive = item.phase !== 'offseason';
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                role="menuitem"
+                className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
+                  active
+                    ? 'text-[#FF6B35] bg-white/5'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span>{item.label}</span>
+                <span className="flex items-center gap-2">
+                  {item.phaseLabel && (
+                    <span className="text-[10px] text-white/30">
+                      {item.phaseLabel}
+                    </span>
+                  )}
+                  {isActive && (
+                    <span className="relative flex h-2 w-2" title="In season">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+                    </span>
+                  )}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// More dropdown — secondary pages
 // ---------------------------------------------------------------------------
 
 function MoreDropdown({ items }: { items: NavItem[] }) {
@@ -117,7 +207,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
 // Navbar
 // ---------------------------------------------------------------------------
 
-export function Navbar({ primary, secondary }: NavbarProps) {
+export function Navbar({ primary, leagues, secondary }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const tickerText = useNewsTicker();
@@ -153,7 +243,7 @@ export function Navbar({ primary, secondary }: NavbarProps) {
               />
             </Link>
 
-            {/* Center: Sport links (desktop) */}
+            {/* Center: Primary + Leagues + More (desktop) */}
             <div className="hidden md:flex items-center gap-1">
               {primary.map((item) => (
                 <Link
@@ -169,6 +259,7 @@ export function Navbar({ primary, secondary }: NavbarProps) {
                   {item.label}
                 </Link>
               ))}
+              <LeaguesDropdown items={leagues} />
               <MoreDropdown items={secondary} />
             </div>
 
@@ -221,6 +312,7 @@ export function Navbar({ primary, secondary }: NavbarProps) {
       {/* Mobile Drawer */}
       <MobileMenuDrawer
         primary={primary}
+        leagues={leagues}
         secondary={secondary}
         open={menuOpen}
         onClose={() => setMenuOpen(false)}

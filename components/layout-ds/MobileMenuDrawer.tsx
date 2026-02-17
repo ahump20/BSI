@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { X } from 'lucide-react';
+import type { LeagueNavItem } from '@/lib/navigation';
 
 interface MenuItem {
   label: string;
@@ -15,6 +16,7 @@ interface MobileMenuDrawerProps {
   open: boolean;
   onClose: () => void;
   primary: MenuItem[];
+  leagues: LeagueNavItem[];
   secondary: MenuItem[];
 }
 
@@ -22,6 +24,7 @@ export function MobileMenuDrawer({
   open,
   onClose,
   primary,
+  leagues,
   secondary,
 }: MobileMenuDrawerProps) {
   const pathname = usePathname();
@@ -69,6 +72,37 @@ export function MobileMenuDrawer({
     );
   };
 
+  const renderLeagueLink = (item: LeagueNavItem) => {
+    const active = isActive(item.href);
+    const isLive = item.phase !== 'offseason';
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onClose}
+        aria-current={active ? 'page' : undefined}
+        className={`flex items-center justify-between w-full px-4 py-3 rounded-lg transition-all min-h-12 ${
+          active
+            ? 'text-[#BF5700] font-semibold bg-white/10'
+            : 'text-white/60 hover:text-white'
+        }`}
+      >
+        <span>{item.label}</span>
+        <span className="flex items-center gap-2">
+          {item.phaseLabel && (
+            <span className="text-[10px] text-white/30">{item.phaseLabel}</span>
+          )}
+          {isLive && (
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            </span>
+          )}
+        </span>
+      </Link>
+    );
+  };
+
   return (
     <AnimatePresence>
       {open && (
@@ -107,12 +141,27 @@ export function MobileMenuDrawer({
               </button>
             </div>
 
-            {/* Primary Sports */}
+            {/* Primary */}
             <nav className="px-4 pb-2 space-y-1">
               {primary.map(renderLink)}
             </nav>
 
-            {/* Divider + Secondary */}
+            {/* Leagues */}
+            {leagues.length > 0 && (
+              <>
+                <div className="mx-4 my-2 border-t border-white/[0.06]" />
+                <div className="px-4 pb-1">
+                  <span className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-4">
+                    Leagues
+                  </span>
+                </div>
+                <nav className="px-4 pb-2 space-y-1">
+                  {leagues.map(renderLeagueLink)}
+                </nav>
+              </>
+            )}
+
+            {/* Secondary */}
             {secondary.length > 0 && (
               <>
                 <div className="mx-4 my-2 border-t border-white/[0.06]" />

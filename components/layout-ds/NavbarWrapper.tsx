@@ -9,6 +9,6 @@ import { getMainNavItems } from '@/lib/navigation';
  * Separated because getMainNavItems() uses `new Date()` which needs client context.
  */
 export function NavbarWrapper() {
-  const { primary, secondary } = useMemo(() => getMainNavItems(), []);
-  return <Navbar primary={primary} secondary={secondary} />;
+  const { primary, leagues, secondary } = useMemo(() => getMainNavItems(), []);
+  return <Navbar primary={primary} leagues={leagues} secondary={secondary} />;
 }

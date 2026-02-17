@@ -125,7 +125,7 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
 export default function CollegeBaseballRankingsPage() {
   const [selectedPoll, setSelectedPoll] = useState('d1baseball');
 
-  const { data: rawData, loading, error } = useSportData<RankingsApiResponse>(
+  const { data: rawData, loading, error, retry } = useSportData<RankingsApiResponse>(
     '/api/college-baseball/rankings'
   );
   const rankings = rawData ? transformESPNRankings(rawData) : null;
@@ -217,20 +217,33 @@ export default function CollegeBaseballRankingsPage() {
               <div className="text-center py-16">
                 <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
                 <p className="text-text-secondary">Loading rankings...</p>
+                <p className="text-text-tertiary text-xs mt-2">This usually takes a few seconds</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
                 <h3 className="text-xl font-semibold text-white mb-2">Error Loading Rankings</h3>
-                <p className="text-text-secondary">{error}</p>
+                <p className="text-text-secondary mb-4">{error}</p>
+                <button
+                  onClick={retry}
+                  className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                >
+                  Try again
+                </button>
               </Card>
             ) : !rankings || rankings.teams.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-text-tertiary text-4xl mb-4">?</div>
                 <h3 className="text-xl font-semibold text-white mb-2">No Rankings Available</h3>
-                <p className="text-text-secondary">
-                  Rankings for this poll are not currently available.
+                <p className="text-text-secondary mb-4">
+                  Rankings for this poll are not currently available. Try another source.
                 </p>
+                <button
+                  onClick={retry}
+                  className="px-4 py-2 bg-white/5 text-text-secondary rounded-lg text-sm font-medium hover:bg-white/10 transition-colors"
+                >
+                  Refresh
+                </button>
               </Card>
             ) : (
               <ScrollReveal direction="up" delay={200}>

@@ -82,6 +82,7 @@ import {
 } from './handlers/cfb';
 
 import { handleSearch } from './handlers/search';
+import { handleScheduled, handleCachedScores } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
 import {
@@ -307,6 +308,12 @@ app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c
 app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
 app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
 
+// --- Cached scores (cron-warmed KV) ---
+app.get('/api/scores/cached', (c) => {
+  const sport = new URL(c.req.url).searchParams.get('sport') || 'mlb';
+  return handleCachedScores(sport, c.env);
+});
+
 // --- Search ---
 app.get('/api/search', (c) => handleSearch(new URL(c.req.url), c.env));
 
@@ -355,7 +362,13 @@ app.get('/ws', (c) => {
 // --- Fallback: proxy to Cloudflare Pages ---
 app.all('*', (c) => proxyToPages(c.req.raw, c.env));
 
-export default app;
+// Module export with fetch (Hono) + scheduled (cron) handlers
+export default {
+  fetch: app.fetch,
+  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext) {
+    await handleScheduled(env);
+  },
+};
 
 // =============================================================================
 // Durable Object — CacheObject

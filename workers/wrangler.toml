@@ -58,6 +58,10 @@ ENVIRONMENT = "development"
 API_VERSION = "1.0.0"
 PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
 
+# Cron trigger — warm KV cache for scores + rankings
+[triggers]
+crons = ["*/1 * * * *"]  # Every minute (scores adjust TTL internally based on season)
+
 [dev]
 port = 8787
 local_protocol = "http"
@@ -109,6 +113,10 @@ class_name = "PortalPoller"
 [[env.production.analytics_engine_datasets]]
 binding = "OPS_EVENTS"
 dataset = "bsi_ops_events"
+
+# Cron trigger — warm KV cache for scores + rankings
+[env.production.triggers]
+crons = ["*/1 * * * *"]
 
 [[env.production.tail_consumers]]
 service = "bsi-error-tracker"
