@@ -10,6 +10,8 @@ import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
 import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
+import { StickyLeagueBar } from '@/components/sports/StickyLeagueBar';
+import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 
 // 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
@@ -148,6 +150,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
             <NavbarWrapper />
             <ScrollProgress />
+            <StickyLeagueBar />
+            <BreadcrumbBar />
             <CommandPalette />
             <KonamiCodeWrapper />
             <PageTransition>{children}</PageTransition>

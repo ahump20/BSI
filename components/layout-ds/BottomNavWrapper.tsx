@@ -1,31 +1,160 @@
 'use client';
 
-import { useMemo } from 'react';
-import { BottomNav } from '@/components/sports';
-import { isInSeason, SPORT_LABELS, SPORT_PATHS, type SportKey } from '@/lib/season';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import {
+  Home,
+  CircleDot,
+  Hexagon,
+  Circle,
+  MoreHorizontal,
+  X,
+  Gamepad2,
+  Trophy,
+  BarChart3,
+  Volleyball,
+  Award,
+  Target,
+} from 'lucide-react';
+import { BottomNav, type BottomNavItem } from '@/components/sports';
+
+/** Secondary pages shown in the "More" slide-up panel. */
+const MORE_ITEMS = [
+  { label: 'College Baseball', href: '/college-baseball', icon: Volleyball },
+  { label: 'College Football', href: '/cfb', icon: Award },
+  { label: 'Scores', href: '/scores', icon: BarChart3 },
+  { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
+  { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
+  { label: 'Dashboard', href: '/dashboard', icon: Target },
+];
 
 /**
- * Season-aware bottom nav for mobile.
- * Shows Home + up to 4 in-season sports. Falls back to defaults if fewer than 4 are active.
+ * Fixed bottom nav for mobile with "More" slide-up panel.
+ * Shows Home / MLB / NFL / NBA / More — predictable sport-switching pattern.
  */
 export function BottomNavWrapper() {
-  const items = useMemo(() => {
-    const now = new Date();
-    const allSports: SportKey[] = ['ncaa', 'mlb', 'nba', 'nfl', 'cfb'];
-    const active = allSports.filter((s) => isInSeason(s, now));
+  const [moreOpen, setMoreOpen] = useState(false);
+  const pathname = usePathname();
 
-    // If fewer than 3 in-season, add off-season sports to fill
-    const pool = active.length >= 3
-      ? active
-      : [...active, ...allSports.filter((s) => !active.includes(s))];
-
-    const sportItems = pool.slice(0, 4).map((s) => ({
-      label: SPORT_LABELS[s],
-      href: SPORT_PATHS[s],
-    }));
-
-    return [{ label: 'Home', href: '/' }, ...sportItems];
+  const toggleMore = useCallback(() => {
+    setMoreOpen((prev) => !prev);
   }, []);
 
-  return <BottomNav items={items} className="md:hidden" />;
+  const closeMore = useCallback(() => {
+    setMoreOpen(false);
+  }, []);
+
+  // Close panel on route change
+  useEffect(() => {
+    closeMore();
+  }, [pathname, closeMore]);
+
+  // Lock body scroll and handle Escape when panel is open
+  useEffect(() => {
+    if (!moreOpen) return;
+
+    document.body.style.overflow = 'hidden';
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMore();
+    };
+    document.addEventListener('keydown', handleKey);
+
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [moreOpen, closeMore]);
+
+  const items: BottomNavItem[] = [
+    { label: 'Home', href: '/', icon: Home },
+    { label: 'MLB', href: '/mlb', icon: CircleDot },
+    { label: 'NFL', href: '/nfl', icon: Hexagon },
+    { label: 'NBA', href: '/nba', icon: Circle },
+    { label: 'More', href: '#more', icon: MoreHorizontal, onPress: toggleMore },
+  ];
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname.startsWith(href);
+  };
+
+  return (
+    <>
+      {/* More panel */}
+      <AnimatePresence>
+        {moreOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-[45] bg-black/60"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={closeMore}
+              aria-hidden="true"
+            />
+
+            {/* Slide-up panel */}
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="More navigation"
+              className="fixed bottom-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-t border-white/10 rounded-t-2xl"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 pt-4 pb-2">
+                <span className="text-xs uppercase tracking-widest text-white/30 font-medium">
+                  More
+                </span>
+                <button
+                  onClick={closeMore}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  aria-label="Close panel"
+                >
+                  <X className="w-4 h-4 text-white/50" />
+                </button>
+              </div>
+
+              {/* Links */}
+              <nav className="px-4 pb-4 grid grid-cols-3 gap-2">
+                {MORE_ITEMS.map((item) => {
+                  const active = isActive(item.href);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={closeMore}
+                      className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
+                        active
+                          ? 'bg-[#BF5700]/15 text-[#BF5700]'
+                          : 'text-white/50 hover:text-white hover:bg-white/5'
+                      }`}
+                      aria-current={active ? 'page' : undefined}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="text-[11px] font-medium text-center leading-tight">
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom nav bar */}
+      <BottomNav items={items} className="md:hidden" />
+    </>
+  );
 }
