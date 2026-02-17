@@ -47,6 +47,7 @@ export default defineConfig({
       'tests/routes/**',
       'tests/a11y/**',
       'tests/flows/**',
+      'tests/resume-quality.spec.ts',
       'node_modules/**',
     ],
 
