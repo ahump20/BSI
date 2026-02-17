@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -15,7 +15,7 @@ import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
-import { teamMetadata } from '@/lib/data/team-metadata';
+import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 
 interface RankedTeam {
   rank: number;
@@ -57,6 +57,25 @@ interface ScheduleGame {
   };
   venue: string;
   tv?: string;
+}
+
+interface TeamListItem {
+  id: string;
+  name: string;
+  shortName?: string;
+  conference?: string;
+  record?: { wins: number; losses: number };
+  logo?: string;
+}
+
+interface PlayerResult {
+  id: string;
+  name: string;
+  team: string;
+  jersey?: string;
+  position: string;
+  classYear?: string;
+  conference?: string;
 }
 
 type TabType = 'rankings' | 'standings' | 'schedule' | 'teams' | 'players';
@@ -111,20 +130,43 @@ const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
     record: data.record2025,
   }));
 
-const conferenceList = [
-  { name: 'SEC', teams: 16, href: '/college-baseball/standings?conference=sec' },
-  { name: 'ACC', teams: 14, href: '/college-baseball/standings?conference=acc' },
-  { name: 'Big 12', teams: 16, href: '/college-baseball/standings?conference=big12' },
-  { name: 'Big Ten', teams: 13, href: '/college-baseball/standings?conference=bigten' },
-  { name: 'Pac-12', teams: 4, href: '/college-baseball/standings?conference=pac12' },
-  { name: 'Sun Belt', teams: 14, href: '/college-baseball/standings?conference=sunbelt' },
-  { name: 'AAC', teams: 11, href: '/college-baseball/standings?conference=aac' },
-  { name: 'All Conferences', teams: 32, href: '/college-baseball/standings' },
-];
+// Dynamic conferenceList — derived from teamMetadata + all D1 conferences
+const conferenceList = (() => {
+  const confMap = new Map<string, number>();
+  for (const team of Object.values(teamMetadata)) {
+    confMap.set(team.conference, (confMap.get(team.conference) || 0) + 1);
+  }
+  const allD1Conferences = [
+    'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12',
+    'Sun Belt', 'AAC', 'Mountain West', 'Conference USA', 'MAC',
+    'Big East', 'Big West', 'Big South', 'Missouri Valley',
+    'Southern', 'Southland', 'WAC', 'America East',
+    'Atlantic 10', 'CAA', 'Horizon', 'MAAC', 'Patriot League',
+    'WCC', 'ASUN', 'Ohio Valley', 'Northeast', 'Summit League',
+    'Ivy League', 'MEAC', 'SWAC', 'Independent',
+  ];
+  for (const name of allD1Conferences) {
+    if (!confMap.has(name)) confMap.set(name, 0);
+  }
+  const POWER_4 = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten']);
+  const toSlug = (name: string) => name.toLowerCase().replace(/[\s-]+/g, '').replace(/[^a-z0-9]/g, '');
+  const entries = Array.from(confMap.entries())
+    .sort(([a], [b]) => {
+      const ap = POWER_4.has(a) ? 0 : 1;
+      const bp = POWER_4.has(b) ? 0 : 1;
+      return ap !== bp ? ap - bp : a.localeCompare(b);
+    })
+    .map(([name, teams]) => ({
+      name,
+      teams,
+      href: `/college-baseball/standings?conference=${toSlug(name)}`,
+    }));
+  entries.push({ name: 'All Conferences', teams: entries.length, href: '/college-baseball/standings' });
+  return entries;
+})();
 
-const scheduleConferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
-
-// formatTimestamp, formatScheduleDate, getDateOffset imported from lib/utils/timezone
+const INITIAL_CONFERENCES_SHOWN = 9;
+const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'All Conferences').map(c => c.name)];
 
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
@@ -133,6 +175,66 @@ export default function CollegeBaseballPage() {
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const hasAutoAdvanced = useRef(false);
+
+  // Team search state
+  const [teamSearch, setTeamSearch] = useState('');
+  const [teamConfFilter, setTeamConfFilter] = useState('All');
+
+  // Expandable conference filter
+  const [showAllConferences, setShowAllConferences] = useState(false);
+
+  // Hub search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [apiSearchResults, setApiSearchResults] = useState<Array<{ name: string; href: string; category?: string }>>([]);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const localSearchResults = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    return Object.entries(teamMetadata)
+      .filter(([slug, meta]) => meta.shortName.toLowerCase().includes(q) || meta.conference?.toLowerCase().includes(q) || slug.includes(q))
+      .slice(0, 8)
+      .map(([slug, meta]) => ({ name: meta.shortName, href: `/college-baseball/teams/${slug}`, category: 'Teams' }));
+  }, [searchQuery]);
+
+  const debouncedApiSearch = useCallback((query: string) => {
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    if (!query || query.length < 2) { setApiSearchResults([]); return; }
+    searchTimerRef.current = setTimeout(async () => {
+      try {
+        const resp = await fetch(`/api/search?q=${encodeURIComponent(query)}&sport=college-baseball`);
+        if (!resp.ok) return;
+        const data = await resp.json() as { results?: Array<{ name?: string; title?: string; url?: string; href?: string; type?: string }> };
+        setApiSearchResults((data.results || []).map((r) => ({
+          name: r.name || r.title || '',
+          href: r.url || r.href || '#',
+          category: r.type ? r.type.charAt(0).toUpperCase() + r.type.slice(1) : 'Results',
+        })));
+      } catch { setApiSearchResults([]); }
+    }, 300);
+  }, []);
+
+  const allSearchResults = useMemo(() => {
+    const seen = new Set<string>();
+    const combined: Array<{ name: string; href: string; category?: string }> = [];
+    for (const r of [...localSearchResults, ...apiSearchResults]) {
+      if (!seen.has(r.href)) { seen.add(r.href); combined.push(r); }
+    }
+    return combined;
+  }, [localSearchResults, apiSearchResults]);
+
+  const groupedSearchResults = useMemo(() => {
+    const groups = new Map<string, Array<{ name: string; href: string }>>();
+    for (const r of allSearchResults) {
+      const cat = r.category || 'Results';
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat)!.push(r);
+    }
+    return groups;
+  }, [allSearchResults]);
+
+  useEffect(() => { debouncedApiSearch(searchQuery); }, [searchQuery, debouncedApiSearch]);
 
   // Rankings — fetched when rankings tab is active
   const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
@@ -168,11 +270,28 @@ export default function CollegeBaseballPage() {
   const hasLiveGames = useMemo(() => scheduleGames.some((g) => g.status === 'live'), [scheduleGames]);
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
-  // Derived shared state
-  const loading = rankingsLoading || standingsLoading;
-  const error = standingsError;
+  // Teams — fetched when teams tab is active
+  const teamsUrl = activeTab === 'teams' ? '/api/college-baseball/teams' : null;
+  const { data: teamsRaw, loading: teamsLoading } =
+    useSportData<{ teams?: TeamListItem[] }>(teamsUrl);
+  const allTeams = useMemo(() => teamsRaw?.teams || [], [teamsRaw]);
+
+  // Per-tab derived state — no shared loading/error
   const dataSource = rankingsRaw?.meta?.dataSource || standingsRaw?.meta?.dataSource || scheduleRaw?.meta?.dataSource || 'ESPN';
   const lastUpdated = rankingsRaw?.meta?.lastUpdated || standingsRaw?.meta?.lastUpdated || scheduleRaw?.timestamp || scheduleRaw?.meta?.lastUpdated || '';
+
+  // Team filtering
+  const filteredTeams = useMemo(() => {
+    let list = allTeams;
+    if (teamConfFilter !== 'All') {
+      list = list.filter(t => t.conference === teamConfFilter);
+    }
+    if (teamSearch.trim()) {
+      const q = teamSearch.toLowerCase();
+      list = list.filter(t => t.name.toLowerCase().includes(q) || (t.shortName || '').toLowerCase().includes(q));
+    }
+    return list;
+  }, [allTeams, teamConfFilter, teamSearch]);
 
   // Smart date initialization: auto-advance to next game day if today has no games
   useEffect(() => {
@@ -198,7 +317,7 @@ export default function CollegeBaseballPage() {
     findNextGameDay();
   }, [activeTab]);
 
-  // Client-side conference filter
+  // Client-side conference filter for schedule
   const filteredGames = selectedConference === 'All'
     ? scheduleGames
     : scheduleGames.filter(
@@ -206,6 +325,12 @@ export default function CollegeBaseballPage() {
           g.homeTeam.conference === selectedConference ||
           g.awayTeam.conference === selectedConference
       );
+
+  // Expandable conference filter
+  const visibleScheduleConferences = showAllConferences
+    ? scheduleConferences
+    : scheduleConferences.slice(0, INITIAL_CONFERENCES_SHOWN);
+  const hiddenCount = scheduleConferences.length - INITIAL_CONFERENCES_SHOWN;
 
   const dateOptions = [
     { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
@@ -264,6 +389,39 @@ export default function CollegeBaseballPage() {
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/college-baseball/games"><Button variant="primary" size="lg">View Live Games</Button></Link>
                 <Link href="/college-baseball/standings"><Button variant="secondary" size="lg">Conference Standings</Button></Link>
+              </div>
+            </ScrollReveal>
+            {/* Hub Search */}
+            <ScrollReveal direction="up" delay={275}>
+              <div className="relative max-w-lg mx-auto mt-6">
+                <div className="relative">
+                  <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                    onFocus={() => setSearchOpen(true)}
+                    onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
+                    placeholder="Search teams, players, articles..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-burnt-orange/50 focus:bg-white/8 transition-colors"
+                  />
+                </div>
+                {searchOpen && allSearchResults.length > 0 && (
+                  <div className="absolute z-50 mt-1 w-full bg-charcoal border border-white/10 rounded-xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
+                    {Array.from(groupedSearchResults.entries()).map(([category, items]) => (
+                      <div key={category}>
+                        <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/30 bg-white/5">{category}</div>
+                        {items.map((item) => (
+                          <Link key={item.href} href={item.href} className="block px-3 py-2 text-sm text-white/80 hover:bg-burnt-orange/15 hover:text-white transition-colors">
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={300}>
@@ -376,7 +534,7 @@ export default function CollegeBaseballPage() {
                 </button>
               ))}
             </div>
-            {/* Secondary nav — pages not covered by tabs */}
+            {/* Secondary nav */}
             <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
               {[
                 { label: 'Editorial', href: '/college-baseball/editorial' },
@@ -392,7 +550,7 @@ export default function CollegeBaseballPage() {
               ))}
             </div>
 
-            {/* Rankings Tab */}
+            {/* Rankings Tab — per-tab loading */}
             {activeTab === 'rankings' && (
               <ScrollReveal>
                 <Card variant="default" padding="lg">
@@ -410,7 +568,7 @@ export default function CollegeBaseballPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {loading ? (
+                    {rankingsLoading ? (
                       <table className="w-full"><tbody>{Array.from({ length: 25 }).map((_, i) => <SkeletonTableRow key={i} columns={4} />)}</tbody></table>
                     ) : (
                       <div className="overflow-x-auto">
@@ -446,17 +604,17 @@ export default function CollegeBaseballPage() {
               </ScrollReveal>
             )}
 
-            {/* Standings Tab */}
+            {/* Standings Tab — per-tab loading */}
             {activeTab === 'standings' && (
               <>
-                {loading ? (
+                {standingsLoading ? (
                   <Card variant="default" padding="lg">
                     <CardContent><table className="w-full"><tbody>{Array.from({ length: 10 }).map((_, i) => <SkeletonTableRow key={i} columns={6} />)}</tbody></table></CardContent>
                   </Card>
-                ) : error ? (
+                ) : standingsError ? (
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
-                    <p className="text-white/60 text-sm mt-1">{error}</p>
+                    <p className="text-white/60 text-sm mt-1">{standingsError}</p>
                     <button onClick={retryStandings} className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg">Retry</button>
                   </Card>
                 ) : standings.length === 0 ? (
@@ -563,9 +721,9 @@ export default function CollegeBaseballPage() {
                   </button>
                 </div>
 
-                {/* Conference Filter */}
+                {/* Expandable Conference Filter */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {scheduleConferences.map((conf) => (
+                  {visibleScheduleConferences.map((conf) => (
                     <button
                       key={conf}
                       onClick={() => setSelectedConference(conf)}
@@ -578,6 +736,14 @@ export default function CollegeBaseballPage() {
                       {conf}
                     </button>
                   ))}
+                  {!showAllConferences && hiddenCount > 0 && (
+                    <button
+                      onClick={() => setShowAllConferences(true)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-burnt-orange hover:bg-white/10 transition-all"
+                    >
+                      +{hiddenCount} More
+                    </button>
+                  )}
                 </div>
 
                 {scheduleLoading ? (
@@ -607,7 +773,6 @@ export default function CollegeBaseballPage() {
                   </Card>
                 ) : (
                   <>
-                    {/* Live Games */}
                     {filteredGames.some((g) => g.status === 'live') && (
                       <div className="mb-6">
                         <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
@@ -621,8 +786,6 @@ export default function CollegeBaseballPage() {
                         </div>
                       </div>
                     )}
-
-                    {/* Upcoming Games */}
                     {filteredGames.some((g) => g.status === 'scheduled') && (
                       <div className="mb-6">
                         <h3 className="text-sm font-semibold text-white mb-3">Upcoming</h3>
@@ -633,8 +796,6 @@ export default function CollegeBaseballPage() {
                         </div>
                       </div>
                     )}
-
-                    {/* Final Games */}
                     {filteredGames.some((g) => g.status === 'final') && (
                       <div className="mb-6">
                         <h3 className="text-sm font-semibold text-white/60 mb-3">Final</h3>
@@ -645,7 +806,6 @@ export default function CollegeBaseballPage() {
                         </div>
                       </div>
                     )}
-
                     <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between flex-wrap gap-4">
                       <DataSourceBadge
                         source={dataSource || 'ESPN College Baseball API'}
@@ -660,40 +820,137 @@ export default function CollegeBaseballPage() {
               </>
             )}
 
-            {/* Teams Tab */}
+            {/* Teams Tab — inline search */}
             {activeTab === 'teams' && (
               <div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-                  {conferenceList.map((conf) => (
-                    <Link key={conf.name} href={conf.href}>
-                      <Card variant="hover" padding="md" className="text-center h-full">
-                        <div className="font-semibold text-white">{conf.name}</div>
-                        <div className="text-xs text-white/40 mt-1">
-                          {conf.name === 'All Conferences' ? `View All ${conf.teams}` : `${conf.teams} Teams`}
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                  <input
+                    type="text"
+                    value={teamSearch}
+                    onChange={(e) => setTeamSearch(e.target.value)}
+                    placeholder="Search teams..."
+                    className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                  />
+                  <select
+                    value={teamConfFilter}
+                    onChange={(e) => setTeamConfFilter(e.target.value)}
+                    className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                  >
+                    <option value="All">All Conferences</option>
+                    {conferenceList.filter(c => c.name !== 'All Conferences').map(c => (
+                      <option key={c.name} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="text-center">
+
+                {teamsLoading ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="bg-white/5 rounded-lg p-4 animate-pulse">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-white/10 rounded-full" />
+                          <div>
+                            <div className="h-4 bg-white/10 rounded w-24 mb-1" />
+                            <div className="h-3 bg-white/5 rounded w-16" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredTeams.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {filteredTeams.map((team) => {
+                      const meta = Object.entries(teamMetadata).find(([, m]) => m.shortName.toLowerCase() === (team.shortName || team.name).toLowerCase())?.[1];
+                      return (
+                        <Link key={team.id} href={`/college-baseball/teams/${team.id}`}>
+                          <Card variant="hover" padding="md" className="h-full">
+                            <div className="flex items-center gap-3">
+                              {meta ? (
+                                <img src={getLogoUrl(meta.espnId)} alt="" className="w-8 h-8 object-contain" />
+                              ) : (
+                                <div className="w-8 h-8 bg-burnt-orange/15 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
+                                  {(team.shortName || team.name).slice(0, 3).toUpperCase()}
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <div className="font-semibold text-white text-sm truncate">{team.name}</div>
+                                <div className="text-xs text-white/40">{team.conference || ''}</div>
+                              </div>
+                            </div>
+                          </Card>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : allTeams.length === 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {conferenceList.map((conf) => (
+                      <Link key={conf.name} href={conf.href}>
+                        <Card variant="hover" padding="md" className="text-center h-full">
+                          <div className="font-semibold text-white">{conf.name}</div>
+                          <div className="text-xs text-white/40 mt-1">
+                            {conf.name === 'All Conferences' ? `View All ${conf.teams}` : `${conf.teams} Teams`}
+                          </div>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-white/40">No teams match &quot;{teamSearch}&quot;</p>
+                  </div>
+                )}
+
+                <div className="text-center mt-6">
                   <Link href="/college-baseball/teams"><Button variant="primary">Browse All Teams</Button></Link>
                 </div>
               </div>
             )}
 
-            {/* Players Tab */}
-            {activeTab === 'players' && (
-              <Card variant="default" padding="lg">
-                <CardHeader><CardTitle>Player Statistics</CardTitle></CardHeader>
-                <CardContent>
-                  <p className="text-white/60 mb-4">Search D1 baseball players for stats, draft projections, and transfer portal activity.</p>
-                  <div className="flex flex-wrap gap-3">
-                    <Link href="/college-baseball/players"><Button variant="primary">Browse Players</Button></Link>
-                    <Link href="/college-baseball/transfer-portal"><Button variant="secondary">Transfer Portal</Button></Link>
+            {/* Players Tab — inline search */}
+            {activeTab === 'players' && <PlayersTabContent />}
+          </Container>
+        </Section>
+
+        {/* League Leaders */}
+        <Section padding="lg" background="charcoal" borderTop>
+          <Container>
+            <ScrollReveal>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                    <path d="M18 20V10M12 20V4M6 20V14" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide">League Leaders</h2>
+                  <p className="text-white/40 text-xs mt-0.5">Top performers across D1 baseball</p>
+                </div>
+              </div>
+            </ScrollReveal>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { cat: 'Batting Average', label: 'AVG' },
+                { cat: 'Home Runs', label: 'HR' },
+                { cat: 'RBI', label: 'RBI' },
+                { cat: 'ERA', label: 'ERA' },
+                { cat: 'Strikeouts', label: 'K' },
+                { cat: 'Stolen Bases', label: 'SB' },
+              ].map((stat) => (
+                <Card key={stat.label} variant="default" padding="md">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-burnt-orange font-semibold text-sm">{stat.cat}</span>
+                    <Badge variant="secondary">{stat.label}</Badge>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                  <p className="text-white/30 text-xs">Stats available once season games are final.</p>
+                </Card>
+              ))}
+            </div>
+            <div className="mt-6 text-center">
+              <Link href="/college-baseball/players">
+                <Button variant="secondary" size="sm">Full Player Statistics →</Button>
+              </Link>
+            </div>
           </Container>
         </Section>
 
@@ -752,6 +1009,123 @@ export default function CollegeBaseballPage() {
   );
 }
 
+// ── Players Tab Content ──────────────────────────────────────────────────────
+
+function PlayersTabContent() {
+  const [search, setSearch] = useState('');
+  const [posFilter, setPosFilter] = useState('All');
+  const [classFilter, setClassFilter] = useState('All');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(debounceRef.current);
+  }, [search]);
+
+  const searchParam = debouncedSearch.length >= 2 ? `?search=${encodeURIComponent(debouncedSearch)}` : '';
+  const { data, loading } = useSportData<{ players?: PlayerResult[] }>(
+    searchParam ? `/api/college-baseball/players${searchParam}` : null
+  );
+  const players = data?.players || [];
+
+  const filtered = useMemo(() => {
+    let list = players;
+    if (posFilter !== 'All') list = list.filter(p => p.position === posFilter);
+    if (classFilter !== 'All') list = list.filter(p => p.classYear === classFilter);
+    return list;
+  }, [players, posFilter, classFilter]);
+
+  return (
+    <Card variant="default" padding="lg">
+      <CardHeader><CardTitle>Player Search</CardTitle></CardHeader>
+      <CardContent>
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name (min 2 chars)..."
+            className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+          />
+          <select
+            value={posFilter}
+            onChange={(e) => setPosFilter(e.target.value)}
+            className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+          >
+            <option value="All">All Positions</option>
+            {['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH', 'UTL'].map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+          <select
+            value={classFilter}
+            onChange={(e) => setClassFilter(e.target.value)}
+            className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+          >
+            <option value="All">All Classes</option>
+            {['Fr', 'So', 'Jr', 'Sr', 'Gr'].map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
+        {!searchParam && (
+          <div className="text-center py-8">
+            <p className="text-white/60 mb-4">Enter at least 2 characters to search D1 baseball players.</p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link href="/college-baseball/players"><Button variant="primary">Browse Players</Button></Link>
+              <Link href="/college-baseball/transfer-portal"><Button variant="secondary">Transfer Portal</Button></Link>
+            </div>
+          </div>
+        )}
+
+        {searchParam && loading && (
+          <table className="w-full"><tbody>{Array.from({ length: 5 }).map((_, i) => <SkeletonTableRow key={i} columns={5} />)}</tbody></table>
+        )}
+
+        {searchParam && !loading && filtered.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-white/40">No players found for &quot;{debouncedSearch}&quot;</p>
+          </div>
+        )}
+
+        {searchParam && !loading && filtered.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-burnt-orange">
+                  {['Name', 'Team', 'Pos', 'Class', ''].map((h) => (
+                    <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.slice(0, 25).map((player) => (
+                  <tr key={player.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td className="p-3 font-semibold text-white">{player.name}</td>
+                    <td className="p-3 text-white/60">{player.team}</td>
+                    <td className="p-3 text-white/60">{player.position}</td>
+                    <td className="p-3 text-white/60">{player.classYear || '-'}</td>
+                    <td className="p-3">
+                      <Link href={`/college-baseball/players/${player.id}`} className="text-burnt-orange text-xs hover:text-ember transition-colors">
+                        Profile →
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Schedule Game Card ───────────────────────────────────────────────────────
+
 function ScheduleGameCard({ game }: { game: ScheduleGame }) {
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
@@ -764,7 +1138,6 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
       <div className={`bg-white/5 rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/[0.07] ${
         isLive ? 'border-green-500/30' : 'border-white/10'
       }`}>
-        {/* Status Bar */}
         <div className={`px-3 py-1.5 rounded-t-lg flex items-center justify-between ${
           isLive ? 'bg-green-500/10' : isFinal ? 'bg-white/5' : 'bg-burnt-orange/10'
         }`}>
@@ -782,8 +1155,6 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
             {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
           </span>
         </div>
-
-        {/* Teams */}
         <div className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
@@ -816,8 +1187,6 @@ function ScheduleGameCard({ game }: { game: ScheduleGame }) {
             </span>
           </div>
         </div>
-
-        {/* Venue */}
         {game.venue && game.venue !== 'TBD' && (
           <div className="px-3 pb-2 text-[10px] text-white/25 truncate">
             {game.venue}
