@@ -52,14 +52,13 @@ export function trackEvent(event: string, properties: Record<string, string | nu
   };
 
   // Fire and forget -- don't await, don't block
-  navigator.sendBeacon?.(
-    ANALYTICS_ENDPOINT,
-    JSON.stringify(payload)
-  ) || fetch(ANALYTICS_ENDPOINT, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    keepalive: true,
-  }).catch(() => {});
+  if (!navigator.sendBeacon?.(ANALYTICS_ENDPOINT, JSON.stringify(payload))) {
+    void fetch(ANALYTICS_ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
+  }
 }
 
 /** Track page view */
