@@ -19,6 +19,7 @@
     "deploy:preview": "npm run build && wrangler pages deploy out --project-name blazesportsintel --branch preview",
     "deploy:worker": "wrangler deploy --config workers/wrangler.toml --env production",
     "deploy:worker:production": "wrangler deploy --config workers/wrangler.toml --env production",
+    "deploy:live-scores": "wrangler deploy --config workers/bsi-live-scores/wrangler.toml",
     "deploy:daily-digest": "wrangler deploy --config workers/bsi-college-baseball-daily/wrangler.toml",
     "deploy:hybrid": "npm run deploy:production && npm run deploy:worker:production",
     "dev:worker": "wrangler dev --config workers/wrangler.toml",

@@ -100,7 +100,14 @@ import {
   handleMMIGame,
   handleMMITrending,
 } from './handlers/analytics';
-import { handleLeaderboard, handleLeaderboardSubmit, handleGameAsset } from './handlers/games';
+import {
+  handleLeaderboard,
+  handleLeaderboardSubmit,
+  handleGameAsset,
+  handleArcadeGames,
+  handleArcadeStats,
+  handleArcadeSession,
+} from './handlers/games';
 import {
   handleTeams,
   handleLead,
@@ -358,6 +365,11 @@ app.post('/api/feedback', (c) => handleFeedback(c.req.raw, c.env));
 
 // --- CSP Reports ---
 app.post('/_csp/report', (c) => handleCSPReport(c.req.raw, c.env));
+
+// --- Arcade ---
+app.get('/api/arcade/games', (c) => handleArcadeGames(new URL(c.req.url)));
+app.get('/api/arcade/stats', (c) => handleArcadeStats(new URL(c.req.url), c.env));
+app.post('/api/arcade/sessions', (c) => handleArcadeSession(c.req.raw, c.env));
 
 // --- Leaderboard ---
 app.get('/api/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url), c.env));
