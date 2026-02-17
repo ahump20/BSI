@@ -1,13 +1,34 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { teamMetadata } from '@/lib/data/team-metadata';
+import { formatTimestamp } from '@/lib/utils/timezone';
+
+/** Map a full team name (e.g. "Texas Longhorns") to its teamMetadata slug (e.g. "texas"). */
+function teamSlug(fullName: string): string {
+  const lower = fullName.toLowerCase();
+  for (const [slug, meta] of Object.entries(teamMetadata)) {
+    if (meta.name.toLowerCase() === lower || meta.shortName.toLowerCase() === lower) {
+      return slug;
+    }
+  }
+  // Fallback: derive from first word(s) before the mascot — take the location portion
+  // e.g. "Oregon State Beavers" → "oregon-state"
+  const words = fullName.split(' ');
+  // Remove last word (mascot) and slugify
+  if (words.length > 1) {
+    return words.slice(0, -1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  }
+  return fullName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
 
 interface RankedTeam {
   rank: number;
@@ -104,36 +125,12 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
 }
 
 export default function CollegeBaseballRankingsPage() {
-  const [rankings, setRankings] = useState<RankingPoll | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedPoll, setSelectedPoll] = useState('d1baseball');
 
-  const loadRankings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Use the unified NCAA API with sport=baseball parameter
-      const response = await fetch(`/api/college-baseball/rankings`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as RankingsApiResponse;
-      const transformed = transformESPNRankings(data);
-      setRankings(transformed);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load rankings');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadRankings();
-  }, [loadRankings]);
+  const { data: rawData, loading, error } = useSportData<RankingsApiResponse>(
+    '/api/college-baseball/rankings'
+  );
+  const rankings = rawData ? transformESPNRankings(rawData) : null;
 
   const getRankChange = (current: number, previous?: number) => {
     if (!previous || current === previous) return null;
@@ -208,11 +205,11 @@ export default function CollegeBaseballRankingsPage() {
                     </h2>
                     {rankings && (
                       <p className="text-text-tertiary text-sm mt-1">
-                        Last updated: {rankings.lastUpdated}
+                        Last updated: {formatTimestamp(rankings.lastUpdated)}
                       </p>
                     )}
                   </div>
-                  <Badge variant="primary">2025 Season</Badge>
+                  <Badge variant="primary">{new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear()} Season</Badge>
                 </div>
               </Card>
             </ScrollReveal>
@@ -304,7 +301,7 @@ export default function CollegeBaseballRankingsPage() {
                               </td>
                               <td className="py-4 px-4">
                                 <Link
-                                  href={`/college-baseball/teams/${encodeURIComponent(team.team.toLowerCase().replace(/\s+/g, '-'))}`}
+                                  href={`/college-baseball/teams/${teamSlug(team.team)}`}
                                   className="font-semibold text-white hover:text-burnt-orange transition-colors"
                                 >
                                   {team.team}
@@ -417,7 +414,7 @@ export default function CollegeBaseballRankingsPage() {
                       Also Receiving Votes
                     </h3>
                     <p className="text-text-secondary text-sm">
-                      Data available during active season. Check back when the 2025 season begins.
+                      Additional teams receiving votes will appear here as the season progresses.
                     </p>
                   </Card>
                   <Card padding="md">
@@ -435,10 +432,11 @@ export default function CollegeBaseballRankingsPage() {
               <p>
                 Rankings sourced from official polls and D1Baseball. Updated weekly during season.
               </p>
-              <p className="mt-1" suppressHydrationWarning>
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
-                CT
-              </p>
+              {rankings && (
+                <p className="mt-1">
+                  Source data: {formatTimestamp(rankings.lastUpdated)}
+                </p>
+              )}
             </div>
           </Container>
         </Section>

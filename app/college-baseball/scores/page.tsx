@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -72,62 +73,26 @@ function getDateOffset(offset: number): string {
 const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
 
 export default function CollegeBaseballScoresPage() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
-  const [hasLiveGames, setHasLiveGames] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
-  const fetchScores = useCallback(async (date: string, conference: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const confParam = conference !== 'All' ? `&conference=${conference}` : '';
-      const res = await fetch(`/api/college-baseball/schedule?date=${date}${confParam}`);
+  const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
+  const { data: rawData, loading, error, retry } = useSportData<ScoresApiResponse>(
+    `/api/college-baseball/schedule?date=${selectedDate}${confParam}`,
+    { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
+  );
 
-      if (!res.ok) {
-        throw new Error('Failed to fetch scores');
-      }
+  const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
+  const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
+  const meta: DataMeta | null = useMemo(() => rawData ? {
+    dataSource: rawData.meta?.dataSource || 'ESPN College Baseball API',
+    lastUpdated: rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
+    timezone: rawData.meta?.timezone || 'America/Chicago',
+  } : null, [rawData]);
 
-      const data = (await res.json()) as ScoresApiResponse;
-
-      if (data.success && data.data) {
-        setGames(data.data);
-        setHasLiveGames(data.data.some((g: Game) => g.status === 'live'));
-        setMeta({
-          dataSource: 'ESPN College Baseball API',
-          lastUpdated: data.timestamp || new Date().toISOString(),
-          timezone: 'America/Chicago',
-        });
-      } else if (data.games) {
-        setGames(data.games);
-        setHasLiveGames(data.live || false);
-        if (data.meta) setMeta(data.meta);
-      } else {
-        setError(data.message || 'No games found');
-        setGames([]);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchScores(selectedDate, selectedConference);
-  }, [selectedDate, selectedConference, fetchScores]);
-
-  // Auto-refresh for live games
-  useEffect(() => {
-    if (hasLiveGames) {
-      const interval = setInterval(() => fetchScores(selectedDate, selectedConference), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [hasLiveGames, selectedDate, selectedConference, fetchScores]);
+  // Sync live detection to enable auto-refresh
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
   // Date navigation
   const dateOptions = [
@@ -408,7 +373,7 @@ export default function CollegeBaseballScoresPage() {
                   for live games.
                 </p>
                 <button
-                  onClick={() => fetchScores(selectedDate, selectedConference)}
+                  onClick={() => retry()}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry

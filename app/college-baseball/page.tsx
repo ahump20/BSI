@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -127,82 +128,48 @@ function getDateOffset(offset: number): string {
 
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
-  const [rankings, setRankings] = useState<RankedTeam[]>(defaultRankings);
-  const [standings, setStandings] = useState<StandingsTeam[]>([]);
-  const [scheduleGames, setScheduleGames] = useState<ScheduleGame[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
-  const [hasLiveGames, setHasLiveGames] = useState(false);
-  const [dataSource, setDataSource] = useState<string>('ESPN');
-
-  // Schedule tab state
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
-  const [scheduleLoading, setScheduleLoading] = useState(false);
-  const [scheduleError, setScheduleError] = useState<string | null>(null);
+  const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const hasAutoAdvanced = useRef(false);
 
-  const fetchRankings = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/ncaa/rankings?sport=baseball');
-      if (!res.ok) throw new Error('Failed to fetch rankings');
-      const data = await res.json() as { rankings?: RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } };
-      if (data.rankings?.length) setRankings(data.rankings);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-      if (data.meta?.dataSource) setDataSource(data.meta.dataSource);
-    } catch {
-      // Keep default rankings
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Rankings — fetched when rankings tab is active
+  const rankingsUrl = activeTab === 'rankings' ? '/api/ncaa/rankings?sport=baseball' : null;
+  const { data: rankingsRaw, loading: rankingsLoading } =
+    useSportData<{ rankings?: RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
+  const rankings = rankingsRaw?.rankings?.length ? rankingsRaw.rankings : defaultRankings;
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/college-baseball/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json() as { standings?: StandingsTeam[]; teams?: StandingsTeam[]; meta?: { lastUpdated?: string; dataSource?: string } };
-      setStandings((data.standings || data.teams || []) as StandingsTeam[]);
-      setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
-      if (data.meta?.dataSource) setDataSource(data.meta.dataSource);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Standings — fetched when standings tab is active
+  const standingsUrl = activeTab === 'standings' ? '/api/college-baseball/standings' : null;
+  const { data: standingsRaw, loading: standingsLoading, error: standingsError, retry: retryStandings } =
+    useSportData<{ standings?: StandingsTeam[]; teams?: StandingsTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(standingsUrl);
+  const standings = (standingsRaw?.standings || standingsRaw?.teams || []) as StandingsTeam[];
 
-  const fetchSchedule = useCallback(async (date: string) => {
-    setScheduleLoading(true);
-    setScheduleError(null);
-    try {
-      const res = await fetch(`/api/college-baseball/schedule?date=${date}`);
-      if (!res.ok) throw new Error('Failed to fetch schedule');
-      const data = await res.json() as {
-        success?: boolean;
-        data?: ScheduleGame[];
-        games?: ScheduleGame[];
-        live?: boolean;
-        meta?: { dataSource?: string; lastUpdated?: string };
-        timestamp?: string;
-        message?: string;
-      };
+  // Schedule — fetched when schedule tab is active, auto-refreshes when live
+  const scheduleUrl = activeTab === 'schedule' ? `/api/college-baseball/schedule?date=${selectedDate}` : null;
+  const { data: scheduleRaw, loading: scheduleLoading, error: scheduleError, retry: retrySchedule } =
+    useSportData<{
+      success?: boolean;
+      data?: ScheduleGame[];
+      games?: ScheduleGame[];
+      live?: boolean;
+      meta?: { dataSource?: string; lastUpdated?: string };
+      timestamp?: string;
+      message?: string;
+    }>(scheduleUrl, {
+      refreshInterval: 30000,
+      refreshWhen: liveGamesDetected,
+    });
 
-      const games = data.data || data.games || [];
-      setScheduleGames(games);
-      setHasLiveGames(games.some((g: ScheduleGame) => g.status === 'live'));
-      setLastUpdated(data.timestamp || data.meta?.lastUpdated || new Date().toISOString());
-      if (data.meta?.dataSource) setDataSource(data.meta.dataSource);
-    } catch (err) {
-      setScheduleError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setScheduleLoading(false);
-    }
-  }, []);
+  const scheduleGames = useMemo(() => scheduleRaw?.data || scheduleRaw?.games || [], [scheduleRaw]);
+  const hasLiveGames = useMemo(() => scheduleGames.some((g) => g.status === 'live'), [scheduleGames]);
+  useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
+
+  // Derived shared state
+  const loading = rankingsLoading || standingsLoading;
+  const error = standingsError;
+  const dataSource = rankingsRaw?.meta?.dataSource || standingsRaw?.meta?.dataSource || scheduleRaw?.meta?.dataSource || 'ESPN';
+  const lastUpdated = rankingsRaw?.meta?.lastUpdated || standingsRaw?.meta?.lastUpdated || scheduleRaw?.timestamp || scheduleRaw?.meta?.lastUpdated || '';
 
   // Smart date initialization: auto-advance to next game day if today has no games
   useEffect(() => {
@@ -227,20 +194,6 @@ export default function CollegeBaseballPage() {
     }
     findNextGameDay();
   }, [activeTab]);
-
-  useEffect(() => {
-    if (activeTab === 'rankings') fetchRankings();
-    else if (activeTab === 'standings') fetchStandings();
-    else if (activeTab === 'schedule') fetchSchedule(selectedDate);
-  }, [activeTab, fetchRankings, fetchStandings, fetchSchedule, selectedDate]);
-
-  // Auto-refresh for live games
-  useEffect(() => {
-    if (activeTab === 'schedule' && hasLiveGames) {
-      const interval = setInterval(() => fetchSchedule(selectedDate), 30000);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab, hasLiveGames, fetchSchedule, selectedDate]);
 
   // Client-side conference filter
   const filteredGames = selectedConference === 'All'
@@ -461,7 +414,7 @@ export default function CollegeBaseballPage() {
                     )}
                     <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
                       <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
-                      <Link href="/baseball/rankings" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                      <Link href="/college-baseball/rankings" className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors">
                         Full Rankings →
                       </Link>
                     </div>
@@ -481,7 +434,7 @@ export default function CollegeBaseballPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={fetchStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
+                    <button onClick={retryStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
                   </Card>
                 ) : standings.length === 0 ? (
                   <div>
@@ -612,7 +565,7 @@ export default function CollegeBaseballPage() {
                   <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
                     <p className="text-red-400 font-semibold">Data Unavailable</p>
                     <p className="text-white/60 text-sm mt-1">{scheduleError}</p>
-                    <button onClick={() => fetchSchedule(selectedDate)} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
+                    <button onClick={retrySchedule} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
                   </Card>
                 ) : filteredGames.length === 0 ? (
                   <Card variant="default" padding="lg">

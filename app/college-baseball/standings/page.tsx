@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -47,36 +48,13 @@ const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : n
 
 export default function CollegeBaseballStandingsPage() {
   const [selectedConference, setSelectedConference] = useState('SEC');
-  const [standings, setStandings] = useState<TeamStanding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchStandings() {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          '/api/college-baseball/standings?conference=' + encodeURIComponent(selectedConference)
-        );
-        const result = (await response.json()) as StandingsApiResponse;
-
-        if (result.success && result.data) {
-          setStandings(result.data);
-          setLastUpdated(result.timestamp || result.cacheTime || new Date().toISOString());
-          setError(null);
-        } else {
-          setError(result.message || 'Failed to fetch standings');
-        }
-      } catch (_err) {
-        setError('Failed to load standings. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchStandings();
-  }, [selectedConference]);
+  const { data: rawData, loading, error: fetchError } = useSportData<StandingsApiResponse>(
+    `/api/college-baseball/standings?conference=${encodeURIComponent(selectedConference)}`
+  );
+  const standings = rawData?.success && rawData?.data ? rawData.data : [];
+  const lastUpdated = rawData?.timestamp || rawData?.cacheTime || null;
+  const error = fetchError || (rawData && !rawData.success ? (rawData.message || 'Failed to fetch standings') : null);
 
   const currentConf = conferences.find((c) => c.id === selectedConference);
 

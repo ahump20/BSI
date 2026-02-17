@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -39,39 +40,15 @@ interface DataMeta {
 
 type ViewType = 'division' | 'league' | 'wildcard';
 export default function MLBStandingsPage() {
-  const [standings, setStandings] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [viewType, setViewType] = useState<ViewType>('division');
   const [sortColumn, setSortColumn] = useState<string>('wins');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/mlb/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = (await res.json()) as { standings?: Team[]; meta?: DataMeta };
-
-      if (data.standings) {
-        setStandings(data.standings);
-      }
-      if (data.meta) {
-        setMeta(data.meta);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStandings();
-  }, [fetchStandings]);
+  const { data: rawData, loading, error, retry } = useSportData<{ standings?: Team[]; meta?: DataMeta }>(
+    '/api/mlb/standings'
+  );
+  const standings = rawData?.standings || [];
+  const meta = rawData?.meta || null;
 
   // Sort function
   const sortTeams = (teams: Team[]): Team[] => {
@@ -479,7 +456,7 @@ export default function MLBStandingsPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={fetchStandings}
+                  onClick={retry}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
