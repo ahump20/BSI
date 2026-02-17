@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
 import type { Env } from '../env';
 import { createNcaaClient } from '../../../lib/api-clients/ncaa-api';
 import { withCache, CACHE_TTL, HTTP_CACHE } from '../middleware/cache';
@@ -18,7 +18,7 @@ function responseMeta(): { dataSource: string; lastUpdated: string; timezone: st
   };
 }
 
-function cachedResponse(c: any, data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}) {
+function cachedResponse(c: Context<{ Bindings: Env }>, data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}) {
   return c.json(data, status, {
     'Cache-Control': `public, max-age=${maxAge}`,
     ...extra,

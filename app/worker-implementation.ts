@@ -315,7 +315,7 @@ export default {
       }
 
       // Route handlers for GET requests
-      const routes: Record<string, (params?: any) => any> = {
+      const routes: Record<string, (params?: Record<string, string>) => unknown> = {
         '/health': () => ({
           status: 'ok',
           timestamp: new Date().toISOString(),
@@ -365,11 +365,6 @@ export default {
             clearInterval(interval);
           }
         }, 5000);
-
-        // Handle client messages
-        server.addEventListener('message', (event) => {
-          const data = JSON.parse(event.data as string);
-        });
 
         return new Response(null, {
           status: 101,

@@ -56,6 +56,14 @@ class CircuitBreaker {
 const breaker = new CircuitBreaker();
 
 // Request metrics
+interface RequestStats {
+  count: number;
+  totalTime: number;
+  errors: number;
+  avgTime: number;
+  errorRate: number;
+}
+
 class RequestMetrics {
   private metrics = new Map<string, { count: number; totalTime: number; errors: number }>();
 
@@ -67,7 +75,7 @@ class RequestMetrics {
     this.metrics.set(path, current);
   }
 
-  getStats(path?: string): any {
+  getStats(path?: string): RequestStats | Record<string, RequestStats> | null {
     if (path) {
       const m = this.metrics.get(path);
       if (!m) return null;
@@ -78,7 +86,7 @@ class RequestMetrics {
       };
     }
 
-    const all: any = {};
+    const all: Record<string, RequestStats> = {};
     this.metrics.forEach((m, p) => {
       all[p] = {
         ...m,
