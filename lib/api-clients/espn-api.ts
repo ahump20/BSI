@@ -9,13 +9,14 @@
 
 import { EspnScoreboardSchema, EspnStandingsSchema, validateApiResponse } from './schemas';
 
-export type ESPNSport = 'mlb' | 'nfl' | 'nba' | 'cfb';
+export type ESPNSport = 'mlb' | 'nfl' | 'nba' | 'cfb' | 'college-baseball';
 
 const SPORT_PATHS: Record<ESPNSport, string> = {
   mlb: 'baseball/mlb',
   nfl: 'football/nfl',
   nba: 'basketball/nba',
   cfb: 'football/college-football',
+  'college-baseball': 'baseball/college-baseball',
 };
 
 const BASE = 'https://site.api.espn.com/apis/site/v2/sports';
