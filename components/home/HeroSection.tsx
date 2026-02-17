@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { isInSeason, SPORT_LABELS, type SportKey } from '@/lib/season';
+import { HeroScoreStrip } from './HeroScoreStrip';
 
 const ALL_SPORTS: SportKey[] = ['ncaa', 'mlb', 'nfl', 'nba', 'cfb'];
 
@@ -67,6 +68,9 @@ export function HeroSection() {
             College Baseball
           </Link>
         </div>
+
+        {/* Live proof — score strip shows the site has real data */}
+        <HeroScoreStrip />
       </div>
     </section>
   );
