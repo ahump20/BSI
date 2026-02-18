@@ -109,6 +109,9 @@ jobs:
       - name: Copy lib to output
         run: cp -r lib out/lib
 
+      - name: Remove RSC payload files (stay under 20k file limit)
+        run: find out -name "__next.*" -delete
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
