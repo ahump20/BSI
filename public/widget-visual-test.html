@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSI Widget Visual Test</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #BF5700;
+      margin-bottom: 40px;
+    }
+    .test-section {
+      margin-bottom: 60px;
+    }
+    .test-label {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-block {
+      background: #0d0d0d;
+      border: 1px solid #333;
+      padding: 16px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #888;
+      margin-top: 8px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>BSI Live Game Widget - Visual Tests</h1>
+
+  <div class="test-section">
+    <div class="test-label">Test: Loading State (Skeleton)</div>
+    <bsi-live-game data-game-id="fake-game-will-fail"></bsi-live-game>
+    <div class="code-block">&lt;bsi-live-game data-game-id="fake-game-will-fail"&gt;&lt;/bsi-live-game&gt;</div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-label">Test: With Mock Data (Simulated Live Game)</div>
+    <div id="mock-widget-container"></div>
+    <div class="code-block">&lt;bsi-live-game data-game-id="tex-lam-20260217"&gt;&lt;/bsi-live-game&gt;</div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-label">Test: Pro Tier Mock</div>
+    <div id="pro-widget-container"></div>
+    <div class="code-block">&lt;bsi-live-game data-game-id="tex-uc-davis-20260215" tier="pro"&gt;&lt;/bsi-live-game&gt;</div>
+  </div>
+
+  <script src="widget.js"></script>
+  
+  <script>
+    // Inject mock data into widgets after they load
+    setTimeout(() => {
+      // Mock widget with data
+      const mockWidget = document.createElement('bsi-live-game');
+      mockWidget.setAttribute('data-game-id', 'tex-lam-20260217');
+      
+      // Inject mock data manually
+      mockWidget._data = {
+        game_id: 'tex-lam-20260217',
+        home: { abbr: 'TEX', score: 2, record: '3-0' },
+        away: { abbr: 'LAM', score: 3 },
+        inning: 4,
+        half: 'bottom',
+        situation: {
+          outs: 1,
+          runners: ['2B'],
+          leverage: 'HIGH',
+          description: 'Runner in scoring position, tying run at bat',
+        },
+        win_probability: { home: 0.48, away: 0.52 },
+        current_pitcher: { name: 'Doe', pitch_count: 67, era: 3.12 },
+        last_play: 'RBI single — .340 hitter',
+        recent_pitches: [
+          { type: 'FF', velocity: 94, result: 'Swing and miss' },
+          { type: 'SL', velocity: 84, result: 'Ball' },
+          { type: 'FF', velocity: 95, result: 'Foul' },
+          { type: 'CH', velocity: 82, result: 'Foul' },
+          { type: 'FF', velocity: 93, result: 'RBI Single' },
+        ],
+      };
+      mockWidget._isLoading = false;
+      mockWidget._render();
+      document.getElementById('mock-widget-container').appendChild(mockWidget);
+
+      // Pro widget with data
+      const proWidget = document.createElement('bsi-live-game');
+      proWidget.setAttribute('data-game-id', 'tex-uc-davis-20260215');
+      proWidget.setAttribute('tier', 'pro');
+      proWidget._tier = 'pro';
+      proWidget._data = {
+        game_id: 'tex-uc-davis-20260215',
+        home: { abbr: 'TEX', score: 7, record: '2-0' },
+        away: { abbr: 'UCD', score: 3 },
+        inning: 9,
+        half: 'top',
+        situation: {
+          outs: 2,
+          runners: ['1B', '3B'],
+          leverage: 'MEDIUM',
+          description: 'Two outs, runners on corners',
+        },
+        win_probability: { home: 0.89, away: 0.11 },
+        current_pitcher: { name: 'Smith', pitch_count: 112, era: 2.45 },
+        last_play: 'Groundout 6-3',
+        recent_pitches: [
+          { type: 'FB', velocity: 92, result: 'Called strike' },
+          { type: 'SL', velocity: 81, result: 'Swing and miss' },
+          { type: 'CH', velocity: 80, result: 'Foul' },
+          { type: 'FB', velocity: 93, result: 'Ball' },
+          { type: 'FB', velocity: 91, result: 'Groundout' },
+        ],
+      };
+      proWidget._isLoading = false;
+      proWidget._render();
+      document.getElementById('pro-widget-container').appendChild(proWidget);
+    }, 100);
+  </script>
+</body>
+</html>
