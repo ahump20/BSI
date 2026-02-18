@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import { StreamOutput, FRESH_WINDOW, renderMarkdown } from '@/components/intelligence/StreamOutput';
 import type { CollegeGameData } from '@/app/college-baseball/game/[gameId]/GameLayoutClient';
 
-// ─── helpers ────────────────────────────────────────────────────────────────
+// ─── Game context helpers ─────────────────────────────────────────────────────
 
 function buildGameQuestion(game: CollegeGameData): string {
   const away = game.teams.away;
@@ -30,20 +31,7 @@ function getAnalysisType(game: CollegeGameData): string {
   return 'pregame';
 }
 
-// Minimal markdown: **bold** and \n → <br />
-function renderMarkdown(text: string): React.ReactNode[] {
-  const segments = text.split(/(\*\*[^*]+\*\*|\n)/g);
-  return segments.map((seg, i) => {
-    if (seg === '\n') return <br key={i} />;
-    if (seg.startsWith('**') && seg.endsWith('**') && seg.length > 4)
-      return <strong key={i}>{seg.slice(2, -2)}</strong>;
-    return seg || null;
-  });
-}
-
-const FRESH_WINDOW = 15;
-
-// ─── component ───────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 interface AskBSIPanelProps {
   game: CollegeGameData;
@@ -152,114 +140,99 @@ export function AskBSIPanel({ game }: AskBSIPanelProps) {
   const hasOutput = stableText.length > 0 || freshChars.length > 0;
 
   return (
-    <>
-      <style>{`
-        @keyframes ask-bsi-cursor {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: 0; }
-        }
-        .ask-bsi-cursor { animation: ask-bsi-cursor 1s step-end infinite; }
-        .ask-bsi-fresh  { transition: color 1.2s ease; }
-      `}</style>
-
+    <div
+      className="border rounded-none"
+      style={{ borderColor: '#BF570030', backgroundColor: '#080808' }}
+    >
+      {/* Panel header */}
       <div
-        className="border rounded-none"
-        style={{ borderColor: '#BF570030', backgroundColor: '#080808' }}
+        className="flex items-center justify-between px-4 py-3 border-b"
+        style={{ borderColor: '#BF570020' }}
       >
-        {/* Panel header */}
-        <div
-          className="flex items-center justify-between px-4 py-3 border-b"
-          style={{ borderColor: '#BF570020' }}
-        >
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            className="text-[9px] tracking-[0.25em] uppercase font-semibold"
+            style={{ color: '#BF5700', fontFamily: 'var(--font-mono)' }}
+          >
+            BSI Intelligence
+          </span>
+          {ttft !== null && (
             <span
-              className="text-[9px] tracking-[0.25em] uppercase font-semibold"
-              style={{ color: '#BF5700', fontFamily: 'var(--font-mono)' }}
+              className="text-[9px] tracking-widest"
+              style={{ color: '#444', fontFamily: 'var(--font-mono)' }}
             >
-              BSI Intelligence
+              · {ttft}ms
             </span>
-            {ttft !== null && (
-              <span
-                className="text-[9px] tracking-widest"
-                style={{ color: '#444', fontFamily: 'var(--font-mono)' }}
-              >
-                · {ttft}ms
-              </span>
-            )}
-          </div>
-          <button
-            onClick={analyze}
-            className="text-[10px] uppercase tracking-widest px-3 py-1 transition-all"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              backgroundColor: isStreaming ? 'transparent' : '#BF5700',
-              color: isStreaming ? '#BF5700' : '#fff',
-              border: isStreaming ? '1px solid #BF5700' : '1px solid transparent',
-            }}
-          >
-            {isStreaming ? '◼ Stop' : done ? '↺ Re-analyze' : '▶ Analyze'}
-          </button>
+          )}
         </div>
-
-        {/* Question preview */}
-        {!hasOutput && !isStreaming && !error && (
-          <div className="px-4 py-3">
-            <p
-              className="text-xs leading-relaxed italic"
-              style={{ color: '#444', fontFamily: 'var(--font-playfair)' }}
-            >
-              &ldquo;{question}&rdquo;
-            </p>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div
-            className="px-4 py-3 text-xs"
-            style={{ color: '#fca5a5', fontFamily: 'var(--font-mono)' }}
-          >
-            ✗ {error}
-          </div>
-        )}
-
-        {/* Streaming output */}
-        {(hasOutput || isStreaming) && !error && (
-          <div className="px-4 py-4">
-            <p
-              className="text-sm leading-relaxed"
-              style={{
-                fontFamily: 'var(--font-playfair)',
-                color: '#d4d4d4',
-                fontSize: '0.95rem',
-              }}
-            >
-              {renderMarkdown(stableText)}
-              {freshChars.map((char, i) => {
-                const ratio = i / Math.max(FRESH_WINDOW - 1, 1);
-                const h = Math.round(ratio * 22);
-                const s = Math.round(ratio * 90);
-                const l = Math.round(83 - ratio * 25);
-                return (
-                  <span
-                    key={stableText.length + i}
-                    className="ask-bsi-fresh"
-                    style={{ color: `hsl(${h}, ${s}%, ${l}%)` }}
-                  >
-                    {char}
-                  </span>
-                );
-              })}
-              {isStreaming && (
-                <span
-                  className="ask-bsi-cursor inline-block w-0.5 h-[0.9em] align-text-bottom ml-px"
-                  style={{ backgroundColor: '#BF5700' }}
-                />
-              )}
-            </p>
-          </div>
-        )}
+        <button
+          onClick={analyze}
+          className="text-[10px] uppercase tracking-widest px-3 py-1 transition-all"
+          style={{
+            fontFamily: 'var(--font-mono)',
+            backgroundColor: isStreaming ? 'transparent' : '#BF5700',
+            color: isStreaming ? '#BF5700' : '#fff',
+            border: isStreaming ? '1px solid #BF5700' : '1px solid transparent',
+          }}
+        >
+          {isStreaming ? '◼ Stop' : done ? '↺ Re-analyze' : '▶ Analyze'}
+        </button>
       </div>
-    </>
+
+      {/* Question preview */}
+      {!hasOutput && !isStreaming && !error && (
+        <div className="px-4 py-3">
+          <p
+            className="text-xs leading-relaxed italic"
+            style={{ color: '#444', fontFamily: 'var(--font-playfair)' }}
+          >
+            &ldquo;{question}&rdquo;
+          </p>
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div
+          className="px-4 py-3 text-xs"
+          style={{ color: '#fca5a5', fontFamily: 'var(--font-mono)' }}
+        >
+          ✗ {error}
+        </div>
+      )}
+
+      {/* Streaming output — uses shared StreamOutput for consistent rendering + italic support */}
+      {(hasOutput || isStreaming) && !error && (
+        <div className="px-4 py-4">
+          <p
+            className="leading-relaxed"
+            style={{ fontFamily: 'var(--font-playfair)', color: '#d4d4d4', fontSize: '0.95rem' }}
+          >
+            {renderMarkdown(stableText)}
+            {freshChars.map((char, i) => {
+              const ratio = i / Math.max(FRESH_WINDOW - 1, 1);
+              const h = Math.round(ratio * 22);
+              const s = Math.round(ratio * 90);
+              const l = Math.round(83 - ratio * 25);
+              return (
+                <span
+                  key={stableText.length + i}
+                  className="bsi-fresh-char"
+                  style={{ color: `hsl(${h}, ${s}%, ${l}%)` }}
+                >
+                  {char}
+                </span>
+              );
+            })}
+            {isStreaming && (
+              <span
+                className="bsi-cursor inline-block w-0.5 h-[0.9em] align-text-bottom ml-px"
+                style={{ backgroundColor: '#BF5700' }}
+              />
+            )}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
