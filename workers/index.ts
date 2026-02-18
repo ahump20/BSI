@@ -16,7 +16,11 @@ import type { Env } from './shared/types';
 import { SECURITY_HEADERS, GHOST_REDIRECTS } from './shared/constants';
 import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
-import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
+import {
+  checkInMemoryRateLimit,
+  checkPostRateLimit,
+  maybeCleanupRateLimit,
+} from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
 
 // --- Handlers ---
@@ -83,9 +87,14 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
-import { handleCreateEmbeddedCheckout } from './handlers/stripe';
+import { handleCreateEmbeddedCheckout, handleStripeWebhook } from './handlers/stripe';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
-import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
+import {
+  handleHealth,
+  handleAdminHealth,
+  handleAdminErrors,
+  handleWebSocket,
+} from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
 import {
   handleCVPitcherMechanics,
@@ -131,7 +140,6 @@ import {
 // Hono App
 // =============================================================================
 
-
 const app = new Hono<{ Bindings: Env }>();
 
 // --- Middleware: www → apex canonical redirect ---
@@ -157,6 +165,7 @@ app.use('*', async (c, next) => {
     path === '/ws' ||
     path === '/health' ||
     path === '/mcp' ||
+    path.startsWith('/webhooks/') ||
     path.endsWith('/') ||
     path.includes('.')
   ) {
@@ -204,6 +213,47 @@ app.use('/api/*', async (c, next) => {
   await next();
 });
 
+// --- Middleware: Premium API key gating for paid data endpoints ---
+app.use('/api/*', async (c, next) => {
+  const gatedPrefixes = ['/api/predictions', '/api/live', '/api/premium'];
+  const isGatedPath = gatedPrefixes.some((prefix) => c.req.path.startsWith(prefix));
+  if (!isGatedPath) {
+    await next();
+    return;
+  }
+
+  const apiKey = c.req.header('X-BSI-Key');
+  if (!apiKey) {
+    return c.json(
+      {
+        error: 'API key required',
+        upgrade: 'https://blazesportsintel.com/pro',
+      },
+      401,
+    );
+  }
+
+  const keysKv = c.env.BSI_KEYS ?? c.env.KV;
+  const keyDataRaw = await keysKv.get(`key:${apiKey}`);
+  if (!keyDataRaw) {
+    return c.json({ error: 'Invalid key' }, 403);
+  }
+
+  let keyData: { tier?: string; expires?: number };
+  try {
+    keyData = JSON.parse(keyDataRaw) as { tier?: string; expires?: number };
+  } catch {
+    return c.json({ error: 'Invalid key record' }, 403);
+  }
+
+  if (!keyData.expires || Date.now() > keyData.expires) {
+    return c.json({ error: 'Subscription expired' }, 402);
+  }
+
+  c.set('tier', keyData.tier || 'pro');
+  await next();
+});
+
 // --- Middleware: Ghost route redirects ---
 app.use('*', async (c, next) => {
   const redirect = GHOST_REDIRECTS[c.req.path];
@@ -246,46 +296,81 @@ app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env)
 app.get('/api/intel/news', (c) => handleIntelNews(new URL(c.req.url), c.env));
 
 // --- College Baseball ---
-app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/scores', (c) =>
+  handleCollegeBaseballScores(new URL(c.req.url), c.env),
+);
+app.get('/api/college-baseball/standings', (c) =>
+  handleCollegeBaseballStandings(new URL(c.req.url), c.env),
+);
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
-app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/schedule', (c) =>
+  handleCollegeBaseballSchedule(new URL(c.req.url), c.env),
+);
 app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
 app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
 app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsEnhanced(c.env));
-app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/players', (c) =>
+  handleCollegeBaseballPlayersList(new URL(c.req.url), c.env),
+);
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
-app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
-app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
-app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
-app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
-app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
-app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/daily', (c) =>
+  handleCollegeBaseballDaily(new URL(c.req.url), c.env),
+);
+app.get('/api/college-baseball/teams/:teamId', (c) =>
+  handleCollegeBaseballTeam(c.req.param('teamId'), c.env),
+);
+app.get('/api/college-baseball/players/compare/:p1/:p2', (c) =>
+  handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env),
+);
+app.get('/api/college-baseball/players/:playerId', (c) =>
+  handleCollegeBaseballPlayer(c.req.param('playerId'), c.env),
+);
+app.get('/api/college-baseball/game/:gameId', (c) =>
+  handleCollegeBaseballGame(c.req.param('gameId'), c.env),
+);
+app.get('/api/college-baseball/games/:gameId', (c) =>
+  handleCollegeBaseballGame(c.req.param('gameId'), c.env),
+);
+app.get('/api/college-baseball/trends/:teamId', (c) =>
+  handleCollegeBaseballTrends(c.req.param('teamId'), c.env),
+);
 app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
-app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
+app.get('/api/college-baseball/editorial/daily/:date', (c) =>
+  handleCollegeBaseballEditorialContent(c.req.param('date'), c.env),
+);
 app.get('/api/college-baseball/scores/ws', (c) => {
   if (c.req.header('Upgrade') !== 'websocket') {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
   }
-  return c.json({ error: 'WebSocket scores available at bsi-live-scores worker', redirect: true }, 501);
+  return c.json(
+    { error: 'WebSocket scores available at bsi-live-scores worker', redirect: true },
+    501,
+  );
 });
 
 // --- CFB ---
 app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
-app.get('/api/cfb/scores', (c) => safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/cfb/standings', (c) => safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env));
+app.get('/api/cfb/scores', (c) =>
+  safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env),
+);
+app.get('/api/cfb/standings', (c) =>
+  safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env),
+);
 app.get('/api/cfb/news', (c) => safeESPN(() => handleCFBNews(c.env), 'articles', [], c.env));
 app.get('/api/ncaa/scores', (c) => {
-  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env);
+  if (c.req.query('sport') === 'football')
+    return safeESPN(() => handleCFBScores(new URL(c.req.url), c.env), 'games', [], c.env);
   return c.json({ error: 'Specify ?sport=football' }, 400);
 });
 app.get('/api/ncaa/standings', (c) => {
-  if (c.req.query('sport') === 'football') return safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env);
+  if (c.req.query('sport') === 'football')
+    return safeESPN(() => handleCFBStandings(c.env), 'standings', [], c.env);
   return c.json({ error: 'Specify ?sport=football' }, 400);
 });
 app.get('/api/college-football/articles', (c) => handleCFBArticlesList(new URL(c.req.url), c.env));
-app.get('/api/college-football/articles/:slug', (c) => handleCFBArticle(c.req.param('slug'), c.env));
+app.get('/api/college-football/articles/:slug', (c) =>
+  handleCFBArticle(c.req.param('slug'), c.env),
+);
 
 // --- Blog Post Feed ---
 app.get('/api/blog-post-feed', (c) =>
@@ -294,41 +379,75 @@ app.get('/api/blog-post-feed', (c) =>
     featured: c.req.query('featured') === 'true',
     limit: Math.min(Number(c.req.query('limit') || 20), 50),
     offset: Number(c.req.query('offset') || 0),
-  })
+  }),
 );
-app.get('/api/blog-post-feed/:slug', (c) =>
-  handleBlogPostFeedItem(c.req.param('slug'), c.env)
-);
+app.get('/api/blog-post-feed/:slug', (c) => handleBlogPostFeedItem(c.req.param('slug'), c.env));
 
 // --- MLB ---
-app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
+app.get('/api/mlb/scores', (c) =>
+  safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env),
+);
+app.get('/api/mlb/standings', (c) =>
+  safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env),
+);
 app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
 app.get('/api/mlb/teams', (c) => safeESPN(() => handleMLBTeamsList(c.env), 'teams', [], c.env));
-app.get('/api/mlb/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/mlb/players/:playerId', (c) => safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/mlb/teams/:teamId', (c) => safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
+app.get('/api/mlb/game/:gameId', (c) =>
+  safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env),
+);
+app.get('/api/mlb/players/:playerId', (c) =>
+  safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env),
+);
+app.get('/api/mlb/teams/:teamId', (c) =>
+  safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env),
+);
 
 // --- NFL ---
-app.get('/api/nfl/scores', (c) => safeESPN(() => handleNFLScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nfl/standings', (c) => safeESPN(() => handleNFLStandings(c.env), 'standings', [], c.env));
+app.get('/api/nfl/scores', (c) =>
+  safeESPN(() => handleNFLScores(new URL(c.req.url), c.env), 'games', [], c.env),
+);
+app.get('/api/nfl/standings', (c) =>
+  safeESPN(() => handleNFLStandings(c.env), 'standings', [], c.env),
+);
 app.get('/api/nfl/news', (c) => safeESPN(() => handleNFLNews(c.env), 'articles', [], c.env));
 app.get('/api/nfl/teams', (c) => safeESPN(() => handleNFLTeamsList(c.env), 'teams', [], c.env));
-app.get('/api/nfl/players', (c) => safeESPN(() => handleNFLPlayers(new URL(c.req.url), c.env), 'players', [], c.env));
-app.get('/api/nfl/leaders', (c) => safeESPN(() => handleNFLLeaders(c.env), 'categories', [], c.env));
-app.get('/api/nfl/game/:gameId', (c) => safeESPN(() => handleNFLGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/nfl/players/:playerId', (c) => safeESPN(() => handleNFLPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/nfl/teams/:teamId', (c) => safeESPN(() => handleNFLTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
+app.get('/api/nfl/players', (c) =>
+  safeESPN(() => handleNFLPlayers(new URL(c.req.url), c.env), 'players', [], c.env),
+);
+app.get('/api/nfl/leaders', (c) =>
+  safeESPN(() => handleNFLLeaders(c.env), 'categories', [], c.env),
+);
+app.get('/api/nfl/game/:gameId', (c) =>
+  safeESPN(() => handleNFLGame(c.req.param('gameId'), c.env), 'game', null, c.env),
+);
+app.get('/api/nfl/players/:playerId', (c) =>
+  safeESPN(() => handleNFLPlayer(c.req.param('playerId'), c.env), 'player', null, c.env),
+);
+app.get('/api/nfl/teams/:teamId', (c) =>
+  safeESPN(() => handleNFLTeam(c.req.param('teamId'), c.env), 'team', null, c.env),
+);
 
 // --- NBA ---
-app.get('/api/nba/scores', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nba/scoreboard', (c) => safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env));
-app.get('/api/nba/standings', (c) => safeESPN(() => handleNBAStandings(c.env), 'standings', [], c.env));
+app.get('/api/nba/scores', (c) =>
+  safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env),
+);
+app.get('/api/nba/scoreboard', (c) =>
+  safeESPN(() => handleNBAScores(new URL(c.req.url), c.env), 'games', [], c.env),
+);
+app.get('/api/nba/standings', (c) =>
+  safeESPN(() => handleNBAStandings(c.env), 'standings', [], c.env),
+);
 app.get('/api/nba/news', (c) => safeESPN(() => handleNBANews(c.env), 'articles', [], c.env));
 app.get('/api/nba/teams', (c) => safeESPN(() => handleNBATeamsList(c.env), 'teams', [], c.env));
-app.get('/api/nba/game/:gameId', (c) => safeESPN(() => handleNBAGame(c.req.param('gameId'), c.env), 'game', null, c.env));
-app.get('/api/nba/players/:playerId', (c) => safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
-app.get('/api/nba/teams/:teamId', (c) => safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env));
+app.get('/api/nba/game/:gameId', (c) =>
+  safeESPN(() => handleNBAGame(c.req.param('gameId'), c.env), 'game', null, c.env),
+);
+app.get('/api/nba/players/:playerId', (c) =>
+  safeESPN(() => handleNBAPlayer(c.req.param('playerId'), c.env), 'player', null, c.env),
+);
+app.get('/api/nba/teams/:teamId', (c) =>
+  safeESPN(() => handleNBATeamFull(c.req.param('teamId'), c.env), 'team', null, c.env),
+);
 
 // --- R2 Game assets ---
 app.get('/api/games/assets/*', (c) => {
@@ -337,15 +456,21 @@ app.get('/api/games/assets/*', (c) => {
 });
 
 // --- CV Intelligence ---
-app.get('/api/cv/pitcher/:playerId/mechanics/history', (c) => handleCVPitcherHistory(c.req.param('playerId'), new URL(c.req.url), c.env));
-app.get('/api/cv/pitcher/:playerId/mechanics', (c) => handleCVPitcherMechanics(c.req.param('playerId'), c.env));
+app.get('/api/cv/pitcher/:playerId/mechanics/history', (c) =>
+  handleCVPitcherHistory(c.req.param('playerId'), new URL(c.req.url), c.env),
+);
+app.get('/api/cv/pitcher/:playerId/mechanics', (c) =>
+  handleCVPitcherMechanics(c.req.param('playerId'), c.env),
+);
 app.get('/api/cv/alerts/injury-risk', (c) => handleCVInjuryAlerts(new URL(c.req.url), c.env));
 app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
 
 // --- Analytics: HAV-F ---
 app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));
 app.get('/api/analytics/havf/player/:id', (c) => handleHAVFPlayer(c.req.param('id'), c.env));
-app.get('/api/analytics/havf/compare/:p1/:p2', (c) => handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env));
+app.get('/api/analytics/havf/compare/:p1/:p2', (c) =>
+  handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env),
+);
 app.post('/api/analytics/havf/compute', (c) => handleHAVFCompute(c.req.raw, c.env));
 
 // --- Analytics: MMI ---
@@ -379,7 +504,10 @@ app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env)
 app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 
 // --- Stripe ---
-app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
+app.post('/api/stripe/create-embedded-checkout', (c) =>
+  handleCreateEmbeddedCheckout(c.req.raw, c.env),
+);
+app.post('/webhooks/stripe', (c) => handleStripeWebhook(c.req.raw, c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
@@ -406,8 +534,12 @@ app.get('/multiplayer/leaderboard', (c) => handleLeaderboard(new URL(c.req.url),
 app.post('/multiplayer/leaderboard', (c) => handleLeaderboardSubmit(c.req.raw, c.env));
 
 // --- Teams ---
-app.get('/api/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
-app.get('/teams/:league', (c) => safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env));
+app.get('/api/teams/:league', (c) =>
+  safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env),
+);
+app.get('/teams/:league', (c) =>
+  safeESPN(() => handleTeams(c.req.param('league'), c.env), 'teams', [], c.env),
+);
 
 // --- Contact + Lead capture ---
 app.post('/api/contact', (c) => handleContact(c.req.raw, c.env));
@@ -500,10 +632,9 @@ export class PortalPoller {
     if (url.pathname === '/status') {
       const alarm = await this.state.storage.getAlarm();
       const lastPoll = await this.state.storage.get<string>('lastPoll');
-      return new Response(
-        JSON.stringify({ alarmSet: !!alarm, lastPoll: lastPoll || 'never' }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ alarmSet: !!alarm, lastPoll: lastPoll || 'never' }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     return new Response('Not found', { status: 404 });

@@ -15,9 +15,13 @@ function createMockD1() {
 function createMockKV() {
   const store = new Map<string, string>();
   return {
-    put: vi.fn(async (key: string, value: string) => { store.set(key, value); }),
+    put: vi.fn(async (key: string, value: string) => {
+      store.set(key, value);
+    }),
     get: vi.fn(async (key: string) => store.get(key) ?? null),
-    delete: vi.fn(async (key: string) => { store.delete(key); }),
+    delete: vi.fn(async (key: string) => {
+      store.delete(key);
+    }),
     list: vi.fn(async () => ({ keys: [] })),
   };
 }
@@ -26,6 +30,7 @@ function createMockEnv(overrides: Record<string, unknown> = {}) {
   return {
     DB: createMockD1(),
     KV: createMockKV(),
+    BSI_KEYS: createMockKV(),
     CACHE: {} as any,
     PORTAL_POLLER: {} as any,
     ASSETS_BUCKET: {} as any,
@@ -57,7 +62,7 @@ describe('workers/index.ts route handlers', () => {
     it('returns ok status with version', async () => {
       const req = new Request('https://blazesportsintel.com/api/health');
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(200);
       expect(body.status).toBe('ok');
@@ -68,7 +73,7 @@ describe('workers/index.ts route handlers', () => {
     it('returns expected JSON shape', async () => {
       const req = new Request('https://blazesportsintel.com/api/health');
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(body).toHaveProperty('status');
       expect(body).toHaveProperty('timestamp');
@@ -80,7 +85,7 @@ describe('workers/index.ts route handlers', () => {
     it('reports the environment from env binding', async () => {
       const req = new Request('https://blazesportsintel.com/api/health');
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
       expect(body.environment).toBe('test');
     });
   });
@@ -103,7 +108,9 @@ describe('workers/index.ts route handlers', () => {
         headers: { Origin: 'https://www.blazesportsintel.com' },
       });
       const res = await worker.fetch(req, env);
-      expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://www.blazesportsintel.com');
+      expect(res.headers.get('Access-Control-Allow-Origin')).toBe(
+        'https://www.blazesportsintel.com',
+      );
     });
 
     it('allows localhost in non-production', async () => {
@@ -156,7 +163,7 @@ describe('workers/index.ts route handlers', () => {
       // Use trailing slash — non-trailing paths get 301 redirected
       const req = new Request('https://blazesportsintel.com/some-unknown-page/');
       const res = await worker.fetch(req, prodEnv);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(500);
       expect(body.error).toBe('Internal server error');
@@ -171,7 +178,7 @@ describe('workers/index.ts route handlers', () => {
 
       const req = new Request('https://blazesportsintel.com/some-unknown-page/');
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(500);
       expect(body.error).toBe('detailed error info');
@@ -191,7 +198,7 @@ describe('workers/index.ts route handlers', () => {
 
       const req = new Request('https://blazesportsintel.com/unknown/');
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(body).toHaveProperty('error');
       expect(typeof body.error).toBe('string');
@@ -207,7 +214,7 @@ describe('workers/index.ts route handlers', () => {
         body: JSON.stringify({}),
       });
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(400);
       expect(body).toHaveProperty('error');
@@ -231,7 +238,7 @@ describe('workers/index.ts route handlers', () => {
       // Even with no KV data, the response should be valid JSON
       expect(res.status).toBe(200);
       // No cache header when returning the "no data" fallback (plain json, not cachedJson)
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
       expect(body).toHaveProperty('entries');
     });
   });
@@ -258,7 +265,7 @@ describe('workers/index.ts route handlers', () => {
         body: JSON.stringify({ name: 'Test', email: 'test@example.com' }),
       });
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
       expect(res.status).toBe(400);
       expect(body.error).toContain('Consent');
     });
@@ -267,14 +274,82 @@ describe('workers/index.ts route handlers', () => {
       const req = new Request('https://blazesportsintel.com/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'Austin', email: 'test@blazesportsintel.com', sport: 'Baseball', consent: true }),
+        body: JSON.stringify({
+          name: 'Austin',
+          email: 'test@blazesportsintel.com',
+          sport: 'Baseball',
+          consent: true,
+        }),
       });
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(200);
       expect(body.success).toBe(true);
       expect(env.KV.put).toHaveBeenCalled();
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Premium API key gating
+  // -----------------------------------------------------------------------
+
+  describe('premium API gating', () => {
+    it('blocks /api/predictions without X-BSI-Key', async () => {
+      const req = new Request('https://blazesportsintel.com/api/predictions/accuracy');
+      const res = await worker.fetch(req, env);
+      const body = (await res.json()) as any;
+
+      expect(res.status).toBe(401);
+      expect(body.error).toContain('API key required');
+    });
+
+    it('allows /api/predictions with a valid key record', async () => {
+      const expires = Date.now() + 60_000;
+      await env.BSI_KEYS.put('key:test-key', JSON.stringify({ tier: 'pro', expires }));
+
+      const req = new Request('https://blazesportsintel.com/api/predictions/accuracy', {
+        headers: { 'X-BSI-Key': 'test-key' },
+      });
+      const res = await worker.fetch(req, env);
+
+      expect(res.status).toBe(200);
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // Stripe webhook API key provisioning
+  // -----------------------------------------------------------------------
+
+  describe('POST /webhooks/stripe', () => {
+    it('provisions an API key from checkout.session.completed', async () => {
+      const req = new Request('https://blazesportsintel.com/webhooks/stripe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'checkout.session.completed',
+          data: {
+            object: {
+              customer_email: 'pro@blazesportsintel.com',
+              metadata: { tier: 'pro', duration_days: '30' },
+            },
+          },
+        }),
+      });
+
+      const res = await worker.fetch(req, env);
+      const body = (await res.json()) as any;
+
+      expect(res.status).toBe(200);
+      expect(body.provisioned).toBe(true);
+
+      const putCalls = (env.BSI_KEYS.put as any).mock.calls as Array<[string, string]>;
+      expect(putCalls.some(([key]) => key.startsWith('key:bsi_'))).toBe(true);
+      expect(
+        putCalls.some(
+          ([key, value]) => key === 'email:pro@blazesportsintel.com' && value.startsWith('bsi_'),
+        ),
+      ).toBe(true);
     });
   });
 
@@ -326,7 +401,9 @@ describe('workers/index.ts route handlers', () => {
       const res = await worker.fetch(req, env);
 
       expect(res.status).toBe(301);
-      expect(res.headers.get('Location')).toBe('https://blazesportsintel.com/college-baseball/standings');
+      expect(res.headers.get('Location')).toBe(
+        'https://blazesportsintel.com/college-baseball/standings',
+      );
     });
   });
 
@@ -352,7 +429,7 @@ describe('workers/index.ts route handlers', () => {
         body: JSON.stringify({ name: 'Test', email: 'test@example.com', message: 'Hello' }),
       });
       const res = await worker.fetch(req, env);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(200);
       expect(body.success).toBe(true);
@@ -366,7 +443,7 @@ describe('workers/index.ts route handlers', () => {
         body: JSON.stringify({ name: 'Test', email: 'test@example.com', message: 'Hello' }),
       });
       const res = await worker.fetch(req, tsEnv);
-      const body = await res.json() as any;
+      const body = (await res.json()) as any;
 
       expect(res.status).toBe(403);
       expect(body.error).toContain('Bot verification required');

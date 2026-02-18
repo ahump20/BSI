@@ -12,6 +12,8 @@ export interface Env {
   ERROR_LOG?: KVNamespace;
   TURNSTILE_SECRET_KEY?: string;
   OPS_EVENTS?: AnalyticsEngineDataset;
+  BSI_KEYS?: KVNamespace;
+  STRIPE_WEBHOOK_SECRET?: string;
 }
 
 export interface PredictionPayload {
