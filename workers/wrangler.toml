@@ -29,6 +29,10 @@ database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 binding = "ERROR_LOG"
 id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 
+[[kv_namespaces]]
+binding = "BSI_KEYS"
+id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS
+
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
@@ -97,6 +101,10 @@ database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 [[env.production.kv_namespaces]]
 binding = "ERROR_LOG"
 id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_KEYS"
+id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS --env production
 
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"
