@@ -18,6 +18,7 @@ import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
+import { requireApiKey, provisionKey, emailKey } from './shared/auth';
 
 // --- Handlers ---
 import {
@@ -420,6 +421,62 @@ app.get('/ws', (c) => {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
   }
   return handleWebSocket();
+});
+
+// --- Premium API routes — require valid BSI key ---
+app.use('/api/premium/*', requireApiKey);
+
+app.get('/api/premium/predictions/:gameId', async (c) => {
+  const gameId = c.req.param('gameId');
+  // Forward to bsi-prediction-api or read from PREDICTION_CACHE KV
+  const cached = await c.env.PREDICTION_CACHE?.get(`pred:${gameId}`);
+  if (cached) return c.json(JSON.parse(cached));
+  return c.json({ error: 'Game not found', gameId }, 404);
+});
+
+app.get('/api/premium/live/:gameId', async (c) => {
+  const gameId = c.req.param('gameId');
+  const cached = await c.env.BSI_PROD_CACHE?.get(`live:${gameId}`);
+  if (cached) return c.json(JSON.parse(cached));
+  return c.json({ error: 'Game not found', gameId }, 404);
+});
+
+// --- Stripe webhook — provision key on successful checkout ---
+app.post('/webhooks/stripe', async (c) => {
+  const body = await c.req.text();
+  const sig = c.req.header('stripe-signature');
+
+  // In production, verify signature with STRIPE_WEBHOOK_SECRET
+  // For now, parse and process (add signature verification once secret is set)
+  let event: { type: string; data: { object: Record<string, unknown> } };
+  try {
+    event = JSON.parse(body);
+  } catch {
+    return c.json({ error: 'Invalid JSON' }, 400);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as {
+      customer_email?: string;
+      customer_details?: { email?: string };
+      metadata?: { tier?: string };
+    };
+
+    const email =
+      session.customer_email ?? session.customer_details?.email ?? '';
+    if (!email) return c.json({ error: 'No email in session' }, 400);
+
+    const tier = (session.metadata?.tier as 'pro' | 'api' | 'embed') ?? 'pro';
+    
+    if (!c.env.BSI_KEYS) {
+      return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
+    }
+    
+    const apiKey = await provisionKey(c.env.BSI_KEYS, email, tier);
+    await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
+  }
+
+  return c.json({ received: true });
 });
 
 // --- Fallback: proxy to Cloudflare Pages ---
