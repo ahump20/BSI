@@ -18,7 +18,7 @@ import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
-import { requireApiKey } from './shared/auth';
+import { requireApiKey, type Tier } from './shared/auth';
 
 // --- Handlers ---
 import {
@@ -140,7 +140,7 @@ import {
 // =============================================================================
 
 
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; Variables: { tier: Tier } }>();
 
 // --- Middleware: www → apex canonical redirect ---
 app.use('*', async (c, next) => {
