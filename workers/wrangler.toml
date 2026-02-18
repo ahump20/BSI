@@ -32,6 +32,7 @@ id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 [[kv_namespaces]]
 binding = "BSI_KEYS"
 id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS
+# After creating, copy the output id above and to [env.production.kv_namespaces] below
 
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
@@ -105,6 +106,7 @@ id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 [[env.production.kv_namespaces]]
 binding = "BSI_KEYS"
 id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS --env production
+# After creating, copy the output id above
 
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"
@@ -133,6 +135,8 @@ service = "bsi-error-tracker"
 # SPORTS_DATA_IO_API_KEY (required for canonical SportsDataIO routes)
 # RAPIDAPI_KEY
 # NOTION_TOKEN
-# STRIPE_SECRET_KEY
+# STRIPE_SECRET_KEY        — sk_live_... (required for session status + subscription API calls)
+# STRIPE_WEBHOOK_SECRET    — whsec_... (required for webhook signature verification)
+# RESEND_API_KEY           — re_... (required for emailing API keys after checkout)
 # AMPLITUDE_API_KEY
 # TURNSTILE_SECRET_KEY (for Cloudflare Turnstile bot protection)

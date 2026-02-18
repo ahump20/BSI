@@ -8,6 +8,8 @@ export interface PricingTier {
   id: 'pro' | 'enterprise';
   name: string;
   price: number;
+  annualPrice?: number; // per-month cost when billed annually
+  annualTotal?: number; // total annual charge
   period: string;
   description: string;
   audience: string;
@@ -20,7 +22,9 @@ export const PRICING_TIERS: PricingTier[] = [
   {
     id: 'pro',
     name: 'Pro',
-    price: 29,
+    price: 12,
+    annualPrice: 8.25,
+    annualTotal: 99,
     period: 'month',
     description: 'For fans, fantasy players, and amateur coaches who want the edge.',
     audience: 'Fans, fantasy players, amateur coaches',

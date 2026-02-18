@@ -18,7 +18,7 @@ import { logError, safeESPN } from './shared/helpers';
 import { corsOrigin, corsHeaders } from './shared/cors';
 import { checkInMemoryRateLimit, checkPostRateLimit, maybeCleanupRateLimit } from './shared/rate-limit';
 import { proxyToPages } from './shared/proxy';
-import { requireApiKey, provisionKey, emailKey } from './shared/auth';
+import { requireApiKey } from './shared/auth';
 
 // --- Handlers ---
 import {
@@ -84,7 +84,14 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
-import { handleCreateEmbeddedCheckout } from './handlers/stripe';
+import {
+  handleCreateEmbeddedCheckout,
+  handleSessionStatus,
+  handleKeyFromSession,
+  handleStripeWebhook,
+  verifyStripeSignature,
+  type StripeEvent,
+} from './handlers/stripe';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -381,6 +388,8 @@ app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 
 // --- Stripe ---
 app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
+app.get('/api/stripe/session-status', (c) => handleSessionStatus(c.req.raw, c.env));
+app.get('/api/key/from-session', (c) => handleKeyFromSession(c.req.raw, c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
@@ -423,6 +432,34 @@ app.get('/ws', (c) => {
   return handleWebSocket();
 });
 
+// --- Public live game endpoint — used by the BSI widget (no API key required) ---
+app.options('/api/live/:gameId', () =>
+  new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-BSI-Key',
+      'Access-Control-Max-Age': '86400',
+    },
+  })
+);
+app.get('/api/live/:gameId', async (c) => {
+  const gameId = c.req.param('gameId');
+  const cached = await c.env.BSI_PROD_CACHE?.get(`live:${gameId}`);
+  return new Response(
+    cached ?? JSON.stringify({ error: 'Game not found', gameId }),
+    {
+      status: cached ? 200 : 404,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=15',
+      },
+    }
+  );
+});
+
 // --- Premium API routes — require valid BSI key ---
 app.use('/api/premium/*', requireApiKey);
 
@@ -441,41 +478,31 @@ app.get('/api/premium/live/:gameId', async (c) => {
   return c.json({ error: 'Game not found', gameId }, 404);
 });
 
-// --- Stripe webhook — provision key on successful checkout ---
+// --- Stripe webhook — subscription lifecycle events ---
 app.post('/webhooks/stripe', async (c) => {
   const body = await c.req.text();
-  const sig = c.req.header('stripe-signature');
+  const sig = c.req.header('stripe-signature') ?? '';
 
-  // In production, verify signature with STRIPE_WEBHOOK_SECRET
-  // For now, parse and process (add signature verification once secret is set)
-  let event: { type: string; data: { object: Record<string, unknown> } };
+  if (!c.env.STRIPE_WEBHOOK_SECRET) {
+    return c.json({ error: 'Webhook secret not configured' }, 500);
+  }
+
+  // Verify HMAC-SHA256 signature — must use raw body before any JSON.parse
+  const valid = await verifyStripeSignature(body, sig, c.env.STRIPE_WEBHOOK_SECRET);
+  if (!valid) {
+    return c.json({ error: 'Invalid signature' }, 400);
+  }
+
+  let event: StripeEvent;
   try {
-    event = JSON.parse(body);
+    event = JSON.parse(body) as StripeEvent;
   } catch {
     return c.json({ error: 'Invalid JSON' }, 400);
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as {
-      customer_email?: string;
-      customer_details?: { email?: string };
-      metadata?: { tier?: string };
-    };
-
-    const email =
-      session.customer_email ?? session.customer_details?.email ?? '';
-    if (!email) return c.json({ error: 'No email in session' }, 400);
-
-    const tier = (session.metadata?.tier as 'pro' | 'api' | 'embed') ?? 'pro';
-    
-    if (!c.env.BSI_KEYS) {
-      return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
-    }
-    
-    const apiKey = await provisionKey(c.env.BSI_KEYS, email, tier);
-    await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
-  }
-
+  // Return 200 immediately — Stripe retries on timeout
+  // All KV writes and Stripe API calls happen in waitUntil (background)
+  c.executionCtx.waitUntil(handleStripeWebhook(event, c.env));
   return c.json({ received: true });
 });
 
