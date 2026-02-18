@@ -11,37 +11,41 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 interface Game {
   id: string;
+  name: string;
+  shortName: string;
   date: string;
-  time: string;
-  status: 'scheduled' | 'live' | 'final' | 'postponed' | 'canceled';
-  inning?: number;
   homeTeam: {
     id: string;
     name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
+    abbreviation: string;
     logo?: string;
   };
   awayTeam: {
     id: string;
     name: string;
-    shortName: string;
-    conference: string;
-    score: number | null;
-    record: { wins: number; losses: number };
+    abbreviation: string;
     logo?: string;
   };
-  venue: string;
-  tv?: string;
-  situation?: string;
+  homeScore: number;
+  awayScore: number;
+  status: {
+    type: string;
+    state: string; // 'pre' | 'in' | 'post'
+    detail: string;
+    period?: number;
+  };
+  venue?: {
+    id?: string;
+    fullName: string;
+    address?: { city: string; state: string };
+    indoor?: boolean;
+  } | null;
 }
 
 interface ScheduleApiResponse {
-  success: boolean;
   data?: Game[];
-  timestamp?: string;
+  totalCount?: number;
+  meta?: { source: string; fetched_at: string; timezone: string };
   message?: string;
 }
 
@@ -62,9 +66,9 @@ export default function CollegeBaseballGamesPage() {
         const response = await fetch('/api/college-baseball/schedule?' + confParam);
         const result = (await response.json()) as ScheduleApiResponse;
 
-        if (result.success && result.data) {
+        if (result.data) {
           setGames(result.data);
-          setLastUpdated(result.timestamp || new Date().toISOString());
+          setLastUpdated(result.meta?.fetched_at || new Date().toISOString());
           setError(null);
         } else {
           setError(result.message || 'Failed to fetch games');
@@ -169,20 +173,21 @@ export default function CollegeBaseballGamesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredGames.map((game, index) => (
                   <ScrollReveal key={game.id} direction="up" delay={Math.min(index * 50, 300)}>
+                    <Link href={`/college-baseball/game/${game.id}`} className="block h-full">
                     <Card variant="hover" padding="md" className="h-full">
                       {/* Status Badge */}
                       <div className="flex items-center justify-between mb-4">
-                        <Badge variant="default">
-                          {game.homeTeam.conference || game.awayTeam.conference}
-                        </Badge>
-                        {game.status === 'live' ? (
+                        <span className="text-xs text-text-tertiary font-mono">
+                          {game.awayTeam.abbreviation} @ {game.homeTeam.abbreviation}
+                        </span>
+                        {game.status.state === 'in' ? (
                           <LiveBadge />
-                        ) : game.status === 'final' ? (
+                        ) : game.status.state === 'post' ? (
                           <Badge variant="default">Final</Badge>
-                        ) : game.status === 'postponed' ? (
+                        ) : game.status.type?.includes('POSTPONED') ? (
                           <Badge variant="warning">Postponed</Badge>
                         ) : (
-                          <Badge variant="primary">{game.time}</Badge>
+                          <Badge variant="primary">{game.status.detail}</Badge>
                         )}
                       </div>
 
@@ -190,83 +195,57 @@ export default function CollegeBaseballGamesPage() {
                       <div className="space-y-3">
                         {/* Away Team */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-white">{game.awayTeam.name}</span>
-                            {game.awayTeam.record && (
-                              <span className="text-xs text-text-tertiary">
-                                ({game.awayTeam.record.wins}-{game.awayTeam.record.losses})
-                              </span>
-                            )}
-                          </div>
-                          {game.awayTeam.score !== null && (
+                          <span className="font-semibold text-white">{game.awayTeam.name}</span>
+                          {game.status.state !== 'pre' && (
                             <span
                               className={`font-display text-xl font-bold ${
-                                game.status === 'final' &&
-                                game.awayTeam.score > (game.homeTeam.score ?? 0)
+                                game.status.state === 'post' && game.awayScore > game.homeScore
                                   ? 'text-success'
                                   : 'text-white'
                               }`}
                             >
-                              {game.awayTeam.score}
+                              {game.awayScore}
                             </span>
                           )}
                         </div>
 
                         {/* Home Team */}
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-white">{game.homeTeam.name}</span>
-                            {game.homeTeam.record && (
-                              <span className="text-xs text-text-tertiary">
-                                ({game.homeTeam.record.wins}-{game.homeTeam.record.losses})
-                              </span>
-                            )}
-                          </div>
-                          {game.homeTeam.score !== null && (
+                          <span className="font-semibold text-white">{game.homeTeam.name}</span>
+                          {game.status.state !== 'pre' && (
                             <span
                               className={`font-display text-xl font-bold ${
-                                game.status === 'final' &&
-                                game.homeTeam.score > (game.awayTeam.score ?? 0)
+                                game.status.state === 'post' && game.homeScore > game.awayScore
                                   ? 'text-success'
                                   : 'text-white'
                               }`}
                             >
-                              {game.homeTeam.score}
+                              {game.homeScore}
                             </span>
                           )}
                         </div>
                       </div>
 
                       {/* Venue */}
-                      {game.venue && game.venue !== 'TBD' && (
+                      {game.venue?.fullName && (
                         <div className="mt-4 pt-4 border-t border-border-subtle">
-                          <span className="text-xs text-text-tertiary">{game.venue}</span>
+                          <span className="text-xs text-text-tertiary">
+                            {game.venue.fullName}
+                            {game.venue.address && ` — ${game.venue.address.city}, ${game.venue.address.state}`}
+                          </span>
                         </div>
                       )}
 
                       {/* Inning indicator for live games */}
-                      {game.status === 'live' && game.inning && (
+                      {game.status.state === 'in' && game.status.period && (
                         <div className="mt-2">
                           <span className="text-sm text-burnt-orange font-semibold">
-                            Inning {game.inning}
+                            Inning {game.status.period}
                           </span>
-                          {game.situation && (
-                            <span className="text-sm text-text-tertiary ml-2">
-                              {game.situation}
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* TV Info */}
-                      {game.tv && (
-                        <div className="mt-2">
-                          <Badge variant="default" className="text-xs">
-                            {game.tv}
-                          </Badge>
                         </div>
                       )}
                     </Card>
+                    </Link>
                   </ScrollReveal>
                 ))}
               </div>
@@ -281,7 +260,13 @@ export default function CollegeBaseballGamesPage() {
               {lastUpdated && (
                 <p className="mt-1">
                   Last updated:{' '}
-                  {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                  {new Date(lastUpdated).toLocaleString('en-US', {
+                    timeZone: 'America/Chicago',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })}{' '}
                   CT
                 </p>
               )}

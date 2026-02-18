@@ -3,6 +3,7 @@
 import { useGameData } from './layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { AskBSIPanel } from '@/components/intelligence/AskBSIPanel';
 
 /**
  * College Baseball Game Summary Page
@@ -247,6 +248,9 @@ export default function CollegeGameSummaryClient() {
           )}
         </div>
       </Card>
+
+      {/* BSI Intelligence panel */}
+      <AskBSIPanel game={game} />
     </div>
   );
 }
