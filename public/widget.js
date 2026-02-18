@@ -149,6 +149,12 @@
       }
     }
 
+    _escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     _injectStyles() {
       const style = document.createElement('style');
       style.textContent = `
@@ -635,10 +641,17 @@
         const inningArrow = data.half === 'top' ? '▲' : '▼';
         const halfText = data.half === 'top' ? 'TOP' : 'BOT';
 
+        // Escape all text content from API
+        const awayAbbr = this._escapeHtml(data.away.abbr || 'AWAY');
+        const homeAbbr = this._escapeHtml(data.home.abbr || 'HOME');
+        const situationDesc = this._escapeHtml(data.situation?.description || 'Game in progress...');
+        const pitcherName = this._escapeHtml(data.current_pitcher?.name || '—');
+        const lastPlay = this._escapeHtml(data.last_play || '—');
+
         container.innerHTML = `
           <div class="header">
             <div class="team">
-              <span class="team-name">${data.away.abbr || 'AWAY'}</span>
+              <span class="team-name">${awayAbbr}</span>
               <span class="score">${data.away.score}</span>
             </div>
             <div class="inning">
@@ -647,7 +660,7 @@
             </div>
             <div class="team">
               <span class="score">${data.home.score}</span>
-              <span class="team-name">${data.home.abbr || 'HOME'}</span>
+              <span class="team-name">${homeAbbr}</span>
             </div>
           </div>
 
@@ -668,7 +681,7 @@
               <div class="leverage-badge leverage-${leverage}">${leverage}</div>
             </div>
             <div class="situation-text">
-              ${data.situation?.description || 'Game in progress...'}
+              ${situationDesc}
             </div>
           </div>
 
@@ -677,19 +690,19 @@
               <div class="win-prob-fill" style="width: ${homeWinProb}%"></div>
             </div>
             <div class="win-prob-labels">
-              <span class="win-prob-label">${data.home.abbr} ${Math.round(homeWinProb)}%</span>
-              <span class="win-prob-label">${data.away.abbr} ${Math.round(awayWinProb)}%</span>
+              <span class="win-prob-label">${homeAbbr} ${Math.round(homeWinProb)}%</span>
+              <span class="win-prob-label">${awayAbbr} ${Math.round(awayWinProb)}%</span>
             </div>
           </div>
 
           <div class="footer-box">
             <div class="pitcher-info">
-              <span>${data.current_pitcher?.name || '—'}</span>
+              <span>${pitcherName}</span>
               <span class="pitcher-stat">${data.current_pitcher?.pitch_count || 0} pitches</span>
               <span class="pitcher-stat">${data.current_pitcher?.era?.toFixed(2) || '0.00'} ERA</span>
             </div>
             <div class="last-play">
-              ${data.last_play || '—'}
+              ${lastPlay}
             </div>
           </div>
 
@@ -742,13 +755,18 @@
           `;
         }
 
-        const pitchItems = pitches.map(p => `
-          <li class="pitch-item">
-            <span class="pitch-type">${p.type}</span>
-            <span class="pitch-velocity">${p.velocity} mph</span>
-            <span class="pitch-result">${p.result}</span>
-          </li>
-        `).join('');
+        const pitchItems = pitches.map(p => {
+          const type = this._escapeHtml(p.type || '');
+          const velocity = parseInt(p.velocity) || 0;
+          const result = this._escapeHtml(p.result || '');
+          return `
+            <li class="pitch-item">
+              <span class="pitch-type">${type}</span>
+              <span class="pitch-velocity">${velocity} mph</span>
+              <span class="pitch-result">${result}</span>
+            </li>
+          `;
+        }).join('');
 
         return `
           <div class="expand-content">
