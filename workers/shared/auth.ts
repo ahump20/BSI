@@ -1,16 +1,11 @@
 // workers/shared/auth.ts
 import type { Context, Next } from 'hono';
+import type { Env } from './types';
 
 export interface KeyData {
   tier: 'pro' | 'api' | 'embed';
   expires: number;
   email: string;
-}
-
-export interface Env {
-  BSI_KEYS: KVNamespace;
-  STRIPE_WEBHOOK_SECRET: string;
-  RESEND_API_KEY?: string;
 }
 
 /**
@@ -22,7 +17,7 @@ export async function requireApiKey(c: Context<{ Bindings: Env }>, next: Next) {
   const apiKey = c.req.header('X-BSI-Key');
   if (!apiKey) {
     return c.json(
-      { error: 'API key required', upgrade: 'https://blazesportsintel.com/pro' },
+      { error: 'API key required', upgrade: 'https://blazesportsintel.com/pricing' },
       401
     );
   }
@@ -34,7 +29,7 @@ export async function requireApiKey(c: Context<{ Bindings: Env }>, next: Next) {
 
   const keyData: KeyData = JSON.parse(raw);
   if (Date.now() > keyData.expires) {
-    return c.json({ error: 'Subscription expired', upgrade: 'https://blazesportsintel.com/pro' }, 402);
+    return c.json({ error: 'Subscription expired', upgrade: 'https://blazesportsintel.com/pricing' }, 402);
   }
 
   c.set('tier', keyData.tier);
@@ -95,4 +90,23 @@ export async function emailKey(
       `,
     }),
   });
+}
+
+/**
+ * Factory: restrict a route to specific tier(s).
+ * Use after requireApiKey in the middleware chain.
+ *
+ * Example: app.get('/api/premium/exports/*', requireTier('api'));
+ */
+export function requireTier(...allowed: KeyData['tier'][]) {
+  return async (c: Context<{ Bindings: Env }>, next: Next) => {
+    const tier = c.get('tier') as KeyData['tier'] | undefined;
+    if (!tier || !allowed.includes(tier)) {
+      return c.json(
+        { error: 'This endpoint requires a higher tier', upgrade: 'https://blazesportsintel.com/pricing' },
+        403,
+      );
+    }
+    await next();
+  };
 }

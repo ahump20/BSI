@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
 
+// Show Pro and Data API on the homepage — the two anchor tiers
+const PREVIEW_TIERS = PRICING_TIERS.filter((t) => t.id === 'pro' || t.id === 'api');
+
 /**
  * PricingPreview — compact 2-card preview of pricing tiers.
  * Links to /pricing for full details. No checkout logic here.
@@ -15,7 +18,7 @@ export function PricingPreview() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-        {PRICING_TIERS.map((tier) => (
+        {PREVIEW_TIERS.map((tier) => (
           <div
             key={tier.id}
             className={`glass-default rounded-2xl p-6 sm:p-8 relative border transition-all duration-300 hover:shadow-glow-sm ${
@@ -39,7 +42,7 @@ export function PricingPreview() {
 
             <div className="text-center mb-6">
               <span className="text-4xl font-display font-bold text-[#BF5700]">
-                ${tier.price}
+                ${tier.monthlyPrice}
               </span>
               <span className="text-white/40 text-sm">/{tier.period}</span>
             </div>

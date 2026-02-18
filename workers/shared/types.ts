@@ -13,7 +13,12 @@ export interface Env {
   TURNSTILE_SECRET_KEY?: string;
   OPS_EVENTS?: AnalyticsEngineDataset;
   BSI_KEYS?: KVNamespace;
+  STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_PRICE_PRO_MONTHLY?: string;
+  STRIPE_PRICE_PRO_ANNUAL?: string;
+  STRIPE_PRICE_API?: string;
+  STRIPE_PRICE_EMBED?: string;
   RESEND_API_KEY?: string;
   PREDICTION_CACHE?: KVNamespace;
   BSI_PROD_CACHE?: KVNamespace;

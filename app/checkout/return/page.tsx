@@ -135,19 +135,31 @@ function CheckoutReturnContent() {
                       Welcome to <span className="text-gradient-blaze">BSI</span>
                     </h1>
                     <p className="text-text-secondary mb-2">
-                      Your {tier === 'enterprise' ? 'Enterprise' : 'Pro'} subscription is now
-                      active.
+                      Your {
+                        tier === 'api' ? 'Data API' :
+                        tier === 'embed' ? 'Embed License' :
+                        'Pro'
+                      } subscription is now active.
                     </p>
                     {customerEmail && (
-                      <p className="text-text-tertiary text-sm mb-8">
+                      <p className="text-text-tertiary text-sm mb-4">
                         Confirmation sent to {customerEmail}
                       </p>
                     )}
+                    <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-4">
+                      <p className="text-burnt-orange text-sm font-semibold mb-1">Your API Key</p>
+                      <p className="text-text-secondary text-sm">
+                        Your API key has been sent to {customerEmail || 'your email'}. Check your
+                        inbox (and spam folder). Include it as the{' '}
+                        <code className="bg-white/5 px-1 rounded text-xs">X-BSI-Key</code> header
+                        in API requests.
+                      </p>
+                    </div>
                     {tier === 'pro' && (
                       <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-8">
                         <p className="text-burnt-orange text-sm">
-                          Your 14-day free trial has started. You won't be charged until the trial
-                          ends.
+                          Your 14-day free trial has started. You won&apos;t be charged until the
+                          trial ends.
                         </p>
                       </div>
                     )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -8,27 +9,27 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
+import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { Footer } from '@/components/layout-ds/Footer';
-import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
+import { PRICING_TIERS, type TierId } from '@/lib/data/pricing-tiers';
 
-// Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
 const HeroVideo = dynamic(
   () => import('@/components/hero/HeroVideo').then((mod) => ({ default: mod.HeroVideo })),
   { ssr: false }
 );
 
-const tiers = PRICING_TIERS;
-
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'annual'>('monthly');
 
-  const handleCheckout = async (tier: 'pro' | 'enterprise') => {
-    setLoading(tier);
+  const handleCheckout = async (tierId: TierId) => {
+    if (tierId === 'free') return;
+    setLoading(tierId);
     try {
       const response = await fetch('/api/stripe/create-embedded-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier }),
+        body: JSON.stringify({ tier: tierId, interval: billingInterval }),
       });
 
       const data = (await response.json()) as { error?: string; clientSecret?: string };
@@ -38,11 +39,10 @@ export default function PricingPage() {
         return;
       }
 
-      // Redirect to checkout
       if (data.clientSecret) {
         window.location.href = `/checkout?client_secret=${data.clientSecret}`;
       }
-    } catch (_error) {
+    } catch {
       alert('Failed to start checkout. Please try again.');
     } finally {
       setLoading(null);
@@ -54,7 +54,6 @@ export default function PricingPage() {
       <main id="main-content">
         {/* Hero */}
         <Section padding="lg" className="pt-28 relative overflow-hidden">
-          {/* Ambient video background */}
           <HeroVideo />
           <div
             className="absolute inset-0 z-[1]"
@@ -73,79 +72,117 @@ export default function PricingPage() {
                 Choose Your <span className="text-gradient-blaze">Plan</span>
               </h1>
               <p className="text-text-secondary text-center max-w-2xl mx-auto">
-                Professional sports intelligence at every level. Start with a 14-day free trial on
-                Pro, or go straight to Enterprise for the full toolkit.
+                Professional sports intelligence at every level. Start free, upgrade when you need
+                the edge.
               </p>
             </ScrollReveal>
           </Container>
         </Section>
 
-        {/* Pricing Cards */}
+        {/* Billing Toggle + Pricing Cards */}
         <Section padding="lg" background="charcoal">
           <Container>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {tiers.map((tier, index) => (
-                <ScrollReveal key={tier.id} direction="up" delay={index * 100}>
-                  <Card
-                    padding="lg"
-                    className={`relative h-full ${
-                      tier.popular ? 'border-burnt-orange border-2' : ''
-                    }`}
-                  >
-                    {tier.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <Badge variant="accent">Most Popular</Badge>
-                      </div>
-                    )}
+            {/* Monthly/Annual toggle */}
+            <div className="flex justify-center mb-10">
+              <ToggleGroup
+                value={billingInterval}
+                onValueChange={setBillingInterval}
+                options={[
+                  { value: 'monthly' as const, label: 'Monthly' },
+                  { value: 'annual' as const, label: 'Annual (Save 31%)' },
+                ]}
+              />
+            </div>
 
-                    <div className="text-center mb-6">
-                      <h2 className="font-display text-2xl font-bold text-white mb-2">
-                        {tier.name}
-                      </h2>
-                      <p className="text-text-tertiary text-sm">{tier.description}</p>
-                    </div>
+            {/* 4-tier grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              {PRICING_TIERS.map((tier, index) => {
+                const displayPrice =
+                  tier.id === 'pro' && billingInterval === 'annual'
+                    ? tier.annualPrice ?? tier.monthlyPrice
+                    : tier.monthlyPrice;
+                const displayPeriod =
+                  tier.id === 'pro' && billingInterval === 'annual' ? 'year' : tier.period;
 
-                    <div className="text-center mb-8">
-                      <span className="font-display text-5xl font-bold text-burnt-orange">
-                        ${tier.price}
-                      </span>
-                      <span className="text-text-tertiary">/{tier.period}</span>
-                    </div>
-
-                    <ul className="space-y-3 mb-8">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-3">
-                          <svg
-                            className="w-5 h-5 text-success flex-shrink-0 mt-0.5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                          <span className="text-text-secondary text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      variant={tier.popular ? 'primary' : 'secondary'}
-                      size="lg"
-                      className="w-full"
-                      onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
-                      disabled={loading !== null}
+                return (
+                  <ScrollReveal key={tier.id} direction="up" delay={index * 75}>
+                    <Card
+                      padding="lg"
+                      className={`relative h-full flex flex-col ${
+                        tier.popular ? 'border-burnt-orange border-2' : ''
+                      }`}
                     >
-                      {loading === tier.id ? 'Loading...' : tier.cta}
-                    </Button>
-                  </Card>
-                </ScrollReveal>
-              ))}
+                      {tier.popular && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                          <Badge variant="accent">Most Popular</Badge>
+                        </div>
+                      )}
+
+                      <div className="text-center mb-4">
+                        <h2 className="font-display text-xl font-bold text-white mb-1">
+                          {tier.name}
+                        </h2>
+                        <p className="text-text-tertiary text-xs">{tier.description}</p>
+                      </div>
+
+                      <div className="text-center mb-6">
+                        {tier.monthlyPrice === 0 ? (
+                          <span className="font-display text-4xl font-bold text-burnt-orange">
+                            Free
+                          </span>
+                        ) : (
+                          <>
+                            <span className="font-display text-4xl font-bold text-burnt-orange">
+                              ${displayPrice}
+                            </span>
+                            <span className="text-text-tertiary text-sm">/{displayPeriod}</span>
+                          </>
+                        )}
+                      </div>
+
+                      <ul className="space-y-2.5 mb-6 flex-1">
+                        {tier.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <svg
+                              className="w-4 h-4 text-success flex-shrink-0 mt-0.5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span className="text-text-secondary text-xs">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {tier.id === 'free' ? (
+                        <Link href="/">
+                          <Button variant="secondary" size="lg" className="w-full">
+                            {tier.cta}
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button
+                          variant={tier.popular ? 'primary' : 'secondary'}
+                          size="lg"
+                          className="w-full"
+                          onClick={() => handleCheckout(tier.id)}
+                          disabled={loading !== null}
+                        >
+                          {loading === tier.id ? 'Loading...' : tier.cta}
+                        </Button>
+                      )}
+                    </Card>
+                  </ScrollReveal>
+                );
+              })}
             </div>
           </Container>
         </Section>
 
-        {/* FAQ / Value Props */}
+        {/* Value Props */}
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
@@ -164,7 +201,7 @@ export default function PricingPage() {
                 {
                   title: 'Multi-Sport Coverage',
                   description:
-                    'MLB, NFL, NCAA—all in one platform. Live scores, standings, and analytics across every league we cover. No switching between apps.',
+                    'MLB, NFL, NCAA—all in one platform. Live scores, standings, and analytics across every league we cover.',
                 },
                 {
                   title: 'Built by a Fan, for Fans',

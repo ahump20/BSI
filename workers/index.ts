@@ -84,7 +84,8 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
-import { handleCreateEmbeddedCheckout } from './handlers/stripe';
+import { handleCreateEmbeddedCheckout, handleSessionStatus } from './handlers/stripe';
+import { verifyStripeSignature } from './shared/stripe-verify';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -177,7 +178,7 @@ app.use('*', async (c, next) => {
   const origin = corsOrigin(c.req.raw, c.env);
   c.res.headers.set('Access-Control-Allow-Origin', origin);
   c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID, X-BSI-Key');
   c.res.headers.set('Access-Control-Max-Age', '86400');
   c.res.headers.set('Vary', 'Origin');
 });
@@ -381,6 +382,7 @@ app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 
 // --- Stripe ---
 app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
+app.get('/api/stripe/session-status', (c) => handleSessionStatus(new URL(c.req.url), c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
@@ -446,8 +448,20 @@ app.post('/webhooks/stripe', async (c) => {
   const body = await c.req.text();
   const sig = c.req.header('stripe-signature');
 
-  // In production, verify signature with STRIPE_WEBHOOK_SECRET
-  // For now, parse and process (add signature verification once secret is set)
+  // Verify signature when webhook secret is configured
+  if (c.env.STRIPE_WEBHOOK_SECRET) {
+    if (!sig) {
+      return c.json({ error: 'Missing stripe-signature header' }, 400);
+    }
+    const valid = await verifyStripeSignature(body, sig, c.env.STRIPE_WEBHOOK_SECRET);
+    if (!valid) {
+      console.warn('[webhook] Invalid Stripe signature');
+      return c.json({ error: 'Invalid signature' }, 400);
+    }
+  } else {
+    console.warn('[webhook] STRIPE_WEBHOOK_SECRET not set — skipping verification');
+  }
+
   let event: { type: string; data: { object: Record<string, unknown> } };
   try {
     event = JSON.parse(body);
@@ -467,13 +481,26 @@ app.post('/webhooks/stripe', async (c) => {
     if (!email) return c.json({ error: 'No email in session' }, 400);
 
     const tier = (session.metadata?.tier as 'pro' | 'api' | 'embed') ?? 'pro';
-    
+
     if (!c.env.BSI_KEYS) {
       return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
     }
-    
-    const apiKey = await provisionKey(c.env.BSI_KEYS, email, tier);
-    await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
+
+    // Check for existing key (upgrade scenario — don't create duplicates)
+    const existingKey = await c.env.BSI_KEYS.get(`email:${email}`);
+    if (existingKey) {
+      const existingData = await c.env.BSI_KEYS.get(`key:${existingKey}`);
+      if (existingData) {
+        const keyData = JSON.parse(existingData);
+        keyData.tier = tier;
+        keyData.expires = Date.now() + 365 * 24 * 60 * 60 * 1000;
+        await c.env.BSI_KEYS.put(`key:${existingKey}`, JSON.stringify(keyData));
+      }
+      await emailKey(c.env.RESEND_API_KEY, email, existingKey, tier);
+    } else {
+      const apiKey = await provisionKey(c.env.BSI_KEYS, email, tier);
+      await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
+    }
   }
 
   return c.json({ received: true });
