@@ -246,6 +246,55 @@ app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env)
 // --- Intel news ---
 app.get('/api/intel/news', (c) => handleIntelNews(new URL(c.req.url), c.env));
 
+// --- Live Game Widget ---
+app.get('/api/live/:gameId', async (c) => {
+  const gameId = c.req.param('gameId');
+  
+  // Try BSI_PROD_CACHE first
+  const cached = await c.env.BSI_PROD_CACHE?.get(`live:${gameId}`);
+  if (cached) {
+    return c.json(JSON.parse(cached), 200, {
+      'Cache-Control': 'public, max-age=15',
+      'Access-Control-Allow-Origin': '*',
+    });
+  }
+  
+  // Fallback: return a demo/stub for unknown game IDs
+  // (real data comes from bsi-intelligence-stream writing to BSI_PROD_CACHE)
+  return c.json({
+    game_id: gameId,
+    home: { abbr: 'TEX', score: 0, record: '0-0' },
+    away: { abbr: 'OPP', score: 0 },
+    inning: 1,
+    half: 'top',
+    situation: {
+      outs: 0,
+      runners: [],
+      leverage: 'LOW',
+      description: 'Game data loading...',
+    },
+    win_probability: { home: 0.5, away: 0.5 },
+    current_pitcher: { name: '—', pitch_count: 0, era: 0.0 },
+    last_play: '—',
+    recent_pitches: [],
+    meta: { source: 'BSI', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+  }, 200, {
+    'Cache-Control': 'no-store',
+    'Access-Control-Allow-Origin': '*',
+  });
+});
+
+// CORS preflight for widget embeds
+app.options('/api/live/*', (c) => {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+});
+
 // --- College Baseball ---
 app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
