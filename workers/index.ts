@@ -489,6 +489,382 @@ function getHighlightlyClient(env: Env): HighlightlyApiClient | null {
   return createHighlightlyClient(env.RAPIDAPI_KEY);
 }
 
+// ---------------------------------------------------------------------------
+// College Baseball Data Transforms
+// Bridge raw API shapes → frontend-expected shapes
+// ---------------------------------------------------------------------------
+
+function transformTeamSide(team: HighlightlyTeamDetail, score: number, opponentScore: number, isFinal: boolean) {
+  return {
+    name: team.name,
+    abbreviation: team.shortName || team.name.substring(0, 3).toUpperCase(),
+    score,
+    isWinner: isFinal && score > opponentScore,
+    record: team.record ? `${team.record.wins}-${team.record.losses}` : undefined,
+    conference: team.conference?.name,
+    ranking: team.ranking,
+  };
+}
+
+/**
+ * Transform Highlightly match + box score into the CollegeGameData shape
+ * expected by GameLayoutClient.tsx
+ */
+function transformGameToCollegeGameData(
+  match: HighlightlyMatch,
+  boxScore: HighlightlyBoxScore | null
+) {
+  const isFinal = match.status.type === 'finished';
+  const isLive = match.status.type === 'inprogress';
+
+  const statusMap: Record<string, string> = {
+    notstarted: 'Scheduled',
+    inprogress: 'In Progress',
+    finished: 'Final',
+    postponed: 'Postponed',
+    cancelled: 'Cancelled',
+  };
+
+  const game: Record<string, unknown> = {
+    id: String(match.id),
+    date: new Date(match.startTimestamp * 1000).toISOString(),
+    status: {
+      state: match.status.type,
+      detailedState: statusMap[match.status.type] || match.status.description || match.status.type,
+      inning: match.currentInning,
+      inningState: match.currentInningHalf
+        ? match.currentInningHalf.charAt(0).toUpperCase() + match.currentInningHalf.slice(1)
+        : undefined,
+      isLive,
+      isFinal,
+    },
+    teams: {
+      away: transformTeamSide(match.awayTeam, match.awayScore, match.homeScore, isFinal),
+      home: transformTeamSide(match.homeTeam, match.homeScore, match.awayScore, isFinal),
+    },
+    venue: match.venue
+      ? { name: match.venue.name, city: match.venue.city, state: match.venue.state }
+      : { name: 'TBD' },
+  };
+
+  // Linescore from box score or match innings
+  const innings = boxScore?.linescores || match.innings || [];
+  if (innings.length > 0) {
+    game.linescore = {
+      innings: innings.map((inn: HighlightlyInning) => ({
+        away: inn.awayRuns,
+        home: inn.homeRuns,
+      })),
+      totals: {
+        away: { runs: match.awayScore, hits: boxScore?.away?.hits ?? 0, errors: boxScore?.away?.errors ?? 0 },
+        home: { runs: match.homeScore, hits: boxScore?.home?.hits ?? 0, errors: boxScore?.home?.errors ?? 0 },
+      },
+    };
+  }
+
+  // Box score batting/pitching lines
+  if (boxScore) {
+    game.boxscore = {
+      away: {
+        batting: (boxScore.away?.batting || []).map((b: HighlightlyBattingLine) => ({
+          player: { id: String(b.player.id), name: b.player.name, position: b.position, year: undefined },
+          ab: b.atBats, r: b.runs, h: b.hits, rbi: b.rbi, bb: b.walks, so: b.strikeouts,
+          avg: b.average != null ? b.average.toFixed(3) : '.000',
+        })),
+        pitching: (boxScore.away?.pitching || []).map((p: HighlightlyPitchingLine) => ({
+          player: { id: String(p.player.id), name: p.player.name, year: undefined },
+          decision: p.decision ?? undefined,
+          ip: p.inningsPitched.toFixed(1), h: p.hits, r: p.runs, er: p.earnedRuns,
+          bb: p.walks, so: p.strikeouts, pitches: p.pitchCount, strikes: p.strikes,
+          era: p.era != null ? p.era.toFixed(2) : '0.00',
+        })),
+      },
+      home: {
+        batting: (boxScore.home?.batting || []).map((b: HighlightlyBattingLine) => ({
+          player: { id: String(b.player.id), name: b.player.name, position: b.position, year: undefined },
+          ab: b.atBats, r: b.runs, h: b.hits, rbi: b.rbi, bb: b.walks, so: b.strikeouts,
+          avg: b.average != null ? b.average.toFixed(3) : '.000',
+        })),
+        pitching: (boxScore.home?.pitching || []).map((p: HighlightlyPitchingLine) => ({
+          player: { id: String(p.player.id), name: p.player.name, year: undefined },
+          decision: p.decision ?? undefined,
+          ip: p.inningsPitched.toFixed(1), h: p.hits, r: p.runs, er: p.earnedRuns,
+          bb: p.walks, so: p.strikeouts, pitches: p.pitchCount, strikes: p.strikes,
+          era: p.era != null ? p.era.toFixed(2) : '0.00',
+        })),
+      },
+    };
+  }
+
+  // Play-by-play
+  if (boxScore?.plays && boxScore.plays.length > 0) {
+    let runningAway = 0;
+    let runningHome = 0;
+    game.plays = boxScore.plays.map((play: HighlightlyPlay, idx: number) => {
+      const prevAway = runningAway;
+      const prevHome = runningHome;
+      runningAway = play.awayScore;
+      runningHome = play.homeScore;
+      const runsScored = (play.awayScore - prevAway) + (play.homeScore - prevHome);
+      return {
+        id: `play-${idx}`,
+        inning: play.inning,
+        halfInning: play.half,
+        description: play.description,
+        result: play.description,
+        isScoring: runsScored > 0,
+        runsScored,
+        scoreAfter: { away: play.awayScore, home: play.homeScore },
+      };
+    });
+  }
+
+  return game;
+}
+
+/**
+ * Transform raw ESPN game summary into CollegeGameData shape.
+ * ESPN summary structure: { header, boxscore, plays, ... }
+ */
+function transformEspnGameSummary(summary: Record<string, unknown>) {
+  const header = (summary.header as Record<string, unknown>) || {};
+  const competitions = (header.competitions as Record<string, unknown>[]) || [];
+  const comp = competitions[0] || {};
+  const competitors = (comp.competitors as Record<string, unknown>[]) || [];
+  const home = competitors.find((c) => c.homeAway === 'home') as Record<string, unknown> | undefined;
+  const away = competitors.find((c) => c.homeAway === 'away') as Record<string, unknown> | undefined;
+
+  const statusDetail = (comp.status as Record<string, unknown>) || {};
+  const statusType = (statusDetail.type as Record<string, unknown>) || {};
+  const isLive = statusType.state === 'in';
+  const isFinal = statusType.completed === true || statusType.state === 'post';
+
+  function teamSide(c: Record<string, unknown> | undefined, opp: Record<string, unknown> | undefined) {
+    const team = (c?.team as Record<string, unknown>) || {};
+    const score = Number(c?.score ?? 0);
+    const oppScore = Number(opp?.score ?? 0);
+    return {
+      name: (team.displayName as string) || (team.name as string) || 'TBD',
+      abbreviation: (team.abbreviation as string) || 'TBD',
+      score,
+      isWinner: isFinal && score > oppScore,
+      record: (c?.record as Record<string, unknown>[])?.[0]?.summary as string | undefined,
+      conference: undefined,
+      ranking: (c?.rank as number) || undefined,
+    };
+  }
+
+  const game: Record<string, unknown> = {
+    id: String(header.id ?? comp.id ?? ''),
+    date: (header.gameDate as string) || (comp.date as string) || new Date().toISOString(),
+    status: {
+      state: statusType.state || 'pre',
+      detailedState: (statusType.shortDetail as string) || (statusType.detail as string) || 'Scheduled',
+      inning: (statusDetail.period as number) || undefined,
+      inningState: (statusDetail.displayClock as string) || undefined,
+      isLive,
+      isFinal,
+    },
+    teams: {
+      away: teamSide(away, home),
+      home: teamSide(home, away),
+    },
+    venue: (() => {
+      const v = (comp.venue as Record<string, unknown>) || {};
+      const addr = (v.address as Record<string, unknown>) || {};
+      return { name: (v.fullName as string) || 'TBD', city: addr.city as string, state: addr.state as string };
+    })(),
+  };
+
+  // ESPN linescore from boxscore
+  const espnBox = (summary.boxscore as Record<string, unknown>) || {};
+  const lineScores = (header.competitions as Record<string, unknown>[])
+    ?.[0]?.status as Record<string, unknown>;
+  // linescores are in the header per competitor
+  const awayLinescores = ((away as Record<string, unknown>)?.linescores as Record<string, unknown>[]) || [];
+  const homeLinescores = ((home as Record<string, unknown>)?.linescores as Record<string, unknown>[]) || [];
+
+  if (awayLinescores.length > 0 || homeLinescores.length > 0) {
+    const maxInnings = Math.max(awayLinescores.length, homeLinescores.length);
+    game.linescore = {
+      innings: Array.from({ length: maxInnings }, (_, i) => ({
+        away: Number((awayLinescores[i] as Record<string, unknown>)?.value ?? 0),
+        home: Number((homeLinescores[i] as Record<string, unknown>)?.value ?? 0),
+      })),
+      totals: {
+        away: { runs: Number(away?.score ?? 0), hits: 0, errors: 0 },
+        home: { runs: Number(home?.score ?? 0), hits: 0, errors: 0 },
+      },
+    };
+
+    // Try to get hits/errors from team stats
+    const teams = (espnBox.teams as Record<string, unknown>[]) || [];
+    for (const t of teams) {
+      const teamObj = (t as Record<string, unknown>).team as Record<string, unknown> | undefined;
+      const stats = ((t as Record<string, unknown>).statistics as Record<string, unknown>[]) || [];
+      const side = (t as Record<string, unknown>).homeAway === 'home' ? 'home' : 'away';
+      for (const stat of stats) {
+        const name = (stat.name as string) || '';
+        const val = Number(stat.displayValue ?? 0);
+        if (name === 'hits') (game.linescore as Record<string, unknown>)
+          && ((game.linescore as { totals: Record<string, Record<string, number>> }).totals[side].hits = val);
+        if (name === 'errors') (game.linescore as Record<string, unknown>)
+          && ((game.linescore as { totals: Record<string, Record<string, number>> }).totals[side].errors = val);
+      }
+    }
+  }
+
+  // ESPN plays
+  const espnPlays = (summary.plays as Record<string, unknown>[]) || [];
+  if (espnPlays.length > 0) {
+    game.plays = espnPlays.slice(0, 200).map((play: Record<string, unknown>, idx: number) => ({
+      id: String(play.id || `play-${idx}`),
+      inning: Number(play.period ?? 1),
+      halfInning: (play.homeAway as string) === 'home' ? 'bottom' as const : 'top' as const,
+      description: (play.text as string) || (play.shortText as string) || '',
+      result: (play.shortText as string) || (play.text as string) || '',
+      isScoring: Boolean(play.scoringPlay),
+      runsScored: Number(play.scoreValue ?? 0),
+      scoreAfter: {
+        away: Number((play.awayScore as number) ?? 0),
+        home: Number((play.homeScore as number) ?? 0),
+      },
+    }));
+  }
+
+  return game;
+}
+
+/**
+ * Transform Highlightly team + roster into the Team shape
+ * expected by TeamDetailClient.tsx
+ */
+function transformCollegeTeamDetail(
+  team: HighlightlyTeamDetail,
+  roster: HighlightlyPlayer[],
+  standings?: HighlightlyStandingsTeam | null
+) {
+  return {
+    id: String(team.id),
+    name: team.name,
+    abbreviation: team.shortName || team.name.substring(0, 3).toUpperCase(),
+    mascot: team.name.split(' ').pop() || team.name,
+    conference: team.conference?.name || 'Independent',
+    division: 'D1',
+    logo: team.logo,
+    location: {
+      city: '',
+      state: '',
+    },
+    colors: team.primaryColor ? {
+      primary: team.primaryColor,
+      secondary: team.secondaryColor || team.primaryColor,
+    } : undefined,
+    stats: standings ? {
+      wins: standings.wins,
+      losses: standings.losses,
+      confWins: standings.conferenceWins,
+      confLosses: standings.conferenceLosses,
+      rpi: standings.rank || 0,
+      streak: standings.streak,
+      runsScored: standings.runsScored,
+      runsAllowed: standings.runsAllowed,
+      battingAvg: 0,
+      era: 0,
+    } : team.record ? {
+      wins: team.record.wins,
+      losses: team.record.losses,
+      confWins: 0,
+      confLosses: 0,
+      rpi: 0,
+      streak: undefined,
+      runsScored: 0,
+      runsAllowed: 0,
+      battingAvg: 0,
+      era: 0,
+    } : undefined,
+    roster: roster.map((p: HighlightlyPlayer) => ({
+      id: String(p.id),
+      name: p.name,
+      number: p.jerseyNumber || '',
+      position: p.position || '',
+      year: '',
+      stats: p.statistics?.batting ? {
+        avg: p.statistics.batting.battingAverage,
+        hr: p.statistics.batting.homeRuns,
+        rbi: p.statistics.batting.rbi,
+      } : p.statistics?.pitching ? {
+        era: p.statistics.pitching.era,
+        wins: p.statistics.pitching.wins,
+        so: p.statistics.pitching.strikeouts,
+      } : undefined,
+    })),
+    schedule: [],
+  };
+}
+
+/**
+ * Transform Highlightly player + stats into PlayerData shape
+ * expected by PlayerDetailClient.tsx
+ */
+function transformPlayerDetail(
+  player: HighlightlyPlayer,
+  stats: HighlightlyPlayerStats | null
+) {
+  return {
+    player: {
+      id: player.id,
+      name: player.name,
+      firstName: player.firstName,
+      lastName: player.lastName,
+      position: player.position,
+      jerseyNumber: player.jerseyNumber,
+      height: player.height,
+      weight: player.weight,
+      dateOfBirth: player.dateOfBirth,
+      team: player.team ? {
+        id: player.team.id,
+        name: player.team.name,
+        shortName: player.team.shortName,
+        conference: player.team.conference ? { name: player.team.conference.name } : undefined,
+      } : undefined,
+    },
+    statistics: stats ? {
+      batting: stats.batting ? {
+        games: stats.batting.games,
+        atBats: stats.batting.atBats,
+        runs: stats.batting.runs,
+        hits: stats.batting.hits,
+        doubles: stats.batting.doubles,
+        triples: stats.batting.triples,
+        homeRuns: stats.batting.homeRuns,
+        rbi: stats.batting.rbi,
+        walks: stats.batting.walks,
+        strikeouts: stats.batting.strikeouts,
+        stolenBases: stats.batting.stolenBases,
+        battingAverage: stats.batting.battingAverage,
+        onBasePercentage: stats.batting.onBasePercentage,
+        sluggingPercentage: stats.batting.sluggingPercentage,
+        ops: stats.batting.ops,
+      } : undefined,
+      pitching: stats.pitching ? {
+        games: stats.pitching.games,
+        gamesStarted: stats.pitching.gamesStarted,
+        wins: stats.pitching.wins,
+        losses: stats.pitching.losses,
+        saves: stats.pitching.saves,
+        inningsPitched: stats.pitching.inningsPitched,
+        hits: stats.pitching.hits,
+        earnedRuns: stats.pitching.earnedRuns,
+        walks: stats.pitching.walks,
+        strikeouts: stats.pitching.strikeouts,
+        era: stats.pitching.era,
+        whip: stats.pitching.whip,
+      } : undefined,
+    } : null,
+  };
+}
+
 async function handleCollegeBaseballScores(
   url: URL,
   env: Env
@@ -629,28 +1005,101 @@ async function handleCollegeBaseballTeam(
     return cachedJson(cached, 200, HTTP_CACHE.team, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
+  const teamIdNum = parseInt(teamId, 10);
+
+  // Try Highlightly first
+  const hlClient = getHighlightlyClient(env);
+  if (hlClient) {
+    try {
+      const [teamResult, playersResult] = await Promise.all([
+        hlClient.getTeam(teamIdNum),
+        hlClient.getTeamPlayers(teamIdNum),
+      ]);
+
+      if (teamResult.success && teamResult.data) {
+        const roster = playersResult.success && playersResult.data
+          ? (playersResult.data as HighlightlyPaginatedResponse<HighlightlyPlayer>).data || []
+          : [];
+        const team = transformCollegeTeamDetail(teamResult.data, roster);
+        const payload = {
+          team,
+          meta: { dataSource: 'Highlightly Pro', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' },
+        };
+        await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+        return cachedJson(payload, 200, HTTP_CACHE.team, {
+          ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
+        });
+      }
+    } catch {
+      // Fall through to NCAA
+    }
+  }
+
+  // NCAA/ESPN fallback
   try {
     const client = getCollegeClient();
     const [teamResult, playersResult] = await Promise.all([
-      client.getTeam(parseInt(teamId, 10)),
-      client.getTeamPlayers(parseInt(teamId, 10)),
+      client.getTeam(teamIdNum),
+      client.getTeamPlayers(teamIdNum),
     ]);
 
+    // ESPN team data is untyped — pass through with minimal transform
+    const rawTeam = (teamResult.data as Record<string, unknown>) || {};
+    const rawRoster = (playersResult.data as { data?: unknown[] })?.data || [];
+    const team = {
+      id: String(rawTeam.id ?? teamId),
+      name: (rawTeam.displayName as string) || (rawTeam.name as string) || 'Unknown',
+      abbreviation: (rawTeam.abbreviation as string) || '',
+      mascot: (rawTeam.nickname as string) || (rawTeam.name as string) || '',
+      conference: ((rawTeam.groups as Record<string, unknown>)?.name as string) || 'Independent',
+      division: 'D1',
+      logo: ((rawTeam.logos as Record<string, unknown>[])
+        ?.[0]?.href as string) || undefined,
+      location: (() => {
+        const loc = (rawTeam.location as Record<string, unknown>) || {};
+        return { city: (loc.city as string) || '', state: (loc.state as string) || '' };
+      })(),
+      stats: rawTeam.record ? (() => {
+        const rec = (rawTeam.record as Record<string, unknown>);
+        const items = (rec.items as Record<string, unknown>[]) || [];
+        const overall = items[0] || {};
+        const conf = items[1] || {};
+        return {
+          wins: Number((overall.summary as string)?.split('-')[0] ?? 0),
+          losses: Number((overall.summary as string)?.split('-')[1] ?? 0),
+          confWins: Number((conf.summary as string)?.split('-')[0] ?? 0),
+          confLosses: Number((conf.summary as string)?.split('-')[1] ?? 0),
+          rpi: 0, streak: undefined, runsScored: 0, runsAllowed: 0, battingAvg: 0, era: 0,
+        };
+      })() : undefined,
+      roster: rawRoster.map((p: unknown) => {
+        const pl = p as Record<string, unknown>;
+        return {
+          id: String(pl.id ?? ''),
+          name: (pl.displayName as string) || (pl.fullName as string) || '',
+          number: String(pl.jersey ?? ''),
+          position: ((pl.position as Record<string, unknown>)?.abbreviation as string) || '',
+          year: (pl.experience as Record<string, unknown>)?.displayValue as string || '',
+          stats: undefined,
+        };
+      }),
+      schedule: [],
+    };
+
     const payload = {
-      team: teamResult.data ?? null,
-      roster: playersResult.data?.data ?? [],
+      team,
+      meta: { dataSource: 'NCAA / ESPN', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' },
     };
 
     if (teamResult.success) {
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
     }
 
-    return cachedJson(payload, 200, HTTP_CACHE.team, {
-      ...dataHeaders(teamResult.timestamp),
-      'X-Cache': 'MISS',
+    return cachedJson(payload, teamResult.success ? 200 : 502, HTTP_CACHE.team, {
+      ...dataHeaders(teamResult.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json({ team: null, roster: [] }, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json({ team: null, meta: { dataSource: 'error', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
   }
 }
 
@@ -665,28 +1114,84 @@ async function handleCollegeBaseballPlayer(
     return cachedJson(cached, 200, HTTP_CACHE.player, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
+  const playerIdNum = parseInt(playerId, 10);
+
+  // Try Highlightly first
+  const hlClient = getHighlightlyClient(env);
+  if (hlClient) {
+    try {
+      const [playerResult, statsResult] = await Promise.all([
+        hlClient.getPlayer(playerIdNum),
+        hlClient.getPlayerStatistics(playerIdNum),
+      ]);
+
+      if (playerResult.success && playerResult.data) {
+        const transformed = transformPlayerDetail(
+          playerResult.data,
+          statsResult.success ? statsResult.data ?? null : null,
+        );
+        const payload = {
+          ...transformed,
+          meta: { dataSource: 'Highlightly Pro', lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' },
+        };
+        await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+        return cachedJson(payload, 200, HTTP_CACHE.player, {
+          ...dataHeaders(playerResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
+        });
+      }
+    } catch {
+      // Fall through to NCAA
+    }
+  }
+
+  // NCAA/ESPN fallback
   try {
     const client = getCollegeClient();
     const [playerResult, statsResult] = await Promise.all([
-      client.getPlayer(parseInt(playerId, 10)),
-      client.getPlayerStatistics(parseInt(playerId, 10)),
+      client.getPlayer(playerIdNum),
+      client.getPlayerStatistics(playerIdNum),
     ]);
 
+    // ESPN athlete data — minimal transform to match PlayerData shape
+    const raw = (playerResult.data as Record<string, unknown>) || {};
     const payload = {
-      player: playerResult.data ?? null,
-      statistics: statsResult.data ?? null,
+      player: {
+        id: Number(raw.id ?? playerId),
+        name: (raw.displayName as string) || (raw.fullName as string) || 'Unknown',
+        firstName: raw.firstName as string | undefined,
+        lastName: raw.lastName as string | undefined,
+        position: ((raw.position as Record<string, unknown>)?.abbreviation as string) || undefined,
+        jerseyNumber: (raw.jersey as string) || undefined,
+        height: (raw.displayHeight as string) || undefined,
+        weight: raw.displayWeight ? Number(String(raw.displayWeight).replace(/[^\d]/g, '')) : undefined,
+        dateOfBirth: raw.dateOfBirth as string | undefined,
+        team: (() => {
+          const t = (raw.team as Record<string, unknown>) || {};
+          if (!t.id) return undefined;
+          return {
+            id: Number(t.id),
+            name: (t.displayName as string) || '',
+            shortName: (t.abbreviation as string) || undefined,
+            conference: undefined,
+          };
+        })(),
+      },
+      statistics: statsResult.data ? (() => {
+        // ESPN overview has categories with stats
+        return statsResult.data;
+      })() : null,
+      meta: { dataSource: 'NCAA / ESPN', lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' },
     };
 
     if (playerResult.success) {
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
     }
 
-    return cachedJson(payload, 200, HTTP_CACHE.player, {
-      ...dataHeaders(playerResult.timestamp),
-      'X-Cache': 'MISS',
+    return cachedJson(payload, playerResult.success ? 200 : 502, HTTP_CACHE.player, {
+      ...dataHeaders(playerResult.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json({ player: null, statistics: null }, 502, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'ERROR' });
+    return json({ player: null, statistics: null, meta: { dataSource: 'error', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
   }
 }
 
@@ -701,25 +1206,59 @@ async function handleCollegeBaseballGame(
     return cachedJson(cached, 200, HTTP_CACHE.game, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
-  const client = getCollegeClient();
-  const [matchResult, boxResult] = await Promise.all([
-    client.getMatch(parseInt(gameId, 10)),
-    client.getBoxScore(parseInt(gameId, 10)),
-  ]);
+  const gameIdNum = parseInt(gameId, 10);
 
-  const payload = {
-    match: matchResult.data ?? null,
-    boxScore: boxResult.data ?? null,
-  };
+  // Try Highlightly first
+  const hlClient = getHighlightlyClient(env);
+  if (hlClient) {
+    try {
+      const [matchResult, boxResult] = await Promise.all([
+        hlClient.getMatch(gameIdNum),
+        hlClient.getBoxScore(gameIdNum),
+      ]);
 
-  if (matchResult.success) {
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+      if (matchResult.success && matchResult.data) {
+        const game = transformGameToCollegeGameData(
+          matchResult.data,
+          boxResult.success ? boxResult.data ?? null : null,
+        );
+        const payload = {
+          game,
+          meta: { dataSource: 'Highlightly Pro', lastUpdated: matchResult.timestamp, timezone: 'America/Chicago' },
+        };
+        await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+        return cachedJson(payload, 200, HTTP_CACHE.game, {
+          ...dataHeaders(matchResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
+        });
+      }
+    } catch {
+      // Highlightly failed — fall through to NCAA
+    }
   }
 
-  return cachedJson(payload, matchResult.success ? 200 : 502, HTTP_CACHE.game, {
-    ...dataHeaders(matchResult.timestamp),
-    'X-Cache': 'MISS',
-  });
+  // NCAA/ESPN fallback
+  try {
+    const client = getCollegeClient();
+    const matchResult = await client.getMatch(gameIdNum);
+
+    if (matchResult.success && matchResult.data) {
+      const game = transformEspnGameSummary(matchResult.data as Record<string, unknown>);
+      const payload = {
+        game,
+        meta: { dataSource: 'NCAA / ESPN', lastUpdated: matchResult.timestamp, timezone: 'America/Chicago' },
+      };
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
+      return cachedJson(payload, 200, HTTP_CACHE.game, {
+        ...dataHeaders(matchResult.timestamp, 'ncaa'), 'X-Cache': 'MISS',
+      });
+    }
+
+    return json({ game: null, meta: { dataSource: 'error', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' } }, 502, {
+      ...dataHeaders(matchResult.timestamp, 'error'), 'X-Cache': 'ERROR',
+    });
+  } catch {
+    return json({ game: null, meta: { dataSource: 'error', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
+  }
 }
 
 async function handleCollegeBaseballSchedule(
@@ -788,6 +1327,78 @@ async function handleCollegeBaseballTrending(env: Env): Promise<Response> {
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.trending);
 
   return cachedJson(payload, 200, HTTP_CACHE.trending, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' });
+}
+
+// --- College Baseball News ---
+
+const CB_NEWS_CATEGORY_KEYWORDS: Record<string, string[]> = {
+  recruiting: ['recruit', 'commit', 'signing', 'class of', 'verbal', 'prospect', 'offer', 'decommit', 'flip'],
+  transfer: ['transfer', 'portal', 'enters portal', 'leaves', 'commits to', 'departed'],
+  rankings: ['ranking', 'ranked', 'top 25', 'poll', 'coaches poll', 'rpi', 'moves up', 'drops'],
+  game: ['win', 'loss', 'beat', 'defeated', 'rally', 'walk-off', 'shutout', 'no-hit', 'sweep', 'series', 'recap'],
+  analysis: ['preview', 'prediction', 'breakdown', 'film', 'analytics', 'projection', 'power rank', 'midseason'],
+};
+
+function classifyNewsCategory(headline: string): string {
+  const lower = headline.toLowerCase();
+  for (const [category, keywords] of Object.entries(CB_NEWS_CATEGORY_KEYWORDS)) {
+    if (keywords.some((kw) => lower.includes(kw))) return category;
+  }
+  return 'general';
+}
+
+async function handleCollegeBaseballNews(env: Env): Promise<Response> {
+  const cacheKey = 'cb:news';
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.news, { 'X-Cache': 'HIT' });
+
+  try {
+    const espnUrl = 'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/news';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(espnUrl, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) throw new Error(`ESPN news returned ${res.status}`);
+
+    const raw = (await res.json()) as Record<string, unknown>;
+    const espnArticles = (raw.articles as Record<string, unknown>[]) || [];
+
+    const articles = espnArticles.map((a: Record<string, unknown>, idx: number) => {
+      const headline = (a.headline as string) || (a.title as string) || '';
+      const links = (a.links as Record<string, unknown>) || {};
+      const web = (links.web as Record<string, unknown>) || {};
+      const categories = (a.categories as Record<string, unknown>[]) || [];
+      const teamCat = categories.find((c) => (c.type as string) === 'team');
+      const confCat = categories.find((c) => (c.type as string) === 'league' || (c.type as string) === 'conference');
+
+      return {
+        id: String(a.id ?? `espn-cb-${idx}`),
+        title: headline,
+        summary: (a.description as string) || '',
+        source: 'ESPN',
+        url: (web.href as string) || (a.url as string) || '#',
+        publishedAt: (a.published as string) || new Date().toISOString(),
+        category: classifyNewsCategory(headline),
+        team: (teamCat?.description as string) || undefined,
+        conference: (confCat?.description as string) || undefined,
+      };
+    });
+
+    const payload = {
+      articles,
+      meta: { dataSource: 'ESPN College Baseball', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 900); // 15 min KV cache
+    return cachedJson(payload, 200, HTTP_CACHE.news, { 'X-Cache': 'MISS' });
+  } catch {
+    return json({ articles: [], meta: { dataSource: 'error', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' } }, 502);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1587,13 +2198,24 @@ async function handleCollegeBaseballTransferPortal(env: Env): Promise<Response> 
   const raw = await env.KV.get('portal:college-baseball:entries', 'text');
   if (raw) {
     try {
-      const data = JSON.parse(raw);
-      return cachedJson(data, 200, HTTP_CACHE.trending);
+      const data = JSON.parse(raw) as { entries?: unknown[]; lastUpdated?: string };
+      return cachedJson({
+        entries: data.entries || [],
+        totalEntries: (data.entries || []).length,
+        lastUpdated: data.lastUpdated || null,
+        meta: { dataSource: 'BSI Portal Tracker', lastUpdated: data.lastUpdated || new Date().toISOString(), timezone: 'America/Chicago' },
+      }, 200, HTTP_CACHE.trending);
     } catch {
       // Corrupt KV entry — fall through
     }
   }
-  return json({ entries: [], lastUpdated: null, message: 'No portal data available yet' }, 200);
+  return json({
+    entries: [],
+    totalEntries: 0,
+    lastUpdated: null,
+    message: 'No portal data available yet',
+    meta: { dataSource: 'BSI Portal Tracker', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' },
+  }, 200);
 }
 
 // ---------------------------------------------------------------------------
@@ -2710,6 +3332,9 @@ export default {
       if (pathname === '/api/college-baseball/trending') {
         return handleCollegeBaseballTrending(env);
       }
+      if (pathname === '/api/college-baseball/news') {
+        return handleCollegeBaseballNews(env);
+      }
 
       // CFB Transfer Portal
       if (pathname === '/api/cfb/transfer-portal') {
@@ -2751,7 +3376,8 @@ export default {
       const playerMatch = matchRoute(pathname, '/api/college-baseball/players/:playerId');
       if (playerMatch) return handleCollegeBaseballPlayer(playerMatch.params.playerId, env);
 
-      const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId');
+      const gameMatch = matchRoute(pathname, '/api/college-baseball/games/:gameId')
+        || matchRoute(pathname, '/api/college-baseball/game/:gameId');
       if (gameMatch) return handleCollegeBaseballGame(gameMatch.params.gameId, env);
 
       // ----- MLB data routes (ESPN) -----
