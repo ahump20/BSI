@@ -62,6 +62,7 @@ export function getMainNavItems(date?: Date): {
   leagues.sort((a, b) => phaseOrder[a.phase] - phaseOrder[b.phase]);
 
   const secondary: MainNavItem[] = [
+    { label: 'Writing', href: '/blog-post-feed' },
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Glossary', href: '/glossary' },
     { label: 'Data Sources', href: '/models/data-quality' },
@@ -86,6 +87,7 @@ export const mainNavItems: MainNavItem[] = [
   { label: 'NBA', href: '/nba' },
   { label: 'CFB', href: '/cfb' },
   { label: 'College Baseball', href: '/college-baseball' },
+  { label: 'Writing', href: '/blog-post-feed' },
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Glossary', href: '/glossary' },
   ...(isPresenceCoachEnabled() ? [{ label: 'Presence Coach', href: '/presence-coach' }] : []),

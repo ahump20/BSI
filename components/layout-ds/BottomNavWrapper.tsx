@@ -17,6 +17,7 @@ import {
   Volleyball,
   Award,
   Target,
+  BookOpen,
 } from 'lucide-react';
 import { BottomNav, type BottomNavItem } from '@/components/sports';
 
@@ -25,6 +26,7 @@ const MORE_ITEMS = [
   { label: 'College Baseball', href: '/college-baseball', icon: Volleyball },
   { label: 'College Football', href: '/cfb', icon: Award },
   { label: 'Scores', href: '/scores', icon: BarChart3 },
+  { label: 'Writing', href: '/blog-post-feed', icon: BookOpen },
   { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
   { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
   { label: 'Dashboard', href: '/dashboard', icon: Target },
