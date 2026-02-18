@@ -642,8 +642,8 @@
   },
   "lastPlanModeUse": 1770842467123,
   "autoUpdatesProtectedForNative": true,
-  "lastReleaseNotesSeen": "2.1.39",
-  "changelogLastFetched": 1770803897050,
+  "lastReleaseNotesSeen": "2.1.45",
+  "changelogLastFetched": 1771407920502,
   "firstStartTime": "2026-01-17T23:03:09.895Z",
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
@@ -892,5 +892,10 @@
   "chromeExtension": {
     "pairedDeviceId": "1527df80-f5b6-42ce-bb84-767639e4902a",
     "pairedDeviceName": "laptop"
-  }
+  },
+  "clientDataCache": {
+    "data": {},
+    "timestamp": 1771407932417
+  },
+  "cachedExtraUsageDisabledReason": "org_level_disabled_until"
 }
