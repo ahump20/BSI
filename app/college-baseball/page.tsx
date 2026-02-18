@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
+import { BlazeCraftOpsWidget } from '@/components/college-baseball/BlazeCraftOpsWidget';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
@@ -264,6 +265,11 @@ export default function CollegeBaseballPage() {
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/college-baseball/games"><Button variant="primary" size="lg">View Live Games</Button></Link>
                 <Link href="/college-baseball/standings"><Button variant="secondary" size="lg">Conference Standings</Button></Link>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={275}>
+              <div className="mt-8 flex justify-center">
+                <BlazeCraftOpsWidget mode="bar" />
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={300}>

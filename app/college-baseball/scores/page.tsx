@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { BlazeCraftOpsWidget } from '@/components/college-baseball/BlazeCraftOpsWidget';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
@@ -265,6 +266,11 @@ export default function CollegeBaseballScoresPage() {
                   <p className="text-text-secondary mt-2">
                     Live scores for all 300+ D1 programs — the coverage ESPN won&apos;t give you
                   </p>
+                </ScrollReveal>
+                <ScrollReveal direction="up" delay={175}>
+                  <div className="mt-3">
+                    <BlazeCraftOpsWidget mode="mini" />
+                  </div>
                 </ScrollReveal>
               </div>
             </div>

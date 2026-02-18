@@ -23,7 +23,7 @@ export const SECURITY_HEADERS: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
   'Content-Security-Policy': [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com",
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com https://blazecraft.app",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
