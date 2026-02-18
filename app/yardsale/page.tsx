@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Footer } from '@/components/layout-ds/Footer';
 
+const colors = {
   clay: '#C4703F',
   chalk: '#F5F0E8',
   chalkDim: '#E8E0D2',
@@ -116,6 +117,7 @@ export default function YardSalePage() {
           sport: 'softball',
           source: 'YardSale Waitlist',
           message: 'Submitted from /yardsale waitlist form',
+          consent: true,
         }),
       });
 
