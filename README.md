@@ -108,6 +108,13 @@ npm run dev
 | `./scripts/configure-provider-secrets.sh --target pages --env production` | Interactive setup for provider keys in Cloudflare Pages secrets |
 | `./scripts/configure-provider-secrets.sh --target worker --env production` | Interactive setup for provider keys in Worker secrets (`workers/wrangler.toml`) |
 
+Playwright CLI quick capture:
+
+```bash
+# Uses the Playwright binary shipped by @playwright/mcp.
+npx --yes --package @playwright/mcp playwright screenshot https://playwright.dev output/playwright/playwright-dev.png
+```
+
 ## Project Structure
 
 ```
