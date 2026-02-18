@@ -31,7 +31,7 @@ id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 
 [[kv_namespaces]]
 binding = "BSI_KEYS"
-id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS
+id = "b7ff9178798d4a238afff79522f651e8"
 
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
@@ -104,7 +104,7 @@ id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
 
 [[env.production.kv_namespaces]]
 binding = "BSI_KEYS"
-id = "REPLACE_WITH_KV_ID"  # run: wrangler kv:namespace create BSI_KEYS --env production
+id = "b7ff9178798d4a238afff79522f651e8"
 
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"

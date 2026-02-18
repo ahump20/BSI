@@ -445,9 +445,34 @@ app.get('/api/premium/live/:gameId', async (c) => {
 app.post('/webhooks/stripe', async (c) => {
   const body = await c.req.text();
   const sig = c.req.header('stripe-signature');
+  const webhookSecret = (c.env as Env & { STRIPE_WEBHOOK_SECRET?: string }).STRIPE_WEBHOOK_SECRET;
 
-  // In production, verify signature with STRIPE_WEBHOOK_SECRET
-  // For now, parse and process (add signature verification once secret is set)
+  // HMAC-SHA256 signature verification using Web Crypto (Workers runtime)
+  if (webhookSecret && sig) {
+    const pairs = sig.split(',');
+    const tEntry = pairs.find((p) => p.startsWith('t='));
+    const v1Entry = pairs.find((p) => p.startsWith('v1='));
+    if (!tEntry || !v1Entry) return c.json({ error: 'Invalid signature header' }, 400);
+
+    const timestamp = tEntry.slice(2);
+    const expected = v1Entry.slice(3);
+    const payload = `${timestamp}.${body}`;
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(webhookSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sigBytes = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+    const computed = Array.from(new Uint8Array(sigBytes))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    if (computed !== expected) return c.json({ error: 'Invalid signature' }, 401);
+  }
+
   let event: { type: string; data: { object: Record<string, unknown> } };
   try {
     event = JSON.parse(body);

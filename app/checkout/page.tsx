@@ -96,14 +96,65 @@ function ErrorState({ message }: { message: string }) {
 }
 
 // ============================================================================
+// Success State (post-payment return from Stripe)
+// ============================================================================
+
+function SuccessState() {
+  return (
+    <>
+      <main id="main-content">
+        <Section padding="lg" className="pt-24 min-h-screen flex items-center justify-center">
+          <Container center>
+            <ScrollReveal direction="up">
+              <Card padding="lg" className="max-w-lg mx-auto text-center">
+                <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg
+                    className="w-8 h-8 text-success"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <h1 className="font-display text-2xl font-bold uppercase tracking-display mb-4">
+                  You're In
+                </h1>
+                <p className="text-text-secondary mb-8">
+                  Subscription confirmed. Check your email for your API key and getting-started
+                  guide.
+                </p>
+                <Link href="/dashboard">
+                  <Button variant="primary" size="lg" className="w-full">
+                    Go to Dashboard
+                  </Button>
+                </Link>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+// ============================================================================
 // Checkout Content
 // ============================================================================
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
   const clientSecret = searchParams.get('client_secret');
   const [error, setError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
+
+  // Post-payment return from Stripe — session_id replaces client_secret in the URL
+  if (sessionId && !clientSecret) {
+    return <SuccessState />;
+  }
 
   // Validate client secret format
   useEffect(() => {
