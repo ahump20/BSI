@@ -729,6 +729,15 @@ export async function handleCollegeBaseballTeam(
   teamId: string,
   env: Env
 ): Promise<Response> {
+  // Resolve slug → ESPN numeric ID via team metadata
+  const slugMeta = teamMetadata[teamId];
+  const espnId = slugMeta?.espnId ?? teamId;
+  const numericId = parseInt(espnId, 10);
+
+  if (isNaN(numericId)) {
+    return json({ team: null, error: 'Unknown team' }, 404);
+  }
+
   const cacheKey = `cb:team:${teamId}`;
   const now = new Date().toISOString();
 
@@ -742,8 +751,8 @@ export async function handleCollegeBaseballTeam(
   if (hlClient) {
     try {
       const [teamResult, playersResult] = await Promise.all([
-        hlClient.getTeam(parseInt(teamId, 10)),
-        hlClient.getTeamPlayers(parseInt(teamId, 10)),
+        hlClient.getTeam(numericId),
+        hlClient.getTeamPlayers(numericId),
       ]);
 
       if (teamResult.success && teamResult.data) {
@@ -766,8 +775,8 @@ export async function handleCollegeBaseballTeam(
   try {
     const client = getCollegeClient();
     const [teamResult, playersResult] = await Promise.all([
-      client.getTeam(parseInt(teamId, 10)),
-      client.getTeamPlayers(parseInt(teamId, 10)),
+      client.getTeam(numericId),
+      client.getTeamPlayers(numericId),
     ]);
 
     if (teamResult.success && teamResult.data) {
@@ -786,6 +795,96 @@ export async function handleCollegeBaseballTeam(
   } catch {
     return json({ team: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
+}
+
+// ---------------------------------------------------------------------------
+// Team Schedule Transform — ESPN events → clean schedule shape
+// ---------------------------------------------------------------------------
+
+function transformTeamSchedule(events: Record<string, unknown>[], teamShortName: string) {
+  return events.map((e) => {
+    const competitions = (e.competitions as Record<string, unknown>[]) ?? [];
+    const comp = competitions[0] ?? {};
+    const competitors = (comp.competitors as Record<string, unknown>[]) ?? [];
+    const date = (e.date as string) ?? '';
+    const statusObj = (comp.status ?? e.status) as Record<string, unknown> | undefined;
+    const statusType = (statusObj?.type as Record<string, unknown>) ?? {};
+    const state = (statusType.state as string) ?? 'pre';
+
+    const home = competitors.find((c) => c.homeAway === 'home') as Record<string, unknown> | undefined;
+    const away = competitors.find((c) => c.homeAway === 'away') as Record<string, unknown> | undefined;
+    const homeTeam = (home?.team as Record<string, unknown>) ?? {};
+    const awayTeam = (away?.team as Record<string, unknown>) ?? {};
+    const rawHomeScore = home?.score as Record<string, unknown> | number | string | undefined;
+    const rawAwayScore = away?.score as Record<string, unknown> | number | string | undefined;
+    const homeScore = typeof rawHomeScore === 'object' && rawHomeScore !== null
+      ? Number((rawHomeScore as Record<string, unknown>).value ?? (rawHomeScore as Record<string, unknown>).displayValue ?? 0)
+      : Number(rawHomeScore ?? 0);
+    const awayScore = typeof rawAwayScore === 'object' && rawAwayScore !== null
+      ? Number((rawAwayScore as Record<string, unknown>).value ?? (rawAwayScore as Record<string, unknown>).displayValue ?? 0)
+      : Number(rawAwayScore ?? 0);
+    const isFinal = state === 'post';
+    const shortLower = teamShortName.toLowerCase();
+    const isHome = (homeTeam.abbreviation as string)?.toLowerCase() === shortLower
+      || (homeTeam.displayName as string)?.toLowerCase().includes(shortLower);
+
+    const opponent = isHome ? awayTeam : homeTeam;
+    const teamScore = isHome ? homeScore : awayScore;
+    const oppScore = isHome ? awayScore : homeScore;
+
+    return {
+      id: String(e.id ?? ''),
+      date,
+      opponent: {
+        name: ((opponent.displayName ?? opponent.name ?? '') as string),
+        abbreviation: ((opponent.abbreviation ?? '') as string),
+      },
+      isHome,
+      status: state,
+      detail: ((statusType.shortDetail ?? statusType.detail ?? '') as string),
+      score: isFinal || state === 'in' ? { team: teamScore, opponent: oppScore } : null,
+      result: isFinal ? (teamScore > oppScore ? 'W' : teamScore < oppScore ? 'L' : 'T') : null,
+    };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Team Schedule handler
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballTeamSchedule(
+  teamId: string,
+  env: Env
+): Promise<Response> {
+  const scheduleMeta = teamMetadata[teamId];
+  const espnId = scheduleMeta?.espnId ?? teamId;
+  const numericId = parseInt(espnId, 10);
+  if (isNaN(numericId)) return json({ schedule: null, error: 'Unknown team' }, 404);
+
+  const cacheKey = `cb:team-schedule:${teamId}`;
+  const now = new Date().toISOString();
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+  }
+
+  try {
+    const client = getCollegeClient();
+    const result = await client.getTeamSchedule(numericId);
+    if (result.success && result.data) {
+      const raw = result.data as Record<string, unknown>;
+      const events = (raw.events ?? []) as Record<string, unknown>[];
+      const schedule = transformTeamSchedule(events, scheduleMeta?.shortName ?? '');
+      const payload = { schedule, meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago' } };
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.schedule);
+      return cachedJson(payload, 200, HTTP_CACHE.schedule, { ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS' });
+    }
+  } catch (err) {
+    console.error('[espn] team schedule:', err instanceof Error ? err.message : err);
+  }
+
+  return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
 }
 
 export async function handleCollegeBaseballPlayer(

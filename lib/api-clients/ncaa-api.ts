@@ -41,6 +41,7 @@ export interface NcaaApiClient {
   getMatch(matchId: number): Promise<NcaaApiResponse<unknown>>;
   getBoxScore(matchId: number): Promise<NcaaApiResponse<unknown>>;
   getSchedule(date: string, range: string): Promise<NcaaApiResponse<NcaaPaginated<unknown>>>;
+  getTeamSchedule(teamId: number): Promise<NcaaApiResponse<unknown>>;
 }
 
 const ESPN_BASE = 'https://site.api.espn.com';
@@ -317,6 +318,17 @@ class EspnNcaaClient implements NcaaApiClient {
       timestamp: this.now(),
       source: 'ncaa',
     };
+  }
+
+  async getTeamSchedule(teamId: number): Promise<NcaaApiResponse<unknown>> {
+    const url = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/teams/${teamId}/schedule`;
+    const result = await espnFetch<Record<string, unknown>>(url);
+
+    if (!result.ok || !result.data) {
+      return { success: false, error: result.error, data: null, timestamp: this.now(), source: 'ncaa' };
+    }
+
+    return { success: true, data: result.data, timestamp: this.now(), source: 'ncaa' };
   }
 }
 
