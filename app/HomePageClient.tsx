@@ -6,8 +6,9 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { HomeLiveScores } from '@/components/home/HomeLiveScores';
 import { EvidenceStrip } from '@/components/home/EvidenceStrip';
 import { EditorialPreview } from '@/components/home/EditorialPreview';
-import { Badge } from '@/components/ui/Badge';
+import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
+import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
 
 // ────────────────────────────────────────
 // SVG Sport Icons (crisp at any size)
@@ -48,18 +49,26 @@ const StadiumIcon = () => (
 // Sports Hub data
 // ────────────────────────────────────────
 
-interface SportCard {
+/** Map sport card names to the keys used by useMultiSportCounts */
+const SPORT_COUNT_KEYS: Record<string, string> = {
+  'College Baseball': 'college-baseball',
+  'MLB': 'mlb',
+  'NFL': 'nfl',
+  'NBA': 'nba',
+  'CFB': 'cfb',
+};
+
+interface SportCardData {
   name: string;
   icon: React.FC;
   href: string;
   description: string;
   accent: string;
   bgAccent: string;
-  flagship?: boolean;
-  comingSoon?: boolean;
+  color: string;
 }
 
-const sports: SportCard[] = [
+const sports: SportCardData[] = [
   {
     name: 'College Baseball',
     icon: BaseballIcon,
@@ -67,7 +76,7 @@ const sports: SportCard[] = [
     description: 'D1 standings, rankings & complete box scores',
     accent: 'group-hover:text-[#BF5700] group-hover:border-[#BF5700]/50',
     bgAccent: 'group-hover:bg-[#BF5700]/10',
-    flagship: true,
+    color: '#BF5700',
   },
   {
     name: 'MLB',
@@ -76,6 +85,7 @@ const sports: SportCard[] = [
     description: 'Live scores, standings & Statcast analytics',
     accent: 'group-hover:text-red-500 group-hover:border-red-500/50',
     bgAccent: 'group-hover:bg-red-500/10',
+    color: '#C41E3A',
   },
   {
     name: 'NFL',
@@ -84,6 +94,7 @@ const sports: SportCard[] = [
     description: 'Real-time scores, standings & team intel',
     accent: 'group-hover:text-blue-400 group-hover:border-blue-400/50',
     bgAccent: 'group-hover:bg-blue-400/10',
+    color: '#013369',
   },
   {
     name: 'NBA',
@@ -92,6 +103,7 @@ const sports: SportCard[] = [
     description: 'Live games, standings & performance data',
     accent: 'group-hover:text-orange-400 group-hover:border-orange-400/50',
     bgAccent: 'group-hover:bg-orange-400/10',
+    color: '#FF6B35',
   },
   {
     name: 'CFB',
@@ -100,24 +112,66 @@ const sports: SportCard[] = [
     description: 'College football analytics & recruiting',
     accent: 'group-hover:text-amber-500 group-hover:border-amber-500/50',
     bgAccent: 'group-hover:bg-amber-500/10',
-    comingSoon: true,
+    color: '#D97706',
   },
 ];
+
+// ────────────────────────────────────────
+// Live game badge for sport cards
+// ────────────────────────────────────────
+
+function LiveGameBadge({ live, today, color }: { live: number; today: number; color: string }) {
+  if (live > 0) {
+    return (
+      <span
+        className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold"
+        style={{ backgroundColor: `${color}25`, color }}
+      >
+        <span className="relative flex h-1.5 w-1.5">
+          <span
+            className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+            style={{ backgroundColor: color }}
+          />
+          <span
+            className="relative inline-flex rounded-full h-1.5 w-1.5"
+            style={{ backgroundColor: color }}
+          />
+        </span>
+        {live} Live
+      </span>
+    );
+  }
+
+  if (today > 0) {
+    return (
+      <span
+        className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-semibold"
+        style={{ backgroundColor: `${color}15`, color }}
+      >
+        {today} Today
+      </span>
+    );
+  }
+
+  return null;
+}
 
 // ────────────────────────────────────────
 // Page Component
 // ────────────────────────────────────────
 
 export function HomePageClient() {
+  const sportCounts = useMultiSportCounts();
+
   return (
     <main id="main-content" className="min-h-screen bg-[#0D0D0D]">
       {/* ─── 1. Hero ─── */}
       <HeroSection />
 
-      {/* ─── 2. Live Scores Strip ─── */}
+      {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <HomeLiveScores />
 
-      {/* ─── 3. Sports Hub — Glass Cards ─── */}
+      {/* ─── 3. Sports Hub — Glass Cards with live badges ─── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0D0D0D] to-[#1A1A1A] relative">
         {/* Subtle grid pattern */}
         <div
@@ -146,52 +200,66 @@ export function HomePageClient() {
           </ScrollReveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            {sports.map((sport, index) => (
-              <ScrollReveal key={sport.name} direction="up" delay={index * 80}>
-                <Link href={sport.href} className="group block h-full">
-                  <div
-                    className={`relative p-6 rounded-2xl border bg-white/[0.03] backdrop-blur-sm ${
-                      sport.flagship
-                        ? 'border-[#BF5700]/30 ring-1 ring-[#BF5700]/10'
-                        : 'border-white/10'
-                    } ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-white/[0.06] h-full flex flex-col items-center text-center`}
-                  >
-                    {sport.flagship && (
-                      <Badge variant="accent" size="sm" className="absolute top-3 right-3">
-                        Flagship
-                      </Badge>
-                    )}
-                    {sport.comingSoon && (
-                      <Badge variant="warning" size="sm" className="absolute top-3 right-3">
-                        Soon
-                      </Badge>
-                    )}
+            {sports.map((sport, index) => {
+              const countKey = SPORT_COUNT_KEYS[sport.name];
+              const counts = countKey ? sportCounts.get(countKey) : undefined;
 
+              return (
+                <ScrollReveal key={sport.name} direction="up" delay={index * 80}>
+                  <Link href={sport.href} className="group block h-full">
                     <div
-                      className={`w-16 h-16 rounded-xl bg-white/5 ${sport.bgAccent} flex items-center justify-center mb-4 transition-all duration-300 text-white/60 ${sport.accent}`}
+                      className={`relative p-6 rounded-2xl border bg-white/[0.03] backdrop-blur-sm border-white/10 ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-white/[0.06] h-full flex flex-col items-center text-center`}
                     >
-                      <sport.icon />
-                    </div>
+                      {/* Live game badge — replaces static Flagship/Soon badges */}
+                      <LiveGameBadge
+                        live={counts?.live ?? 0}
+                        today={counts?.today ?? 0}
+                        color={sport.color}
+                      />
 
-                    <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-[#BF5700] transition-colors">
-                      {sport.name}
-                    </h3>
-                    <p className="text-sm text-white/50 leading-relaxed">{sport.description}</p>
-                  </div>
-                </Link>
-              </ScrollReveal>
-            ))}
+                      <div
+                        className={`w-16 h-16 rounded-xl bg-white/5 ${sport.bgAccent} flex items-center justify-center mb-4 transition-all duration-300 text-white/60 ${sport.accent}`}
+                      >
+                        <sport.icon />
+                      </div>
+
+                      <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-[#BF5700] transition-colors">
+                        {sport.name}
+                      </h3>
+                      <p className="text-sm text-white/50 leading-relaxed">{sport.description}</p>
+                    </div>
+                  </Link>
+                </ScrollReveal>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ─── 4. Evidence Strip ─── */}
-      <EvidenceStrip />
-
-      {/* ─── 5. Editorial Preview ─── */}
+      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
       <EditorialPreview />
 
-      {/* ─── 6. Founder Quote ─── */}
+      {/* ─── 5. Evidence Strip ─── */}
+      <EvidenceStrip />
+
+      {/* ─── 6. Trending Intel Feed ─── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0D0D0D] to-[#1A1A1A]">
+        <div className="max-w-5xl mx-auto">
+          <ScrollReveal direction="up">
+            <div className="mb-8">
+              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
+                Cross-Sport Intel
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-white uppercase tracking-wide">
+                What&apos;s Happening Now
+              </h2>
+            </div>
+            <TrendingIntelFeed />
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ─── 7. Founder Quote ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0D0D0D] relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#BF5700]/5 rounded-full blur-3xl pointer-events-none" />
@@ -227,7 +295,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. CTA ─── */}
+      {/* ─── 8. CTA ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A]">
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal direction="up">
@@ -264,7 +332,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 8. Footer ─── */}
+      {/* ─── 9. Footer ─── */}
       <Footer />
     </main>
   );
