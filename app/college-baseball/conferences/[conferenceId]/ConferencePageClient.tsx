@@ -662,55 +662,6 @@ const conferenceData: Record<
       },
     ],
   },
-  'pac-12': {
-    id: 'pac-12',
-    name: 'Pac-12',
-    fullName: 'Pacific-12 Conference',
-    description:
-      'The Pac-12 is rebuilding after losing its biggest programs to the Big Ten and Big 12. Oregon State and Washington State remain as anchors, joined by four new members. The conference will need time to establish its new identity in college baseball.',
-    region: 'West',
-    storylines: [
-      'Oregon State returns as the flagship program after Stanford, USC, UCLA departures',
-      'Washington State brings competitive culture to reduced conference',
-      'New members (San Diego State, Fresno State, etc.) provide regional competition',
-      'Conference identity in flux as realignment settles',
-      'Regional recruiting becomes crucial for remaining programs',
-    ],
-    teams: [
-      {
-        name: 'Oregon State',
-        mascot: 'Beavers',
-        slug: 'oregon-state',
-        rank: null,
-        previousRank: null,
-        previewNote: 'Mitch Canham leads conference flagship',
-      },
-      {
-        name: 'Washington State',
-        mascot: 'Cougars',
-        slug: 'washington-state',
-        rank: null,
-        previousRank: null,
-        previewNote: 'Brian Green maintains competitiveness',
-      },
-      {
-        name: 'San Diego State',
-        mascot: 'Aztecs',
-        slug: 'san-diego-state',
-        rank: null,
-        previousRank: null,
-        previewNote: 'New to Pac-12, brings Mountain West success',
-      },
-      {
-        name: 'Fresno State',
-        mascot: 'Bulldogs',
-        slug: 'fresno-state',
-        rank: null,
-        previousRank: null,
-        previewNote: 'Ryan Overland joins new conference',
-      },
-    ],
-  },
   'big-east': {
     id: 'big-east',
     name: 'Big East',
@@ -729,6 +680,7 @@ const conferenceData: Record<
       {
         name: 'UConn',
         mascot: 'Huskies',
+        slug: 'uconn',
         rank: 16,
         previousRank: null,
         keyPlayer: 'Jarrett Palensky, OF',
@@ -737,6 +689,7 @@ const conferenceData: Record<
       {
         name: 'Creighton',
         mascot: 'Bluejays',
+        slug: 'creighton',
         rank: null,
         previousRank: null,
         previewNote: 'Ed Servais has program trending up',
@@ -744,6 +697,7 @@ const conferenceData: Record<
       {
         name: 'Xavier',
         mascot: 'Musketeers',
+        slug: 'xavier',
         rank: null,
         previousRank: null,
         previewNote: 'Strong pitching development program',
@@ -751,6 +705,7 @@ const conferenceData: Record<
       {
         name: "St. John's",
         mascot: 'Red Storm',
+        slug: 'st-johns',
         rank: null,
         previousRank: null,
         previewNote: 'NYC metro recruiting advantage',
@@ -758,6 +713,7 @@ const conferenceData: Record<
       {
         name: 'Villanova',
         mascot: 'Wildcats',
+        slug: 'villanova',
         rank: null,
         previousRank: null,
         previewNote: 'Building toward Big East competitiveness',
@@ -765,6 +721,7 @@ const conferenceData: Record<
       {
         name: 'Seton Hall',
         mascot: 'Pirates',
+        slug: 'seton-hall',
         rank: null,
         previousRank: null,
         previewNote: 'Northeast recruiting presence',
@@ -772,6 +729,7 @@ const conferenceData: Record<
       {
         name: 'Georgetown',
         mascot: 'Hoyas',
+        slug: 'georgetown',
         rank: null,
         previousRank: null,
         previewNote: 'Working to improve in Big East',
@@ -779,6 +737,7 @@ const conferenceData: Record<
       {
         name: 'Butler',
         mascot: 'Bulldogs',
+        slug: 'butler',
         rank: null,
         previousRank: null,
         previewNote: 'Developing program under Dave Schrage',
@@ -803,6 +762,7 @@ const conferenceData: Record<
       {
         name: 'East Carolina',
         mascot: 'Pirates',
+        slug: 'east-carolina',
         rank: 13,
         previousRank: null,
         keyPlayer: 'Jacob Starling, C',
@@ -811,6 +771,7 @@ const conferenceData: Record<
       {
         name: 'Tulane',
         mascot: 'Green Wave',
+        slug: 'tulane',
         rank: 15,
         previousRank: null,
         keyPlayer: 'Bennett Lee, OF',
@@ -819,6 +780,7 @@ const conferenceData: Record<
       {
         name: 'Memphis',
         mascot: 'Tigers',
+        slug: 'memphis',
         rank: null,
         previousRank: null,
         previewNote: 'Daron Schoenrock developing talent in the Bluff City',
@@ -826,6 +788,7 @@ const conferenceData: Record<
       {
         name: 'Wichita State',
         mascot: 'Shockers',
+        slug: 'wichita-state',
         rank: null,
         previousRank: null,
         previewNote: 'Eric Wedge brings MLB experience to Wichita',
@@ -833,6 +796,7 @@ const conferenceData: Record<
       {
         name: 'South Florida',
         mascot: 'Bulls',
+        slug: 'south-florida',
         rank: null,
         previousRank: null,
         previewNote: 'Billy Mohl builds in Tampa Bay area',
@@ -840,6 +804,7 @@ const conferenceData: Record<
       {
         name: 'Charlotte',
         mascot: '49ers',
+        slug: 'charlotte',
         rank: null,
         previousRank: null,
         previewNote: 'Robert Woodard develops program',
@@ -854,6 +819,7 @@ const conferenceData: Record<
       {
         name: 'Rice',
         mascot: 'Owls',
+        slug: 'rice',
         rank: null,
         previousRank: null,
         previewNote: 'Jose Cruz Jr. rebuilding storied program',
@@ -861,6 +827,7 @@ const conferenceData: Record<
       {
         name: 'UTSA',
         mascot: 'Roadrunners',
+        slug: 'utsa',
         rank: null,
         previousRank: null,
         previewNote: 'Building in San Antonio market',
@@ -892,6 +859,7 @@ const conferenceData: Record<
       {
         name: 'Louisiana',
         mascot: "Ragin' Cajuns",
+        slug: 'louisiana',
         rank: null,
         previousRank: null,
         keyPlayer: 'Ben Bedrencuk, RHP',
@@ -900,6 +868,7 @@ const conferenceData: Record<
       {
         name: 'Coastal Carolina',
         mascot: 'Chanticleers',
+        slug: 'coastal-carolina',
         rank: null,
         previousRank: null,
         previewNote: '2016 champs remain competitive',
@@ -907,6 +876,7 @@ const conferenceData: Record<
       {
         name: 'South Alabama',
         mascot: 'Jaguars',
+        slug: 'south-alabama',
         rank: null,
         previousRank: null,
         previewNote: 'Mark Calvi develops Gulf Coast talent',
@@ -914,6 +884,7 @@ const conferenceData: Record<
       {
         name: 'Southern Miss',
         mascot: 'Golden Eagles',
+        slug: 'southern-miss',
         rank: null,
         previousRank: null,
         previewNote: 'Scott Berry builds strong program',
@@ -921,6 +892,7 @@ const conferenceData: Record<
       {
         name: 'App State',
         mascot: 'Mountaineers',
+        slug: 'app-state',
         rank: null,
         previousRank: null,
         previewNote: 'Kermit Smith brings winning culture',
@@ -928,6 +900,7 @@ const conferenceData: Record<
       {
         name: 'Georgia Southern',
         mascot: 'Eagles',
+        slug: 'georgia-southern',
         rank: null,
         previousRank: null,
         previewNote: 'Building in Southeast Georgia',
@@ -935,6 +908,7 @@ const conferenceData: Record<
       {
         name: 'Texas State',
         mascot: 'Bobcats',
+        slug: 'texas-state',
         rank: null,
         previousRank: null,
         previewNote: 'Steven Trout develops Texas talent',
@@ -942,6 +916,7 @@ const conferenceData: Record<
       {
         name: 'Arkansas State',
         mascot: 'Red Wolves',
+        slug: 'arkansas-state',
         rank: null,
         previousRank: null,
         previewNote: 'Working toward Sun Belt contention',
@@ -949,6 +924,7 @@ const conferenceData: Record<
       {
         name: 'Troy',
         mascot: 'Trojans',
+        slug: 'troy',
         rank: null,
         previousRank: null,
         previewNote: 'Mark Smartt builds Alabama program',
@@ -956,6 +932,7 @@ const conferenceData: Record<
       {
         name: 'Georgia State',
         mascot: 'Panthers',
+        slug: 'georgia-state',
         rank: null,
         previousRank: null,
         previewNote: 'Atlanta metro recruiting advantage',
@@ -980,6 +957,7 @@ const conferenceData: Record<
       {
         name: 'Nevada',
         mascot: 'Wolf Pack',
+        slug: 'nevada',
         rank: null,
         previousRank: null,
         previewNote: 'T.J. Bruce builds in Reno',
@@ -987,6 +965,7 @@ const conferenceData: Record<
       {
         name: 'San Jose State',
         mascot: 'Spartans',
+        slug: 'san-jose-state',
         rank: null,
         previousRank: null,
         previewNote: 'Bay Area recruiting advantage',
@@ -994,6 +973,7 @@ const conferenceData: Record<
       {
         name: 'UNLV',
         mascot: 'Rebels',
+        slug: 'unlv',
         rank: null,
         previousRank: null,
         previewNote: 'Vegas market builds program',
@@ -1001,6 +981,7 @@ const conferenceData: Record<
       {
         name: 'Air Force',
         mascot: 'Falcons',
+        slug: 'air-force',
         rank: null,
         previousRank: null,
         previewNote: 'Military academy baseball tradition',
@@ -1008,6 +989,7 @@ const conferenceData: Record<
       {
         name: 'New Mexico',
         mascot: 'Lobos',
+        slug: 'new-mexico',
         rank: null,
         previousRank: null,
         previewNote: 'Building in Albuquerque',
@@ -1039,6 +1021,7 @@ const conferenceData: Record<
       {
         name: 'Middle Tennessee',
         mascot: 'Blue Raiders',
+        slug: 'middle-tennessee',
         rank: null,
         previousRank: null,
         previewNote: 'Jim McGuire builds consistent contender',
@@ -1046,6 +1029,7 @@ const conferenceData: Record<
       {
         name: 'Louisiana Tech',
         mascot: 'Bulldogs',
+        slug: 'louisiana-tech',
         rank: null,
         previousRank: null,
         previewNote: 'Lane Burroughs develops Louisiana talent',
@@ -1053,6 +1037,7 @@ const conferenceData: Record<
       {
         name: 'FIU',
         mascot: 'Panthers',
+        slug: 'fiu',
         rank: null,
         previousRank: null,
         previewNote: 'South Florida recruiting pipeline',
@@ -1060,6 +1045,7 @@ const conferenceData: Record<
       {
         name: 'Liberty',
         mascot: 'Flames',
+        slug: 'liberty',
         rank: null,
         previousRank: null,
         previewNote: 'Scott Jackson builds competitive program',
@@ -1067,6 +1053,7 @@ const conferenceData: Record<
       {
         name: 'Jacksonville State',
         mascot: 'Gamecocks',
+        slug: 'jax-state',
         rank: null,
         previousRank: null,
         previewNote: 'Alabama recruiting presence',
@@ -1074,6 +1061,7 @@ const conferenceData: Record<
       {
         name: 'New Mexico State',
         mascot: 'Aggies',
+        slug: 'new-mexico-state',
         rank: null,
         previousRank: null,
         previewNote: 'Mike Kirby builds in Las Cruces',
@@ -1081,6 +1069,7 @@ const conferenceData: Record<
       {
         name: 'Sam Houston',
         mascot: 'Bearkats',
+        slug: 'sam-houston',
         rank: null,
         previousRank: null,
         previewNote: 'Jay Sirianni develops Texas talent',
@@ -1112,6 +1101,7 @@ const conferenceData: Record<
       {
         name: 'VCU',
         mascot: 'Rams',
+        slug: 'vcu',
         rank: null,
         previousRank: null,
         keyPlayer: 'Tyler Locklear, 3B',
@@ -1120,6 +1110,7 @@ const conferenceData: Record<
       {
         name: 'Davidson',
         mascot: 'Wildcats',
+        slug: 'davidson',
         rank: null,
         previousRank: null,
         previewNote: 'Rucker Taylor develops talent in North Carolina',
@@ -1127,6 +1118,7 @@ const conferenceData: Record<
       {
         name: 'George Mason',
         mascot: 'Patriots',
+        slug: 'george-mason',
         rank: null,
         previousRank: null,
         previewNote: 'Bill Brown builds in Northern Virginia',
@@ -1134,6 +1126,7 @@ const conferenceData: Record<
       {
         name: 'Saint Louis',
         mascot: 'Billikens',
+        slug: 'saint-louis',
         rank: null,
         previousRank: null,
         previewNote: 'Darin Hendrickson develops Midwest talent',
@@ -1141,6 +1134,7 @@ const conferenceData: Record<
       {
         name: 'Dayton',
         mascot: 'Flyers',
+        slug: 'dayton',
         rank: null,
         previousRank: null,
         previewNote: 'Building program in Ohio',
@@ -1148,6 +1142,7 @@ const conferenceData: Record<
       {
         name: 'Rhode Island',
         mascot: 'Rams',
+        slug: 'rhode-island',
         rank: null,
         previousRank: null,
         previewNote: 'Northeast recruiting presence',
@@ -1155,6 +1150,7 @@ const conferenceData: Record<
       {
         name: 'George Washington',
         mascot: 'Revolutionaries',
+        slug: 'george-washington',
         rank: null,
         previousRank: null,
         previewNote: 'D.C. area recruiting advantage',
@@ -1162,6 +1158,7 @@ const conferenceData: Record<
       {
         name: 'La Salle',
         mascot: 'Explorers',
+        slug: 'la-salle',
         rank: null,
         previousRank: null,
         previewNote: 'Philadelphia metro recruiting',
@@ -1186,6 +1183,7 @@ const conferenceData: Record<
       {
         name: 'UNC Wilmington',
         mascot: 'Seahawks',
+        slug: 'unc-wilmington',
         rank: null,
         previousRank: null,
         previewNote: 'Randy Hood builds consistent contender',
@@ -1193,6 +1191,7 @@ const conferenceData: Record<
       {
         name: 'Northeastern',
         mascot: 'Huskies',
+        slug: 'northeastern',
         rank: null,
         previousRank: null,
         previewNote: 'Mike Glavine develops New England talent',
@@ -1200,6 +1199,7 @@ const conferenceData: Record<
       {
         name: 'Charleston',
         mascot: 'Cougars',
+        slug: 'charleston',
         rank: null,
         previousRank: null,
         previewNote: 'Building in South Carolina',
@@ -1207,6 +1207,7 @@ const conferenceData: Record<
       {
         name: 'Elon',
         mascot: 'Phoenix',
+        slug: 'elon',
         rank: null,
         previousRank: null,
         previewNote: 'Mike Kennedy builds program',
@@ -1214,6 +1215,7 @@ const conferenceData: Record<
       {
         name: 'Hofstra',
         mascot: 'Pride',
+        slug: 'hofstra',
         rank: null,
         previousRank: null,
         previewNote: 'Long Island recruiting presence',
@@ -1221,6 +1223,7 @@ const conferenceData: Record<
       {
         name: 'William & Mary',
         mascot: 'Tribe',
+        slug: 'william-mary',
         rank: null,
         previousRank: null,
         previewNote: 'Academic excellence and baseball',
@@ -1228,6 +1231,7 @@ const conferenceData: Record<
       {
         name: 'Delaware',
         mascot: 'Blue Hens',
+        slug: 'delaware',
         rank: null,
         previousRank: null,
         previewNote: 'Mid-Atlantic recruiting presence',
@@ -1235,6 +1239,7 @@ const conferenceData: Record<
       {
         name: 'Towson',
         mascot: 'Tigers',
+        slug: 'towson',
         rank: null,
         previousRank: null,
         previewNote: 'Building in Baltimore area',
@@ -1259,6 +1264,7 @@ const conferenceData: Record<
       {
         name: 'Dallas Baptist',
         mascot: 'Patriots',
+        slug: 'dallas-baptist',
         rank: null,
         previousRank: null,
         keyPlayer: 'Multiple draft prospects',
@@ -1267,6 +1273,7 @@ const conferenceData: Record<
       {
         name: 'Indiana State',
         mascot: 'Sycamores',
+        slug: 'indiana-state',
         rank: null,
         previousRank: null,
         previewNote: 'Mitch Hannahs builds Midwest powerhouse',
@@ -1274,6 +1281,7 @@ const conferenceData: Record<
       {
         name: 'Illinois State',
         mascot: 'Redbirds',
+        slug: 'illinois-state',
         rank: null,
         previousRank: null,
         previewNote: 'Steve Holm develops Illinois talent',
@@ -1281,6 +1289,7 @@ const conferenceData: Record<
       {
         name: 'Southern Illinois',
         mascot: 'Salukis',
+        slug: 'southern-illinois',
         rank: null,
         previousRank: null,
         previewNote: 'Building competitive program',
@@ -1288,6 +1297,7 @@ const conferenceData: Record<
       {
         name: 'Evansville',
         mascot: 'Purple Aces',
+        slug: 'evansville',
         rank: null,
         previousRank: null,
         previewNote: 'Indiana recruiting presence',
@@ -1295,6 +1305,7 @@ const conferenceData: Record<
       {
         name: 'Missouri State',
         mascot: 'Bears',
+        slug: 'missouri-state',
         rank: null,
         previousRank: null,
         previewNote: 'Keith Guttin builds consistent contender',
@@ -1302,6 +1313,7 @@ const conferenceData: Record<
       {
         name: 'Valparaiso',
         mascot: 'Beacons',
+        slug: 'valparaiso',
         rank: null,
         previousRank: null,
         previewNote: 'Working toward MVC competitiveness',
@@ -1309,6 +1321,7 @@ const conferenceData: Record<
       {
         name: 'Bradley',
         mascot: 'Braves',
+        slug: 'bradley',
         rank: null,
         previousRank: null,
         previewNote: 'Illinois recruiting presence',
@@ -1333,6 +1346,7 @@ const conferenceData: Record<
       {
         name: 'Gonzaga',
         mascot: 'Bulldogs',
+        slug: 'gonzaga',
         rank: null,
         previousRank: null,
         previewNote: 'Mark Machtolf builds consistent contender',
@@ -1340,6 +1354,7 @@ const conferenceData: Record<
       {
         name: 'Pepperdine',
         mascot: 'Waves',
+        slug: 'pepperdine',
         rank: null,
         previousRank: null,
         previewNote: 'SoCal recruiting in Malibu',
@@ -1347,6 +1362,7 @@ const conferenceData: Record<
       {
         name: 'San Diego',
         mascot: 'Toreros',
+        slug: 'san-diego',
         rank: null,
         previousRank: null,
         previewNote: 'Building in beautiful San Diego',
@@ -1354,6 +1370,7 @@ const conferenceData: Record<
       {
         name: 'Santa Clara',
         mascot: 'Broncos',
+        slug: 'santa-clara',
         rank: null,
         previousRank: null,
         previewNote: 'Bay Area recruiting presence',
@@ -1361,6 +1378,7 @@ const conferenceData: Record<
       {
         name: 'San Francisco',
         mascot: 'Dons',
+        slug: 'san-francisco',
         rank: null,
         previousRank: null,
         previewNote: 'Building in San Francisco',
@@ -1368,6 +1386,7 @@ const conferenceData: Record<
       {
         name: 'Loyola Marymount',
         mascot: 'Lions',
+        slug: 'loyola-marymount',
         rank: null,
         previousRank: null,
         previewNote: 'Los Angeles recruiting pipeline',
@@ -1375,6 +1394,7 @@ const conferenceData: Record<
       {
         name: 'Pacific',
         mascot: 'Tigers',
+        slug: 'pacific',
         rank: null,
         previousRank: null,
         previewNote: 'Central California recruiting',
@@ -1382,6 +1402,7 @@ const conferenceData: Record<
       {
         name: 'Portland',
         mascot: 'Pilots',
+        slug: 'portland',
         rank: null,
         previousRank: null,
         previewNote: 'Pacific Northwest presence',
@@ -1406,6 +1427,7 @@ const conferenceData: Record<
       {
         name: 'Cal State Fullerton',
         mascot: 'Titans',
+        slug: 'cal-state-fullerton',
         rank: null,
         previousRank: null,
         previewNote: 'Jason Dietrich rebuilds 4-time national champs',
@@ -1413,6 +1435,7 @@ const conferenceData: Record<
       {
         name: 'Long Beach State',
         mascot: 'Beach',
+        slug: 'long-beach-state',
         rank: null,
         previousRank: null,
         previewNote: 'SoCal recruiting powerhouse',
@@ -1420,6 +1443,7 @@ const conferenceData: Record<
       {
         name: 'UC Irvine',
         mascot: 'Anteaters',
+        slug: 'uc-irvine',
         rank: null,
         previousRank: null,
         previewNote: 'Ben Orloff builds in Orange County',
@@ -1427,6 +1451,7 @@ const conferenceData: Record<
       {
         name: 'UC Santa Barbara',
         mascot: 'Gauchos',
+        slug: 'uc-santa-barbara',
         rank: null,
         previousRank: null,
         previewNote: 'Andrew Checketts develops talent',
@@ -1434,6 +1459,7 @@ const conferenceData: Record<
       {
         name: 'Cal Poly',
         mascot: 'Mustangs',
+        slug: 'cal-poly',
         rank: null,
         previousRank: null,
         previewNote: 'Central Coast recruiting base',
@@ -1441,6 +1467,7 @@ const conferenceData: Record<
       {
         name: 'Cal State Northridge',
         mascot: 'Matadors',
+        slug: 'cal-state-northridge',
         rank: null,
         previousRank: null,
         previewNote: 'LA Valley recruiting presence',
@@ -1448,6 +1475,7 @@ const conferenceData: Record<
       {
         name: 'UC Riverside',
         mascot: 'Highlanders',
+        slug: 'uc-riverside',
         rank: null,
         previousRank: null,
         previewNote: 'Inland Empire recruiting',
@@ -1455,6 +1483,7 @@ const conferenceData: Record<
       {
         name: 'Hawaii',
         mascot: 'Rainbow Warriors',
+        slug: 'hawaii',
         rank: null,
         previousRank: null,
         previewNote: 'Island baseball tradition',
@@ -1479,6 +1508,7 @@ const conferenceData: Record<
       {
         name: 'McNeese State',
         mascot: 'Cowboys',
+        slug: 'mcneese',
         rank: null,
         previousRank: null,
         previewNote: 'Justin Hill builds in Lake Charles',
@@ -1486,6 +1516,7 @@ const conferenceData: Record<
       {
         name: 'Southeastern Louisiana',
         mascot: 'Lions',
+        slug: 'se-louisiana',
         rank: null,
         previousRank: null,
         previewNote: 'Louisiana recruiting pipeline',
@@ -1493,6 +1524,7 @@ const conferenceData: Record<
       {
         name: 'Texas A&M-Corpus Christi',
         mascot: 'Islanders',
+        slug: 'tamu-corpus-christi',
         rank: null,
         previousRank: null,
         previewNote: 'South Texas recruiting base',
@@ -1500,6 +1532,7 @@ const conferenceData: Record<
       {
         name: 'Lamar',
         mascot: 'Cardinals',
+        slug: 'lamar',
         rank: null,
         previousRank: null,
         previewNote: 'Southeast Texas presence',
@@ -1507,6 +1540,7 @@ const conferenceData: Record<
       {
         name: 'Nicholls',
         mascot: 'Colonels',
+        slug: 'nicholls',
         rank: null,
         previousRank: null,
         previewNote: 'Louisiana bayou baseball',
@@ -1514,6 +1548,7 @@ const conferenceData: Record<
       {
         name: 'Northwestern State',
         mascot: 'Demons',
+        slug: 'northwestern-state',
         rank: null,
         previousRank: null,
         previewNote: 'Building in Natchitoches',
@@ -1521,6 +1556,7 @@ const conferenceData: Record<
       {
         name: 'Houston Christian',
         mascot: 'Huskies',
+        slug: 'houston-christian',
         rank: null,
         previousRank: null,
         previewNote: 'Houston metro recruiting',
@@ -1528,6 +1564,7 @@ const conferenceData: Record<
       {
         name: 'Incarnate Word',
         mascot: 'Cardinals',
+        slug: 'incarnate-word',
         rank: null,
         previousRank: null,
         previewNote: 'San Antonio presence',
@@ -1562,15 +1599,39 @@ function RankChange({ current, previous }: { current: number | null; previous: n
 // ─── Auto-generated conference data from teamMetadata ──────────────────────────
 // For conferences without hand-written editorial content, derive a hub page
 // directly from the team entries in teamMetadata.
-const conferenceSlugMap: Record<string, { name: string; fullName: string; region: string }> = {
-  asun: { name: 'ASUN', fullName: 'ASUN Conference', region: 'Southeast' },
-  'america-east': { name: 'America East', fullName: 'America East Conference', region: 'Northeast' },
-  'big-south': { name: 'Big South', fullName: 'Big South Conference', region: 'Southeast' },
-  horizon: { name: 'Horizon', fullName: 'Horizon League', region: 'Midwest' },
-  'patriot-league': { name: 'Patriot League', fullName: 'Patriot League', region: 'Northeast' },
-  southern: { name: 'Southern', fullName: 'Southern Conference', region: 'Southeast' },
-  summit: { name: 'Summit', fullName: 'Summit League', region: 'Midwest' },
-  wac: { name: 'WAC', fullName: 'Western Athletic Conference', region: 'West' },
+const conferenceSlugMap: Record<string, { name: string; fullName: string; region: string; description: string }> = {
+  asun: {
+    name: 'ASUN', fullName: 'ASUN Conference', region: 'Southeast',
+    description: 'The ASUN has emerged as a competitive mid-major conference with strong Florida and Southeast recruiting. Jacksonville, Stetson, and Kennesaw State lead the way with regular NCAA Tournament appearances.',
+  },
+  'america-east': {
+    name: 'America East', fullName: 'America East Conference', region: 'Northeast',
+    description: 'The America East features northeastern programs competing in cold-weather markets. Bryant and Stony Brook lead the conference with strong regional recruiting and improving facilities.',
+  },
+  'big-south': {
+    name: 'Big South', fullName: 'Big South Conference', region: 'Southeast',
+    description: 'The Big South produces competitive baseball from the Carolinas and Virginia. Campbell and Winthrop have built consistent programs that challenge for NCAA Tournament bids annually.',
+  },
+  horizon: {
+    name: 'Horizon', fullName: 'Horizon League', region: 'Midwest',
+    description: 'The Horizon League brings competitive baseball from the Midwest and Great Lakes region. Wright State and Northern Kentucky have emerged as conference contenders with strong player development.',
+  },
+  'patriot-league': {
+    name: 'Patriot League', fullName: 'Patriot League', region: 'Northeast',
+    description: 'The Patriot League combines academic excellence with competitive baseball. Army, Navy, and Bucknell anchor the conference with unique institutional identities and disciplined programs.',
+  },
+  southern: {
+    name: 'Southern', fullName: 'Southern Conference', region: 'Southeast',
+    description: 'The Southern Conference features programs from the Appalachian region and Southeast. Samford and ETSU have built competitive programs with strong pitching development and regional recruiting.',
+  },
+  summit: {
+    name: 'Summit', fullName: 'Summit League', region: 'Midwest',
+    description: 'The Summit League represents Great Plains and Upper Midwest baseball. Oral Roberts and North Dakota State lead the way with programs that consistently compete for conference titles and at-large bids.',
+  },
+  wac: {
+    name: 'WAC', fullName: 'Western Athletic Conference', region: 'West',
+    description: 'The WAC spans the western United States with programs from Texas to California. Grand Canyon and Sacramento State anchor the conference with strong recruiting in baseball-rich regions.',
+  },
 };
 
 function getAutoConferenceTeams(conferenceId: string) {
@@ -1669,7 +1730,10 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                   <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
                     {auto.fullName}
                   </h1>
-                  <p className="text-text-secondary mt-2">
+                  <p className="text-text-secondary mt-2 max-w-3xl">
+                    {auto.description}
+                  </p>
+                  <p className="text-text-tertiary mt-2 text-sm">
                     {auto.teams.length} {auto.teams.length === 1 ? 'team' : 'teams'} &middot; {auto.region}
                   </p>
                 </div>
@@ -1708,11 +1772,13 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 <div className="grid md:grid-cols-2 gap-4">
                   {auto.teams.map((team) => {
                     const logoUrl = getLogoUrl(team.espnId);
+                    const rank = preseasonRanks[team.slug];
                     return (
                       <Link key={team.slug} href={`/college-baseball/teams/${team.slug}`}>
                         <Card
                           padding="md"
                           className="hover:border-burnt-orange/50 transition-all group"
+                          style={{ borderLeftWidth: '3px', borderLeftColor: `${team.colors.primary}60` }}
                         >
                           <div className="flex items-center gap-4">
                             <div
@@ -1726,10 +1792,17 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                                 loading="lazy"
                               />
                             </div>
-                            <div className="min-w-0">
-                              <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors truncate">
-                                {team.fullName}
-                              </h3>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors truncate">
+                                  {team.fullName}
+                                </h3>
+                                {rank && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold text-white bg-burnt-orange shrink-0">
+                                    #{rank}
+                                  </span>
+                                )}
+                              </div>
                               <div className="flex items-center gap-2 text-sm text-text-tertiary">
                                 <MapPin className="w-3 h-3 shrink-0" />
                                 <span className="truncate">

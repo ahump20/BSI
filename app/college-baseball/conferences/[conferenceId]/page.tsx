@@ -10,7 +10,6 @@ export async function generateStaticParams() {
     { conferenceId: 'acc' },
     { conferenceId: 'big-12' },
     { conferenceId: 'big-ten' },
-    { conferenceId: 'pac-12' },
     // Mid-Major / Group of 5
     { conferenceId: 'big-east' },
     { conferenceId: 'aac' },
