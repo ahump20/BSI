@@ -154,6 +154,7 @@ app.use('*', async (c, next) => {
   if (
     path === '/' ||
     path.startsWith('/api/') ||
+    path.startsWith('/webhooks') ||
     path.startsWith('/_csp/') ||
     path.startsWith('/_next/') ||
     path === '/ws' ||
