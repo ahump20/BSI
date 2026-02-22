@@ -41,6 +41,8 @@ import {
   handleCollegeBaseballTrends,
   handleCollegeBaseballTeamSchedule,
   handleCollegeBaseballLeaders,
+  handleIngestStats,
+  processFinishedGames,
 } from './handlers/college-baseball';
 
 import {
@@ -256,6 +258,10 @@ app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new U
 app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
 app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
+app.get('/api/college-baseball/ingest-stats', (c) => {
+  const url = new URL(c.req.url);
+  return handleIngestStats(c.env, url.searchParams.get('date') || undefined);
+});
 app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
 app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));

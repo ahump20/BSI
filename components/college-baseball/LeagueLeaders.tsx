@@ -132,7 +132,7 @@ export function LeagueLeaders() {
               { cat: 'RBI', label: 'RBI' },
               { cat: 'ERA', label: 'ERA' },
               { cat: 'Strikeouts', label: 'K' },
-              { cat: 'Stolen Bases', label: 'SB' },
+              { cat: 'Hits', label: 'H' },
             ].map((stat) => (
               <Card key={stat.label} variant="default" padding="md">
                 <div className="flex items-center justify-between mb-3">

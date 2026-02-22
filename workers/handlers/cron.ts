@@ -17,6 +17,7 @@ import {
   getScoreboard,
   transformScoreboard,
 } from '../../lib/api-clients/espn-api';
+import { processFinishedGames } from './college-baseball';
 import {
   transformSDIOMLBScores,
   transformSDIONFLScores,
@@ -361,6 +362,27 @@ export async function handleScheduled(env: Env): Promise<void> {
     checkedAt: now,
     activeSports,
   }, 300); // 5-minute TTL
+
+  // Ingest finished college baseball box scores every 10 minutes
+  if (ncaaActive) {
+    try {
+      const ingestGateKey = 'cron:cbb:ingest:last';
+      const lastIngest = await kvGet<string>(env.KV, ingestGateKey);
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      if (!lastIngest || lastIngest < tenMinAgo) {
+        const ingestResult = await processFinishedGames(env, date);
+        await kvPut(env.KV, ingestGateKey, now, 900); // 15-min TTL
+        console.log(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
+
+        // Invalidate leaders cache so next request picks up fresh data
+        if (ingestResult.processed > 0) {
+          await env.KV.delete('cb:leaders');
+        }
+      }
+    } catch (err) {
+      await logError(env, `cron:stats-ingest: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-ingest');
+    }
+  }
 
   // Populate search index once per day (gated by KV timestamp)
   try {
