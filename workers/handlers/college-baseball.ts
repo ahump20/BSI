@@ -741,6 +741,93 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
   }
 }
 
+/**
+ * Enrich a team payload with D1 accumulated stats.
+ * - Merges per-player stats onto the roster
+ * - Adds team-level aggregate stats as `teamStats`
+ */
+async function enrichTeamWithD1Stats(
+  payload: Record<string, unknown>,
+  espnTeamId: string,
+  env: Env,
+): Promise<void> {
+  try {
+    const { results: playerRows } = await env.DB.prepare(
+      `SELECT espn_id, name, position, headshot,
+              games_bat, at_bats, runs, hits, home_runs, rbis,
+              walks_bat, strikeouts_bat, stolen_bases,
+              games_pitch, innings_pitched_thirds, earned_runs,
+              strikeouts_pitch, walks_pitch, hits_allowed
+       FROM player_season_stats
+       WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ?`
+    ).bind(espnTeamId).all<D1PlayerStats>();
+
+    if (!playerRows || playerRows.length === 0) return;
+
+    // Build lookup by ESPN ID
+    const statsMap = new Map<string, D1PlayerStats>();
+    for (const r of playerRows) {
+      statsMap.set(r.espn_id, r);
+    }
+
+    // Enrich roster players
+    const team = payload.team as Record<string, unknown> | undefined;
+    const roster = (team?.roster ?? []) as Record<string, unknown>[];
+    for (const player of roster) {
+      const pid = String(player.id || '');
+      const d1 = statsMap.get(pid);
+      if (!d1) continue;
+
+      const avg = d1.at_bats > 0 ? Math.round((d1.hits / d1.at_bats) * 1000) / 1000 : 0;
+      const ip = d1.innings_pitched_thirds / 3;
+      const era = ip > 0 ? Math.round((d1.earned_runs * 9 / ip) * 100) / 100 : 0;
+
+      if (d1.at_bats > 0 || d1.games_bat > 0) {
+        player.stats = { avg, hr: d1.home_runs, rbi: d1.rbis };
+      } else if (d1.innings_pitched_thirds > 0 || d1.games_pitch > 0) {
+        player.stats = { era, wins: 0, so: d1.strikeouts_pitch };
+      }
+
+      if (!player.headshot && d1.headshot) {
+        (player as Record<string, unknown>).headshot = d1.headshot;
+      }
+    }
+
+    // Compute team aggregate stats
+    let teamAB = 0, teamH = 0, teamHR = 0, teamRBI = 0, teamR = 0, teamK = 0;
+    let teamIP3 = 0, teamER = 0, teamPitchK = 0, teamPitchBB = 0, teamHA = 0;
+
+    for (const r of playerRows) {
+      teamAB += r.at_bats; teamH += r.hits; teamHR += r.home_runs;
+      teamRBI += r.rbis; teamR += r.runs; teamK += r.strikeouts_bat;
+      teamIP3 += r.innings_pitched_thirds; teamER += r.earned_runs;
+      teamPitchK += r.strikeouts_pitch; teamPitchBB += r.walks_pitch;
+      teamHA += r.hits_allowed;
+    }
+
+    const teamAvg = teamAB > 0 ? Math.round((teamH / teamAB) * 1000) / 1000 : 0;
+    const teamIP = teamIP3 / 3;
+    const teamERA = teamIP > 0 ? Math.round((teamER * 9 / teamIP) * 100) / 100 : 0;
+    const teamWHIP = teamIP > 0 ? Math.round(((teamHA + teamPitchBB) / teamIP) * 100) / 100 : 0;
+
+    payload.teamStats = {
+      batting: {
+        atBats: teamAB, hits: teamH, homeRuns: teamHR, rbi: teamRBI,
+        runs: teamR, strikeouts: teamK, battingAverage: teamAvg,
+        players: playerRows.filter((r) => r.at_bats > 0).length,
+      },
+      pitching: {
+        inningsPitched: Math.round(teamIP * 10) / 10, earnedRuns: teamER,
+        strikeouts: teamPitchK, walks: teamPitchBB, hitsAllowed: teamHA,
+        era: teamERA, whip: teamWHIP,
+        pitchers: playerRows.filter((r) => r.innings_pitched_thirds > 0).length,
+      },
+    };
+  } catch (err) {
+    console.error('[d1] team stats enrichment failed:', err instanceof Error ? err.message : err);
+  }
+}
+
 export async function handleCollegeBaseballTeam(
   teamId: string,
   env: Env
@@ -776,9 +863,9 @@ export async function handleCollegeBaseballTeam(
           teamResult.data,
           playersResult.success ? (playersResult.data?.data ?? []) : []
         );
-        // Only cache if Highlightly returned meaningful data (name exists)
         if (team.name) {
-          const payload = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+          const payload: Record<string, unknown> = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+          await enrichTeamWithD1Stats(payload, String(numericId), env);
           await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
           return cachedJson(payload, 200, HTTP_CACHE.team, {
             ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
@@ -803,7 +890,8 @@ export async function handleCollegeBaseballTeam(
         teamResult.data as Record<string, unknown>,
         playersResult.data?.data ?? []
       );
-      const payload = { team, meta: { dataSource: 'espn', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+      const payload: Record<string, unknown> = { team, meta: { dataSource: 'espn', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+      await enrichTeamWithD1Stats(payload, String(numericId), env);
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
       return cachedJson(payload, 200, HTTP_CACHE.team, {
         ...dataHeaders(teamResult.timestamp, 'espn'), 'X-Cache': 'MISS',
@@ -906,6 +994,105 @@ export async function handleCollegeBaseballTeamSchedule(
   return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
 }
 
+// ---------------------------------------------------------------------------
+// D1 Stats Enrichment — query accumulated season stats for a player
+// ---------------------------------------------------------------------------
+
+interface D1PlayerStats {
+  espn_id: string;
+  name: string;
+  team: string;
+  team_id: string;
+  position: string;
+  headshot: string;
+  games_bat: number;
+  at_bats: number;
+  runs: number;
+  hits: number;
+  rbis: number;
+  home_runs: number;
+  walks_bat: number;
+  strikeouts_bat: number;
+  stolen_bases: number;
+  games_pitch: number;
+  innings_pitched_thirds: number;
+  hits_allowed: number;
+  runs_allowed: number;
+  earned_runs: number;
+  walks_pitch: number;
+  strikeouts_pitch: number;
+  home_runs_allowed: number;
+}
+
+/**
+ * Query D1 for a player's accumulated season stats and format them
+ * to match the statistics shape the PlayerDetailClient expects.
+ */
+async function getD1PlayerStats(
+  espnId: string,
+  env: Env,
+): Promise<Record<string, unknown> | null> {
+  try {
+    const row = await env.DB.prepare(
+      `SELECT * FROM player_season_stats
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
+    ).bind(espnId).first<D1PlayerStats>();
+
+    if (!row) return null;
+
+    const stats: Record<string, unknown> = {};
+
+    if (row.at_bats > 0 || row.games_bat > 0) {
+      const avg = row.at_bats > 0 ? row.hits / row.at_bats : 0;
+      const obp = (row.at_bats + row.walks_bat) > 0
+        ? (row.hits + row.walks_bat) / (row.at_bats + row.walks_bat)
+        : 0;
+      stats.batting = {
+        games: row.games_bat,
+        atBats: row.at_bats,
+        runs: row.runs,
+        hits: row.hits,
+        doubles: 0,
+        triples: 0,
+        homeRuns: row.home_runs,
+        rbi: row.rbis,
+        walks: row.walks_bat,
+        strikeouts: row.strikeouts_bat,
+        stolenBases: row.stolen_bases,
+        battingAverage: Math.round(avg * 1000) / 1000,
+        onBasePercentage: Math.round(obp * 1000) / 1000,
+        sluggingPercentage: 0,
+        ops: 0,
+      };
+    }
+
+    if (row.innings_pitched_thirds > 0 || row.games_pitch > 0) {
+      const ip = row.innings_pitched_thirds / 3;
+      const era = ip > 0 ? (row.earned_runs * 9) / ip : 0;
+      const whip = ip > 0 ? (row.hits_allowed + row.walks_pitch) / ip : 0;
+      stats.pitching = {
+        games: row.games_pitch,
+        gamesStarted: 0,
+        wins: 0,
+        losses: 0,
+        saves: 0,
+        inningsPitched: Math.round(ip * 10) / 10,
+        hits: row.hits_allowed,
+        earnedRuns: row.earned_runs,
+        walks: row.walks_pitch,
+        strikeouts: row.strikeouts_pitch,
+        era: Math.round(era * 100) / 100,
+        whip: Math.round(whip * 100) / 100,
+      };
+    }
+
+    return Object.keys(stats).length > 0 ? stats : null;
+  } catch (err) {
+    console.error('[d1] player stats lookup failed:', err instanceof Error ? err.message : err);
+    return null;
+  }
+}
+
 export async function handleCollegeBaseballPlayer(
   playerId: string,
   env: Env
@@ -932,10 +1119,16 @@ export async function handleCollegeBaseballPlayer(
           playerResult.data,
           statsResult.success ? (statsResult.data ?? null) : null
         );
-        const wrapped = { ...payload, meta: { dataSource: 'highlightly', lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
+        // Enrich with D1 stats if Highlightly returned no statistics
+        if (!payload.statistics) {
+          const d1Stats = await getD1PlayerStats(playerId, env);
+          if (d1Stats) payload.statistics = d1Stats;
+        }
+        const source = payload.statistics && !(statsResult.success && statsResult.data) ? 'highlightly+d1' : 'highlightly';
+        const wrapped = { ...payload, meta: { dataSource: source, lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
         await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
         return cachedJson(wrapped, 200, HTTP_CACHE.player, {
-          ...dataHeaders(playerResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
+          ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
         });
       }
     } catch (err) {
@@ -956,17 +1149,57 @@ export async function handleCollegeBaseballPlayer(
         playerResult.data as Record<string, unknown>,
         statsResult.success ? (statsResult.data as Record<string, unknown> | null) : null
       );
-      const wrapped = { ...payload, meta: { dataSource: 'espn', lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
+      // Enrich with D1 stats if ESPN returned no statistics
+      let d1Enriched = false;
+      if (!payload.statistics) {
+        const d1Stats = await getD1PlayerStats(playerId, env);
+        if (d1Stats) {
+          payload.statistics = d1Stats;
+          d1Enriched = true;
+        }
+      }
+      const source = d1Enriched ? 'espn+d1' : 'espn';
+      const wrapped = { ...payload, meta: { dataSource: source, lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
       await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
       return cachedJson(wrapped, 200, HTTP_CACHE.player, {
-        ...dataHeaders(playerResult.timestamp, 'espn'), 'X-Cache': 'MISS',
+        ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
       });
     }
-
-    return json({ player: null, statistics: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
-  } catch {
-    return json({ player: null, statistics: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+  } catch (err) {
+    console.error('[espn] player fallback:', err instanceof Error ? err.message : err);
   }
+
+  // D1-only fallback — player exists in box score data but not in ESPN/Highlightly roster
+  try {
+    const row = await env.DB.prepare(
+      `SELECT * FROM player_season_stats
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
+    ).bind(playerId).first<D1PlayerStats>();
+
+    if (row) {
+      const d1Stats = await getD1PlayerStats(playerId, env);
+      const payload = {
+        player: {
+          id: Number(row.espn_id),
+          name: row.name,
+          position: row.position,
+          jerseyNumber: undefined,
+          team: { id: Number(row.team_id), name: row.team, shortName: undefined, conference: undefined },
+          headshot: row.headshot || undefined,
+        },
+        statistics: d1Stats,
+        meta: { dataSource: 'd1', lastUpdated: now, timezone: 'America/Chicago' },
+      };
+      await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
+      return cachedJson(payload, 200, HTTP_CACHE.player, {
+        ...dataHeaders(now, 'd1'), 'X-Cache': 'MISS',
+      });
+    }
+  } catch (err) {
+    console.error('[d1] player fallback:', err instanceof Error ? err.message : err);
+  }
+
+  return json({ player: null, statistics: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
 }
 
 export async function handleCollegeBaseballGame(
@@ -1309,24 +1542,39 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
   const team = url.searchParams.get('team') || '';
   const search = url.searchParams.get('search') || '';
   const position = url.searchParams.get('position') || '';
-  const classYear = url.searchParams.get('class') || '';
-  const draftOnly = url.searchParams.get('draft') === 'true';
+  const sortBy = url.searchParams.get('sort') || '';
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '50', 10)));
+  const offset = (page - 1) * limit;
+
+  // D1 primary path — query accumulated stats directly
+  try {
+    const d1Result = await queryPlayersFromD1(env, { search, team, position, sortBy, limit, offset });
+    if (d1Result && d1Result.length > 0) {
+      const payload = {
+        players: d1Result,
+        meta: { source: 'd1-accumulated', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+      };
+      return cachedJson(payload, 200, HTTP_CACHE.player, {
+        ...dataHeaders(new Date().toISOString(), 'd1'), 'X-Cache': 'MISS',
+      });
+    }
+  } catch (err) {
+    console.error('[d1] players list query failed:', err instanceof Error ? err.message : err);
+  }
+
+  // ESPN fallback — used when D1 has no data (offseason)
+  const now = new Date().toISOString();
   const cacheKey = `cb:players:list:${team || 'all'}`;
 
-  // Try cache for the base team roster (filter client-side params in memory)
   let roster: Record<string, unknown>[] | null = null;
-
   const cached = await kvGet<Record<string, unknown>[]>(env.KV, cacheKey);
   if (cached) {
     roster = cached;
   } else {
-    // Fetch roster from ESPN via NCAA client
-    // If a specific team is requested, fetch that team's roster
-    // Otherwise, fetch a set of notable programs for the browsing experience
     const client = getCollegeClient();
 
     if (team) {
-      // Search for team ID by name — use ESPN teams endpoint
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8000);
@@ -1347,9 +1595,9 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
 
           if (matched) {
             const tObj = (matched.team || matched) as Record<string, unknown>;
-            const teamId = parseInt(tObj.id as string, 10);
+            const teamIdNum = parseInt(tObj.id as string, 10);
             const teamName = (tObj.displayName || tObj.name || '') as string;
-            const result = await client.getTeamPlayers(teamId);
+            const result = await client.getTeamPlayers(teamIdNum);
             if (result.success && result.data) {
               roster = (result.data.data || []) as Record<string, unknown>[];
               for (const p of roster) {
@@ -1364,7 +1612,6 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
     }
 
     if (!roster) {
-      // Default: fetch top programs' rosters for a browsable list
       const topTeams = [
         { id: 126, name: 'Texas Longhorns', conf: 'SEC' },
         { id: 85, name: 'LSU Tigers', conf: 'SEC' },
@@ -1384,7 +1631,6 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
         const r = results[i];
         if (r.status === 'fulfilled' && r.value.success && r.value.data) {
           const players = (r.value.data.data || []) as Record<string, unknown>[];
-          // Attach team context since ESPN roster doesn't embed it per-athlete
           for (const p of players) {
             p._teamName = topTeams[i].name;
             p._teamConf = topTeams[i].conf;
@@ -1394,7 +1640,6 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
       }
     }
 
-    // Cache the roster for 1 hour
     if (roster.length > 0) {
       await kvPut(env.KV, cacheKey, roster, CACHE_TTL.players);
     }
@@ -1421,21 +1666,13 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
     });
   }
 
-  if (classYear) {
-    filtered = filtered.filter((p) => {
-      const exp = ((p.experience as Record<string, unknown>)?.abbreviation as string || '').toLowerCase();
-      return exp.startsWith(classYear.toLowerCase());
-    });
-  }
-
-  // Transform to frontend Player shape
+  // Transform ESPN roster to frontend Player shape
   const players = filtered.map((p) => {
     const pos = p.position as Record<string, unknown> | undefined;
     const exp = p.experience as Record<string, unknown> | undefined;
     const team_ = p.team as Record<string, unknown> | undefined;
     const birthPlace = p.birthPlace as Record<string, unknown> | undefined;
 
-    // ESPN returns bats/throws as objects {type, abbreviation, displayValue} or strings
     const batsRaw = p.bats;
     const throwsRaw = p.throws;
     const batsStr = typeof batsRaw === 'string' ? batsRaw
@@ -1463,10 +1700,129 @@ export async function handleCollegeBaseballPlayersList(url: URL, env: Env): Prom
 
   const payload = {
     players,
-    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago' },
   };
 
-  return cachedJson(payload, 200, HTTP_CACHE.player, { ...dataHeaders(new Date().toISOString(), 'espn'), 'X-Cache': roster === cached ? 'HIT' : 'MISS' });
+  return cachedJson(payload, 200, HTTP_CACHE.player, { ...dataHeaders(now, 'espn'), 'X-Cache': roster === cached ? 'HIT' : 'MISS' });
+}
+
+/**
+ * Query D1 accumulated stats for the players list endpoint.
+ * Returns players in the frontend Player shape with inline stats.
+ */
+async function queryPlayersFromD1(
+  env: Env,
+  opts: { search: string; team: string; position: string; sortBy: string; limit: number; offset: number },
+): Promise<Record<string, unknown>[] | null> {
+  const conditions = [`sport = 'college-baseball'`, `season = 2026`];
+  const binds: (string | number)[] = [];
+
+  if (opts.search) {
+    conditions.push(`(name LIKE ? OR team LIKE ?)`);
+    const q = `%${opts.search}%`;
+    binds.push(q, q);
+  }
+
+  if (opts.team) {
+    conditions.push(`team LIKE ?`);
+    binds.push(`%${opts.team}%`);
+  }
+
+  if (opts.position) {
+    if (opts.position === 'IF') {
+      conditions.push(`position IN ('1B','2B','3B','SS','IF')`);
+    } else if (opts.position === 'OF') {
+      conditions.push(`position IN ('LF','CF','RF','OF')`);
+    } else if (opts.position === 'P') {
+      conditions.push(`(position IN ('P','SP','RP','LHP','RHP') OR innings_pitched_thirds > 0)`);
+    } else {
+      conditions.push(`position = ?`);
+      binds.push(opts.position.toUpperCase());
+    }
+  }
+
+  // Order by descending impact — different for pitchers vs batters
+  let orderClause: string;
+  switch (opts.sortBy) {
+    case 'avg':
+      conditions.push(`at_bats >= 10`);
+      orderClause = `CAST(hits AS REAL) / at_bats DESC`;
+      break;
+    case 'homeRuns':
+      orderClause = `home_runs DESC`;
+      break;
+    case 'rbi':
+      orderClause = `rbis DESC`;
+      break;
+    case 'era':
+      conditions.push(`innings_pitched_thirds >= 9`);
+      orderClause = `CAST(earned_runs AS REAL) * 27 / innings_pitched_thirds ASC`;
+      break;
+    case 'strikeouts':
+      orderClause = `strikeouts_pitch DESC`;
+      break;
+    default:
+      // Default sort: composite batting value
+      orderClause = `(hits + home_runs * 3 + rbis) DESC`;
+      break;
+  }
+
+  const where = conditions.join(' AND ');
+  const sql = `SELECT espn_id, name, team, team_id, position, headshot,
+    games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat, stolen_bases,
+    games_pitch, innings_pitched_thirds, earned_runs, walks_pitch, strikeouts_pitch, hits_allowed
+    FROM player_season_stats
+    WHERE ${where}
+    ORDER BY ${orderClause}
+    LIMIT ? OFFSET ?`;
+
+  binds.push(opts.limit, opts.offset);
+
+  const { results } = await env.DB.prepare(sql).bind(...binds).all<D1PlayerStats>();
+
+  if (!results || results.length === 0) return null;
+
+  return results.map((r) => {
+    const avg = r.at_bats > 0 ? Math.round((r.hits / r.at_bats) * 1000) / 1000 : 0;
+    const obp = (r.at_bats + r.walks_bat) > 0
+      ? Math.round(((r.hits + r.walks_bat) / (r.at_bats + r.walks_bat)) * 1000) / 1000
+      : 0;
+    const ip = r.innings_pitched_thirds / 3;
+    const era = ip > 0 ? Math.round((r.earned_runs * 9 / ip) * 100) / 100 : 0;
+    const whip = ip > 0 ? Math.round(((r.hits_allowed + r.walks_pitch) / ip) * 100) / 100 : 0;
+
+    const player: Record<string, unknown> = {
+      id: r.espn_id,
+      name: r.name,
+      team: r.team,
+      jersey: '',
+      position: r.position,
+      classYear: '',
+      conference: '',
+      headshot: r.headshot || '',
+      bio: { height: '', weight: 0, bats: '', throws: '', hometown: '' },
+    };
+
+    if (r.at_bats > 0 || r.games_bat > 0) {
+      player.battingStats = {
+        avg, homeRuns: r.home_runs, rbi: r.rbis, ops: 0, games: r.games_bat,
+        atBats: r.at_bats, runs: r.runs, hits: r.hits, doubles: 0, triples: 0,
+        walks: r.walks_bat, strikeouts: r.strikeouts_bat, stolenBases: r.stolen_bases,
+        obp, slg: 0,
+      };
+    }
+
+    if (r.innings_pitched_thirds > 0 || r.games_pitch > 0) {
+      player.pitchingStats = {
+        era, wins: 0, losses: 0, strikeouts: r.strikeouts_pitch, whip,
+        games: r.games_pitch, gamesStarted: 0, completeGames: 0, shutouts: 0, saves: 0,
+        inningsPitched: Math.round(ip * 10) / 10, hits: r.hits_allowed,
+        runs: r.runs_allowed ?? 0, earnedRuns: r.earned_runs, walks: r.walks_pitch,
+      };
+    }
+
+    return player;
+  });
 }
 
 // --- College Baseball Enhanced News (ESPN + Highlightly) ---

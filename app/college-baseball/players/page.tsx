@@ -17,6 +17,7 @@ interface Player {
   position: string;
   classYear: string;
   conference: string;
+  headshot?: string;
   bio: {
     height: string;
     weight: number;
@@ -107,14 +108,12 @@ interface PlayersApiResponse {
 }
 
 const sortOptions = [
-  { value: 'mlbRank', label: 'MLB Draft Rank' },
+  { value: 'default', label: 'Impact (Default)' },
   { value: 'avg', label: 'Batting Average' },
   { value: 'homeRuns', label: 'Home Runs' },
   { value: 'rbi', label: 'RBI' },
-  { value: 'ops', label: 'OPS' },
-  { value: 'era', label: 'ERA' },
-  { value: 'strikeouts', label: 'Strikeouts' },
-  { value: 'whip', label: 'WHIP' },
+  { value: 'era', label: 'ERA (Pitchers)' },
+  { value: 'strikeouts', label: 'Strikeouts (Pitchers)' },
 ];
 
 export default function CollegeBaseballPlayersPage() {
@@ -128,7 +127,7 @@ export default function CollegeBaseballPlayersPage() {
     classYear: '',
     draftOnly: false,
   });
-  const [sortBy, setSortBy] = useState('mlbRank');
+  const [sortBy, setSortBy] = useState('default');
 
   const loadPlayers = useCallback(async () => {
     setLoading(true);
@@ -141,6 +140,7 @@ export default function CollegeBaseballPlayersPage() {
       if (filters.position) params.append('position', filters.position);
       if (filters.classYear) params.append('class', filters.classYear);
       if (filters.draftOnly) params.append('draft', 'true');
+      if (sortBy && sortBy !== 'default') params.append('sort', sortBy);
 
       const response = await fetch(`/api/college-baseball/players?${params}`);
 
@@ -155,30 +155,25 @@ export default function CollegeBaseballPlayersPage() {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters, sortBy]);
 
   useEffect(() => {
     loadPlayers();
   }, [loadPlayers]);
 
-  const sortedPlayers = [...players].sort((a, b) => {
+  // When sort is 'default', preserve API order (server-side sorted by D1)
+  const sortedPlayers = sortBy === 'default' ? players : [...players].sort((a, b) => {
     switch (sortBy) {
-      case 'mlbRank':
-        return (a.draftProspect?.mlbRank || 999) - (b.draftProspect?.mlbRank || 999);
       case 'avg':
         return (b.battingStats?.avg || 0) - (a.battingStats?.avg || 0);
       case 'homeRuns':
         return (b.battingStats?.homeRuns || 0) - (a.battingStats?.homeRuns || 0);
       case 'rbi':
         return (b.battingStats?.rbi || 0) - (a.battingStats?.rbi || 0);
-      case 'ops':
-        return (b.battingStats?.ops || 0) - (a.battingStats?.ops || 0);
       case 'era':
         return (a.pitchingStats?.era || 99) - (b.pitchingStats?.era || 99);
       case 'strikeouts':
         return (b.pitchingStats?.strikeouts || 0) - (a.pitchingStats?.strikeouts || 0);
-      case 'whip':
-        return (a.pitchingStats?.whip || 99) - (b.pitchingStats?.whip || 99);
       default:
         return 0;
     }
@@ -186,9 +181,9 @@ export default function CollegeBaseballPlayersPage() {
 
   const stats = {
     total: players.length,
-    draftProspects: players.filter((p) => p.draftProspect?.isDraftEligible).length,
-    pitchers: players.filter((p) => p.position === 'P').length,
-    positionPlayers: players.filter((p) => p.position !== 'P').length,
+    withStats: players.filter((p) => p.battingStats || p.pitchingStats).length,
+    pitchers: players.filter((p) => p.pitchingStats).length,
+    positionPlayers: players.filter((p) => p.battingStats && !p.pitchingStats).length,
   };
 
   const handleSearch = () => {
@@ -324,10 +319,10 @@ export default function CollegeBaseballPlayersPage() {
                 </Card>
                 <Card padding="md" className="text-center">
                   <div className="font-display text-2xl md:text-3xl font-bold text-burnt-orange">
-                    {stats.draftProspects}
+                    {stats.withStats}
                   </div>
                   <div className="text-xs text-text-tertiary uppercase tracking-wider mt-1">
-                    Draft Prospects
+                    With Stats
                   </div>
                 </Card>
                 <Card padding="md" className="text-center">
@@ -393,102 +388,121 @@ export default function CollegeBaseballPlayersPage() {
                     <Card variant="hover" padding="none" className="overflow-hidden">
                       {/* Player Header */}
                       <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border-subtle">
-                        <h3 className="font-display text-xl font-bold text-white">{player.name}</h3>
-                        <p className="text-text-secondary text-sm">{player.team}</p>
+                        <div className="flex items-center gap-3">
+                          {player.headshot && (
+                            <img src={player.headshot} alt="" className="w-10 h-10 rounded-full object-cover bg-charcoal" loading="lazy" />
+                          )}
+                          <div className="min-w-0">
+                            <h3 className="font-display text-xl font-bold text-white">
+                              <Link href={`/college-baseball/players/${player.id}`} className="hover:text-burnt-orange transition-colors">
+                                {player.name}
+                              </Link>
+                            </h3>
+                            <p className="text-text-secondary text-sm">{player.team}</p>
+                          </div>
+                        </div>
                         <div className="flex flex-wrap gap-3 mt-2 text-xs text-text-tertiary">
-                          <span>#{player.jersey}</span>
-                          <span>{player.position}</span>
-                          <span>{player.classYear}</span>
-                          <span>{player.conference}</span>
+                          {player.jersey && <span>#{player.jersey}</span>}
+                          {player.position && <span>{player.position}</span>}
+                          {player.classYear && <span>{player.classYear}</span>}
+                          {player.conference && <span>{player.conference}</span>}
+                          {player.battingStats && <span>{player.battingStats.games}G</span>}
+                          {player.pitchingStats && !player.battingStats && <span>{player.pitchingStats.games}G</span>}
                         </div>
                       </div>
 
-                      {/* Bio */}
+                      {/* Bio — only show if meaningful data exists */}
+                      {(player.bio.height || player.bio.weight > 0 || player.bio.bats || player.bio.throws || player.bio.hometown) && (
                       <div className="p-4 bg-charcoal/30 border-b border-border-subtle">
-                        <div className="grid grid-cols-5 gap-2 text-center text-sm">
-                          <div>
-                            <div className="text-text-tertiary text-xs uppercase">Height</div>
-                            <div className="text-white font-medium">{player.bio.height}</div>
-                          </div>
-                          <div>
-                            <div className="text-text-tertiary text-xs uppercase">Weight</div>
-                            <div className="text-white font-medium">{player.bio.weight} lbs</div>
-                          </div>
-                          <div>
-                            <div className="text-text-tertiary text-xs uppercase">Bats</div>
-                            <div className="text-white font-medium">{player.bio.bats}</div>
-                          </div>
-                          <div>
-                            <div className="text-text-tertiary text-xs uppercase">Throws</div>
-                            <div className="text-white font-medium">{player.bio.throws}</div>
-                          </div>
-                          <div className="col-span-5 md:col-span-1">
-                            <div className="text-text-tertiary text-xs uppercase">Hometown</div>
-                            <div className="text-white font-medium truncate">
-                              {player.bio.hometown}
+                        <div className="flex flex-wrap gap-4 text-center text-sm">
+                          {player.bio.height && (
+                            <div>
+                              <div className="text-text-tertiary text-xs uppercase">Height</div>
+                              <div className="text-white font-medium">{player.bio.height}</div>
                             </div>
-                          </div>
+                          )}
+                          {player.bio.weight > 0 && (
+                            <div>
+                              <div className="text-text-tertiary text-xs uppercase">Weight</div>
+                              <div className="text-white font-medium">{player.bio.weight} lbs</div>
+                            </div>
+                          )}
+                          {player.bio.bats && (
+                            <div>
+                              <div className="text-text-tertiary text-xs uppercase">Bats</div>
+                              <div className="text-white font-medium">{player.bio.bats}</div>
+                            </div>
+                          )}
+                          {player.bio.throws && (
+                            <div>
+                              <div className="text-text-tertiary text-xs uppercase">Throws</div>
+                              <div className="text-white font-medium">{player.bio.throws}</div>
+                            </div>
+                          )}
+                          {player.bio.hometown && (
+                            <div>
+                              <div className="text-text-tertiary text-xs uppercase">Hometown</div>
+                              <div className="text-white font-medium truncate">{player.bio.hometown}</div>
+                            </div>
+                          )}
                         </div>
                       </div>
+                      )}
 
                       {/* Stats */}
                       <div className="p-4">
-                        {player.position === 'P' && player.pitchingStats ? (
-                          <div className="space-y-2">
-                            <div className="grid grid-cols-4 gap-2 text-center">
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.pitchingStats.era.toFixed(2)}
-                                </div>
-                                <div className="text-text-tertiary text-xs">ERA</div>
+                        {player.pitchingStats && !player.battingStats ? (
+                          <div className="grid grid-cols-4 gap-2 text-center">
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.pitchingStats.era.toFixed(2)}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.pitchingStats.wins}-{player.pitchingStats.losses}
-                                </div>
-                                <div className="text-text-tertiary text-xs">W-L</div>
+                              <div className="text-text-tertiary text-xs">ERA</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.pitchingStats.strikeouts}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.pitchingStats.strikeouts}
-                                </div>
-                                <div className="text-text-tertiary text-xs">SO</div>
+                              <div className="text-text-tertiary text-xs">K</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.pitchingStats.inningsPitched}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.pitchingStats.whip.toFixed(2)}
-                                </div>
-                                <div className="text-text-tertiary text-xs">WHIP</div>
+                              <div className="text-text-tertiary text-xs">IP</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.pitchingStats.whip.toFixed(2)}
                               </div>
+                              <div className="text-text-tertiary text-xs">WHIP</div>
                             </div>
                           </div>
                         ) : player.battingStats ? (
-                          <div className="space-y-2">
-                            <div className="grid grid-cols-4 gap-2 text-center">
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.battingStats.avg.toFixed(3)}
-                                </div>
-                                <div className="text-text-tertiary text-xs">AVG</div>
+                          <div className="grid grid-cols-4 gap-2 text-center">
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.battingStats.avg.toFixed(3).replace(/^0/, '')}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.battingStats.homeRuns}
-                                </div>
-                                <div className="text-text-tertiary text-xs">HR</div>
+                              <div className="text-text-tertiary text-xs">AVG</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.battingStats.homeRuns}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.battingStats.rbi}
-                                </div>
-                                <div className="text-text-tertiary text-xs">RBI</div>
+                              <div className="text-text-tertiary text-xs">HR</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.battingStats.rbi}
                               </div>
-                              <div>
-                                <div className="text-burnt-orange font-display text-lg font-bold">
-                                  {player.battingStats.ops.toFixed(3)}
-                                </div>
-                                <div className="text-text-tertiary text-xs">OPS</div>
+                              <div className="text-text-tertiary text-xs">RBI</div>
+                            </div>
+                            <div>
+                              <div className="text-burnt-orange font-display text-lg font-bold">
+                                {player.battingStats.hits}
                               </div>
+                              <div className="text-text-tertiary text-xs">H</div>
                             </div>
                           </div>
                         ) : (
@@ -537,7 +551,7 @@ export default function CollegeBaseballPlayersPage() {
 
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">
-              <p>Player data sourced from official NCAA statistics.</p>
+              <p>Stats accumulated from ESPN box scores via BSI D1 pipeline.</p>
               <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT

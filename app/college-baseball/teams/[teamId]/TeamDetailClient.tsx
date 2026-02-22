@@ -28,6 +28,29 @@ interface LiveStats {
   era: number;
 }
 
+interface TeamStats {
+  batting: {
+    atBats: number;
+    hits: number;
+    homeRuns: number;
+    rbi: number;
+    runs: number;
+    strikeouts: number;
+    battingAverage: number;
+    players: number;
+  };
+  pitching: {
+    inningsPitched: number;
+    earnedRuns: number;
+    strikeouts: number;
+    walks: number;
+    hitsAllowed: number;
+    era: number;
+    whip: number;
+    pitchers: number;
+  };
+}
+
 interface RosterPlayer {
   id?: string;
   name: string;
@@ -132,6 +155,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     if (!teamData) return [];
     const teamObj = teamData.team as Record<string, unknown> | undefined;
     return (teamObj?.roster ?? []) as RosterPlayer[];
+  }, [teamData]);
+
+  const teamStats = useMemo<TeamStats | null>(() => {
+    if (!teamData) return null;
+    return (teamData.teamStats as TeamStats) ?? null;
   }, [teamData]);
 
   const scheduleGames = useMemo<ScheduleGame[]>(() => {
@@ -325,6 +353,41 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </ScrollReveal>
                 )}
 
+                {!hasPreseason && (
+                  <ScrollReveal direction="up" className="mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {hasLiveRecord && (
+                        <Card padding="md">
+                          <div className="text-xs uppercase tracking-wide text-white/30">2026 Record</div>
+                          <div className="mt-1 text-xl font-mono" style={{ color: accent }}>
+                            {liveStats.wins}-{liveStats.losses}
+                          </div>
+                        </Card>
+                      )}
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">Conference</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-white">
+                          {meta.conference}
+                        </div>
+                      </Card>
+                      {rosterPlayers.length > 0 && (
+                        <Card padding="md">
+                          <div className="text-xs uppercase tracking-wide text-white/30">Roster</div>
+                          <div className="mt-1 text-xl font-mono text-white">
+                            {rosterPlayers.length} players
+                          </div>
+                        </Card>
+                      )}
+                      <Card padding="md">
+                        <div className="text-xs uppercase tracking-wide text-white/30">Division</div>
+                        <div className="mt-1 text-xl font-display uppercase tracking-wide text-white">
+                          D1
+                        </div>
+                      </Card>
+                    </div>
+                  </ScrollReveal>
+                )}
+
                 {preseason?.editorialLink && (
                   <ScrollReveal direction="up" className="mb-8">
                     <Link href={preseason.editorialLink}>
@@ -377,27 +440,136 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   {!hasPreseason && (
                     <ScrollReveal direction="up">
                       <Card padding="lg">
-                        <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">Team Information</h2>
+                        <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">
+                          Team Profile
+                        </h2>
                         <div className="space-y-4">
-                          <div className="flex justify-between">
+                          <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-white/40">Conference</span>
                             <span className="text-white font-semibold">{meta.conference}</span>
                           </div>
-                          <div className="flex justify-between">
+                          <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-white/40">Stadium</span>
                             <span className="text-white font-semibold">{meta.location.stadium}</span>
                           </div>
-                          <div className="flex justify-between">
+                          <div className="flex justify-between py-2 border-b border-white/5">
                             <span className="text-white/40">Location</span>
                             <span className="text-white font-semibold">{meta.location.city}, {meta.location.state}</span>
                           </div>
+                          {rosterPlayers.length > 0 && (
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                              <span className="text-white/40">Active Roster</span>
+                              <span className="text-white font-semibold">{rosterPlayers.length} players</span>
+                            </div>
+                          )}
                         </div>
                       </Card>
                     </ScrollReveal>
                   )}
                 </div>
 
-                {/* Team Leaders — only when stats are available from Highlightly */}
+                {/* Tab CTAs for non-ranked teams */}
+                {!hasPreseason && (
+                  <ScrollReveal direction="up" delay={100} className="mt-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {rosterPlayers.length > 0 && (
+                        <button onClick={() => setActiveTab('roster')} className="text-left">
+                          <Card padding="md" className="hover:border-burnt-orange/50 transition-all">
+                            <div className="text-xs uppercase tracking-wide mb-1" style={{ color: accent }}>
+                              Full Roster
+                            </div>
+                            <div className="text-white font-semibold">
+                              {rosterPlayers.length} players &mdash; view roster breakdown
+                            </div>
+                          </Card>
+                        </button>
+                      )}
+                      <button onClick={() => setActiveTab('schedule')} className="text-left">
+                        <Card padding="md" className="hover:border-burnt-orange/50 transition-all">
+                          <div className="text-xs uppercase tracking-wide mb-1" style={{ color: accent }}>
+                            Season Schedule
+                          </div>
+                          <div className="text-white font-semibold">
+                            View full 2026 schedule &amp; results
+                          </div>
+                        </Card>
+                      </button>
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* Team Season Stats — from D1 accumulated data */}
+                {teamStats && (
+                  <ScrollReveal direction="up" className="mt-8">
+                    <Card padding="lg">
+                      <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">2026 Season Stats</h2>
+                      <div className="grid grid-cols-2 gap-8">
+                        {/* Batting */}
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-white/30 mb-4 font-semibold">Batting</div>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.batting.battingAverage.toFixed(3).replace(/^0/, '')}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">AVG</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-2xl font-bold text-white">{teamStats.batting.homeRuns}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">HR</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-2xl font-bold text-white">{teamStats.batting.rbi}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">RBI</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.batting.runs}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">Runs</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.batting.hits}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">Hits</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.batting.players}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">Batters</div>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Pitching */}
+                        <div>
+                          <div className="text-xs uppercase tracking-wider text-white/30 mb-4 font-semibold">Pitching</div>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.pitching.era.toFixed(2)}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">ERA</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-2xl font-bold text-white">{teamStats.pitching.strikeouts}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">K</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-2xl font-bold text-white">{teamStats.pitching.whip.toFixed(2)}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">WHIP</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.pitching.inningsPitched}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">IP</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.pitching.walks}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">BB</div>
+                            </div>
+                            <div>
+                              <div className="font-mono text-lg text-white/60">{teamStats.pitching.pitchers}</div>
+                              <div className="text-white/30 text-xs uppercase mt-1">Pitchers</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </ScrollReveal>
+                )}
+
+                {/* Team Leaders — only when stats are available from Highlightly/D1 */}
                 {teamLeaders && (
                   <ScrollReveal direction="up" className="mt-8">
                     <Card padding="lg">
@@ -491,6 +663,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   const hasNumbers = rosterPlayers.some((p) => p.number && p.number !== '');
                   const hasPositions = rosterPlayers.some((p) => p.position && p.position !== 'UN' && p.position !== '');
                   const hasYears = rosterPlayers.some((p) => p.year && p.year !== '' && p.year !== '—');
+                  const hasStats = rosterPlayers.some((p) => p.stats && (p.stats.avg !== undefined || p.stats.era !== undefined));
                   return (
                     <Card padding="none" className="overflow-hidden">
                       <div className="overflow-x-auto">
@@ -501,22 +674,48 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               <th className="text-left px-4 py-3">Name</th>
                               {hasPositions && <th className="text-left px-4 py-3">Pos</th>}
                               {hasYears && <th className="text-left px-4 py-3">Year</th>}
+                              {hasStats && (
+                                <>
+                                  <th className="text-right px-4 py-3">AVG/ERA</th>
+                                  <th className="text-right px-4 py-3">HR/K</th>
+                                  <th className="text-right px-4 py-3">RBI/W</th>
+                                </>
+                              )}
                             </tr>
                           </thead>
                           <tbody>
-                            {rosterPlayers.map((p) => (
-                              <tr key={p.id || p.name} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                {hasNumbers && <td className="px-4 py-3 font-mono" style={{ color: accent }}>{p.number}</td>}
-                                <td className="px-4 py-3 text-white font-semibold">{p.name}</td>
-                                {hasPositions && <td className="px-4 py-3 text-white/60">{p.position}</td>}
-                                {hasYears && <td className="px-4 py-3 text-white/60">{p.year}</td>}
-                              </tr>
-                            ))}
+                            {rosterPlayers.map((p) => {
+                              const isBatter = p.stats?.avg !== undefined;
+                              const isPitcher = p.stats?.era !== undefined;
+                              return (
+                                <tr key={p.id || p.name} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                  {hasNumbers && <td className="px-4 py-3 font-mono" style={{ color: accent }}>{p.number}</td>}
+                                  <td className="px-4 py-3 text-white font-semibold">
+                                    {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
+                                  </td>
+                                  {hasPositions && <td className="px-4 py-3 text-white/60">{p.position}</td>}
+                                  {hasYears && <td className="px-4 py-3 text-white/60">{p.year}</td>}
+                                  {hasStats && (
+                                    <>
+                                      <td className="px-4 py-3 text-right font-mono text-white/80">
+                                        {isBatter ? p.stats?.avg?.toFixed(3).replace(/^0/, '') : isPitcher ? p.stats?.era?.toFixed(2) : '\u2014'}
+                                      </td>
+                                      <td className="px-4 py-3 text-right font-mono text-white/60">
+                                        {isBatter ? p.stats?.hr : isPitcher ? p.stats?.so : '\u2014'}
+                                      </td>
+                                      <td className="px-4 py-3 text-right font-mono text-white/60">
+                                        {isBatter ? p.stats?.rbi : isPitcher ? (p.stats?.wins ?? '\u2014') : '\u2014'}
+                                      </td>
+                                    </>
+                                  )}
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
                       <div className="px-4 py-3 border-t border-white/5 text-xs text-white/20">
-                        {rosterPlayers.length} players &mdash; Source: ESPN
+                        {rosterPlayers.length} players{hasStats ? ' \u00b7 Stats from D1 box scores' : ''} &mdash; Source: ESPN
                       </div>
                     </Card>
                   );
