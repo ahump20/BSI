@@ -39,7 +39,6 @@ import {
   handleCollegeBaseballNewsEnhanced,
   handleCollegeBaseballPlayerCompare,
   handleCollegeBaseballTrends,
-  handleCollegeBaseballTeamSchedule,
 } from './handlers/college-baseball';
 
 import {
