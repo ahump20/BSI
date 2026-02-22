@@ -22,7 +22,6 @@ export const metadata: Metadata = {
 interface TeamEntry {
   name: string;
   slug: string;
-  hasPage: boolean;
 }
 
 const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
@@ -30,94 +29,102 @@ const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
     name: 'SEC',
     fullName: 'Southeastern Conference',
     teams: [
-      { name: 'Texas', slug: 'texas', hasPage: true },
-      { name: 'Texas A&M', slug: 'texas-am', hasPage: true },
-      { name: 'LSU', slug: 'lsu', hasPage: true },
-      { name: 'Florida', slug: 'florida', hasPage: true },
-      { name: 'Tennessee', slug: 'tennessee', hasPage: true },
-      { name: 'Arkansas', slug: 'arkansas', hasPage: true },
-      { name: 'Vanderbilt', slug: 'vanderbilt', hasPage: true },
-      { name: 'Ole Miss', slug: 'ole-miss', hasPage: true },
-      { name: 'Georgia', slug: 'georgia', hasPage: true },
-      { name: 'Auburn', slug: 'auburn', hasPage: true },
-      { name: 'Alabama', slug: 'alabama', hasPage: true },
-      { name: 'Mississippi State', slug: 'mississippi-state', hasPage: true },
-      { name: 'South Carolina', slug: 'south-carolina', hasPage: true },
-      { name: 'Kentucky', slug: 'kentucky', hasPage: true },
-      { name: 'Missouri', slug: 'missouri', hasPage: true },
-      { name: 'Oklahoma', slug: 'oklahoma', hasPage: true },
+      { name: 'Texas', slug: 'texas' },
+      { name: 'Texas A&M', slug: 'texas-am' },
+      { name: 'LSU', slug: 'lsu' },
+      { name: 'Florida', slug: 'florida' },
+      { name: 'Tennessee', slug: 'tennessee' },
+      { name: 'Arkansas', slug: 'arkansas' },
+      { name: 'Vanderbilt', slug: 'vanderbilt' },
+      { name: 'Ole Miss', slug: 'ole-miss' },
+      { name: 'Georgia', slug: 'georgia' },
+      { name: 'Auburn', slug: 'auburn' },
+      { name: 'Alabama', slug: 'alabama' },
+      { name: 'Mississippi State', slug: 'mississippi-state' },
+      { name: 'South Carolina', slug: 'south-carolina' },
+      { name: 'Kentucky', slug: 'kentucky' },
+      { name: 'Missouri', slug: 'missouri' },
+      { name: 'Oklahoma', slug: 'oklahoma' },
     ],
   },
   {
     name: 'ACC',
     fullName: 'Atlantic Coast Conference',
     teams: [
-      { name: 'Wake Forest', slug: 'wake-forest', hasPage: true },
-      { name: 'Virginia', slug: 'virginia', hasPage: true },
-      { name: 'Clemson', slug: 'clemson', hasPage: true },
-      { name: 'North Carolina', slug: 'north-carolina', hasPage: true },
-      { name: 'NC State', slug: 'nc-state', hasPage: true },
-      { name: 'Duke', slug: 'duke', hasPage: true },
-      { name: 'Louisville', slug: 'louisville', hasPage: true },
-      { name: 'Miami', slug: 'miami', hasPage: true },
-      { name: 'Florida State', slug: 'florida-state', hasPage: true },
-      { name: 'Stanford', slug: 'stanford', hasPage: true },
-      { name: 'Cal', slug: 'california', hasPage: true },
-      { name: 'Virginia Tech', slug: 'virginia-tech', hasPage: false },
-      { name: 'Georgia Tech', slug: 'georgia-tech', hasPage: false },
-      { name: 'Notre Dame', slug: 'notre-dame', hasPage: false },
-      { name: 'Pittsburgh', slug: 'pittsburgh', hasPage: false },
-      { name: 'Boston College', slug: 'boston-college', hasPage: false },
+      { name: 'Wake Forest', slug: 'wake-forest' },
+      { name: 'Virginia', slug: 'virginia' },
+      { name: 'Clemson', slug: 'clemson' },
+      { name: 'North Carolina', slug: 'north-carolina' },
+      { name: 'NC State', slug: 'nc-state' },
+      { name: 'Duke', slug: 'duke' },
+      { name: 'Louisville', slug: 'louisville' },
+      { name: 'Miami', slug: 'miami' },
+      { name: 'Florida State', slug: 'florida-state' },
+      { name: 'Stanford', slug: 'stanford' },
+      { name: 'Cal', slug: 'california' },
+      { name: 'Virginia Tech', slug: 'virginia-tech' },
+      { name: 'Georgia Tech', slug: 'georgia-tech' },
+      { name: 'Notre Dame', slug: 'notre-dame' },
+      { name: 'Pittsburgh', slug: 'pittsburgh' },
+      { name: 'Boston College', slug: 'boston-college' },
+      { name: 'Syracuse', slug: 'syracuse' },
+      { name: 'SMU', slug: 'smu' },
     ],
   },
   {
     name: 'Big 12',
     fullName: 'Big 12 Conference',
     teams: [
-      { name: 'TCU', slug: 'tcu', hasPage: true },
-      { name: 'Texas Tech', slug: 'texas-tech', hasPage: true },
-      { name: 'Oklahoma State', slug: 'oklahoma-state', hasPage: true },
-      { name: 'Baylor', slug: 'baylor', hasPage: true },
-      { name: 'West Virginia', slug: 'west-virginia', hasPage: true },
-      { name: 'Kansas State', slug: 'kansas-state', hasPage: true },
-      { name: 'Arizona', slug: 'arizona', hasPage: true },
-      { name: 'Arizona State', slug: 'arizona-state', hasPage: true },
-      { name: 'Kansas', slug: 'kansas', hasPage: true },
-      { name: 'BYU', slug: 'byu', hasPage: true },
-      { name: 'UCF', slug: 'ucf', hasPage: true },
-      { name: 'Houston', slug: 'houston', hasPage: true },
-      { name: 'Cincinnati', slug: 'cincinnati', hasPage: true },
-      { name: 'Colorado', slug: 'colorado', hasPage: false },
-      { name: 'Utah', slug: 'utah', hasPage: true },
+      { name: 'TCU', slug: 'tcu' },
+      { name: 'Texas Tech', slug: 'texas-tech' },
+      { name: 'Oklahoma State', slug: 'oklahoma-state' },
+      { name: 'Baylor', slug: 'baylor' },
+      { name: 'West Virginia', slug: 'west-virginia' },
+      { name: 'Kansas State', slug: 'kansas-state' },
+      { name: 'Arizona', slug: 'arizona' },
+      { name: 'Arizona State', slug: 'arizona-state' },
+      { name: 'Kansas', slug: 'kansas' },
+      { name: 'BYU', slug: 'byu' },
+      { name: 'UCF', slug: 'ucf' },
+      { name: 'Houston', slug: 'houston' },
+      { name: 'Cincinnati', slug: 'cincinnati' },
+      { name: 'Colorado', slug: 'colorado' },
+      { name: 'Utah', slug: 'utah' },
+      { name: 'Iowa State', slug: 'iowa-state' },
     ],
   },
   {
     name: 'Big Ten',
     fullName: 'Big Ten Conference',
     teams: [
-      { name: 'UCLA', slug: 'ucla', hasPage: true },
-      { name: 'USC', slug: 'usc', hasPage: true },
-      { name: 'Indiana', slug: 'indiana', hasPage: true },
-      { name: 'Maryland', slug: 'maryland', hasPage: true },
-      { name: 'Michigan', slug: 'michigan', hasPage: true },
-      { name: 'Ohio State', slug: 'ohio-state', hasPage: true },
-      { name: 'Penn State', slug: 'penn-state', hasPage: true },
-      { name: 'Rutgers', slug: 'rutgers', hasPage: true },
-      { name: 'Nebraska', slug: 'nebraska', hasPage: true },
-      { name: 'Minnesota', slug: 'minnesota', hasPage: true },
-      { name: 'Iowa', slug: 'iowa', hasPage: true },
-      { name: 'Illinois', slug: 'illinois', hasPage: true },
-      { name: 'Northwestern', slug: 'northwestern', hasPage: true },
-      { name: 'Purdue', slug: 'purdue', hasPage: true },
-      { name: 'Michigan State', slug: 'michigan-state', hasPage: true },
+      { name: 'UCLA', slug: 'ucla' },
+      { name: 'USC', slug: 'usc' },
+      { name: 'Indiana', slug: 'indiana' },
+      { name: 'Maryland', slug: 'maryland' },
+      { name: 'Michigan', slug: 'michigan' },
+      { name: 'Ohio State', slug: 'ohio-state' },
+      { name: 'Penn State', slug: 'penn-state' },
+      { name: 'Rutgers', slug: 'rutgers' },
+      { name: 'Nebraska', slug: 'nebraska' },
+      { name: 'Minnesota', slug: 'minnesota' },
+      { name: 'Iowa', slug: 'iowa' },
+      { name: 'Illinois', slug: 'illinois' },
+      { name: 'Northwestern', slug: 'northwestern' },
+      { name: 'Purdue', slug: 'purdue' },
+      { name: 'Michigan State', slug: 'michigan-state' },
+      { name: 'Wisconsin', slug: 'wisconsin' },
+      { name: 'Oregon', slug: 'oregon' },
+      { name: 'Washington', slug: 'washington' },
     ],
   },
   {
     name: 'Pac-12',
     fullName: 'Pac-12 Conference',
     teams: [
-      { name: 'Oregon State', slug: 'oregon-state', hasPage: true },
-      { name: 'Washington State', slug: 'washington-state', hasPage: false },
+      { name: 'Oregon State', slug: 'oregon-state' },
+      { name: 'Washington State', slug: 'washington-state' },
+      { name: 'San Diego State', slug: 'san-diego-state' },
+      { name: 'Fresno State', slug: 'fresno-state' },
     ],
   },
 ];
@@ -127,34 +134,28 @@ function TeamCard({ team }: { team: TeamEntry }) {
   const preseason = preseason2026[team.slug];
   const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
 
-  const content = (
-    <Card
-      padding="md"
-      variant={team.hasPage ? 'hover' : 'default'}
-      className={`text-center transition-all ${team.hasPage ? 'hover:border-burnt-orange' : 'opacity-40'}`}
-    >
-      <div className="flex flex-col items-center gap-2">
-        {logoUrl && (
-          <img
-            src={logoUrl}
-            alt=""
-            className="w-8 h-8 object-contain"
-            loading="lazy"
-          />
-        )}
-        <span className="text-white font-medium text-sm">{team.name}</span>
-        {preseason && (
-          <Badge variant="primary" size="sm">#{preseason.rank}</Badge>
-        )}
-      </div>
-    </Card>
-  );
-
-  if (!team.hasPage) return <div className="block">{content}</div>;
-
   return (
     <Link href={`/college-baseball/teams/${team.slug}`} className="block">
-      {content}
+      <Card
+        padding="md"
+        variant="hover"
+        className="text-center transition-all hover:border-burnt-orange"
+      >
+        <div className="flex flex-col items-center gap-2">
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt=""
+              className="w-8 h-8 object-contain"
+              loading="lazy"
+            />
+          )}
+          <span className="text-white font-medium text-sm">{team.name}</span>
+          {preseason && (
+            <Badge variant="primary" size="sm">#{preseason.rank}</Badge>
+          )}
+        </div>
+      </Card>
     </Link>
   );
 }
@@ -203,7 +204,7 @@ export default function TeamsPage() {
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-16 text-center">
                 <p className="text-text-tertiary text-sm">
-                  Grayed-out teams are coming soon. Full coverage expanding through the 2026 season.
+                  All Power 5 and Pac-12 team profiles are live. Mid-major coverage expanding through the 2026 season.
                 </p>
               </div>
             </ScrollReveal>

@@ -11,25 +11,26 @@ export async function generateStaticParams() {
   // Return common team IDs for static generation
   // Additional teams will be handled client-side via the teams API
   const teams = [
-    // SEC
+    // SEC (16)
     'texas', 'texas-am', 'lsu', 'florida', 'tennessee', 'arkansas',
     'vanderbilt', 'ole-miss', 'georgia', 'auburn', 'alabama',
     'mississippi-state', 'south-carolina', 'kentucky', 'missouri', 'oklahoma',
-    // ACC
+    // ACC (18)
     'wake-forest', 'virginia', 'clemson', 'north-carolina', 'nc-state',
     'duke', 'louisville', 'miami', 'florida-state', 'stanford', 'california',
-    // Big 12
+    'virginia-tech', 'georgia-tech', 'notre-dame', 'pittsburgh',
+    'boston-college', 'syracuse', 'smu',
+    // Big 12 (16)
     'tcu', 'texas-tech', 'oklahoma-state', 'baylor', 'west-virginia',
     'kansas-state', 'arizona', 'arizona-state', 'kansas', 'byu', 'ucf',
-    'houston', 'cincinnati', 'utah',
-    // Big Ten
+    'houston', 'cincinnati', 'colorado', 'utah', 'iowa-state',
+    // Big Ten (18)
     'ucla', 'usc', 'indiana', 'maryland', 'michigan', 'ohio-state',
     'penn-state', 'rutgers', 'nebraska', 'minnesota', 'iowa', 'illinois',
-    'northwestern', 'purdue', 'michigan-state',
-    // Pac-12
-    'oregon-state',
-    // Other ranked
+    'northwestern', 'purdue', 'michigan-state', 'wisconsin',
     'oregon', 'washington',
+    // Pac-12 (4)
+    'oregon-state', 'washington-state', 'san-diego-state', 'fresno-state',
   ];
 
   return teams.map((teamId) => ({ teamId }));

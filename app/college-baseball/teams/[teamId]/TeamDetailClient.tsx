@@ -26,6 +26,38 @@ interface LiveStats {
   era: number;
 }
 
+/**
+ * Returns the best accent color for dark backgrounds.
+ * If the primary is too dark against #0D0D0D, tries secondary, then lightens primary.
+ */
+function getAccentColor(primary: string, secondary: string): string {
+  const lum = getLuminance(primary);
+  if (lum >= 0.35) return primary;
+
+  const secLum = getLuminance(secondary);
+  if (secLum >= 0.35) return secondary;
+
+  // Both too dark — lighten primary by blending toward white
+  return lightenHex(primary, 0.4);
+}
+
+function getLuminance(hex: string): number {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+function lightenHex(hex: string, amount: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lr = Math.round(r + (255 - r) * amount);
+  const lg = Math.round(g + (255 - g) * amount);
+  const lb = Math.round(b + (255 - b) * amount);
+  return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`;
+}
+
 interface TeamDetailClientProps {
   teamId: string;
 }
@@ -51,6 +83,17 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   }, [teamData]);
 
   const statsUnavailable = !!statsError;
+
+  // ─── Team color theming ──────────────────────────────────────────────────
+  const accent = meta ? getAccentColor(meta.colors.primary, meta.colors.secondary) : '#BF5700';
+
+  const teamStyles = meta
+    ? ({
+        '--team-primary': accent,
+        '--team-primary-20': `${accent}33`,
+        '--team-primary-40': `${accent}66`,
+      } as React.CSSProperties)
+    : {};
 
   // ─── No metadata → error state ──────────────────────────────────────────────
   if (!meta) {
@@ -87,12 +130,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <main id="main-content">
+      <main id="main-content" style={teamStyles}>
         {/* ─── Hero Section ─────────────────────────────────────────────────── */}
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
+        <div style={{ backgroundImage: `linear-gradient(to bottom, ${accent}1A, #1A1A1A, #0D0D0D)` }}>
+        <Section padding="lg" className="pt-24">
           <Container>
             <ScrollReveal direction="up">
-              {/* Breadcrumb */}
+              {/* Breadcrumb — BSI brand orange stays */}
               <nav className="flex items-center gap-3 mb-8 text-sm">
                 <Link
                   href="/college-baseball"
@@ -116,7 +160,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {/* Logo */}
                 <div
                   className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white/5 flex items-center justify-center overflow-hidden shrink-0"
-                  style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: `${meta.colors.primary}40` }}
+                  style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: `${accent}40` }}
                 >
                   {!logoError ? (
                     <img
@@ -127,7 +171,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       onError={() => setLogoError(true)}
                     />
                   ) : (
-                    <span className="font-display text-burnt-orange font-bold text-3xl md:text-4xl">
+                    <span
+                      className="font-display font-bold text-3xl md:text-4xl"
+                      style={{ color: accent }}
+                    >
                       {meta.abbreviation}
                     </span>
                   )}
@@ -145,7 +192,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     <Badge variant="secondary">{meta.conference}</Badge>
                     {hasPreseason && (
                       <>
-                        <Badge variant="primary">#{preseason.rank} Preseason</Badge>
+                        <span
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold text-white"
+                          style={{ backgroundColor: accent }}
+                        >
+                          #{preseason.rank} Preseason
+                        </span>
                         <Badge variant="accent">{getTierLabel(preseason.tier)}</Badge>
                       </>
                     )}
@@ -176,7 +228,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   <div className="flex flex-wrap gap-4 md:gap-6 shrink-0">
                     {overallRecord && (
                       <div className="text-center">
-                        <div className="font-mono text-2xl md:text-3xl font-bold text-burnt-orange">
+                        <div
+                          className="font-mono text-2xl md:text-3xl font-bold"
+                          style={{ color: accent }}
+                        >
                           {overallRecord}
                         </div>
                         <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
@@ -208,6 +263,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </ScrollReveal>
           </Container>
         </Section>
+        </div>
 
         {/* ─── Tabs Navigation ──────────────────────────────────────────────── */}
         <Section
@@ -222,9 +278,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors ${
                     activeTab === tab
-                      ? 'text-burnt-orange border-b-2 border-burnt-orange'
+                      ? 'border-b-2'
                       : 'text-white/30 hover:text-white/60'
                   }`}
+                  style={
+                    activeTab === tab
+                      ? { color: accent, borderColor: accent }
+                      : undefined
+                  }
                 >
                   {tab}
                 </button>
@@ -254,7 +315,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         <div className="text-xs uppercase tracking-wide text-white/30">
                           Postseason
                         </div>
-                        <div className="mt-1 text-xl font-mono text-burnt-orange">
+                        <div
+                          className="mt-1 text-xl font-mono"
+                          style={{ color: accent }}
+                        >
                           {preseason.postseason2025}
                         </div>
                       </Card>
@@ -288,7 +352,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         className="group flex items-center justify-between"
                       >
                         <div>
-                          <div className="text-xs uppercase tracking-wide text-burnt-orange font-semibold mb-1">
+                          <div
+                            className="text-xs uppercase tracking-wide font-semibold mb-1"
+                            style={{ color: accent }}
+                          >
                             Full Preview Available
                           </div>
                           <div className="text-white font-display text-lg uppercase tracking-wide">
@@ -299,7 +366,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           </div>
                         </div>
                         <svg
-                          className="w-6 h-6 text-burnt-orange group-hover:translate-x-1 transition-transform shrink-0 ml-4"
+                          className="w-6 h-6 group-hover:translate-x-1 transition-transform shrink-0 ml-4"
+                          style={{ color: accent }}
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -338,7 +406,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               >
                                 <span className="text-white font-semibold">{name}</span>
                                 {stat && (
-                                  <span className="font-mono text-sm text-burnt-orange">{stat}</span>
+                                  <span
+                                    className="font-mono text-sm"
+                                    style={{ color: accent }}
+                                  >
+                                    {stat}
+                                  </span>
                                 )}
                               </div>
                             );
@@ -412,7 +485,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <ScrollReveal direction="up">
                 <Card padding="lg" className="text-center">
                   <div className="py-8">
-                    <div className="text-burnt-orange text-4xl mb-4 font-display">2026</div>
+                    <div
+                      className="text-4xl mb-4 font-display"
+                      style={{ color: accent }}
+                    >
+                      2026
+                    </div>
                     <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
                       Season Schedule
                     </h3>
@@ -423,7 +501,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     {preseason?.editorialLink && (
                       <Link
                         href={preseason.editorialLink}
-                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                        className="inline-block px-6 py-2 text-white font-semibold rounded-lg transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: accent }}
                       >
                         View Schedule Preview
                       </Link>
@@ -437,7 +516,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <ScrollReveal direction="up">
                 <Card padding="lg" className="text-center">
                   <div className="py-8">
-                    <div className="text-burnt-orange text-4xl mb-4 font-display font-bold">
+                    <div
+                      className="text-4xl mb-4 font-display font-bold"
+                      style={{ color: accent }}
+                    >
                       {meta.abbreviation}
                     </div>
                     <h3 className="text-xl font-display font-bold text-white uppercase tracking-wide mb-3">
@@ -450,7 +532,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     {preseason?.editorialLink && (
                       <Link
                         href={preseason.editorialLink}
-                        className="inline-block px-6 py-2 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange/90 transition-colors"
+                        className="inline-block px-6 py-2 text-white font-semibold rounded-lg transition-opacity hover:opacity-90"
+                        style={{ backgroundColor: accent }}
                       >
                         View Full Breakdown
                       </Link>
@@ -460,7 +543,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               </ScrollReveal>
             )}
 
-            {/* Data Attribution */}
+            {/* Data Attribution — BSI brand, stays burnt-orange */}
             <div className="mt-12 pt-6 border-t border-white/5 text-center">
               <div className="flex items-center justify-center gap-2 text-xs text-white/20">
                 <span>BSI Preseason Intelligence</span>

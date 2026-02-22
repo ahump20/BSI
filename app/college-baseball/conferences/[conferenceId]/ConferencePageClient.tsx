@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import {
   Trophy,
   Users,
@@ -31,6 +32,7 @@ const conferenceData: Record<
     teams: Array<{
       name: string;
       mascot: string;
+      slug?: string;
       rank: number | null;
       previousRank: number | null;
       keyPlayer?: string;
@@ -56,6 +58,7 @@ const conferenceData: Record<
       {
         name: 'Texas',
         mascot: 'Longhorns',
+        slug: 'texas',
         rank: 1,
         previousRank: null,
         keyPlayer: 'Lucas Gordon, RHP',
@@ -64,6 +67,7 @@ const conferenceData: Record<
       {
         name: 'Texas A&M',
         mascot: 'Aggies',
+        slug: 'texas-am',
         rank: 2,
         previousRank: null,
         keyPlayer: 'Gavin Grahovac, C',
@@ -72,6 +76,7 @@ const conferenceData: Record<
       {
         name: 'Tennessee',
         mascot: 'Volunteers',
+        slug: 'tennessee',
         rank: 10,
         previousRank: null,
         keyPlayer: 'Christian Moore, 2B',
@@ -80,6 +85,7 @@ const conferenceData: Record<
       {
         name: 'LSU',
         mascot: 'Tigers',
+        slug: 'lsu',
         rank: 14,
         previousRank: null,
         keyPlayer: 'Tommy White, 1B',
@@ -88,6 +94,7 @@ const conferenceData: Record<
       {
         name: 'Vanderbilt',
         mascot: 'Commodores',
+        slug: 'vanderbilt',
         rank: null,
         previousRank: null,
         previewNote: 'Tim Corbin reloads with elite pitching prospects',
@@ -95,6 +102,7 @@ const conferenceData: Record<
       {
         name: 'Arkansas',
         mascot: 'Razorbacks',
+        slug: 'arkansas',
         rank: null,
         previousRank: null,
         previewNote: 'Dave Van Horn always contends—watch for second-half surge',
@@ -102,6 +110,7 @@ const conferenceData: Record<
       {
         name: 'Ole Miss',
         mascot: 'Rebels',
+        slug: 'ole-miss',
         rank: null,
         previousRank: null,
         previewNote: 'Young roster with upside',
@@ -109,6 +118,7 @@ const conferenceData: Record<
       {
         name: 'Florida',
         mascot: 'Gators',
+        slug: 'florida',
         rank: null,
         previousRank: null,
         previewNote: "Kevin O'Sullivan in rebuild mode after departures",
@@ -116,6 +126,7 @@ const conferenceData: Record<
       {
         name: 'Georgia',
         mascot: 'Bulldogs',
+        slug: 'georgia',
         rank: null,
         previousRank: null,
         previewNote: 'Competitive in SEC East',
@@ -123,6 +134,7 @@ const conferenceData: Record<
       {
         name: 'South Carolina',
         mascot: 'Gamecocks',
+        slug: 'south-carolina',
         rank: null,
         previousRank: null,
         previewNote: 'Monte Lee building toward contention',
@@ -130,6 +142,7 @@ const conferenceData: Record<
       {
         name: 'Kentucky',
         mascot: 'Wildcats',
+        slug: 'kentucky',
         rank: null,
         previousRank: null,
         previewNote: 'Improving program under Nick Mingione',
@@ -137,6 +150,7 @@ const conferenceData: Record<
       {
         name: 'Auburn',
         mascot: 'Tigers',
+        slug: 'auburn',
         rank: null,
         previousRank: null,
         previewNote: 'Sonny DiChiara era begins in earnest',
@@ -144,6 +158,7 @@ const conferenceData: Record<
       {
         name: 'Missouri',
         mascot: 'Tigers',
+        slug: 'missouri',
         rank: null,
         previousRank: null,
         previewNote: 'Building toward SEC competitiveness',
@@ -151,6 +166,7 @@ const conferenceData: Record<
       {
         name: 'Mississippi State',
         mascot: 'Bulldogs',
+        slug: 'mississippi-state',
         rank: null,
         previousRank: null,
         previewNote: 'Chris Lemonis looking to bounce back',
@@ -158,6 +174,7 @@ const conferenceData: Record<
       {
         name: 'Alabama',
         mascot: 'Crimson Tide',
+        slug: 'alabama',
         rank: null,
         previousRank: null,
         previewNote: 'Rob Vaughn building the program',
@@ -165,6 +182,7 @@ const conferenceData: Record<
       {
         name: 'Oklahoma',
         mascot: 'Sooners',
+        slug: 'oklahoma',
         rank: null,
         previousRank: null,
         previewNote: 'First year in SEC—adjustment season expected',
@@ -189,6 +207,7 @@ const conferenceData: Record<
       {
         name: 'Stanford',
         mascot: 'Cardinal',
+        slug: 'stanford',
         rank: 3,
         previousRank: null,
         keyPlayer: 'Braden Montgomery, OF',
@@ -197,6 +216,7 @@ const conferenceData: Record<
       {
         name: 'Florida State',
         mascot: 'Seminoles',
+        slug: 'florida-state',
         rank: 4,
         previousRank: null,
         keyPlayer: 'James Tibbs III, OF',
@@ -205,6 +225,7 @@ const conferenceData: Record<
       {
         name: 'NC State',
         mascot: 'Wolfpack',
+        slug: 'nc-state',
         rank: 5,
         previousRank: null,
         keyPlayer: 'Sam Highfill, LHP',
@@ -213,6 +234,7 @@ const conferenceData: Record<
       {
         name: 'Clemson',
         mascot: 'Tigers',
+        slug: 'clemson',
         rank: 6,
         previousRank: null,
         previewNote: 'Monte Lee has Tigers back in the hunt',
@@ -220,6 +242,7 @@ const conferenceData: Record<
       {
         name: 'North Carolina',
         mascot: 'Tar Heels',
+        slug: 'north-carolina',
         rank: 7,
         previousRank: null,
         previewNote: 'Scott Forbes builds another contender',
@@ -227,6 +250,7 @@ const conferenceData: Record<
       {
         name: 'Virginia',
         mascot: 'Cavaliers',
+        slug: 'virginia',
         rank: 8,
         previousRank: null,
         keyPlayer: 'Ethan Anderson, SS',
@@ -235,6 +259,7 @@ const conferenceData: Record<
       {
         name: 'Louisville',
         mascot: 'Cardinals',
+        slug: 'louisville',
         rank: 9,
         previousRank: null,
         previewNote: 'Dan McDonnell always fields a contender',
@@ -242,6 +267,7 @@ const conferenceData: Record<
       {
         name: 'Wake Forest',
         mascot: 'Demon Deacons',
+        slug: 'wake-forest',
         rank: 11,
         previousRank: null,
         previewNote: 'Breakout season was no fluke',
@@ -249,6 +275,7 @@ const conferenceData: Record<
       {
         name: 'Miami',
         mascot: 'Hurricanes',
+        slug: 'miami',
         rank: 17,
         previousRank: null,
         previewNote: 'The U is back in the baseball conversation',
@@ -256,6 +283,7 @@ const conferenceData: Record<
       {
         name: 'Virginia Tech',
         mascot: 'Hokies',
+        slug: 'virginia-tech',
         rank: 19,
         previousRank: null,
         previewNote: 'John Szefc has Hokies on the rise',
@@ -263,6 +291,7 @@ const conferenceData: Record<
       {
         name: 'Georgia Tech',
         mascot: 'Yellow Jackets',
+        slug: 'georgia-tech',
         rank: 20,
         previousRank: null,
         previewNote: 'Danny Hall gets them in the conversation',
@@ -270,6 +299,7 @@ const conferenceData: Record<
       {
         name: 'Notre Dame',
         mascot: 'Fighting Irish',
+        slug: 'notre-dame',
         rank: 21,
         previousRank: null,
         previewNote: 'Link Jarrett II leads Irish into ACC',
@@ -277,6 +307,7 @@ const conferenceData: Record<
       {
         name: 'Cal',
         mascot: 'Golden Bears',
+        slug: 'california',
         rank: 22,
         previousRank: null,
         previewNote: 'Mike Neu brings West Coast talent to ACC',
@@ -284,6 +315,7 @@ const conferenceData: Record<
       {
         name: 'SMU',
         mascot: 'Mustangs',
+        slug: 'smu',
         rank: 23,
         previousRank: null,
         previewNote: 'Texas talent pipeline now feeds ACC',
@@ -291,6 +323,7 @@ const conferenceData: Record<
       {
         name: 'Duke',
         mascot: 'Blue Devils',
+        slug: 'duke',
         rank: 24,
         previousRank: null,
         previewNote: 'Chris Pollard has Duke relevant again',
@@ -298,6 +331,7 @@ const conferenceData: Record<
       {
         name: 'Pittsburgh',
         mascot: 'Panthers',
+        slug: 'pittsburgh',
         rank: null,
         previousRank: null,
         previewNote: 'Mike Bell building in Pittsburgh',
@@ -305,6 +339,7 @@ const conferenceData: Record<
       {
         name: 'Boston College',
         mascot: 'Eagles',
+        slug: 'boston-college',
         rank: null,
         previousRank: null,
         previewNote: 'Working toward ACC competitiveness',
@@ -312,6 +347,7 @@ const conferenceData: Record<
       {
         name: 'Syracuse',
         mascot: 'Orange',
+        slug: 'syracuse',
         rank: null,
         previousRank: null,
         previewNote: 'Building program in cold weather',
@@ -336,6 +372,7 @@ const conferenceData: Record<
       {
         name: 'Oklahoma State',
         mascot: 'Cowboys',
+        slug: 'oklahoma-state',
         rank: 12,
         previousRank: null,
         keyPlayer: 'Aidan Meola, RHP',
@@ -344,6 +381,7 @@ const conferenceData: Record<
       {
         name: 'Baylor',
         mascot: 'Bears',
+        slug: 'baylor',
         rank: 18,
         previousRank: null,
         previewNote: 'Mitch Thompson builds contender in Waco',
@@ -351,6 +389,7 @@ const conferenceData: Record<
       {
         name: 'UCF',
         mascot: 'Knights',
+        slug: 'ucf',
         rank: 25,
         previousRank: null,
         previewNote: 'Greg Lovelady brings winning culture from AAC',
@@ -358,6 +397,7 @@ const conferenceData: Record<
       {
         name: 'Houston',
         mascot: 'Cougars',
+        slug: 'houston',
         rank: null,
         previousRank: null,
         previewNote: 'Todd Whitting adjusts to Big 12 competition',
@@ -365,6 +405,7 @@ const conferenceData: Record<
       {
         name: 'West Virginia',
         mascot: 'Mountaineers',
+        slug: 'west-virginia',
         rank: null,
         previousRank: null,
         previewNote: 'Randy Mazey has underrated roster',
@@ -372,6 +413,7 @@ const conferenceData: Record<
       {
         name: 'BYU',
         mascot: 'Cougars',
+        slug: 'byu',
         rank: null,
         previousRank: null,
         previewNote: 'First year in power conference—learning curve expected',
@@ -379,6 +421,7 @@ const conferenceData: Record<
       {
         name: 'TCU',
         mascot: 'Horned Frogs',
+        slug: 'tcu',
         rank: null,
         previousRank: null,
         previewNote: 'Kirk Saarloos in rebuild after CWS core departed',
@@ -386,6 +429,7 @@ const conferenceData: Record<
       {
         name: 'Kansas State',
         mascot: 'Wildcats',
+        slug: 'kansas-state',
         rank: null,
         previousRank: null,
         previewNote: 'Building toward contention',
@@ -393,6 +437,7 @@ const conferenceData: Record<
       {
         name: 'Texas Tech',
         mascot: 'Red Raiders',
+        slug: 'texas-tech',
         rank: null,
         previousRank: null,
         previewNote: 'Tim Tadlock reloads after draft losses',
@@ -400,6 +445,7 @@ const conferenceData: Record<
       {
         name: 'Kansas',
         mascot: 'Jayhawks',
+        slug: 'kansas',
         rank: null,
         previousRank: null,
         previewNote: 'Working to stay competitive in Big 12',
@@ -407,6 +453,7 @@ const conferenceData: Record<
       {
         name: 'Cincinnati',
         mascot: 'Bearcats',
+        slug: 'cincinnati',
         rank: null,
         previousRank: null,
         previewNote: 'Scott Googins adjusts to Big 12 level',
@@ -414,6 +461,7 @@ const conferenceData: Record<
       {
         name: 'Arizona',
         mascot: 'Wildcats',
+        slug: 'arizona',
         rank: null,
         previousRank: null,
         previewNote: 'Chip Hale brings Pac-12 experience',
@@ -421,6 +469,7 @@ const conferenceData: Record<
       {
         name: 'Arizona State',
         mascot: 'Sun Devils',
+        slug: 'arizona-state',
         rank: null,
         previousRank: null,
         previewNote: 'Willie Bloomquist building in Tempe',
@@ -428,6 +477,7 @@ const conferenceData: Record<
       {
         name: 'Colorado',
         mascot: 'Buffaloes',
+        slug: 'colorado',
         rank: null,
         previousRank: null,
         previewNote: 'Adjusting to Big 12 baseball',
@@ -435,6 +485,7 @@ const conferenceData: Record<
       {
         name: 'Utah',
         mascot: 'Utes',
+        slug: 'utah',
         rank: null,
         previousRank: null,
         previewNote: 'New to power conference baseball',
@@ -442,6 +493,7 @@ const conferenceData: Record<
       {
         name: 'Iowa State',
         mascot: 'Cyclones',
+        slug: 'iowa-state',
         rank: null,
         previousRank: null,
         previewNote: 'Working to establish Big 12 presence',
@@ -466,6 +518,7 @@ const conferenceData: Record<
       {
         name: 'USC',
         mascot: 'Trojans',
+        slug: 'usc',
         rank: null,
         previousRank: null,
         previewNote: 'First year in Big Ten—transition season',
@@ -473,6 +526,7 @@ const conferenceData: Record<
       {
         name: 'UCLA',
         mascot: 'Bruins',
+        slug: 'ucla',
         rank: null,
         previousRank: null,
         previewNote: 'John Savage adjusts to Big Ten travel',
@@ -480,6 +534,7 @@ const conferenceData: Record<
       {
         name: 'Michigan',
         mascot: 'Wolverines',
+        slug: 'michigan',
         rank: null,
         previousRank: null,
         previewNote: 'Erik Bakich returns program to prominence',
@@ -487,6 +542,7 @@ const conferenceData: Record<
       {
         name: 'Indiana',
         mascot: 'Hoosiers',
+        slug: 'indiana',
         rank: null,
         previousRank: null,
         previewNote: 'Jeff Mercer has built a consistent winner',
@@ -494,6 +550,7 @@ const conferenceData: Record<
       {
         name: 'Maryland',
         mascot: 'Terrapins',
+        slug: 'maryland',
         rank: null,
         previousRank: null,
         previewNote: 'Matt Swope developing pitching depth',
@@ -501,6 +558,7 @@ const conferenceData: Record<
       {
         name: 'Nebraska',
         mascot: 'Cornhuskers',
+        slug: 'nebraska',
         rank: null,
         previousRank: null,
         previewNote: 'Will Bolt builds toward contention',
@@ -508,6 +566,7 @@ const conferenceData: Record<
       {
         name: 'Illinois',
         mascot: 'Fighting Illini',
+        slug: 'illinois',
         rank: null,
         previousRank: null,
         previewNote: 'Dan Hartleb works to stay competitive',
@@ -515,6 +574,7 @@ const conferenceData: Record<
       {
         name: 'Ohio State',
         mascot: 'Buckeyes',
+        slug: 'ohio-state',
         rank: null,
         previousRank: null,
         previewNote: 'Bill Mosiello in first years at helm',
@@ -522,6 +582,7 @@ const conferenceData: Record<
       {
         name: 'Rutgers',
         mascot: 'Scarlet Knights',
+        slug: 'rutgers',
         rank: null,
         previousRank: null,
         previewNote: 'Steve Owens building in New Jersey',
@@ -529,6 +590,7 @@ const conferenceData: Record<
       {
         name: 'Penn State',
         mascot: 'Nittany Lions',
+        slug: 'penn-state',
         rank: null,
         previousRank: null,
         previewNote: 'Rob Cooper develops program',
@@ -536,6 +598,7 @@ const conferenceData: Record<
       {
         name: 'Purdue',
         mascot: 'Boilermakers',
+        slug: 'purdue',
         rank: null,
         previousRank: null,
         previewNote: 'Greg Goff working toward competitiveness',
@@ -543,6 +606,7 @@ const conferenceData: Record<
       {
         name: 'Northwestern',
         mascot: 'Wildcats',
+        slug: 'northwestern',
         rank: null,
         previousRank: null,
         previewNote: 'Jim Foster builds academic-athletic balance',
@@ -550,6 +614,7 @@ const conferenceData: Record<
       {
         name: 'Minnesota',
         mascot: 'Golden Gophers',
+        slug: 'minnesota',
         rank: null,
         previousRank: null,
         previewNote: 'John Anderson in his final seasons',
@@ -557,6 +622,7 @@ const conferenceData: Record<
       {
         name: 'Iowa',
         mascot: 'Hawkeyes',
+        slug: 'iowa',
         rank: null,
         previousRank: null,
         previewNote: 'Rick Heller builds consistently',
@@ -564,6 +630,7 @@ const conferenceData: Record<
       {
         name: 'Michigan State',
         mascot: 'Spartans',
+        slug: 'michigan-state',
         rank: null,
         previousRank: null,
         previewNote: 'Jake Boss Jr. developing program',
@@ -571,6 +638,7 @@ const conferenceData: Record<
       {
         name: 'Wisconsin',
         mascot: 'Badgers',
+        slug: 'wisconsin',
         rank: null,
         previousRank: null,
         previewNote: 'Working to establish Big Ten presence',
@@ -578,6 +646,7 @@ const conferenceData: Record<
       {
         name: 'Oregon',
         mascot: 'Ducks',
+        slug: 'oregon',
         rank: null,
         previousRank: null,
         previewNote: 'Mark Wasikowski adjusts to Big Ten',
@@ -585,6 +654,7 @@ const conferenceData: Record<
       {
         name: 'Washington',
         mascot: 'Huskies',
+        slug: 'washington',
         rank: null,
         previousRank: null,
         previewNote: 'New to Big Ten baseball',
@@ -609,6 +679,7 @@ const conferenceData: Record<
       {
         name: 'Oregon State',
         mascot: 'Beavers',
+        slug: 'oregon-state',
         rank: null,
         previousRank: null,
         previewNote: 'Mitch Canham leads conference flagship',
@@ -616,6 +687,7 @@ const conferenceData: Record<
       {
         name: 'Washington State',
         mascot: 'Cougars',
+        slug: 'washington-state',
         rank: null,
         previousRank: null,
         previewNote: 'Brian Green maintains competitiveness',
@@ -623,6 +695,7 @@ const conferenceData: Record<
       {
         name: 'San Diego State',
         mascot: 'Aztecs',
+        slug: 'san-diego-state',
         rank: null,
         previousRank: null,
         previewNote: 'New to Pac-12, brings Mountain West success',
@@ -630,6 +703,7 @@ const conferenceData: Record<
       {
         name: 'Fresno State',
         mascot: 'Bulldogs',
+        slug: 'fresno-state',
         rank: null,
         previousRank: null,
         previewNote: 'Ryan Overland joins new conference',
@@ -1612,39 +1686,62 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 <div className="grid gap-4 mb-10">
                   {rankedTeams
                     .sort((a, b) => (a.rank || 99) - (b.rank || 99))
-                    .map((team) => (
-                      <Card
-                        key={team.name}
-                        padding="md"
-                        className="hover:border-burnt-orange/50 transition-all"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center">
-                              <span className="font-display text-xl font-bold text-burnt-orange">
-                                #{team.rank}
-                              </span>
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h3 className="font-display text-lg font-bold text-white">
-                                  {team.name} {team.mascot}
-                                </h3>
-                                <RankChange current={team.rank} previous={team.previousRank} />
+                    .map((team) => {
+                      const meta = team.slug ? teamMetadata[team.slug] : null;
+                      const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+
+                      const card = (
+                        <Card
+                          key={team.name}
+                          padding="md"
+                          className={`transition-all ${team.slug ? 'hover:border-burnt-orange/50' : ''}`}
+                        >
+                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center overflow-hidden">
+                                {logoUrl ? (
+                                  <img src={logoUrl} alt="" className="w-9 h-9 object-contain" loading="lazy" />
+                                ) : (
+                                  <span className="font-display text-xl font-bold text-burnt-orange">
+                                    #{team.rank}
+                                  </span>
+                                )}
                               </div>
-                              {team.keyPlayer && (
-                                <p className="text-burnt-orange text-sm">{team.keyPlayer}</p>
-                              )}
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h3 className="font-display text-lg font-bold text-white">
+                                    {team.name} {team.mascot}
+                                  </h3>
+                                  {logoUrl && (
+                                    <span className="font-display text-sm font-bold text-burnt-orange">
+                                      #{team.rank}
+                                    </span>
+                                  )}
+                                  <RankChange current={team.rank} previous={team.previousRank} />
+                                </div>
+                                {team.keyPlayer && (
+                                  <p className="text-burnt-orange text-sm">{team.keyPlayer}</p>
+                                )}
+                              </div>
                             </div>
+                            {team.previewNote && (
+                              <p className="text-text-secondary text-sm md:text-right md:max-w-md">
+                                {team.previewNote}
+                              </p>
+                            )}
                           </div>
-                          {team.previewNote && (
-                            <p className="text-text-secondary text-sm md:text-right md:max-w-md">
-                              {team.previewNote}
-                            </p>
-                          )}
-                        </div>
-                      </Card>
-                    ))}
+                        </Card>
+                      );
+
+                      if (team.slug) {
+                        return (
+                          <Link key={team.name} href={`/college-baseball/teams/${team.slug}`}>
+                            {card}
+                          </Link>
+                        );
+                      }
+                      return <div key={team.name}>{card}</div>;
+                    })}
                 </div>
               </ScrollReveal>
             )}
@@ -1656,18 +1753,41 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                   Other Conference Teams ({unrankedTeams.length})
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {unrankedTeams.map((team) => (
-                    <Card key={team.name} padding="md">
-                      <div>
-                        <h3 className="font-display text-lg font-bold text-white">
-                          {team.name} {team.mascot}
-                        </h3>
-                        {team.previewNote && (
-                          <p className="text-text-secondary text-sm mt-1">{team.previewNote}</p>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
+                  {unrankedTeams.map((team) => {
+                    const meta = team.slug ? teamMetadata[team.slug] : null;
+                    const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+
+                    const card = (
+                      <Card
+                        key={team.name}
+                        padding="md"
+                        className={team.slug ? 'hover:border-burnt-orange/50 transition-all' : ''}
+                      >
+                        <div className="flex items-center gap-3">
+                          {logoUrl && (
+                            <img src={logoUrl} alt="" className="w-8 h-8 object-contain shrink-0" loading="lazy" />
+                          )}
+                          <div>
+                            <h3 className="font-display text-lg font-bold text-white">
+                              {team.name} {team.mascot}
+                            </h3>
+                            {team.previewNote && (
+                              <p className="text-text-secondary text-sm mt-1">{team.previewNote}</p>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+
+                    if (team.slug) {
+                      return (
+                        <Link key={team.name} href={`/college-baseball/teams/${team.slug}`}>
+                          {card}
+                        </Link>
+                      );
+                    }
+                    return <div key={team.name}>{card}</div>;
+                  })}
                 </div>
               </ScrollReveal>
             )}
