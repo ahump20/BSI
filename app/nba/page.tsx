@@ -6,12 +6,16 @@ import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { TabBar, TabPanel } from '@/components/ui/TabBar';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { SportHero } from '@/components/sports/SportHero';
+import { GameScoreCard } from '@/components/sports/GameScoreCard';
+import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Team {
@@ -39,6 +43,21 @@ interface Game {
 }
 
 type TabType = 'standings' | 'scores' | 'teams' | 'players';
+
+const NBA_HERO_STATS = [
+  { value: '30', label: 'NBA Teams' },
+  { value: '82', label: 'Games/Season' },
+  { value: 'Live', label: 'Real-Time Scores' },
+  { value: 'PER', label: 'Advanced Data' },
+];
+
+const COURT_VISION_BULLETS = [
+  { bold: 'Hawk-Eye: 12 cameras', text: 'per arena tracking 29 skeletal keypoints per player in real-time' },
+  { bold: 'Second Spectrum', text: '(Genius Sports) provides the analytics layer — play-type classification, matchup data, shot quality' },
+  { bold: 'Play-type classification:', text: 'pick-and-roll, isolation, spot-up, transition — every possession tagged automatically' },
+  { bold: 'Shot tracking', text: 'with real-time arc, distance, and defender proximity metrics' },
+];
+
 export default function NBAPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
   const [standings, setStandings] = useState<Team[]>([]);
@@ -131,227 +150,141 @@ export default function NBAPage() {
       <>
         <main id="main-content">
         {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-[#1D428A]/20 via-transparent to-transparent pointer-events-none" />
-          <Container center>
-            <ScrollReveal direction="up">
-              <Badge variant="success" className="mb-4">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2" />
-                National Basketball Association
-              </Badge>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
-                NBA <span className="text-gradient-blaze">Intelligence</span>
-              </h1>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={120}>
-              <DataFreshnessIndicator
-                source="SportsDataIO"
-                refreshInterval={30}
-              />
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={150}>
-              <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-4">
-                Grizzlies. Mavericks. Thunder. Every game, every stat, no network filter.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={200}>
-              <p className="text-white/60 text-center max-w-2xl mx-auto mb-8">
-                Live scores, conference standings, and analytics for all 30 teams.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={250}>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Link href="/nba/games"><Button variant="primary" size="lg">Live Scores</Button></Link>
-                <Link href="/nba/standings"><Button variant="secondary" size="lg">Standings</Button></Link>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={300}>
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white/5 border border-white/10 rounded-2xl">
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">30</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">NBA Teams</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">82</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Games/Season</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">Live</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Real-Time Scores</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">PER</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Advanced Data</div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <SportHero
+          sport="NBA"
+          leagueName="National Basketball Association"
+          tagline="Grizzlies. Mavericks. Thunder. Every game, every stat, no network filter."
+          description="Live scores, conference standings, and analytics for all 30 teams."
+          accentColor="#1D428A"
+          dataSource="SportsDataIO"
+          primaryCta={{ label: 'Live Scores', href: '/nba/games' }}
+          secondaryCta={{ label: 'Standings', href: '/nba/standings' }}
+          stats={NBA_HERO_STATS}
+        />
 
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <div className="flex gap-2 mb-8 border-b border-white/10 overflow-x-auto pb-px">
-              {tabs.map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id ? 'text-[#BF5700] border-[#BF5700]' : 'text-white/40 border-transparent hover:text-white'
-                  }`}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
 
             {/* Standings Tab */}
-            {activeTab === 'standings' && (
-              <>
-                {loading ? (
-                  <div className="space-y-6">
-                    {[1, 2].map((i) => (
-                      <Card key={i} variant="default" padding="lg">
-                        <CardHeader><Skeleton variant="text" width={200} height={24} /></CardHeader>
-                        <CardContent><table className="w-full"><tbody>{[1, 2, 3, 4, 5].map((j) => <SkeletonTableRow key={j} columns={7} />)}</tbody></table></CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : error ? (
-                  <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
-                    <p className="text-red-400 font-semibold">Data Unavailable</p>
-                    <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={fetchStandings} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
-                  </Card>
-                ) : standings.length === 0 ? (
-                  <Card variant="default" padding="lg">
-                    <div className="text-center py-8">
-                      <p className="text-white/60">Offseason -- no standings yet.</p>
-                    </div>
-                  </Card>
-                ) : (
-                  [{ label: 'Eastern Conference', teams: eastern }, { label: 'Western Conference', teams: western }]
-                    .filter((conf) => conf.teams.length > 0)
-                    .map((conf) => (
-                      <ScrollReveal key={conf.label}>
-                        <Card variant="default" padding="lg" className="mb-6">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-3">
-                              <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" />
-                              {conf.label}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="overflow-x-auto">
-                              <table className="w-full">
-                                <thead>
-                                  <tr className="border-b-2 border-[#BF5700]">
-                                    {['#', 'Team', 'W', 'L', 'PCT', 'GB', 'STRK'].map((h) => (
-                                      <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
-                                    ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
-                                    <tr key={team.teamName} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                      <td className="p-3 text-[#BF5700] font-bold">{idx + 1}</td>
-                                      <td className="p-3 font-semibold text-white">{team.teamName}</td>
-                                      <td className="p-3 text-white/60">{team.wins}</td>
-                                      <td className="p-3 text-white/60">{team.losses}</td>
-                                      <td className="p-3 text-white/60">{team.winPercentage.toFixed(3).replace('0.', '.')}</td>
-                                      <td className="p-3 text-white/60">{team.gamesBack != null ? (team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)) : '-'}</td>
-                                      <td className="p-3 text-white/60">{team.streak || '-'}</td>
-                                    </tr>
+            <TabPanel id="standings" activeTab={activeTab}>
+              {loading ? (
+                <div className="space-y-6">
+                  {[1, 2].map((i) => (
+                    <Card key={i} variant="default" padding="lg">
+                      <CardHeader><Skeleton variant="text" width={200} height={24} /></CardHeader>
+                      <CardContent><table className="w-full"><tbody>{[1, 2, 3, 4, 5].map((j) => <SkeletonTableRow key={j} columns={7} />)}</tbody></table></CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : error ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="error" onRetry={fetchStandings} />
+                </Card>
+              ) : standings.length === 0 ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="offseason" sport="NBA" />
+                </Card>
+              ) : (
+                [{ label: 'Eastern Conference', teams: eastern }, { label: 'Western Conference', teams: western }]
+                  .filter((conf) => conf.teams.length > 0)
+                  .map((conf) => (
+                    <ScrollReveal key={conf.label}>
+                      <Card variant="default" padding="lg" className="mb-6">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-3">
+                            <Image src="/icons/basketball.svg" alt="" width={20} height={20} className="opacity-60" />
+                            {conf.label}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b-2 border-burnt-orange">
+                                  {['#', 'Team', 'W', 'L', 'PCT', 'GB', 'STRK'].map((h) => (
+                                    <th key={h} className="text-left p-3 text-text-tertiary font-semibold text-xs">{h}</th>
                                   ))}
-                                </tbody>
-                              </table>
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-white/10">
-                              <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </ScrollReveal>
-                    ))
-                )}
-              </>
-            )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
+                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-white/5 transition-colors">
+                                    <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
+                                    <td className="p-3 font-semibold text-white">{team.teamName}</td>
+                                    <td className="p-3 text-text-secondary">{team.wins}</td>
+                                    <td className="p-3 text-text-secondary">{team.losses}</td>
+                                    <td className="p-3 text-text-secondary">{team.winPercentage.toFixed(3).replace('0.', '.')}</td>
+                                    <td className="p-3 text-text-secondary">{team.gamesBack != null ? (team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)) : '-'}</td>
+                                    <td className="p-3 text-text-secondary">{team.streak || '-'}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-border-subtle">
+                            <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </ScrollReveal>
+                  ))
+              )}
+            </TabPanel>
 
             {/* Scores Tab */}
-            {activeTab === 'scores' && (
-              <>
-                {loading ? (
-                  <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
-                ) : error ? (
-                  <Card variant="default" padding="lg" className="bg-red-500/10 border-red-500/30">
-                    <p className="text-red-400 font-semibold">Data Unavailable</p>
-                    <p className="text-white/60 text-sm mt-1">{error}</p>
-                    <button onClick={fetchScores} className="mt-4 px-4 py-2 bg-[#BF5700] text-white rounded-lg">Retry</button>
-                  </Card>
-                ) : games.length === 0 ? (
+            <TabPanel id="scores" activeTab={activeTab}>
+              {loading ? (
+                <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
+              ) : error ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="error" onRetry={fetchScores} />
+                </Card>
+              ) : games.length === 0 ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="no-games" sport="NBA" />
+                </Card>
+              ) : (
+                <ScrollReveal>
                   <Card variant="default" padding="lg">
-                    <div className="text-center py-8">
-                      <p className="text-white/60">No games today.</p>
-                    </div>
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <span>Today&apos;s Games</span>
+                        {hasLiveGames && <LiveBadge />}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {games.map((game) => (
+                          <GameScoreCard
+                            key={game.id}
+                            game={game}
+                          />
+                        ))}
+                      </div>
+                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                        <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
+                        {hasLiveGames && <span className="text-xs text-text-tertiary ml-4">Auto-refreshing every 30 seconds</span>}
+                      </div>
+                    </CardContent>
                   </Card>
-                ) : (
-                  <ScrollReveal>
-                    <Card variant="default" padding="lg">
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <span>Today&apos;s Games</span>
-                          {hasLiveGames && <LiveBadge />}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {games.map((game) => (
-                            <div key={game.id} className={`bg-white/5 rounded-lg p-4 flex justify-between items-center border ${game.isLive ? 'border-green-500/30' : 'border-transparent'}`}>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="font-semibold text-white">{game.away.name}</span>
-                                  <span className="ml-auto text-[#BF5700] font-bold text-lg">{game.away.score}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-white">{game.home.name}</span>
-                                  <span className="ml-auto text-[#BF5700] font-bold text-lg">{game.home.score}</span>
-                                </div>
-                              </div>
-                              <div className="ml-6 text-right min-w-[80px]">
-                                {game.isLive ? (
-                                  <div className="flex items-center justify-end gap-1.5">
-                                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                                    <span className="text-green-400 font-semibold text-sm">{game.detail || 'Live'}</span>
-                                  </div>
-                                ) : (
-                                  <span className={`font-semibold text-sm ${game.isFinal ? 'text-white/30' : 'text-[#BF5700]'}`}>{game.status}</span>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-white/10">
-                          <DataSourceBadge source="SportsDataIO" timestamp={formatTimestamp(lastUpdated)} />
-                          {hasLiveGames && <span className="text-xs text-white/30 ml-4">Auto-refreshing every 30 seconds</span>}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </ScrollReveal>
-                )}
-              </>
-            )}
+                </ScrollReveal>
+              )}
+            </TabPanel>
 
             {/* Teams Tab */}
-            {activeTab === 'teams' && (
+            <TabPanel id="teams" activeTab={activeTab}>
               <div className="grid gap-6 md:grid-cols-2">
                 {[{ label: 'Eastern Conference', teams: eastern }, { label: 'Western Conference', teams: western }].map((conf) => (
                   <div key={conf.label}>
-                    <h3 className="text-xl font-display font-bold text-[#BF5700] mb-4">{conf.label}</h3>
+                    <h3 className="text-xl font-display font-bold text-burnt-orange mb-4">{conf.label}</h3>
                     <div className="space-y-2">
                       {conf.teams.sort((a, b) => b.wins - a.wins).map((team) => (
                         <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
                           <Card variant="hover" padding="sm" className="flex items-center justify-between px-4 py-3">
                             <span className="font-medium text-white">{team.teamName}</span>
-                            <span className="text-sm text-white/40">{team.wins}-{team.losses}</span>
+                            <span className="text-sm text-text-tertiary">{team.wins}-{team.losses}</span>
                           </Card>
                         </Link>
                       ))}
@@ -359,67 +292,42 @@ export default function NBAPage() {
                   </div>
                 ))}
               </div>
-            )}
+            </TabPanel>
 
             {/* Players Tab */}
-            {activeTab === 'players' && (
+            <TabPanel id="players" activeTab={activeTab}>
               <Card variant="default" padding="lg">
                 <CardHeader><CardTitle>Player Statistics</CardTitle></CardHeader>
                 <CardContent>
-                  <p className="text-white/60 mb-4">Search NBA players for detailed stats and profiles.</p>
+                  <p className="text-text-secondary mb-4">Search NBA players for detailed stats and profiles.</p>
                   <div className="flex flex-wrap gap-3">
                     <Link href="/nba/players"><Button variant="primary">Browse All Players</Button></Link>
                     <Link href="/nba/standings"><Button variant="secondary">View Standings</Button></Link>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </TabPanel>
           </Container>
         </Section>
 
         {/* Court Vision Section */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
-            <ScrollReveal>
-              <Card variant="default" padding="lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                      <rect x="2" y="3" width="20" height="14" rx="2" />
-                      <line x1="8" y1="21" x2="16" y2="21" />
-                      <line x1="12" y1="17" x2="12" y2="21" />
-                    </svg>
-                  </div>
-                  <div>
-                    <CardTitle size="md">Court Vision</CardTitle>
-                    <p className="text-text-tertiary text-xs mt-0.5">How the NBA tracks the game</p>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-sm text-text-secondary">
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Hawk-Eye: 12 cameras</strong> per arena tracking 29 skeletal keypoints per player in real-time</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Second Spectrum</strong> (Genius Sports) provides the analytics layer — play-type classification, matchup data, shot quality</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Play-type classification:</strong> pick-and-roll, isolation, spot-up, transition — every possession tagged automatically</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Shot tracking</strong> with real-time arc, distance, and defender proximity metrics</span>
-                  </li>
-                </ul>
-                <div className="mt-5 pt-4 border-t border-white/5">
-                  <Link href="/vision-ai">
-                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
-                  </Link>
-                </div>
-              </Card>
-            </ScrollReveal>
+            <SportInfoCard
+              icon={
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              }
+              title="Court Vision"
+              subtitle="How the NBA tracks the game"
+              bullets={COURT_VISION_BULLETS}
+              actions={[
+                { label: 'Full Vision AI Landscape →', href: '/vision-ai', variant: 'ghost' },
+              ]}
+            />
           </Container>
         </Section>
       </main>

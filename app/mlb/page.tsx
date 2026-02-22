@@ -10,8 +10,12 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { RefreshIndicator } from '@/components/ui/RefreshIndicator';
+import { TabBar, TabPanel } from '@/components/ui/TabBar';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { SportHero } from '@/components/sports/SportHero';
+import { GameScoreCard } from '@/components/sports/GameScoreCard';
+import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 const mlbFeatures = [
@@ -130,9 +134,20 @@ interface DataMeta {
 
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';
 
-/**
- * Format timestamp in America/Chicago timezone
- */
+const MLB_HERO_STATS = [
+  { value: '30', label: 'MLB Teams' },
+  { value: '162', label: 'Games/Season' },
+  { value: 'Live', label: 'Real-Time Scores' },
+  { value: 'Statcast', label: 'Advanced Data' },
+];
+
+const STATCAST_BULLETS = [
+  { bold: '12 Hawk-Eye cameras', text: 'per ballpark track ball trajectory, bat path, and 18 skeletal keypoints at 30fps' },
+  { bold: '225+ metrics per pitch', text: '— Statcast generates ~7TB of tracking data per game' },
+  { bold: 'Bat tracking', text: 'now operational across all 30 parks — exit velocity, sweet-spot rate, and attack angle' },
+  { bold: 'ABS deployed for 2026', text: '— robot umpire system using pose-tracking cameras for batter-specific strike zones' },
+];
+
 export default function MLBPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
   const [standings, setStandings] = useState<Team[]>([]);
@@ -168,7 +183,6 @@ export default function MLBPage() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch today's games
       const res = await fetch('/api/mlb/scores');
       if (!res.ok) throw new Error('Failed to fetch scores');
       const data = (await res.json()) as { games?: unknown; live?: boolean; meta?: unknown };
@@ -217,73 +231,13 @@ export default function MLBPage() {
     standingsByDivision[div].sort((a, b) => b.wins - a.wins);
   });
 
-  // Division display order
   const divisionOrder = ['AL East', 'AL Central', 'AL West', 'NL East', 'NL Central', 'NL West'];
 
-  const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
-    {
-      id: 'standings',
-      label: 'Standings',
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M3 3v18h18M8 17V9m4 8V5m4 12v-6" />
-        </svg>
-      ),
-    },
-    {
-      id: 'teams',
-      label: 'Teams',
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      ),
-    },
-    {
-      id: 'players',
-      label: 'Players',
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
-        </svg>
-      ),
-    },
-    {
-      id: 'schedule',
-      label: 'Schedule',
-      icon: (
-        <svg
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-        </svg>
-      ),
-    },
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'standings', label: 'Standings' },
+    { id: 'teams', label: 'Teams' },
+    { id: 'players', label: 'Players' },
+    { id: 'schedule', label: 'Schedule' },
   ];
 
   return (
@@ -291,89 +245,16 @@ export default function MLBPage() {
       <>
         <main id="main-content">
         {/* Hero Section */}
-        <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/15 via-transparent to-transparent pointer-events-none" />
-
-          <Container center>
-            <ScrollReveal direction="up">
-              <Badge variant="success" className="mb-4">
-                <span className="w-2 h-2 bg-success rounded-full animate-pulse mr-2" />
-                Major League Baseball
-              </Badge>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-display mb-4">
-                MLB <span className="text-gradient-blaze">Intelligence</span>
-              </h1>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delay={120}>
-              <DataFreshnessIndicator
-                source="SportsDataIO"
-                refreshInterval={30}
-              />
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delay={150}>
-              <p className="text-gold font-semibold text-lg tracking-wide text-center mb-4">
-                Cardinals. Rangers. Astros. Every game, every stat, no network filter.
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delay={200}>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Live scores, division standings, and Statcast analytics for all 30 teams—pulled
-                straight from MLB's official API. No third-party garbage. No guesswork.
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal direction="up" delay={250}>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Link href="/mlb/scores">
-                  <Button variant="primary" size="lg">
-                    View Live Scores
-                  </Button>
-                </Link>
-                <Link href="/mlb/standings">
-                  <Button variant="secondary" size="lg">
-                    Division Standings
-                  </Button>
-                </Link>
-              </div>
-            </ScrollReveal>
-
-            {/* Stats Bar */}
-            <ScrollReveal direction="up" delay={300}>
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 glass-card rounded-2xl">
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">30</div>
-                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
-                    MLB Teams
-                  </div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">162</div>
-                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
-                    Games/Season
-                  </div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
-                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
-                    Real-Time Scores
-                  </div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">Statcast</div>
-                  <div className="text-xs uppercase tracking-wider text-text-tertiary mt-1">
-                    Advanced Data
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <SportHero
+          sport="MLB"
+          leagueName="Major League Baseball"
+          tagline="Cardinals. Rangers. Astros. Every game, every stat, no network filter."
+          description="Live scores, division standings, and Statcast analytics for all 30 teams—pulled straight from MLB's official API. No third-party garbage. No guesswork."
+          dataSource="SportsDataIO"
+          primaryCta={{ label: 'View Live Scores', href: '/mlb/scores' }}
+          secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
+          stats={MLB_HERO_STATS}
+        />
 
         {/* Features Section */}
         <Section padding="lg" background="charcoal" borderTop>
@@ -436,166 +317,136 @@ export default function MLBPage() {
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            {/* Tab Navigation */}
-            <div className="flex gap-2 mb-8 border-b border-border-subtle overflow-x-auto pb-px">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id
-                      ? 'text-burnt-orange border-burnt-orange'
-                      : 'text-text-tertiary border-transparent hover:text-white'
-                  }`}
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
 
             {/* Standings Tab */}
-            {activeTab === 'standings' && (
-              <>
-                {loading ? (
-                  <div className="space-y-6">
-                    {[1, 2, 3].map((i) => (
-                      <Card key={i} variant="default" padding="lg">
+            <TabPanel id="standings" activeTab={activeTab}>
+              {loading ? (
+                <div className="space-y-6">
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} variant="default" padding="lg">
+                      <CardHeader>
+                        <Skeleton variant="text" width={200} height={24} />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto">
+                          <table className="w-full" aria-label="MLB standings">
+                            <thead>
+                              <tr className="border-b-2 border-burnt-orange">
+                                {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map(
+                                  (h) => (
+                                    <th scope="col"
+                                      key={h}
+                                      className="text-left p-3 text-copper font-semibold"
+                                    >
+                                      {h}
+                                    </th>
+                                  )
+                                )}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {[1, 2, 3, 4, 5].map((j) => (
+                                <SkeletonTableRow key={j} columns={9} />
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : error ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="error" onRetry={fetchStandings} />
+                </Card>
+              ) : standings.length === 0 ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="offseason" sport="MLB" />
+                </Card>
+              ) : (
+                divisionOrder
+                  .filter((div) => standingsByDivision[div]?.length > 0)
+                  .map((division) => (
+                    <ScrollReveal key={division}>
+                      <Card variant="default" padding="lg" className="mb-6">
                         <CardHeader>
-                          <Skeleton variant="text" width={200} height={24} />
+                          <CardTitle className="flex items-center gap-3">
+                            <svg
+                              viewBox="0 0 24 24"
+                              className="w-6 h-6 text-burnt-orange"
+                              fill="currentColor"
+                            >
+                              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                            </svg>
+                            {division}
+                          </CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="overflow-x-auto">
-                            <table className="w-full" aria-label="MLB standings">
+                            <table className="w-full" aria-label="MLB division standings">
                               <thead>
                                 <tr className="border-b-2 border-burnt-orange">
-                                  {['Rank', 'Team', 'W', 'L', 'PCT', 'GB', 'RS', 'RA', 'STRK'].map(
-                                    (h) => (
-                                      <th scope="col"
-                                        key={h}
-                                        className="text-left p-3 text-copper font-semibold"
-                                      >
-                                        {h}
-                                      </th>
-                                    )
-                                  )}
+                                  <th scope="col" className="text-left p-3 text-copper font-semibold">
+                                    Rank
+                                  </th>
+                                  <th scope="col" className="text-left p-3 text-copper font-semibold">
+                                    Team
+                                  </th>
+                                  <th className="text-left p-3 text-copper font-semibold">W</th>
+                                  <th className="text-left p-3 text-copper font-semibold">L</th>
+                                  <th className="text-left p-3 text-copper font-semibold">PCT</th>
+                                  <th className="text-left p-3 text-copper font-semibold">GB</th>
+                                  <th className="text-left p-3 text-copper font-semibold">RS</th>
+                                  <th className="text-left p-3 text-copper font-semibold">RA</th>
+                                  <th className="text-left p-3 text-copper font-semibold">
+                                    STRK
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {[1, 2, 3, 4, 5].map((j) => (
-                                  <SkeletonTableRow key={j} columns={9} />
+                                {standingsByDivision[division].map((team, idx) => (
+                                  <tr
+                                    key={team.teamName}
+                                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                                  >
+                                    <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
+                                    <td className="p-3 font-semibold text-white">
+                                      {team.teamName}
+                                    </td>
+                                    <td className="p-3 text-text-secondary">{team.wins}</td>
+                                    <td className="p-3 text-text-secondary">{team.losses}</td>
+                                    <td className="p-3 text-text-secondary">
+                                      {team.winPercentage.toFixed(3).replace('0.', '.')}
+                                    </td>
+                                    <td className="p-3 text-text-secondary">
+                                      {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
+                                    </td>
+                                    <td className="p-3 text-text-secondary">{team.runsScored}</td>
+                                    <td className="p-3 text-text-secondary">
+                                      {team.runsAllowed}
+                                    </td>
+                                    <td className="p-3 text-text-secondary">{team.streakCode}</td>
+                                  </tr>
                                 ))}
                               </tbody>
                             </table>
                           </div>
+                          <div className="mt-4 pt-4 border-t border-border-subtle">
+                            <DataSourceBadge
+                              source={meta?.dataSource || 'MLB Stats API'}
+                              timestamp={formatTimestamp(meta?.lastUpdated)}
+                            />
+                          </div>
                         </CardContent>
                       </Card>
-                    ))}
-                  </div>
-                ) : error ? (
-                  <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
-                    <p className="text-error font-semibold">Data Unavailable</p>
-                    <p className="text-text-secondary text-sm mt-1">{error}</p>
-                    <button
-                      onClick={fetchStandings}
-                      className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
-                    >
-                      Retry
-                    </button>
-                  </Card>
-                ) : standings.length === 0 ? (
-                  <Card variant="default" padding="lg">
-                    <div className="text-center py-8">
-                      <p className="text-text-secondary">Offseason—no standings yet.</p>
-                      <p className="text-text-tertiary text-sm mt-2">
-                        Check back when Spring Training wraps and the boys take the field for real.
-                      </p>
-                    </div>
-                  </Card>
-                ) : (
-                  divisionOrder
-                    .filter((div) => standingsByDivision[div]?.length > 0)
-                    .map((division) => (
-                      <ScrollReveal key={division}>
-                        <Card variant="default" padding="lg" className="mb-6">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-3">
-                              <svg
-                                viewBox="0 0 24 24"
-                                className="w-6 h-6 text-burnt-orange"
-                                fill="currentColor"
-                              >
-                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                              </svg>
-                              {division}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="overflow-x-auto">
-                              <table className="w-full" aria-label="MLB division standings">
-                                <thead>
-                                  <tr className="border-b-2 border-burnt-orange">
-                                    <th scope="col" className="text-left p-3 text-copper font-semibold">
-                                      Rank
-                                    </th>
-                                    <th scope="col" className="text-left p-3 text-copper font-semibold">
-                                      Team
-                                    </th>
-                                    <th className="text-left p-3 text-copper font-semibold">W</th>
-                                    <th className="text-left p-3 text-copper font-semibold">L</th>
-                                    <th className="text-left p-3 text-copper font-semibold">PCT</th>
-                                    <th className="text-left p-3 text-copper font-semibold">GB</th>
-                                    <th className="text-left p-3 text-copper font-semibold">RS</th>
-                                    <th className="text-left p-3 text-copper font-semibold">RA</th>
-                                    <th className="text-left p-3 text-copper font-semibold">
-                                      STRK
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {standingsByDivision[division].map((team, idx) => (
-                                    <tr
-                                      key={team.teamName}
-                                      className="border-b border-border-subtle hover:bg-white/5 transition-colors"
-                                    >
-                                      <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                      <td className="p-3 font-semibold text-white">
-                                        {team.teamName}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.wins}</td>
-                                      <td className="p-3 text-text-secondary">{team.losses}</td>
-                                      <td className="p-3 text-text-secondary">
-                                        {team.winPercentage.toFixed(3).replace('0.', '.')}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">
-                                        {team.gamesBack === 0 ? '-' : team.gamesBack.toFixed(1)}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.runsScored}</td>
-                                      <td className="p-3 text-text-secondary">
-                                        {team.runsAllowed}
-                                      </td>
-                                      <td className="p-3 text-text-secondary">{team.streakCode}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-border-subtle">
-                              <DataSourceBadge
-                                source={meta?.dataSource || 'MLB Stats API'}
-                                timestamp={formatTimestamp(meta?.lastUpdated)}
-                              />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </ScrollReveal>
-                    ))
-                )}
-              </>
-            )}
+                    </ScrollReveal>
+                  ))
+              )}
+            </TabPanel>
 
             {/* Teams Tab */}
-            {activeTab === 'teams' && (
+            <TabPanel id="teams" activeTab={activeTab}>
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
@@ -633,10 +484,10 @@ export default function MLBPage() {
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </TabPanel>
 
             {/* Players Tab */}
-            {activeTab === 'players' && (
+            <TabPanel id="players" activeTab={activeTab}>
               <Card variant="default" padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
@@ -674,209 +525,120 @@ export default function MLBPage() {
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </TabPanel>
 
             {/* Schedule Tab */}
-            {activeTab === 'schedule' && (
-              <>
-                {loading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <SkeletonScoreCard key={i} />
-                    ))}
-                  </div>
-                ) : error ? (
-                  <Card variant="default" padding="lg" className="bg-error/10 border-error/30">
-                    <p className="text-error font-semibold">Data Unavailable</p>
-                    <p className="text-text-secondary text-sm mt-1">{error}</p>
-                    <button
-                      onClick={fetchSchedule}
-                      className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
-                    >
-                      Retry
-                    </button>
-                  </Card>
-                ) : schedule.length === 0 ? (
+            <TabPanel id="schedule" activeTab={activeTab}>
+              {loading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <SkeletonScoreCard key={i} />
+                  ))}
+                </div>
+              ) : error ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="error" onRetry={fetchSchedule} />
+                </Card>
+              ) : schedule.length === 0 ? (
+                <Card variant="default" padding="lg">
+                  <EmptyState type="no-games" sport="MLB" />
+                </Card>
+              ) : (
+                <ScrollReveal>
                   <Card variant="default" padding="lg">
-                    <div className="text-center py-8">
-                      <p className="text-text-secondary">No games today.</p>
-                      <p className="text-text-tertiary text-sm mt-2">
-                        Off day across the league. Check back tomorrow—162 games don't play
-                        themselves.
-                      </p>
-                    </div>
-                  </Card>
-                ) : (
-                  <ScrollReveal>
-                    <Card variant="default" padding="lg">
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <svg
-                              viewBox="0 0 24 24"
-                              className="w-6 h-6 text-burnt-orange"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                              <line x1="16" y1="2" x2="16" y2="6" />
-                              <line x1="8" y1="2" x2="8" y2="6" />
-                              <line x1="3" y1="10" x2="21" y2="10" />
-                            </svg>
-                            Today&apos;s Games
-                          </div>
-                          <div className="flex items-center gap-3">
-                            {hasLiveGames && <LiveBadge />}
-                            <RefreshIndicator active={hasLiveGames} intervalSeconds={30} />
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {schedule.map((game) => {
-                            const isComplete = game.status.isFinal;
-                            const isLive = game.status.isLive;
-
-                            return (
-                              <div
-                                key={game.id}
-                                className={`bg-graphite rounded-lg p-4 flex justify-between items-center border ${
-                                  isLive ? 'border-success' : 'border-border-subtle'
-                                }`}
-                              >
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <span className="font-semibold text-white">
-                                      {game.teams.away.name}
-                                    </span>
-                                    {isComplete && game.teams.away.isWinner && (
-                                      <svg
-                                        viewBox="0 0 24 24"
-                                        className="w-4 h-4 text-success"
-                                        fill="currentColor"
-                                      >
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                      </svg>
-                                    )}
-                                    <span className="ml-auto text-burnt-orange font-bold text-lg">
-                                      {game.teams.away.score}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-white">
-                                      {game.teams.home.name}
-                                    </span>
-                                    {isComplete && game.teams.home.isWinner && (
-                                      <svg
-                                        viewBox="0 0 24 24"
-                                        className="w-4 h-4 text-success"
-                                        fill="currentColor"
-                                      >
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                      </svg>
-                                    )}
-                                    <span className="ml-auto text-burnt-orange font-bold text-lg">
-                                      {game.teams.home.score}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="ml-6 text-right min-w-[100px]">
-                                  {isLive ? (
-                                    <div className="flex items-center justify-end gap-1.5">
-                                      <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                                      <span className="text-success font-semibold text-sm">
-                                        {game.status.inningState} {game.status.inning}
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <div
-                                      className={`font-semibold text-sm ${
-                                        isComplete ? 'text-text-tertiary' : 'text-burnt-orange'
-                                      }`}
-                                    >
-                                      {game.status.detailedState}
-                                    </div>
-                                  )}
-                                  <div className="text-xs text-text-tertiary mt-1">
-                                    {game.venue?.name || 'TBD'}
-                                  </div>
-                                  {(isComplete || isLive) && (
-                                    <div className="text-xs text-text-tertiary mt-1">
-                                      H: {game.teams.away.hits}-{game.teams.home.hits} | E:{' '}
-                                      {game.teams.away.errors}-{game.teams.home.errors}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="w-6 h-6 text-burnt-orange"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                          </svg>
+                          Today&apos;s Games
                         </div>
-                        <div className="mt-4 pt-4 border-t border-border-subtle">
-                          <DataSourceBadge
-                            source={meta?.dataSource || 'MLB Stats API'}
-                            timestamp={formatTimestamp(meta?.lastUpdated)}
+                        <div className="flex items-center gap-3">
+                          {hasLiveGames && <LiveBadge />}
+                          <RefreshIndicator active={hasLiveGames} intervalSeconds={30} />
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {schedule.map((game) => (
+                          <GameScoreCard
+                            key={game.id}
+                            game={{
+                              id: game.id,
+                              away: {
+                                name: game.teams.away.name,
+                                score: game.teams.away.score,
+                                isWinner: game.status.isFinal ? game.teams.away.isWinner : undefined,
+                                hits: game.teams.away.hits,
+                                errors: game.teams.away.errors,
+                              },
+                              home: {
+                                name: game.teams.home.name,
+                                score: game.teams.home.score,
+                                isWinner: game.status.isFinal ? game.teams.home.isWinner : undefined,
+                                hits: game.teams.home.hits,
+                                errors: game.teams.home.errors,
+                              },
+                              status: game.status.detailedState,
+                              isLive: game.status.isLive,
+                              isFinal: game.status.isFinal,
+                              detail: game.status.isLive
+                                ? `${game.status.inningState} ${game.status.inning}`
+                                : undefined,
+                              venue: game.venue?.name || 'TBD',
+                            }}
+                            showHitsErrors
                           />
-                          {hasLiveGames && (
-                            <span className="text-xs text-text-tertiary ml-4">
-                              Auto-refreshing every 30 seconds
-                            </span>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </ScrollReveal>
-                )}
-              </>
-            )}
+                        ))}
+                      </div>
+                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                        <DataSourceBadge
+                          source={meta?.dataSource || 'MLB Stats API'}
+                          timestamp={formatTimestamp(meta?.lastUpdated)}
+                        />
+                        {hasLiveGames && (
+                          <span className="text-xs text-text-tertiary ml-4">
+                            Auto-refreshing every 30 seconds
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
+              )}
+            </TabPanel>
           </Container>
         </Section>
 
         {/* Statcast & Vision AI Section */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
-            <ScrollReveal>
-              <Card variant="default" padding="lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                      <circle cx="12" cy="12" r="3" />
-                      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-                    </svg>
-                  </div>
-                  <div>
-                    <CardTitle size="md">Statcast &amp; Vision AI</CardTitle>
-                    <p className="text-text-tertiary text-xs mt-0.5">How MLB tracks everything</p>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-sm text-text-secondary">
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">12 Hawk-Eye cameras</strong> per ballpark track ball trajectory, bat path, and 18 skeletal keypoints at 30fps</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">225+ metrics per pitch</strong> — Statcast generates ~7TB of tracking data per game</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Bat tracking</strong> now operational across all 30 parks — exit velocity, sweet-spot rate, and attack angle</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">ABS deployed for 2026</strong> — robot umpire system using pose-tracking cameras for batter-specific strike zones</span>
-                  </li>
-                </ul>
-                <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-white/5">
-                  <Link href="/mlb/abs">
-                    <Button variant="outline" size="sm">ABS Challenge Tracker</Button>
-                  </Link>
-                  <Link href="/vision-ai">
-                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
-                  </Link>
-                </div>
-              </Card>
-            </ScrollReveal>
+            <SportInfoCard
+              icon={
+                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+              }
+              title="Statcast &amp; Vision AI"
+              subtitle="How MLB tracks everything"
+              bullets={STATCAST_BULLETS}
+              actions={[
+                { label: 'ABS Challenge Tracker', href: '/mlb/abs', variant: 'outline' },
+                { label: 'Full Vision AI Landscape →', href: '/vision-ai', variant: 'ghost' },
+              ]}
+            />
           </Container>
         </Section>
       </main>
