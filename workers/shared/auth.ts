@@ -2,9 +2,11 @@
 import type { Context, Next } from 'hono';
 
 export interface KeyData {
-  tier: 'pro' | 'api' | 'embed';
+  tier: 'pro' | 'enterprise';
   expires: number;
   email: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
 }
 
 export interface Env {
@@ -49,14 +51,26 @@ export async function requireApiKey(c: Context<{ Bindings: Env }>, next: Next) {
 export async function provisionKey(
   kv: KVNamespace,
   email: string,
-  tier: KeyData['tier']
+  tier: KeyData['tier'],
+  stripeIds?: { customerId?: string; subscriptionId?: string },
 ): Promise<string> {
   const apiKey = crypto.randomUUID();
   const expires = Date.now() + 365 * 24 * 60 * 60 * 1000; // 1 year
-  const keyData: KeyData = { tier, expires, email };
+  const keyData: KeyData = {
+    tier,
+    expires,
+    email,
+    stripe_customer_id: stripeIds?.customerId,
+    stripe_subscription_id: stripeIds?.subscriptionId,
+  };
 
   await kv.put(`key:${apiKey}`, JSON.stringify(keyData));
   await kv.put(`email:${email}`, apiKey);
+
+  // Reverse lookup: Stripe customer ID → email (for lifecycle webhook events)
+  if (stripeIds?.customerId) {
+    await kv.put(`stripe:${stripeIds.customerId}`, email);
+  }
 
   return apiKey;
 }
@@ -73,7 +87,7 @@ export async function emailKey(
 ): Promise<void> {
   if (!resendApiKey) return;
 
-  const tierLabel = tier === 'api' ? 'Data API' : tier === 'embed' ? 'Embed License' : 'Pro';
+  const tierLabel = tier === 'enterprise' ? 'Enterprise' : 'Pro';
 
   await fetch('https://api.resend.com/emails', {
     method: 'POST',

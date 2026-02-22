@@ -121,6 +121,7 @@ type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
 export default function DashboardPage() {
   const [authStatus, setAuthStatus] = useState<AuthStatus>('checking');
   const [authTier, setAuthTier] = useState<string | null>(null);
+  const [hasBilling, setHasBilling] = useState(false);
 
   useEffect(() => {
     const key = typeof window !== 'undefined' ? localStorage.getItem('bsi-api-key') : null;
@@ -130,10 +131,11 @@ export default function DashboardPage() {
     }
 
     fetch('/api/auth/validate', { headers: { 'X-BSI-Key': key } })
-      .then((res) => res.json() as Promise<{ valid?: boolean; tier?: string }>)
+      .then((res) => res.json() as Promise<{ valid?: boolean; tier?: string; has_billing?: boolean }>)
       .then((data) => {
         if (data.valid) {
           setAuthTier(data.tier ?? null);
+          setHasBilling(!!data.has_billing);
           setAuthStatus('authenticated');
         } else {
           localStorage.removeItem('bsi-api-key');
@@ -164,10 +166,10 @@ export default function DashboardPage() {
     return null;
   }
 
-  return <DashboardContent tier={authTier} />;
+  return <DashboardContent tier={authTier} hasBilling={hasBilling} />;
 }
 
-function DashboardContent({ tier }: { tier: string | null }) {
+function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBilling: boolean }) {
   const [activeSport, setActiveSport] = useState<Sport>('mlb');
   const [stats, setStats] = useState<DashboardStats>({
     liveGames: 0,
@@ -183,6 +185,23 @@ function DashboardContent({ tier }: { tier: string | null }) {
   const handleSignOut = () => {
     localStorage.removeItem('bsi-api-key');
     window.location.href = '/';
+  };
+
+  const handleManageSubscription = async () => {
+    const key = localStorage.getItem('bsi-api-key');
+    if (!key) return;
+    try {
+      const res = await fetch('/api/stripe/customer-portal', {
+        method: 'POST',
+        headers: { 'X-BSI-Key': key },
+      });
+      const data = await res.json() as { url?: string };
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      // Portal unavailable — non-critical, fail silently
+    }
   };
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
@@ -314,6 +333,14 @@ function DashboardContent({ tier }: { tier: string | null }) {
                   <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm font-medium animate-pulse">
                     {stats.liveGames} Live Now
                   </span>
+                )}
+                {hasBilling && (
+                  <button
+                    onClick={handleManageSubscription}
+                    className="px-3 py-1.5 text-xs text-burnt-orange hover:text-ember border border-burnt-orange/30 hover:border-burnt-orange/50 rounded-lg transition-colors"
+                  >
+                    Manage Subscription
+                  </button>
                 )}
                 <button
                   onClick={handleSignOut}

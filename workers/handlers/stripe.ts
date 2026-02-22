@@ -13,9 +13,9 @@
 
 import type { Env } from '../shared/types';
 import { json } from '../shared/helpers';
+import type { KeyData } from '../shared/auth';
 
 interface ExtendedEnv extends Env {
-  STRIPE_SECRET_KEY?: string;
   STRIPE_PRICE_PRO?: string;
   STRIPE_PRICE_ENTERPRISE?: string;
 }
@@ -116,6 +116,11 @@ export async function handleCreateEmbeddedCheckout(
     'metadata[tier]': tier,
   });
 
+  // Pro tier gets a 14-day trial; Enterprise does not
+  if (tier === 'pro') {
+    params.set('subscription_data[trial_period_days]', '14');
+  }
+
   try {
     const res = await fetch(`${STRIPE_API}/checkout/sessions`, {
       method: 'POST',
@@ -141,5 +146,69 @@ export async function handleCreateEmbeddedCheckout(
   } catch (err) {
     console.error('[stripe] checkout session error:', err);
     return json({ error: 'Failed to create checkout session.' }, 502);
+  }
+}
+
+/**
+ * POST /api/stripe/customer-portal
+ *
+ * Creates a Stripe Customer Portal session so subscribers can manage
+ * billing, update payment methods, cancel, or view invoices.
+ * Requires a valid BSI API key in the X-BSI-Key header.
+ */
+export async function handleCustomerPortal(
+  request: Request,
+  env: ExtendedEnv,
+): Promise<Response> {
+  const { STRIPE_SECRET_KEY } = env;
+  if (!STRIPE_SECRET_KEY) {
+    return json({ error: 'Stripe is not configured.' }, 503);
+  }
+
+  const apiKey = request.headers.get('X-BSI-Key');
+  if (!apiKey) {
+    return json({ error: 'API key required.' }, 401);
+  }
+
+  const raw = await env.BSI_KEYS?.get(`key:${apiKey}`);
+  if (!raw) {
+    return json({ error: 'Invalid API key.' }, 401);
+  }
+
+  const keyData: KeyData = JSON.parse(raw);
+  if (!keyData.stripe_customer_id) {
+    return json({ error: 'No billing account linked.' }, 404);
+  }
+
+  const params = new URLSearchParams({
+    'customer': keyData.stripe_customer_id,
+    'return_url': 'https://blazesportsintel.com/dashboard',
+  });
+
+  try {
+    const res = await fetch(`${STRIPE_API}/billing_portal/sessions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
+
+    if (!res.ok) {
+      const err = (await res.json()) as { error?: { message?: string } };
+      const msg = err?.error?.message ?? 'Failed to create portal session.';
+      return json({ error: msg }, res.status as 400 | 500);
+    }
+
+    const session = (await res.json()) as { url?: string };
+    if (!session.url) {
+      return json({ error: 'No portal URL returned from Stripe.' }, 502);
+    }
+
+    return json({ url: session.url });
+  } catch (err) {
+    console.error('[stripe] customer portal error:', err);
+    return json({ error: 'Failed to create portal session.' }, 502);
   }
 }

@@ -85,7 +85,7 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
-import { handleCreateEmbeddedCheckout, handleSessionStatus } from './handlers/stripe';
+import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
@@ -387,6 +387,7 @@ app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 // --- Stripe ---
 app.get('/api/stripe/session-status', (c) => handleSessionStatus(new URL(c.req.url), c.env));
 app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
+app.post('/api/stripe/customer-portal', (c) => handleCustomerPortal(c.req.raw, c.env));
 
 // --- Predictions ---
 app.post('/api/predictions', (c) => handlePredictionSubmit(c.req.raw, c.env));
@@ -490,10 +491,19 @@ app.post('/webhooks/stripe', async (c) => {
     return c.json({ error: 'Invalid JSON' }, 400);
   }
 
+  if (!c.env.BSI_KEYS) {
+    return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
+  }
+
+  const kv = c.env.BSI_KEYS;
+
+  // --- checkout.session.completed: provision key for new subscriber ---
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as {
       customer_email?: string;
       customer_details?: { email?: string };
+      customer?: string;
+      subscription?: string;
       metadata?: { tier?: string };
     };
 
@@ -501,14 +511,81 @@ app.post('/webhooks/stripe', async (c) => {
       session.customer_email ?? session.customer_details?.email ?? '';
     if (!email) return c.json({ error: 'No email in session' }, 400);
 
-    const tier = (session.metadata?.tier as 'pro' | 'api' | 'embed') ?? 'pro';
-    
-    if (!c.env.BSI_KEYS) {
-      return c.json({ error: 'BSI_KEYS namespace not configured' }, 500);
-    }
-    
-    const apiKey = await provisionKey(c.env.BSI_KEYS, email, tier);
+    const tier = (session.metadata?.tier as import('./shared/auth').KeyData['tier']) ?? 'pro';
+
+    const apiKey = await provisionKey(kv, email, tier, {
+      customerId: session.customer as string | undefined,
+      subscriptionId: session.subscription as string | undefined,
+    });
     await emailKey(c.env.RESEND_API_KEY, email, apiKey, tier);
+  }
+
+  // --- customer.subscription.deleted: revoke access ---
+  if (event.type === 'customer.subscription.deleted') {
+    const sub = event.data.object as { customer?: string };
+    const customerId = sub.customer;
+    if (customerId) {
+      const email = await kv.get(`stripe:${customerId}`);
+      if (email) {
+        const keyUuid = await kv.get(`email:${email}`);
+        if (keyUuid) await kv.delete(`key:${keyUuid}`);
+        await kv.delete(`email:${email}`);
+        await kv.delete(`stripe:${customerId}`);
+        console.log(`[webhook] Revoked access for ${email} (subscription deleted)`);
+      }
+    }
+  }
+
+  // --- customer.subscription.updated: tier change ---
+  if (event.type === 'customer.subscription.updated') {
+    const sub = event.data.object as {
+      customer?: string;
+      metadata?: { tier?: string };
+    };
+    const customerId = sub.customer;
+    const newTier = sub.metadata?.tier as import('./shared/auth').KeyData['tier'] | undefined;
+    if (customerId && newTier) {
+      const email = await kv.get(`stripe:${customerId}`);
+      if (email) {
+        const keyUuid = await kv.get(`email:${email}`);
+        if (keyUuid) {
+          const raw = await kv.get(`key:${keyUuid}`);
+          if (raw) {
+            const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
+            keyData.tier = newTier;
+            await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
+            console.log(`[webhook] Updated tier to ${newTier} for ${email}`);
+          }
+        }
+      }
+    }
+  }
+
+  // --- invoice.payment_failed: log but don't revoke (Stripe retries) ---
+  if (event.type === 'invoice.payment_failed') {
+    const invoice = event.data.object as { customer?: string; attempt_count?: number };
+    console.warn(`[webhook] Payment failed for customer ${invoice.customer} (attempt ${invoice.attempt_count ?? '?'})`);
+  }
+
+  // --- invoice.paid: extend expiry on successful renewal ---
+  if (event.type === 'invoice.paid') {
+    const invoice = event.data.object as { customer?: string; billing_reason?: string };
+    // Only extend on renewal, not the initial subscription payment
+    if (invoice.billing_reason === 'subscription_cycle' && invoice.customer) {
+      const email = await kv.get(`stripe:${invoice.customer}`);
+      if (email) {
+        const keyUuid = await kv.get(`email:${email}`);
+        if (keyUuid) {
+          const raw = await kv.get(`key:${keyUuid}`);
+          if (raw) {
+            const keyData = JSON.parse(raw) as import('./shared/auth').KeyData;
+            keyData.expires = Date.now() + 365 * 24 * 60 * 60 * 1000;
+            await kv.put(`key:${keyUuid}`, JSON.stringify(keyData));
+            console.log(`[webhook] Extended expiry for ${email} (renewal paid)`);
+          }
+        }
+      }
+    }
   }
 
   return c.json({ received: true });
