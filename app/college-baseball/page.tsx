@@ -22,6 +22,14 @@ interface RankedTeam {
   team: string;
   conference: string;
   record?: string;
+  slug?: string;
+}
+
+/** Reverse-lookup: team display name → route slug, indexed by both full name and shortName. */
+const teamNameToSlug: Record<string, string> = {};
+for (const [slug, meta] of Object.entries(teamMetadata)) {
+  teamNameToSlug[meta.name.toLowerCase()] = slug;
+  teamNameToSlug[meta.shortName.toLowerCase()] = slug;
 }
 
 interface StandingsTeam {
@@ -106,17 +114,27 @@ function normalizeRankings(raw: { rankings?: ESPNPoll[] | RankedTeam[]; meta?: {
     const poll = first as unknown as ESPNPoll;
     return {
       pollName: poll.name || '',
-      teams: poll.ranks.map((e) => ({
-        rank: e.current,
-        team: e.team?.location ? `${e.team.location} ${e.team.name}` : e.team?.nickname || e.team?.name || 'Unknown',
-        conference: '',
-        record: e.recordSummary || '',
-      })),
+      teams: poll.ranks.map((e) => {
+        const teamName = e.team?.location ? `${e.team.location} ${e.team.name}` : e.team?.nickname || e.team?.name || 'Unknown';
+        return {
+          rank: e.current,
+          team: teamName,
+          conference: '',
+          record: e.recordSummary || '',
+          slug: teamNameToSlug[teamName.toLowerCase()],
+        };
+      }),
     };
   }
 
   // Already flat RankedTeam[] (Highlightly or normalized worker response)
-  return { teams: rankings as RankedTeam[], pollName: '' };
+  return {
+    teams: (rankings as RankedTeam[]).map(t => ({
+      ...t,
+      slug: t.slug || teamNameToSlug[t.team.toLowerCase()],
+    })),
+    pollName: '',
+  };
 }
 
 /** Preseason fallback — derived from preseason-2026.ts, never hardcoded. Top 25 only. */
@@ -128,6 +146,7 @@ const preseasonRankings: RankedTeam[] = Object.entries(preseason2026)
     team: teamMetadata[slug]?.shortName || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
     conference: data.conference,
     record: data.record2025,
+    slug,
   }));
 
 // Dynamic conferenceList — derived from teamMetadata + all D1 conferences
@@ -595,7 +614,15 @@ export default function CollegeBaseballPage() {
                             {rankings.map((team) => (
                               <tr key={team.rank} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                 <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
-                                <td className="p-3 font-semibold text-white">{team.team}</td>
+                                <td className="p-3 font-semibold text-white">
+                                  {team.slug ? (
+                                    <Link href={`/college-baseball/teams/${team.slug}`} className="hover:text-burnt-orange transition-colors">
+                                      {team.team}
+                                    </Link>
+                                  ) : (
+                                    team.team
+                                  )}
+                                </td>
                                 <td className="p-3 text-white/60">{team.conference}</td>
                                 <td className="p-3 text-white/60">{team.record || '-'}</td>
                               </tr>
