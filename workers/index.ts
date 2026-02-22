@@ -452,6 +452,10 @@ app.post('/webhooks/stripe', async (c) => {
   const webhookSecret = (c.env as Env & { STRIPE_WEBHOOK_SECRET?: string }).STRIPE_WEBHOOK_SECRET;
 
   // HMAC-SHA256 signature verification using Web Crypto (Workers runtime)
+  // When webhook secret is configured, signature is mandatory.
+  if (webhookSecret && !sig) {
+    return c.json({ error: 'Missing stripe-signature header' }, 401);
+  }
   if (webhookSecret && sig) {
     const pairs = sig.split(',');
     const tEntry = pairs.find((p) => p.startsWith('t='));
