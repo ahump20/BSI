@@ -13,6 +13,7 @@ import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { StickyLeagueBar } from '@/components/sports/StickyLeagueBar';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { CommandPalette } from '@/components/layout-ds/CommandPalette';
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 
 // 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
 const inter = Inter({
@@ -87,9 +88,7 @@ export const metadata: Metadata = {
     description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
     images: ['/images/og-image.jpg'],
   },
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   robots: {
     index: true,
     follow: true,
@@ -101,7 +100,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
-/** Structured data (JSON-LD) for SEO — Organization + WebSite */
+/** Structured data (JSON-LD) for SEO -- Organization + WebSite */
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -136,11 +135,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Preconnect to Cloudflare Stream for hero video poster/playback */}
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
-        {/* Static JSON-LD for SEO — hardcoded content, no user input */}
+        {/* Static JSON-LD for SEO -- safe: hardcoded content, no user input */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <BreadcrumbJsonLd />
       </head>
       <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />

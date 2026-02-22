@@ -4,7 +4,8 @@ import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: 'NFL Analytics | BSI',
-  description: 'NFL team stats, standings, and game analysis across all 32 teams.',
+  description: 'Live NFL scores, standings, team rosters, and game stats. Real-time football analytics powered by BSI.',
+  alternates: { canonical: '/nfl' },
   openGraph: { title: 'NFL Analytics | BSI', description: 'NFL team stats, standings, and game analysis across all 32 teams.' },
 };
 
