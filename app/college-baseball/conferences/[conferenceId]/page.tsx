@@ -23,6 +23,15 @@ export async function generateStaticParams() {
     { conferenceId: 'wcc' },
     { conferenceId: 'big-west' },
     { conferenceId: 'southland' },
+    // D1 Contender Conferences
+    { conferenceId: 'asun' },
+    { conferenceId: 'america-east' },
+    { conferenceId: 'big-south' },
+    { conferenceId: 'horizon' },
+    { conferenceId: 'patriot-league' },
+    { conferenceId: 'southern' },
+    { conferenceId: 'summit' },
+    { conferenceId: 'wac' },
   ];
 }
 

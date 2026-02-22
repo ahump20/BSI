@@ -1922,8 +1922,12 @@ export async function handleCollegeBaseballLeaders(env: Env): Promise<Response> 
 
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min TTL
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
-  } catch (err) {
-    console.error('[leaders] ESPN fetch failed:', err instanceof Error ? err.message : err);
-    return json({ categories: [], meta: { lastUpdated: now, dataSource: 'error' } }, 502);
+  } catch {
+    // ESPN doesn't serve a /leaders endpoint for college baseball (404).
+    // Return 200 with empty categories so the UI renders its placeholder
+    // state without triggering retry logic or polluting error monitoring.
+    const empty = { categories: [], meta: { lastUpdated: now, dataSource: 'unavailable' } };
+    await kvPut(env.KV, cacheKey, empty, 3600); // cache for 1h to avoid hammering ESPN
+    return cachedJson(empty, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   }
 }

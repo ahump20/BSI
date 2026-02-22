@@ -1558,6 +1558,43 @@ function RankChange({ current, previous }: { current: number | null; previous: n
   return <Minus className="w-4 h-4 text-text-tertiary" />;
 }
 
+// ─── Auto-generated conference data from teamMetadata ──────────────────────────
+// For conferences without hand-written editorial content, derive a hub page
+// directly from the team entries in teamMetadata.
+const conferenceSlugMap: Record<string, { name: string; fullName: string; region: string }> = {
+  asun: { name: 'ASUN', fullName: 'ASUN Conference', region: 'Southeast' },
+  'america-east': { name: 'America East', fullName: 'America East Conference', region: 'Northeast' },
+  'big-south': { name: 'Big South', fullName: 'Big South Conference', region: 'Southeast' },
+  horizon: { name: 'Horizon', fullName: 'Horizon League', region: 'Midwest' },
+  'patriot-league': { name: 'Patriot League', fullName: 'Patriot League', region: 'Northeast' },
+  southern: { name: 'Southern', fullName: 'Southern Conference', region: 'Southeast' },
+  summit: { name: 'Summit', fullName: 'Summit League', region: 'Midwest' },
+  wac: { name: 'WAC', fullName: 'Western Athletic Conference', region: 'West' },
+};
+
+function getAutoConferenceTeams(conferenceId: string) {
+  const conf = conferenceSlugMap[conferenceId];
+  if (!conf) return null;
+
+  const teams = Object.entries(teamMetadata)
+    .filter(([, meta]) => meta.conference === conf.name)
+    .map(([slug, meta]) => ({
+      slug,
+      name: meta.shortName,
+      fullName: meta.name,
+      mascot: meta.mascot,
+      espnId: meta.espnId,
+      colors: meta.colors,
+      city: meta.location.city,
+      state: meta.location.state,
+      stadium: meta.location.stadium,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  if (teams.length === 0) return null;
+  return { ...conf, id: conferenceId, teams };
+}
+
 interface ConferencePageClientProps {
   conferenceId: string;
 }
@@ -1565,25 +1602,140 @@ interface ConferencePageClientProps {
 export default function ConferencePageClient({ conferenceId }: ConferencePageClientProps) {
   const conference = conferenceData[conferenceId];
 
+  // Auto-generated hub for conferences without editorial content
   if (!conference) {
+    const auto = getAutoConferenceTeams(conferenceId);
+    if (!auto) {
+      return (
+        <>
+          <main id="main-content">
+            <Section padding="lg" className="pt-24">
+              <Container>
+                <div className="text-center py-20">
+                  <h1 className="font-display text-3xl font-bold text-white mb-4">
+                    Conference Not Found
+                  </h1>
+                  <p className="text-text-secondary mb-6">
+                    The conference you&apos;re looking for doesn&apos;t exist.
+                  </p>
+                  <Link
+                    href="/college-baseball/conferences"
+                    className="text-burnt-orange hover:underline"
+                  >
+                    ← Back to Conferences
+                  </Link>
+                </div>
+              </Container>
+            </Section>
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
     return (
       <>
         <main id="main-content">
           <Section padding="lg" className="pt-24">
             <Container>
-              <div className="text-center py-20">
-                <h1 className="font-display text-3xl font-bold text-white mb-4">
-                  Conference Not Found
-                </h1>
-                <p className="text-text-secondary mb-6">
-                  The conference you&apos;re looking for doesn&apos;t exist.
-                </p>
+              {/* Breadcrumb */}
+              <ScrollReveal direction="up">
                 <Link
                   href="/college-baseball/conferences"
-                  className="text-burnt-orange hover:underline"
+                  className="inline-flex items-center gap-2 text-text-tertiary hover:text-burnt-orange transition-colors mb-6"
                 >
-                  ← Back to Conferences
+                  <ArrowLeft className="w-4 h-4" />
+                  All Conferences
                 </Link>
+
+                <div className="mb-8">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
+                    {auto.fullName}
+                  </h1>
+                  <p className="text-text-secondary mt-2">
+                    {auto.teams.length} {auto.teams.length === 1 ? 'team' : 'teams'} &middot; {auto.region}
+                  </p>
+                </div>
+              </ScrollReveal>
+
+              {/* Quick Stats */}
+              <ScrollReveal direction="up" delay={100}>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                  <Card padding="md" className="text-center">
+                    <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-white">
+                      {auto.teams.length}
+                    </div>
+                    <div className="text-text-tertiary text-sm">{auto.teams.length === 1 ? 'Team' : 'Teams'}</div>
+                  </Card>
+                  <Card padding="md" className="text-center">
+                    <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-white">
+                      {auto.region}
+                    </div>
+                    <div className="text-text-tertiary text-sm">Region</div>
+                  </Card>
+                  <Card padding="md" className="text-center col-span-2 md:col-span-1">
+                    <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
+                    <div className="font-display text-2xl font-bold text-white">D1</div>
+                    <div className="text-text-tertiary text-sm">Division</div>
+                  </Card>
+                </div>
+              </ScrollReveal>
+
+              {/* Team Grid */}
+              <ScrollReveal direction="up" delay={200}>
+                <h2 className="font-display text-xl font-bold text-white mb-4">
+                  Conference Teams
+                </h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {auto.teams.map((team) => {
+                    const logoUrl = getLogoUrl(team.espnId);
+                    return (
+                      <Link key={team.slug} href={`/college-baseball/teams/${team.slug}`}>
+                        <Card
+                          padding="md"
+                          className="hover:border-burnt-orange/50 transition-all group"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div
+                              className="w-14 h-14 rounded-lg flex items-center justify-center overflow-hidden shrink-0"
+                              style={{ backgroundColor: `${team.colors.primary}20` }}
+                            >
+                              <img
+                                src={logoUrl}
+                                alt=""
+                                className="w-10 h-10 object-contain"
+                                loading="lazy"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors truncate">
+                                {team.fullName}
+                              </h3>
+                              <div className="flex items-center gap-2 text-sm text-text-tertiary">
+                                <MapPin className="w-3 h-3 shrink-0" />
+                                <span className="truncate">
+                                  {team.city}, {team.state}
+                                </span>
+                              </div>
+                              <p className="text-xs text-text-tertiary mt-0.5">{team.stadium}</p>
+                            </div>
+                          </div>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </ScrollReveal>
+
+              {/* Attribution */}
+              <div className="mt-10 text-center text-xs text-text-tertiary">
+                <p>Team data sourced from ESPN.</p>
+                <p className="mt-1" suppressHydrationWarning>
+                  Last updated:{' '}
+                  {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
+                </p>
               </div>
             </Container>
           </Section>

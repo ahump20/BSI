@@ -85,6 +85,34 @@ const mostRankedConf = conferences.reduce((best, c) =>
   c.rankedTeams > best.rankedTeams ? c : best, conferences[0]);
 const topConf = conferences.find((c) => c.topRank === 1) || conferences[0];
 
+/** Conference name → slug mapping for all non-Power-5 conferences. */
+const confNameToSlug: Record<string, string> = {
+  'Big East': 'big-east', AAC: 'aac', 'Sun Belt': 'sun-belt', 'Mountain West': 'mountain-west',
+  CUSA: 'c-usa', 'A-10': 'a-10', CAA: 'colonial', 'Missouri Valley': 'missouri-valley',
+  WCC: 'wcc', 'Big West': 'big-west', Southland: 'southland',
+  ASUN: 'asun', 'America East': 'america-east', 'Big South': 'big-south', Horizon: 'horizon',
+  'Patriot League': 'patriot-league', Southern: 'southern', Summit: 'summit', WAC: 'wac',
+};
+
+/** Derive mid-major/D1 conference data from teamMetadata. */
+const powerConfs = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12']);
+const midMajorConfs = (() => {
+  const confTeams: Record<string, number> = {};
+  for (const meta of Object.values(teamMetadata)) {
+    if (powerConfs.has(meta.conference)) continue;
+    confTeams[meta.conference] = (confTeams[meta.conference] || 0) + 1;
+  }
+  return Object.entries(confTeams)
+    .filter(([name]) => confNameToSlug[name])
+    .map(([name, count]) => ({
+      id: confNameToSlug[name],
+      name,
+      teamCount: count,
+      ranked: confStats[name]?.ranked || 0,
+    }))
+    .sort((a, b) => b.teamCount - a.teamCount || a.name.localeCompare(b.name));
+})();
+
 export default function ConferencesHubPage() {
   return (
     <>
@@ -185,6 +213,37 @@ export default function ConferencesHubPage() {
                 </ScrollReveal>
               ))}
             </div>
+
+            {/* Mid-Major & D1 Conferences */}
+            {midMajorConfs.length > 0 && (
+              <ScrollReveal direction="up" delay={400}>
+                <h2 className="font-display text-2xl font-bold text-white mt-12 mb-6">
+                  Mid-Major &amp; D1 Conferences
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {midMajorConfs.map((conf) => (
+                    <Link key={conf.id} href={`/college-baseball/conferences/${conf.id}`}>
+                      <Card
+                        padding="md"
+                        className="hover:border-burnt-orange/50 transition-all cursor-pointer group h-full"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors">
+                            {conf.name}
+                          </h3>
+                          {conf.ranked > 0 && (
+                            <Badge variant="primary">{conf.ranked} Ranked</Badge>
+                          )}
+                        </div>
+                        <div className="text-text-tertiary text-sm mt-2">
+                          {conf.teamCount} {conf.teamCount === 1 ? 'team' : 'teams'}
+                        </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              </ScrollReveal>
+            )}
 
             {/* Data Attribution */}
             <div className="mt-10 text-center text-xs text-text-tertiary">
