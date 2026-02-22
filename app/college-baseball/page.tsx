@@ -243,10 +243,18 @@ export default function CollegeBaseballPage() {
   // Rankings — fetched when rankings tab is active
   const rankingsUrl = activeTab === 'rankings' ? '/api/college-baseball/rankings' : null;
   const { data: rankingsRaw, loading: rankingsLoading, error: rankingsError, retry: retryRankings } =
-    useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
+    useSportData<{ rankings?: ESPNPoll[] | RankedTeam[]; previousRankings?: Record<string, unknown> | null; meta?: { lastUpdated?: string; dataSource?: string } }>(rankingsUrl);
   const normalized = useMemo(() => normalizeRankings(rankingsRaw ?? {}), [rankingsRaw]);
   const rankings = normalized.teams.length ? normalized.teams : preseasonRankings;
   const isLiveRankings = normalized.teams.length > 0;
+
+  // Normalize previous rankings (same ESPN poll format) into flat { rank, team }[]
+  const previousRankings = useMemo(() => {
+    const prev = rankingsRaw?.previousRankings;
+    if (!prev) return undefined;
+    const normed = normalizeRankings(prev as { rankings?: ESPNPoll[] | RankedTeam[] });
+    return normed.teams.length ? normed.teams.map(t => ({ rank: t.rank, team: t.team })) : undefined;
+  }, [rankingsRaw?.previousRankings]);
 
   // Standings — fetched when standings tab is active
   const standingsUrl = activeTab === 'standings' ? '/api/college-baseball/standings' : null;
@@ -406,6 +414,7 @@ export default function CollegeBaseballPage() {
                 dataSource={rankingsRaw?.meta?.dataSource || 'espn'}
                 lastUpdated={lastUpdated}
                 preseasonFallback={preseasonRankings}
+                previousRankings={previousRankings}
               />
             </TabPanel>
 
