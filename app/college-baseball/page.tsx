@@ -24,15 +24,6 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
 import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCard';
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
-import { SportInfoCard } from '@/components/sports/SportInfoCard';
-
-const SCOUTING_TECH_BULLETS = [
-  { bold: 'No league-wide tracking', text: '— unlike MLB\u2019s Statcast, college baseball has no standardized optical tracking infrastructure' },
-  { bold: 'KinaTrax at 7 NCAA programs', text: '(~$500K per install) — markerless 3D motion capture for pitching biomechanics' },
-  { bold: 'Rapsodo units at mid-tier programs', text: '($3K-$5K vs TrackMan at $20K+) — pitch tracking becoming accessible' },
-  { bold: 'Synergy Sports covers ~90% of D1 baseball', text: '— comprehensive play-type tagging from game film' },
-  { bold: 'SkillCorner + broadcast-derived tracking', text: 'emerging — could bring positional data to any streamed game' },
-];
 
 interface RankedTeam {
   rank: number;
@@ -723,25 +714,6 @@ export default function CollegeBaseballPage() {
         {/* League Leaders — live from ESPN */}
         <LeagueLeaders />
 
-        {/* Scouting Technology Section */}
-        <Section padding="lg" background="midnight" borderTop>
-          <Container>
-            <SportInfoCard
-              icon={
-                <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-              }
-              title="Scouting Technology"
-              subtitle="The tracking gap in college baseball"
-              bullets={SCOUTING_TECH_BULLETS}
-              actions={[
-                { label: 'Full Vision AI Landscape \u2192', href: '/vision-ai', variant: 'ghost' },
-              ]}
-            />
-          </Container>
-        </Section>
 
       </main>
         <Footer />
