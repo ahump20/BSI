@@ -90,6 +90,40 @@ export async function generateStaticParams() {
     // Sun Belt (expansion)
     'app-state', 'arkansas-state', 'georgia-southern', 'georgia-state',
     'james-madison', 'marshall', 'texas-state', 'ul-monroe',
+    // ─── Full D1 Conference Expansion ───
+    // A-10
+    'davidson', 'dayton', 'fordham', 'george-mason', 'george-washington',
+    'la-salle', 'rhode-island', 'richmond', 'saint-josephs', 'saint-louis',
+    'st-bonaventure',
+    // America East
+    'binghamton', 'bryant', 'njit', 'ualbany', 'umass-lowell', 'umbc',
+    // Big South
+    'charleston-southern', 'gardner-webb', 'high-point', 'longwood',
+    'presbyterian', 'radford', 'unc-asheville', 'usc-upstate',
+    // Horizon
+    'milwaukee', 'northern-kentucky', 'oakland', 'youngstown-state',
+    // Missouri Valley
+    'belmont', 'bradley', 'illinois-state', 'murray-state',
+    'southern-illinois', 'uic', 'valparaiso',
+    // Mountain West (expansion)
+    'nevada', 'san-jose-state', 'unlv',
+    // Patriot League
+    'bucknell', 'holy-cross', 'lafayette', 'lehigh',
+    // Southern
+    'citadel', 'etsu', 'samford', 'unc-greensboro',
+    'vmi', 'western-carolina', 'wofford',
+    // Southland (expansion)
+    'houston-christian', 'incarnate-word', 'lamar', 'new-orleans',
+    'nicholls', 'northwestern-state', 'tamu-corpus-christi', 'utrgv',
+    // Summit
+    'north-dakota-state', 'northern-colorado', 'omaha',
+    'south-dakota-state', 'st-thomas',
+    // WAC (expansion)
+    'abilene-christian', 'cal-baptist', 'sacramento-state',
+    'tarleton-state', 'ut-arlington', 'utah-tech', 'utah-valley',
+    // WCC (expansion)
+    'loyola-marymount', 'pacific', 'portland', 'saint-marys',
+    'san-francisco', 'seattle-u',
   ];
 
   return teams.map((teamId) => ({ teamId }));
