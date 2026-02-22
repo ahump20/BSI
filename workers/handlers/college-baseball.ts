@@ -16,7 +16,7 @@ import type {
   HighlightlyBoxScore,
 } from '../../lib/api-clients/highlightly-api';
 import { teamMetadata } from '../../lib/data/team-metadata';
-import { getLeaders } from '../../lib/api-clients/espn-api';
+import { getLeaders, getScoreboard, getGameSummary } from '../../lib/api-clients/espn-api';
 
 /**
  * ESPN doesn't include conference in scoreboard responses.
@@ -1637,12 +1637,13 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
 
   try {
     const { results } = await env.DB.prepare(
-      `SELECT id, date, title, preview, teams, word_count, created_at
+      `SELECT id, slug, date, title, preview, teams, word_count, created_at
        FROM editorials
        ORDER BY date DESC
        LIMIT 30`
     ).all<{
       id: number;
+      slug: string;
       date: string;
       title: string;
       preview: string | null;
@@ -1651,15 +1652,21 @@ export async function handleCollegeBaseballEditorialList(env: Env): Promise<Resp
       created_at: string;
     }>();
 
-    const editorials = (results ?? []).map((row) => ({
-      id: row.id,
-      date: row.date,
-      title: row.title,
-      preview: row.preview ?? '',
-      teams: row.teams ? row.teams.split(',').map((t) => t.trim()) : [],
-      wordCount: row.word_count,
-      createdAt: row.created_at,
-    }));
+    const editorials = (results ?? []).map((row) => {
+      let teams: string[] = [];
+      try { teams = JSON.parse(row.teams || '[]'); } catch { /* fallback */ }
+      if (!Array.isArray(teams)) teams = row.teams ? row.teams.split(',').map((t) => t.trim()) : [];
+      return {
+        id: row.id,
+        slug: row.slug,
+        date: row.date,
+        title: row.title,
+        preview: row.preview ?? '',
+        teams,
+        wordCount: row.word_count,
+        createdAt: row.created_at,
+      };
+    });
 
     const payload = {
       editorials,

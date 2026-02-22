@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/Badge';
 
 interface Editorial {
   id: number;
+  slug?: string;
   date: string;
   title: string;
   preview: string;
@@ -109,6 +110,7 @@ const SLUG_OVERRIDES: Record<string, string> = {
 };
 
 function getEditorialHref(article: Editorial): string {
+  if (article.slug) return `/college-baseball/editorial/${article.slug}`;
   const raw = titleToSlug(article.title);
   const slug = SLUG_OVERRIDES[raw] || raw;
   return `/college-baseball/editorial/${slug}`;
