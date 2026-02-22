@@ -104,5 +104,6 @@ export async function handleValidateKey(
     tier: keyData.tier,
     email: keyData.email,
     expires_at: new Date(keyData.expires).toISOString(),
+    has_billing: !!keyData.stripe_customer_id,
   });
 }
