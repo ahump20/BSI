@@ -23,6 +23,62 @@ interface ExtendedEnv extends Env {
 const STRIPE_API = 'https://api.stripe.com/v1';
 const RETURN_URL = 'https://blazesportsintel.com/checkout?session_id={CHECKOUT_SESSION_ID}';
 
+/**
+ * GET /api/stripe/session-status?session_id=cs_xxx
+ *
+ * Retrieves a Stripe Checkout Session by ID and returns its status.
+ * Used by the /checkout/return page to verify payment after redirect.
+ */
+export async function handleSessionStatus(
+  url: URL,
+  env: ExtendedEnv,
+): Promise<Response> {
+  const { STRIPE_SECRET_KEY } = env;
+
+  if (!STRIPE_SECRET_KEY) {
+    return json({ error: 'Stripe is not configured.' }, 503);
+  }
+
+  const sessionId = url.searchParams.get('session_id');
+  if (!sessionId) {
+    return json({ error: 'Missing session_id parameter.' }, 400);
+  }
+
+  try {
+    const res = await fetch(`${STRIPE_API}/checkout/sessions/${sessionId}`, {
+      headers: {
+        Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+      },
+    });
+
+    if (!res.ok) {
+      const err = (await res.json()) as { error?: { message?: string } };
+      const msg = err?.error?.message ?? 'Failed to retrieve session.';
+      return json({ error: msg }, res.status as 400 | 404 | 500);
+    }
+
+    const session = (await res.json()) as {
+      status?: string;
+      customer_email?: string;
+      customer_details?: { email?: string };
+      subscription?: string;
+      metadata?: { tier?: string };
+      payment_status?: string;
+    };
+
+    return json({
+      status: session.status ?? 'unknown',
+      customer_email: session.customer_email ?? session.customer_details?.email ?? null,
+      subscription_id: session.subscription ?? null,
+      tier: session.metadata?.tier ?? null,
+      payment_status: session.payment_status ?? 'unknown',
+    });
+  } catch (err) {
+    console.error('[stripe] session-status error:', err);
+    return json({ error: 'Failed to verify session.' }, 502);
+  }
+}
+
 export async function handleCreateEmbeddedCheckout(
   request: Request,
   env: ExtendedEnv,

@@ -33,6 +33,7 @@ jobs:
     outputs:
       blazesportsintel: ${{ steps.changes.outputs.blazesportsintel }}
       blazecraft: ${{ steps.changes.outputs.blazecraft }}
+      worker: ${{ steps.changes.outputs.worker }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -56,6 +57,12 @@ jobs:
             else
               echo "blazecraft=false" >> $GITHUB_OUTPUT
             fi
+            # Worker always deploys on manual dispatch of 'all' or 'blazesportsintel'
+            if [ "$INPUT_SITE" = "all" ] || [ "$INPUT_SITE" = "blazesportsintel" ]; then
+              echo "worker=true" >> $GITHUB_OUTPUT
+            else
+              echo "worker=false" >> $GITHUB_OUTPUT
+            fi
           else
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
 
@@ -69,6 +76,12 @@ jobs:
               echo "blazecraft=true" >> $GITHUB_OUTPUT
             else
               echo "blazecraft=false" >> $GITHUB_OUTPUT
+            fi
+
+            if echo "$CHANGED_FILES" | grep -qE "^workers/"; then
+              echo "worker=true" >> $GITHUB_OUTPUT
+            else
+              echo "worker=false" >> $GITHUB_OUTPUT
             fi
           fi
 
@@ -168,16 +181,41 @@ jobs:
           workingDirectory: games/blazecraft
           command: pages deploy dist --project-name=blazecraft --branch=${{ github.ref_name }} --commit-dirty=true
 
+  deploy-worker:
+    name: Deploy Worker
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      needs.detect-changes.outputs.worker == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Deploy Worker to production
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers
+          command: deploy --env production
+
   deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
-    needs: [deploy-blazesportsintel, deploy-blazecraft]
+    needs: [deploy-blazesportsintel, deploy-blazecraft, deploy-worker]
     if: always()
     steps:
       - name: Summary
         env:
           BSI_RESULT: ${{ needs.deploy-blazesportsintel.result }}
           BC_RESULT: ${{ needs.deploy-blazecraft.result }}
+          WKR_RESULT: ${{ needs.deploy-worker.result }}
           ACTOR: ${{ github.actor }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
@@ -187,6 +225,7 @@ jobs:
           echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| BlazeSportsIntel | $BSI_RESULT |" >> $GITHUB_STEP_SUMMARY
           echo "| BlazeCraft | $BC_RESULT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Worker | $WKR_RESULT |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by:** $ACTOR" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** $COMMIT_SHA" >> $GITHUB_STEP_SUMMARY

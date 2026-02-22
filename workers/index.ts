@@ -84,7 +84,7 @@ import {
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
-import { handleCreateEmbeddedCheckout } from './handlers/stripe';
+import { handleCreateEmbeddedCheckout, handleSessionStatus } from './handlers/stripe';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -380,6 +380,7 @@ app.get('/api/models/monte-carlo/example', (c) => handleMonteCarloExample(c.env)
 app.get('/api/intel/weekly-brief', (c) => handleWeeklyBrief(c.env));
 
 // --- Stripe ---
+app.get('/api/stripe/session-status', (c) => handleSessionStatus(new URL(c.req.url), c.env));
 app.post('/api/stripe/create-embedded-checkout', (c) => handleCreateEmbeddedCheckout(c.req.raw, c.env));
 
 // --- Predictions ---

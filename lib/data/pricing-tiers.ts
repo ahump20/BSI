@@ -20,7 +20,7 @@ export const PRICING_TIERS: PricingTier[] = [
   {
     id: 'pro',
     name: 'Pro',
-    price: 29,
+    price: 12,
     period: 'month',
     description: 'For fans, fantasy players, and amateur coaches who want the edge.',
     audience: 'Fans, fantasy players, amateur coaches',
