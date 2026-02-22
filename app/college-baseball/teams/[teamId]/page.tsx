@@ -70,6 +70,26 @@ export async function generateStaticParams() {
     'grand-canyon', 'sfa', 'dallas-baptist',
     // WCC
     'gonzaga', 'pepperdine', 'san-diego', 'santa-clara',
+    // ─── Conference Expansion (full rosters) ───
+    // AAC (expansion)
+    'charlotte', 'memphis', 'south-florida', 'uab', 'utsa',
+    // ASUN (expansion)
+    'austin-peay', 'bellarmine', 'eastern-kentucky', 'lipscomb',
+    'north-alabama', 'north-florida', 'queens', 'west-georgia',
+    // Big East (expansion)
+    'butler', 'georgetown', 'seton-hall', 'st-johns', 'villanova',
+    // Big West (expansion)
+    'cal-poly', 'cal-state-bakersfield', 'cal-state-northridge', 'hawaii',
+    'uc-davis', 'uc-irvine', 'uc-riverside', 'uc-san-diego',
+    // CAA (expansion)
+    'charleston', 'elon', 'hofstra', 'monmouth', 'nc-at',
+    'towson', 'unc-wilmington', 'william-mary',
+    // C-USA (expansion)
+    'delaware', 'fiu', 'middle-tennessee', 'missouri-state',
+    'new-mexico-state', 'western-kentucky',
+    // Sun Belt (expansion)
+    'app-state', 'arkansas-state', 'georgia-southern', 'georgia-state',
+    'james-madison', 'marshall', 'texas-state', 'ul-monroe',
   ];
 
   return teams.map((teamId) => ({ teamId }));
