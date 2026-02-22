@@ -139,22 +139,28 @@ function CheckoutReturnContent() {
                       active.
                     </p>
                     {customerEmail && (
-                      <p className="text-text-tertiary text-sm mb-8">
-                        Confirmation sent to {customerEmail}
+                      <p className="text-text-tertiary text-sm mb-4">
+                        Your API key has been sent to {customerEmail}. Use it to access your dashboard.
                       </p>
                     )}
                     {tier === 'pro' && (
-                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-8">
+                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-6">
                         <p className="text-burnt-orange text-sm">
-                          Your 14-day free trial has started. You won't be charged until the trial
+                          Your 14-day free trial has started. You won&apos;t be charged until the trial
                           ends.
                         </p>
                       </div>
                     )}
+                    <div className="bg-charcoal/50 border border-white/10 rounded-lg p-4 mb-8">
+                      <p className="text-text-secondary text-sm">
+                        Check your inbox for an email from BSI with your API key.
+                        Enter it on the login page to access your dashboard.
+                      </p>
+                    </div>
                     <div className="space-y-4">
-                      <Link href="/dashboard">
+                      <Link href="/auth/login">
                         <Button variant="primary" size="lg" className="w-full">
-                          Go to Dashboard
+                          Enter My Key
                         </Button>
                       </Link>
                       <Link href="/college-baseball">

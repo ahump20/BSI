@@ -21,7 +21,7 @@ interface ExtendedEnv extends Env {
 }
 
 const STRIPE_API = 'https://api.stripe.com/v1';
-const RETURN_URL = 'https://blazesportsintel.com/checkout?session_id={CHECKOUT_SESSION_ID}';
+const RETURN_URL = 'https://blazesportsintel.com/checkout/return/?session_id={CHECKOUT_SESSION_ID}';
 
 /**
  * GET /api/stripe/session-status?session_id=cs_xxx
@@ -113,6 +113,7 @@ export async function handleCreateEmbeddedCheckout(
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
     'return_url': RETURN_URL,
+    'metadata[tier]': tier,
   });
 
   try {

@@ -116,7 +116,58 @@ const SPORT_TEAM_COUNTS: Record<Sport, number> = {
   ncaa: 300,
 };
 
+type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
+
 export default function DashboardPage() {
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('checking');
+  const [authTier, setAuthTier] = useState<string | null>(null);
+
+  useEffect(() => {
+    const key = typeof window !== 'undefined' ? localStorage.getItem('bsi-api-key') : null;
+    if (!key) {
+      setAuthStatus('unauthenticated');
+      return;
+    }
+
+    fetch('/api/auth/validate', { headers: { 'X-BSI-Key': key } })
+      .then((res) => res.json() as Promise<{ valid?: boolean; tier?: string }>)
+      .then((data) => {
+        if (data.valid) {
+          setAuthTier(data.tier ?? null);
+          setAuthStatus('authenticated');
+        } else {
+          localStorage.removeItem('bsi-api-key');
+          setAuthStatus('unauthenticated');
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem('bsi-api-key');
+        setAuthStatus('unauthenticated');
+      });
+  }, []);
+
+  if (authStatus === 'checking') {
+    return (
+      <main id="main-content" className="min-h-screen pt-24 md:pt-28 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-text-secondary text-sm">Verifying access...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (authStatus === 'unauthenticated') {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
+    return null;
+  }
+
+  return <DashboardContent tier={authTier} />;
+}
+
+function DashboardContent({ tier }: { tier: string | null }) {
   const [activeSport, setActiveSport] = useState<Sport>('mlb');
   const [stats, setStats] = useState<DashboardStats>({
     liveGames: 0,
@@ -128,6 +179,11 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(60);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('bsi-api-key');
+    window.location.href = '/';
+  };
 
   const { formatDateTime, isLoaded: timezoneLoaded } = useUserSettings();
   const lastUpdatedLabel = stats.lastUpdated && timezoneLoaded
@@ -248,12 +304,23 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
+                {tier && (
+                  <span className="px-3 py-1 bg-burnt-orange/20 text-burnt-orange rounded-full text-xs font-semibold uppercase tracking-wider">
+                    {tier}
+                  </span>
+                )}
                 <LiveBadge />
                 {stats.liveGames > 0 && (
                   <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm font-medium animate-pulse">
                     {stats.liveGames} Live Now
                   </span>
                 )}
+                <button
+                  onClick={handleSignOut}
+                  className="px-3 py-1.5 text-xs text-white/40 hover:text-white/70 border border-white/10 hover:border-white/20 rounded-lg transition-colors"
+                >
+                  Sign Out
+                </button>
               </div>
             </div>
           </ScrollReveal>

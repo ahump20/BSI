@@ -39,6 +39,7 @@ import {
   handleCollegeBaseballNewsEnhanced,
   handleCollegeBaseballPlayerCompare,
   handleCollegeBaseballTrends,
+  handleCollegeBaseballTeamSchedule,
 } from './handlers/college-baseball';
 
 import {
@@ -85,6 +86,7 @@ import {
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
 import { handleSearch } from './handlers/search';
 import { handleCreateEmbeddedCheckout, handleSessionStatus } from './handlers/stripe';
+import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
 import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
@@ -177,7 +179,7 @@ app.use('*', async (c, next) => {
   const origin = corsOrigin(c.req.raw, c.env);
   c.res.headers.set('Access-Control-Allow-Origin', origin);
   c.res.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+  c.res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID, X-BSI-Key');
   c.res.headers.set('Access-Control-Max-Age', '86400');
   c.res.headers.set('Vary', 'Origin');
 });
@@ -233,9 +235,10 @@ app.onError(async (err, c) => {
 // --- MCP Protocol ---
 app.all('/mcp', (c) => handleMcpRequest(c.req.raw, c.env));
 
-// --- Auth stubs ---
-app.all('/api/auth/login', (c) => c.json({ error: 'Authentication is not yet available.' }, 501));
-app.all('/api/auth/signup', (c) => c.json({ error: 'Authentication is not yet available.' }, 501));
+// --- Auth ---
+app.post('/api/auth/login', (c) => handleLogin(c.req.raw, c.env));
+app.get('/api/auth/validate', (c) => handleValidateKey(c.req.raw, c.env));
+app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));
@@ -257,6 +260,7 @@ app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsE
 app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
