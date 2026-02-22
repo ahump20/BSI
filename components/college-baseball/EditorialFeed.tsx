@@ -155,8 +155,8 @@ export function EditorialFeed() {
     return list;
   }, [data]);
 
-  // Use API data if available, fallback to hardcoded
-  const displayArticles = articles || (error ? FALLBACK_ARTICLES : null);
+  // Use API data if available, fallback to hardcoded when empty or errored
+  const displayArticles = articles || FALLBACK_ARTICLES;
 
   // Loading state
   if (loading && !displayArticles) {
