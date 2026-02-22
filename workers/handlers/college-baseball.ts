@@ -764,18 +764,23 @@ async function enrichTeamWithD1Stats(
 
     if (!playerRows || playerRows.length === 0) return;
 
-    // Build lookup by ESPN ID
-    const statsMap = new Map<string, D1PlayerStats>();
+    // Build lookup by ESPN ID and by normalized name (fallback)
+    const statsById = new Map<string, D1PlayerStats>();
+    const statsByName = new Map<string, D1PlayerStats>();
     for (const r of playerRows) {
-      statsMap.set(r.espn_id, r);
+      statsById.set(r.espn_id, r);
+      const normName = r.name.toLowerCase().replace(/[^a-z ]/g, '').trim();
+      if (normName) statsByName.set(normName, r);
     }
 
-    // Enrich roster players
+    // Enrich roster players — try ID match first, then name match
     const team = payload.team as Record<string, unknown> | undefined;
     const roster = (team?.roster ?? []) as Record<string, unknown>[];
     for (const player of roster) {
       const pid = String(player.id || '');
-      const d1 = statsMap.get(pid);
+      const playerName = ((player.name ?? player.displayName ?? '') as string)
+        .toLowerCase().replace(/[^a-z ]/g, '').replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+      const d1 = statsById.get(pid) ?? (playerName ? statsByName.get(playerName) : undefined);
       if (!d1) continue;
 
       const avg = d1.at_bats > 0 ? Math.round((d1.hits / d1.at_bats) * 1000) / 1000 : 0;
