@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { getTeamBySlug } from '@/lib/college-baseball/team-registry';
 
 export const metadata: Metadata = {
   title: 'College Baseball Teams | Blaze Sports Intel',
@@ -125,7 +126,7 @@ export default function TeamsPage() {
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
                 <Badge variant="primary" className="mb-4">
-                  300+ D1 Programs
+                  66 Power 5 Programs
                 </Badge>
                 <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-display mb-4">
                   College Baseball <span className="text-gradient-blaze">Teams</span>
@@ -148,21 +149,45 @@ export default function TeamsPage() {
                       <span className="text-text-tertiary text-sm">{conference.fullName}</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      {conference.teams.map((team) => (
-                        <Link
-                          key={team.slug}
-                          href={'/college-baseball/teams/' + team.slug}
-                          className="block"
-                        >
-                          <Card
-                            padding="md"
-                            variant="hover"
-                            className="text-center transition-all hover:border-burnt-orange"
+                      {conference.teams.map((team) => {
+                        const teamData = getTeamBySlug(team.slug);
+                        return (
+                          <Link
+                            key={team.slug}
+                            href={'/college-baseball/teams/' + team.slug}
+                            className="block group"
                           >
-                            <span className="text-white font-medium text-sm">{team.name}</span>
-                          </Card>
-                        </Link>
-                      ))}
+                            <Card
+                              padding="md"
+                              variant="hover"
+                              className="text-center transition-all"
+                              style={{
+                                borderColor: teamData
+                                  ? undefined
+                                  : undefined,
+                              }}
+                            >
+                              {teamData && (
+                                <div
+                                  className="w-8 h-8 rounded-full mx-auto mb-2 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity"
+                                  style={{
+                                    background: `${teamData.colors.primary}20`,
+                                    border: `2px solid ${teamData.colors.primary}40`,
+                                  }}
+                                >
+                                  <span
+                                    className="text-[10px] font-bold font-display"
+                                    style={{ color: teamData.colors.primary }}
+                                  >
+                                    {teamData.abbreviation.slice(0, 3)}
+                                  </span>
+                                </div>
+                              )}
+                              <span className="text-white font-medium text-sm">{team.name}</span>
+                            </Card>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </ScrollReveal>
@@ -172,13 +197,13 @@ export default function TeamsPage() {
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-16 text-center">
                 <p className="text-text-tertiary text-sm mb-4">
-                  Looking for a specific team? More conferences coming soon.
+                  Every Power 5 program, rendered in team colors. Click any team for its scouting report.
                 </p>
                 <Link
-                  href="/contact"
+                  href="/college-baseball"
                   className="text-burnt-orange hover:text-ember transition-colors"
                 >
-                  Request a team
+                  Back to College Baseball
                 </Link>
               </div>
             </ScrollReveal>

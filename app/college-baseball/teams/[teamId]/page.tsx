@@ -1,59 +1,34 @@
-import TeamDetailClient from './TeamDetailClient';
-// Force static generation with dynamic params disabled
+import type { Metadata } from 'next';
+import { COLLEGE_BASEBALL_TEAMS, getTeamBySlug } from '@/lib/college-baseball/team-registry';
+import TeamProfilePage from './TeamProfilePage';
+
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
-// Generate static params for static export
 export async function generateStaticParams() {
-  // Return common team IDs for static generation
-  // Additional teams will be handled client-side via the teams API
-  const teams = [
-    'texas',
-    'lsu',
-    'texas-am',
-    'florida',
-    'tennessee',
-    'arkansas',
-    'vanderbilt',
-    'ole-miss',
-    'georgia',
-    'auburn',
-    'alabama',
-    'mississippi-state',
-    'south-carolina',
-    'kentucky',
-    'missouri',
-    'wake-forest',
-    'virginia',
-    'nc-state',
-    'clemson',
-    'florida-state',
-    'miami',
-    'louisville',
-    'duke',
-    'north-carolina',
-    'tcu',
-    'texas-tech',
-    'oklahoma-state',
-    'baylor',
-    'west-virginia',
-    'kansas-state',
-    'oregon-state',
-    'stanford',
-    'arizona',
-    'arizona-state',
-    'ucla',
-    'usc',
-  ];
-
-  return teams.map((teamId) => ({ teamId }));
+  return COLLEGE_BASEBALL_TEAMS.map((team) => ({ teamId: team.slug }));
 }
 
 interface PageProps {
   params: Promise<{ teamId: string }>;
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { teamId } = await params;
+  const team = getTeamBySlug(teamId);
+  if (!team) return { title: 'Team | Blaze Sports Intel' };
+
+  return {
+    title: `${team.name} ${team.mascot} Baseball | Blaze Sports Intel`,
+    description: `${team.name} ${team.mascot} college baseball program profile. ${team.conference} conference. ${team.venue.name}, ${team.location.city}, ${team.location.state}. Scouting grades, season stats, and analytics.`,
+    openGraph: {
+      title: `${team.name} ${team.mascot} Baseball`,
+      description: `College baseball analytics for the ${team.name} ${team.mascot}. ${team.conference} conference.`,
+    },
+  };
+}
+
 export default async function TeamDetailPage({ params }: PageProps) {
   const { teamId } = await params;
-  return <TeamDetailClient teamId={teamId} />;
+  return <TeamProfilePage teamId={teamId} />;
 }
