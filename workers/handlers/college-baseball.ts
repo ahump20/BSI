@@ -752,17 +752,35 @@ async function enrichTeamWithD1Stats(
   env: Env,
 ): Promise<void> {
   try {
-    const { results: playerRows } = await env.DB.prepare(
-      `SELECT espn_id, name, position, headshot,
-              games_bat, at_bats, runs, hits, home_runs, rbis,
-              walks_bat, strikeouts_bat, stolen_bases,
-              games_pitch, innings_pitched_thirds, earned_runs,
-              strikeouts_pitch, walks_pitch, hits_allowed
-       FROM player_season_stats
-       WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ?`
-    ).bind(espnTeamId).all<D1PlayerStats>();
+    // D1 stores ESPN box-score team IDs (e.g. 251 for Texas) while the handler
+    // may pass the Highlightly ID (e.g. 126). Extract the ESPN site ID from the
+    // team logo URL as a fallback lookup key.
+    const teamObj = payload.team as Record<string, unknown> | undefined;
+    const logoUrl = (teamObj?.logo ?? '') as string;
+    const logoMatch = logoUrl.match(/\/(\d+)\.png/);
+    const espnSiteId = logoMatch?.[1];
 
-    if (!playerRows || playerRows.length === 0) return;
+    const idsToTry = [espnTeamId];
+    if (espnSiteId && espnSiteId !== espnTeamId) idsToTry.push(espnSiteId);
+
+    let playerRows: D1PlayerStats[] = [];
+    for (const tid of idsToTry) {
+      const { results } = await env.DB.prepare(
+        `SELECT espn_id, name, position, headshot,
+                games_bat, at_bats, runs, hits, home_runs, rbis,
+                walks_bat, strikeouts_bat, stolen_bases,
+                games_pitch, innings_pitched_thirds, earned_runs,
+                strikeouts_pitch, walks_pitch, hits_allowed
+         FROM player_season_stats
+         WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ?`
+      ).bind(tid).all<D1PlayerStats>();
+      if (results && results.length > 0) {
+        playerRows = results;
+        break;
+      }
+    }
+
+    if (playerRows.length === 0) return;
 
     // Build lookup by ESPN ID and by normalized name (fallback)
     const statsById = new Map<string, D1PlayerStats>();
