@@ -776,6 +776,8 @@ async function enrichTeamWithD1Stats(
     // Enrich roster players — try ID match first, then name match
     const team = payload.team as Record<string, unknown> | undefined;
     const roster = (team?.roster ?? []) as Record<string, unknown>[];
+    const matchedD1Ids = new Set<string>();
+
     for (const player of roster) {
       const pid = String(player.id || '');
       const playerName = ((player.name ?? player.displayName ?? '') as string)
@@ -783,6 +785,7 @@ async function enrichTeamWithD1Stats(
       const d1 = statsById.get(pid) ?? (playerName ? statsByName.get(playerName) : undefined);
       if (!d1) continue;
 
+      matchedD1Ids.add(d1.espn_id);
       const avg = d1.at_bats > 0 ? Math.round((d1.hits / d1.at_bats) * 1000) / 1000 : 0;
       const ip = d1.innings_pitched_thirds / 3;
       const era = ip > 0 ? Math.round((d1.earned_runs * 9 / ip) * 100) / 100 : 0;
@@ -796,6 +799,32 @@ async function enrichTeamWithD1Stats(
       if (!player.headshot && d1.headshot) {
         (player as Record<string, unknown>).headshot = d1.headshot;
       }
+    }
+
+    // Append D1 players who weren't matched to the roster (current season players
+    // often missing from ESPN's historical roster endpoint)
+    for (const r of playerRows) {
+      if (matchedD1Ids.has(r.espn_id)) continue;
+
+      const avg = r.at_bats > 0 ? Math.round((r.hits / r.at_bats) * 1000) / 1000 : 0;
+      const ip = r.innings_pitched_thirds / 3;
+      const era = ip > 0 ? Math.round((r.earned_runs * 9 / ip) * 100) / 100 : 0;
+
+      const entry: Record<string, unknown> = {
+        id: r.espn_id,
+        name: r.name,
+        position: r.position || 'UN',
+        headshot: r.headshot || undefined,
+        source: 'd1',
+      };
+
+      if (r.at_bats > 0 || r.games_bat > 0) {
+        entry.stats = { avg, hr: r.home_runs, rbi: r.rbis };
+      } else if (r.innings_pitched_thirds > 0 || r.games_pitch > 0) {
+        entry.stats = { era, wins: 0, so: r.strikeouts_pitch };
+      }
+
+      roster.push(entry);
     }
 
     // Compute team aggregate stats
