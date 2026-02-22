@@ -3,8 +3,8 @@
 import { ScrollReveal } from '@/components/cinematic';
 
 const stats = [
-  { value: '14', label: 'Live Workers' },
-  { value: '6', label: 'Sports Covered' },
+  { value: '5', label: 'Sports Live' },
+  { value: '197', label: 'D1 Teams' },
   { value: '30s', label: 'Update Cycle' },
   { value: '100%', label: 'Independent' },
 ] as const;
