@@ -151,13 +151,11 @@ function CheckoutContent() {
   const [error, setError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  // Post-payment return from Stripe — session_id replaces client_secret in the URL
-  if (sessionId && !clientSecret) {
-    return <SuccessState />;
-  }
-
   // Validate client secret format
   useEffect(() => {
+    // Skip validation when returning from Stripe with session_id
+    if (sessionId && !clientSecret) return;
+
     if (!clientSecret) {
       setError('No checkout session found. Please select a plan from pricing.');
       return;
@@ -170,13 +168,18 @@ function CheckoutContent() {
     }
 
     setIsReady(true);
-  }, [clientSecret]);
+  }, [clientSecret, sessionId]);
 
   // Callback for EmbeddedCheckoutProvider
   const fetchClientSecret = useCallback(async () => {
     // Client secret already provided via URL param
     return clientSecret as string;
   }, [clientSecret]);
+
+  // Post-payment return from Stripe — session_id replaces client_secret in the URL
+  if (sessionId && !clientSecret) {
+    return <SuccessState />;
+  }
 
   // Error state
   if (error) {
