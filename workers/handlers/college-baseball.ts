@@ -16,6 +16,7 @@ import type {
   HighlightlyBoxScore,
 } from '../../lib/api-clients/highlightly-api';
 import { teamMetadata } from '../../lib/data/team-metadata';
+import { getLeaders } from '../../lib/api-clients/espn-api';
 
 /**
  * ESPN doesn't include conference in scoreboard responses.
@@ -653,11 +654,23 @@ export async function handleCollegeBaseballStandings(
 
 export async function handleCollegeBaseballRankings(env: Env): Promise<Response> {
   const cacheKey = 'cb:rankings:v2';
+  const prevKey = 'cb:rankings:prev';
   const now = new Date().toISOString();
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  // Rotate current → previous before fetching new data
+  async function rotatePrevious() {
+    try {
+      const current = await kvGet<unknown>(env.KV, cacheKey);
+      if (current) {
+        await kvPut(env.KV, prevKey, current, 604800); // 7 days
+      }
+    } catch { /* non-critical */ }
+  }
+
+  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.rankings, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+    const prev = await kvGet<unknown>(env.KV, prevKey);
+    return cachedJson({ ...cached, previousRankings: prev || null }, 200, HTTP_CACHE.rankings, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
   // Try Highlightly first
@@ -666,9 +679,10 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     try {
       const result = await hlClient.getRankings();
       if (result.success && result.data) {
+        await rotatePrevious();
         const payload = { rankings: result.data, meta: { dataSource: 'highlightly', lastUpdated: result.timestamp, sport: 'college-baseball' } };
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
-        return cachedJson(payload, 200, HTTP_CACHE.rankings, {
+        return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
         });
       }
@@ -688,13 +702,14 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     if (res.ok) {
       const raw = (await res.json()) as Record<string, unknown>;
       const rankings = (raw.rankings as unknown[]) || [];
+      await rotatePrevious();
       const payload = {
         rankings,
         timestamp: now,
         meta: { dataSource: 'espn', lastUpdated: now, sport: 'college-baseball' },
       };
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
-      return cachedJson(payload, 200, HTTP_CACHE.rankings, {
+      return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
         ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
       });
     }
@@ -707,6 +722,7 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     const client = getCollegeClient();
     const result = await client.getRankings();
     const rankings = Array.isArray(result.data) ? result.data : [];
+    await rotatePrevious();
     const payload = {
       rankings,
       timestamp: result.timestamp,
@@ -717,11 +733,11 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
     }
 
-    return cachedJson(payload, result.success ? 200 : 502, HTTP_CACHE.rankings, {
+    return cachedJson({ ...payload, previousRankings: null }, result.success ? 200 : 502, HTTP_CACHE.rankings, {
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json({ rankings: [], meta: { dataSource: 'error', lastUpdated: now, sport: 'college-baseball' } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+    return json({ rankings: [], previousRankings: null, meta: { dataSource: 'error', lastUpdated: now, sport: 'college-baseball' } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -760,11 +776,14 @@ export async function handleCollegeBaseballTeam(
           teamResult.data,
           playersResult.success ? (playersResult.data?.data ?? []) : []
         );
-        const payload = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
-        await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-        return cachedJson(payload, 200, HTTP_CACHE.team, {
-          ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
-        });
+        // Only cache if Highlightly returned meaningful data (name exists)
+        if (team.name) {
+          const payload = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+          await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+          return cachedJson(payload, 200, HTTP_CACHE.team, {
+            ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
+          });
+        }
       }
     } catch (err) {
       console.error('[highlightly] team fallback:', err instanceof Error ? err.message : err);
@@ -1862,5 +1881,49 @@ export async function handleCollegeBaseballTrends(teamId: string, env: Env): Pro
       message: 'Trend data temporarily unavailable.',
       meta: { source: 'bsi-d1', fetched_at: now, timezone: 'America/Chicago' },
     }, 503);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Leaders
+// ---------------------------------------------------------------------------
+
+export async function handleCollegeBaseballLeaders(env: Env): Promise<Response> {
+  const cacheKey = 'cb:leaders';
+  const now = new Date().toISOString();
+
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw = await getLeaders('college-baseball') as any;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const categories = (raw?.leaders || []).map((cat: any) => ({
+      name: cat.name || cat.displayName || '',
+      abbreviation: cat.abbreviation || '',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      leaders: (cat.leaders || []).slice(0, 10).map((leader: any) => ({
+        name: leader.athlete?.displayName || '',
+        id: leader.athlete?.id,
+        team: leader.athlete?.team?.abbreviation || '',
+        teamId: leader.athlete?.team?.id,
+        headshot: leader.athlete?.headshot?.href || '',
+        value: leader.displayValue || leader.value || '',
+        stat: cat.abbreviation || cat.name || '',
+      })),
+    }));
+
+    const payload = {
+      categories,
+      meta: { lastUpdated: now, dataSource: 'espn' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 300); // 5 min TTL
+    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    console.error('[leaders] ESPN fetch failed:', err instanceof Error ? err.message : err);
+    return json({ categories: [], meta: { lastUpdated: now, dataSource: 'error' } }, 502);
   }
 }

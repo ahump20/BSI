@@ -31,6 +31,45 @@ export async function generateStaticParams() {
     'oregon', 'washington',
     // Pac-12 (4)
     'oregon-state', 'washington-state', 'san-diego-state', 'fresno-state',
+    // ─── D1 MCWS Contenders ───
+    // A-10
+    'vcu',
+    // AAC
+    'east-carolina', 'fau', 'rice', 'tulane', 'wichita-state',
+    // ASUN
+    'jacksonville', 'jax-state', 'kennesaw-state', 'stetson',
+    // America East
+    'maine',
+    // Big East
+    'creighton', 'uconn', 'xavier',
+    // Big South
+    'winthrop',
+    // Big West
+    'cal-state-fullerton', 'long-beach-state', 'uc-santa-barbara',
+    // CAA
+    'campbell', 'northeastern', 'stony-brook',
+    // CUSA
+    'liberty', 'louisiana-tech', 'sam-houston',
+    // Horizon
+    'wright-state',
+    // Missouri Valley
+    'evansville', 'indiana-state',
+    // Mountain West
+    'air-force', 'new-mexico',
+    // Patriot League
+    'army', 'navy',
+    // Southern
+    'mercer',
+    // Southland
+    'mcneese', 'se-louisiana',
+    // Summit
+    'oral-roberts',
+    // Sun Belt
+    'coastal-carolina', 'louisiana', 'old-dominion', 'south-alabama', 'southern-miss', 'troy',
+    // WAC
+    'grand-canyon', 'sfa', 'dallas-baptist',
+    // WCC
+    'gonzaga', 'pepperdine', 'san-diego', 'santa-clara',
   ];
 
   return teams.map((teamId) => ({ teamId }));

@@ -487,35 +487,40 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             {/* ── Roster ──────────────────────────────────────────────────── */}
             {activeTab === 'roster' && (
               <ScrollReveal direction="up">
-                {rosterPlayers.length > 0 ? (
-                  <Card padding="none" className="overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b border-white/10 text-white/40 text-xs uppercase tracking-wider">
-                            <th className="text-left px-4 py-3">#</th>
-                            <th className="text-left px-4 py-3">Name</th>
-                            <th className="text-left px-4 py-3">Pos</th>
-                            <th className="text-left px-4 py-3">Year</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {rosterPlayers.map((p) => (
-                            <tr key={p.id || p.name} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                              <td className="px-4 py-3 font-mono" style={{ color: accent }}>{p.number}</td>
-                              <td className="px-4 py-3 text-white font-semibold">{p.name}</td>
-                              <td className="px-4 py-3 text-white/60">{p.position}</td>
-                              <td className="px-4 py-3 text-white/60">{p.year || '\u2014'}</td>
+                {rosterPlayers.length > 0 ? (() => {
+                  const hasNumbers = rosterPlayers.some((p) => p.number && p.number !== '');
+                  const hasPositions = rosterPlayers.some((p) => p.position && p.position !== 'UN' && p.position !== '');
+                  const hasYears = rosterPlayers.some((p) => p.year && p.year !== '' && p.year !== '—');
+                  return (
+                    <Card padding="none" className="overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-white/10 text-white/40 text-xs uppercase tracking-wider">
+                              {hasNumbers && <th className="text-left px-4 py-3">#</th>}
+                              <th className="text-left px-4 py-3">Name</th>
+                              {hasPositions && <th className="text-left px-4 py-3">Pos</th>}
+                              {hasYears && <th className="text-left px-4 py-3">Year</th>}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="px-4 py-3 border-t border-white/5 text-xs text-white/20">
-                      {rosterPlayers.length} players &mdash; Source: ESPN
-                    </div>
-                  </Card>
-                ) : (
+                          </thead>
+                          <tbody>
+                            {rosterPlayers.map((p) => (
+                              <tr key={p.id || p.name} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                {hasNumbers && <td className="px-4 py-3 font-mono" style={{ color: accent }}>{p.number}</td>}
+                                <td className="px-4 py-3 text-white font-semibold">{p.name}</td>
+                                {hasPositions && <td className="px-4 py-3 text-white/60">{p.position}</td>}
+                                {hasYears && <td className="px-4 py-3 text-white/60">{p.year}</td>}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="px-4 py-3 border-t border-white/5 text-xs text-white/20">
+                        {rosterPlayers.length} players &mdash; Source: ESPN
+                      </div>
+                    </Card>
+                  );
+                })() : (
                   <Card padding="lg" className="text-center">
                     <p className="text-white/50">Roster loading...</p>
                   </Card>

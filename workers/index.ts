@@ -40,6 +40,7 @@ import {
   handleCollegeBaseballPlayerCompare,
   handleCollegeBaseballTrends,
   handleCollegeBaseballTeamSchedule,
+  handleCollegeBaseballLeaders,
 } from './handlers/college-baseball';
 
 import {
@@ -254,6 +255,7 @@ app.get('/api/intel/news', (c) => handleIntelNews(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
+app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
 app.get('/api/college-baseball/schedule', (c) => handleCollegeBaseballSchedule(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/trending', (c) => handleCollegeBaseballTrending(c.env));
 app.get('/api/college-baseball/news', (c) => handleCollegeBaseballNews(c.env));
