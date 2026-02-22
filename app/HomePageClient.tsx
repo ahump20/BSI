@@ -199,13 +199,20 @@ export function HomePageClient() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
             {sports.map((sport, index) => {
               const countKey = SPORT_COUNT_KEYS[sport.name];
               const counts = countKey ? sportCounts.get(countKey) : undefined;
 
+              const isLast = index === sports.length - 1;
+
               return (
-                <ScrollReveal key={sport.name} direction="up" delay={index * 80}>
+                <ScrollReveal
+                  key={sport.name}
+                  direction="up"
+                  delay={index * 80}
+                  className={isLast ? 'sm:col-span-2 md:col-span-1' : undefined}
+                >
                   <Link href={sport.href} className="group block h-full">
                     <div
                       className={`relative p-6 rounded-2xl border bg-white/[0.03] backdrop-blur-sm border-white/10 ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-white/[0.06] h-full flex flex-col items-center text-center`}
