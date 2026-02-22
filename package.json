@@ -11,7 +11,7 @@
     "copy:lib": "cp -r lib dist/",
     "copy:web-vitals": "cp node_modules/web-vitals/dist/web-vitals.attribution.js public/js/web-vitals.min.js",
     "copy:functions": "rm -rf out/functions && cp -R functions out/functions",
-    "build": "next build && npm run copy:functions && node scripts/generate-sitemap.mjs",
+    "build": "NEXT_DIST_DIR=/tmp/bsi-next-build next build && npm run copy:functions && node scripts/generate-sitemap.mjs",
     "build:vite": "npm run copy:web-vitals && vite build && npm run build:functions",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy out --project-name blazesportsintel --branch main",

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { preseason2026 } from '@/lib/data/preseason-2026';
 import {
   Trophy,
   Users,
@@ -1595,12 +1596,28 @@ function getAutoConferenceTeams(conferenceId: string) {
   return { ...conf, id: conferenceId, teams };
 }
 
+/** Build slug → rank lookup from preseason data (Top 25 only). */
+const preseasonRanks: Record<string, number> = {};
+for (const [slug, data] of Object.entries(preseason2026)) {
+  if (data.rank <= 25) preseasonRanks[slug] = data.rank;
+}
+
+/** Sync conference team ranks with preseason2026 data source. */
+function syncRanks(teams: typeof conferenceData[string]['teams']) {
+  return teams.map((team) => {
+    if (!team.slug) return team;
+    const liveRank = preseasonRanks[team.slug] ?? null;
+    return { ...team, rank: liveRank };
+  });
+}
+
 interface ConferencePageClientProps {
   conferenceId: string;
 }
 
 export default function ConferencePageClient({ conferenceId }: ConferencePageClientProps) {
-  const conference = conferenceData[conferenceId];
+  const raw = conferenceData[conferenceId];
+  const conference = raw ? { ...raw, teams: syncRanks(raw.teams) } : null;
 
   // Auto-generated hub for conferences without editorial content
   if (!conference) {

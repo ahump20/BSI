@@ -45,13 +45,13 @@ const conferenceInfo: Record<string, { fullName: string; description: string; re
   },
 };
 
-/** Derive ranked team counts and top teams from preseason data. */
+/** Derive ranked team counts and top teams from preseason data (Top 25 only). */
 function buildConferenceStats() {
   const confMap: Record<string, { ranked: number; topTeam: string | null; topRank: number | null }> = {};
   for (const [slug, data] of Object.entries(preseason2026)) {
     const conf = data.conference;
     if (!confMap[conf]) confMap[conf] = { ranked: 0, topTeam: null, topRank: null };
-    confMap[conf].ranked++;
+    if (data.rank <= 25) confMap[conf].ranked++;
     if (confMap[conf].topRank === null || data.rank < confMap[conf].topRank!) {
       confMap[conf].topRank = data.rank;
       confMap[conf].topTeam = teamMetadata[slug]?.shortName || slug;
@@ -84,6 +84,7 @@ const conferences = conferenceOrder
 const mostRankedConf = conferences.reduce((best, c) =>
   c.rankedTeams > best.rankedTeams ? c : best, conferences[0]);
 const topConf = conferences.find((c) => c.topRank === 1) || conferences[0];
+const totalRanked = conferences.reduce((sum, c) => sum + c.rankedTeams, 0);
 
 /** Conference name → slug mapping for all non-Power-5 conferences. */
 const confNameToSlug: Record<string, string> = {
@@ -148,7 +149,7 @@ export default function ConferencesHubPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 <Card padding="md" className="text-center">
                   <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">25</div>
+                  <div className="font-display text-2xl font-bold text-white">{totalRanked}</div>
                   <div className="text-text-tertiary text-sm">Ranked Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
