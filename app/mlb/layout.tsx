@@ -4,7 +4,8 @@ import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: 'MLB Analytics | BSI',
-  description: 'Live MLB standings, scores, player stats, and division breakdowns.',
+  description: 'Live MLB scores, standings, player stats, box scores, and advanced sabermetrics. Real-time baseball analytics powered by BSI.',
+  alternates: { canonical: '/mlb' },
   openGraph: { title: 'MLB Analytics | BSI', description: 'Live MLB standings, scores, player stats, and division breakdowns.' },
 };
 

@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'College Baseball Live Scores | BSI',
-  description: 'Real-time NCAA baseball scores with rank badges, live status indicators, and yesterday fallback.',
+  title: 'College Baseball Scores | Blaze Sports Intel',
+  description: 'Live NCAA Division I baseball scores with real-time updates, box scores, and line scores across all D1 conferences.',
+  alternates: { canonical: '/college-baseball/scores' },
+  openGraph: {
+    title: 'College Baseball Scores | Blaze Sports Intel',
+    description: 'Live NCAA baseball scores with real-time updates.',
+  },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function CollegeBaseballScoresLayout({ children }: { children: ReactNode }) {
   return children;
 }
