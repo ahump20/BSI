@@ -130,11 +130,11 @@ export function HomeLiveScores() {
 
   const games = useMemo(() => {
     const all = rawData?.data || rawData?.games || [];
-    // Prioritize live games, then scheduled, then final — show max 5
+    // Prioritize live games, then final, then scheduled — show max 5
     const live = all.filter((g) => g.status === 'live');
     const scheduled = all.filter((g) => g.status === 'scheduled');
     const final_ = all.filter((g) => g.status === 'final');
-    return [...live, ...scheduled, ...final_].slice(0, 5);
+    return [...live, ...final_, ...scheduled].slice(0, 5);
   }, [rawData]);
 
   const hasLiveGames = games.some((g) => g.status === 'live');
