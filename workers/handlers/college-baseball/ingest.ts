@@ -65,6 +65,8 @@ export async function processFinishedGames(
 
       // Each entry in boxPlayers is a team: { team: {...}, statistics: [batting, pitching] }
       const stmts: D1PreparedStatement[] = [];
+      const teamRunsFromBox = new Map<string, number>();
+      const playerEspnIds = new Set<string>();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const teamBox of boxPlayers as any[]) {
@@ -101,6 +103,10 @@ export async function processFinishedGames(
 
               const ab = num('AB');
               if (ab === 0 && num('R') === 0 && num('H') === 0) continue; // skip DNP entries
+
+              // Track for box score proving
+              teamRunsFromBox.set(teamId, (teamRunsFromBox.get(teamId) || 0) + num('R'));
+              playerEspnIds.add(espnId);
 
               // Season averages from box score — overwrite each game (always latest)
               const seasonObp = dec('OBP');
@@ -195,9 +201,49 @@ export async function processFinishedGames(
       const homeScore = Number(homeCompetitor?.score ?? 0);
       const awayScore = Number(awayCompetitor?.score ?? 0);
 
+      // Box score proving — runs consistency check
+      const homeRunsBox = teamRunsFromBox.get(homeTeamId) ?? 0;
+      const awayRunsBox = teamRunsFromBox.get(awayTeamId) ?? 0;
+      const homeMatch = homeRunsBox === homeScore;
+      const awayMatch = awayRunsBox === awayScore;
+      const validationStatus = playerEspnIds.size === 0
+        ? 'unchecked'
+        : (homeMatch && awayMatch ? 'proved' : homeMatch || awayMatch ? 'partial' : 'failed');
+      const validationDetail = JSON.stringify({
+        home: { runs_box: homeRunsBox, score: homeScore, match: homeMatch },
+        away: { runs_box: awayRunsBox, score: awayScore, match: awayMatch },
+        players_parsed: playerEspnIds.size,
+      });
+
       stmts.push(env.DB.prepare(
-        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score) VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)`
-      ).bind(gameId, date, homeTeam, awayTeam, homeTeamId, awayTeamId, homeScore, awayScore));
+        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score, validation_status, validation_detail) VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(gameId, date, homeTeam, awayTeam, homeTeamId, awayTeamId, homeScore, awayScore, validationStatus, validationDetail));
+
+      // Provenance: tag game and player entity sources
+      stmts.push(env.DB.prepare(
+        `INSERT OR IGNORE INTO entity_source (entity_source_id, entity_type, entity_id, source_system_id) VALUES (?, 'game', ?, 'espn')`
+      ).bind(`espn:game:${gameId}`, gameId));
+      for (const pid of playerEspnIds) {
+        stmts.push(env.DB.prepare(
+          `INSERT OR IGNORE INTO entity_source (entity_source_id, entity_type, entity_id, source_system_id) VALUES (?, 'player', ?, 'espn')`
+        ).bind(`espn:player:${pid}`, pid));
+      }
+
+      // Raw payload ledger (if R2 data lake is bound)
+      if (env.DATA_LAKE) {
+        try {
+          const rawJson = JSON.stringify(summary);
+          const r2Key = `espn/college-baseball/games/${gameId}/${date}.json`;
+          await env.DATA_LAKE.put(r2Key, rawJson);
+          const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(rawJson));
+          const sha256Hex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+          stmts.push(env.DB.prepare(
+            `INSERT OR IGNORE INTO source_payload (payload_id, source_system_id, entity_type, entity_id, received_at, r2_key, sha256, parsed_at, parse_status) VALUES (?, 'espn', 'game', ?, ?, ?, ?, ?, 'parsed')`
+          ).bind(`espn:game:${gameId}:${date}`, gameId, new Date().toISOString(), r2Key, sha256Hex, new Date().toISOString()));
+        } catch (err) {
+          console.error(`[provenance] R2 payload store failed for game ${gameId}:`, err);
+        }
+      }
 
       // D1 batch limit is 100 statements; chunk conservatively
       for (let i = 0; i < stmts.length; i += 50) {
@@ -339,10 +385,31 @@ export async function syncTeamCumulativeStats(
 
       if (!hasAthletes) {
         gamesNoData++;
-        // Still mark as processed so we don't re-fetch empty games
+        // Still mark as processed — extract scores from summary header even without athlete data
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const noAthComps = summary?.header?.competitions?.[0]?.competitors || [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const noAthHome = noAthComps.find((c: any) => c.homeAway === 'home');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const noAthAway = noAthComps.find((c: any) => c.homeAway === 'away');
+        const noAthHomeTeam = noAthHome?.team?.displayName || '';
+        const noAthAwayTeam = noAthAway?.team?.displayName || '';
+        const noAthHomeId = String(noAthHome?.team?.id ?? '');
+        const noAthAwayId = String(noAthAway?.team?.id ?? '');
+        const noAthHomeScore = noAthHome?.score != null ? Number(noAthHome.score) : null;
+        const noAthAwayScore = noAthAway?.score != null ? Number(noAthAway.score) : null;
+
         await env.DB.prepare(
-          `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
-        ).bind(game.id, game.date).run();
+          `INSERT INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score)
+           VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(game_id) DO UPDATE SET
+             home_team = COALESCE(NULLIF(excluded.home_team, ''), processed_games.home_team),
+             away_team = COALESCE(NULLIF(excluded.away_team, ''), processed_games.away_team),
+             home_team_id = COALESCE(NULLIF(excluded.home_team_id, ''), processed_games.home_team_id),
+             away_team_id = COALESCE(NULLIF(excluded.away_team_id, ''), processed_games.away_team_id),
+             home_score = COALESCE(excluded.home_score, processed_games.home_score),
+             away_score = COALESCE(excluded.away_score, processed_games.away_score)`
+        ).bind(game.id, game.date, noAthHomeTeam, noAthAwayTeam, noAthHomeId, noAthAwayId, noAthHomeScore, noAthAwayScore).run();
         continue;
       }
 
@@ -453,10 +520,31 @@ export async function syncTeamCumulativeStats(
         }
       }
 
-      // Mark game as processed
+      // Extract scores from summary header (mirrors processFinishedGames pattern)
+      const syncComps = summary?.header?.competitions?.[0]?.competitors || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const syncHome = syncComps.find((c: any) => c.homeAway === 'home');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const syncAway = syncComps.find((c: any) => c.homeAway === 'away');
+      const syncHomeTeam = syncHome?.team?.displayName || '';
+      const syncAwayTeam = syncAway?.team?.displayName || '';
+      const syncHomeId = String(syncHome?.team?.id ?? '');
+      const syncAwayId = String(syncAway?.team?.id ?? '');
+      const syncHomeScore = syncHome?.score != null ? Number(syncHome.score) : null;
+      const syncAwayScore = syncAway?.score != null ? Number(syncAway.score) : null;
+
+      // Mark game as processed — ON CONFLICT backfills scores for existing NULL-score rows
       stmts.push(env.DB.prepare(
-        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
-      ).bind(game.id, game.date));
+        `INSERT INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score)
+         VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(game_id) DO UPDATE SET
+           home_team = COALESCE(NULLIF(excluded.home_team, ''), processed_games.home_team),
+           away_team = COALESCE(NULLIF(excluded.away_team, ''), processed_games.away_team),
+           home_team_id = COALESCE(NULLIF(excluded.home_team_id, ''), processed_games.home_team_id),
+           away_team_id = COALESCE(NULLIF(excluded.away_team_id, ''), processed_games.away_team_id),
+           home_score = COALESCE(excluded.home_score, processed_games.home_score),
+           away_score = COALESCE(excluded.away_score, processed_games.away_score)`
+      ).bind(game.id, game.date, syncHomeTeam, syncAwayTeam, syncHomeId, syncAwayId, syncHomeScore, syncAwayScore));
 
       // Batch upsert (D1 limit is 100)
       for (let i = 0; i < stmts.length; i += 50) {
