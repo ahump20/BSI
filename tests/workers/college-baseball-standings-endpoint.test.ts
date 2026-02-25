@@ -75,7 +75,7 @@ describe('handleCollegeBaseballStandings', () => {
 
   it('returns cached standings on KV HIT', async () => {
     const cached = { success: true, data: [{ team: 'Texas', wins: 30 }], conference: 'SEC', meta: {} };
-    env.KV._store.set('cb:standings:v2:SEC', JSON.stringify(cached));
+    env.KV._store.set('cb:standings:v3:SEC', JSON.stringify(cached));
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
@@ -93,7 +93,7 @@ describe('handleCollegeBaseballStandings', () => {
     await worker.fetch(req, env);
 
     expect(env.KV.put).toHaveBeenCalledWith(
-      'cb:standings:v2:SEC',
+      'cb:standings:v3:SEC',
       expect.any(String),
       expect.objectContaining({ expirationTtl: expect.any(Number) })
     );
@@ -106,7 +106,7 @@ describe('handleCollegeBaseballStandings', () => {
     await worker.fetch(req, env);
 
     expect(env.KV.put).toHaveBeenCalledWith(
-      'cb:standings:v2:NCAA',
+      'cb:standings:v3:NCAA',
       expect.any(String),
       expect.objectContaining({ expirationTtl: expect.any(Number) })
     );
@@ -134,7 +134,7 @@ describe('handleCollegeBaseballStandings', () => {
     const res = await worker.fetch(req, env);
 
     expect(res.status).toBe(200);
-    expect(res.headers.get('X-Data-Source')).toBe('ncaa');
+    expect(res.headers.get('X-Data-Source')).toBe('espn-v2');
   });
 
   it('ensures data is always an array', async () => {

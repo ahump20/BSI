@@ -197,7 +197,7 @@ export default function CollegeBaseballStandingsPage() {
             {!loading && !error && standings.length === 0 && (
               <Card padding="lg" className="text-center">
                 <p className="text-text-secondary mb-2">
-                  No standings data available for {currentConf?.name}.
+                  No standings data available for {currentConf?.fullName || currentConf?.name}.
                 </p>
                 <p className="text-text-tertiary text-sm">
                   {isInSeason

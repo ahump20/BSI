@@ -231,9 +231,9 @@ export const ESPN_SCOREBOARD = {
   ],
 };
 
-export const HIGHLIGHTLY_STANDINGS = {
-  data: [{ conference: 'SEC', teams: [{ name: 'Texas', wins: 30, losses: 10 }] }],
-};
+export const HIGHLIGHTLY_STANDINGS = [
+  { conference: 'SEC', teams: [{ name: 'Texas', wins: 30, losses: 10 }] },
+];
 
 export const ESPN_STANDINGS = {
   children: [

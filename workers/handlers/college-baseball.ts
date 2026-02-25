@@ -629,8 +629,11 @@ export async function handleCollegeBaseballStandings(
   if (hlClient) {
     try {
       const result = await hlClient.getStandings(conference);
-      if (result.success && result.data) {
-        const payload = wrap(Array.isArray(result.data) ? result.data : [], 'highlightly', result.timestamp);
+      const hlData = Array.isArray(result.data) ? result.data : [];
+      // Only trust Highlightly if it actually returned teams; empty results for
+      // niche conferences (e.g. Independent) should fall through to ESPN v2.
+      if (result.success && hlData.length > 0) {
+        const payload = wrap(hlData, 'highlightly', result.timestamp);
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
         return cachedJson(payload, 200, HTTP_CACHE.standings, {
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
