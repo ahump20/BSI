@@ -724,6 +724,50 @@ export default function CollegeBaseballPage() {
         {/* League Leaders — live from ESPN */}
         <LeagueLeaders />
 
+        {/* Tracking & Vision AI Section */}
+        <Section padding="lg" background="midnight" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                      <circle cx="12" cy="12" r="10" />
+                      <circle cx="12" cy="12" r="3" />
+                      <line x1="12" y1="2" x2="12" y2="6" />
+                      <line x1="12" y1="18" x2="12" y2="22" />
+                      <line x1="2" y1="12" x2="6" y2="12" />
+                      <line x1="18" y1="12" x2="22" y2="12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <CardTitle size="md">Tracking &amp; Vision AI</CardTitle>
+                    <p className="text-text-tertiary text-xs mt-0.5">How college baseball uses tracking data</p>
+                  </div>
+                </div>
+                <ul className="space-y-3 text-sm text-text-secondary">
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">TrackMan:</strong> pitch velocity, spin rate, extension — D1 standard since 2018, installed at 300+ programs</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">Yakkertech:</strong> batted-ball data — exit velo, launch angle, spray charts at programs using optical tracking</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
+                    <span><strong className="text-white">BSI HAV-F &amp; MMI:</strong> proprietary analytics layered on tracking data — hit quality, at-bat grading, velocity trends, fielding value, and in-game momentum shifts</span>
+                  </li>
+                </ul>
+                <div className="mt-5 pt-4 border-t border-white/5">
+                  <Link href="/vision-ai">
+                    <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
+                  </Link>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
       </main>
         <Footer />
