@@ -35,9 +35,10 @@ export async function handleNBAScores(url: URL, env: Env): Promise<Response> {
   const sdio = getSDIOClient(env);
 
   if (sdio) {
+    // ESPN primary so game IDs match handleNBAGame (which uses ESPN getGameSummary)
     const result = await fetchWithFallback(
-      async () => transformSDIONBAScores(await sdio.getNBAScores(date)),
       async () => transformScoreboard(await getScoreboard('nba', toDateString(date)) as Record<string, unknown>) as BSIScoreboardResult,
+      async () => transformSDIONBAScores(await sdio.getNBAScores(date)),
       cacheKey, env.KV, CACHE_TTL.scores,
     );
     return cachedJson(result.data, 200, HTTP_CACHE.scores, {

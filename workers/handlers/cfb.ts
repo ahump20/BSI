@@ -45,12 +45,13 @@ export async function handleCFBScores(url: URL, env: Env): Promise<Response> {
   const sdio = getSDIOClient(env);
 
   if (sdio) {
+    // ESPN primary so game IDs match handleCFBGame (which uses ESPN getGameSummary)
     const result = await fetchWithFallback(
+      async () => transformScoreboard(await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
       async () => {
         const week = parseInt(url.searchParams.get('week') || '1', 10);
         return transformSDIOCFBScores(await sdio.getCFBScores(undefined, week));
       },
-      async () => transformScoreboard(await getScoreboard('cfb', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
       cacheKey, env.KV, CACHE_TTL.scores,
     );
     return cachedJson(result.data, 200, HTTP_CACHE.scores, {

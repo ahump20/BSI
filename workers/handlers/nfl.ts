@@ -40,9 +40,10 @@ export async function handleNFLScores(url: URL, env: Env): Promise<Response> {
   const sdio = getSDIOClient(env);
 
   if (sdio) {
+    // ESPN primary so game IDs match handleNFLGame (which uses ESPN getGameSummary)
     const result = await fetchWithFallback(
-      async () => transformSDIONFLScores(await sdio.getNFLScoresByDate(date)),
       async () => transformScoreboard(await getScoreboard('nfl', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
+      async () => transformSDIONFLScores(await sdio.getNFLScoresByDate(date)),
       cacheKey, env.KV, CACHE_TTL.scores,
     );
     return cachedJson(result.data, 200, HTTP_CACHE.scores, {
