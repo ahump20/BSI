@@ -193,7 +193,8 @@ class EspnNcaaClient implements NcaaApiClient {
   async getStandings(): Promise<NcaaApiResponse<unknown[]>> {
     // Returns all D1 conference groups from ESPN. The handler owns conference
     // filtering via team-metadata.ts espnId → conference mapping.
-    const url = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/standings`;
+    // ESPN standings lives at /apis/v2/ (not /apis/site/v2/ which returns empty).
+    const url = `${ESPN_BASE}/apis/v2/sports/${SPORT_PATH}/standings`;
     const result = await espnFetch<Record<string, unknown>>(url);
 
     if (!result.ok || !result.data) {
