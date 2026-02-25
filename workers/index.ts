@@ -47,7 +47,6 @@ import {
   handleCBBTeamSabermetrics,
   handleCBBTeamSOS,
   handleCBBConferencePowerIndex,
-  handleESPNDiagnostics,
   handleCBBBulkSync,
 } from './handlers/college-baseball';
 
@@ -288,7 +287,7 @@ app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL
 app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
 app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
-app.get('/api/college-baseball/diagnostics/:teamId', (c) => handleESPNDiagnostics(c.req.param('teamId'), c.env));
+// Diagnostics endpoint removed after ESPN verification (2026-02-25)
 app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
