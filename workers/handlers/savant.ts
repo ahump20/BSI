@@ -99,7 +99,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { leaderboard: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -140,7 +140,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
     await kvPut(env.KV, cacheKey, output, 300);
     return cachedJson(
       {
-        leaderboard: output,
+        data: output,
         total: results.length,
         tier,
         meta: savantMeta('bsi-savant', false),
@@ -180,7 +180,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { leaderboard: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -219,7 +219,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
     await kvPut(env.KV, cacheKey, output, 300);
     return cachedJson(
       {
-        leaderboard: output,
+        data: output,
         total: results.length,
         tier,
         meta: savantMeta('bsi-savant', false),
@@ -310,7 +310,7 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { park_factors: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -342,7 +342,7 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
     await kvPut(env.KV, cacheKey, output, 600);
     return cachedJson(
       {
-        park_factors: output,
+        data: output,
         total: results.length,
         tier,
         meta: savantMeta('bsi-savant', false),
@@ -371,7 +371,7 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { conferences: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -393,7 +393,7 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
     await kvPut(env.KV, cacheKey, output, 600);
     return cachedJson(
       {
-        conferences: output,
+        data: output,
         total: results.length,
         tier,
         meta: savantMeta('bsi-savant', false),

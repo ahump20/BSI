@@ -17,7 +17,7 @@ interface PercentileBarProps {
  * Red-white-blue gradient: blue = poor, white = average, red = elite.
  * When higherIsBetter is false (e.g., ERA), the gradient inverts.
  */
-function getPercentileColor(pct: number, higherIsBetter: boolean): string {
+export function getPercentileColor(pct: number, higherIsBetter: boolean): string {
   const effective = higherIsBetter ? pct : 100 - pct;
 
   if (effective >= 90) return '#c0392b'; // Deep red — elite

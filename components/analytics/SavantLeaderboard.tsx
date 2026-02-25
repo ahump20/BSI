@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { MetricGate } from './MetricGate';
 import { MetricTooltip, METRIC_DEFS } from './MetricTooltip';
+import { getPercentileColor } from './PercentileBar';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-interface ColumnDef {
+export interface ColumnDef {
   key: string;
   label: string;
   /** Metric key for tooltip lookup */
   metricKey?: string;
-  /** Whether higher values are better (affects color) */
+  /** Whether higher values are better (affects heatmap color) */
   higherIsBetter?: boolean;
   /** Format function */
   format?: (v: number) => string;
@@ -52,29 +52,68 @@ export { fmt3, fmt2, fmt1, fmtPct, fmtInt };
 // ---------------------------------------------------------------------------
 
 export const BATTING_COLUMNS: ColumnDef[] = [
-  { key: 'avg', label: 'AVG', format: fmt3 },
-  { key: 'obp', label: 'OBP', format: fmt3 },
-  { key: 'slg', label: 'SLG', format: fmt3 },
+  { key: 'avg', label: 'AVG', format: fmt3, higherIsBetter: true },
+  { key: 'obp', label: 'OBP', format: fmt3, higherIsBetter: true },
+  { key: 'slg', label: 'SLG', format: fmt3, higherIsBetter: true },
   { key: 'k_pct', label: 'K%', format: fmtPct, higherIsBetter: false },
-  { key: 'bb_pct', label: 'BB%', format: fmtPct },
-  { key: 'iso', label: 'ISO', metricKey: 'ISO', format: fmt3 },
+  { key: 'bb_pct', label: 'BB%', format: fmtPct, higherIsBetter: true },
+  { key: 'iso', label: 'ISO', metricKey: 'ISO', format: fmt3, higherIsBetter: true },
   { key: 'babip', label: 'BABIP', metricKey: 'BABIP', format: fmt3, hideMobile: true },
-  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, pro: true },
-  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, pro: true, hideMobile: true },
-  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, pro: true, hideMobile: true },
+  { key: 'woba', label: 'wOBA', metricKey: 'wOBA', format: fmt3, pro: true, higherIsBetter: true },
+  { key: 'wrc_plus', label: 'wRC+', metricKey: 'wRC+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
+  { key: 'ops_plus', label: 'OPS+', metricKey: 'OPS+', format: fmtInt, pro: true, hideMobile: true, higherIsBetter: true },
 ];
 
 export const PITCHING_COLUMNS: ColumnDef[] = [
   { key: 'era', label: 'ERA', format: fmt2, higherIsBetter: false },
   { key: 'whip', label: 'WHIP', format: fmt2, higherIsBetter: false },
-  { key: 'k_9', label: 'K/9', format: fmt1 },
+  { key: 'k_9', label: 'K/9', format: fmt1, higherIsBetter: true },
   { key: 'bb_9', label: 'BB/9', format: fmt1, higherIsBetter: false },
   { key: 'hr_9', label: 'HR/9', format: fmt1, higherIsBetter: false, hideMobile: true },
   { key: 'fip', label: 'FIP', metricKey: 'FIP', format: fmt2, higherIsBetter: false, pro: true },
   { key: 'era_minus', label: 'ERA-', metricKey: 'ERA-', format: fmtInt, higherIsBetter: false, pro: true, hideMobile: true },
-  { key: 'k_bb', label: 'K/BB', metricKey: 'K/BB', format: fmt2, pro: true, hideMobile: true },
-  { key: 'lob_pct', label: 'LOB%', metricKey: 'LOB%', format: fmtPct, pro: true, hideMobile: true },
+  { key: 'k_bb', label: 'K/BB', metricKey: 'K/BB', format: fmt2, pro: true, hideMobile: true, higherIsBetter: true },
+  { key: 'lob_pct', label: 'LOB%', metricKey: 'LOB%', format: fmtPct, pro: true, hideMobile: true, higherIsBetter: true },
 ];
+
+// ---------------------------------------------------------------------------
+// Percentile computation
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a percentile rank map for each column from the FULL dataset.
+ * Returns { [columnKey]: Map<rowIndex, percentile 0-100> }.
+ */
+function computePercentiles(
+  allData: Record<string, unknown>[],
+  columns: ColumnDef[],
+): Map<string, number[]> {
+  const result = new Map<string, number[]>();
+
+  for (const col of columns) {
+    const values: { index: number; val: number }[] = [];
+    for (let i = 0; i < allData.length; i++) {
+      const v = allData[i][col.key];
+      if (v != null && typeof v === 'number' && Number.isFinite(v)) {
+        values.push({ index: i, val: v });
+      }
+    }
+
+    // Sort ascending by value
+    values.sort((a, b) => a.val - b.val);
+
+    const pctls = new Array<number>(allData.length).fill(50);
+    const n = values.length;
+    for (let rank = 0; rank < n; rank++) {
+      // Percentile: percentage of values below this one
+      pctls[values[rank].index] = n > 1 ? (rank / (n - 1)) * 100 : 50;
+    }
+
+    result.set(col.key, pctls);
+  }
+
+  return result;
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -93,13 +132,18 @@ export function SavantLeaderboard({
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [showAll, setShowAll] = useState(false);
 
-  const sorted = useMemo(() => {
-    const s = [...data].sort((a, b) => {
-      const aVal = (a[sortKey] as number) ?? 0;
-      const bVal = (b[sortKey] as number) ?? 0;
+  // Compute percentiles from FULL dataset (before sort/slice)
+  const percentiles = useMemo(() => computePercentiles(data, columns), [data, columns]);
+
+  // Build sort order — track original indices for percentile lookup
+  const sortedWithIndex = useMemo(() => {
+    const indexed = data.map((row, i) => ({ row, originalIndex: i }));
+    indexed.sort((a, b) => {
+      const aVal = (a.row[sortKey] as number) ?? 0;
+      const bVal = (b.row[sortKey] as number) ?? 0;
       return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
     });
-    return showAll ? s : s.slice(0, initialRows);
+    return showAll ? indexed : indexed.slice(0, initialRows);
   }, [data, sortKey, sortDir, showAll, initialRows]);
 
   function handleSort(key: string) {
@@ -138,7 +182,7 @@ export function SavantLeaderboard({
               {columns.map(col => (
                 <th
                   key={col.key}
-                  className={`px-2 py-3 text-center ${col.hideMobile ? 'hidden md:table-cell' : ''}`}
+                  className={`px-1.5 py-3 text-center ${col.hideMobile ? 'hidden md:table-cell' : ''}`}
                 >
                   <button
                     onClick={() => handleSort(col.key)}
@@ -169,7 +213,7 @@ export function SavantLeaderboard({
             </tr>
           </thead>
           <tbody>
-            {sorted.map((row, i) => {
+            {sortedWithIndex.map(({ row, originalIndex }, i) => {
               const rank = i + 1;
               const playerId = row.player_id as string;
               return (
@@ -178,16 +222,16 @@ export function SavantLeaderboard({
                   onClick={() => playerId && onPlayerClick?.(playerId)}
                   className={`border-b border-white/[0.02] transition-colors ${
                     onPlayerClick ? 'cursor-pointer hover:bg-white/[0.03]' : ''
-                  } ${rank <= 3 ? 'bg-[#BF5700]/[0.03]' : ''}`}
+                  }`}
                 >
-                  <td className="pl-5 pr-2 py-3">
+                  <td className="pl-5 pr-2 py-2.5">
                     <span className={`text-xs font-mono tabular-nums ${
                       rank <= 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
                     }`}>
                       {rank}
                     </span>
                   </td>
-                  <td className="px-2 py-3">
+                  <td className="px-2 py-2.5">
                     <div>
                       <span className="text-white font-medium text-sm">
                         {row.player_name as string}
@@ -199,7 +243,7 @@ export function SavantLeaderboard({
                       )}
                     </div>
                   </td>
-                  <td className="px-2 py-3 hidden sm:table-cell">
+                  <td className="px-2 py-2.5 hidden sm:table-cell">
                     <span className="text-white/40 text-xs">{row.team as string}</span>
                   </td>
                   {columns.map(col => {
@@ -209,14 +253,33 @@ export function SavantLeaderboard({
                       ? (col.format ? col.format(val as number) : String(val))
                       : '—';
 
+                    // Percentile heatmap background
+                    const pctlArr = percentiles.get(col.key);
+                    const pctl = pctlArr ? pctlArr[originalIndex] : 50;
+                    const higherIsBetter = col.higherIsBetter ?? true;
+                    const showHeatmap = val != null && !isGated && col.higherIsBetter !== undefined;
+                    const bgColor = showHeatmap
+                      ? getPercentileColor(pctl, higherIsBetter)
+                      : undefined;
+
                     return (
                       <td
                         key={col.key}
-                        className={`px-2 py-3 text-center font-mono tabular-nums text-xs ${
+                        className={`px-1.5 py-2.5 text-center ${
                           col.hideMobile ? 'hidden md:table-cell' : ''
-                        } ${isGated ? 'text-white/10' : 'text-white/60'}`}
+                        }`}
                       >
-                        {display}
+                        <span
+                          className={`inline-block px-1.5 py-0.5 rounded font-mono tabular-nums text-xs ${
+                            isGated ? 'text-white/10' : showHeatmap ? 'text-white font-medium' : 'text-white/60'
+                          }`}
+                          style={showHeatmap ? {
+                            backgroundColor: `${bgColor}22`,
+                            color: bgColor,
+                          } : undefined}
+                        >
+                          {display}
+                        </span>
                       </td>
                     );
                   })}

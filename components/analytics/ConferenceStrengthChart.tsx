@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import { getPercentileColor } from './PercentileBar';
+
 interface ConferenceRow {
   conference: string;
   strength_index: number;
@@ -16,9 +19,9 @@ interface ConferenceStrengthChartProps {
 }
 
 /**
- * ConferenceStrengthChart — ranked bar visualization for conference comparison.
+ * ConferenceStrengthChart — ranked bar visualization with sub-metric badges.
  * Uses inline CSS bars instead of Recharts for zero-bundle-cost rendering.
- * Conference strength index 0-100 displayed as horizontal bars.
+ * P5 / mid-major tier separator. Expandable detail rows.
  */
 function strengthColor(index: number): string {
   if (index >= 75) return '#BF5700';
@@ -32,8 +35,93 @@ export function ConferenceStrengthChart({
   isPro = false,
   className = '',
 }: ConferenceStrengthChartProps) {
+  const [expandedConf, setExpandedConf] = useState<string | null>(null);
+
   const sorted = [...data].sort((a, b) => b.strength_index - a.strength_index);
   const displayData = isPro ? sorted : sorted.slice(0, 5);
+
+  // Find where P5 ends and mid-major starts
+  const p5Conferences = displayData.filter(c => c.is_power === 1);
+  const midMajors = displayData.filter(c => c.is_power !== 1);
+  const showTierSeparator = p5Conferences.length > 0 && midMajors.length > 0;
+
+  // Compute percentiles for sub-metrics across all conferences
+  const allERAs = data.map(c => c.avg_era).sort((a, b) => a - b);
+  const allWOBAs = data.map(c => c.avg_woba).sort((a, b) => a - b);
+  const allOPS = data.map(c => c.avg_ops).sort((a, b) => a - b);
+
+  function getSubPctl(val: number, sorted: number[]): number {
+    if (sorted.length <= 1) return 50;
+    const below = sorted.filter(v => v < val).length;
+    return (below / (sorted.length - 1)) * 100;
+  }
+
+  function renderConference(conf: ConferenceRow, i: number, globalRank: number) {
+    const isExpanded = expandedConf === conf.conference;
+    const eraPctl = getSubPctl(conf.avg_era, allERAs);
+    const wobaPctl = getSubPctl(conf.avg_woba, allWOBAs);
+    const opsPctl = getSubPctl(conf.avg_ops, allOPS);
+
+    return (
+      <div key={conf.conference}>
+        <button
+          className="flex items-center gap-3 w-full py-2 hover:bg-white/[0.02] transition-colors rounded-md px-1 -mx-1"
+          onClick={() => setExpandedConf(isExpanded ? null : conf.conference)}
+        >
+          <span className={`text-xs font-mono w-4 tabular-nums ${
+            globalRank <= 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
+          }`}>
+            {globalRank}
+          </span>
+          <span className="text-sm text-white w-24 shrink-0 truncate text-left">
+            {conf.conference}
+          </span>
+          <div className="flex-1 h-[10px] rounded-full bg-white/[0.04] overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{
+                width: `${conf.strength_index}%`,
+                backgroundColor: strengthColor(conf.strength_index),
+              }}
+            />
+          </div>
+          <span
+            className="text-xs font-mono font-bold tabular-nums w-8 text-right"
+            style={{ color: strengthColor(conf.strength_index) }}
+          >
+            {conf.strength_index.toFixed(0)}
+          </span>
+          {/* Sub-metric badges */}
+          <div className="hidden sm:flex items-center gap-1.5 ml-2">
+            <SubBadge label="ERA" value={conf.avg_era.toFixed(2)} color={getPercentileColor(eraPctl, false)} />
+            <SubBadge label="wOBA" value={conf.avg_woba.toFixed(3)} color={getPercentileColor(wobaPctl, true)} />
+            <SubBadge label="OPS" value={conf.avg_ops.toFixed(3)} color={getPercentileColor(opsPctl, true)} />
+          </div>
+          {conf.is_power === 1 && (
+            <span className="text-[8px] text-[#BF5700] font-mono uppercase tracking-wider">
+              P5
+            </span>
+          )}
+          <span className="text-[10px] text-white/20 ml-1">
+            {isExpanded ? '▲' : '▼'}
+          </span>
+        </button>
+
+        {/* Expanded detail row */}
+        {isExpanded && (
+          <div className="ml-8 mb-2 pl-4 border-l border-white/[0.06] py-2 space-y-2">
+            <div className="grid grid-cols-3 gap-3">
+              <SubMetricBar label="ERA" value={conf.avg_era} pctl={eraPctl} format={(v) => v.toFixed(2)} higherIsBetter={false} />
+              <SubMetricBar label="wOBA" value={conf.avg_woba} pctl={wobaPctl} format={(v) => v.toFixed(3)} higherIsBetter={true} />
+              <SubMetricBar label="OPS" value={conf.avg_ops} pctl={opsPctl} format={(v) => v.toFixed(3)} higherIsBetter={true} />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  let globalRank = 0;
 
   return (
     <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl overflow-hidden ${className}`}>
@@ -42,43 +130,31 @@ export function ConferenceStrengthChart({
           Conference Strength Index
         </h3>
         <p className="text-[10px] text-white/30 mt-1 font-mono">
-          Composite of inter-conference record, RPI, offense, and pitching
+          Composite of inter-conference record, RPI, offense, and pitching · Click to expand
         </p>
       </div>
 
-      <div className="px-5 py-4 space-y-3">
-        {displayData.map((conf, i) => (
-          <div key={conf.conference} className="flex items-center gap-3">
-            <span className={`text-xs font-mono w-4 tabular-nums ${
-              i < 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
-            }`}>
-              {i + 1}
-            </span>
-            <span className="text-sm text-white w-24 shrink-0 truncate">
-              {conf.conference}
-            </span>
-            <div className="flex-1 h-[10px] rounded-full bg-white/[0.04] overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-700"
-                style={{
-                  width: `${conf.strength_index}%`,
-                  backgroundColor: strengthColor(conf.strength_index),
-                }}
-              />
-            </div>
-            <span
-              className="text-xs font-mono font-bold tabular-nums w-8 text-right"
-              style={{ color: strengthColor(conf.strength_index) }}
-            >
-              {conf.strength_index.toFixed(0)}
-            </span>
-            {conf.is_power === 1 && (
-              <span className="text-[8px] text-[#BF5700] font-mono uppercase tracking-wider">
-                P5
-              </span>
-            )}
+      <div className="px-5 py-4 space-y-1">
+        {/* P5 section */}
+        {p5Conferences.map((conf, i) => {
+          globalRank++;
+          return renderConference(conf, i, globalRank);
+        })}
+
+        {/* Tier separator */}
+        {showTierSeparator && (
+          <div className="flex items-center gap-3 py-2">
+            <div className="flex-1 border-t border-white/[0.06]" />
+            <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">Mid-Major</span>
+            <div className="flex-1 border-t border-white/[0.06]" />
           </div>
-        ))}
+        )}
+
+        {/* Mid-major section */}
+        {midMajors.map((conf, i) => {
+          globalRank++;
+          return renderConference(conf, i, globalRank);
+        })}
       </div>
 
       {isPro && displayData.length > 0 && (
@@ -110,6 +186,52 @@ export function ConferenceStrengthChart({
           </a>
         </div>
       )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
+
+function SubBadge({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono"
+      style={{ backgroundColor: `${color}18`, color }}
+    >
+      <span className="text-white/30">{label}</span>
+      {value}
+    </span>
+  );
+}
+
+function SubMetricBar({
+  label,
+  value,
+  pctl,
+  format,
+  higherIsBetter,
+}: {
+  label: string;
+  value: number;
+  pctl: number;
+  format: (v: number) => string;
+  higherIsBetter: boolean;
+}) {
+  const color = getPercentileColor(pctl, higherIsBetter);
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[9px] text-white/30 font-mono uppercase">{label}</span>
+        <span className="text-xs font-mono font-bold" style={{ color }}>{format(value)}</span>
+      </div>
+      <div className="h-[4px] rounded-full bg-white/[0.04] overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${Math.max(5, pctl)}%`, backgroundColor: color }}
+        />
+      </div>
     </div>
   );
 }
