@@ -172,4 +172,102 @@ describe('handleCollegeBaseballStandings', () => {
 
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=300');
   });
+
+  it('flattens ESPN v2 conference groups into team entries', async () => {
+    // Highlightly fails → ESPN v2 fallback with nested entries
+    globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+      const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+
+      if (urlStr.includes('mlb-college-baseball-api')) {
+        return new Response('Error', { status: 500 });
+      }
+      if (urlStr.includes('espn.com') && urlStr.includes('/standings')) {
+        return new Response(JSON.stringify({
+          children: [{
+            name: 'Southeastern Conference',
+            standings: {
+              entries: [{
+                team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX' },
+                wins: 30,
+                losses: 10,
+                winPercent: 0.75,
+                leagueWinPercent: 0.80,
+                streak: 'W5',
+                pointDifferential: 62,
+              }],
+            },
+          }],
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+      if (urlStr.includes('espn.com') && urlStr.includes('/rankings')) {
+        return new Response(JSON.stringify({ rankings: [] }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=NCAA');
+    const res = await worker.fetch(req, env);
+    const body = await res.json() as any;
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.data).toHaveLength(1);
+    expect(body.data[0].team.name).toBe('Texas Longhorns');
+    expect(body.data[0].overallRecord.wins).toBe(30);
+    expect(body.data[0].overallRecord.losses).toBe(10);
+    expect(body.data[0].winPct).toBe(0.75);
+  });
+
+  it('ESPN v2 fallback filters by conference metadata', async () => {
+    // Highlightly fails → ESPN returns multiple conferences
+    globalThis.fetch = vi.fn(async (url: string | URL | Request) => {
+      const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+
+      if (urlStr.includes('mlb-college-baseball-api')) {
+        return new Response('Error', { status: 500 });
+      }
+      if (urlStr.includes('espn.com') && urlStr.includes('/standings')) {
+        return new Response(JSON.stringify({
+          children: [
+            {
+              name: 'Southeastern Conference',
+              standings: {
+                entries: [
+                  { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.80 },
+                  { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU' }, wins: 25, losses: 15, winPercent: 0.625, leagueWinPercent: 0.60 },
+                ],
+              },
+            },
+            {
+              name: 'Big 12 Conference',
+              standings: {
+                entries: [
+                  { team: { id: '66', displayName: 'TCU Horned Frogs', abbreviation: 'TCU' }, wins: 28, losses: 12, winPercent: 0.70, leagueWinPercent: 0.65 },
+                ],
+              },
+            },
+          ],
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+      if (urlStr.includes('espn.com') && urlStr.includes('/rankings')) {
+        return new Response(JSON.stringify({ rankings: [] }), {
+          status: 200, headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
+    const res = await worker.fetch(req, env);
+    const body = await res.json() as any;
+
+    expect(res.status).toBe(200);
+    expect(body.data.length).toBe(2); // Only SEC teams (Texas + A&M)
+    const teamNames = body.data.map((d: any) => d.team.name);
+    expect(teamNames).toContain('Texas Longhorns');
+    expect(teamNames).toContain('Texas A&M Aggies');
+    expect(teamNames).not.toContain('TCU Horned Frogs'); // Big 12, not SEC
+  });
 });
