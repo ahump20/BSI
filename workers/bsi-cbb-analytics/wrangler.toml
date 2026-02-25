@@ -1,0 +1,27 @@
+# BSI College Baseball Analytics — Cron Worker
+# Computes advanced sabermetric metrics from cumulative player stats in D1,
+# stores results in cbb_batting_advanced / cbb_pitching_advanced / park factors /
+# conference strength tables, and caches hot leaderboards in KV.
+#
+# Deploy: wrangler deploy --config workers/bsi-cbb-analytics/wrangler.toml
+
+name = "bsi-cbb-analytics"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+# Daily 6 AM CT (11 UTC): full recompute of all advanced metrics
+# Sunday 7 AM CT (12 UTC): park factor + conference strength recalculation
+[triggers]
+crons = ["0 11 * * *", "0 12 * * 0"]
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[dev]
+port = 8793
