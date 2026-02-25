@@ -67,6 +67,282 @@ interface RawRow {
 }
 
 // ---------------------------------------------------------------------------
+// Team → Conference map (sourced from lib/data/team-metadata.ts, 2025-26)
+// Keyed by ESPN displayName as stored in player_season_stats.team
+// ---------------------------------------------------------------------------
+
+const TEAM_CONF: Record<string, string> = {
+  // SEC
+  'Texas Longhorns': 'SEC',
+  'Texas A&M Aggies': 'SEC',
+  'Florida Gators': 'SEC',
+  'LSU Tigers': 'SEC',
+  'Arkansas Razorbacks': 'SEC',
+  'Tennessee Volunteers': 'SEC',
+  'Vanderbilt Commodores': 'SEC',
+  'Ole Miss Rebels': 'SEC',
+  'Georgia Bulldogs': 'SEC',
+  'Auburn Tigers': 'SEC',
+  'Alabama Crimson Tide': 'SEC',
+  'Mississippi State Bulldogs': 'SEC',
+  'South Carolina Gamecocks': 'SEC',
+  'Kentucky Wildcats': 'SEC',
+  'Missouri Tigers': 'SEC',
+  'Oklahoma Sooners': 'SEC',
+  // ACC
+  'Wake Forest Demon Deacons': 'ACC',
+  'Virginia Cavaliers': 'ACC',
+  'NC State Wolfpack': 'ACC',
+  'Clemson Tigers': 'ACC',
+  'Florida State Seminoles': 'ACC',
+  'Miami Hurricanes': 'ACC',
+  'Louisville Cardinals': 'ACC',
+  'Duke Blue Devils': 'ACC',
+  'North Carolina Tar Heels': 'ACC',
+  'Stanford Cardinal': 'ACC',
+  'California Golden Bears': 'ACC',
+  'Georgia Tech Yellow Jackets': 'ACC',
+  'Boston College Eagles': 'ACC',
+  'Notre Dame Fighting Irish': 'ACC',
+  'Pittsburgh Panthers': 'ACC',
+  'SMU Mustangs': 'ACC',
+  'Syracuse Orange': 'ACC',
+  'Virginia Tech Hokies': 'ACC',
+  // Big 12
+  'TCU Horned Frogs': 'Big 12',
+  'Texas Tech Red Raiders': 'Big 12',
+  'Oklahoma State Cowboys': 'Big 12',
+  'Baylor Bears': 'Big 12',
+  'West Virginia Mountaineers': 'Big 12',
+  'Kansas State Wildcats': 'Big 12',
+  'Arizona Wildcats': 'Big 12',
+  'Arizona State Sun Devils': 'Big 12',
+  'BYU Cougars': 'Big 12',
+  'Cincinnati Bearcats': 'Big 12',
+  'Colorado Buffaloes': 'Big 12',
+  'Houston Cougars': 'Big 12',
+  'Iowa State Cyclones': 'Big 12',
+  'Kansas Jayhawks': 'Big 12',
+  'UCF Knights': 'Big 12',
+  'Utah Utes': 'Big 12',
+  // Big Ten
+  'UCLA Bruins': 'Big Ten',
+  'USC Trojans': 'Big Ten',
+  'Illinois Fighting Illini': 'Big Ten',
+  'Indiana Hoosiers': 'Big Ten',
+  'Iowa Hawkeyes': 'Big Ten',
+  'Maryland Terrapins': 'Big Ten',
+  'Michigan Wolverines': 'Big Ten',
+  'Michigan State Spartans': 'Big Ten',
+  'Minnesota Golden Gophers': 'Big Ten',
+  'Nebraska Cornhuskers': 'Big Ten',
+  'Northwestern Wildcats': 'Big Ten',
+  'Ohio State Buckeyes': 'Big Ten',
+  'Oregon Ducks': 'Big Ten',
+  'Penn State Nittany Lions': 'Big Ten',
+  'Purdue Boilermakers': 'Big Ten',
+  'Rutgers Scarlet Knights': 'Big Ten',
+  'Washington Huskies': 'Big Ten',
+  'Wisconsin Badgers': 'Big Ten',
+  // Independent
+  'Oregon State Beavers': 'Independent',
+  // Mountain West
+  'Fresno State Bulldogs': 'Mountain West',
+  'San Diego State Aztecs': 'Mountain West',
+  'Washington State Cougars': 'Mountain West',
+  'Air Force Falcons': 'Mountain West',
+  'New Mexico Lobos': 'Mountain West',
+  'Grand Canyon Lopes': 'Mountain West',
+  'Nevada Wolf Pack': 'Mountain West',
+  'San Jose State Spartans': 'Mountain West',
+  'UNLV Rebels': 'Mountain West',
+  // A-10
+  'VCU Rams': 'A-10',
+  'Davidson Wildcats': 'A-10',
+  'Dayton Flyers': 'A-10',
+  'Fordham Rams': 'A-10',
+  'George Mason Patriots': 'A-10',
+  'George Washington Revolutionaries': 'A-10',
+  'La Salle Explorers': 'A-10',
+  'Rhode Island Rams': 'A-10',
+  'Richmond Spiders': 'A-10',
+  "Saint Joseph's Hawks": 'A-10',
+  'Saint Louis Billikens': 'A-10',
+  'St. Bonaventure Bonnies': 'A-10',
+  // AAC
+  'East Carolina Pirates': 'AAC',
+  'Florida Atlantic Owls': 'AAC',
+  'Rice Owls': 'AAC',
+  'Tulane Green Wave': 'AAC',
+  'Wichita State Shockers': 'AAC',
+  'Charlotte 49ers': 'AAC',
+  'Memphis Tigers': 'AAC',
+  'South Florida Bulls': 'AAC',
+  'UAB Blazers': 'AAC',
+  'UTSA Roadrunners': 'AAC',
+  // ASUN
+  'Jacksonville Dolphins': 'ASUN',
+  'Jacksonville State Gamecocks': 'ASUN',
+  'Kennesaw State Owls': 'ASUN',
+  'Stetson Hatters': 'ASUN',
+  'Austin Peay Governors': 'ASUN',
+  'Bellarmine Knights': 'ASUN',
+  'Eastern Kentucky Colonels': 'ASUN',
+  'Lipscomb Bisons': 'ASUN',
+  'North Alabama Lions': 'ASUN',
+  'North Florida Ospreys': 'ASUN',
+  'Queens University Royals': 'ASUN',
+  'West Georgia Wolves': 'ASUN',
+  // America East
+  'Maine Black Bears': 'America East',
+  'UAlbany Great Danes': 'America East',
+  'Binghamton Bearcats': 'America East',
+  'Bryant Bulldogs': 'America East',
+  'NJIT Highlanders': 'America East',
+  'UMBC Retrievers': 'America East',
+  'UMass Lowell River Hawks': 'America East',
+  // Big East
+  'Creighton Bluejays': 'Big East',
+  'UConn Huskies': 'Big East',
+  'Xavier Musketeers': 'Big East',
+  'Butler Bulldogs': 'Big East',
+  'Georgetown Hoyas': 'Big East',
+  'Seton Hall Pirates': 'Big East',
+  "St. John's Red Storm": 'Big East',
+  'Villanova Wildcats': 'Big East',
+  // Big South
+  'Winthrop Eagles': 'Big South',
+  'Charleston Southern Buccaneers': 'Big South',
+  "Gardner-Webb Runnin' Bulldogs": 'Big South',
+  'High Point Panthers': 'Big South',
+  'Longwood Lancers': 'Big South',
+  'Presbyterian Blue Hose': 'Big South',
+  'Radford Highlanders': 'Big South',
+  'UNC Asheville Bulldogs': 'Big South',
+  'South Carolina Upstate Spartans': 'Big South',
+  // Big West
+  'Cal State Fullerton Titans': 'Big West',
+  'Long Beach State Beach': 'Big West',
+  'UC Santa Barbara Gauchos': 'Big West',
+  'Cal Poly Mustangs': 'Big West',
+  'Cal State Bakersfield Roadrunners': 'Big West',
+  'Cal State Northridge Matadors': 'Big West',
+  "Hawai'i Rainbow Warriors": 'Big West',
+  'UC Davis Aggies': 'Big West',
+  'UC Irvine Anteaters': 'Big West',
+  'UC Riverside Highlanders': 'Big West',
+  'UC San Diego Tritons': 'Big West',
+  // CAA
+  'Campbell Fighting Camels': 'CAA',
+  'Northeastern Huskies': 'CAA',
+  'Stony Brook Seawolves': 'CAA',
+  'Charleston Cougars': 'CAA',
+  'Elon Phoenix': 'CAA',
+  'Hofstra Pride': 'CAA',
+  'Monmouth Hawks': 'CAA',
+  'North Carolina A&T Aggies': 'CAA',
+  'Towson Tigers': 'CAA',
+  'UNC Wilmington Seahawks': 'CAA',
+  'William & Mary Tribe': 'CAA',
+  // CUSA
+  'Liberty Flames': 'CUSA',
+  'Louisiana Tech Bulldogs': 'CUSA',
+  'Sam Houston Bearkats': 'CUSA',
+  'Dallas Baptist Patriots': 'CUSA',
+  'Delaware Blue Hens': 'CUSA',
+  'Florida International Panthers': 'CUSA',
+  'Middle Tennessee Blue Raiders': 'CUSA',
+  'Missouri State Bears': 'CUSA',
+  'New Mexico State Aggies': 'CUSA',
+  'Western Kentucky Hilltoppers': 'CUSA',
+  // Horizon
+  'Wright State Raiders': 'Horizon',
+  'Milwaukee Panthers': 'Horizon',
+  'Northern Kentucky Norse': 'Horizon',
+  'Oakland Golden Grizzlies': 'Horizon',
+  'Youngstown State Penguins': 'Horizon',
+  // Missouri Valley
+  'Evansville Purple Aces': 'Missouri Valley',
+  'Indiana State Sycamores': 'Missouri Valley',
+  'Belmont Bruins': 'Missouri Valley',
+  'Bradley Braves': 'Missouri Valley',
+  'Illinois State Redbirds': 'Missouri Valley',
+  'Murray State Racers': 'Missouri Valley',
+  'Southern Illinois Salukis': 'Missouri Valley',
+  'UIC Flames': 'Missouri Valley',
+  'Valparaiso Beacons': 'Missouri Valley',
+  // Patriot League
+  'Army Black Knights': 'Patriot League',
+  'Navy Midshipmen': 'Patriot League',
+  'Bucknell Bison': 'Patriot League',
+  'Holy Cross Crusaders': 'Patriot League',
+  'Lafayette Leopards': 'Patriot League',
+  'Lehigh Mountain Hawks': 'Patriot League',
+  // Southern
+  'Mercer Bears': 'Southern',
+  'East Tennessee State Buccaneers': 'Southern',
+  'Samford Bulldogs': 'Southern',
+  'The Citadel Bulldogs': 'Southern',
+  'UNC Greensboro Spartans': 'Southern',
+  'VMI Keydets': 'Southern',
+  'Western Carolina Catamounts': 'Southern',
+  'Wofford Terriers': 'Southern',
+  // Southland
+  'McNeese Cowboys': 'Southland',
+  'SE Louisiana Lions': 'Southland',
+  'Stephen F. Austin Lumberjacks': 'Southland',
+  'Houston Christian Huskies': 'Southland',
+  'Incarnate Word Cardinals': 'Southland',
+  'Lamar Cardinals': 'Southland',
+  'New Orleans Privateers': 'Southland',
+  'Nicholls Colonels': 'Southland',
+  'Northwestern State Demons': 'Southland',
+  'Texas A&M-Corpus Christi Islanders': 'Southland',
+  'UT Rio Grande Valley Vaqueros': 'Southland',
+  // Summit
+  'Oral Roberts Golden Eagles': 'Summit',
+  'North Dakota State Bison': 'Summit',
+  'Northern Colorado Bears': 'Summit',
+  'Omaha Mavericks': 'Summit',
+  'South Dakota State Jackrabbits': 'Summit',
+  'St. Thomas-Minnesota Tommies': 'Summit',
+  // Sun Belt
+  'Coastal Carolina Chanticleers': 'Sun Belt',
+  "Louisiana Ragin' Cajuns": 'Sun Belt',
+  'Old Dominion Monarchs': 'Sun Belt',
+  'South Alabama Jaguars': 'Sun Belt',
+  'Southern Miss Golden Eagles': 'Sun Belt',
+  'Troy Trojans': 'Sun Belt',
+  'App State Mountaineers': 'Sun Belt',
+  'Arkansas State Red Wolves': 'Sun Belt',
+  'Georgia Southern Eagles': 'Sun Belt',
+  'Georgia State Panthers': 'Sun Belt',
+  'James Madison Dukes': 'Sun Belt',
+  'Marshall Thundering Herd': 'Sun Belt',
+  'Texas State Bobcats': 'Sun Belt',
+  'UL Monroe Warhawks': 'Sun Belt',
+  // WAC
+  'Abilene Christian Wildcats': 'WAC',
+  'California Baptist Lancers': 'WAC',
+  'Sacramento State Hornets': 'WAC',
+  'Tarleton State Texans': 'WAC',
+  'UT Arlington Mavericks': 'WAC',
+  'Utah Tech Trailblazers': 'WAC',
+  'Utah Valley Wolverines': 'WAC',
+  // WCC
+  'Gonzaga Bulldogs': 'WCC',
+  'Pepperdine Waves': 'WCC',
+  'San Diego Toreros': 'WCC',
+  'Santa Clara Broncos': 'WCC',
+  'Loyola Marymount Lions': 'WCC',
+  'Pacific Tigers': 'WCC',
+  'Portland Pilots': 'WCC',
+  "Saint Mary's Gaels": 'WCC',
+  'San Francisco Dons': 'WCC',
+  'Seattle U Redhawks': 'WCC',
+};
+
+// ---------------------------------------------------------------------------
 // Main compute
 // ---------------------------------------------------------------------------
 
@@ -122,6 +398,8 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
   let batCount = 0, pitchCount = 0;
 
   for (const row of rawRows) {
+    const conf = TEAM_CONF[row.team] || null;
+
     // Batting
     if (row.games_bat > 0) {
       const pa = row.at_bats + row.walks_bat + row.hit_by_pitch + row.sacrifice_flies;
@@ -142,17 +420,17 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
         const opsPlus = lgOBP > 0 && lgSLG > 0 ? safe(100 * (obp / lgOBP + slg / lgSLG - 1)) : 100;
 
         batStmts.push(db.prepare(
-          `INSERT INTO cbb_batting_advanced (player_id, player_name, team, team_id, season, position, g, ab, pa, r, h, doubles, triples, hr, rbi, bb, so, sb, cs, avg, obp, slg, ops, k_pct, bb_pct, iso, babip, woba, wrc_plus, ops_plus, park_adjusted, data_source, computed_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
+          `INSERT INTO cbb_batting_advanced (player_id, player_name, team, team_id, conference, season, position, g, ab, pa, r, h, doubles, triples, hr, rbi, bb, so, sb, cs, avg, obp, slg, ops, k_pct, bb_pct, iso, babip, woba, wrc_plus, ops_plus, park_adjusted, data_source, computed_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
            ON CONFLICT(player_id, season) DO UPDATE SET
-             player_name=excluded.player_name, team=excluded.team, g=excluded.g, ab=excluded.ab, pa=excluded.pa,
+             player_name=excluded.player_name, team=excluded.team, conference=excluded.conference, g=excluded.g, ab=excluded.ab, pa=excluded.pa,
              r=excluded.r, h=excluded.h, doubles=excluded.doubles, triples=excluded.triples, hr=excluded.hr,
              rbi=excluded.rbi, bb=excluded.bb, so=excluded.so, sb=excluded.sb, cs=excluded.cs,
              avg=excluded.avg, obp=excluded.obp, slg=excluded.slg, ops=excluded.ops,
              k_pct=excluded.k_pct, bb_pct=excluded.bb_pct, iso=excluded.iso, babip=excluded.babip,
              woba=excluded.woba, wrc_plus=excluded.wrc_plus, ops_plus=excluded.ops_plus, computed_at=excluded.computed_at`
         ).bind(
-          row.espn_id, row.name, row.team, row.team_id, SEASON, row.position,
+          row.espn_id, row.name, row.team, row.team_id, conf, SEASON, row.position,
           row.games_bat, ab, pa, row.runs, row.hits, row.doubles, row.triples, row.home_runs,
           row.rbis, row.walks_bat, row.strikeouts_bat, row.stolen_bases, row.caught_stealing,
           round(avg), round(obp), round(slg), round(ops), round(kPct), round(bbPct),
@@ -180,16 +458,16 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
         const babip = (() => { const d = bfEst - row.strikeouts_pitch - row.home_runs_allowed; return d > 0 ? safe((row.hits_allowed - row.home_runs_allowed) / d) : 0; })();
 
         pitchStmts.push(db.prepare(
-          `INSERT INTO cbb_pitching_advanced (player_id, player_name, team, team_id, season, position, g, w, l, sv, ip, h, er, bb, hbp, so, era, whip, k_9, bb_9, hr_9, fip, era_minus, k_bb, lob_pct, babip, park_adjusted, data_source, computed_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
+          `INSERT INTO cbb_pitching_advanced (player_id, player_name, team, team_id, conference, season, position, g, w, l, sv, ip, h, er, bb, hbp, so, era, whip, k_9, bb_9, hr_9, fip, era_minus, k_bb, lob_pct, babip, park_adjusted, data_source, computed_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
            ON CONFLICT(player_id, season) DO UPDATE SET
-             player_name=excluded.player_name, team=excluded.team, g=excluded.g, w=excluded.w, l=excluded.l,
+             player_name=excluded.player_name, team=excluded.team, conference=excluded.conference, g=excluded.g, w=excluded.w, l=excluded.l,
              sv=excluded.sv, ip=excluded.ip, h=excluded.h, er=excluded.er, bb=excluded.bb, hbp=excluded.hbp,
              so=excluded.so, era=excluded.era, whip=excluded.whip, k_9=excluded.k_9, bb_9=excluded.bb_9,
              hr_9=excluded.hr_9, fip=excluded.fip, era_minus=excluded.era_minus, k_bb=excluded.k_bb,
              lob_pct=excluded.lob_pct, babip=excluded.babip, computed_at=excluded.computed_at`
         ).bind(
-          row.espn_id, row.name, row.team, row.team_id, SEASON, row.position,
+          row.espn_id, row.name, row.team, row.team_id, conf, SEASON, row.position,
           row.games_pitch, row.wins, row.losses, row.saves,
           round(ip, 1), row.hits_allowed, row.earned_runs, row.walks_pitch,
           row.hit_by_pitch, row.strikeouts_pitch,
@@ -214,8 +492,8 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
   const confAgg = new Map<string, { totalERA: number; eraCount: number; totalOPS: number; opsCount: number; totalWOBA: number; wobaCount: number }>();
 
   const { results: batRows } = await db.prepare(
-    'SELECT conference, era, ops, woba FROM cbb_batting_advanced WHERE season = ? AND conference IS NOT NULL'
-  ).bind(SEASON).all() as { results: { conference: string; era: number; ops: number; woba: number }[] };
+    'SELECT conference, ops, woba FROM cbb_batting_advanced WHERE season = ? AND conference IS NOT NULL'
+  ).bind(SEASON).all() as { results: { conference: string; ops: number; woba: number }[] };
 
   for (const r of batRows || []) {
     let a = confAgg.get(r.conference);
