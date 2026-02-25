@@ -563,6 +563,283 @@ export async function syncTeamCumulativeStats(
   return { team: teamName, gamesProcessed, gamesSkipped, gamesNoData, timestamp: now, errors };
 }
 
+// ---------------------------------------------------------------------------
+// Highlightly Sync — fills ESPN coverage gaps with cumulative season stats
+// ---------------------------------------------------------------------------
+
+/**
+ * Sync player stats from Highlightly for teams ESPN doesn't cover.
+ *
+ * Highlightly provides cumulative season totals per player (not per-game),
+ * including doubles, triples, OBP, SLG, wins, losses, saves — fields ESPN
+ * box scores lack entirely. The upsert does a full SET (not additive)
+ * since the data represents complete season totals.
+ *
+ * Players are keyed as `hl:{highlightly_id}` in the espn_id column to avoid
+ * collisions with ESPN-sourced rows. Teams that already have >= 5 ESPN players
+ * are skipped unless `force=true`.
+ *
+ * GET /api/college-baseball/sync-highlightly?conference=SEC&key={admin_key}
+ * GET /api/college-baseball/sync-highlightly?team=auburn&key={admin_key}
+ */
+export async function handleHighlightlySync(
+  url: URL,
+  env: Env,
+): Promise<Response> {
+  const key = url.searchParams.get('key');
+  const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
+  if (!adminKey || key !== adminKey) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+
+  const hl = getHighlightlyClient(env);
+  if (!hl) {
+    return json({ error: 'RAPIDAPI_KEY not configured' }, 500);
+  }
+
+  const conference = url.searchParams.get('conference');
+  const teamSlug = url.searchParams.get('team');
+  const force = url.searchParams.get('force') === 'true';
+  const now = new Date().toISOString();
+
+  if (!conference && !teamSlug) {
+    return json({ error: 'Provide ?conference=<name> or ?team=<slug>' }, 400);
+  }
+
+  // Determine target teams from teamMetadata
+  const targetTeams: Array<{ slug: string; name: string; shortName: string; conference: string; espnId: string }> = [];
+
+  if (teamSlug) {
+    const meta = teamMetadata[teamSlug];
+    if (!meta) return json({ error: `Unknown team slug: ${teamSlug}` }, 404);
+    targetTeams.push({ slug: teamSlug, name: meta.name, shortName: meta.shortName, conference: meta.conference, espnId: meta.espnId });
+  } else if (conference) {
+    for (const [slug, meta] of Object.entries(teamMetadata)) {
+      if (meta.conference.toLowerCase() === conference.toLowerCase()) {
+        targetTeams.push({ slug, name: meta.name, shortName: meta.shortName, conference: meta.conference, espnId: meta.espnId });
+      }
+    }
+    if (targetTeams.length === 0) {
+      return json({ error: `No teams found for conference: ${conference}` }, 404);
+    }
+  }
+
+  // Fetch Highlightly team list for name → hlTeamId mapping
+  const teamsRes = await hl.getTeams('NCAA');
+  if (!teamsRes.success || !teamsRes.data) {
+    return json({ error: 'Failed to fetch Highlightly teams', detail: teamsRes.error }, 502);
+  }
+
+  const hlTeams = teamsRes.data.data;
+
+  // Match helper: finds the Highlightly team ID for a given BSI team name
+  function findHlTeamId(name: string, shortName: string): number | null {
+    const nameLower = name.toLowerCase();
+    const shortLower = shortName.toLowerCase();
+
+    // Exact full name match
+    for (const t of hlTeams) {
+      if (t.name.toLowerCase() === nameLower) return t.id;
+    }
+    // Exact short name match
+    for (const t of hlTeams) {
+      if (t.name.toLowerCase() === shortLower) return t.id;
+      if (t.shortName?.toLowerCase() === shortLower) return t.id;
+    }
+    // Prefix: "Auburn" starts "Auburn Tigers" or vice versa
+    for (const t of hlTeams) {
+      const hlLower = t.name.toLowerCase();
+      if (nameLower.startsWith(hlLower) || hlLower.startsWith(nameLower)) return t.id;
+      if (shortLower.length >= 4 && (hlLower.startsWith(shortLower) || shortLower.startsWith(hlLower))) return t.id;
+    }
+    return null;
+  }
+
+  // Process each target team
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const results: Array<{
+    team: string;
+    slug: string;
+    hlTeamId: number | null;
+    playersUpserted: number;
+    skippedEspnCoverage: boolean;
+    error?: string;
+  }> = [];
+
+  for (const target of targetTeams) {
+    const hlTeamId = findHlTeamId(target.name, target.shortName);
+
+    if (hlTeamId === null) {
+      results.push({ team: target.name, slug: target.slug, hlTeamId: null, playersUpserted: 0, skippedEspnCoverage: false, error: 'No Highlightly team match' });
+      continue;
+    }
+
+    // Skip teams with existing ESPN data unless force=true
+    if (!force) {
+      const espnCount = await env.DB.prepare(
+        `SELECT COUNT(*) as cnt FROM player_season_stats
+         WHERE sport = 'college-baseball' AND season = 2026
+           AND team_id = ? AND (stats_source IS NULL OR stats_source = 'box-score')`
+      ).bind(target.espnId).first<{ cnt: number }>();
+
+      if (espnCount && espnCount.cnt >= 5) {
+        results.push({ team: target.name, slug: target.slug, hlTeamId, playersUpserted: 0, skippedEspnCoverage: true });
+        continue;
+      }
+    }
+
+    // Fetch roster with cumulative season stats
+    try {
+      const rosterRes = await hl.getTeamPlayers(hlTeamId);
+      if (!rosterRes.success || !rosterRes.data) {
+        results.push({ team: target.name, slug: target.slug, hlTeamId, playersUpserted: 0, skippedEspnCoverage: false, error: `Roster fetch failed: ${rosterRes.error}` });
+        continue;
+      }
+
+      const players = rosterRes.data.data;
+      const stmts: D1PreparedStatement[] = [];
+      let upserted = 0;
+
+      for (const player of players) {
+        const batting = player.statistics?.batting;
+        const pitching = player.statistics?.pitching;
+
+        const hasBatting = batting && (batting.atBats > 0 || batting.games > 0);
+        const hasPitching = pitching && (pitching.inningsPitched > 0 || pitching.games > 0);
+        if (!hasBatting && !hasPitching) continue;
+
+        const hlId = `hl:${player.id}`;
+        const name = player.name || `${player.firstName || ''} ${player.lastName || ''}`.trim();
+        const position = player.position || '';
+
+        // Batting — cumulative season totals
+        const gamesBat = batting?.games ?? 0;
+        const atBats = batting?.atBats ?? 0;
+        const runs = batting?.runs ?? 0;
+        const hits = batting?.hits ?? 0;
+        const rbis = batting?.rbi ?? 0;
+        const hr = batting?.homeRuns ?? 0;
+        const walksBat = batting?.walks ?? 0;
+        const kBat = batting?.strikeouts ?? 0;
+        const sb = batting?.stolenBases ?? 0;
+        const doubles = batting?.doubles ?? 0;
+        const triples = batting?.triples ?? 0;
+        const cs = batting?.caughtStealing ?? 0;
+        const obp = batting?.onBasePercentage ?? 0;
+        const slg = batting?.sluggingPercentage ?? 0;
+        const tb = hits + doubles + triples * 2 + hr * 3;
+
+        // Pitching — cumulative season totals
+        // Highlightly uses standard baseball IP notation (6.1 = 6⅓)
+        const gamesPitch = pitching?.games ?? 0;
+        const ipThirds = pitching ? parseInningsToThirds(String(pitching.inningsPitched)) : 0;
+        const ha = pitching?.hits ?? 0;
+        const ra = pitching?.runs ?? 0;
+        const er = pitching?.earnedRuns ?? 0;
+        const walksPitch = pitching?.walks ?? 0;
+        const kPitch = pitching?.strikeouts ?? 0;
+        const hra = pitching?.homeRunsAllowed ?? 0;
+        const wins = pitching?.wins ?? 0;
+        const losses = pitching?.losses ?? 0;
+        const saves = pitching?.saves ?? 0;
+
+        stmts.push(env.DB.prepare(`
+          INSERT INTO player_season_stats
+            (espn_id, season, sport, name, team, team_id, position, headshot,
+             games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat,
+             stolen_bases, doubles, triples, caught_stealing, total_bases,
+             on_base_pct, slugging_pct,
+             games_pitch, innings_pitched_thirds, hits_allowed, runs_allowed, earned_runs,
+             walks_pitch, strikeouts_pitch, home_runs_allowed, wins, losses, saves,
+             stats_source)
+          VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, '',
+                  ?, ?, ?, ?, ?, ?, ?, ?,
+                  ?, ?, ?, ?, ?,
+                  ?, ?,
+                  ?, ?, ?, ?, ?,
+                  ?, ?, ?, ?, ?, ?,
+                  'highlightly')
+          ON CONFLICT(espn_id, season, sport) DO UPDATE SET
+            name = excluded.name,
+            team = excluded.team,
+            team_id = excluded.team_id,
+            position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
+            games_bat = excluded.games_bat,
+            at_bats = excluded.at_bats,
+            runs = excluded.runs,
+            hits = excluded.hits,
+            rbis = excluded.rbis,
+            home_runs = excluded.home_runs,
+            walks_bat = excluded.walks_bat,
+            strikeouts_bat = excluded.strikeouts_bat,
+            stolen_bases = excluded.stolen_bases,
+            doubles = excluded.doubles,
+            triples = excluded.triples,
+            caught_stealing = excluded.caught_stealing,
+            total_bases = excluded.total_bases,
+            on_base_pct = excluded.on_base_pct,
+            slugging_pct = excluded.slugging_pct,
+            games_pitch = excluded.games_pitch,
+            innings_pitched_thirds = excluded.innings_pitched_thirds,
+            hits_allowed = excluded.hits_allowed,
+            runs_allowed = excluded.runs_allowed,
+            earned_runs = excluded.earned_runs,
+            walks_pitch = excluded.walks_pitch,
+            strikeouts_pitch = excluded.strikeouts_pitch,
+            home_runs_allowed = excluded.home_runs_allowed,
+            wins = excluded.wins,
+            losses = excluded.losses,
+            saves = excluded.saves,
+            stats_source = 'highlightly',
+            updated_at = datetime('now')
+        `).bind(
+          hlId, name, target.name, target.espnId, position,
+          gamesBat, atBats, runs, hits, rbis, hr, walksBat, kBat,
+          sb, doubles, triples, cs, tb,
+          obp, slg,
+          gamesPitch, ipThirds, ha, ra, er,
+          walksPitch, kPitch, hra, wins, losses, saves,
+        ));
+
+        upserted++;
+      }
+
+      // D1 batch limit is 100 statements
+      for (let i = 0; i < stmts.length; i += 50) {
+        await env.DB.batch(stmts.slice(i, i + 50));
+      }
+
+      results.push({ team: target.name, slug: target.slug, hlTeamId, playersUpserted: upserted, skippedEspnCoverage: false });
+    } catch (err) {
+      results.push({ team: target.name, slug: target.slug, hlTeamId, playersUpserted: 0, skippedEspnCoverage: false, error: err instanceof Error ? err.message : 'Unknown error' });
+    }
+
+    // Rate limit between Highlightly API calls
+    await new Promise((r) => setTimeout(r, 300));
+  }
+
+  // Invalidate caches
+  await env.KV.delete('cb:saber:league:2026');
+  await env.KV.delete('cb:leaders');
+
+  const totalUpserted = results.reduce((s, r) => s + r.playersUpserted, 0);
+  const totalSkipped = results.filter((r) => r.skippedEspnCoverage).length;
+  const totalErrors = results.filter((r) => r.error).length;
+  const totalNoMatch = results.filter((r) => r.hlTeamId === null).length;
+
+  return json({
+    conference: conference || undefined,
+    team: teamSlug || undefined,
+    teamsProcessed: results.length,
+    totalPlayersUpserted: totalUpserted,
+    teamsSkippedEspnCoverage: totalSkipped,
+    teamsNoMatch: totalNoMatch,
+    errors: totalErrors,
+    results,
+    meta: { source: 'highlightly-sync', timestamp: now },
+  });
+}
+
 /**
  * HTTP handler for bulk cumulative stats sync.
  * GET /api/college-baseball/sync-stats?team=251&key={admin_key}
