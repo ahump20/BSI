@@ -3211,10 +3211,17 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
     // Runs per PA — needed for wRC+ denominator
     const runs_per_pa = pa > 0 ? totalRuns / pa : 0;
 
+    // Guard: with <100 qualified hitters, league baselines are unreliable.
+    // Use reference D1 values (typical full-season college baseball) as floor.
+    const thinSample = (batting.qualified_hitters || 0) < 100;
+
     // wOBA scale: (lgOBP - lgwOBA) / (lgOBP - lgAVG) — Tango framework
-    const woba_scale = (league_obp - league_avg) > 0
-      ? (league_obp - league_woba) / (league_obp - league_avg)
-      : 1.15; // fallback to typical value
+    // Must be positive (typically 1.0-1.3 for college). Clamp to [0.8, 1.4].
+    let woba_scale = 1.15; // D1 reference default
+    if (!thinSample && (league_obp - league_avg) > 0.01) {
+      const raw = (league_obp - league_woba) / (league_obp - league_avg);
+      woba_scale = Math.max(0.8, Math.min(1.4, raw));
+    }
 
     // Pitching: compute FIP constant from D1 league data (Bug 6 fix)
     // cFIP = lgERA - (13*lgHR/9 + 3*lgBB/9 - 2*lgK/9)
@@ -3225,10 +3232,14 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
     const lgBB9 = ip > 0 ? (pitching.total_bb || 0) * 9 / ip : 0;
     const lgK9 = ip > 0 ? (pitching.total_k || 0) * 9 / ip : 0;
 
-    // FIP constant computed from D1 data — typically 3.7-4.0 for college (higher than MLB's ~3.2)
-    const fip_constant = ip > 0
-      ? lgERA - (13 * lgHR9 + 3 * lgBB9 - 2 * lgK9) / 9
-      : 3.80; // fallback for early season
+    // FIP constant: typically 3.7-4.0 for D1. Clamp to [3.0, 5.0] to guard against
+    // extreme early-season samples. Use reference when <5 qualified pitchers.
+    const qualifiedPitchers = pitching.qualified_pitchers || 0;
+    let fip_constant = 3.80; // D1 reference default
+    if (qualifiedPitchers >= 5 && ip > 0) {
+      const raw = lgERA - (13 * lgHR9 + 3 * lgBB9 - 2 * lgK9) / 9;
+      fip_constant = Math.max(3.0, Math.min(5.0, raw));
+    }
 
     const league_fip = ip > 0
       ? (13 * (pitching.total_hr || 0) + 3 * (pitching.total_bb || 0) - 2 * (pitching.total_k || 0)) / ip + fip_constant
@@ -3250,8 +3261,9 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       woba_scale: Math.round(woba_scale * 100) / 100,
       runs_per_pa: Math.round(runs_per_pa * 1000) / 1000,
       weights_source: 'mlb-derived',
+      thin_sample: thinSample,
       qualified_hitters: batting.qualified_hitters || 0,
-      qualified_pitchers: pitching.qualified_pitchers || 0,
+      qualified_pitchers: qualifiedPitchers,
       meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     };
 
