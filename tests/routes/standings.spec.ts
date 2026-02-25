@@ -55,7 +55,7 @@ test.describe('College Baseball Standings', () => {
     );
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Primary conference buttons
     for (const name of ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC']) {
@@ -78,11 +78,11 @@ test.describe('College Baseball Standings', () => {
     });
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Click ACC button
     await page.getByRole('button', { name: 'ACC', exact: true }).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Conference header shows full name
     await expect(page.getByText('Atlantic Coast Conference')).toBeVisible();
@@ -94,17 +94,17 @@ test.describe('College Baseball Standings', () => {
     );
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Expand more conferences
     await page.getByRole('button', { name: /\+18 More/ }).click();
 
     // Click Independent button
     await page.getByRole('button', { name: 'Ind.', exact: true }).click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Header shows "Independent"
-    await expect(page.getByText('Independent')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Independent' })).toBeVisible();
   });
 
   test('standings table has team rows when data exists', async ({ page }) => {
@@ -113,7 +113,7 @@ test.describe('College Baseball Standings', () => {
     );
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Table should be visible
     const table = page.locator('table');
@@ -139,7 +139,7 @@ test.describe('College Baseball Standings', () => {
     );
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Empty state message
     await expect(page.getByText(/Conference play may not have started yet/)).toBeVisible();
@@ -151,7 +151,7 @@ test.describe('College Baseball Standings', () => {
     );
 
     await page.goto('/college-baseball/standings');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Data source attribution
     await expect(page.getByText(/Data sourced from ESPN/)).toBeVisible();
