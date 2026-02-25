@@ -117,13 +117,13 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 | `bsi-fanbase-db` | 197 KB | Fan sentiment |
 | `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
 
-### KV Namespaces (9)
+### KV Namespaces (8)
 
 **Bound to active workers:**
 `BSI_PROD_CACHE` · `BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
 
 **Other:**
-`PREDICTION_CACHE` · `bsi-ticker-cache` · `portfolio-contacts`
+`PREDICTION_CACHE` · `portfolio-contacts`
 
 ### R2 Buckets (18)
 
