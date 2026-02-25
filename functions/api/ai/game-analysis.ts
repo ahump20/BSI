@@ -23,6 +23,22 @@ const ALLOWED_ORIGINS = new Set([
   'http://localhost:3000',
 ]);
 
+// --- In-memory rate limiter (5 requests/IP/minute) ---
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX = 5;
+const _rateLimits = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = _rateLimits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    _rateLimits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return true;
+  }
+  entry.count++;
+  return entry.count <= RATE_MAX;
+}
+
 const SYSTEM_PROMPT = `You are a college baseball analyst for Blaze Sports Intel. You provide detailed, insightful analysis grounded in the game data provided. Your tone is knowledgeable, direct, and analytical — like a veteran scout writing for a savvy audience. Cite specific stats from the game context. No filler, no generic commentary.`;
 
 function getCorsHeaders(request: Request): Record<string, string> {
@@ -45,7 +61,7 @@ async function callClaude(prompt: string, gameContext: string, apiKey: string): 
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1024,
+      max_tokens: 512,
       system: SYSTEM_PROMPT,
       messages: [
         {
@@ -93,6 +109,15 @@ async function callGemini(prompt: string, gameContext: string, apiKey: string): 
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const corsHeaders = getCorsHeaders(context.request);
+
+  // Rate limit by IP
+  const ip = context.request.headers.get('cf-connecting-ip') || 'unknown';
+  if (!checkRateLimit(ip)) {
+    return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again in a minute.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    });
+  }
 
   try {
     const payload = (await context.request.json()) as AnalysisPayload;

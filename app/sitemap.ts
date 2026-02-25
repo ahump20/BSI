@@ -59,6 +59,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/week-1-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-2-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
   // 2026 team previews (SEC)
@@ -114,6 +115,11 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/washington-2026', changeFrequency: 'monthly', priority: 0.7 },
 ];
 
+const mlbEditorial: SitemapEntry[] = [
+  { path: '/mlb/editorial', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/mlb/editorial/2026-season-preview', changeFrequency: 'monthly', priority: 0.8 },
+];
+
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
@@ -163,7 +169,7 @@ const features: SitemapEntry[] = [
   { path: '/fanbase/compare', changeFrequency: 'daily', priority: 0.6 },
   { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
   { path: '/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
-  { path: '/vision-ai', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/vision-AI-Intelligence', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
 ];
 
@@ -191,6 +197,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const all = [
     ...flagship,
     ...editorial,
+    ...mlbEditorial,
     ...proSports,
     ...features,
     ...arcade,

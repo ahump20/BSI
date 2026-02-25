@@ -36,6 +36,9 @@ function lookupConference(displayName: string): string {
   return conferenceByName[lower] || conferenceByName[lower.replace(/ (university|college)$/i, '')] || '';
 }
 
+/** Current season — single source of truth for all D1 queries in this file. */
+const SEASON = 2026;
+
 // ---------------------------------------------------------------------------
 // Team Detail Transform — Highlightly → Team interface
 // ---------------------------------------------------------------------------
@@ -845,8 +848,8 @@ async function enrichTeamWithD1Stats(
                 games_pitch, innings_pitched_thirds, earned_runs,
                 strikeouts_pitch, walks_pitch, hits_allowed
          FROM player_season_stats
-         WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ?`
-      ).bind(tid).all<D1PlayerStats>();
+         WHERE sport = 'college-baseball' AND season = ? AND team_id = ?`
+      ).bind(SEASON, tid).all<D1PlayerStats>();
       if (results && results.length > 0) {
         playerRows = results;
         break;
@@ -1160,8 +1163,8 @@ async function getD1PlayerStats(
   try {
     const row = await env.DB.prepare(
       `SELECT * FROM player_season_stats
-       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
-    ).bind(espnId).first<D1PlayerStats>();
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = ?`
+    ).bind(espnId, SEASON).first<D1PlayerStats>();
 
     if (!row) return null;
 
@@ -1298,8 +1301,8 @@ export async function handleCollegeBaseballPlayer(
   try {
     const row = await env.DB.prepare(
       `SELECT * FROM player_season_stats
-       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
-    ).bind(playerId).first<D1PlayerStats>();
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = ?`
+    ).bind(playerId, SEASON).first<D1PlayerStats>();
 
     if (row) {
       const d1Stats = await getD1PlayerStats(playerId, env);
@@ -1839,8 +1842,8 @@ async function queryPlayersFromD1(
   env: Env,
   opts: { search: string; team: string; position: string; sortBy: string; limit: number; offset: number },
 ): Promise<Record<string, unknown>[] | null> {
-  const conditions = [`sport = 'college-baseball'`, `season = 2026`];
-  const binds: (string | number)[] = [];
+  const conditions = [`sport = 'college-baseball'`, `season = ?`];
+  const binds: (string | number)[] = [SEASON];
 
   if (opts.search) {
     conditions.push(`(name LIKE ? OR team LIKE ?)`);
@@ -2721,10 +2724,30 @@ export async function syncTeamCumulativeStats(
 
       if (!hasAthletes) {
         gamesNoData++;
-        // Still mark as processed so we don't re-fetch empty games
+        // Still mark as processed — extract scores from summary header even without athlete data
+        const noAthComps = summary?.header?.competitions?.[0]?.competitors || [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const noAthHome = noAthComps.find((c: any) => c.homeAway === 'home');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const noAthAway = noAthComps.find((c: any) => c.homeAway === 'away');
+        const noAthHomeTeam = noAthHome?.team?.displayName || '';
+        const noAthAwayTeam = noAthAway?.team?.displayName || '';
+        const noAthHomeId = String(noAthHome?.team?.id ?? '');
+        const noAthAwayId = String(noAthAway?.team?.id ?? '');
+        const noAthHomeScore = noAthHome?.score != null ? Number(noAthHome.score) : null;
+        const noAthAwayScore = noAthAway?.score != null ? Number(noAthAway.score) : null;
+
         await env.DB.prepare(
-          `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
-        ).bind(game.id, game.date).run();
+          `INSERT INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score)
+           VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(game_id) DO UPDATE SET
+             home_team = COALESCE(NULLIF(excluded.home_team, ''), processed_games.home_team),
+             away_team = COALESCE(NULLIF(excluded.away_team, ''), processed_games.away_team),
+             home_team_id = COALESCE(NULLIF(excluded.home_team_id, ''), processed_games.home_team_id),
+             away_team_id = COALESCE(NULLIF(excluded.away_team_id, ''), processed_games.away_team_id),
+             home_score = COALESCE(excluded.home_score, processed_games.home_score),
+             away_score = COALESCE(excluded.away_score, processed_games.away_score)`
+        ).bind(game.id, game.date, noAthHomeTeam, noAthAwayTeam, noAthHomeId, noAthAwayId, noAthHomeScore, noAthAwayScore).run();
         continue;
       }
 
@@ -2835,10 +2858,31 @@ export async function syncTeamCumulativeStats(
         }
       }
 
-      // Mark game as processed
+      // Extract scores from summary header (mirrors processFinishedGames pattern)
+      const syncComps = summary?.header?.competitions?.[0]?.competitors || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const syncHome = syncComps.find((c: any) => c.homeAway === 'home');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const syncAway = syncComps.find((c: any) => c.homeAway === 'away');
+      const syncHomeTeam = syncHome?.team?.displayName || '';
+      const syncAwayTeam = syncAway?.team?.displayName || '';
+      const syncHomeId = String(syncHome?.team?.id ?? '');
+      const syncAwayId = String(syncAway?.team?.id ?? '');
+      const syncHomeScore = syncHome?.score != null ? Number(syncHome.score) : null;
+      const syncAwayScore = syncAway?.score != null ? Number(syncAway.score) : null;
+
+      // Mark game as processed — ON CONFLICT backfills scores for existing NULL-score rows
       stmts.push(env.DB.prepare(
-        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
-      ).bind(game.id, game.date));
+        `INSERT INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score)
+         VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(game_id) DO UPDATE SET
+           home_team = COALESCE(NULLIF(excluded.home_team, ''), processed_games.home_team),
+           away_team = COALESCE(NULLIF(excluded.away_team, ''), processed_games.away_team),
+           home_team_id = COALESCE(NULLIF(excluded.home_team_id, ''), processed_games.home_team_id),
+           away_team_id = COALESCE(NULLIF(excluded.away_team_id, ''), processed_games.away_team_id),
+           home_score = COALESCE(excluded.home_score, processed_games.home_score),
+           away_score = COALESCE(excluded.away_score, processed_games.away_score)`
+      ).bind(game.id, game.date, syncHomeTeam, syncAwayTeam, syncHomeId, syncAwayId, syncHomeScore, syncAwayScore));
 
       // Batch upsert (D1 limit is 100)
       for (let i = 0; i < stmts.length; i += 50) {
@@ -2990,7 +3034,7 @@ async function buildLeaderCategories(env: Env) {
       sql: `SELECT espn_id, name, team, team_id, headshot,
               ROUND(CAST(hits AS REAL) / at_bats, 3) AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats >= 15
             ORDER BY computed_value DESC
             LIMIT 10`,
@@ -3001,7 +3045,7 @@ async function buildLeaderCategories(env: Env) {
       abbreviation: 'homeRuns',
       sql: `SELECT espn_id, name, team, team_id, headshot, home_runs AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY home_runs DESC
             LIMIT 10`,
@@ -3012,7 +3056,7 @@ async function buildLeaderCategories(env: Env) {
       abbreviation: 'RBIs',
       sql: `SELECT espn_id, name, team, team_id, headshot, rbis AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY rbis DESC
             LIMIT 10`,
@@ -3024,7 +3068,7 @@ async function buildLeaderCategories(env: Env) {
       sql: `SELECT espn_id, name, team, team_id, headshot,
               ROUND(CAST(earned_runs AS REAL) * 27 / innings_pitched_thirds, 2) AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND innings_pitched_thirds >= 15
             ORDER BY computed_value ASC
             LIMIT 10`,
@@ -3035,7 +3079,7 @@ async function buildLeaderCategories(env: Env) {
       abbreviation: 'strikeouts',
       sql: `SELECT espn_id, name, team, team_id, headshot, strikeouts_pitch AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND innings_pitched_thirds > 0
             ORDER BY strikeouts_pitch DESC
             LIMIT 10`,
@@ -3046,7 +3090,7 @@ async function buildLeaderCategories(env: Env) {
       abbreviation: 'hits',
       sql: `SELECT espn_id, name, team, team_id, headshot, hits AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY hits DESC
             LIMIT 10`,
@@ -3056,7 +3100,7 @@ async function buildLeaderCategories(env: Env) {
 
   const categories = [];
   for (const q of queries) {
-    const { results } = await env.DB.prepare(q.sql).all<LeaderRow>();
+    const { results } = await env.DB.prepare(q.sql).bind(SEASON).all<LeaderRow>();
 
     if (results.length === 0) continue;
 
@@ -3105,8 +3149,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(runs) as total_r,
         COUNT(*) as qualified_hitters
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
-    `).first<Record<string, number>>();
+      WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
+    `).bind(SEASON).first<Record<string, number>>();
 
     // When 2B/3B/HBP are mostly 0 (ESPN doesn't provide these in box scores),
     // compute league-wide approximations from stored OBP/SLG.
@@ -3117,9 +3161,9 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       const players = await env.DB.prepare(`
         SELECT at_bats, hits, home_runs, walks_bat, on_base_pct, slugging_pct
         FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
+        WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
           AND on_base_pct > 0 AND slugging_pct > 0
-      `).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
+      `).bind(SEASON).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
 
       let derived2B = 0, derived3B = 0, derivedHBP = 0, derivedSF = 0;
       for (const p of players.results) {
@@ -3169,8 +3213,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(earned_runs) as total_er,
         COUNT(*) as qualified_pitchers
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds >= 45
-    `).first<Record<string, number>>();
+      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds >= 45
+    `).bind(SEASON).first<Record<string, number>>();
 
     if (!batting || !pitching) {
       return json({ error: 'No qualifying data', meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
@@ -3291,9 +3335,9 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
       const lookup = await env.DB.prepare(`
         SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
         LIMIT 1
-      `).bind(searchTerm).first<{ team_id: string }>();
+      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
       if (lookup?.team_id) resolvedId = lookup.team_id;
     }
 
@@ -3318,18 +3362,18 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
              walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat,
              on_base_pct, slugging_pct
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND at_bats >= 20
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND at_bats >= 20
       ORDER BY at_bats DESC
-    `).bind(resolvedId).all<Record<string, unknown>>();
+    `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
     // Qualified pitchers for this team
     const pitchers = await env.DB.prepare(`
       SELECT espn_id, name, position, innings_pitched_thirds, strikeouts_pitch,
              walks_pitch, home_runs_allowed, earned_runs, hits_allowed, games_pitch
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND innings_pitched_thirds >= 45
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND innings_pitched_thirds >= 45
       ORDER BY innings_pitched_thirds DESC
-    `).bind(resolvedId).all<Record<string, unknown>>();
+    `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
     // Compute per-hitter sabermetrics.
     // ESPN college baseball box scores lack 2B/3B/HBP/SF labels.
@@ -3555,9 +3599,9 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
       const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
       const lookup = await env.DB.prepare(`
         SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
         LIMIT 1
-      `).bind(searchTerm).first<{ team_id: string }>();
+      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
       if (lookup?.team_id) resolvedId = lookup.team_id;
     }
 
@@ -3727,9 +3771,9 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
         SUM(home_runs) as total_hr, SUM(walks_bat) as total_bb,
         SUM(strikeouts_bat) as total_k
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats > 0
+      WHERE sport = 'college-baseball' AND season = ? AND at_bats > 0
       GROUP BY team_id, team
-    `).all<Record<string, unknown>>();
+    `).bind(SEASON).all<Record<string, unknown>>();
 
     // Get pitching stats
     const pitching = await env.DB.prepare(`
@@ -3740,9 +3784,9 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
         SUM(home_runs_allowed) as total_hr,
         SUM(earned_runs) as total_er
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds > 0
+      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds > 0
       GROUP BY team_id
-    `).all<Record<string, unknown>>();
+    `).bind(SEASON).all<Record<string, unknown>>();
 
     const pitchingMap = new Map(pitching.results.map((p) => [p.team_id as string, p]));
 
