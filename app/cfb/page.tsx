@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
+import { TabBar } from '@/components/ui/TabBar';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface RankedTeam {
@@ -91,34 +92,7 @@ export default function CFBPage() {
       setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
-      // Fallback preseason rankings
-      setRankings([
-        { rank: 1, team: 'Texas', conference: 'SEC' },
-        { rank: 2, team: 'Ohio State', conference: 'Big Ten' },
-        { rank: 3, team: 'Georgia', conference: 'SEC' },
-        { rank: 4, team: 'Oregon', conference: 'Big Ten' },
-        { rank: 5, team: 'Penn State', conference: 'Big Ten' },
-        { rank: 6, team: 'Alabama', conference: 'SEC' },
-        { rank: 7, team: 'Notre Dame', conference: 'Independent' },
-        { rank: 8, team: 'Michigan', conference: 'Big Ten' },
-        { rank: 9, team: 'Tennessee', conference: 'SEC' },
-        { rank: 10, team: 'LSU', conference: 'SEC' },
-        { rank: 11, team: 'USC', conference: 'Big Ten' },
-        { rank: 12, team: 'Clemson', conference: 'ACC' },
-        { rank: 13, team: 'Miami', conference: 'ACC' },
-        { rank: 14, team: 'Oklahoma', conference: 'SEC' },
-        { rank: 15, team: 'Ole Miss', conference: 'SEC' },
-        { rank: 16, team: 'Colorado', conference: 'Big 12' },
-        { rank: 17, team: 'Missouri', conference: 'SEC' },
-        { rank: 18, team: 'Florida State', conference: 'ACC' },
-        { rank: 19, team: 'Kansas State', conference: 'Big 12' },
-        { rank: 20, team: 'Iowa State', conference: 'Big 12' },
-        { rank: 21, team: 'SMU', conference: 'ACC' },
-        { rank: 22, team: 'Arizona', conference: 'Big 12' },
-        { rank: 23, team: 'BYU', conference: 'Big 12' },
-        { rank: 24, team: 'Texas A&M', conference: 'SEC' },
-        { rank: 25, team: 'Louisville', conference: 'ACC' },
-      ]);
+      setRankings([]);
     } finally {
       setLoading(false);
     }
@@ -212,16 +186,7 @@ export default function CFBPage() {
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <div className="flex gap-2 mb-8 border-b border-white/10 overflow-x-auto pb-px">
-              {tabs.map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id ? 'text-[#BF5700] border-[#BF5700]' : 'text-white/40 border-transparent hover:text-white'
-                  }`}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
 
             {/* Rankings Tab */}
             {activeTab === 'rankings' && (
@@ -267,9 +232,14 @@ export default function CFBPage() {
                             </tbody>
                           </table>
                         </div>
+                        {rankings.length === 0 && error && (
+                          <div className="text-center py-8">
+                            <p className="text-white/60 mb-4">{error}</p>
+                            <Button variant="primary" size="sm" onClick={() => fetchRankings()}>Retry</Button>
+                          </div>
+                        )}
                         <div className="mt-4 pt-4 border-t border-white/10">
                           <DataSourceBadge source="SportsDataIO (Derived Rankings)" timestamp={formatTimestamp(lastUpdated)} />
-                          {error && <span className="text-xs text-yellow-400 ml-4">Using cached/preseason data</span>}
                         </div>
                       </CardContent>
                     </Card>

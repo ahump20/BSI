@@ -150,5 +150,8 @@ service = "bsi-error-tracker"
 # RAPIDAPI_KEY
 # NOTION_TOKEN
 # STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# RESEND_API_KEY
 # AMPLITUDE_API_KEY
 # TURNSTILE_SECRET_KEY (for Cloudflare Turnstile bot protection)
+# ADMIN_KEY (required for /api/admin/* endpoints)

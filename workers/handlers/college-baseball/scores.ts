@@ -151,9 +151,14 @@ export async function handleCollegeBaseballSchedule(
   const conference = url.searchParams.get('conference') || '';
   const cacheKey = `cb:schedule:${date}:${range}`;
 
+  // This endpoint powers the live scores page, which polls every 30s.
+  // Use scores-level HTTP cache (30s) instead of schedule (3600s) so
+  // browsers and Cloudflare CDN don't serve stale data during live games.
+  const httpCache = HTTP_CACHE.scores;
+
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
-    return cachedJson(cached, 200, HTTP_CACHE.schedule, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
+    return cachedJson(cached, 200, httpCache, { ...dataHeaders(new Date().toISOString()), 'X-Cache': 'HIT' });
   }
 
   const client = getCollegeClient();
@@ -162,7 +167,7 @@ export async function handleCollegeBaseballSchedule(
   if (!result.success || !result.data) {
     return cachedJson(
       { success: false, data: [], message: 'Failed to fetch schedule', timestamp: result.timestamp },
-      502, HTTP_CACHE.schedule, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' }
+      502, httpCache, { ...dataHeaders(result.timestamp), 'X-Cache': 'MISS' }
     );
   }
 
@@ -243,7 +248,7 @@ export async function handleCollegeBaseballSchedule(
   };
 
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.schedule);
-  return cachedJson(payload, 200, HTTP_CACHE.schedule, {
+  return cachedJson(payload, 200, httpCache, {
     ...dataHeaders(result.timestamp), 'X-Cache': 'MISS',
   });
 }

@@ -259,6 +259,15 @@ app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));
 app.get('/api/health', (c) => handleHealth(c.env));
+
+// --- Admin auth middleware — requires ADMIN_KEY secret ---
+app.use('/api/admin/*', async (c, next) => {
+  const key = c.env.ADMIN_KEY;
+  const provided = c.req.header('X-Admin-Key') ?? c.req.query('key');
+  if (!key || provided !== key) return c.json({ error: 'Unauthorized' }, 401);
+  await next();
+});
+
 app.get('/api/admin/health', (c) => handleAdminHealth(c.env));
 app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env));
 
@@ -397,11 +406,11 @@ app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gam
 app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(c.env));
 
 // --- Savant: College Baseball Advanced Analytics ---
-app.get('/api/savant/batting/leaderboard', (c) => handleSavantBattingLeaderboard(new URL(c.req.url), c.env));
-app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboard(new URL(c.req.url), c.env));
-app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env));
-app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env));
-app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env));
+app.get('/api/savant/batting/leaderboard', (c) => handleSavantBattingLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboard(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env, c.req.raw.headers));
+app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env, c.req.raw.headers));
 
 // --- Cached scores (cron-warmed KV) ---
 app.get('/api/scores/cached', (c) => {
@@ -621,35 +630,44 @@ app.post('/webhooks/stripe', async (c) => {
             })
           : 'soon';
 
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${(c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: 'BSI <noreply@blazesportsintel.com>',
-            to: email,
-            subject: 'Your BSI Pro trial ends in 3 days',
-            html: `
-              <h2>Your BSI Pro trial ends ${trialEndDate}</h2>
-              <p>After your trial, here's what you'll lose access to:</p>
-              <ul>
-                <li>Live scores across MLB, NFL, NBA, NCAA</li>
-                <li>Real-time game updates every 30 seconds</li>
-                <li>Transfer portal tracking</li>
-                <li>Player pro-projection comps</li>
-                <li>Complete box scores with batting/pitching lines</li>
-                <li>Conference standings and rankings</li>
-                <li>Player comparison tools</li>
-              </ul>
-              <p><strong>No action needed to keep access</strong> — your card will be charged $12/mo on ${trialEndDate}.</p>
-              <p>Questions? Reply to this email.</p>
-              <p>— Austin @ BSI</p>
-            `,
-          }),
-        });
-        console.log(`[webhook] Trial ending email sent to ${email}`);
+        try {
+          const emailRes = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${(c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: 'BSI <noreply@blazesportsintel.com>',
+              to: email,
+              subject: 'Your BSI Pro trial ends in 3 days',
+              html: `
+                <h2>Your BSI Pro trial ends ${trialEndDate}</h2>
+                <p>After your trial, here's what you'll lose access to:</p>
+                <ul>
+                  <li>Live scores across MLB, NFL, NBA, NCAA</li>
+                  <li>Real-time game updates every 30 seconds</li>
+                  <li>Transfer portal tracking</li>
+                  <li>Player pro-projection comps</li>
+                  <li>Complete box scores with batting/pitching lines</li>
+                  <li>Conference standings and rankings</li>
+                  <li>Player comparison tools</li>
+                </ul>
+                <p><strong>No action needed to keep access</strong> — your card will be charged $12/mo on ${trialEndDate}.</p>
+                <p>Questions? Reply to this email.</p>
+                <p>— Austin @ BSI</p>
+              `,
+            }),
+          });
+          if (emailRes.ok) {
+            console.log(`[webhook] Trial ending email sent to ${email}`);
+          } else {
+            const errBody = await emailRes.text().catch(() => 'unknown');
+            console.error(`[webhook] Trial email failed for ${email}: ${emailRes.status} — ${errBody}`);
+          }
+        } catch (emailErr) {
+          console.error(`[webhook] Trial email error for ${email}:`, emailErr);
+        }
       }
     }
   }

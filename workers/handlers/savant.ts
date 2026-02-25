@@ -34,6 +34,21 @@ function savantMeta(source: string, cacheHit: boolean) {
   };
 }
 
+/** Resolve tier from API key in BSI_KEYS KV. Falls back to 'free'. */
+async function resolveTier(url: URL, headers: Headers, env: Env): Promise<string> {
+  const keyValue = headers.get('X-BSI-Key') ?? url.searchParams.get('key') ?? '';
+  if (!keyValue || !env.BSI_KEYS) return 'free';
+  try {
+    const raw = await env.BSI_KEYS.get(`key:${keyValue}`);
+    if (!raw) return 'free';
+    const data = JSON.parse(raw) as { tier?: string; expires?: number };
+    if (data.expires && data.expires < Date.now()) return 'free';
+    return data.tier || 'free';
+  } catch {
+    return 'free';
+  }
+}
+
 /** Strip Pro-tier fields from a row for free-tier responses. */
 function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
   const proKeys = [
@@ -65,13 +80,13 @@ function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
  *   sort       — asc or desc (default: desc)
  *   tier       — 'pro' for full metrics, omit for free tier
  */
-export async function handleSavantBattingLeaderboard(url: URL, env: Env): Promise<Response> {
+export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers?: Headers): Promise<Response> {
   const metric = url.searchParams.get('metric') || 'woba';
   const conference = url.searchParams.get('conference') || '';
   const position = url.searchParams.get('position') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'asc' ? 'ASC' : 'DESC';
-  const tier = url.searchParams.get('tier') || 'free';
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   // Validate metric column to prevent SQL injection
   const allowedMetrics = [
@@ -147,13 +162,13 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env): Promis
 /**
  * GET /api/savant/pitching/leaderboard
  */
-export async function handleSavantPitchingLeaderboard(url: URL, env: Env): Promise<Response> {
+export async function handleSavantPitchingLeaderboard(url: URL, env: Env, headers?: Headers): Promise<Response> {
   const metric = url.searchParams.get('metric') || 'fip';
   const conference = url.searchParams.get('conference') || '';
   const position = url.searchParams.get('position') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'desc' ? 'DESC' : 'ASC';
-  const tier = url.searchParams.get('tier') || 'free';
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const allowedMetrics = [
     'era', 'whip', 'k_9', 'bb_9', 'hr_9', 'fip', 'x_fip',
@@ -226,8 +241,8 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env): Promi
 /**
  * GET /api/savant/player/:id
  */
-export async function handleSavantPlayer(playerId: string, url: URL, env: Env): Promise<Response> {
-  const tier = url.searchParams.get('tier') || 'free';
+export async function handleSavantPlayer(playerId: string, url: URL, env: Env, headers?: Headers): Promise<Response> {
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:player:${playerId}:${tier}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
@@ -287,9 +302,9 @@ export async function handleSavantPlayer(playerId: string, url: URL, env: Env): 
 /**
  * GET /api/savant/park-factors
  */
-export async function handleSavantParkFactors(url: URL, env: Env): Promise<Response> {
+export async function handleSavantParkFactors(url: URL, env: Env, headers?: Headers): Promise<Response> {
   const conference = url.searchParams.get('conference') || '';
-  const tier = url.searchParams.get('tier') || 'free';
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:parks:${conference || 'all'}:${tier}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
@@ -349,8 +364,8 @@ export async function handleSavantParkFactors(url: URL, env: Env): Promise<Respo
 /**
  * GET /api/savant/conference-strength
  */
-export async function handleSavantConferenceStrength(url: URL, env: Env): Promise<Response> {
-  const tier = url.searchParams.get('tier') || 'free';
+export async function handleSavantConferenceStrength(url: URL, env: Env, headers?: Headers): Promise<Response> {
+  const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:conf:${tier}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
