@@ -73,13 +73,18 @@ export default function BSIShowcase() {
 
               <div className="space-y-4 text-bone/85 text-lg leading-relaxed mb-6">
                 <p>
-                  BSI covers what mainstream sports media overlook: the athletes, programs, and markets
-                  outside the East and West Coast spotlight. The gap between interest in college and
-                  amateur sports and access to meaningful analytics is the product.
+                  I built BSI because the coverage I wanted did not exist. Try finding advanced
+                  analytics for a Tuesday night college baseball game between Rice and Sam Houston.
+                  Try tracking conference standings across six sports without clicking through
+                  fifteen pages. The gap between interest in the game and access to meaningful
+                  data is the product.
                 </p>
                 <p>
-                  Old-school scouting instinct fused with new-school sabermetrics, powered by AI tooling
-                  that makes the depth accessible.
+                  Fourteen Workers handle every API call, data transformation, and cache layer.
+                  Five databases store historical and live game data. Eighteen storage buckets
+                  hold everything from box scores to editorial assets. One person built all of it
+                  &mdash; old-school scouting instinct fused with new-school sabermetrics, running
+                  on Cloudflare&rsquo;s edge.
                 </p>
               </div>
 

@@ -64,9 +64,8 @@ export default function About() {
               <motion.div variants={staggerItem}>
                 <p>
                   On <strong className="text-bone">August 17, 1995</strong>, I was born in Memphis,
-                  Tennessee — the same day as <strong className="text-bone">Davy Crockett</strong>,
-                  the legendary folk hero who famously declared "You may all go to hell,
-                  and I will go to Texas" before defending the Alamo.
+                  Tennessee — the same day as <strong className="text-bone">Davy Crockett</strong>.
+                  "You may all go to hell, and I will go to Texas." That energy was in the room.
                 </p>
               </motion.div>
 
@@ -92,9 +91,8 @@ export default function About() {
                 <p>
                   But my parents had a plan. They brought{' '}
                   <strong className="text-burnt-orange">Texas soil</strong> from{' '}
-                  <strong className="text-bone">West Columbia</strong> — the birthplace
-                  of the Republic of Texas, where the first capital stood and Stephen F. Austin's
-                  vision took root. That soil was placed beneath my mother before I was born.
+                  <strong className="text-bone">West Columbia</strong> — birthplace
+                  of the Republic of Texas. That soil was placed beneath my mother before I was born.
                 </p>
               </motion.div>
 
@@ -178,8 +176,7 @@ export default function About() {
                   The name <strong className="text-burnt-orange">Blaze Sports Intel</strong> comes
                   from my dachshund, <strong className="text-bone">Bartlett Blaze</strong> — who was
                   named after my first baseball team, the Bartlett Blaze from youth ball.
-                  The name carries the full arc: youth baseball, family pet, professional platform.
-                  It's not corporate branding — it's lived history.
+                  It is not corporate branding — it is lived history.
                 </p>
               </motion.div>
 
