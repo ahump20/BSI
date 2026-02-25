@@ -110,13 +110,13 @@ export default function SavantHubPage() {
   const [positionFilter, setPositionFilter] = useState('');
 
   const { data: battingRes, loading: battingLoading } =
-    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100&tier=pro');
+    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
   const { data: pitchingRes, loading: pitchingLoading } =
-    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=100&tier=pro');
+    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=100');
   const { data: parkRes, loading: parkLoading } =
-    useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors?tier=pro');
+    useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
   const { data: confRes, loading: confLoading } =
-    useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength?tier=pro');
+    useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength');
 
   // ── Derived filter options ──
   const conferences = useMemo(() => {
