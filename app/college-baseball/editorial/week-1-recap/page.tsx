@@ -235,7 +235,7 @@ export default function Week1RecapPage() {
           </Container>
           <Container>
             <ScrollReveal direction="up" delay={50}>
-              <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+              <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr>
@@ -469,6 +469,9 @@ export default function Week1RecapPage() {
               <div className="flex flex-wrap gap-6 pt-2">
                 <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   All Editorial &rarr;
+                </Link>
+                <Link href="/college-baseball/editorial/weekend-2-recap" className="font-display text-[13px] uppercase tracking-widest text-white/40 hover:text-burnt-orange transition-colors">
+                  Weekend 2 Recap &rarr;
                 </Link>
               </div>
             </div>
