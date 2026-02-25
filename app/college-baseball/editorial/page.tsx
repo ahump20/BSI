@@ -137,6 +137,15 @@ interface FeatureArticle {
 
 const FEATURE_ARTICLES: FeatureArticle[] = [
   {
+    title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
+    slug: 'weekend-2-recap',
+    description: 'UCLA swept TCU 30-8. Two players hit for the cycle. Auburn emerged at Globe Life. The complete BSI breakdown.',
+    date: 'February 24, 2026',
+    readTime: '15 min',
+    badge: 'Weekend 2 Recap',
+    tags: ['Weekly', 'National'],
+  },
+  {
     title: 'Texas Week 1: 27 Runs. One Hit Allowed by Volantis.',
     slug: 'texas-week-1-recap',
     description: 'The Longhorns swept UC Davis 27-7. Volantis earned SEC honors. Now Michigan State — fresh off upsetting No. 8 Louisville — arrives for Weekend 2.',
@@ -564,6 +573,65 @@ export default function EditorialHubPage() {
 
         {/* Daily AI Digest — fetches from /api/college-baseball/editorial/list */}
         <DailyDigestSection />
+
+        {/* Weekly Recaps — static editorial pages */}
+        {(activeTag === 'All' || activeTag === 'Weekly' || activeTag === 'National') && (
+          <Section padding="md" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <div className="flex items-end justify-between mb-6">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-1 h-8 rounded-full bg-burnt-orange" />
+                      <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-white">
+                        Weekly Recaps
+                      </h2>
+                    </div>
+                    <p className="text-white/40 text-sm ml-4 pl-3">
+                      National-scope breakdowns of each weekend&apos;s results, rankings movement, and matchups to watch
+                    </p>
+                  </div>
+                </div>
+              </ScrollReveal>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ScrollReveal direction="up" delay={0}>
+                  <Link href="/college-baseball/editorial/weekend-2-recap" className="block group">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="primary">Weekend 2</Badge>
+                        <span className="text-white/20 text-xs">Feb 24, 2026</span>
+                        <span className="text-white/15 text-xs">15 min</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        The No. 1 Showed Up. The Rest Got Sorted.
+                      </h3>
+                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                        UCLA swept TCU 30-8. Two cycles hit. Auburn announced itself at Globe Life. Plus Weekend 3 preview.
+                      </p>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+                <ScrollReveal direction="up" delay={60}>
+                  <Link href="/college-baseball/editorial/week-1-recap" className="block group">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="primary">Week 1</Badge>
+                        <span className="text-white/20 text-xs">Feb 16, 2026</span>
+                        <span className="text-white/15 text-xs">18 min</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        Three Grand Slams. One Record Book. The Season Starts Now.
+                      </h3>
+                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                        Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners.
+                      </p>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              </div>
+            </Container>
+          </Section>
+        )}
 
         {/* Tag Filter Bar */}
         <TagFilterBar activeTag={activeTag} onTagChange={setActiveTag} />
