@@ -6,93 +6,78 @@ interface Message {
   text: string;
 }
 
-const knowledge: { keywords: string[]; response: string }[] = [
+// Fallback keyword responses when API is unavailable
+const FALLBACK_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ['bsi', 'blaze', 'sports intel', 'platform'],
-    response:
-      'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. It runs on 14 Cloudflare Workers, 5 D1 databases, 9 KV namespaces, and 18 R2 buckets — all built and maintained by Austin.',
-  },
-  {
-    keywords: ['college baseball', 'flagship'],
-    response:
-      'College baseball is BSI\'s flagship coverage area. The platform provides real-time scores, standings, rankings, and 58+ editorial deep-dives for programs outside the usual media spotlight — covering SEC, Big 12, and Big Ten conferences.',
-  },
-  {
-    keywords: ['cloudflare', 'worker', 'infrastructure', 'architecture', 'stack', 'tech'],
-    response:
-      'BSI\'s entire stack runs on Cloudflare: Pages for the frontend, Workers (Hono framework) for all backend logic, D1 for SQL, KV for caching, and R2 for storage. 14 Workers, 5 D1 databases, 9 KV namespaces, 18 R2 buckets. No AWS, no Vercel, no external databases.',
-  },
-  {
-    keywords: ['texas', 'soil', 'origin', 'born', 'memphis'],
-    response:
-      'Austin was born August 17, 1995 in Memphis, Tennessee. His parents brought Texas soil from West Columbia (birthplace of the Republic of Texas) and placed it beneath his mother before he was born. The El Campo Leader-News ran the headline: "Tennessee Birth Will Be on Texas Soil."',
-  },
-  {
-    keywords: ['education', 'degree', 'school', 'university', 'full sail', 'mccombs', 'ut'],
-    response:
-      'Austin holds a B.A. in International Relations from UT Austin (2014-2020), an M.S. in Entertainment Business — Sports Management from Full Sail University (graduated Feb 2026, GPA 3.56), and is currently pursuing an AI & ML Postgraduate Certificate from UT Austin McCombs.',
-  },
-  {
-    keywords: ['ai', 'claude', 'machine learning', 'predict'],
-    response:
-      'BSI uses Claude AI for editorial generation and deep analysis, plus machine learning models for predictive intelligence — grounded in historical data, matchup dynamics, and contextual factors rather than hype cycles.',
-  },
-  {
-    keywords: ['editorial', 'writing', 'article', 'content'],
-    response:
-      'BSI has published 58+ editorial deep-dives covering SEC, Big 12, and Big Ten college baseball programs. Conference previews, weekly recaps, and scouting analysis — all written with the same analytical depth that prestige platforms give only to the top 10 programs.',
-  },
-  {
-    keywords: ['project', 'blazecraft', 'sandlot', 'game', 'arcade'],
-    response:
-      'Beyond BSI, Austin built BlazeCraft (blazecraft.app) — a Warcraft 3–style system health dashboard — and Sandlot Sluggers, a browser-based baseball game in the BSI Arcade. All deployed on Cloudflare.',
+    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 14 Cloudflare Workers with 5 D1 databases — all maintained by Austin.',
   },
   {
     keywords: ['contact', 'email', 'hire', 'reach'],
-    response:
-      'You can reach Austin at Austin@BlazeSportsIntel.com, on LinkedIn at linkedin.com/in/ahump20, or on X at @BlazeSportsIntel. He\'s based in San Antonio, Texas.',
+    response: 'Reach Austin at Austin@BlazeSportsIntel.com, on LinkedIn at linkedin.com/in/ahump20, or on X at @BlazeSportsIntel.',
   },
   {
-    keywords: ['experience', 'work', 'spectrum', 'northwestern', 'job'],
-    response:
-      'Austin\'s career spans: Founder of BSI (2023-present), Advertising Account Executive at Spectrum Reach (2022-2025), Financial Representative at Northwestern Mutual (2020-2022) where he earned the "Power of 10" Award for top 10% nationally.',
-  },
-  {
-    keywords: ['resume', 'cv', 'download'],
-    response:
-      'You can download Austin\'s resume from the contact section of this site, or directly at austinhumphrey.com/Austin_Humphrey_Resume.pdf.',
+    keywords: ['texas', 'soil', 'origin', 'born'],
+    response: 'Austin was born August 17, 1995 in Memphis. His parents brought Texas soil from West Columbia and placed it beneath his mother before he was born. The El Campo Leader-News ran the headline: "Tennessee Birth Will Be on Texas Soil."',
   },
 ];
 
-function getResponse(input: string): string {
+function getFallbackResponse(input: string): string {
   const lower = input.toLowerCase();
-  for (const entry of knowledge) {
+  for (const entry of FALLBACK_RESPONSES) {
     if (entry.keywords.some((kw) => lower.includes(kw))) {
       return entry.response;
     }
   }
-  return 'I can answer questions about Austin\'s background, Blaze Sports Intel, his projects, editorial work, tech stack, education, experience, or how to get in touch. What would you like to know?';
+  return 'I can answer questions about Austin, BSI, his projects, editorial work, tech stack, education, or how to get in touch. What would you like to know?';
 }
 
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: 'Hey! Ask me anything about Austin or Blaze Sports Intel.' },
+    { role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
   ]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, loading]);
 
-  const send = () => {
+  const send = async () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || loading) return;
+
     const userMsg: Message = { role: 'user', text: trimmed };
-    const assistantMsg: Message = { role: 'assistant', text: getResponse(trimmed) };
-    setMessages((prev) => [...prev, userMsg, assistantMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
+    setLoading(true);
+
+    try {
+      // Send last 6 messages for context
+      const history = [...messages, userMsg].slice(-6).map((m) => ({
+        role: m.role,
+        content: m.text,
+      }));
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      });
+
+      if (!res.ok) throw new Error('API error');
+
+      const data = await res.json() as { text: string };
+      setMessages((prev) => [...prev, { role: 'assistant', text: data.text }]);
+    } catch {
+      // Fall back to local keyword matching
+      const fallback = getFallbackResponse(trimmed);
+      setMessages((prev) => [...prev, { role: 'assistant', text: fallback }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -100,10 +85,20 @@ export default function AIChatWidget() {
       {/* FAB */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-burnt-orange rounded-full flex items-center justify-center shadow-lg hover:brightness-110 transition-all duration-300 cursor-pointer"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-burnt-orange rounded-full flex items-center justify-center shadow-lg hover:brightness-110 transition-all duration-300 cursor-pointer group"
         aria-label={open ? 'Close chat' : 'Open chat'}
       >
-        <span className="text-white text-xl">{open ? '✕' : '💬'}</span>
+        <span className="text-white text-xl group-hover:scale-110 transition-transform duration-200">
+          {open ? (
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+              <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
+              <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
+        </span>
       </button>
 
       {/* Chat panel */}
@@ -117,10 +112,13 @@ export default function AIChatWidget() {
             className="fixed bottom-24 right-6 z-50 w-80 max-h-[28rem] bg-charcoal border border-bone/10 rounded-lg shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-bone/5 bg-midnight">
+            <div className="px-4 py-3 border-b border-bone/5 bg-midnight flex items-center justify-between">
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-burnt-orange font-medium">
                 Ask About Austin
               </p>
+              <span className="font-mono text-[0.5rem] text-warm-gray/40 uppercase tracking-wider">
+                AI-Powered
+              </span>
             </div>
 
             {/* Messages */}
@@ -140,6 +138,19 @@ export default function AIChatWidget() {
                   {msg.text}
                 </div>
               ))}
+
+              {/* Typing indicator */}
+              {loading && (
+                <div className="text-sm text-warm-gray mr-8 flex items-center gap-1">
+                  <span className="text-burnt-orange font-mono text-xs mr-1">{'>'}</span>
+                  <span className="inline-flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-burnt-orange/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </span>
+                </div>
+              )}
+
               <div ref={bottomRef} />
             </div>
 
@@ -152,11 +163,13 @@ export default function AIChatWidget() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && send()}
                   placeholder="Ask a question..."
-                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/50 focus:outline-none focus:border-burnt-orange/50"
+                  disabled={loading}
+                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/50 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
                 />
                 <button
                   onClick={send}
-                  className="bg-burnt-orange text-white px-3 py-2 rounded text-xs font-sans uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer"
+                  disabled={loading}
+                  className="bg-burnt-orange text-white px-3 py-2 rounded text-xs font-sans uppercase tracking-wider hover:brightness-110 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Send
                 </button>
