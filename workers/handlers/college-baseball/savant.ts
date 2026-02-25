@@ -677,6 +677,13 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
 
     const pitchingMap = new Map(pitching.results.map((p) => [p.team_id as string, p]));
 
+    // Get team → conference mapping from analytics-enriched table
+    const confRows = await env.DB.prepare(`
+      SELECT DISTINCT team_id, conference FROM cbb_batting_advanced
+      WHERE season = ? AND conference IS NOT NULL
+    `).bind(SEASON).all<{ team_id: string; conference: string }>();
+    const teamConf = new Map(confRows.results.map((r) => [r.team_id, r.conference]));
+
     // Get team W-L records from processed_games
     const games = await env.DB.prepare(`
       SELECT home_team_id, away_team_id, home_score, away_score
@@ -686,15 +693,33 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
     `).all<{ home_team_id: string; away_team_id: string; home_score: number; away_score: number }>();
 
     const winLoss: Record<string, { w: number; l: number }> = {};
+    const confWinLoss: Record<string, { w: number; l: number }> = {};
     for (const g of games.results) {
       if (!winLoss[g.home_team_id]) winLoss[g.home_team_id] = { w: 0, l: 0 };
       if (!winLoss[g.away_team_id]) winLoss[g.away_team_id] = { w: 0, l: 0 };
+
+      const homeConf = teamConf.get(g.home_team_id);
+      const awayConf = teamConf.get(g.away_team_id);
+      const isConfGame = homeConf && awayConf && homeConf === awayConf;
+
       if (g.home_score > g.away_score) {
         winLoss[g.home_team_id].w++;
         winLoss[g.away_team_id].l++;
+        if (isConfGame) {
+          if (!confWinLoss[g.home_team_id]) confWinLoss[g.home_team_id] = { w: 0, l: 0 };
+          if (!confWinLoss[g.away_team_id]) confWinLoss[g.away_team_id] = { w: 0, l: 0 };
+          confWinLoss[g.home_team_id].w++;
+          confWinLoss[g.away_team_id].l++;
+        }
       } else if (g.away_score > g.home_score) {
         winLoss[g.away_team_id].w++;
         winLoss[g.home_team_id].l++;
+        if (isConfGame) {
+          if (!confWinLoss[g.home_team_id]) confWinLoss[g.home_team_id] = { w: 0, l: 0 };
+          if (!confWinLoss[g.away_team_id]) confWinLoss[g.away_team_id] = { w: 0, l: 0 };
+          confWinLoss[g.home_team_id].l++;
+          confWinLoss[g.away_team_id].w++;
+        }
       }
     }
 
@@ -728,17 +753,26 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
       const total = record.w + record.l;
       const winPct = total > 0 ? record.w / total : 0;
 
+      const confRecord = confWinLoss[teamId] ?? { w: 0, l: 0 };
+      const confTotal = confRecord.w + confRecord.l;
+      // Before conference play starts, fall back to overall win%
+      const confWinPct = confTotal > 0 ? confRecord.w / confTotal : winPct;
+
       return {
         team_id: teamId,
         team: t.team as string,
         wins: record.w,
         losses: record.l,
+        conf_wins: confRecord.w,
+        conf_losses: confRecord.l,
         win_pct: Math.round(winPct * 1000) / 1000,
+        conf_win_pct: Math.round(confWinPct * 1000) / 1000,
         wrc_plus: Math.round(wrcPlus),
         fip: Math.round(fip * 100) / 100,
         woba: Math.round(woba * 1000) / 1000,
         // CPI components (will normalize after)
         _winPct: winPct,
+        _confWinPct: confWinPct,
         _wrcPlus: wrcPlus,
         _fipInv: fip > 0 ? 1 / fip : 0,
       };
@@ -747,16 +781,18 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
     // Normalize and compute CPI
     if (teamCPI.length > 0) {
       const maxWP = Math.max(...teamCPI.map((t) => t._winPct));
+      const maxCWP = Math.max(...teamCPI.map((t) => t._confWinPct));
       const maxWRC = Math.max(...teamCPI.map((t) => t._wrcPlus));
       const maxFipInv = Math.max(...teamCPI.map((t) => t._fipInv));
 
       for (const t of teamCPI) {
         const normWP = maxWP > 0 ? t._winPct / maxWP : 0;
+        const normCWP = maxCWP > 0 ? t._confWinPct / maxCWP : 0;
         const normWRC = maxWRC > 0 ? t._wrcPlus / maxWRC : 0;
         const normFipInv = maxFipInv > 0 ? t._fipInv / maxFipInv : 0;
 
         (t as Record<string, unknown>).cpi = Math.round(
-          (0.30 * normWP + 0.30 * normWP + 0.20 * normWRC + 0.20 * normFipInv) * 1000
+          (0.30 * normWP + 0.30 * normCWP + 0.20 * normWRC + 0.20 * normFipInv) * 1000
         ) / 1000;
       }
     }
@@ -766,7 +802,7 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
 
     // Clean up internal fields
     const ranked = teamCPI.map((t, i) => {
-      const { _winPct, _wrcPlus, _fipInv, ...rest } = t;
+      const { _winPct, _confWinPct, _wrcPlus, _fipInv, ...rest } = t;
       return { rank: i + 1, ...rest, cpi: (t as Record<string, unknown>).cpi };
     });
 
