@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -13,9 +13,13 @@ import {
   SavantLeaderboard,
   BATTING_COLUMNS,
   PITCHING_COLUMNS,
+  fmt3,
+  fmt2,
+  fmtInt,
 } from '@/components/analytics/SavantLeaderboard';
 import { ParkFactorTable } from '@/components/analytics/ParkFactorTable';
 import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStrengthChart';
+import { getPercentileColor } from '@/components/analytics/PercentileBar';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -25,6 +29,7 @@ type Tab = 'batting' | 'pitching' | 'park-factors' | 'conference';
 
 interface LeaderboardResponse {
   data: Record<string, unknown>[];
+  total?: number;
   meta: { source: string; fetched_at: string; timezone: string };
 }
 
@@ -59,20 +64,95 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Spotlight card definitions
+// ---------------------------------------------------------------------------
+
+interface SpotlightDef {
+  metricKey: string;
+  label: string;
+  abbr: string;
+  description: string;
+  format: (v: number) => string;
+  higherIsBetter: boolean;
+  tab: 'batting' | 'pitching';
+}
+
+const SPOTLIGHT_DEFS: SpotlightDef[] = [
+  {
+    metricKey: 'woba', label: 'Weighted On-Base Average', abbr: 'wOBA',
+    description: 'Best single batting metric publicly available. Weights each way of reaching base by run value.',
+    format: fmt3, higherIsBetter: true, tab: 'batting',
+  },
+  {
+    metricKey: 'wrc_plus', label: 'Weighted Runs Created+', abbr: 'wRC+',
+    description: 'Park-adjusted, 100 = league average. 150 means 50% better than average.',
+    format: fmtInt, higherIsBetter: true, tab: 'batting',
+  },
+  {
+    metricKey: 'fip', label: 'Fielding Independent Pitching', abbr: 'FIP',
+    description: 'Isolates what the pitcher controls: K, BB, HBP, HR. Strips defense and luck on balls in play.',
+    format: fmt2, higherIsBetter: false, tab: 'pitching',
+  },
+  {
+    metricKey: 'era_minus', label: 'ERA Minus', abbr: 'ERA-',
+    description: 'Park-adjusted ERA on a 100 scale. 80 = 20% better than league average. Lower is better.',
+    format: fmtInt, higherIsBetter: false, tab: 'pitching',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 export default function SavantHubPage() {
   const [activeTab, setActiveTab] = useState<Tab>('batting');
+  const [conferenceFilter, setConferenceFilter] = useState('');
+  const [positionFilter, setPositionFilter] = useState('');
 
   const { data: battingRes, loading: battingLoading } =
-    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=50');
+    useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100&tier=pro');
   const { data: pitchingRes, loading: pitchingLoading } =
-    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=50');
+    useSportData<LeaderboardResponse>('/api/savant/pitching/leaderboard?limit=100&tier=pro');
   const { data: parkRes, loading: parkLoading } =
-    useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors');
+    useSportData<{ data: ParkFactorRow[] }>('/api/savant/park-factors?tier=pro');
   const { data: confRes, loading: confLoading } =
-    useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength');
+    useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength?tier=pro');
+
+  // ── Derived filter options ──
+  const conferences = useMemo(() => {
+    const confs = new Set<string>();
+    for (const row of battingRes?.data ?? []) {
+      if (row.conference) confs.add(row.conference as string);
+    }
+    for (const row of pitchingRes?.data ?? []) {
+      if (row.conference) confs.add(row.conference as string);
+    }
+    return ['', ...Array.from(confs).sort()];
+  }, [battingRes, pitchingRes]);
+
+  const positions = useMemo(() => {
+    const pos = new Set<string>();
+    const source = activeTab === 'pitching' ? pitchingRes?.data : battingRes?.data;
+    for (const row of source ?? []) {
+      if (row.position) pos.add(row.position as string);
+    }
+    return ['', ...Array.from(pos).sort()];
+  }, [activeTab, battingRes, pitchingRes]);
+
+  // ── Apply client-side filters ──
+  function applyFilters(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+    let filtered = rows;
+    if (conferenceFilter) {
+      filtered = filtered.filter(r => r.conference === conferenceFilter);
+    }
+    if (positionFilter) {
+      filtered = filtered.filter(r => r.position === positionFilter);
+    }
+    return filtered;
+  }
+
+  const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [battingRes, conferenceFilter, positionFilter]);
+  const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [pitchingRes, conferenceFilter, positionFilter]);
 
   return (
     <>
@@ -99,7 +179,7 @@ export default function SavantHubPage() {
 
             {/* Hero */}
             <ScrollReveal direction="up" delay={50}>
-              <div className="mb-10">
+              <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">ADVANCED ANALYTICS</Badge>
                 </div>
@@ -114,43 +194,59 @@ export default function SavantHubPage() {
               </div>
             </ScrollReveal>
 
-            {/* Methodology cards */}
+            {/* Data Coverage Banner */}
+            <ScrollReveal direction="up" delay={75}>
+              <Card padding="sm" className="mb-8 border-white/[0.04]">
+                <p className="text-[11px] font-mono text-white/30 leading-relaxed">
+                  Data coverage: SEC, ACC, Big 12, Big Ten — sourced from ESPN box scores (~30% of D1 games).
+                  Full D1 coverage coming via Highlightly Pro integration.
+                </p>
+              </Card>
+            </ScrollReveal>
+
+            {/* Spotlight cards — dynamic, data-driven */}
             <ScrollReveal direction="up" delay={100}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
-                <Card padding="md">
-                  <span className="font-display text-2xl font-bold text-[#BF5700]">wOBA</span>
-                  <p className="text-[11px] text-white/30 mt-1 leading-relaxed">
-                    Weighted On-Base Average. Best single batting metric publicly available.
-                  </p>
-                </Card>
-                <Card padding="md">
-                  <span className="font-display text-2xl font-bold text-[#BF5700]">FIP</span>
-                  <p className="text-[11px] text-white/30 mt-1 leading-relaxed">
-                    Fielding Independent Pitching. Isolates what the pitcher controls.
-                  </p>
-                </Card>
-                <Card padding="md">
-                  <span className="font-display text-2xl font-bold text-[#BF5700]">wRC+</span>
-                  <p className="text-[11px] text-white/30 mt-1 leading-relaxed">
-                    Weighted Runs Created Plus. Park-adjusted, 100 = league average.
-                  </p>
-                </Card>
-                <Card padding="md">
-                  <span className="font-display text-2xl font-bold text-[#BF5700]">PF</span>
-                  <p className="text-[11px] text-white/30 mt-1 leading-relaxed">
-                    Park Factors. How venues inflate or suppress offense.
-                  </p>
-                </Card>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                {SPOTLIGHT_DEFS.map(spot => {
+                  const source = spot.tab === 'batting' ? battingRes?.data : pitchingRes?.data;
+                  const leader = findLeader(source ?? [], spot.metricKey, spot.higherIsBetter);
+                  const pctl = leader ? computeQuickPercentile(source ?? [], spot.metricKey, leader.value, spot.higherIsBetter) : 50;
+                  const color = getPercentileColor(pctl, spot.higherIsBetter);
+
+                  return (
+                    <Card key={spot.metricKey} padding="md" className="relative overflow-hidden">
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className="font-display text-2xl font-bold" style={{ color }}>{spot.abbr}</span>
+                      </div>
+                      {leader ? (
+                        <div className="mb-2">
+                          <span className="text-sm text-white font-medium">{leader.name}</span>
+                          <span className="ml-1.5 text-[10px] text-white/25">{leader.team}</span>
+                          <span className="block text-lg font-mono font-bold tabular-nums mt-0.5" style={{ color }}>
+                            {spot.format(leader.value)}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="mb-2 h-12 flex items-center">
+                          <span className="text-xs text-white/20">Loading...</span>
+                        </div>
+                      )}
+                      <p className="text-[10px] text-white/25 leading-relaxed">
+                        {spot.description}
+                      </p>
+                    </Card>
+                  );
+                })}
               </div>
             </ScrollReveal>
 
             {/* Tab navigation */}
             <ScrollReveal direction="up" delay={150}>
-              <div className="flex items-center gap-1 border-b border-white/[0.06] mb-8 overflow-x-auto">
+              <div className="flex items-center gap-1 border-b border-white/[0.06] mb-4 overflow-x-auto">
                 {TABS.map((tab) => (
                   <button
                     key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
+                    onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
                     className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                       activeTab === tab.key
                         ? 'text-[#BF5700] border-[#BF5700]'
@@ -163,6 +259,36 @@ export default function SavantHubPage() {
               </div>
             </ScrollReveal>
 
+            {/* Filters — shown for batting/pitching tabs */}
+            {(activeTab === 'batting' || activeTab === 'pitching') && (
+              <ScrollReveal direction="up" delay={175}>
+                <div className="flex items-center gap-3 mb-6 flex-wrap">
+                  <FilterSelect
+                    label="Conference"
+                    value={conferenceFilter}
+                    onChange={setConferenceFilter}
+                    options={conferences}
+                    allLabel="All Conferences"
+                  />
+                  <FilterSelect
+                    label="Position"
+                    value={positionFilter}
+                    onChange={setPositionFilter}
+                    options={positions}
+                    allLabel="All Positions"
+                  />
+                  {(conferenceFilter || positionFilter) && (
+                    <button
+                      onClick={() => { setConferenceFilter(''); setPositionFilter(''); }}
+                      className="text-[10px] font-mono text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+              </ScrollReveal>
+            )}
+
             {/* Tab content */}
             <ScrollReveal direction="up" delay={200}>
               {activeTab === 'batting' && (
@@ -170,7 +296,7 @@ export default function SavantHubPage() {
                   <LeaderboardSkeleton />
                 ) : (
                   <SavantLeaderboard
-                    data={battingRes?.data ?? []}
+                    data={filteredBatting}
                     columns={BATTING_COLUMNS}
                     title="Batting Leaders — Advanced"
                     isPro={false}
@@ -184,7 +310,7 @@ export default function SavantHubPage() {
                   <LeaderboardSkeleton />
                 ) : (
                   <SavantLeaderboard
-                    data={pitchingRes?.data ?? []}
+                    data={filteredPitching}
                     columns={PITCHING_COLUMNS}
                     title="Pitching Leaders — Advanced"
                     isPro={false}
@@ -244,6 +370,85 @@ export default function SavantHubPage() {
       <Footer />
     </>
   );
+}
+
+// ---------------------------------------------------------------------------
+// Filter dropdown
+// ---------------------------------------------------------------------------
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  allLabel,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  allLabel: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] font-display uppercase tracking-widest text-white/25">{label}</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="bg-white/[0.04] border border-white/[0.08] rounded-md px-2.5 py-1.5 text-xs text-white/60 font-mono appearance-none cursor-pointer hover:border-white/[0.12] transition-colors focus:outline-none focus:border-[#BF5700]/40"
+      >
+        {options.map(opt => (
+          <option key={opt} value={opt} className="bg-[#1A1A1A] text-white">
+            {opt || allLabel}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Spotlight helpers
+// ---------------------------------------------------------------------------
+
+function findLeader(
+  data: Record<string, unknown>[],
+  key: string,
+  higherIsBetter: boolean,
+): { name: string; team: string; value: number } | null {
+  if (data.length === 0) return null;
+  let best = data[0];
+  let bestVal = (best[key] as number) ?? (higherIsBetter ? -Infinity : Infinity);
+
+  for (let i = 1; i < data.length; i++) {
+    const val = (data[i][key] as number) ?? (higherIsBetter ? -Infinity : Infinity);
+    if (higherIsBetter ? val > bestVal : val < bestVal) {
+      best = data[i];
+      bestVal = val;
+    }
+  }
+
+  return {
+    name: best.player_name as string,
+    team: best.team as string,
+    value: bestVal,
+  };
+}
+
+function computeQuickPercentile(
+  data: Record<string, unknown>[],
+  key: string,
+  value: number,
+  higherIsBetter: boolean,
+): number {
+  const values = data
+    .map(r => r[key] as number)
+    .filter(v => v != null && Number.isFinite(v))
+    .sort((a, b) => a - b);
+
+  if (values.length <= 1) return 50;
+  const below = values.filter(v => (higherIsBetter ? v < value : v > value)).length;
+  return (below / (values.length - 1)) * 100;
 }
 
 // ---------------------------------------------------------------------------
