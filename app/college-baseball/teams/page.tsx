@@ -132,7 +132,7 @@ const conferences: { name: string; fullName: string; teams: TeamEntry[] }[] = [
 function TeamCard({ team }: { team: TeamEntry }) {
   const meta = teamMetadata[team.slug];
   const preseason = preseason2026[team.slug];
-  const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+  const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
 
   return (
     <Link href={`/college-baseball/teams/${team.slug}`} className="block">

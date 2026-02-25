@@ -167,6 +167,7 @@ const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'Al
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
   const [selectedDate, setSelectedDate] = useState<string>("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
@@ -390,6 +391,8 @@ export default function CollegeBaseballPage() {
             {/* Secondary nav */}
             <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
               {[
+                { label: 'Savant', href: '/college-baseball/savant' },
+                { label: 'Portal', href: '/college-baseball/transfer-portal' },
                 { label: 'Editorial', href: '/college-baseball/editorial' },
                 { label: 'News', href: '/college-baseball/news' },
                 { label: 'Compare', href: '/college-baseball/compare' },
@@ -673,7 +676,7 @@ export default function CollegeBaseballPage() {
                           <Card variant="hover" padding="md" className="h-full">
                             <div className="flex items-center gap-3">
                               {meta ? (
-                                <img src={getLogoUrl(meta.espnId)} alt="" className="w-8 h-8 object-contain" />
+                                <img src={getLogoUrl(meta.espnId, meta.logoId)} alt="" className="w-8 h-8 object-contain" />
                               ) : (
                                 <div className="w-8 h-8 bg-burnt-orange/15 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                   {(team.shortName || team.name).slice(0, 3).toUpperCase()}

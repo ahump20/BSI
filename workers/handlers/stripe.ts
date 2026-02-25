@@ -66,12 +66,29 @@ export async function handleSessionStatus(
       payment_status?: string;
     };
 
+    // If a subscription exists, fetch it to get trial_end timestamp
+    let trialEnd: number | null = null;
+    if (session.subscription) {
+      try {
+        const subRes = await fetch(`${STRIPE_API}/subscriptions/${session.subscription}`, {
+          headers: { Authorization: `Bearer ${STRIPE_SECRET_KEY}` },
+        });
+        if (subRes.ok) {
+          const sub = (await subRes.json()) as { trial_end?: number | null };
+          trialEnd = sub.trial_end ?? null;
+        }
+      } catch {
+        // Non-fatal — trial_end is optional enhancement
+      }
+    }
+
     return json({
       status: session.status ?? 'unknown',
       customer_email: session.customer_email ?? session.customer_details?.email ?? null,
       subscription_id: session.subscription ?? null,
       tier: session.metadata?.tier ?? null,
       payment_status: session.payment_status ?? 'unknown',
+      trial_end: trialEnd,
     });
   } catch (err) {
     console.error('[stripe] session-status error:', err);

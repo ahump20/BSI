@@ -114,7 +114,7 @@ export function EnrichedRankingsTable({
       const slug = team.slug || teamNameToSlug[team.team.toLowerCase()];
       const meta = slug ? teamMetadata[slug] : undefined;
       const conference = team.conference || meta?.conference || '';
-      const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+      const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
       const prevRank = prevMap?.get(team.team.toLowerCase()) ?? null;
 
       return { ...team, slug, conference, logoUrl, prevRank };

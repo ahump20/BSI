@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
+import { trackPaywallHit } from '@/lib/analytics/tracker';
 
 // Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
 const HeroVideo = dynamic(
@@ -21,6 +22,11 @@ const tiers = PRICING_TIERS;
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+
+  // Fire paywall_hit when user sees pricing — D1 tracks who hit the gate
+  useEffect(() => {
+    trackPaywallHit('/pricing');
+  }, []);
 
   const handleCheckout = async (tier: 'pro' | 'enterprise') => {
     setLoading(tier);

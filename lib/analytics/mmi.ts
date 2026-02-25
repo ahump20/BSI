@@ -153,7 +153,7 @@ export function computeSD(
   homeScore: number,
   awayScore: number,
   inningsRemaining: number,
-  totalInnings: number,
+  _totalInnings: number,
 ): number {
   const diff = homeScore - awayScore;
   const leverageMultiplier = 1 + 0.1 * inningsRemaining;

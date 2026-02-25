@@ -27,6 +27,8 @@ const ENDPOINTS = [
   { url: 'https://blazesportsintel.com/api/college-baseball/scores', name: 'CB Scores' },
   { url: 'https://blazesportsintel.com/api/college-baseball/standings?conference=SEC', name: 'CB Standings' },
   { url: 'https://blazesportsintel.com/scores/', name: 'Scores Page' },
+  { url: 'https://api.blazesportsintel.com/health', name: 'CBB API Health' },
+  { url: 'https://cbb-api-sync.humphrey-austin20.workers.dev/status', name: 'CBB Sync Status' },
 ] as const;
 
 const TIMEOUT_MS = 10_000;

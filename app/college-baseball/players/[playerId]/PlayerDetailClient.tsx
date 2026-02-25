@@ -8,7 +8,13 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
+import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
+import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 interface PlayerData {
   player: {
@@ -38,20 +44,91 @@ interface PlayerData {
   } | null;
 }
 
+interface HAVFData {
+  player: {
+    player_id: string;
+    name: string;
+    h_score: number;
+    a_score: number;
+    v_score: number;
+    f_score: number;
+    havf_composite: number;
+    breakdown: string;
+  } | null;
+}
+
+interface SavantData {
+  data: {
+    k_pct?: number;
+    bb_pct?: number;
+    iso?: number;
+    babip?: number;
+    woba?: number;
+    wrc_plus?: number;
+    fip?: number;
+    era_minus?: number;
+    k_9?: number;
+    bb_9?: number;
+    hr_9?: number;
+  } | null;
+}
+
+// ---------------------------------------------------------------------------
+// HAV-F Bar Component
+// ---------------------------------------------------------------------------
+
+function HAVFBar({ label, score, color }: { label: string; score: number; color: string }) {
+  const pct = Math.min(score * 100, 100);
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-xs text-white/40 uppercase tracking-widest w-8 shrink-0 font-mono">{label}</span>
+      <div className="flex-1 h-2 bg-white/[0.06] rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
+      </div>
+      <span className="text-sm font-mono text-white/70 w-12 text-right">{(score * 100).toFixed(0)}</span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function PlayerDetailClient() {
   const params = useParams();
   const playerId = params.playerId as string;
   const [data, setData] = useState<PlayerData | null>(null);
+  const [havf, setHavf] = useState<HAVFData | null>(null);
+  const [savant, setSavant] = useState<SavantData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/college-baseball/players/${playerId}`);
-        const json = await res.json();
-        setData(json as PlayerData);
-        setLastUpdated(res.headers.get('X-Last-Updated') || new Date().toISOString());
+        // Fetch player data, HAV-F, and Savant in parallel
+        const [playerRes, havfRes, savantRes] = await Promise.all([
+          fetch(`/api/college-baseball/players/${playerId}`),
+          fetch(`/api/analytics/havf/player/${playerId}`).catch(() => null),
+          fetch(`/api/savant/player/${playerId}`).catch(() => null),
+        ]);
+
+        const playerJson = await playerRes.json();
+        setData(playerJson as PlayerData);
+        setLastUpdated(playerRes.headers.get('X-Last-Updated') || new Date().toISOString());
+
+        if (havfRes?.ok) {
+          const havfJson = await havfRes.json();
+          setHavf(havfJson as HAVFData);
+        }
+
+        if (savantRes?.ok) {
+          const savantJson = await savantRes.json();
+          setSavant(savantJson as SavantData);
+        }
       } catch {
         setData(null);
       } finally {
@@ -77,6 +154,7 @@ export default function PlayerDetailClient() {
 
   const player = data?.player;
   const stats = data?.statistics;
+  const havfPlayer = havf?.player;
 
   if (!player) {
     return (
@@ -100,6 +178,7 @@ export default function PlayerDetailClient() {
       <main id="main-content" className="pt-24">
         <Section padding="lg">
           <Container>
+            {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
               <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
                 College Baseball
@@ -112,6 +191,7 @@ export default function PlayerDetailClient() {
               <span className="text-white">{player.name}</span>
             </div>
 
+            {/* Player Header */}
             <div className="mb-8">
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
                 {player.name}
@@ -127,7 +207,7 @@ export default function PlayerDetailClient() {
               </div>
             </div>
 
-            {/* Bio */}
+            {/* Bio Card */}
             <Card padding="lg" className="mb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {player.height && <div><span className="text-xs text-white/40 block">Height</span><span className="text-white font-medium">{player.height}</span></div>}
@@ -136,6 +216,84 @@ export default function PlayerDetailClient() {
                 {player.team?.conference?.name && <div><span className="text-xs text-white/40 block">Conference</span><span className="text-white font-medium">{player.team.conference.name}</span></div>}
               </div>
             </Card>
+
+            {/* HAV-F Analytics Section */}
+            {havfPlayer && (
+              <Card padding="none" className="mb-6 overflow-hidden">
+                <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/20 to-transparent border-b border-white/[0.08]">
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-display text-lg font-bold text-white uppercase tracking-wide">
+                      HAV-F Evaluation
+                    </h2>
+                    <Link
+                      href="/models/havf"
+                      className="text-[10px] text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest"
+                    >
+                      Methodology &rarr;
+                    </Link>
+                  </div>
+                </div>
+                <div className="p-4 md:p-6">
+                  <div className="grid md:grid-cols-[1fr_auto] gap-6">
+                    {/* Component bars */}
+                    <div className="space-y-3">
+                      <HAVFBar label="H" score={havfPlayer.h_score} color="#BF5700" />
+                      <HAVFBar label="A" score={havfPlayer.a_score} color="#FF6B35" />
+                      <HAVFBar label="V" score={havfPlayer.v_score} color="#FDB913" />
+                      <HAVFBar label="F" score={havfPlayer.f_score} color="#8B4513" />
+                    </div>
+
+                    {/* Composite score */}
+                    <div className="flex flex-col items-center justify-center md:border-l md:border-white/[0.06] md:pl-6">
+                      <span className="text-xs text-white/30 uppercase tracking-widest mb-1">Composite</span>
+                      <span className="font-display text-4xl md:text-5xl font-bold text-burnt-orange">
+                        {(havfPlayer.havf_composite * 100).toFixed(0)}
+                      </span>
+                      <span className="text-xs text-white/20 mt-1">percentile</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                    <span className="text-[10px] text-white/20">
+                      Hitting &middot; At-Bat Quality &middot; Velocity &middot; Fielding
+                    </span>
+                    <Link
+                      href="/college-baseball/analytics"
+                      className="text-[10px] text-white/30 hover:text-burnt-orange transition-colors"
+                    >
+                      Full Leaderboard &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Savant Advanced Stats */}
+            {savant?.data && (
+              <AdvancedStatsCard
+                title={stats?.batting ? 'Advanced Batting' : 'Advanced Pitching'}
+                profileUrl={`/college-baseball/savant/player/${playerId}`}
+                className="mb-6"
+                stats={
+                  stats?.batting
+                    ? [
+                        ...(savant.data.k_pct != null ? [{ label: 'K%', value: savant.data.k_pct, format: (v: number) => `${(v * 100).toFixed(1)}%`, higherIsBetter: false }] : []),
+                        ...(savant.data.bb_pct != null ? [{ label: 'BB%', value: savant.data.bb_pct, format: (v: number) => `${(v * 100).toFixed(1)}%` }] : []),
+                        ...(savant.data.iso != null ? [{ label: 'ISO', value: savant.data.iso, format: (v: number) => v.toFixed(3).replace(/^0/, '') }] : []),
+                        ...(savant.data.babip != null ? [{ label: 'BABIP', value: savant.data.babip, format: (v: number) => v.toFixed(3).replace(/^0/, '') }] : []),
+                        ...(savant.data.woba != null ? [{ label: 'wOBA', value: savant.data.woba, format: (v: number) => v.toFixed(3).replace(/^0/, ''), pro: true }] : []),
+                        ...(savant.data.wrc_plus != null ? [{ label: 'wRC+', value: savant.data.wrc_plus, format: (v: number) => String(Math.round(v)), pro: true }] : []),
+                      ]
+                    : [
+                        ...(savant.data.k_9 != null ? [{ label: 'K/9', value: savant.data.k_9, format: (v: number) => v.toFixed(1) }] : []),
+                        ...(savant.data.bb_9 != null ? [{ label: 'BB/9', value: savant.data.bb_9, format: (v: number) => v.toFixed(1), higherIsBetter: false }] : []),
+                        ...(savant.data.hr_9 != null ? [{ label: 'HR/9', value: savant.data.hr_9, format: (v: number) => v.toFixed(1), higherIsBetter: false }] : []),
+                        ...(savant.data.fip != null ? [{ label: 'FIP', value: savant.data.fip, format: (v: number) => v.toFixed(2), higherIsBetter: false, pro: true }] : []),
+                        ...(savant.data.era_minus != null ? [{ label: 'ERA-', value: savant.data.era_minus, format: (v: number) => String(Math.round(v)), higherIsBetter: false, pro: true }] : []),
+                      ]
+                }
+              />
+            )}
 
             {/* Batting Stats */}
             {stats?.batting && (
@@ -212,7 +370,19 @@ export default function PlayerDetailClient() {
               </Card>
             )}
 
+            {/* HAV-F methodology link */}
+            <div className="mt-8 mb-2">
+              <Link href="/models/havf" className="text-xs text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest">
+                How BSI evaluates players &rarr;
+              </Link>
+            </div>
+
             {lastUpdated && <DataAttribution lastUpdated={lastUpdated} className="mt-6" />}
+
+            {/* Email capture */}
+            <div className="mt-8">
+              <IntelSignup />
+            </div>
           </Container>
         </Section>
       </main>

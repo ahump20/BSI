@@ -62,6 +62,8 @@ export function getMainNavItems(date?: Date): {
   leagues.sort((a, b) => phaseOrder[a.phase] - phaseOrder[b.phase]);
 
   const secondary: MainNavItem[] = [
+    { label: 'Savant', href: '/college-baseball/savant' },
+    { label: 'Portal', href: '/college-baseball/portal' },
     { label: 'Writing', href: '/blog-post-feed' },
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Glossary', href: '/glossary' },

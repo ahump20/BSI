@@ -6,7 +6,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -79,6 +78,20 @@ const mlbFeatures = [
       'Advanced metrics including exit velocity, launch angle, sprint speed, and pitch movement data.',
     badge: 'Pro-Level',
     badgeVariant: 'warning' as const,
+  },
+  {
+    href: '/mlb/editorial',
+    icon: (
+      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-burnt-orange fill-none stroke-[1.5]">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+      </svg>
+    ),
+    title: 'Editorial',
+    description:
+      'Season previews, division analysis, and long-form coverage of the 2026 MLB season.',
+    badge: 'New',
+    badgeVariant: 'primary' as const,
   },
 ];
 

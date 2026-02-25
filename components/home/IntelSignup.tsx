@@ -1,14 +1,23 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { trackEmailSignup } from '@/lib/analytics/tracker';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
+interface IntelSignupProps {
+  /** Sport context for analytics tagging. Defaults to auto-detect from URL. */
+  sport?: string;
+  /** Optional callback after successful signup */
+  onSignup?: () => void;
+}
+
 /**
- * IntelSignup — email capture form for the Trending Intel section.
+ * IntelSignup — email capture form for content pages.
  * Posts to existing /api/newsletter endpoint.
+ * Fires trackEmailSignup with sport context on success.
  */
-export function IntelSignup() {
+export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(true);
   const [state, setState] = useState<FormState>('idle');
@@ -42,6 +51,8 @@ export function IntelSignup() {
 
       setState('success');
       setEmail('');
+      trackEmailSignup(sport);
+      onSignup?.();
     } catch {
       setErrorMsg('Network error. Try again.');
       setState('error');

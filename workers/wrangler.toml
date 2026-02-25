@@ -45,6 +45,10 @@ id = "e6cb68e815cd45babeee0e10460dbfee"
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
 
+[[r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
+
 [[durable_objects.bindings]]
 name = "CACHE"
 class_name = "CacheObject"
@@ -126,6 +130,10 @@ id = "e6cb68e815cd45babeee0e10460dbfee"
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
 
+[[env.production.r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
+
 [[env.production.durable_objects.bindings]]
 name = "CACHE"
 class_name = "CacheObject"
@@ -150,5 +158,8 @@ service = "bsi-error-tracker"
 # RAPIDAPI_KEY
 # NOTION_TOKEN
 # STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# RESEND_API_KEY
 # AMPLITUDE_API_KEY
 # TURNSTILE_SECRET_KEY (for Cloudflare Turnstile bot protection)
+# ADMIN_KEY (required for /api/admin/* endpoints)

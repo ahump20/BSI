@@ -212,7 +212,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     );
   }
 
-  const logoUrl = getLogoUrl(meta.espnId);
+  const logoUrl = getLogoUrl(meta.espnId, meta.logoId);
   const hasPreseason = !!preseason;
   const overallRecord = preseason?.record2025?.split(' (')[0] || null;
   const confRecord = preseason?.record2025?.match(/\(([^)]+)\)/)?.[1] || null;

@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { trackPaywallConvert, trackTrialStart } from '@/lib/analytics/tracker';
 
 // ============================================================================
 // Types
@@ -29,6 +30,7 @@ interface SessionStatusResponse {
   subscription_id: string | null;
   tier: string | null;
   payment_status: string;
+  trial_end: number | null;
   error?: string;
 }
 
@@ -64,6 +66,7 @@ function CheckoutReturnContent() {
   const [status, setStatus] = useState<CheckoutStatus>('loading');
   const [customerEmail, setCustomerEmail] = useState<string | null>(null);
   const [tier, setTier] = useState<string | null>(null);
+  const [trialEnd, setTrialEnd] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -91,6 +94,12 @@ function CheckoutReturnContent() {
           setStatus('success');
           setCustomerEmail(data.customer_email);
           setTier(data.tier);
+          setTrialEnd(data.trial_end);
+          // Fire D1 analytics events for Query 5 (paywall funnel)
+          trackPaywallConvert(undefined, data.tier ?? 'pro');
+          if (data.trial_end) {
+            trackTrialStart(data.tier ?? 'pro');
+          }
         } else if (data.status === 'open') {
           // Session still open - redirect back to checkout
           router.push('/checkout');
@@ -143,11 +152,16 @@ function CheckoutReturnContent() {
                         Your API key has been sent to {customerEmail}. Use it to access your dashboard.
                       </p>
                     )}
-                    {tier === 'pro' && (
+                    {tier === 'pro' && trialEnd && (
                       <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-6">
                         <p className="text-burnt-orange text-sm">
-                          Your 14-day free trial has started. You won&apos;t be charged until the trial
-                          ends.
+                          Your 14-day free trial has started. You won&apos;t be charged until{' '}
+                          {new Date(trialEnd * 1000).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                          .
                         </p>
                       </div>
                     )}

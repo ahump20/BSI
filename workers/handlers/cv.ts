@@ -20,6 +20,8 @@ export async function handleCVPitcherMechanics(playerId: string, env: Env): Prom
     await kvPut(env.KV, cacheKey, result, 300);
     return cachedJson(cvApiResponse(result, 'cv-d1', false), 200, 300, { 'X-Cache': 'MISS' });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('no such table')) return json({ error: 'CV data not yet available', detail: 'Table not initialized' }, 404);
     return json({ error: 'Failed to fetch pitcher mechanics' }, 500);
   }
 }
@@ -45,6 +47,8 @@ export async function handleCVPitcherHistory(playerId: string, url: URL, env: En
     await kvPut(env.KV, cacheKey, results, 3600);
     return cachedJson(cvApiResponse(results, 'cv-d1', false), 200, 3600, { 'X-Cache': 'MISS' });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('no such table')) return json({ error: 'CV data not yet available', detail: 'Table not initialized' }, 404);
     return json({ error: 'Failed to fetch pitcher history' }, 500);
   }
 }
@@ -62,6 +66,8 @@ export async function handleCVInjuryAlerts(url: URL, env: Env): Promise<Response
 
     return cachedJson(cvApiResponse(results, 'cv-d1', false), 200, 60);
   } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('no such table')) return json({ error: 'CV data not yet available', detail: 'Table not initialized' }, 404);
     return json({ error: 'Failed to fetch injury alerts' }, 500);
   }
 }
@@ -84,6 +90,8 @@ export async function handleCVAdoption(url: URL, env: Env): Promise<Response> {
     await kvPut(env.KV, cacheKey, results, 86400);
     return cachedJson(cvApiResponse(results, 'cv-d1', false), 200, 86400, { 'X-Cache': 'MISS' });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (msg.includes('no such table')) return json({ error: 'CV data not yet available', detail: 'Table not initialized' }, 404);
     return json({ error: 'Failed to fetch CV adoption data' }, 500);
   }
 }

@@ -11,7 +11,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { HAVFLeaderboard } from '@/components/analytics/HAVFLeaderboard';
 import { HAVFRadar } from '@/components/analytics/HAVFRadar';
-import { HAVFBadge } from '@/components/analytics/HAVFBadge';
 
 interface HAVFPlayerAPI {
   player_id: string;
@@ -103,7 +102,16 @@ export default function CollegeBaseballAnalyticsPage() {
                 <p className="text-white/50 mt-3 max-w-2xl text-base leading-relaxed">
                   BSI&apos;s proprietary player evaluation metric. Four measurable dimensions
                   compressed into a single composite score that tells you what batting
-                  average and ERA alone never will.
+                  average and ERA alone never will.{' '}
+                  <Link href="/models/havf" className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                    Read the full methodology &rarr;
+                  </Link>
+                </p>
+                <p className="text-white/40 mt-2 text-sm">
+                  Looking for wOBA, FIP, wRC+, park factors?{' '}
+                  <Link href="/college-baseball/savant" className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                    College Baseball Savant &rarr;
+                  </Link>
                 </p>
               </div>
             </ScrollReveal>

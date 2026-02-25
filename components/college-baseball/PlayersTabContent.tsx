@@ -34,14 +34,13 @@ export function PlayersTabContent() {
   const { data, loading } = useSportData<{ players?: PlayerResult[] }>(
     searchParam ? `/api/college-baseball/players${searchParam}` : null
   );
-  const players = data?.players || [];
-
   const filtered = useMemo(() => {
+    const players = data?.players || [];
     let list = players;
     if (posFilter !== 'All') list = list.filter(p => p.position === posFilter);
     if (classFilter !== 'All') list = list.filter(p => p.classYear === classFilter);
     return list;
-  }, [players, posFilter, classFilter]);
+  }, [data?.players, posFilter, classFilter]);
 
   return (
     <Card variant="default" padding="lg">

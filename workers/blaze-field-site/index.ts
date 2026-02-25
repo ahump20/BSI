@@ -42,22 +42,46 @@ const MIME_TYPES: Record<string, string> = {
   '.wav': 'audio/wav',
 };
 
+/** Origins allowed to POST to this worker. */
+const ALLOWED_POST_ORIGINS = [
+  'https://blazecraft.app',
+  'http://localhost:5173',
+  'http://localhost:8791',
+];
+
+/** Returns the origin header if it's in the allow list, or empty string if not. */
+function corsOrigin(request: Request): string {
+  const origin = request.headers.get('Origin') ?? '';
+  return ALLOWED_POST_ORIGINS.includes(origin) ? origin : '';
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    // Analytics beacon
+    // Analytics beacon — restrict to known origins
     if (url.pathname === '/api/beacon' && request.method === 'POST') {
-      // Fire-and-forget — don't block response
-      return new Response(null, { status: 204 });
+      const origin = corsOrigin(request);
+      return new Response(null, {
+        status: 204,
+        headers: origin ? { 'Access-Control-Allow-Origin': origin } : {},
+      });
     }
 
-    // CORS preflight for all API routes
+    // CORS preflight for API routes
     if (request.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+      const isPostRoute = url.pathname === '/api/events/ingest'
+        || url.pathname === '/api/blazecraft/events'
+        || url.pathname === '/api/beacon';
+
+      const origin = isPostRoute ? corsOrigin(request) : '*';
+      if (isPostRoute && !origin) {
+        return new Response(null, { status: 204, headers: {} });
+      }
       return new Response(null, {
         status: 204,
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': origin,
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           'Access-Control-Max-Age': '86400',
@@ -143,20 +167,33 @@ interface SessionEntry {
   lastSeen: string;
 }
 
-const API_HEADERS = {
+/** Headers for GET API responses — public data, open CORS. */
+const API_HEADERS_PUBLIC = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Cache-Control': 'no-cache',
 };
 
+/** Build headers for POST API responses — restricted CORS. */
+function apiHeadersRestricted(request: Request): Record<string, string> {
+  const origin = corsOrigin(request);
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+  };
+  if (origin) headers['Access-Control-Allow-Origin'] = origin;
+  return headers;
+}
+
 async function handleEventIngest(request: Request, env: Env): Promise<Response> {
+  const headers = apiHeadersRestricted(request);
   try {
     const body = await request.json() as Record<string, unknown>;
 
     if (!body.type || !body.agentId) {
       return new Response(JSON.stringify({ error: 'Missing required fields: type, agentId' }), {
         status: 400,
-        headers: API_HEADERS,
+        headers,
       });
     }
 
@@ -199,12 +236,12 @@ async function handleEventIngest(request: Request, env: Env): Promise<Response> 
 
     return new Response(JSON.stringify({ ok: true, session: sessionId, count: trimmed.length }), {
       status: 200,
-      headers: API_HEADERS,
+      headers,
     });
   } catch {
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
       status: 400,
-      headers: API_HEADERS,
+      headers,
     });
   }
 }
@@ -214,7 +251,7 @@ async function handleAgentEvents(env: Env): Promise<Response> {
   const index = await env.MONITOR_KV.get<SessionEntry[]>(SESSION_INDEX_KEY, 'json');
   if (!index?.length) {
     return new Response(JSON.stringify({ events: [], count: 0 }), {
-      headers: API_HEADERS,
+      headers: API_HEADERS_PUBLIC,
     });
   }
 
@@ -231,7 +268,7 @@ async function handleAgentEvents(env: Env): Promise<Response> {
   const capped = allEvents.slice(0, 100);
 
   return new Response(JSON.stringify({ events: capped, count: capped.length }), {
-    headers: API_HEADERS,
+    headers: API_HEADERS_PUBLIC,
   });
 }
 

@@ -66,7 +66,7 @@ export function GameStatusBadge({ status, className = '' }: { status: GameStatus
 
 interface DataSourceBadgeProps {
   source: string;
-  timestamp: string;
+  timestamp?: string;
   className?: string;
 }
 
@@ -74,8 +74,12 @@ export function DataSourceBadge({ source, timestamp, className = '' }: DataSourc
   return (
     <div className={`flex items-center gap-2 text-xs text-white/40 ${className}`}>
       <span className="font-medium">{source}</span>
-      <span>|</span>
-      <span>{timestamp}</span>
+      {timestamp && (
+        <>
+          <span>|</span>
+          <span>{timestamp}</span>
+        </>
+      )}
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 
 interface Player {
@@ -548,6 +549,11 @@ export default function CollegeBaseballPlayersPage() {
                 ))}
               </div>
             )}
+
+            {/* Email Capture */}
+            <div className="mt-12 max-w-md mx-auto">
+              <IntelSignup sport="college_baseball" />
+            </div>
 
             {/* Data Attribution */}
             <div className="mt-12 text-center text-xs text-text-tertiary">

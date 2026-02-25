@@ -30,30 +30,30 @@ interface RankingEntry {
 }
 
 const RANKINGS: RankingEntry[] = [
-  { rank: 1, team: 'UCLA', record: '5-1', change: '—', prev: '1', headline: 'Swept No. 7 TCU 30-8; Cholowsky 5 HR, 10 RBI' },
+  { rank: 1, team: 'UCLA', record: '6-1', change: '—', prev: '1', headline: 'Swept No. 7 TCU 30-8; Cholowsky 3 HR, 5 RBI in G1' },
   { rank: 2, team: 'LSU', record: '8-0', change: '—', prev: '2', headline: '3-0 at Jax Classic; beat Indiana, Notre Dame, UCF' },
   { rank: 3, team: 'Texas', record: '7-0', change: '—', prev: '3', headline: 'Swept Michigan State; Robbins hit for the cycle' },
-  { rank: 4, team: 'Mississippi State', record: '6-0', change: '—', prev: '4', headline: 'Kept rolling; unbeaten through two weekends' },
-  { rank: 5, team: 'Georgia Tech', record: '6-0', change: '—', prev: '5', headline: 'Extended unbeaten start; pitching depth showing' },
-  { rank: 6, team: 'Arkansas', record: '5-1', change: '↑2', prev: '8', headline: 'Kozeal hit for the cycle; walk-off win vs Xavier' },
+  { rank: 4, team: 'Mississippi State', record: '8-0', change: '—', prev: '4', headline: 'Swept Delaware; outscored opponents 58-12' },
+  { rank: 5, team: 'Georgia Tech', record: '8-0', change: '—', prev: '5', headline: '6 straight games of 10+ runs; program record' },
+  { rank: 6, team: 'Arkansas', record: '6-1', change: '↑2', prev: '8', headline: 'Kozeal hit for the cycle; walk-off win vs Xavier' },
   { rank: 7, team: 'Auburn', record: '6-1', change: '↑2', prev: '9', headline: '3-0 at Globe Life; beat FSU + Louisville' },
-  { rank: 8, team: 'North Carolina', record: '6-0', change: '↑2', prev: '10', headline: 'Continued unbeaten run through Week 2' },
-  { rank: 9, team: 'Coastal Carolina', record: '6-0', change: '↓3', prev: '6', headline: 'Lost to Illinois 14-5 at Battle at the Beach' },
-  { rank: 10, team: 'Florida', record: '5-1', change: '↑2', prev: '12', headline: 'Bounced back after Opening Day upset' },
-  { rank: 11, team: 'Georgia', record: '5-1', change: '↑3', prev: '14', headline: 'Portal-loaded roster finding its stride' },
-  { rank: 12, team: 'Southern Miss', record: '5-1', change: '↑8', prev: '20', headline: 'Biggest riser; dominant weekend at home' },
-  { rank: 13, team: 'Oklahoma', record: '6-0', change: '↑8', prev: '21', headline: 'Unbeaten; Shriners momentum carrying over' },
-  { rank: 14, team: 'NC State', record: '5-0', change: '↑3', prev: '17', headline: 'Strong start extends into second weekend' },
-  { rank: 15, team: 'Clemson', record: '6-0', change: '↑4', prev: '19', headline: 'Quiet six-game win streak to open season' },
-  { rank: 16, team: 'Wake Forest', record: '5-1', change: '↑6', prev: '22', headline: 'Recovered from Houston loss; surging' },
-  { rank: 17, team: 'Miami (FL)', record: '9-0', change: '↑6', prev: '23', headline: 'Outscored opponents 144-37; 9-0 start' },
-  { rank: 18, team: 'TCU', record: '4-4', change: '↓11', prev: '7', headline: 'Swept by UCLA; biggest drop of the week' },
-  { rank: 19, team: 'Oregon State', record: '4-2', change: '↓8', prev: '11', headline: 'Inconsistent; lost ground after slow Week 2' },
-  { rank: 20, team: 'Tennessee', record: '5-2', change: '↓7', prev: '13', headline: 'Lost to Kent State; 0-for-15 with RISP Saturday' },
-  { rank: 21, team: 'Florida State', record: '4-2', change: '↓5', prev: '16', headline: 'Lost to Auburn at Globe Life; dropped' },
-  { rank: 22, team: 'Kentucky', record: '6-1', change: '↓4', prev: '18', headline: 'Won series but shutout by Evansville' },
-  { rank: 23, team: 'Texas A&M', record: '6-0', change: '↑1', prev: '24', headline: 'Unbeaten; Sorrell production continues' },
-  { rank: 24, team: 'West Virginia', record: '6-0', change: '↑1', prev: '25', headline: 'Extended unbeaten start; quietly rolling' },
+  { rank: 8, team: 'North Carolina', record: '6-1-1', change: '↑2', prev: '10', headline: 'Swept Indiana; lost G2 and tied G3 at ECU' },
+  { rank: 9, team: 'Coastal Carolina', record: '5-2', change: '↓3', prev: '6', headline: 'Lost to Illinois 14-5 at Battle at the Beach' },
+  { rank: 10, team: 'Florida', record: '7-0', change: '↑2', prev: '12', headline: '5-0 week; swept Kennesaw State' },
+  { rank: 11, team: 'Georgia', record: '6-1', change: '↑3', prev: '14', headline: 'Swept Samford; outscored 45-5 on the weekend' },
+  { rank: 12, team: 'Southern Miss', record: '6-1', change: '↑8', prev: '20', headline: 'Biggest riser; 3-0 at Round Rock Classic' },
+  { rank: 13, team: 'Oklahoma', record: '7-0', change: '↑8', prev: '21', headline: 'Unbeaten; swept Coppin State by combined 57-1' },
+  { rank: 14, team: 'NC State', record: '5-1', change: '↑3', prev: '17', headline: 'Only loss: 1-0 to Princeton in Saturday DH' },
+  { rank: 15, team: 'Clemson', record: '7-0', change: '↑4', prev: '19', headline: '4-0 week; swept Bryant by multiple runs each game' },
+  { rank: 16, team: 'Wake Forest', record: '6-1', change: '↑6', prev: '22', headline: 'Swept Siena after Puerto Rico loss to Houston' },
+  { rank: 17, team: 'Miami (FL)', record: '9-0', change: '↑6', prev: '23', headline: 'Outscored opponents 144-39; 9-0 start' },
+  { rank: 18, team: 'TCU', record: '2-5', change: '↓11', prev: '7', headline: 'Swept by UCLA; lost midweek to UT Arlington' },
+  { rank: 19, team: 'Oregon State', record: '4-3', change: '↓8', prev: '11', headline: 'Lost 2 of 3 at Round Rock; dropped hard' },
+  { rank: 20, team: 'Tennessee', record: '5-2', change: '↓7', prev: '13', headline: 'Lost series to Kent State; hitless with runners on Saturday' },
+  { rank: 21, team: 'Florida State', record: '4-2', change: '↓5', prev: '16', headline: 'Lost to Auburn and Nebraska at Globe Life' },
+  { rank: 22, team: 'Kentucky', record: '5-2', change: '↓4', prev: '18', headline: 'Shutout by Evansville; lost midweek to Morehead State' },
+  { rank: 23, team: 'Texas A&M', record: '7-0', change: '↑1', prev: '24', headline: 'Unbeaten; swept Penn with Sorrell leading' },
+  { rank: 24, team: 'West Virginia', record: '5-1', change: '↑1', prev: '25', headline: 'Lost G3 at Liberty; otherwise dominant' },
   { rank: 25, team: 'Ole Miss', record: '8-0', change: 'NEW', prev: 'NR', headline: 'Swept Missouri State; best start since 2018' },
 ];
 
@@ -67,7 +67,7 @@ function movementClass(change: string) {
 // ── Stat boxes ───────────────────────────────────────────────────────
 
 const STATS = [
-  { label: "Cholowsky's Weekend", value: '5 HR', helperText: '7-for-16, 10 RBI in 3 games' },
+  { label: "Cholowsky vs TCU", value: '3 HR', helperText: '5 RBI in Game 1 alone; 6 HR on the season' },
   { label: 'UCLA outscored TCU', value: '30-8', helperText: 'Sweep included 15-5 run-rule' },
   { label: 'Cycles hit Weekend 2', value: '2', helperText: 'Kozeal (Arkansas) + Robbins (Texas)' },
   { label: 'SEC teams ranked', value: '12', helperText: 'Of 25 spots in D1Baseball poll' },
@@ -162,10 +162,10 @@ export default function Weekend2RecapPage() {
                   The matchup was supposed to be the weekend&rsquo;s headliner &mdash; No. 1 UCLA hosting No. 7 TCU, the same Horned Frogs who beat two ranked teams at the Shriners Showdown in Week 1. It was a headliner. Just not a competitive one. UCLA won 10&ndash;2, 5&ndash;1, and 15&ndash;5 (run-rule), outscoring TCU 30&ndash;8 across three games. The margin wasn&rsquo;t the story. The mechanism was.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Roch Cholowsky</strong> went 7-for-16 with 5 home runs and 10 RBI on the weekend. The consensus No. 1 overall pick in the 2026 MLB Draft opened Game 1 with a grand slam in the second inning and followed it with a solo shot in the fourth. Five home runs in a three-game series against a ranked opponent isn&rsquo;t a hot weekend &mdash; it&rsquo;s a demolition notice. Cholowsky now has 7 home runs in 6 games, and the exit velocities suggest the power is structural, not situational. TCU&rsquo;s pitching staff, which held Arkansas and Vanderbilt to 4 runs each at the Shriners, had no answer for UCLA&rsquo;s top four hitters.
+                  <strong className="text-white font-semibold">Roch Cholowsky</strong>, the consensus No. 1 overall pick in the 2026 MLB Draft, opened Game 1 with a grand slam in the second inning and followed it with a solo shot in the fifth &mdash; 2 home runs and 5 RBI before the game was half over. He added another solo homer in Game 3, giving him 3 home runs in the series and 6 on the season through 7 games. Combined with <strong className="text-white font-semibold">Will Gasparino</strong>, who went 7-for-13 (.538) in the series, UCLA&rsquo;s 3-4 hitters produced 6 home runs and 16 RBI across three games. TCU&rsquo;s pitching staff, which held Arkansas and Vanderbilt to 4 runs each at the Shriners, had no answer for UCLA&rsquo;s lineup depth.
                 </p>
                 <p>
-                  TCU&rsquo;s 11-spot drop from No. 7 to No. 18 is the largest single-week fall of the young season, and it rewrites how we should read their Shriners results. Beating ranked teams in one-run games at a neutral site demonstrated competitiveness. Getting swept by 22 aggregate runs at someone else&rsquo;s park demonstrated the gap between competing and contending. Lucas Franco, the Big 12 Preseason Freshman of the Year who looked electric in Arlington, went quiet against UCLA&rsquo;s rotation. The question for Kirk Saarloos&rsquo;s staff isn&rsquo;t whether they can play tight games &mdash; they proved that in Week 1. The question is whether they have a second gear when the opponent has one they can&rsquo;t match.
+                  TCU&rsquo;s 11-spot drop from No. 7 to No. 18 is the largest single-week fall of the young season, and it rewrites how we should read their Shriners results. Beating ranked teams in one-run games at a neutral site demonstrated competitiveness. Getting swept by 22 aggregate runs at someone else&rsquo;s park demonstrated the gap between competing and contending. The rotation unraveled &mdash; starter Mason Brassfield was knocked out after 1.2 innings in Game 1, and ace Tommy LaPour was unavailable due to elbow soreness. The question for Kirk Saarloos&rsquo;s staff isn&rsquo;t whether they can play tight games &mdash; they proved that in Week 1. The question is whether they have the pitching depth to survive when their top arm is out and the opponent&rsquo;s lineup doesn&rsquo;t let up.
                 </p>
               </div>
             </ScrollReveal>
@@ -186,7 +186,7 @@ export default function Weekend2RecapPage() {
                   The Amegy Bank College Baseball Series at Globe Life Field produced its own clarity. Auburn went 3&ndash;0, beating Kansas State 5&ndash;1, No. 16 Florida State 8&ndash;5, and No. 15 Louisville 10&ndash;6. The win against Kansas State was methodical &mdash; <strong className="text-white font-semibold">Jake Marciano</strong> threw 6.0 innings of shutout baseball with zero walks and 8 strikeouts. The wins against Florida State and Louisville were chaotic, decided by Auburn&rsquo;s willingness to manufacture runs across multiple phases of the game rather than relying on one big inning.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Bristol Carter</strong> was named Most Outstanding Player of the event: 6 hits, 7 runs scored, 3 walks, 3 stolen bases, and 2 RBI across three games. Carter&rsquo;s value wasn&rsquo;t in power production &mdash; it was in pressure. He got on base, advanced, and forced defensive decisions that compounded into runs. That&rsquo;s the kind of player who changes how a lineup functions, because the defense can never settle in when he&rsquo;s moving.
+                  <strong className="text-white font-semibold">Bristol Carter</strong> was named Most Outstanding Player of the event: 6 hits, 7 runs scored, 3 walks, 2 stolen bases, and 2 RBI across three games. Carter&rsquo;s value wasn&rsquo;t in power production &mdash; it was in pressure. He got on base, advanced, and forced defensive decisions that compounded into runs. That&rsquo;s the kind of player who changes how a lineup functions, because the defense can never settle in when he&rsquo;s moving.
                 </p>
                 <p>
                   Auburn climbed from No. 9 to No. 7, and the trajectory matters more than the two spots. Butch Thompson&rsquo;s club is 6&ndash;1 with wins over two ranked opponents at a neutral site. Louisville, which lost its home opener to Michigan State in Week 1, now has losses to both the Spartans and Auburn in the first two weekends &mdash; and dropped out of the Top 25 entirely. Florida State fell from No. 16 to No. 21. The Globe Life Field results are doing real damage to the teams that can&rsquo;t match Auburn&rsquo;s combination of starting pitching depth and lineup versatility.
@@ -231,10 +231,10 @@ export default function Weekend2RecapPage() {
             <ScrollReveal direction="up" delay={50}>
               <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
                 <p>
-                  <strong className="text-white font-semibold">Kent State 2, No. 13 Tennessee 1.</strong> The Vols went 0-for-15 with runners in scoring position in Saturday&rsquo;s loss. Zero for fifteen. That&rsquo;s not a cold streak &mdash; that&rsquo;s a lineup that couldn&rsquo;t make an adjustment when the opposing staff took away the pull side. Tennessee had opened the weekend with a 4&ndash;3 win Friday, rescued by <strong className="text-white font-semibold">Tyler Myatt&rsquo;s</strong> 434-foot pinch-hit walk-off home run. Then dropped Game 3 as well, 9&ndash;5. The Vols fell from No. 13 to No. 20 &mdash; a 7-spot drop that signals the Josh Elander era&rsquo;s first real turbulence. The Lindsey Nelson crowd that set attendance records in Week 1 watched a team that couldn&rsquo;t execute with runners on. That gap between situational hitting and raw offensive talent is what conference play exposes.
+                  <strong className="text-white font-semibold">Kent State 2, No. 13 Tennessee 1.</strong> The Vols went 0-for-15 with runners on base in Saturday&rsquo;s loss. Zero for fifteen. That&rsquo;s not a cold streak &mdash; that&rsquo;s a lineup that couldn&rsquo;t make an adjustment when the opposing staff took away the pull side. Tennessee had opened the weekend with a 4&ndash;3 win Friday, rescued by <strong className="text-white font-semibold">Tyler Myatt&rsquo;s</strong> 434-foot pinch-hit walk-off home run. Then dropped Game 3 as well, 9&ndash;5. The Vols fell from No. 13 to No. 20 &mdash; a 7-spot drop that signals the Josh Elander era&rsquo;s first real turbulence. The Lindsey Nelson crowd that set attendance records in Week 1 watched a team that couldn&rsquo;t execute with runners on. That gap between situational hitting and raw offensive talent is what conference play exposes.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Evansville shut out No. 18 Kentucky</strong> in the first game of a doubleheader. Kentucky won the series 2&ndash;1, but a shutout loss to an MVC opponent at home is the kind of result that tells you the floor isn&rsquo;t as stable as the record suggests. The Wildcats dropped from No. 18 to No. 22. They&rsquo;re still playing without shortstop Tyler Bell, the projected first-round pick who went down with a shoulder injury in Week 1. Bell&rsquo;s absence doesn&rsquo;t explain a shutout &mdash; he plays defense, not all nine positions &mdash; but it explains the margin for error shrinking in a lineup that can&rsquo;t absorb a zero without its best hitter.
+                  <strong className="text-white font-semibold">Evansville shut out No. 18 Kentucky</strong> in the second game of a doubleheader. Kentucky won the series 2&ndash;1, but a shutout loss to an MVC opponent at home is the kind of result that tells you the floor isn&rsquo;t as stable as the record suggests. The Wildcats dropped from No. 18 to No. 22. They&rsquo;re still playing without shortstop Tyler Bell, the projected first-round pick who went down with a shoulder injury in Week 1. Bell&rsquo;s absence doesn&rsquo;t explain a shutout &mdash; he plays defense, not all nine positions &mdash; but it explains the margin for error shrinking in a lineup that can&rsquo;t absorb a zero without its best hitter.
                 </p>
                 <p>
                   <strong className="text-white font-semibold">Illinois 14, No. 9 Coastal Carolina 5</strong> at the Battle at the Beach showed cracks in a Chanticleers team that allowed just 4 runs total in Week 1. Coastal still won the weekend&rsquo;s other games, but a 14-run loss to an unranked Big Ten opponent is the kind of variance that drops you from No. 6 to No. 9. When your pitching staff gives up 14, the bullpen is the story &mdash; and Coastal&rsquo;s middle relief couldn&rsquo;t stop the bleeding once the dam broke.
@@ -285,7 +285,7 @@ export default function Weekend2RecapPage() {
                 </table>
               </div>
               <p className="font-mono text-[10px] tracking-wider uppercase text-white/30 mt-3">
-                Dropped out: Louisville (prev. 15, 2-4)
+                Dropped out: Louisville (prev. 15) &middot; Virginia &middot; Arizona
               </p>
             </ScrollReveal>
           </Container>
@@ -308,7 +308,7 @@ export default function Weekend2RecapPage() {
                   <strong className="text-white font-semibold">Ruger Riojas</strong> set the tone Friday with 6 innings, 1 earned run, and 10 strikeouts. Riojas was a reliever last season. His conversion to a starting role is one of the most consequential development stories in college baseball right now &mdash; when your former bullpen arm can give you 6 innings with 10 strikeouts on Fridays, it lengthens the entire pitching staff and lets your actual relievers work shorter, higher-leverage outings.
                 </p>
                 <p>
-                  Sunday was <strong className="text-white font-semibold">Dylan Volantis</strong> at his best: 7 innings, 0 earned runs, 9 strikeouts (career high). The 2025 SEC Freshman of the Year who opened with 7 IP, 1 H, 8 K against UC Davis in Week 1 has now thrown 14 innings to start the season with 17 strikeouts and 1 earned run. Texas is 7&ndash;0 without needing a signature comeback or a dramatic walk-off. They&rsquo;re winning by controlling the game from the first inning &mdash; starters going deep, defense holding, and just enough offense to put it away. That profile might not generate headlines, but it&rsquo;s the profile that travels in March.
+                  Sunday was <strong className="text-white font-semibold">Dylan Volantis</strong> at his best: 7 innings, 0 earned runs, 9 strikeouts (career high). The 2025 SEC Freshman of the Year who opened with 7 IP, 1 H, 8 K against UC Davis in Week 1 has now thrown 14 innings to start the season with 17 strikeouts and zero earned runs. Texas is 7&ndash;0 without needing a signature comeback or a dramatic walk-off. They&rsquo;re winning by controlling the game from the first inning &mdash; starters going deep, defense holding, and just enough offense to put it away. That profile might not generate headlines, but it&rsquo;s the profile that travels in March.
                 </p>
               </div>
             </ScrollReveal>
@@ -326,10 +326,10 @@ export default function Weekend2RecapPage() {
             <ScrollReveal direction="up" delay={50}>
               <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
                 <p>
-                  Four programs remain unbeaten after two weekends, and the shape of each unbeaten record tells you something different about what&rsquo;s sustainable.
+                  Ten ranked programs remain unbeaten after two weekends. Mississippi State, Georgia Tech, Florida, Oklahoma, Clemson, and Texas A&amp;M are all unblemished &mdash; but the four unbeaten records that tell you the most about what&rsquo;s coming are these.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Miami (FL) at 9&ndash;0</strong> has the most dominant aggregate: 144 runs scored, 37 allowed. That 3.9-to-1 ratio is absurd even against a soft early schedule. The Hurricanes are hitting from every spot in the order, and Alex Sosa&rsquo;s power emergence &mdash; he already has multiple multi-homer games &mdash; gives them a middle-of-the-lineup anchor. Miami climbed from No. 23 to No. 17 and should keep climbing if the run production holds against better pitching.
+                  <strong className="text-white font-semibold">Miami (FL) at 9&ndash;0</strong> has the most dominant aggregate: 144 runs scored, 39 allowed. That 3.7-to-1 ratio is absurd even against a soft early schedule. The Hurricanes are hitting from every spot in the order, and Alex Sosa&rsquo;s power emergence &mdash; he already has multiple multi-homer games &mdash; gives them a middle-of-the-lineup anchor. Miami climbed from No. 23 to No. 17 and should keep climbing if the run production holds against better pitching.
                 </p>
                 <p>
                   <strong className="text-white font-semibold">Ole Miss at 8&ndash;0</strong> swept Missouri State 11&ndash;6, 6&ndash;3, 3&ndash;2 to enter the Top 25 at No. 25. Austin Fawley&rsquo;s grand slam in the opener and Judd Utermark&rsquo;s multi-homer performances have given Mike Bianco&rsquo;s club its best start since 2018. The concern: two of the three wins were decided by 3 runs or fewer, which means the Rebels are winning close games against a non-conference opponent. That works until it doesn&rsquo;t &mdash; but the fact that they won all three, including a one-run Sunday game, shows a roster that knows how to finish.
@@ -359,16 +359,16 @@ export default function Weekend2RecapPage() {
                   The <strong className="text-white font-semibold">Amegy Bank College Baseball Series returns to Globe Life Field</strong> (Feb. 27&ndash;Mar. 1) with a round-robin featuring No. 1 UCLA, No. 4 Mississippi State, No. 20 Tennessee, No. 23 Texas A&amp;M, Arizona State, and Virginia Tech. The matchups that matter most:
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">No. 1 UCLA vs. No. 20 Tennessee</strong> (Friday, 4 PM CT) is the weekend&rsquo;s most revealing game. Tennessee needs a quality win to arrest a 7-spot slide, and UCLA just proved at TCU&rsquo;s expense what happens when elite talent meets a team in transition. If Tennessee goes 0-for-15 with RISP again against UCLA&rsquo;s rotation, the Elander era&rsquo;s first real crisis becomes the story. If the Vols can solve UCLA&rsquo;s arms, it tells you the Kent State loss was an aberration, not a pattern.
+                  <strong className="text-white font-semibold">No. 1 UCLA vs. No. 20 Tennessee</strong> (Friday, 3 PM CT) is the weekend&rsquo;s most revealing game. Tennessee needs a quality win to arrest a 7-spot slide, and UCLA just proved at TCU&rsquo;s expense what happens when elite talent meets a team in transition. If the Vols go hitless with runners on again against UCLA&rsquo;s rotation, the Elander era&rsquo;s first real crisis becomes the story. If they can solve UCLA&rsquo;s arms, it tells you the Kent State loss was an aberration, not a pattern.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">No. 23 Texas A&amp;M vs. No. 1 UCLA</strong> (Saturday, 8 PM CT) tests whether the Aggies&rsquo; offensive production &mdash; 38 runs in their first two games, Sorrell earning SEC Player of the Week honors &mdash; can translate against the best pitching staff in the country. UCLA has now outscored its last ranked opponent 30&ndash;8. Texas A&amp;M needs to prove it can score against arms that live in the low-to-mid 90s with multiple secondaries.
+                  <strong className="text-white font-semibold">No. 23 Texas A&amp;M vs. No. 1 UCLA</strong> (Saturday, 7 PM CT) tests whether the Aggies&rsquo; offensive production &mdash; Sorrell earning SEC Player of the Week honors &mdash; can translate against the best pitching staff in the country. UCLA has now outscored its last ranked opponent 30&ndash;8. Texas A&amp;M needs to prove it can score against arms that live in the low-to-mid 90s with multiple secondaries.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">No. 1 UCLA vs. No. 4 Mississippi State</strong> (Sunday, 3:30 PM CT) is the de facto headliner of the weekend. Both teams are unbeaten. Brian O&rsquo;Connor&rsquo;s club hasn&rsquo;t faced a lineup like UCLA&rsquo;s yet. This is the kind of mid-February game that rewrites preseason projections &mdash; whoever wins will own the strongest non-conference r&eacute;sum&eacute; in the sport entering March.
+                  <strong className="text-white font-semibold">No. 1 UCLA vs. No. 4 Mississippi State</strong> (Sunday, 2:30 PM CT) is the de facto headliner of the weekend. Both teams are unbeaten. Brian O&rsquo;Connor&rsquo;s club hasn&rsquo;t faced a lineup like UCLA&rsquo;s yet. This is the kind of late-February game that rewrites preseason projections &mdash; whoever wins will own the strongest non-conference r&eacute;sum&eacute; in the sport entering March.
                 </p>
                 <p>
-                  Outside Arlington, the ACC opens conference play for some programs. <strong className="text-white font-semibold">Louisville at No. 8 North Carolina</strong> is a test of whether the Cardinals can stop the bleeding after falling out of the Top 25 entirely. Louisville hasn&rsquo;t lost three straight weekends to open a season since the program&rsquo;s early days in the ACC. UNC is 6&ndash;0 and ascending. <strong className="text-white font-semibold">No. 21 Florida State at No. 16 Wake Forest</strong> matches two teams headed in opposite directions in the poll &mdash; FSU down 5, Wake Forest up 6. The winner establishes early ACC positioning that compounds through the league schedule.
+                  The Globe Life round-robin also features Arizona State and Virginia Tech, giving six teams three games apiece at a neutral site with real stakes. The teams that come out of Arlington 3&ndash;0 will carry non-conference r&eacute;sum&eacute;s that hold up through Selection Monday. The teams that stumble will spend March trying to recover ground they gave away in February.
                 </p>
               </div>
             </ScrollReveal>
@@ -385,7 +385,7 @@ export default function Weekend2RecapPage() {
                 </div>
                 <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">
                   <p>
-                    Weekend 2 separated the teams playing to a standard from the teams playing to a schedule. UCLA didn&rsquo;t just sweep TCU &mdash; it eliminated ambiguity about who owns the No. 1 ranking and why. Cholowsky&rsquo;s 5-home-run series against a ranked opponent is the kind of individual performance that resets how the entire draft class is evaluated. Auburn&rsquo;s 3&ndash;0 run through Globe Life, built on Marciano&rsquo;s dominance and Carter&rsquo;s manufacturing, announced a team that can win in multiple shapes. And two cycles &mdash; Kozeal in a walk-off, Robbins in a tight game &mdash; reminded everyone that the best individual performances in college baseball happen when they matter, not when the scoreboard has already decided the outcome.
+                    Weekend 2 separated the teams playing to a standard from the teams playing to a schedule. UCLA didn&rsquo;t just sweep TCU &mdash; it eliminated ambiguity about who owns the No. 1 ranking and why. Cholowsky and Gasparino combining for 6 home runs and 16 RBI against a ranked opponent is the kind of lineup performance that resets how the No. 1 ranking is evaluated. Auburn&rsquo;s 3&ndash;0 run through Globe Life, built on Marciano&rsquo;s dominance and Carter&rsquo;s manufacturing, announced a team that can win in multiple shapes. And two cycles &mdash; Kozeal in a walk-off, Robbins in a tight game &mdash; reminded everyone that the best individual performances in college baseball happen when they matter, not when the scoreboard has already decided the outcome.
                   </p>
                   <p>
                     Weekend 3 brings the question that February can only ask but never fully answer: when the best teams face each other at a neutral site with real stakes, does the depth that won non-conference series hold up? Globe Life will tell us. And the answer will shape the national picture from March through Omaha.

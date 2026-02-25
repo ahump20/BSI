@@ -111,8 +111,8 @@ function buildPitchingRows(p1Stats: PlayerInfo['statistics'], p2Stats: PlayerInf
 
 function buildRadarData(
   rows: StatRow[],
-  p1Name: string,
-  p2Name: string
+  _p1Name: string,
+  _p2Name: string
 ): Array<{ stat: string; player1: number; player2: number; fullMark: number }> {
   return rows
     .filter((r) => r.format === 'decimal3' || r.format === 'decimal2' || ['HR', 'RBI', 'K', 'SV', 'W', 'SB'].includes(r.label))
