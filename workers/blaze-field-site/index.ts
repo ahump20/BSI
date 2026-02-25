@@ -122,8 +122,10 @@ export default {
   },
 };
 
-const AGENT_EVENTS_KEY = 'agent:events';
-const MAX_EVENTS = 100;
+const SESSION_KEY_PREFIX = 'agent:session:';
+const SESSION_INDEX_KEY = 'agent:sessions';
+const MAX_EVENTS_PER_SESSION = 20;
+const MAX_SESSIONS = 20;
 const EVENT_TTL = 3600; // 1 hour
 
 interface AgentEvent {
@@ -136,6 +138,11 @@ interface AgentEvent {
   receivedAt: string;
 }
 
+interface SessionEntry {
+  id: string;
+  lastSeen: string;
+}
+
 const API_HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
@@ -146,7 +153,6 @@ async function handleEventIngest(request: Request, env: Env): Promise<Response> 
   try {
     const body = await request.json() as Record<string, unknown>;
 
-    // Validate required fields
     if (!body.type || !body.agentId) {
       return new Response(JSON.stringify({ error: 'Missing required fields: type, agentId' }), {
         status: 400,
@@ -154,29 +160,44 @@ async function handleEventIngest(request: Request, env: Env): Promise<Response> 
       });
     }
 
+    const sessionId = body.sessionId ? String(body.sessionId) : String(body.agentId);
+
     const event: AgentEvent = {
       type: String(body.type),
       agentId: String(body.agentId),
       agentName: String(body.agentName || body.agentId),
-      sessionId: body.sessionId ? String(body.sessionId) : undefined,
+      sessionId,
       timestamp: String(body.timestamp || new Date().toISOString()),
       data: typeof body.data === 'object' && body.data !== null ? body.data as Record<string, unknown> : undefined,
       receivedAt: new Date().toISOString(),
     };
 
-    // Read existing events, append, trim to MAX_EVENTS
-    const existing = await env.MONITOR_KV.get(AGENT_EVENTS_KEY, 'json') as AgentEvent[] | null;
+    // 1. Append to per-session key (strongly consistent get, no cross-session races)
+    const sessionKey = `${SESSION_KEY_PREFIX}${sessionId}`;
+    const existing = await env.MONITOR_KV.get<AgentEvent[]>(sessionKey, 'json');
     const events = existing ?? [];
     events.push(event);
+    const trimmed = events.slice(-MAX_EVENTS_PER_SESSION);
 
-    // Keep only the most recent MAX_EVENTS
-    const trimmed = events.slice(-MAX_EVENTS);
+    // 2. Update session index (tracks which sessions exist)
+    const index = await env.MONITOR_KV.get<SessionEntry[]>(SESSION_INDEX_KEY, 'json') ?? [];
+    const entry = index.find(s => s.id === sessionId);
+    if (entry) {
+      entry.lastSeen = event.receivedAt;
+    } else {
+      index.push({ id: sessionId, lastSeen: event.receivedAt });
+    }
+    // Keep most recent sessions, evict oldest
+    index.sort((a, b) => b.lastSeen.localeCompare(a.lastSeen));
+    const trimmedIndex = index.slice(0, MAX_SESSIONS);
 
-    await env.MONITOR_KV.put(AGENT_EVENTS_KEY, JSON.stringify(trimmed), {
-      expirationTtl: EVENT_TTL,
-    });
+    // 3. Write both in parallel
+    await Promise.all([
+      env.MONITOR_KV.put(sessionKey, JSON.stringify(trimmed), { expirationTtl: EVENT_TTL }),
+      env.MONITOR_KV.put(SESSION_INDEX_KEY, JSON.stringify(trimmedIndex), { expirationTtl: EVENT_TTL }),
+    ]);
 
-    return new Response(JSON.stringify({ ok: true, count: trimmed.length }), {
+    return new Response(JSON.stringify({ ok: true, session: sessionId, count: trimmed.length }), {
       status: 200,
       headers: API_HEADERS,
     });
@@ -189,13 +210,27 @@ async function handleEventIngest(request: Request, env: Env): Promise<Response> 
 }
 
 async function handleAgentEvents(env: Env): Promise<Response> {
-  const parsed = await env.MONITOR_KV.get<AgentEvent[]>(AGENT_EVENTS_KEY, 'json');
-  if (!parsed) {
+  // Read the session index (specific key = strongly consistent)
+  const index = await env.MONITOR_KV.get<SessionEntry[]>(SESSION_INDEX_KEY, 'json');
+  if (!index?.length) {
     return new Response(JSON.stringify({ events: [], count: 0 }), {
       headers: API_HEADERS,
     });
   }
-  return new Response(JSON.stringify({ events: parsed, count: parsed.length }), {
+
+  // Fetch all session event arrays in parallel (specific keys = strongly consistent)
+  const reads = index.map(s => env.MONITOR_KV.get<AgentEvent[]>(`${SESSION_KEY_PREFIX}${s.id}`, 'json'));
+  const results = await Promise.all(reads);
+
+  const allEvents: AgentEvent[] = [];
+  for (const sessionEvents of results) {
+    if (sessionEvents) allEvents.push(...sessionEvents);
+  }
+
+  allEvents.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  const capped = allEvents.slice(0, 100);
+
+  return new Response(JSON.stringify({ events: capped, count: capped.length }), {
     headers: API_HEADERS,
   });
 }
