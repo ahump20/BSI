@@ -18,7 +18,7 @@ function createMockKV() {
   };
 }
 
-/** Minimal D1 mock — supports prepare().bind().first() and prepare().bind().all() */
+/** Minimal D1 mock — supports prepare().bind().first/all/run and prepare().first/all/run */
 function createMockD1(responses: Record<string, { results?: any[]; first?: any }> = {}) {
   return {
     prepare: vi.fn((sql: string) => {
@@ -31,12 +31,15 @@ function createMockD1(responses: Record<string, { results?: any[]; first?: any }
         }
       }
 
+      const resultMethods = {
+        first: vi.fn(async () => matched?.first ?? null),
+        all: vi.fn(async () => ({ results: matched?.results ?? [] })),
+        run: vi.fn(async () => ({ success: true })),
+      };
+
       return {
-        bind: vi.fn((..._args: any[]) => ({
-          first: vi.fn(async () => matched?.first ?? null),
-          all: vi.fn(async () => ({ results: matched?.results ?? [] })),
-          run: vi.fn(async () => ({ success: true })),
-        })),
+        ...resultMethods,
+        bind: vi.fn((..._args: any[]) => resultMethods),
       };
     }),
     batch: vi.fn(async (stmts: any[]) => stmts.map(() => ({ success: true }))),
@@ -138,17 +141,23 @@ describe('bsi-cbb-analytics', () => {
           total_hr: 300, total_er: 2000, n: 150,
         },
       },
-      // Batting query
+      // Batting player query (computeBatting)
       'at_bats, hits, doubles': { results: [sampleBatter] },
-      // Pitching query
-      'innings_pitched_thirds': { results: [samplePitcher] },
+      // Pitching player query (computePitching) — must not collide with SUM() above
+      'strikeouts_pitch, walks_pitch, home_runs_allowed': { results: [samplePitcher] },
       // Top 50 leaderboard queries
       'ORDER BY woba DESC': { results: [] },
       'ORDER BY fip ASC': { results: [] },
-      // Park factors / conference strength
+      // Park factors: team list + processed_games home/away/cross-conf
       'DISTINCT team': { results: [{ team: 'Test U', team_id: 't1' }] },
+      'home_team_id as team_id': { results: [] },
+      'away_team_id as team_id': { results: [] },
+      // Conference strength queries
       'AVG(woba)': { results: [{ conference: 'SEC', avg_woba: 0.350, avg_ops: 0.800, n: 10 }] },
       'AVG(era)': { results: [{ conference: 'SEC', avg_era: 4.20 }] },
+      'home_team_id, away_team_id, home_score': { results: [] },
+      // League context D1 persist (INSERT OR REPLACE INTO cbb_league_context)
+      'cbb_league_context': { results: [] },
     });
 
     const mod = await import('../../workers/bsi-cbb-analytics/index');
