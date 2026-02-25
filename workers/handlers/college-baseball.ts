@@ -15,17 +15,20 @@ import type {
   HighlightlyPlayerStats,
   HighlightlyBoxScore,
 } from '../../lib/api-clients/highlightly-api';
-import { teamMetadata } from '../../lib/data/team-metadata';
+import { teamMetadata, getLogoUrl } from '../../lib/data/team-metadata';
 import { getLeaders, getScoreboard, getGameSummary } from '../../lib/api-clients/espn-api';
 
 /**
  * ESPN doesn't include conference in scoreboard responses.
  * Build a lowercase display name → conference lookup from teamMetadata.
+ * Also build espnId → metadata lookup for standings conference filtering.
  */
 const conferenceByName: Record<string, string> = {};
-for (const meta of Object.values(teamMetadata)) {
+const metaByEspnId: Record<string, { slug: string; conference: string; logoId?: string; espnId: string; shortName: string }> = {};
+for (const [slug, meta] of Object.entries(teamMetadata)) {
   conferenceByName[meta.name.toLowerCase()] = meta.conference;
   conferenceByName[meta.shortName.toLowerCase()] = meta.conference;
+  metaByEspnId[meta.espnId] = { slug, conference: meta.conference, logoId: meta.logoId, espnId: meta.espnId, shortName: meta.shortName };
 }
 function lookupConference(displayName: string): string {
   if (!displayName) return '';
@@ -605,7 +608,7 @@ export async function handleCollegeBaseballStandings(
   env: Env
 ): Promise<Response> {
   const conference = url.searchParams.get('conference') || 'NCAA';
-  const cacheKey = `cb:standings:v2:${conference}`;
+  const cacheKey = `cb:standings:v3:${conference}`;
   const now = new Date().toISOString();
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
@@ -638,17 +641,78 @@ export async function handleCollegeBaseballStandings(
     }
   }
 
+  // ESPN v2 returns all D1 teams in a flat list — filter by conference here
   const client = getCollegeClient();
   const result = await client.getStandings(conference);
-  const data = Array.isArray(result.data) ? result.data : [];
-  const payload = wrap(data, 'ncaa', result.timestamp);
 
-  if (result.success) {
-    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+  if (!result.success || !Array.isArray(result.data)) {
+    const payload = wrap([], 'ncaa', result.timestamp);
+    return cachedJson(payload, 502, HTTP_CACHE.standings, {
+      ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
+    });
   }
 
-  return cachedJson(payload, result.success ? 200 : 502, HTTP_CACHE.standings, {
-    ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
+  // Filter teams by conference using team-metadata.ts espnId → conference mapping
+  const entries = result.data as Array<Record<string, unknown>>;
+  const filtered = conference === 'NCAA'
+    ? entries
+    : entries.filter((entry) => {
+        const team = (entry.team as Record<string, unknown>) || {};
+        const teamId = String(team.id ?? '');
+        const meta = metaByEspnId[teamId];
+        if (meta) return meta.conference === conference;
+        // Fallback: match by display name
+        const name = (team.displayName as string) ?? '';
+        return lookupConference(name) === conference;
+      });
+
+  // Transform into TeamStanding shape expected by the UI
+  const standings = filtered.map((entry, index) => {
+    const team = (entry.team as Record<string, unknown>) || {};
+    const teamId = String(team.id ?? '');
+    const meta = metaByEspnId[teamId];
+    const wins = Number(entry.wins ?? 0);
+    const losses = Number(entry.losses ?? 0);
+    const winPct = Number(entry.winPercent ?? 0);
+    const leagueWinPct = Number(entry.leagueWinPercent ?? 0);
+
+    // ESPN v2 standings provides leagueWinPercent but no raw conference W-L.
+    // Show the percentage directly rather than deriving bogus W-L numbers.
+
+    const logo = meta
+      ? getLogoUrl(meta.espnId, meta.logoId)
+      : (team.logo as string) ?? '';
+
+    return {
+      rank: index + 1,
+      team: {
+        id: meta?.slug ?? teamId,
+        name: (team.displayName as string) ?? '',
+        shortName: meta?.shortName ?? (team.abbreviation as string) ?? '',
+        logo,
+      },
+      conferenceRecord: { wins: 0, losses: 0, pct: leagueWinPct },
+      overallRecord: { wins, losses },
+      winPct,
+      streak: (entry.streak as string) ?? '',
+      pointDifferential: Number(entry.pointDifferential ?? 0),
+    };
+  });
+
+  // Sort by win percentage desc, then point differential as tiebreaker
+  standings.sort((a, b) => {
+    if (b.winPct !== a.winPct) return b.winPct - a.winPct;
+    return b.pointDifferential - a.pointDifferential;
+  });
+
+  // Re-rank after sorting
+  standings.forEach((s, i) => { s.rank = i + 1; });
+
+  const payload = wrap(standings, 'espn-v2', result.timestamp);
+  await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);
+
+  return cachedJson(payload, 200, HTTP_CACHE.standings, {
+    ...dataHeaders(result.timestamp, 'espn-v2'), 'X-Cache': 'MISS',
   });
 }
 

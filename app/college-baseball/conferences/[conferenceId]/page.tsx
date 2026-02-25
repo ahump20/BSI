@@ -31,6 +31,8 @@ export async function generateStaticParams() {
     { conferenceId: 'southern' },
     { conferenceId: 'summit' },
     { conferenceId: 'wac' },
+    // Independent
+    { conferenceId: 'independent' },
   ];
 }
 

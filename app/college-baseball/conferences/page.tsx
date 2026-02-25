@@ -37,12 +37,6 @@ const conferenceInfo: Record<string, { fullName: string; description: string; re
     region: 'Midwest',
     teams: 18,
   },
-  'Pac-12': {
-    fullName: 'Pacific-12 Conference',
-    description: 'The Pac-12 is rebuilding after losing major programs. Oregon State remains as an anchor.',
-    region: 'West',
-    teams: 4,
-  },
 };
 
 /** Derive ranked team counts and top teams from preseason data (Top 25 only). */
@@ -61,7 +55,7 @@ function buildConferenceStats() {
 }
 
 const confStats = buildConferenceStats();
-const conferenceOrder = ['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12'];
+const conferenceOrder = ['SEC', 'ACC', 'Big 12', 'Big Ten'];
 const conferences = conferenceOrder
   .filter((name) => conferenceInfo[name])
   .map((name) => {
@@ -93,10 +87,11 @@ const confNameToSlug: Record<string, string> = {
   WCC: 'wcc', 'Big West': 'big-west', Southland: 'southland',
   ASUN: 'asun', 'America East': 'america-east', 'Big South': 'big-south', Horizon: 'horizon',
   'Patriot League': 'patriot-league', Southern: 'southern', Summit: 'summit', WAC: 'wac',
+  Independent: 'independent',
 };
 
 /** Derive mid-major/D1 conference data from teamMetadata. */
-const powerConfs = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12']);
+const powerConfs = new Set(['SEC', 'ACC', 'Big 12', 'Big Ten']);
 const midMajorConfs = (() => {
   const confTeams: Record<string, number> = {};
   for (const meta of Object.values(teamMetadata)) {
@@ -154,7 +149,7 @@ export default function ConferencesHubPage() {
                 </Card>
                 <Card padding="md" className="text-center">
                   <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">5</div>
+                  <div className="font-display text-2xl font-bold text-white">4</div>
                   <div className="text-text-tertiary text-sm">Power Conferences</div>
                 </Card>
                 <Card padding="md" className="text-center">

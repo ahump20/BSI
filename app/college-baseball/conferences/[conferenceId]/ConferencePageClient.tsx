@@ -944,14 +944,14 @@ const conferenceData: Record<
     name: 'Mountain West',
     fullName: 'Mountain West Conference',
     description:
-      'The Mountain West lost San Diego State and Fresno State to the Pac-12 but retains competitive programs. Nevada, San Jose State, and UNLV lead the conference. Regional recruiting in California and the Southwest provides a solid talent base, though the conference fights for NCAA Tournament bids.',
+      'The Mountain West lost San Diego State and Fresno State in realignment but retains competitive programs. Nevada, San Jose State, and UNLV lead the conference. Regional recruiting in California and the Southwest provides a solid talent base, though the conference fights for NCAA Tournament bids.',
     region: 'West',
     storylines: [
       'Nevada looks to emerge as conference leader after departures',
       'San Jose State benefits from Bay Area recruiting',
       'UNLV brings strong Vegas recruiting presence',
       'Air Force offers unique military academy baseball experience',
-      'Conference adjusts after losing marquee programs to Pac-12',
+      'Conference adjusts after losing marquee programs in realignment',
     ],
     teams: [
       {
@@ -1632,6 +1632,10 @@ const conferenceSlugMap: Record<string, { name: string; fullName: string; region
     name: 'WAC', fullName: 'Western Athletic Conference', region: 'West',
     description: 'The WAC spans the western United States with programs from Texas to California. Grand Canyon and Sacramento State anchor the conference with strong recruiting in baseball-rich regions.',
   },
+  independent: {
+    name: 'Independent', fullName: 'Independent', region: 'West',
+    description: 'Oregon State competes as an independent after the Pac-12 dissolved its baseball conference in realignment. The Beavers schedule non-conference opponents nationally while maintaining their Corvallis identity and recruiting base.',
+  },
 };
 
 function getAutoConferenceTeams(conferenceId: string) {
@@ -1646,6 +1650,7 @@ function getAutoConferenceTeams(conferenceId: string) {
       fullName: meta.name,
       mascot: meta.mascot,
       espnId: meta.espnId,
+      logoId: meta.logoId,
       colors: meta.colors,
       city: meta.location.city,
       state: meta.location.state,
@@ -1771,7 +1776,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   {auto.teams.map((team) => {
-                    const logoUrl = getLogoUrl(team.espnId);
+                    const logoUrl = getLogoUrl(team.espnId, team.logoId);
                     const rank = preseasonRanks[team.slug];
                     return (
                       <Link key={team.slug} href={`/college-baseball/teams/${team.slug}`}>
@@ -1930,7 +1935,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                     .sort((a, b) => (a.rank || 99) - (b.rank || 99))
                     .map((team) => {
                       const meta = team.slug ? teamMetadata[team.slug] : null;
-                      const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+                      const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
 
                       const card = (
                         <Card
@@ -1997,7 +2002,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 <div className="grid md:grid-cols-2 gap-4">
                   {unrankedTeams.map((team) => {
                     const meta = team.slug ? teamMetadata[team.slug] : null;
-                    const logoUrl = meta ? getLogoUrl(meta.espnId) : null;
+                    const logoUrl = meta ? getLogoUrl(meta.espnId, meta.logoId) : null;
 
                     const card = (
                       <Card
