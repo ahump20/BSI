@@ -29,6 +29,7 @@ const trendTeams = Object.entries(teamMetadata)
     shortName: meta.shortName,
     conference: meta.conference,
     espnId: meta.espnId,
+    logoId: meta.logoId,
   }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -192,7 +193,7 @@ export default function TrendsPage() {
                           }`}
                         >
                           <img
-                            src={getLogoUrl(team.espnId)}
+                            src={getLogoUrl(team.espnId, team.logoId)}
                             alt=""
                             className="w-6 h-6 object-contain"
                             loading="lazy"
