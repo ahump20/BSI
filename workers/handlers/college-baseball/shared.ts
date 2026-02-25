@@ -26,6 +26,9 @@ export { HTTP_CACHE, CACHE_TTL };
 export { teamMetadata, getLogoUrl };
 export { getLeaders, getScoreboard, getGameSummary };
 
+/** Current season — single source of truth for all D1 queries across college-baseball handlers. */
+export const SEASON = 2026;
+
 
 /**
  * ESPN doesn't include conference in scoreboard responses.
@@ -86,8 +89,8 @@ export async function getD1PlayerStats(
   try {
     const row = await env.DB.prepare(
       `SELECT * FROM player_season_stats
-       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
-    ).bind(espnId).first<D1PlayerStats>();
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = ?`
+    ).bind(espnId, SEASON).first<D1PlayerStats>();
 
     if (!row) return null;
 
@@ -175,8 +178,8 @@ export async function enrichTeamWithD1Stats(
                 games_pitch, innings_pitched_thirds, earned_runs,
                 strikeouts_pitch, walks_pitch, hits_allowed
          FROM player_season_stats
-         WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ?`
-      ).bind(tid).all<D1PlayerStats>();
+         WHERE sport = 'college-baseball' AND season = ? AND team_id = ?`
+      ).bind(SEASON, tid).all<D1PlayerStats>();
       if (results && results.length > 0) {
         playerRows = results;
         break;
@@ -342,8 +345,8 @@ export async function queryPlayersFromD1(
   env: Env,
   opts: { search: string; team: string; position: string; sortBy: string; limit: number; offset: number },
 ): Promise<Record<string, unknown>[] | null> {
-  const conditions = [`sport = 'college-baseball'`, `season = 2026`];
-  const binds: (string | number)[] = [];
+  const conditions = [`sport = 'college-baseball'`, `season = ?`];
+  const binds: (string | number)[] = [SEASON];
 
   if (opts.search) {
     conditions.push(`(name LIKE ? OR team LIKE ?)`);
@@ -587,7 +590,7 @@ export async function buildLeaderCategories(env: Env) {
       sql: `SELECT espn_id, name, team, team_id, headshot,
               ROUND(CAST(hits AS REAL) / at_bats, 3) AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats >= 15
             ORDER BY computed_value DESC
             LIMIT 10`,
@@ -598,7 +601,7 @@ export async function buildLeaderCategories(env: Env) {
       abbreviation: 'homeRuns',
       sql: `SELECT espn_id, name, team, team_id, headshot, home_runs AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY home_runs DESC
             LIMIT 10`,
@@ -609,7 +612,7 @@ export async function buildLeaderCategories(env: Env) {
       abbreviation: 'RBIs',
       sql: `SELECT espn_id, name, team, team_id, headshot, rbis AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY rbis DESC
             LIMIT 10`,
@@ -621,7 +624,7 @@ export async function buildLeaderCategories(env: Env) {
       sql: `SELECT espn_id, name, team, team_id, headshot,
               ROUND(CAST(earned_runs AS REAL) * 27 / innings_pitched_thirds, 2) AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND innings_pitched_thirds >= 15
             ORDER BY computed_value ASC
             LIMIT 10`,
@@ -632,7 +635,7 @@ export async function buildLeaderCategories(env: Env) {
       abbreviation: 'strikeouts',
       sql: `SELECT espn_id, name, team, team_id, headshot, strikeouts_pitch AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND innings_pitched_thirds > 0
             ORDER BY strikeouts_pitch DESC
             LIMIT 10`,
@@ -643,7 +646,7 @@ export async function buildLeaderCategories(env: Env) {
       abbreviation: 'hits',
       sql: `SELECT espn_id, name, team, team_id, headshot, hits AS computed_value
             FROM player_season_stats
-            WHERE sport = 'college-baseball' AND season = 2026
+            WHERE sport = 'college-baseball' AND season = ?
               AND at_bats > 0
             ORDER BY hits DESC
             LIMIT 10`,
@@ -653,7 +656,7 @@ export async function buildLeaderCategories(env: Env) {
 
   const categories = [];
   for (const q of queries) {
-    const { results } = await env.DB.prepare(q.sql).all<LeaderRow>();
+    const { results } = await env.DB.prepare(q.sql).bind(SEASON).all<LeaderRow>();
 
     if (results.length === 0) continue;
 

@@ -3,7 +3,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, teamMetadata, getLogoUrl, getD1PlayerStats, queryPlayersFromD1, computeBattingDifferentials, computePitchingDifferentials } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, getLogoUrl, getD1PlayerStats, queryPlayersFromD1, computeBattingDifferentials, computePitchingDifferentials } from './shared';
 import { transformHighlightlyPlayer, transformEspnPlayer } from './transforms';
 
 export async function handleCollegeBaseballPlayer(
@@ -86,8 +86,8 @@ export async function handleCollegeBaseballPlayer(
   try {
     const row = await env.DB.prepare(
       `SELECT * FROM player_season_stats
-       WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
-    ).bind(playerId).first<D1PlayerStats>();
+       WHERE espn_id = ? AND sport = 'college-baseball' AND season = ?`
+    ).bind(playerId, SEASON).first<D1PlayerStats>();
 
     if (row) {
       const d1Stats = await getD1PlayerStats(playerId, env);

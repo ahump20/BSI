@@ -7,7 +7,7 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, HTTP_CACHE, CACHE_TTL, SEASON, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
 
 /**
  * League-wide sabermetric baselines for 2026 college baseball.
@@ -36,8 +36,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(runs) as total_r,
         COUNT(*) as qualified_hitters
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
-    `).first<Record<string, number>>();
+      WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
+    `).bind(SEASON).first<Record<string, number>>();
 
     // When 2B/3B/HBP are mostly 0 (ESPN doesn't provide these in box scores),
     // compute league-wide approximations from stored OBP/SLG.
@@ -48,9 +48,9 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       const players = await env.DB.prepare(`
         SELECT at_bats, hits, home_runs, walks_bat, on_base_pct, slugging_pct
         FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
+        WHERE sport = 'college-baseball' AND season = ? AND at_bats >= 20
           AND on_base_pct > 0 AND slugging_pct > 0
-      `).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
+      `).bind(SEASON).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
 
       let derived2B = 0, derived3B = 0, derivedHBP = 0, derivedSF = 0;
       for (const p of players.results) {
@@ -100,8 +100,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(earned_runs) as total_er,
         COUNT(*) as qualified_pitchers
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds >= 45
-    `).first<Record<string, number>>();
+      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds >= 45
+    `).bind(SEASON).first<Record<string, number>>();
 
     if (!batting || !pitching) {
       return json({ error: 'No qualifying data', meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
@@ -222,9 +222,9 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
       const lookup = await env.DB.prepare(`
         SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
         LIMIT 1
-      `).bind(searchTerm).first<{ team_id: string }>();
+      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
       if (lookup?.team_id) resolvedId = lookup.team_id;
     }
 
@@ -249,18 +249,18 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
              walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat,
              on_base_pct, slugging_pct
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND at_bats >= 20
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND at_bats >= 20
       ORDER BY at_bats DESC
-    `).bind(resolvedId).all<Record<string, unknown>>();
+    `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
     // Qualified pitchers for this team
     const pitchers = await env.DB.prepare(`
       SELECT espn_id, name, position, innings_pitched_thirds, strikeouts_pitch,
              walks_pitch, home_runs_allowed, earned_runs, hits_allowed, games_pitch
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND innings_pitched_thirds >= 45
+      WHERE sport = 'college-baseball' AND season = ? AND team_id = ? AND innings_pitched_thirds >= 45
       ORDER BY innings_pitched_thirds DESC
-    `).bind(resolvedId).all<Record<string, unknown>>();
+    `).bind(SEASON, resolvedId).all<Record<string, unknown>>();
 
     // Compute per-hitter sabermetrics.
     // ESPN college baseball box scores lack 2B/3B/HBP/SF labels.
@@ -486,9 +486,9 @@ export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Respon
       const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
       const lookup = await env.DB.prepare(`
         SELECT team_id FROM player_season_stats
-        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        WHERE sport = 'college-baseball' AND season = ? AND LOWER(team) LIKE LOWER(?)
         LIMIT 1
-      `).bind(searchTerm).first<{ team_id: string }>();
+      `).bind(SEASON, searchTerm).first<{ team_id: string }>();
       if (lookup?.team_id) resolvedId = lookup.team_id;
     }
 
@@ -658,9 +658,9 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
         SUM(home_runs) as total_hr, SUM(walks_bat) as total_bb,
         SUM(strikeouts_bat) as total_k
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats > 0
+      WHERE sport = 'college-baseball' AND season = ? AND at_bats > 0
       GROUP BY team_id, team
-    `).all<Record<string, unknown>>();
+    `).bind(SEASON).all<Record<string, unknown>>();
 
     // Get pitching stats
     const pitching = await env.DB.prepare(`
@@ -671,9 +671,9 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
         SUM(home_runs_allowed) as total_hr,
         SUM(earned_runs) as total_er
       FROM player_season_stats
-      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds > 0
+      WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds > 0
       GROUP BY team_id
-    `).all<Record<string, unknown>>();
+    `).bind(SEASON).all<Record<string, unknown>>();
 
     const pitchingMap = new Map(pitching.results.map((p) => [p.team_id as string, p]));
 
