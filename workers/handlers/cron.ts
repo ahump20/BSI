@@ -17,7 +17,7 @@ import {
   getScoreboard,
   transformScoreboard,
 } from '../../lib/api-clients/espn-api';
-import { processFinishedGames, syncTeamCumulativeStats } from './college-baseball';
+import { processFinishedGames } from './college-baseball';
 import {
   transformSDIOMLBScores,
   transformSDIONFLScores,
@@ -374,9 +374,11 @@ export async function handleScheduled(env: Env): Promise<void> {
         await kvPut(env.KV, ingestGateKey, now, 900); // 15-min TTL
         console.log(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
 
-        // Invalidate leaders cache so next request picks up fresh data
+        // Invalidate caches so next request picks up fresh data + sabermetrics derivation
         if (ingestResult.processed > 0) {
           await env.KV.delete('cb:leaders');
+          await env.KV.delete('cb:saber:league:2026');
+          console.log('[cron] Invalidated leaders + sabermetrics caches after ingest');
         }
       }
     } catch (err) {
@@ -384,44 +386,11 @@ export async function handleScheduled(env: Env): Promise<void> {
     }
   }
 
-  // Cumulative stats sync every 6 hours — authoritative season totals from ESPN
-  // Corrects drift from missed box-score ingests and fills in HBP/SF/2B/3B
-  if (ncaaActive) {
-    try {
-      const syncGateKey = 'cron:cbb:cumulative-sync:last';
-      const lastSync = await kvGet<string>(env.KV, syncGateKey);
-      const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
-      if (!lastSync || lastSync < sixHoursAgo) {
-        // Sync all teams that have teamMetadata entries (SEC + others as expanded)
-        const allTeams = Object.entries(teamMetadata)
-          .map(([slug, meta]) => ({ slug, espnId: meta.espnId, name: meta.name }));
-
-        let synced = 0;
-        let syncErrors = 0;
-        for (const team of allTeams) {
-          try {
-            if (synced > 0) await new Promise((r) => setTimeout(r, 200)); // rate limit
-            await syncTeamCumulativeStats(team.espnId, env);
-            synced++;
-            // Invalidate team-level sabermetrics cache
-            await env.KV.delete(`cb:saber:team:${team.espnId}`);
-            await env.KV.delete(`cb:saber:team:${team.slug}`);
-          } catch {
-            syncErrors++;
-          }
-        }
-
-        // Invalidate league-level caches
-        await env.KV.delete('cb:saber:league:2026');
-        await env.KV.delete('cb:leaders');
-
-        await kvPut(env.KV, syncGateKey, now, 21600); // 6-hour TTL
-        console.log(`[cron] Cumulative sync: ${synced}/${allTeams.length} teams synced, ${syncErrors} errors`);
-      }
-    } catch (err) {
-      await logError(env, `cron:cumulative-sync: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-cumulative-sync');
-    }
-  }
+  // NOTE: The full backfill sync (syncTeamCumulativeStats) iterates scoreboards
+  // day-by-day — too expensive for recurring cron. Use the admin endpoint
+  // /api/college-baseball/sync-stats?team=<id>&key=<admin_key> for backfills.
+  // Daily processFinishedGames above now captures OBP/SLG from box scores,
+  // enabling sabermetric derivation of 2B/3B/HBP in downstream handlers.
 
   // Populate search index once per day (gated by KV timestamp)
   try {

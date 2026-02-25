@@ -2471,18 +2471,31 @@ export async function processFinishedGames(
 
             if (isBatting && stats.length > 0) {
               // Batting labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG']
+              // NOTE: ESPN college baseball box scores do NOT include 2B, 3B, HBP, SF labels.
+              // OBP and SLG at position 10/11 are SEASON averages (university-reported),
+              // stored here and used by sabermetrics handlers to derive missing stats.
               const idx = (label: string) => labels.indexOf(label);
               const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
+              const dec = (label: string) => {
+                const i = idx(label);
+                return i >= 0 ? parseFloat(stats[i] || '0') || 0 : 0;
+              };
 
               const ab = num('AB');
               if (ab === 0 && num('R') === 0 && num('H') === 0) continue; // skip DNP entries
 
+              // Season averages from box score — overwrite each game (always latest)
+              const seasonObp = dec('OBP');
+              const seasonSlg = dec('SLG');
+
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
                   (espn_id, season, sport, name, team, team_id, position, headshot,
-                   games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat, stolen_bases, doubles, triples)
+                   games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat,
+                   stolen_bases, doubles, triples, on_base_pct, slugging_pct)
                 VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
-                        1, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
+                        1, ?, ?, ?, ?, ?, ?, ?,
+                        0, 0, 0, ?, ?)
                 ON CONFLICT(espn_id, season, sport) DO UPDATE SET
                   name = excluded.name,
                   team = excluded.team,
@@ -2497,12 +2510,13 @@ export async function processFinishedGames(
                   home_runs = player_season_stats.home_runs + excluded.home_runs,
                   walks_bat = player_season_stats.walks_bat + excluded.walks_bat,
                   strikeouts_bat = player_season_stats.strikeouts_bat + excluded.strikeouts_bat,
-                  doubles = player_season_stats.doubles + excluded.doubles,
-                  triples = player_season_stats.triples + excluded.triples,
+                  on_base_pct = excluded.on_base_pct,
+                  slugging_pct = excluded.slugging_pct,
                   updated_at = datetime('now')
               `).bind(
                 espnId, name, teamName, teamId, position, headshot,
-                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'), num('2B'), num('3B'),
+                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'),
+                seasonObp, seasonSlg,
               ));
             }
 
@@ -2602,230 +2616,245 @@ export async function handleIngestStats(env: Env, dateStr?: string): Promise<Res
 }
 
 // ---------------------------------------------------------------------------
-// Cumulative Stats Sync — authoritative season totals from ESPN
+// Cumulative Stats Sync — backfill from scoreboard game summaries
 // ---------------------------------------------------------------------------
 
 /**
- * Fetches ESPN's team statistics endpoint for a given college baseball team
- * and REPLACES player_season_stats rows with the authoritative cumulative totals.
+ * Backfill player stats for a team by iterating ESPN scoreboards day-by-day
+ * and processing any games that haven't been ingested yet.
  *
- * ESPN's team statistics endpoint returns full batting/pitching lines per player
- * for the entire season — including 2B, 3B, HBP, SF, SB that aren't available
- * in per-game box scores.
+ * ESPN's college baseball coverage is partial (~30% of games have per-player
+ * box score data, concentrated in SEC/Big Ten/ACC home games). For games
+ * ESPN covers, box scores include per-game AB/H/HR/BB/K/R/RBI plus
+ * university-reported season OBP and SLG. The season OBP/SLG enable
+ * sabermetric derivation of 2B/3B/HBP in downstream handlers.
  *
- * Returns { team, playersUpserted, timestamp } or throws on failure.
+ * For games ESPN doesn't cover: scores and team data are available,
+ * but individual player stats are not.
  */
 export async function syncTeamCumulativeStats(
   teamId: string,
   env: Env,
-): Promise<{ team: string; playersUpserted: number; timestamp: string; errors: string[] }> {
+): Promise<{ team: string; gamesProcessed: number; gamesSkipped: number; gamesNoData: number; timestamp: string; errors: string[] }> {
   const now = new Date().toISOString();
   const errors: string[] = [];
+  let gamesProcessed = 0;
+  let gamesSkipped = 0;
+  let gamesNoData = 0;
 
-  // Fetch team statistics from ESPN
-  const statsUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/statistics`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
-  const res = await fetch(statsUrl, { signal: controller.signal });
-  clearTimeout(timeout);
+  // Season start: college baseball typically starts mid-February
+  const seasonStart = '20260214';
+  const today = new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0].replace(/-/g, '');
 
-  if (!res.ok) {
-    throw new Error(`ESPN team stats returned ${res.status} for team ${teamId}`);
-  }
+  // Iterate scoreboards day-by-day to find this team's games
+  const gameIds: Array<{ id: string; date: string }> = [];
+  let currentDate = seasonStart;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = await res.json() as any;
-
-  // ESPN structures this as: { splits: { categories: [...] } } or { results: { stats: { categories: [...] } } }
-  // The categories array contains stat groups (batting, pitching, fielding)
-  // with per-athlete breakdowns.
-  const teamName = data.team?.displayName || data.team?.shortDisplayName || `Team ${teamId}`;
-
-  // Try multiple known ESPN response shapes
-  const splits = data.splits || data.results?.stats || {};
-  const categories = splits.categories || data.categories || [];
-
-  if (!Array.isArray(categories) || categories.length === 0) {
-    throw new Error(`No stat categories found for team ${teamId}. ESPN response keys: ${Object.keys(data).join(', ')}`);
-  }
-
-  const stmts: D1PreparedStatement[] = [];
-  let upsertCount = 0;
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const category of categories as any[]) {
-    const catName = (category.name || category.displayName || '').toLowerCase();
-    const isBatting = catName.includes('batting') || catName.includes('hitting');
-    const isPitching = catName.includes('pitching');
-
-    if (!isBatting && !isPitching) continue;
-
-    // Build stat key → index map from the category's stat definitions
-    const statDefs: Array<{ name: string; abbreviation: string }> = category.stats || [];
-    const statMap: Record<string, number> = {};
-    statDefs.forEach((s, i) => {
-      if (s.abbreviation) statMap[s.abbreviation] = i;
-      if (s.name) statMap[s.name] = i;
-    });
-
-    // Per-athlete stats are in category.athletes (array of { athlete, stats[] })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const athletes: any[] = category.athletes || [];
-
-    for (const entry of athletes) {
-      const athlete = entry.athlete || {};
-      const espnId = String(athlete.id || '');
-      if (!espnId) continue;
-
-      const name = athlete.displayName || athlete.fullName || '';
-      const position = athlete.position?.abbreviation || '';
-      const headshot = athlete.headshot?.href || athlete.headshot || '';
+  while (currentDate <= today) {
+    try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const stats: any[] = entry.stats || [];
+      const scoreboard = await getScoreboard('college-baseball', currentDate) as any;
+      const events = scoreboard?.events || [];
 
-      // Helper to pull a stat value by abbreviation or name
-      const val = (key: string): number => {
-        const idx = statMap[key];
-        if (idx === undefined) return 0;
-        const raw = stats[idx];
-        if (raw === undefined || raw === null || raw === '' || raw === '-') return 0;
-        return parseFloat(String(raw)) || 0;
-      };
+      for (const event of events) {
+        const competitions = event.competitions || [];
+        for (const comp of competitions) {
+          const competitors = comp.competitors || [];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const isTeamGame = competitors.some((c: any) => String(c.team?.id) === teamId);
+          const isCompleted = comp.status?.type?.completed === true;
 
-      try {
-        if (isBatting) {
-          const ab = Math.round(val('AB'));
-          const h = Math.round(val('H'));
-          const doubles = Math.round(val('2B'));
-          const triples = Math.round(val('3B'));
-          const hr = Math.round(val('HR'));
-          const rbi = Math.round(val('RBI'));
-          const bb = Math.round(val('BB'));
-          const k = Math.round(val('SO') || val('K'));
-          const hbp = Math.round(val('HBP'));
-          const sf = Math.round(val('SF'));
-          const sh = Math.round(val('SH') || val('SAC'));
-          const sb = Math.round(val('SB'));
-          const cs = Math.round(val('CS'));
-          const r = Math.round(val('R'));
-          const tb = Math.round(val('TB') || (h + doubles + 2 * triples + 3 * hr));
-          const obp = val('OBP');
-          const slg = val('SLG');
-
-          if (ab === 0 && h === 0 && bb === 0) continue;
-
-          stmts.push(env.DB.prepare(`
-            INSERT INTO player_season_stats
-              (espn_id, season, sport, name, team, team_id, position, headshot,
-               games_bat, at_bats, runs, hits, doubles, triples, home_runs, rbis,
-               walks_bat, strikeouts_bat, stolen_bases, hit_by_pitch,
-               sacrifice_flies, sacrifice_hits, caught_stealing,
-               total_bases, on_base_pct, slugging_pct, stats_source)
-            VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
-                    0, ?, ?, ?, ?, ?, ?, ?,
-                    ?, ?, ?, ?,
-                    ?, ?, ?,
-                    ?, ?, ?, 'cumulative-sync')
-            ON CONFLICT(espn_id, season, sport) DO UPDATE SET
-              name = excluded.name,
-              team = excluded.team,
-              team_id = excluded.team_id,
-              position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
-              headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
-              at_bats = excluded.at_bats,
-              runs = excluded.runs,
-              hits = excluded.hits,
-              doubles = excluded.doubles,
-              triples = excluded.triples,
-              home_runs = excluded.home_runs,
-              rbis = excluded.rbis,
-              walks_bat = excluded.walks_bat,
-              strikeouts_bat = excluded.strikeouts_bat,
-              stolen_bases = excluded.stolen_bases,
-              hit_by_pitch = excluded.hit_by_pitch,
-              sacrifice_flies = excluded.sacrifice_flies,
-              sacrifice_hits = excluded.sacrifice_hits,
-              caught_stealing = excluded.caught_stealing,
-              total_bases = excluded.total_bases,
-              on_base_pct = excluded.on_base_pct,
-              slugging_pct = excluded.slugging_pct,
-              stats_source = 'cumulative-sync',
-              updated_at = datetime('now')
-          `).bind(
-            espnId, name, teamName, teamId, position, headshot,
-            ab, r, h, doubles, triples, hr, rbi,
-            bb, k, sb, hbp,
-            sf, sh, cs,
-            tb, obp, slg,
-          ));
-          upsertCount++;
+          if (isTeamGame && isCompleted) {
+            const isoDate = currentDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            gameIds.push({ id: String(event.id), date: isoDate });
+          }
         }
-
-        if (isPitching) {
-          const ipStr = String(stats[statMap['IP']] ?? '0');
-          const ipThirds = parseInningsToThirds(ipStr);
-          const hitsAllowed = Math.round(val('H'));
-          const runsAllowed = Math.round(val('R'));
-          const er = Math.round(val('ER'));
-          const bbPitch = Math.round(val('BB'));
-          const kPitch = Math.round(val('SO') || val('K'));
-          const hrAllowed = Math.round(val('HR'));
-          const w = Math.round(val('W'));
-          const l = Math.round(val('L'));
-          const sv = Math.round(val('SV'));
-          const gp = Math.round(val('GP') || val('APP'));
-
-          if (ipThirds === 0 && er === 0) continue;
-
-          stmts.push(env.DB.prepare(`
-            INSERT INTO player_season_stats
-              (espn_id, season, sport, name, team, team_id, position, headshot,
-               games_pitch, innings_pitched_thirds, hits_allowed, runs_allowed,
-               earned_runs, walks_pitch, strikeouts_pitch, home_runs_allowed,
-               wins, losses, saves, stats_source)
-            VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
-                    ?, ?, ?, ?,
-                    ?, ?, ?, ?,
-                    ?, ?, ?, 'cumulative-sync')
-            ON CONFLICT(espn_id, season, sport) DO UPDATE SET
-              name = excluded.name,
-              team = excluded.team,
-              team_id = excluded.team_id,
-              position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
-              headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
-              games_pitch = excluded.games_pitch,
-              innings_pitched_thirds = excluded.innings_pitched_thirds,
-              hits_allowed = excluded.hits_allowed,
-              runs_allowed = excluded.runs_allowed,
-              earned_runs = excluded.earned_runs,
-              walks_pitch = excluded.walks_pitch,
-              strikeouts_pitch = excluded.strikeouts_pitch,
-              home_runs_allowed = excluded.home_runs_allowed,
-              wins = excluded.wins,
-              losses = excluded.losses,
-              saves = excluded.saves,
-              stats_source = 'cumulative-sync',
-              updated_at = datetime('now')
-          `).bind(
-            espnId, name, teamName, teamId, position, headshot,
-            gp, ipThirds, hitsAllowed, runsAllowed,
-            er, bbPitch, kPitch, hrAllowed,
-            w, l, sv,
-          ));
-          upsertCount++;
-        }
-      } catch (err) {
-        errors.push(`${name} (${espnId}): ${err instanceof Error ? err.message : 'parse error'}`);
       }
+    } catch {
+      errors.push(`Scoreboard fetch failed for ${currentDate}`);
     }
+
+    // Increment date by 1 day
+    const d = new Date(currentDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'));
+    d.setDate(d.getDate() + 1);
+    currentDate = d.toISOString().split('T')[0].replace(/-/g, '');
+
+    // Rate limit: 50ms between scoreboard fetches
+    await new Promise((r) => setTimeout(r, 50));
   }
 
-  // Batch upsert (D1 batch limit is 100 statements)
-  for (let i = 0; i < stmts.length; i += 50) {
-    await env.DB.batch(stmts.slice(i, i + 50));
+  if (gameIds.length === 0) {
+    return { team: `Team ${teamId}`, gamesProcessed: 0, gamesSkipped: 0, gamesNoData: 0, timestamp: now, errors };
   }
 
-  return { team: teamName, playersUpserted: upsertCount, timestamp: now, errors };
+  // Check which games are already processed
+  const processedSet = new Set<string>();
+  const PARAM_CHUNK = 80;
+  for (let i = 0; i < gameIds.length; i += PARAM_CHUNK) {
+    const chunk = gameIds.slice(i, i + PARAM_CHUNK);
+    const placeholders = chunk.map(() => '?').join(',');
+    const existing = await env.DB.prepare(
+      `SELECT game_id FROM processed_games WHERE game_id IN (${placeholders})`
+    ).bind(...chunk.map((g) => g.id)).all<{ game_id: string }>();
+    for (const r of existing.results) processedSet.add(r.game_id);
+  }
+
+  // Process each unprocessed game
+  let teamName = `Team ${teamId}`;
+
+  for (const game of gameIds) {
+    if (processedSet.has(game.id)) {
+      gamesSkipped++;
+      continue;
+    }
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const summary = await getGameSummary('college-baseball', game.id) as any;
+      const boxPlayers = summary?.boxscore?.players || [];
+
+      // Check if any team has athlete data (ESPN coverage varies)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hasAthletes = boxPlayers.some((tb: any) =>
+        (tb.statistics || []).some((sg: { athletes?: unknown[] }) => (sg.athletes || []).length > 0)
+      );
+
+      if (!hasAthletes) {
+        gamesNoData++;
+        // Still mark as processed so we don't re-fetch empty games
+        await env.DB.prepare(
+          `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
+        ).bind(game.id, game.date).run();
+        continue;
+      }
+
+      // Process box score — same logic as processFinishedGames
+      const stmts: D1PreparedStatement[] = [];
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const teamBox of boxPlayers as any[]) {
+        const tbName = teamBox.team?.displayName || teamBox.team?.shortDisplayName || '';
+        const tbId = String(teamBox.team?.id || '');
+        if (tbId === teamId) teamName = tbName;
+
+        for (const statGroup of (teamBox.statistics || [])) {
+          const labels: string[] = statGroup.labels || [];
+          const isBatting = labels.includes('AB') || labels.includes('H-AB');
+          const isPitching = labels.includes('IP') || labels.includes('ERA');
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+            const athlete = athleteEntry.athlete || {};
+            const espnId = String(athlete.id || '');
+            if (!espnId) continue;
+
+            const name = athlete.displayName || '';
+            const position = athlete.position?.abbreviation || '';
+            const headshot = athlete.headshot?.href || '';
+            const stats: string[] = athleteEntry.stats || [];
+
+            if (isBatting && stats.length > 0) {
+              const idx = (label: string) => labels.indexOf(label);
+              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
+              const dec = (label: string) => {
+                const i = idx(label);
+                return i >= 0 ? parseFloat(stats[i] || '0') || 0 : 0;
+              };
+
+              const ab = num('AB');
+              if (ab === 0 && num('R') === 0 && num('H') === 0) continue;
+
+              stmts.push(env.DB.prepare(`
+                INSERT INTO player_season_stats
+                  (espn_id, season, sport, name, team, team_id, position, headshot,
+                   games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat,
+                   stolen_bases, doubles, triples, on_base_pct, slugging_pct)
+                VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
+                        1, ?, ?, ?, ?, ?, ?, ?,
+                        0, 0, 0, ?, ?)
+                ON CONFLICT(espn_id, season, sport) DO UPDATE SET
+                  name = excluded.name,
+                  team = excluded.team,
+                  team_id = excluded.team_id,
+                  position = excluded.position,
+                  headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
+                  games_bat = player_season_stats.games_bat + 1,
+                  at_bats = player_season_stats.at_bats + excluded.at_bats,
+                  runs = player_season_stats.runs + excluded.runs,
+                  hits = player_season_stats.hits + excluded.hits,
+                  rbis = player_season_stats.rbis + excluded.rbis,
+                  home_runs = player_season_stats.home_runs + excluded.home_runs,
+                  walks_bat = player_season_stats.walks_bat + excluded.walks_bat,
+                  strikeouts_bat = player_season_stats.strikeouts_bat + excluded.strikeouts_bat,
+                  on_base_pct = excluded.on_base_pct,
+                  slugging_pct = excluded.slugging_pct,
+                  updated_at = datetime('now')
+              `).bind(
+                espnId, name, tbName, tbId, position, headshot,
+                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'),
+                dec('OBP'), dec('SLG'),
+              ));
+            }
+
+            if (isPitching && stats.length > 0) {
+              const idx = (label: string) => labels.indexOf(label);
+              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
+              const ipStr = stats[idx('IP')] || '0';
+              const ipThirds = parseInningsToThirds(ipStr);
+
+              if (ipThirds === 0) continue;
+
+              stmts.push(env.DB.prepare(`
+                INSERT INTO player_season_stats
+                  (espn_id, season, sport, name, team, team_id, position, headshot,
+                   games_pitch, innings_pitched_thirds, hits_allowed, runs_allowed,
+                   earned_runs, walks_pitch, strikeouts_pitch, home_runs_allowed)
+                VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
+                        1, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(espn_id, season, sport) DO UPDATE SET
+                  name = excluded.name,
+                  team = excluded.team,
+                  team_id = excluded.team_id,
+                  position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
+                  headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
+                  games_pitch = player_season_stats.games_pitch + 1,
+                  innings_pitched_thirds = player_season_stats.innings_pitched_thirds + excluded.innings_pitched_thirds,
+                  hits_allowed = player_season_stats.hits_allowed + excluded.hits_allowed,
+                  runs_allowed = player_season_stats.runs_allowed + excluded.runs_allowed,
+                  earned_runs = player_season_stats.earned_runs + excluded.earned_runs,
+                  walks_pitch = player_season_stats.walks_pitch + excluded.walks_pitch,
+                  strikeouts_pitch = player_season_stats.strikeouts_pitch + excluded.strikeouts_pitch,
+                  home_runs_allowed = player_season_stats.home_runs_allowed + excluded.home_runs_allowed,
+                  updated_at = datetime('now')
+              `).bind(
+                espnId, name, tbName, tbId, position, headshot,
+                ipThirds, num('H'), num('R'), num('ER'), num('BB'), num('K'), num('HR'),
+              ));
+            }
+          }
+        }
+      }
+
+      // Mark game as processed
+      stmts.push(env.DB.prepare(
+        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, '', '')`
+      ).bind(game.id, game.date));
+
+      // Batch upsert (D1 limit is 100)
+      for (let i = 0; i < stmts.length; i += 50) {
+        await env.DB.batch(stmts.slice(i, i + 50));
+      }
+
+      gamesProcessed++;
+    } catch (err) {
+      errors.push(`Game ${game.id}: ${err instanceof Error ? err.message : 'unknown error'}`);
+    }
+
+    // Rate limit: 200ms between game summary fetches
+    await new Promise((r) => setTimeout(r, 200));
+  }
+
+  return { team: teamName, gamesProcessed, gamesSkipped, gamesNoData, timestamp: now, errors };
 }
 
 /**
@@ -2858,7 +2887,7 @@ export async function handleCBBBulkSync(
       await env.KV.delete(`cb:saber:team:${singleTeam}`);
       await env.KV.delete('cb:saber:league:2026');
       await env.KV.delete('cb:leaders');
-      return json({ ...result, meta: { source: 'cumulative-sync', timestamp: now } });
+      return json({ ...result, meta: { source: 'backfill-sync', timestamp: now } });
     } catch (err) {
       return json({ error: err instanceof Error ? err.message : 'Sync failed', team: singleTeam }, 500);
     }
@@ -2874,19 +2903,17 @@ export async function handleCBBBulkSync(
       return json({ error: `No teams found for conference: ${conference}` }, 404);
     }
 
-    const results: Array<{ team: string; espnId: string; playersUpserted: number; error?: string }> = [];
+    const results: Array<{ team: string; espnId: string; gamesProcessed: number; gamesNoData: number; error?: string }> = [];
 
     for (const team of teamsInConf) {
       try {
-        // Rate limit: 200ms between teams to avoid ESPN throttling
-        if (results.length > 0) await new Promise((r) => setTimeout(r, 200));
         const result = await syncTeamCumulativeStats(team.espnId, env);
-        results.push({ team: result.team, espnId: team.espnId, playersUpserted: result.playersUpserted });
+        results.push({ team: result.team, espnId: team.espnId, gamesProcessed: result.gamesProcessed, gamesNoData: result.gamesNoData });
         // Invalidate team cache
         await env.KV.delete(`cb:saber:team:${team.espnId}`);
         await env.KV.delete(`cb:saber:team:${team.slug}`);
       } catch (err) {
-        results.push({ team: team.name, espnId: team.espnId, playersUpserted: 0, error: err instanceof Error ? err.message : 'Failed' });
+        results.push({ team: team.name, espnId: team.espnId, gamesProcessed: 0, gamesNoData: 0, error: err instanceof Error ? err.message : 'Failed' });
       }
     }
 
@@ -2894,16 +2921,18 @@ export async function handleCBBBulkSync(
     await env.KV.delete('cb:saber:league:2026');
     await env.KV.delete('cb:leaders');
 
-    const totalUpserted = results.reduce((s, r) => s + r.playersUpserted, 0);
+    const totalProcessed = results.reduce((s, r) => s + r.gamesProcessed, 0);
+    const totalNoData = results.reduce((s, r) => s + r.gamesNoData, 0);
     const errorCount = results.filter((r) => r.error).length;
 
     return json({
       conference,
       teamsProcessed: results.length,
-      totalPlayersUpserted: totalUpserted,
+      totalGamesProcessed: totalProcessed,
+      totalGamesNoData: totalNoData,
       errors: errorCount,
       results,
-      meta: { source: 'cumulative-sync', timestamp: now },
+      meta: { source: 'backfill-sync', timestamp: now },
     });
   }
 
@@ -3061,7 +3090,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
 
   try {
     // Aggregate batting stats for all qualified hitters (20+ AB)
-    // Include HBP and SF for correct PA and wOBA
+    // Include OBP/SLG for per-player derivation of 2B/3B/HBP
     const batting = await env.DB.prepare(`
       SELECT
         SUM(at_bats) as total_ab,
@@ -3078,6 +3107,57 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       FROM player_season_stats
       WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
     `).first<Record<string, number>>();
+
+    // When 2B/3B/HBP are mostly 0 (ESPN doesn't provide these in box scores),
+    // compute league-wide approximations from stored OBP/SLG.
+    // Per-player derivation would be more accurate but is done in the team handler;
+    // the league handler uses aggregate approximation for baselines.
+    if (batting && (batting.total_2b || 0) === 0 && (batting.total_hbp || 0) === 0) {
+      // Fetch per-player data for derivation
+      const players = await env.DB.prepare(`
+        SELECT at_bats, hits, home_runs, walks_bat, on_base_pct, slugging_pct
+        FROM player_season_stats
+        WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
+          AND on_base_pct > 0 AND slugging_pct > 0
+      `).all<{ at_bats: number; hits: number; home_runs: number; walks_bat: number; on_base_pct: number; slugging_pct: number }>();
+
+      let derived2B = 0, derived3B = 0, derivedHBP = 0, derivedSF = 0;
+      for (const p of players.results) {
+        const ab = p.at_bats;
+        const h = p.hits;
+        const hr = p.home_runs;
+        const bb = p.walks_bat;
+        const slg = p.slugging_pct;
+        const obp = p.on_base_pct;
+
+        // Derive TB → 2B/3B
+        if (slg > 0 && ab > 0 && h > hr) {
+          const tb = Math.round(slg * ab);
+          const xb = Math.max(0, tb - h - 3 * hr);
+          const est3B = Math.max(0, Math.round(xb * 0.05));
+          derived3B += est3B;
+          derived2B += Math.max(0, xb - 2 * est3B);
+        }
+
+        // Derive HBP from OBP
+        if (obp > 0 && obp < 1 && ab > 0) {
+          const estHbp = Math.round((obp * (ab + bb) - h - bb) / (1 - obp));
+          if (estHbp > 0) derivedHBP += estHbp;
+          else if (estHbp < 0) {
+            // Negative means SF likely exists
+            for (let trySf = 1; trySf <= 3; trySf++) {
+              const adj = Math.round((obp * (ab + bb + trySf) - h - bb) / (1 - obp));
+              if (adj >= 0) { derivedHBP += adj; derivedSF += trySf; break; }
+            }
+          }
+        }
+      }
+
+      batting.total_2b = derived2B;
+      batting.total_3b = derived3B;
+      batting.total_hbp = derivedHBP;
+      batting.total_sf = derivedSF;
+    }
 
     // Aggregate pitching stats for qualified pitchers (45+ thirds = 15 IP)
     const pitching = await env.DB.prepare(`
@@ -3220,10 +3300,11 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     // wOBA linear weights (MLB-derived, flagged for future D1 calibration)
     const wBB = 0.69, wHBP = 0.72, w1B = 0.89, w2B = 1.24, w3B = 1.56, wHR = 2.01;
 
-    // Qualified hitters for this team — include HBP and SF for correct PA
+    // Qualified hitters — include OBP/SLG for derivation when 2B/3B/HBP unavailable
     const hitters = await env.DB.prepare(`
       SELECT espn_id, name, position, at_bats, hits, doubles, triples, home_runs,
-             walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat
+             walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat,
+             on_base_pct, slugging_pct
       FROM player_season_stats
       WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND at_bats >= 20
       ORDER BY at_bats DESC
@@ -3238,33 +3319,70 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       ORDER BY innings_pitched_thirds DESC
     `).bind(resolvedId).all<Record<string, unknown>>();
 
-    // Compute per-hitter sabermetrics with corrected PA and wOBA (Bugs 4, 5 fix)
+    // Compute per-hitter sabermetrics.
+    // ESPN college baseball box scores lack 2B/3B/HBP/SF labels.
+    // When those columns are 0 but season OBP/SLG exist (university-reported),
+    // derive the missing values:
+    //   TB = round(SLG * AB)  →  2B + 2*3B = TB - H - 3*HR
+    //   HBP ≈ round((OBP*(AB+BB) - H - BB) / (1 - OBP))  (assuming SF≈0)
+    //   ISO = SLG - AVG  (exact from university stats, used as override)
     const hitterStats = hitters.results.map((h) => {
       const ab = Number(h.at_bats || 0);
       const hits = Number(h.hits || 0);
-      const d = Number(h.doubles || 0);
-      const t = Number(h.triples || 0);
+      let d = Number(h.doubles || 0);
+      let t = Number(h.triples || 0);
       const hr = Number(h.home_runs || 0);
       const bb = Number(h.walks_bat || 0);
       const k = Number(h.strikeouts_bat || 0);
-      const hbp = Number(h.hit_by_pitch || 0);
-      const sf = Number(h.sacrifice_flies || 0);
-      const singles = hits - d - t - hr;
+      let hbp = Number(h.hit_by_pitch || 0);
+      let sf = Number(h.sacrifice_flies || 0);
+      const obpStored = Number(h.on_base_pct || 0);
+      const slgStored = Number(h.slugging_pct || 0);
 
-      // Corrected PA = AB + BB + HBP + SF
+      // Derive 2B/3B from SLG when direct data is missing
+      if (d === 0 && t === 0 && slgStored > 0 && ab > 0 && hits > hr) {
+        const tb = Math.round(slgStored * ab);
+        // TB = H + 2B + 2*3B + 3*HR → 2B + 2*3B = TB - H - 3*HR
+        const xb = Math.max(0, tb - hits - 3 * hr);
+        // Triples are ~5% of extra-base hits in college — approximate
+        t = Math.max(0, Math.round(xb * 0.05));
+        d = Math.max(0, xb - 2 * t);
+      }
+
+      // Derive HBP from OBP when direct data is missing
+      if (hbp === 0 && obpStored > 0 && obpStored < 1 && ab > 0) {
+        // OBP = (H + BB + HBP) / (AB + BB + HBP + SF)
+        // Assume SF ≈ 0: HBP = (OBP*(AB+BB) - H - BB) / (1 - OBP)
+        const estHbp = Math.round((obpStored * (ab + bb) - hits - bb) / (1 - obpStored));
+        hbp = Math.max(0, estHbp);
+        // If HBP estimate is negative, OBP might account for SF too — try SF=1,2
+        if (estHbp < 0) {
+          for (let trySf = 1; trySf <= 3; trySf++) {
+            const adjusted = Math.round((obpStored * (ab + bb + trySf) - hits - bb) / (1 - obpStored));
+            if (adjusted >= 0) { hbp = adjusted; sf = trySf; break; }
+          }
+        }
+      }
+
+      const singles = Math.max(0, hits - d - t - hr);
+
+      // PA = AB + BB + HBP + SF
       const pa = ab + bb + hbp + sf;
 
       const babip = (ab - k - hr) > 0 ? (hits - hr) / (ab - k - hr) : 0;
-      const iso = ab > 0 ? (d + 2 * t + 3 * hr) / ab : 0;
+      // ISO: use SLG - AVG when university data available (exact), else compute from hit types
+      const avg = ab > 0 ? hits / ab : 0;
+      const iso = slgStored > 0 && ab > 0
+        ? slgStored - avg
+        : (ab > 0 ? (d + 2 * t + 3 * hr) / ab : 0);
       const kpct = pa > 0 ? k / pa : 0;
       const bbpct = pa > 0 ? bb / pa : 0;
 
-      // Corrected wOBA with HBP and proper denominator
+      // wOBA with derived values
       const woba = pa > 0
         ? (wBB * bb + wHBP * hbp + w1B * singles + w2B * d + w3B * t + wHR * hr) / pa
         : 0;
 
-      // Corrected wRC+ using D1 league data
       // wRC+ = ((wOBA - lgwOBA) / wOBA_scale + lgR/PA) / lgR/PA * 100
       const wrcPlus = lgRunsPerPA > 0
         ? ((woba - lgWoba) / wobaScale + lgRunsPerPA) / lgRunsPerPA * 100
