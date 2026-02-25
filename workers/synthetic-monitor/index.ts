@@ -24,7 +24,7 @@ interface CheckResult {
 const ENDPOINTS = [
   { url: 'https://blazesportsintel.com/', name: 'Homepage' },
   { url: 'https://blazesportsintel.com/api/health', name: 'API Health' },
-  { url: 'https://blazesportsintel.com/api/college-baseball/scoreboard', name: 'CB Scoreboard' },
+  { url: 'https://blazesportsintel.com/api/college-baseball/scores', name: 'CB Scores' },
   { url: 'https://blazesportsintel.com/api/college-baseball/standings?conference=SEC', name: 'CB Standings' },
   { url: 'https://blazesportsintel.com/scores/', name: 'Scores Page' },
 ] as const;
