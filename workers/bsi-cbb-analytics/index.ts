@@ -7,7 +7,7 @@
  *
  * Cron schedule:
  *   - Daily 6 AM CT (11 UTC):  Full recompute of per-player advanced metrics
- *   - Sunday 7 AM CT (12 UTC): Park factor + conference strength recalculation
+ *   - Sundays: also recalculates park factors + conference strength (day check in code)
  *
  * Data flow:
  *   player_season_stats (D1, populated by bsi-cbb-ingest + sync endpoints)
@@ -92,7 +92,6 @@ interface PlayerPitchingRow {
   hits_allowed: number;
   hit_by_pitch_pitch?: number;
   games_pitch: number;
-  games_started?: number;
   wins?: number;
   losses?: number;
   saves?: number;
@@ -329,7 +328,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
   const { results: pitchers } = await db.prepare(`
     SELECT espn_id, name, team, team_id, position, innings_pitched_thirds,
            strikeouts_pitch, walks_pitch, home_runs_allowed, earned_runs,
-           hits_allowed, games_pitch, games_started, wins, losses, saves
+           hits_allowed, games_pitch, wins, losses, saves
     FROM player_season_stats
     WHERE sport = 'college-baseball' AND season = ? AND innings_pitched_thirds >= ?
     ORDER BY innings_pitched_thirds DESC
@@ -378,7 +377,7 @@ async function computePitching(db: D1Database, kv: KVNamespace, league: LeagueCo
 
     batch.push(upsert.bind(
       p.espn_id, p.name, p.team, p.team_id, p.conference ?? null, SEASON, p.position,
-      p.games_pitch || 0, p.games_started ?? 0,
+      p.games_pitch || 0, 0,
       p.wins ?? 0, p.losses ?? 0, p.saves ?? 0,
       r2(ip), h, er, bb, hbp, so, r2(era), r3(whip),
       r1(k9), r1(bb9), r1(hr9), r2(fip), null, r1(eraMinus), r2(kBB), r3(lobPct), r3(babip),
@@ -536,9 +535,8 @@ export default {
     return new Response('BSI CBB Analytics Worker — use /run to trigger manually', { status: 200 });
   },
 
-  async scheduled(event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
-    const cron = event.cron;
-    const isSunday = cron.includes('* 0'); // Sunday-only cron
+  async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
+    const isSunday = new Date().getUTCDay() === 0;
     await runAnalytics(env, isSunday);
   },
 };

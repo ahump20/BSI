@@ -10,9 +10,9 @@ main = "index.ts"
 compatibility_date = "2025-12-01"
 
 # Daily 6 AM CT (11 UTC): full recompute of all advanced metrics
-# Sunday 7 AM CT (12 UTC): park factor + conference strength recalculation
+# Sunday: also recalculates park factors + conference strength (checked in code)
 [triggers]
-crons = ["0 11 * * *", "0 12 * * 0"]
+crons = ["0 11 * * *"]
 
 [[kv_namespaces]]
 binding = "KV"
