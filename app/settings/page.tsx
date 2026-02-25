@@ -44,7 +44,7 @@ export default function SettingsPage() {
           {/* Current Settings Summary */}
           <div className="flex flex-wrap items-center gap-3 mt-4">
             {timezoneLoaded && <TimezoneBadge />}
-            {teamsLoaded && <FavoriteTeamsBadge teams={teamPrefs?.teams ?? []} />}
+            {teamsLoaded && <FavoriteTeamsBadge teams={teamPrefs?.favoriteTeams ?? []} />}
           </div>
         </div>
       </div>
