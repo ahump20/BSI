@@ -11,6 +11,7 @@
 
 export interface Env {
   ASSETS: R2Bucket;
+  MONITOR_KV: KVNamespace;
 }
 
 const SECURITY_HEADERS = {
@@ -51,6 +52,51 @@ export default {
       return new Response(null, { status: 204 });
     }
 
+    // CORS preflight for all API routes
+    if (request.method === 'OPTIONS' && url.pathname.startsWith('/api/')) {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      });
+    }
+
+    // Agent event ingestion — receives tool use events from Claude Code hooks
+    if ((url.pathname === '/api/blazecraft/events' || url.pathname === '/api/events/ingest') && request.method === 'POST') {
+      return handleEventIngest(request, env);
+    }
+
+    // Agent events — returns recent events for dashboard
+    if (url.pathname === '/api/agent-events') {
+      return handleAgentEvents(env);
+    }
+
+    // Infrastructure status — reads synthetic monitor results from KV
+    if (url.pathname === '/api/status') {
+      const latest = await env.MONITOR_KV.get('summary:latest', 'text');
+      if (!latest) {
+        return new Response(JSON.stringify({ error: 'No monitoring data yet' }), {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-cache',
+          },
+        });
+      }
+      return new Response(latest, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Cache-Control': 'public, max-age=30',
+        },
+      });
+    }
+
     // Determine asset path
     let path = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
 
@@ -75,6 +121,84 @@ export default {
     return buildResponse(object, path, isHashed);
   },
 };
+
+const AGENT_EVENTS_KEY = 'agent:events';
+const MAX_EVENTS = 100;
+const EVENT_TTL = 3600; // 1 hour
+
+interface AgentEvent {
+  type: string;
+  agentId: string;
+  agentName: string;
+  sessionId?: string;
+  timestamp: string;
+  data?: Record<string, unknown>;
+  receivedAt: string;
+}
+
+const API_HEADERS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Cache-Control': 'no-cache',
+};
+
+async function handleEventIngest(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = await request.json() as Record<string, unknown>;
+
+    // Validate required fields
+    if (!body.type || !body.agentId) {
+      return new Response(JSON.stringify({ error: 'Missing required fields: type, agentId' }), {
+        status: 400,
+        headers: API_HEADERS,
+      });
+    }
+
+    const event: AgentEvent = {
+      type: String(body.type),
+      agentId: String(body.agentId),
+      agentName: String(body.agentName || body.agentId),
+      sessionId: body.sessionId ? String(body.sessionId) : undefined,
+      timestamp: String(body.timestamp || new Date().toISOString()),
+      data: typeof body.data === 'object' && body.data !== null ? body.data as Record<string, unknown> : undefined,
+      receivedAt: new Date().toISOString(),
+    };
+
+    // Read existing events, append, trim to MAX_EVENTS
+    const existing = await env.MONITOR_KV.get(AGENT_EVENTS_KEY, 'json') as AgentEvent[] | null;
+    const events = existing ?? [];
+    events.push(event);
+
+    // Keep only the most recent MAX_EVENTS
+    const trimmed = events.slice(-MAX_EVENTS);
+
+    await env.MONITOR_KV.put(AGENT_EVENTS_KEY, JSON.stringify(trimmed), {
+      expirationTtl: EVENT_TTL,
+    });
+
+    return new Response(JSON.stringify({ ok: true, count: trimmed.length }), {
+      status: 200,
+      headers: API_HEADERS,
+    });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+      status: 400,
+      headers: API_HEADERS,
+    });
+  }
+}
+
+async function handleAgentEvents(env: Env): Promise<Response> {
+  const events = await env.MONITOR_KV.get(AGENT_EVENTS_KEY, 'text');
+  if (!events) {
+    return new Response(JSON.stringify({ events: [], count: 0 }), {
+      headers: API_HEADERS,
+    });
+  }
+  return new Response(JSON.stringify({ events: JSON.parse(events), count: JSON.parse(events).length }), {
+    headers: API_HEADERS,
+  });
+}
 
 function buildResponse(object: R2ObjectBody, path: string, immutable: boolean): Response {
   const ext = path.includes('.') ? path.slice(path.lastIndexOf('.')) : '.html';

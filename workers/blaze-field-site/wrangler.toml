@@ -6,6 +6,10 @@ compatibility_date = "2024-08-23"
 binding = "ASSETS"
 bucket_name = "blaze-field-assets"
 
+[[kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
+
 [dev]
 port = 8791
 local_protocol = "http"
@@ -20,3 +24,7 @@ routes = [
 [[env.production.r2_buckets]]
 binding = "ASSETS"
 bucket_name = "blaze-field-assets"
+
+[[env.production.kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
