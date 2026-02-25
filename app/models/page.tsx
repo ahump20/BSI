@@ -39,6 +39,15 @@ interface ModelHealthResponse {
 
 const MODELS: ModelCard[] = [
   {
+    title: 'HAV-F Player Evaluation',
+    slug: 'havf',
+    description:
+      'Composite player evaluation metric — Hitting, At-Bat Quality, Velocity, Fielding. Percentile-based scoring against the full college baseball cohort.',
+    status: 'live',
+    version: 'v1.0',
+    tags: ['College Baseball', 'Scouting'],
+  },
+  {
     title: 'Win Probability',
     slug: 'win-probability',
     description:

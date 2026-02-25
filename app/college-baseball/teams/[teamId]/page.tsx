@@ -146,7 +146,7 @@ export async function generateMetadata({
 
   const title = `${team.name} Baseball | ${team.conference} | Blaze Sports Intel`;
   const description = `${team.name} college baseball profile — ${team.conference} standings, roster, schedule, and analytics at ${team.location.stadium} in ${team.location.city}, ${team.location.state}.`;
-  const logoUrl = getLogoUrl(team.espnId);
+  const logoUrl = getLogoUrl(team.espnId, team.logoId);
 
   return {
     title,

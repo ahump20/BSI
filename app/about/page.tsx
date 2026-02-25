@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
@@ -353,22 +353,24 @@ export default function AboutPage() {
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 <p className="text-xl leading-relaxed">
-                  UT Austin grad — International Relations with minors in European Studies,
-                  Political Science, and Economics. Full Sail gave me an MS in Entertainment
-                  Business. I made top 10% nationally at Northwestern Mutual before I got tired of
-                  waiting.
-                </p>
-                <p className="leading-relaxed font-semibold text-white">
-                  Waiting for someone else to fix sports coverage.
+                  Try finding a box score for a midweek game between Rice and Houston. Try tracking
+                  your team&apos;s conference standings without clicking through 15 pages. Try
+                  getting real analytics &mdash; not just scores and highlights curated for the same
+                  ten programs every week.
                 </p>
                 <p className="leading-relaxed">
-                  ESPN treats college baseball like an afterthought. Try finding a box score for a
-                  midweek game between Rice and Houston. Try tracking your team&apos;s conference
-                  standings without clicking through 15 pages. Try getting real analytics instead of
-                  just scores.
+                  I got tired of waiting for someone else to fix it. I studied international
+                  systems at UT Austin because I wanted to understand how power structures work
+                  &mdash; who gets covered, who gets ignored, and why. I finished a master&apos;s
+                  in entertainment business at Full Sail because the coverage gap is not just
+                  editorial; it is a product problem. I made top 10% nationally at Northwestern
+                  Mutual because I learned how to build something from nothing with no safety net.
+                </p>
+                <p className="leading-relaxed font-semibold text-white">
+                  Every credential pointed the same direction: build the thing nobody else would.
                 </p>
                 <p className="leading-relaxed text-xl" style={{ color: colors.ember }}>
-                  Fans deserve better. So I built it myself.
+                  So I did.
                 </p>
               </div>
             </div>
@@ -541,48 +543,24 @@ export default function AboutPage() {
           <ScrollReveal delay={200}>
             <div className="max-w-4xl mx-auto mt-12">
               <Card>
-                <CardHeader>
-                  <CardTitle>Our Commitment to You</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500">✓</span>
-                      <div>
-                        <h4 className="font-semibold text-white">Real Data, Always</h4>
-                        <p className="text-sm text-gray-400">
-                          No placeholders, no estimates. If we cannot verify it, we do not publish
-                          it.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500">✓</span>
-                      <div>
-                        <h4 className="font-semibold text-white">Source Transparency</h4>
-                        <p className="text-sm text-gray-400">
-                          Every stat is cited with timestamp. You know exactly where it came from.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500">✓</span>
-                      <div>
-                        <h4 className="font-semibold text-white">Fan-First Coverage</h4>
-                        <p className="text-sm text-gray-400">
-                          We cover the games ESPN ignores. Every game matters to someone.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500">✓</span>
-                      <div>
-                        <h4 className="font-semibold text-white">Enterprise-Grade API</h4>
-                        <p className="text-sm text-gray-400">
-                          Professional tools for scouts, coaches, and media organizations.
-                        </p>
-                      </div>
-                    </div>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">What That Means in Practice</h3>
+                  <div
+                    className="prose prose-sm prose-invert max-w-none text-gray-400"
+                    style={{ fontFamily: 'Georgia, serif' }}
+                  >
+                    <p>
+                      Every stat on this site is sourced, timestamped, and verified against at
+                      least one cross-reference before it ships. If we cannot confirm it, it does
+                      not publish. That is not a marketing line &mdash; it is the
+                      reason the data pipeline exists.
+                    </p>
+                    <p>
+                      We cover the Tuesday night game between Rice and Sam Houston the same way
+                      we cover the Saturday showcase between Tennessee and LSU. Every game matters
+                      to someone. The platform is built for those someones &mdash; fans, coaches,
+                      scouts, and the players whose careers happen outside the broadcast window.
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -712,11 +690,14 @@ export default function AboutPage() {
                 className="text-2xl md:text-3xl font-bold mt-2 mb-4"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
-                Meet the <span style={{ color: colors.burntOrange }}>Operator</span>
+                One <span style={{ color: colors.burntOrange }}>Operator</span>
               </h2>
-              <p className="text-gray-400 mb-8">
-                Three years of data-informed strategy. Two years designing AI workflows from prompt to
-                deployment. One person building everything you see here.
+              <p className="text-gray-400 mb-8" style={{ fontFamily: 'Georgia, serif' }}>
+                Fourteen deployed Workers. Five databases. Eighteen storage buckets. Six sports.
+                One person who built every line, wrote every article, and answers every email at{' '}
+                <a href="mailto:Austin@blazesportsintel.com" className="underline hover:text-white">
+                  Austin@blazesportsintel.com
+                </a>.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
