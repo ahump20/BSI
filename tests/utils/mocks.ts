@@ -237,7 +237,9 @@ export const HIGHLIGHTLY_STANDINGS = [
 
 export const ESPN_STANDINGS = {
   children: [
-    { name: 'Southeastern Conference', standings: { entries: [] } },
+    { name: 'Southeastern Conference', standings: { entries: [
+      { team: { id: '251', displayName: 'Texas Longhorns', abbreviation: 'TEX' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.667, streak: 'W3', pointDifferential: 45 },
+    ] } },
     { name: 'Big 12 Conference', standings: { entries: [] } },
     { name: 'Atlantic Coast Conference', standings: { entries: [] } },
   ],
