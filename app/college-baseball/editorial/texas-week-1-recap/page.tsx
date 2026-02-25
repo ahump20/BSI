@@ -47,10 +47,6 @@ const game1LineScore: InningScore[] = [
   { team: 'Texas', innings: [0, 0, 3, 0, 4, 0, 5], r: 12, h: 11, e: 0 },
 ];
 
-const game1TexasPitching: PitchingLine[] = [
-  { name: 'Ruger Riojas', ip: '5.0', h: 4, r: 1, er: 1, bb: 1, so: 6, pitches: 78, decision: 'W (1-0)' },
-  { name: 'Max Grubbs', ip: '2.0', h: 3, r: 1, er: 1, bb: 1, so: 1, pitches: 37 },
-];
 
 // Game 2: Texas 6, UC Davis 4
 const game2LineScore: InningScore[] = [

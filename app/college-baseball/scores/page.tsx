@@ -60,6 +60,7 @@ const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Be
 
 export default function CollegeBaseballScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);

@@ -15,3 +15,5 @@ dist/
 workers/**/.wrangler/
 app/.wrangler/
 tests/resume-quality.spec.ts-snapshots/
+playwright-report/
+test-results/

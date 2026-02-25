@@ -5,7 +5,7 @@ import { useGameData } from '../layout';
 import Linescore from '@/components/college-baseball/Linescore';
 import PlayByPlay from '@/components/college-baseball/PlayByPlay';
 import MatchupCard from '@/components/college-baseball/MatchupCard';
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 // =============================================================================

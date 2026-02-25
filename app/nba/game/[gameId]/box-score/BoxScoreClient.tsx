@@ -22,11 +22,6 @@ interface BoxscoreTeam {
   statistics?: BoxscoreTeamStat[];
 }
 
-interface PlayerStatEntry {
-  name?: string;
-  displayValue?: string;
-}
-
 interface BoxscorePlayerAthlete {
   athlete?: {
     displayName?: string;

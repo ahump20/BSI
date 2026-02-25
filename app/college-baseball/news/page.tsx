@@ -74,15 +74,14 @@ export default function CollegeBaseballNewsPage() {
     '/api/college-baseball/news/enhanced',
   );
 
-  const articles = data?.articles || [];
-
   const filtered = useMemo(() => {
+    const articles = data?.articles || [];
     return articles.filter((item) => {
       const matchCategory = categoryFilter === 'all' || item.category === categoryFilter;
       const matchSource = sourceFilter === 'all' || item.source === sourceFilter;
       return matchCategory && matchSource;
     });
-  }, [articles, categoryFilter, sourceFilter]);
+  }, [data?.articles, categoryFilter, sourceFilter]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, EnhancedNewsItem[]>();

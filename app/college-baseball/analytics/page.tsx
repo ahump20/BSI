@@ -11,7 +11,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { HAVFLeaderboard } from '@/components/analytics/HAVFLeaderboard';
 import { HAVFRadar } from '@/components/analytics/HAVFRadar';
-import { HAVFBadge } from '@/components/analytics/HAVFBadge';
 
 interface HAVFPlayerAPI {
   player_id: string;
