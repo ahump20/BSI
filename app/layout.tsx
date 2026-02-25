@@ -14,6 +14,7 @@ import { StickyLeagueBar } from '@/components/sports/StickyLeagueBar';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
+import { PageTracker } from '@/components/analytics/PageTracker';
 
 // 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
 const inter = Inter({
@@ -156,6 +157,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <BreadcrumbBar />
             <CommandPalette />
             <KonamiCodeWrapper />
+            <PageTracker />
             <PageTransition>{children}</PageTransition>
             <FeedbackButton />
             <ScrollToTopButton />
