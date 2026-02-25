@@ -374,15 +374,23 @@ export async function handleScheduled(env: Env): Promise<void> {
         await kvPut(env.KV, ingestGateKey, now, 900); // 15-min TTL
         console.log(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
 
-        // Invalidate leaders cache so next request picks up fresh data
+        // Invalidate caches so next request picks up fresh data + sabermetrics derivation
         if (ingestResult.processed > 0) {
           await env.KV.delete('cb:leaders');
+          await env.KV.delete('cb:saber:league:2026');
+          console.log('[cron] Invalidated leaders + sabermetrics caches after ingest');
         }
       }
     } catch (err) {
       await logError(env, `cron:stats-ingest: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-ingest');
     }
   }
+
+  // NOTE: The full backfill sync (syncTeamCumulativeStats) iterates scoreboards
+  // day-by-day — too expensive for recurring cron. Use the admin endpoint
+  // /api/college-baseball/sync-stats?team=<id>&key=<admin_key> for backfills.
+  // Daily processFinishedGames above now captures OBP/SLG from box scores,
+  // enabling sabermetric derivation of 2B/3B/HBP in downstream handlers.
 
   // Populate search index once per day (gated by KV timestamp)
   try {

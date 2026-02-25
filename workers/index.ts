@@ -47,6 +47,7 @@ import {
   handleCBBTeamSabermetrics,
   handleCBBTeamSOS,
   handleCBBConferencePowerIndex,
+  handleCBBBulkSync,
 } from './handlers/college-baseball';
 
 import {
@@ -124,6 +125,13 @@ import {
   handleWinProbExample,
   handleMonteCarloExample,
 } from './handlers/analytics';
+import {
+  handleSavantBattingLeaderboard,
+  handleSavantPitchingLeaderboard,
+  handleSavantPlayer,
+  handleSavantParkFactors,
+  handleSavantConferenceStrength,
+} from './handlers/savant';
 import {
   handleLeaderboard,
   handleLeaderboardSubmit,
@@ -286,6 +294,8 @@ app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL
 app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
 app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
+// Diagnostics endpoint removed after ESPN verification (2026-02-25)
+app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
@@ -395,6 +405,13 @@ app.post('/api/analytics/havf/compute', (c) => handleHAVFCompute(c.req.raw, c.en
 app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));
 app.get('/api/analytics/mmi/game/:gameId', (c) => handleMMIGame(c.req.param('gameId'), c.env));
 app.get('/api/analytics/mmi/trending', (c) => handleMMITrending(c.env));
+
+// --- Savant: College Baseball Advanced Analytics ---
+app.get('/api/savant/batting/leaderboard', (c) => handleSavantBattingLeaderboard(new URL(c.req.url), c.env));
+app.get('/api/savant/pitching/leaderboard', (c) => handleSavantPitchingLeaderboard(new URL(c.req.url), c.env));
+app.get('/api/savant/player/:id', (c) => handleSavantPlayer(c.req.param('id'), new URL(c.req.url), c.env));
+app.get('/api/savant/park-factors', (c) => handleSavantParkFactors(new URL(c.req.url), c.env));
+app.get('/api/savant/conference-strength', (c) => handleSavantConferenceStrength(new URL(c.req.url), c.env));
 
 // --- Cached scores (cron-warmed KV) ---
 app.get('/api/scores/cached', (c) => {
