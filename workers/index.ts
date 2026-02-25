@@ -84,6 +84,10 @@ import {
   handleCFBNews,
   handleCFBArticle,
   handleCFBArticlesList,
+  handleCFBTeamsList,
+  handleCFBTeam,
+  handleCFBGame,
+  handleCFBPlayer,
 } from './handlers/cfb';
 
 import { handleBlogPostFeedList, handleBlogPostFeedItem } from './handlers/blog-post-feed';
@@ -300,6 +304,10 @@ app.get('/api/ncaa/standings', (c) => {
 });
 app.get('/api/college-football/articles', (c) => handleCFBArticlesList(new URL(c.req.url), c.env));
 app.get('/api/college-football/articles/:slug', (c) => handleCFBArticle(c.req.param('slug'), c.env));
+app.get('/api/cfb/teams', (c) => safeESPN(() => handleCFBTeamsList(c.env), 'teams', [], c.env));
+app.get('/api/cfb/game/:gameId', (c) => safeESPN(() => handleCFBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
+app.get('/api/cfb/players/:playerId', (c) => safeESPN(() => handleCFBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
+app.get('/api/cfb/teams/:teamId', (c) => safeESPN(() => handleCFBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
 
 // --- Blog Post Feed ---
 app.get('/api/blog-post-feed', (c) =>

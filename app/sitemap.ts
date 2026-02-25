@@ -135,6 +135,7 @@ const proSports: SitemapEntry[] = [
   { path: '/cfb/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/cfb/articles', changeFrequency: 'daily', priority: 0.6 },
   { path: '/cfb/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/cfb/teams', changeFrequency: 'daily', priority: 0.6 },
 ];
 
 const features: SitemapEntry[] = [
@@ -166,8 +167,6 @@ const marketing: SitemapEntry[] = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/for-coaches', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/for-scouts', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/coverage', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
