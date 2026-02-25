@@ -90,16 +90,16 @@ meta: { source: string; fetched_at: string; timezone: 'America/Chicago' }
 
 This is what actually exists in Cloudflare right now. Use `wrangler` or the Cloudflare MCP tools to verify current state — don't trust this list if something feels off.
 
-### Workers (15 deployed)
+### Workers (16 deployed)
 
-**Site and API (Hono router, 797 lines + handler modules):**
+**Site and API (Hono router + handler modules):**
 `blazesportsintel-worker-prod` · `blazesportsintel-worker` · `blazesportsintel-worker-canary`
 
 **Ingest pipeline:**
 `bsi-cbb-ingest` · `bsi-sportradar-ingest` · `bsi-portal-sync` · `bsi-prediction-api`
 
 **Analytics:**
-`bsi-analytics-events` (behavioral events → D1)
+`bsi-analytics-events` (behavioral events → D1) · `bsi-savant-compute` (cron every 6h — wOBA, FIP, wRC+)
 
 **Operations:**
 `bsi-error-tracker` (tail consumer) · `bsi-synthetic-monitor` (cron) · `bsi-news-ticker` · `bsi-ticker`
@@ -116,7 +116,7 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 |------|------|---------|
 | `bsi-historical-db` | 4.5 MB | Historical archives |
 | `bsi-game-db` | 3.3 MB | Live/recent game data (sportradar-ingest) |
-| `bsi-prod-db` | 3.3 MB | Production data (main worker) |
+| `bsi-prod-db` | 3.8 MB | Production data (main worker + savant compute) |
 | `bsi-events-db` | 284 KB | Behavioral analytics (bsi-analytics-events) |
 | `bsi-fanbase-db` | 197 KB | Fan sentiment |
 | `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
@@ -156,6 +156,7 @@ workers/                # Main Hono worker (blazesportsintel-worker-prod)
   shared/               # Types, helpers, constants, cors, rate-limit, proxy
   wrangler.toml         # Bindings, routes, environments
 workers/bsi-cbb-ingest/ # College baseball ingest pipeline
+workers/bsi-savant-compute/ # Cron: advanced metrics (wOBA, FIP, wRC+)
 workers/sportradar-ingest/ # Sportradar data pipeline
 workers/mini-games-api/ # Arcade leaderboard API
 workers/blaze-field-*/  # BlazeCraft game workers
