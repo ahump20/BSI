@@ -19,6 +19,7 @@ import { LiveScoreStrip } from '@/components/college-baseball/LiveScoreStrip';
 import { EditorialFeed } from '@/components/college-baseball/EditorialFeed';
 import { EnrichedRankingsTable } from '@/components/college-baseball/EnrichedRankingsTable';
 import { LeagueLeaders } from '@/components/college-baseball/LeagueLeaders';
+import { IntelSignup } from '@/components/home/IntelSignup';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
@@ -372,6 +373,15 @@ export default function CollegeBaseballPage() {
 
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
+
+        {/* Intel Signup — email capture for roster-market intelligence */}
+        <Section padding="md">
+          <Container>
+            <div className="max-w-xl mx-auto">
+              <IntelSignup />
+            </div>
+          </Container>
+        </Section>
 
         {/* Tabs */}
         <Section padding="lg" background="charcoal" borderTop>

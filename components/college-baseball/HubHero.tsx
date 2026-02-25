@@ -52,7 +52,7 @@ export function HubHero({
         </ScrollReveal>
         <ScrollReveal direction="up" delay={150}>
           <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-6">
-            Coverage this sport has always deserved.
+            Roster intelligence. Pro projections. The depth ESPN doesn&apos;t build.
           </p>
         </ScrollReveal>
 

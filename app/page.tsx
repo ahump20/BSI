@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import { HomePageClient } from './HomePageClient';
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Independent Sports Analytics',
+  title: 'Blaze Sports Intel | College Baseball Intelligence & Multi-Sport Analytics',
   description:
-    'Real-time MLB, NFL, NBA, and NCAA analytics built by a fan who got tired of waiting. Live scores, deep editorial, and data-driven coverage the big networks skip.',
+    'College baseball roster-market intelligence, transfer portal tracking, and pro projections — plus live analytics across MLB, NFL, NBA, and college football. The depth ESPN doesn\u2019t build.',
   openGraph: {
     title: 'Blaze Sports Intel',
     description:
-      'Independent sports analytics — live scores, editorial depth, and real data across 6 sports.',
+      'College baseball intelligence — roster-market data, transfer portal tracking, pro projections, and live multi-sport analytics.',
     type: 'website',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
     description:
-      'Independent sports analytics — live scores, editorial depth, and real data across 6 sports.',
+      'College baseball intelligence — roster-market data, transfer portal tracking, pro projections, and live multi-sport analytics.',
   },
 };
 

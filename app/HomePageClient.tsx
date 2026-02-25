@@ -73,7 +73,7 @@ const sports: SportCardData[] = [
     name: 'College Baseball',
     icon: BaseballIcon,
     href: '/college-baseball',
-    description: 'D1 standings, rankings & complete box scores',
+    description: 'Roster intelligence, portal tracking & pro projections',
     accent: 'group-hover:text-[#BF5700] group-hover:border-[#BF5700]/50',
     bgAccent: 'group-hover:bg-[#BF5700]/10',
     color: '#BF5700',
@@ -187,14 +187,14 @@ export function HomePageClient() {
           <ScrollReveal direction="up">
             <div className="text-center mb-12">
               <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
-                Coverage
+                Intelligence
               </span>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase tracking-wide">
-                Every Game Matters
+                Six Sports. One Platform.
               </h2>
               <p className="mt-3 text-base text-white/50 max-w-2xl mx-auto">
-                From the College World Series to Sunday Night Football — real analytics, not just
-                scores.
+                College baseball roster intelligence leads. MLB, NFL, NBA, and college football
+                analytics round out the picture.
               </p>
             </div>
           </ScrollReveal>
@@ -279,11 +279,11 @@ export function HomePageClient() {
 
               <div>
                 <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl text-white/90 leading-relaxed mb-6">
-                  ESPN treats college baseball like an afterthought. Fans check scores at 11 PM and
-                  get a paragraph if they&apos;re lucky.
+                  ESPN shows you scores. They don&apos;t tell you which portal pickup just changed a
+                  conference race, or which freshman&apos;s exit velo projects him as a day-two pick.
                   <span className="text-[#BF5700]">
                     {' '}
-                    I got tired of waiting for someone else to fix it.
+                    That&apos;s what I built BSI to do.
                   </span>
                 </blockquote>
 
@@ -307,11 +307,10 @@ export function HomePageClient() {
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal direction="up">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-              Ready to experience real sports intel?
+              Built for the people who run the game.
             </h2>
             <p className="text-base text-white/50 mb-10 max-w-2xl mx-auto">
-              Join fans who refuse to settle for box scores and headlines. Get the data that actually
-              matters.
+              Join fans, scouts, and analysts who track roster markets, not just scoreboards.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

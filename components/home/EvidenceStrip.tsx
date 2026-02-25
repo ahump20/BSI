@@ -3,9 +3,9 @@
 import { ScrollReveal } from '@/components/cinematic';
 
 const stats = [
-  { value: '5', label: 'Sports Live' },
-  { value: '197', label: 'D1 Teams' },
-  { value: '30s', label: 'Update Cycle' },
+  { value: '297', label: 'D1 Teams Tracked' },
+  { value: '30s', label: 'Portal Refresh' },
+  { value: '6', label: 'Sports Covered' },
   { value: '100%', label: 'Independent' },
 ] as const;
 

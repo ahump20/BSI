@@ -6,10 +6,10 @@ interface ProofChip {
 }
 
 const CHIPS: ProofChip[] = [
-  { label: 'Official Sources', href: '/models/data-quality' },
-  { label: 'Timestamped', href: '/models/data-quality' },
-  { label: '30-sec Refresh', href: '/models/data-quality' },
-  { label: 'No Placeholders', href: '/models/data-quality' },
+  { label: 'Multi-Source Verified', href: '/models/data-quality' },
+  { label: 'Real-Time Portal Data', href: '/college-baseball/transfer-portal' },
+  { label: '30-sec Updates', href: '/models/data-quality' },
+  { label: 'No Hardcoded Data', href: '/models/data-quality' },
 ];
 
 /**

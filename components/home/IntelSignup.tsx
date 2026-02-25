@@ -52,7 +52,7 @@ export function IntelSignup() {
     return (
       <div className="glass-default rounded-xl p-4 border border-green-500/20 mb-4">
         <p className="text-sm text-green-400 font-medium">You&apos;re in.</p>
-        <p className="text-xs text-white/40 mt-1">College baseball intel drops first.</p>
+        <p className="text-xs text-white/40 mt-1">Roster-market intelligence, delivered first.</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ export function IntelSignup() {
   return (
     <form onSubmit={handleSubmit} className="glass-default rounded-xl p-4 border border-white/[0.06] mb-4">
       <p className="text-sm font-display text-white uppercase tracking-wide mb-3">
-        Get the Intel Drop
+        Get Portal &amp; Draft Intel
       </p>
 
       <div className="flex gap-2">
@@ -88,7 +88,7 @@ export function IntelSignup() {
           onChange={(e) => setConsent(e.target.checked)}
           className="rounded border-white/20 bg-white/5 text-[#BF5700] focus:ring-[#BF5700]/50 h-3.5 w-3.5"
         />
-        <span className="text-[11px] text-white/30">College baseball first — I agree to receive emails</span>
+        <span className="text-[11px] text-white/30">Portal &amp; draft intelligence — I agree to receive emails</span>
       </label>
 
       {state === 'error' && errorMsg && (

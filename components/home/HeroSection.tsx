@@ -43,16 +43,16 @@ export function HeroSection() {
         </div>
 
         <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-white uppercase tracking-tight leading-none mb-6">
-          Born to Blaze
+          The Intelligence Layer
           <br />
           <span className="bg-gradient-to-r from-[#BF5700] to-[#FDB913] bg-clip-text text-transparent">
-            the Path Less Beaten
+            College Baseball Never Had
           </span>
         </h1>
 
         <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] text-lg md:text-xl text-white/60 max-w-3xl mx-auto mb-10 leading-relaxed">
-          Every game matters to someone. MLB, NFL, NBA, College Baseball — real analytics, not
-          just scores. Built by a fan who got tired of waiting.
+          Roster-market intelligence, transfer portal tracking, and pro projections — the depth
+          ESPN doesn&apos;t build. Plus live analytics across MLB, NFL, NBA, and college football.
         </p>
 
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.45s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
@@ -69,10 +69,10 @@ export function HeroSection() {
             College Baseball
           </Link>
           <Link
-            href="/models"
+            href="/college-baseball/transfer-portal"
             className="inline-flex items-center justify-center gap-2 border-2 border-white/10 hover:border-white/30 text-white/60 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
           >
-            See Models
+            Transfer Portal Intel
           </Link>
         </div>
 
