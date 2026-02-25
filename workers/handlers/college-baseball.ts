@@ -644,12 +644,9 @@ export async function handleCollegeBaseballStandings(
     }
   }
 
-  // ESPN v2 standings returns conference groups, each containing standings.entries.
-  // Fetch ALL groups and flatten into individual team entries, then filter by
-  // our own metadata so we can match conferences ESPN doesn't name the same way
-  // (and catch Independent teams that aren't in any ESPN conference group).
+  // ESPN v2 returns all D1 conference groups — flatten entries, filter by conference here
   const client = getCollegeClient();
-  const result = await client.getStandings('NCAA'); // always fetch all groups
+  const result = await client.getStandings();
 
   if (!result.success || !Array.isArray(result.data)) {
     const payload = wrap([], 'espn-v2', result.timestamp);
@@ -658,14 +655,12 @@ export async function handleCollegeBaseballStandings(
     });
   }
 
-  // Flatten conference groups → individual team entries
-  const groups = result.data as Array<Record<string, unknown>>;
-  const entries: Array<Record<string, unknown>> = [];
-  for (const group of groups) {
-    const stObj = (group.standings as Record<string, unknown>) || {};
-    const groupEntries = (stObj.entries as Array<Record<string, unknown>>) || [];
-    entries.push(...groupEntries);
-  }
+  // Flatten nested conference groups: each child has .standings.entries
+  const children = result.data as Array<Record<string, unknown>>;
+  const entries = children.flatMap((child) => {
+    const standings = (child.standings as Record<string, unknown>) || {};
+    return (standings.entries as Array<Record<string, unknown>>) || [];
+  });
 
   // Filter teams by conference using team-metadata.ts espnId → conference mapping
   const filtered = conference === 'NCAA'
