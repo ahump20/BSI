@@ -778,14 +778,31 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
       };
     });
 
-    // Normalize and compute CPI
-    if (teamCPI.length > 0) {
-      const maxWP = Math.max(...teamCPI.map((t) => t._winPct));
-      const maxCWP = Math.max(...teamCPI.map((t) => t._confWinPct));
-      const maxWRC = Math.max(...teamCPI.map((t) => t._wrcPlus));
-      const maxFipInv = Math.max(...teamCPI.map((t) => t._fipInv));
+    // Filter to requested conference before normalization so CPI is conference-relative.
+    // URL slug may differ from DB name: "big-12" vs "Big 12", "sec" vs "SEC".
+    const confSlugNorm = conf.toLowerCase().replace(/-/g, ' ');
+    const filteredCPI = teamCPI.filter((t) => {
+      const tc = teamConf.get(t.team_id);
+      return tc && tc.toLowerCase() === confSlugNorm;
+    });
 
-      for (const t of teamCPI) {
+    if (filteredCPI.length === 0) {
+      return json({
+        conference: conf,
+        season: 2026,
+        teams: [],
+        meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+      });
+    }
+
+    // Normalize and compute CPI (conference-relative)
+    if (filteredCPI.length > 0) {
+      const maxWP = Math.max(...filteredCPI.map((t) => t._winPct));
+      const maxCWP = Math.max(...filteredCPI.map((t) => t._confWinPct));
+      const maxWRC = Math.max(...filteredCPI.map((t) => t._wrcPlus));
+      const maxFipInv = Math.max(...filteredCPI.map((t) => t._fipInv));
+
+      for (const t of filteredCPI) {
         const normWP = maxWP > 0 ? t._winPct / maxWP : 0;
         const normCWP = maxCWP > 0 ? t._confWinPct / maxCWP : 0;
         const normWRC = maxWRC > 0 ? t._wrcPlus / maxWRC : 0;
@@ -798,10 +815,10 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
     }
 
     // Sort by CPI descending
-    teamCPI.sort((a, b) => ((b as Record<string, unknown>).cpi as number) - ((a as Record<string, unknown>).cpi as number));
+    filteredCPI.sort((a, b) => ((b as Record<string, unknown>).cpi as number) - ((a as Record<string, unknown>).cpi as number));
 
     // Clean up internal fields
-    const ranked = teamCPI.map((t, i) => {
+    const ranked = filteredCPI.map((t, i) => {
       const { _winPct, _confWinPct, _wrcPlus, _fipInv, ...rest } = t;
       return { rank: i + 1, ...rest, cpi: (t as Record<string, unknown>).cpi };
     });
