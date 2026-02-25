@@ -140,20 +140,10 @@ import {
   handleArcadeStats,
   handleArcadeSession,
 } from './handlers/games';
-import {
-  handleTeams,
-  handleLead,
-  handleFeedback,
-  handleIntelNews,
-  handleESPNNews,
-  handleModelHealth,
-  handleWeeklyBrief,
-  handlePredictionSubmit,
-  handlePredictionAccuracy,
-  handleAnalyticsEvent,
-  handleContact,
-  handleCSPReport,
-} from './handlers/misc';
+import { handleTeams, handleModelHealth, handleAnalyticsEvent, handleWeeklyBrief } from './handlers/general';
+import { handleContact, handleLead, handleFeedback, handleCSPReport } from './handlers/lead';
+import { handlePredictionSubmit, handlePredictionAccuracy } from './handlers/predictions';
+import { handleIntelNews, handleESPNNews } from './handlers/news';
 
 // =============================================================================
 // Hono App
