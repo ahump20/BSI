@@ -109,5 +109,6 @@
     "playground@claude-plugins-official": true,
     "posthog@claude-plugins-official": true
   },
-  "autoUpdatesChannel": "latest"
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true
 }
