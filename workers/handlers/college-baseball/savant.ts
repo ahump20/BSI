@@ -677,12 +677,13 @@ export async function handleCBBConferencePowerIndex(conf: string, env: Env): Pro
 
     const pitchingMap = new Map(pitching.results.map((p) => [p.team_id as string, p]));
 
-    // Get team → conference mapping from analytics-enriched table
-    const confRows = await env.DB.prepare(`
-      SELECT DISTINCT team_id, conference FROM cbb_batting_advanced
-      WHERE season = ? AND conference IS NOT NULL
-    `).bind(SEASON).all<{ team_id: string; conference: string }>();
-    const teamConf = new Map(confRows.results.map((r) => [r.team_id, r.conference]));
+    // Map team_id → conference from teamMetadata (covers all 245 teams).
+    // Previously sourced from cbb_batting_advanced, which only had conferences
+    // for teams whose batters met the MIN_PA threshold in savant-compute.
+    const teamConf = new Map<string, string>();
+    for (const [, meta] of Object.entries(metaByEspnId)) {
+      if (meta.conference) teamConf.set(meta.espnId, meta.conference);
+    }
 
     // Get team W-L records from processed_games
     const games = await env.DB.prepare(`

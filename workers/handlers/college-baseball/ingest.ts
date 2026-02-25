@@ -609,12 +609,12 @@ export async function handleCBBBulkSync(
       return json({ error: `No teams found for conference: ${conference}` }, 404);
     }
 
-    const results: Array<{ team: string; espnId: string; gamesProcessed: number; gamesNoData: number; error?: string }> = [];
+    const results: Array<{ team: string; espnId: string; gamesProcessed: number; gamesSkipped: number; gamesNoData: number; error?: string }> = [];
 
     for (const team of teamsInConf) {
       try {
         const result = await syncTeamCumulativeStats(team.espnId, env);
-        results.push({ team: result.team, espnId: team.espnId, gamesProcessed: result.gamesProcessed, gamesNoData: result.gamesNoData });
+        results.push({ team: result.team, espnId: team.espnId, gamesProcessed: result.gamesProcessed, gamesSkipped: result.gamesSkipped, gamesNoData: result.gamesNoData });
         // Invalidate team cache
         await env.KV.delete(`cb:saber:team:${team.espnId}`);
         await env.KV.delete(`cb:saber:team:${team.slug}`);
@@ -628,6 +628,7 @@ export async function handleCBBBulkSync(
     await env.KV.delete('cb:leaders');
 
     const totalProcessed = results.reduce((s, r) => s + r.gamesProcessed, 0);
+    const totalSkipped = results.reduce((s, r) => s + r.gamesSkipped, 0);
     const totalNoData = results.reduce((s, r) => s + r.gamesNoData, 0);
     const errorCount = results.filter((r) => r.error).length;
 
@@ -635,6 +636,7 @@ export async function handleCBBBulkSync(
       conference,
       teamsProcessed: results.length,
       totalGamesProcessed: totalProcessed,
+      totalGamesSkipped: totalSkipped,
       totalGamesNoData: totalNoData,
       errors: errorCount,
       results,

@@ -15,7 +15,7 @@ interface Env {
 }
 
 const SEASON = 2026;
-const MIN_PA = 20;
+const MIN_PA = 10;
 const MIN_IP = 5.0;
 
 // ---------------------------------------------------------------------------
