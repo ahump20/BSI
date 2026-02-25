@@ -2602,6 +2602,315 @@ export async function handleIngestStats(env: Env, dateStr?: string): Promise<Res
 }
 
 // ---------------------------------------------------------------------------
+// Cumulative Stats Sync — authoritative season totals from ESPN
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetches ESPN's team statistics endpoint for a given college baseball team
+ * and REPLACES player_season_stats rows with the authoritative cumulative totals.
+ *
+ * ESPN's team statistics endpoint returns full batting/pitching lines per player
+ * for the entire season — including 2B, 3B, HBP, SF, SB that aren't available
+ * in per-game box scores.
+ *
+ * Returns { team, playersUpserted, timestamp } or throws on failure.
+ */
+export async function syncTeamCumulativeStats(
+  teamId: string,
+  env: Env,
+): Promise<{ team: string; playersUpserted: number; timestamp: string; errors: string[] }> {
+  const now = new Date().toISOString();
+  const errors: string[] = [];
+
+  // Fetch team statistics from ESPN
+  const statsUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/statistics`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  const res = await fetch(statsUrl, { signal: controller.signal });
+  clearTimeout(timeout);
+
+  if (!res.ok) {
+    throw new Error(`ESPN team stats returned ${res.status} for team ${teamId}`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await res.json() as any;
+
+  // ESPN structures this as: { splits: { categories: [...] } } or { results: { stats: { categories: [...] } } }
+  // The categories array contains stat groups (batting, pitching, fielding)
+  // with per-athlete breakdowns.
+  const teamName = data.team?.displayName || data.team?.shortDisplayName || `Team ${teamId}`;
+
+  // Try multiple known ESPN response shapes
+  const splits = data.splits || data.results?.stats || {};
+  const categories = splits.categories || data.categories || [];
+
+  if (!Array.isArray(categories) || categories.length === 0) {
+    throw new Error(`No stat categories found for team ${teamId}. ESPN response keys: ${Object.keys(data).join(', ')}`);
+  }
+
+  const stmts: D1PreparedStatement[] = [];
+  let upsertCount = 0;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const category of categories as any[]) {
+    const catName = (category.name || category.displayName || '').toLowerCase();
+    const isBatting = catName.includes('batting') || catName.includes('hitting');
+    const isPitching = catName.includes('pitching');
+
+    if (!isBatting && !isPitching) continue;
+
+    // Build stat key → index map from the category's stat definitions
+    const statDefs: Array<{ name: string; abbreviation: string }> = category.stats || [];
+    const statMap: Record<string, number> = {};
+    statDefs.forEach((s, i) => {
+      if (s.abbreviation) statMap[s.abbreviation] = i;
+      if (s.name) statMap[s.name] = i;
+    });
+
+    // Per-athlete stats are in category.athletes (array of { athlete, stats[] })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const athletes: any[] = category.athletes || [];
+
+    for (const entry of athletes) {
+      const athlete = entry.athlete || {};
+      const espnId = String(athlete.id || '');
+      if (!espnId) continue;
+
+      const name = athlete.displayName || athlete.fullName || '';
+      const position = athlete.position?.abbreviation || '';
+      const headshot = athlete.headshot?.href || athlete.headshot || '';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stats: any[] = entry.stats || [];
+
+      // Helper to pull a stat value by abbreviation or name
+      const val = (key: string): number => {
+        const idx = statMap[key];
+        if (idx === undefined) return 0;
+        const raw = stats[idx];
+        if (raw === undefined || raw === null || raw === '' || raw === '-') return 0;
+        return parseFloat(String(raw)) || 0;
+      };
+
+      try {
+        if (isBatting) {
+          const ab = Math.round(val('AB'));
+          const h = Math.round(val('H'));
+          const doubles = Math.round(val('2B'));
+          const triples = Math.round(val('3B'));
+          const hr = Math.round(val('HR'));
+          const rbi = Math.round(val('RBI'));
+          const bb = Math.round(val('BB'));
+          const k = Math.round(val('SO') || val('K'));
+          const hbp = Math.round(val('HBP'));
+          const sf = Math.round(val('SF'));
+          const sh = Math.round(val('SH') || val('SAC'));
+          const sb = Math.round(val('SB'));
+          const cs = Math.round(val('CS'));
+          const r = Math.round(val('R'));
+          const tb = Math.round(val('TB') || (h + doubles + 2 * triples + 3 * hr));
+          const obp = val('OBP');
+          const slg = val('SLG');
+
+          if (ab === 0 && h === 0 && bb === 0) continue;
+
+          stmts.push(env.DB.prepare(`
+            INSERT INTO player_season_stats
+              (espn_id, season, sport, name, team, team_id, position, headshot,
+               games_bat, at_bats, runs, hits, doubles, triples, home_runs, rbis,
+               walks_bat, strikeouts_bat, stolen_bases, hit_by_pitch,
+               sacrifice_flies, sacrifice_hits, caught_stealing,
+               total_bases, on_base_pct, slugging_pct, stats_source)
+            VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
+                    0, ?, ?, ?, ?, ?, ?, ?,
+                    ?, ?, ?, ?,
+                    ?, ?, ?,
+                    ?, ?, ?, 'cumulative-sync')
+            ON CONFLICT(espn_id, season, sport) DO UPDATE SET
+              name = excluded.name,
+              team = excluded.team,
+              team_id = excluded.team_id,
+              position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
+              headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
+              at_bats = excluded.at_bats,
+              runs = excluded.runs,
+              hits = excluded.hits,
+              doubles = excluded.doubles,
+              triples = excluded.triples,
+              home_runs = excluded.home_runs,
+              rbis = excluded.rbis,
+              walks_bat = excluded.walks_bat,
+              strikeouts_bat = excluded.strikeouts_bat,
+              stolen_bases = excluded.stolen_bases,
+              hit_by_pitch = excluded.hit_by_pitch,
+              sacrifice_flies = excluded.sacrifice_flies,
+              sacrifice_hits = excluded.sacrifice_hits,
+              caught_stealing = excluded.caught_stealing,
+              total_bases = excluded.total_bases,
+              on_base_pct = excluded.on_base_pct,
+              slugging_pct = excluded.slugging_pct,
+              stats_source = 'cumulative-sync',
+              updated_at = datetime('now')
+          `).bind(
+            espnId, name, teamName, teamId, position, headshot,
+            ab, r, h, doubles, triples, hr, rbi,
+            bb, k, sb, hbp,
+            sf, sh, cs,
+            tb, obp, slg,
+          ));
+          upsertCount++;
+        }
+
+        if (isPitching) {
+          const ipStr = String(stats[statMap['IP']] ?? '0');
+          const ipThirds = parseInningsToThirds(ipStr);
+          const hitsAllowed = Math.round(val('H'));
+          const runsAllowed = Math.round(val('R'));
+          const er = Math.round(val('ER'));
+          const bbPitch = Math.round(val('BB'));
+          const kPitch = Math.round(val('SO') || val('K'));
+          const hrAllowed = Math.round(val('HR'));
+          const w = Math.round(val('W'));
+          const l = Math.round(val('L'));
+          const sv = Math.round(val('SV'));
+          const gp = Math.round(val('GP') || val('APP'));
+
+          if (ipThirds === 0 && er === 0) continue;
+
+          stmts.push(env.DB.prepare(`
+            INSERT INTO player_season_stats
+              (espn_id, season, sport, name, team, team_id, position, headshot,
+               games_pitch, innings_pitched_thirds, hits_allowed, runs_allowed,
+               earned_runs, walks_pitch, strikeouts_pitch, home_runs_allowed,
+               wins, losses, saves, stats_source)
+            VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
+                    ?, ?, ?, ?,
+                    ?, ?, ?, ?,
+                    ?, ?, ?, 'cumulative-sync')
+            ON CONFLICT(espn_id, season, sport) DO UPDATE SET
+              name = excluded.name,
+              team = excluded.team,
+              team_id = excluded.team_id,
+              position = CASE WHEN excluded.position != '' THEN excluded.position ELSE player_season_stats.position END,
+              headshot = CASE WHEN excluded.headshot != '' THEN excluded.headshot ELSE player_season_stats.headshot END,
+              games_pitch = excluded.games_pitch,
+              innings_pitched_thirds = excluded.innings_pitched_thirds,
+              hits_allowed = excluded.hits_allowed,
+              runs_allowed = excluded.runs_allowed,
+              earned_runs = excluded.earned_runs,
+              walks_pitch = excluded.walks_pitch,
+              strikeouts_pitch = excluded.strikeouts_pitch,
+              home_runs_allowed = excluded.home_runs_allowed,
+              wins = excluded.wins,
+              losses = excluded.losses,
+              saves = excluded.saves,
+              stats_source = 'cumulative-sync',
+              updated_at = datetime('now')
+          `).bind(
+            espnId, name, teamName, teamId, position, headshot,
+            gp, ipThirds, hitsAllowed, runsAllowed,
+            er, bbPitch, kPitch, hrAllowed,
+            w, l, sv,
+          ));
+          upsertCount++;
+        }
+      } catch (err) {
+        errors.push(`${name} (${espnId}): ${err instanceof Error ? err.message : 'parse error'}`);
+      }
+    }
+  }
+
+  // Batch upsert (D1 batch limit is 100 statements)
+  for (let i = 0; i < stmts.length; i += 50) {
+    await env.DB.batch(stmts.slice(i, i + 50));
+  }
+
+  return { team: teamName, playersUpserted: upsertCount, timestamp: now, errors };
+}
+
+/**
+ * HTTP handler for bulk cumulative stats sync.
+ * GET /api/college-baseball/sync-stats?team=251&key={admin_key}
+ * GET /api/college-baseball/sync-stats?conference=SEC&key={admin_key}
+ *
+ * Requires ADMIN_KEY env binding for auth.
+ */
+export async function handleCBBBulkSync(
+  url: URL,
+  env: Env,
+): Promise<Response> {
+  // Auth gate
+  const key = url.searchParams.get('key');
+  const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
+  if (!adminKey || key !== adminKey) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+
+  const singleTeam = url.searchParams.get('team');
+  const conference = url.searchParams.get('conference');
+  const now = new Date().toISOString();
+
+  // Single team sync
+  if (singleTeam) {
+    try {
+      const result = await syncTeamCumulativeStats(singleTeam, env);
+      // Invalidate caches
+      await env.KV.delete(`cb:saber:team:${singleTeam}`);
+      await env.KV.delete('cb:saber:league:2026');
+      await env.KV.delete('cb:leaders');
+      return json({ ...result, meta: { source: 'cumulative-sync', timestamp: now } });
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : 'Sync failed', team: singleTeam }, 500);
+    }
+  }
+
+  // Conference sync: look up ESPN IDs from teamMetadata
+  if (conference) {
+    const teamsInConf = Object.entries(teamMetadata)
+      .filter(([, meta]) => meta.conference.toLowerCase() === conference.toLowerCase())
+      .map(([slug, meta]) => ({ slug, espnId: meta.espnId, name: meta.name }));
+
+    if (teamsInConf.length === 0) {
+      return json({ error: `No teams found for conference: ${conference}` }, 404);
+    }
+
+    const results: Array<{ team: string; espnId: string; playersUpserted: number; error?: string }> = [];
+
+    for (const team of teamsInConf) {
+      try {
+        // Rate limit: 200ms between teams to avoid ESPN throttling
+        if (results.length > 0) await new Promise((r) => setTimeout(r, 200));
+        const result = await syncTeamCumulativeStats(team.espnId, env);
+        results.push({ team: result.team, espnId: team.espnId, playersUpserted: result.playersUpserted });
+        // Invalidate team cache
+        await env.KV.delete(`cb:saber:team:${team.espnId}`);
+        await env.KV.delete(`cb:saber:team:${team.slug}`);
+      } catch (err) {
+        results.push({ team: team.name, espnId: team.espnId, playersUpserted: 0, error: err instanceof Error ? err.message : 'Failed' });
+      }
+    }
+
+    // Invalidate league caches
+    await env.KV.delete('cb:saber:league:2026');
+    await env.KV.delete('cb:leaders');
+
+    const totalUpserted = results.reduce((s, r) => s + r.playersUpserted, 0);
+    const errorCount = results.filter((r) => r.error).length;
+
+    return json({
+      conference,
+      teamsProcessed: results.length,
+      totalPlayersUpserted: totalUpserted,
+      errors: errorCount,
+      results,
+      meta: { source: 'cumulative-sync', timestamp: now },
+    });
+  }
+
+  return json({ error: 'Provide ?team=<espnId> or ?conference=<name>' }, 400);
+}
+
+// ---------------------------------------------------------------------------
 // Leaders — queries accumulated D1 stats
 // ---------------------------------------------------------------------------
 
@@ -2752,6 +3061,7 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
 
   try {
     // Aggregate batting stats for all qualified hitters (20+ AB)
+    // Include HBP and SF for correct PA and wOBA
     const batting = await env.DB.prepare(`
       SELECT
         SUM(at_bats) as total_ab,
@@ -2761,6 +3071,9 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
         SUM(home_runs) as total_hr,
         SUM(walks_bat) as total_bb,
         SUM(strikeouts_bat) as total_k,
+        SUM(hit_by_pitch) as total_hbp,
+        SUM(sacrifice_flies) as total_sf,
+        SUM(runs) as total_r,
         COUNT(*) as qualified_hitters
       FROM player_season_stats
       WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
@@ -2790,21 +3103,55 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
     const hr = batting.total_hr || 0;
     const bb = batting.total_bb || 0;
     const k = batting.total_k || 0;
+    const hbp = batting.total_hbp || 0;
+    const sf = batting.total_sf || 0;
+    const totalRuns = batting.total_r || 0;
     const singles = h - doubles - triples - hr;
-    const pa = ab + bb;
 
+    // Correct PA = AB + BB + HBP + SF (Bug 4 fix)
+    const pa = ab + bb + hbp + sf;
+
+    // wOBA with HBP in numerator (Bug 5 fix) — using MLB linear weights for now
+    // TODO(Phase 3B): derive college-specific weights from D1 run environment
+    const wBB = 0.69, wHBP = 0.72, w1B = 0.89, w2B = 1.24, w3B = 1.56, wHR = 2.01;
     const league_woba = pa > 0
-      ? (0.69 * bb + 0.89 * singles + 1.24 * doubles + 1.56 * triples + 2.01 * hr) / pa
+      ? (wBB * bb + wHBP * hbp + w1B * singles + w2B * doubles + w3B * triples + wHR * hr) / pa
       : 0;
+
     const league_babip = (ab - k - hr) > 0 ? (h - hr) / (ab - k - hr) : 0;
     const league_kpct = pa > 0 ? k / pa : 0;
     const league_bbpct = pa > 0 ? bb / pa : 0;
     const league_iso = ab > 0 ? (doubles + 2 * triples + 3 * hr) / ab : 0;
 
+    // League OBP and AVG for wOBA scale computation
+    const league_avg = ab > 0 ? h / ab : 0;
+    const league_obp = pa > 0 ? (h + bb + hbp) / pa : 0;
+    const league_slg = ab > 0 ? (singles + 2 * doubles + 3 * triples + 4 * hr) / ab : 0;
+
+    // Runs per PA — needed for wRC+ denominator
+    const runs_per_pa = pa > 0 ? totalRuns / pa : 0;
+
+    // wOBA scale: (lgOBP - lgwOBA) / (lgOBP - lgAVG) — Tango framework
+    const woba_scale = (league_obp - league_avg) > 0
+      ? (league_obp - league_woba) / (league_obp - league_avg)
+      : 1.15; // fallback to typical value
+
+    // Pitching: compute FIP constant from D1 league data (Bug 6 fix)
+    // cFIP = lgERA - (13*lgHR/9 + 3*lgBB/9 - 2*lgK/9)
     const ipThirds = pitching.total_ip_thirds || 0;
     const ip = ipThirds / 3;
+    const lgERA = ip > 0 ? (pitching.total_er || 0) * 9 / ip : 0;
+    const lgHR9 = ip > 0 ? (pitching.total_hr || 0) * 9 / ip : 0;
+    const lgBB9 = ip > 0 ? (pitching.total_bb || 0) * 9 / ip : 0;
+    const lgK9 = ip > 0 ? (pitching.total_k || 0) * 9 / ip : 0;
+
+    // FIP constant computed from D1 data — typically 3.7-4.0 for college (higher than MLB's ~3.2)
+    const fip_constant = ip > 0
+      ? lgERA - (13 * lgHR9 + 3 * lgBB9 - 2 * lgK9) / 9
+      : 3.80; // fallback for early season
+
     const league_fip = ip > 0
-      ? (13 * (pitching.total_hr || 0) + 3 * (pitching.total_bb || 0) - 2 * (pitching.total_k || 0)) / ip + 3.2
+      ? (13 * (pitching.total_hr || 0) + 3 * (pitching.total_bb || 0) - 2 * (pitching.total_k || 0)) / ip + fip_constant
       : 0;
 
     const payload = {
@@ -2815,6 +3162,14 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       league_bbpct: Math.round(league_bbpct * 1000) / 1000,
       league_iso: Math.round(league_iso * 1000) / 1000,
       league_fip: Math.round(league_fip * 100) / 100,
+      league_era: Math.round(lgERA * 100) / 100,
+      league_obp: Math.round(league_obp * 1000) / 1000,
+      league_avg: Math.round(league_avg * 1000) / 1000,
+      league_slg: Math.round(league_slg * 1000) / 1000,
+      fip_constant: Math.round(fip_constant * 100) / 100,
+      woba_scale: Math.round(woba_scale * 100) / 100,
+      runs_per_pa: Math.round(runs_per_pa * 1000) / 1000,
+      weights_source: 'mlb-derived',
       qualified_hitters: batting.qualified_hitters || 0,
       qualified_pitchers: pitching.qualified_pitchers || 0,
       meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
@@ -2852,12 +3207,23 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
 
     // Get league baseline from KV (computed by league handler or ingest cron)
     const leagueRaw = await kvGet<Record<string, number>>(env.KV, 'cb:saber:league:2026');
-    const lgWoba = leagueRaw?.league_woba ?? 0.340; // fallback to typical D1 average
+    const lgWoba = leagueRaw?.league_woba ?? 0.340;
+    const lgFip = leagueRaw?.league_fip ?? 4.50;
+    const lgBabip = leagueRaw?.league_babip ?? 0.300;
+    const lgKpct = leagueRaw?.league_kpct ?? 0.200;
+    const lgBbpct = leagueRaw?.league_bbpct ?? 0.100;
+    // College-calibrated constants from league handler (Bug 6 fix)
+    const cFIP = leagueRaw?.fip_constant ?? 3.80;
+    const wobaScale = leagueRaw?.woba_scale ?? 1.15;
+    const lgRunsPerPA = leagueRaw?.runs_per_pa ?? 0.060;
 
-    // Qualified hitters for this team
+    // wOBA linear weights (MLB-derived, flagged for future D1 calibration)
+    const wBB = 0.69, wHBP = 0.72, w1B = 0.89, w2B = 1.24, w3B = 1.56, wHR = 2.01;
+
+    // Qualified hitters for this team — include HBP and SF for correct PA
     const hitters = await env.DB.prepare(`
       SELECT espn_id, name, position, at_bats, hits, doubles, triples, home_runs,
-             walks_bat, strikeouts_bat, games_bat
+             walks_bat, strikeouts_bat, hit_by_pitch, sacrifice_flies, games_bat
       FROM player_season_stats
       WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND at_bats >= 20
       ORDER BY at_bats DESC
@@ -2870,9 +3236,9 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       FROM player_season_stats
       WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND innings_pitched_thirds >= 45
       ORDER BY innings_pitched_thirds DESC
-    `).bind(teamId).all<Record<string, unknown>>();
+    `).bind(resolvedId).all<Record<string, unknown>>();
 
-    // Compute per-hitter sabermetrics
+    // Compute per-hitter sabermetrics with corrected PA and wOBA (Bugs 4, 5 fix)
     const hitterStats = hitters.results.map((h) => {
       const ab = Number(h.at_bats || 0);
       const hits = Number(h.hits || 0);
@@ -2881,18 +3247,27 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       const hr = Number(h.home_runs || 0);
       const bb = Number(h.walks_bat || 0);
       const k = Number(h.strikeouts_bat || 0);
+      const hbp = Number(h.hit_by_pitch || 0);
+      const sf = Number(h.sacrifice_flies || 0);
       const singles = hits - d - t - hr;
-      const pa = ab + bb;
+
+      // Corrected PA = AB + BB + HBP + SF
+      const pa = ab + bb + hbp + sf;
 
       const babip = (ab - k - hr) > 0 ? (hits - hr) / (ab - k - hr) : 0;
       const iso = ab > 0 ? (d + 2 * t + 3 * hr) / ab : 0;
       const kpct = pa > 0 ? k / pa : 0;
       const bbpct = pa > 0 ? bb / pa : 0;
+
+      // Corrected wOBA with HBP and proper denominator
       const woba = pa > 0
-        ? (0.69 * bb + 0.89 * singles + 1.24 * d + 1.56 * t + 2.01 * hr) / pa
+        ? (wBB * bb + wHBP * hbp + w1B * singles + w2B * d + w3B * t + wHR * hr) / pa
         : 0;
-      const wrcPlus = lgWoba > 0
-        ? ((woba - lgWoba) / 1.15 + 1.0) * 100
+
+      // Corrected wRC+ using D1 league data
+      // wRC+ = ((wOBA - lgwOBA) / wOBA_scale + lgR/PA) / lgR/PA * 100
+      const wrcPlus = lgRunsPerPA > 0
+        ? ((woba - lgWoba) / wobaScale + lgRunsPerPA) / lgRunsPerPA * 100
         : 100;
 
       return {
@@ -2901,6 +3276,7 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
         position: h.position,
         games: Number(h.games_bat || 0),
         ab,
+        pa,
         babip: Math.round(babip * 1000) / 1000,
         iso: Math.round(iso * 1000) / 1000,
         kpct: Math.round(kpct * 1000) / 1000,
@@ -2910,7 +3286,7 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       };
     });
 
-    // Compute per-pitcher sabermetrics
+    // Compute per-pitcher sabermetrics with college-calibrated FIP constant (Bug 6 fix)
     const pitcherStats = pitchers.results.map((p) => {
       const ipThirds = Number(p.innings_pitched_thirds || 0);
       const ip = ipThirds / 3;
@@ -2918,7 +3294,8 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       const bb = Number(p.walks_pitch || 0);
       const hr = Number(p.home_runs_allowed || 0);
 
-      const fip = ip > 0 ? (13 * hr + 3 * bb - 2 * k) / ip + 3.2 : 0;
+      // FIP with D1-computed constant instead of MLB's 3.2
+      const fip = ip > 0 ? (13 * hr + 3 * bb - 2 * k) / ip + cFIP : 0;
       const k9 = ip > 0 ? (k * 9.0) / ip : 0;
       const bb9 = ip > 0 ? (bb * 9.0) / ip : 0;
 
@@ -2934,37 +3311,77 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
       };
     });
 
-    // Team aggregates
+    // Team aggregates (AB-weighted for rate stats)
     const teamAb = hitterStats.reduce((s, h) => s + h.ab, 0);
-    const teamWoba = hitterStats.length > 0
-      ? hitterStats.reduce((s, h) => s + h.woba * h.ab, 0) / teamAb
+    const teamPa = hitterStats.reduce((s, h) => s + h.pa, 0);
+    const teamWoba = teamPa > 0
+      ? hitterStats.reduce((s, h) => s + h.woba * h.pa, 0) / teamPa
       : 0;
-    const teamFip = pitcherStats.length > 0
-      ? pitcherStats.reduce((s, p) => s + p.fip * p.ip, 0) / pitcherStats.reduce((s, p) => s + p.ip, 0)
-      : 0;
-    const teamBabip = hitterStats.length > 0
+    const teamBabip = teamAb > 0
       ? hitterStats.reduce((s, h) => s + h.babip * h.ab, 0) / teamAb
       : 0;
-    const teamKpct = hitterStats.length > 0
-      ? hitterStats.reduce((s, h) => s + h.kpct * h.ab, 0) / teamAb
+    const teamIso = teamAb > 0
+      ? hitterStats.reduce((s, h) => s + h.iso * h.ab, 0) / teamAb
       : 0;
-    const teamBbpct = hitterStats.length > 0
-      ? hitterStats.reduce((s, h) => s + h.bbpct * h.ab, 0) / teamAb
+    const teamKpct = teamPa > 0
+      ? hitterStats.reduce((s, h) => s + h.kpct * h.pa, 0) / teamPa
+      : 0;
+    const teamBbpct = teamPa > 0
+      ? hitterStats.reduce((s, h) => s + h.bbpct * h.pa, 0) / teamPa
+      : 0;
+    // Team wRC+ using corrected formula
+    const teamWrcPlus = lgRunsPerPA > 0
+      ? ((teamWoba - lgWoba) / wobaScale + lgRunsPerPA) / lgRunsPerPA * 100
+      : 100;
+
+    const totalIp = pitcherStats.reduce((s, p) => s + p.ip, 0);
+    const teamFip = totalIp > 0
+      ? pitcherStats.reduce((s, p) => s + p.fip * p.ip, 0) / totalIp
+      : 0;
+    const teamK9 = totalIp > 0
+      ? pitcherStats.reduce((s, p) => s + p.k9 * p.ip, 0) / totalIp
+      : 0;
+    const teamBb9 = totalIp > 0
+      ? pitcherStats.reduce((s, p) => s + p.bb9 * p.ip, 0) / totalIp
       : 0;
 
+    // Shape top hitters/pitchers for the SabermetricsPanel component
+    const topHitters = [...hitterStats]
+      .sort((a, b) => b.wrc_plus - a.wrc_plus)
+      .slice(0, 5)
+      .map((h) => ({ name: h.name, wrc_plus: h.wrc_plus, woba: h.woba, babip: h.babip, iso: h.iso, pa: h.pa }));
+
+    const topPitchers = [...pitcherStats]
+      .sort((a, b) => a.fip - b.fip)
+      .slice(0, 5)
+      .map((p) => ({ name: p.name, fip: p.fip, k_per_9: p.k9, bb_per_9: p.bb9, ip: p.ip }));
+
+    // Response shaped to match the TeamSabermetrics interface in SabermetricsPanel
     const payload = {
-      team_id: teamId,
+      teamId: resolvedId,
       season: 2026,
-      team: {
+      batting: {
         woba: Math.round(teamWoba * 1000) / 1000,
-        fip: Math.round(teamFip * 100) / 100,
+        wrc_plus: Math.round(teamWrcPlus),
         babip: Math.round(teamBabip * 1000) / 1000,
-        kpct: Math.round(teamKpct * 1000) / 1000,
-        bbpct: Math.round(teamBbpct * 1000) / 1000,
+        iso: Math.round(teamIso * 1000) / 1000,
+        k_pct: Math.round(teamKpct * 1000) / 1000,
+        bb_pct: Math.round(teamBbpct * 1000) / 1000,
+        top_hitters: topHitters,
       },
-      league: { woba: lgWoba },
-      top_hitters_by_wrc_plus: [...hitterStats].sort((a, b) => b.wrc_plus - a.wrc_plus).slice(0, 5),
-      top_pitchers_by_fip: [...pitcherStats].sort((a, b) => a.fip - b.fip).slice(0, 5),
+      pitching: {
+        fip: Math.round(teamFip * 100) / 100,
+        k_per_9: Math.round(teamK9 * 10) / 10,
+        bb_per_9: Math.round(teamBb9 * 10) / 10,
+        top_pitchers: topPitchers,
+      },
+      league: {
+        woba: lgWoba,
+        fip: lgFip,
+        babip: lgBabip,
+        k_pct: lgKpct,
+        bb_pct: lgBbpct,
+      },
       all_hitters: hitterStats,
       all_pitchers: pitcherStats,
       meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
@@ -2975,6 +3392,168 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
   } catch (err) {
     return json({ error: err instanceof Error ? err.message : 'Team sabermetrics failed' }, 500);
   }
+}
+
+// ---------------------------------------------------------------------------
+// ESPN Data Diagnostics — TEMPORARY (remove after verification)
+// ---------------------------------------------------------------------------
+
+/**
+ * Diagnostic endpoint that fetches ESPN's team statistics and one box score,
+ * returning raw label arrays and available stat fields. Used to verify
+ * which stats ESPN exposes for college baseball before building the
+ * cumulative sync pipeline.
+ *
+ * GET /api/college-baseball/diagnostics/:teamId
+ */
+export async function handleESPNDiagnostics(teamId: string, env: Env): Promise<Response> {
+  const results: Record<string, unknown> = { teamId, timestamp: new Date().toISOString() };
+
+  // 1. Team cumulative statistics endpoint
+  try {
+    const statsUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/statistics`;
+    const controller1 = new AbortController();
+    const timeout1 = setTimeout(() => controller1.abort(), 10000);
+    const statsRes = await fetch(statsUrl, { signal: controller1.signal });
+    clearTimeout(timeout1);
+
+    if (statsRes.ok) {
+      const statsData = await statsRes.json() as Record<string, unknown>;
+      // Extract available stat category names and per-category label keys
+      const splits = statsData.splits as Record<string, unknown> | undefined;
+      const categories = (splits?.categories || statsData.categories || []) as Array<{
+        name?: string;
+        displayName?: string;
+        stats?: Array<{ name?: string; displayName?: string; abbreviation?: string; value?: number }>;
+      }>;
+
+      results.teamStatistics = {
+        url: statsUrl,
+        status: statsRes.status,
+        categoryCount: categories.length,
+        categories: categories.map((cat) => ({
+          name: cat.name || cat.displayName,
+          statKeys: (cat.stats || []).map((s) => ({
+            name: s.name,
+            abbreviation: s.abbreviation,
+            displayName: s.displayName,
+            sampleValue: s.value,
+          })),
+        })),
+        // Also try to find per-athlete splits
+        hasAthletes: !!(statsData as Record<string, unknown>).athletes,
+        rawTopLevelKeys: Object.keys(statsData),
+      };
+    } else {
+      results.teamStatistics = { url: statsUrl, status: statsRes.status, error: 'Non-200 response' };
+    }
+  } catch (err) {
+    results.teamStatistics = { error: err instanceof Error ? err.message : 'Failed to fetch team statistics' };
+  }
+
+  // 1b. Try the athletes statistics endpoint (per-player cumulative)
+  try {
+    const athletesUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/athletes?limit=50`;
+    const controller1b = new AbortController();
+    const timeout1b = setTimeout(() => controller1b.abort(), 10000);
+    const athletesRes = await fetch(athletesUrl, { signal: controller1b.signal });
+    clearTimeout(timeout1b);
+
+    if (athletesRes.ok) {
+      const athletesData = await athletesRes.json() as Record<string, unknown>;
+      const items = (athletesData.items || athletesData.athletes || []) as Array<Record<string, unknown>>;
+      const firstAthlete = items[0];
+      results.athletesList = {
+        url: athletesUrl,
+        status: athletesRes.status,
+        count: items.length,
+        sampleAthlete: firstAthlete ? {
+          id: firstAthlete.id,
+          name: (firstAthlete as Record<string, unknown>).displayName || (firstAthlete as Record<string, unknown>).fullName,
+          topLevelKeys: Object.keys(firstAthlete),
+        } : null,
+        rawTopLevelKeys: Object.keys(athletesData),
+      };
+    } else {
+      results.athletesList = { url: athletesUrl, status: athletesRes.status, error: 'Non-200 response' };
+    }
+  } catch (err) {
+    results.athletesList = { error: err instanceof Error ? err.message : 'Failed' };
+  }
+
+  // 2. Recent box score — find the most recent finished game for this team
+  try {
+    const espnDate = new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0].replace(/-/g, '');
+    const scoreboard = await getScoreboard('college-baseball', espnDate) as Record<string, unknown>;
+    const events = ((scoreboard?.events || []) as Array<Record<string, unknown>>);
+
+    // Find a finished game involving this team (or any finished game as fallback)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let targetGame: any = null;
+    for (const e of events) {
+      const competitions = (e.competitions || []) as Array<Record<string, unknown>>;
+      const comp = competitions[0];
+      if (!comp) continue;
+      const status = (comp.status as Record<string, unknown>)?.type as Record<string, unknown> | undefined;
+      if (status?.completed !== true) continue;
+      // Check if this team is involved
+      const competitors = (comp.competitors || []) as Array<Record<string, unknown>>;
+      const involves = competitors.some((c) => String((c.team as Record<string, unknown>)?.id) === teamId);
+      if (involves || !targetGame) targetGame = e;
+      if (involves) break;
+    }
+
+    if (targetGame) {
+      const gameId = String(targetGame.id);
+      const summary = await getGameSummary('college-baseball', gameId) as Record<string, unknown>;
+      const boxPlayers = ((summary?.boxscore as Record<string, unknown>)?.players || []) as Array<Record<string, unknown>>;
+
+      results.boxScore = {
+        gameId,
+        teamCount: boxPlayers.length,
+        teams: boxPlayers.map((teamBox) => {
+          const stats = (teamBox.statistics || []) as Array<{ labels?: string[]; athletes?: unknown[] }>;
+          return {
+            team: (teamBox.team as Record<string, unknown>)?.displayName,
+            teamId: (teamBox.team as Record<string, unknown>)?.id,
+            statGroups: stats.map((sg) => ({
+              labels: sg.labels,
+              labelCount: sg.labels?.length,
+              athleteCount: (sg.athletes || []).length,
+            })),
+          };
+        }),
+      };
+    } else {
+      results.boxScore = { note: 'No finished games found for today', date: espnDate };
+    }
+  } catch (err) {
+    results.boxScore = { error: err instanceof Error ? err.message : 'Failed to fetch box score' };
+  }
+
+  // 3. Try the per-athlete statistics endpoint (season stats per player)
+  try {
+    const athleteStatsUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams/${teamId}/statistics?season=2026&seasontype=2`;
+    const controller3 = new AbortController();
+    const timeout3 = setTimeout(() => controller3.abort(), 10000);
+    const res3 = await fetch(athleteStatsUrl, { signal: controller3.signal });
+    clearTimeout(timeout3);
+
+    if (res3.ok) {
+      const data3 = await res3.json() as Record<string, unknown>;
+      results.seasonStats = {
+        url: athleteStatsUrl,
+        status: res3.status,
+        topLevelKeys: Object.keys(data3),
+      };
+    } else {
+      results.seasonStats = { url: athleteStatsUrl, status: res3.status };
+    }
+  } catch (err) {
+    results.seasonStats = { error: err instanceof Error ? err.message : 'Failed' };
+  }
+
+  return json({ diagnostics: results, meta: { source: 'espn-diagnostics', note: 'TEMPORARY — remove after verification' } });
 }
 
 // ---------------------------------------------------------------------------
