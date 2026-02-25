@@ -173,7 +173,6 @@ export default function CollegeBaseballGamesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredGames.map((game, index) => (
                   <ScrollReveal key={game.id} direction="up" delay={Math.min(index * 50, 300)}>
-                    <Link href={`/college-baseball/game/${game.id}`} className="block h-full">
                     <Card variant="hover" padding="md" className="h-full">
                       {/* Status Badge */}
                       <div className="flex items-center justify-between mb-4">
@@ -244,8 +243,12 @@ export default function CollegeBaseballGamesPage() {
                           </span>
                         </div>
                       )}
+                      <div className="mt-4 pt-4 border-t border-border-subtle">
+                        <span className="text-xs text-text-tertiary">
+                          Game details are temporarily unavailable in this static deployment.
+                        </span>
+                      </div>
                     </Card>
-                    </Link>
                   </ScrollReveal>
                 ))}
               </div>

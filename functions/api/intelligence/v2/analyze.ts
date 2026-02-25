@@ -4,6 +4,7 @@
 
 interface Env {
   ANTHROPIC_API_KEY: string;
+  JWT_SECRET?: string;
   BSI_PROD_CACHE?: KVNamespace;
   BSI_SPORTRADAR_CACHE?: KVNamespace;
   SPORTSDATAIO_API_KEY?: string;
@@ -36,6 +37,54 @@ function getSessionToken(request: Request): string | null {
     return authHeader.slice(7).trim() || null;
   }
   return getCookieValue(request.headers.get('Cookie'), 'bsi-session');
+}
+
+function decodeBase64Url(value: string): string | null {
+  try {
+    const padded = value.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(value.length / 4) * 4, '=');
+    return atob(padded);
+  } catch {
+    return null;
+  }
+}
+
+async function verifySubscriberToken(token: string, jwtSecret?: string): Promise<boolean> {
+  if (!jwtSecret) return false;
+
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  const [headerPart, payloadPart, signaturePart] = parts;
+
+  const headerRaw = decodeBase64Url(headerPart);
+  const payloadRaw = decodeBase64Url(payloadPart);
+  const signatureRaw = decodeBase64Url(signaturePart);
+  if (!headerRaw || !payloadRaw || !signatureRaw) return false;
+
+  let payload: { exp?: number; tier?: string };
+  try {
+    payload = JSON.parse(payloadRaw) as { exp?: number; tier?: string };
+  } catch {
+    return false;
+  }
+
+  if (typeof payload.exp !== 'number' || payload.exp <= Math.floor(Date.now() / 1000)) {
+    return false;
+  }
+
+  if (payload.tier && !['pro', 'enterprise', 'subscriber'].includes(payload.tier)) {
+    return false;
+  }
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(jwtSecret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+
+  const signature = Uint8Array.from(signatureRaw, (c) => c.charCodeAt(0));
+  return crypto.subtle.verify('HMAC', key, signature, new TextEncoder().encode(`${headerPart}.${payloadPart}`));
 }
 
 // ─── Context assembly ─────────────────────────────────────────────────────────
@@ -107,7 +156,8 @@ async function assembleSportContext(sport: Sport, env: Env): Promise<SportContex
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Auth gate
   const token = getSessionToken(context.request);
-  if (!token) {
+  const hasValidToken = token ? await verifySubscriberToken(token, context.env.JWT_SECRET) : false;
+  if (!hasValidToken) {
     return new Response(
       JSON.stringify({ error: 'subscription_required', redirect: '/pricing' }),
       {
