@@ -373,33 +373,35 @@ describe('handleCBBTeamSOS', () => {
 // ---------------------------------------------------------------------------
 
 describe('handleCBBConferencePowerIndex', () => {
+  // Use real espnIds from team-metadata.ts so the handler's metaByEspnId
+  // lookup resolves conference correctly (126=Texas/SEC, 75=Florida/SEC, 117=Clemson/ACC).
   const secTeams = [
     makeTeamBattingRow('126', 'Texas', { total_hr: 12 }),
-    makeTeamBattingRow('2', 'Florida', { total_hr: 10 }),
+    makeTeamBattingRow('75', 'Florida', { total_hr: 10 }),
   ];
 
   const accTeams = [
-    makeTeamBattingRow('228', 'Clemson', { total_hr: 9 }),
+    makeTeamBattingRow('117', 'Clemson', { total_hr: 9 }),
   ];
 
   const allTeams = [...secTeams, ...accTeams];
 
   const pitchingRows = [
     { team_id: '126', total_ip_thirds: 300, total_k: 90, total_bb: 30, total_hr: 6, total_er: 25 },
-    { team_id: '2', total_ip_thirds: 270, total_k: 80, total_bb: 35, total_hr: 8, total_er: 30 },
-    { team_id: '228', total_ip_thirds: 250, total_k: 70, total_bb: 25, total_hr: 5, total_er: 20 },
+    { team_id: '75', total_ip_thirds: 270, total_k: 80, total_bb: 35, total_hr: 8, total_er: 30 },
+    { team_id: '117', total_ip_thirds: 250, total_k: 70, total_bb: 25, total_hr: 5, total_er: 20 },
   ];
 
   const confRows = [
     { team_id: '126', conference: 'SEC' },
-    { team_id: '2', conference: 'SEC' },
-    { team_id: '228', conference: 'ACC' },
+    { team_id: '75', conference: 'SEC' },
+    { team_id: '117', conference: 'ACC' },
   ];
 
   const games = [
-    makeGameRow('126', '2', 5, 3),    // SEC vs SEC: 126 wins
-    makeGameRow('2', '228', 4, 6),    // Cross-conf: 228 wins
-    makeGameRow('126', '228', 7, 1),  // Cross-conf: 126 wins
+    makeGameRow('126', '75', 5, 3),    // SEC vs SEC: 126 wins
+    makeGameRow('75', '117', 4, 6),    // Cross-conf: 117 wins
+    makeGameRow('126', '117', 7, 1),   // Cross-conf: 126 wins
   ];
 
   function makeEnv(kvInit: Record<string, unknown> = {}) {
@@ -443,16 +445,16 @@ describe('handleCBBConferencePowerIndex', () => {
   });
 
   it('handles hyphenated slug for Big 12', async () => {
-    // Add Big 12 teams
-    const b12Teams = [makeTeamBattingRow('300', 'TCU', {})];
-    const b12Pitching = [{ team_id: '300', total_ip_thirds: 200, total_k: 60, total_bb: 20, total_hr: 4, total_er: 15 }];
+    // Add Big 12 teams — TCU real espnId is 198
+    const b12Teams = [makeTeamBattingRow('198', 'TCU', {})];
+    const b12Pitching = [{ team_id: '198', total_ip_thirds: 200, total_k: 60, total_bb: 20, total_hr: 4, total_er: 15 }];
     const b12Conf = [
       ...confRows,
-      { team_id: '300', conference: 'Big 12' },
+      { team_id: '198', conference: 'Big 12' },
     ];
     const b12Games = [
       ...games,
-      makeGameRow('300', '126', 3, 5),
+      makeGameRow('198', '126', 3, 5),
     ];
 
     const kv = createMockKV();
