@@ -381,7 +381,7 @@ export default function PlayerDetailClient() {
 
             {/* Email capture */}
             <div className="mt-8">
-              <IntelSignup sport="college_baseball" />
+              <IntelSignup />
             </div>
           </Container>
         </Section>
