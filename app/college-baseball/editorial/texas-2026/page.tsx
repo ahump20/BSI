@@ -73,7 +73,7 @@ const data: TeamPreviewData = {
       position: 'LHP',
       year: 'Gr.',
       stats: '3.06 ERA, 72 K',
-      bio: 'Friendswood product. Veteran lefty anchors the rotation. Consistent strike-thrower with big-game experience.',
+      bio: 'Friendswood product. Left-hander who pitched Texas through two SEC elimination games last spring. Commands four pitches and never gives in to contact — the kind of starter who gives the lineup time to work.',
     },
     {
       name: 'Dylan Volantis',
@@ -87,14 +87,14 @@ const data: TeamPreviewData = {
       position: 'RHP',
       year: 'So.',
       stats: '2.78 ERA',
-      bio: 'Wylie product. Pitched beyond his years as a freshman. Reliable arm in high-leverage situations.',
+      bio: 'Wylie product. Threw 2.78 ERA innings as a freshman in games Texas had to win. Slider tunnels off the fastball well enough to get swings in two-strike counts.',
     },
     {
       name: 'Max Grubbs',
       position: 'RHP',
       year: 'Sr.',
       stats: '2.84 ERA, 6-2',
-      bio: 'Arlington native. Veteran right-hander with a deep pitch mix. Consistent innings-eater.',
+      bio: 'Arlington native. Four-pitch right-hander who went 6-2 with a 2.84 ERA last season. Schlossnagle trusts him in any situation — start, long relief, or bridge to the closer.',
     },
   ],
 
@@ -105,7 +105,7 @@ const data: TeamPreviewData = {
       year: 'Jr.',
       fromSchool: 'Wake Forest',
       stats: '',
-      bio: 'Left-handed arm from the CWS runner-up. Adds SEC-tested depth to an already loaded staff.',
+      bio: 'Pitched in the CWS finals for Wake Forest last June. Left-hander with a deceptive delivery who changes eye levels — exactly the arm profile Schlossnagle uses to shorten games.',
     },
     {
       name: 'Ashton Larson',
@@ -113,7 +113,7 @@ const data: TeamPreviewData = {
       year: 'Jr.',
       fromSchool: 'LSU',
       stats: '',
-      bio: 'Outfield depth from the defending national champions. Speed and defensive range.',
+      bio: 'Won a national title at LSU as a reserve outfielder. Plus speed who covers center and can pinch-run in tight games — the kind of roster piece that matters in May.',
     },
     {
       name: 'Thomas Burns',
@@ -121,7 +121,7 @@ const data: TeamPreviewData = {
       year: 'Jr.',
       fromSchool: 'Arizona State',
       stats: '3.71 ERA, 40 K in 26.2 IP',
-      bio: 'Bullpen depth with swing-and-miss stuff.',
+      bio: 'Posted a 3.71 ERA with 40 K in 26.2 IP at Arizona State. Power slider gets right-handers to expand the zone — a weapon in the sixth and seventh innings.',
     },
     {
       name: 'Temo Becerra',
@@ -129,7 +129,7 @@ const data: TeamPreviewData = {
       year: 'R-Sr.',
       fromSchool: 'Stanford',
       stats: '',
-      bio: 'Veteran infielder adds experience and flexibility. Can play multiple positions.',
+      bio: 'Stanford infielder who played in a College World Series. Can slot at second, third, or first — the utility piece that lets Schlossnagle rest starters without losing defensive quality.',
     },
     {
       name: 'Cody Howard',
@@ -145,7 +145,7 @@ const data: TeamPreviewData = {
       year: 'R-Sr.',
       fromSchool: 'College of Charleston',
       stats: '',
-      bio: 'Speed and defense in the outfield. Could be a late-inning weapon on the bases.',
+      bio: 'College of Charleston product with 70-grade speed. Defensive replacement and pinch-runner who can steal a base in the ninth when the game is tight.',
     },
   ],
 

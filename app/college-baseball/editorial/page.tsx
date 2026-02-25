@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
+import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
@@ -68,59 +69,59 @@ interface TeamCard {
 }
 
 const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '44-14', tier: 'Omaha Favorite' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '53-15', tier: 'Omaha Favorite' },
-  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '52-17', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '47-23', tier: 'Omaha Favorite' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '45-23', tier: 'Contender' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '46-21', tier: 'Contender' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '43-21', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '40-21', tier: 'Dark Horse' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '39-23', tier: 'Dark Horse' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '40-22', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '42-23', tier: 'Bubble' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '36-23', tier: 'Bubble' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '32-26', tier: 'Bubble' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '33-25', tier: 'Bubble' },
-  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '28-29', tier: 'Rebuilding' },
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '7-0', tier: 'Omaha Favorite' },
+  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '7-0', tier: 'Omaha Favorite' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '6-1', tier: 'Contender' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '6-1', tier: 'Contender' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '8-0', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '7-0', tier: 'Contender' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '6-1', tier: 'Contender' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '5-2', tier: 'Contender' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '5-2', tier: 'Contender' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '5-2', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '5-2', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '8-0', tier: 'Dark Horse' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '4-3', tier: 'Bubble' },
+  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '3-4', tier: 'Rebuilding' },
 ];
 
 const BIG12_TEAMS: TeamCard[] = [
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '44-20', tier: 'Contender' },
-  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '42-18', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '35-24', tier: 'Dark Horse' },
-  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '36-22', tier: 'Dark Horse' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '30-27', tier: 'Bubble' },
-  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '32-26', tier: 'Bubble' },
-  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '34-25', tier: 'Bubble' },
-  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '29-27', tier: 'Bubble' },
-  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '20-33', tier: 'Rebuilding' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '25-30', tier: 'Rebuilding' },
-  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '28-28', tier: 'Rebuilding' },
-  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '26-29', tier: 'Rebuilding' },
-  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '22-33', tier: 'Rebuilding' },
+  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '5-2', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '4-3', tier: 'Dark Horse' },
+  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '5-1', tier: 'Bubble' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '5-2', tier: 'Bubble' },
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '2-5', tier: 'Bubble' },
+  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '4-3', tier: 'Bubble' },
+  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '4-3', tier: 'Bubble' },
+  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '3-4', tier: 'Rebuilding' },
+  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '2-5', tier: 'Rebuilding' },
 ];
 
 const BIGTEN_TEAMS: TeamCard[] = [
-  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '48-18', tier: 'Omaha Favorite' },
-  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '42-16', tier: 'Contender' },
-  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '37-23', tier: 'Contender' },
-  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '33-23', tier: 'Dark Horse' },
-  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '33-22-1', tier: 'Dark Horse' },
-  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '32-24', tier: 'Bubble' },
-  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '33-23', tier: 'Bubble' },
-  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '33-29', tier: 'Bubble' },
-  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '30-24', tier: 'Bubble' },
-  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '28-27', tier: 'Bubble' },
-  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '29-28', tier: 'Bubble' },
-  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '29-28', tier: 'Bubble' },
-  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '31-23', tier: 'Bubble' },
-  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '13-37', tier: 'Rebuilding' },
-  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '27-29', tier: 'Rebuilding' },
-  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '24-28', tier: 'Rebuilding' },
-  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '25-27', tier: 'Rebuilding' },
+  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '5-2', tier: 'Contender' },
+  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '4-3', tier: 'Contender' },
+  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '5-2', tier: 'Bubble' },
+  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '5-2', tier: 'Bubble' },
+  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '4-3', tier: 'Bubble' },
+  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '4-3', tier: 'Bubble' },
+  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '4-3', tier: 'Bubble' },
+  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '4-3', tier: 'Bubble' },
+  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '3-4', tier: 'Bubble' },
+  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '3-4', tier: 'Bubble' },
+  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '2-5', tier: 'Rebuilding' },
+  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
 ];
 
 // ── Standalone articles ────────────────────────────────────────────────
@@ -136,6 +137,69 @@ interface FeatureArticle {
 }
 
 const FEATURE_ARTICLES: FeatureArticle[] = [
+  {
+    title: 'Weekend 3 Preview: Globe Life Gets the Real Test',
+    slug: 'weekend-3-preview',
+    description: 'UCLA faces Tennessee. Mississippi State puts its 8-0 record on the line. Eight undefeated Top 25 teams enter the weekend — the Amegy Bank series at Globe Life tells us which ones are built for June.',
+    date: 'February 25, 2026',
+    readTime: '12 min',
+    badge: 'Weekly Preview',
+    tags: ['National', 'Weekly'],
+  },
+  {
+    title: 'What Two Weekends of College Baseball Actually Told Us',
+    slug: 'what-two-weekends-told-us',
+    description: 'Eight undefeated Top 25 teams. A 22-year save record broken. Two cycles in one weekend. Here is what the data says matters — and what was noise.',
+    date: 'February 25, 2026',
+    readTime: '12 min',
+    badge: 'Analysis',
+    tags: ['National'],
+  },
+  {
+    title: 'Roch Cholowsky: The No. 1 Pick Through Two Weekends',
+    slug: 'roch-cholowsky-2026-draft-profile',
+    description: 'UCLA shortstop Roch Cholowsky hit 3 HR vs No. 7 TCU including a Game 1 grand slam. 6 HR through 7 games. Full scouting report and draft analysis.',
+    date: 'February 25, 2026',
+    readTime: '10 min',
+    badge: 'Draft Profile',
+    tags: ['National'],
+  },
+  {
+    title: 'Liam Peterson: The Walk Problem and the No. 9 Pick',
+    slug: 'liam-peterson-2026-draft-profile',
+    description: 'Florida\'s ace walked 5 batters on Opening Day and didn\'t survive the fourth inning. The No. 9 overall prospect and No. 3 college arm has three Friday starts to answer the question: mechanical or mental?',
+    date: 'February 25, 2026',
+    readTime: '9 min',
+    badge: 'Draft Profile',
+    tags: ['SEC'],
+  },
+  {
+    title: 'Dylan Volantis: 14 IP. 0 ER. The Conversion Is Real.',
+    slug: 'dylan-volantis-2026-draft-profile',
+    description: 'Texas LHP Dylan Volantis converted from closer to Sunday starter. 14 IP, 0 ER, 17 K through two starts. SEC Freshman of the Year in 2025. Draft stock analysis.',
+    date: 'February 25, 2026',
+    readTime: '10 min',
+    badge: 'Draft Profile',
+    tags: ['SEC'],
+  },
+  {
+    title: 'Tyce Armstrong: Three Grand Slams and a 50-Year Record',
+    slug: 'tyce-armstrong-2026-draft-profile',
+    description: 'Baylor first baseman hit three grand slams in a single game — only the second player in NCAA D1 history to do it. 12 RBI. ESPN Player of the Week. What it means for the draft.',
+    date: 'February 25, 2026',
+    readTime: '8 min',
+    badge: 'Draft Profile',
+    tags: ['Big 12'],
+  },
+  {
+    title: 'Jackson Flora: 100 MPH and a New Arsenal',
+    slug: 'jackson-flora-2026-draft-profile',
+    description: 'UCSB right-hander Jackson Flora touched 100 mph and debuted new curveball and changeup against No. 20 Southern Miss. No. 14 on MLB Pipeline. Full scouting report.',
+    date: 'February 25, 2026',
+    readTime: '8 min',
+    badge: 'Draft Profile',
+    tags: ['National'],
+  },
   {
     title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
     slug: 'weekend-2-recap',
@@ -755,11 +819,20 @@ export default function EditorialHubPage() {
                   <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">6</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">15</div>
                   <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Feature Articles</div>
                 </div>
               </div>
             </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Email Capture */}
+        <Section padding="md" borderTop>
+          <Container>
+            <div className="max-w-md mx-auto">
+              <IntelSignup sport="college_baseball" />
+            </div>
           </Container>
         </Section>
 

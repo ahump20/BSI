@@ -547,6 +547,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://blazesportsintel.com/college-baseball/editorial/weekend-3-preview/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://blazesportsintel.com/college-baseball/editorial/west-virginia-2026/</loc>
     <lastmod>2026-02-25</lastmod>
     <changefreq>weekly</changefreq>
@@ -767,6 +773,18 @@
     <lastmod>2026-02-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/mlb/editorial/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://blazesportsintel.com/mlb/editorial/2026-season-preview/</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://blazesportsintel.com/mlb/games/</loc>
