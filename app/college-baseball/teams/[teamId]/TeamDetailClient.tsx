@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
+import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
@@ -124,7 +125,7 @@ interface TeamDetailClientProps {
 }
 
 export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'roster' | 'schedule'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'roster' | 'schedule' | 'advanced'>('overview');
   const [logoError, setLogoError] = useState(false);
 
   const meta = teamMetadata[teamId];
@@ -310,14 +311,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         <Section padding="none" className="bg-charcoal border-b border-white/10 sticky top-16 z-30">
           <Container>
             <div className="flex gap-1">
-              {(['overview', 'roster', 'schedule'] as const).map((tab) => (
+              {(['overview', 'roster', 'schedule', 'advanced'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors ${activeTab === tab ? 'border-b-2' : 'text-white/30 hover:text-white/60'}`}
                   style={activeTab === tab ? { color: accent, borderColor: accent } : undefined}
                 >
-                  {tab}
+                  {tab === 'advanced' ? 'Advanced Stats' : tab}
                 </button>
               ))}
             </div>
@@ -725,6 +726,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </Card>
                 )}
               </ScrollReveal>
+            )}
+
+            {/* ── Advanced Stats ──────────────────────────────────────────── */}
+            {activeTab === 'advanced' && (
+              <SabermetricsPanel teamId={teamId} espnId={meta?.espnId} accent={accent} />
             )}
 
             {/* Attribution */}

@@ -43,6 +43,10 @@ import {
   handleCollegeBaseballLeaders,
   handleIngestStats,
   processFinishedGames,
+  handleCBBLeagueSabermetrics,
+  handleCBBTeamSabermetrics,
+  handleCBBTeamSOS,
+  handleCBBConferencePowerIndex,
 } from './handlers/college-baseball';
 
 import {
@@ -53,6 +57,12 @@ import {
   handleMLBTeam,
   handleMLBTeamsList,
   handleMLBNews,
+  handleMLBStatsLeaders,
+  handleMLBLeaderboard,
+  handleMLBSpringScores,
+  handleMLBSpringStandings,
+  handleMLBSpringSchedule,
+  handleMLBSpringRoster,
 } from './handlers/mlb';
 
 import {
@@ -273,7 +283,11 @@ app.get('/api/college-baseball/news/enhanced', (c) => handleCollegeBaseballNewsE
 app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
 app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
 app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
@@ -326,7 +340,14 @@ app.get('/api/blog-post-feed/:slug', (c) =>
 app.get('/api/mlb/scores', (c) => safeESPN(() => handleMLBScores(new URL(c.req.url), c.env), 'games', [], c.env));
 app.get('/api/mlb/standings', (c) => safeESPN(() => handleMLBStandings(c.env), 'standings', [], c.env));
 app.get('/api/mlb/news', (c) => safeESPN(() => handleMLBNews(c.env), 'articles', [], c.env));
+app.get('/api/mlb/stats/leaders', (c) => safeESPN(() => handleMLBStatsLeaders(new URL(c.req.url), c.env), 'leaders', [], c.env));
+app.get('/api/mlb/leaderboards/:category', (c) => safeESPN(() => handleMLBLeaderboard(c.req.param('category'), new URL(c.req.url), c.env), 'data', [], c.env));
 app.get('/api/mlb/teams', (c) => safeESPN(() => handleMLBTeamsList(c.env), 'teams', [], c.env));
+// Spring Training
+app.get('/api/mlb/spring-training/scores', (c) => safeESPN(() => handleMLBSpringScores(new URL(c.req.url), c.env), 'games', [], c.env));
+app.get('/api/mlb/spring-training/standings', (c) => safeESPN(() => handleMLBSpringStandings(c.env), 'standings', {}, c.env));
+app.get('/api/mlb/spring-training/schedule', (c) => safeESPN(() => handleMLBSpringSchedule(new URL(c.req.url), c.env), 'schedule', [], c.env));
+app.get('/api/mlb/spring-training/roster/:teamKey', (c) => safeESPN(() => handleMLBSpringRoster(c.req.param('teamKey'), c.env), 'roster', [], c.env));
 app.get('/api/mlb/game/:gameId', (c) => safeESPN(() => handleMLBGame(c.req.param('gameId'), c.env), 'game', null, c.env));
 app.get('/api/mlb/players/:playerId', (c) => safeESPN(() => handleMLBPlayer(c.req.param('playerId'), c.env), 'player', null, c.env));
 app.get('/api/mlb/teams/:teamId', (c) => safeESPN(() => handleMLBTeam(c.req.param('teamId'), c.env), 'team', null, c.env));
@@ -573,6 +594,55 @@ app.post('/webhooks/stripe', async (c) => {
             console.log(`[webhook] Updated tier to ${newTier} for ${email}`);
           }
         }
+      }
+    }
+  }
+
+  // --- customer.subscription.trial_will_end: loss-framed email 3 days before expiry ---
+  if (event.type === 'customer.subscription.trial_will_end') {
+    const sub = event.data.object as {
+      customer?: string;
+      trial_end?: number;
+    };
+    const customerId = sub.customer;
+    if (customerId) {
+      const email = await kv.get(`stripe:${customerId}`);
+      if (email && (c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY) {
+        const trialEndDate = sub.trial_end
+          ? new Date(sub.trial_end * 1000).toLocaleDateString('en-US', {
+              month: 'long', day: 'numeric', year: 'numeric',
+            })
+          : 'soon';
+
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${(c.env as Env & { RESEND_API_KEY?: string }).RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'BSI <noreply@blazesportsintel.com>',
+            to: email,
+            subject: 'Your BSI Pro trial ends in 3 days',
+            html: `
+              <h2>Your BSI Pro trial ends ${trialEndDate}</h2>
+              <p>After your trial, here's what you'll lose access to:</p>
+              <ul>
+                <li>Live scores across MLB, NFL, NBA, NCAA</li>
+                <li>Real-time game updates every 30 seconds</li>
+                <li>Transfer portal tracking</li>
+                <li>Player pro-projection comps</li>
+                <li>Complete box scores with batting/pitching lines</li>
+                <li>Conference standings and rankings</li>
+                <li>Player comparison tools</li>
+              </ul>
+              <p><strong>No action needed to keep access</strong> — your card will be charged $12/mo on ${trialEndDate}.</p>
+              <p>Questions? Reply to this email.</p>
+              <p>— Austin @ BSI</p>
+            `,
+          }),
+        });
+        console.log(`[webhook] Trial ending email sent to ${email}`);
       }
     }
   }

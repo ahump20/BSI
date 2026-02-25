@@ -44,6 +44,14 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/acc-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/big-12-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/sec-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
+  // Draft profiles
+  { path: '/college-baseball/editorial/roch-cholowsky-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/dylan-volantis-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/jackson-flora-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/tyce-armstrong-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/liam-peterson-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  // Analysis
+  { path: '/college-baseball/editorial/what-two-weekends-told-us', changeFrequency: 'monthly', priority: 0.8 },
   // Weekly features
   { path: '/college-baseball/editorial/week-1-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
@@ -106,6 +114,9 @@ const editorial: SitemapEntry[] = [
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/mlb/spring-training', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/mlb/spring-training/scores', changeFrequency: 'hourly', priority: 0.7 },
+  { path: '/mlb/spring-training/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/mlb/scores', changeFrequency: 'hourly', priority: 0.7 },
   { path: '/mlb/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/mlb/games', changeFrequency: 'daily', priority: 0.7 },

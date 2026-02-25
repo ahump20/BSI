@@ -17,5 +17,8 @@ binding = "KV"
 id = "e6cb68e815cd45babeee0e10460dbfee"
 preview_id = "e6cb68e815cd45babeee0e10460dbfee"
 
+[vars]
+# RAPIDAPI_KEY is set as a secret via: wrangler secret put RAPIDAPI_KEY --config workers/bsi-portal-sync/wrangler.toml
+
 [dev]
 port = 8790

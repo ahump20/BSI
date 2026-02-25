@@ -17,6 +17,7 @@ import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { getSeasonPhase } from '@/lib/season';
 
 const mlbFeatures = [
   {
@@ -255,6 +256,43 @@ export default function MLBPage() {
           secondaryCta={{ label: 'Division Standings', href: '/mlb/standings' }}
           stats={MLB_HERO_STATS}
         />
+
+        {/* Spring Training Banner — visible during preseason */}
+        {getSeasonPhase('mlb').phase === 'preseason' && (
+          <Section padding="md" background="charcoal" borderTop>
+            <Container>
+              <Link href="/mlb/spring-training" className="group block">
+                <div className="bg-gradient-to-r from-burnt-orange/15 via-ember/10 to-transparent rounded-xl p-6 border border-burnt-orange/30 hover:border-burnt-orange transition-colors">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-burnt-orange/20 rounded-lg flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-burnt-orange" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M12 2c-2 4-2 8 0 12s2 8 0 12" />
+                          <path d="M2 12c4-2 8-2 12 0s8 2 12 0" />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="warning">Spring Training</Badge>
+                          <LiveBadge />
+                        </div>
+                        <h3 className="text-white font-semibold">Cactus & Grapefruit League</h3>
+                        <p className="text-text-tertiary text-sm mt-1">Live scores, standings, rosters, and schedules across both spring leagues.</p>
+                      </div>
+                    </div>
+                    <span className="text-burnt-orange font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                      View Spring Training
+                      <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </Container>
+          </Section>
+        )}
 
         {/* Features Section */}
         <Section padding="lg" background="charcoal" borderTop>

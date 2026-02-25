@@ -136,7 +136,7 @@ async function ingestStandings(env: Env): Promise<{ source: string; conferences:
         highlightlyHeaders(env.RAPIDAPI_KEY)
       );
       if (result.ok && result.data) {
-        await env.KV.put(`cb:standings:v2:${conf}`, JSON.stringify(result.data), { expirationTtl: TTL.standings });
+        await env.KV.put(`cb:standings:v3:${conf}`, JSON.stringify(result.data), { expirationTtl: TTL.standings });
         hlSuccess++;
       }
     }
@@ -158,13 +158,13 @@ async function ingestStandings(env: Env): Promise<{ source: string; conferences:
         ((c.name as string) ?? '').toLowerCase().includes(conf.toLowerCase())
       );
       if (match) {
-        await env.KV.put(`cb:standings:v2:${conf}`, JSON.stringify([match]), { expirationTtl: TTL.standings });
+        await env.KV.put(`cb:standings:v3:${conf}`, JSON.stringify([match]), { expirationTtl: TTL.standings });
         written++;
       }
     }
 
     // Also write NCAA-level (all)
-    await env.KV.put('cb:standings:v2:NCAA', JSON.stringify(children), { expirationTtl: TTL.standings });
+    await env.KV.put('cb:standings:v3:NCAA', JSON.stringify(children), { expirationTtl: TTL.standings });
     return { source: 'espn', conferences: written };
   }
 
@@ -295,7 +295,7 @@ export default {
       // Check cache freshness
       const scoresFresh = !!(await env.KV.get('cb:scores:today', 'text'));
       const rankingsFresh = !!(await env.KV.get('cb:rankings', 'text'));
-      const standingsFresh = !!(await env.KV.get('cb:standings:v2:NCAA', 'text'));
+      const standingsFresh = !!(await env.KV.get('cb:standings:v3:NCAA', 'text'));
 
       return new Response(JSON.stringify({
         season: isBaseballSeason(),

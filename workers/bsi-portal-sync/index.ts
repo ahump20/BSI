@@ -12,6 +12,7 @@
 
 interface Env {
   KV: KVNamespace;
+  RAPIDAPI_KEY?: string;
 }
 
 interface PortalEntry {
@@ -47,13 +48,58 @@ async function espnFetch<T>(url: string): Promise<{ ok: boolean; data?: T; error
   }
 }
 
+const HIGHLIGHTLY_HOST = 'mlb-college-baseball-api.p.rapidapi.com';
+const HIGHLIGHTLY_BASE = `https://${HIGHLIGHTLY_HOST}`;
+
+function highlightlyHeaders(apiKey: string): Record<string, string> {
+  return {
+    'x-rapidapi-key': apiKey,
+    'x-rapidapi-host': HIGHLIGHTLY_HOST,
+    Accept: 'application/json',
+  };
+}
+
+async function fetchHighlightlyPortal(apiKey: string): Promise<PortalEntry[]> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const res = await fetch(`${HIGHLIGHTLY_BASE}/transfers?league=NCAA`, {
+      headers: { 'User-Agent': 'BSI-Portal-Sync/1.0', ...highlightlyHeaders(apiKey) },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return [];
+
+    const raw = await res.json() as Record<string, unknown>;
+    const transfers = (raw.data ?? raw.transfers ?? []) as Array<Record<string, unknown>>;
+
+    return transfers.map((t) => ({
+      id: String(t.id ?? t.playerId ?? `hl-${Math.random().toString(36).slice(2)}`),
+      playerName: (t.playerName ?? t.name ?? (t.athlete as Record<string, unknown>)?.name ?? '') as string,
+      position: (t.position ?? '') as string,
+      fromSchool: (t.fromSchool ?? t.previousSchool ?? t.from ?? '') as string,
+      toSchool: (t.toSchool ?? t.newSchool ?? t.to ?? undefined) as string | undefined,
+      status: (t.status ?? 'entered') as string,
+      enteredDate: (t.date ?? t.enteredDate ?? undefined) as string | undefined,
+      classification: (t.classification ?? t.year ?? undefined) as string | undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 /**
- * Fetch transfer portal data from ESPN's athlete transfer endpoint.
- * ESPN doesn't have a dedicated portal API, so we use the news feed
- * filtered for transfer-related articles + the athletes endpoint
- * with transfer status filtering when available.
+ * Fetch transfer portal data.
+ * Highlightly first (structured portal endpoint), ESPN fallback (news-based scraping).
  */
-async function fetchPortalEntries(): Promise<PortalEntry[]> {
+async function fetchPortalEntries(env: Env): Promise<PortalEntry[]> {
+  // Highlightly first (structured portal data)
+  if (env.RAPIDAPI_KEY) {
+    const hlEntries = await fetchHighlightlyPortal(env.RAPIDAPI_KEY);
+    if (hlEntries.length > 0) return hlEntries;
+  }
+
+  // ESPN fallback (news-based scraping)
   const entries: PortalEntry[] = [];
 
   // Strategy 1: ESPN transfer news → extract player names and schools
@@ -115,7 +161,7 @@ async function fetchPortalEntries(): Promise<PortalEntry[]> {
 
 export default {
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
-    const entries = await fetchPortalEntries();
+    const entries = await fetchPortalEntries(env);
     const now = new Date().toISOString();
 
     // Merge with existing entries to avoid losing data between syncs

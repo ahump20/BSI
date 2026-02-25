@@ -2480,9 +2480,9 @@ export async function processFinishedGames(
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
                   (espn_id, season, sport, name, team, team_id, position, headshot,
-                   games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat, stolen_bases)
+                   games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat, stolen_bases, doubles, triples)
                 VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
-                        1, ?, ?, ?, ?, ?, ?, ?, 0)
+                        1, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
                 ON CONFLICT(espn_id, season, sport) DO UPDATE SET
                   name = excluded.name,
                   team = excluded.team,
@@ -2497,10 +2497,12 @@ export async function processFinishedGames(
                   home_runs = player_season_stats.home_runs + excluded.home_runs,
                   walks_bat = player_season_stats.walks_bat + excluded.walks_bat,
                   strikeouts_bat = player_season_stats.strikeouts_bat + excluded.strikeouts_bat,
+                  doubles = player_season_stats.doubles + excluded.doubles,
+                  triples = player_season_stats.triples + excluded.triples,
                   updated_at = datetime('now')
               `).bind(
                 espnId, name, teamName, teamId, position, headshot,
-                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'),
+                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'), num('2B'), num('3B'),
               ));
             }
 
@@ -2553,9 +2555,17 @@ export async function processFinishedGames(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const awayTeam = competitors.find((c: any) => c.homeAway === 'away')?.team?.displayName || '';
 
+      // Extract team IDs and scores for RPI/SOS computation
+      const homeCompetitor = competitors.find((c: any) => c.homeAway === 'home');
+      const awayCompetitor = competitors.find((c: any) => c.homeAway === 'away');
+      const homeTeamId = String(homeCompetitor?.team?.id ?? '');
+      const awayTeamId = String(awayCompetitor?.team?.id ?? '');
+      const homeScore = Number(homeCompetitor?.score ?? 0);
+      const awayScore = Number(awayCompetitor?.score ?? 0);
+
       stmts.push(env.DB.prepare(
-        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team) VALUES (?, 'college-baseball', ?, ?, ?)`
-      ).bind(gameId, date, homeTeam, awayTeam));
+        `INSERT OR IGNORE INTO processed_games (game_id, sport, game_date, home_team, away_team, home_team_id, away_team_id, home_score, away_score) VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(gameId, date, homeTeam, awayTeam, homeTeamId, awayTeamId, homeScore, awayScore));
 
       // D1 batch limit is 100 statements; chunk conservatively
       for (let i = 0; i < stmts.length; i += 50) {
@@ -2728,4 +2738,564 @@ async function buildLeaderCategories(env: Env) {
   }
 
   return categories;
+}
+
+/**
+ * League-wide sabermetric baselines for 2026 college baseball.
+ * GET /api/college-baseball/sabermetrics
+ * Computes league-average wOBA, BABIP, K%, BB% from all qualified hitters in D1.
+ */
+export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
+  const cacheKey = 'cb:saber:league:2026';
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  try {
+    // Aggregate batting stats for all qualified hitters (20+ AB)
+    const batting = await env.DB.prepare(`
+      SELECT
+        SUM(at_bats) as total_ab,
+        SUM(hits) as total_h,
+        SUM(doubles) as total_2b,
+        SUM(triples) as total_3b,
+        SUM(home_runs) as total_hr,
+        SUM(walks_bat) as total_bb,
+        SUM(strikeouts_bat) as total_k,
+        COUNT(*) as qualified_hitters
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats >= 20
+    `).first<Record<string, number>>();
+
+    // Aggregate pitching stats for qualified pitchers (45+ thirds = 15 IP)
+    const pitching = await env.DB.prepare(`
+      SELECT
+        SUM(innings_pitched_thirds) as total_ip_thirds,
+        SUM(strikeouts_pitch) as total_k,
+        SUM(walks_pitch) as total_bb,
+        SUM(home_runs_allowed) as total_hr,
+        SUM(earned_runs) as total_er,
+        COUNT(*) as qualified_pitchers
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds >= 45
+    `).first<Record<string, number>>();
+
+    if (!batting || !pitching) {
+      return json({ error: 'No qualifying data', meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
+    }
+
+    const ab = batting.total_ab || 0;
+    const h = batting.total_h || 0;
+    const doubles = batting.total_2b || 0;
+    const triples = batting.total_3b || 0;
+    const hr = batting.total_hr || 0;
+    const bb = batting.total_bb || 0;
+    const k = batting.total_k || 0;
+    const singles = h - doubles - triples - hr;
+    const pa = ab + bb;
+
+    const league_woba = pa > 0
+      ? (0.69 * bb + 0.89 * singles + 1.24 * doubles + 1.56 * triples + 2.01 * hr) / pa
+      : 0;
+    const league_babip = (ab - k - hr) > 0 ? (h - hr) / (ab - k - hr) : 0;
+    const league_kpct = pa > 0 ? k / pa : 0;
+    const league_bbpct = pa > 0 ? bb / pa : 0;
+    const league_iso = ab > 0 ? (doubles + 2 * triples + 3 * hr) / ab : 0;
+
+    const ipThirds = pitching.total_ip_thirds || 0;
+    const ip = ipThirds / 3;
+    const league_fip = ip > 0
+      ? (13 * (pitching.total_hr || 0) + 3 * (pitching.total_bb || 0) - 2 * (pitching.total_k || 0)) / ip + 3.2
+      : 0;
+
+    const payload = {
+      season: 2026,
+      league_woba: Math.round(league_woba * 1000) / 1000,
+      league_babip: Math.round(league_babip * 1000) / 1000,
+      league_kpct: Math.round(league_kpct * 1000) / 1000,
+      league_bbpct: Math.round(league_bbpct * 1000) / 1000,
+      league_iso: Math.round(league_iso * 1000) / 1000,
+      league_fip: Math.round(league_fip * 100) / 100,
+      qualified_hitters: batting.qualified_hitters || 0,
+      qualified_pitchers: pitching.qualified_pitchers || 0,
+      meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 3600);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'Sabermetrics computation failed' }, 500);
+  }
+}
+
+/**
+ * Team-level sabermetrics for a specific college baseball team.
+ * GET /api/college-baseball/teams/:teamId/sabermetrics
+ */
+export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `cb:saber:team:${teamId}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.team, { 'X-Cache': 'HIT' });
+
+  try {
+    // Resolve slug to ESPN numeric team_id if non-numeric
+    let resolvedId = teamId;
+    if (!/^\d+$/.test(teamId)) {
+      // Convert slug to search term: "texas-am" → "%texas%a%m%"
+      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+      const lookup = await env.DB.prepare(`
+        SELECT team_id FROM player_season_stats
+        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        LIMIT 1
+      `).bind(searchTerm).first<{ team_id: string }>();
+      if (lookup?.team_id) resolvedId = lookup.team_id;
+    }
+
+    // Get league baseline from KV (computed by league handler or ingest cron)
+    const leagueRaw = await kvGet<Record<string, number>>(env.KV, 'cb:saber:league:2026');
+    const lgWoba = leagueRaw?.league_woba ?? 0.340; // fallback to typical D1 average
+
+    // Qualified hitters for this team
+    const hitters = await env.DB.prepare(`
+      SELECT espn_id, name, position, at_bats, hits, doubles, triples, home_runs,
+             walks_bat, strikeouts_bat, games_bat
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND at_bats >= 20
+      ORDER BY at_bats DESC
+    `).bind(resolvedId).all<Record<string, unknown>>();
+
+    // Qualified pitchers for this team
+    const pitchers = await env.DB.prepare(`
+      SELECT espn_id, name, position, innings_pitched_thirds, strikeouts_pitch,
+             walks_pitch, home_runs_allowed, earned_runs, hits_allowed, games_pitch
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND team_id = ? AND innings_pitched_thirds >= 45
+      ORDER BY innings_pitched_thirds DESC
+    `).bind(teamId).all<Record<string, unknown>>();
+
+    // Compute per-hitter sabermetrics
+    const hitterStats = hitters.results.map((h) => {
+      const ab = Number(h.at_bats || 0);
+      const hits = Number(h.hits || 0);
+      const d = Number(h.doubles || 0);
+      const t = Number(h.triples || 0);
+      const hr = Number(h.home_runs || 0);
+      const bb = Number(h.walks_bat || 0);
+      const k = Number(h.strikeouts_bat || 0);
+      const singles = hits - d - t - hr;
+      const pa = ab + bb;
+
+      const babip = (ab - k - hr) > 0 ? (hits - hr) / (ab - k - hr) : 0;
+      const iso = ab > 0 ? (d + 2 * t + 3 * hr) / ab : 0;
+      const kpct = pa > 0 ? k / pa : 0;
+      const bbpct = pa > 0 ? bb / pa : 0;
+      const woba = pa > 0
+        ? (0.69 * bb + 0.89 * singles + 1.24 * d + 1.56 * t + 2.01 * hr) / pa
+        : 0;
+      const wrcPlus = lgWoba > 0
+        ? ((woba - lgWoba) / 1.15 + 1.0) * 100
+        : 100;
+
+      return {
+        espn_id: h.espn_id,
+        name: h.name,
+        position: h.position,
+        games: Number(h.games_bat || 0),
+        ab,
+        babip: Math.round(babip * 1000) / 1000,
+        iso: Math.round(iso * 1000) / 1000,
+        kpct: Math.round(kpct * 1000) / 1000,
+        bbpct: Math.round(bbpct * 1000) / 1000,
+        woba: Math.round(woba * 1000) / 1000,
+        wrc_plus: Math.round(wrcPlus),
+      };
+    });
+
+    // Compute per-pitcher sabermetrics
+    const pitcherStats = pitchers.results.map((p) => {
+      const ipThirds = Number(p.innings_pitched_thirds || 0);
+      const ip = ipThirds / 3;
+      const k = Number(p.strikeouts_pitch || 0);
+      const bb = Number(p.walks_pitch || 0);
+      const hr = Number(p.home_runs_allowed || 0);
+
+      const fip = ip > 0 ? (13 * hr + 3 * bb - 2 * k) / ip + 3.2 : 0;
+      const k9 = ip > 0 ? (k * 9.0) / ip : 0;
+      const bb9 = ip > 0 ? (bb * 9.0) / ip : 0;
+
+      return {
+        espn_id: p.espn_id,
+        name: p.name,
+        position: p.position,
+        games: Number(p.games_pitch || 0),
+        ip: Math.round(ip * 10) / 10,
+        fip: Math.round(fip * 100) / 100,
+        k9: Math.round(k9 * 10) / 10,
+        bb9: Math.round(bb9 * 10) / 10,
+      };
+    });
+
+    // Team aggregates
+    const teamAb = hitterStats.reduce((s, h) => s + h.ab, 0);
+    const teamWoba = hitterStats.length > 0
+      ? hitterStats.reduce((s, h) => s + h.woba * h.ab, 0) / teamAb
+      : 0;
+    const teamFip = pitcherStats.length > 0
+      ? pitcherStats.reduce((s, p) => s + p.fip * p.ip, 0) / pitcherStats.reduce((s, p) => s + p.ip, 0)
+      : 0;
+    const teamBabip = hitterStats.length > 0
+      ? hitterStats.reduce((s, h) => s + h.babip * h.ab, 0) / teamAb
+      : 0;
+    const teamKpct = hitterStats.length > 0
+      ? hitterStats.reduce((s, h) => s + h.kpct * h.ab, 0) / teamAb
+      : 0;
+    const teamBbpct = hitterStats.length > 0
+      ? hitterStats.reduce((s, h) => s + h.bbpct * h.ab, 0) / teamAb
+      : 0;
+
+    const payload = {
+      team_id: teamId,
+      season: 2026,
+      team: {
+        woba: Math.round(teamWoba * 1000) / 1000,
+        fip: Math.round(teamFip * 100) / 100,
+        babip: Math.round(teamBabip * 1000) / 1000,
+        kpct: Math.round(teamKpct * 1000) / 1000,
+        bbpct: Math.round(teamBbpct * 1000) / 1000,
+      },
+      league: { woba: lgWoba },
+      top_hitters_by_wrc_plus: [...hitterStats].sort((a, b) => b.wrc_plus - a.wrc_plus).slice(0, 5),
+      top_pitchers_by_fip: [...pitcherStats].sort((a, b) => a.fip - b.fip).slice(0, 5),
+      all_hitters: hitterStats,
+      all_pitchers: pitcherStats,
+      meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 1800);
+    return cachedJson(payload, 200, HTTP_CACHE.team, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'Team sabermetrics failed' }, 500);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// SOS / RPI — Strength of Schedule and Ratings Percentage Index
+// ---------------------------------------------------------------------------
+
+/**
+ * Strength of Schedule and RPI for a team.
+ * GET /api/college-baseball/teams/:teamId/sos
+ *
+ * RPI = 0.25 * WP + 0.50 * OWP + 0.25 * OOWP
+ * WP = win percentage
+ * OWP = opponents' average winning percentage (excluding games vs this team)
+ * OOWP = opponents' opponents' average winning percentage
+ */
+export async function handleCBBTeamSOS(teamId: string, env: Env): Promise<Response> {
+  const cacheKey = `cb:sos:${teamId}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  try {
+    // Resolve slug to ESPN numeric team_id if non-numeric
+    let resolvedId = teamId;
+    if (!/^\d+$/.test(teamId)) {
+      const searchTerm = `%${teamId.replace(/-/g, '%')}%`;
+      const lookup = await env.DB.prepare(`
+        SELECT team_id FROM player_season_stats
+        WHERE sport = 'college-baseball' AND season = 2026 AND LOWER(team) LIKE LOWER(?)
+        LIMIT 1
+      `).bind(searchTerm).first<{ team_id: string }>();
+      if (lookup?.team_id) resolvedId = lookup.team_id;
+    }
+
+    // Get all processed games for the season
+    const allGames = await env.DB.prepare(`
+      SELECT game_id, home_team_id, away_team_id, home_score, away_score
+      FROM processed_games
+      WHERE sport = 'college-baseball' AND game_date >= '2026-02-01'
+        AND home_team_id IS NOT NULL AND away_team_id IS NOT NULL
+    `).all<{ game_id: string; home_team_id: string; away_team_id: string; home_score: number; away_score: number }>();
+
+    if (allGames.results.length === 0) {
+      return json({ error: 'No game data available for RPI computation', meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' } }, 404);
+    }
+
+    // Build win/loss record per team
+    const records: Record<string, { wins: number; losses: number; opponents: string[] }> = {};
+
+    const ensureRecord = (id: string) => {
+      if (!records[id]) records[id] = { wins: 0, losses: 0, opponents: [] };
+    };
+
+    for (const g of allGames.results) {
+      ensureRecord(g.home_team_id);
+      ensureRecord(g.away_team_id);
+
+      records[g.home_team_id].opponents.push(g.away_team_id);
+      records[g.away_team_id].opponents.push(g.home_team_id);
+
+      if (g.home_score > g.away_score) {
+        records[g.home_team_id].wins++;
+        records[g.away_team_id].losses++;
+      } else if (g.away_score > g.home_score) {
+        records[g.away_team_id].wins++;
+        records[g.home_team_id].losses++;
+      }
+      // Ties don't count for RPI
+    }
+
+    const wp = (id: string): number => {
+      const r = records[id];
+      if (!r) return 0;
+      const total = r.wins + r.losses;
+      return total > 0 ? r.wins / total : 0;
+    };
+
+    // OWP: opponents' winning percentage, excluding games against this team
+    const owpForTeam = (id: string): number => {
+      const r = records[id];
+      if (!r || r.opponents.length === 0) return 0;
+
+      let totalWP = 0;
+      let count = 0;
+
+      for (const oppId of r.opponents) {
+        const oppRecord = records[oppId];
+        if (!oppRecord) continue;
+
+        // Opponent's W-L excluding games vs teamId
+        const gamesVsTeam = oppRecord.opponents.filter((o) => o === id).length;
+        // Approximate: reduce wins/losses proportionally
+        // In reality we'd need to check each game individually
+        const oppTotal = oppRecord.wins + oppRecord.losses;
+        if (oppTotal <= gamesVsTeam) continue;
+
+        const oppWP = oppTotal > 0 ? oppRecord.wins / oppTotal : 0;
+        totalWP += oppWP;
+        count++;
+      }
+
+      return count > 0 ? totalWP / count : 0;
+    };
+
+    // OOWP: opponents' opponents' average winning percentage
+    const oowpForTeam = (id: string): number => {
+      const r = records[id];
+      if (!r || r.opponents.length === 0) return 0;
+
+      let totalOWP = 0;
+      let count = 0;
+
+      for (const oppId of r.opponents) {
+        const owp = owpForTeam(oppId);
+        totalOWP += owp;
+        count++;
+      }
+
+      return count > 0 ? totalOWP / count : 0;
+    };
+
+    const teamWP = wp(resolvedId);
+    const teamOWP = owpForTeam(resolvedId);
+    const teamOOWP = oowpForTeam(resolvedId);
+    const rpi = 0.25 * teamWP + 0.50 * teamOWP + 0.25 * teamOOWP;
+
+    // Compute RPI for all teams and rank
+    const allTeamIds = Object.keys(records);
+    const rpiValues = allTeamIds.map((id) => ({
+      id,
+      rpi: 0.25 * wp(id) + 0.50 * owpForTeam(id) + 0.25 * oowpForTeam(id),
+    })).sort((a, b) => b.rpi - a.rpi);
+
+    const rpiRank = rpiValues.findIndex((v) => v.id === resolvedId) + 1;
+
+    // SOS rank (by OWP)
+    const sosValues = allTeamIds.map((id) => ({
+      id,
+      owp: owpForTeam(id),
+    })).sort((a, b) => b.owp - a.owp);
+    const sosRank = sosValues.findIndex((v) => v.id === resolvedId) + 1;
+
+    // Opponents list with records
+    const teamRecord = records[resolvedId];
+    const uniqueOpponents = [...new Set(teamRecord?.opponents ?? [])];
+    const opponents = uniqueOpponents.map((oppId) => ({
+      id: oppId,
+      wins: records[oppId]?.wins ?? 0,
+      losses: records[oppId]?.losses ?? 0,
+      wp: Math.round(wp(oppId) * 1000) / 1000,
+    }));
+
+    const payload = {
+      team_id: teamId,
+      wp: Math.round(teamWP * 1000) / 1000,
+      owp: Math.round(teamOWP * 1000) / 1000,
+      oowp: Math.round(teamOOWP * 1000) / 1000,
+      rpi: Math.round(rpi * 1000) / 1000,
+      rpi_rank: rpiRank,
+      sos_rank: sosRank,
+      total_teams: allTeamIds.length,
+      record: { wins: teamRecord?.wins ?? 0, losses: teamRecord?.losses ?? 0 },
+      opponents,
+      meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 3600);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'RPI computation failed' }, 500);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Conference Power Index — BSI-computed ranking
+// ---------------------------------------------------------------------------
+
+/**
+ * Conference Power Index — BSI-computed ranking.
+ * CPI = 0.30*winPct + 0.30*confWinPct + 0.20*norm_wRC+ + 0.20*norm_FIP_inverse
+ * GET /api/college-baseball/conferences/:conf/power-index
+ */
+export async function handleCBBConferencePowerIndex(conf: string, env: Env): Promise<Response> {
+  const cacheKey = `cb:cpi:${conf}`;
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
+
+  try {
+    // Get league baseline
+    const leagueRaw = await kvGet<Record<string, number>>(env.KV, 'cb:saber:league:2026');
+    const lgWoba = leagueRaw?.league_woba ?? 0.340;
+
+    // Get teams in conference with aggregate stats
+    const teams = await env.DB.prepare(`
+      SELECT team_id, team,
+        SUM(at_bats) as total_ab, SUM(hits) as total_h,
+        SUM(doubles) as total_2b, SUM(triples) as total_3b,
+        SUM(home_runs) as total_hr, SUM(walks_bat) as total_bb,
+        SUM(strikeouts_bat) as total_k
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND at_bats > 0
+      GROUP BY team_id, team
+    `).all<Record<string, unknown>>();
+
+    // Get pitching stats
+    const pitching = await env.DB.prepare(`
+      SELECT team_id,
+        SUM(innings_pitched_thirds) as total_ip_thirds,
+        SUM(strikeouts_pitch) as total_k,
+        SUM(walks_pitch) as total_bb,
+        SUM(home_runs_allowed) as total_hr,
+        SUM(earned_runs) as total_er
+      FROM player_season_stats
+      WHERE sport = 'college-baseball' AND season = 2026 AND innings_pitched_thirds > 0
+      GROUP BY team_id
+    `).all<Record<string, unknown>>();
+
+    const pitchingMap = new Map(pitching.results.map((p) => [p.team_id as string, p]));
+
+    // Get team W-L records from processed_games
+    const games = await env.DB.prepare(`
+      SELECT home_team_id, away_team_id, home_score, away_score
+      FROM processed_games
+      WHERE sport = 'college-baseball' AND game_date >= '2026-02-01'
+        AND home_team_id IS NOT NULL AND away_team_id IS NOT NULL
+    `).all<{ home_team_id: string; away_team_id: string; home_score: number; away_score: number }>();
+
+    const winLoss: Record<string, { w: number; l: number }> = {};
+    for (const g of games.results) {
+      if (!winLoss[g.home_team_id]) winLoss[g.home_team_id] = { w: 0, l: 0 };
+      if (!winLoss[g.away_team_id]) winLoss[g.away_team_id] = { w: 0, l: 0 };
+      if (g.home_score > g.away_score) {
+        winLoss[g.home_team_id].w++;
+        winLoss[g.away_team_id].l++;
+      } else if (g.away_score > g.home_score) {
+        winLoss[g.away_team_id].w++;
+        winLoss[g.home_team_id].l++;
+      }
+    }
+
+    // Compute CPI per team
+    const teamCPI = teams.results.map((t) => {
+      const teamId = t.team_id as string;
+      const ab = Number(t.total_ab || 0);
+      const h = Number(t.total_h || 0);
+      const d = Number(t.total_2b || 0);
+      const tr = Number(t.total_3b || 0);
+      const hr = Number(t.total_hr || 0);
+      const bb = Number(t.total_bb || 0);
+      const singles = h - d - tr - hr;
+      const pa = ab + bb;
+
+      const woba = pa > 0
+        ? (0.69 * bb + 0.89 * singles + 1.24 * d + 1.56 * tr + 2.01 * hr) / pa
+        : 0;
+      const wrcPlus = lgWoba > 0
+        ? ((woba - lgWoba) / 1.15 + 1.0) * 100
+        : 100;
+
+      const pitch = pitchingMap.get(teamId);
+      const ipThirds = Number(pitch?.total_ip_thirds || 0);
+      const ip = ipThirds / 3;
+      const fip = ip > 0
+        ? (13 * Number(pitch?.total_hr || 0) + 3 * Number(pitch?.total_bb || 0) - 2 * Number(pitch?.total_k || 0)) / ip + 3.2
+        : 5.0;
+
+      const record = winLoss[teamId] ?? { w: 0, l: 0 };
+      const total = record.w + record.l;
+      const winPct = total > 0 ? record.w / total : 0;
+
+      return {
+        team_id: teamId,
+        team: t.team as string,
+        wins: record.w,
+        losses: record.l,
+        win_pct: Math.round(winPct * 1000) / 1000,
+        wrc_plus: Math.round(wrcPlus),
+        fip: Math.round(fip * 100) / 100,
+        woba: Math.round(woba * 1000) / 1000,
+        // CPI components (will normalize after)
+        _winPct: winPct,
+        _wrcPlus: wrcPlus,
+        _fipInv: fip > 0 ? 1 / fip : 0,
+      };
+    });
+
+    // Normalize and compute CPI
+    if (teamCPI.length > 0) {
+      const maxWP = Math.max(...teamCPI.map((t) => t._winPct));
+      const maxWRC = Math.max(...teamCPI.map((t) => t._wrcPlus));
+      const maxFipInv = Math.max(...teamCPI.map((t) => t._fipInv));
+
+      for (const t of teamCPI) {
+        const normWP = maxWP > 0 ? t._winPct / maxWP : 0;
+        const normWRC = maxWRC > 0 ? t._wrcPlus / maxWRC : 0;
+        const normFipInv = maxFipInv > 0 ? t._fipInv / maxFipInv : 0;
+
+        (t as Record<string, unknown>).cpi = Math.round(
+          (0.30 * normWP + 0.30 * normWP + 0.20 * normWRC + 0.20 * normFipInv) * 1000
+        ) / 1000;
+      }
+    }
+
+    // Sort by CPI descending
+    teamCPI.sort((a, b) => ((b as Record<string, unknown>).cpi as number) - ((a as Record<string, unknown>).cpi as number));
+
+    // Clean up internal fields
+    const ranked = teamCPI.map((t, i) => {
+      const { _winPct, _wrcPlus, _fipInv, ...rest } = t;
+      return { rank: i + 1, ...rest, cpi: (t as Record<string, unknown>).cpi };
+    });
+
+    const payload = {
+      conference: conf,
+      season: 2026,
+      teams: ranked,
+      meta: { source: 'bsi-d1', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    };
+
+    await kvPut(env.KV, cacheKey, payload, 3600);
+    return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'CPI computation failed' }, 500);
+  }
 }
