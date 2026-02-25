@@ -1,12 +1,12 @@
 /**
- * Blaze Field — Production CDN Worker
+ * Blaze Field — BlazeCraft CDN + API Worker
  *
- * Serves the Vite-built game from R2 with:
- * - COOP/COEP headers (required for Havok SharedArrayBuffer)
+ * Serves the Canvas2D game dashboard from R2 and provides:
+ * - /api/status — synthetic monitor results from MONITOR_KV
+ * - /api/agent-events — recent Claude Code hook events for wisp rendering
+ * - /api/events/ingest — POST endpoint for hook event ingestion
  * - Cache-Control: immutable for hashed assets, 5min for index.html
- * - Brotli compression (handled by Cloudflare edge)
- * - Custom 404 page
- * - Analytics beacon endpoint
+ * - COOP/COEP security headers, custom 404
  */
 
 export interface Env {
@@ -189,13 +189,13 @@ async function handleEventIngest(request: Request, env: Env): Promise<Response> 
 }
 
 async function handleAgentEvents(env: Env): Promise<Response> {
-  const events = await env.MONITOR_KV.get(AGENT_EVENTS_KEY, 'text');
-  if (!events) {
+  const parsed = await env.MONITOR_KV.get<AgentEvent[]>(AGENT_EVENTS_KEY, 'json');
+  if (!parsed) {
     return new Response(JSON.stringify({ events: [], count: 0 }), {
       headers: API_HEADERS,
     });
   }
-  return new Response(JSON.stringify({ events: JSON.parse(events), count: JSON.parse(events).length }), {
+  return new Response(JSON.stringify({ events: parsed, count: parsed.length }), {
     headers: API_HEADERS,
   });
 }
