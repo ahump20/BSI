@@ -101,7 +101,7 @@ export async function handleCollegeBaseballGame(
           matchResult.data,
           boxResult.success ? (boxResult.data ?? null) : null
         );
-        const payload = { game, meta: { dataSource: 'highlightly', lastUpdated: matchResult.timestamp, timezone: 'America/Chicago' } };
+        const payload = { game, meta: { source: 'highlightly', fetched_at: matchResult.timestamp, timezone: 'America/Chicago' } };
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
         return cachedJson(payload, 200, HTTP_CACHE.game, {
           ...dataHeaders(matchResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
@@ -122,7 +122,7 @@ export async function handleCollegeBaseballGame(
       const game = transformEspnGameSummary(summary);
 
       if (game) {
-        const payload = { game, meta: { dataSource: 'espn', lastUpdated: matchResult.timestamp, timezone: 'America/Chicago' } };
+        const payload = { game, meta: { source: 'espn', fetched_at: matchResult.timestamp, timezone: 'America/Chicago' } };
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.games);
         return cachedJson(payload, 200, HTTP_CACHE.game, {
           ...dataHeaders(matchResult.timestamp, 'espn'), 'X-Cache': 'MISS',
@@ -131,12 +131,12 @@ export async function handleCollegeBaseballGame(
     }
 
     return json(
-      { game: null, meta: { dataSource: 'error', lastUpdated: now, timezone: 'America/Chicago' } },
+      { game: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } },
       502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
     );
   } catch {
     return json(
-      { game: null, meta: { dataSource: 'error', lastUpdated: now, timezone: 'America/Chicago' } },
+      { game: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } },
       502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' }
     );
   }
