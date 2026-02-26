@@ -133,9 +133,11 @@ export function EditorialPreview() {
   }, [data]);
 
   const displayArticles = articles || FALLBACK_ARTICLES;
+  const isUsingFallback = !articles;
   const [featured, ...rest] = displayArticles;
   const secondary = rest.slice(0, 3);
   const articleCount = articles?.length ?? null;
+  const fetchedAt = data?.meta?.fetched_at;
 
   // Loading skeleton
   if (loading && !articles) {
@@ -252,6 +254,16 @@ export function EditorialPreview() {
               </ScrollReveal>
             ))}
           </div>
+        )}
+
+        {/* Attribution */}
+        {!loading && (
+          <p className="text-[10px] text-white/15 mt-4">
+            {isUsingFallback ? 'Showing recent highlights' : 'Source: BSI Editorial · D1'}
+            {fetchedAt && !isUsingFallback && (
+              <> · Updated {new Date(fetchedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>
+            )}
+          </p>
         )}
       </div>
     </section>

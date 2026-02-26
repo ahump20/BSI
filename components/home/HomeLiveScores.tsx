@@ -291,6 +291,7 @@ export function HomeLiveScores() {
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState<SportFilter>('all');
   const [activeSports] = useState(getActiveSports);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
 
   useEffect(() => {
     setToday(getDateOffset(0));
@@ -326,6 +327,7 @@ export function HomeLiveScores() {
       }
 
       setAllGames(games);
+      setLastFetched(new Date());
       setError(false);
     } catch {
       setError(true);
@@ -460,9 +462,12 @@ export function HomeLiveScores() {
           )}
         </div>
 
-        {hasLiveGames && (
+        {!loading && allGames.length > 0 && (
           <p className="text-[10px] text-white/20 mt-2">
-            Auto-refreshing every 30 seconds
+            {hasLiveGames ? 'Auto-refreshing every 30s' : 'Refreshes every 5 min'}
+            {lastFetched && (
+              <> · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>
+            )}
           </p>
         )}
       </div>
