@@ -15,23 +15,25 @@ import { createMockEnv, createMockCtx, HIGHLIGHTLY_STANDINGS, ESPN_STANDINGS } f
 function mockBothSources() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    const urlObj = new URL(urlStr, 'http://localhost');
 
     // Highlightly standings
-    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/standings')) {
+    if (urlObj.hostname.includes('mlb-college-baseball-api') && urlObj.pathname.includes('/standings')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN standings
-    if (urlStr.includes('espn.com') && urlStr.includes('/standings')) {
+    if (urlObj.hostname.includes('espn.com') && urlObj.pathname.includes('/standings')) {
       return new Response(JSON.stringify(ESPN_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN rankings (handler also fetches these)
-    if (urlStr.includes('espn.com') && urlStr.includes('/rankings')) {
+    if (urlObj.hostname.includes('espn.com') && urlObj.pathname.includes('/rankings')) {
+    const urlObj = new URL(urlStr, 'http://localhost');
       return new Response(JSON.stringify({ rankings: [] }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -45,14 +47,14 @@ function mockHighlightlyOnly() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
 
-    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/standings')) {
+    if (urlObj.hostname.includes('mlb-college-baseball-api') && urlObj.pathname.includes('/standings')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN fails
-    if (urlStr.includes('espn.com')) {
+    if (urlObj.hostname.includes('espn.com')) {
       return new Response('Service Unavailable', { status: 503 });
     }
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
