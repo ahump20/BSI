@@ -444,6 +444,103 @@ export function computeFullBattingLine(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Additional Metrics — contact, discipline, run estimation, workload
+// ---------------------------------------------------------------------------
+
+/**
+ * Contact Rate — fraction of plate appearances NOT ending in strikeout.
+ * Complement of K%. D1 average ~75–80%.
+ */
+export function calculateContactRate(so: number, pa: number): number {
+  if (pa <= 0) return 0;
+  return safe(1 - so / pa);
+}
+
+/**
+ * Plate Discipline Score — walk rate as a fraction of all walk-or-strikeout outcomes.
+ * BB% / (BB% + K%). Higher = more selective. ~0.30 is average D1 hitter.
+ */
+export function calculatePlateDiscipline(bb: number, so: number, pa: number): number {
+  if (pa <= 0) return 0;
+  const bbPct = bb / pa;
+  const kPct = so / pa;
+  const denom = bbPct + kPct;
+  if (denom <= 0) return 0;
+  return safe(bbPct / denom);
+}
+
+/**
+ * Linear Weight Runs (LwR) — run value created from raw batting events.
+ * Simplified BaseRuns using MLB run weights. Useful for absolute run contribution
+ * estimates when park-adjusted league context is unavailable.
+ *
+ * Weights approximate: 1B=0.47, 2B=0.77, 3B=1.04, HR=1.42, BB=0.33, HBP=0.34, Out=-0.27
+ */
+export function calculateLinearWeightRuns(
+  singles: number,
+  doubles: number,
+  triples: number,
+  hr: number,
+  bb: number,
+  hbp: number,
+  outs: number,
+): number {
+  return safe(
+    0.47 * singles +
+    0.77 * doubles +
+    1.04 * triples +
+    1.42 * hr +
+    0.33 * bb +
+    0.34 * hbp -
+    0.27 * outs,
+  );
+}
+
+/**
+ * SIERA-Lite — simplified Skill-Interactive ERA.
+ * Full SIERA requires batted-ball data (GB%, FB%) unavailable in D1 box scores.
+ * This version uses K%, BB%, and HR rate as proxies and produces a comparable scale.
+ *
+ * Formula: 6.145 - 16.986*(K/BF) + 11.434*(BB/BF) + 1.858*(HR/BF)*9
+ * Derived from the SIERA equation stripped of batted-ball terms.
+ * Clamped [0, 12].
+ */
+export function calculateSIERALite(so: number, bb: number, hr: number, ip: number): number {
+  if (ip <= 0) return 0;
+  // Estimate batters faced: IP × 3 + H proxy (we only have K/BB/HR here)
+  const bfEst = Math.max(ip * 3 + bb + hr, 1);
+  const kPct = so / bfEst;
+  const bbPct = bb / bfEst;
+  const hrPer9 = (hr / ip) * 9;
+  const raw = 6.145 - 16.986 * kPct + 11.434 * bbPct + 1.858 * (hrPer9 / 9);
+  return clamp(safe(raw), 0, 12);
+}
+
+/**
+ * Workload Score — pitching fatigue index on a 0–100 scale.
+ * Combines IP density (IP per start/appearance) with recent-week appearance
+ * frequency. Lower is lower workload. 50 = average starter load.
+ *
+ * Used for identifying arms under stress or candidates for rest.
+ */
+export function calculateWorkloadScore(
+  g: number,
+  gs: number,
+  ip: number,
+  last7dAppearances: number,
+): number {
+  if (g <= 0) return 0;
+  const ipPerApp = ip / g;
+  // Starters: ~6 IP/G is baseline (score 50). Relievers: ~1 IP/G baseline.
+  const isStarter = gs / g >= 0.5;
+  const baseline = isStarter ? 6 : 1;
+  const densityScore = clamp((ipPerApp / baseline) * 50, 0, 80);
+  // Recent appearances penalty: each appearance in last 7 days adds 6 points
+  const recentPenalty = clamp(last7dAppearances * 6, 0, 20);
+  return clamp(safe(densityScore + recentPenalty), 0, 100);
+}
+
 /**
  * Compute a full advanced pitching line from raw stats + league context.
  */

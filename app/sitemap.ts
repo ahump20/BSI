@@ -169,6 +169,7 @@ const features: SitemapEntry[] = [
   { path: '/fanbase', changeFrequency: 'daily', priority: 0.6 },
   { path: '/fanbase/compare', changeFrequency: 'daily', priority: 0.6 },
   { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/college-baseball/analytics/playground', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
   { path: '/vision-AI-Intelligence', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
