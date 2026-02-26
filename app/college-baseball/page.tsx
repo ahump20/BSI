@@ -392,6 +392,7 @@ export default function CollegeBaseballPage() {
             <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
               {[
                 { label: 'Savant', href: '/college-baseball/savant' },
+                { label: 'Sabermetrics', href: '/college-baseball/sabermetrics' },
                 { label: 'Portal', href: '/college-baseball/transfer-portal' },
                 { label: 'Editorial', href: '/college-baseball/editorial' },
                 { label: 'News', href: '/college-baseball/news' },

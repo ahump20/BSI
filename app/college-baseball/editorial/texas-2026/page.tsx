@@ -5,12 +5,12 @@ const data: TeamPreviewData = {
   teamName: 'Texas',
   teamSlug: 'texas',
   mascot: 'Longhorns',
-  badgeText: 'Season Preview',
-  date: 'February 13, 2026',
+  badgeText: 'Season Preview \u00b7 Updated Feb 26',
+  date: 'February 26, 2026',
   readTime: '15 min read',
   heroTitle: '2026 Season Preview',
   heroSubtitle:
-    '3,818 wins. 38 College World Series appearances. 6 national championships. 130 years of baseball. After winning the SEC in Year One, Schlossnagle\'s Longhorns reload for an Omaha run.',
+    '8-0 to start 2026. .340 team BA, 1.36 ERA. 3,818 all-time wins, 38 CWS appearances, 6 national championships. After winning the SEC in Year One, Schlossnagle\'s Longhorns aren\'t reloading — they\'re accelerating.',
 
   programStats: {
     allTimeWins: '3,818',
@@ -44,57 +44,64 @@ const data: TeamPreviewData = {
       name: 'Ethan Mendoza',
       position: 'INF',
       year: 'Jr.',
-      stats: '.333/.437/.476',
-      bio: 'Southlake Carroll product. Best contact hitter in the SEC as a sophomore. Returns as the engine of the lineup.',
+      stats: '.448/.526/.793, 3 HR, 10 RBI',
+      bio: 'Southlake Carroll product hitting cleanup. Jumped from .333 as a sophomore to .448 through 8 games with a .345 ISO — the biggest development on the roster. Second-Team All-Region returning as the engine of the lineup.',
+    },
+    {
+      name: 'Jaxon Pack Jr.',
+      position: 'OF',
+      year: 'Fr.',
+      stats: '.435/.567/.696, 1 HR, 6 BB',
+      bio: 'Left-handed freshman from Millikan HS (Long Beach). 2024 PG All-American. The .567 OBP as a true freshman is the number — he controls the strike zone like a junior. Already starting in the outfield.',
+    },
+    {
+      name: 'Kash Tinney',
+      position: 'C',
+      year: 'Jr.',
+      stats: '.304/.529/.739, 3 HR, 11 BB / 9 K',
+      bio: 'Notre Dame transfer. NCBWA Division 5 Preseason Player of the Year, multiple All-America teams. The 11 BB to 9 K ratio from the catcher spot is elite discipline plus power. Gives Texas a legitimate middle-of-the-order threat behind the plate.',
     },
     {
       name: 'Adrian Rodriguez',
       position: 'INF',
       year: 'So.',
-      stats: '.313/.410/.516, 7 HR',
-      bio: 'Switch-hitter from Flower Mound. First Team Freshman All-America. Slashed his way into the lineup and never slowed down.',
+      stats: '.294/.333/.500, 5 2B, 1 3B',
+      bio: 'Switch-hitter from Flower Mound. First Team Freshman All-America last spring. Early 2026 numbers show gap-to-gap power (5 doubles, 1 triple) rather than the home run pop of 2025. Still only a sophomore.',
     },
     {
       name: 'Casey Borba',
       position: 'INF',
       year: 'Jr.',
-      stats: '.278, 12 HR',
-      bio: 'Orange Lutheran product. Power bat in the middle of the order. 12 home runs as a sophomore.',
-    },
-    {
-      name: 'Jonah Williams',
-      position: 'OF',
-      year: 'So.',
-      stats: '.327 BA (limited)',
-      bio: 'Galveston native. Electric speed and bat control. Breakout candidate if he gets everyday at-bats.',
+      stats: '.241/.324/.379, 1 HR',
+      bio: 'Orange Lutheran product. Slower start than his 12-HR sophomore campaign. The power profile is still there — the approach will come as conference play approaches.',
     },
     {
       name: 'Luke Harrison',
       position: 'LHP',
       year: 'Gr.',
-      stats: '3.06 ERA, 72 K',
-      bio: 'Friendswood product. Left-hander who pitched Texas through two SEC elimination games last spring. Commands four pitches and never gives in to contact — the kind of starter who gives the lineup time to work.',
+      stats: '1.86 ERA, 9.2 IP, 8 K, 1-0',
+      bio: 'Friendswood product. Veteran left-hander settling into the weekend rotation. 1.86 ERA through early starts. Commands four pitches and pitched Texas through two SEC elimination games last spring.',
     },
     {
       name: 'Dylan Volantis',
       position: 'LHP',
       year: 'So.',
-      stats: '1.94 ERA, 74 K, 12 SV in 51 IP',
-      bio: 'Thousand Oaks, CA. Most dominant reliever in college baseball. Only a sophomore. Could move into the rotation or stay as closer.',
+      stats: '0.00 ERA, 14 IP, 17 K, 2 BB, 2-0',
+      bio: 'Moved from closer to starter and has been untouchable. 0.00 ERA with 10.93 K/9 through 14 innings. SEC Freshman of the Year last spring (1.94 ERA, 12 saves). The stuff plays anywhere in the rotation.',
     },
     {
       name: 'Jason Flores',
       position: 'RHP',
       year: 'So.',
-      stats: '2.78 ERA',
-      bio: 'Wylie product. Threw 2.78 ERA innings as a freshman in games Texas had to win. Slider tunnels off the fastball well enough to get swings in two-strike counts.',
+      stats: '10.12 ERA, 2.2 IP',
+      bio: 'Wylie product. Rough early-season outing — 10.12 ERA in limited innings. The 2.78 ERA stuff from last spring is still there. Small sample; Schlossnagle will give him runway.',
     },
     {
       name: 'Max Grubbs',
       position: 'RHP',
       year: 'Sr.',
-      stats: '2.84 ERA, 6-2',
-      bio: 'Arlington native. Four-pitch right-hander who went 6-2 with a 2.84 ERA last season. Schlossnagle trusts him in any situation — start, long relief, or bridge to the closer.',
+      stats: '1.80 ERA, 5 IP, 4 K, 1-0',
+      bio: 'Arlington native. Four-pitch right-hander cruising at 1.80 ERA through early action. Went 6-2 with a 2.84 ERA last season. Schlossnagle trusts him in any situation — start, long relief, or bridge.',
     },
   ],
 
@@ -120,16 +127,16 @@ const data: TeamPreviewData = {
       position: 'RHP',
       year: 'Jr.',
       fromSchool: 'Arizona State',
-      stats: '3.71 ERA, 40 K in 26.2 IP',
-      bio: 'Posted a 3.71 ERA with 40 K in 26.2 IP at Arizona State. Power slider gets right-handers to expand the zone — a weapon in the sixth and seventh innings.',
+      stats: '2.45 ERA, 3.2 IP, 9 K',
+      bio: 'Nine strikeouts in 3.2 innings — the ASU transfer brought his power slider to Austin and it\'s working. 2.45 ERA in early bullpen appearances. A weapon in the sixth and seventh innings.',
     },
     {
       name: 'Temo Becerra',
       position: 'INF',
       year: 'R-Sr.',
       fromSchool: 'Stanford',
-      stats: '',
-      bio: 'Stanford infielder who played in a College World Series. Can slot at second, third, or first — the utility piece that lets Schlossnagle rest starters without losing defensive quality.',
+      stats: '.308/.455/.423, 22 assists at SS',
+      bio: 'Stanford transfer hitting .308 with a .455 OBP through 8 games. The 22 assists at shortstop show the range and arm. CWS experience. Exactly the utility piece that lets Schlossnagle rest starters without losing defensive quality.',
     },
     {
       name: 'Cody Howard',
@@ -151,20 +158,20 @@ const data: TeamPreviewData = {
 
   pitchingAnalysis: {
     headline:
-      'Dylan Volantis is the most dominant reliever in college baseball. A 1.94 ERA with 74 strikeouts and 12 saves in 51 innings — as a freshman. His 11 SEC saves broke a conference freshman record that had stood for 22 years. Whether he stays as closer or moves into the rotation, he anchors everything.',
+      'Dylan Volantis moved from closer to starter — and it\'s been the best pitching decision of the early season. 0.00 ERA in 14 innings with 17 strikeouts and 2 walks. The question of whether he stays as closer or moves to the rotation has been answered. Staff-wide: 1.36 ERA, 0.909 WHIP, 11.32 K/9, zero home runs allowed in 66 innings.',
     rotation:
-      'Luke Harrison leads the way — a veteran lefty from Friendswood with a 3.06 ERA and 72 strikeouts. Jason Flores (2.78 ERA) and Max Grubbs (2.84 ERA, 6-2) round out a rotation that can match up with anyone in the SEC. Portal additions Haiden Leffew (Wake Forest) and Thomas Burns (Arizona State) add arms that have pitched on big stages.',
+      'Volantis (0.00 ERA, 14 IP, 17 K) anchors the front of the rotation. Luke Harrison (1.86 ERA, 9.2 IP) provides the veteran lefty presence. Ty Cozart (1.12 ERA, 8 IP, 12 K as a freshman) and Max Grubbs (1.80 ERA, 5 IP, 1-0) round out a rotation that hasn\'t allowed a home run through 8 games. Flores (10.12 ERA in 2.2 IP) had a rough early outing but the stuff is still there.',
     depth:
-      'This is where Texas separates. Cody Howard (from Baylor) strengthens the pen. The returning arms already have SEC experience. Schlossnagle can mix and match without overextending anyone. When your worst bullpen option has a sub-3.00 ERA, you can compete in any series.',
+      'Charlie Riojas (1.64 ERA, 19 K in 11 IP — 15.55 K/9, K/BB of 9.5) is the most dominant reliever on the staff by rate stats. Thomas Burns (ASU transfer — 9 K in 3.2 IP) is already producing. Cody Howard (from Baylor) strengthens the pen further. The zero home runs allowed stat is elite but comes against non-SEC lineups — the real test is March.',
   },
 
   lineupAnalysis: {
     engine:
-      'Ethan Mendoza (.333/.437/.476) is the best pure contact hitter in the SEC. The Southlake Carroll product rarely chases, works deep counts, and puts the ball in play when it matters. He sets the table for everything that follows.',
+      'Ethan Mendoza (.448/.526/.793) has jumped from good to dominant. The Southlake Carroll product leads the team with a .345 ISO and 3 HR through 8 games. But the lineup depth is the real story — Texas is hitting .340 as a team with a 1.025 OPS. The BB/K ratio of 0.98 (50 walks to 51 strikeouts) means this lineup almost never gives away at-bats.',
     middle:
-      'Adrian Rodriguez (.313/.410/.516, 7 HR) and Casey Borba (.278, 12 HR) provide the complementary thunder. Rodriguez is a switch-hitter with rare bat speed for a sophomore. Borba supplies the middle-of-the-order power. Together they give Texas on-base, slugging, and plate discipline that few lineups in the country can match.',
+      'Jaxon Pack Jr. (.435/.567/.696) is the freshman revelation — L/L hitter from Long Beach with a .567 OBP that belies his class year. Kash Tinney (.304/.529/.739, 3 HR) adds power from the catcher spot with an 11 BB/9 K ratio. Cameron Robbins (.419/.486/.871, 3 HR, .452 ISO) is the power leader. Rodriguez (.294, 5 2B) provides gap-to-gap doubles. The lineup is 1-through-8 deep.',
     supportingCast:
-      'Jonah Williams (.327 in limited action) is the breakout candidate — electric speed and bat control from Galveston. Ashton Larson (from LSU) adds outfield depth and defensive range. Dariyan Pendergrass (College of Charleston) provides late-inning speed. This is not a one-line lineup.',
+      'Temo Becerra (.308/.455/.423) brings CWS experience from Stanford with 22 assists at shortstop in 8 games. Borba (.241) is working through a slow start. The stolen base game is efficient — 14-17 (82.4%). No dead spots in the order.',
   },
 
   scheduleHighlights: [
@@ -181,18 +188,18 @@ const data: TeamPreviewData = {
   ],
 
   scoutingGrades: [
-    { category: 'Lineup Depth', grade: 70 },
-    { category: 'Rotation', grade: 65 },
+    { category: 'Lineup Depth', grade: 80 },
+    { category: 'Rotation', grade: 75 },
     { category: 'Bullpen', grade: 80 },
-    { category: 'Defense', grade: 60 },
+    { category: 'Defense', grade: 65 },
     { category: 'Speed/Baserunning', grade: 60 },
-    { category: 'Coaching', grade: 75 },
+    { category: 'Coaching', grade: 80 },
     { category: 'Schedule Difficulty', grade: 70 },
   ],
 
   projectionTier: 'Omaha Favorite',
   projectionText:
-    'Texas has the most complete roster in college baseball. Elite pitching depth led by Volantis, a balanced lineup anchored by Mendoza and Rodriguez, portal additions from national contenders, and a coaching staff that won the SEC in Year One. The schedule is relentless, but the Longhorns did not come to the SEC to settle for the regular season. Schlossnagle came to Austin to compete for Omaha — and this roster gives him the tools to get there.',
+    'Eight games in, the preseason case has only gotten stronger. Texas is hitting .340 with a 1.36 ERA and a +57 run differential. Volantis moved to the rotation and hasn\'t allowed a run. The lineup is deep enough that the 7-8-9 hitters are producing. The caveat: UC Davis, Lamar, Michigan State, and UTRGV are not SEC opponents. Ole Miss at home March 13-15 will answer the questions that matter. But the process — the plate discipline, the pitching depth, the coaching infrastructure — is what makes this team an Omaha favorite, not the early results.',
 
   relatedLinks: [
     { label: 'Texas Team Page', href: '/college-baseball/teams/texas' },

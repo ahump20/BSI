@@ -75,7 +75,7 @@ export default function BSIShowcase() {
                 <p>
                   I built BSI because the coverage I wanted did not exist. Try finding advanced
                   analytics for a Tuesday night college baseball game between Rice and Sam Houston.
-                  Try tracking conference standings across six sports without clicking through
+                  Try tracking conference standings across five sports without clicking through
                   fifteen pages. The gap between interest in the game and access to meaningful
                   data is the product.
                 </p>

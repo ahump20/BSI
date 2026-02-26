@@ -27,6 +27,7 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/compare', changeFrequency: 'daily', priority: 0.7 },
   { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/college-baseball/sabermetrics', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/savant/conference-index', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason', changeFrequency: 'weekly', priority: 0.8 },
