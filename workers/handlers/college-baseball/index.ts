@@ -24,7 +24,7 @@ export { handleCollegeBaseballPlayer, handleCollegeBaseballPlayersList, handleCo
 export { handleCollegeBaseballTrending, handleCollegeBaseballDaily, handleCollegeBaseballNews, handleCollegeBaseballNewsEnhanced, handleCollegeBaseballTransferPortal, handleCollegeBaseballEditorialList, handleCollegeBaseballEditorialContent } from './editorial';
 
 // Ingestion pipeline
-export { processFinishedGames, handleIngestStats, syncTeamCumulativeStats, handleCBBBulkSync, handleHighlightlySync } from './ingest';
+export { processFinishedGames, handleIngestStats, syncTeamCumulativeStats, handleCBBBulkSync, handleHighlightlySync, handleGameLogBackfill } from './ingest';
 
 // Sabermetrics
 export { handleCBBLeagueSabermetrics, handleCBBTeamSabermetrics, handleCBBTeamSOS, handleCBBConferencePowerIndex } from './savant';

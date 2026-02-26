@@ -31,16 +31,48 @@ export function getPlayerHighlights(playerId: string): PlayerHighlight[] {
 // ---------------------------------------------------------------------------
 
 const playerHighlightData: Record<string, PlayerHighlight[]> = {
-  // Example:
-  // '4683024': [
-  //   {
-  //     id: 'jac-1',
-  //     title: 'Jace LaViolette 3-run HR vs Arkansas',
-  //     date: '2026-03-01',
-  //     videoUrl: 'https://www.youtube.com/watch?v=...',
-  //     source: 'youtube',
-  //     duration: '0:42',
-  //     gameContext: 'vs Arkansas, March 1',
-  //   },
-  // ],
+  // Roch Cholowsky — UCLA, projected No. 1 pick, SS
+  '78754': [
+    {
+      id: 'chol-1',
+      title: 'Cholowsky & Gasparino combine for 16 RBI vs TCU',
+      date: '2026-02-22',
+      videoUrl: 'https://uclabruins.com/watch?Archive=15357',
+      source: 'espn',
+      gameContext: 'vs TCU, Feb 22',
+    },
+  ],
+  // Liam Peterson — Florida, top RHP draft prospect
+  '77371': [
+    {
+      id: 'pet-1',
+      title: '2026 MLB Draft Profile: Liam Peterson, RHP',
+      date: '2026-02-01',
+      videoUrl: 'https://www.mlb.com/video/2026-draft-liam-peterson-rhp',
+      source: 'espn',
+      gameContext: 'Draft scouting report',
+    },
+  ],
+  // Tyce Armstrong — Baylor, 3 grand slams on opening day (Feb 13, 2026)
+  // Not yet in D1 (Baylor games not ESPN-covered). ID TBD — using placeholder.
+  // When Armstrong gets ingested, update this key to his espn_id.
+  'tyce-armstrong-placeholder': [
+    {
+      id: 'arm-1',
+      title: 'Tyce Armstrong — 3 Grand Slams vs New Mexico State',
+      date: '2026-02-13',
+      videoUrl: 'https://www.espn.com/video/clip/_/id/47924782',
+      source: 'espn',
+      duration: '1:45',
+      gameContext: 'vs New Mexico State, Feb 13 — ties NCAA record',
+    },
+    {
+      id: 'arm-2',
+      title: 'Armstrong on his historic three grand slam performance',
+      date: '2026-02-20',
+      videoUrl: 'https://www.ncaa.com/video/baseball/2026-02-20/baylors-tyce-armstrong-his-historic-three-grand-slam-performance',
+      source: 'espn',
+      gameContext: 'NCAA.com interview',
+    },
+  ],
 };

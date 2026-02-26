@@ -937,3 +937,189 @@ export async function handleCBBBulkSync(
 
   return json({ error: 'Provide ?team=<espnId> or ?conference=<name>' }, 400);
 }
+
+// ---------------------------------------------------------------------------
+// Game Log Backfill — populate player_game_log from already-processed games
+// ---------------------------------------------------------------------------
+
+/**
+ * Re-fetch ESPN box scores for processed games and write game log rows.
+ * Season-total UPSERTs are NOT re-run — only INSERT OR IGNORE into
+ * player_game_log. Safe to call repeatedly; duplicates are ignored.
+ *
+ * GET /api/college-baseball/backfill-game-log?key={admin}&date=2026-02-14
+ * GET /api/college-baseball/backfill-game-log?key={admin}&start=2026-02-14&end=2026-02-25
+ */
+export async function handleGameLogBackfill(
+  url: URL,
+  env: Env,
+): Promise<Response> {
+  const key = url.searchParams.get('key');
+  const adminKey = (env as Env & { ADMIN_KEY?: string }).ADMIN_KEY;
+  if (!adminKey || key !== adminKey) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+
+  const singleDate = url.searchParams.get('date');
+  const startDate = url.searchParams.get('start');
+  const endDate = url.searchParams.get('end');
+
+  // Build date list
+  const dates: string[] = [];
+  if (singleDate) {
+    dates.push(singleDate);
+  } else if (startDate && endDate) {
+    let dt = DateTime.fromISO(startDate, { zone: 'America/Chicago' });
+    const end = DateTime.fromISO(endDate, { zone: 'America/Chicago' });
+    while (dt <= end) {
+      dates.push(dt.toISODate()!);
+      dt = dt.plus({ days: 1 });
+    }
+  } else {
+    return json({ error: 'Provide ?date=YYYY-MM-DD or ?start=...&end=...' }, 400);
+  }
+
+  const summary = {
+    datesProcessed: 0,
+    gamesRefetched: 0,
+    gameLogRowsInserted: 0,
+    errors: [] as string[],
+  };
+
+  for (const date of dates) {
+    try {
+      const result = await backfillGameLogForDate(env, date);
+      summary.datesProcessed++;
+      summary.gamesRefetched += result.games;
+      summary.gameLogRowsInserted += result.rows;
+      summary.errors.push(...result.errors);
+    } catch (err) {
+      summary.errors.push(`${date}: ${err instanceof Error ? err.message : 'unknown'}`);
+    }
+  }
+
+  return json({
+    ...summary,
+    dates: dates.length,
+    meta: { source: 'game-log-backfill', timestamp: new Date().toISOString() },
+  });
+}
+
+/**
+ * For a single date, fetch all processed game IDs, re-fetch box scores,
+ * and insert game log rows only (no season-total updates).
+ */
+async function backfillGameLogForDate(
+  env: Env,
+  date: string,
+): Promise<{ games: number; rows: number; errors: string[] }> {
+  const result = { games: 0, rows: 0, errors: [] as string[] };
+
+  // Get processed games for this date
+  const processed = await env.DB.prepare(
+    `SELECT game_id, home_team, away_team, home_team_id, away_team_id, home_score, away_score
+     FROM processed_games
+     WHERE sport = 'college-baseball' AND game_date = ?`
+  ).bind(date).all<{
+    game_id: string;
+    home_team: string;
+    away_team: string;
+    home_team_id: string;
+    away_team_id: string;
+    home_score: number;
+    away_score: number;
+  }>();
+
+  if (!processed.results.length) return result;
+
+  // Process games 5 at a time to stay within Worker CPU limits
+  const CONCURRENCY = 5;
+  const games = processed.results;
+
+  for (let i = 0; i < games.length; i += CONCURRENCY) {
+    const batch = games.slice(i, i + CONCURRENCY);
+    const batchResults = await Promise.allSettled(
+      batch.map(async (game) => {
+        const stmts: D1PreparedStatement[] = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const summary = await getGameSummary('college-baseball', game.game_id) as any;
+        const boxPlayers = summary?.boxscore?.players || [];
+
+        for (const teamBox of boxPlayers) {
+          const teamId = String(teamBox.team?.id || '');
+
+          for (const statGroup of (teamBox.statistics || [])) {
+            const labels: string[] = statGroup.labels || [];
+            const isBatting = labels.includes('AB') || labels.includes('H-AB');
+            const isPitching = labels.includes('IP') || labels.includes('ERA');
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+              const athlete = athleteEntry.athlete || {};
+              const espnId = String(athlete.id || '');
+              if (!espnId) continue;
+
+              const stats: string[] = athleteEntry.stats || [];
+              const opponent = teamId === game.home_team_id ? game.away_team : game.home_team;
+              const isHome = teamId === game.home_team_id ? 1 : 0;
+              const gameResult = teamId === game.home_team_id
+                ? (game.home_score > game.away_score ? 'W' : 'L')
+                : (game.away_score > game.home_score ? 'W' : 'L');
+
+              if (isBatting && stats.length > 0) {
+                const line = parseEspnBattingLine(labels, stats, athlete);
+                if (!line) continue;
+
+                stmts.push(env.DB.prepare(`
+                  INSERT OR IGNORE INTO player_game_log
+                    (espn_id, game_id, game_date, season, sport, opponent, is_home, result,
+                     ab, r, h, rbi, hr, bb, k, sb)
+                  VALUES (?, ?, ?, 2026, 'college-baseball', ?, ?, ?,
+                          ?, ?, ?, ?, ?, ?, ?, 0)
+                `).bind(
+                  espnId, game.game_id, date, opponent, isHome, gameResult,
+                  line.ab, line.r, line.h, line.rbi, line.hr, line.bb, line.k,
+                ));
+              }
+
+              if (isPitching && stats.length > 0) {
+                const line = parseEspnPitchingLine(labels, stats, athlete);
+                if (!line) continue;
+
+                stmts.push(env.DB.prepare(`
+                  INSERT OR IGNORE INTO player_game_log
+                    (espn_id, game_id, game_date, season, sport, opponent, is_home, result,
+                     ip_thirds, ha, er, so, bb_p, w, l, sv)
+                  VALUES (?, ?, ?, 2026, 'college-baseball', ?, ?, ?,
+                          ?, ?, ?, ?, ?, 0, 0, 0)
+                `).bind(
+                  espnId, game.game_id, date, opponent, isHome, gameResult,
+                  line.ipThirds, line.h, line.er, line.k, line.bb,
+                ));
+              }
+            }
+          }
+        }
+
+        // Batch write game log rows
+        for (let j = 0; j < stmts.length; j += 50) {
+          await env.DB.batch(stmts.slice(j, j + 50));
+        }
+
+        return stmts.length;
+      })
+    );
+
+    for (const r of batchResults) {
+      if (r.status === 'fulfilled') {
+        result.games++;
+        result.rows += r.value;
+      } else {
+        result.errors.push(r.reason?.message || 'unknown');
+      }
+    }
+  }
+
+  return result;
+}
