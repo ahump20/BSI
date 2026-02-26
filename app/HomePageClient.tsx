@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
 import { HomeLiveScores } from '@/components/home/HomeLiveScores';
-import { EvidenceStrip } from '@/components/home/EvidenceStrip';
+
 import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -74,7 +74,7 @@ const sports: SportCardData[] = [
     name: 'College Baseball',
     icon: BaseballIcon,
     href: '/college-baseball',
-    description: 'Roster intelligence, portal tracking & pro projections',
+    description: 'Every D1 team. Live scores, box scores, standings, rankings, portal tracking, and weekly editorial.',
     accent: 'group-hover:text-burnt-orange group-hover:border-burnt-orange/50',
     bgAccent: 'group-hover:bg-burnt-orange/10',
     color: 'var(--bsi-primary)',
@@ -83,7 +83,7 @@ const sports: SportCardData[] = [
     name: 'MLB',
     icon: BaseballIcon,
     href: '/mlb',
-    description: 'Live scores, standings & Statcast analytics',
+    description: 'Live scores, standings, and the advanced metrics — wOBA, FIP, wRC+ — that tell you what the box score won\u2019t.',
     accent: 'group-hover:text-red-500 group-hover:border-red-500/50',
     bgAccent: 'group-hover:bg-red-500/10',
     color: '#C41E3A',
@@ -92,7 +92,7 @@ const sports: SportCardData[] = [
     name: 'NFL',
     icon: FootballIcon,
     href: '/nfl',
-    description: 'Real-time scores, standings & team intel',
+    description: 'Live scores, standings, and team coverage built for the fan who watches past the primetime window.',
     accent: 'group-hover:text-blue-400 group-hover:border-blue-400/50',
     bgAccent: 'group-hover:bg-blue-400/10',
     color: '#013369',
@@ -101,7 +101,7 @@ const sports: SportCardData[] = [
     name: 'NBA',
     icon: BasketballIcon,
     href: '/nba',
-    description: 'Live games, standings & performance data',
+    description: 'Live scores, standings, and game analytics across the full league — not just the coasts.',
     accent: 'group-hover:text-orange-400 group-hover:border-orange-400/50',
     bgAccent: 'group-hover:bg-orange-400/10',
     color: 'var(--bsi-accent)',
@@ -110,7 +110,7 @@ const sports: SportCardData[] = [
     name: 'CFB',
     icon: StadiumIcon,
     href: '/cfb',
-    description: 'College football analytics & recruiting',
+    description: 'Scores, standings, and conference coverage from the Big 12 to the Sun Belt.',
     accent: 'group-hover:text-amber-500 group-hover:border-amber-500/50',
     bgAccent: 'group-hover:bg-amber-500/10',
     color: '#D97706',
@@ -188,14 +188,13 @@ export function HomePageClient() {
           <ScrollReveal direction="up">
             <div className="text-center mb-12">
               <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
-                Intelligence
+                Coverage
               </span>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary uppercase tracking-wide">
-                Six Sports. One Platform.
+                Five Sports. One Platform.
               </h2>
               <p className="mt-3 text-base text-text-tertiary max-w-2xl mx-auto">
-                College baseball roster intelligence leads. MLB, NFL, NBA, and college football
-                analytics round out the picture.
+                College baseball is the flagship. MLB, NFL, NBA, and college football round out the coverage.
               </p>
             </div>
           </ScrollReveal>
@@ -216,7 +215,8 @@ export function HomePageClient() {
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className={`relative p-6 rounded-2xl border bg-surface-light backdrop-blur-sm border-border ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-surface-medium h-full flex flex-col items-center text-center`}
+                      className={`card-accent-line relative p-6 rounded-2xl border bg-surface-light backdrop-blur-sm border-border ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-surface-medium h-full flex flex-col items-center text-center`}
+                      style={{ '--card-accent': sport.color } as React.CSSProperties}
                     >
                       {/* Live game badge — replaces static Flagship/Soon badges */}
                       <LiveGameBadge
@@ -247,8 +247,7 @@ export function HomePageClient() {
       {/* ─── 4. Editorial Feed (D1-backed) ─── */}
       <EditorialPreview />
 
-      {/* ─── 5. Evidence Strip ─── */}
-      <EvidenceStrip />
+      {/* ─── 5. (Evidence Strip removed — sport hub + live scores are the proof) ─── */}
 
       {/* ─── 6. Trending Intel Feed ─── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-primary to-background-secondary">
@@ -267,34 +266,66 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. Founder Quote ─── */}
+      {/* ─── 7. Garrido + Austin Quote ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-primary relative overflow-hidden">
         {/* Background glow */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-burnt-orange/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
+            {/* Kicker */}
+            <span className="kicker mb-6 block">The Standard</span>
+
             <div className="flex gap-6 md:gap-8">
-              {/* Burnt-orange left border — editorial magazine feel */}
-              <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange to-burnt-orange/20" />
+              {/* Burnt-orange left border */}
+              <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange via-burnt-orange/40 to-transparent" />
 
-              <div>
-                <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/90 leading-relaxed mb-6">
-                  ESPN shows you scores. They don&apos;t tell you which portal pickup just changed a
-                  conference race, or which freshman&apos;s exit velo projects him as a day-two pick.
-                  <span className="text-burnt-orange">
-                    {' '}
-                    That&apos;s what I built BSI to do.
-                  </span>
-                </blockquote>
+              <div className="space-y-10 relative">
+                {/* Decorative oversized quote mark */}
+                <span
+                  className="absolute -top-6 -left-2 font-serif text-[8rem] leading-none text-burnt-orange/[0.07] pointer-events-none select-none"
+                  aria-hidden="true"
+                >
+                  &ldquo;
+                </span>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-burnt-orange to-burnt-orange/70 flex items-center justify-center text-white text-sm font-bold">
-                    AH
+                {/* Garrido */}
+                <div className="relative">
+                  <blockquote className="font-serif text-xl md:text-2xl text-text-primary/90 leading-relaxed mb-6">
+                    &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
+                    — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
+                    uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
+                  </blockquote>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bsi-gradient-brand flex items-center justify-center text-white text-sm font-bold">
+                      AG
+                    </div>
+                    <div>
+                      <div className="text-text-primary font-semibold text-sm">Augie Garrido, 1939&ndash;2018</div>
+                      <div className="text-text-muted text-xs">Winningest coach in college baseball history</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-text-primary font-semibold text-sm">Austin Humphrey</div>
-                    <div className="text-text-muted text-xs">Founder, Blaze Sports Intel</div>
+                </div>
+
+                {/* Accent divider */}
+                <div className="divider-accent h-px w-full" />
+
+                {/* Austin */}
+                <div>
+                  <blockquote className="font-serif text-lg md:text-xl text-text-secondary leading-relaxed mb-6">
+                    &ldquo;That&apos;s who shows up here. The one checking scores at midnight.
+                    The one who cares about the Tuesday game as much as the Saturday showcase.&rdquo;
+                  </blockquote>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-burnt-orange to-burnt-orange/70 flex items-center justify-center text-white text-sm font-bold">
+                      AH
+                    </div>
+                    <div>
+                      <div className="text-text-primary font-semibold text-sm">Austin Humphrey</div>
+                      <div className="text-text-muted text-xs">Founder, Blaze Sports Intel</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -304,19 +335,21 @@ export function HomePageClient() {
       </section>
 
       {/* ─── 8. CTA ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary relative overflow-hidden">
+        {/* Ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-burnt-orange/[0.04] rounded-full blur-3xl pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-4">
-              Built for the people who run the game.
+              Start with college baseball. Go from there.
             </h2>
             <p className="text-base text-text-tertiary mb-10 max-w-2xl mx-auto">
-              Join fans, scouts, and analysts who track roster markets, not just scoreboards.
+              Five sports. Live scores. Real analytics. See for yourself.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(191,87,0,0.3)]"
+                className="bsi-btn-glow inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-glow-sm"
               >
                 Start Free Trial
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,7 +365,7 @@ export function HomePageClient() {
                 href="/about"
                 className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-burnt-orange text-text-primary hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
               >
-                Learn Our Story
+                About BSI
               </Link>
             </div>
           </ScrollReveal>

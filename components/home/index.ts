@@ -4,7 +4,6 @@ export { SportHubCards } from './SportHubCards';
 export { TrendingIntelFeed } from './TrendingIntelFeed';
 export { StatsBand } from './StatsBand';
 export { CtaSection } from './CtaSection';
-export { AboutSection } from './AboutSection';
 export { PersonaSwitch } from './PersonaSwitch';
 export { PricingPreview } from './PricingPreview';
 export { TransparencyBlock } from './TransparencyBlock';

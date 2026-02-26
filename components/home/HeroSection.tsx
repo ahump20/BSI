@@ -24,12 +24,12 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Gradient background */}
+      {/* Layered gradient background — warm center glow + cool offset for depth */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
-            'radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--bsi-primary) 15%, transparent) 0%, var(--bsi-surface) 70%)',
+            'radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--bsi-primary) 15%, transparent) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(253, 185, 19, 0.06) 0%, transparent 50%), var(--bsi-surface)',
         }}
       />
 
@@ -43,24 +43,25 @@ export function HeroSection() {
         </div>
 
         <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-text-primary uppercase tracking-tight leading-none mb-6">
-          The Intelligence Layer
+          Every Game Covered
           <br />
-          <span className="bg-gradient-to-r from-burnt-orange to-[#FDB913] bg-clip-text text-transparent">
-            College Baseball Never Had
+          <span className="text-gradient-animated">
+            Like It Matters
           </span>
         </h1>
 
         <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] text-lg md:text-xl text-text-secondary max-w-3xl mx-auto mb-10 leading-relaxed">
-          Roster-market intelligence, transfer portal tracking, and pro projections — the depth
-          ESPN doesn&apos;t build. Plus live analytics across MLB, NFL, NBA, and college football.
+          The Wednesday night game between Rice and Sam Houston gets the same depth as a
+          Saturday showcase on ESPN. Five sports. College and pro. Built for fans who follow
+          the game past the highlights.
         </p>
 
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.45s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            href="/scores"
+            className="bsi-btn-glow inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-glow-sm"
           >
-            Launch Dashboard
+            Explore Live Scores
           </Link>
           <Link
             href="/college-baseball"

@@ -11,20 +11,23 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-background-primary text-text-primary pt-16 md:pt-20">
       {/* Hero — product thesis first */}
-      <Section className="pt-28 md:pt-36 pb-20">
-        <Container size="narrow" center>
+      <Section className="pt-28 md:pt-36 pb-20 relative overflow-hidden">
+        {/* Ambient hero glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(191,87,0,0.08) 0%, transparent 70%)' }} />
+        <Container size="narrow" center className="relative z-10">
           <ScrollReveal>
             <p className="text-sm tracking-[0.2em] text-burnt-orange uppercase mb-8 font-medium">
-              Why This Exists
+              About Blaze Sports Intel
             </p>
             <h1 className="font-display uppercase text-4xl md:text-5xl lg:text-6xl font-bold mb-10 tracking-wide leading-[1.1]">
-              The Coverage Gap{' '}
-              <span className="text-burnt-orange">Is the Product</span>
+              Built for Fans Who Follow{' '}
+              <span className="text-burnt-orange">the Whole Game</span>
             </h1>
             <p className="text-xl md:text-2xl text-text-secondary leading-relaxed max-w-2xl mx-auto">
-              Try finding a box score for a Tuesday night game between Rice and Houston.
-              Try tracking conference standings without clicking through fifteen pages.
-              That gap between interest and access — that is what BSI covers.
+              Not just the highlights. Not just the playoffs. BSI covers college baseball, MLB,
+              NFL, NBA, and college football with live scores, real analytics, and independent
+              editorial — from a Wednesday night mid-major matchup to Monday Night Football.
+              One platform. One person. Every game.
             </p>
           </ScrollReveal>
         </Container>
@@ -37,25 +40,25 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  stat: '300+',
-                  label: 'D1 Baseball Programs',
-                  desc: 'Every team. Every conference. Not just the thirty programs ESPN decides to cover on a given weekend.',
+                  stat: 'Every Game',
+                  label: 'Not Just the Top 25',
+                  desc: 'Full box scores, live standings, and analytics for every D1 baseball program and every major pro league. The mid-major Tuesday night game covered with the same depth as a primetime showcase.',
                 },
                 {
-                  stat: '30s',
-                  label: 'Live Score Updates',
-                  desc: 'Real-time scores across college baseball, MLB, NFL, NBA, and college football. Multi-source verified.',
+                  stat: 'Deep Intel',
+                  label: 'Beyond the Box Score',
+                  desc: 'Transfer portal tracking, conference strength rankings, and advanced metrics like wOBA and wRC+. The kind of analysis scouts and front offices use — open to every fan.',
                 },
                 {
-                  stat: '100%',
-                  label: 'Sourced & Timestamped',
-                  desc: 'Every data point shows where it came from and when. No anonymous data. No stale caches passed off as live.',
+                  stat: 'No Filter',
+                  label: 'Independent Coverage',
+                  desc: 'Every stat shows its source and timestamp. Free access to scores and standings across every sport. Original editorial from someone who actually watches.',
                 },
               ].map((card) => (
                 <div
                   key={card.stat}
                   className="p-6 rounded-lg bg-background-secondary border border-border-subtle
-                             hover:border-border-accent transition-all duration-300 ease-out-expo"
+                             hover:border-border-accent hover:shadow-glow-sm transition-all duration-300 ease-out-expo"
                 >
                   <div className="font-display text-3xl font-bold text-burnt-orange mb-2">
                     {card.stat}
@@ -108,67 +111,45 @@ export default function AboutPage() {
 
                 <div className="space-y-5 text-text-secondary leading-[1.75]">
                   <p>
-                    Born in Memphis with Texas soil under the hospital bed — a Humphrey tradition going
-                    back generations from West Columbia, birthplace of the Republic of Texas. My family
-                    has held the same four season tickets to Longhorn football for over forty years.
+                    I grew up watching Tuesday night college baseball games that nobody would
+                    talk about the next morning. Not because they weren&apos;t worth watching —
+                    a kid from a mid-major program working a two-seam fastball he taught himself
+                    off YouTube deserves coverage as much as anyone on ESPN — but because no
+                    platform thought the audience was large enough to justify it. The audience
+                    was always there. It just never had anywhere to go.
                   </p>
                   <p>
-                    I studied international systems at UT Austin to understand how power structures
-                    decide who gets covered and who gets ignored. Finished a master&apos;s in
-                    entertainment business at Full Sail because the coverage gap is a product problem,
-                    not just an editorial one. Made top 10% nationally at Northwestern Mutual because
-                    I learned how to build something from nothing with no safety net.
+                    I studied international systems at UT Austin — how power structures decide
+                    who gets seen and who gets ignored. That framework maps onto sports media
+                    with uncomfortable precision: the same forces that determine which countries
+                    get a seat at the table determine which programs get a broadcast window,
+                    which athletes get scouted, and which markets get written off. A graduate
+                    degree in entertainment business sharpened the conviction: this gap
+                    isn&apos;t editorial. It&apos;s structural. And structural problems need
+                    someone willing to build what closes them.
                   </p>
                   <p>
-                    Every credential pointed the same direction: build the thing nobody else would.
-                    I pitched a perfect game once — 27 up, 27 down — but that is not the story.
-                    The story is the Tuesday night games that nobody covers, the mid-major programs
-                    with real talent that never make the broadcast window, and the fans who care
-                    about depth instead of highlights.
+                    BSI is that build. Every data pipeline, every article, every line of code —
+                    written and maintained by one person. Not out of stubbornness, but because
+                    the thing I wanted didn&apos;t exist and nobody with a content team and a
+                    VC check was going to make it for the fans I had in mind. Five sports, college
+                    and pro. Live scores from multiple verified sources. Analytics deeper than a
+                    box score. A Wednesday night game between Rice and Sam Houston covered with
+                    the same rigor as a Saturday showcase between Tennessee and LSU — because
+                    that&apos;s the standard, not the exception.
                   </p>
                   <p className="text-text-primary">
-                    <span className="text-burnt-orange font-semibold">Blaze Sports Intel</span> — named
-                    after my first baseball team and a dachshund, built for fans who got tired of waiting.
+                    The name comes from a dachshund. My first baseball team in Bartlett, Texas
+                    was the <span className="text-burnt-orange font-semibold">Blaze</span> —
+                    when my family got a dog, I named him after it. Years later, when I needed
+                    a name for what I&apos;d been building since I first noticed the gap, Blaze
+                    was already there. The people who end up here tend to arrive the same way —
+                    they&apos;d been looking for coverage like this. They just didn&apos;t know
+                    someone was building it.
                   </p>
                 </div>
               </div>
             </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* Infrastructure strip */}
-      <Section className="py-20 bg-background-secondary border-t border-border-subtle">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="text-center mb-12">
-              <h2 className="font-display uppercase text-2xl md:text-3xl font-bold tracking-wide">
-                One <span className="text-burnt-orange">Operator</span>. Full Stack.
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {[
-                { value: '15', label: 'Workers Deployed' },
-                { value: '6', label: 'Databases' },
-                { value: '18', label: 'Storage Buckets' },
-                { value: '6', label: 'Sports Covered' },
-              ].map((item) => (
-                <div key={item.label}>
-                  <div className="font-display text-3xl md:text-4xl font-bold text-text-primary">
-                    {item.value}
-                  </div>
-                  <p className="text-xs text-text-muted uppercase tracking-[0.15em] mt-2 font-medium">
-                    {item.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-center text-text-tertiary mt-10 max-w-xl mx-auto leading-relaxed">
-              Every line of code, every article, every data pipeline — built and maintained by one person
-              on Cloudflare infrastructure. No VC funding, no content team, no shortcuts.
-            </p>
           </ScrollReveal>
         </Container>
       </Section>
@@ -178,11 +159,11 @@ export default function AboutPage() {
         <Container size="narrow" center>
           <ScrollReveal>
             <h2 className="font-display uppercase text-3xl md:text-4xl font-bold mb-6 tracking-wide">
-              See What <span className="text-burnt-orange">Real Coverage</span> Looks Like
+              Start with <span className="text-burnt-orange">College Baseball</span>
             </h2>
             <p className="text-lg text-text-tertiary mb-10 max-w-lg mx-auto leading-relaxed">
-              Start with college baseball — the flagship. Live scores, full box scores,
-              standings, analytics, and editorial that goes where ESPN won&apos;t.
+              The flagship. Live scores, full box scores, standings, analytics, and the
+              editorial that covers the games nobody else will.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
