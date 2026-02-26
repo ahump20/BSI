@@ -29,6 +29,11 @@ import {
   calculateConferenceStrength,
   calculateFIPConstant,
   calculateWOBAScale,
+  calculateContactRate,
+  calculatePlateDiscipline,
+  calculateLinearWeightRuns,
+  calculateSIERALite,
+  calculateWorkloadScore,
   computeFullBattingLine,
   computeFullPitchingLine,
   MLB_WOBA_WEIGHTS,
@@ -514,5 +519,141 @@ describe('computeFullPitchingLine', () => {
     const result = computeFullPitchingLine(stats, MLB_LEAGUE);
     // ERA = 65 * 9 / 180 = 3.25
     expect(result.era).toBeCloseTo(3.25, 2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Additional Metrics — contact, discipline, run estimation, workload
+// ---------------------------------------------------------------------------
+
+describe('calculateContactRate', () => {
+  it('returns 1 minus K%', () => {
+    // 100 SO in 500 PA → K% = 0.20 → contact rate = 0.80
+    expect(calculateContactRate(100, 500)).toBeCloseTo(0.80, 3);
+  });
+
+  it('returns 0 for 0 PA', () => {
+    expect(calculateContactRate(10, 0)).toBe(0);
+  });
+
+  it('returns 1 when no strikeouts', () => {
+    expect(calculateContactRate(0, 200)).toBeCloseTo(1.0, 3);
+  });
+
+  it('returns 0 when all PA are strikeouts', () => {
+    expect(calculateContactRate(100, 100)).toBeCloseTo(0, 3);
+  });
+});
+
+describe('calculatePlateDiscipline', () => {
+  it('computes BB/(BB+K) correctly', () => {
+    // 50 BB, 100 SO in 500 PA → bbPct=0.10, kPct=0.20, score = 0.10/0.30 = 0.333
+    expect(calculatePlateDiscipline(50, 100, 500)).toBeCloseTo(0.333, 3);
+  });
+
+  it('returns 0 for 0 PA', () => {
+    expect(calculatePlateDiscipline(10, 20, 0)).toBe(0);
+  });
+
+  it('returns 0 when no walks or strikeouts', () => {
+    expect(calculatePlateDiscipline(0, 0, 200)).toBe(0);
+  });
+
+  it('returns 1.0 for all walks and no strikeouts', () => {
+    expect(calculatePlateDiscipline(50, 0, 200)).toBeCloseTo(1.0, 3);
+  });
+
+  it('returns higher value for more walks relative to strikeouts', () => {
+    const selective = calculatePlateDiscipline(60, 80, 400);
+    const freeSwingers = calculatePlateDiscipline(20, 120, 400);
+    expect(selective).toBeGreaterThan(freeSwingers);
+  });
+});
+
+describe('calculateLinearWeightRuns', () => {
+  it('computes LwR for a typical productive lineup', () => {
+    // 80 1B, 30 2B, 5 3B, 25 HR, 55 BB, 8 HBP, 300 outs
+    // LwR = 0.47*80 + 0.77*30 + 1.04*5 + 1.42*25 + 0.33*55 + 0.34*8 - 0.27*300
+    //     = 37.6 + 23.1 + 5.2 + 35.5 + 18.15 + 2.72 - 81 = 41.27
+    expect(calculateLinearWeightRuns(80, 30, 5, 25, 55, 8, 300)).toBeCloseTo(41.27, 1);
+  });
+
+  it('returns negative value for hitless lineup', () => {
+    expect(calculateLinearWeightRuns(0, 0, 0, 0, 0, 0, 400)).toBeLessThan(0);
+  });
+
+  it('returns 0 for all zero inputs', () => {
+    expect(calculateLinearWeightRuns(0, 0, 0, 0, 0, 0, 0)).toBeCloseTo(0, 3);
+  });
+
+  it('adds more value for extra-base hits than singles', () => {
+    const singleHeavy = calculateLinearWeightRuns(20, 0, 0, 0, 0, 0, 100);
+    const hrHeavy = calculateLinearWeightRuns(0, 0, 0, 20, 0, 0, 100);
+    expect(hrHeavy).toBeGreaterThan(singleHeavy);
+  });
+});
+
+describe('calculateSIERALite', () => {
+  it('returns a reasonable ERA-scale value for a solid pitcher', () => {
+    // 180 K, 45 BB, 15 HR, 180 IP
+    const result = calculateSIERALite(180, 45, 15, 180);
+    expect(result).toBeGreaterThan(2.5);
+    expect(result).toBeLessThan(6.0);
+  });
+
+  it('returns lower value for elite strikeout pitcher', () => {
+    const elite = calculateSIERALite(250, 30, 10, 180);
+    const average = calculateSIERALite(150, 50, 20, 180);
+    expect(elite).toBeLessThan(average);
+  });
+
+  it('clamps to [0, 12]', () => {
+    // Very bad pitcher
+    const bad = calculateSIERALite(30, 120, 60, 60);
+    expect(bad).toBeLessThanOrEqual(12);
+    expect(bad).toBeGreaterThanOrEqual(0);
+  });
+
+  it('returns 0 for 0 IP', () => {
+    expect(calculateSIERALite(100, 30, 10, 0)).toBe(0);
+  });
+
+  it('improves with h and hbp provided (more accurate BF estimate)', () => {
+    // Without h/hbp the BF estimate is lower, changing percentages
+    const approx = calculateSIERALite(150, 40, 12, 180);
+    const precise = calculateSIERALite(150, 40, 12, 180, 160, 6);
+    // Both should be in a valid range; precise BF doesn't crash
+    expect(precise).toBeGreaterThan(0);
+    expect(approx).toBeGreaterThan(0);
+  });
+});
+
+describe('calculateWorkloadScore', () => {
+  it('returns ~50 for a typical starter workload', () => {
+    // 30 G, 30 GS, 180 IP, 0 recent appearances → starter baseline 6 IP/G
+    // densityScore = (180/30 / 6) * 50 = (1.0) * 50 = 50, recentPenalty = 0
+    expect(calculateWorkloadScore(30, 30, 180, 0)).toBeCloseTo(50, 0);
+  });
+
+  it('returns 0 for 0 games', () => {
+    expect(calculateWorkloadScore(0, 0, 0, 0)).toBe(0);
+  });
+
+  it('adds penalty for recent appearances', () => {
+    const rested = calculateWorkloadScore(30, 30, 180, 0);
+    const fatigued = calculateWorkloadScore(30, 30, 180, 3);
+    expect(fatigued).toBeGreaterThan(rested);
+  });
+
+  it('clamps to [0, 100]', () => {
+    const extreme = calculateWorkloadScore(5, 0, 100, 10);
+    expect(extreme).toBeLessThanOrEqual(100);
+    expect(extreme).toBeGreaterThanOrEqual(0);
+  });
+
+  it('treats relievers with lower IP-per-game baseline', () => {
+    // Reliever: 60 G, 0 GS, 60 IP, 0 recent → ipPerApp=1.0, baseline=1, density=50
+    const reliever = calculateWorkloadScore(60, 0, 60, 0);
+    expect(reliever).toBeCloseTo(50, 0);
   });
 });
