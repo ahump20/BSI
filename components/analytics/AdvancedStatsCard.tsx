@@ -70,7 +70,7 @@ export function AdvancedStatsCard({
                   />
                 </div>
               )}
-              <span className="text-sm text-white font-mono tabular-nums">
+              <span className="text-sm text-text-primary font-mono tabular-nums">
                 {(stat.format || defaultFormat)(stat.value)}
               </span>
             </div>
@@ -80,7 +80,7 @@ export function AdvancedStatsCard({
 
       {/* Pro stats */}
       {proStats.length > 0 && (
-        <MetricGate isPro={isPro} metricName="wRC+, FIP, eBA" className="border-t border-white/[0.04]">
+        <MetricGate isPro={isPro} metricName="wRC+, FIP, eBA" className="border-t border-border-subtle">
           <div className="px-5 py-3 space-y-2">
             {proStats.map(stat => (
               <div key={stat.label} className="flex items-center justify-between">
@@ -98,7 +98,7 @@ export function AdvancedStatsCard({
                       />
                     </div>
                   )}
-                  <span className="text-sm text-white font-mono tabular-nums">
+                  <span className="text-sm text-text-primary font-mono tabular-nums">
                     {(stat.format || defaultFormat)(stat.value)}
                   </span>
                 </div>

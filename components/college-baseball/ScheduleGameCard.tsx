@@ -85,14 +85,14 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
               </span>
             </div>
             <span className={`text-lg font-bold font-mono ml-2 ${
-              isScheduled ? 'text-white/20' : homeWon ? 'text-white' : 'text-white/50'
+              isScheduled ? 'text-text-muted' : homeWon ? 'text-text-primary' : 'text-text-muted'
             }`}>
               {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
             </span>
           </div>
         </div>
         {game.venue && game.venue !== 'TBD' && (
-          <div className="px-3 pb-2 text-[10px] text-white/25 truncate">
+          <div className="px-3 pb-2 text-[10px] text-text-muted truncate">
             {game.venue}
           </div>
         )}

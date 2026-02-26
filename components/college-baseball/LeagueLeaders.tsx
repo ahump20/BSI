@@ -64,8 +64,8 @@ function SkeletonLeaderCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center justify-between mb-4">
-        <div className="h-4 w-24 bg-white/10 rounded" />
-        <div className="h-5 w-10 bg-white/10 rounded" />
+        <div className="h-4 w-24 bg-surface rounded" />
+        <div className="h-5 w-10 bg-surface rounded" />
       </div>
       <div className="space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (

@@ -196,7 +196,7 @@ export function BoxScoreTable({
                 </h4>
                 <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} batting statistics`}>
                   <thead>
-                    <tr className="text-white/40 uppercase">
+                    <tr className="text-text-muted uppercase">
                       <th scope="col" className="text-left py-1">Batter</th>
                       <th scope="col" className="text-center py-1">AB</th>
                       <th scope="col" className="text-center py-1">R</th>
@@ -226,7 +226,7 @@ export function BoxScoreTable({
                         {!isCompact && <td className="text-center tabular-nums">{b.slg ?? '-'}</td>}
                       </tr>
                     ))}
-                    <tr className="border-t border-white/10 font-bold">
+                    <tr className="border-t border-border font-bold">
                       <td className="py-1">TOTALS</td>
                       <td className="text-center tabular-nums">{sumBatting(side.batting, 'ab')}</td>
                       <td className="text-center tabular-nums">{sumBatting(side.batting, 'r')}</td>
@@ -261,7 +261,7 @@ export function BoxScoreTable({
                 </h4>
                 <table className="w-full text-xs text-text-secondary" aria-label={`${side.abbr} pitching statistics`}>
                   <thead>
-                    <tr className="text-white/40 uppercase">
+                    <tr className="text-text-muted uppercase">
                       <th scope="col" className="text-left py-1">Pitcher</th>
                       <th scope="col" className="text-center py-1">IP</th>
                       <th scope="col" className="text-center py-1">H</th>
@@ -277,7 +277,7 @@ export function BoxScoreTable({
                       <tr key={i} className="border-t border-white/5">
                         <td className="py-1">
                           {p.player.name}
-                          {p.decision && <span className="text-white/40 ml-1">({p.decision})</span>}
+                          {p.decision && <span className="text-text-muted ml-1">({p.decision})</span>}
                         </td>
                         <td className="text-center tabular-nums">{p.ip}</td>
                         <td className="text-center tabular-nums">{p.h}</td>

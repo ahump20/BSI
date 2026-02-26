@@ -116,7 +116,7 @@ export function TrendingIntelFeed() {
           articles.map((article, i) => {
             const color = SPORT_COLORS[article.sport] || '#BF5700';
             const inner = (
-              <div className="group/item py-2 border-b border-white/5 last:border-0">
+              <div className="group/item py-2 border-b border-border-subtle last:border-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span
                     className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
@@ -124,7 +124,7 @@ export function TrendingIntelFeed() {
                   >
                     {article.sport}
                   </span>
-                  <span className="text-[10px] text-white/30">{relativeTime(article.published)}</span>
+                  <span className="text-[10px] text-text-muted">{relativeTime(article.published)}</span>
                 </div>
                 <p className="text-sm text-white/80 leading-snug line-clamp-1 group-hover/item:text-white transition-colors">
                   {article.headline}
