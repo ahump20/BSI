@@ -155,13 +155,13 @@ export function HAVFLeaderboard({
                   key={player.playerId}
                   onClick={() => onPlayerClick?.(player.playerId)}
                   className={`border-b border-white/[0.02] transition-colors ${
-                    onPlayerClick ? 'cursor-pointer hover:bg-white/[0.03]' : ''
-                  } ${rank <= 3 ? 'bg-[#BF5700]/[0.03]' : ''}`}
+                    onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
+                  } ${rank <= 3 ? 'bg-burnt-orange/[0.03]' : ''}`}
                 >
                   <td className="pl-5 pr-2 py-3">
                     <span
                       className={`text-xs font-mono tabular-nums ${
-                        rank <= 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
+                        rank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
                       }`}
                     >
                       {rank}
@@ -169,14 +169,14 @@ export function HAVFLeaderboard({
                   </td>
                   <td className="px-2 py-3">
                     <div>
-                      <span className="text-white font-medium text-sm">{player.playerName}</span>
+                      <span className="text-text-primary font-medium text-sm">{player.playerName}</span>
                       {player.position && (
-                        <span className="ml-1.5 text-[10px] text-white/25 uppercase">{player.position}</span>
+                        <span className="ml-1.5 text-[10px] text-text-muted uppercase">{player.position}</span>
                       )}
                     </div>
                   </td>
                   <td className="px-2 py-3 hidden sm:table-cell">
-                    <span className="text-white/40 text-xs">{player.team}</span>
+                    <span className="text-text-muted text-xs">{player.team}</span>
                   </td>
                   <td className="px-2 py-3 text-center">
                     <HAVFBadge score={player.composite} size="sm" />
@@ -206,10 +206,10 @@ export function HAVFLeaderboard({
 
       {/* Show more */}
       {!showAll && players.length > initialRows && (
-        <div className="px-5 py-3 border-t border-white/[0.04] text-center">
+        <div className="px-5 py-3 border-t border-border-subtle text-center">
           <button
             onClick={() => setShowAll(true)}
-            className="text-xs text-[#BF5700] hover:text-[#FF6B35] font-medium transition-colors"
+            className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
           >
             Show all {players.length} players
           </button>

@@ -382,21 +382,21 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
           </div>
         ) : (
           <div className="py-6 text-center">
-            <p className="text-[11px] font-mono text-white/25">
+            <p className="text-[11px] font-mono text-text-muted">
               No pitchers above fatigue threshold
             </p>
-            <p className="text-[10px] font-mono text-white/15 mt-1">
+            <p className="text-[10px] font-mono text-text-muted mt-1">
               Data populates during live games
             </p>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
-          <span className="font-mono text-[10px] text-white/20">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border-subtle">
+          <span className="font-mono text-[10px] text-text-muted">
             Threshold: {threshold}+
           </span>
-          <span className="font-mono text-[10px] text-white/20">
+          <span className="font-mono text-[10px] text-text-muted">
             CV Intelligence
           </span>
         </div>

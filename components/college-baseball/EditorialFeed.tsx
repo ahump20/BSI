@@ -275,12 +275,12 @@ export function EditorialFeed() {
                           {article.title}
                         </h4>
                         {article.preview && (
-                          <p className="text-white/40 text-xs mt-0.5 line-clamp-2">
+                          <p className="text-text-muted text-xs mt-0.5 line-clamp-2">
                             {article.preview}
                           </p>
                         )}
                       </div>
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/20 flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted flex-shrink-0 ml-3" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
                     </div>

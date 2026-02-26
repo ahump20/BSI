@@ -15,7 +15,7 @@ const options: { id: LeagueFilter; label: string }[] = [
 
 export function SpringTrainingLeagueFilter({ value, onChange }: SpringTrainingLeagueFilterProps) {
   return (
-    <div className="flex gap-1 p-1 bg-white/5 rounded-lg" role="radiogroup" aria-label="Filter by league">
+    <div className="flex gap-1 p-1 bg-surface-light rounded-lg" role="radiogroup" aria-label="Filter by league">
       {options.map((opt) => (
         <button
           key={opt.id}
@@ -25,7 +25,7 @@ export function SpringTrainingLeagueFilter({ value, onChange }: SpringTrainingLe
           className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
             value === opt.id
               ? 'bg-burnt-orange text-white'
-              : 'text-white/50 hover:text-white hover:bg-white/5'
+              : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
           }`}
         >
           {opt.label}

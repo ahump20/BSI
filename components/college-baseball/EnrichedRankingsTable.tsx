@@ -60,7 +60,7 @@ function RankChange({ current, previous }: { current: number; previous: number |
   }
   const diff = previous - current;
   if (diff === 0) {
-    return <span className="text-white/20 text-xs">—</span>;
+    return <span className="text-text-muted text-xs">—</span>;
   }
   if (diff > 0) {
     return (
@@ -151,7 +151,7 @@ export function EnrichedRankingsTable({
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
               <p className="text-red-400 font-semibold">Rankings Unavailable</p>
-              <p className="text-white/60 text-sm mt-1">{error}</p>
+              <p className="text-text-secondary text-sm mt-1">{error}</p>
               <button
                 onClick={onRetry}
                 className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg text-sm font-medium hover:bg-ember transition-colors"
@@ -159,7 +159,7 @@ export function EnrichedRankingsTable({
                 Retry
               </button>
               {preseasonFallback.length > 0 && (
-                <p className="text-white/30 text-xs mt-3">Showing preseason rankings as fallback below.</p>
+                <p className="text-text-muted text-xs mt-3">Showing preseason rankings as fallback below.</p>
               )}
             </div>
           ) : (

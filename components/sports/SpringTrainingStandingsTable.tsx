@@ -32,7 +32,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-white/40 text-xs uppercase tracking-wider">
+              <tr className="border-b border-border text-text-muted text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3 w-8">#</th>
                 <th className="text-left px-4 py-3">Team</th>
                 <th className="text-right px-4 py-3">W</th>
@@ -46,7 +46,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
               {sorted.map((team, i) => (
                 <tr
                   key={team.id}
-                  className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                  className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                 >
                   <td className="px-4 py-3 text-white/40 font-mono text-xs">{i + 1}</td>
                   <td className="px-4 py-3">
