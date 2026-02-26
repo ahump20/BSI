@@ -19,8 +19,8 @@ const SOURCE_COLORS: Record<HeadlineSource, string> = {
   NFL: 'text-green-400',
   NCAA: 'text-purple-400',
   BSI: 'text-burnt-orange',
-  AP: 'text-white/60',
-  CUSTOM: 'text-white/50',
+  AP: 'text-text-secondary',
+  CUSTOM: 'text-text-muted',
   MLB_COM: 'text-blue-500',
   BASEBALL_AMERICA: 'text-red-500',
   D1BASEBALL: 'text-yellow-400',
@@ -67,7 +67,7 @@ export function HeadlineCard({
       <button
         onClick={handleClick}
         disabled={!isClickable}
-        className={`w-full text-left flex items-start gap-3 p-2 rounded hover:bg-white/5 transition-colors ${className}`}
+        className={`w-full text-left flex items-start gap-3 p-2 rounded hover:bg-surface-light transition-colors ${className}`}
       >
         {headline.category !== 'GENERAL' && categoryBadge.label && (
           <span
@@ -77,8 +77,8 @@ export function HeadlineCard({
           </span>
         )}
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm line-clamp-2">{headline.title}</p>
-          <div className="flex items-center gap-2 mt-1 text-xs text-white/40">
+          <p className="text-text-primary text-sm line-clamp-2">{headline.title}</p>
+          <div className="flex items-center gap-2 mt-1 text-xs text-text-muted">
             {showSource && (
               <span className={SOURCE_COLORS[headline.source]}>{headline.source}</span>
             )}
@@ -117,13 +117,13 @@ export function HeadlineCard({
               {categoryBadge.label}
             </span>
           )}
-          <h3 className="text-white font-semibold text-lg line-clamp-2 group-hover:text-burnt-orange transition-colors">
+          <h3 className="text-text-primary font-semibold text-lg line-clamp-2 group-hover:text-burnt-orange transition-colors">
             {headline.title}
           </h3>
           {headline.summary && (
-            <p className="text-white/60 text-sm mt-1 line-clamp-2">{headline.summary}</p>
+            <p className="text-text-secondary text-sm mt-1 line-clamp-2">{headline.summary}</p>
           )}
-          <div className="flex items-center gap-2 mt-2 text-xs text-white/40">
+          <div className="flex items-center gap-2 mt-2 text-xs text-text-muted">
             {showSource && (
               <span className={SOURCE_COLORS[headline.source]}>{headline.source}</span>
             )}
@@ -160,11 +160,11 @@ export function HeadlineCard({
               {categoryBadge.label}
             </span>
           )}
-          <h4 className="text-white text-sm font-medium line-clamp-2 group-hover:text-burnt-orange transition-colors">
+          <h4 className="text-text-primary text-sm font-medium line-clamp-2 group-hover:text-burnt-orange transition-colors">
             {headline.title}
           </h4>
         </div>
-        <div className="flex items-center gap-2 mt-1 text-xs text-white/40">
+        <div className="flex items-center gap-2 mt-1 text-xs text-text-muted">
           {showSource && <span className={SOURCE_COLORS[headline.source]}>{headline.source}</span>}
           <span>{formatRelativeTime(headline.publishedAt)}</span>
           {headline.author && <span>• {headline.author}</span>}

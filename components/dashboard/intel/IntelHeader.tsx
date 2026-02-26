@@ -128,7 +128,7 @@ export function IntelHeader({
         {teamLens ? (
           <button
             onClick={() => onTeamLensChange(null)}
-            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-white/30"
+            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-border-strong"
             style={{
               fontFamily: 'var(--intel-mono)',
               borderRadius: '2px',

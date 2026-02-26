@@ -126,11 +126,11 @@ export function TrendingIntelFeed() {
                   </span>
                   <span className="text-[10px] text-text-muted">{relativeTime(article.published)}</span>
                 </div>
-                <p className="text-sm text-white/80 leading-snug line-clamp-1 group-hover/item:text-white transition-colors">
+                <p className="text-sm text-text-primary leading-snug line-clamp-1 group-hover/item:text-text-primary transition-colors">
                   {article.headline}
                 </p>
                 {article.description && (
-                  <p className="text-xs text-white/30 mt-0.5 line-clamp-1 hidden lg:block">
+                  <p className="text-xs text-text-muted mt-0.5 line-clamp-1 hidden lg:block">
                     {article.description}
                   </p>
                 )}

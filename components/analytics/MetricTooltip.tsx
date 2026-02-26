@@ -36,20 +36,20 @@ export function MetricTooltip({
     >
       {children}
       {open && (
-        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-lg bg-[#1A1A1A] border border-white/10 shadow-xl">
-          <span className="block text-xs font-mono text-[#BF5700] font-bold mb-1">
+        <span className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 rounded-lg bg-background-secondary border border-border shadow-xl">
+          <span className="block text-xs font-mono text-burnt-orange font-bold mb-1">
             {metric}
           </span>
-          <span className="block text-[11px] text-white/70 leading-relaxed">
+          <span className="block text-[11px] text-text-secondary leading-relaxed">
             {description}
           </span>
           {context && (
-            <span className="block text-[10px] text-white/40 mt-1.5 font-mono">
+            <span className="block text-[10px] text-text-muted mt-1.5 font-mono">
               {context}
             </span>
           )}
           {/* Arrow */}
-          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-0 h-0 border-x-[6px] border-x-transparent border-t-[6px] border-t-white/10" />
+          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-0 h-0 border-x-[6px] border-x-transparent border-t-[6px] border-t-border" />
         </span>
       )}
     </span>

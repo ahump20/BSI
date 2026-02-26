@@ -25,7 +25,7 @@ const CATEGORY_STYLES: Record<string, string> = {
   editorial: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
   analysis: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
   rankings: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  general: 'bg-white/10 text-white/50 border-white/20',
+  general: 'bg-surface text-text-muted border-border-strong',
 };
 
 export function NewsCard({

@@ -137,7 +137,7 @@ export function GameGrid({
                     {canScrollLeft && (
                       <button
                         onClick={() => scrollBy('left')}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white/70 hover:text-white hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -ml-3"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-text-secondary hover:text-text-primary hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -ml-3"
                         aria-label="Scroll left"
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -146,7 +146,7 @@ export function GameGrid({
                     {canScrollRight && (
                       <button
                         onClick={() => scrollBy('right')}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white/70 hover:text-white hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -mr-3"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-text-secondary hover:text-text-primary hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -mr-3"
                         aria-label="Scroll right"
                       >
                         <ChevronRight className="h-4 w-4" />

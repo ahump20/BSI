@@ -144,7 +144,7 @@ export function BoxScoreTable({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-white/5">
+              <tr className="border-b border-border-subtle">
                 <td className="px-4 py-2 font-medium">{awayTeam.abbreviation}</td>
                 {linescore.innings.map((inn, i) => (
                   <td key={i} className="px-2 py-2 text-center tabular-nums">{inn.away ?? '-'}</td>
@@ -212,7 +212,7 @@ export function BoxScoreTable({
                   </thead>
                   <tbody>
                     {side.batting.map((b, i) => (
-                      <tr key={i} className="border-t border-white/5">
+                      <tr key={i} className="border-t border-border-subtle">
                         <td className="py-1">{b.player.name}</td>
                         <td className="text-center tabular-nums">{b.ab}</td>
                         <td className="text-center tabular-nums">{b.r}</td>
@@ -274,7 +274,7 @@ export function BoxScoreTable({
                   </thead>
                   <tbody>
                     {side.pitching.map((p, i) => (
-                      <tr key={i} className="border-t border-white/5">
+                      <tr key={i} className="border-t border-border-subtle">
                         <td className="py-1">
                           {p.player.name}
                           {p.decision && <span className="text-text-muted ml-1">({p.decision})</span>}

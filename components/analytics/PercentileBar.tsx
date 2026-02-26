@@ -41,10 +41,10 @@ export function PercentileBar({
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <span className="text-[11px] text-white/40 font-mono w-16 text-right shrink-0 uppercase tracking-wide">
+      <span className="text-[11px] text-text-muted font-mono w-16 text-right shrink-0 uppercase tracking-wide">
         {label}
       </span>
-      <div className="flex-1 h-[8px] rounded-full bg-white/[0.04] overflow-hidden relative">
+      <div className="flex-1 h-[8px] rounded-full bg-surface-light overflow-hidden relative">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pct}%`, backgroundColor: color }}

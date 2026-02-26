@@ -52,12 +52,12 @@ export function PlayersTabContent() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name (min 2 chars)..."
-            className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
           />
           <select
             value={posFilter}
             onChange={(e) => setPosFilter(e.target.value)}
-            className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
           >
             <option value="All">All Positions</option>
             {['P', 'C', '1B', '2B', '3B', 'SS', 'OF', 'DH', 'UTL'].map(p => (
@@ -67,7 +67,7 @@ export function PlayersTabContent() {
           <select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
-            className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+            className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
           >
             <option value="All">All Classes</option>
             {['Fr', 'So', 'Jr', 'Sr', 'Gr'].map(c => (
@@ -78,7 +78,7 @@ export function PlayersTabContent() {
 
         {!searchParam && (
           <div className="text-center py-8">
-            <p className="text-white/60 mb-4">Enter at least 2 characters to search D1 baseball players.</p>
+            <p className="text-text-secondary mb-4">Enter at least 2 characters to search D1 baseball players.</p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/college-baseball/players"><Button variant="primary">Browse Players</Button></Link>
               <Link href="/college-baseball/transfer-portal"><Button variant="secondary">Transfer Portal</Button></Link>
@@ -92,7 +92,7 @@ export function PlayersTabContent() {
 
         {searchParam && !loading && filtered.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-white/40">No players found for &quot;{debouncedSearch}&quot;</p>
+            <p className="text-text-muted">No players found for &quot;{debouncedSearch}&quot;</p>
           </div>
         )}
 
@@ -102,17 +102,17 @@ export function PlayersTabContent() {
               <thead>
                 <tr className="border-b-2 border-burnt-orange">
                   {['Name', 'Team', 'Pos', 'Class', ''].map((h) => (
-                    <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                    <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.slice(0, 25).map((player) => (
-                  <tr key={player.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                    <td className="p-3 font-semibold text-white">{player.name}</td>
-                    <td className="p-3 text-white/60">{player.team}</td>
-                    <td className="p-3 text-white/60">{player.position}</td>
-                    <td className="p-3 text-white/60">{player.classYear || '-'}</td>
+                  <tr key={player.id} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                    <td className="p-3 font-semibold text-text-primary">{player.name}</td>
+                    <td className="p-3 text-text-secondary">{player.team}</td>
+                    <td className="p-3 text-text-secondary">{player.position}</td>
+                    <td className="p-3 text-text-secondary">{player.classYear || '-'}</td>
                     <td className="p-3">
                       <Link href={`/college-baseball/players/${player.id}`} className="text-burnt-orange text-xs hover:text-ember transition-colors">
                         Profile →

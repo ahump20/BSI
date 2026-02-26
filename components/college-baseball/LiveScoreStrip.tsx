@@ -206,8 +206,8 @@ export function LiveScoreStrip() {
     return (
       <Section padding="sm" className="py-4">
         <Container>
-          <div className="text-center py-6 bg-white/5 border border-white/10 rounded-xl">
-            <p className="text-white/50 text-sm">No games today</p>
+          <div className="text-center py-6 bg-surface-light border border-border rounded-xl">
+            <p className="text-text-muted text-sm">No games today</p>
             <Link href="/college-baseball/scores" className="text-burnt-orange text-sm hover:text-ember transition-colors mt-1 inline-block">
               View full schedule →
             </Link>
@@ -224,7 +224,7 @@ export function LiveScoreStrip() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <h2 className="font-display text-lg font-bold text-white uppercase tracking-wide">
+              <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                 Today&apos;s Games
               </h2>
               {liveCount > 0 && (

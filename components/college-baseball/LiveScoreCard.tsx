@@ -37,7 +37,7 @@ function AnimatedScore({
         isScheduled
           ? 'text-text-tertiary'
           : isWinner
-            ? 'text-white'
+            ? 'text-text-primary'
             : 'text-text-secondary'
       }`}
       animate={flash ? { scale: [1, 1.3, 1], color: ['', '#FF6B35', ''] } : {}}
@@ -121,7 +121,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
     <Wrapper {...(wrapperProps as Record<string, unknown>)}>
       <Link href={`/college-baseball/game/${game.id}`} className="block">
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
@@ -194,7 +194,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
                 <div>
                   <p
                     className={`font-semibold ${
-                      awayWon ? 'text-white' : 'text-text-secondary'
+                      awayWon ? 'text-text-primary' : 'text-text-secondary'
                     }`}
                   >
                     {game.awayTeam.ranking && (
@@ -232,7 +232,7 @@ export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScore
                 <div>
                   <p
                     className={`font-semibold ${
-                      homeWon ? 'text-white' : 'text-text-secondary'
+                      homeWon ? 'text-text-primary' : 'text-text-secondary'
                     }`}
                   >
                     {game.homeTeam.ranking && (

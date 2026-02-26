@@ -139,7 +139,7 @@ export default function Linescore({
               })}
 
               {/* Totals */}
-              <td className="text-center px-2 py-2.5 font-mono font-bold text-white border-l border-border-subtle">
+              <td className="text-center px-2 py-2.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                 {totals.away.runs}
               </td>
               <td className="text-center px-2 py-2.5 font-mono text-bone">
@@ -187,7 +187,7 @@ export default function Linescore({
               })}
 
               {/* Totals */}
-              <td className="text-center px-2 py-2.5 font-mono font-bold text-white border-l border-border-subtle">
+              <td className="text-center px-2 py-2.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                 {totals.home.runs}
               </td>
               <td className="text-center px-2 py-2.5 font-mono text-bone">

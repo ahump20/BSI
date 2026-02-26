@@ -103,11 +103,11 @@ export function ContentEmailGate({
       </div>
 
       {/* Email gate */}
-      <div className="relative -mt-8 bg-midnight border border-white/[0.08] rounded-xl p-6 md:p-8 text-center">
-        <h3 className="font-display text-xl md:text-2xl font-bold uppercase tracking-display text-white mb-2">
+      <div className="relative -mt-8 bg-midnight border border-border rounded-xl p-6 md:p-8 text-center">
+        <h3 className="font-display text-xl md:text-2xl font-bold uppercase tracking-display text-text-primary mb-2">
           Continue Reading
         </h3>
-        <p className="text-white/50 text-sm mb-6 max-w-md mx-auto">
+        <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
           Get full access to BSI analysis and intel drops. Free — just enter your email.
         </p>
 
@@ -118,12 +118,12 @@ export function ContentEmailGate({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
             required
-            className="flex-1 min-w-0 bg-white/5 border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#BF5700]/50 transition-colors"
+            className="flex-1 min-w-0 bg-surface-light border border-border rounded-lg px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
           />
           <button
             type="submit"
             disabled={state === 'loading'}
-            className="shrink-0 bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-300 disabled:opacity-50"
+            className="shrink-0 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-300 disabled:opacity-50"
           >
             {state === 'loading' ? 'Joining...' : 'Unlock'}
           </button>
@@ -133,7 +133,7 @@ export function ContentEmailGate({
           <p className="text-xs text-red-400 mt-3">{errorMsg}</p>
         )}
 
-        <p className="text-[11px] text-white/20 mt-4">
+        <p className="text-[11px] text-text-muted mt-4">
           No spam. College baseball intel first. Unsubscribe anytime.
         </p>
       </div>

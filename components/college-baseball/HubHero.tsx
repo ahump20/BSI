@@ -60,7 +60,7 @@ export function HubHero({
         <ScrollReveal direction="up" delay={200}>
           <div className="relative max-w-lg mx-auto">
             <div className="relative">
-              <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input
@@ -70,16 +70,16 @@ export function HubHero({
                 onFocus={() => onSearchOpen(true)}
                 onBlur={() => setTimeout(() => onSearchOpen(false), 200)}
                 placeholder="Search teams, players, articles..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-burnt-orange/50 focus:bg-white/8 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-surface-light border border-border rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 focus:bg-surface transition-colors"
               />
             </div>
             {searchOpen && hasResults && (
-              <div className="absolute z-50 mt-1 w-full bg-charcoal border border-white/10 rounded-xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
+              <div className="absolute z-50 mt-1 w-full bg-charcoal border border-border rounded-xl shadow-xl overflow-hidden max-h-80 overflow-y-auto">
                 {Array.from(groupedSearchResults.entries()).map(([category, items]) => (
                   <div key={category}>
-                    <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/30 bg-white/5">{category}</div>
+                    <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-text-muted bg-surface-light">{category}</div>
                     {items.map((item) => (
-                      <Link key={item.href} href={item.href} className="block px-3 py-2 text-sm text-white/80 hover:bg-burnt-orange/15 hover:text-white transition-colors">
+                      <Link key={item.href} href={item.href} className="block px-3 py-2 text-sm text-text-primary hover:bg-burnt-orange/15 hover:text-text-primary transition-colors">
                         {item.name}
                       </Link>
                     ))}
@@ -92,22 +92,22 @@ export function HubHero({
 
         {/* Stats Bar */}
         <ScrollReveal direction="up" delay={250}>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white/5 border border-white/10 rounded-2xl">
+          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-surface-light border border-border rounded-2xl">
             <div className="text-center p-4">
               <div className="font-display text-3xl font-bold text-burnt-orange">300+</div>
-              <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Division I Teams</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Division I Teams</div>
             </div>
             <div className="text-center p-4">
               <div className="font-display text-3xl font-bold text-burnt-orange">32</div>
-              <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Conferences</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Conferences</div>
             </div>
             <div className="text-center p-4">
               <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
-              <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Real-Time Scores</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Real-Time Scores</div>
             </div>
             <div className="text-center p-4">
               <div className="font-display text-3xl font-bold text-burnt-orange">RPI</div>
-              <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Advanced Data</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Advanced Data</div>
             </div>
           </div>
         </ScrollReveal>

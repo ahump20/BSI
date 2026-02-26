@@ -71,10 +71,10 @@ function SkeletonLeaderCard() {
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="h-3 w-3 bg-white/8 rounded" />
-              <div className="h-3 w-28 bg-white/8 rounded" />
+              <div className="h-3 w-3 bg-surface rounded" />
+              <div className="h-3 w-28 bg-surface rounded" />
             </div>
-            <div className="h-3 w-10 bg-white/8 rounded" />
+            <div className="h-3 w-10 bg-surface rounded" />
           </div>
         ))}
       </div>
@@ -112,8 +112,8 @@ export function LeagueLeaders() {
               </svg>
             </div>
             <div>
-              <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide">League Leaders</h2>
-              <p className="text-white/40 text-xs mt-0.5">Top performers across D1 baseball</p>
+              <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">League Leaders</h2>
+              <p className="text-text-muted text-xs mt-0.5">Top performers across D1 baseball</p>
             </div>
           </div>
         </ScrollReveal>
@@ -139,7 +139,7 @@ export function LeagueLeaders() {
                   <span className="text-burnt-orange font-semibold text-sm">{stat.cat}</span>
                   <Badge variant="secondary">{stat.label}</Badge>
                 </div>
-                <p className="text-white/30 text-xs">Stats available once season games are final.</p>
+                <p className="text-text-muted text-xs">Stats available once season games are final.</p>
               </Card>
             ))}
           </div>
@@ -160,21 +160,21 @@ export function LeagueLeaders() {
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span className={`text-xs font-bold tabular-nums w-4 text-right ${
-                            idx === 0 ? 'text-burnt-orange' : 'text-white/30'
+                            idx === 0 ? 'text-burnt-orange' : 'text-text-muted'
                           }`}>
                             {idx + 1}
                           </span>
                           <div className="min-w-0">
-                            <span className="text-sm text-white font-medium truncate block">
+                            <span className="text-sm text-text-primary font-medium truncate block">
                               {leader.name}
                             </span>
-                            <span className="text-[10px] text-white/30 uppercase tracking-wider">
+                            <span className="text-[10px] text-text-muted uppercase tracking-wider">
                               {leader.team}
                             </span>
                           </div>
                         </div>
                         <span className={`text-sm font-mono font-bold tabular-nums ml-2 ${
-                          idx === 0 ? 'text-burnt-orange' : 'text-white/70'
+                          idx === 0 ? 'text-burnt-orange' : 'text-text-secondary'
                         }`}>
                           {leader.value}
                         </span>

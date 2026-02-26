@@ -139,7 +139,7 @@ export function CitationFooter({ sources, source, fetchedAt, additionalSources, 
       <div className="flex flex-wrap gap-2">
         {resolvedSources.map((s) => (
           s.url ? (
-            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors">{s.name}</a>
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-burnt-orange hover:text-ember transition-colors">{s.name}</a>
           ) : (
             <span key={s.name} className="text-xs text-text-muted">{s.name}</span>
           )

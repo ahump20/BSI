@@ -26,16 +26,16 @@ export function AboutSection() {
       <div className="max-w-7xl mx-auto">
         {/* Origin narrative */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-display text-white uppercase tracking-wide mb-8">
+          <h2 className="text-3xl md:text-4xl font-display text-text-primary uppercase tracking-wide mb-8">
             <span className="text-gradient-brand">The Origin</span>
           </h2>
-          <p className="text-lg text-white/60 leading-relaxed mb-6">
+          <p className="text-lg text-text-secondary leading-relaxed mb-6">
             BSI started with a simple frustration: the games that matter most to real fans
             don&apos;t get the coverage they deserve. College baseball buried behind football
             replays. Mid-major hoops ignored entirely. The data existed — it just wasn&apos;t
             accessible.
           </p>
-          <p className="text-lg text-white/60 leading-relaxed">
+          <p className="text-lg text-text-secondary leading-relaxed">
             So we built the pipeline ourselves. Cloudflare Workers pulling data from
             every source that matters, transforming it into the analytics platform we always
             wanted. No venture money. No compromise. Just depth.
@@ -47,12 +47,12 @@ export function AboutSection() {
           {VALUES.map((value) => (
             <div
               key={value.title}
-              className="glass-default rounded-2xl p-8 text-center border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300"
+              className="glass-default rounded-2xl p-8 text-center border border-border-subtle hover:border-border-strong transition-all duration-300"
             >
-              <h3 className="text-xl font-display text-white uppercase tracking-wide mb-4">
+              <h3 className="text-xl font-display text-text-primary uppercase tracking-wide mb-4">
                 {value.title}
               </h3>
-              <p className="text-sm text-white/50 leading-relaxed">
+              <p className="text-sm text-text-muted leading-relaxed">
                 {value.description}
               </p>
             </div>

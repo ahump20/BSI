@@ -35,7 +35,7 @@ export function EcosystemBar() {
       <div className="max-w-7xl mx-auto w-full flex items-center justify-between text-xs">
         <a
           href="/arcade"
-          className="flex items-center gap-1.5 sm:gap-2 text-white/60 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 sm:gap-2 text-text-secondary hover:text-text-primary transition-colors"
         >
           {agentActive && (
             <span className="live-indicator__dot" style={{ width: 6, height: 6 }} />
@@ -44,7 +44,7 @@ export function EcosystemBar() {
             BSI Command Center
           </span>
         </a>
-        <span className="text-white/30 text-[0.5rem] sm:text-[0.5625rem] tracking-wide uppercase hidden sm:inline">
+        <span className="text-text-muted text-[0.5rem] sm:text-[0.5625rem] tracking-wide uppercase hidden sm:inline">
           Blaze Sports Intel Ecosystem
         </span>
       </div>

@@ -106,8 +106,8 @@ export function MMITimeline({
             <span className="w-2 h-2 rounded-full bg-[#6B8DB2]" />
             {awayTeam}
           </span>
-          <span className="flex items-center gap-1.5 text-[10px] text-[#BF5700]">
-            <span className="w-2 h-2 rounded-full bg-[#BF5700]" />
+          <span className="flex items-center gap-1.5 text-[10px] text-burnt-orange">
+            <span className="w-2 h-2 rounded-full bg-burnt-orange" />
             {homeTeam}
           </span>
         </div>

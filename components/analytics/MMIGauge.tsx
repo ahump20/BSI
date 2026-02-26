@@ -120,7 +120,7 @@ export function MMIGauge({
           {awayTeam}
         </span>
         <span className="text-[10px] text-text-muted uppercase tracking-wider">Neutral</span>
-        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-[#BF5700]' : 'text-text-muted'}`}>
+        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-burnt-orange' : 'text-text-muted'}`}>
           {homeTeam}
         </span>
       </div>

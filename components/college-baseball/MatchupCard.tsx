@@ -85,7 +85,7 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
                 </svg>
               </div>
 
-              <p className="font-display text-sm font-semibold uppercase text-white">
+              <p className="font-display text-sm font-semibold uppercase text-text-primary">
                 {pitcher.name}
               </p>
               <p className="text-text-tertiary text-xs mt-0.5">{pitcher.team}</p>
@@ -143,7 +143,7 @@ export default function MatchupCard({ pitcher, batter, isLive }: MatchupCardProp
                 </svg>
               </div>
 
-              <p className="font-display text-sm font-semibold uppercase text-white">
+              <p className="font-display text-sm font-semibold uppercase text-text-primary">
                 {batter.name}
               </p>
               <p className="text-text-tertiary text-xs mt-0.5">{batter.team}</p>

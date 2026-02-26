@@ -42,7 +42,7 @@ export function HeroSection() {
           {badgeText}
         </div>
 
-        <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-white uppercase tracking-tight leading-none mb-6">
+        <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-text-primary uppercase tracking-tight leading-none mb-6">
           The Intelligence Layer
           <br />
           <span className="bg-gradient-to-r from-[#BF5700] to-[#FDB913] bg-clip-text text-transparent">
@@ -50,7 +50,7 @@ export function HeroSection() {
           </span>
         </h1>
 
-        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] text-lg md:text-xl text-white/60 max-w-3xl mx-auto mb-10 leading-relaxed">
+        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] text-lg md:text-xl text-text-secondary max-w-3xl mx-auto mb-10 leading-relaxed">
           Roster-market intelligence, transfer portal tracking, and pro projections — the depth
           ESPN doesn&apos;t build. Plus live analytics across MLB, NFL, NBA, and college football.
         </p>
@@ -58,19 +58,19 @@ export function HeroSection() {
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.45s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
           >
             Launch Dashboard
           </Link>
           <Link
             href="/college-baseball"
-            className="inline-flex items-center justify-center gap-2 border-2 border-white/20 hover:border-[#BF5700] text-white hover:text-[#BF5700] px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 border-2 border-border-strong hover:border-burnt-orange text-text-primary hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
           >
             College Baseball
           </Link>
           <Link
             href="/college-baseball/transfer-portal"
-            className="inline-flex items-center justify-center gap-2 border-2 border-white/10 hover:border-white/30 text-white/60 hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-border-strong text-text-secondary hover:text-text-primary px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
           >
             Transfer Portal Intel
           </Link>

@@ -24,11 +24,11 @@ export function UnmuteButton({ videoRef }: UnmuteButtonProps) {
     <button
       onClick={toggle}
       aria-label={muted ? 'Unmute video' : 'Mute video'}
-      className="absolute bottom-6 right-6 z-20 p-3 rounded-full bg-charcoal-900/70 backdrop-blur-sm border border-white/10 hover:border-burnt-orange-500/40 transition-all duration-300 group"
+      className="absolute bottom-6 right-6 z-20 p-3 rounded-full bg-charcoal-900/70 backdrop-blur-sm border border-border hover:border-burnt-orange-500/40 transition-all duration-300 group"
     >
       {muted ? (
         <svg
-          className="w-5 h-5 text-white/60 group-hover:text-white transition-colors"
+          className="w-5 h-5 text-text-secondary group-hover:text-text-primary transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

@@ -14,18 +14,18 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">{data.teamName} 2026 Preview</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">{data.teamName} 2026 Preview</span>
             </nav>
           </Container>
         </Section>
@@ -38,14 +38,14 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">{data.badgeText}</Badge>
-                  <span className="text-white/40 text-sm">{data.date}</span>
-                  <span className="text-white/40 text-sm">{data.readTime}</span>
+                  <span className="text-text-muted text-sm">{data.date}</span>
+                  <span className="text-text-muted text-sm">{data.readTime}</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   {data.teamName} {data.mascot}:{' '}
                   <span className="text-gradient-blaze">{data.heroTitle}</span>
                 </h1>
-                <p className="text-white/60 text-lg md:text-xl leading-relaxed mb-4">
+                <p className="text-text-secondary text-lg md:text-xl leading-relaxed mb-4">
                   {data.heroSubtitle}
                 </p>
                 <div className="flex items-center gap-4 text-sm text-white/30">
@@ -104,7 +104,7 @@ export function SECTeamPreviewTemplate({ data }: { data: TeamPreviewData }) {
               </h2>
               <div className="flex items-center gap-3 mb-6">
                 <span className="font-mono text-xl font-bold text-[#BF5700]">{data.record2025}</span>
-                <span className="text-white/40 text-sm">{data.record2025Context}</span>
+                <span className="text-text-muted text-sm">{data.record2025Context}</span>
               </div>
             </ScrollReveal>
 

@@ -4,7 +4,7 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Sleeper'
 
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-[#BF5700]/20 text-[#FF6B35] border-[#BF5700]/30',
+  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
   'Dark Horse': 'bg-surface text-text-secondary border-border-strong',
   Bubble: 'bg-surface-light text-text-muted border-border',
   Sleeper: 'bg-surface-light text-text-muted border-border',

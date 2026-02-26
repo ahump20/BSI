@@ -69,10 +69,10 @@ export function HAVFRadar({
   const color = getCompositeColor(composite);
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl p-5 ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-1">
-        <h4 className="font-display text-sm uppercase tracking-widest text-white/60">
+        <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary">
           HAV-F Profile
         </h4>
         <div
@@ -86,7 +86,7 @@ export function HAVFRadar({
           {composite.toFixed(1)}
         </div>
       </div>
-      <p className="text-white font-semibold text-lg mb-3 truncate">{playerName}</p>
+      <p className="text-text-primary font-semibold text-lg mb-3 truncate">{playerName}</p>
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={height}>
@@ -153,7 +153,7 @@ export function HAVFRadar({
       <div className="grid grid-cols-4 gap-2 mt-2">
         {data.map((d) => (
           <div key={d.axis} className="text-center">
-            <div className="h-1 rounded-full bg-white/5 overflow-hidden">
+            <div className="h-1 rounded-full bg-surface-light overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
