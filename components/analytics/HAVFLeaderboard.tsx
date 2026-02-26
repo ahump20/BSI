@@ -34,13 +34,13 @@ function ComponentBar({ value, label }: { value: number; label: string }) {
   const intensity = value >= 80 ? '#FF6B35' : value >= 60 ? '#BF5700' : 'rgba(255,255,255,0.3)';
   return (
     <div className="flex items-center gap-1.5 min-w-[60px]" title={`${label}: ${value.toFixed(1)}`}>
-      <div className="flex-1 h-[6px] rounded-full bg-white/[0.04] overflow-hidden">
+      <div className="flex-1 h-[6px] rounded-full bg-surface-light overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${value}%`, backgroundColor: intensity }}
         />
       </div>
-      <span className="text-[10px] font-mono text-white/30 tabular-nums w-5 text-right">
+      <span className="text-[10px] font-mono text-text-muted tabular-nums w-5 text-right">
         {Math.round(value)}
       </span>
     </div>
@@ -92,7 +92,7 @@ export function HAVFLeaderboard({
     <button
       onClick={() => handleSort(k)}
       className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors ${
-        sortKey === k ? 'text-[#BF5700]' : 'text-white/30 hover:text-white/50'
+        sortKey === k ? 'text-burnt-orange' : 'text-text-muted hover:text-text-muted'
       } ${cls}`}
     >
       {label}
@@ -103,11 +103,11 @@ export function HAVFLeaderboard({
   );
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-wider text-white">{title}</h3>
-        <span className="text-[10px] font-mono text-white/20 tabular-nums">
+      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>
+        <span className="text-[10px] font-mono text-text-muted tabular-nums">
           {players.length} player{players.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -116,15 +116,15 @@ export function HAVFLeaderboard({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.04]">
+            <tr className="border-b border-border-subtle">
               <th className="pl-5 pr-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">#</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
               </th>
               <th className="px-2 py-3 text-left">
                 <SortHeader k="playerName" label="Player" />
               </th>
               <th className="px-2 py-3 text-left hidden sm:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">Team</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Team</span>
               </th>
               <th className="px-2 py-3 text-center">
                 <SortHeader k="composite" label="HAV-F" className="justify-center" />

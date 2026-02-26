@@ -122,21 +122,21 @@ function getEditorialHref(article: Editorial): string {
 
 function SkeletonFeatured() {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-5 md:p-7 animate-pulse">
-      <div className="h-4 w-24 bg-white/10 rounded mb-3" />
-      <div className="h-6 w-3/4 bg-white/10 rounded mb-2" />
-      <div className="h-4 w-full bg-white/8 rounded mb-1" />
-      <div className="h-4 w-2/3 bg-white/8 rounded" />
+    <div className="bg-surface-light border border-border rounded-xl p-5 md:p-7 animate-pulse">
+      <div className="h-4 w-24 bg-surface rounded mb-3" />
+      <div className="h-6 w-3/4 bg-surface rounded mb-2" />
+      <div className="h-4 w-full bg-surface rounded mb-1" />
+      <div className="h-4 w-2/3 bg-surface rounded" />
     </div>
   );
 }
 
 function SkeletonSecondary() {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-4 animate-pulse h-full">
-      <div className="h-3 w-16 bg-white/10 rounded mb-3" />
-      <div className="h-5 w-5/6 bg-white/10 rounded mb-2" />
-      <div className="h-3 w-full bg-white/8 rounded" />
+    <div className="bg-surface-light border border-border rounded-xl p-4 animate-pulse h-full">
+      <div className="h-3 w-16 bg-surface rounded mb-3" />
+      <div className="h-5 w-5/6 bg-surface rounded mb-2" />
+      <div className="h-3 w-full bg-surface rounded" />
     </div>
   );
 }
@@ -166,7 +166,7 @@ export function EditorialFeed() {
       <Section padding="sm" className="py-4">
         <Container>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-lg font-bold text-white uppercase tracking-wide">
+            <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
               Latest Analysis
             </h2>
             <Link
@@ -202,7 +202,7 @@ export function EditorialFeed() {
           {/* Section header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <h2 className="font-display text-lg font-bold text-white uppercase tracking-wide">
+              <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                 Latest Analysis
               </h2>
               {articles && !error && (
@@ -228,20 +228,20 @@ export function EditorialFeed() {
                     {featured.teams.length > 0 && (
                       <Badge variant="primary">{featured.teams[0]}</Badge>
                     )}
-                    <span className="text-white/30 text-[10px] uppercase tracking-wider">
+                    <span className="text-text-muted text-[10px] uppercase tracking-wider">
                       {formatDate(featured.date)}
                     </span>
                     {featured.wordCount > 0 && (
-                      <span className="text-white/20 text-[10px]">
+                      <span className="text-text-muted text-[10px]">
                         · {readTime(featured.wordCount)}
                       </span>
                     )}
                   </div>
-                  <h3 className="font-display text-lg md:text-xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                  <h3 className="font-display text-lg md:text-xl font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
                     {featured.title}
                   </h3>
                   {featured.preview && (
-                    <p className="text-white/50 text-sm mt-1 line-clamp-2">
+                    <p className="text-text-muted text-sm mt-1 line-clamp-2">
                       {featured.preview}
                     </p>
                   )}
@@ -258,7 +258,7 @@ export function EditorialFeed() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {secondary.map((article) => (
                 <Link key={article.id} href={getEditorialHref(article)}>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
+                  <div className="bg-surface-light border border-border rounded-xl p-3 md:p-4 hover:border-burnt-orange/40 transition-all group cursor-pointer h-full">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -267,11 +267,11 @@ export function EditorialFeed() {
                               {article.teams[0]}
                             </span>
                           )}
-                          <span className="text-white/25 text-[10px]">
+                          <span className="text-text-muted text-[10px]">
                             {formatDate(article.date)}
                           </span>
                         </div>
-                        <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
+                        <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">
                           {article.title}
                         </h4>
                         {article.preview && (

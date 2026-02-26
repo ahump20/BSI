@@ -21,8 +21,8 @@ export function Tooltip({ content, children, side = 'top', className = '' }: Too
         role="tooltip"
         className={`
           pointer-events-none absolute ${positionClass} z-[1070]
-          whitespace-nowrap rounded-md border border-white/10 px-2 py-1
-          bg-[var(--bsi-bg-secondary,#161620)] text-white/80 font-mono text-[10px]
+          whitespace-nowrap rounded-md border border-border px-2 py-1
+          bg-[var(--bsi-bg-secondary,#161620)] text-text-primary font-mono text-[10px]
           opacity-0 transition-opacity group-hover:opacity-100
         `}
       >

@@ -66,7 +66,7 @@ function fmt(val: number | string, format: StatRow['format']): string {
 }
 
 function diffColor(diff: number, lowerIsBetter: boolean): string {
-  if (diff === 0) return 'text-white/60';
+  if (diff === 0) return 'text-text-secondary';
   const positive = lowerIsBetter ? diff < 0 : diff > 0;
   return positive ? 'text-green-400' : 'text-red-400';
 }
@@ -146,26 +146,26 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
   return (
     <Card variant="elevated" padding="none" className="overflow-hidden">
       {/* Header — player names side by side */}
-      <CardHeader className="bg-[#1A1A1A]">
+      <CardHeader className="bg-background-secondary">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           {/* Player 1 */}
           <div className="text-left">
-            <CardTitle size="md" className="text-[#BF5700]">{p1Name}</CardTitle>
+            <CardTitle size="md" className="text-burnt-orange">{p1Name}</CardTitle>
             <div className="flex flex-wrap gap-2 mt-1">
               {p1?.position && <Badge variant="primary" size="sm">{p1.position}</Badge>}
-              {p1?.team && <span className="text-xs text-white/50">{p1.team.name}</span>}
+              {p1?.team && <span className="text-xs text-text-muted">{p1.team.name}</span>}
             </div>
           </div>
 
           {/* VS divider */}
-          <div className="text-white/30 font-display text-lg font-bold uppercase tracking-wider">VS</div>
+          <div className="text-text-muted font-display text-lg font-bold uppercase tracking-wider">VS</div>
 
           {/* Player 2 */}
           <div className="text-right">
-            <CardTitle size="md" className="text-[#FF6B35]">{p2Name}</CardTitle>
+            <CardTitle size="md" className="text-ember">{p2Name}</CardTitle>
             <div className="flex flex-wrap gap-2 mt-1 justify-end">
               {p2?.position && <Badge variant="accent" size="sm">{p2.position}</Badge>}
-              {p2?.team && <span className="text-xs text-white/50">{p2.team.name}</span>}
+              {p2?.team && <span className="text-xs text-text-muted">{p2.team.name}</span>}
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
 
       {/* Radar Chart */}
       {radarData.length >= 3 && (
-        <CardContent className="border-b border-white/10">
+        <CardContent className="border-b border-border">
           <StatRadarChart player1Name={p1Name} player2Name={p2Name} data={radarData} />
         </CardContent>
       )}
@@ -181,25 +181,25 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
       {/* Batting Stats Table */}
       {battingRows.length > 0 && (
         <div>
-          <div className="px-6 py-3 bg-[#1A1A1A]/50 border-b border-white/10">
-            <h3 className="text-sm font-display uppercase tracking-wider text-white/70">Batting</h3>
+          <div className="px-6 py-3 bg-background-secondary/50 border-b border-border">
+            <h3 className="text-sm font-display uppercase tracking-wider text-text-secondary">Batting</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full" aria-label="Batting comparison">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-white/40 uppercase w-1/4">{p1Name.split(' ').pop()}</th>
-                  <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-white/40 uppercase w-1/4">Stat</th>
-                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-white/40 uppercase w-1/4">{p2Name.split(' ').pop()}</th>
-                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-white/40 uppercase w-1/4">+/-</th>
+                <tr className="border-b border-border">
+                  <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-text-muted uppercase w-1/4">{p1Name.split(' ').pop()}</th>
+                  <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-text-muted uppercase w-1/4">Stat</th>
+                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-text-muted uppercase w-1/4">{p2Name.split(' ').pop()}</th>
+                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-text-muted uppercase w-1/4">+/-</th>
                 </tr>
               </thead>
               <tbody>
                 {battingRows.map((row) => (
-                  <tr key={row.key} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                    <td className="py-2 px-4 text-left text-white font-mono text-sm">{fmt(row.p1, row.format)}</td>
-                    <td className="py-2 px-4 text-center text-white/60 text-xs font-semibold uppercase">{row.label}</td>
-                    <td className="py-2 px-4 text-right text-white font-mono text-sm">{fmt(row.p2, row.format)}</td>
+                  <tr key={row.key} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                    <td className="py-2 px-4 text-left text-text-primary font-mono text-sm">{fmt(row.p1, row.format)}</td>
+                    <td className="py-2 px-4 text-center text-text-secondary text-xs font-semibold uppercase">{row.label}</td>
+                    <td className="py-2 px-4 text-right text-text-primary font-mono text-sm">{fmt(row.p2, row.format)}</td>
                     <td className={`py-2 px-4 text-right font-mono text-sm ${diffColor(row.diff, row.lowerIsBetter ?? false)}`}>
                       {row.diff > 0 ? '+' : ''}{fmt(row.diff, row.format)}
                     </td>
@@ -214,25 +214,25 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
       {/* Pitching Stats Table */}
       {pitchingRows.length > 0 && (
         <div>
-          <div className="px-6 py-3 bg-[#1A1A1A]/50 border-b border-white/10">
-            <h3 className="text-sm font-display uppercase tracking-wider text-white/70">Pitching</h3>
+          <div className="px-6 py-3 bg-background-secondary/50 border-b border-border">
+            <h3 className="text-sm font-display uppercase tracking-wider text-text-secondary">Pitching</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full" aria-label="Pitching comparison">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-white/40 uppercase w-1/4">{p1Name.split(' ').pop()}</th>
-                  <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-white/40 uppercase w-1/4">Stat</th>
-                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-white/40 uppercase w-1/4">{p2Name.split(' ').pop()}</th>
-                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-white/40 uppercase w-1/4">+/-</th>
+                <tr className="border-b border-border">
+                  <th scope="col" className="py-2 px-4 text-left text-xs font-semibold text-text-muted uppercase w-1/4">{p1Name.split(' ').pop()}</th>
+                  <th scope="col" className="py-2 px-4 text-center text-xs font-semibold text-text-muted uppercase w-1/4">Stat</th>
+                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-text-muted uppercase w-1/4">{p2Name.split(' ').pop()}</th>
+                  <th scope="col" className="py-2 px-4 text-right text-xs font-semibold text-text-muted uppercase w-1/4">+/-</th>
                 </tr>
               </thead>
               <tbody>
                 {pitchingRows.map((row) => (
-                  <tr key={row.key} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                    <td className="py-2 px-4 text-left text-white font-mono text-sm">{fmt(row.p1, row.format)}</td>
-                    <td className="py-2 px-4 text-center text-white/60 text-xs font-semibold uppercase">{row.label}</td>
-                    <td className="py-2 px-4 text-right text-white font-mono text-sm">{fmt(row.p2, row.format)}</td>
+                  <tr key={row.key} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                    <td className="py-2 px-4 text-left text-text-primary font-mono text-sm">{fmt(row.p1, row.format)}</td>
+                    <td className="py-2 px-4 text-center text-text-secondary text-xs font-semibold uppercase">{row.label}</td>
+                    <td className="py-2 px-4 text-right text-text-primary font-mono text-sm">{fmt(row.p2, row.format)}</td>
                     <td className={`py-2 px-4 text-right font-mono text-sm ${diffColor(row.diff, row.lowerIsBetter ?? false)}`}>
                       {row.diff > 0 ? '+' : ''}{fmt(row.diff, row.format)}
                     </td>
@@ -247,7 +247,7 @@ export function PlayerCompareCard({ player1, player2, comparison }: PlayerCompar
       {/* No stats fallback */}
       {allRows.length === 0 && (
         <CardContent>
-          <p className="text-white/40 text-sm text-center py-8">
+          <p className="text-text-muted text-sm text-center py-8">
             No comparable statistics available for these players.
           </p>
         </CardContent>

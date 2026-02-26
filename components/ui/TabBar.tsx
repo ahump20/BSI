@@ -26,16 +26,16 @@ const sizeClasses = {
 
 const variantClasses = {
   default: {
-    container: 'flex border-b border-white/10',
+    container: 'flex border-b border-border',
     tab: 'border-b-2 border-transparent transition-colors',
-    active: 'border-b-2 border-[#BF5700] text-white',
-    inactive: 'text-white/50 hover:text-white',
+    active: 'border-b-2 border-burnt-orange text-text-primary',
+    inactive: 'text-text-muted hover:text-text-primary',
   },
   pills: {
-    container: 'flex gap-2 p-1 bg-white/5 rounded-lg',
+    container: 'flex gap-2 p-1 bg-surface-light rounded-lg',
     tab: 'rounded-md transition-colors',
-    active: 'bg-[#BF5700] text-white',
-    inactive: 'text-white/60 hover:text-white hover:bg-white/5',
+    active: 'bg-burnt-orange text-white',
+    inactive: 'text-text-secondary hover:text-text-primary hover:bg-surface-light',
   },
 };
 
@@ -115,14 +115,14 @@ export function TabBar({
               ${sizeClass}
               ${variantStyle.tab}
               ${isActive ? variantStyle.active : variantStyle.inactive}
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700]
+              focus:outline-none focus-visible:ring-2 focus-visible:ring-burnt-orange
               whitespace-nowrap flex items-center gap-2 transition-all
             `}
           >
             {Icon && <Icon className="w-4 h-4" />}
             <span>{tab.label}</span>
             {tab.badge !== undefined && (
-              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-[#BF5700] text-white text-xs font-semibold">
+              <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-burnt-orange text-white text-xs font-semibold">
                 {tab.badge}
               </span>
             )}

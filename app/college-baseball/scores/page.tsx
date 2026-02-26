@@ -41,9 +41,14 @@ interface Game {
 }
 
 interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
+  source: string;
+  fetched_at: string;
   timezone: string;
+  degraded?: boolean;
+  sources?: string[];
+  // Backward-compat during rollout
+  dataSource?: string;
+  lastUpdated?: string;
 }
 
 interface ScoresApiResponse {
@@ -75,9 +80,11 @@ export default function CollegeBaseballScoresPage() {
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
   const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
   const meta: DataMeta | null = useMemo(() => rawData ? {
-    dataSource: rawData.meta?.dataSource || 'ESPN College Baseball API',
-    lastUpdated: rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
+    source: rawData.meta?.source || rawData.meta?.dataSource || 'ESPN',
+    fetched_at: rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
     timezone: rawData.meta?.timezone || 'America/Chicago',
+    degraded: rawData.meta?.degraded,
+    sources: rawData.meta?.sources,
   } : null, [rawData]);
 
   // Sync live detection to enable auto-refresh
@@ -449,13 +456,18 @@ export default function CollegeBaseballScoresPage() {
                 )}
 
                 {/* Data Freshness Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle">
+                <div className="mt-8 pt-4 border-t border-border-subtle space-y-2">
                   <DataFreshnessIndicator
-                    lastUpdated={meta?.lastUpdated ? new Date(meta.lastUpdated) : undefined}
-                    source={meta?.dataSource || 'ESPN'}
+                    lastUpdated={meta?.fetched_at ? new Date(meta.fetched_at) : undefined}
+                    source={meta?.source || 'ESPN'}
                     refreshInterval={hasLiveGames ? 30 : undefined}
                     isCached={!hasLiveGames && !!rawData}
                   />
+                  {meta?.degraded && (
+                    <p className="text-xs text-yellow-500/60 text-center">
+                      Limited data — advanced stats unavailable
+                    </p>
+                  )}
                 </div>
               </>
             )}

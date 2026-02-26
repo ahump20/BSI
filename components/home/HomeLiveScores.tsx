@@ -216,7 +216,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
   return (
     <Link
       href={game.href}
-      className="group flex-shrink-0 w-48 sm:w-56 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-300 overflow-hidden"
+      className="group flex-shrink-0 w-48 sm:w-56 rounded-xl border border-border bg-surface-light hover:bg-surface-light transition-all duration-300 overflow-hidden"
       style={{ borderColor: isLive ? `${sportColor}40` : undefined }}
     >
       {/* Status bar */}
@@ -225,8 +225,8 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
           isLive
             ? 'text-green-400'
             : isFinal
-              ? 'bg-white/5 text-white/40'
-              : 'text-white/50'
+              ? 'bg-surface-light text-text-muted'
+              : 'text-text-muted'
         }`}
         style={isLive ? { backgroundColor: `${sportColor}15` } : undefined}
       >
@@ -251,21 +251,21 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
       {/* Teams */}
       <div className="p-3 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium truncate ${awayWon ? 'text-white' : 'text-white/70'}`}>
+          <span className={`text-sm font-medium truncate ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
             {game.away.abbr || game.away.name}
           </span>
           <span className={`text-sm font-bold font-mono tabular-nums ${
-            isLive ? 'text-white' : awayWon ? 'text-white' : 'text-white/50'
+            isLive ? 'text-text-primary' : awayWon ? 'text-text-primary' : 'text-text-muted'
           }`}>
             {game.away.score !== null ? game.away.score : '-'}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className={`text-sm font-medium truncate ${homeWon ? 'text-white' : 'text-white/70'}`}>
+          <span className={`text-sm font-medium truncate ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
             {game.home.abbr || game.home.name}
           </span>
           <span className={`text-sm font-bold font-mono tabular-nums ${
-            isLive ? 'text-white' : homeWon ? 'text-white' : 'text-white/50'
+            isLive ? 'text-text-primary' : homeWon ? 'text-text-primary' : 'text-text-muted'
           }`}>
             {game.home.score !== null ? game.home.score : '-'}
           </span>
@@ -383,19 +383,19 @@ export function HomeLiveScores() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-white/60">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-text-secondary">
               Today&apos;s Games
             </h2>
             {hasLiveGames && <LiveBadge />}
             {!loading && allGames.length > 0 && (
-              <span className="text-[10px] text-white/30 tabular-nums">
+              <span className="text-[10px] text-text-muted tabular-nums">
                 {allGames.length} game{allGames.length !== 1 ? 's' : ''}
               </span>
             )}
           </div>
           <Link
             href="/scores"
-            className="text-xs font-semibold text-[#BF5700] hover:text-[#FF6B35] transition-colors flex items-center gap-1"
+            className="text-xs font-semibold text-burnt-orange hover:text-ember transition-colors flex items-center gap-1"
           >
             All scores
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -411,8 +411,8 @@ export function HomeLiveScores() {
               onClick={() => setFilter('all')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                 filter === 'all'
-                  ? 'bg-white/15 text-white'
-                  : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'
+                  ? 'bg-surface-medium text-text-primary'
+                  : 'bg-surface-light text-text-muted hover:bg-surface hover:text-text-secondary'
               }`}
             >
               All ({allGames.length})
@@ -425,8 +425,8 @@ export function HomeLiveScores() {
                   onClick={() => setFilter(sport.key)}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                     filter === sport.key
-                      ? 'text-white'
-                      : 'text-white/40 hover:text-white/60'
+                      ? 'text-text-primary'
+                      : 'text-text-muted hover:text-text-secondary'
                   }`}
                   style={{
                     backgroundColor: filter === sport.key ? `${sport.color}30` : 'rgba(255,255,255,0.05)',
@@ -450,11 +450,11 @@ export function HomeLiveScores() {
               ))}
             </>
           ) : error ? (
-            <div className="text-sm text-white/40 py-4">
+            <div className="text-sm text-text-muted py-4">
               Scores unavailable — check back during the season.
             </div>
           ) : displayGames.length === 0 ? (
-            <div className="text-sm text-white/30 py-4">
+            <div className="text-sm text-text-muted py-4">
               No {filter === 'all' ? '' : `${activeSports.find((s) => s.key === filter)?.label || ''} `}games today.
             </div>
           ) : (
@@ -463,7 +463,7 @@ export function HomeLiveScores() {
         </div>
 
         {!loading && allGames.length > 0 && (
-          <p className="text-[10px] text-white/20 mt-2">
+          <p className="text-[10px] text-text-muted mt-2">
             {hasLiveGames ? 'Auto-refreshing every 30s' : 'Refreshes every 5 min'}
             {lastFetched && (
               <> · Updated {lastFetched.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>

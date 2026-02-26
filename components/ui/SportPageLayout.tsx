@@ -32,18 +32,18 @@ export function SportPageLayout({
   isRefreshing = false,
 }: SportPageLayoutProps) {
   const skeletonClasses =
-    'h-4 bg-white/10 rounded animate-pulse w-full mb-3';
+    'h-4 bg-surface rounded animate-pulse w-full mb-3';
 
   return (
     <div className={`bsi-theme-${sport} min-h-screen bg-gradient-to-br from-midnight via-midnight to-midnight-dark`}>
       {/* Header */}
-      <header className="border-b border-white/10 sticky top-0 z-30 bg-midnight/80 backdrop-blur-xl">
+      <header className="border-b border-border sticky top-0 z-30 bg-midnight/80 backdrop-blur-xl">
         <div className="px-4 py-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-white/60 text-base md:text-lg">{subtitle}</p>
+            <p className="text-text-secondary text-base md:text-lg">{subtitle}</p>
           )}
         </div>
 
@@ -60,7 +60,7 @@ export function SportPageLayout({
 
         {/* Data Freshness & Refresh */}
         {(lastUpdated || onRefresh) && (
-          <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between">
+          <div className="px-4 py-3 border-t border-border-subtle flex items-center justify-between">
             {lastUpdated && (
               <DataFreshnessIndicator
                 lastUpdated={lastUpdated}

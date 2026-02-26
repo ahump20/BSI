@@ -63,9 +63,9 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
   }
 
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 sm:p-5">
+    <div className="bg-surface-light border border-border-subtle rounded-xl p-4 sm:p-5">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-white/40">Cite this page</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Cite this page</span>
         <div className="flex gap-1">
           {(['apa', 'bibtex'] as const).map((f) => (
             <button
@@ -73,8 +73,8 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
               onClick={() => setFormat(f)}
               className={`px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider border transition-all ${
                 format === f
-                  ? 'bg-[#BF5700]/20 text-[#BF5700] border-[#BF5700]/30'
-                  : 'bg-white/[0.03] text-white/30 border-white/10 hover:text-white/50'
+                  ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
+                  : 'bg-surface-light text-text-muted border-border hover:text-text-secondary'
               }`}
             >
               {f === 'apa' ? 'APA' : 'BibTeX'}
@@ -82,12 +82,12 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
           ))}
         </div>
       </div>
-      <pre className="text-xs text-white/50 bg-white/[0.02] rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
+      <pre className="text-xs text-text-muted bg-surface-light rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
         {text}
       </pre>
       <button
         onClick={handleCopy}
-        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-white/10 text-white/50 hover:text-white/70 hover:border-white/20 transition-all"
+        className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-light border border-border text-text-muted hover:text-text-secondary hover:border-border-strong transition-all"
       >
         {copied ? (
           <>

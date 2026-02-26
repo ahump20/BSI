@@ -32,13 +32,13 @@ export function SportInfoCard({ icon, title, subtitle, bullets, actions }: Sport
             <li key={bullet.bold} className="flex gap-2">
               <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
               <span>
-                <strong className="text-white">{bullet.bold}</strong> {bullet.text}
+                <strong className="text-text-primary">{bullet.bold}</strong> {bullet.text}
               </span>
             </li>
           ))}
         </ul>
         {actions && actions.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-white/5">
+          <div className="flex flex-wrap gap-3 mt-5 pt-4 border-t border-border-subtle">
             {actions.map((action) => (
               <Link key={action.href} href={action.href}>
                 <Button variant={action.variant || 'ghost'} size="sm">

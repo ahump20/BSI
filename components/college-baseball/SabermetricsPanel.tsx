@@ -69,25 +69,25 @@ function StatBar({ label, value, leagueAvg, format, higher }: {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-white/60">{label}</span>
-        <span className={`font-mono font-semibold ${aboveAvg ? 'text-green-400' : 'text-white'}`}>
+        <span className="text-text-secondary">{label}</span>
+        <span className={`font-mono font-semibold ${aboveAvg ? 'text-green-400' : 'text-text-primary'}`}>
           {format(value)}
         </span>
       </div>
-      <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
+      <div className="relative h-2 bg-surface-light rounded-full overflow-hidden">
         <div
           className={`absolute inset-y-0 left-0 rounded-full transition-all ${
-            aboveAvg ? 'bg-green-500/60' : 'bg-white/20'
+            aboveAvg ? 'bg-green-500/60' : 'bg-surface-medium'
           }`}
           style={{ width: `${pct}%` }}
         />
         <div
-          className="absolute inset-y-0 w-0.5 bg-white/30"
+          className="absolute inset-y-0 w-0.5 bg-text-muted"
           style={{ left: `${avgPct}%` }}
           title={`League avg: ${format(leagueAvg)}`}
         />
       </div>
-      <div className="text-[10px] text-white/25">
+      <div className="text-[10px] text-text-muted">
         League avg: {format(leagueAvg)}
       </div>
     </div>
@@ -114,7 +114,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-white/5 rounded-lg animate-pulse" />
+          <div key={i} className="h-24 bg-surface-light rounded-lg animate-pulse" />
         ))}
       </div>
     );
@@ -123,7 +123,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
   if (error || !data) {
     return (
       <Card padding="lg" className="text-center">
-        <p className="text-white/50">Advanced stats unavailable — data requires minimum plate appearances and innings pitched.</p>
+        <p className="text-text-muted">Advanced stats unavailable — data requires minimum plate appearances and innings pitched.</p>
       </Card>
     );
   }
@@ -156,12 +156,12 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
 
             {/* Top Hitters by wRC+ */}
             {data.batting.top_hitters.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-white/5">
-                <h4 className="text-xs uppercase tracking-wider text-white/30 mb-3">Top Hitters by wRC+</h4>
+              <div className="mt-6 pt-4 border-t border-border-subtle">
+                <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3">Top Hitters by wRC+</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-white/30 text-xs uppercase tracking-wider">
+                      <tr className="text-text-muted text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
                         <th className="text-right py-2">wRC+</th>
                         <th className="text-right py-2">wOBA</th>
@@ -172,15 +172,15 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
                     </thead>
                     <tbody>
                       {data.batting.top_hitters.map((h) => (
-                        <tr key={h.name} className="border-t border-white/5">
-                          <td className="py-2 text-white font-medium">{h.name}</td>
+                        <tr key={h.name} className="border-t border-border-subtle">
+                          <td className="py-2 text-text-primary font-medium">{h.name}</td>
                           <td className="py-2 text-right font-mono" style={{ color: h.wrc_plus >= 100 ? accent : undefined }}>
                             {Math.round(h.wrc_plus)}
                           </td>
-                          <td className="py-2 text-right font-mono text-white/60">{fmt3(h.woba)}</td>
-                          <td className="py-2 text-right font-mono text-white/60">{fmt3(h.babip)}</td>
-                          <td className="py-2 text-right font-mono text-white/60">{fmt3(h.iso)}</td>
-                          <td className="py-2 text-right font-mono text-white/40">{h.pa}</td>
+                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.woba)}</td>
+                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.babip)}</td>
+                          <td className="py-2 text-right font-mono text-text-secondary">{fmt3(h.iso)}</td>
+                          <td className="py-2 text-right font-mono text-text-muted">{h.pa}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -208,12 +208,12 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
 
             {/* Top Pitchers by FIP */}
             {data.pitching.top_pitchers.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-white/5">
-                <h4 className="text-xs uppercase tracking-wider text-white/30 mb-3">Top Pitchers by FIP</h4>
+              <div className="mt-6 pt-4 border-t border-border-subtle">
+                <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3">Top Pitchers by FIP</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-white/30 text-xs uppercase tracking-wider">
+                      <tr className="text-text-muted text-xs uppercase tracking-wider">
                         <th className="text-left py-2">Player</th>
                         <th className="text-right py-2">FIP</th>
                         <th className="text-right py-2">K/9</th>
@@ -223,14 +223,14 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
                     </thead>
                     <tbody>
                       {data.pitching.top_pitchers.map((p) => (
-                        <tr key={p.name} className="border-t border-white/5">
-                          <td className="py-2 text-white font-medium">{p.name}</td>
+                        <tr key={p.name} className="border-t border-border-subtle">
+                          <td className="py-2 text-text-primary font-medium">{p.name}</td>
                           <td className="py-2 text-right font-mono" style={{ color: p.fip <= data.league.fip ? accent : undefined }}>
                             {fmt2(p.fip)}
                           </td>
-                          <td className="py-2 text-right font-mono text-white/60">{fmt1(p.k_per_9)}</td>
-                          <td className="py-2 text-right font-mono text-white/60">{fmt1(p.bb_per_9)}</td>
-                          <td className="py-2 text-right font-mono text-white/40">{fmt1(p.ip)}</td>
+                          <td className="py-2 text-right font-mono text-text-secondary">{fmt1(p.k_per_9)}</td>
+                          <td className="py-2 text-right font-mono text-text-secondary">{fmt1(p.bb_per_9)}</td>
+                          <td className="py-2 text-right font-mono text-text-muted">{fmt1(p.ip)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -242,7 +242,7 @@ export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: Saberm
         </Card>
 
         {/* Attribution */}
-        <div className="text-xs text-white/20 text-center">
+        <div className="text-xs text-text-muted text-center">
           BSI Sabermetrics — computed from D1 box scores · Min. 20 PA / 15 IP
         </div>
       </div>

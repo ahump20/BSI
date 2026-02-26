@@ -16,7 +16,7 @@ export function Skeleton({ variant = 'rectangular', width, height, className = '
 
   return (
     <div
-      className={`bg-white/10 ${shimmer ? 'bsi-shimmer' : 'animate-pulse'} ${variantClass} ${className}`}
+      className={`bg-surface ${shimmer ? 'bsi-shimmer' : 'animate-pulse'} ${variantClass} ${className}`}
       style={style}
       aria-hidden="true"
     />
@@ -25,7 +25,7 @@ export function Skeleton({ variant = 'rectangular', width, height, className = '
 
 export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
   return (
-    <tr className="border-b border-white/5">
+    <tr className="border-b border-border-subtle">
       {Array.from({ length: columns }).map((_, i) => (
         <td key={i} className="p-3">
           <Skeleton variant="text" height={16} />
@@ -37,7 +37,7 @@ export function SkeletonTableRow({ columns = 5 }: { columns?: number }) {
 
 export function SkeletonScoreCard() {
   return (
-    <div className="bg-white/5 rounded-lg p-4">
+    <div className="bg-surface-light rounded-lg p-4">
       <div className="flex justify-between items-center mb-3">
         <Skeleton variant="text" width={120} height={16} />
         <Skeleton variant="text" width={40} height={24} />
@@ -81,11 +81,11 @@ export function SkeletonPageHeader() {
 
 export function SkeletonStandingsTable({ rows = 10, columns = 5 }: { rows?: number; columns?: number }) {
   return (
-    <div className="bg-white/5 rounded-lg p-4 animate-pulse">
+    <div className="bg-surface-light rounded-lg p-4 animate-pulse">
       <Skeleton variant="text" width={140} height={20} className="mb-4" />
       <table className="w-full">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-border">
             {Array.from({ length: columns }).map((_, i) => (
               <th key={i} className="pb-2 px-2">
                 <Skeleton variant="text" height={14} />

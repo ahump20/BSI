@@ -126,20 +126,20 @@ export function StandingsTable({
   })();
 
   return (
-    <div className={`bg-white/5 border border-white/10 rounded-xl ${className}`}>
-      <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Standings</h3>
+    <div className={`bg-surface-light border border-border rounded-xl ${className}`}>
+      <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-text-primary">Standings</h3>
         {groupBy === 'none' && (
-          <span className="text-xs text-white/40 uppercase tracking-wider">Top {limit}</span>
+          <span className="text-xs text-text-muted uppercase tracking-wider">Top {limit}</span>
         )}
       </div>
 
       {error && (
         <div className="px-6 py-4 text-center">
-          <p className="text-white/40 text-sm mb-2">Failed to load standings</p>
+          <p className="text-text-muted text-sm mb-2">Failed to load standings</p>
           <button
             onClick={() => { setError(false); setLoading(true); }}
-            className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+            className="text-xs text-burnt-orange hover:text-ember transition-colors"
           >
             Retry
           </button>
@@ -151,29 +151,29 @@ export function StandingsTable({
           {displayGroups.map((group) => (
             <div key={group.label || 'all'}>
               {group.label && (
-                <div className="px-4 py-2 bg-white/3 border-b border-white/5">
-                  <span className="text-xs font-bold text-white/50 uppercase tracking-wider">
+                <div className="px-4 py-2 bg-surface-light border-b border-border-subtle">
+                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
                     {group.label}
                   </span>
                 </div>
               )}
               <table className="w-full" aria-label={`${group.label || sport} standings`}>
                 <thead>
-                  <tr className="border-b border-white/10">
-                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">#</th>
-                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">Team</th>
-                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">W</th>
-                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">L</th>
-                    <th scope="col" className="text-left p-3 text-xs text-white/40 font-semibold">PCT</th>
+                  <tr className="border-b border-border">
+                    <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">#</th>
+                    <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">Team</th>
+                    <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">W</th>
+                    <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">L</th>
+                    <th scope="col" className="text-left p-3 text-xs text-text-muted font-semibold">PCT</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading
                     ? Array.from({ length: Math.min(limit, 5) }).map((_, i) => (
-                        <tr key={i} className="border-b border-white/5">
+                        <tr key={i} className="border-b border-border-subtle">
                           {Array.from({ length: 5 }).map((_, j) => (
                             <td key={j} className="p-3">
-                              <div className="h-4 bg-white/10 rounded animate-pulse" />
+                              <div className="h-4 bg-surface rounded animate-pulse" />
                             </td>
                           ))}
                         </tr>
@@ -181,10 +181,10 @@ export function StandingsTable({
                     : group.teams.map((team, idx) => (
                         <tr
                           key={team.name}
-                          className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                          className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                         >
-                          <td className="p-3 text-[#BF5700] font-bold text-sm">{idx + 1}</td>
-                          <td className="p-3 text-white font-medium text-sm">
+                          <td className="p-3 text-burnt-orange font-bold text-sm">{idx + 1}</td>
+                          <td className="p-3 text-text-primary font-medium text-sm">
                             <span className="flex items-center gap-2">
                               {showLogos && team.logo && (
                                 <img
@@ -199,9 +199,9 @@ export function StandingsTable({
                               {team.abbreviation || team.name}
                             </span>
                           </td>
-                          <td className="p-3 text-white/60 text-sm">{team.wins}</td>
-                          <td className="p-3 text-white/60 text-sm">{team.losses}</td>
-                          <td className="p-3 text-white/60 text-sm">
+                          <td className="p-3 text-text-secondary text-sm">{team.wins}</td>
+                          <td className="p-3 text-text-secondary text-sm">{team.losses}</td>
+                          <td className="p-3 text-text-secondary text-sm">
                             {getWinPct(team).toFixed(3).replace('0.', '.')}
                           </td>
                         </tr>

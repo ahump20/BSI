@@ -30,7 +30,7 @@ export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProp
   };
 
   return (
-    <div className="flex gap-2 p-1 bg-white/5 rounded-xl">
+    <div className="flex gap-2 p-1 bg-surface-light rounded-xl">
       {sports.map((sport) => (
         <button
           key={sport.id}

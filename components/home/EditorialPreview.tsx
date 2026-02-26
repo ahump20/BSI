@@ -142,17 +142,17 @@ export function EditorialPreview() {
   // Loading skeleton
   if (loading && !articles) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#1A1A1A] to-[#0D0D0D]">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-secondary to-background-primary">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10">
-            <div className="h-3 w-20 bg-white/10 rounded mb-4 animate-pulse" />
-            <div className="h-8 w-48 bg-white/10 rounded animate-pulse" />
+            <div className="h-3 w-20 bg-surface rounded mb-4 animate-pulse" />
+            <div className="h-8 w-48 bg-surface rounded animate-pulse" />
           </div>
           <div className="space-y-4">
-            <div className="h-40 bg-white/5 border border-white/10 rounded-2xl animate-pulse" />
+            <div className="h-40 bg-surface-light border border-border rounded-2xl animate-pulse" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-white/5 border border-white/10 rounded-2xl animate-pulse" />
+                <div key={i} className="h-32 bg-surface-light border border-border rounded-2xl animate-pulse" />
               ))}
             </div>
           </div>
@@ -162,16 +162,16 @@ export function EditorialPreview() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#1A1A1A] to-[#0D0D0D]">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-secondary to-background-primary">
       <div className="max-w-5xl mx-auto">
         <ScrollReveal direction="up">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-4">
+              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-4">
                 From the Press Box
               </span>
               <div className="flex items-center gap-3">
-                <h2 className="font-display text-3xl md:text-4xl font-bold text-white uppercase tracking-wide">
+                <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide">
                   Editorial
                 </h2>
                 {articleCount !== null && !error && (
@@ -183,7 +183,7 @@ export function EditorialPreview() {
             </div>
             <Link
               href="/college-baseball/editorial"
-              className="text-sm font-semibold text-[#BF5700] hover:text-[#FF6B35] transition-colors flex items-center gap-1"
+              className="text-sm font-semibold text-burnt-orange hover:text-ember transition-colors flex items-center gap-1"
             >
               All Articles
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
@@ -201,22 +201,22 @@ export function EditorialPreview() {
                 {featured.teams?.length > 0 && (
                   <Badge variant="primary" size="sm">{featured.teams[0]}</Badge>
                 )}
-                <span className="text-[10px] text-white/30 uppercase tracking-wider">
+                <span className="text-[10px] text-text-muted uppercase tracking-wider">
                   {formatDate(featured.date)}
                 </span>
                 {featured.wordCount > 0 && (
-                  <span className="text-[10px] text-white/20">
+                  <span className="text-[10px] text-text-muted">
                     · {readTime(featured.wordCount)}
                   </span>
                 )}
               </div>
-              <h3 className="font-serif text-xl md:text-2xl font-bold text-white leading-snug mb-3 group-hover:text-[#BF5700] transition-colors">
+              <h3 className="font-serif text-xl md:text-2xl font-bold text-text-primary leading-snug mb-3 group-hover:text-burnt-orange transition-colors">
                 {featured.title}
               </h3>
-              <p className="text-sm text-white/50 leading-relaxed line-clamp-2 mb-4">
+              <p className="text-sm text-text-muted leading-relaxed line-clamp-2 mb-4">
                 {featured.preview}
               </p>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#BF5700] group-hover:gap-2.5 transition-all">
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-burnt-orange group-hover:gap-2.5 transition-all">
                 Read
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -232,21 +232,21 @@ export function EditorialPreview() {
             {secondary.map((article, i) => (
               <ScrollReveal key={article.id} direction="up" delay={i * 80}>
                 <Link href={getEditorialHref(article)} className="group block h-full">
-                  <article className="h-full rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:p-6 transition-all duration-300 hover:border-[#BF5700]/40 hover:bg-white/[0.05]">
+                  <article className="h-full rounded-2xl border border-border bg-surface-light p-5 md:p-6 transition-all duration-300 hover:border-[#BF5700]/40 hover:bg-surface-light">
                     <div className="flex items-center gap-2 mb-2">
                       {article.teams?.length > 0 && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-[#BF5700]/70">
                           {article.teams[0]}
                         </span>
                       )}
-                      <span className="text-[10px] text-white/25">
+                      <span className="text-[10px] text-text-muted">
                         {formatDate(article.date)}
                       </span>
                     </div>
-                    <h3 className="font-serif text-base font-bold text-white leading-snug mb-2 group-hover:text-[#BF5700] transition-colors line-clamp-2">
+                    <h3 className="font-serif text-base font-bold text-text-primary leading-snug mb-2 group-hover:text-burnt-orange transition-colors line-clamp-2">
                       {article.title}
                     </h3>
-                    <p className="text-xs text-white/40 leading-relaxed line-clamp-2">
+                    <p className="text-xs text-text-muted leading-relaxed line-clamp-2">
                       {article.preview}
                     </p>
                   </article>
@@ -258,7 +258,7 @@ export function EditorialPreview() {
 
         {/* Attribution */}
         {!loading && (
-          <p className="text-[10px] text-white/15 mt-4">
+          <p className="text-[10px] text-text-muted mt-4">
             {isUsingFallback ? 'Showing recent highlights' : 'Source: BSI Editorial · D1'}
             {fetchedAt && !isUsingFallback && (
               <> · Updated {new Date(fetchedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })} CT</>

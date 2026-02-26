@@ -39,17 +39,17 @@ export function EmptyState({ type, sport: _sport, onRetry }: EmptyStateProps) {
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
-      <Icon className="w-16 h-16 text-white/40 mb-4" />
-      <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
+      <Icon className="w-16 h-16 text-text-muted mb-4" />
+      <h3 className="text-xl md:text-2xl font-semibold text-text-primary mb-2">
         {config.title}
       </h3>
-      <p className="text-white/60 text-center max-w-sm mb-6">
+      <p className="text-text-secondary text-center max-w-sm mb-6">
         {config.message}
       </p>
       {onRetry && type === 'error' && (
         <button
           onClick={onRetry}
-          className="px-6 py-2 bg-[#BF5700] hover:bg-[#A34900] text-white font-semibold rounded-lg transition-colors"
+          className="px-6 py-2 bg-burnt-orange hover:bg-burnt-orange-700 text-white font-semibold rounded-lg transition-colors"
         >
           Try Again
         </button>

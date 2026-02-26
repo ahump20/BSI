@@ -104,7 +104,7 @@ export function BottomNavWrapper() {
               role="dialog"
               aria-modal="true"
               aria-label="More navigation"
-              className="fixed bottom-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-t border-white/10 rounded-t-2xl"
+              className="fixed bottom-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-t border-border rounded-t-2xl"
               style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
@@ -113,15 +113,15 @@ export function BottomNavWrapper() {
             >
               {/* Header */}
               <div className="flex items-center justify-between px-4 pt-4 pb-2">
-                <span className="text-xs uppercase tracking-widest text-white/30 font-medium">
+                <span className="text-xs uppercase tracking-widest text-text-muted font-medium">
                   More
                 </span>
                 <button
                   onClick={closeMore}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  className="p-2 hover:bg-surface rounded-lg transition-colors"
                   aria-label="Close panel"
                 >
-                  <X className="w-4 h-4 text-white/50" />
+                  <X className="w-4 h-4 text-text-muted" />
                 </button>
               </div>
 
@@ -137,8 +137,8 @@ export function BottomNavWrapper() {
                       onClick={closeMore}
                       className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-colors ${
                         active
-                          ? 'bg-[#BF5700]/15 text-[#BF5700]'
-                          : 'text-white/50 hover:text-white hover:bg-white/5'
+                          ? 'bg-burnt-orange/15 text-burnt-orange'
+                          : 'text-text-muted hover:text-text-primary hover:bg-surface-light'
                       }`}
                       aria-current={active ? 'page' : undefined}
                     >

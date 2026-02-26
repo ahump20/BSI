@@ -100,8 +100,8 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
           hasActiveSport
-            ? 'bg-[#BF5700]/15 text-[#FF6B35]'
-            : 'text-white/60 hover:text-white hover:bg-white/5'
+            ? 'bg-burnt-orange/15 text-ember'
+            : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
         }`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -112,7 +112,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
 
       {open && (
         <div
-          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl py-1 z-50"
+          className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
           role="menu"
         >
           {items.map((item) => {
@@ -127,14 +127,14 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
                 role="menuitem"
                 className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
                   active
-                    ? 'text-[#FF6B35] bg-white/5'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    ? 'text-ember bg-surface-light'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
                 }`}
               >
                 <span>{item.label}</span>
                 <span className="flex items-center gap-2">
                   {item.phaseLabel && (
-                    <span className="text-[10px] text-white/30">
+                    <span className="text-[10px] text-text-muted">
                       {item.phaseLabel}
                     </span>
                   )}
@@ -176,7 +176,7 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all"
+        className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-light transition-all"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -185,14 +185,14 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-white/[0.08] rounded-xl shadow-2xl py-1 z-50" role="menu">
+        <div className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="block px-4 py-2.5 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+              className="block px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light transition-colors"
             >
               {item.label}
             </Link>
@@ -225,7 +225,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
   return (
     <>
       <nav
-        className="sticky top-0 z-40 bg-midnight/95 backdrop-blur-xl border-b border-white/[0.06]"
+        className="sticky top-0 z-40 bg-midnight/95 backdrop-blur-xl border-b border-border-subtle"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -251,8 +251,8 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
                   href={item.href}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                     isActive(item.href)
-                      ? 'bg-[#BF5700]/15 text-[#FF6B35]'
-                      : 'text-white/60 hover:text-white hover:bg-white/5'
+                      ? 'bg-burnt-orange/15 text-ember'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-light'
                   }`}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
@@ -267,7 +267,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
             <div className="flex items-center gap-3">
               {/* News ticker — desktop only, subtle */}
               <span
-                className="hidden lg:block text-xs text-white/30 max-w-[200px] truncate"
+                className="hidden lg:block text-xs text-text-muted max-w-[200px] truncate"
                 aria-live="polite"
               >
                 {tickerText}
@@ -276,12 +276,12 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
               {/* Cmd+K search trigger */}
               <button
                 onClick={openCommandPalette}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/40 hover:text-white/60 hover:bg-white/[0.06] transition-all text-sm"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-light border border-border-subtle text-text-muted hover:text-text-secondary hover:bg-surface-medium transition-all text-sm"
                 aria-label="Open search"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span className="hidden lg:inline">Search...</span>
-                <kbd className="hidden lg:inline text-[10px] text-white/20 bg-white/[0.06] px-1.5 py-0.5 rounded font-mono">
+                <kbd className="hidden lg:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded font-mono">
                   ⌘K
                 </kbd>
               </button>
@@ -289,7 +289,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
               {/* Mobile: search icon */}
               <button
                 onClick={openCommandPalette}
-                className="md:hidden p-2 text-white/50 hover:text-white transition-colors"
+                className="md:hidden p-2 text-text-muted hover:text-text-primary transition-colors"
                 aria-label="Open search"
               >
                 <Search className="w-5 h-5" />
@@ -298,7 +298,7 @@ export function Navbar({ primary, leagues, secondary }: NavbarProps) {
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden p-2 text-white/70 hover:text-white transition-colors"
+                className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
               >

@@ -156,11 +156,11 @@ export function SavantLeaderboard({
   }
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-wider text-white">{title}</h3>
-        <span className="text-[10px] font-mono text-white/20 tabular-nums">
+      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>
+        <span className="text-[10px] font-mono text-text-muted tabular-nums">
           {data.length} player{data.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -169,15 +169,15 @@ export function SavantLeaderboard({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.04]">
+            <tr className="border-b border-border-subtle">
               <th className="pl-5 pr-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">#</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
               </th>
               <th className="px-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">Player</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Player</span>
               </th>
               <th className="px-2 py-3 text-left hidden sm:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">Team</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Team</span>
               </th>
               {columns.map(col => (
                 <th
@@ -187,7 +187,7 @@ export function SavantLeaderboard({
                   <button
                     onClick={() => handleSort(col.key)}
                     className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors mx-auto ${
-                      sortKey === col.key ? 'text-[#BF5700]' : 'text-white/30 hover:text-white/50'
+                      sortKey === col.key ? 'text-burnt-orange' : 'text-text-muted hover:text-text-muted'
                     }`}
                   >
                     {col.metricKey && METRIC_DEFS[col.metricKey] ? (
@@ -202,7 +202,7 @@ export function SavantLeaderboard({
                       col.label
                     )}
                     {col.pro && !isPro && (
-                      <span className="text-[7px] text-[#BF5700] ml-0.5">PRO</span>
+                      <span className="text-[7px] text-burnt-orange ml-0.5">PRO</span>
                     )}
                     {sortKey === col.key && (
                       <span className="text-[8px]">{sortDir === 'desc' ? '\u25BC' : '\u25B2'}</span>
@@ -221,30 +221,30 @@ export function SavantLeaderboard({
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
                   className={`border-b border-white/[0.02] transition-colors ${
-                    onPlayerClick ? 'cursor-pointer hover:bg-white/[0.03]' : ''
+                    onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
                   }`}
                 >
                   <td className="pl-5 pr-2 py-2.5">
                     <span className={`text-xs font-mono tabular-nums ${
-                      rank <= 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
+                      rank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
                     }`}>
                       {rank}
                     </span>
                   </td>
                   <td className="px-2 py-2.5">
                     <div>
-                      <span className="text-white font-medium text-sm">
+                      <span className="text-text-primary font-medium text-sm">
                         {row.player_name as string}
                       </span>
                       {row.position && (
-                        <span className="ml-1.5 text-[10px] text-white/25 uppercase">
+                        <span className="ml-1.5 text-[10px] text-text-muted uppercase">
                           {row.position as string}
                         </span>
                       )}
                     </div>
                   </td>
                   <td className="px-2 py-2.5 hidden sm:table-cell">
-                    <span className="text-white/40 text-xs">{row.team as string}</span>
+                    <span className="text-text-muted text-xs">{row.team as string}</span>
                   </td>
                   {columns.map(col => {
                     const val = row[col.key];
@@ -271,7 +271,7 @@ export function SavantLeaderboard({
                       >
                         <span
                           className={`inline-block px-1.5 py-0.5 rounded font-mono tabular-nums text-xs ${
-                            isGated ? 'text-white/10' : showHeatmap ? 'text-white font-medium' : 'text-white/60'
+                            isGated ? 'text-text-muted' : showHeatmap ? 'text-white font-medium' : 'text-text-secondary'
                           }`}
                           style={showHeatmap ? {
                             backgroundColor: `${bgColor}22`,
@@ -292,18 +292,18 @@ export function SavantLeaderboard({
 
       {/* Show more */}
       {!showAll && data.length > initialRows && (
-        <div className="px-5 py-3 border-t border-white/[0.04] text-center">
+        <div className="px-5 py-3 border-t border-border-subtle text-center">
           {isPro ? (
             <button
               onClick={() => setShowAll(true)}
-              className="text-xs text-[#BF5700] hover:text-[#FF6B35] font-medium transition-colors"
+              className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
             >
               Show all {data.length} players
             </button>
           ) : (
             <a
               href="/pricing"
-              className="text-xs text-[#BF5700] hover:text-[#FF6B35] font-medium transition-colors"
+              className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
             >
               Upgrade to Pro for full leaderboard ({data.length} players)
             </a>

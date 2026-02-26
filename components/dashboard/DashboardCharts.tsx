@@ -38,10 +38,10 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
     return (
       <div className="h-64 flex items-center justify-center">
         <div className="w-full max-w-sm space-y-3 px-4" aria-hidden>
-          <div className="h-4 rounded bg-white/10 animate-pulse" />
-          <div className="h-4 rounded bg-white/10 animate-pulse" />
-          <div className="h-4 rounded bg-white/10 animate-pulse" />
-          <div className="h-4 rounded bg-white/10 animate-pulse" />
+          <div className="h-4 rounded bg-surface animate-pulse" />
+          <div className="h-4 rounded bg-surface animate-pulse" />
+          <div className="h-4 rounded bg-surface animate-pulse" />
+          <div className="h-4 rounded bg-surface animate-pulse" />
         </div>
         <span className="sr-only">Updating standings visualization</span>
       </div>
@@ -71,7 +71,7 @@ export function StandingsBarChart({ data, isLoading }: StandingsBarChartProps) {
         </BarChart>
       </ResponsiveContainer>
       {data.length === 0 && (
-        <p className="mt-2 text-xs text-white/40">Showing last known standings snapshot.</p>
+        <p className="mt-2 text-xs text-text-muted">Showing last known standings snapshot.</p>
       )}
     </div>
   );

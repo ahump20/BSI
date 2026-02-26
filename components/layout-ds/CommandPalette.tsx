@@ -260,10 +260,10 @@ export function CommandPalette() {
 
       {/* Palette container */}
       <div className="relative flex items-start justify-center pt-[15vh] sm:pt-[20vh] px-4">
-        <div className="w-full max-w-xl bg-[#111115] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden">
+        <div className="w-full max-w-xl bg-background-primary border border-border rounded-2xl shadow-2xl overflow-hidden">
           {/* Search input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
-            <Search className="w-5 h-5 text-white/30 shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
+            <Search className="w-5 h-5 text-text-muted shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -271,11 +271,11 @@ export function CommandPalette() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search teams, players, pages..."
-              className="flex-1 bg-transparent text-white text-base placeholder:text-white/30 outline-none"
+              className="flex-1 bg-transparent text-text-primary text-base placeholder:text-text-muted outline-none"
               autoComplete="off"
               spellCheck={false}
             />
-            <kbd className="hidden sm:inline text-[10px] text-white/20 bg-white/[0.06] px-1.5 py-0.5 rounded font-mono">
+            <kbd className="hidden sm:inline text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded font-mono">
               ESC
             </kbd>
           </div>
@@ -288,7 +288,7 @@ export function CommandPalette() {
                 {/* Recent searches */}
                 {recentSearches.length > 0 && (
                   <div className="mb-3">
-                    <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-2 mb-1">
+                    <p className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-2 mb-1">
                       Recent
                     </p>
                     {recentSearches.map((q) => (
@@ -298,9 +298,9 @@ export function CommandPalette() {
                           setQuery(q);
                           search(q);
                         }}
-                        className="flex items-center gap-2 w-full px-2 py-2 text-sm text-white/50 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-left"
+                        className="flex items-center gap-2 w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors text-left"
                       >
-                        <Clock className="w-3.5 h-3.5 text-white/20" />
+                        <Clock className="w-3.5 h-3.5 text-text-muted" />
                         {q}
                       </button>
                     ))}
@@ -308,47 +308,47 @@ export function CommandPalette() {
                 )}
 
                 {/* Quick links */}
-                <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-2 mb-1">
+                <p className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-2 mb-1">
                   Quick Links
                 </p>
                 {QUICK_LINKS.map((link) => (
                   <button
                     key={link.href}
                     onClick={() => navigate(link.href)}
-                    className="flex items-center justify-between w-full px-2 py-2 text-sm text-white/50 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                    className="flex items-center justify-between w-full px-2 py-2 text-sm text-text-muted hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors"
                   >
                     <span>{link.label}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-white/20" />
+                    <ArrowRight className="w-3.5 h-3.5 text-text-muted" />
                   </button>
                 ))}
               </div>
             ) : loading ? (
               /* Loading */
-              <div className="px-4 py-8 text-center text-white/30 text-sm">
+              <div className="px-4 py-8 text-center text-text-muted text-sm">
                 Searching...
               </div>
             ) : results.length === 0 ? (
               /* No results — show web search fallback */
               <div className="p-3">
-                <p className="text-sm text-white/30 text-center py-4">
+                <p className="text-sm text-text-muted text-center py-4">
                   No results on BSI
                 </p>
                 <button
                   onClick={handleWebSearch}
                   className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
-                    selectedIndex === 0 ? 'bg-white/5 text-white' : 'text-white/50 hover:bg-white/5'
+                    selectedIndex === 0 ? 'bg-surface-light text-text-primary' : 'text-text-muted hover:bg-surface-light'
                   }`}
                 >
                   <span className="text-sm">
                     Search the web for &quot;{query}&quot;
                   </span>
-                  <ExternalLink className="w-3.5 h-3.5 text-white/20" />
+                  <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
                 </button>
               </div>
             ) : (
               /* Results */
               <div className="p-2">
-                <p className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-2 mb-1">
+                <p className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-2 mb-1">
                   On BSI
                 </p>
                 {results.map((r, i) => (
@@ -356,38 +356,38 @@ export function CommandPalette() {
                     key={`${r.type}-${r.id}`}
                     onClick={() => navigate(r.url)}
                     className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
-                      i === selectedIndex ? 'bg-white/5' : 'hover:bg-white/[0.03]'
+                      i === selectedIndex ? 'bg-surface-light' : 'hover:bg-surface-light'
                     }`}
                     onMouseEnter={() => setSelectedIndex(i)}
                   >
-                    <span className="text-[10px] uppercase tracking-wider text-white/25 w-12 shrink-0 font-medium">
+                    <span className="text-[10px] uppercase tracking-wider text-text-muted w-12 shrink-0 font-medium">
                       {typeLabel(r.type)}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm text-white truncate">{r.name}</div>
+                      <div className="text-sm text-text-primary truncate">{r.name}</div>
                       {r.sport && (
-                        <div className="text-[11px] text-white/30">{r.sport}</div>
+                        <div className="text-[11px] text-text-muted">{r.sport}</div>
                       )}
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-white/15 shrink-0" />
+                    <ArrowRight className="w-3.5 h-3.5 text-text-muted shrink-0" />
                   </button>
                 ))}
 
                 {/* Web search fallback */}
-                <div className="border-t border-white/[0.04] mt-1 pt-1">
+                <div className="border-t border-border-subtle mt-1 pt-1">
                   <button
                     onClick={handleWebSearch}
                     onMouseEnter={() => setSelectedIndex(results.length)}
                     className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg transition-colors text-left ${
                       selectedIndex === results.length
-                        ? 'bg-white/5 text-white'
-                        : 'text-white/40 hover:bg-white/[0.03]'
+                        ? 'bg-surface-light text-text-primary'
+                        : 'text-text-muted hover:bg-surface-light'
                     }`}
                   >
                     <span className="text-sm">
                       Search the web for &quot;{query}&quot;
                     </span>
-                    <ExternalLink className="w-3.5 h-3.5 text-white/20" />
+                    <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
                   </button>
                 </div>
               </div>
@@ -395,15 +395,15 @@ export function CommandPalette() {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-white/[0.06] px-4 py-2 flex items-center gap-4 text-[10px] text-white/20">
+          <div className="border-t border-border-subtle px-4 py-2 flex items-center gap-4 text-[10px] text-text-muted">
             <span>
-              <kbd className="bg-white/[0.06] px-1 py-0.5 rounded font-mono">↑↓</kbd> navigate
+              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">↑↓</kbd> navigate
             </span>
             <span>
-              <kbd className="bg-white/[0.06] px-1 py-0.5 rounded font-mono">↵</kbd> select
+              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">↵</kbd> select
             </span>
             <span>
-              <kbd className="bg-white/[0.06] px-1 py-0.5 rounded font-mono">esc</kbd> close
+              <kbd className="bg-surface-light px-1 py-0.5 rounded font-mono">esc</kbd> close
             </span>
           </div>
         </div>
