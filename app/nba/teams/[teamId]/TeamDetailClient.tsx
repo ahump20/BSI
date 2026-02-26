@@ -236,7 +236,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     fetchTeam();
   }, [fetchTeam]);
 
-  const teamColor = team?.color ? `#${team.color}` : '#BF5700';
+  const teamColor = team?.color ? `#${team.color}` : 'var(--bsi-primary)';
   const logoUrl = team?.logos?.[0]?.href;
 
   // Sort roster by position

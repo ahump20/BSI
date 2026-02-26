@@ -4,12 +4,12 @@
  *
  * All data must be sourced and cited - no fabrication
  *
- * Brand Colors:
- * - Burnt Orange: #BF5700
- * - Texas Soil: #8B4513
- * - Charcoal: #1A1A1A
- * - Midnight: #0D0D0D
- * - Ember (accent): #FF6B35
+ * Brand Colors (via CSS custom properties):
+ * - var(--bsi-primary)     burnt-orange
+ * - var(--bsi-texas-soil)  texas-soil
+ * - var(--bsi-charcoal)    charcoal
+ * - var(--bsi-midnight)    midnight
+ * - var(--bsi-accent)      ember (accent only)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -132,7 +132,7 @@ function CollapsibleSection({
   return (
     <div
       style={{
-        backgroundColor: '#1A1A1A',
+        backgroundColor: 'var(--bsi-charcoal)',
         borderRadius: '8px',
         marginBottom: '1rem',
         border: '1px solid rgba(255,255,255,0.08)',
@@ -149,7 +149,7 @@ function CollapsibleSection({
           justifyContent: 'space-between',
           padding: '1rem 1.25rem',
           background: isOpen
-            ? 'linear-gradient(90deg, rgba(191,87,0,0.12) 0%, transparent 70%)'
+            ? 'linear-gradient(90deg, color-mix(in srgb, var(--bsi-primary) 12%, transparent) 0%, transparent 70%)'
             : 'transparent',
           border: 'none',
           cursor: 'pointer',
@@ -157,7 +157,7 @@ function CollapsibleSection({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ color: '#FF6B35', display: 'flex' }}>{icon}</div>
+          <div style={{ color: 'var(--bsi-accent)', display: 'flex' }}>{icon}</div>
           <span
             style={{
               fontSize: '1rem',
@@ -240,12 +240,12 @@ function Citation({ sourceName, sourceUrl }: { sourceName: string; sourceUrl: st
         alignItems: 'center',
         gap: '0.25rem',
         fontSize: '0.6875rem',
-        color: '#8B4513',
+        color: 'var(--bsi-texas-soil)',
         textDecoration: 'none',
         transition: 'color 0.2s ease',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = '#FF6B35')}
-      onMouseLeave={(e) => (e.currentTarget.style.color = '#8B4513')}
+      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--bsi-accent)')}
+      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--bsi-texas-soil)')}
     >
       <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
         <path d="M8 6V8H2V2H4V1H1V9H9V6H8ZM5.5 1V2H7.3L3.4 5.9L4.1 6.6L8 2.7V4.5H9V1H5.5Z" />
@@ -279,7 +279,7 @@ function RecordCard({
   return (
     <div
       style={{
-        backgroundColor: '#0D0D0D',
+        backgroundColor: 'var(--bsi-midnight)',
         borderRadius: '6px',
         padding: '1rem',
         border: '1px solid rgba(255,255,255,0.06)',
@@ -311,7 +311,7 @@ function RecordCard({
         style={{
           fontSize: '1.75rem',
           fontWeight: 700,
-          color: '#BF5700',
+          color: 'var(--bsi-primary)',
           lineHeight: 1.2,
         }}
       >
@@ -423,8 +423,8 @@ export function HistoricalRecordBook({
           style={{
             width: '40px',
             height: '40px',
-            border: '3px solid rgba(191,87,0,0.2)',
-            borderTopColor: '#BF5700',
+            border: '3px solid color-mix(in srgb, var(--bsi-primary) 20%, transparent)',
+            borderTopColor: 'var(--bsi-primary)',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
             margin: '0 auto 1rem',
@@ -479,7 +479,7 @@ export function HistoricalRecordBook({
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.15em',
-              color: '#FF6B35',
+              color: 'var(--bsi-accent)',
             }}
           >
             Historical Record Book
@@ -578,7 +578,7 @@ export function HistoricalRecordBook({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0.875rem 1rem',
-                backgroundColor: '#0D0D0D',
+                backgroundColor: 'var(--bsi-midnight)',
                 borderRadius: '6px',
                 marginBottom: '0.5rem',
                 border: '1px solid rgba(255,255,255,0.06)',
@@ -589,7 +589,7 @@ export function HistoricalRecordBook({
                   style={{
                     fontSize: '1rem',
                     fontWeight: 700,
-                    color: '#BF5700',
+                    color: 'var(--bsi-primary)',
                     minWidth: '50px',
                   }}
                 >
@@ -648,10 +648,10 @@ export function HistoricalRecordBook({
               key={era.id}
               style={{
                 padding: '1.25rem',
-                backgroundColor: '#0D0D0D',
+                backgroundColor: 'var(--bsi-midnight)',
                 borderRadius: '6px',
                 marginBottom: '0.75rem',
-                borderLeft: '3px solid #8B4513',
+                borderLeft: '3px solid var(--bsi-texas-soil)',
               }}
             >
               <div
@@ -706,7 +706,7 @@ export function HistoricalRecordBook({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.375rem',
-                    color: '#BF5700',
+                    color: 'var(--bsi-primary)',
                     fontSize: '0.8125rem',
                     fontWeight: 600,
                   }}
@@ -738,7 +738,7 @@ export function HistoricalRecordBook({
             <div
               key={player.id}
               style={{
-                backgroundColor: '#0D0D0D',
+                backgroundColor: 'var(--bsi-midnight)',
                 borderRadius: '8px',
                 overflow: 'hidden',
                 border: '1px solid rgba(255,255,255,0.06)',
@@ -758,14 +758,14 @@ export function HistoricalRecordBook({
                     width: '40px',
                     height: '40px',
                     borderRadius: '50%',
-                    backgroundColor: player.franchiseRank <= 3 ? '#BF5700' : '#1A1A1A',
-                    border: '2px solid #BF5700',
+                    backgroundColor: player.franchiseRank <= 3 ? 'var(--bsi-primary)' : 'var(--bsi-charcoal)',
+                    border: '2px solid var(--bsi-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '1rem',
                     fontWeight: 700,
-                    color: player.franchiseRank <= 3 ? '#FFFFFF' : '#BF5700',
+                    color: player.franchiseRank <= 3 ? '#FFFFFF' : 'var(--bsi-primary)',
                   }}
                 >
                   {player.franchiseRank}
@@ -822,8 +822,8 @@ export function HistoricalRecordBook({
                       textTransform: 'uppercase',
                       padding: '0.25rem 0.5rem',
                       borderRadius: '4px',
-                      backgroundColor: 'rgba(191,87,0,0.2)',
-                      color: '#BF5700',
+                      backgroundColor: 'color-mix(in srgb, var(--bsi-primary) 20%, transparent)',
+                      color: 'var(--bsi-primary)',
                     }}
                   >
                     HOF {player.hofYear}
@@ -836,8 +836,8 @@ export function HistoricalRecordBook({
                       fontWeight: 600,
                       padding: '0.25rem 0.5rem',
                       borderRadius: '4px',
-                      backgroundColor: 'rgba(139,69,19,0.2)',
-                      color: '#8B4513',
+                      backgroundColor: 'color-mix(in srgb, var(--bsi-texas-soil) 20%, transparent)',
+                      color: 'var(--bsi-texas-soil)',
                     }}
                   >
                     Number Retired
@@ -850,8 +850,8 @@ export function HistoricalRecordBook({
                       fontWeight: 600,
                       padding: '0.25rem 0.5rem',
                       borderRadius: '4px',
-                      backgroundColor: 'rgba(255,107,53,0.2)',
-                      color: '#FF6B35',
+                      backgroundColor: 'color-mix(in srgb, var(--bsi-accent) 20%, transparent)',
+                      color: 'var(--bsi-accent)',
                     }}
                   >
                     {player.mvpAwards}x MVP
@@ -882,7 +882,7 @@ export function HistoricalRecordBook({
         style={{
           marginTop: '2rem',
           paddingTop: '1rem',
-          borderTop: '1px solid rgba(139,69,19,0.3)',
+          borderTop: '1px solid color-mix(in srgb, var(--bsi-texas-soil) 30%, transparent)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -891,7 +891,7 @@ export function HistoricalRecordBook({
         <span
           style={{
             fontSize: '0.75rem',
-            color: '#8B4513',
+            color: 'var(--bsi-texas-soil)',
           }}
         >
           Blaze Sports Intel • All records verified and cited

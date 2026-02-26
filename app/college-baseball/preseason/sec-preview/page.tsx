@@ -36,7 +36,7 @@ const secTeams: SECTeam[] = [
     outlook:
       'Three projected first-round picks anchor the deepest pitching staff in America. The Longhorns return their entire middle infield and enter SEC play with championship expectations.',
     isNew: true,
-    primaryColor: '#BF5700',
+    primaryColor: 'var(--bsi-primary)',
   },
   {
     id: 'texas-am',

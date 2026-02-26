@@ -73,7 +73,7 @@ function CustomTooltip({
 export function TrendChart({
   data,
   title,
-  color = '#BF5700',
+  color = '#BF5700', // token: --bsi-primary
   type = 'line',
   yAxisDomain,
   valueFormatter,
@@ -125,7 +125,7 @@ export function TrendChart({
               fillOpacity={0.15}
               strokeWidth={2}
               dot={false}
-              activeDot={{ r: 4, fill: color, stroke: '#1A1A1A', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: color, stroke: 'var(--bsi-charcoal)', strokeWidth: 2 }}
             />
           ) : (
             <Line
@@ -134,7 +134,7 @@ export function TrendChart({
               stroke={color}
               strokeWidth={2}
               dot={false}
-              activeDot={{ r: 4, fill: color, stroke: '#1A1A1A', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: color, stroke: 'var(--bsi-charcoal)', strokeWidth: 2 }}
             />
           )}
         </ChartComponent>

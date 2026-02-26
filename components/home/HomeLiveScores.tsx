@@ -30,11 +30,12 @@ type SportFilter = 'all' | 'college-baseball' | 'mlb' | 'nfl' | 'nba';
 // Sport config
 // ────────────────────────────────────────
 
+// Hex required — values get alpha digits concatenated (e.g., `${color}40`)
 const SPORT_COLORS: Record<string, string> = {
-  'college-baseball': '#BF5700',
+  'college-baseball': '#BF5700', // token: --bsi-primary
   mlb: '#C41E3A',
   nfl: '#013369',
-  nba: '#FF6B35',
+  nba: '#FF6B35', // token: --bsi-accent
 };
 
 interface SportEndpoint {
@@ -211,7 +212,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
   const isFinal = game.status === 'final';
   const awayWon = isFinal && (game.away.score ?? 0) > (game.home.score ?? 0);
   const homeWon = isFinal && (game.home.score ?? 0) > (game.away.score ?? 0);
-  const sportColor = SPORT_COLORS[game.sport] || '#BF5700';
+  const sportColor = SPORT_COLORS[game.sport] || '#BF5700'; // token: --bsi-primary (hex required for alpha concat)
 
   return (
     <Link

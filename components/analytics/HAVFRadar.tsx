@@ -34,15 +34,16 @@ const AXIS_LABELS: Record<string, string> = {
 };
 
 function getCompositeColor(score: number): string {
-  if (score >= 80) return '#FF6B35';
-  if (score >= 60) return '#BF5700';
+  // Hex retained — consumed by Recharts stroke/fill (token: --bsi-accent, --bsi-primary)
+  if (score >= 80) return '#FF6B35'; // token: --bsi-accent
+  if (score >= 60) return '#BF5700'; // token: --bsi-primary
   if (score >= 40) return 'rgba(255,255,255,0.7)';
   return 'rgba(255,255,255,0.4)';
 }
 
 function getCompositeGlow(score: number): string {
-  if (score >= 80) return '0 0 20px rgba(255,107,53,0.4)';
-  if (score >= 60) return '0 0 12px rgba(191,87,0,0.3)';
+  if (score >= 80) return '0 0 20px rgba(255,107,53,0.4)'; // token: --bsi-accent
+  if (score >= 60) return '0 0 12px rgba(191,87,0,0.3)'; // token: --bsi-primary
   return 'none';
 }
 
@@ -142,7 +143,7 @@ export function HAVFRadar({
             dot={{
               r: 3,
               fill: color,
-              stroke: '#0D0D0D',
+              stroke: '#0D0D0D', // token: --bsi-midnight
               strokeWidth: 2,
             }}
           />

@@ -138,8 +138,8 @@ export default function SECOpeningWeekendPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-[#C9A227]/8 to-[#8B4513]/5 border border-[#C9A227]/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[#0D0D0D] text-[#C9A227] px-3">
+              <div className="relative bg-gradient-to-br from-[#C9A227]/8 to-texas-soil/5 border border-[#C9A227]/15 rounded p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-[#C9A227] px-3">
                   BSI Verdict
                 </div>
                 <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">

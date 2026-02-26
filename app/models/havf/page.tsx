@@ -28,7 +28,7 @@ const COMPONENTS = [
       { stat: 'wOBA', weight: 0.20, description: 'Weighted on-base average — assigns run values to each outcome' },
       { stat: 'ISO', weight: 0.10, description: 'Isolated power — extra-base hit ability (SLG minus AVG)' },
     ],
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
   },
   {
     key: 'A',
@@ -42,7 +42,7 @@ const COMPONENTS = [
       { stat: 'BABIP', weight: 0.20, description: 'Batting average on balls in play — quality of contact' },
       { stat: 'HR%', weight: 0.20, description: 'Home run rate — damage per plate appearance' },
     ],
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
   },
   {
     key: 'V',
@@ -72,8 +72,8 @@ const COMPONENTS = [
 ] as const;
 
 const INTERPRETATION_TIERS = [
-  { range: '80-100', label: 'Elite', description: 'Top of the cohort. Draft-board material.', color: '#FF6B35' },
-  { range: '60-79', label: 'Above Average', description: 'Strong performer with standout dimensions.', color: '#BF5700' },
+  { range: '80-100', label: 'Elite', description: 'Top of the cohort. Draft-board material.', color: 'var(--bsi-accent)' },
+  { range: '60-79', label: 'Above Average', description: 'Strong performer with standout dimensions.', color: 'var(--bsi-primary)' },
   { range: '40-59', label: 'Average', description: 'Solid contributor. The shape of the radar matters more than the composite here.', color: 'rgba(255,255,255,0.5)' },
   { range: '20-39', label: 'Below Average', description: 'Weaknesses outweigh strengths against this cohort.', color: 'rgba(255,255,255,0.3)' },
   { range: '0-19', label: 'Developmental', description: 'Early-career or limited data. Not a death sentence — check the breakdown.', color: 'rgba(255,255,255,0.2)' },

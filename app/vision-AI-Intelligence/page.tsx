@@ -102,7 +102,7 @@ const loadTensorFlow = (): Promise<TensorFlowAPI> => {
 // BSI DESIGN TOKENS (matching globals.css)
 // ═══════════════════════════════════════════════════════════════════════════
 const COLORS = {
-  orange: '#bf5700',
+  orange: 'var(--bsi-primary)',
   bone: '#f5f2eb',
   dust: '#c4b8a5',
   pro: '#22c55e',

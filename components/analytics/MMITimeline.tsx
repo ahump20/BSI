@@ -50,7 +50,7 @@ function CustomTooltip({
       <p className="text-[10px] font-display uppercase tracking-wider text-text-muted mb-1">
         {point.payload.label}
       </p>
-      <p className="text-sm font-mono font-bold tabular-nums" style={{ color: val > 0 ? '#BF5700' : val < 0 ? '#6B8DB2' : 'rgba(255,255,255,0.5)' }}>
+      <p className="text-sm font-mono font-bold tabular-nums" style={{ color: val > 0 ? 'var(--bsi-primary)' : val < 0 ? '#6B8DB2' : 'rgba(255,255,255,0.5)' }}>
         {val > 0 ? '+' : ''}{val.toFixed(1)}
       </p>
       <p className="text-[10px] text-text-muted mt-0.5">
@@ -117,8 +117,8 @@ export function MMITimeline({
         <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
           <defs>
             <linearGradient id="mmiGradientPos" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#BF5700" stopOpacity={0.4} />
-              <stop offset="100%" stopColor="#BF5700" stopOpacity={0.02} />
+              <stop offset="0%" stopColor="#BF5700" stopOpacity={0.4} /> {/* token: --bsi-primary */}
+              <stop offset="100%" stopColor="#BF5700" stopOpacity={0.02} /> {/* token: --bsi-primary */}
             </linearGradient>
             <linearGradient id="mmiGradientNeg" x1="0" y1="1" x2="0" y2="0">
               <stop offset="0%" stopColor="#6B8DB2" stopOpacity={0.4} />
@@ -146,7 +146,7 @@ export function MMITimeline({
           <Area
             type="monotone"
             dataKey="positive"
-            stroke="#BF5700"
+            stroke="#BF5700" // token: --bsi-primary
             strokeWidth={2}
             fill="url(#mmiGradientPos)"
             baseValue={0}

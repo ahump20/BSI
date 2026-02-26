@@ -40,7 +40,7 @@ function AnimatedScore({
             ? 'text-text-primary'
             : 'text-text-secondary'
       }`}
-      animate={flash ? { scale: [1, 1.3, 1], color: ['', '#FF6B35', ''] } : {}}
+      animate={flash ? { scale: [1, 1.3, 1], color: ['', 'var(--bsi-accent)', ''] } : {}}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       {value !== null ? value : '-'}

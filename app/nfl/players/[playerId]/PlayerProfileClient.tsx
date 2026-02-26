@@ -201,7 +201,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                     ) : (
                       <div
                         className="w-full h-full rounded-full flex items-center justify-center text-4xl font-bold border-4"
-                        style={{ backgroundColor: teamColor, borderColor: '#BF5700', color: '#fff' }}
+                        style={{ backgroundColor: teamColor, borderColor: 'var(--bsi-primary)', color: '#fff' }}
                       >
                         #{player.jersey || '?'}
                       </div>

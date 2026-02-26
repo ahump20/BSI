@@ -14,7 +14,7 @@ const sports: { id: Sport; label: string; icon: string; color: string }[] = [
   { id: 'mlb', label: 'MLB', icon: '/icons/baseball.svg', color: '#C41E3A' },
   { id: 'nfl', label: 'NFL', icon: '/icons/football.svg', color: '#013369' },
   { id: 'nba', label: 'NBA', icon: '/icons/basketball.svg', color: '#1D428A' },
-  { id: 'ncaa', label: 'NCAA', icon: '/icons/baseball.svg', color: '#BF5700' },
+  { id: 'ncaa', label: 'NCAA', icon: '/icons/baseball.svg', color: 'var(--bsi-primary)' },
 ];
 
 export function SportTabs({ defaultSport = 'mlb', onSportChange }: SportTabsProps) {

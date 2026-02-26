@@ -76,7 +76,7 @@ const sports: SportCardData[] = [
     description: 'Roster intelligence, portal tracking & pro projections',
     accent: 'group-hover:text-burnt-orange group-hover:border-burnt-orange/50',
     bgAccent: 'group-hover:bg-burnt-orange/10',
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
   },
   {
     name: 'MLB',
@@ -103,7 +103,7 @@ const sports: SportCardData[] = [
     description: 'Live games, standings & performance data',
     accent: 'group-hover:text-orange-400 group-hover:border-orange-400/50',
     bgAccent: 'group-hover:bg-orange-400/10',
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
   },
   {
     name: 'CFB',

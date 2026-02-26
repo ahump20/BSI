@@ -425,7 +425,7 @@ export default function Weekend3PreviewPage() {
                     BSI Verdict
                   </span>
                 </div>
-                <div className="bg-gradient-to-br from-burnt-orange/8 to-[#8B4513]/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
+                <div className="bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
                   <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                     <p>
                       Weekend 3 is the weekend that separates record from identity. Eight undefeated Top 25

@@ -319,7 +319,7 @@ export default function TrendsPage() {
                             <TrendChart
                               data={winPctData}
                               title="Win Percentage"
-                              color="#BF5700"
+                              color="var(--bsi-primary)"
                               type="area"
                               yAxisDomain={[0, 1]}
                               valueFormatter={(v) => (v * 100).toFixed(0) + '%'}
@@ -347,7 +347,7 @@ export default function TrendsPage() {
                             <TrendChart
                               data={runDiffData}
                               title="Run Differential"
-                              color="#FF6B35"
+                              color="var(--bsi-accent)"
                               type="area"
                               valueFormatter={(v) => (v >= 0 ? `+${v}` : String(v))}
                             />

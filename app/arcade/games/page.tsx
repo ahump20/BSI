@@ -17,7 +17,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Blaze Blitz Football',
     description: 'Arcade football with fast drives, jukes, and explosive plays.',
     url: '/games/blitz/',
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
     icon: '\uD83C\uDFC8',
   },
   {
@@ -25,7 +25,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Sandlot Sluggers',
     description: 'Step into the batter\'s box for timing-based baseball action.',
     url: '/games/sandlot-sluggers/',
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
     icon: '\u26BE',
   },
   {

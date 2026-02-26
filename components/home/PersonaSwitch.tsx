@@ -100,7 +100,7 @@ export function PersonaSwitch() {
               `}
               style={
                 active === key
-                  ? { background: 'linear-gradient(135deg, #BF5700, #FF6B35)' }
+                  ? { background: 'linear-gradient(135deg, var(--bsi-primary), var(--bsi-accent))' }
                   : undefined
               }
             >

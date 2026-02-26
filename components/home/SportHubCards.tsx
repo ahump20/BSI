@@ -17,11 +17,12 @@ interface SportHub {
   inSeason: boolean;
 }
 
+// Hex required — accent values get alpha digits concatenated (e.g., `${accent}20`)
 const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error' | 'inSeason'>[] = [
-  { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' },
+  { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' }, // token: --bsi-primary
   { key: 'mlb', name: 'MLB', href: '/mlb', accent: '#C41E3A' },
   { key: 'nfl', name: 'NFL', href: '/nfl', accent: '#013369' },
-  { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' },
+  { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' }, // token: --bsi-accent
 ];
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
@@ -197,12 +198,12 @@ export function SportHubCards() {
           className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-border-subtle hover:border-border-strong card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
             isInSeason('cfb') ? 'hover:shadow-glow-sm' : 'opacity-60'
           }`}
-          style={{ '--card-accent': '#8B4513' } as React.CSSProperties}
+          style={{ '--card-accent': 'var(--bsi-texas-soil)' } as React.CSSProperties}
         >
           <div className="flex items-center gap-3">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(139,69,19,0.2)', color: '#8B4513' }}
+              style={{ backgroundColor: 'color-mix(in srgb, var(--bsi-texas-soil) 20%, transparent)', color: 'var(--bsi-texas-soil)' }}
             >
               <SportIcon sport="cfb" className="w-6 h-6" />
             </div>

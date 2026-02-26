@@ -15,7 +15,7 @@ export function ToggleGroup<T extends string>({
   onValueChange,
   options,
   className,
-  accentColor = 'var(--bsi-primary, #BF5700)',
+  accentColor = 'var(--bsi-primary)',
 }: ToggleGroupProps<T>) {
   return (
     <div

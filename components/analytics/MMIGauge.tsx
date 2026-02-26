@@ -20,8 +20,8 @@ interface MMIGaugeProps {
 
 function getMagnitudeConfig(mag: string): { label: string; color: string } {
   switch (mag) {
-    case 'extreme': return { label: 'EXTREME', color: '#FF6B35' };
-    case 'high': return { label: 'HIGH', color: '#BF5700' };
+    case 'extreme': return { label: 'EXTREME', color: 'var(--bsi-accent)' };
+    case 'high': return { label: 'HIGH', color: 'var(--bsi-primary)' };
     case 'medium': return { label: 'MEDIUM', color: 'rgba(255,255,255,0.6)' };
     default: return { label: 'LOW', color: 'rgba(255,255,255,0.3)' };
   }
@@ -52,7 +52,7 @@ export function MMIGauge({
   const magConfig = getMagnitudeConfig(magnitude);
 
   // Color: away momentum = steel blue, neutral = white, home momentum = burnt orange
-  const indicatorColor = isAway ? '#6B8DB2' : isHome ? '#BF5700' : 'rgba(255,255,255,0.5)';
+  const indicatorColor = isAway ? '#6B8DB2' : isHome ? 'var(--bsi-primary)' : 'rgba(255,255,255,0.5)';
 
   if (compact) {
     return (
@@ -70,7 +70,7 @@ export function MMIGauge({
           {/* Home fill */}
           <motion.div
             className="absolute inset-y-0 right-0 rounded-r-full"
-            style={{ backgroundColor: '#BF5700' }}
+            style={{ backgroundColor: 'var(--bsi-primary)' }}
             initial={{ width: '50%' }}
             animate={{ width: `${Math.max(0, position / 2 + 25 - 50 + 50 - 25)}%`, opacity: isHome ? 0.6 : 0.1 }}
             transition={{ type: 'spring', stiffness: 80, damping: 20 }}
@@ -139,7 +139,7 @@ export function MMIGauge({
         <div
           className="absolute inset-y-0 right-0 w-1/2 rounded-r-full"
           style={{
-            background: 'linear-gradient(to left, rgba(191,87,0,0.3), transparent)',
+            background: 'linear-gradient(to left, color-mix(in srgb, var(--bsi-primary) 30%, transparent), transparent)',
             opacity: isHome ? 1 : 0.2,
           }}
         />
@@ -151,7 +151,7 @@ export function MMIGauge({
           className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2"
           style={{
             backgroundColor: indicatorColor,
-            borderColor: '#0D0D0D',
+            borderColor: 'var(--bsi-midnight)',
             boxShadow: `0 0 10px ${indicatorColor}80`,
           }}
           initial={{ left: '50%', x: '-50%' }}

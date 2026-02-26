@@ -70,7 +70,7 @@ export function GameGrid({
         <span className="intel-section-label">
           <Activity
             className="h-3.5 w-3.5 inline-block mr-1.5 -mt-0.5"
-            style={{ color: 'var(--bsi-intel-accent, var(--bsi-cyan, #06B6D4))' }}
+            style={{ color: 'var(--bsi-intel-accent, var(--bsi-cyan))' }}
           />
           Slate
         </span>

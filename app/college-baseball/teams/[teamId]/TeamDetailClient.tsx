@@ -268,7 +268,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   // ─── Theme ────────────────────────────────────────────────────────────────
 
-  const accent = meta ? getAccentColor(meta.colors.primary, meta.colors.secondary) : '#BF5700';
+  const accent = meta ? getAccentColor(meta.colors.primary, meta.colors.secondary) : 'var(--bsi-primary)';
   const teamStyles = meta
     ? ({ '--team-primary': accent, '--team-primary-20': `${accent}33`, '--team-primary-40': `${accent}66` } as React.CSSProperties)
     : {};
@@ -307,7 +307,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     <>
       <main id="main-content" style={teamStyles}>
         {/* Hero */}
-        <div style={{ backgroundImage: `linear-gradient(to bottom, ${accent}1A, #1A1A1A, #0D0D0D)` }}>
+        <div style={{ backgroundImage: `linear-gradient(to bottom, ${accent}1A, var(--bsi-charcoal), var(--bsi-midnight))` }}>
           <Section padding="lg" className="pt-24">
             <Container>
               <ScrollReveal direction="up">

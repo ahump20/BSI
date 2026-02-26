@@ -553,7 +553,7 @@ export function PortalHeatmap() {
       .append('rect')
       .attr('width', cellSize - 2)
       .attr('height', cellSize - 2)
-      .attr('fill', (d) => (d.value > 0 ? colorScale(d.value) : '#1a1a1a'))
+      .attr('fill', (d) => (d.value > 0 ? colorScale(d.value) : 'var(--bsi-charcoal)'))
       .attr('stroke', '#ffffff')
       .attr('stroke-width', 1)
       .on('mouseover', function (event, d) {
@@ -660,7 +660,7 @@ export function PortalHeatmap() {
       .style('color', '#ffffff')
       .style('padding', '12px')
       .style('border-radius', '8px')
-      .style('border', '1px solid rgba(255, 107, 0, 0.3)')
+      .style('border', '1px solid color-mix(in srgb, var(--bsi-accent) 30%, transparent)')
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
@@ -685,7 +685,7 @@ export function PortalHeatmap() {
       .style('color', '#ffffff')
       .style('padding', '12px')
       .style('border-radius', '8px')
-      .style('border', '1px solid rgba(255, 107, 0, 0.3)')
+      .style('border', '1px solid color-mix(in srgb, var(--bsi-accent) 30%, transparent)')
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
@@ -708,7 +708,7 @@ export function PortalHeatmap() {
       .style('color', '#ffffff')
       .style('padding', '12px')
       .style('border-radius', '8px')
-      .style('border', '1px solid rgba(255, 107, 0, 0.3)')
+      .style('border', '1px solid color-mix(in srgb, var(--bsi-accent) 30%, transparent)')
       .style('font-family', 'system-ui')
       .style('font-size', '14px')
       .style('pointer-events', 'none')
@@ -890,7 +890,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     marginBottom: '24px',
     paddingBottom: '16px',
-    borderBottom: '2px solid rgba(255, 107, 0, 0.2)',
+    borderBottom: '2px solid color-mix(in srgb, var(--bsi-accent) 20%, transparent)',
   },
   title: {
     fontSize: '24px',
@@ -921,9 +921,9 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'all 0.2s',
   },
   vizButtonActive: {
-    background: 'rgba(255, 107, 0, 0.2)',
-    borderColor: '#ff6b00',
-    color: '#ff6b00',
+    background: 'color-mix(in srgb, var(--bsi-accent) 20%, transparent)',
+    borderColor: 'var(--bsi-accent)',
+    color: 'var(--bsi-accent)',
   },
 
   // SVG Container
@@ -943,15 +943,15 @@ const styles: Record<string, React.CSSProperties> = {
 
   // Instructions
   instructions: {
-    background: 'rgba(255, 107, 0, 0.05)',
-    border: '1px solid rgba(255, 107, 0, 0.2)',
+    background: 'color-mix(in srgb, var(--bsi-accent) 5%, transparent)',
+    border: '1px solid color-mix(in srgb, var(--bsi-accent) 20%, transparent)',
     borderRadius: '12px',
     padding: '24px',
   },
   instructionsTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
-    color: '#ff6b00',
+    color: 'var(--bsi-accent)',
     margin: '0 0 16px 0',
   },
   instructionsList: {
@@ -974,8 +974,8 @@ const styles: Record<string, React.CSSProperties> = {
   spinner: {
     width: '48px',
     height: '48px',
-    border: '4px solid rgba(255, 107, 0, 0.1)',
-    borderTopColor: '#ff6b00',
+    border: '4px solid color-mix(in srgb, var(--bsi-accent) 10%, transparent)',
+    borderTopColor: 'var(--bsi-accent)',
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
   },
@@ -1008,7 +1008,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   retryButton: {
     padding: '12px 24px',
-    background: 'linear-gradient(135deg, #ff6b00, #ff8800)',
+    background: 'linear-gradient(135deg, var(--bsi-accent), var(--bsi-primary))',
     border: 'none',
     borderRadius: '8px',
     color: '#ffffff',

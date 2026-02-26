@@ -317,7 +317,7 @@ const CONFERENCES: ConferenceData[] = [
     teams: 14,
     ranked: 5,
     href: '/college-baseball/editorial/big-12',
-    accent: '#BF5700',
+    accent: 'var(--bsi-primary)',
   },
   {
     name: 'Big Ten',
@@ -333,7 +333,7 @@ const CONFERENCES: ConferenceData[] = [
 // Conference section → tag mapping
 const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; teams: TeamCard[]; accent: string; confHref: string }[] = [
   { tag: 'SEC', title: 'SEC', tagline: 'The Standard', teams: SEC_TEAMS, accent: '#C9A227', confHref: '/college-baseball/editorial/sec' },
-  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, accent: '#BF5700', confHref: '/college-baseball/editorial/big-12' },
+  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, accent: 'var(--bsi-primary)', confHref: '/college-baseball/editorial/big-12' },
   { tag: 'Big Ten', title: 'Big Ten', tagline: 'Northern Rising', teams: BIGTEN_TEAMS, accent: '#6B8CAE', confHref: '/college-baseball/editorial/big-ten' },
 ];
 

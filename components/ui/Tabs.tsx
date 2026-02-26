@@ -68,7 +68,7 @@ export function Tab({ value, children, className }: TabProps) {
       className={clsx(
         'px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.15em] transition-all',
         isActive
-          ? 'bg-[var(--bsi-primary,#BF5700)]/15 text-[var(--bsi-primary,#BF5700)] border border-[var(--bsi-primary,#BF5700)]/30'
+          ? 'bg-burnt-orange/15 text-burnt-orange border border-burnt-orange/30'
           : 'text-text-muted hover:text-text-secondary border border-transparent',
         className,
       )}

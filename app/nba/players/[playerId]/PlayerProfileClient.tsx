@@ -128,7 +128,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
     fetchPlayer();
   }, [fetchPlayer]);
 
-  const teamColor = '#BF5700'; // Default to burnt orange, could use team color if available
+  const teamColor = 'var(--bsi-primary)'; // Default to burnt orange, could use team color if available
 
   return (
     <>

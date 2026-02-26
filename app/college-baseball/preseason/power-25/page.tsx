@@ -426,7 +426,7 @@ export default function Power25Page() {
       <main id="main-content">
         {/* Hero */}
         <Section padding="none" className="relative">
-          <div className="bg-gradient-to-br from-burnt-orange via-[#8B4513] to-charcoal relative overflow-hidden">
+          <div className="bg-gradient-to-br from-burnt-orange via-texas-soil to-charcoal relative overflow-hidden">
             <div className="absolute inset-0 bg-black/50" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_transparent_0%,_black_100%)] opacity-70" />
             <Container className="relative z-10 py-16 md:py-24">

@@ -231,7 +231,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="flex items-start gap-4">
                 <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
-                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                  style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {player.primaryNumber || '-'}
                 </div>
@@ -494,7 +494,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="flex items-center gap-6">
                 <div
                   className="w-24 h-24 rounded-xl flex items-center justify-center text-3xl font-bold text-white"
-                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                  style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {displayAbbrev}
                 </div>

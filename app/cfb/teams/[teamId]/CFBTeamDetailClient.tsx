@@ -119,7 +119,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
     fetchTeam();
   }, [fetchTeam]);
 
-  const teamColor = team?.color ? `#${team.color}` : '#BF5700';
+  const teamColor = team?.color ? `#${team.color}` : 'var(--bsi-primary)';
   const logoUrl = team?.logos?.[0]?.href;
 
   // Sort roster by position, then name

@@ -102,7 +102,7 @@ interface SabermetricsPanelProps {
   accent?: string;
 }
 
-export function SabermetricsPanel({ teamId, espnId, accent = '#BF5700' }: SabermetricsPanelProps) {
+export function SabermetricsPanel({ teamId, espnId, accent = 'var(--bsi-primary)' }: SabermetricsPanelProps) {
   // D1 stores ESPN numeric IDs; prefer espnId when available
   const lookupId = espnId || teamId;
   const { data, loading, error } = useSportData<TeamSabermetrics>(

@@ -313,7 +313,7 @@ export function PitcherFatigue({ sport }: PitcherFatigueProps) {
         </CardHeader>
         <CardContent>
           <div className="h-[120px] flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-burnt-orange/30 border-t-[#BF5700] rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
           </div>
         </CardContent>
       </Card>

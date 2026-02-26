@@ -24,8 +24,8 @@ const topSeries = [
 
 const confPreviews = [
   { name: 'SEC', ranked: 13, teams: 16, note: 'The deepest conference in America. 13 ranked teams. Four in the top five.', href: '/college-baseball/editorial/sec-opening-weekend', accent: '#C9A227' },
-  { name: 'ACC', ranked: 5, teams: 15, note: 'Stanford and Cal arrive. Wake Forest reloads. Five teams in the top 20.', href: '/college-baseball/editorial/acc-opening-weekend', accent: '#FF6B35' },
-  { name: 'Big 12', ranked: 5, teams: 14, note: 'TCU leads the way. Kansas is a dark horse. The new Big 12 has real depth.', href: '/college-baseball/editorial/big-12-opening-weekend', accent: '#BF5700' },
+  { name: 'ACC', ranked: 5, teams: 15, note: 'Stanford and Cal arrive. Wake Forest reloads. Five teams in the top 20.', href: '/college-baseball/editorial/acc-opening-weekend', accent: 'var(--bsi-accent)' },
+  { name: 'Big 12', ranked: 5, teams: 14, note: 'TCU leads the way. Kansas is a dark horse. The new Big 12 has real depth.', href: '/college-baseball/editorial/big-12-opening-weekend', accent: 'var(--bsi-primary)' },
   { name: 'Big Ten', ranked: 3, teams: 17, note: 'UCLA is an Omaha favorite. Oregon and USC add punch. The conference is rising.', href: '/college-baseball/editorial/big-ten', accent: '#6B8CAE' },
 ];
 
@@ -167,7 +167,7 @@ export default function NationalOpeningWeekendPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-[#8B4513]/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
+              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
                 <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
                   BSI Verdict
                 </div>

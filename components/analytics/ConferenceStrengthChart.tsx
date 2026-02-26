@@ -24,7 +24,7 @@ interface ConferenceStrengthChartProps {
  * P5 / mid-major tier separator. Expandable detail rows.
  */
 function strengthColor(index: number): string {
-  if (index >= 75) return '#BF5700';
+  if (index >= 75) return 'var(--bsi-primary)';
   if (index >= 60) return '#d4775c';
   if (index >= 45) return '#aaaaaa';
   return 'rgba(255,255,255,0.25)';

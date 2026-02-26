@@ -75,7 +75,7 @@ function SkeletonPlayerCard() {
 }
 
 function PlayerCard({ player }: { player: Player }) {
-  const teamColor = player.teamColor ? `#${player.teamColor}` : '#BF5700';
+  const teamColor = player.teamColor ? `#${player.teamColor}` : 'var(--bsi-primary)';
 
   return (
     <Link href={`/nba/players/${player.id}`}>

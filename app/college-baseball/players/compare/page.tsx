@@ -271,14 +271,14 @@ export default function PlayerComparePage() {
                 selected={player1}
                 onSelect={setPlayer1}
                 onClear={() => handleClear(1)}
-                accentColor="#BF5700"
+                accentColor="var(--bsi-primary)"
               />
               <PlayerSearchInput
                 label="Player 2"
                 selected={player2}
                 onSelect={setPlayer2}
                 onClear={() => handleClear(2)}
-                accentColor="#FF6B35"
+                accentColor="var(--bsi-accent)"
               />
             </div>
 

@@ -28,7 +28,7 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
       {/* Header */}
       <div className="flex items-center justify-between p-4 pb-0">
         <div className="intel-section-label">
-          <Newspaper className="h-4 w-4" style={{ color: 'var(--bsi-intel-accent, var(--bsi-ember, #FF6B35))' }} />
+          <Newspaper className="h-4 w-4" style={{ color: 'var(--bsi-intel-accent, var(--bsi-accent))' }} />
           News Feed
         </div>
         <div className="flex items-center gap-2">

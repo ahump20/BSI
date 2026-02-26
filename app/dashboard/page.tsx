@@ -295,7 +295,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
     { name: 'MLB', value: 25, color: '#C41E3A' },
     { name: 'NFL', value: 25, color: '#013369' },
     { name: 'NBA', value: 25, color: '#1D428A' },
-    { name: 'NCAA', value: 25, color: '#BF5700' },
+    { name: 'NCAA', value: 25, color: 'var(--bsi-primary)' },
   ];
 
   return (
@@ -719,7 +719,7 @@ function CountdownRing({ seconds, total }: { seconds: number; total: number }) {
       <circle
         cx="12" cy="12" r={radius}
         fill="none"
-        stroke="#BF5700"
+        stroke="var(--bsi-primary)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeDasharray={circumference}

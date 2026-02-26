@@ -43,7 +43,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#bf5700',
+  themeColor: '#bf5700', // token: --bsi-primary (browser meta tag requires raw hex)
   width: 'device-width',
   initialScale: 1,
 };

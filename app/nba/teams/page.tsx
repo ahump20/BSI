@@ -60,7 +60,7 @@ function SkeletonTeamCard() {
 
 function TeamCard({ team }: { team: NBATeam }) {
   const logoUrl = team.logos?.[0]?.href;
-  const teamColor = team.color ? `#${team.color}` : '#BF5700';
+  const teamColor = team.color ? `#${team.color}` : 'var(--bsi-primary)';
 
   return (
     <Link href={`/nba/teams/${team.id}`}>

@@ -171,7 +171,7 @@ export default function SECEditorialPage() {
             <div
               className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full opacity-[0.07]"
               style={{
-                background: 'radial-gradient(circle at center, #BF5700 0%, transparent 70%)',
+                background: 'radial-gradient(circle at center, var(--bsi-primary) 0%, transparent 70%)',
               }}
             />
           </div>

@@ -34,7 +34,7 @@ export const teamMetadata: Record<string, TeamMeta> = {
     conference: 'SEC',
     espnId: '126',
     logoId: '251',
-    colors: { primary: '#BF5700', secondary: '#FFFFFF' },
+    colors: { primary: '#BF5700', secondary: '#FFFFFF' }, // team identity color (coincides with BSI primary)
     location: { city: 'Austin', state: 'TX', stadium: 'UFCU Disch-Falk Field' },
   },
   'texas-am': {

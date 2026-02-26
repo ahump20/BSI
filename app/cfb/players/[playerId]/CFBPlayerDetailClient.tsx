@@ -124,7 +124,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
     fetchPlayer();
   }, [fetchPlayer]);
 
-  const teamColor = '#BF5700'; // BSI burnt-orange default for CFB
+  const teamColor = 'var(--bsi-primary)'; // BSI burnt-orange default for CFB
 
   return (
     <>
@@ -192,7 +192,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                     ) : (
                       <div
                         className="w-full h-full rounded-full flex items-center justify-center text-4xl font-bold border-4"
-                        style={{ backgroundColor: teamColor, borderColor: '#BF5700', color: '#fff' }}
+                        style={{ backgroundColor: teamColor, borderColor: 'var(--bsi-primary)', color: '#fff' }}
                       >
                         #{player.jersey || '?'}
                       </div>

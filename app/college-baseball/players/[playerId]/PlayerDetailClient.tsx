@@ -237,10 +237,10 @@ export default function PlayerDetailClient() {
                   <div className="grid md:grid-cols-[1fr_auto] gap-6">
                     {/* Component bars */}
                     <div className="space-y-3">
-                      <HAVFBar label="H" score={havfPlayer.h_score} color="#BF5700" />
-                      <HAVFBar label="A" score={havfPlayer.a_score} color="#FF6B35" />
+                      <HAVFBar label="H" score={havfPlayer.h_score} color="var(--bsi-primary)" />
+                      <HAVFBar label="A" score={havfPlayer.a_score} color="var(--bsi-accent)" />
                       <HAVFBar label="V" score={havfPlayer.v_score} color="#FDB913" />
-                      <HAVFBar label="F" score={havfPlayer.f_score} color="#8B4513" />
+                      <HAVFBar label="F" score={havfPlayer.f_score} color="var(--bsi-texas-soil)" />
                     </div>
 
                     {/* Composite score */}

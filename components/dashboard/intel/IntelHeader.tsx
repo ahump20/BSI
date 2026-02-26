@@ -51,7 +51,7 @@ export function IntelHeader({
           <div
             className="grid h-10 w-10 place-items-center border border-border"
             style={{
-              background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary, #BF5700)), var(--bsi-ember, #FF6B35))',
+              background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary)), var(--bsi-accent))',
               borderRadius: '2px',
             }}
           >
@@ -99,7 +99,7 @@ export function IntelHeader({
           <div className="text-right hidden sm:block">
             <div
               className="text-sm font-semibold"
-              style={{ fontFamily: 'var(--intel-mono)', color: 'var(--bsi-intel-accent, var(--bsi-primary, #BF5700))' }}
+              style={{ fontFamily: 'var(--intel-mono)', color: 'var(--bsi-intel-accent, var(--bsi-primary))' }}
             >
               {time}
             </div>
@@ -116,7 +116,7 @@ export function IntelHeader({
           value={mode}
           onValueChange={onModeChange}
           options={MODE_OPTIONS}
-          accentColor="var(--bsi-intel-accent, var(--bsi-cyan, #06B6D4))"
+          accentColor="var(--bsi-intel-accent, var(--bsi-cyan))"
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
@@ -134,9 +134,9 @@ export function IntelHeader({
             style={{
               fontFamily: 'var(--intel-mono)',
               borderRadius: '2px',
-              border: `1px solid color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 30%, transparent)`,
-              background: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 10%, transparent)',
-              color: 'var(--bsi-intel-accent, var(--bsi-ember, #FF6B35))',
+              border: `1px solid color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-accent)) 30%, transparent)`,
+              background: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-accent)) 10%, transparent)',
+              color: 'var(--bsi-intel-accent, var(--bsi-accent))',
             }}
           >
             Lens: {teamLens} ✕

@@ -31,7 +31,7 @@ type SortKey = 'composite' | 'hScore' | 'aScore' | 'vScore' | 'fScore' | 'player
 type SortDir = 'asc' | 'desc';
 
 function ComponentBar({ value, label }: { value: number; label: string }) {
-  const intensity = value >= 80 ? '#FF6B35' : value >= 60 ? '#BF5700' : 'rgba(255,255,255,0.3)';
+  const intensity = value >= 80 ? 'var(--bsi-accent)' : value >= 60 ? 'var(--bsi-primary)' : 'rgba(255,255,255,0.3)';
   return (
     <div className="flex items-center gap-1.5 min-w-[60px]" title={`${label}: ${value.toFixed(1)}`}>
       <div className="flex-1 h-[6px] rounded-full bg-surface-light overflow-hidden">
