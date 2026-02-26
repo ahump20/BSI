@@ -21,16 +21,16 @@ const CATEGORY_LABELS: Record<CategoryFilter, string> = {
 
 function TermCard({ term }: { term: GlossaryTerm }) {
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6">
+    <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-        <h3 className="font-display text-lg font-bold uppercase tracking-wide text-white">
+        <h3 className="font-display text-lg font-bold uppercase tracking-wide text-text-primary">
           {term.term}
         </h3>
         <div className="flex flex-wrap gap-1.5">
           {term.sport.map((s) => (
             <span
               key={s}
-              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#BF5700] bg-[#BF5700]/10 rounded-md"
+              className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-burnt-orange bg-burnt-orange/10 rounded-md"
             >
               {s}
             </span>
@@ -40,32 +40,32 @@ function TermCard({ term }: { term: GlossaryTerm }) {
 
       <div className="space-y-4 text-sm">
         <div>
-          <span className="text-white/25 text-xs uppercase tracking-wider block mb-1">Definition</span>
-          <p className="text-white/50 leading-relaxed">{term.mlbDefinition}</p>
-          <p className="text-white/20 text-xs mt-1">Source: {term.mlbSource}</p>
+          <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Definition</span>
+          <p className="text-text-tertiary leading-relaxed">{term.mlbDefinition}</p>
+          <p className="text-text-muted text-xs mt-1">Source: {term.mlbSource}</p>
         </div>
 
         <div>
-          <span className="text-white/25 text-xs uppercase tracking-wider block mb-1">NCAA Equivalent</span>
-          <p className="text-white/50 leading-relaxed">{term.ncaaEquivalent}</p>
+          <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">NCAA Equivalent</span>
+          <p className="text-text-tertiary leading-relaxed">{term.ncaaEquivalent}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <span className="text-white/25 text-xs uppercase tracking-wider block mb-1">Available Data</span>
-            <p className="text-white/40 leading-relaxed text-xs">{term.availableData}</p>
+            <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Available Data</span>
+            <p className="text-text-muted leading-relaxed text-xs">{term.availableData}</p>
           </div>
           <div>
-            <span className="text-white/25 text-xs uppercase tracking-wider block mb-1">Limitations</span>
-            <p className="text-white/40 leading-relaxed text-xs">{term.limitations}</p>
+            <span className="text-text-muted text-xs uppercase tracking-wider block mb-1">Limitations</span>
+            <p className="text-text-muted leading-relaxed text-xs">{term.limitations}</p>
           </div>
         </div>
 
         {term.bsiLink && (
-          <div className="pt-2 border-t border-white/[0.04]">
+          <div className="pt-2 border-t border-border-subtle">
             <Link
               href={term.bsiLink}
-              className="text-xs text-[#BF5700] hover:text-[#FF6B35] font-semibold transition-colors"
+              className="text-xs text-burnt-orange hover:text-ember font-semibold transition-colors"
             >
               {term.bsiLinkLabel || 'Related BSI Model'} &#8594;
             </Link>
@@ -101,7 +101,7 @@ export default function GlossaryPage() {
   return (
     <>
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
           </Container>
@@ -111,10 +111,10 @@ export default function GlossaryPage() {
           <Container>
             <div className="max-w-3xl mb-8">
               <Badge variant="primary" className="mb-4">Reference</Badge>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-3">
                 Analytics Glossary
               </h1>
-              <p className="text-white/50 text-lg leading-relaxed">
+              <p className="text-text-tertiary text-lg leading-relaxed">
                 Pro-level metrics mapped to college equivalents. What each stat measures, what
                 data actually exists at the college level, and where the gaps are. Honest about
                 what BSI can and cannot measure.
@@ -128,7 +128,7 @@ export default function GlossaryPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search terms..."
-                className="flex-1 min-w-0 bg-white/5 border border-white/[0.08] rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#BF5700]/50 transition-colors"
+                className="flex-1 min-w-0 bg-surface-light border border-border rounded-lg px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
               />
               <div className="flex gap-1.5 overflow-x-auto">
                 {(Object.keys(CATEGORY_LABELS) as CategoryFilter[]).map((cat) => (
@@ -137,8 +137,8 @@ export default function GlossaryPage() {
                     onClick={() => setCategory(cat)}
                     className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider border transition-all ${
                       category === cat
-                        ? 'bg-[#BF5700]/20 text-[#BF5700] border-[#BF5700]/30'
-                        : 'bg-white/[0.03] text-white/30 border-white/10 hover:text-white/50'
+                        ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
+                        : 'bg-surface-light text-text-muted border-border hover:text-text-tertiary'
                     }`}
                   >
                     {CATEGORY_LABELS[cat]}
@@ -157,8 +157,8 @@ export default function GlossaryPage() {
                     href={hasResults ? `#letter-${letter}` : undefined}
                     className={`w-8 h-8 flex items-center justify-center rounded text-xs font-bold ${
                       hasResults
-                        ? 'bg-white/5 text-white/50 hover:text-[#BF5700] hover:bg-[#BF5700]/10 transition-all'
-                        : 'bg-white/[0.02] text-white/15 cursor-default'
+                        ? 'bg-surface-light text-text-tertiary hover:text-burnt-orange hover:bg-burnt-orange/10 transition-all'
+                        : 'bg-surface-light text-text-muted cursor-default'
                     }`}
                   >
                     {letter}
@@ -170,7 +170,7 @@ export default function GlossaryPage() {
             {/* Terms */}
             {sortedLetters.map((letter) => (
               <div key={letter} id={`letter-${letter}`} className="mb-10">
-                <h2 className="font-display text-2xl font-bold text-white/20 uppercase mb-4 sticky top-0 bg-[#0D0D12] py-2 z-10">
+                <h2 className="font-display text-2xl font-bold text-text-muted uppercase mb-4 sticky top-0 bg-background-primary py-2 z-10">
                   {letter}
                 </h2>
                 <div className="space-y-4">
@@ -183,10 +183,10 @@ export default function GlossaryPage() {
 
             {filtered.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-white/30 text-sm">No terms match your search.</p>
+                <p className="text-text-muted text-sm">No terms match your search.</p>
                 <button
                   onClick={() => { setSearch(''); setCategory('all'); }}
-                  className="mt-4 text-[#BF5700] hover:text-[#FF6B35] text-sm font-semibold transition-colors"
+                  className="mt-4 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
                 >
                   Clear filters
                 </button>
@@ -194,11 +194,11 @@ export default function GlossaryPage() {
             )}
 
             {/* Footer links */}
-            <div className="mt-12 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/models" className="hover:text-white/60 transition-colors">
+            <div className="mt-12 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/models" className="hover:text-text-secondary transition-colors">
                 Models & Methodology
               </Link>
-              <Link href="/models/data-quality" className="hover:text-white/60 transition-colors">
+              <Link href="/models/data-quality" className="hover:text-text-secondary transition-colors">
                 Data Quality
               </Link>
             </div>

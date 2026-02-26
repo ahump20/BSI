@@ -38,35 +38,35 @@ function GameCardList({ games }: { games: GameScore[] }) {
           key={game.id}
           role="group"
           aria-label={`${game.away.name} at ${game.home.name}`}
-          className={`bg-white/5 rounded-lg p-4 border transition-colors ${
+          className={`bg-surface-light rounded-lg p-4 border transition-colors ${
             game.isLive
               ? 'border-green-500/30'
               : game.isPostponed
-                ? 'border-white/[0.03] opacity-50'
+                ? 'border-border-subtle opacity-50'
                 : 'border-transparent'
           }`}
         >
           <div className="flex justify-between items-center mb-1.5">
-            <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+            <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
               {game.away.rank && (
-                <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-md leading-none">
                   #{game.away.rank}
                 </span>
               )}
               {game.away.name}
             </span>
-            <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
+            <span className="font-bold text-burnt-orange text-lg tabular-nums" aria-label={`${game.away.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.away.score}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="font-semibold text-white text-sm flex items-center gap-1.5">
+            <span className="font-semibold text-text-primary text-sm flex items-center gap-1.5">
               {game.home.rank && (
-                <span className="text-[10px] font-bold text-[#BF5700] bg-[#BF5700]/10 px-1.5 py-0.5 rounded-md leading-none">
+                <span className="text-[10px] font-bold text-burnt-orange bg-burnt-orange/10 px-1.5 py-0.5 rounded-md leading-none">
                   #{game.home.rank}
                 </span>
               )}
               {game.home.name}
             </span>
-            <span className="font-bold text-[#BF5700] text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
+            <span className="font-bold text-burnt-orange text-lg tabular-nums" aria-label={`${game.home.name} score`} {...(game.isLive ? { 'aria-live': 'polite' as const } : {})}>{game.home.score}</span>
           </div>
           <div className="mt-2 flex items-center gap-2">
             {game.isLive && (
@@ -75,8 +75,8 @@ function GameCardList({ games }: { games: GameScore[] }) {
             <span className={`text-xs ${
               game.isLive ? 'text-green-400'
                 : game.isPostponed ? 'text-yellow-500/60'
-                : game.isFinal ? 'text-white/30'
-                : 'text-[#BF5700]'
+                : game.isFinal ? 'text-text-muted'
+                : 'text-burnt-orange'
             }`}>
               {game.detail || game.status}
             </span>
@@ -91,9 +91,9 @@ function LoadingSkeleton() {
   return (
     <>
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-white/5 rounded-lg p-4 animate-pulse">
-          <div className="h-4 bg-white/10 rounded w-2/3 mb-2" />
-          <div className="h-4 bg-white/10 rounded w-2/3" />
+        <div key={i} className="bg-surface-light rounded-lg p-4 animate-pulse">
+          <div className="h-4 bg-surface rounded w-2/3 mb-2" />
+          <div className="h-4 bg-surface rounded w-2/3" />
         </div>
       ))}
     </>
@@ -115,13 +115,13 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
   const loading = connectionStatus === 'connecting' && games.length === 0;
 
   return (
-    <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
-      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
+    <div className={`bg-surface-light border border-border-subtle rounded-xl ${className}`}>
+      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h3 className="text-lg font-semibold text-white">Live Scores</h3>
+          <h3 className="text-lg font-semibold text-text-primary">Live Scores</h3>
           <ConnectionIndicator status={connectionStatus} />
         </div>
-        <span className="text-xs text-white/40 uppercase tracking-wider">NCAA</span>
+        <span className="text-xs text-text-muted uppercase tracking-wider">NCAA</span>
       </div>
       {isPreseason && preseasonLabel && (
         <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
@@ -145,7 +145,7 @@ function LiveScoresPanelWS({ className = '' }: { className?: string }) {
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-white/40 text-sm">No games scheduled</p>
+            <p className="text-text-muted text-sm">No games scheduled</p>
           </div>
         ) : (
           <GameCardList games={games} />
@@ -255,12 +255,12 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
   }, [sport, buildEndpoint, buildCachedEndpoint]);
 
   return (
-    <div className={`bg-white/5 border border-white/[0.06] rounded-xl ${className}`}>
-      <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">
+    <div className={`bg-surface-light border border-border-subtle rounded-xl ${className}`}>
+      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-text-primary">
           {isYesterday ? "Yesterday's Results" : 'Live Scores'}
         </h3>
-        <span className="text-xs text-white/40 uppercase tracking-wider">{sport.toUpperCase()}</span>
+        <span className="text-xs text-text-muted uppercase tracking-wider">{sport.toUpperCase()}</span>
       </div>
       {isPreseason && preseasonLabel && (
         <div className="mx-4 mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
@@ -278,7 +278,7 @@ function LiveScoresPanelREST({ sport, className = '' }: { sport: Sport; classNam
           </div>
         ) : games.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-white/40 text-sm">No games scheduled</p>
+            <p className="text-text-muted text-sm">No games scheduled</p>
           </div>
         ) : (
           <GameCardList games={games} />

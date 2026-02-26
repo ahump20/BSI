@@ -56,7 +56,7 @@ function toGrade(percentile: number): number {
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-green-400';
   if (grade >= 60) return 'text-blue-400';
-  if (grade >= 50) return 'text-white';
+  if (grade >= 50) return 'text-text-primary';
   if (grade >= 40) return 'text-yellow-400';
   return 'text-red-400';
 }
@@ -268,7 +268,7 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
       <div className="bg-graphite rounded-lg p-3 mb-4">
         <div className="flex justify-between items-baseline mb-1.5">
           <span className="text-text-tertiary text-xs">Actual Win%</span>
-          <span className="text-white font-mono text-sm font-bold">{(analysis.winPct * 100).toFixed(1)}%</span>
+          <span className="text-text-primary font-mono text-sm font-bold">{(analysis.winPct * 100).toFixed(1)}%</span>
         </div>
         <div className="h-2 bg-charcoal rounded-full overflow-hidden mb-2">
           <div className="h-full bg-burnt-orange rounded-full" style={{ width: `${analysis.winPct * 100}%` }} />
@@ -278,7 +278,7 @@ export function AITeamPreview({ teamId: _teamId, teamName, stats, conference: _c
           <span className="text-text-secondary font-mono text-sm">{(analysis.pythWinPct * 100).toFixed(1)}%</span>
         </div>
         <div className="h-2 bg-charcoal rounded-full overflow-hidden">
-          <div className="h-full bg-white/30 rounded-full" style={{ width: `${analysis.pythWinPct * 100}%` }} />
+          <div className="h-full bg-text-muted rounded-full" style={{ width: `${analysis.pythWinPct * 100}%` }} />
         </div>
         {Math.abs(analysis.luck) > 0.02 && (
           <p className="text-text-tertiary text-xs mt-2">

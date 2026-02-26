@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SportIcon } from '@/components/icons/SportIcon';
 import { isInSeason, getReturnMonth, type SportKey } from '@/lib/season';
 import { normalizeGames, type GameScore } from '@/lib/scores/normalize';
+import { withAlpha } from '@/lib/utils/color';
 
 interface SportHub {
   key: SportKey;
@@ -18,10 +19,10 @@ interface SportHub {
 }
 
 const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error' | 'inSeason'>[] = [
-  { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' },
+  { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' }, // token: --bsi-primary
   { key: 'mlb', name: 'MLB', href: '/mlb', accent: '#C41E3A' },
   { key: 'nfl', name: 'NFL', href: '/nfl', accent: '#013369' },
-  { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' },
+  { key: 'nba', name: 'NBA', href: '/nba', accent: '#FF6B35' }, // token: --bsi-accent
 ];
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
@@ -121,7 +122,7 @@ export function SportHubCards() {
             className={`group ${isFlag ? 'sm:col-span-2 lg:col-span-2' : ''}`}
           >
             <div
-              className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
+              className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-border-subtle hover:border-border-strong card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
                 hub.inSeason
                   ? 'hover:shadow-glow-sm'
                   : 'opacity-60'
@@ -132,16 +133,16 @@ export function SportHubCards() {
               <div className="flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: `${hub.accent}20`, color: hub.accent }}
+                  style={{ backgroundColor: withAlpha(hub.accent, 0.12), color: hub.accent }}
                 >
                   <SportIcon sport={hub.key} className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">
+                  <h3 className="font-display text-lg text-text-primary uppercase tracking-wide group-hover:text-ember transition-colors">
                     {hub.name}
                   </h3>
                   {isFlag && (
-                    <span className="text-[10px] uppercase tracking-widest text-[#BF5700]/70 font-medium">
+                    <span className="text-[10px] uppercase tracking-widest text-burnt-orange/70 font-medium">
                       Flagship
                     </span>
                   )}
@@ -151,16 +152,16 @@ export function SportHubCards() {
               {/* Status */}
               <div className="flex-1 flex flex-col justify-end gap-1.5">
                 {!hub.inSeason ? (
-                  <span className="text-xs text-white/30">
+                  <span className="text-xs text-text-muted">
                     Returns {getReturnMonth(hub.key)}
                   </span>
                 ) : hub.loading ? (
                   <div className="space-y-2">
-                    <div className="h-4 bg-white/5 rounded w-2/3 animate-pulse" />
-                    <div className="h-3 bg-white/5 rounded w-1/2 animate-pulse" />
+                    <div className="h-4 bg-surface-light rounded w-2/3 animate-pulse" />
+                    <div className="h-3 bg-surface-light rounded w-1/2 animate-pulse" />
                   </div>
                 ) : hub.error ? (
-                  <span className="text-xs text-white/30">Unavailable</span>
+                  <span className="text-xs text-text-muted">Unavailable</span>
                 ) : (
                   <>
                     {liveCount > 0 ? (
@@ -171,17 +172,17 @@ export function SportHubCards() {
                         </span>
                       </div>
                     ) : hub.games.length > 0 ? (
-                      <span className="text-xs text-white/40">
+                      <span className="text-xs text-text-muted">
                         {hub.games.filter((g) => g.isFinal).length > 0
                           ? `${hub.games.filter((g) => g.isFinal).length} final today`
                           : `${hub.games.length} scheduled`}
                       </span>
                     ) : (
-                      <span className="text-xs text-white/30">No games today</span>
+                      <span className="text-xs text-text-muted">No games today</span>
                     )}
 
                     {nextMatchup && (
-                      <span className="text-xs text-white/50 truncate">{nextMatchup}</span>
+                      <span className="text-xs text-text-muted truncate">{nextMatchup}</span>
                     )}
                   </>
                 )}
@@ -194,22 +195,22 @@ export function SportHubCards() {
       {/* CFB */}
       <Link href="/cfb" className="group">
         <div
-          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
+          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-border-subtle hover:border-border-strong card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
             isInSeason('cfb') ? 'hover:shadow-glow-sm' : 'opacity-60'
           }`}
-          style={{ '--card-accent': '#8B4513' } as React.CSSProperties}
+          style={{ '--card-accent': 'var(--bsi-texas-soil)' } as React.CSSProperties}
         >
           <div className="flex items-center gap-3">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(139,69,19,0.2)', color: '#8B4513' }}
+              style={{ backgroundColor: 'color-mix(in srgb, var(--bsi-texas-soil) 20%, transparent)', color: 'var(--bsi-texas-soil)' }}
             >
               <SportIcon sport="cfb" className="w-6 h-6" />
             </div>
-            <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">CFB</h3>
+            <h3 className="font-display text-lg text-text-primary uppercase tracking-wide group-hover:text-ember transition-colors">CFB</h3>
           </div>
           <div className="flex-1 flex items-end">
-            <span className="text-xs text-white/30">
+            <span className="text-xs text-text-muted">
               {isInSeason('cfb') ? 'Scores & Standings' : `Returns ${getReturnMonth('cfb')}`}
             </span>
           </div>

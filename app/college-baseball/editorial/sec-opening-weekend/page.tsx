@@ -29,18 +29,18 @@ export default function SECOpeningWeekendPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">SEC Opening Weekend</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">SEC Opening Weekend</span>
             </nav>
           </Container>
         </Section>
@@ -53,14 +53,14 @@ export default function SECOpeningWeekendPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Conference Preview</Badge>
-                  <span className="text-white/40 text-sm">February 12, 2026</span>
-                  <span className="text-white/40 text-sm">12 min read</span>
+                  <span className="text-text-muted text-sm">February 12, 2026</span>
+                  <span className="text-text-muted text-sm">12 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   SEC Opening Weekend:{' '}
                   <span className="text-gradient-blaze">The Deepest Conference in America Opens Play</span>
                 </h1>
-                <p className="font-serif text-xl text-white/50 leading-relaxed">
+                <p className="font-serif text-xl text-text-tertiary leading-relaxed">
                   13 ranked teams. Four in the top five. A transfer portal arms race that reshaped half the rosters in the league. The SEC doesn&rsquo;t ease into the season — it detonates.
                 </p>
               </div>
@@ -72,7 +72,7 @@ export default function SECOpeningWeekendPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   There is no other conference like this. Not in any sport, at any level, in any country. The SEC puts 13 teams in the preseason top 25 and the programs that didn&rsquo;t make the cut — Missouri, Mississippi State — would be contenders in any other league. The depth is the product. The depth is the weapon. And on Valentine&rsquo;s Day weekend, all 16 programs take the field with Omaha on the line.
                 </p>
@@ -97,13 +97,13 @@ export default function SECOpeningWeekendPage() {
                 <ScrollReveal key={m.at} direction="up" delay={Math.min(i * 50, 300)}>
                   <Card variant="default" padding="md" className="h-full">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-display text-sm font-bold uppercase tracking-wide text-white">{m.at}</span>
+                      <span className="font-display text-sm font-bold uppercase tracking-wide text-text-primary">{m.at}</span>
                     </div>
                     <div className="font-mono text-[10px] uppercase tracking-wider text-[#C9A227] mb-2">
                       {m.away} @ {m.at} &middot; {m.date}
                     </div>
-                    <p className="font-serif text-sm text-white/60 leading-relaxed mb-3">{m.capsule}</p>
-                    <div className="text-[10px] uppercase tracking-wider text-white/30">
+                    <p className="font-serif text-sm text-text-tertiary leading-relaxed mb-3">{m.capsule}</p>
+                    <div className="text-[10px] uppercase tracking-wider text-text-muted">
                       Watch for: <span className="text-[#C9A227]/70">{m.watch}</span>
                     </div>
                   </Card>
@@ -125,8 +125,8 @@ export default function SECOpeningWeekendPage() {
               {storylines.map((s, i) => (
                 <ScrollReveal key={s.title} direction="up" delay={i * 60}>
                   <div className="border-l-[3px] border-[#C9A227]/40 pl-6">
-                    <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-2">{s.title}</h3>
-                    <p className="font-serif text-base text-white/60 leading-relaxed">{s.description}</p>
+                    <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-2">{s.title}</h3>
+                    <p className="font-serif text-base text-text-tertiary leading-relaxed">{s.description}</p>
                   </div>
                 </ScrollReveal>
               ))}
@@ -138,8 +138,8 @@ export default function SECOpeningWeekendPage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="relative bg-gradient-to-br from-[#C9A227]/8 to-[#8B4513]/5 border border-[#C9A227]/15 rounded p-8 sm:p-10">
-                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-[#0D0D0D] text-[#C9A227] px-3">
+              <div className="relative bg-gradient-to-br from-[#C9A227]/8 to-texas-soil/5 border border-[#C9A227]/15 rounded p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-[#C9A227] px-3">
                   BSI Verdict
                 </div>
                 <div className="font-serif text-lg leading-relaxed text-[#FAF7F2] space-y-4">

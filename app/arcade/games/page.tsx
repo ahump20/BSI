@@ -17,7 +17,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Blaze Blitz Football',
     description: 'Arcade football with fast drives, jukes, and explosive plays.',
     url: '/games/blitz/',
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
     icon: '\uD83C\uDFC8',
   },
   {
@@ -25,7 +25,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Sandlot Sluggers',
     description: 'Step into the batter\'s box for timing-based baseball action.',
     url: '/games/sandlot-sluggers/',
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
     icon: '\u26BE',
   },
   {
@@ -48,7 +48,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
 
 export default function ArcadeGamesPage() {
   return (
-    <main className="min-h-screen bg-midnight pt-24 md:pt-28 pb-16">
+    <main className="min-h-screen bg-background-primary pt-24 md:pt-28 pb-16">
       <section className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
@@ -57,10 +57,10 @@ export default function ArcadeGamesPage() {
             >
               BSI Arcade
             </span>
-            <h1 className="text-4xl md:text-5xl font-display text-white uppercase tracking-wide">
+            <h1 className="text-4xl md:text-5xl font-display text-text-primary uppercase tracking-wide">
               Mini Games
             </h1>
-            <p className="text-white/60 mt-4 max-w-2xl">
+            <p className="text-text-secondary mt-4 max-w-2xl">
               Pick a game and compete for the leaderboard. All games run in your browser.
             </p>
           </div>
@@ -77,17 +77,17 @@ export default function ArcadeGamesPage() {
             <a
               key={game.id}
               href={game.url}
-              className="glass-elevated rounded-xl p-6 flex flex-col justify-between group hover:border-white/20 transition-all"
+              className="glass-elevated rounded-xl p-6 flex flex-col justify-between group hover:border-border-strong transition-all"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-3xl">{game.icon}</span>
                   <span className="w-2 h-2 rounded-full bg-green-400" />
                 </div>
-                <h2 className="text-lg font-display text-white uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
+                <h2 className="text-lg font-display text-text-primary uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
                   {game.title}
                 </h2>
-                <p className="text-sm text-white/50">{game.description}</p>
+                <p className="text-sm text-text-tertiary">{game.description}</p>
               </div>
               <div className="mt-6">
                 <span

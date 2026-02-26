@@ -1,4 +1,4 @@
-import { Skeleton, ScoreCardSkeletonList, SkeletonPageHeader } from '@/components/ui/Skeleton';
+import { ScoreCardSkeletonList, SkeletonPageHeader } from '@/components/ui/Skeleton';
 
 export default function ScoresLoading() {
   return (

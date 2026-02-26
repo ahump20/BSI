@@ -221,7 +221,7 @@ export default function MLBPlayersPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Players</span>
+              <span className="text-text-primary font-medium">Players</span>
             </nav>
           </Container>
         </Section>
@@ -263,7 +263,7 @@ export default function MLBPlayersPage() {
                   className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                     statType === 'bat'
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                   }`}
                 >
                   Batting
@@ -273,7 +273,7 @@ export default function MLBPlayersPage() {
                   className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                     statType === 'pit'
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                   }`}
                 >
                   Pitching
@@ -293,7 +293,7 @@ export default function MLBPlayersPage() {
                         setPosition(e.target.value);
                         setPage(1);
                       }}
-                      className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by position"
                     >
                       {positions.map((pos) => (
@@ -311,7 +311,7 @@ export default function MLBPlayersPage() {
                       setLeague(e.target.value as 'all' | 'al' | 'nl');
                       setPage(1);
                     }}
-                    className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Filter by league"
                   >
                     <option value="all">All Leagues</option>
@@ -326,7 +326,7 @@ export default function MLBPlayersPage() {
                       setSortBy(e.target.value);
                       setPage(1);
                     }}
-                    className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                    className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                     aria-label="Sort by"
                   >
                     {sortOptions.map((opt) => (
@@ -373,7 +373,7 @@ export default function MLBPlayersPage() {
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Error Loading Players</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Players</h3>
                 <p className="text-text-secondary">{error}</p>
                 <button
                   onClick={fetchPlayers}
@@ -385,7 +385,7 @@ export default function MLBPlayersPage() {
             ) : players.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-text-tertiary text-4xl mb-4">?</div>
-                <h3 className="text-xl font-semibold text-white mb-2">No Players Found</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">No Players Found</h3>
                 <p className="text-text-secondary">Try adjusting your filters.</p>
               </Card>
             ) : (
@@ -424,7 +424,7 @@ export default function MLBPlayersPage() {
                       {players.map((player, index) => (
                         <tr
                           key={player.playerid}
-                          className="hover:bg-white/5 transition-colors group"
+                          className="hover:bg-surface-light transition-colors group"
                         >
                           <td className="py-3 px-4 text-text-tertiary text-sm">
                             {(page - 1) * 50 + index + 1}
@@ -432,7 +432,7 @@ export default function MLBPlayersPage() {
                           <td className="py-3 px-4">
                             <Link
                               href={`/mlb/players/${player.playerid}`}
-                              className="font-medium text-white group-hover:text-burnt-orange transition-colors"
+                              className="font-medium text-text-primary group-hover:text-burnt-orange transition-colors"
                             >
                               {player.Name}
                             </Link>
@@ -443,7 +443,7 @@ export default function MLBPlayersPage() {
                               <td className="py-3 px-4 text-right text-text-secondary font-mono text-sm">
                                 {formatStat(player.G, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right text-white font-mono text-sm">
+                              <td className="py-3 px-4 text-right text-text-primary font-mono text-sm">
                                 {formatStat(player.AVG)}
                               </td>
                               <td className="py-3 px-4 text-right text-burnt-orange font-mono text-sm font-semibold">
@@ -452,7 +452,7 @@ export default function MLBPlayersPage() {
                               <td className="py-3 px-4 text-right text-text-secondary font-mono text-sm">
                                 {formatStat(player.RBI, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right text-white font-mono text-sm">
+                              <td className="py-3 px-4 text-right text-text-primary font-mono text-sm">
                                 {formatStat(player.OPS)}
                               </td>
                               <td className="py-3 px-4 text-right text-burnt-orange font-mono text-sm font-semibold">
@@ -467,7 +467,7 @@ export default function MLBPlayersPage() {
                               <td className="py-3 px-4 text-right text-text-secondary font-mono text-sm">
                                 {formatStat(player.G, 0)}
                               </td>
-                              <td className="py-3 px-4 text-right text-white font-mono text-sm">
+                              <td className="py-3 px-4 text-right text-text-primary font-mono text-sm">
                                 {player.W ?? '-'}-{player.L ?? '-'}
                               </td>
                               <td className="py-3 px-4 text-right text-burnt-orange font-mono text-sm font-semibold">
@@ -476,7 +476,7 @@ export default function MLBPlayersPage() {
                               <td className="py-3 px-4 text-right text-text-secondary font-mono text-sm">
                                 {formatStat(player.IP, 1)}
                               </td>
-                              <td className="py-3 px-4 text-right text-white font-mono text-sm">
+                              <td className="py-3 px-4 text-right text-text-primary font-mono text-sm">
                                 {formatStat(player.K, 0)}
                               </td>
                               <td className="py-3 px-4 text-right text-burnt-orange font-mono text-sm font-semibold">
@@ -502,7 +502,7 @@ export default function MLBPlayersPage() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
@@ -512,7 +512,7 @@ export default function MLBPlayersPage() {
                   <button
                     onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                     disabled={page === pagination.totalPages}
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>

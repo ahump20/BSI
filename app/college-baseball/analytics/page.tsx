@@ -11,7 +11,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { HAVFLeaderboard } from '@/components/analytics/HAVFLeaderboard';
 import { HAVFRadar } from '@/components/analytics/HAVFRadar';
-import { HAVFBadge } from '@/components/analytics/HAVFBadge';
 
 interface HAVFPlayerAPI {
   player_id: string;
@@ -75,19 +74,19 @@ export default function CollegeBaseballAnalyticsPage() {
               <nav className="flex items-center gap-2 text-sm mb-6">
                 <Link
                   href="/"
-                  className="text-white/40 hover:text-[#BF5700] transition-colors"
+                  className="text-text-muted hover:text-burnt-orange transition-colors"
                 >
                   Home
                 </Link>
-                <span className="text-white/20">/</span>
+                <span className="text-text-muted">/</span>
                 <Link
                   href="/college-baseball"
-                  className="text-white/40 hover:text-[#BF5700] transition-colors"
+                  className="text-text-muted hover:text-burnt-orange transition-colors"
                 >
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/70">Analytics</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-secondary">Analytics</span>
               </nav>
             </ScrollReveal>
 
@@ -97,13 +96,22 @@ export default function CollegeBaseballAnalyticsPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">BSI PROPRIETARY</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-white">
-                  HAV-F <span className="text-[#BF5700]">Analytics</span>
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
+                  HAV-F <span className="text-burnt-orange">Analytics</span>
                 </h1>
-                <p className="text-white/50 mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   BSI&apos;s proprietary player evaluation metric. Four measurable dimensions
                   compressed into a single composite score that tells you what batting
-                  average and ERA alone never will.
+                  average and ERA alone never will.{' '}
+                  <Link href="/models/havf" className="text-burnt-orange hover:text-ember transition-colors">
+                    Read the full methodology &rarr;
+                  </Link>
+                </p>
+                <p className="text-text-muted mt-2 text-sm">
+                  Looking for wOBA, FIP, wRC+, park factors?{' '}
+                  <Link href="/college-baseball/savant" className="text-burnt-orange hover:text-ember transition-colors">
+                    College Baseball Savant &rarr;
+                  </Link>
                 </p>
               </div>
             </ScrollReveal>
@@ -114,17 +122,17 @@ export default function CollegeBaseballAnalyticsPage() {
                 {METHODOLOGY.map((m) => (
                   <Card key={m.key} padding="md" className="group">
                     <div className="flex items-baseline gap-2 mb-1.5">
-                      <span className="font-display text-2xl font-bold text-[#BF5700]">
+                      <span className="font-display text-2xl font-bold text-burnt-orange">
                         {m.key}
                       </span>
-                      <span className="text-[10px] font-mono text-white/25 uppercase tracking-wider">
+                      <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
                         {m.weight}
                       </span>
                     </div>
-                    <p className="font-display text-xs uppercase tracking-widest text-white/60 mb-1">
+                    <p className="font-display text-xs uppercase tracking-widest text-text-secondary mb-1">
                       {m.label}
                     </p>
-                    <p className="text-[11px] text-white/30 leading-relaxed">
+                    <p className="text-[11px] text-text-muted leading-relaxed">
                       {m.description}
                     </p>
                   </Card>
@@ -137,22 +145,22 @@ export default function CollegeBaseballAnalyticsPage() {
               <ScrollReveal direction="up" delay={150}>
                 <Card padding="none" className="overflow-hidden">
                   {/* Skeleton header */}
-                  <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
-                    <div className="h-4 w-40 bg-white/[0.06] rounded animate-pulse" />
-                    <div className="h-3 w-20 bg-white/[0.04] rounded animate-pulse" />
+                  <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+                    <div className="h-4 w-40 bg-surface-light rounded animate-pulse" />
+                    <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
                   </div>
                   {/* Skeleton rows */}
-                  <div className="divide-y divide-white/[0.02]">
+                  <div className="divide-y divide-border-subtle">
                     {Array.from({ length: 10 }).map((_, i) => (
                       <div key={i} className="px-5 py-3 flex items-center gap-4">
-                        <div className="h-4 w-6 bg-white/[0.04] rounded animate-pulse" />
-                        <div className="h-4 flex-1 max-w-[200px] bg-white/[0.06] rounded animate-pulse" />
-                        <div className="h-4 w-16 bg-white/[0.04] rounded animate-pulse hidden sm:block" />
-                        <div className="h-6 w-12 bg-white/[0.06] rounded-full animate-pulse ml-auto" />
-                        <div className="h-[6px] w-16 bg-white/[0.04] rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-white/[0.04] rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-white/[0.04] rounded-full animate-pulse hidden md:block" />
-                        <div className="h-[6px] w-16 bg-white/[0.04] rounded-full animate-pulse hidden md:block" />
+                        <div className="h-4 w-6 bg-surface-light rounded animate-pulse" />
+                        <div className="h-4 flex-1 max-w-[200px] bg-surface-light rounded animate-pulse" />
+                        <div className="h-4 w-16 bg-surface-light rounded animate-pulse hidden sm:block" />
+                        <div className="h-6 w-12 bg-surface-light rounded-full animate-pulse ml-auto" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
+                        <div className="h-[6px] w-16 bg-surface-light rounded-full animate-pulse hidden md:block" />
                       </div>
                     ))}
                   </div>
@@ -160,31 +168,31 @@ export default function CollegeBaseballAnalyticsPage() {
               </ScrollReveal>
             ) : error ? (
               <Card padding="lg" className="text-center">
-                <div className="text-red-400 text-4xl mb-4 font-display">!</div>
-                <h3 className="text-xl font-display font-semibold text-white mb-2 uppercase tracking-wide">
+                <div className="text-error text-4xl mb-4 font-display">!</div>
+                <h3 className="text-xl font-display font-semibold text-text-primary mb-2 uppercase tracking-wide">
                   Error Loading Leaderboard
                 </h3>
-                <p className="text-white/40 mb-6 text-sm">{error}</p>
+                <p className="text-text-muted mb-6 text-sm">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-[#BF5700]/20 text-[#BF5700] rounded-lg text-sm font-medium hover:bg-[#BF5700]/30 transition-colors"
+                  className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                 >
                   Try again
                 </button>
               </Card>
             ) : players.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-white/20 text-4xl mb-4 font-display">--</div>
-                <h3 className="text-xl font-display font-semibold text-white mb-2 uppercase tracking-wide">
+                <div className="text-text-muted text-4xl mb-4 font-display">--</div>
+                <h3 className="text-xl font-display font-semibold text-text-primary mb-2 uppercase tracking-wide">
                   No Player Data Available
                 </h3>
-                <p className="text-white/40 mb-6 text-sm">
+                <p className="text-text-muted mb-6 text-sm">
                   HAV-F leaderboards populate once the season begins and game data flows through
                   the pipeline.
                 </p>
                 <button
                   onClick={retry}
-                  className="px-5 py-2 bg-white/5 text-white/50 rounded-lg text-sm font-medium hover:bg-white/10 transition-colors"
+                  className="px-5 py-2 bg-surface-light text-text-tertiary rounded-lg text-sm font-medium hover:bg-surface-medium transition-colors"
                 >
                   Refresh
                 </button>
@@ -223,7 +231,7 @@ export default function CollegeBaseballAnalyticsPage() {
 
                 {/* Data attribution */}
                 {response?.meta && (
-                  <div className="mt-8 text-center text-xs text-white/25">
+                  <div className="mt-8 text-center text-xs text-text-muted">
                     <p>
                       Source: {response.meta.source} | Last updated: {response.meta.fetched_at} | {response.meta.timezone}
                     </p>

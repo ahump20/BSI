@@ -10,7 +10,7 @@ import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
 export function PricingPreview() {
   return (
     <div>
-      <h2 className="text-2xl md:text-3xl font-display text-white uppercase tracking-wide mb-8 text-center">
+      <h2 className="text-2xl md:text-3xl font-display text-text-primary uppercase tracking-wide mb-8 text-center">
         <span className="text-gradient-brand">Plans</span>
       </h2>
 
@@ -20,36 +20,36 @@ export function PricingPreview() {
             key={tier.id}
             className={`glass-default rounded-2xl p-6 sm:p-8 relative border transition-all duration-300 hover:shadow-glow-sm ${
               tier.popular
-                ? 'border-[#BF5700]/50 hover:border-[#BF5700]'
-                : 'border-white/[0.06] hover:border-white/[0.12]'
+                ? 'border-burnt-orange/50 hover:border-burnt-orange'
+                : 'border-border-subtle hover:border-border-strong'
             }`}
           >
             {tier.popular && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-[#BF5700] text-white">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-burnt-orange text-white">
                 Popular
               </span>
             )}
 
             <div className="text-center mb-4">
-              <h3 className="text-lg font-display text-white uppercase tracking-wide mb-1">
+              <h3 className="text-lg font-display text-text-primary uppercase tracking-wide mb-1">
                 {tier.name}
               </h3>
-              <p className="text-xs text-white/40">{tier.audience}</p>
+              <p className="text-xs text-text-muted">{tier.audience}</p>
             </div>
 
             <div className="text-center mb-6">
-              <span className="text-4xl font-display font-bold text-[#BF5700]">
+              <span className="text-4xl font-display font-bold text-burnt-orange">
                 ${tier.price}
               </span>
-              <span className="text-white/40 text-sm">/{tier.period}</span>
+              <span className="text-text-muted text-sm">/{tier.period}</span>
             </div>
 
             <Link
               href="/pricing"
               className={`block w-full text-center py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                 tier.popular
-                  ? 'bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white'
-                  : 'border border-white/20 hover:border-[#BF5700] text-white/80 hover:text-white'
+                  ? 'bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white'
+                  : 'border border-border-strong hover:border-burnt-orange text-text-primary hover:text-text-primary'
               }`}
             >
               {tier.cta}
@@ -61,7 +61,7 @@ export function PricingPreview() {
       <div className="text-center mt-6">
         <Link
           href="/pricing"
-          className="text-sm text-white/40 hover:text-[#BF5700] transition-colors"
+          className="text-sm text-text-muted hover:text-burnt-orange transition-colors"
         >
           Compare all features &rarr;
         </Link>

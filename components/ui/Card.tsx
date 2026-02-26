@@ -24,10 +24,10 @@ const paddingClasses: Record<string, string> = {
 };
 
 const variantClasses: Record<string, string> = {
-  default: 'bg-white/5 border border-white/10 rounded-xl',
+  default: 'bg-surface-light border border-border rounded-xl',
   hover:
-    'bg-white/5 border border-white/10 rounded-xl hover:bg-white/8 hover:border-white/20 transition-bsi-normal',
-  elevated: 'bg-white/5 border border-white/10 rounded-xl shadow-lg',
+    'bg-surface-light border border-border rounded-xl hover:bg-surface-medium hover:border-border-strong transition-bsi-normal',
+  elevated: 'bg-surface-light border border-border rounded-xl shadow-lg',
 };
 
 export function Card({
@@ -65,7 +65,7 @@ export function Card({
 }
 
 export function CardHeader({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`px-6 py-4 border-b border-white/10 ${className}`}>{children}</div>;
+  return <div className={`px-6 py-4 border-b border-border ${className}`}>{children}</div>;
 }
 
 export function CardTitle({
@@ -80,7 +80,7 @@ export function CardTitle({
   const sizeClass = size === 'sm' ? 'text-base' : size === 'lg' ? 'text-xl' : 'text-lg';
   return (
     <h3
-      className={`${sizeClass} font-display uppercase tracking-wide font-semibold text-white ${className}`}
+      className={`${sizeClass} font-display uppercase tracking-wide font-semibold text-text-primary ${className}`}
     >
       {children}
     </h3>
@@ -95,7 +95,7 @@ export function StatCard({ label, value, helperText, className = '' }: StatCardP
   return (
     <Card variant="default" padding="md" className={className}>
       <div className="text-xs uppercase tracking-wide text-text-tertiary">{label}</div>
-      <div className="mt-1 text-2xl font-display text-white">{value}</div>
+      <div className="mt-1 text-2xl font-display text-text-primary">{value}</div>
       {helperText ? <div className="mt-1 text-xs text-text-muted">{helperText}</div> : null}
     </Card>
   );

@@ -4,6 +4,8 @@
     "/api/*"
   ],
   "exclude": [
+    "/api/events",
+    "/api/events/*",
     "/_next/static/*",
     "/images/*",
     "/fonts/*",

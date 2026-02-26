@@ -60,7 +60,7 @@ export default function FanbaseHubPage() {
                 Home
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Fanbase</span>
+              <span className="text-text-primary font-medium">Fanbase</span>
             </nav>
           </Container>
         </Section>
@@ -102,7 +102,7 @@ export default function FanbaseHubPage() {
             {loading ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-graphite rounded-lg p-6 animate-pulse">
+                  <div key={i} className="bg-background-tertiary rounded-lg p-6 animate-pulse">
                     <div className="h-5 bg-surface-secondary rounded w-1/2 mb-3" />
                     <div className="h-8 bg-surface-secondary rounded w-1/3 mb-2" />
                     <div className="h-4 bg-surface-secondary rounded w-2/3" />
@@ -118,7 +118,7 @@ export default function FanbaseHubPage() {
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
                   <div className="text-4xl mb-4">&#128293;</div>
-                  <h2 className="text-xl font-bold text-white mb-2">Fanbase Tracker Coming Soon</h2>
+                  <h2 className="text-xl font-bold text-text-primary mb-2">Fanbase Tracker Coming Soon</h2>
                   <p className="text-text-tertiary text-sm max-w-md mx-auto">
                     Fan sentiment data will populate here once the BSI Fanbase Updater worker is active.
                     Real-time polling captures the pulse of fan communities across every major sport.
@@ -132,7 +132,7 @@ export default function FanbaseHubPage() {
                     <Link href={`/fanbase/${team.teamSlug}`} className="block">
                       <Card variant="hover" padding="md">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-display text-lg font-bold text-white uppercase">
+                          <h3 className="font-display text-lg font-bold text-text-primary uppercase">
                             {team.team}
                           </h3>
                           <Badge variant="secondary" size="sm">{team.sport}</Badge>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
@@ -65,7 +65,7 @@ function GameCard({ game }: { game: ESPNGame }) {
 
   return (
     <Card variant="hover" padding="none" className={`overflow-hidden transition-all ${isLive ? 'border-success/50' : ''}`}>
-      <div className={`px-4 py-2 flex items-center justify-between ${isLive ? 'bg-success/20' : isCompleted ? 'bg-charcoal' : 'bg-burnt-orange/20'}`}>
+      <div className={`px-4 py-2 flex items-center justify-between ${isLive ? 'bg-success/20' : isCompleted ? 'bg-background-secondary' : 'bg-burnt-orange/20'}`}>
         <span className={`text-xs font-semibold uppercase ${isLive ? 'text-success' : isCompleted ? 'text-text-tertiary' : 'text-burnt-orange'}`}>
           {isLive && <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse mr-1.5" />}
           {statusText}
@@ -85,12 +85,12 @@ function GameCard({ game }: { game: ESPNGame }) {
                 {logoUrl ? (
                   <img src={logoUrl} alt="" className="w-8 h-8 object-contain" />
                 ) : (
-                  <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                  <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                     {team.team.abbreviation}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className={`font-semibold truncate ${isWinner ? 'text-white' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold truncate ${isWinner ? 'text-text-primary' : 'text-text-secondary'}`}>
                     {team.team.displayName}
                   </p>
                   {team.records?.[0]?.summary && (
@@ -98,7 +98,7 @@ function GameCard({ game }: { game: ESPNGame }) {
                   )}
                 </div>
               </div>
-              <span className={`text-2xl font-bold font-mono ${isWinner ? 'text-white' : team.score ? 'text-text-secondary' : 'text-text-tertiary'}`}>
+              <span className={`text-2xl font-bold font-mono ${isWinner ? 'text-text-primary' : team.score ? 'text-text-secondary' : 'text-text-tertiary'}`}>
                 {team.score ?? '-'}
               </span>
             </div>
@@ -161,7 +161,7 @@ export default function CFBScoresPage() {
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/cfb" className="text-text-tertiary hover:text-burnt-orange transition-colors">CFB</Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Scores</span>
+              <span className="text-text-primary font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -171,7 +171,7 @@ export default function CFBScoresPage() {
           <Container>
             <div className="flex items-center gap-3 mb-4">
               <Badge variant="primary">Live Scores</Badge>
-              {hasLive && <LiveBadge />}
+              {hasLive && <FreshnessBadge isLive fetchedAt={lastUpdated} />}
             </div>
             <ScrollReveal direction="up">
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">
@@ -193,7 +193,7 @@ export default function CFBScoresPage() {
                     className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
                       selectedDate === val
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                     }`}
                   >
                     {opt.label}
@@ -205,7 +205,7 @@ export default function CFBScoresPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-40 bg-graphite rounded-lg animate-pulse" />
+                  <div key={i} className="h-40 bg-background-tertiary rounded-lg animate-pulse" />
                 ))}
               </div>
             ) : error ? (

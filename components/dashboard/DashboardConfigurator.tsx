@@ -44,7 +44,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
   return (
     <Card padding="lg" className="max-w-lg mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display text-xl font-bold text-white">Customize Dashboard</h2>
+        <h2 className="font-display text-xl font-bold text-text-primary">Customize Dashboard</h2>
         <button onClick={onClose} className="text-text-tertiary hover:text-white transition-colors" aria-label="Close">&times;</button>
       </div>
       <div className="mb-6">

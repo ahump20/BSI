@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'NBA | Blaze Sports Intel',
   description: 'Live NBA scores, standings, team rosters, and player stats. Real-time basketball analytics powered by BSI.',
+  alternates: { canonical: '/nba' },
   openGraph: { title: 'NBA | Blaze Sports Intel', description: 'Live NBA scores, standings, and analytics.' },
 };
 

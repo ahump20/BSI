@@ -147,7 +147,7 @@ export default function PlayByPlay({
             className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
               filter === 'all'
                 ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-white/10'
+                : 'bg-graphite text-text-secondary hover:bg-surface'
             }`}
           >
             All ({plays.length})
@@ -157,7 +157,7 @@ export default function PlayByPlay({
             className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
               filter === 'scoring'
                 ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-white/10'
+                : 'bg-graphite text-text-secondary hover:bg-surface'
             }`}
           >
             Scoring ({scoringCount})
@@ -197,7 +197,7 @@ export default function PlayByPlay({
                   className={`px-4 py-3 border-b border-border-subtle transition-colors ${
                     play.isScoring
                       ? 'bg-burnt-orange/5 border-l-4 border-l-burnt-orange'
-                      : 'hover:bg-white/[0.02]'
+                      : 'hover:bg-surface-light'
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -208,7 +208,7 @@ export default function PlayByPlay({
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm leading-relaxed ${play.isScoring ? 'text-white font-medium' : 'text-text-secondary'}`}>
+                      <p className={`text-sm leading-relaxed ${play.isScoring ? 'text-text-primary font-medium' : 'text-text-secondary'}`}>
                         {play.description}
                       </p>
 

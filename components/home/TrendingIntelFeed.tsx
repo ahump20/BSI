@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { withAlpha } from '@/lib/utils/color';
 
 interface Article {
   headline: string;
@@ -38,9 +39,9 @@ function relativeTime(iso: string): string {
 const SPORT_COLORS: Record<string, string> = {
   mlb: '#C41E3A',
   nfl: '#013369',
-  nba: '#FF6B35',
-  ncaa: '#BF5700',
-  'college-baseball': '#BF5700',
+  nba: '#FF6B35', // token: --bsi-accent
+  ncaa: '#BF5700', // token: --bsi-primary
+  'college-baseball': '#BF5700', // token: --bsi-primary
 };
 
 export function TrendingIntelFeed() {
@@ -96,7 +97,7 @@ export function TrendingIntelFeed() {
 
   return (
     <div className="glass-default rounded-2xl p-6 h-full flex flex-col hover:shadow-glow-sm transition-shadow duration-300">
-      <h3 className="font-display text-lg text-white uppercase tracking-wide mb-4">
+      <h3 className="font-display text-lg text-text-primary uppercase tracking-wide mb-4">
         Trending Intel
       </h3>
 
@@ -104,33 +105,33 @@ export function TrendingIntelFeed() {
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 animate-pulse">
-              <div className="h-3 bg-white/5 rounded w-16" />
-              <div className="h-4 bg-white/5 rounded w-full" />
+              <div className="h-3 bg-surface-light rounded w-16" />
+              <div className="h-4 bg-surface-light rounded w-full" />
             </div>
           ))
         ) : error ? (
-          <p className="text-sm text-white/40 py-4 text-center">Intel feed temporarily unavailable.</p>
+          <p className="text-sm text-text-muted py-4 text-center">Intel feed temporarily unavailable.</p>
         ) : articles.length === 0 ? (
-          <p className="text-sm text-white/30 py-4 text-center">No intel available right now.</p>
+          <p className="text-sm text-text-muted py-4 text-center">No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
-            const color = SPORT_COLORS[article.sport] || '#BF5700';
+            const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary
             const inner = (
-              <div className="group/item py-2 border-b border-white/5 last:border-0">
+              <div className="group/item py-2 border-b border-border-subtle last:border-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span
                     className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-                    style={{ backgroundColor: `${color}20`, color }}
+                    style={{ backgroundColor: withAlpha(color, 0.12), color }}
                   >
                     {article.sport}
                   </span>
-                  <span className="text-[10px] text-white/30">{relativeTime(article.published)}</span>
+                  <span className="text-[10px] text-text-muted">{relativeTime(article.published)}</span>
                 </div>
-                <p className="text-sm text-white/80 leading-snug line-clamp-1 group-hover/item:text-white transition-colors">
+                <p className="text-sm text-text-primary leading-snug line-clamp-1 group-hover/item:text-text-primary transition-colors">
                   {article.headline}
                 </p>
                 {article.description && (
-                  <p className="text-xs text-white/30 mt-0.5 line-clamp-1 hidden lg:block">
+                  <p className="text-xs text-text-muted mt-0.5 line-clamp-1 hidden lg:block">
                     {article.description}
                   </p>
                 )}

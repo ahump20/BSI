@@ -98,7 +98,7 @@ export const loaderStyles = `
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 107, 53, 0.3);
-  border-top-color: #ff6b35;
+  border-top-color: var(--bsi-accent, #ff6b35);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -133,8 +133,8 @@ export const loaderStyles = `
 .error-retry {
   padding: 0.5rem 1rem;
   background: rgba(255, 107, 53, 0.2);
-  border: 1px solid #ff6b35;
-  color: #ff6b35;
+  border: 1px solid var(--bsi-accent, #ff6b35);
+  color: var(--bsi-accent, #ff6b35);
   cursor: pointer;
   transition: all 0.3s;
 }

@@ -27,14 +27,14 @@ interface DataSourcePanelProps {
 
 export function DataSourcePanel({ sources, lastUpdated, refreshInterval, className = '' }: DataSourcePanelProps) {
   return (
-    <div className={`bg-white/5 border border-white/10 rounded-xl p-4 ${className}`}>
+    <div className={`bg-surface-light border border-border rounded-xl p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-white/30" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
-        <span className="text-xs text-white/40 font-semibold uppercase tracking-wider">Data Sources</span>
+        <span className="text-xs text-text-muted font-semibold uppercase tracking-wider">Data Sources</span>
         {refreshInterval && (
-          <span className="ml-auto text-xs text-white/30">Refreshing every {refreshInterval}s</span>
+          <span className="ml-auto text-xs text-text-muted">Refreshing every {refreshInterval}s</span>
         )}
       </div>
       <div className="flex flex-wrap gap-3">
@@ -44,14 +44,14 @@ export function DataSourcePanel({ sources, lastUpdated, refreshInterval, classNa
             href={source.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+            className="text-xs text-burnt-orange hover:text-ember transition-colors"
           >
             {source.name}
           </a>
         ))}
       </div>
       {lastUpdated && (
-        <p className="text-xs text-white/20 mt-2">
+        <p className="text-xs text-text-muted mt-2">
           Last updated: {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })} CT
         </p>
       )}
@@ -77,7 +77,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-white/10 ${className}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 bg-midnight/95 backdrop-blur-md border-t border-border ${className}`}
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="navigation"
       aria-label="Bottom navigation"
@@ -94,7 +94,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
                 key={item.label}
                 onClick={item.onPress}
                 className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
-                  active ? 'text-[#BF5700]' : 'text-white/40'
+                  active ? 'text-burnt-orange' : 'text-text-muted'
                 }`}
               >
                 {Icon && <Icon className="w-5 h-5" />}
@@ -108,7 +108,7 @@ export function BottomNav({ items, className = '' }: { items: BottomNavItem[]; c
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center gap-0.5 min-w-[48px] min-h-[48px] transition-colors ${
-                active ? 'text-[#BF5700]' : 'text-white/40 hover:text-white'
+                active ? 'text-burnt-orange' : 'text-text-muted hover:text-text-primary'
               }`}
               aria-current={active ? 'page' : undefined}
             >
@@ -134,22 +134,22 @@ export function CitationFooter({ sources, source, fetchedAt, additionalSources, 
   const resolvedSources = sources ?? (source ? [{ name: source, url: '', fetchedAt: fetchedAt ?? '' }] : []);
   if (resolvedSources.length === 0) return null;
   return (
-    <footer className={`border-t border-white/10 pt-4 mt-8 ${className}`}>
-      <p className="text-xs text-white/30 mb-2">Sources</p>
+    <footer className={`border-t border-border pt-4 mt-8 ${className}`}>
+      <p className="text-xs text-text-muted mb-2">Sources</p>
       <div className="flex flex-wrap gap-2">
         {resolvedSources.map((s) => (
           s.url ? (
-            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#BF5700] hover:text-[#FF6B35] transition-colors">{s.name}</a>
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-xs text-burnt-orange hover:text-ember transition-colors">{s.name}</a>
           ) : (
-            <span key={s.name} className="text-xs text-white/40">{s.name}</span>
+            <span key={s.name} className="text-xs text-text-muted">{s.name}</span>
           )
         ))}
         {additionalSources?.map((s) => (
-          <span key={s} className="text-xs text-white/40">{s}</span>
+          <span key={s} className="text-xs text-text-muted">{s}</span>
         ))}
       </div>
       {showFreshness && fetchedAt && (
-        <p className="text-[10px] text-white/20 mt-1">Last updated: {fetchedAt}</p>
+        <p className="text-[10px] text-text-muted mt-1">Last updated: {fetchedAt}</p>
       )}
     </footer>
   );
@@ -157,7 +157,7 @@ export function CitationFooter({ sources, source, fetchedAt, additionalSources, 
 
 export function DataDisclaimer({ className = '' }: { className?: string }) {
   return (
-    <p className={`text-[10px] text-white/20 ${className}`}>
+    <p className={`text-[10px] text-text-muted ${className}`}>
       Data is provided for informational purposes only. Stats may be delayed or incomplete.
     </p>
   );

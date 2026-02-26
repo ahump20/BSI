@@ -17,6 +17,7 @@ import {
   getScoreboard,
   transformScoreboard,
 } from '../../lib/api-clients/espn-api';
+import { processFinishedGames } from './college-baseball';
 import {
   transformSDIOMLBScores,
   transformSDIONFLScores,
@@ -85,8 +86,8 @@ async function fetchMLBScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIOMLBScores(await sdio.getMLBScores());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO MLB failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('mlb', todayESPN());
@@ -99,8 +100,8 @@ async function fetchNFLScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIONFLScores(await sdio.getNFLScoresByDate());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO NFL failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nfl', todayESPN());
@@ -113,8 +114,8 @@ async function fetchNBAScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIONBAScores(await sdio.getNBAScores());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO NBA failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nba', todayESPN());
@@ -158,15 +159,15 @@ async function cacheRankings(env: Env): Promise<boolean> {
         if (result.success && result.data) {
           const payload = {
             rankings: result.data,
-            meta: { dataSource: 'highlightly', lastUpdated: result.timestamp, sport: 'college-baseball' },
+            meta: { source: 'highlightly', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' },
           };
           await kvPut(env.KV, key, payload, 86400); // 24 hours
           // Also write to the handler's cache key so the handler reads it
           await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);
           return true;
         }
-      } catch {
-        // Fall through
+      } catch (err) {
+        console.log(`[cron] Highlightly rankings failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
       }
     }
 
@@ -184,7 +185,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
         const payload = {
           rankings,
           timestamp: now,
-          meta: { dataSource: 'espn', lastUpdated: now, sport: 'college-baseball' },
+          meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball' },
         };
         await kvPut(env.KV, key, payload, 86400);
         await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);
@@ -199,7 +200,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
       const payload = {
         rankings: result.data,
         timestamp: result.timestamp,
-        meta: { dataSource: 'ncaa', lastUpdated: result.timestamp, sport: 'college-baseball' },
+        meta: { source: 'ncaa', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' },
       };
       await kvPut(env.KV, key, payload, 86400);
       await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);
@@ -361,6 +362,69 @@ export async function handleScheduled(env: Env): Promise<void> {
     checkedAt: now,
     activeSports,
   }, 300); // 5-minute TTL
+
+  // Ingest finished college baseball box scores every 10 minutes
+  if (ncaaActive) {
+    try {
+      const ingestGateKey = 'cron:cbb:ingest:last';
+      const lastIngest = await kvGet<string>(env.KV, ingestGateKey);
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+      if (!lastIngest || lastIngest < tenMinAgo) {
+        const ingestResult = await processFinishedGames(env, date);
+        await kvPut(env.KV, ingestGateKey, now, 900); // 15-min TTL
+        console.log(`[cron] Stats ingested: ${ingestResult.processed} games, ${ingestResult.skipped} skipped, ${ingestResult.errors.length} errors`);
+
+        // Invalidate caches so next request picks up fresh data + sabermetrics derivation
+        if (ingestResult.processed > 0) {
+          await env.KV.delete('cb:leaders');
+          await env.KV.delete('cb:saber:league:2026');
+
+          // Invalidate team-level KV caches for affected teams
+          if (ingestResult.affectedTeamIds?.length) {
+            const espnToSlug = new Map<string, string>();
+            for (const [slug, meta] of Object.entries(teamMetadata)) {
+              if (meta.espnId) espnToSlug.set(String(meta.espnId), slug);
+            }
+            const toDelete = ingestResult.affectedTeamIds
+              .map(id => ({ espnId: id, slug: espnToSlug.get(id) }))
+              .filter((e): e is { espnId: string; slug: string } => !!e.slug);
+            const unmapped = ingestResult.affectedTeamIds.filter(id => !espnToSlug.has(id));
+
+            const deleteResults = await Promise.allSettled(
+              toDelete.map(async ({ slug }) => {
+                await env.KV.delete(`cb:team:${slug}`);
+                return slug;
+              })
+            );
+            const invalidated = deleteResults
+              .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled')
+              .map(r => r.value);
+            const failedDeletes = deleteResults.filter(r => r.status === 'rejected').length;
+
+            if (invalidated.length > 0) {
+              console.log(`[cron] Invalidated team caches: ${invalidated.join(', ')}`);
+            }
+            if (failedDeletes > 0) {
+              console.log(`[cron] Failed to invalidate ${failedDeletes} team cache(s)`);
+            }
+            if (unmapped.length > 0) {
+              console.log(`[cron] Unmapped espnIds (no teamMetadata): ${unmapped.join(', ')}`);
+            }
+          }
+
+          console.log('[cron] Invalidated leaders + sabermetrics caches after ingest');
+        }
+      }
+    } catch (err) {
+      await logError(env, `cron:stats-ingest: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-ingest');
+    }
+  }
+
+  // NOTE: The full backfill sync (syncTeamCumulativeStats) iterates scoreboards
+  // day-by-day — too expensive for recurring cron. Use the admin endpoint
+  // /api/college-baseball/sync-stats?team=<id>&key=<admin_key> for backfills.
+  // Daily processFinishedGames above now captures OBP/SLG from box scores,
+  // enabling sabermetric derivation of 2B/3B/HBP in downstream handlers.
 
   // Populate search index once per day (gated by KV timestamp)
   try {

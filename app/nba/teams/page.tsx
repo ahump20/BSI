@@ -48,10 +48,10 @@ function SkeletonTeamCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-graphite rounded-full" />
+        <div className="w-16 h-16 bg-background-tertiary rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-graphite rounded w-3/4" />
-          <div className="h-4 bg-graphite/50 rounded w-1/2" />
+          <div className="h-5 bg-background-tertiary rounded w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-1/2" />
         </div>
       </div>
     </Card>
@@ -60,7 +60,7 @@ function SkeletonTeamCard() {
 
 function TeamCard({ team }: { team: NBATeam }) {
   const logoUrl = team.logos?.[0]?.href;
-  const teamColor = team.color ? `#${team.color}` : '#BF5700';
+  const teamColor = team.color ? `#${team.color}` : 'var(--bsi-primary)';
 
   return (
     <Link href={`/nba/teams/${team.id}`}>
@@ -92,7 +92,7 @@ function TeamCard({ team }: { team: NBATeam }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-white text-lg truncate">{team.name}</h3>
+            <h3 className="font-display font-bold text-text-primary text-lg truncate">{team.name}</h3>
             <p className="text-text-secondary text-sm">{team.location}</p>
           </div>
 
@@ -173,7 +173,7 @@ export default function NBATeamsPage() {
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Teams</span>
+              <span className="text-text-primary font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -216,7 +216,7 @@ export default function NBATeamsPage() {
                     className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
                       selectedConference === conf
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
                     }`}
                   >
                     {conf === 'All' ? 'All Teams' : `${conf} Conference`}
@@ -231,12 +231,12 @@ export default function NBATeamsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
                   >
                     ✕
                   </button>
@@ -286,7 +286,7 @@ export default function NBATeamsPage() {
                         return (
                           <ScrollReveal key={division} direction="up" delay={divIndex * 100}>
                             <div>
-                              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                              <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                                 <span className="w-2 h-2 bg-burnt-orange rounded-full" />
                                 {division} Division
                               </h3>
@@ -340,19 +340,19 @@ export default function NBATeamsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/news"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Latest News →
               </Link>

@@ -31,16 +31,16 @@ type SortKey = 'composite' | 'hScore' | 'aScore' | 'vScore' | 'fScore' | 'player
 type SortDir = 'asc' | 'desc';
 
 function ComponentBar({ value, label }: { value: number; label: string }) {
-  const intensity = value >= 80 ? '#FF6B35' : value >= 60 ? '#BF5700' : 'rgba(255,255,255,0.3)';
+  const intensity = value >= 80 ? 'var(--bsi-accent)' : value >= 60 ? 'var(--bsi-primary)' : 'rgba(255,255,255,0.3)';
   return (
     <div className="flex items-center gap-1.5 min-w-[60px]" title={`${label}: ${value.toFixed(1)}`}>
-      <div className="flex-1 h-[6px] rounded-full bg-white/[0.04] overflow-hidden">
+      <div className="flex-1 h-[6px] rounded-full bg-surface-light overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${value}%`, backgroundColor: intensity }}
         />
       </div>
-      <span className="text-[10px] font-mono text-white/30 tabular-nums w-5 text-right">
+      <span className="text-[10px] font-mono text-text-muted tabular-nums w-5 text-right">
         {Math.round(value)}
       </span>
     </div>
@@ -92,7 +92,7 @@ export function HAVFLeaderboard({
     <button
       onClick={() => handleSort(k)}
       className={`flex items-center gap-1 text-[10px] font-display uppercase tracking-widest transition-colors ${
-        sortKey === k ? 'text-[#BF5700]' : 'text-white/30 hover:text-white/50'
+        sortKey === k ? 'text-burnt-orange' : 'text-text-muted hover:text-text-muted'
       } ${cls}`}
     >
       {label}
@@ -103,11 +103,11 @@ export function HAVFLeaderboard({
   );
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
-        <h3 className="font-display text-base uppercase tracking-wider text-white">{title}</h3>
-        <span className="text-[10px] font-mono text-white/20 tabular-nums">
+      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+        <h3 className="font-display text-base uppercase tracking-wider text-text-primary">{title}</h3>
+        <span className="text-[10px] font-mono text-text-muted tabular-nums">
           {players.length} player{players.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -116,15 +116,15 @@ export function HAVFLeaderboard({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.04]">
+            <tr className="border-b border-border-subtle">
               <th className="pl-5 pr-2 py-3 text-left">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">#</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">#</span>
               </th>
               <th className="px-2 py-3 text-left">
                 <SortHeader k="playerName" label="Player" />
               </th>
               <th className="px-2 py-3 text-left hidden sm:table-cell">
-                <span className="text-[10px] font-display uppercase tracking-widest text-white/30">Team</span>
+                <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Team</span>
               </th>
               <th className="px-2 py-3 text-center">
                 <SortHeader k="composite" label="HAV-F" className="justify-center" />
@@ -154,14 +154,14 @@ export function HAVFLeaderboard({
                 <tr
                   key={player.playerId}
                   onClick={() => onPlayerClick?.(player.playerId)}
-                  className={`border-b border-white/[0.02] transition-colors ${
-                    onPlayerClick ? 'cursor-pointer hover:bg-white/[0.03]' : ''
-                  } ${rank <= 3 ? 'bg-[#BF5700]/[0.03]' : ''}`}
+                  className={`border-b border-border-subtle transition-colors ${
+                    onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
+                  } ${rank <= 3 ? 'bg-burnt-orange/[0.03]' : ''}`}
                 >
                   <td className="pl-5 pr-2 py-3">
                     <span
                       className={`text-xs font-mono tabular-nums ${
-                        rank <= 3 ? 'text-[#BF5700] font-bold' : 'text-white/20'
+                        rank <= 3 ? 'text-burnt-orange font-bold' : 'text-text-muted'
                       }`}
                     >
                       {rank}
@@ -169,14 +169,14 @@ export function HAVFLeaderboard({
                   </td>
                   <td className="px-2 py-3">
                     <div>
-                      <span className="text-white font-medium text-sm">{player.playerName}</span>
+                      <span className="text-text-primary font-medium text-sm">{player.playerName}</span>
                       {player.position && (
-                        <span className="ml-1.5 text-[10px] text-white/25 uppercase">{player.position}</span>
+                        <span className="ml-1.5 text-[10px] text-text-muted uppercase">{player.position}</span>
                       )}
                     </div>
                   </td>
                   <td className="px-2 py-3 hidden sm:table-cell">
-                    <span className="text-white/40 text-xs">{player.team}</span>
+                    <span className="text-text-muted text-xs">{player.team}</span>
                   </td>
                   <td className="px-2 py-3 text-center">
                     <HAVFBadge score={player.composite} size="sm" />
@@ -206,10 +206,10 @@ export function HAVFLeaderboard({
 
       {/* Show more */}
       {!showAll && players.length > initialRows && (
-        <div className="px-5 py-3 border-t border-white/[0.04] text-center">
+        <div className="px-5 py-3 border-t border-border-subtle text-center">
           <button
             onClick={() => setShowAll(true)}
-            className="text-xs text-[#BF5700] hover:text-[#FF6B35] font-medium transition-colors"
+            className="text-xs text-burnt-orange hover:text-ember font-medium transition-colors"
           >
             Show all {players.length} players
           </button>

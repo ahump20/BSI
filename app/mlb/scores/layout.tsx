@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'MLB Live Scores | BSI',
-  description: 'Real-time MLB scores and game updates for all 30 teams. Live box scores, line scores, and play-by-play.',
+  title: 'MLB Scores Today | Blaze Sports Intel',
+  description: 'Live MLB scores with real-time updates, box scores, and line scores for every game across the American and National Leagues.',
+  alternates: { canonical: '/mlb/scores' },
+  openGraph: {
+    title: 'MLB Scores Today | Blaze Sports Intel',
+    description: 'Live MLB scores with real-time box score updates.',
+  },
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function MLBScoresLayout({ children }: { children: ReactNode }) {
   return children;
 }

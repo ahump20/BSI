@@ -28,13 +28,13 @@ export function MMIMiniIndicator({ value, favoredTeam, className = '' }: MMIMini
     color = 'rgba(255,255,255,0.2)';
     arrow = '\u2194'; // ↔
   } else if (abs >= 75) {
-    color = isHome ? '#FF6B35' : '#6B8DB2';
+    color = isHome ? 'var(--bsi-accent)' : '#6B8DB2';
     arrow = isHome ? '\u25B6\u25B6' : '\u25C0\u25C0'; // ▶▶ or ◀◀
   } else if (abs >= 40) {
-    color = isHome ? '#BF5700' : '#6B8DB2';
+    color = isHome ? 'var(--bsi-primary)' : '#6B8DB2';
     arrow = isHome ? '\u25B6' : '\u25C0'; // ▶ or ◀
   } else {
-    color = isHome ? 'rgba(191,87,0,0.6)' : 'rgba(107,141,178,0.6)';
+    color = isHome ? 'color-mix(in srgb, var(--bsi-primary) 60%, transparent)' : 'rgba(107,141,178,0.6)';
     arrow = isHome ? '\u25B8' : '\u25C2'; // ▸ or ◂
   }
 

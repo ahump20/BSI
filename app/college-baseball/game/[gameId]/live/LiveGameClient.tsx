@@ -5,7 +5,7 @@ import { useGameData } from '../layout';
 import Linescore from '@/components/college-baseball/Linescore';
 import PlayByPlay from '@/components/college-baseball/PlayByPlay';
 import MatchupCard from '@/components/college-baseball/MatchupCard';
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
 // =============================================================================
@@ -37,10 +37,10 @@ function CollapsibleBoxScore({
     <Card variant="default" padding="none" className="overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-3 flex items-center justify-between bg-charcoal hover:bg-white/5 transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between bg-background-secondary hover:bg-surface-light transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-midnight rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange relative">
+          <div className="w-8 h-8 bg-background-primary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange relative">
             {team.abbreviation}
             {team.ranking && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-burnt-orange text-white text-[9px] font-bold rounded-full flex items-center justify-center">
@@ -49,7 +49,7 @@ function CollapsibleBoxScore({
             )}
           </div>
           <div className="text-left">
-            <p className="text-white font-semibold text-sm">{team.name}</p>
+            <p className="text-text-primary font-semibold text-sm">{team.name}</p>
             {team.record && <p className="text-text-tertiary text-xs">{team.record}</p>}
           </div>
           <span className="text-text-tertiary text-xs ml-2">{label}</span>
@@ -69,7 +69,7 @@ function CollapsibleBoxScore({
         <div className="border-t border-border-subtle">
           {/* Batting */}
           <div>
-            <div className="px-4 py-2 bg-graphite border-b border-border-subtle">
+            <div className="px-4 py-2 bg-background-tertiary border-b border-border-subtle">
               <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
                 Batting
               </span>
@@ -90,16 +90,16 @@ function CollapsibleBoxScore({
                 </thead>
                 <tbody>
                   {batting.map((b, i) => (
-                    <tr key={i} className="border-b border-border-subtle hover:bg-white/[0.03] transition-colors">
+                    <tr key={i} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                       <td className="p-2.5">
                         <div className="flex items-center gap-1.5">
                           <span className="text-text-tertiary text-xs w-5">{b.player.position}</span>
-                          <span className="text-white font-medium text-sm">{b.player.name}</span>
+                          <span className="text-text-primary font-medium text-sm">{b.player.name}</span>
                         </div>
                       </td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.ab}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.r}</td>
-                      <td className="text-center p-2.5 font-mono text-white font-semibold text-sm">{b.h}</td>
+                      <td className="text-center p-2.5 font-mono text-text-primary font-semibold text-sm">{b.h}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.rbi}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.bb}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{b.so}</td>
@@ -113,7 +113,7 @@ function CollapsibleBoxScore({
 
           {/* Pitching */}
           <div>
-            <div className="px-4 py-2 bg-graphite border-b border-border-subtle">
+            <div className="px-4 py-2 bg-background-tertiary border-b border-border-subtle">
               <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
                 Pitching
               </span>
@@ -134,10 +134,10 @@ function CollapsibleBoxScore({
                 </thead>
                 <tbody>
                   {pitching.map((p, i) => (
-                    <tr key={i} className="border-b border-border-subtle hover:bg-white/[0.03] transition-colors">
+                    <tr key={i} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                       <td className="p-2.5">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium text-sm">{p.player.name}</span>
+                          <span className="text-text-primary font-medium text-sm">{p.player.name}</span>
                           {p.decision && (
                             <Badge
                               variant={p.decision === 'W' ? 'success' : p.decision === 'L' ? 'error' : 'secondary'}
@@ -148,7 +148,7 @@ function CollapsibleBoxScore({
                           )}
                         </div>
                       </td>
-                      <td className="text-center p-2.5 font-mono text-white font-semibold text-sm">{p.ip}</td>
+                      <td className="text-center p-2.5 font-mono text-text-primary font-semibold text-sm">{p.ip}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.h}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.r}</td>
                       <td className="text-center p-2.5 font-mono text-text-secondary text-sm">{p.er}</td>

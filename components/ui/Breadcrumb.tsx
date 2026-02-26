@@ -27,13 +27,13 @@ export function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
           return (
             <li key={item.href ?? item.label} className="flex items-center gap-1">
               {i > 0 && (
-                <span className="text-white/20 select-none" aria-hidden="true">
+                <span className="text-text-muted select-none" aria-hidden="true">
                   /
                 </span>
               )}
               {isLast || !item.href ? (
                 <span
-                  className="text-[#BF5700] font-semibold truncate max-w-[200px]"
+                  className="text-burnt-orange font-semibold truncate max-w-[200px]"
                   aria-current="page"
                 >
                   {item.label}
@@ -41,7 +41,7 @@ export function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
               ) : (
                 <Link
                   href={item.href}
-                  className="text-white/40 hover:text-[#BF5700] transition-colors truncate max-w-[200px]"
+                  className="text-text-muted hover:text-burnt-orange transition-colors truncate max-w-[200px]"
                 >
                   {item.label}
                 </Link>

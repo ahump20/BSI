@@ -22,7 +22,7 @@ function parseNumeric(value: string): { num: number; suffix: string } | null {
  */
 export function StatsBand() {
   return (
-    <section className="py-10 border-y border-white/5 bg-[#0D0D12]">
+    <section className="py-10 border-y border-border-subtle bg-background-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map((stat) => {
@@ -30,14 +30,14 @@ export function StatsBand() {
 
             return (
               <div key={stat.label}>
-                <p className="text-3xl md:text-4xl font-display font-bold text-[#BF5700]">
+                <p className="text-3xl md:text-4xl font-display font-bold text-burnt-orange">
                   {parsed ? (
                     <AnimatedCounter end={parsed.num} suffix={parsed.suffix} />
                   ) : (
                     stat.value
                   )}
                 </p>
-                <p className="text-sm text-white/50 mt-1 uppercase tracking-wider">
+                <p className="text-sm text-text-muted mt-1 uppercase tracking-wider">
                   {stat.label}
                 </p>
               </div>

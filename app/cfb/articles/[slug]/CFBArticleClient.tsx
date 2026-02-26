@@ -116,7 +116,7 @@ export function CFBArticleClient() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <h1 className="text-2xl font-semibold text-white mb-4">{error}</h1>
+                  <h1 className="text-2xl font-semibold text-text-primary mb-4">{error}</h1>
                   <p className="text-text-tertiary mb-6">
                     The article you&apos;re looking for doesn&apos;t exist or has been removed.
                   </p>
@@ -146,7 +146,7 @@ export function CFBArticleClient() {
                       )}
                     </div>
 
-                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-white mb-4">
+                    <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-text-primary mb-4">
                       {article.title}
                     </h1>
 
@@ -176,9 +176,9 @@ export function CFBArticleClient() {
                   {article.home_team_name && article.away_team_name && (
                     <Card variant="default" padding="md" className="mb-8">
                       <div className="flex items-center justify-center gap-4 text-lg font-semibold">
-                        <span className="text-white">{article.away_team_name}</span>
+                        <span className="text-text-primary">{article.away_team_name}</span>
                         <span className="text-text-tertiary">@</span>
-                        <span className="text-white">{article.home_team_name}</span>
+                        <span className="text-text-primary">{article.home_team_name}</span>
                       </div>
                       {article.game_date && (
                         <div className="text-center text-sm text-text-tertiary mt-2">

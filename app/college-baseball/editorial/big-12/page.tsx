@@ -3,7 +3,6 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import type { Metadata } from 'next';
@@ -26,9 +25,9 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Rebuildi
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
   Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-white/10 text-white/70 border-white/20',
-  Bubble: 'bg-white/5 text-white/40 border-white/10',
-  Rebuilding: 'bg-white/[0.03] text-white/25 border-white/5',
+  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
+  Bubble: 'bg-surface-light text-text-muted border-border',
+  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
 };
 
 function TierBadge({ tier }: { tier: string }) {
@@ -100,21 +99,21 @@ const STORYLINES: Storyline[] = [
 function TeamPreviewCard({ team }: { team: TeamCard }) {
   return (
     <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-white/[0.06] transition-all h-full">
+      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-surface-medium transition-all h-full">
         <div className="flex items-start justify-between mb-2">
           <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
+            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
               {team.name}
             </h4>
-            <p className="text-white/30 text-xs">{team.mascot}</p>
+            <p className="text-text-muted text-xs">{team.mascot}</p>
           </div>
           <TierBadge tier={team.tier} />
         </div>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-white/40 text-xs font-mono">{team.record}</span>
+          <span className="text-text-muted text-xs font-mono">{team.record}</span>
           <svg
             viewBox="0 0 24 24"
-            className="w-3.5 h-3.5 text-white/15 group-hover:text-burnt-orange/60 transition-colors"
+            className="w-3.5 h-3.5 text-text-muted group-hover:text-burnt-orange/60 transition-colors"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -134,24 +133,24 @@ export default function Big12EditorialPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link
                 href="/college-baseball"
-                className="text-white/40 hover:text-burnt-orange transition-colors"
+                className="text-text-muted hover:text-burnt-orange transition-colors"
               >
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
+              <span className="text-text-muted">/</span>
               <Link
                 href="/college-baseball/editorial"
-                className="text-white/40 hover:text-burnt-orange transition-colors"
+                className="text-text-muted hover:text-burnt-orange transition-colors"
               >
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Big 12</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Big 12</span>
             </nav>
           </Container>
         </Section>
@@ -169,7 +168,7 @@ export default function Big12EditorialPage() {
                   Big 12 Baseball:{' '}
                   <span className="text-burnt-orange">New Blood</span>
                 </h1>
-                <p className="text-white/50 text-lg leading-relaxed">
+                <p className="text-text-tertiary text-lg leading-relaxed">
                   The conference has been reshaped by expansion. Arizona, Arizona State, BYU,
                   Cincinnati, Colorado, Houston, UCF, and Utah arrived — bringing new recruiting
                   pipelines, regional baseball cultures, and a depth the Big 12 has never had.
@@ -181,28 +180,28 @@ export default function Big12EditorialPage() {
 
             {/* Stats Band */}
             <ScrollReveal direction="up" delay={100}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-white/[0.03] border border-white/[0.06] rounded-xl p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center bg-surface-light border border-border-subtle rounded-xl p-6">
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">14</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Programs
                   </div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">5</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Dark Horse+
                   </div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-ember">TCU</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Conference Headliner
                   </div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">8</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">
                     Expansion Additions
                   </div>
                 </div>
@@ -218,11 +217,11 @@ export default function Big12EditorialPage() {
               <div className="max-w-3xl mx-auto">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-white">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                     The Conference, Transformed
                   </h2>
                 </div>
-                <div className="space-y-5 text-white/60 leading-relaxed">
+                <div className="space-y-5 text-text-tertiary leading-relaxed">
                   <p>
                     Two years ago, the Big 12 was a six-team baseball conference trying to
                     justify its Power Five status on the diamond. Texas and Oklahoma had left.
@@ -262,11 +261,11 @@ export default function Big12EditorialPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-white">
+                    <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                       All 14 Team Previews
                     </h2>
                   </div>
-                  <p className="text-white/40 text-sm ml-4 pl-3">
+                  <p className="text-text-muted text-sm ml-4 pl-3">
                     Sorted by projection tier — full scouting breakdowns for every program
                   </p>
                 </div>
@@ -288,7 +287,7 @@ export default function Big12EditorialPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-1 h-8 rounded-full bg-ember" />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-white">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                   Key Storylines
                 </h2>
               </div>
@@ -300,7 +299,7 @@ export default function Big12EditorialPage() {
                     <h3 className="font-display text-sm font-bold text-burnt-orange uppercase tracking-wide mb-3">
                       {story.title}
                     </h3>
-                    <p className="text-white/50 text-sm leading-relaxed">{story.body}</p>
+                    <p className="text-text-tertiary text-sm leading-relaxed">{story.body}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -312,7 +311,7 @@ export default function Big12EditorialPage() {
         <Section padding="md" borderTop>
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
                 More Conference Previews
               </h2>
             </ScrollReveal>
@@ -329,8 +328,8 @@ export default function Big12EditorialPage() {
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#C9A227] group-hover:brightness-125 transition-all">
                         SEC
                       </h3>
-                      <p className="text-white/40 text-sm mt-1 italic">The Standard</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-white/30">
+                      <p className="text-text-muted text-sm mt-1 italic">The Standard</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
                         <span>16 teams</span>
                         <span>13 ranked</span>
                       </div>
@@ -362,8 +361,8 @@ export default function Big12EditorialPage() {
                       <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#6B8CAE] group-hover:brightness-125 transition-all">
                         Big Ten
                       </h3>
-                      <p className="text-white/40 text-sm mt-1 italic">Northern Rising</p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-white/30">
+                      <p className="text-text-muted text-sm mt-1 italic">Northern Rising</p>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
                         <span>17 teams</span>
                         <span>3 ranked</span>
                       </div>
@@ -391,7 +390,7 @@ export default function Big12EditorialPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-white/20 text-xs">
+              <p className="text-text-muted text-xs">
                 Data: ESPN / SportsDataIO / D1Baseball — February 2026
               </p>
               <div className="flex items-center gap-4">
@@ -403,7 +402,7 @@ export default function Big12EditorialPage() {
                 </Link>
                 <Link
                   href="/college-baseball"
-                  className="text-sm text-white/30 hover:text-white/50 transition-colors"
+                  className="text-sm text-text-muted hover:text-text-secondary transition-colors"
                 >
                   College Baseball
                 </Link>

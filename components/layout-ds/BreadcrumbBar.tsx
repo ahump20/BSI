@@ -30,6 +30,26 @@ const SEGMENT_LABELS: Record<string, string> = {
   compare: 'Compare',
   trends: 'Trends',
   live: 'Live',
+  conferences: 'Conferences',
+  // Conference slugs
+  sec: 'SEC',
+  acc: 'ACC',
+  'big-12': 'Big 12',
+  'big-ten': 'Big Ten',
+  'pac-12': 'Pac-12',
+  'big-east': 'Big East',
+  aac: 'AAC',
+  'sun-belt': 'Sun Belt',
+  'mountain-west': 'Mountain West',
+  'c-usa': 'C-USA',
+  'a-10': 'A-10',
+  colonial: 'Colonial',
+  'missouri-valley': 'Missouri Valley',
+  wcc: 'WCC',
+  'big-west': 'Big West',
+  southland: 'Southland',
+  asun: 'ASUN',
+  wac: 'WAC',
 };
 
 /** Convert a URL slug to a display label. */

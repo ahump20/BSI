@@ -101,12 +101,16 @@ function ErrorState({ message }: { message: string }) {
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
   const clientSecret = searchParams.get('client_secret');
   const [error, setError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   // Validate client secret format
   useEffect(() => {
+    // Skip validation when returning from Stripe with session_id
+    if (sessionId && !clientSecret) return;
+
     if (!clientSecret) {
       setError('No checkout session found. Please select a plan from pricing.');
       return;
@@ -119,13 +123,21 @@ function CheckoutContent() {
     }
 
     setIsReady(true);
-  }, [clientSecret]);
+  }, [clientSecret, sessionId]);
 
   // Callback for EmbeddedCheckoutProvider
   const fetchClientSecret = useCallback(async () => {
     // Client secret already provided via URL param
     return clientSecret as string;
   }, [clientSecret]);
+
+  // Post-payment return from Stripe — redirect to the verified return page
+  if (sessionId && !clientSecret) {
+    if (typeof window !== 'undefined') {
+      window.location.href = `/checkout/return/?session_id=${sessionId}`;
+    }
+    return <LoadingState />;
+  }
 
   // Error state
   if (error) {

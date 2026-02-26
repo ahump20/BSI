@@ -68,6 +68,7 @@ export default function IntelDashboard() {
         newsLoading,
         isLoading,
         isError,
+        lastFetched,
   } = useIntelDashboard(sport, mode, teamLens);
 
   const { toggle: togglePin, isPinned } = usePinnedBriefing();
@@ -134,8 +135,8 @@ export default function IntelDashboard() {
         return (
                 <div className="flex min-h-[60vh] items-center justify-center">
                         <div className="text-center">
-                                  <p className="font-display text-lg text-white/60">Unable to load intel data</p>
-                                  <p className="mt-1 font-mono text-[12px] text-white/30">
+                                  <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
+                                  <p className="mt-1 font-mono text-[12px] text-text-muted">
                                               Check network connection or try refreshing
                                   </p>
                         </div>
@@ -154,6 +155,7 @@ export default function IntelDashboard() {
                           onOpenPalette={handleOpenPalette}
                           liveCount={liveCount}
                           briefingLine={briefingLine}
+                          fetchedAt={lastFetched ? new Date(lastFetched).toISOString() : undefined}
                         />
 
                 <hr className="intel-masthead-rule" />

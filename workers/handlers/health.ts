@@ -80,6 +80,43 @@ export async function handleAdminHealth(env: Env): Promise<Response> {
   });
 }
 
+/**
+ * Public system status — reads synthetic monitor results from MONITOR_KV.
+ * GET /api/status
+ */
+export async function handleStatus(env: Env): Promise<Response> {
+  if (!env.MONITOR_KV) {
+    return json({
+      status: 'unknown',
+      message: 'Monitor KV not configured',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  try {
+    const raw = await env.MONITOR_KV.get('summary:latest', 'text');
+    if (!raw) {
+      return json({
+        status: 'unknown',
+        message: 'No monitor data available yet',
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    const summary = JSON.parse(raw);
+    return json({
+      ...summary,
+      meta: { source: 'bsi-synthetic-monitor', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    return json({
+      status: 'error',
+      error: err instanceof Error ? err.message : 'Failed to read monitor data',
+      timestamp: new Date().toISOString(),
+    }, 500);
+  }
+}
+
 export async function handleAdminErrors(url: URL, env: Env): Promise<Response> {
   const errorKv = env.ERROR_LOG ?? env.KV;
   const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '50', 10) || 50, 200);

@@ -14,16 +14,16 @@ export default function CollegeBaseballGamesPage() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">College Baseball</Link>
-              <span className="text-white/40">/</span>
-              <span className="text-white">Schedule</span>
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">College Baseball</Link>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Schedule</span>
             </div>
 
             <div className="mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
                 Game <span className="text-burnt-orange">Schedule</span>
               </h1>
-              <p className="text-white/60 mt-2">NCAA Division I baseball schedule and calendar view</p>
+              <p className="text-text-secondary mt-2">NCAA Division I baseball schedule and calendar view</p>
             </div>
 
             <CalendarView />

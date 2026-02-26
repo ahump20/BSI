@@ -131,11 +131,11 @@ export function GameBriefClient({ slug }: { slug: string }) {
           <Section padding="lg">
             <Container>
               <div className="max-w-3xl animate-pulse space-y-4">
-                <div className="h-6 bg-white/[0.06] rounded w-1/4" />
-                <div className="h-10 bg-white/[0.06] rounded w-3/4" />
-                <div className="h-40 bg-white/[0.04] rounded-xl" />
-                <div className="h-4 bg-white/[0.04] rounded w-full" />
-                <div className="h-4 bg-white/[0.04] rounded w-5/6" />
+                <div className="h-6 bg-border-subtle rounded w-1/4" />
+                <div className="h-10 bg-border-subtle rounded w-3/4" />
+                <div className="h-40 bg-surface-light rounded-xl" />
+                <div className="h-4 bg-surface-light rounded w-full" />
+                <div className="h-4 bg-surface-light rounded w-5/6" />
               </div>
             </Container>
           </Section>
@@ -151,10 +151,10 @@ export function GameBriefClient({ slug }: { slug: string }) {
         <main id="main-content">
           <Section padding="lg">
             <Container>
-              <h1 className="font-display text-2xl font-bold text-white uppercase">Brief Not Found</h1>
-              <p className="text-white/40 mt-2">
+              <h1 className="font-display text-2xl font-bold text-text-primary uppercase">Brief Not Found</h1>
+              <p className="text-text-muted mt-2">
                 This game brief doesn&#39;t exist yet.{' '}
-                <Link href="/intel/game-briefs" className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <Link href="/intel/game-briefs" className="text-burnt-orange hover:text-ember transition-colors">
                   Browse all briefs &#8594;
                 </Link>
               </p>
@@ -180,7 +180,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
         }}
       />
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -204,11 +204,11 @@ export function GameBriefClient({ slug }: { slug: string }) {
               />
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/intel/game-briefs" className="hover:text-white/60 transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/intel/game-briefs" className="hover:text-text-secondary transition-colors">
                 &#8592; All Game Briefs
               </Link>
-              <Link href="/intel" className="hover:text-white/60 transition-colors">
+              <Link href="/intel" className="hover:text-text-secondary transition-colors">
                 Intel Dashboard
               </Link>
             </div>

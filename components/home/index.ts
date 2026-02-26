@@ -9,3 +9,5 @@ export { PersonaSwitch } from './PersonaSwitch';
 export { PricingPreview } from './PricingPreview';
 export { TransparencyBlock } from './TransparencyBlock';
 export { IntelSignup } from './IntelSignup';
+export { EvidenceStrip } from './EvidenceStrip';
+export { EditorialPreview } from './EditorialPreview';

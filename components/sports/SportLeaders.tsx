@@ -110,12 +110,12 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   }, [sport, config]);
 
   return (
-    <div className={`bg-white/5 border border-white/10 rounded-xl p-6 ${className}`}>
+    <div className={`bg-surface-light border border-border rounded-xl p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">{config.title}</h3>
+        <h3 className="text-lg font-semibold text-text-primary">{config.title}</h3>
         <Link
           href={config.viewAllHref}
-          className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+          className="text-sm text-burnt-orange hover:text-ember transition-colors"
         >
           View All →
         </Link>
@@ -123,33 +123,33 @@ export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="p-4 bg-white/5 rounded-lg animate-pulse">
-              <div className="h-3 bg-white/10 rounded w-1/2 mb-2" />
-              <div className="h-5 bg-white/10 rounded w-3/4 mb-1" />
-              <div className="h-7 bg-white/10 rounded w-1/3" />
+            <div key={i} className="p-4 bg-surface-light rounded-lg animate-pulse">
+              <div className="h-3 bg-surface rounded w-1/2 mb-2" />
+              <div className="h-5 bg-surface rounded w-3/4 mb-1" />
+              <div className="h-7 bg-surface rounded w-1/3" />
             </div>
           ))}
         </div>
       ) : leaders.length === 0 ? (
-        <p className="text-white/30 text-sm text-center py-6">No leader data available</p>
+        <p className="text-text-muted text-sm text-center py-6">No leader data available</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           {leaders.map((player, index) => (
             <div
               key={`${player.name}-${index}`}
-              className="p-4 bg-white/5 rounded-lg hover:bg-white/8 transition-colors"
+              className="p-4 bg-surface-light rounded-lg hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
-                <span className="w-6 h-6 flex items-center justify-center bg-[#BF5700]/20 text-[#BF5700] rounded-full text-xs font-bold">
+                <span className="w-6 h-6 flex items-center justify-center bg-burnt-orange/20 text-burnt-orange rounded-full text-xs font-bold">
                   {index + 1}
                 </span>
-                <span className="text-xs text-white/40">{player.team}</span>
+                <span className="text-xs text-text-muted">{player.team}</span>
               </div>
-              <p className="font-semibold text-white text-sm truncate">{player.name}</p>
-              <p className="text-2xl font-bold text-[#BF5700]">
+              <p className="font-semibold text-text-primary text-sm truncate">{player.name}</p>
+              <p className="text-2xl font-bold text-burnt-orange">
                 {typeof player.value === 'number' ? player.value.toFixed(1) : player.value}
               </p>
-              <p className="text-xs text-white/30">{config.statLabel}</p>
+              <p className="text-xs text-text-muted">{config.statLabel}</p>
             </div>
           ))}
         </div>

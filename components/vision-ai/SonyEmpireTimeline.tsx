@@ -95,7 +95,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                         ? 'bg-burnt-orange text-white border-burnt-orange shadow-[0_0_20px_rgba(191,87,0,0.4)]'
                         : isExpanded
                           ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                          : 'bg-graphite text-text-secondary border-white/10 hover:border-burnt-orange/30 hover:text-burnt-orange'
+                          : 'bg-graphite text-text-secondary border-border hover:border-burnt-orange/30 hover:text-burnt-orange'
                     }`}
                     aria-expanded={isExpanded}
                     aria-label={`${acq.year}: ${acq.company}`}
@@ -108,8 +108,8 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                 <div
                   className={`rounded-lg border transition-all cursor-pointer ${
                     isExpanded
-                      ? 'bg-white/[0.04] border-burnt-orange/20'
-                      : 'bg-transparent border-transparent hover:bg-white/[0.02]'
+                      ? 'bg-surface-light border-burnt-orange/20'
+                      : 'bg-transparent border-transparent hover:bg-surface-light'
                   }`}
                   onClick={() => setExpanded(isExpanded ? null : i)}
                   role="button"
@@ -124,7 +124,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                   <div className="px-4 py-3">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-burnt-orange font-mono text-sm font-bold">{acq.year}</span>
-                      <span className="text-white font-semibold text-sm">{acq.company}</span>
+                      <span className="text-text-primary font-semibold text-sm">{acq.company}</span>
                       <Badge variant="primary" size="sm">{acq.focus}</Badge>
                     </div>
 
@@ -136,7 +136,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                           {acq.sports.map((sport) => (
                             <span
                               key={sport}
-                              className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-text-muted border border-white/5 font-mono"
+                              className="text-[10px] px-2 py-0.5 rounded-full bg-surface-light text-text-muted border border-border-subtle font-mono"
                             >
                               {sport}
                             </span>
@@ -159,20 +159,20 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
       </div>
 
       {/* Summary insight */}
-      <div className="mt-4 bg-graphite rounded-lg p-4 border border-white/5">
+      <div className="mt-4 bg-graphite rounded-lg p-4 border border-border-subtle">
         <div className="flex justify-between text-sm mb-2">
           <span className="text-text-tertiary">Total acquisitions</span>
-          <span className="text-white font-mono">{ACQUISITIONS.length}</span>
+          <span className="text-text-primary font-mono">{ACQUISITIONS.length}</span>
         </div>
         <div className="flex justify-between text-sm mb-2">
           <span className="text-text-tertiary">Span</span>
-          <span className="text-white font-mono">{ACQUISITIONS[ACQUISITIONS.length - 1].year - ACQUISITIONS[0].year} years</span>
+          <span className="text-text-primary font-mono">{ACQUISITIONS[ACQUISITIONS.length - 1].year - ACQUISITIONS[0].year} years</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-text-tertiary">Sports covered</span>
-          <span className="text-white font-mono">7+</span>
+          <span className="text-text-primary font-mono">7+</span>
         </div>
-        <p className="text-text-muted text-xs mt-3 pt-3 border-t border-white/5">
+        <p className="text-text-muted text-xs mt-3 pt-3 border-t border-border-subtle">
           Sony now owns the full stack: data capture (Hawk-Eye), biomechanics (KinaTrax),
           wearable fusion (STATSports), visualization (Beyond Sports), and distribution (Pulselive).
         </p>

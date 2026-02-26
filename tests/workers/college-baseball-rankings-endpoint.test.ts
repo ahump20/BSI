@@ -89,7 +89,7 @@ describe('handleCollegeBaseballRankings', () => {
   });
 
   it('returns cached rankings on KV HIT', async () => {
-    const cached = { rankings: [{ rank: 1, team: 'Texas' }], meta: { dataSource: 'cache' } };
+    const cached = { rankings: [{ rank: 1, team: 'Texas' }], meta: { source: 'cache' } };
     env.KV._store.set('cb:rankings:v2', JSON.stringify(cached));
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
@@ -111,7 +111,7 @@ describe('handleCollegeBaseballRankings', () => {
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);
-    expect(body.meta.dataSource).toBe('highlightly');
+    expect(body.meta.source).toBe('highlightly');
     expect(res.headers.get('X-Cache')).toBe('MISS');
   });
 
@@ -123,7 +123,7 @@ describe('handleCollegeBaseballRankings', () => {
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);
-    expect(body.meta.dataSource).toBe('espn');
+    expect(body.meta.source).toBe('espn');
     expect(body.rankings).toBeDefined();
   });
 
@@ -139,7 +139,7 @@ describe('handleCollegeBaseballRankings', () => {
 
     // NCAA client returns success: false → handler returns 502
     expect(res.status).toBe(502);
-    expect(body.meta.dataSource).toBe('ncaa');
+    expect(body.meta.source).toBe('ncaa');
     expect(body.rankings).toEqual([]);
   });
 
@@ -153,7 +153,7 @@ describe('handleCollegeBaseballRankings', () => {
 
     expect(res.status).toBe(502);
     expect(body.rankings).toEqual([]);
-    expect(body.meta.dataSource).toBe('ncaa');
+    expect(body.meta.source).toBe('ncaa');
   });
 
   it('uses v2 cache key', async () => {

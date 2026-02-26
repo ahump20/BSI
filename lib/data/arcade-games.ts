@@ -19,7 +19,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Blaze Blitz',
     description:
       'Call plays and drive downfield in this fast-paced football strategy game.',
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
     icon: '\u{1F3C8}',
     url: '/arcade/games/blitz',
     deployed: true,
@@ -30,7 +30,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Sandlot Sluggers',
     description:
       'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
     icon: '\u26BE',
     url: '/arcade/games/sandlot-sluggers',
     deployed: true,
@@ -63,7 +63,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Leadership Capital Index',
     description:
       '23 intangible leadership metrics mapped to 5 academic frameworks. Quantify the It Factor.',
-    color: '#BF5700',
+    color: 'var(--bsi-primary)',
     icon: '\u{1F4CA}',
     url: '/arcade/games/leadership-capital',
     deployed: true,
@@ -74,7 +74,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     title: 'Lone Star Legends Championship',
     description:
       'Build your roster, manage your bullpen, and lead a Texas program to the College World Series.',
-    color: '#8B4513',
+    color: 'var(--bsi-texas-soil)',
     icon: '\u2B50',
     url: '/arcade/games/lone-star-legends',
     deployed: false,
@@ -86,7 +86,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     title: 'BlazeCraft',
     description:
       'Real-time system health dashboard disguised as a Warcraft III-style strategy game.',
-    color: '#FF6B35',
+    color: 'var(--bsi-accent)',
     icon: '\u{1F525}',
     url: 'https://blazecraft.app',
     deployed: true,

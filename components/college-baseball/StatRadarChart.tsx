@@ -24,7 +24,7 @@ interface StatRadarChartProps {
 export function StatRadarChart({ player1Name, player2Name, data }: StatRadarChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-white/40 text-sm">
+      <div className="flex items-center justify-center h-64 text-text-muted text-sm">
         No comparable statistics available
       </div>
     );
@@ -46,15 +46,15 @@ export function StatRadarChart({ player1Name, player2Name, data }: StatRadarChar
         <Radar
           name={player1Name}
           dataKey="player1"
-          stroke="#BF5700"
-          fill="#BF5700"
+          stroke="#BF5700" // token: --bsi-primary
+          fill="#BF5700" // token: --bsi-primary
           fillOpacity={0.3}
         />
         <Radar
           name={player2Name}
           dataKey="player2"
-          stroke="#FF6B35"
-          fill="#FF6B35"
+          stroke="#FF6B35" // token: --bsi-accent
+          fill="#FF6B35" // token: --bsi-accent
           fillOpacity={0.3}
         />
         <Legend

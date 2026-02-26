@@ -40,9 +40,10 @@ export async function handleNFLScores(url: URL, env: Env): Promise<Response> {
   const sdio = getSDIOClient(env);
 
   if (sdio) {
+    // ESPN primary so game IDs match handleNFLGame (which uses ESPN getGameSummary)
     const result = await fetchWithFallback(
-      async () => transformSDIONFLScores(await sdio.getNFLScoresByDate(date)),
       async () => transformScoreboard(await getScoreboard('nfl', toDateString(date)) as Record<string, unknown>) as unknown as BSIScoreboardResult,
+      async () => transformSDIONFLScores(await sdio.getNFLScoresByDate(date)),
       cacheKey, env.KV, CACHE_TTL.scores,
     );
     return cachedJson(result.data, 200, HTTP_CACHE.scores, {
@@ -197,7 +198,7 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
         ...p,
         team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: (team.logos?.[0] as Record<string, unknown>)?.href as string | undefined },
       })),
-      meta: { dataSource: 'espn', lastUpdated: new Date().toISOString(), totalPlayers: roster.length },
+      meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', totalPlayers: roster.length },
     };
 
     await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
@@ -238,7 +239,7 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
   const payload = {
     timestamp: new Date().toISOString(),
     players: allPlayers.slice(0, limit),
-    meta: { dataSource: 'espn', lastUpdated: new Date().toISOString(), totalPlayers: allPlayers.length },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago', totalPlayers: allPlayers.length },
   };
 
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
@@ -269,7 +270,7 @@ export async function handleNFLLeaders(env: Env): Promise<Response> {
 
   const payload = {
     categories,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
   };
 
   await kvPut(env.KV, cacheKey, payload, CACHE_TTL.standings);

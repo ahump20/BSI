@@ -74,12 +74,12 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
       >
         <defs>
           <linearGradient id="sz-zone-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#BF5700" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#BF5700" stopOpacity="0.05" />
+            <stop offset="0%" stopColor="var(--bsi-primary)" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="var(--bsi-primary)" stopOpacity="0.05" />
           </linearGradient>
           <linearGradient id="sz-zone-stroke" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#BF5700" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#FF6B35" stopOpacity="0.6" />
+            <stop offset="0%" stopColor="var(--bsi-primary)" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="var(--bsi-accent)" stopOpacity="0.6" />
           </linearGradient>
           <filter id="sz-glow">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -122,7 +122,7 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
             y1={zoneTop + ((zoneBottom - zoneTop) / 3) * i}
             x2={zoneRight}
             y2={zoneTop + ((zoneBottom - zoneTop) / 3) * i}
-            stroke="rgba(191,87,0,0.15)"
+            stroke="color-mix(in srgb, var(--bsi-primary) 15%, transparent)"
             strokeWidth="0.5"
           />
         ))}
@@ -133,16 +133,16 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
             y1={zoneTop}
             x2={zoneLeft + ((zoneRight - zoneLeft) / 3) * i}
             y2={zoneBottom}
-            stroke="rgba(191,87,0,0.15)"
+            stroke="color-mix(in srgb, var(--bsi-primary) 15%, transparent)"
             strokeWidth="0.5"
           />
         ))}
 
         {/* Zone labels */}
-        <text x={zoneLeft - 8} y={zoneTop + 4} textAnchor="end" fill="#BF5700" fontSize="7" fontFamily="monospace" opacity="0.7">
+        <text x={zoneLeft - 8} y={zoneTop + 4} textAnchor="end" fill="var(--bsi-primary)" fontSize="7" fontFamily="monospace" opacity="0.7">
           TOP
         </text>
-        <text x={zoneLeft - 8} y={zoneBottom + 4} textAnchor="end" fill="#BF5700" fontSize="7" fontFamily="monospace" opacity="0.7">
+        <text x={zoneLeft - 8} y={zoneBottom + 4} textAnchor="end" fill="var(--bsi-primary)" fontSize="7" fontFamily="monospace" opacity="0.7">
           BOT
         </text>
 
@@ -184,7 +184,7 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
               y1={p1.cy}
               x2={p2.cx}
               y2={p2.cy}
-              stroke={isHighlighted ? '#FF6B35' : 'rgba(255,255,255,0.2)'}
+              stroke={isHighlighted ? 'var(--bsi-accent)' : 'rgba(255,255,255,0.2)'}
               strokeWidth={isHighlighted ? 1.5 : 1}
               className="transition-all duration-200"
             />
@@ -201,8 +201,8 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
                 cx={point.cx}
                 cy={point.cy}
                 r={isHovered ? 5 : isZoneBoundary ? 4 : 3}
-                fill={isZoneBoundary ? '#BF5700' : isHovered ? '#FF6B35' : 'rgba(255,255,255,0.5)'}
-                stroke={isZoneBoundary ? '#FF6B35' : 'rgba(255,255,255,0.3)'}
+                fill={isZoneBoundary ? 'var(--bsi-primary)' : isHovered ? 'var(--bsi-accent)' : 'rgba(255,255,255,0.5)'}
+                stroke={isZoneBoundary ? 'var(--bsi-accent)' : 'rgba(255,255,255,0.3)'}
                 strokeWidth={isHovered ? 1.5 : 0.5}
                 className="cursor-pointer transition-all duration-200"
                 filter={isHovered ? 'url(#sz-glow)' : undefined}
@@ -214,7 +214,7 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
                   x={point.cx}
                   y={point.cy - 10}
                   textAnchor="middle"
-                  fill="#FF6B35"
+                  fill="var(--bsi-accent)"
                   fontSize="8"
                   fontFamily="monospace"
                   fontWeight="bold"
@@ -230,7 +230,7 @@ export function StrikeZoneModel({ className = '', compact = false }: StrikeZoneM
         {!compact && (
           <g transform="translate(10, 10)">
             <rect x="0" y="0" width="90" height="46" rx="4" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
-            <circle cx="12" cy="14" r="3" fill="#BF5700" stroke="#FF6B35" strokeWidth="0.5" />
+            <circle cx="12" cy="14" r="3" fill="var(--bsi-primary)" stroke="var(--bsi-accent)" strokeWidth="0.5" />
             <text x="20" y="17" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="monospace">Zone boundary</text>
             <circle cx="12" cy="30" r="3" fill="rgba(255,255,255,0.5)" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5" />
             <text x="20" y="33" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="monospace">Skeletal point</text>

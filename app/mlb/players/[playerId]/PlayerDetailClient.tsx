@@ -215,7 +215,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 Players
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {loading ? 'Loading...' : player?.fullName || 'Player'}
               </span>
             </nav>
@@ -236,7 +236,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             <Container>
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Error Loading Player</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Player</h3>
                 <p className="text-text-secondary mb-4">{error}</p>
                 <Link
                   href="/mlb/players"
@@ -257,7 +257,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                 <div className="flex flex-col md:flex-row gap-8 items-start">
                   {/* Headshot */}
                   <ScrollReveal direction="left">
-                    <div className="relative w-40 h-40 rounded-lg overflow-hidden bg-graphite border border-border-subtle">
+                    <div className="relative w-40 h-40 rounded-lg overflow-hidden bg-background-tertiary border border-border-subtle">
                       {assets?.headshot ? (
                         <Image
                           src={assets.headshot}
@@ -311,37 +311,37 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                         {player.currentAge && (
                           <div>
                             <span className="text-text-tertiary">Age:</span>{' '}
-                            <span className="text-white font-medium">{player.currentAge}</span>
+                            <span className="text-text-primary font-medium">{player.currentAge}</span>
                           </div>
                         )}
                         {player.height && (
                           <div>
                             <span className="text-text-tertiary">Height:</span>{' '}
-                            <span className="text-white font-medium">{player.height}</span>
+                            <span className="text-text-primary font-medium">{player.height}</span>
                           </div>
                         )}
                         {player.weight && (
                           <div>
                             <span className="text-text-tertiary">Weight:</span>{' '}
-                            <span className="text-white font-medium">{player.weight} lbs</span>
+                            <span className="text-text-primary font-medium">{player.weight} lbs</span>
                           </div>
                         )}
                         <div>
                           <span className="text-text-tertiary">Bats:</span>{' '}
-                          <span className="text-white font-medium">
+                          <span className="text-text-primary font-medium">
                             {player.batSide?.description || player.batSide?.code}
                           </span>
                         </div>
                         <div>
                           <span className="text-text-tertiary">Throws:</span>{' '}
-                          <span className="text-white font-medium">
+                          <span className="text-text-primary font-medium">
                             {player.pitchHand?.description || player.pitchHand?.code}
                           </span>
                         </div>
                         {player.birthCity && (
                           <div>
                             <span className="text-text-tertiary">From:</span>{' '}
-                            <span className="text-white font-medium">
+                            <span className="text-text-primary font-medium">
                               {player.birthCity}
                               {player.birthStateProvince && `, ${player.birthStateProvince}`}
                             </span>
@@ -368,13 +368,13 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                             <div className="text-text-tertiary text-xs uppercase">ERA</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-white">
+                            <div className="font-display text-2xl font-bold text-text-primary">
                               {primaryStats.wins ?? '-'}-{primaryStats.losses ?? '-'}
                             </div>
                             <div className="text-text-tertiary text-xs uppercase">W-L</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-white">
+                            <div className="font-display text-2xl font-bold text-text-primary">
                               {formatStat(primaryStats.strikeOuts as number, 0)}
                             </div>
                             <div className="text-text-tertiary text-xs uppercase">K</div>
@@ -395,13 +395,13 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                             <div className="text-text-tertiary text-xs uppercase">AVG</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-white">
+                            <div className="font-display text-2xl font-bold text-text-primary">
                               {formatStat(primaryStats.homeRuns as number, 0)}
                             </div>
                             <div className="text-text-tertiary text-xs uppercase">HR</div>
                           </div>
                           <div>
-                            <div className="font-display text-2xl font-bold text-white">
+                            <div className="font-display text-2xl font-bold text-text-primary">
                               {formatStat(primaryStats.rbi as number, 0)}
                             </div>
                             <div className="text-text-tertiary text-xs uppercase">RBI</div>
@@ -423,7 +423,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             {/* Tabs */}
             <Section
               padding="none"
-              className="border-b border-border-subtle sticky top-0 bg-charcoal z-10"
+              className="border-b border-border-subtle sticky top-0 bg-background-secondary z-10"
             >
               <Container>
                 <div className="flex gap-1 overflow-x-auto">
@@ -434,7 +434,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                       className={`px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                         activeTab === tab.id
                           ? 'text-burnt-orange border-b-2 border-burnt-orange'
-                          : 'text-text-secondary hover:text-white'
+                          : 'text-text-secondary hover:text-text-primary'
                       }`}
                     >
                       {tab.label}
@@ -473,7 +473,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 { label: 'HR', value: primaryStats.homeRuns, decimals: 0 },
                               ].map((stat) => (
                                 <div key={stat.label} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
+                                  <div className="text-text-primary font-mono font-semibold">
                                     {formatStat(stat.value as number, stat.decimals)}
                                   </div>
                                   <div className="text-text-tertiary text-xs uppercase">
@@ -499,7 +499,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 { label: 'BB', value: primaryStats.baseOnBalls, decimals: 0 },
                               ].map((stat) => (
                                 <div key={stat.label} className="text-center">
-                                  <div className="text-white font-mono font-semibold">
+                                  <div className="text-text-primary font-mono font-semibold">
                                     {formatStat(stat.value as number, stat.decimals)}
                                   </div>
                                   <div className="text-text-tertiary text-xs uppercase">
@@ -521,34 +521,34 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                           <dl className="space-y-3">
                             <div className="flex justify-between">
                               <dt className="text-text-tertiary">Full Name</dt>
-                              <dd className="text-white">{player.fullName}</dd>
+                              <dd className="text-text-primary">{player.fullName}</dd>
                             </div>
                             <div className="flex justify-between">
                               <dt className="text-text-tertiary">Position</dt>
-                              <dd className="text-white">{player.primaryPosition.name}</dd>
+                              <dd className="text-text-primary">{player.primaryPosition.name}</dd>
                             </div>
                             <div className="flex justify-between">
                               <dt className="text-text-tertiary">Bats/Throws</dt>
-                              <dd className="text-white">
+                              <dd className="text-text-primary">
                                 {player.batSide?.code}/{player.pitchHand?.code}
                               </dd>
                             </div>
                             {player.mlbDebutDate && (
                               <div className="flex justify-between">
                                 <dt className="text-text-tertiary">MLB Debut</dt>
-                                <dd className="text-white">{player.mlbDebutDate}</dd>
+                                <dd className="text-text-primary">{player.mlbDebutDate}</dd>
                               </div>
                             )}
                             {player.draftYear && (
                               <div className="flex justify-between">
                                 <dt className="text-text-tertiary">Draft Year</dt>
-                                <dd className="text-white">{player.draftYear}</dd>
+                                <dd className="text-text-primary">{player.draftYear}</dd>
                               </div>
                             )}
                             {player.birthCountry && (
                               <div className="flex justify-between">
                                 <dt className="text-text-tertiary">Birth Country</dt>
-                                <dd className="text-white">{player.birthCountry}</dd>
+                                <dd className="text-text-primary">{player.birthCountry}</dd>
                               </div>
                             )}
                           </dl>
@@ -593,7 +593,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-white font-mono font-semibold">
+                                    <div className="text-text-primary font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -623,7 +623,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-white font-mono font-semibold">
+                                    <div className="text-text-primary font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -653,7 +653,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-white font-mono font-semibold">
+                                    <div className="text-text-primary font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -683,7 +683,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                                 .slice(0, 9)
                                 .map(([key, value]) => (
                                   <div key={key} className="text-center">
-                                    <div className="text-white font-mono font-semibold">
+                                    <div className="text-text-primary font-mono font-semibold">
                                       {formatStat(
                                         value,
                                         key.includes('avg') ||
@@ -721,8 +721,8 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
                             </thead>
                             <tbody className="divide-y divide-border-subtle">
                               {stats.gameLog.map((game, idx) => (
-                                <tr key={idx} className="hover:bg-white/5 transition-colors">
-                                  <td className="py-3 px-4 text-white text-sm">{game.date}</td>
+                                <tr key={idx} className="hover:bg-surface-light transition-colors">
+                                  <td className="py-3 px-4 text-text-primary text-sm">{game.date}</td>
                                   <td className="py-3 px-4 text-text-secondary text-sm">
                                     {game.opponent}
                                   </td>

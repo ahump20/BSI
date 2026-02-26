@@ -90,13 +90,16 @@ meta: { source: string; fetched_at: string; timezone: 'America/Chicago' }
 
 This is what actually exists in Cloudflare right now. Use `wrangler` or the Cloudflare MCP tools to verify current state — don't trust this list if something feels off.
 
-### Workers (14 deployed)
+### Workers (16 deployed)
 
-**Site and API (Hono router, 382 lines):**
+**Site and API (Hono router + handler modules):**
 `blazesportsintel-worker-prod` · `blazesportsintel-worker` · `blazesportsintel-worker-canary`
 
 **Ingest pipeline:**
 `bsi-cbb-ingest` · `bsi-sportradar-ingest` · `bsi-portal-sync` · `bsi-prediction-api`
+
+**Analytics:**
+`bsi-analytics-events` (behavioral events → D1) · `bsi-savant-compute` (cron every 6h — wOBA, FIP, wRC+)
 
 **Operations:**
 `bsi-error-tracker` (tail consumer) · `bsi-synthetic-monitor` (cron) · `bsi-news-ticker` · `bsi-ticker`
@@ -107,23 +110,24 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 **Games:**
 `mini-games-api`
 
-### D1 Databases (5)
+### D1 Databases (6)
 
 | Name | Size | Purpose |
 |------|------|---------|
 | `bsi-historical-db` | 4.5 MB | Historical archives |
 | `bsi-game-db` | 3.3 MB | Live/recent game data (sportradar-ingest) |
-| `bsi-prod-db` | 344 KB | Production data (main worker) |
+| `bsi-prod-db` | 3.8 MB | Production data (main worker + savant compute) |
+| `bsi-events-db` | 284 KB | Behavioral analytics (bsi-analytics-events) |
 | `bsi-fanbase-db` | 197 KB | Fan sentiment |
 | `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
 
 ### KV Namespaces (9)
 
 **Bound to active workers:**
-`BSI_PROD_CACHE` · `BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
+`BSI_PROD_CACHE` · `BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `BSI_KEYS` (API key → tier lookup) · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
 
 **Other:**
-`PREDICTION_CACHE` · `bsi-ticker-cache` · `portfolio-contacts`
+`PREDICTION_CACHE` · `portfolio-contacts`
 
 ### R2 Buckets (18)
 
@@ -152,6 +156,7 @@ workers/                # Main Hono worker (blazesportsintel-worker-prod)
   shared/               # Types, helpers, constants, cors, rate-limit, proxy
   wrangler.toml         # Bindings, routes, environments
 workers/bsi-cbb-ingest/ # College baseball ingest pipeline
+workers/bsi-savant-compute/ # Cron: advanced metrics (wOBA, FIP, wRC+)
 workers/sportradar-ingest/ # Sportradar data pipeline
 workers/mini-games-api/ # Arcade leaderboard API
 workers/blaze-field-*/  # BlazeCraft game workers
@@ -161,7 +166,7 @@ functions/              # Cloudflare Pages Functions
 games/                  # Browser arcade games
 external/               # Standalone projects (Sandlot-Sluggers)
 scripts/                # Build/deploy/data scripts
-tests/                  # Test suites (165 passing)
+tests/                  # Test suites (511 passing)
 docs/                   # Infrastructure and operations docs
 ```
 
@@ -233,7 +238,6 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 - Repo lives on iCloud Drive — `git status`, pre-commit hooks, and ripgrep searches may hang. Use `--no-verify` on commits if hooks stall. If git hangs, check for stale `.git/index.lock` and remove it.
 - `next.config.ts` is configured to skip TypeScript build errors — ESLint errors are handled separately in CI
 - `tsconfig.json` excludes `workers/**/*` — workers have their own configs
-- Legacy paths excluded: `lib/api/v1/**/*`, `lib/adapters/*`
 - ESPN dates labeled UTC are actually ET — always verify timezone
 - `external/` projects have their own CLAUDE.md and build systems
 - Husky handles git hooks via `prepare` script

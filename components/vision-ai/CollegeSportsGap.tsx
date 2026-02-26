@@ -57,7 +57,7 @@ const TRACKING_DATA: TrackingRow[] = [
 const levelConfig = {
   full: { bar: 'w-full', color: 'bg-green-500', label: 'Full' },
   partial: { bar: 'w-1/2', color: 'bg-yellow-500', label: 'Partial' },
-  none: { bar: 'w-[8%]', color: 'bg-white/10', label: 'Gap' },
+  none: { bar: 'w-[8%]', color: 'bg-surface', label: 'Gap' },
 } as const;
 
 export function CollegeSportsGap({ className = '' }: { className?: string }) {
@@ -86,14 +86,14 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       {/* Comparison table */}
       <div className="space-y-3">
         {TRACKING_DATA.map((row) => (
-          <div key={row.category} className="bg-white/[0.02] rounded-lg p-4 border border-white/[0.04] hover:border-white/[0.08] transition-colors">
-            <div className="text-white font-semibold text-sm mb-3">{row.category}</div>
+          <div key={row.category} className="bg-surface-light rounded-lg p-4 border border-border-subtle hover:border-border transition-colors">
+            <div className="text-text-primary font-semibold text-sm mb-3">{row.category}</div>
             <div className="grid grid-cols-2 gap-4">
               {/* Pro */}
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold w-10">Pro</span>
-                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-surface-light rounded-full overflow-hidden">
                     <div className={`h-full ${levelConfig[row.pro.level].color} ${levelConfig[row.pro.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${
@@ -109,7 +109,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
               <div>
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="text-[10px] uppercase tracking-wider text-text-muted font-semibold w-10">Coll</span>
-                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-surface-light rounded-full overflow-hidden">
                     <div className={`h-full ${levelConfig[row.college.level].color} ${levelConfig[row.college.level].bar} rounded-full transition-all`} />
                   </div>
                   <span className={`text-[9px] font-mono ${

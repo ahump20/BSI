@@ -26,6 +26,9 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/transfer-portal', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
   { path: '/college-baseball/compare', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/college-baseball/savant', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/college-baseball/savant/park-factors', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/college-baseball/savant/conference-index', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/power-25', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/college-baseball/preseason/sec-preview', changeFrequency: 'weekly', priority: 0.8 },
@@ -44,9 +47,19 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/acc-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/big-12-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/sec-opening-weekend', changeFrequency: 'monthly', priority: 0.8 },
+  // Draft profiles
+  { path: '/college-baseball/editorial/roch-cholowsky-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/dylan-volantis-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/jackson-flora-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/tyce-armstrong-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/liam-peterson-2026-draft-profile', changeFrequency: 'monthly', priority: 0.8 },
+  // Analysis
+  { path: '/college-baseball/editorial/what-two-weekends-told-us', changeFrequency: 'monthly', priority: 0.8 },
   // Weekly features
   { path: '/college-baseball/editorial/week-1-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-2-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
   // 2026 team previews (SEC)
@@ -102,9 +115,17 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/washington-2026', changeFrequency: 'monthly', priority: 0.7 },
 ];
 
+const mlbEditorial: SitemapEntry[] = [
+  { path: '/mlb/editorial', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/mlb/editorial/2026-season-preview', changeFrequency: 'monthly', priority: 0.8 },
+];
+
 const proSports: SitemapEntry[] = [
   // MLB
   { path: '/mlb', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/mlb/spring-training', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/mlb/spring-training/scores', changeFrequency: 'hourly', priority: 0.7 },
+  { path: '/mlb/spring-training/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/mlb/scores', changeFrequency: 'hourly', priority: 0.7 },
   { path: '/mlb/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/mlb/games', changeFrequency: 'daily', priority: 0.7 },
@@ -135,9 +156,11 @@ const proSports: SitemapEntry[] = [
   { path: '/cfb/standings', changeFrequency: 'daily', priority: 0.7 },
   { path: '/cfb/articles', changeFrequency: 'daily', priority: 0.6 },
   { path: '/cfb/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/cfb/teams', changeFrequency: 'daily', priority: 0.6 },
 ];
 
 const features: SitemapEntry[] = [
+  { path: '/status', changeFrequency: 'always', priority: 0.4 },
   { path: '/dashboard', changeFrequency: 'daily', priority: 0.7 },
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
@@ -147,7 +170,7 @@ const features: SitemapEntry[] = [
   { path: '/fanbase/compare', changeFrequency: 'daily', priority: 0.6 },
   { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
   { path: '/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
-  { path: '/vision-ai', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/vision-AI-Intelligence', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
 ];
 
@@ -166,8 +189,6 @@ const marketing: SitemapEntry[] = [
   { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/for-coaches', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/for-scouts', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/coverage', changeFrequency: 'monthly', priority: 0.5 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
@@ -177,6 +198,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const all = [
     ...flagship,
     ...editorial,
+    ...mlbEditorial,
     ...proSports,
     ...features,
     ...arcade,

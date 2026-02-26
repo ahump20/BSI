@@ -70,7 +70,7 @@ export function GameGrid({
         <span className="intel-section-label">
           <Activity
             className="h-3.5 w-3.5 inline-block mr-1.5 -mt-0.5"
-            style={{ color: 'var(--bsi-intel-accent, var(--bsi-cyan, #06B6D4))' }}
+            style={{ color: 'var(--bsi-intel-accent, var(--bsi-cyan))' }}
           />
           Slate
         </span>
@@ -137,7 +137,7 @@ export function GameGrid({
                     {canScrollLeft && (
                       <button
                         onClick={() => scrollBy('left')}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white/70 hover:text-white hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -ml-3"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-text-secondary hover:text-text-primary hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -ml-3"
                         aria-label="Scroll left"
                       >
                         <ChevronLeft className="h-4 w-4" />
@@ -146,7 +146,7 @@ export function GameGrid({
                     {canScrollRight && (
                       <button
                         onClick={() => scrollBy('right')}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-white/70 hover:text-white hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -mr-3"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-black/60 text-text-secondary hover:text-text-primary hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity -mr-3"
                         aria-label="Scroll right"
                       >
                         <ChevronRight className="h-4 w-4" />
@@ -173,7 +173,7 @@ export function GameGrid({
                         {marquee.map((g) => (
                           <span
                             key={g.id}
-                            className="w-1.5 h-1.5 rounded-full bg-white/20"
+                            className="w-1.5 h-1.5 rounded-full bg-surface-medium"
                             aria-hidden
                           />
                         ))}

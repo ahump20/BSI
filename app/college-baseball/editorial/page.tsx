@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
+import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
 
@@ -42,10 +43,10 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Sleeper'
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
   Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-white/10 text-white/70 border-white/20',
-  Bubble: 'bg-white/5 text-white/40 border-white/10',
-  Sleeper: 'bg-white/5 text-white/30 border-white/10',
-  Rebuilding: 'bg-white/[0.03] text-white/25 border-white/5',
+  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
+  Bubble: 'bg-surface-light text-text-muted border-border',
+  Sleeper: 'bg-surface-light text-text-muted border-border',
+  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
 };
 
 function TierBadge({ tier }: { tier: string }) {
@@ -68,59 +69,59 @@ interface TeamCard {
 }
 
 const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '44-14', tier: 'Omaha Favorite' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '53-15', tier: 'Omaha Favorite' },
-  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '52-17', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '47-23', tier: 'Omaha Favorite' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '45-23', tier: 'Contender' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '46-21', tier: 'Contender' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '43-21', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '40-21', tier: 'Dark Horse' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '39-23', tier: 'Dark Horse' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '40-22', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '42-23', tier: 'Bubble' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '36-23', tier: 'Bubble' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '32-26', tier: 'Bubble' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '33-25', tier: 'Bubble' },
-  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '28-29', tier: 'Rebuilding' },
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '7-0', tier: 'Omaha Favorite' },
+  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '7-0', tier: 'Omaha Favorite' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '6-1', tier: 'Contender' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '6-1', tier: 'Contender' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '8-0', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '7-0', tier: 'Contender' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '6-1', tier: 'Contender' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '5-2', tier: 'Contender' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '5-2', tier: 'Contender' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '5-2', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '5-2', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '8-0', tier: 'Dark Horse' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '4-3', tier: 'Bubble' },
+  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '3-4', tier: 'Rebuilding' },
 ];
 
 const BIG12_TEAMS: TeamCard[] = [
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '44-20', tier: 'Contender' },
-  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '42-18', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '38-22', tier: 'Dark Horse' },
-  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '35-24', tier: 'Dark Horse' },
-  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '36-22', tier: 'Dark Horse' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '30-27', tier: 'Bubble' },
-  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '32-26', tier: 'Bubble' },
-  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '34-25', tier: 'Bubble' },
-  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '29-27', tier: 'Bubble' },
-  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '20-33', tier: 'Rebuilding' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '25-30', tier: 'Rebuilding' },
-  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '28-28', tier: 'Rebuilding' },
-  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '26-29', tier: 'Rebuilding' },
-  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '22-33', tier: 'Rebuilding' },
+  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '5-2', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '4-3', tier: 'Dark Horse' },
+  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '5-1', tier: 'Bubble' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '5-2', tier: 'Bubble' },
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '2-5', tier: 'Bubble' },
+  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '4-3', tier: 'Bubble' },
+  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '4-3', tier: 'Bubble' },
+  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '3-4', tier: 'Rebuilding' },
+  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '2-5', tier: 'Rebuilding' },
 ];
 
 const BIGTEN_TEAMS: TeamCard[] = [
-  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '48-18', tier: 'Omaha Favorite' },
-  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '42-16', tier: 'Contender' },
-  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '37-23', tier: 'Contender' },
-  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '33-23', tier: 'Dark Horse' },
-  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '33-22-1', tier: 'Dark Horse' },
-  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '32-24', tier: 'Bubble' },
-  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '33-23', tier: 'Bubble' },
-  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '33-29', tier: 'Bubble' },
-  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '30-24', tier: 'Bubble' },
-  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '28-27', tier: 'Bubble' },
-  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '29-28', tier: 'Bubble' },
-  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '29-28', tier: 'Bubble' },
-  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '31-23', tier: 'Bubble' },
-  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '13-37', tier: 'Rebuilding' },
-  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '27-29', tier: 'Rebuilding' },
-  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '24-28', tier: 'Rebuilding' },
-  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '25-27', tier: 'Rebuilding' },
+  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '8-0', tier: 'Omaha Favorite' },
+  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '5-2', tier: 'Contender' },
+  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '4-3', tier: 'Contender' },
+  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '4-3', tier: 'Dark Horse' },
+  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '5-2', tier: 'Bubble' },
+  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '5-2', tier: 'Bubble' },
+  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '4-3', tier: 'Bubble' },
+  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '4-3', tier: 'Bubble' },
+  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '4-3', tier: 'Bubble' },
+  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '4-3', tier: 'Bubble' },
+  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '3-4', tier: 'Bubble' },
+  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '3-4', tier: 'Bubble' },
+  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '2-5', tier: 'Rebuilding' },
+  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
 ];
 
 // ── Standalone articles ────────────────────────────────────────────────
@@ -133,9 +134,93 @@ interface FeatureArticle {
   readTime: string;
   badge: string;
   tags: FilterTag[];
+  /** Team slugs this article covers (matches teamMetadata keys) */
+  teams?: string[];
 }
 
-const FEATURE_ARTICLES: FeatureArticle[] = [
+export type { FeatureArticle };
+
+export const FEATURE_ARTICLES: FeatureArticle[] = [
+  {
+    title: 'Weekend 3 Preview: Globe Life Gets the Real Test',
+    slug: 'weekend-3-preview',
+    description: 'UCLA faces Tennessee. Mississippi State puts its 8-0 record on the line. Eight undefeated Top 25 teams enter the weekend — the Amegy Bank series at Globe Life tells us which ones are built for June.',
+    date: 'February 25, 2026',
+    readTime: '12 min',
+    badge: 'Weekly Preview',
+    tags: ['National', 'Weekly'],
+    teams: ['ucla', 'tennessee', 'mississippi-state', 'texas', 'auburn'],
+  },
+  {
+    title: 'What Two Weekends of College Baseball Actually Told Us',
+    slug: 'what-two-weekends-told-us',
+    description: 'Eight undefeated Top 25 teams. A 22-year save record broken. Two cycles in one weekend. Here is what the data says matters — and what was noise.',
+    date: 'February 25, 2026',
+    readTime: '12 min',
+    badge: 'Analysis',
+    tags: ['National'],
+    teams: ['ucla', 'mississippi-state', 'texas', 'florida', 'lsu', 'tennessee', 'auburn'],
+  },
+  {
+    title: 'Roch Cholowsky: The No. 1 Pick Through Two Weekends',
+    slug: 'roch-cholowsky-2026-draft-profile',
+    description: 'UCLA shortstop Roch Cholowsky hit 3 HR vs No. 7 TCU including a Game 1 grand slam. 6 HR through 7 games. Full scouting report and draft analysis.',
+    date: 'February 25, 2026',
+    readTime: '10 min',
+    badge: 'Draft Profile',
+    tags: ['National'],
+    teams: ['ucla'],
+  },
+  {
+    title: 'Liam Peterson: The Walk Problem and the No. 9 Pick',
+    slug: 'liam-peterson-2026-draft-profile',
+    description: 'Florida\'s ace walked 5 batters on Opening Day and didn\'t survive the fourth inning. The No. 9 overall prospect and No. 3 college arm has three Friday starts to answer the question: mechanical or mental?',
+    date: 'February 25, 2026',
+    readTime: '9 min',
+    badge: 'Draft Profile',
+    tags: ['SEC'],
+    teams: ['florida'],
+  },
+  {
+    title: 'Dylan Volantis: 14 IP. 0 ER. The Conversion Is Real.',
+    slug: 'dylan-volantis-2026-draft-profile',
+    description: 'Texas LHP Dylan Volantis converted from closer to Sunday starter. 14 IP, 0 ER, 17 K through two starts. SEC Freshman of the Year in 2025. Draft stock analysis.',
+    date: 'February 25, 2026',
+    readTime: '10 min',
+    badge: 'Draft Profile',
+    tags: ['SEC'],
+    teams: ['texas'],
+  },
+  {
+    title: 'Tyce Armstrong: Three Grand Slams and a 50-Year Record',
+    slug: 'tyce-armstrong-2026-draft-profile',
+    description: 'Baylor first baseman hit three grand slams in a single game — only the second player in NCAA D1 history to do it. 12 RBI. ESPN Player of the Week. What it means for the draft.',
+    date: 'February 25, 2026',
+    readTime: '8 min',
+    badge: 'Draft Profile',
+    tags: ['Big 12'],
+    teams: ['baylor'],
+  },
+  {
+    title: 'Jackson Flora: 100 MPH and a New Arsenal',
+    slug: 'jackson-flora-2026-draft-profile',
+    description: 'UCSB right-hander Jackson Flora touched 100 mph and debuted new curveball and changeup against No. 20 Southern Miss. No. 14 on MLB Pipeline. Full scouting report.',
+    date: 'February 25, 2026',
+    readTime: '8 min',
+    badge: 'Draft Profile',
+    tags: ['National'],
+    teams: ['uc-santa-barbara'],
+  },
+  {
+    title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
+    slug: 'weekend-2-recap',
+    description: 'UCLA swept TCU 30-8. Two players hit for the cycle. Auburn emerged at Globe Life. The complete BSI breakdown.',
+    date: 'February 24, 2026',
+    readTime: '15 min',
+    badge: 'Weekend 2 Recap',
+    tags: ['Weekly', 'National'],
+    teams: ['ucla', 'tcu', 'auburn', 'texas', 'mississippi-state', 'lsu'],
+  },
   {
     title: 'Texas Week 1: 27 Runs. One Hit Allowed by Volantis.',
     slug: 'texas-week-1-recap',
@@ -144,6 +229,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '15 min',
     badge: 'Texas Weekly',
     tags: ['SEC', 'Weekly', 'Team Preview'],
+    teams: ['texas'],
   },
   {
     title: 'Week 1 Recap: Three Grand Slams. One Record Book.',
@@ -153,6 +239,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '18 min',
     badge: 'Week 1 Recap',
     tags: ['Weekly', 'National'],
+    teams: ['baylor', 'texas', 'ucla', 'oklahoma', 'auburn'],
   },
   {
     title: 'National Opening Weekend Preview',
@@ -230,7 +317,7 @@ const CONFERENCES: ConferenceData[] = [
     teams: 14,
     ranked: 5,
     href: '/college-baseball/editorial/big-12',
-    accent: '#BF5700',
+    accent: 'var(--bsi-primary)',
   },
   {
     name: 'Big Ten',
@@ -246,7 +333,7 @@ const CONFERENCES: ConferenceData[] = [
 // Conference section → tag mapping
 const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; teams: TeamCard[]; accent: string; confHref: string }[] = [
   { tag: 'SEC', title: 'SEC', tagline: 'The Standard', teams: SEC_TEAMS, accent: '#C9A227', confHref: '/college-baseball/editorial/sec' },
-  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, accent: '#BF5700', confHref: '/college-baseball/editorial/big-12' },
+  { tag: 'Big 12', title: 'Big 12', tagline: 'New Blood', teams: BIG12_TEAMS, accent: 'var(--bsi-primary)', confHref: '/college-baseball/editorial/big-12' },
   { tag: 'Big Ten', title: 'Big Ten', tagline: 'Northern Rising', teams: BIGTEN_TEAMS, accent: '#6B8CAE', confHref: '/college-baseball/editorial/big-ten' },
 ];
 
@@ -254,7 +341,7 @@ const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; tea
 
 function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagChange: (tag: FilterTag) => void }) {
   return (
-    <Section padding="sm" className="border-b border-white/10 sticky top-0 z-30 bg-charcoal/95 backdrop-blur-sm">
+    <Section padding="sm" className="border-b border-border sticky top-0 z-30 bg-background-secondary/95 backdrop-blur-sm">
       <Container>
         <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1" aria-label="Filter articles by tag">
           {FILTER_TAGS.map((tag) => {
@@ -268,7 +355,7 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
                   border transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                    : 'bg-white/[0.03] text-white/40 border-white/10 hover:text-white/60 hover:border-white/20'
+                    : 'bg-surface-light text-text-muted border-border hover:text-text-tertiary hover:border-border-subtle'
                   }
                 `}
                 aria-pressed={isActive}
@@ -288,19 +375,19 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
 function TeamPreviewCard({ team }: { team: TeamCard }) {
   return (
     <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-white/[0.06] transition-all h-full">
+      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-surface-medium transition-all h-full">
         <div className="flex items-start justify-between mb-2">
           <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
+            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
               {team.name}
             </h4>
-            <p className="text-white/30 text-xs">{team.mascot}</p>
+            <p className="text-text-muted text-xs">{team.mascot}</p>
           </div>
           <TierBadge tier={team.tier} />
         </div>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-white/40 text-xs font-mono">{team.record}</span>
-          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white/15 group-hover:text-burnt-orange/60 transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
+          <span className="text-text-muted text-xs font-mono">{team.record}</span>
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-text-muted group-hover:text-burnt-orange/60 transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </div>
@@ -330,11 +417,11 @@ function ConferenceSection({
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 rounded-full" style={{ backgroundColor: accent }} />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-white">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                   {title}
                 </h2>
               </div>
-              <p className="text-white/40 text-sm ml-4 pl-3">{tagline} — {teams.length} team previews</p>
+              <p className="text-text-muted text-sm ml-4 pl-3">{tagline} — {teams.length} team previews</p>
             </div>
             <Link href={confHref} className="hidden md:flex items-center gap-1.5 text-sm font-semibold hover:text-ember transition-colors" style={{ color: accent }}>
               Full {title} Preview
@@ -383,11 +470,11 @@ function DailyDigestSection() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 rounded-full bg-ember" />
-                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-white">
+                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
                   Daily AI Digest
                 </h2>
               </div>
-              <p className="text-white/40 text-sm ml-4 pl-3">
+              <p className="text-text-muted text-sm ml-4 pl-3">
                 AI-generated analysis from BSI's editorial pipeline
               </p>
             </div>
@@ -397,11 +484,11 @@ function DailyDigestSection() {
         {loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-5 animate-pulse">
-                <div className="h-3 bg-white/5 rounded w-24 mb-3" />
-                <div className="h-5 bg-white/5 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-white/5 rounded w-full" />
-                <div className="h-3 bg-white/5 rounded w-5/6 mt-1" />
+              <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-5 animate-pulse">
+                <div className="h-3 bg-surface-light rounded w-24 mb-3" />
+                <div className="h-5 bg-surface-light rounded w-3/4 mb-2" />
+                <div className="h-3 bg-surface-light rounded w-full" />
+                <div className="h-3 bg-surface-light rounded w-5/6 mt-1" />
               </div>
             ))}
           </div>
@@ -418,23 +505,23 @@ function DailyDigestSection() {
                   <Card variant="default" padding="md" className="h-full hover:border-ember/30 transition-all">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="secondary">AI Digest</Badge>
-                      <span className="text-white/20 text-xs">
+                      <span className="text-text-muted text-xs">
                         {new Date(editorial.date + 'T12:00:00').toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                         })}
                       </span>
                       {editorial.wordCount > 0 && (
-                        <span className="text-white/15 text-xs">
+                        <span className="text-text-muted text-xs">
                           {Math.ceil(editorial.wordCount / 250)} min
                         </span>
                       )}
                     </div>
-                    <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-ember transition-colors mb-1.5">
+                    <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-ember transition-colors mb-1.5">
                       {editorial.title}
                     </h3>
                     {editorial.preview && (
-                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
                         {editorial.preview}
                       </p>
                     )}
@@ -443,13 +530,13 @@ function DailyDigestSection() {
                         {editorial.teams.slice(0, 3).map((team) => (
                           <span
                             key={team}
-                            className="text-[10px] text-white/25 bg-white/[0.03] px-1.5 py-0.5 rounded"
+                            className="text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded"
                           >
                             {team}
                           </span>
                         ))}
                         {editorial.teams.length > 3 && (
-                          <span className="text-[10px] text-white/15">
+                          <span className="text-[10px] text-text-muted">
                             +{editorial.teams.length - 3}
                           </span>
                         )}
@@ -502,14 +589,14 @@ export default function EditorialHubPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Editorial</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Editorial</span>
             </nav>
           </Container>
         </Section>
@@ -525,7 +612,7 @@ export default function EditorialHubPage() {
                   College Baseball{' '}
                   <span className="text-gradient-blaze">Editorial</span>
                 </h1>
-                <p className="text-white/50 text-lg leading-relaxed">
+                <p className="text-text-tertiary text-lg leading-relaxed">
                   47 team season previews. 3 conference breakdowns. Scouting grades on the 20-80 scale.
                   Projection tiers from Omaha Favorite to Rebuilding. The depth this sport has always deserved.
                 </p>
@@ -541,13 +628,13 @@ export default function EditorialHubPage() {
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-3">
                         <Badge variant="secondary">{featured.badge}</Badge>
-                        <span className="text-white/30 text-sm">{featured.date}</span>
-                        <span className="text-white/30 text-sm">{featured.readTime}</span>
+                        <span className="text-text-muted text-sm">{featured.date}</span>
+                        <span className="text-text-muted text-sm">{featured.readTime}</span>
                       </div>
-                      <h2 className="font-display text-2xl md:text-3xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
+                      <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
                         {featured.title}
                       </h2>
-                      <p className="text-white/50 max-w-xl">{featured.description}</p>
+                      <p className="text-text-tertiary max-w-xl">{featured.description}</p>
                       <div className="mt-4 flex items-center gap-2 text-burnt-orange text-sm font-semibold group-hover:text-ember transition-colors">
                         Read article
                         <svg viewBox="0 0 24 24" className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
@@ -565,6 +652,65 @@ export default function EditorialHubPage() {
         {/* Daily AI Digest — fetches from /api/college-baseball/editorial/list */}
         <DailyDigestSection />
 
+        {/* Weekly Recaps — static editorial pages */}
+        {(activeTag === 'All' || activeTag === 'Weekly' || activeTag === 'National') && (
+          <Section padding="md" borderTop>
+            <Container>
+              <ScrollReveal direction="up">
+                <div className="flex items-end justify-between mb-6">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-1 h-8 rounded-full bg-burnt-orange" />
+                      <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
+                        Weekly Recaps
+                      </h2>
+                    </div>
+                    <p className="text-text-muted text-sm ml-4 pl-3">
+                      National-scope breakdowns of each weekend&apos;s results, rankings movement, and matchups to watch
+                    </p>
+                  </div>
+                </div>
+              </ScrollReveal>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ScrollReveal direction="up" delay={0}>
+                  <Link href="/college-baseball/editorial/weekend-2-recap" className="block group">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="primary">Weekend 2</Badge>
+                        <span className="text-text-muted text-xs">Feb 24, 2026</span>
+                        <span className="text-text-muted text-xs">15 min</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        The No. 1 Showed Up. The Rest Got Sorted.
+                      </h3>
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
+                        UCLA swept TCU 30-8. Two cycles hit. Auburn announced itself at Globe Life. Plus Weekend 3 preview.
+                      </p>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+                <ScrollReveal direction="up" delay={60}>
+                  <Link href="/college-baseball/editorial/week-1-recap" className="block group">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="primary">Week 1</Badge>
+                        <span className="text-text-muted text-xs">Feb 16, 2026</span>
+                        <span className="text-text-muted text-xs">18 min</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        Three Grand Slams. One Record Book. The Season Starts Now.
+                      </h3>
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
+                        Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners.
+                      </p>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+              </div>
+            </Container>
+          </Section>
+        )}
+
         {/* Tag Filter Bar */}
         <TagFilterBar activeTag={activeTag} onTagChange={setActiveTag} />
 
@@ -573,7 +719,7 @@ export default function EditorialHubPage() {
           <Section padding="md">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
                   Conference Previews
                 </h2>
               </ScrollReveal>
@@ -581,14 +727,14 @@ export default function EditorialHubPage() {
                 {filteredConferences.map((conf, i) => (
                   <ScrollReveal key={conf.name} direction="up" delay={i * 80}>
                     <Link href={conf.href} className="block group">
-                      <Card variant="default" padding="lg" className="h-full hover:border-white/20 transition-all relative overflow-hidden">
+                      <Card variant="default" padding="lg" className="h-full hover:border-border-strong transition-all relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg" style={{ backgroundColor: conf.accent }} />
                         <div className="mt-2">
                           <h3 className="font-display text-xl font-bold uppercase tracking-wide group-hover:transition-colors" style={{ color: conf.accent }}>
                             {conf.name}
                           </h3>
-                          <p className="text-white/40 text-sm mt-1 italic">{conf.tagline}</p>
-                          <div className="flex items-center gap-4 mt-4 text-xs text-white/30">
+                          <p className="text-text-muted text-sm mt-1 italic">{conf.tagline}</p>
+                          <div className="flex items-center gap-4 mt-4 text-xs text-text-muted">
                             <span>{conf.teams} teams</span>
                             <span>{conf.ranked} ranked</span>
                           </div>
@@ -613,7 +759,7 @@ export default function EditorialHubPage() {
           <Section padding="lg" background="charcoal" borderTop>
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
                   Feature Articles
                 </h2>
               </ScrollReveal>
@@ -624,13 +770,13 @@ export default function EditorialHubPage() {
                       <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary">{article.badge}</Badge>
-                          <span className="text-white/20 text-xs">{article.readTime}</span>
+                          <span className="text-text-muted text-xs">{article.readTime}</span>
                         </div>
-                        <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                           {article.title}
                         </h3>
-                        <p className="text-white/40 text-xs leading-relaxed">{article.description}</p>
-                        <p className="text-white/20 text-[10px] mt-3">{article.date}</p>
+                        <p className="text-text-muted text-xs leading-relaxed">{article.description}</p>
+                        <p className="text-text-muted text-[10px] mt-3">{article.date}</p>
                       </Card>
                     </Link>
                   </ScrollReveal>
@@ -657,7 +803,7 @@ export default function EditorialHubPage() {
           <Section padding="lg">
             <Container>
               <div className="text-center py-12">
-                <p className="text-white/30 text-sm">No editorial content matches this filter yet.</p>
+                <p className="text-text-muted text-sm">No editorial content matches this filter yet.</p>
                 <button
                   onClick={() => setActiveTag('All')}
                   className="mt-4 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
@@ -676,22 +822,31 @@ export default function EditorialHubPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">47</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Team Previews</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Team Previews</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">3</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Conferences</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Conferences</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-[#C9A227]">20-80</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">6</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Feature Articles</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">15</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Feature Articles</div>
                 </div>
               </div>
             </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Email Capture */}
+        <Section padding="md" borderTop>
+          <Container>
+            <div className="max-w-md mx-auto">
+              <IntelSignup sport="college_baseball" />
+            </div>
           </Container>
         </Section>
 
@@ -699,7 +854,7 @@ export default function EditorialHubPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-white/20 text-xs">
+              <p className="text-text-muted text-xs">
                 Data: ESPN / SportsDataIO / D1Baseball — February 2026
               </p>
               <Link href="/college-baseball" className="text-sm text-burnt-orange hover:text-ember transition-colors">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { withAlpha } from '@/lib/utils/color';
 
 interface HeroGame {
   sport: string;
@@ -26,34 +27,34 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
   return (
     <Link
       href="/scores"
-      className="glass-default rounded-xl p-3 sm:p-4 border border-white/[0.06] hover:border-white/[0.12] transition-all duration-300 flex-1 min-w-0 group"
+      className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle hover:border-border-strong transition-all duration-300 flex-1 min-w-0 group"
     >
       <div className="flex items-center gap-2 mb-2">
         <span
           className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-          style={{ backgroundColor: `${accent}20`, color: accent }}
+          style={{ backgroundColor: withAlpha(accent, 0.12), color: accent }}
         >
           {label}
         </span>
-        <span className="text-[10px] text-white/30 uppercase tracking-wider truncate">
+        <span className="text-[10px] text-text-muted uppercase tracking-wider truncate">
           {game.sport}
         </span>
       </div>
 
       <div className="space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-white/80 font-medium truncate">
+          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
             {abbr(game.away)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-[#BF5700] tabular-nums">
+          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
             {game.away.score}
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-xs sm:text-sm text-white/80 font-medium truncate">
+          <span className="text-xs sm:text-sm text-text-primary font-medium truncate">
             {abbr(game.home)}
           </span>
-          <span className="text-xs sm:text-sm font-bold text-[#BF5700] tabular-nums">
+          <span className="text-xs sm:text-sm font-bold text-burnt-orange tabular-nums">
             {game.home.score}
           </span>
         </div>
@@ -68,8 +69,8 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
         )}
         <span className={`text-[10px] ${
           label === 'Live' ? 'text-green-400'
-            : label === 'Final' ? 'text-white/30'
-            : 'text-[#BF5700]'
+            : label === 'Final' ? 'text-text-muted'
+            : 'text-burnt-orange'
         }`}>
           {game.detail || game.status}
         </span>
@@ -80,19 +81,19 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
 
 function SkeletonCard() {
   return (
-    <div className="glass-default rounded-xl p-3 sm:p-4 border border-white/[0.06] flex-1 min-w-0 animate-pulse">
-      <div className="h-3 bg-white/5 rounded w-16 mb-3" />
+    <div className="glass-default rounded-xl p-3 sm:p-4 border border-border-subtle flex-1 min-w-0 animate-pulse">
+      <div className="h-3 bg-surface-light rounded w-16 mb-3" />
       <div className="space-y-1.5">
         <div className="flex justify-between">
-          <div className="h-3 bg-white/5 rounded w-12" />
-          <div className="h-3 bg-white/5 rounded w-6" />
+          <div className="h-3 bg-surface-light rounded w-12" />
+          <div className="h-3 bg-surface-light rounded w-6" />
         </div>
         <div className="flex justify-between">
-          <div className="h-3 bg-white/5 rounded w-12" />
-          <div className="h-3 bg-white/5 rounded w-6" />
+          <div className="h-3 bg-surface-light rounded w-12" />
+          <div className="h-3 bg-surface-light rounded w-6" />
         </div>
       </div>
-      <div className="h-2 bg-white/5 rounded w-20 mt-2" />
+      <div className="h-2 bg-surface-light rounded w-20 mt-2" />
     </div>
   );
 }
@@ -157,7 +158,7 @@ export function HeroScoreStrip() {
       </div>
 
       {data?.meta && (
-        <p className="text-[10px] text-white/20 text-center mt-3">
+        <p className="text-[10px] text-text-muted text-center mt-3">
           Updated {new Date(data.meta.fetched_at).toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',

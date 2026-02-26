@@ -49,7 +49,7 @@ export default function CollegeBoxScoreClient() {
       {/* Away Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
+          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
             {game.teams.away.abbreviation}
             {game.teams.away.ranking && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -58,20 +58,20 @@ export default function CollegeBoxScoreClient() {
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-white">{game.teams.away.name}</h3>
+            <h3 className="font-semibold text-text-primary">{game.teams.away.name}</h3>
             <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
           </div>
         </div>
 
         {/* Away Batting */}
         <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-graphite">
+          <CardHeader className="bg-background-tertiary">
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} batting statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
+                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
                   <th scope="col" className="text-left p-3 font-medium">Player</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">R</th>
@@ -86,14 +86,14 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.away.batting.map((batter, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
                         <span className="text-text-tertiary text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-white font-medium">{batter.player.name}</span>
+                        <span className="text-text-primary font-medium">{batter.player.name}</span>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
                         )}
@@ -101,7 +101,7 @@ export default function CollegeBoxScoreClient() {
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">
+                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
                       {batter.h}
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
@@ -117,13 +117,13 @@ export default function CollegeBoxScoreClient() {
 
         {/* Away Pitching */}
         <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-graphite">
+          <CardHeader className="bg-background-tertiary">
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.away.abbreviation || 'Away'} pitching statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
+                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
                   <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
                   <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">H</th>
@@ -138,11 +138,11 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.away.pitching.map((pitcher, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{pitcher.player.name}</span>
+                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
                           <span className="text-text-tertiary text-xs">
                             ({pitcher.player.year})
@@ -164,7 +164,7 @@ export default function CollegeBoxScoreClient() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">
+                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
                       {pitcher.ip}
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>
@@ -184,7 +184,7 @@ export default function CollegeBoxScoreClient() {
       {/* Home Team */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
+          <div className="w-10 h-10 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange relative">
             {game.teams.home.abbreviation}
             {game.teams.home.ranking && (
               <span className="absolute -top-1 -right-1 w-5 h-5 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -193,20 +193,20 @@ export default function CollegeBoxScoreClient() {
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-white">{game.teams.home.name}</h3>
+            <h3 className="font-semibold text-text-primary">{game.teams.home.name}</h3>
             <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>
           </div>
         </div>
 
         {/* Home Batting */}
         <Card variant="default" padding="none" className="mb-4 overflow-hidden">
-          <CardHeader className="bg-graphite">
+          <CardHeader className="bg-background-tertiary">
             <CardTitle size="sm">Batting</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} batting statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
+                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
                   <th scope="col" className="text-left p-3 font-medium">Player</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">AB</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">R</th>
@@ -221,14 +221,14 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.home.batting.map((batter, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
                         <span className="text-text-tertiary text-xs w-6">
                           {batter.player.position}
                         </span>
-                        <span className="text-white font-medium">{batter.player.name}</span>
+                        <span className="text-text-primary font-medium">{batter.player.name}</span>
                         {batter.player.year && (
                           <span className="text-text-tertiary text-xs">({batter.player.year})</span>
                         )}
@@ -236,7 +236,7 @@ export default function CollegeBoxScoreClient() {
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.ab}</td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.r}</td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">
+                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
                       {batter.h}
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{batter.rbi}</td>
@@ -252,13 +252,13 @@ export default function CollegeBoxScoreClient() {
 
         {/* Home Pitching */}
         <Card variant="default" padding="none" className="overflow-hidden">
-          <CardHeader className="bg-graphite">
+          <CardHeader className="bg-background-tertiary">
             <CardTitle size="sm">Pitching</CardTitle>
           </CardHeader>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label={`${game.teams.home.abbreviation || 'Home'} pitching statistics`}>
               <thead>
-                <tr className="border-b border-border-subtle bg-charcoal text-text-tertiary">
+                <tr className="border-b border-border-subtle bg-background-secondary text-text-tertiary">
                   <th scope="col" className="text-left p-3 font-medium">Pitcher</th>
                   <th scope="col" className="text-center p-3 font-medium w-14">IP</th>
                   <th scope="col" className="text-center p-3 font-medium w-12">H</th>
@@ -273,11 +273,11 @@ export default function CollegeBoxScoreClient() {
                 {boxscore.home.pitching.map((pitcher, idx) => (
                   <tr
                     key={idx}
-                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                   >
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{pitcher.player.name}</span>
+                        <span className="text-text-primary font-medium">{pitcher.player.name}</span>
                         {pitcher.player.year && (
                           <span className="text-text-tertiary text-xs">
                             ({pitcher.player.year})
@@ -299,7 +299,7 @@ export default function CollegeBoxScoreClient() {
                         )}
                       </div>
                     </td>
-                    <td className="text-center p-3 font-mono text-white font-semibold">
+                    <td className="text-center p-3 font-mono text-text-primary font-semibold">
                       {pitcher.ip}
                     </td>
                     <td className="text-center p-3 font-mono text-text-secondary">{pitcher.h}</td>

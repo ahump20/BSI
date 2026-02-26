@@ -40,14 +40,14 @@ export default function CompareHubPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Compare Teams</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Compare Teams</span>
             </nav>
           </Container>
         </Section>
@@ -60,7 +60,7 @@ export default function CompareHubPage() {
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
               Pick Your <span className="text-gradient-blaze">Rivalry</span>
             </h1>
-            <p className="text-white/50 text-center max-w-xl mx-auto">
+            <p className="text-text-tertiary text-center max-w-xl mx-auto">
               Compare any two Power 25 teams head-to-head. Rankings, records, key players, and BSI tier ratings — all in one sharable card.
             </p>
           </Container>
@@ -69,7 +69,7 @@ export default function CompareHubPage() {
         {/* Featured Rivalries */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary mb-6">
               Featured Rivalries
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
@@ -81,11 +81,11 @@ export default function CompareHubPage() {
                   <Link key={`${a}-${b}`} href={`/college-baseball/compare/${a}/${b}`}>
                     <Card variant="hover" padding="md" className="h-full text-center">
                       <div className="text-xs text-burnt-orange uppercase tracking-wider mb-2">{label}</div>
-                      <div className="font-display text-lg font-bold text-white uppercase">
+                      <div className="font-display text-lg font-bold text-text-primary uppercase">
                         #{teamA.rank} {teamDisplayName(a)}
                       </div>
-                      <div className="text-white/30 text-sm my-1">vs</div>
-                      <div className="font-display text-lg font-bold text-white uppercase">
+                      <div className="text-text-muted text-sm my-1">vs</div>
+                      <div className="font-display text-lg font-bold text-text-primary uppercase">
                         #{teamB.rank} {teamDisplayName(b)}
                       </div>
                       <div className="mt-3 flex justify-center gap-2">
@@ -99,10 +99,10 @@ export default function CompareHubPage() {
             </div>
 
             {/* Full Power 25 Grid */}
-            <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-white mb-2">
+            <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary mb-2">
               Power 25 Teams
             </h2>
-            <p className="text-white/40 text-sm mb-6">Pick any team to see available matchups</p>
+            <p className="text-text-muted text-sm mb-6">Pick any team to see available matchups</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {teams.map(([slug, data], i) => {
                 // Pick a different team as opponent — next in rankings, wrapping to first
@@ -111,10 +111,10 @@ export default function CompareHubPage() {
                 <Link key={slug} href={`/college-baseball/compare/${slug}/${opponent}`}>
                   <Card variant="hover" padding="sm" className="text-center">
                     <div className="font-display text-sm font-bold text-burnt-orange">#{data.rank}</div>
-                    <div className="font-display text-sm font-bold text-white uppercase mt-0.5 truncate">
+                    <div className="font-display text-sm font-bold text-text-primary uppercase mt-0.5 truncate">
                       {teamDisplayName(slug)}
                     </div>
-                    <div className="text-[10px] text-white/30 mt-0.5">{data.conference} · {getTierLabel(data.tier)}</div>
+                    <div className="text-[10px] text-text-muted mt-0.5">{data.conference} · {getTierLabel(data.tier)}</div>
                   </Card>
                 </Link>
                 );

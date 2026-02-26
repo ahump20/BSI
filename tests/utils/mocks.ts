@@ -22,6 +22,14 @@ export function createMockKV() {
 }
 
 // ---------------------------------------------------------------------------
+// Mock ExecutionContext
+// ---------------------------------------------------------------------------
+
+export function createMockCtx() {
+  return { waitUntil: vi.fn(), passThroughOnException: vi.fn() };
+}
+
+// ---------------------------------------------------------------------------
 // Mock Env
 // ---------------------------------------------------------------------------
 
@@ -39,6 +47,7 @@ export function createMockEnv(overrides: Record<string, unknown> = {}) {
     CACHE: {} as any,
     PORTAL_POLLER: {} as any,
     ASSETS_BUCKET: {} as any,
+    DATA_LAKE: { put: vi.fn().mockResolvedValue(undefined) } as any,
     ENVIRONMENT: 'test',
     API_VERSION: '1.0.0-test',
     PAGES_ORIGIN: 'https://test.pages.dev',
@@ -153,15 +162,15 @@ export const ESPN_GAME_SUMMARY = {
       {
         team: { id: '2633' },
         statistics: [
-          { name: 'batting', athletes: [{ athlete: { id: '1', displayName: 'Jared Thomas', position: { abbreviation: 'CF' } }, stats: ['4', '2', '3', '2', '0', '1', '.345'] }] },
-          { name: 'pitching', athletes: [{ athlete: { id: '2', displayName: 'Lucas Gordon' }, stats: ['7.0', '5', '3', '2', '2', '8', '2.85'] }] },
+          { name: 'batting', labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG'], athletes: [{ athlete: { id: '1', displayName: 'Jared Thomas', position: { abbreviation: 'CF' } }, stats: ['3-4', '4', '2', '3', '2', '0', '0', '1', '52', '.345', '.380', '.520'] }] },
+          { name: 'pitching', labels: ['IP', 'H', 'R', 'ER', 'BB', 'K', 'HR', '#P', 'ERA'], athletes: [{ athlete: { id: '2', displayName: 'Lucas Gordon' }, stats: ['7.0', '5', '3', '2', '2', '8', '0', '95', '2.85'] }] },
         ],
       },
       {
         team: { id: '2641' },
         statistics: [
-          { name: 'batting', athletes: [{ athlete: { id: '3', displayName: 'Ryan Miller', position: { abbreviation: 'SS' } }, stats: ['4', '1', '1', '1', '0', '2', '.280'] }] },
-          { name: 'pitching', athletes: [{ athlete: { id: '4', displayName: 'Jake Foster' }, stats: ['5.0', '7', '5', '4', '3', '4', '4.20'] }] },
+          { name: 'batting', labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG'], athletes: [{ athlete: { id: '3', displayName: 'Ryan Miller', position: { abbreviation: 'SS' } }, stats: ['1-4', '4', '1', '1', '1', '0', '0', '2', '45', '.280', '.340', '.420'] }] },
+          { name: 'pitching', labels: ['IP', 'H', 'R', 'ER', 'BB', 'K', 'HR', '#P', 'ERA'], athletes: [{ athlete: { id: '4', displayName: 'Jake Foster' }, stats: ['5.0', '7', '5', '4', '3', '4', '0', '80', '4.20'] }] },
         ],
       },
     ],
@@ -231,14 +240,29 @@ export const ESPN_SCOREBOARD = {
   ],
 };
 
-export const HIGHLIGHTLY_STANDINGS = {
-  data: [{ conference: 'SEC', teams: [{ name: 'Texas', wins: 30, losses: 10 }] }],
-};
+export const HIGHLIGHTLY_STANDINGS = [
+  { conference: 'SEC', teams: [{ name: 'Texas', wins: 30, losses: 10 }] },
+];
 
 export const ESPN_STANDINGS = {
   children: [
-    { name: 'Southeastern Conference', standings: { entries: [] } },
-    { name: 'Big 12 Conference', standings: { entries: [] } },
+    {
+      name: 'Southeastern Conference',
+      standings: {
+        entries: [
+          { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.80, streak: 'W5', pointDifferential: 62 },
+          { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' }, wins: 25, losses: 15, winPercent: 0.625, leagueWinPercent: 0.60, streak: 'L1', pointDifferential: 18 },
+        ],
+      },
+    },
+    {
+      name: 'Big 12 Conference',
+      standings: {
+        entries: [
+          { team: { id: '66', displayName: 'TCU Horned Frogs', abbreviation: 'TCU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/66.png' }, wins: 28, losses: 12, winPercent: 0.70, leagueWinPercent: 0.65, streak: 'W3', pointDifferential: 30 },
+        ],
+      },
+    },
     { name: 'Atlantic Coast Conference', standings: { entries: [] } },
   ],
 };
@@ -259,6 +283,7 @@ export function mockFetchForHighlightly() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
 
+    // --- Highlightly (RapidAPI) paths ---
     if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/matches/')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_MATCH), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
@@ -276,6 +301,11 @@ export function mockFetchForHighlightly() {
     }
     if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/players/')) {
       return new Response(JSON.stringify({ id: 1, name: 'Jared Thomas', position: 'CF', jerseyNumber: '7', team: HIGHLIGHTLY_MATCH.homeTeam }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // --- ESPN paths (team handler now calls ESPN first as skeleton) ---
+    if (urlStr.includes('espn.com') && urlStr.includes('/teams/')) {
+      return new Response(JSON.stringify(ESPN_TEAM), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
 
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });

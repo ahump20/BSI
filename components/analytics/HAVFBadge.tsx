@@ -11,8 +11,8 @@ interface HAVFBadgeProps {
 }
 
 function getScoreConfig(score: number): { color: string; bg: string; tier: string } {
-  if (score >= 80) return { color: '#FF6B35', bg: 'rgba(255,107,53,0.12)', tier: 'ELITE' };
-  if (score >= 65) return { color: '#BF5700', bg: 'rgba(191,87,0,0.12)', tier: 'ABOVE AVG' };
+  if (score >= 80) return { color: 'var(--bsi-accent)', bg: 'color-mix(in srgb, var(--bsi-accent) 12%, transparent)', tier: 'ELITE' };
+  if (score >= 65) return { color: 'var(--bsi-primary)', bg: 'color-mix(in srgb, var(--bsi-primary) 12%, transparent)', tier: 'ABOVE AVG' };
   if (score >= 45) return { color: 'rgba(255,255,255,0.65)', bg: 'rgba(255,255,255,0.06)', tier: 'AVERAGE' };
   if (score >= 25) return { color: 'rgba(255,255,255,0.4)', bg: 'rgba(255,255,255,0.04)', tier: 'BELOW AVG' };
   return { color: 'rgba(255,255,255,0.25)', bg: 'rgba(255,255,255,0.03)', tier: 'POOR' };

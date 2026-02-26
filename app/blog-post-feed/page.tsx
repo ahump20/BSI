@@ -66,7 +66,7 @@ function categoryLabel(cat: string): string {
 function FeaturedCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog-post-feed/${post.slug}`} className="block group">
-      <div className="relative rounded-xl overflow-hidden border border-burnt-orange/30 bg-gradient-to-br from-charcoal-900 via-graphite to-midnight hover:border-burnt-orange/60 transition-all duration-300">
+      <div className="relative rounded-xl overflow-hidden border border-burnt-orange/30 bg-gradient-to-br from-charcoal-900 via-background-tertiary to-background-primary hover:border-burnt-orange/60 transition-all duration-300">
         {/* Glow accent */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-burnt-orange via-ember to-burnt-orange/50" />
         <div className="p-8 md:p-10">
@@ -83,7 +83,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
             ))}
           </div>
 
-          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-display text-white mb-3 group-hover:text-burnt-orange transition-colors duration-200 leading-tight">
+          <h2 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-display text-text-primary mb-3 group-hover:text-burnt-orange transition-colors duration-200 leading-tight">
             {post.title}
           </h2>
 
@@ -134,7 +134,7 @@ function ArticleCard({ post }: { post: BlogPost }) {
           </Badge>
         </div>
 
-        <h3 className="font-display text-lg font-bold text-white uppercase tracking-wide mb-2 line-clamp-2 leading-snug flex-1">
+        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2 line-clamp-2 leading-snug flex-1">
           {post.title}
         </h3>
 
@@ -159,7 +159,7 @@ function ArticleCard({ post }: { post: BlogPost }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-graphite rounded-lg p-6 animate-pulse">
+    <div className="bg-background-tertiary rounded-lg p-6 animate-pulse">
       <div className="h-4 bg-surface-secondary rounded w-1/4 mb-3" />
       <div className="h-6 bg-surface-secondary rounded w-3/4 mb-2" />
       <div className="h-4 bg-surface-secondary rounded w-full mb-1" />
@@ -215,7 +215,7 @@ export default function BlogPostFeedPage() {
                 BSI
               </Link>
               <span>/</span>
-              <span className="text-white font-medium">Writing</span>
+              <span className="text-text-primary font-medium">Writing</span>
             </nav>
           </Container>
         </Section>
@@ -254,7 +254,7 @@ export default function BlogPostFeedPage() {
                     ${
                       activeCategory === cat.key
                         ? 'bg-burnt-orange text-white'
-                        : 'text-text-tertiary hover:text-white hover:bg-surface-light'
+                        : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
                     }
                   `}
                 >
@@ -270,7 +270,7 @@ export default function BlogPostFeedPage() {
           <Container>
             {loading ? (
               <div className="space-y-8">
-                <div className="animate-pulse rounded-xl bg-graphite h-64" />
+                <div className="animate-pulse rounded-xl bg-background-tertiary h-64" />
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <SkeletonCard key={i} />

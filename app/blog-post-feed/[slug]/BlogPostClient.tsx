@@ -52,7 +52,7 @@ function applyInline(text: string): React.ReactNode[] {
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={i} className="text-white font-semibold">
+        <strong key={i} className="text-text-primary font-semibold">
           {part.slice(2, -2)}
         </strong>
       );
@@ -159,7 +159,7 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h2
                 key={idx}
-                className="font-display text-2xl md:text-3xl font-bold text-white uppercase tracking-display mt-10 mb-4 first:mt-0"
+                className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-display mt-10 mb-4 first:mt-0"
               >
                 {node.text}
               </h2>
@@ -169,7 +169,7 @@ function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h3
                 key={idx}
-                className="font-display text-lg font-bold text-white uppercase tracking-wide mt-7 mb-3"
+                className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mt-7 mb-3"
               >
                 {node.text}
               </h3>
@@ -326,11 +326,11 @@ export function BlogPostClient() {
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-midnight">
+      <main id="main-content" className="min-h-screen bg-background-primary">
         {/* Hero */}
         <Section
           padding="lg"
-          className="bg-gradient-to-b from-charcoal to-midnight relative overflow-hidden"
+          className="bg-gradient-to-b from-background-secondary to-background-primary relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/5 via-transparent to-transparent pointer-events-none" />
 
@@ -367,7 +367,7 @@ export function BlogPostClient() {
                 </div>
               ) : error ? (
                 <Card variant="default" padding="lg" className="text-center">
-                  <h1 className="text-2xl font-semibold text-white mb-4">{error}</h1>
+                  <h1 className="text-2xl font-semibold text-text-primary mb-4">{error}</h1>
                   <p className="text-text-tertiary mb-6">
                     This article doesn&apos;t exist or hasn&apos;t been published yet.
                   </p>
@@ -391,7 +391,7 @@ export function BlogPostClient() {
                   </div>
 
                   {/* Title */}
-                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-white mb-4 leading-tight">
+                  <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display text-text-primary mb-4 leading-tight">
                     {post.title}
                   </h1>
 

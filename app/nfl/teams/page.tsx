@@ -311,11 +311,11 @@ export default function NFLTeamsPage() {
       className="h-full transition-all hover:border-burnt-orange group"
     >
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-charcoal rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
+        <div className="w-16 h-16 bg-background-secondary rounded-lg flex items-center justify-center text-xl font-bold text-burnt-orange group-hover:bg-burnt-orange/10 transition-colors">
           {team.abbreviation}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
+          <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
             {team.city} {team.name}
           </p>
           <p className="text-xs text-text-tertiary">
@@ -340,7 +340,7 @@ export default function NFLTeamsPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Teams</span>
+              <span className="text-text-primary font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -379,7 +379,7 @@ export default function NFLTeamsPage() {
 
               return (
                 <div key={division} className="mb-8">
-                  <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                     <svg
                       viewBox="0 0 24 24"
                       className="w-5 h-5 text-burnt-orange"

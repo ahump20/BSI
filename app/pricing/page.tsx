@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
+import { trackPaywallHit } from '@/lib/analytics/tracker';
 
 // Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
 const HeroVideo = dynamic(
@@ -21,6 +22,11 @@ const tiers = PRICING_TIERS;
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+
+  // Fire paywall_hit when user sees pricing — D1 tracks who hit the gate
+  useEffect(() => {
+    trackPaywallHit('/pricing');
+  }, []);
 
   const handleCheckout = async (tier: 'pro' | 'enterprise') => {
     setLoading(tier);
@@ -99,7 +105,7 @@ export default function PricingPage() {
                     )}
 
                     <div className="text-center mb-6">
-                      <h2 className="font-display text-2xl font-bold text-white mb-2">
+                      <h2 className="font-display text-2xl font-bold text-text-primary mb-2">
                         {tier.name}
                       </h2>
                       <p className="text-text-tertiary text-sm">{tier.description}</p>
@@ -174,7 +180,7 @@ export default function PricingPage() {
               ].map((item, index) => (
                 <ScrollReveal key={item.title} direction="up" delay={index * 100}>
                   <Card padding="lg" className="text-center h-full">
-                    <h3 className="font-semibold text-white text-lg mb-3">{item.title}</h3>
+                    <h3 className="font-semibold text-text-primary text-lg mb-3">{item.title}</h3>
                     <p className="text-text-tertiary text-sm">{item.description}</p>
                   </Card>
                 </ScrollReveal>

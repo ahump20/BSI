@@ -42,7 +42,7 @@ export function ScrollProgress() {
       ref={barRef}
       className="fixed top-0 left-0 right-0 h-[2px] z-50 pointer-events-none"
       style={{
-        background: '#BF5700',
+        background: 'var(--bsi-primary)',
         transformOrigin: 'left',
         transform: 'scaleX(0)',
       }}

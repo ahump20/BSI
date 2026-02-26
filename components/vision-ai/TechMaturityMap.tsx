@@ -83,7 +83,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
               activeSport === sport
                 ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                : 'bg-white/5 text-text-tertiary border-white/10 hover:text-white hover:border-white/20'
+                : 'bg-surface-light text-text-tertiary border-border hover:text-text-primary hover:border-border-strong'
             }`}
           >
             {sport}
@@ -98,8 +98,8 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
           aria-pressed={activeMaturity === 'all'}
           className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
             activeMaturity === 'all'
-              ? 'bg-white/10 text-white border-white/20'
-              : 'bg-transparent text-text-tertiary border-white/5 hover:text-white'
+              ? 'bg-surface text-text-primary border-border-strong'
+              : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
           }`}
         >
           All Stages
@@ -111,8 +111,8 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
             aria-pressed={activeMaturity === m}
             className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider rounded-full border transition-all ${
               activeMaturity === m
-                ? `bg-white/10 text-white border-white/20`
-                : 'bg-transparent text-text-tertiary border-white/5 hover:text-white'
+                ? `bg-surface text-text-primary border-border-strong`
+                : 'bg-transparent text-text-tertiary border-border-subtle hover:text-text-primary'
             }`}
           >
             {maturityConfig[m].label}
@@ -132,12 +132,12 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
               {entries.map((entry) => (
                 <div
                   key={entry.company}
-                  className="group bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/10 rounded-lg px-4 py-3 transition-all"
+                  className="group bg-surface-light hover:bg-surface-light border border-border-subtle hover:border-border rounded-lg px-4 py-3 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-white font-semibold text-sm">{entry.company}</span>
+                        <span className="text-text-primary font-semibold text-sm">{entry.company}</span>
                         <Badge variant={maturityConfig[entry.maturity].variant} size="sm">
                           {maturityConfig[entry.maturity].label}
                         </Badge>
@@ -148,7 +148,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
                       {entry.sports.filter((s) => s !== 'All').map((sport) => (
                         <span
                           key={sport}
-                          className="text-[9px] px-1.5 py-0.5 rounded bg-white/5 text-text-muted font-mono"
+                          className="text-[9px] px-1.5 py-0.5 rounded bg-surface-light text-text-muted font-mono"
                         >
                           {sport}
                         </span>
@@ -163,7 +163,7 @@ export function TechMaturityMap({ className = '' }: { className?: string }) {
       </div>
 
       {/* Summary */}
-      <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+      <div className="mt-6 pt-4 border-t border-border-subtle flex items-center justify-between">
         <span className="text-text-muted text-xs">
           {filtered.length} {filtered.length === 1 ? 'technology' : 'technologies'} shown
         </span>

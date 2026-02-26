@@ -103,18 +103,18 @@ export default async function ComparisonPage({ params }: PageProps) {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/compare" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/compare" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Compare
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">{nameA} vs {nameB}</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">{nameA} vs {nameB}</span>
             </nav>
           </Container>
         </Section>
@@ -126,10 +126,10 @@ export default async function ComparisonPage({ params }: PageProps) {
             <Badge variant="primary" className="mb-4">Head-to-Head</Badge>
             <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-2">
               <span className="text-gradient-blaze">{nameA}</span>
-              <span className="text-white/30 mx-3">vs</span>
+              <span className="text-text-muted mx-3">vs</span>
               <span className="text-gradient-blaze">{nameB}</span>
             </h1>
-            <p className="text-white/50 text-center text-lg">
+            <p className="text-text-tertiary text-center text-lg">
               #{a.rank} vs #{b.rank} — 2026 Preseason Power 25
             </p>
           </Container>
@@ -143,35 +143,35 @@ export default async function ComparisonPage({ params }: PageProps) {
               <Card variant="default" padding="lg" className={higher === 'left' ? 'border-burnt-orange/40' : ''}>
                 <div className="text-center mb-6">
                   <div className="font-display text-5xl font-bold text-burnt-orange mb-2">#{a.rank}</div>
-                  <Link href={`/college-baseball/teams/${team1}`} className="font-display text-2xl font-bold text-white uppercase hover:text-burnt-orange transition-colors">
+                  <Link href={`/college-baseball/teams/${team1}`} className="font-display text-2xl font-bold text-text-primary uppercase hover:text-burnt-orange transition-colors">
                     {nameA}
                   </Link>
-                  <div className="text-white/40 text-sm mt-1">{a.conference}</div>
+                  <div className="text-text-muted text-sm mt-1">{a.conference}</div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">Tier</span>
+                    <span className="text-text-muted text-sm">Tier</span>
                     <Badge variant={tierBadgeVariant(a.tier)}>{getTierLabel(a.tier)}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">2025 Record</span>
-                    <span className="text-white font-mono">{a.record2025}</span>
+                    <span className="text-text-muted text-sm">2025 Record</span>
+                    <span className="text-text-primary font-mono">{a.record2025}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">Postseason</span>
-                    <span className="text-white text-sm">{a.postseason2025}</span>
+                    <span className="text-text-muted text-sm">Postseason</span>
+                    <span className="text-text-primary text-sm">{a.postseason2025}</span>
                   </div>
                   <div>
-                    <span className="text-white/40 text-sm block mb-2">Key Players</span>
+                    <span className="text-text-muted text-sm block mb-2">Key Players</span>
                     <div className="flex flex-wrap gap-2">
                       {a.keyPlayers.map((p) => (
-                        <span key={p} className="text-xs bg-white/5 px-2 py-1 rounded text-white/60">{p}</span>
+                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded text-text-tertiary">{p}</span>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <span className="text-white/40 text-sm block mb-1">BSI Outlook</span>
-                    <p className="text-white/50 text-sm leading-relaxed">{a.outlook}</p>
+                    <span className="text-text-muted text-sm block mb-1">BSI Outlook</span>
+                    <p className="text-text-tertiary text-sm leading-relaxed">{a.outlook}</p>
                   </div>
                 </div>
               </Card>
@@ -180,35 +180,35 @@ export default async function ComparisonPage({ params }: PageProps) {
               <Card variant="default" padding="lg" className={higher === 'right' ? 'border-burnt-orange/40' : ''}>
                 <div className="text-center mb-6">
                   <div className="font-display text-5xl font-bold text-burnt-orange mb-2">#{b.rank}</div>
-                  <Link href={`/college-baseball/teams/${team2}`} className="font-display text-2xl font-bold text-white uppercase hover:text-burnt-orange transition-colors">
+                  <Link href={`/college-baseball/teams/${team2}`} className="font-display text-2xl font-bold text-text-primary uppercase hover:text-burnt-orange transition-colors">
                     {nameB}
                   </Link>
-                  <div className="text-white/40 text-sm mt-1">{b.conference}</div>
+                  <div className="text-text-muted text-sm mt-1">{b.conference}</div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">Tier</span>
+                    <span className="text-text-muted text-sm">Tier</span>
                     <Badge variant={tierBadgeVariant(b.tier)}>{getTierLabel(b.tier)}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">2025 Record</span>
-                    <span className="text-white font-mono">{b.record2025}</span>
+                    <span className="text-text-muted text-sm">2025 Record</span>
+                    <span className="text-text-primary font-mono">{b.record2025}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-sm">Postseason</span>
-                    <span className="text-white text-sm">{b.postseason2025}</span>
+                    <span className="text-text-muted text-sm">Postseason</span>
+                    <span className="text-text-primary text-sm">{b.postseason2025}</span>
                   </div>
                   <div>
-                    <span className="text-white/40 text-sm block mb-2">Key Players</span>
+                    <span className="text-text-muted text-sm block mb-2">Key Players</span>
                     <div className="flex flex-wrap gap-2">
                       {b.keyPlayers.map((p) => (
-                        <span key={p} className="text-xs bg-white/5 px-2 py-1 rounded text-white/60">{p}</span>
+                        <span key={p} className="text-xs bg-surface-light px-2 py-1 rounded text-text-tertiary">{p}</span>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <span className="text-white/40 text-sm block mb-1">BSI Outlook</span>
-                    <p className="text-white/50 text-sm leading-relaxed">{b.outlook}</p>
+                    <span className="text-text-muted text-sm block mb-1">BSI Outlook</span>
+                    <p className="text-text-tertiary text-sm leading-relaxed">{b.outlook}</p>
                   </div>
                 </div>
               </Card>
@@ -221,16 +221,16 @@ export default async function ComparisonPage({ params }: PageProps) {
               </h2>
               <div className="text-center">
                 {a.tier === b.tier ? (
-                  <p className="text-white/60">
-                    Both squads are <span className="text-white font-semibold">{getTierLabel(a.tier)}</span> tier.
+                  <p className="text-text-tertiary">
+                    Both squads are <span className="text-text-primary font-semibold">{getTierLabel(a.tier)}</span> tier.
                     This one comes down to matchups and who peaks in June.
                   </p>
                 ) : (
-                  <p className="text-white/60">
-                    <span className="text-white font-semibold">{higher === 'left' ? nameA : nameB}</span> holds
-                    the edge as a <span className="text-white font-semibold">{getTierLabel(higher === 'left' ? a.tier : b.tier)}</span>,
-                    but <span className="text-white font-semibold">{higher === 'left' ? nameB : nameA}</span> at
-                    the <span className="text-white font-semibold">{getTierLabel(higher === 'left' ? b.tier : a.tier)}</span> level
+                  <p className="text-text-tertiary">
+                    <span className="text-text-primary font-semibold">{higher === 'left' ? nameA : nameB}</span> holds
+                    the edge as a <span className="text-text-primary font-semibold">{getTierLabel(higher === 'left' ? a.tier : b.tier)}</span>,
+                    but <span className="text-text-primary font-semibold">{higher === 'left' ? nameB : nameA}</span> at
+                    the <span className="text-text-primary font-semibold">{getTierLabel(higher === 'left' ? b.tier : a.tier)}</span> level
                     has the talent to flip the script.
                   </p>
                 )}
@@ -239,7 +239,7 @@ export default async function ComparisonPage({ params }: PageProps) {
                 <Link href="/college-baseball/compare" className="text-sm text-burnt-orange hover:text-ember transition-colors">
                   Compare Other Teams
                 </Link>
-                <Link href="/college-baseball" className="text-sm text-white/40 hover:text-white transition-colors">
+                <Link href="/college-baseball" className="text-sm text-text-muted hover:text-text-primary transition-colors">
                   Back to College Baseball
                 </Link>
               </div>

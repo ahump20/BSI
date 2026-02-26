@@ -71,7 +71,7 @@ export default function PreseasonHubPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Preseason 2026</span>
+                <span className="text-text-primary">Preseason 2026</span>
               </div>
 
               <div className="max-w-3xl">
@@ -96,7 +96,7 @@ export default function PreseasonHubPage() {
                 {quickStats.map((stat) => (
                   <Card key={stat.label} padding="md" className="text-center">
                     <stat.icon className="w-5 h-5 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl md:text-3xl font-bold text-white">
+                    <div className="font-display text-2xl md:text-3xl font-bold text-text-primary">
                       {stat.value}
                     </div>
                     <div className="text-text-tertiary text-xs md:text-sm">{stat.label}</div>
@@ -126,15 +126,15 @@ export default function PreseasonHubPage() {
                         <div className="relative z-10">
                           <div className="flex items-center gap-3 mb-4">
                             <Badge variant="primary">{story.category}</Badge>
-                            <span className="text-white/70 text-sm">{story.readTime}</span>
+                            <span className="text-text-secondary text-sm">{story.readTime}</span>
                           </div>
-                          <h2 className="font-display text-2xl md:text-4xl font-bold text-white uppercase tracking-display mb-3 group-hover:text-burnt-orange transition-colors">
+                          <h2 className="font-display text-2xl md:text-4xl font-bold text-text-primary uppercase tracking-display mb-3 group-hover:text-burnt-orange transition-colors">
                             {story.title}
                           </h2>
-                          <p className="text-white/90 text-lg md:text-xl font-medium mb-4">
+                          <p className="text-text-primary text-lg md:text-xl font-medium mb-4">
                             {story.subtitle}
                           </p>
-                          <p className="text-white/70 max-w-2xl mb-6">{story.description}</p>
+                          <p className="text-text-secondary max-w-2xl mb-6">{story.description}</p>
                           <div className="flex items-center text-burnt-orange font-medium">
                             Read the full story
                             <ChevronRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -152,7 +152,7 @@ export default function PreseasonHubPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={200}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display mb-6 text-white">
+              <h2 className="font-display text-xl font-bold uppercase tracking-display mb-6 text-text-primary">
                 More Preseason Coverage
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
@@ -168,7 +168,7 @@ export default function PreseasonHubPage() {
                           <Badge variant="secondary">{story.category}</Badge>
                           <span className="text-text-tertiary text-sm">{story.readTime}</span>
                         </div>
-                        <h3 className="font-display text-xl font-bold text-white uppercase tracking-display mb-2 group-hover:text-burnt-orange transition-colors">
+                        <h3 className="font-display text-xl font-bold text-text-primary uppercase tracking-display mb-2 group-hover:text-burnt-orange transition-colors">
                           {story.title}
                         </h3>
                         <p className="text-text-secondary text-sm mb-2">{story.subtitle}</p>
@@ -191,7 +191,7 @@ export default function PreseasonHubPage() {
                     padding="md"
                     className="hover:border-burnt-orange/50 transition-all cursor-pointer"
                   >
-                    <span className="text-white font-medium">View Full Rankings →</span>
+                    <span className="text-text-primary font-medium">View Full Rankings →</span>
                   </Card>
                 </Link>
                 <Link href="/college-baseball/conferences">
@@ -199,7 +199,7 @@ export default function PreseasonHubPage() {
                     padding="md"
                     className="hover:border-burnt-orange/50 transition-all cursor-pointer"
                   >
-                    <span className="text-white font-medium">Conference Previews →</span>
+                    <span className="text-text-primary font-medium">Conference Previews →</span>
                   </Card>
                 </Link>
                 <Link href="/college-baseball/teams/texas">
@@ -207,7 +207,7 @@ export default function PreseasonHubPage() {
                     padding="md"
                     className="hover:border-burnt-orange/50 transition-all cursor-pointer"
                   >
-                    <span className="text-white font-medium">Texas Longhorns →</span>
+                    <span className="text-text-primary font-medium">Texas Longhorns →</span>
                   </Card>
                 </Link>
               </div>

@@ -36,7 +36,7 @@ const secTeams: SECTeam[] = [
     outlook:
       'Three projected first-round picks anchor the deepest pitching staff in America. The Longhorns return their entire middle infield and enter SEC play with championship expectations.',
     isNew: true,
-    primaryColor: '#BF5700',
+    primaryColor: 'var(--bsi-primary)',
   },
   {
     id: 'texas-am',
@@ -281,20 +281,20 @@ export default function SECPreviewPage() {
               <ScrollReveal direction="up">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Conference Preview</Badge>
-                  <span className="text-white/70 text-sm">12 min read</span>
+                  <span className="text-text-secondary text-sm">12 min read</span>
                 </div>
 
-                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-white mb-4 max-w-4xl">
+                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary mb-4 max-w-4xl">
                   2026 SEC Baseball:{' '}
                   <span className="text-burnt-orange">The Deepest Conference Just Got Deeper</span>
                 </h1>
 
-                <p className="text-white/90 text-xl md:text-2xl font-medium mb-6 max-w-3xl">
+                <p className="text-text-secondary text-xl md:text-2xl font-medium mb-6 max-w-3xl">
                   Texas. Texas A&M. LSU. Tennessee. Vanderbilt. This isn&apos;t a fantasy
                   league—it&apos;s the SEC.
                 </p>
 
-                <p className="text-white/70 max-w-2xl text-lg leading-relaxed">
+                <p className="text-text-secondary max-w-2xl text-lg leading-relaxed">
                   Conference realignment brought the Lone Star State&apos;s two flagship programs
                   into the fold. Now the SEC has {conferenceStats.rankedTeams} ranked teams and
                   arguably the strongest top-to-bottom lineup in college baseball history. Every
@@ -312,28 +312,28 @@ export default function SECPreviewPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card padding="md" className="text-center">
                   <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-3xl font-bold text-white">
+                  <div className="font-display text-3xl font-bold text-text-primary">
                     {conferenceStats.rankedTeams}
                   </div>
                   <div className="text-text-tertiary text-sm">Ranked Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-3xl font-bold text-white">
+                  <div className="font-display text-3xl font-bold text-text-primary">
                     {conferenceStats.totalTeams}
                   </div>
                   <div className="text-text-tertiary text-sm">Total Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <Star className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-3xl font-bold text-white">
+                  <div className="font-display text-3xl font-bold text-text-primary">
                     {conferenceStats.newMembers}
                   </div>
                   <div className="text-text-tertiary text-sm">New Members</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-3xl font-bold text-white">#1</div>
+                  <div className="font-display text-3xl font-bold text-text-primary">#1</div>
                   <div className="text-text-tertiary text-sm">Top Team (Texas)</div>
                 </Card>
               </div>
@@ -346,7 +346,7 @@ export default function SECPreviewPage() {
           <Container>
             <ScrollReveal direction="up" delay={150}>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-white mb-6">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-6">
                   The New Reality
                 </h2>
 
@@ -365,7 +365,7 @@ export default function SECPreviewPage() {
                     perpetual arm factory, is #10. That&apos;s five top-ten teams in one conference.
                   </p>
 
-                  <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 italic text-white/90">
+                  <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 italic text-text-secondary">
                     &ldquo;Every weekend in this conference is a postseason atmosphere. There are no
                     off weeks. You better be ready to compete or you&apos;ll get buried.&rdquo;
                   </blockquote>
@@ -393,7 +393,7 @@ export default function SECPreviewPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={200}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-white mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
                 <Calendar className="w-5 h-5 inline mr-2 text-burnt-orange" />
                 Key SEC Matchups
               </h2>
@@ -402,7 +402,7 @@ export default function SECPreviewPage() {
                 {keyMatchups.map((matchup, index) => (
                   <Card key={index} padding="md">
                     <div className="text-burnt-orange text-sm font-medium mb-1">{matchup.date}</div>
-                    <div className="text-white font-bold mb-1">{matchup.teams}</div>
+                    <div className="text-text-primary font-bold mb-1">{matchup.teams}</div>
                     <div className="text-text-tertiary text-sm">{matchup.note}</div>
                   </Card>
                 ))}
@@ -415,7 +415,7 @@ export default function SECPreviewPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={250}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-white mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
                 <Users className="w-5 h-5 inline mr-2 text-burnt-orange" />
                 Team-by-Team Breakdown
               </h2>
@@ -434,7 +434,7 @@ export default function SECPreviewPage() {
                             className="w-3 h-3 rounded-full"
                             style={{ backgroundColor: team.primaryColor }}
                           />
-                          <h3 className="font-display text-xl font-bold text-white">
+                          <h3 className="font-display text-xl font-bold text-text-primary">
                             {team.name} {team.mascot}
                           </h3>
                           {team.ranking && <Badge variant="primary">#{team.ranking}</Badge>}
@@ -443,22 +443,22 @@ export default function SECPreviewPage() {
                         <p className="text-text-secondary text-sm mb-3">{team.outlook}</p>
                         <div className="flex flex-wrap gap-4 text-sm">
                           <span className="text-text-tertiary">
-                            2025: <span className="text-white">{team.lastSeason}</span>
+                            2025: <span className="text-text-primary">{team.lastSeason}</span>
                           </span>
                           <span className="text-text-tertiary">
-                            Postseason: <span className="text-white">{team.postseason}</span>
+                            Postseason: <span className="text-text-primary">{team.postseason}</span>
                           </span>
                           <span className="text-text-tertiary">
-                            Key Returners: <span className="text-white">{team.keyReturners}</span>
+                            Key Returners: <span className="text-text-primary">{team.keyReturners}</span>
                           </span>
                           <span className="text-text-tertiary">
-                            Coach: <span className="text-white">{team.headCoach}</span>
+                            Coach: <span className="text-text-primary">{team.headCoach}</span>
                           </span>
                         </div>
                       </div>
                       <Link
                         href={`/college-baseball/teams/${team.id}`}
-                        className="inline-flex items-center text-burnt-orange font-medium hover:text-white transition-colors shrink-0"
+                        className="inline-flex items-center text-burnt-orange font-medium hover:text-text-primary transition-colors shrink-0"
                       >
                         Full Profile <ArrowRight className="w-4 h-4 ml-1" />
                       </Link>
@@ -475,7 +475,7 @@ export default function SECPreviewPage() {
           <Container>
             <ScrollReveal direction="up" delay={300}>
               <Card padding="lg" className="text-center">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-white mb-4">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-4">
                   The Rivalry That Started It All
                 </h2>
                 <p className="text-text-secondary mb-6 max-w-xl mx-auto">

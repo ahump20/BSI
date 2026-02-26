@@ -79,7 +79,7 @@ export function PersonaSwitch() {
     <div>
       {/* Section header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <h2 className="text-2xl md:text-3xl font-display text-white uppercase tracking-wide">
+        <h2 className="text-2xl md:text-3xl font-display text-text-primary uppercase tracking-wide">
           <span className="text-gradient-brand">Start Here</span>
         </h2>
 
@@ -95,12 +95,12 @@ export function PersonaSwitch() {
                 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200
                 ${active === key
                   ? 'text-white shadow-glow-sm'
-                  : 'glass-subtle text-white/60 hover:text-white hover:bg-white/10'
+                  : 'glass-subtle text-text-secondary hover:text-text-primary hover:bg-surface'
                 }
               `}
               style={
                 active === key
-                  ? { background: 'linear-gradient(135deg, #BF5700, #FF6B35)' }
+                  ? { background: 'linear-gradient(135deg, var(--bsi-primary), var(--bsi-accent))' }
                   : undefined
               }
             >
@@ -111,7 +111,7 @@ export function PersonaSwitch() {
       </div>
 
       {/* Headline + CTA */}
-      <p className={`text-lg text-white/60 mb-6 transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+      <p className={`text-lg text-text-secondary mb-6 transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
         {config.headline}
       </p>
 
@@ -121,12 +121,12 @@ export function PersonaSwitch() {
           <Link
             key={card.title}
             href={card.href}
-            className="glass-default rounded-xl p-6 border border-white/[0.06] hover:border-[#BF5700]/40 transition-all duration-300 group"
+            className="glass-default rounded-xl p-6 border border-border-subtle hover:border-burnt-orange/40 transition-all duration-300 group"
           >
-            <h3 className="text-base font-display text-white uppercase tracking-wide mb-2 group-hover:text-[#BF5700] transition-colors">
+            <h3 className="text-base font-display text-text-primary uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
               {card.title}
             </h3>
-            <p className="text-sm text-white/40 leading-relaxed">
+            <p className="text-sm text-text-muted leading-relaxed">
               {card.description}
             </p>
           </Link>
@@ -137,7 +137,7 @@ export function PersonaSwitch() {
       <div className="mt-6 text-center sm:text-left">
         <Link
           href={config.ctaHref}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300"
         >
           {config.ctaText}
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

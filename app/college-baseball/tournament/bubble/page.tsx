@@ -42,9 +42,9 @@ function classifyBubbleZone(rank: number | undefined): BubbleZone {
 }
 
 const zoneStyles: Record<BubbleZone, string> = {
-  Lock: 'text-green-400/70 border-green-500/20 bg-green-500/5',
+  Lock: 'text-success border-green-500/20 bg-green-500/5',
   Bubble: 'text-yellow-400/70 border-yellow-500/20 bg-yellow-500/5',
-  'Work to Do': 'text-red-400/70 border-red-500/20 bg-red-500/5',
+  'Work to Do': 'text-error border-red-500/20 bg-red-500/5',
 };
 
 // ---------------------------------------------------------------------------
@@ -70,7 +70,7 @@ export default function BubbleWatchPage() {
   return (
     <>
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -87,10 +87,10 @@ export default function BubbleWatchPage() {
             <Badge variant="warning" className="mb-4">
               {isTournamentWindow ? 'Live Rankings' : 'Coming May 2026'}
             </Badge>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
               Bubble Watch
             </h1>
-            <p className="text-white/50 text-lg leading-relaxed mb-8">
+            <p className="text-text-tertiary text-lg leading-relaxed mb-8">
               Tracking the NCAA tournament field of 64 — who&#39;s locked in, who&#39;s out, and
               who needs a strong conference tournament to punch their ticket.
             </p>
@@ -98,15 +98,15 @@ export default function BubbleWatchPage() {
             {loading && !hasBubbleData && (
               <div className="space-y-3 mb-8">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-14 bg-white/[0.03] rounded-lg animate-pulse" />
+                  <div key={i} className="h-14 bg-surface-light rounded-lg animate-pulse" />
                 ))}
               </div>
             )}
 
             {error && !hasBubbleData && (
-              <div className="mb-8 text-xs text-white/30 flex items-center gap-3">
+              <div className="mb-8 text-xs text-text-muted flex items-center gap-3">
                 <span>Could not load rankings data</span>
-                <button onClick={retry} className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
                   Retry
                 </button>
               </div>
@@ -123,19 +123,19 @@ export default function BubbleWatchPage() {
                       className={`flex items-center justify-between gap-4 border rounded-lg p-3 ${style}`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <span className="text-xs font-mono w-8 shrink-0 text-white/30">
+                        <span className="text-xs font-mono w-8 shrink-0 text-text-muted">
                           #{team.rank}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm text-white/70 font-medium truncate">
+                          <p className="text-sm text-text-secondary font-medium truncate">
                             {team.name || team.team}
                           </p>
-                          <p className="text-[10px] text-white/25">{team.conference}</p>
+                          <p className="text-[10px] text-text-muted">{team.conference}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         {team.record && (
-                          <span className="text-xs font-mono text-white/30">{team.record}</span>
+                          <span className="text-xs font-mono text-text-muted">{team.record}</span>
                         )}
                         <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current">
                           {zone}
@@ -145,25 +145,25 @@ export default function BubbleWatchPage() {
                   );
                 })}
                 {lastUpdated && (
-                  <p className="text-[10px] text-white/15 pt-3">
+                  <p className="text-[10px] text-text-muted pt-3">
                     Rankings updated {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
               </div>
             ) : !loading && (
-              <div className="bg-white/[0.02] border border-dashed border-white/10 rounded-xl p-8 text-center">
-                <p className="text-sm text-white/30 mb-2">
+              <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center">
+                <p className="text-sm text-text-muted mb-2">
                   Bubble data populates when conference tournaments begin in late May.
                 </p>
-                <p className="text-xs text-white/20">
+                <p className="text-xs text-text-muted">
                   RPI, strength of schedule, and selection committee criteria will drive the bubble
                   rankings once the dataset is available.
                 </p>
               </div>
             )}
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/college-baseball/tournament" className="hover:text-white/60 transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/college-baseball/tournament" className="hover:text-text-secondary transition-colors">
                 &#8592; Tournament HQ
               </Link>
             </div>

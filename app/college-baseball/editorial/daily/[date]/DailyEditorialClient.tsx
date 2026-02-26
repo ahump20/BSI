@@ -74,21 +74,21 @@ export default function DailyEditorialClient() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
-                <Link href="/college-baseball" className="text-white/30 hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball/editorial" className="text-white/30 hover:text-burnt-orange transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Editorial
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/60">Daily Digest</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-tertiary">Daily Digest</span>
               </nav>
 
-              <h1 className="font-display text-2xl md:text-3xl font-bold text-white uppercase tracking-wide mb-2">
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide mb-2">
                 BSI Daily Digest
               </h1>
-              <p className="text-white/40 text-sm">{formattedDate}</p>
+              <p className="text-text-muted text-sm">{formattedDate}</p>
             </ScrollReveal>
           </Container>
         </Section>
@@ -99,7 +99,7 @@ export default function DailyEditorialClient() {
               <Card padding="lg" className="text-center">
                 <div className="py-12">
                   <div className="w-8 h-8 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-white/40 text-sm">Loading editorial...</p>
+                  <p className="text-text-muted text-sm">Loading editorial...</p>
                 </div>
               </Card>
             )}
@@ -107,7 +107,7 @@ export default function DailyEditorialClient() {
             {error && !loading && (
               <Card padding="lg" className="text-center">
                 <div className="py-8">
-                  <p className="text-red-400 mb-2">{error}</p>
+                  <p className="text-error mb-2">{error}</p>
                   <Link
                     href="/college-baseball/editorial"
                     className="text-burnt-orange hover:text-burnt-orange/80 transition-colors text-sm"
@@ -121,23 +121,23 @@ export default function DailyEditorialClient() {
             {data && !loading && (
               <ScrollReveal direction="up">
                 <article className="prose prose-invert prose-lg max-w-none">
-                  <h2 className="font-display text-xl font-bold text-white uppercase tracking-wide mb-6">
+                  <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">
                     {data.title}
                   </h2>
                   <div
-                    className="text-white/80 leading-relaxed space-y-4 [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-white [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:font-display [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-burnt-orange [&_h3]:uppercase [&_h3]:tracking-wide [&_h3]:mt-6 [&_h3]:mb-2"
+                    className="text-text-secondary leading-relaxed space-y-4 [&_h2]:font-display [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-text-primary [&_h2]:uppercase [&_h2]:tracking-wide [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:font-display [&_h3]:text-base [&_h3]:font-semibold [&_h3]:text-burnt-orange [&_h3]:uppercase [&_h3]:tracking-wide [&_h3]:mt-6 [&_h3]:mb-2"
                     dangerouslySetInnerHTML={{ __html: data.content }}
                   />
                 </article>
 
                 {data.teams && (
-                  <div className="mt-8 pt-4 border-t border-white/10">
-                    <p className="text-white/30 text-xs uppercase tracking-wider mb-2">Teams mentioned</p>
+                  <div className="mt-8 pt-4 border-t border-border">
+                    <p className="text-text-muted text-xs uppercase tracking-wider mb-2">Teams mentioned</p>
                     <div className="flex flex-wrap gap-2">
                       {data.teams.split(',').map((team) => (
                         <span
                           key={team.trim()}
-                          className="px-2.5 py-1 bg-white/5 border border-white/10 rounded text-white/50 text-xs"
+                          className="px-2.5 py-1 bg-surface-light border border-border rounded text-text-tertiary text-xs"
                         >
                           {team.trim()}
                         </span>

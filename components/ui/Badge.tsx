@@ -9,15 +9,15 @@ export interface BadgeProps {
 }
 
 const variantClasses: Record<string, string> = {
-  primary: 'bg-[#BF5700]/20 text-[#BF5700] border-[#BF5700]/30',
-  secondary: 'bg-white/10 text-white/70 border-white/20',
-  success: 'bg-green-600/20 text-green-400 border-green-500/30',
-  warning: 'bg-yellow-600/20 text-yellow-400 border-yellow-500/30',
-  error: 'bg-red-600/20 text-red-400 border-red-500/30',
-  outline: 'bg-transparent text-white/70 border-white/30',
-  default: 'bg-white/10 text-white/70 border-white/20',
-  info: 'bg-blue-600/20 text-blue-400 border-blue-500/30',
-  accent: 'bg-[#BF5700]/20 text-[#FF6B35] border-[#BF5700]/30',
+  primary: 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30',
+  secondary: 'bg-surface text-text-secondary border-border-strong',
+  success: 'bg-success/20 text-success-light border-success/30',
+  warning: 'bg-warning/20 text-warning-light border-warning/30',
+  error: 'bg-error/20 text-error-light border-error/30',
+  outline: 'bg-transparent text-text-secondary border-border-strong',
+  default: 'bg-surface text-text-secondary border-border-strong',
+  info: 'bg-info/20 text-info-light border-info/30',
+  accent: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
 };
 
 const sizeClasses: Record<string, string> = {
@@ -36,6 +36,13 @@ export function Badge({ children, variant = 'primary', size = 'md', style, class
   );
 }
 
+// Re-export FreshnessBadge so existing `import { FreshnessBadge } from './Badge'` works
+export { FreshnessBadge } from './FreshnessBadge';
+
+/**
+ * @deprecated Use `FreshnessBadge` instead — it shows honest data freshness.
+ * Kept for backwards compat; renders a static "LIVE" badge with no data awareness.
+ */
 export function LiveBadge({ className = '' }: { className?: string }) {
   return (
     <Badge variant="success" className={className}>
@@ -66,16 +73,20 @@ export function GameStatusBadge({ status, className = '' }: { status: GameStatus
 
 interface DataSourceBadgeProps {
   source: string;
-  timestamp: string;
+  timestamp?: string;
   className?: string;
 }
 
 export function DataSourceBadge({ source, timestamp, className = '' }: DataSourceBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 text-xs text-white/40 ${className}`}>
+    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
       <span className="font-medium">{source}</span>
-      <span>|</span>
-      <span>{timestamp}</span>
+      {timestamp && (
+        <>
+          <span>|</span>
+          <span>{timestamp}</span>
+        </>
+      )}
     </div>
   );
 }

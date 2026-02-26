@@ -6,7 +6,7 @@
  * NCAA fallback, missing API key, total failure (502), and Cache-Control.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockEnv, HIGHLIGHTLY_SCORES } from '../utils/mocks';
+import { createMockEnv, createMockCtx, HIGHLIGHTLY_SCORES } from '../utils/mocks';
 
 // ---------------------------------------------------------------------------
 // Fetch mocks scoped to this endpoint
@@ -77,7 +77,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);
@@ -92,7 +92,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('MISS');
@@ -108,7 +108,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores?date=2026-02-15');
-    await worker.fetch(req, env);
+    await worker.fetch(req, env, createMockCtx());
 
     expect(env.KV.put).toHaveBeenCalledWith(
       'cb:scores:2026-02-15',
@@ -121,7 +121,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockNcaaOnly();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('MISS');
@@ -133,7 +133,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockNcaaOnly();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Data-Source')).toBe('espn');
@@ -145,7 +145,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(502);
@@ -157,8 +157,90 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
+    expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Schedule Endpoint (powers the live scores page)
+// ---------------------------------------------------------------------------
+
+describe('handleCollegeBaseballSchedule', () => {
+  let env: ReturnType<typeof createMockEnv>;
+  let worker: { fetch: (request: Request, env: any) => Promise<Response> };
+  let originalFetch: typeof globalThis.fetch;
+
+  beforeEach(async () => {
+    env = createMockEnv();
+    worker = await import('../../workers/index');
+    if ('default' in worker) worker = (worker as any).default;
+    originalFetch = globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    vi.restoreAllMocks();
+  });
+
+  it('uses scores-level Cache-Control (30s), not schedule (3600s)', async () => {
+    // ESPN scoreboard mock for the schedule endpoint
+    globalThis.fetch = vi.fn(async () =>
+      new Response(JSON.stringify({
+        events: [{
+          id: '501',
+          name: 'Test Game',
+          date: '2026-02-25T18:00Z',
+          competitions: [{
+            competitors: [
+              { homeAway: 'home', team: { id: '126', displayName: 'Texas', abbreviation: 'TEX' }, score: '0' },
+              { homeAway: 'away', team: { id: '245', displayName: 'Texas A&M', abbreviation: 'TAMU' }, score: '0' },
+            ],
+            venue: { fullName: 'UFCU Disch-Falk Field' },
+            status: { type: { state: 'pre', name: 'STATUS_SCHEDULED' }, displayClock: '', period: 0 },
+          }],
+          status: { type: { state: 'pre', name: 'STATUS_SCHEDULED' } },
+        }],
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+    ) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
+    const res = await worker.fetch(req, env, createMockCtx());
+
+    expect(res.status).toBe(200);
+    // Schedule endpoint powers the live scores page — must use short cache
+    expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
+  });
+
+  it('returns cached data on KV HIT with 30s max-age', async () => {
+    const cached = {
+      success: true,
+      data: [{ id: '501', status: 'scheduled', homeTeam: { name: 'Texas' }, awayTeam: { name: 'A&M' } }],
+      live: false,
+      timestamp: new Date().toISOString(),
+    };
+    env.KV._store.set('cb:schedule:2026-02-25:week', JSON.stringify(cached));
+    globalThis.fetch = vi.fn() as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
+    const res = await worker.fetch(req, env, createMockCtx());
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('X-Cache')).toBe('HIT');
+    expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
+    // Should not call external APIs on cache hit
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('returns 502 with short cache on upstream failure', async () => {
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
+
+    const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
+    const res = await worker.fetch(req, env, createMockCtx());
+
+    expect(res.status).toBe(502);
+    // Even errors should use the short cache, not 3600s
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
   });
 });

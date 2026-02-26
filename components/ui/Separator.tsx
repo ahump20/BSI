@@ -11,7 +11,7 @@ export function Separator({ orientation = 'horizontal', accent = false, classNam
     <div
       role="separator"
       className={clsx(
-        orientation === 'horizontal' ? 'divider' : 'w-px h-full bg-white/10',
+        orientation === 'horizontal' ? 'divider' : 'w-px h-full bg-border',
         accent && 'divider-accent',
         className,
       )}

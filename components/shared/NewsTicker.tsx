@@ -58,16 +58,16 @@ export function NewsTicker() {
 
   return (
     <div
-      className="bg-charcoal/80 border-b border-white/5 py-1.5 px-4 text-center overflow-hidden"
+      className="bg-charcoal/80 border-b border-border-subtle py-1.5 px-4 text-center overflow-hidden"
       aria-live="polite"
       aria-label="News ticker"
     >
       {current?.href ? (
-        <a href={current.href} className="text-xs text-white/50 hover:text-white/70 truncate block transition-colors">
+        <a href={current.href} className="text-xs text-text-muted hover:text-text-secondary truncate block transition-colors">
           {current.text}
         </a>
       ) : (
-        <p className="text-xs text-white/50 truncate">
+        <p className="text-xs text-text-muted truncate">
           {current?.text}
         </p>
       )}

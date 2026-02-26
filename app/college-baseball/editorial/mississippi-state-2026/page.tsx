@@ -92,7 +92,7 @@ const data: TeamPreviewData = {
       year: 'R-Sr.',
       fromSchool: 'Southern Miss',
       stats: '3.05 ERA, 88 K',
-      bio: 'In-state arm with plus stuff. Adds rotation depth behind Alford.',
+      bio: 'Threw a 3.05 ERA with 88 K at Southern Miss — 40 miles down the road. Right-hander with a power sinker who fills the Saturday spot and gives the Bulldogs two arms who can pitch deep into games.',
     },
     {
       name: 'Jonathan Embry',
@@ -100,7 +100,7 @@ const data: TeamPreviewData = {
       year: 'Jr.',
       fromSchool: 'Louisville',
       stats: '.282/.365/.438, 7 HR',
-      bio: 'Outfield depth from an ACC program. Adds a veteran bat to a developing lineup.',
+      bio: 'Hit .282 with 7 HR at Louisville before transferring. Left-handed bat with gap power who gives Lemonis a proven run producer in the middle of a lineup that needed one.',
     },
   ],
 

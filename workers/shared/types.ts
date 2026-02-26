@@ -13,10 +13,15 @@ export interface Env {
   TURNSTILE_SECRET_KEY?: string;
   OPS_EVENTS?: AnalyticsEngineDataset;
   BSI_KEYS?: KVNamespace;
+  STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   RESEND_API_KEY?: string;
   PREDICTION_CACHE?: KVNamespace;
   BSI_PROD_CACHE?: KVNamespace;
+  MONITOR_KV?: KVNamespace;
+  DATA_LAKE?: R2Bucket;
+  ADMIN_KEY?: string;
+  RATE_LIMIT?: KVNamespace;
 }
 
 export interface PredictionPayload {

@@ -3,9 +3,13 @@ import type { Metadata } from 'next';
 import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: 'Live Scores | BSI',
-  description: 'Cross-sport live scoreboard.',
-  openGraph: { title: 'Live Scores | BSI', description: 'Cross-sport live scoreboard.' },
+  title: 'Live Scores | Blaze Sports Intel',
+  description: 'Live scores across MLB, NFL, NBA, college baseball, and college football with real-time updates and box score links.',
+  alternates: { canonical: '/scores' },
+  openGraph: {
+    title: 'Live Scores | Blaze Sports Intel',
+    description: 'Real-time live scores across all sports.',
+  },
 };
 
 export default function ScoresLayout({ children }: { children: ReactNode }) {

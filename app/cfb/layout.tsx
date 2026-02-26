@@ -4,7 +4,8 @@ import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: 'College Football | BSI',
-  description: 'CFB scores, standings, and conference breakdowns.',
+  description: 'CFB rankings, scores, transfer portal news, and conference breakdowns. Real-time college football analytics powered by BSI.',
+  alternates: { canonical: '/cfb' },
   openGraph: { title: 'College Football | BSI', description: 'CFB scores, standings, and conference breakdowns.' },
 };
 

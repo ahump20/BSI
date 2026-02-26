@@ -70,18 +70,18 @@ export default function LoneStarRivalryPage() {
               <ScrollReveal direction="up">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Feature Story</Badge>
-                  <span className="text-white/70 text-sm">8 min read</span>
+                  <span className="text-text-secondary text-sm">8 min read</span>
                 </div>
 
-                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-white mb-4 max-w-4xl">
+                <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary mb-4 max-w-4xl">
                   The Lone Star Rivalry <span className="text-burnt-orange">Enters the SEC</span>
                 </h1>
 
-                <p className="text-white/90 text-xl md:text-2xl font-medium mb-6 max-w-3xl">
+                <p className="text-text-secondary text-xl md:text-2xl font-medium mb-6 max-w-3xl">
                   Texas and Texas A&M: #1 vs #2 in Baseball&apos;s Biggest Stage
                 </p>
 
-                <p className="text-white/70 max-w-2xl text-lg leading-relaxed">
+                <p className="text-text-secondary max-w-2xl text-lg leading-relaxed">
                   For the first time in history, the Longhorns and Aggies enter SEC play
                   together—and they&apos;re doing it as the top two teams in the nation. This
                   isn&apos;t just realignment. This is a seismic shift in college baseball.
@@ -109,7 +109,7 @@ export default function LoneStarRivalryPage() {
                         </span>
                         <Badge variant="primary">Preseason</Badge>
                       </div>
-                      <h2 className="font-display text-2xl font-bold text-white uppercase">
+                      <h2 className="font-display text-2xl font-bold text-text-primary uppercase">
                         Texas Longhorns
                       </h2>
                     </div>
@@ -121,29 +121,29 @@ export default function LoneStarRivalryPage() {
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">2025 Record</span>
-                      <span className="text-white font-medium">{texasStats.lastSeason}</span>
+                      <span className="text-text-primary font-medium">{texasStats.lastSeason}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Postseason</span>
-                      <span className="text-white font-medium">{texasStats.cws}</span>
+                      <span className="text-text-primary font-medium">{texasStats.cws}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Key Returners</span>
-                      <span className="text-white font-medium">{texasStats.keyReturners}</span>
+                      <span className="text-text-primary font-medium">{texasStats.keyReturners}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Preseason All-Americans</span>
-                      <span className="text-white font-medium">{texasStats.allAmericans}</span>
+                      <span className="text-text-primary font-medium">{texasStats.allAmericans}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Head Coach</span>
-                      <span className="text-white font-medium">{texasStats.headCoach}</span>
+                      <span className="text-text-primary font-medium">{texasStats.headCoach}</span>
                     </div>
                   </div>
 
                   <Link
                     href="/college-baseball/teams/texas"
-                    className="mt-4 inline-flex items-center text-burnt-orange font-medium hover:text-white transition-colors"
+                    className="mt-4 inline-flex items-center text-burnt-orange font-medium hover:text-text-primary transition-colors"
                   >
                     Full Team Profile <ArrowRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -162,7 +162,7 @@ export default function LoneStarRivalryPage() {
                         </span>
                         <Badge variant="secondary">Preseason</Badge>
                       </div>
-                      <h2 className="font-display text-2xl font-bold text-white uppercase">
+                      <h2 className="font-display text-2xl font-bold text-text-primary uppercase">
                         Texas A&M Aggies
                       </h2>
                     </div>
@@ -174,29 +174,29 @@ export default function LoneStarRivalryPage() {
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">2025 Record</span>
-                      <span className="text-white font-medium">{aggieStats.lastSeason}</span>
+                      <span className="text-text-primary font-medium">{aggieStats.lastSeason}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Postseason</span>
-                      <span className="text-white font-medium">{aggieStats.cws}</span>
+                      <span className="text-text-primary font-medium">{aggieStats.cws}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Key Returners</span>
-                      <span className="text-white font-medium">{aggieStats.keyReturners}</span>
+                      <span className="text-text-primary font-medium">{aggieStats.keyReturners}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Preseason All-Americans</span>
-                      <span className="text-white font-medium">{aggieStats.allAmericans}</span>
+                      <span className="text-text-primary font-medium">{aggieStats.allAmericans}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-text-tertiary">Head Coach</span>
-                      <span className="text-white font-medium">{aggieStats.headCoach}</span>
+                      <span className="text-text-primary font-medium">{aggieStats.headCoach}</span>
                     </div>
                   </div>
 
                   <Link
                     href="/college-baseball/teams/texas-am"
-                    className="mt-4 inline-flex items-center text-[#500000] font-medium hover:text-white transition-colors"
+                    className="mt-4 inline-flex items-center text-[#500000] font-medium hover:text-text-primary transition-colors"
                   >
                     Full Team Profile <ArrowRight className="w-4 h-4 ml-1" />
                   </Link>
@@ -211,7 +211,7 @@ export default function LoneStarRivalryPage() {
           <Container>
             <ScrollReveal direction="up" delay={150}>
               <div className="max-w-3xl mx-auto">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-white mb-6">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-6">
                   The Story
                 </h2>
 
@@ -232,7 +232,7 @@ export default function LoneStarRivalryPage() {
                     order: Texas at #1, Texas A&M at #2.
                   </p>
 
-                  <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 italic text-white/90">
+                  <blockquote className="border-l-4 border-burnt-orange pl-6 my-8 italic text-text-secondary">
                     &ldquo;This is bigger than any single series. This is two programs that
                     genuinely believe they&apos;re the best in the country, now playing in the same
                     conference for the first time in over a decade. The intensity is going to be
@@ -269,7 +269,7 @@ export default function LoneStarRivalryPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={200}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-white mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
                 <Calendar className="w-5 h-5 inline mr-2 text-burnt-orange" />
                 Key Dates
               </h2>
@@ -278,7 +278,7 @@ export default function LoneStarRivalryPage() {
                 {keyDates.map((date, index) => (
                   <Card key={index} padding="md">
                     <div className="text-burnt-orange text-sm font-medium mb-1">{date.date}</div>
-                    <div className="text-white font-bold mb-1">{date.event}</div>
+                    <div className="text-text-primary font-bold mb-1">{date.event}</div>
                     <div className="text-text-tertiary text-sm">{date.note}</div>
                   </Card>
                 ))}
@@ -291,7 +291,7 @@ export default function LoneStarRivalryPage() {
         <Section padding="md">
           <Container>
             <ScrollReveal direction="up" delay={250}>
-              <h2 className="font-display text-xl font-bold uppercase tracking-display text-white mb-6">
+              <h2 className="font-display text-xl font-bold uppercase tracking-display text-text-primary mb-6">
                 <Trophy className="w-5 h-5 inline mr-2 text-burnt-orange" />
                 Recent Head-to-Head
               </h2>
@@ -300,7 +300,7 @@ export default function LoneStarRivalryPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-white/10">
+                      <tr className="border-b border-border">
                         <th className="text-left py-3 text-text-tertiary font-medium">Year</th>
                         <th className="text-left py-3 text-text-tertiary font-medium">Winner</th>
                         <th className="text-left py-3 text-text-tertiary font-medium">Score</th>
@@ -309,8 +309,8 @@ export default function LoneStarRivalryPage() {
                     </thead>
                     <tbody>
                       {headToHeadHistory.map((game, index) => (
-                        <tr key={index} className="border-b border-white/5 last:border-0">
-                          <td className="py-3 text-white">{game.year}</td>
+                        <tr key={index} className="border-b border-border-subtle last:border-0">
+                          <td className="py-3 text-text-primary">{game.year}</td>
                           <td className="py-3">
                             <span
                               className={
@@ -322,7 +322,7 @@ export default function LoneStarRivalryPage() {
                               {game.winner}
                             </span>
                           </td>
-                          <td className="py-3 text-white">{game.score}</td>
+                          <td className="py-3 text-text-primary">{game.score}</td>
                           <td className="py-3 text-text-tertiary">{game.location}</td>
                         </tr>
                       ))}
@@ -339,7 +339,7 @@ export default function LoneStarRivalryPage() {
           <Container>
             <ScrollReveal direction="up" delay={300}>
               <Card padding="lg" className="text-center">
-                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-white mb-4">
+                <h2 className="font-display text-2xl font-bold uppercase tracking-display text-text-primary mb-4">
                   Follow the Rivalry All Season
                 </h2>
                 <p className="text-text-secondary mb-6 max-w-xl mx-auto">

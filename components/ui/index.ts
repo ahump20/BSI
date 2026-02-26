@@ -5,7 +5,7 @@
  */
 
 // Badge components
-export { Badge, LiveBadge, DataSourceBadge } from './Badge';
+export { Badge, LiveBadge, FreshnessBadge, DataSourceBadge } from './Badge';
 export type { BadgeProps } from './Badge';
 
 // Button

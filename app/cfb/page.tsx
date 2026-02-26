@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
+import { TabBar } from '@/components/ui/TabBar';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface RankedTeam {
@@ -91,34 +92,7 @@ export default function CFBPage() {
       setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
-      // Fallback preseason rankings
-      setRankings([
-        { rank: 1, team: 'Texas', conference: 'SEC' },
-        { rank: 2, team: 'Ohio State', conference: 'Big Ten' },
-        { rank: 3, team: 'Georgia', conference: 'SEC' },
-        { rank: 4, team: 'Oregon', conference: 'Big Ten' },
-        { rank: 5, team: 'Penn State', conference: 'Big Ten' },
-        { rank: 6, team: 'Alabama', conference: 'SEC' },
-        { rank: 7, team: 'Notre Dame', conference: 'Independent' },
-        { rank: 8, team: 'Michigan', conference: 'Big Ten' },
-        { rank: 9, team: 'Tennessee', conference: 'SEC' },
-        { rank: 10, team: 'LSU', conference: 'SEC' },
-        { rank: 11, team: 'USC', conference: 'Big Ten' },
-        { rank: 12, team: 'Clemson', conference: 'ACC' },
-        { rank: 13, team: 'Miami', conference: 'ACC' },
-        { rank: 14, team: 'Oklahoma', conference: 'SEC' },
-        { rank: 15, team: 'Ole Miss', conference: 'SEC' },
-        { rank: 16, team: 'Colorado', conference: 'Big 12' },
-        { rank: 17, team: 'Missouri', conference: 'SEC' },
-        { rank: 18, team: 'Florida State', conference: 'ACC' },
-        { rank: 19, team: 'Kansas State', conference: 'Big 12' },
-        { rank: 20, team: 'Iowa State', conference: 'Big 12' },
-        { rank: 21, team: 'SMU', conference: 'ACC' },
-        { rank: 22, team: 'Arizona', conference: 'Big 12' },
-        { rank: 23, team: 'BYU', conference: 'Big 12' },
-        { rank: 24, team: 'Texas A&M', conference: 'SEC' },
-        { rank: 25, team: 'Louisville', conference: 'ACC' },
-      ]);
+      setRankings([]);
     } finally {
       setLoading(false);
     }
@@ -157,7 +131,7 @@ export default function CFBPage() {
       <main id="main-content">
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-[#BF5700]/20 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/20 via-transparent to-transparent pointer-events-none" />
           <Container center>
             <ScrollReveal direction="up">
               <Badge variant="success" className="mb-4">
@@ -171,12 +145,12 @@ export default function CFBPage() {
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={150}>
-              <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-4">
+              <p className="text-burnt-orange font-semibold text-lg tracking-wide text-center mb-4">
                 Longhorns. SEC. Big Ten. Every conference, every rivalry, covered right.
               </p>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
-              <p className="text-white/60 text-center max-w-2xl mx-auto mb-8">
+              <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
                 Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs.
               </p>
             </ScrollReveal>
@@ -187,22 +161,22 @@ export default function CFBPage() {
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={300}>
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-surface-light border border-border rounded-2xl">
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">134</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">FBS Teams</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">134</div>
+                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">FBS Teams</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">10</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Conferences</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">10</div>
+                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Conferences</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">12</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Playoff Teams</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">12</div>
+                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Playoff Teams</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-[#BF5700]">SP+</div>
-                  <div className="text-xs uppercase tracking-wider text-white/40 mt-1">Advanced Data</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">SP+</div>
+                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Advanced Data</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -212,16 +186,7 @@ export default function CFBPage() {
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
-            <div className="flex gap-2 mb-8 border-b border-white/10 overflow-x-auto pb-px">
-              {tabs.map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
-                    activeTab === tab.id ? 'text-[#BF5700] border-[#BF5700]' : 'text-white/40 border-transparent hover:text-white'
-                  }`}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+            <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
 
             {/* Rankings Tab */}
             {activeTab === 'rankings' && (
@@ -249,27 +214,32 @@ export default function CFBPage() {
                         <div className="overflow-x-auto">
                           <table className="w-full">
                             <thead>
-                              <tr className="border-b-2 border-[#BF5700]">
+                              <tr className="border-b-2 border-burnt-orange">
                                 {['Rank', 'Team', 'Conference', 'Record'].map((h) => (
-                                  <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                                  <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               {rankings.map((team) => (
-                                <tr key={team.rank} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                  <td className="p-3 text-[#BF5700] font-bold text-lg">{team.rank}</td>
-                                  <td className="p-3 font-semibold text-white">{team.team}</td>
-                                  <td className="p-3 text-white/60">{team.conference}</td>
-                                  <td className="p-3 text-white/60">{team.record || '-'}</td>
+                                <tr key={team.rank} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                                  <td className="p-3 text-burnt-orange font-bold text-lg">{team.rank}</td>
+                                  <td className="p-3 font-semibold text-text-primary">{team.team}</td>
+                                  <td className="p-3 text-text-secondary">{team.conference}</td>
+                                  <td className="p-3 text-text-secondary">{team.record || '-'}</td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-white/10">
+                        {rankings.length === 0 && error && (
+                          <div className="text-center py-8">
+                            <p className="text-text-secondary mb-4">{error}</p>
+                            <Button variant="primary" size="sm" onClick={() => fetchRankings()}>Retry</Button>
+                          </div>
+                        )}
+                        <div className="mt-4 pt-4 border-t border-border">
                           <DataSourceBadge source="SportsDataIO (Derived Rankings)" timestamp={formatTimestamp(lastUpdated)} />
-                          {error && <span className="text-xs text-yellow-400 ml-4">Using cached/preseason data</span>}
                         </div>
                       </CardContent>
                     </Card>
@@ -284,9 +254,9 @@ export default function CFBPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {conferences.map((conf) => (
                     <Card key={conf.name} variant="hover" padding="lg" className="text-center">
-                      <div className="font-semibold text-white text-lg">{conf.name}</div>
-                      <div className="text-sm text-white/40 mt-1">{conf.description}</div>
-                      <div className="text-xs text-[#BF5700] mt-2">{conf.teams} Teams</div>
+                      <div className="font-semibold text-text-primary text-lg">{conf.name}</div>
+                      <div className="text-sm text-text-muted mt-1">{conf.description}</div>
+                      <div className="text-xs text-burnt-orange mt-2">{conf.teams} Teams</div>
                     </Card>
                   ))}
                 </div>
@@ -308,19 +278,19 @@ export default function CFBPage() {
                   {portalLoading ? (
                     <div className="space-y-3">
                       {Array.from({ length: 10 }).map((_, i) => (
-                        <div key={i} className="h-10 bg-white/5 rounded animate-pulse" />
+                        <div key={i} className="h-10 bg-surface-light rounded animate-pulse" />
                       ))}
                     </div>
                   ) : portalError ? (
                     <div className="text-center py-8">
-                      <p className="text-white/60 mb-4">Unable to load transfer portal data.</p>
+                      <p className="text-text-secondary mb-4">Unable to load transfer portal data.</p>
                       <Link href="/cfb/transfer-portal">
                         <Button variant="primary">View Transfer Portal Page</Button>
                       </Link>
                     </div>
                   ) : portalEntries.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-white/60 mb-4">No transfer portal entries available yet.</p>
+                      <p className="text-text-secondary mb-4">No transfer portal entries available yet.</p>
                       <Link href="/cfb/transfer-portal">
                         <Button variant="primary">View Transfer Portal</Button>
                       </Link>
@@ -329,19 +299,19 @@ export default function CFBPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b-2 border-[#BF5700]">
+                          <tr className="border-b-2 border-burnt-orange">
                             {['Player', 'Pos', 'From', 'To', 'Status'].map((h) => (
-                              <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                              <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {portalEntries.slice(0, 25).map((entry, i) => (
-                            <tr key={`${entry.name}-${i}`} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                              <td className="p-3 font-semibold text-white">{entry.name}</td>
-                              <td className="p-3 text-white/60">{entry.position}</td>
-                              <td className="p-3 text-white/60">{entry.fromSchool}</td>
-                              <td className="p-3 text-white/60">{entry.toSchool || 'Undecided'}</td>
+                            <tr key={`${entry.name}-${i}`} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
+                              <td className="p-3 font-semibold text-text-primary">{entry.name}</td>
+                              <td className="p-3 text-text-secondary">{entry.position}</td>
+                              <td className="p-3 text-text-secondary">{entry.fromSchool}</td>
+                              <td className="p-3 text-text-secondary">{entry.toSchool || 'Undecided'}</td>
                               <td className="p-3">
                                 <Badge variant={entry.toSchool ? 'success' : 'warning'}>
                                   {entry.status || (entry.toSchool ? 'Committed' : 'In Portal')}
@@ -362,21 +332,21 @@ export default function CFBPage() {
               <Card variant="default" padding="lg">
                 <CardHeader><CardTitle>Advanced Analytics</CardTitle></CardHeader>
                 <CardContent>
-                  <p className="text-white/60 mb-4">
+                  <p className="text-text-secondary mb-4">
                     SP+ ratings, EPA metrics, and advanced statistics for teams and players across all FBS programs.
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-[#BF5700]">SP+</div>
-                      <div className="text-xs text-white/40 mt-1">Team Efficiency Ratings</div>
+                      <div className="font-display text-2xl font-bold text-burnt-orange">SP+</div>
+                      <div className="text-xs text-text-muted mt-1">Team Efficiency Ratings</div>
                     </Card>
                     <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-[#BF5700]">EPA</div>
-                      <div className="text-xs text-white/40 mt-1">Expected Points Added</div>
+                      <div className="font-display text-2xl font-bold text-burnt-orange">EPA</div>
+                      <div className="text-xs text-text-muted mt-1">Expected Points Added</div>
                     </Card>
                     <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-[#BF5700]">CFP</div>
-                      <div className="text-xs text-white/40 mt-1">Playoff Projections</div>
+                      <div className="font-display text-2xl font-bold text-burnt-orange">CFP</div>
+                      <div className="text-xs text-text-muted mt-1">Playoff Projections</div>
                     </Card>
                   </div>
                 </CardContent>
@@ -393,7 +363,7 @@ export default function CFBPage() {
                 <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide mt-2">
                   CFB <span className="text-gradient-blaze">Data Hub</span>
                 </h2>
-                <p className="text-white/60 mt-4 max-w-2xl mx-auto">
+                <p className="text-text-secondary mt-4 max-w-2xl mx-auto">
                   Live scores, conference standings, and rankings powered by ESPN.
                 </p>
               </div>
@@ -403,8 +373,8 @@ export default function CFBPage() {
               <ScrollReveal delay={0}>
                 <Link href="/cfb/scores">
                   <Card variant="hover" padding="lg" className="h-full">
-                    <h3 className="text-lg font-semibold text-white mb-3">Live Scores</h3>
-                    <p className="text-white/40 text-sm leading-relaxed mb-4">
+                    <h3 className="text-lg font-semibold text-text-primary mb-3">Live Scores</h3>
+                    <p className="text-text-muted text-sm leading-relaxed mb-4">
                       Real-time scores and game updates for all FBS teams.
                     </p>
                     <Badge variant="success">Live</Badge>
@@ -414,8 +384,8 @@ export default function CFBPage() {
               <ScrollReveal delay={100}>
                 <Link href="/cfb/standings">
                   <Card variant="hover" padding="lg" className="h-full">
-                    <h3 className="text-lg font-semibold text-white mb-3">Conference Standings</h3>
-                    <p className="text-white/40 text-sm leading-relaxed mb-4">
+                    <h3 className="text-lg font-semibold text-text-primary mb-3">Conference Standings</h3>
+                    <p className="text-text-muted text-sm leading-relaxed mb-4">
                       Complete standings for SEC, Big Ten, Big 12, ACC, and all FBS conferences.
                     </p>
                     <Badge variant="success">Live</Badge>
@@ -424,8 +394,8 @@ export default function CFBPage() {
               </ScrollReveal>
               <ScrollReveal delay={200}>
                 <Card variant="default" padding="lg" className="h-full">
-                  <h3 className="text-lg font-semibold text-white mb-3">Rankings & Analytics</h3>
-                  <p className="text-white/40 text-sm leading-relaxed mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary mb-3">Rankings & Analytics</h3>
+                  <p className="text-text-muted text-sm leading-relaxed mb-4">
                     AP Top 25, playoff projections, and advanced analytics.
                   </p>
                   <Badge variant="warning">Coming Soon</Badge>
@@ -455,22 +425,22 @@ export default function CFBPage() {
                 <ul className="space-y-3 text-sm text-text-secondary">
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Catapult GPS</strong> dominant across SEC and Power 4 — real-time workload, sprint distance, and collision load</span>
+                    <span><strong className="text-text-primary">Catapult GPS</strong> dominant across SEC and Power 4 — real-time workload, sprint distance, and collision load</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Hudl IQ:</strong> CV-based tracking from All-22 coaching film — extracting positional data without dedicated camera arrays</span>
+                    <span><strong className="text-text-primary">Hudl IQ:</strong> CV-based tracking from All-22 coaching film — extracting positional data without dedicated camera arrays</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">SkillCorner:</strong> broadcast-feed tracking for speed, separation, and get-off time across televised games</span>
+                    <span><strong className="text-text-primary">SkillCorner:</strong> broadcast-feed tracking for speed, separation, and get-off time across televised games</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Sportlogiq</strong> (acquired by Teamworks Jan 2026) — formation recognition and route classification</span>
+                    <span><strong className="text-text-primary">Sportlogiq</strong> (acquired by Teamworks Jan 2026) — formation recognition and route classification</span>
                   </li>
                 </ul>
-                <div className="mt-5 pt-4 border-t border-white/5">
+                <div className="mt-5 pt-4 border-t border-border-subtle">
                   <Link href="/vision-ai">
                     <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
                   </Link>

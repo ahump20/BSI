@@ -1,7 +1,7 @@
 'use client';
 
 import { Command, Info } from 'lucide-react';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -21,6 +21,7 @@ interface IntelHeaderProps {
   onOpenPalette: () => void;
   liveCount: number;
   briefingLine: string;
+  fetchedAt?: string;
 }
 
 const MODE_OPTIONS: Array<{ value: IntelMode; label: string }> = [
@@ -38,6 +39,7 @@ export function IntelHeader({
   onOpenPalette,
   liveCount,
   briefingLine,
+  fetchedAt,
 }: IntelHeaderProps) {
   const { time, date } = useChicagoClock();
 
@@ -47,9 +49,9 @@ export function IntelHeader({
       <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
           <div
-            className="grid h-10 w-10 place-items-center border border-white/10"
+            className="grid h-10 w-10 place-items-center border border-border"
             style={{
-              background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary, #BF5700)), var(--bsi-ember, #FF6B35))',
+              background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary)), var(--bsi-accent))',
               borderRadius: '2px',
             }}
           >
@@ -65,7 +67,7 @@ export function IntelHeader({
               <h1 className="intel-masthead text-xl md:text-[2.25rem]">
                 Intel Briefing
               </h1>
-              <LiveBadge />
+              <FreshnessBadge isLive={liveCount > 0} fetchedAt={fetchedAt} />
               {liveCount > 0 && (
                 <Badge variant="success" className="text-[10px]">
                   {liveCount} Live
@@ -97,7 +99,7 @@ export function IntelHeader({
           <div className="text-right hidden sm:block">
             <div
               className="text-sm font-semibold"
-              style={{ fontFamily: 'var(--intel-mono)', color: 'var(--bsi-intel-accent, var(--bsi-primary, #BF5700))' }}
+              style={{ fontFamily: 'var(--intel-mono)', color: 'var(--bsi-intel-accent, var(--bsi-primary))' }}
             >
               {time}
             </div>
@@ -114,11 +116,11 @@ export function IntelHeader({
           value={mode}
           onValueChange={onModeChange}
           options={MODE_OPTIONS}
-          accentColor="var(--bsi-intel-accent, var(--bsi-cyan, #06B6D4))"
+          accentColor="var(--bsi-intel-accent, var(--bsi-cyan))"
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
-          <span className="inline-flex items-center gap-1 text-white/30">
+          <span className="inline-flex items-center gap-1 text-text-muted">
             <Info className="h-3.5 w-3.5" />
             <span className="intel-caption">{MODE_LABELS[mode]}</span>
           </span>
@@ -128,13 +130,13 @@ export function IntelHeader({
         {teamLens ? (
           <button
             onClick={() => onTeamLensChange(null)}
-            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-white/30"
+            className="inline-flex items-center gap-1 px-2 py-1 text-[11px] transition-colors hover:border-border-strong"
             style={{
               fontFamily: 'var(--intel-mono)',
               borderRadius: '2px',
-              border: `1px solid color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 30%, transparent)`,
-              background: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-ember, #FF6B35)) 10%, transparent)',
-              color: 'var(--bsi-intel-accent, var(--bsi-ember, #FF6B35))',
+              border: `1px solid color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-accent)) 30%, transparent)`,
+              background: 'color-mix(in srgb, var(--bsi-intel-accent, var(--bsi-accent)) 10%, transparent)',
+              color: 'var(--bsi-intel-accent, var(--bsi-accent))',
             }}
           >
             Lens: {teamLens} ✕
@@ -143,7 +145,7 @@ export function IntelHeader({
           <select
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
-            className="h-8 border border-white/10 bg-white/5 px-2 text-[11px] text-white/60 outline-none focus:border-white/30"
+            className="h-8 border border-border bg-surface-light px-2 text-[11px] text-text-secondary outline-none focus:border-border-strong"
             style={{ fontFamily: 'var(--intel-mono)', borderRadius: '2px' }}
           >
             <option value="">Team lens...</option>

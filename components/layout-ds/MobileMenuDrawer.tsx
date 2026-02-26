@@ -63,8 +63,8 @@ export function MobileMenuDrawer({
         aria-current={active ? 'page' : undefined}
         className={`block w-full px-4 py-3 rounded-lg transition-all min-h-12 flex items-center ${
           active
-            ? 'text-[#BF5700] font-semibold bg-white/10'
-            : 'text-white/60 hover:text-white'
+            ? 'text-burnt-orange font-semibold bg-surface'
+            : 'text-text-secondary hover:text-text-primary'
         }`}
       >
         {item.label}
@@ -83,14 +83,14 @@ export function MobileMenuDrawer({
         aria-current={active ? 'page' : undefined}
         className={`flex items-center justify-between w-full px-4 py-3 rounded-lg transition-all min-h-12 ${
           active
-            ? 'text-[#BF5700] font-semibold bg-white/10'
-            : 'text-white/60 hover:text-white'
+            ? 'text-burnt-orange font-semibold bg-surface'
+            : 'text-text-secondary hover:text-text-primary'
         }`}
       >
         <span>{item.label}</span>
         <span className="flex items-center gap-2">
           {item.phaseLabel && (
-            <span className="text-[10px] text-white/30">{item.phaseLabel}</span>
+            <span className="text-[10px] text-text-muted">{item.phaseLabel}</span>
           )}
           {isLive && (
             <span className="relative flex h-2 w-2">
@@ -123,7 +123,7 @@ export function MobileMenuDrawer({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-b border-white/10 max-h-[80vh] overflow-y-auto"
+            className="fixed top-0 left-0 right-0 z-50 bg-midnight/95 backdrop-blur-xl border-b border-border max-h-[80vh] overflow-y-auto"
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
@@ -134,10 +134,10 @@ export function MobileMenuDrawer({
               <button
                 ref={closeButtonRef}
                 onClick={onClose}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface rounded-lg transition-colors"
                 aria-label="Close menu"
               >
-                <X className="w-5 h-5 text-white" />
+                <X className="w-5 h-5 text-text-primary" />
               </button>
             </div>
 
@@ -149,9 +149,9 @@ export function MobileMenuDrawer({
             {/* Leagues */}
             {leagues.length > 0 && (
               <>
-                <div className="mx-4 my-2 border-t border-white/[0.06]" />
+                <div className="mx-4 my-2 border-t border-border-subtle" />
                 <div className="px-4 pb-1">
-                  <span className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-4">
+                  <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4">
                     Leagues
                   </span>
                 </div>
@@ -164,9 +164,9 @@ export function MobileMenuDrawer({
             {/* Secondary */}
             {secondary.length > 0 && (
               <>
-                <div className="mx-4 my-2 border-t border-white/[0.06]" />
+                <div className="mx-4 my-2 border-t border-border-subtle" />
                 <div className="px-4 pb-1">
-                  <span className="text-[10px] uppercase tracking-widest text-white/25 font-medium px-4">
+                  <span className="text-[10px] uppercase tracking-widest text-text-muted font-medium px-4">
                     More
                   </span>
                 </div>

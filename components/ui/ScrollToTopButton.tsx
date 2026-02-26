@@ -32,7 +32,7 @@ export function ScrollToTopButton() {
       {isVisible && (
         <motion.button
           onClick={scrollToTop}
-          className="fixed bottom-24 right-4 p-3 bg-[#BF5700] hover:bg-[#A34900] text-white rounded-full shadow-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#BF5700] focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
+          className="fixed bottom-24 right-4 p-3 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-full shadow-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-burnt-orange focus-visible:ring-offset-2 focus-visible:ring-offset-midnight"
           aria-label="Scroll to top"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}

@@ -26,7 +26,7 @@ export default function TermsPage() {
               <div className="prose prose-invert max-w-none space-y-8">
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">1. Acceptance of Terms</h2>
                   <p className="text-text-secondary leading-relaxed">
                     By accessing or using Blaze Sports Intel (&ldquo;BSI,&rdquo; &ldquo;the Service&rdquo;),
                     you agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;). If you do not
@@ -36,7 +36,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">2. Description of Service</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">2. Description of Service</h2>
                   <p className="text-text-secondary leading-relaxed">
                     BSI provides sports analytics, live scores, statistical data, transfer portal tracking,
                     and related intelligence tools for college and professional sports. The Service is
@@ -45,18 +45,18 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">3. Subscriptions and Payment</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">3. Subscriptions and Payment</h2>
                   <ul className="list-disc pl-5 space-y-2 text-text-secondary">
-                    <li><strong className="text-white">Plans:</strong> Pro ($29/month), Enterprise ($199/month). Pricing is subject to change with 30 days&apos; notice.</li>
-                    <li><strong className="text-white">Free trial:</strong> Pro plan includes a 14-day free trial. You will not be charged until the trial ends.</li>
-                    <li><strong className="text-white">Billing:</strong> Subscriptions renew automatically. You authorize recurring charges to your payment method on file.</li>
-                    <li><strong className="text-white">Cancellation:</strong> You may cancel at any time. Access continues through the end of your current billing period. No refunds for partial periods.</li>
-                    <li><strong className="text-white">Payment processing:</strong> All payments are processed by Stripe, Inc. Your use of Stripe is subject to Stripe&apos;s terms of service.</li>
+                    <li><strong className="text-text-primary">Plans:</strong> Pro ($29/month), Enterprise ($199/month). Pricing is subject to change with 30 days&apos; notice.</li>
+                    <li><strong className="text-text-primary">Free trial:</strong> Pro plan includes a 14-day free trial. You will not be charged until the trial ends.</li>
+                    <li><strong className="text-text-primary">Billing:</strong> Subscriptions renew automatically. You authorize recurring charges to your payment method on file.</li>
+                    <li><strong className="text-text-primary">Cancellation:</strong> You may cancel at any time. Access continues through the end of your current billing period. No refunds for partial periods.</li>
+                    <li><strong className="text-text-primary">Payment processing:</strong> All payments are processed by Stripe, Inc. Your use of Stripe is subject to Stripe&apos;s terms of service.</li>
                   </ul>
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">4. Acceptable Use</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">4. Acceptable Use</h2>
                   <p className="text-text-secondary leading-relaxed mb-3">You agree not to:</p>
                   <ul className="list-disc pl-5 space-y-1 text-text-secondary">
                     <li>Resell, redistribute, sublicense, or commercially exploit BSI data without written permission</li>
@@ -73,7 +73,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">5. Intellectual Property</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">5. Intellectual Property</h2>
                   <p className="text-text-secondary leading-relaxed">
                     The BSI platform, including its design, code, features, branding, and presentation
                     of data, is the intellectual property of Blaze Intelligence LLC. The underlying sports
@@ -88,16 +88,16 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">6. Data Accuracy Disclaimer</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">6. Data Accuracy Disclaimer</h2>
                   <p className="text-text-secondary leading-relaxed">
-                    <strong className="text-white">BSI provides sports data for informational purposes only.</strong>{' '}
+                    <strong className="text-text-primary">BSI provides sports data for informational purposes only.</strong>{' '}
                     While we strive for accuracy, we do not guarantee that any data, statistics, scores,
                     rankings, valuations, or analytics provided through the Service are complete, accurate,
                     or current. Data is sourced from third-party APIs and public sources and may contain
                     errors, delays, or omissions.
                   </p>
                   <p className="text-text-secondary leading-relaxed mt-2">
-                    <strong className="text-white">
+                    <strong className="text-text-primary">
                       You should not rely solely on BSI data for recruiting decisions, financial decisions,
                       NIL valuations, roster management, or any other decision with material consequences.
                     </strong>{' '}
@@ -106,7 +106,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">7. Disclaimer of Warranties</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">7. Disclaimer of Warranties</h2>
                   <p className="text-text-secondary leading-relaxed uppercase text-xs tracking-wide">
                     THE SERVICE IS PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE&rdquo; WITHOUT
                     WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING
@@ -117,7 +117,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">8. Limitation of Liability</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">8. Limitation of Liability</h2>
                   <p className="text-text-secondary leading-relaxed uppercase text-xs tracking-wide">
                     TO THE MAXIMUM EXTENT PERMITTED BY LAW, BLAZE INTELLIGENCE LLC AND ITS OFFICERS,
                     DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
@@ -133,7 +133,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">9. Indemnification</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">9. Indemnification</h2>
                   <p className="text-text-secondary leading-relaxed">
                     You agree to indemnify, defend, and hold harmless Blaze Intelligence LLC and its
                     officers, directors, employees, and agents from any claims, damages, losses, liabilities,
@@ -144,7 +144,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">10. Termination</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">10. Termination</h2>
                   <p className="text-text-secondary leading-relaxed">
                     We may suspend or terminate your access to the Service at any time for any reason,
                     including violation of these Terms, with or without notice. Upon termination, your
@@ -154,7 +154,7 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">11. Governing Law and Dispute Resolution</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">11. Governing Law and Dispute Resolution</h2>
                   <p className="text-text-secondary leading-relaxed">
                     These Terms are governed by the laws of the State of Texas, without regard to conflict
                     of law principles.
@@ -167,14 +167,14 @@ export default function TermsPage() {
                     judgment in any court of competent jurisdiction.
                   </p>
                   <p className="text-text-secondary leading-relaxed mt-2">
-                    <strong className="text-white">CLASS ACTION WAIVER:</strong> You agree that any dispute
+                    <strong className="text-text-primary">CLASS ACTION WAIVER:</strong> You agree that any dispute
                     resolution proceedings will be conducted only on an individual basis and not in a class,
                     consolidated, or representative action.
                   </p>
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">12. Modifications</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">12. Modifications</h2>
                   <p className="text-text-secondary leading-relaxed">
                     We reserve the right to modify these Terms at any time. Material changes will be
                     communicated via email to registered users at least 30 days before they take effect.
@@ -184,13 +184,13 @@ export default function TermsPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">13. General Provisions</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">13. General Provisions</h2>
                   <ul className="list-disc pl-5 space-y-2 text-text-secondary">
-                    <li><strong className="text-white">Entire Agreement:</strong> These Terms, together with our Privacy Policy, constitute the entire agreement between you and Blaze Intelligence LLC regarding the Service.</li>
-                    <li><strong className="text-white">Severability:</strong> If any provision of these Terms is found unenforceable, the remaining provisions remain in full force and effect.</li>
-                    <li><strong className="text-white">Waiver:</strong> Our failure to enforce any provision of these Terms does not constitute a waiver of that provision.</li>
-                    <li><strong className="text-white">Assignment:</strong> You may not assign your rights under these Terms without our written consent. We may assign our rights without restriction.</li>
-                    <li><strong className="text-white">Force Majeure:</strong> We are not liable for failures or delays caused by events beyond our reasonable control.</li>
+                    <li><strong className="text-text-primary">Entire Agreement:</strong> These Terms, together with our Privacy Policy, constitute the entire agreement between you and Blaze Intelligence LLC regarding the Service.</li>
+                    <li><strong className="text-text-primary">Severability:</strong> If any provision of these Terms is found unenforceable, the remaining provisions remain in full force and effect.</li>
+                    <li><strong className="text-text-primary">Waiver:</strong> Our failure to enforce any provision of these Terms does not constitute a waiver of that provision.</li>
+                    <li><strong className="text-text-primary">Assignment:</strong> You may not assign your rights under these Terms without our written consent. We may assign our rights without restriction.</li>
+                    <li><strong className="text-text-primary">Force Majeure:</strong> We are not liable for failures or delays caused by events beyond our reasonable control.</li>
                   </ul>
                 </section>
 

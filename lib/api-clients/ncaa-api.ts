@@ -32,7 +32,7 @@ export interface NcaaPaginated<T> {
 export interface NcaaApiClient {
   healthCheck(): Promise<ProviderHealth>;
   getMatches(league: string, date?: string): Promise<NcaaApiResponse<NcaaPaginated<unknown>>>;
-  getStandings(conference: string): Promise<NcaaApiResponse<unknown[]>>;
+  getStandings(): Promise<NcaaApiResponse<unknown[]>>;
   getRankings(): Promise<NcaaApiResponse<unknown[]>>;
   getTeam(teamId: number): Promise<NcaaApiResponse<unknown>>;
   getTeamPlayers(teamId: number): Promise<NcaaApiResponse<NcaaPaginated<unknown>>>;
@@ -41,6 +41,7 @@ export interface NcaaApiClient {
   getMatch(matchId: number): Promise<NcaaApiResponse<unknown>>;
   getBoxScore(matchId: number): Promise<NcaaApiResponse<unknown>>;
   getSchedule(date: string, range: string): Promise<NcaaApiResponse<NcaaPaginated<unknown>>>;
+  getTeamSchedule(teamId: number): Promise<NcaaApiResponse<unknown>>;
 }
 
 const ESPN_BASE = 'https://site.api.espn.com';
@@ -189,10 +190,11 @@ class EspnNcaaClient implements NcaaApiClient {
     };
   }
 
-  async getStandings(conference: string): Promise<NcaaApiResponse<unknown[]>> {
-    // ESPN college baseball standings aren't as structured as pro sports.
-    // Use the scoreboard with conference groups to derive standings, or use rankings as a proxy.
-    const url = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/standings`;
+  async getStandings(): Promise<NcaaApiResponse<unknown[]>> {
+    // Returns all D1 conference groups from ESPN. The handler owns conference
+    // filtering via team-metadata.ts espnId → conference mapping.
+    // ESPN standings lives at /apis/v2/ (not /apis/site/v2/ which returns empty).
+    const url = `${ESPN_BASE}/apis/v2/sports/${SPORT_PATH}/standings`;
     const result = await espnFetch<Record<string, unknown>>(url);
 
     if (!result.ok || !result.data) {
@@ -201,15 +203,7 @@ class EspnNcaaClient implements NcaaApiClient {
     }
 
     const children = (result.data.children as Record<string, unknown>[]) || [];
-    // Filter by conference if specified
-    const filtered = conference === 'NCAA'
-      ? children
-      : children.filter((c) => {
-          const name = ((c as Record<string, unknown>).name as string) || '';
-          return name.toLowerCase().includes(conference.toLowerCase());
-        });
-
-    return { success: true, data: filtered, timestamp: this.now(), source: 'ncaa' };
+    return { success: true, data: children, timestamp: this.now(), source: 'ncaa' };
   }
 
   async getRankings(): Promise<NcaaApiResponse<unknown[]>> {
@@ -317,6 +311,17 @@ class EspnNcaaClient implements NcaaApiClient {
       timestamp: this.now(),
       source: 'ncaa',
     };
+  }
+
+  async getTeamSchedule(teamId: number): Promise<NcaaApiResponse<unknown>> {
+    const url = `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/teams/${teamId}/schedule`;
+    const result = await espnFetch<Record<string, unknown>>(url);
+
+    if (!result.ok || !result.data) {
+      return { success: false, error: result.error, data: null, timestamp: this.now(), source: 'ncaa' };
+    }
+
+    return { success: true, data: result.data, timestamp: this.now(), source: 'ncaa' };
   }
 }
 

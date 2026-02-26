@@ -255,7 +255,7 @@ describe('BSI College Baseball Daily Pipeline', () => {
       // Pre-populate KV with yesterday's scores and rankings
       env.KV._store.set('cb:scores:2026-02-13', JSON.stringify(HIGHLIGHTLY_SCORES));
       env.KV._store.set('cb:rankings', JSON.stringify(HIGHLIGHTLY_RANKINGS));
-      env.KV._store.set('cb:standings:v2:SEC', JSON.stringify(HIGHLIGHTLY_STANDINGS));
+      env.KV._store.set('cb:standings:v3:SEC', JSON.stringify(HIGHLIGHTLY_STANDINGS));
       globalThis.fetch = mockSuccessfulFetches();
 
       const req = new Request('https://example.com/?edition=morning');
@@ -481,7 +481,7 @@ describe('BSI College Baseball Daily Pipeline', () => {
     it('generates a markdown prompt with required sections', async () => {
       env.KV._store.set('cb:scores:2026-02-13', JSON.stringify(HIGHLIGHTLY_SCORES));
       env.KV._store.set('cb:rankings', JSON.stringify(HIGHLIGHTLY_RANKINGS));
-      env.KV._store.set('cb:standings:v2:SEC', JSON.stringify(HIGHLIGHTLY_STANDINGS));
+      env.KV._store.set('cb:standings:v3:SEC', JSON.stringify(HIGHLIGHTLY_STANDINGS));
       globalThis.fetch = mockSuccessfulFetches();
 
       const req = new Request('https://example.com/?edition=morning');

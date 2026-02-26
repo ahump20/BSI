@@ -37,10 +37,10 @@ function AnimatedScore({
         isScheduled
           ? 'text-text-tertiary'
           : isWinner
-            ? 'text-white'
+            ? 'text-text-primary'
             : 'text-text-secondary'
       }`}
-      animate={flash ? { scale: [1, 1.3, 1], color: ['', '#FF6B35', ''] } : {}}
+      animate={flash ? { scale: [1, 1.3, 1], color: ['', 'var(--bsi-accent)', ''] } : {}}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       {value !== null ? value : '-'}
@@ -69,9 +69,11 @@ interface LiveScoreCardProps {
   game: LiveGame;
   /** Show animation transitions (disable for initial render batch) */
   animate?: boolean;
+  /** Timestamp of last data message — displayed as "Xs ago" during live games */
+  lastMessageAt?: Date;
 }
 
-export function LiveScoreCard({ game, animate = true }: LiveScoreCardProps) {
+export function LiveScoreCard({ game, animate = true, lastMessageAt }: LiveScoreCardProps) {
   const isLive = game.status === 'in';
   const isFinal = game.status === 'post';
   const isScheduled = game.status === 'pre';
@@ -119,7 +121,7 @@ export function LiveScoreCard({ game, animate = true }: LiveScoreCardProps) {
     <Wrapper {...(wrapperProps as Record<string, unknown>)}>
       <Link href={`/college-baseball/game/${game.id}`} className="block">
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
@@ -164,9 +166,14 @@ export function LiveScoreCard({ game, animate = true }: LiveScoreCardProps) {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="px-2 py-0.5 bg-success/20 text-success text-[10px] font-bold uppercase rounded-full tracking-wider"
+                  className="flex items-center gap-1.5 px-2 py-0.5 bg-success/20 text-success text-[10px] font-bold uppercase rounded-full tracking-wider"
                 >
                   LIVE
+                  {lastMessageAt && (
+                    <span className="text-success/60 font-normal normal-case tracking-normal">
+                      {Math.floor((Date.now() - lastMessageAt.getTime()) / 1000)}s ago
+                    </span>
+                  )}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -187,7 +194,7 @@ export function LiveScoreCard({ game, animate = true }: LiveScoreCardProps) {
                 <div>
                   <p
                     className={`font-semibold ${
-                      awayWon ? 'text-white' : 'text-text-secondary'
+                      awayWon ? 'text-text-primary' : 'text-text-secondary'
                     }`}
                   >
                     {game.awayTeam.ranking && (
@@ -225,7 +232,7 @@ export function LiveScoreCard({ game, animate = true }: LiveScoreCardProps) {
                 <div>
                   <p
                     className={`font-semibold ${
-                      homeWon ? 'text-white' : 'text-text-secondary'
+                      homeWon ? 'text-text-primary' : 'text-text-secondary'
                     }`}
                   >
                     {game.homeTeam.ranking && (

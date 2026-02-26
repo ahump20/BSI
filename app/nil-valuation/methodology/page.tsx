@@ -23,7 +23,7 @@ export default function NILMethodologyPage() {
                 NIL Valuation
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Methodology</span>
+              <span className="text-text-primary font-medium">Methodology</span>
             </nav>
           </Container>
         </Section>
@@ -83,35 +83,35 @@ export default function NILMethodologyPage() {
                       <li className="flex items-start gap-3">
                         <span className="text-burnt-orange font-bold">1.</span>
                         <div>
-                          <strong className="text-white">On-Field Performance</strong> — Statistical
+                          <strong className="text-text-primary">On-Field Performance</strong> — Statistical
                           production, awards, and projected draft position contribute to base value.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="text-burnt-orange font-bold">2.</span>
                         <div>
-                          <strong className="text-white">Social Following</strong> — Combined reach
+                          <strong className="text-text-primary">Social Following</strong> — Combined reach
                           across platforms with engagement rate adjustments.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="text-burnt-orange font-bold">3.</span>
                         <div>
-                          <strong className="text-white">Market Size</strong> — School market,
+                          <strong className="text-text-primary">Market Size</strong> — School market,
                           conference visibility, and regional brand affinity.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="text-burnt-orange font-bold">4.</span>
                         <div>
-                          <strong className="text-white">Sport Premium</strong> — Football and
+                          <strong className="text-text-primary">Sport Premium</strong> — Football and
                           basketball command higher valuations due to media exposure.
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
                         <span className="text-burnt-orange font-bold">5.</span>
                         <div>
-                          <strong className="text-white">Comparable Deals</strong> — Actual NIL
+                          <strong className="text-text-primary">Comparable Deals</strong> — Actual NIL
                           deals for similar athletes inform market pricing.
                         </div>
                       </li>
@@ -142,9 +142,9 @@ export default function NILMethodologyPage() {
                       For baseball athletes, we convert Wins Above Replacement (WAR) to NIL value
                       using MLB market rates as a benchmark:
                     </p>
-                    <div className="bg-graphite rounded-lg p-4 font-mono text-sm">
+                    <div className="bg-background-tertiary rounded-lg p-4 font-mono text-sm">
                       <p className="text-burnt-orange mb-2">{'// Base calculation'}</p>
-                      <p className="text-white">
+                      <p className="text-text-primary">
                         NIL Value = WAR × $/WAR × College Discount Factor
                       </p>
                       <p className="text-text-tertiary mt-4">
@@ -269,7 +269,7 @@ export default function NILMethodologyPage() {
                   <CardContent>
                     <p className="text-text-secondary">
                       Our valuations are{' '}
-                      <strong className="text-white">
+                      <strong className="text-text-primary">
                         estimates for informational purposes only
                       </strong>
                       . Actual NIL values depend on negotiation, specific deal terms, and market

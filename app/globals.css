@@ -162,7 +162,7 @@
   --bsi-border-base: rgba(255, 255, 255, 0.1);
   --bsi-border-strong: rgba(255, 255, 255, 0.15);
   --bsi-border-accent: rgba(191, 87, 0, 0.4);
-  --bsi-intel-accent: var(--bsi-primary, #bf5700);
+  --bsi-intel-accent: var(--bsi-primary);
 }
 
 /* ========================================================================== */
@@ -1723,7 +1723,7 @@ textarea:focus-visible,
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--card-accent, #bf5700);
+  background: var(--card-accent, var(--bsi-primary));
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 1;

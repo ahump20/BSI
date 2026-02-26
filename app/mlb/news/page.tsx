@@ -82,7 +82,7 @@ export default function MLBNewsPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">News</span>
+              <span className="text-text-primary font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -114,7 +114,7 @@ export default function MLBNewsPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     filter === cat.id
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {cat.label}
@@ -191,7 +191,7 @@ export default function MLBNewsPage() {
                             rel="noopener noreferrer"
                             className="block"
                           >
-                            <h3 className="text-white font-semibold text-lg group-hover:text-burnt-orange transition-colors">
+                            <h3 className="text-text-primary font-semibold text-lg group-hover:text-burnt-orange transition-colors">
                               {item.title}
                             </h3>
                             <p className="text-text-secondary text-sm mt-1 line-clamp-2">

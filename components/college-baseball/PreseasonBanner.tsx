@@ -21,16 +21,16 @@ export function PreseasonBanner({ teamId }: PreseasonBannerProps) {
       padding="lg"
       className={
         data.tier === 'elite'
-          ? 'border-[#BF5700]/40 bg-gradient-to-r from-[#BF5700]/10 to-transparent'
-          : 'border-white/10'
+          ? 'border-burnt-orange/40 bg-gradient-to-r from-burnt-orange/10 to-transparent'
+          : 'border-border'
       }
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
-          <span className="font-display text-3xl font-bold text-[#BF5700]">#{data.rank}</span>
+          <span className="font-display text-3xl font-bold text-burnt-orange">#{data.rank}</span>
           <div>
-            <span className="text-white font-semibold text-sm">Preseason Power 25</span>
-            <div className="text-white/30 text-xs">BSI 2026 Rankings</div>
+            <span className="text-text-primary font-semibold text-sm">Preseason Power 25</span>
+            <div className="text-text-muted text-xs">BSI 2026 Rankings</div>
           </div>
         </div>
         <Badge variant={data.tier === 'elite' ? 'primary' : 'secondary'}>
@@ -38,7 +38,7 @@ export function PreseasonBanner({ teamId }: PreseasonBannerProps) {
         </Badge>
       </div>
 
-      <div className="text-white/40 text-sm mb-3">
+      <div className="text-text-muted text-sm mb-3">
         2025: {data.record2025} | {data.postseason2025}
       </div>
 
@@ -46,27 +46,27 @@ export function PreseasonBanner({ teamId }: PreseasonBannerProps) {
         {data.keyPlayers.map((player) => (
           <span
             key={player}
-            className="text-xs bg-white/5 px-2 py-1 rounded text-white/50"
+            className="text-xs bg-surface-light px-2 py-1 rounded text-text-muted"
           >
             {player}
           </span>
         ))}
       </div>
 
-      <p className="text-white/50 text-sm leading-relaxed mb-4">{data.outlook}</p>
+      <p className="text-text-muted text-sm leading-relaxed mb-4">{data.outlook}</p>
 
       <div className="flex flex-wrap gap-4">
         {data.editorialLink && (
           <Link
             href={data.editorialLink}
-            className="text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors font-medium"
+            className="text-sm text-burnt-orange hover:text-ember transition-colors font-medium"
           >
             Read Full Preview →
           </Link>
         )}
         <Link
           href="/college-baseball/preseason/power-25"
-          className="text-sm text-white/30 hover:text-white transition-colors"
+          className="text-sm text-text-muted hover:text-text-primary transition-colors"
         >
           View Preseason Power 25 →
         </Link>
