@@ -21,6 +21,7 @@ interface IntelHeaderProps {
   onOpenPalette: () => void;
   liveCount: number;
   briefingLine: string;
+  fetchedAt?: string;
 }
 
 const MODE_OPTIONS: Array<{ value: IntelMode; label: string }> = [
@@ -38,6 +39,7 @@ export function IntelHeader({
   onOpenPalette,
   liveCount,
   briefingLine,
+  fetchedAt,
 }: IntelHeaderProps) {
   const { time, date } = useChicagoClock();
 
@@ -65,7 +67,7 @@ export function IntelHeader({
               <h1 className="intel-masthead text-xl md:text-[2.25rem]">
                 Intel Briefing
               </h1>
-              <FreshnessBadge isLive={liveCount > 0} />
+              <FreshnessBadge isLive={liveCount > 0} fetchedAt={fetchedAt} />
               {liveCount > 0 && (
                 <Badge variant="success" className="text-[10px]">
                   {liveCount} Live

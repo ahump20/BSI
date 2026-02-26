@@ -1000,6 +1000,9 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const marquee = useMemo(() => enrichedGames.filter((g) => g.tier === 'marquee'), [enrichedGames]);
   const standard = useMemo(() => enrichedGames.filter((g) => g.tier === 'standard'), [enrichedGames]);
 
+  // Most recent successful fetch timestamp across all score queries
+  const lastFetched = Math.max(...scoreQueryResults.map(r => r.dataUpdatedAt ?? 0)) || undefined;
+
   return {
     games: enrichedGames,
     hero,
@@ -1013,6 +1016,7 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
     newsLoading: newsQuery.isLoading,
     isLoading,
     isError,
+    lastFetched,
   };
 }
 

@@ -68,6 +68,7 @@ export default function IntelDashboard() {
         newsLoading,
         isLoading,
         isError,
+        lastFetched,
   } = useIntelDashboard(sport, mode, teamLens);
 
   const { toggle: togglePin, isPinned } = usePinnedBriefing();
@@ -154,6 +155,7 @@ export default function IntelDashboard() {
                           onOpenPalette={handleOpenPalette}
                           liveCount={liveCount}
                           briefingLine={briefingLine}
+                          fetchedAt={lastFetched ? new Date(lastFetched).toISOString() : undefined}
                         />
 
                 <hr className="intel-masthead-rule" />
