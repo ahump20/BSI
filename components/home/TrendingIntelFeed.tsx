@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { withAlpha } from '@/lib/utils/color';
 
 interface Article {
   headline: string;
@@ -35,7 +36,6 @@ function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-// Hex required — values get alpha digits concatenated (e.g., `${color}30`)
 const SPORT_COLORS: Record<string, string> = {
   mlb: '#C41E3A',
   nfl: '#013369',
@@ -115,13 +115,13 @@ export function TrendingIntelFeed() {
           <p className="text-sm text-text-muted py-4 text-center">No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
-            const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary (hex required for alpha concat)
+            const color = SPORT_COLORS[article.sport] || '#BF5700'; // token: --bsi-primary
             const inner = (
               <div className="group/item py-2 border-b border-border-subtle last:border-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span
                     className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-                    style={{ backgroundColor: `${color}20`, color }}
+                    style={{ backgroundColor: withAlpha(color, 0.12), color }}
                   >
                     {article.sport}
                   </span>

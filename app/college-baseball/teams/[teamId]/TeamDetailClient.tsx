@@ -13,6 +13,7 @@ import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPan
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { withAlpha } from '@/lib/utils/color';
 import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -270,7 +271,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   const accent = meta ? getAccentColor(meta.colors.primary, meta.colors.secondary) : 'var(--bsi-primary)';
   const teamStyles = meta
-    ? ({ '--team-primary': accent, '--team-primary-20': `${accent}33`, '--team-primary-40': `${accent}66` } as React.CSSProperties)
+    ? ({ '--team-primary': accent, '--team-primary-20': withAlpha(accent, 0.20), '--team-primary-40': withAlpha(accent, 0.40) } as React.CSSProperties)
     : {};
 
   // ─── Not found ────────────────────────────────────────────────────────────
@@ -307,7 +308,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     <>
       <main id="main-content" style={teamStyles}>
         {/* Hero */}
-        <div style={{ backgroundImage: `linear-gradient(to bottom, ${accent}1A, var(--bsi-charcoal), var(--bsi-midnight))` }}>
+        <div style={{ backgroundImage: `linear-gradient(to bottom, ${withAlpha(accent, 0.10)}, var(--bsi-charcoal), var(--bsi-midnight))` }}>
           <Section padding="lg" className="pt-24">
             <Container>
               <ScrollReveal direction="up">
@@ -321,7 +322,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8">
                   {/* Logo */}
-                  <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-surface-light flex items-center justify-center overflow-hidden shrink-0" style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: `${accent}40` }}>
+                  <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-surface-light flex items-center justify-center overflow-hidden shrink-0" style={{ borderWidth: '4px', borderStyle: 'solid', borderColor: withAlpha(accent, 0.25) }}>
                     {!logoError ? (
                       <img src={logoUrl} alt={`${meta.name} logo`} className="w-20 h-20 md:w-24 md:h-24 object-contain" loading="eager" onError={() => setLogoError(true)} />
                     ) : (
@@ -882,7 +883,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                     return (
                       <ScrollReveal key={group} direction="up">
                         <Card padding="none" className="overflow-hidden">
-                          <div className="px-4 py-3 border-b border-border" style={{ backgroundColor: `${accent}0D` }}>
+                          <div className="px-4 py-3 border-b border-border" style={{ backgroundColor: withAlpha(accent, 0.05) }}>
                             <h3 className="font-display text-sm font-bold uppercase tracking-wider" style={{ color: accent }}>{group}</h3>
                             <span className="text-text-muted text-xs">{groupPlayers.length} player{groupPlayers.length !== 1 ? 's' : ''}</span>
                           </div>

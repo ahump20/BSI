@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { withAlpha } from '@/lib/utils/color';
 
 interface MMIGaugeProps {
   /** Momentum value from -100 (away) to +100 (home) */
@@ -107,7 +108,7 @@ export function MMIGauge({
           )}
           <span
             className="text-[9px] uppercase tracking-wider font-display px-2 py-0.5 rounded-full"
-            style={{ color: magConfig.color, backgroundColor: `${magConfig.color}15` }}
+            style={{ color: magConfig.color, backgroundColor: withAlpha(magConfig.color, 0.08) }}
           >
             {magConfig.label}
           </span>
@@ -152,7 +153,7 @@ export function MMIGauge({
           style={{
             backgroundColor: indicatorColor,
             borderColor: 'var(--bsi-midnight)',
-            boxShadow: `0 0 10px ${indicatorColor}80`,
+            boxShadow: `0 0 10px ${withAlpha(indicatorColor, 0.5)}`,
           }}
           initial={{ left: '50%', x: '-50%' }}
           animate={{ left: `${position}%` }}

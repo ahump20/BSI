@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { withAlpha } from '@/lib/utils/color';
 
 interface ParkFactorRow {
   team: string;
@@ -158,7 +159,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                   <td className="px-2 py-3 text-center">
                     <span
                       className="inline-block px-1.5 py-0.5 rounded font-mono text-xs font-bold tabular-nums"
-                      style={{ color, backgroundColor: `${color}22` }}
+                      style={{ color, backgroundColor: withAlpha(color, 0.13) }}
                     >
                       {formatFactor(row.runs_factor)}
                     </span>

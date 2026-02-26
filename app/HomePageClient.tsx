@@ -9,6 +9,7 @@ import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
+import { withAlpha } from '@/lib/utils/color';
 
 // ────────────────────────────────────────
 // SVG Sport Icons (crisp at any size)
@@ -125,7 +126,7 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
     return (
       <span
         className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold"
-        style={{ backgroundColor: `${color}25`, color }}
+        style={{ backgroundColor: withAlpha(color, 0.15), color }}
       >
         <span className="relative flex h-1.5 w-1.5">
           <span
@@ -146,7 +147,7 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
     return (
       <span
         className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-        style={{ backgroundColor: `${color}15`, color }}
+        style={{ backgroundColor: withAlpha(color, 0.08), color }}
       >
         {today} Today
       </span>

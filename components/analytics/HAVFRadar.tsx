@@ -8,6 +8,7 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
 } from 'recharts';
+import { withAlpha } from '@/lib/utils/color';
 
 interface HAVFRadarProps {
   /** Player name displayed above chart */
@@ -80,7 +81,7 @@ export function HAVFRadar({
           className="px-3 py-1 rounded-full text-sm font-bold tabular-nums"
           style={{
             color,
-            backgroundColor: `${color}15`,
+            backgroundColor: withAlpha(color, 0.08),
             boxShadow: getCompositeGlow(composite),
           }}
         >

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SportIcon } from '@/components/icons/SportIcon';
 import { isInSeason, getReturnMonth, type SportKey } from '@/lib/season';
 import { normalizeGames, type GameScore } from '@/lib/scores/normalize';
+import { withAlpha } from '@/lib/utils/color';
 
 interface SportHub {
   key: SportKey;
@@ -17,7 +18,6 @@ interface SportHub {
   inSeason: boolean;
 }
 
-// Hex required — accent values get alpha digits concatenated (e.g., `${accent}20`)
 const SPORT_CONFIG: Omit<SportHub, 'games' | 'loading' | 'error' | 'inSeason'>[] = [
   { key: 'ncaa', name: 'College Baseball', href: '/college-baseball', accent: '#BF5700' }, // token: --bsi-primary
   { key: 'mlb', name: 'MLB', href: '/mlb', accent: '#C41E3A' },
@@ -133,7 +133,7 @@ export function SportHubCards() {
               <div className="flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: `${hub.accent}20`, color: hub.accent }}
+                  style={{ backgroundColor: withAlpha(hub.accent, 0.12), color: hub.accent }}
                 >
                   <SportIcon sport={hub.key} className="w-6 h-6" />
                 </div>

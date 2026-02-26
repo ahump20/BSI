@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { withAlpha } from '@/lib/utils/color';
 
 interface HeroGame {
   sport: string;
@@ -31,7 +32,7 @@ function GameCard({ game, label, accent }: { game: HeroGame; label: string; acce
       <div className="flex items-center gap-2 mb-2">
         <span
           className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded tracking-wider"
-          style={{ backgroundColor: `${accent}20`, color: accent }}
+          style={{ backgroundColor: withAlpha(accent, 0.12), color: accent }}
         >
           {label}
         </span>

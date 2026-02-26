@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FreshnessBadge } from '@/components/ui/Badge';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { getDateOffset } from '@/lib/utils/timezone';
+import { withAlpha } from '@/lib/utils/color';
 
 // ────────────────────────────────────────
 // Types
@@ -30,7 +31,6 @@ type SportFilter = 'all' | 'college-baseball' | 'mlb' | 'nfl' | 'nba';
 // Sport config
 // ────────────────────────────────────────
 
-// Hex required — values get alpha digits concatenated (e.g., `${color}40`)
 const SPORT_COLORS: Record<string, string> = {
   'college-baseball': '#BF5700', // token: --bsi-primary
   mlb: '#C41E3A',
@@ -212,13 +212,13 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
   const isFinal = game.status === 'final';
   const awayWon = isFinal && (game.away.score ?? 0) > (game.home.score ?? 0);
   const homeWon = isFinal && (game.home.score ?? 0) > (game.away.score ?? 0);
-  const sportColor = SPORT_COLORS[game.sport] || '#BF5700'; // token: --bsi-primary (hex required for alpha concat)
+  const sportColor = SPORT_COLORS[game.sport] || '#BF5700'; // token: --bsi-primary
 
   return (
     <Link
       href={game.href}
       className="group flex-shrink-0 w-48 sm:w-56 rounded-xl border border-border bg-surface-light hover:bg-surface-light transition-all duration-300 overflow-hidden"
-      style={{ borderColor: isLive ? `${sportColor}40` : undefined }}
+      style={{ borderColor: isLive ? withAlpha(sportColor, 0.25) : undefined }}
     >
       {/* Status bar */}
       <div
@@ -229,7 +229,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
               ? 'bg-surface-light text-text-muted'
               : 'text-text-muted'
         }`}
-        style={isLive ? { backgroundColor: `${sportColor}15` } : undefined}
+        style={isLive ? { backgroundColor: withAlpha(sportColor, 0.08) } : undefined}
       >
         <span className="flex items-center gap-1.5">
           {isLive && (
@@ -243,7 +243,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
         {/* Sport badge */}
         <span
           className="px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider"
-          style={{ backgroundColor: `${sportColor}20`, color: sportColor }}
+          style={{ backgroundColor: withAlpha(sportColor, 0.12), color: sportColor }}
         >
           {game.sportLabel}
         </span>
@@ -430,8 +430,8 @@ export function HomeLiveScores() {
                       : 'text-text-muted hover:text-text-secondary'
                   }`}
                   style={{
-                    backgroundColor: filter === sport.key ? `${sport.color}30` : 'rgba(255,255,255,0.05)',
-                    borderColor: filter === sport.key ? `${sport.color}50` : 'transparent',
+                    backgroundColor: filter === sport.key ? withAlpha(sport.color, 0.19) : 'rgba(255,255,255,0.05)',
+                    borderColor: filter === sport.key ? withAlpha(sport.color, 0.31) : 'transparent',
                   }}
                 >
                   {sport.label} ({sportCounts.get(sport.key) || 0})

@@ -19,6 +19,7 @@ import {
   ChevronDown,
   Minus,
 } from 'lucide-react';
+import { withAlpha } from '@/lib/utils/color';
 
 // Conference data with full team rosters
 const conferenceData: Record<
@@ -1783,12 +1784,12 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                         <Card
                           padding="md"
                           className="hover:border-burnt-orange/50 transition-all group"
-                          style={{ borderLeftWidth: '3px', borderLeftColor: `${team.colors.primary}60` }}
+                          style={{ borderLeftWidth: '3px', borderLeftColor: withAlpha(team.colors.primary, 0.38) }}
                         >
                           <div className="flex items-center gap-4">
                             <div
                               className="w-14 h-14 rounded-lg flex items-center justify-center overflow-hidden shrink-0"
-                              style={{ backgroundColor: `${team.colors.primary}20` }}
+                              style={{ backgroundColor: withAlpha(team.colors.primary, 0.12) }}
                             >
                               <img
                                 src={logoUrl}

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { MetricTooltip, METRIC_DEFS } from './MetricTooltip';
 import { getPercentileColor } from './PercentileBar';
+import { withAlpha } from '@/lib/utils/color';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -288,7 +289,7 @@ export function SavantLeaderboard({
                               showHeatmap ? 'text-white font-medium' : 'text-text-secondary'
                             }`}
                             style={showHeatmap ? {
-                              backgroundColor: `${bgColor}22`,
+                              backgroundColor: withAlpha(bgColor, 0.13),
                               color: bgColor,
                             } : undefined}
                           >

@@ -6,7 +6,9 @@
 :root {
   /* ---- Anchor Palette ---- */
   --bsi-primary: #BF5700;
+  --bsi-primary-rgb: 191, 87, 0;
   --bsi-accent: #FF6B35;
+  --bsi-accent-rgb: 255, 107, 53;
   --bsi-surface: #0D0D12;
   --bsi-gold: #FDB913;
   --bsi-text: #FAFAFA;

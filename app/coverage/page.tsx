@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
+import { withAlpha } from '@/lib/utils/color';
 // Navbar is rendered by the root layout — no page-level import needed
 import { Footer } from '@/components/layout-ds/Footer';
 
@@ -223,7 +224,7 @@ export default function CoveragePage() {
                             </h3>
                             <Badge
                               variant="secondary"
-                              style={{ backgroundColor: `${sport.statusColor}20`, color: sport.statusColor }}
+                              style={{ backgroundColor: withAlpha(sport.statusColor, 0.12), color: sport.statusColor }}
                             >
                               {sport.status}
                             </Badge>

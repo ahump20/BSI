@@ -6,6 +6,7 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { withAlpha } from '@/lib/utils/color';
 import {
   ARCADE_GAMES,
   ARCADE_CATEGORIES,
@@ -88,7 +89,7 @@ export default function ArcadePage() {
                     <Card variant="hover" padding="lg" className="h-full">
                       <div
                         className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
-                        style={{ background: `${game.color}20` }}
+                        style={{ background: withAlpha(game.color, 0.12) }}
                       >
                         {game.icon}
                       </div>
@@ -118,7 +119,7 @@ export default function ArcadePage() {
                     <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-border-strong">
                       <div
                         className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
-                        style={{ background: `${game.color}20` }}
+                        style={{ background: withAlpha(game.color, 0.12) }}
                       >
                         {game.icon}
                       </div>
@@ -145,7 +146,7 @@ export default function ArcadePage() {
                   <Card variant="hover" padding="lg" className="h-full transition-all group-hover:border-border-strong">
                     <div
                       className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl mb-4"
-                      style={{ background: `${game.color}20` }}
+                      style={{ background: withAlpha(game.color, 0.12) }}
                     >
                       {game.icon}
                     </div>

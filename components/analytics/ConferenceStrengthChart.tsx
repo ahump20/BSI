@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getPercentileColor } from './PercentileBar';
+import { withAlpha } from '@/lib/utils/color';
 
 interface ConferenceRow {
   conference: string;
@@ -198,7 +199,7 @@ function SubBadge({ label, value, color }: { label: string; value: string; color
   return (
     <span
       className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono"
-      style={{ backgroundColor: `${color}18`, color }}
+      style={{ backgroundColor: withAlpha(color, 0.09), color }}
     >
       <span className="text-text-muted">{label}</span>
       {value}
