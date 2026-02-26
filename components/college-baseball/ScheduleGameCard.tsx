@@ -55,32 +55,32 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
               </span>
             ) : isFinal ? 'Final' : game.time}
           </span>
-          <span className="text-[10px] text-white/30 font-medium">
+          <span className="text-[10px] text-text-muted font-medium">
             {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
           </span>
         </div>
         <div className="p-3 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
+              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
                 {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
               </div>
-              <span className={`font-semibold text-sm truncate ${awayWon ? 'text-white' : 'text-white/70'}`}>
+              <span className={`font-semibold text-sm truncate ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {game.awayTeam.name}
               </span>
             </div>
             <span className={`text-lg font-bold font-mono ml-2 ${
-              isScheduled ? 'text-white/20' : awayWon ? 'text-white' : 'text-white/50'
+              isScheduled ? 'text-text-muted' : awayWon ? 'text-text-primary' : 'text-text-muted'
             }`}>
               {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-6 h-6 bg-white/5 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
+              <div className="w-6 h-6 bg-surface-light rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange flex-shrink-0">
                 {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
               </div>
-              <span className={`font-semibold text-sm truncate ${homeWon ? 'text-white' : 'text-white/70'}`}>
+              <span className={`font-semibold text-sm truncate ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {game.homeTeam.name}
               </span>
             </div>

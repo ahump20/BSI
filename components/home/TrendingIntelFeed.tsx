@@ -96,7 +96,7 @@ export function TrendingIntelFeed() {
 
   return (
     <div className="glass-default rounded-2xl p-6 h-full flex flex-col hover:shadow-glow-sm transition-shadow duration-300">
-      <h3 className="font-display text-lg text-white uppercase tracking-wide mb-4">
+      <h3 className="font-display text-lg text-text-primary uppercase tracking-wide mb-4">
         Trending Intel
       </h3>
 
@@ -104,14 +104,14 @@ export function TrendingIntelFeed() {
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 animate-pulse">
-              <div className="h-3 bg-white/5 rounded w-16" />
-              <div className="h-4 bg-white/5 rounded w-full" />
+              <div className="h-3 bg-surface-light rounded w-16" />
+              <div className="h-4 bg-surface-light rounded w-full" />
             </div>
           ))
         ) : error ? (
-          <p className="text-sm text-white/40 py-4 text-center">Intel feed temporarily unavailable.</p>
+          <p className="text-sm text-text-muted py-4 text-center">Intel feed temporarily unavailable.</p>
         ) : articles.length === 0 ? (
-          <p className="text-sm text-white/30 py-4 text-center">No intel available right now.</p>
+          <p className="text-sm text-text-muted py-4 text-center">No intel available right now.</p>
         ) : (
           articles.map((article, i) => {
             const color = SPORT_COLORS[article.sport] || '#BF5700';

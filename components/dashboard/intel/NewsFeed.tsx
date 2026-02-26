@@ -83,7 +83,7 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
                 )}
                 <div className="p-3">
                   <div
-                    className="intel-narrative text-[0.8rem] leading-snug line-clamp-3 group-hover:text-white/90"
+                    className="intel-narrative text-[0.8rem] leading-snug line-clamp-3 group-hover:text-text-primary"
                     style={{ fontStyle: 'normal', color: 'var(--intel-text-headline)' }}
                   >
                     {a.headline}

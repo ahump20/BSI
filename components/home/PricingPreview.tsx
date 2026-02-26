@@ -48,8 +48,8 @@ export function PricingPreview() {
               href="/pricing"
               className={`block w-full text-center py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                 tier.popular
-                  ? 'bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white'
-                  : 'border border-white/20 hover:border-[#BF5700] text-white/80 hover:text-white'
+                  ? 'bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white'
+                  : 'border border-border-strong hover:border-burnt-orange text-text-primary hover:text-text-primary'
               }`}
             >
               {tier.cta}
@@ -61,7 +61,7 @@ export function PricingPreview() {
       <div className="text-center mt-6">
         <Link
           href="/pricing"
-          className="text-sm text-white/40 hover:text-[#BF5700] transition-colors"
+          className="text-sm text-text-muted hover:text-burnt-orange transition-colors"
         >
           Compare all features &rarr;
         </Link>

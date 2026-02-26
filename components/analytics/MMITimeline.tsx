@@ -76,11 +76,11 @@ export function MMITimeline({
 }: MMITimelineProps) {
   if (data.length === 0) {
     return (
-      <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl p-5 ${className}`}>
-        <h4 className="font-display text-sm uppercase tracking-widest text-white/60 mb-4">
+      <div className={`bg-background-primary border border-border-subtle rounded-xl p-5 ${className}`}>
+        <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary mb-4">
           Momentum Timeline
         </h4>
-        <div className="flex items-center justify-center text-white/20 text-sm" style={{ height }}>
+        <div className="flex items-center justify-center text-text-muted text-sm" style={{ height }}>
           No momentum data available
         </div>
       </div>
@@ -95,10 +95,10 @@ export function MMITimeline({
   }));
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl p-5 ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-display text-sm uppercase tracking-widest text-white/60">
+        <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary">
           Momentum Timeline
         </h4>
         <div className="flex items-center gap-4">

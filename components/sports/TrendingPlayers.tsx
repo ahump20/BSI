@@ -84,7 +84,7 @@ export function TrendingPlayers() {
       </Card>
 
       <Card padding="md">
-        <h3 className="font-display text-lg font-bold text-white mb-4">Top Games</h3>
+        <h3 className="font-display text-lg font-bold text-text-primary mb-4">Top Games</h3>
         {games.length === 0 ? (
           <p className="text-text-tertiary text-sm">No top games available yet.</p>
         ) : (
@@ -96,7 +96,7 @@ export function TrendingPlayers() {
                 className="block py-2 border-b border-border-subtle last:border-0 hover:bg-charcoal/50 -mx-2 px-2 rounded transition-colors"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-white font-medium">{g.teamA} vs {g.teamB}</span>
+                  <span className="text-text-primary font-medium">{g.teamA} vs {g.teamB}</span>
                   <span className="text-text-secondary text-sm font-mono">{g.scoreA}-{g.scoreB}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">

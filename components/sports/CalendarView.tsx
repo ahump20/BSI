@@ -80,9 +80,9 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-white transition-colors" aria-label="Previous week">&larr; Prev</button>
-        <span className="text-white font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
-        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-white transition-colors" aria-label="Next week">Next &rarr;</button>
+        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Previous week">&larr; Prev</button>
+        <span className="text-text-primary font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
+        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Next week">Next &rarr;</button>
       </div>
       {loading ? (
         <div className="grid grid-cols-7 gap-2">
@@ -116,7 +116,7 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
                       const scoreStr = aScore !== null && hScore !== null ? `${aScore}-${hScore}` : g.time;
                       return (
                         <Link key={g.id} href={`/college-baseball/game/${g.id}`} className="block p-1 rounded bg-charcoal/60 hover:bg-slate/60 transition-colors">
-                          <div className="text-[10px] text-white truncate">{away} @ {home}</div>
+                          <div className="text-[10px] text-text-primary truncate">{away} @ {home}</div>
                           <div className="text-[9px] text-text-tertiary">{g.score || scoreStr}</div>
                         </Link>
                       );

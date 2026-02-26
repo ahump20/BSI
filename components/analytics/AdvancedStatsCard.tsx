@@ -39,13 +39,13 @@ export function AdvancedStatsCard({
   const proStats = stats.filter(s => s.pro);
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl overflow-hidden ${className}`}>
-      <div className="px-5 py-3 border-b border-white/[0.04] flex items-center justify-between">
-        <h4 className="font-display text-sm uppercase tracking-wider text-white">{title}</h4>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl overflow-hidden ${className}`}>
+      <div className="px-5 py-3 border-b border-border-subtle flex items-center justify-between">
+        <h4 className="font-display text-sm uppercase tracking-wider text-text-primary">{title}</h4>
         {profileUrl && (
           <a
             href={profileUrl}
-            className="text-[10px] font-mono text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+            className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
           >
             Full Profile →
           </a>
@@ -56,7 +56,7 @@ export function AdvancedStatsCard({
       <div className="px-5 py-3 space-y-2">
         {freeStats.map(stat => (
           <div key={stat.label} className="flex items-center justify-between">
-            <span className="text-[11px] text-white/40 font-mono uppercase tracking-wide">
+            <span className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
               {stat.label}
             </span>
             <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export function AdvancedStatsCard({
           <div className="px-5 py-3 space-y-2">
             {proStats.map(stat => (
               <div key={stat.label} className="flex items-center justify-between">
-                <span className="text-[11px] text-white/40 font-mono uppercase tracking-wide">
+                <span className="text-[11px] text-text-muted font-mono uppercase tracking-wide">
                   {stat.label}
                 </span>
                 <div className="flex items-center gap-3">
