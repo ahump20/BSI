@@ -22,7 +22,7 @@ const VALUES = [
 
 export function AboutSection() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0D0D12]">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-primary">
       <div className="max-w-7xl mx-auto">
         {/* Origin narrative */}
         <div className="max-w-3xl mx-auto text-center mb-16">

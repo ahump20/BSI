@@ -6,7 +6,7 @@ import { usePathname, useParams } from 'next/navigation';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -289,7 +289,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                         day: 'numeric',
                       })}
                     </Badge>
-                    {game.status.isLive && <LiveBadge />}
+                    {game.status.isLive && <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />}
                   </div>
 
                   {/* Scoreboard */}

@@ -30,16 +30,16 @@ export function DataAttribution({ lastUpdated, source = 'Highlightly', className
 
   if (!isValidDate) {
     return source ? (
-      <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>
+      <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
         <span>Powered by {source}</span>
       </div>
     ) : null;
   }
 
   return (
-    <div className={`flex items-center gap-2 text-xs text-[#666] ${className}`}>
+    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
       <span>{relative}</span>
-      <span className="text-[#444]">·</span>
+      <span className="text-text-muted">·</span>
       <span>Powered by {source}</span>
     </div>
   );

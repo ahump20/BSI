@@ -61,9 +61,9 @@ function CustomTooltip({
     : String(entry.value);
 
   return (
-    <div className="bg-charcoal border border-white/20 rounded-lg px-3 py-2 shadow-lg">
-      <p className="text-white/50 text-xs mb-1">{formattedDate}</p>
-      <p className="text-white font-mono text-sm font-semibold">
+    <div className="bg-charcoal border border-border-strong rounded-lg px-3 py-2 shadow-lg">
+      <p className="text-text-muted text-xs mb-1">{formattedDate}</p>
+      <p className="text-text-primary font-mono text-sm font-semibold">
         {entry.payload.label ?? formattedValue}
       </p>
     </div>
@@ -81,7 +81,7 @@ export function TrendChart({
 }: TrendChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center text-white/30 text-sm" style={{ height }}>
+      <div className="flex items-center justify-center text-text-muted text-sm" style={{ height }}>
         No trend data available
       </div>
     );
@@ -91,7 +91,7 @@ export function TrendChart({
 
   return (
     <div>
-      <h4 className="text-xs uppercase tracking-wider text-white/40 mb-3 font-semibold">
+      <h4 className="text-xs uppercase tracking-wider text-text-muted mb-3 font-semibold">
         {title}
       </h4>
       <ResponsiveContainer width="100%" height={height}>

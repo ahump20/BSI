@@ -113,7 +113,7 @@ export default function TrendsPage() {
     <>
       <main id="main-content">
         {/* Header */}
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
+        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-background-primary">
           <Container>
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
@@ -169,7 +169,7 @@ export default function TrendsPage() {
         </Section>
 
         {/* Content */}
-        <Section padding="lg" className="bg-[#0D0D0D]">
+        <Section padding="lg" className="bg-background-primary">
           <Container>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Team Selector */}

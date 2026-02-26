@@ -220,7 +220,7 @@ export function SavantLeaderboard({
                 <tr
                   key={playerId || i}
                   onClick={() => playerId && onPlayerClick?.(playerId)}
-                  className={`border-b border-white/[0.02] transition-colors ${
+                  className={`border-b border-border-subtle transition-colors ${
                     onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
                   }`}
                 >

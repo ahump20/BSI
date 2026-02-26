@@ -278,7 +278,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (!meta) {
     return (
       <>
-        <main className="min-h-screen pt-24 bg-gradient-to-b from-charcoal to-[#0D0D0D]">
+        <main className="min-h-screen pt-24 bg-gradient-to-b from-charcoal to-background-primary">
           <Container>
             <Card padding="lg" className="text-center mt-12">
               <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
@@ -409,7 +409,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
         </Section>
 
         {/* Tab Content */}
-        <Section padding="lg" className="bg-[#0D0D0D]">
+        <Section padding="lg" className="bg-background-primary">
           <Container>
             {/* ── Overview ──────────────────────────────────────────────────── */}
             {activeTab === 'overview' && (

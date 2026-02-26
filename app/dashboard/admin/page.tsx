@@ -56,8 +56,8 @@ export default function AdminDashboardPage() {
             <div className="max-w-sm mx-auto">
               <Card padding="lg" className="text-center">
                 <h1 className="text-xl font-bold text-text-primary mb-4">Admin Access</h1>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-background-tertiary border border-border rounded-lg px-3 py-2 text-sm text-text-primary mb-4 focus:outline-none focus:border-[#BF5700]" />
-                <button onClick={login} className="w-full py-2.5 bg-[#BF5700] text-white rounded-lg font-medium">Enter</button>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-background-tertiary border border-border rounded-lg px-3 py-2 text-sm text-text-primary mb-4 focus:outline-none focus:border-burnt-orange" />
+                <button onClick={login} className="w-full py-2.5 bg-burnt-orange text-white rounded-lg font-medium">Enter</button>
               </Card>
             </div>
           </Container>
@@ -78,7 +78,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {loading && !health ? (
-            <div className="flex items-center justify-center py-20"><div className="w-10 h-10 border-4 border-[#BF5700]/30 border-t-[#BF5700] rounded-full animate-spin" /></div>
+            <div className="flex items-center justify-center py-20"><div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" /></div>
           ) : health ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card padding="lg">

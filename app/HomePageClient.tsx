@@ -74,8 +74,8 @@ const sports: SportCardData[] = [
     icon: BaseballIcon,
     href: '/college-baseball',
     description: 'Roster intelligence, portal tracking & pro projections',
-    accent: 'group-hover:text-[#BF5700] group-hover:border-[#BF5700]/50',
-    bgAccent: 'group-hover:bg-[#BF5700]/10',
+    accent: 'group-hover:text-burnt-orange group-hover:border-burnt-orange/50',
+    bgAccent: 'group-hover:bg-burnt-orange/10',
     color: '#BF5700',
   },
   {
@@ -164,7 +164,7 @@ export function HomePageClient() {
   const sportCounts = useMultiSportCounts();
 
   return (
-    <main id="main-content" className="min-h-screen bg-[#0D0D0D]">
+    <main id="main-content" className="min-h-screen bg-background-primary">
       {/* ─── 1. Hero ─── */}
       <HeroSection />
 
@@ -172,7 +172,7 @@ export function HomePageClient() {
       <HomeLiveScores />
 
       {/* ─── 3. Sports Hub — Glass Cards with live badges ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0D0D0D] to-[#1A1A1A] relative">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-primary to-background-secondary relative">
         {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -186,7 +186,7 @@ export function HomePageClient() {
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
             <div className="text-center mb-12">
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
+              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
                 Intelligence
               </span>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary uppercase tracking-wide">
@@ -230,7 +230,7 @@ export function HomePageClient() {
                         <sport.icon />
                       </div>
 
-                      <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-[#BF5700] transition-colors">
+                      <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">
                         {sport.name}
                       </h3>
                       <p className="text-sm text-text-tertiary leading-relaxed">{sport.description}</p>
@@ -250,11 +250,11 @@ export function HomePageClient() {
       <EvidenceStrip />
 
       {/* ─── 6. Trending Intel Feed ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#0D0D0D] to-[#1A1A1A]">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-primary to-background-secondary">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
             <div className="mb-8">
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
+              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
                 Cross-Sport Intel
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide">
@@ -267,28 +267,28 @@ export function HomePageClient() {
       </section>
 
       {/* ─── 7. Founder Quote ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0D0D0D] relative overflow-hidden">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-primary relative overflow-hidden">
         {/* Background glow */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#BF5700]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-burnt-orange/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
             <div className="flex gap-6 md:gap-8">
               {/* Burnt-orange left border — editorial magazine feel */}
-              <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-[#BF5700] to-[#BF5700]/20" />
+              <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange to-burnt-orange/20" />
 
               <div>
                 <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/90 leading-relaxed mb-6">
                   ESPN shows you scores. They don&apos;t tell you which portal pickup just changed a
                   conference race, or which freshman&apos;s exit velo projects him as a day-two pick.
-                  <span className="text-[#BF5700]">
+                  <span className="text-burnt-orange">
                     {' '}
                     That&apos;s what I built BSI to do.
                   </span>
                 </blockquote>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#BF5700] to-[#BF5700]/70 flex items-center justify-center text-white text-sm font-bold">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-burnt-orange to-burnt-orange/70 flex items-center justify-center text-white text-sm font-bold">
                     AH
                   </div>
                   <div>
@@ -303,7 +303,7 @@ export function HomePageClient() {
       </section>
 
       {/* ─── 8. CTA ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A]">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary">
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal direction="up">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-4">
@@ -315,7 +315,7 @@ export function HomePageClient() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#BF5700] to-[#BF5700]/80 hover:from-[#BF5700]/90 hover:to-[#BF5700] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(191,87,0,0.3)]"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-[0_0_30px_rgba(191,87,0,0.3)]"
               >
                 Start Free Trial
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +329,7 @@ export function HomePageClient() {
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-[#BF5700] text-text-primary hover:text-[#BF5700] px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-burnt-orange text-text-primary hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
               >
                 Learn Our Story
               </Link>

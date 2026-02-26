@@ -20,7 +20,7 @@ export function PricingPreview() {
             key={tier.id}
             className={`glass-default rounded-2xl p-6 sm:p-8 relative border transition-all duration-300 hover:shadow-glow-sm ${
               tier.popular
-                ? 'border-[#BF5700]/50 hover:border-[#BF5700]'
+                ? 'border-burnt-orange/50 hover:border-burnt-orange'
                 : 'border-border-subtle hover:border-border-strong'
             }`}
           >

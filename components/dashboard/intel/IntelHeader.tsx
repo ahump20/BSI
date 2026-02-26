@@ -1,7 +1,7 @@
 'use client';
 
 import { Command, Info } from 'lucide-react';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ToggleGroup } from '@/components/ui/ToggleGroup';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -65,7 +65,7 @@ export function IntelHeader({
               <h1 className="intel-masthead text-xl md:text-[2.25rem]">
                 Intel Briefing
               </h1>
-              <LiveBadge />
+              <FreshnessBadge isLive={liveCount > 0} />
               {liveCount > 0 && (
                 <Badge variant="success" className="text-[10px]">
                   {liveCount} Live

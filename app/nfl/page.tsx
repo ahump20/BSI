@@ -7,7 +7,7 @@ import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -241,7 +241,7 @@ export default function NFLPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span>This Week&apos;s Games</span>
-                        {hasLiveGames && <LiveBadge />}
+                        {hasLiveGames && <FreshnessBadge isLive fetchedAt={lastUpdated} />}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

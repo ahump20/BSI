@@ -154,7 +154,7 @@ export function HAVFLeaderboard({
                 <tr
                   key={player.playerId}
                   onClick={() => onPlayerClick?.(player.playerId)}
-                  className={`border-b border-white/[0.02] transition-colors ${
+                  className={`border-b border-border-subtle transition-colors ${
                     onPlayerClick ? 'cursor-pointer hover:bg-surface-light' : ''
                   } ${rank <= 3 ? 'bg-burnt-orange/[0.03]' : ''}`}
                 >

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
@@ -171,7 +171,7 @@ export default function CFBScoresPage() {
           <Container>
             <div className="flex items-center gap-3 mb-4">
               <Badge variant="primary">Live Scores</Badge>
-              {hasLive && <LiveBadge />}
+              {hasLive && <FreshnessBadge isLive fetchedAt={lastUpdated} />}
             </div>
             <ScrollReveal direction="up">
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-gradient-blaze">

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
@@ -146,7 +146,7 @@ export default function ScoresHubPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4">
                 <Badge variant="primary">All Sports</Badge>
-                {hasAnyLive && <LiveBadge />}
+                {hasAnyLive && <FreshnessBadge isLive fetchedAt={fetchedAt} />}
               </div>
             </ScrollReveal>
 

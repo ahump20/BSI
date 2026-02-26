@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -251,7 +251,7 @@ export default function NBAPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span>Today&apos;s Games</span>
-                        {hasLiveGames && <LiveBadge />}
+                        {hasLiveGames && <FreshnessBadge isLive fetchedAt={lastUpdated} />}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

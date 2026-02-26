@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -396,7 +396,7 @@ export default function NFLGamesPage() {
                 <ScrollReveal direction="up">
                   <div className="flex items-center gap-3 mb-4">
                     <Badge variant="primary">Live Scores</Badge>
-                    {hasLiveGames && <LiveBadge />}
+                    {hasLiveGames && <FreshnessBadge isLive fetchedAt={meta?.fetched_at} />}
                   </div>
                 </ScrollReveal>
 

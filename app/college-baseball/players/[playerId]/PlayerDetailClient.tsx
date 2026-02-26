@@ -220,7 +220,7 @@ export default function PlayerDetailClient() {
             {/* HAV-F Analytics Section */}
             {havfPlayer && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/20 to-transparent border-b border-border">
+                <div className="px-4 py-3 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border">
                   <div className="flex items-center justify-between">
                     <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                       HAV-F Evaluation

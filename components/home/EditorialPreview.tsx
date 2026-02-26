@@ -196,7 +196,7 @@ export function EditorialPreview() {
         {/* Featured article */}
         <ScrollReveal direction="up">
           <Link href={getEditorialHref(featured)} className="group block mb-4">
-            <article className="rounded-2xl border border-[#BF5700]/20 bg-gradient-to-r from-[#BF5700]/10 to-transparent p-6 md:p-8 transition-all duration-300 hover:border-[#BF5700]/50 hover:shadow-[0_0_30px_rgba(191,87,0,0.08)]">
+            <article className="rounded-2xl border border-burnt-orange/20 bg-gradient-to-r from-burnt-orange/10 to-transparent p-6 md:p-8 transition-all duration-300 hover:border-burnt-orange/50 hover:shadow-[0_0_30px_rgba(191,87,0,0.08)]">
               <div className="flex items-center gap-2 mb-3">
                 {featured.teams?.length > 0 && (
                   <Badge variant="primary" size="sm">{featured.teams[0]}</Badge>
@@ -232,10 +232,10 @@ export function EditorialPreview() {
             {secondary.map((article, i) => (
               <ScrollReveal key={article.id} direction="up" delay={i * 80}>
                 <Link href={getEditorialHref(article)} className="group block h-full">
-                  <article className="h-full rounded-2xl border border-border bg-surface-light p-5 md:p-6 transition-all duration-300 hover:border-[#BF5700]/40 hover:bg-surface-light">
+                  <article className="h-full rounded-2xl border border-border bg-surface-light p-5 md:p-6 transition-all duration-300 hover:border-burnt-orange/40 hover:bg-surface-light">
                     <div className="flex items-center gap-2 mb-2">
                       {article.teams?.length > 0 && (
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-[#BF5700]/70">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-burnt-orange/70">
                           {article.teams[0]}
                         </span>
                       )}

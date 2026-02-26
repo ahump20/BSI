@@ -17,7 +17,7 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse';
 
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
-  Contender: 'bg-[#BF5700]/20 text-[#FF6B35] border-[#BF5700]/30',
+  Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
   'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
 };
 
@@ -151,7 +151,7 @@ export default function TeamDossiersIndexPage() {
                 const style = tierStyles[dossier.tier] || tierStyles['Dark Horse'];
                 return (
                   <Link key={dossier.slug} href={`/intel/team-dossiers/${dossier.slug}`} className="block group">
-                    <Card variant="default" padding="md" className="h-full hover:border-[#BF5700]/30 transition-all">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors">

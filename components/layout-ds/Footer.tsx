@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HealthDot } from './HealthDot';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -49,6 +50,7 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img src="/images/brand/bsi-logo-primary.png" alt="BSI" className="h-8 w-auto opacity-70" />
             <span className="text-sm text-text-muted">Blaze Sports Intel</span>
+            <HealthDot />
           </div>
           <p className="text-xs text-text-muted">
             &copy; {currentYear} Blaze Intelligence LLC. All rights reserved.

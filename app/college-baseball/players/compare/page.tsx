@@ -175,7 +175,7 @@ function PlayerSearchInput({
         }}
         onFocus={() => { if (results.length > 0) setOpen(true); }}
         placeholder="Search by name..."
-        className="w-full p-3 rounded-lg border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-[#BF5700] transition-colors"
+        className="w-full p-3 rounded-lg border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-burnt-orange transition-colors"
       />
       {searching && (
         <div className="absolute right-3 top-[38px] mt-0.5">
@@ -245,11 +245,11 @@ export default function PlayerComparePage() {
           <Container>
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/players" className="text-text-muted hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/players" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Players
               </Link>
               <span className="text-text-muted">/</span>
@@ -285,7 +285,7 @@ export default function PlayerComparePage() {
             {/* Loading */}
             {loading && (
               <div className="flex items-center justify-center py-20">
-                <div className="w-10 h-10 border-4 border-[#BF5700]/30 border-t-[#BF5700] rounded-full animate-spin" />
+                <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
               </div>
             )}
 
@@ -295,7 +295,7 @@ export default function PlayerComparePage() {
                 <p className="text-error mb-3">{error}</p>
                 <button
                   onClick={retry}
-                  className="px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors text-sm"
+                  className="px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors text-sm"
                 >
                   Retry
                 </button>

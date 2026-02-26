@@ -112,7 +112,7 @@ export default function SavantPlayerClient() {
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-[#BF5700]/30 border-t-[#BF5700] rounded-full animate-spin" />
+              <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
             </div>
           </Container>
         </Section>
@@ -133,7 +133,7 @@ export default function SavantPlayerClient() {
                 </p>
                 <Link
                   href="/college-baseball/savant"
-                  className="text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                  className="text-burnt-orange hover:text-ember transition-colors"
                 >
                   Back to Savant
                 </Link>
@@ -156,11 +156,11 @@ export default function SavantPlayerClient() {
           <Container>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm mb-6">
-              <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
               <span className="text-text-muted">/</span>
-              <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball/savant" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Savant
               </Link>
               <span className="text-text-muted">/</span>
@@ -363,13 +363,13 @@ export default function SavantPlayerClient() {
             <div className="flex items-center gap-6 mt-8">
               <Link
                 href={`/college-baseball/players/${playerId}`}
-                className="text-xs text-text-muted hover:text-[#BF5700] transition-colors uppercase tracking-widest"
+                className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
               >
                 Full Player Profile &rarr;
               </Link>
               <Link
                 href="/college-baseball/savant"
-                className="text-xs text-text-muted hover:text-[#BF5700] transition-colors uppercase tracking-widest"
+                className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
               >
                 Savant Leaderboard &rarr;
               </Link>

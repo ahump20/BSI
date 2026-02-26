@@ -108,7 +108,7 @@ export function GameBrief({ brief }: { brief: GameBriefData }) {
           <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
             Win Probability
           </h2>
-          <div className="bg-white/[0.02] border border-dashed border-border rounded-xl p-8 text-center">
+          <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center">
             <p className="text-sm text-text-muted">
               Win probability chart will render here when the WP model is live.
             </p>

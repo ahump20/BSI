@@ -106,7 +106,7 @@ export default function BubbleWatchPage() {
             {error && !hasBubbleData && (
               <div className="mb-8 text-xs text-text-muted flex items-center gap-3">
                 <span>Could not load rankings data</span>
-                <button onClick={retry} className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
                   Retry
                 </button>
               </div>

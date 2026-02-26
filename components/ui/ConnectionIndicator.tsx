@@ -26,7 +26,7 @@ export function ConnectionIndicator({ status, className = '' }: ConnectionIndica
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider text-white/60 ${config.bg} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider text-text-secondary ${config.bg} ${className}`}
       role="status"
       aria-label={`Connection: ${config.label}`}
     >

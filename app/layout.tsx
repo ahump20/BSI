@@ -143,7 +143,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <BreadcrumbJsonLd />
       </head>
-      <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
+      <body className="bg-midnight text-text-primary antialiased min-h-screen font-sans pb-20 md:pb-0">
         <NoiseOverlay cssOnly />
         <CustomCursor />
         <Providers>

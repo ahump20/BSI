@@ -106,7 +106,7 @@ export function IntelStream({
   const hasOutput = output.length > 0;
 
   return (
-    <div className="rounded-xl border border-border-subtle bg-white/[0.02] overflow-hidden">
+    <div className="rounded-xl border border-border-subtle bg-surface-light overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <div className="flex items-center gap-2">

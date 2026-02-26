@@ -48,10 +48,10 @@ export function NewsCard({
       rel={url.startsWith('/') ? undefined : 'noopener noreferrer'}
       className="block group"
     >
-      <div className="bg-[#1A1A1A] border border-white/10 rounded-xl overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
+      <div className="bg-background-secondary border border-border rounded-xl overflow-hidden hover:border-burnt-orange/40 hover:-translate-y-0.5 transition-all duration-200">
         {/* Image header (optional) */}
         {imageUrl && (
-          <div className="relative h-40 overflow-hidden bg-white/5">
+          <div className="relative h-40 overflow-hidden bg-surface-light">
             <img
               src={imageUrl}
               alt=""
@@ -80,20 +80,20 @@ export function NewsCard({
 
             {/* Timestamp */}
             {relativeTime && (
-              <span className="text-[10px] text-white/30 ml-auto flex-shrink-0">
+              <span className="text-[10px] text-text-muted ml-auto flex-shrink-0">
                 {relativeTime}
               </span>
             )}
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-white text-sm leading-snug group-hover:text-burnt-orange transition-colors line-clamp-2">
+          <h3 className="font-semibold text-text-primary text-sm leading-snug group-hover:text-burnt-orange transition-colors line-clamp-2">
             {title}
           </h3>
 
           {/* Description — truncated to 2 lines */}
           {description && (
-            <p className="text-white/50 text-xs leading-relaxed mt-2 line-clamp-2">
+            <p className="text-text-muted text-xs leading-relaxed mt-2 line-clamp-2">
               {description}
             </p>
           )}

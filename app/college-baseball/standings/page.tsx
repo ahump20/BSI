@@ -66,6 +66,12 @@ interface StandingsApiResponse {
   timestamp?: string;
   cacheTime?: string;
   message?: string;
+  meta?: {
+    source?: string;
+    sources?: string[];
+    degraded?: boolean;
+    fetched_at?: string;
+  };
 }
 
 const seasonYear = new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear();
@@ -80,8 +86,9 @@ export default function CollegeBaseballStandingsPage() {
     `/api/college-baseball/standings?conference=${encodeURIComponent(selectedConference)}`
   );
   const standings = rawData?.success && rawData?.data ? rawData.data : [];
-  const lastUpdated = rawData?.timestamp || rawData?.cacheTime || null;
+  const lastUpdated = rawData?.timestamp || rawData?.cacheTime || rawData?.meta?.fetched_at || null;
   const error = fetchError || (rawData && !rawData.success ? (rawData.message || 'Failed to fetch standings') : null);
+  const meta = rawData?.meta || null;
 
   const currentConf = allConferences.find((c) => c.id === selectedConference);
   const hasConferencePlay = standings.some((s) =>
@@ -168,7 +175,16 @@ export default function CollegeBaseballStandingsPage() {
                     </h2>
                     <p className="text-text-tertiary text-sm mt-1">{seasonYear} Conference Standings</p>
                   </div>
-                  <Badge variant="primary">Updated Daily</Badge>
+                  {meta?.sources ? (
+                    <div className={`flex items-center gap-1.5 text-xs font-medium ${
+                      meta.degraded ? 'text-yellow-400' : 'text-green-400'
+                    }`}>
+                      <span className={`w-2 h-2 rounded-full ${meta.degraded ? 'bg-yellow-400' : 'bg-green-400'}`} />
+                      Sources: {meta.sources.join(' + ')}
+                    </div>
+                  ) : (
+                    <Badge variant="primary">Updated Daily</Badge>
+                  )}
                 </div>
               </Card>
             </ScrollReveal>

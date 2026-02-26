@@ -32,15 +32,15 @@ export default function ConferenceIndexPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Home
                 </Link>
                 <span className="text-text-muted">/</span>
-                <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                   College Baseball
                 </Link>
                 <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball/savant" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Savant
                 </Link>
                 <span className="text-text-muted">/</span>
@@ -55,7 +55,7 @@ export default function ConferenceIndexPage() {
                   <Badge variant="accent" size="sm">CONFERENCE ANALYTICS</Badge>
                 </div>
                 <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  Conference <span className="text-[#BF5700]">Strength Index</span>
+                  Conference <span className="text-burnt-orange">Strength Index</span>
                 </h1>
                 <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   Composite ranking of conference competitiveness. Weighs inter-conference
@@ -74,7 +74,7 @@ export default function ConferenceIndexPage() {
                   <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
-                    className="px-5 py-2 bg-[#BF5700]/20 text-[#BF5700] rounded-lg text-sm font-medium hover:bg-[#BF5700]/30 transition-colors"
+                    className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                   >
                     Try again
                   </button>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow, SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -288,7 +288,7 @@ export default function MLBPage() {
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <Badge variant="warning">Spring Training</Badge>
-                          <LiveBadge />
+                          <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
                         </div>
                         <h3 className="text-text-primary font-semibold">Cactus & Grapefruit League</h3>
                         <p className="text-text-tertiary text-sm mt-1">Live scores, standings, rosters, and schedules across both spring leagues.</p>
@@ -340,7 +340,7 @@ export default function MLBPage() {
 
                       <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
                         {feature.isLive ? (
-                          <LiveBadge />
+                          <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />
                         ) : (
                           <Badge variant={feature.badgeVariant}>{feature.badge}</Badge>
                         )}
@@ -615,7 +615,7 @@ export default function MLBPage() {
                           Today&apos;s Games
                         </div>
                         <div className="flex items-center gap-3">
-                          {hasLiveGames && <LiveBadge />}
+                          {hasLiveGames && <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />}
                           <RefreshIndicator active={hasLiveGames} intervalSeconds={30} />
                         </div>
                       </CardTitle>

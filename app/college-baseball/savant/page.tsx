@@ -162,13 +162,13 @@ export default function SavantHubPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Home
                 </Link>
                 <span className="text-text-muted">/</span>
                 <Link
                   href="/college-baseball"
-                  className="text-text-muted hover:text-[#BF5700] transition-colors"
+                  className="text-text-muted hover:text-burnt-orange transition-colors"
                 >
                   College Baseball
                 </Link>
@@ -184,7 +184,7 @@ export default function SavantHubPage() {
                   <Badge variant="accent" size="sm">ADVANCED ANALYTICS</Badge>
                 </div>
                 <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  College Baseball <span className="text-[#BF5700]">Savant</span>
+                  College Baseball <span className="text-burnt-orange">Savant</span>
                 </h1>
                 <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
@@ -249,7 +249,7 @@ export default function SavantHubPage() {
                     onClick={() => { setActiveTab(tab.key); setPositionFilter(''); }}
                     className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                       activeTab === tab.key
-                        ? 'text-[#BF5700] border-[#BF5700]'
+                        ? 'text-burnt-orange border-burnt-orange'
                         : 'text-text-muted border-transparent hover:text-text-tertiary'
                     }`}
                   >
@@ -280,7 +280,7 @@ export default function SavantHubPage() {
                   {(conferenceFilter || positionFilter) && (
                     <button
                       onClick={() => { setConferenceFilter(''); setPositionFilter(''); }}
-                      className="text-[10px] font-mono text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                      className="text-[10px] font-mono text-burnt-orange hover:text-ember transition-colors"
                     >
                       Clear filters
                     </button>
@@ -349,14 +349,14 @@ export default function SavantHubPage() {
                   Source: BSI College Baseball Savant | Methodology:{' '}
                   <Link
                     href="/college-baseball/savant/park-factors"
-                    className="text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                    className="text-burnt-orange hover:text-ember transition-colors"
                   >
                     Park Factors
                   </Link>
                   {' · '}
                   <Link
                     href="/college-baseball/savant/conference-index"
-                    className="text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                    className="text-burnt-orange hover:text-ember transition-colors"
                   >
                     Conference Strength
                   </Link>
@@ -395,7 +395,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-surface-light border border-border rounded-md px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-[#BF5700]/40"
+        className="bg-surface-light border border-border rounded-md px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40"
       >
         {options.map(opt => (
           <option key={opt} value={opt} className="bg-background-secondary text-text-primary">
@@ -462,7 +462,7 @@ function LeaderboardSkeleton() {
         <div className="h-4 w-48 bg-surface-medium rounded animate-pulse" />
         <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
       </div>
-      <div className="divide-y divide-white/[0.02]">
+      <div className="divide-y divide-border-subtle">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-5 py-3 flex items-center gap-4">
             <div className="h-4 w-6 bg-surface-light rounded animate-pulse" />

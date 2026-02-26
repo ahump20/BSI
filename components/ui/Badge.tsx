@@ -36,6 +36,13 @@ export function Badge({ children, variant = 'primary', size = 'md', style, class
   );
 }
 
+// Re-export FreshnessBadge so existing `import { FreshnessBadge } from './Badge'` works
+export { FreshnessBadge } from './FreshnessBadge';
+
+/**
+ * @deprecated Use `FreshnessBadge` instead — it shows honest data freshness.
+ * Kept for backwards compat; renders a static "LIVE" badge with no data awareness.
+ */
 export function LiveBadge({ className = '' }: { className?: string }) {
   return (
     <Badge variant="success" className={className}>

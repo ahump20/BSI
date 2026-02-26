@@ -86,7 +86,7 @@ export function CollegeSportsGap({ className = '' }: { className?: string }) {
       {/* Comparison table */}
       <div className="space-y-3">
         {TRACKING_DATA.map((row) => (
-          <div key={row.category} className="bg-white/[0.02] rounded-lg p-4 border border-border-subtle hover:border-border transition-colors">
+          <div key={row.category} className="bg-surface-light rounded-lg p-4 border border-border-subtle hover:border-border transition-colors">
             <div className="text-text-primary font-semibold text-sm mb-3">{row.category}</div>
             <div className="grid grid-cols-2 gap-4">
               {/* Pro */}

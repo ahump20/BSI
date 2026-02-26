@@ -76,7 +76,7 @@ export function DataFreshnessIndicator({
   }, [lastUpdated, isCached]);
 
   return (
-    <div className="flex items-center justify-center gap-2 text-xs text-white/60">
+    <div className="flex items-center justify-center gap-2 text-xs text-text-secondary">
       <span
         className={`w-2 h-2 rounded-full ${statusColor} ${isCached ? 'animate-pulse' : ''}`}
         title={exactAge}
@@ -88,13 +88,13 @@ export function DataFreshnessIndicator({
         <span className="text-orange-400/80 font-medium">· cached</span>
       )}
       {refreshInterval && !isCached && (
-        <span className="text-white/30">· {refreshInterval}s refresh</span>
+        <span className="text-text-muted">· {refreshInterval}s refresh</span>
       )}
       {onRefresh && (
         <button
           onClick={onRefresh}
           disabled={isRefreshing}
-          className="ml-2 p-1 hover:bg-white/10 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="ml-2 p-1 hover:bg-surface rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Refresh data"
         >
           <RefreshCw

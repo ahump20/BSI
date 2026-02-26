@@ -121,7 +121,7 @@ export function PersonaSwitch() {
           <Link
             key={card.title}
             href={card.href}
-            className="glass-default rounded-xl p-6 border border-border-subtle hover:border-[#BF5700]/40 transition-all duration-300 group"
+            className="glass-default rounded-xl p-6 border border-border-subtle hover:border-burnt-orange/40 transition-all duration-300 group"
           >
             <h3 className="text-base font-display text-text-primary uppercase tracking-wide mb-2 group-hover:text-burnt-orange transition-colors">
               {card.title}

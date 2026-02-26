@@ -128,7 +128,7 @@ export default function GameBriefsIndexPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {briefs.map((brief) => (
                 <Link key={brief.slug} href={`/intel/game-briefs/${brief.slug}`} className="block group">
-                  <Card variant="default" padding="md" className="h-full hover:border-[#BF5700]/30 transition-all">
+                  <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="secondary" size="sm">{brief.sport}</Badge>
                       {brief.readTime && <span className="text-text-muted text-xs">{brief.readTime}</span>}

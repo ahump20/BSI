@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { TabBar, TabPanel } from '@/components/ui/TabBar';
@@ -127,7 +127,7 @@ export default function SpringTrainingPage() {
                       <CardTitle className="flex items-center justify-between">
                         <span className="flex items-center gap-3">
                           Today&apos;s Spring Training Games
-                          {hasLive && <LiveBadge />}
+                          {hasLive && <FreshnessBadge isLive fetchedAt={scoresData?.meta?.lastUpdated} />}
                         </span>
                         <Badge variant="primary">{filteredGames.length} Games</Badge>
                       </CardTitle>

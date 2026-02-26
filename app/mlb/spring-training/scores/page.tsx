@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -81,7 +81,7 @@ export default function SpringTrainingScoresPage() {
               </div>
               <div className="flex items-center gap-4">
                 <SpringTrainingLeagueFilter value={league} onChange={setLeague} />
-                {hasLive && <LiveBadge />}
+                {hasLive && <FreshnessBadge isLive fetchedAt={data?.meta?.lastUpdated} />}
               </div>
             </div>
 

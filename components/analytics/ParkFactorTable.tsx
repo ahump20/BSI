@@ -145,7 +145,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
 
               return (
                 <>{confHeader}
-                <tr key={`${row.team}-${i}`} className="border-b border-white/[0.02]">
+                <tr key={`${row.team}-${i}`} className="border-b border-border-subtle">
                   <td className="pl-5 pr-2 py-3">
                     <span className="text-text-primary text-sm font-medium">{row.team}</span>
                     {row.conference && !groupByConf && (

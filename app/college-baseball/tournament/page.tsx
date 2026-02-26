@@ -96,7 +96,7 @@ export default function TournamentHubPage() {
         </Section>
 
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#C9A227]/5 via-transparent to-[#BF5700]/5 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#C9A227]/5 via-transparent to-burnt-orange/5 pointer-events-none" />
           <Container>
             <div className="max-w-3xl mb-8">
               <Badge variant="warning" className="mb-4">
@@ -104,7 +104,7 @@ export default function TournamentHubPage() {
               </Badge>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-text-primary mb-4">
                 Tournament{' '}
-                <span className="bg-gradient-to-r from-[#C9A227] to-[#BF5700] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#C9A227] to-burnt-orange bg-clip-text text-transparent">
                   HQ
                 </span>
               </h1>

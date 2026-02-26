@@ -34,7 +34,7 @@ const CATEGORY_BADGES: Record<HeadlineCategory, { label: string; color: string }
   TRADE: { label: 'TRADE', color: 'bg-purple-600 text-white' },
   SCORE: { label: 'SCORE', color: 'bg-green-600 text-white' },
   PREVIEW: { label: 'PREVIEW', color: 'bg-blue-600 text-white' },
-  RECAP: { label: 'RECAP', color: 'bg-gray-600 text-white' },
+  RECAP: { label: 'RECAP', color: 'bg-surface-heavy text-white' },
   ANALYSIS: { label: 'ANALYSIS', color: 'bg-burnt-orange text-white' },
   GENERAL: { label: '', color: '' },
 };

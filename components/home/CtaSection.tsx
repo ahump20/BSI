@@ -7,11 +7,11 @@ import Link from 'next/link';
  */
 export function CtaSection() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0D0D12]">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-primary">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-display text-text-primary uppercase tracking-wide mb-6">
           Ready to{' '}
-          <span className="bg-gradient-to-r from-[#BF5700] to-[#FDB913] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-burnt-orange to-[#FDB913] bg-clip-text text-transparent">
             Go Deeper
           </span>
           ?

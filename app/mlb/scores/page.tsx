@@ -6,7 +6,8 @@ import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
@@ -55,6 +56,7 @@ interface DataMeta {
   dataSource: string;
   lastUpdated: string;
   timezone: string;
+  degraded?: boolean;
 }
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -98,10 +100,13 @@ export default function MLBScoresPage() {
   ];
 
   const GameCard = ({ game }: { game: Game }) => {
-    const isLive = game.status.isLive;
-    const isFinal = game.status.isFinal;
+    const isLive = game.status?.isLive;
+    const isFinal = game.status?.isFinal;
     const isScheduled = !isLive && !isFinal;
     const gameId = game.gamePk || game.id;
+
+    const away = game.teams?.away;
+    const home = game.teams?.home;
 
     return (
       <Link href={`/mlb/game/${gameId}`} className="block">
@@ -124,10 +129,10 @@ export default function MLBScoresPage() {
               {isLive ? (
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                  {game.status.inningState} {game.status.inning}
+                  {game.status?.inningState} {game.status?.inning}
                 </span>
               ) : (
-                game.status.detailedState
+                game.status?.detailedState
               )}
             </span>
             <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
@@ -139,21 +144,21 @@ export default function MLBScoresPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.teams.away.abbreviation}
+                  {away?.abbreviation ?? '???'}
                 </div>
                 <div>
                   <p
-                    className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                    className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                   >
-                    {game.teams.away.name}
+                    {away?.name ?? 'Away'}
                   </p>
-                  {game.teams.away.record && (
-                    <p className="text-xs text-text-tertiary">{game.teams.away.record}</p>
+                  {away?.record && (
+                    <p className="text-xs text-text-tertiary">{away.record}</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isFinal && game.teams.away.isWinner && (
+                {isFinal && away?.isWinner && (
                   <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
@@ -162,12 +167,12 @@ export default function MLBScoresPage() {
                   className={`text-2xl font-bold font-mono ${
                     isScheduled
                       ? 'text-text-tertiary'
-                      : isFinal && game.teams.away.isWinner
+                      : isFinal && away?.isWinner
                         ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
-                  {isScheduled ? '-' : game.teams.away.score}
+                  {isScheduled ? '-' : away?.score ?? '-'}
                 </span>
               </div>
             </div>
@@ -176,21 +181,21 @@ export default function MLBScoresPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.teams.home.abbreviation}
+                  {home?.abbreviation ?? '???'}
                 </div>
                 <div>
                   <p
-                    className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                    className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                   >
-                    {game.teams.home.name}
+                    {home?.name ?? 'Home'}
                   </p>
-                  {game.teams.home.record && (
-                    <p className="text-xs text-text-tertiary">{game.teams.home.record}</p>
+                  {home?.record && (
+                    <p className="text-xs text-text-tertiary">{home.record}</p>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isFinal && game.teams.home.isWinner && (
+                {isFinal && home?.isWinner && (
                   <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
@@ -199,12 +204,12 @@ export default function MLBScoresPage() {
                   className={`text-2xl font-bold font-mono ${
                     isScheduled
                       ? 'text-text-tertiary'
-                      : isFinal && game.teams.home.isWinner
+                      : isFinal && home?.isWinner
                         ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
-                  {isScheduled ? '-' : game.teams.home.score}
+                  {isScheduled ? '-' : home?.score ?? '-'}
                 </span>
               </div>
             </div>
@@ -214,10 +219,10 @@ export default function MLBScoresPage() {
           {(isFinal || isLive) && (
             <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary border-t border-border-subtle pt-3">
               <span>
-                H: {game.teams.away.hits}-{game.teams.home.hits}
+                H: {away?.hits ?? 0}-{home?.hits ?? 0}
               </span>
               <span>
-                E: {game.teams.away.errors}-{game.teams.home.errors}
+                E: {away?.errors ?? 0}-{home?.errors ?? 0}
               </span>
               <span className="text-burnt-orange hover:text-ember">Box Score →</span>
             </div>
@@ -267,7 +272,7 @@ export default function MLBScoresPage() {
                 <ScrollReveal direction="up">
                   <div className="flex items-center gap-3 mb-4">
                     <Badge variant="primary">Live Scores</Badge>
-                    {hasLiveGames && <LiveBadge />}
+                    {hasLiveGames && <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />}
                   </div>
                 </ScrollReveal>
 
@@ -357,24 +362,10 @@ export default function MLBScoresPage() {
                 </button>
               </Card>
             ) : games.length === 0 ? (
-              <Card variant="default" padding="lg">
-                <div className="text-center py-8">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <p className="text-text-secondary">No games scheduled for this date</p>
-                  <p className="text-text-tertiary text-sm mt-2">Try selecting a different date</p>
-                </div>
-              </Card>
+              <EmptyState
+                type={meta?.degraded ? 'source-unavailable' : 'no-games'}
+                onRetry={meta?.degraded ? () => retry() : undefined}
+              />
             ) : (
               <>
                 {/* Live Games Section */}

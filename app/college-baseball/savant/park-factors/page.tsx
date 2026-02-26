@@ -33,15 +33,15 @@ export default function ParkFactorsPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Home
                 </Link>
                 <span className="text-text-muted">/</span>
-                <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                   College Baseball
                 </Link>
                 <span className="text-text-muted">/</span>
-                <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
+                <Link href="/college-baseball/savant" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Savant
                 </Link>
                 <span className="text-text-muted">/</span>
@@ -56,7 +56,7 @@ export default function ParkFactorsPage() {
                   <Badge variant="accent" size="sm">VENUE ANALYTICS</Badge>
                 </div>
                 <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
-                  Park <span className="text-[#BF5700]">Factors</span>
+                  Park <span className="text-burnt-orange">Factors</span>
                 </h1>
                 <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   How venues inflate or suppress offense. A runs factor above 1.000 means
@@ -70,7 +70,7 @@ export default function ParkFactorsPage() {
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
                 <Card padding="md">
-                  <span className="text-xs text-[#BF5700] font-display uppercase tracking-widest block mb-1">
+                  <span className="text-xs text-burnt-orange font-display uppercase tracking-widest block mb-1">
                     Hitter-Friendly
                   </span>
                   <p className="text-[11px] text-text-muted leading-relaxed">
@@ -108,7 +108,7 @@ export default function ParkFactorsPage() {
                   <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
-                    className="px-5 py-2 bg-[#BF5700]/20 text-[#BF5700] rounded-lg text-sm font-medium hover:bg-[#BF5700]/30 transition-colors"
+                    className="px-5 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
                   >
                     Try again
                   </button>
@@ -133,7 +133,7 @@ function TableSkeleton() {
         <div className="h-5 w-32 bg-surface-medium rounded animate-pulse" />
       </div>
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="px-5 py-3 flex items-center gap-4 border-b border-white/[0.02]">
+        <div key={i} className="px-5 py-3 flex items-center gap-4 border-b border-border-subtle">
           <div className="h-4 w-32 bg-surface-medium rounded animate-pulse" />
           <div className="h-4 w-24 bg-surface-light rounded animate-pulse hidden sm:block" />
           <div className="h-4 w-16 bg-surface-light rounded animate-pulse ml-auto" />

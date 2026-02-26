@@ -21,7 +21,7 @@ export function MatchupRadar({ game }: MatchupRadarProps) {
   if (data.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-border-subtle bg-white/[0.02] p-3">
+    <div className="rounded-lg border border-border-subtle bg-surface-light p-3">
       <div className="flex items-center justify-between mb-2">
         <span className="font-mono text-[10px] text-text-muted uppercase tracking-wider">Matchup Radar</span>
         <div className="flex items-center gap-3 font-mono text-[10px]">

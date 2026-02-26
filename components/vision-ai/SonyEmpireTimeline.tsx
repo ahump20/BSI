@@ -109,7 +109,7 @@ export function SonyEmpireTimeline({ className = '' }: { className?: string }) {
                   className={`rounded-lg border transition-all cursor-pointer ${
                     isExpanded
                       ? 'bg-surface-light border-burnt-orange/20'
-                      : 'bg-transparent border-transparent hover:bg-white/[0.02]'
+                      : 'bg-transparent border-transparent hover:bg-surface-light'
                   }`}
                   onClick={() => setExpanded(isExpanded ? null : i)}
                   role="button"

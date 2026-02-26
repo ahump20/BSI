@@ -45,7 +45,7 @@ export function HeroSection() {
         <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-text-primary uppercase tracking-tight leading-none mb-6">
           The Intelligence Layer
           <br />
-          <span className="bg-gradient-to-r from-[#BF5700] to-[#FDB913] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-burnt-orange to-[#FDB913] bg-clip-text text-transparent">
             College Baseball Never Had
           </span>
         </h1>

@@ -22,7 +22,7 @@ function parseNumeric(value: string): { num: number; suffix: string } | null {
  */
 export function StatsBand() {
   return (
-    <section className="py-10 border-y border-border-subtle bg-[#0D0D12]">
+    <section className="py-10 border-y border-border-subtle bg-background-primary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map((stat) => {

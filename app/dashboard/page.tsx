@@ -58,7 +58,7 @@ import { LiveScoresPanel } from '@/components/sports/LiveScoresPanel';
 import { StandingsTable } from '@/components/sports/StandingsTable';
 import { SportLeaders } from '@/components/sports/SportLeaders';
 import { DataSourcePanel, DataDisclaimer, type DataSource } from '@/components/sports';
-import { LiveBadge } from '@/components/ui/Badge';
+import { FreshnessBadge } from '@/components/ui/Badge';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -328,7 +328,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                     {tier}
                   </span>
                 )}
-                <LiveBadge />
+                <FreshnessBadge isLive={stats.liveGames > 0} fetchedAt={stats.lastUpdated} />
                 {stats.liveGames > 0 && (
                   <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm font-medium animate-pulse">
                     {stats.liveGames} Live Now
@@ -640,10 +640,10 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
   return (
     <Link
       href={href}
-      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-[#BF5700] border border-transparent transition-all group"
+      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-burnt-orange border border-transparent transition-all group"
     >
       <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-      <p className="font-semibold text-text-primary group-hover:text-[#BF5700] transition-colors text-sm">
+      <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors text-sm">
         {title}
       </p>
       <p className="text-xs text-text-muted">{subtitle}</p>
@@ -655,14 +655,14 @@ function ArcadeQuickLinkCard() {
   return (
     <Link
       href="/arcade"
-      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-[#BF5700] border border-transparent transition-all group"
+      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-burnt-orange border border-transparent transition-all group"
     >
       <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-[var(--bsi-gold,#D4A843)]" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="2" y="6" width="20" height="12" rx="2" />
         <circle cx="9" cy="12" r="2" />
         <path d="M15 10v4M13 12h4" />
       </svg>
-      <p className="font-semibold text-text-primary group-hover:text-[#BF5700] transition-colors text-sm">
+      <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors text-sm">
         Arcade
       </p>
       <p className="text-xs text-text-muted">Mini-games</p>

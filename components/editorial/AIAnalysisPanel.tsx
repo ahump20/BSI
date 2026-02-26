@@ -87,11 +87,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-[480px] bg-[#0D0D0D] border-l border-white/10 overflow-y-auto">
+      <div className="relative w-full max-w-[480px] bg-background-primary border-l border-border overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[#0D0D0D] border-b border-white/10 p-4 flex items-center justify-between">
-          <h2 className="font-display text-lg uppercase tracking-wider text-white">AI Game Analysis</h2>
-          <button onClick={onClose} className="text-white/40 hover:text-white transition-colors">
+        <div className="sticky top-0 bg-background-primary border-b border-border p-4 flex items-center justify-between">
+          <h2 className="font-display text-lg uppercase tracking-wider text-text-primary">AI Game Analysis</h2>
+          <button onClick={onClose} className="text-text-muted hover:text-text-primary transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -99,16 +99,16 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
         </div>
 
         {/* Model toggle */}
-        <div className="p-4 border-b border-white/5">
-          <div className="flex bg-[#1A1A1A] rounded overflow-hidden">
+        <div className="p-4 border-b border-border-subtle">
+          <div className="flex bg-background-secondary rounded overflow-hidden">
             {(['claude', 'gemini'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setSelectedModel(m)}
                 className={`flex-1 py-2 text-xs font-mono uppercase tracking-wider transition-colors ${
                   selectedModel === m
-                    ? 'bg-[#BF5700] text-white'
-                    : 'text-white/40 hover:text-white/60'
+                    ? 'bg-burnt-orange text-white'
+                    : 'text-text-muted hover:text-text-secondary'
                 }`}
               >
                 {m === 'claude' ? 'Claude' : 'Gemini'}
@@ -126,14 +126,14 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 disabled={loading}
                 className={`w-full text-left p-3 rounded border transition-colors ${
                   selectedPrompt === prompt.id
-                    ? 'border-[#BF5700]/40 bg-[#BF5700]/5'
-                    : 'border-white/5 hover:border-white/10 bg-[#1A1A1A]'
+                    ? 'border-burnt-orange/40 bg-burnt-orange/5'
+                    : 'border-border-subtle hover:border-border bg-background-secondary'
                 } ${loading ? 'opacity-50 cursor-wait' : ''}`}
               >
-                <div className="font-mono text-xs uppercase tracking-wider text-[#BF5700] mb-1">
+                <div className="font-mono text-xs uppercase tracking-wider text-burnt-orange mb-1">
                   {prompt.label}
                 </div>
-                <div className="text-white/40 text-xs">{prompt.description}</div>
+                <div className="text-text-muted text-xs">{prompt.description}</div>
               </button>
               {prompt.id === 'custom' && (
                 <div className="mt-2 space-y-2">
@@ -141,12 +141,12 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                     value={customQuestion}
                     onChange={(e) => setCustomQuestion(e.target.value)}
                     placeholder="What do you want to know about this game?"
-                    className="w-full bg-[#1A1A1A] border border-white/10 rounded p-3 text-sm text-white/80 placeholder:text-white/20 resize-none h-20 focus:outline-none focus:border-[#BF5700]/30"
+                    className="w-full bg-background-secondary border border-border rounded p-3 text-sm text-text-primary placeholder:text-text-muted resize-none h-20 focus:outline-none focus:border-burnt-orange/30"
                   />
                   <button
                     onClick={() => handleAnalyze('custom')}
                     disabled={loading || !customQuestion.trim()}
-                    className="w-full py-2 bg-[#BF5700] hover:bg-[#FF6B35] disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded transition-colors"
+                    className="w-full py-2 bg-burnt-orange hover:bg-ember disabled:opacity-40 text-white text-xs font-mono uppercase tracking-wider rounded transition-colors"
                   >
                     {loading ? 'Analyzing...' : 'Analyze'}
                   </button>
@@ -158,11 +158,11 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
 
         {/* Response */}
         {(loading || response || error) && (
-          <div className="p-4 border-t border-white/5">
+          <div className="p-4 border-t border-border-subtle">
             {loading && (
               <div className="space-y-3">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="h-4 bg-[#BF5700]/10 rounded animate-pulse" style={{ width: `${80 - i * 15}%` }} />
+                  <div key={i} className="h-4 bg-burnt-orange/10 rounded animate-pulse" style={{ width: `${80 - i * 15}%` }} />
                 ))}
               </div>
             )}
@@ -171,7 +171,7 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
                 <p className="text-red-400/80 text-sm">{error}</p>
                 <button
                   onClick={() => selectedPrompt && handleAnalyze(selectedPrompt)}
-                  className="text-xs font-mono uppercase tracking-wider text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+                  className="text-xs font-mono uppercase tracking-wider text-burnt-orange hover:text-ember transition-colors"
                 >
                   Retry
                 </button>
@@ -180,12 +180,12 @@ export function AIAnalysisPanel({ isOpen, onClose, gameContext, defaultModel = '
             {response && (
               <div className="space-y-4">
                 <div className="prose prose-invert prose-sm max-w-none">
-                  <div className="text-white/70 text-sm leading-relaxed whitespace-pre-wrap">{response}</div>
+                  <div className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap">{response}</div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-white/40 hover:text-[#BF5700] border border-white/10 rounded transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange border border-border rounded transition-colors"
                   >
                     Copy
                   </button>
