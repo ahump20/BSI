@@ -33,7 +33,6 @@ function mockBothSources() {
     }
     // ESPN rankings (handler also fetches these)
     if (urlObj.hostname === 'espn.com' && urlObj.pathname.includes('/rankings')) {
-    const urlObj = new URL(urlStr, 'http://localhost');
       return new Response(JSON.stringify({ rankings: [] }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
