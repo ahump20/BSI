@@ -128,9 +128,9 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
             <div className="space-y-2">
               {game.keyStats.map((stat) => (
                 <div key={stat.label} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                  <span className="text-right font-mono text-[12px] text-white/70 tabular-nums">{stat.away}</span>
-                  <span className="font-mono text-[10px] text-white/30 text-center min-w-[80px]">{stat.label}</span>
-                  <span className="text-left font-mono text-[12px] text-white/70 tabular-nums">{stat.home}</span>
+                  <span className="text-right font-mono text-[12px] text-text-secondary tabular-nums">{stat.away}</span>
+                  <span className="font-mono text-[10px] text-text-muted text-center min-w-[80px]">{stat.label}</span>
+                  <span className="text-left font-mono text-[12px] text-text-secondary tabular-nums">{stat.home}</span>
                 </div>
               ))}
             </div>
@@ -149,8 +149,8 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
         {/* Model Explainability (SHAP-like) */}
         <div className="my-4">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-white/30" />
-            <span className="font-mono text-[11px] text-white/40 uppercase tracking-wider">What Drives This Outcome</span>
+            <TrendingUp className="h-4 w-4 text-text-muted" />
+            <span className="font-mono text-[11px] text-text-muted uppercase tracking-wider">What Drives This Outcome</span>
           </div>
           <div className="h-[180px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -185,11 +185,11 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           <div className="flex items-center justify-center gap-4 mt-2 font-mono text-[10px]">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-sm bg-green-500/80" />
-              <span className="text-white/30">Favors outcome</span>
+              <span className="text-text-muted">Favors outcome</span>
             </span>
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-sm bg-red-500/80" />
-              <span className="text-white/30">Works against</span>
+              <span className="text-text-muted">Works against</span>
             </span>
           </div>
         </div>

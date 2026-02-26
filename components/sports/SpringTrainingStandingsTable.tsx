@@ -48,7 +48,7 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                   key={team.id}
                   className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                 >
-                  <td className="px-4 py-3 text-white/40 font-mono text-xs">{i + 1}</td>
+                  <td className="px-4 py-3 text-text-muted font-mono text-xs">{i + 1}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       {team.logo && (
@@ -59,8 +59,8 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                           loading="lazy"
                         />
                       )}
-                      <span className="text-white font-medium">{team.name}</span>
-                      <span className="text-white/30 text-xs">{team.abbreviation}</span>
+                      <span className="text-text-primary font-medium">{team.name}</span>
+                      <span className="text-text-muted text-xs">{team.abbreviation}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right font-mono text-white">{team.wins}</td>

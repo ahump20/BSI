@@ -57,8 +57,8 @@ export function MMIGauge({
   if (compact) {
     return (
       <div className={`flex items-center gap-2 ${className}`}>
-        <span className="text-[10px] text-white/30 w-8 text-right truncate">{awayTeam}</span>
-        <div className="flex-1 h-[6px] rounded-full bg-white/[0.04] relative overflow-hidden min-w-[80px]">
+        <span className="text-[10px] text-text-muted w-8 text-right truncate">{awayTeam}</span>
+        <div className="flex-1 h-[6px] rounded-full bg-surface-light relative overflow-hidden min-w-[80px]">
           {/* Away fill */}
           <motion.div
             className="absolute inset-y-0 left-0 rounded-l-full"
@@ -84,7 +84,7 @@ export function MMIGauge({
             transition={{ type: 'spring', stiffness: 100, damping: 15 }}
           />
         </div>
-        <span className="text-[10px] text-white/30 w-8 truncate">{homeTeam}</span>
+        <span className="text-[10px] text-text-muted w-8 truncate">{homeTeam}</span>
       </div>
     );
   }
