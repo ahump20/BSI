@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -23,6 +24,11 @@ export default function ConferenceIndexPage() {
   const { data, loading, error, retry } = useSportData<{ data: ConferenceRow[] }>(
     '/api/savant/conference-strength'
   );
+
+  const isPro = useMemo(() => {
+    const firstRow = data?.data?.[0];
+    return firstRow ? (firstRow as Record<string, unknown>)._tier_gated !== true : false;
+  }, [data]);
 
   return (
     <>
@@ -80,7 +86,7 @@ export default function ConferenceIndexPage() {
                   </button>
                 </Card>
               ) : (
-                <ConferenceStrengthChart data={data?.data ?? []} isPro={false} />
+                <ConferenceStrengthChart data={data?.data ?? []} isPro={isPro} />
               )}
             </ScrollReveal>
 

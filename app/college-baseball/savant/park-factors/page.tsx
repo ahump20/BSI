@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -24,6 +25,11 @@ export default function ParkFactorsPage() {
   const { data, loading, error, retry } = useSportData<{ data: ParkFactorRow[] }>(
     '/api/savant/park-factors'
   );
+
+  const isPro = useMemo(() => {
+    const firstRow = data?.data?.[0];
+    return firstRow ? (firstRow as Record<string, unknown>)._tier_gated !== true : false;
+  }, [data]);
 
   return (
     <>
@@ -114,7 +120,7 @@ export default function ParkFactorsPage() {
                   </button>
                 </Card>
               ) : (
-                <ParkFactorTable data={data?.data ?? []} isPro={false} />
+                <ParkFactorTable data={data?.data ?? []} isPro={isPro} />
               )}
             </ScrollReveal>
           </Container>

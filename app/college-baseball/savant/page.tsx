@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { MetricGate } from '@/components/analytics/MetricGate';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -118,6 +119,12 @@ export default function SavantHubPage() {
   const { data: confRes, loading: confLoading } =
     useSportData<{ data: ConferenceRow[] }>('/api/savant/conference-strength');
 
+  // Derive tier from API response — worker sets _tier_gated on free-tier rows
+  const isPro = useMemo(() => {
+    const firstRow = battingRes?.data?.[0] ?? pitchingRes?.data?.[0];
+    return firstRow ? (firstRow as Record<string, unknown>)._tier_gated !== true : false;
+  }, [battingRes, pitchingRes]);
+
   // ── Derived filter options ──
   const conferences = useMemo(() => {
     const confs = new Set<string>();
@@ -140,7 +147,7 @@ export default function SavantHubPage() {
   }, [activeTab, battingRes, pitchingRes]);
 
   // ── Apply client-side filters ──
-  function applyFilters(rows: Record<string, unknown>[]): Record<string, unknown>[] {
+  const applyFilters = useCallback((rows: Record<string, unknown>[]): Record<string, unknown>[] => {
     let filtered = rows;
     if (conferenceFilter) {
       filtered = filtered.filter(r => r.conference === conferenceFilter);
@@ -149,10 +156,10 @@ export default function SavantHubPage() {
       filtered = filtered.filter(r => r.position === positionFilter);
     }
     return filtered;
-  }
+  }, [conferenceFilter, positionFilter]);
 
-  const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [battingRes, conferenceFilter, positionFilter]);
-  const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [pitchingRes, conferenceFilter, positionFilter]);
+  const filteredBatting = useMemo(() => applyFilters(battingRes?.data ?? []), [applyFilters, battingRes]);
+  const filteredPitching = useMemo(() => applyFilters(pitchingRes?.data ?? []), [applyFilters, pitchingRes]);
 
   return (
     <>
@@ -218,19 +225,21 @@ export default function SavantHubPage() {
                       <div className="flex items-baseline gap-2 mb-1">
                         <span className="font-display text-2xl font-bold" style={{ color }}>{spot.abbr}</span>
                       </div>
-                      {leader ? (
-                        <div className="mb-2">
-                          <span className="text-sm text-text-primary font-medium">{leader.name}</span>
-                          <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
-                          <span className="block text-lg font-mono font-bold tabular-nums mt-0.5" style={{ color }}>
-                            {spot.format(leader.value)}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="mb-2 h-12 flex items-center">
-                          <span className="text-xs text-text-muted">Loading...</span>
-                        </div>
-                      )}
+                      <MetricGate isPro={isPro} metricName={spot.label}>
+                        {leader ? (
+                          <div className="mb-2">
+                            <span className="text-sm text-text-primary font-medium">{leader.name}</span>
+                            <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
+                            <span className="block text-lg font-mono font-bold tabular-nums mt-0.5" style={{ color }}>
+                              {spot.format(leader.value)}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="mb-2 h-12 flex items-center">
+                            <span className="text-xs text-text-muted">Loading...</span>
+                          </div>
+                        )}
+                      </MetricGate>
                       <p className="text-[10px] text-text-muted leading-relaxed">
                         {spot.description}
                       </p>
@@ -299,7 +308,7 @@ export default function SavantHubPage() {
                     data={filteredBatting}
                     columns={BATTING_COLUMNS}
                     title="Batting Leaders — Advanced"
-                    isPro={false}
+                    isPro={isPro}
                     initialRows={25}
                   />
                 )
@@ -313,7 +322,7 @@ export default function SavantHubPage() {
                     data={filteredPitching}
                     columns={PITCHING_COLUMNS}
                     title="Pitching Leaders — Advanced"
-                    isPro={false}
+                    isPro={isPro}
                     initialRows={25}
                   />
                 )
@@ -325,7 +334,7 @@ export default function SavantHubPage() {
                 ) : (
                   <ParkFactorTable
                     data={parkRes?.data ?? []}
-                    isPro={false}
+                    isPro={isPro}
                   />
                 )
               )}
@@ -336,7 +345,7 @@ export default function SavantHubPage() {
                 ) : (
                   <ConferenceStrengthChart
                     data={confRes?.data ?? []}
-                    isPro={false}
+                    isPro={isPro}
                   />
                 )
               )}
