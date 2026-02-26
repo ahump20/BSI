@@ -46,7 +46,7 @@ export async function handleCollegeBaseballTeam(
           if (slugMeta) {
             team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);
           }
-          const payload: Record<string, unknown> = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+          const payload: Record<string, unknown> = { team, meta: { source: 'highlightly', fetched_at: teamResult.timestamp, timezone: 'America/Chicago' } };
           await enrichTeamWithD1Stats(payload, String(numericId), env);
           await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
           return cachedJson(payload, 200, HTTP_CACHE.team, {
@@ -72,7 +72,7 @@ export async function handleCollegeBaseballTeam(
         teamResult.data as Record<string, unknown>,
         playersResult.data?.data ?? []
       );
-      const payload: Record<string, unknown> = { team, meta: { dataSource: 'espn', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
+      const payload: Record<string, unknown> = { team, meta: { source: 'espn', fetched_at: teamResult.timestamp, timezone: 'America/Chicago' } };
       await enrichTeamWithD1Stats(payload, String(numericId), env);
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
       return cachedJson(payload, 200, HTTP_CACHE.team, {
