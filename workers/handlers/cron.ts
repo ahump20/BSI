@@ -86,8 +86,8 @@ async function fetchMLBScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIOMLBScores(await sdio.getMLBScores());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO MLB failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('mlb', todayESPN());
@@ -100,8 +100,8 @@ async function fetchNFLScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIONFLScores(await sdio.getNFLScoresByDate());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO NFL failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nfl', todayESPN());
@@ -114,8 +114,8 @@ async function fetchNBAScores(env: Env): Promise<unknown> {
   if (sdio) {
     try {
       return transformSDIONBAScores(await sdio.getNBAScores());
-    } catch {
-      // Fall through to ESPN
+    } catch (err) {
+      console.log(`[cron] SDIO NBA failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
     }
   }
   const raw = await getScoreboard('nba', todayESPN());
@@ -166,8 +166,8 @@ async function cacheRankings(env: Env): Promise<boolean> {
           await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);
           return true;
         }
-      } catch {
-        // Fall through
+      } catch (err) {
+        console.log(`[cron] Highlightly rankings failed, falling back to ESPN: ${err instanceof Error ? err.message : 'unknown'}`);
       }
     }
 
@@ -378,6 +378,40 @@ export async function handleScheduled(env: Env): Promise<void> {
         if (ingestResult.processed > 0) {
           await env.KV.delete('cb:leaders');
           await env.KV.delete('cb:saber:league:2026');
+
+          // Invalidate team-level KV caches for affected teams
+          if (ingestResult.affectedTeamIds?.length) {
+            const espnToSlug = new Map<string, string>();
+            for (const [slug, meta] of Object.entries(teamMetadata)) {
+              if (meta.espnId) espnToSlug.set(String(meta.espnId), slug);
+            }
+            const toDelete = ingestResult.affectedTeamIds
+              .map(id => ({ espnId: id, slug: espnToSlug.get(id) }))
+              .filter((e): e is { espnId: string; slug: string } => !!e.slug);
+            const unmapped = ingestResult.affectedTeamIds.filter(id => !espnToSlug.has(id));
+
+            const deleteResults = await Promise.allSettled(
+              toDelete.map(async ({ slug }) => {
+                await env.KV.delete(`cb:team:${slug}`);
+                return slug;
+              })
+            );
+            const invalidated = deleteResults
+              .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled')
+              .map(r => r.value);
+            const failedDeletes = deleteResults.filter(r => r.status === 'rejected').length;
+
+            if (invalidated.length > 0) {
+              console.log(`[cron] Invalidated team caches: ${invalidated.join(', ')}`);
+            }
+            if (failedDeletes > 0) {
+              console.log(`[cron] Failed to invalidate ${failedDeletes} team cache(s)`);
+            }
+            if (unmapped.length > 0) {
+              console.log(`[cron] Unmapped espnIds (no teamMetadata): ${unmapped.join(', ')}`);
+            }
+          }
+
           console.log('[cron] Invalidated leaders + sabermetrics caches after ingest');
         }
       }

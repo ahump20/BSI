@@ -1,9 +1,8 @@
 /**
  * College Baseball — sabermetrics, SOS, and conference power index handlers.
  *
- * TODO: wOBA weights at line ~100 use MLB linear weights. College-specific
- * weights require a full season of D1 run-scoring data — too thin at 3 weeks in.
- * See docs/tech-debt/college-woba-weights.md for details.
+ * wOBA linear weights: read from cbb_league_context (D1-derived by bsi-savant-compute).
+ * Falls back to MLB weights when league context is unavailable.
  */
 
 import type { Env } from './shared';
@@ -122,9 +121,18 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
     // Correct PA = AB + BB + HBP + SF (Bug 4 fix)
     const pa = ab + bb + hbp + sf;
 
-    // wOBA with HBP in numerator (Bug 5 fix) — using MLB linear weights for now
-    // TODO(Phase 3B): derive college-specific weights from D1 run environment
-    const wBB = 0.69, wHBP = 0.72, w1B = 0.89, w2B = 1.24, w3B = 1.56, wHR = 2.01;
+    // wOBA linear weights: read D1-derived weights from cbb_league_context if available
+    const lgCtx = await env.DB.prepare(
+      `SELECT w_bb, w_hbp, w_1b, w_2b, w_3b, w_hr, weights_source FROM cbb_league_context WHERE season = ?`
+    ).bind(SEASON).first<{ w_bb: number | null; w_hbp: number | null; w_1b: number | null; w_2b: number | null; w_3b: number | null; w_hr: number | null; weights_source: string | null }>();
+
+    const wBB = lgCtx?.w_bb ?? 0.69;
+    const wHBP = lgCtx?.w_hbp ?? 0.72;
+    const w1B = lgCtx?.w_1b ?? 0.89;
+    const w2B = lgCtx?.w_2b ?? 1.24;
+    const w3B = lgCtx?.w_3b ?? 1.56;
+    const wHR = lgCtx?.w_hr ?? 2.01;
+    const weightsSource = lgCtx?.weights_source ?? 'mlb-derived';
     const league_woba = pa > 0
       ? (wBB * bb + wHBP * hbp + w1B * singles + w2B * doubles + w3B * triples + wHR * hr) / pa
       : 0;
@@ -191,7 +199,8 @@ export async function handleCBBLeagueSabermetrics(env: Env): Promise<Response> {
       fip_constant: Math.round(fip_constant * 100) / 100,
       woba_scale: Math.round(woba_scale * 100) / 100,
       runs_per_pa: Math.round(runs_per_pa * 1000) / 1000,
-      weights_source: 'mlb-derived',
+      weights_source: weightsSource,
+      weights: { wBB, wHBP, w1B, w2B, w3B, wHR },
       thin_sample: thinSample,
       qualified_hitters: batting.qualified_hitters || 0,
       qualified_pitchers: qualifiedPitchers,
@@ -240,8 +249,17 @@ export async function handleCBBTeamSabermetrics(teamId: string, env: Env): Promi
     const wobaScale = leagueRaw?.woba_scale ?? 1.15;
     const lgRunsPerPA = leagueRaw?.runs_per_pa ?? 0.060;
 
-    // wOBA linear weights (MLB-derived, flagged for future D1 calibration)
-    const wBB = 0.69, wHBP = 0.72, w1B = 0.89, w2B = 1.24, w3B = 1.56, wHR = 2.01;
+    // wOBA linear weights: read D1-derived weights from cbb_league_context if available
+    const lgCtxTeam = await env.DB.prepare(
+      `SELECT w_bb, w_hbp, w_1b, w_2b, w_3b, w_hr FROM cbb_league_context WHERE season = ?`
+    ).bind(SEASON).first<{ w_bb: number | null; w_hbp: number | null; w_1b: number | null; w_2b: number | null; w_3b: number | null; w_hr: number | null }>();
+
+    const wBB = lgCtxTeam?.w_bb ?? 0.69;
+    const wHBP = lgCtxTeam?.w_hbp ?? 0.72;
+    const w1B = lgCtxTeam?.w_1b ?? 0.89;
+    const w2B = lgCtxTeam?.w_2b ?? 1.24;
+    const w3B = lgCtxTeam?.w_3b ?? 1.56;
+    const wHR = lgCtxTeam?.w_hr ?? 2.01;
 
     // Qualified hitters — include OBP/SLG for derivation when 2B/3B/HBP unavailable
     const hitters = await env.DB.prepare(`

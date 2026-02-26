@@ -107,7 +107,7 @@ import { handleSearch } from './handlers/search';
 import { handleCreateEmbeddedCheckout, handleSessionStatus, handleCustomerPortal } from './handlers/stripe';
 import { handleLogin, handleValidateKey } from './handlers/auth';
 import { handleScheduled, handleCachedScores, handleHealthProviders } from './handlers/cron';
-import { handleHealth, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
+import { handleHealth, handleStatus, handleAdminHealth, handleAdminErrors, handleWebSocket } from './handlers/health';
 import { handleMcpRequest } from './handlers/mcp';
 import {
   handleCVPitcherMechanics,
@@ -260,6 +260,7 @@ app.all('/api/auth/signup', (c) => c.redirect('/pricing', 302));
 // --- Health ---
 app.get('/health', (c) => handleHealth(c.env));
 app.get('/api/health', (c) => handleHealth(c.env));
+app.get('/api/status', (c) => handleStatus(c.env));
 
 // --- Admin auth middleware — requires ADMIN_KEY secret ---
 app.use('/api/admin/*', async (c, next) => {

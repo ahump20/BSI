@@ -16,10 +16,11 @@ import { json, cachedJson, kvGet, kvPut, dataHeaders, getHighlightlyClient, HTTP
 export async function processFinishedGames(
   env: Env,
   dateStr?: string,
-): Promise<{ processed: number; skipped: number; errors: string[] }> {
+): Promise<{ processed: number; skipped: number; errors: string[]; affectedTeamIds: string[] }> {
   const date = dateStr || new Date().toLocaleString('en-CA', { timeZone: 'America/Chicago' }).split(',')[0];
   const espnDate = date.replace(/-/g, '');
-  const result = { processed: 0, skipped: 0, errors: [] as string[] };
+  const result = { processed: 0, skipped: 0, errors: [] as string[], affectedTeamIds: [] as string[] };
+  const affectedTeamIdSet = new Set<string>();
 
   // 1. Fetch today's scoreboard
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,10 +117,10 @@ export async function processFinishedGames(
                 INSERT INTO player_season_stats
                   (espn_id, season, sport, name, team, team_id, position, headshot,
                    games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat,
-                   stolen_bases, doubles, triples, on_base_pct, slugging_pct)
+                   stolen_bases, doubles, triples, on_base_pct, slugging_pct, stats_source)
                 VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
                         1, ?, ?, ?, ?, ?, ?, ?,
-                        0, 0, 0, ?, ?)
+                        0, 0, 0, ?, ?, 'espn-box-score')
                 ON CONFLICT(espn_id, season, sport) DO UPDATE SET
                   name = excluded.name,
                   team = excluded.team,
@@ -136,6 +137,7 @@ export async function processFinishedGames(
                   strikeouts_bat = player_season_stats.strikeouts_bat + excluded.strikeouts_bat,
                   on_base_pct = excluded.on_base_pct,
                   slugging_pct = excluded.slugging_pct,
+                  stats_source = COALESCE(player_season_stats.stats_source, 'espn-box-score'),
                   updated_at = datetime('now')
               `).bind(
                 espnId, name, teamName, teamId, position, headshot,
@@ -156,9 +158,9 @@ export async function processFinishedGames(
                 INSERT INTO player_season_stats
                   (espn_id, season, sport, name, team, team_id, position, headshot,
                    games_pitch, innings_pitched_thirds, hits_allowed, runs_allowed,
-                   earned_runs, walks_pitch, strikeouts_pitch, home_runs_allowed)
+                   earned_runs, walks_pitch, strikeouts_pitch, home_runs_allowed, stats_source)
                 VALUES (?, 2026, 'college-baseball', ?, ?, ?, ?, ?,
-                        1, ?, ?, ?, ?, ?, ?, ?)
+                        1, ?, ?, ?, ?, ?, ?, ?, 'espn-box-score')
                 ON CONFLICT(espn_id, season, sport) DO UPDATE SET
                   name = excluded.name,
                   team = excluded.team,
@@ -173,6 +175,7 @@ export async function processFinishedGames(
                   walks_pitch = player_season_stats.walks_pitch + excluded.walks_pitch,
                   strikeouts_pitch = player_season_stats.strikeouts_pitch + excluded.strikeouts_pitch,
                   home_runs_allowed = player_season_stats.home_runs_allowed + excluded.home_runs_allowed,
+                  stats_source = COALESCE(player_season_stats.stats_source, 'espn-box-score'),
                   updated_at = datetime('now')
               `).bind(
                 espnId, name, teamName, teamId, position, headshot,
@@ -200,6 +203,10 @@ export async function processFinishedGames(
       const awayTeamId = String(awayCompetitor?.team?.id ?? '');
       const homeScore = Number(homeCompetitor?.score ?? 0);
       const awayScore = Number(awayCompetitor?.score ?? 0);
+
+      // Track affected teams for cache invalidation
+      if (homeTeamId) affectedTeamIdSet.add(homeTeamId);
+      if (awayTeamId) affectedTeamIdSet.add(awayTeamId);
 
       // Box score proving — runs consistency check
       const homeRunsBox = teamRunsFromBox.get(homeTeamId) ?? 0;
@@ -257,6 +264,7 @@ export async function processFinishedGames(
     }
   }
 
+  result.affectedTeamIds = [...affectedTeamIdSet];
   return result;
 }
 
@@ -679,7 +687,7 @@ export async function handleHighlightlySync(
       const espnCount = await env.DB.prepare(
         `SELECT COUNT(*) as cnt FROM player_season_stats
          WHERE sport = 'college-baseball' AND season = 2026
-           AND team_id = ? AND (stats_source IS NULL OR stats_source = 'box-score')`
+           AND team_id = ? AND (stats_source IS NULL OR stats_source LIKE 'espn%' OR stats_source = 'box-score')`
       ).bind(target.espnId).first<{ cnt: number }>();
 
       if (espnCount && espnCount.cnt >= 5) {
@@ -800,6 +808,11 @@ export async function handleHighlightlySync(
           gamesPitch, ipThirds, ha, ra, er,
           walksPitch, kPitch, hra, wins, losses, saves,
         ));
+
+        // Provenance: tag player entity source as highlightly
+        stmts.push(env.DB.prepare(
+          `INSERT OR IGNORE INTO entity_source (entity_source_id, entity_type, entity_id, source_system_id) VALUES (?, 'player', ?, 'highlightly')`
+        ).bind(`hl:player:${player.id}`, hlId));
 
         upserted++;
       }

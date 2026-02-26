@@ -41,6 +41,10 @@ id = "eebf04d329c0419e92eec884f39a636d"
 binding = "BSI_PROD_CACHE"
 id = "e6cb68e815cd45babeee0e10460dbfee"
 
+[[kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
+
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
@@ -125,6 +129,10 @@ id = "eebf04d329c0419e92eec884f39a636d"
 [[env.production.kv_namespaces]]
 binding = "BSI_PROD_CACHE"
 id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[env.production.kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
 
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"

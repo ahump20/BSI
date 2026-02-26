@@ -59,6 +59,7 @@ export interface D1PlayerStats {
   team_id: string;
   position: string;
   headshot: string;
+  // Batting (original + migration 040/042)
   games_bat: number;
   at_bats: number;
   runs: number;
@@ -68,6 +69,16 @@ export interface D1PlayerStats {
   walks_bat: number;
   strikeouts_bat: number;
   stolen_bases: number;
+  doubles: number;
+  triples: number;
+  hit_by_pitch: number;
+  sacrifice_flies: number;
+  sacrifice_hits: number;
+  caught_stealing: number;
+  total_bases: number;
+  on_base_pct: number;
+  slugging_pct: number;
+  // Pitching (original)
   games_pitch: number;
   innings_pitched_thirds: number;
   hits_allowed: number;
@@ -76,6 +87,9 @@ export interface D1PlayerStats {
   walks_pitch: number;
   strikeouts_pitch: number;
   home_runs_allowed: number;
+  wins: number;
+  losses: number;
+  saves: number;
 }
 
 /**
@@ -98,25 +112,32 @@ export async function getD1PlayerStats(
 
     if (row.at_bats > 0 || row.games_bat > 0) {
       const avg = row.at_bats > 0 ? row.hits / row.at_bats : 0;
-      const obp = (row.at_bats + row.walks_bat) > 0
-        ? (row.hits + row.walks_bat) / (row.at_bats + row.walks_bat)
-        : 0;
+      const pa = row.at_bats + row.walks_bat + (row.hit_by_pitch ?? 0) + (row.sacrifice_flies ?? 0);
+      const obp = row.on_base_pct > 0 ? row.on_base_pct
+        : pa > 0 ? (row.hits + row.walks_bat + (row.hit_by_pitch ?? 0)) / pa : 0;
+      const slg = row.slugging_pct > 0 ? row.slugging_pct
+        : row.at_bats > 0 ? (row.total_bases ?? 0) / row.at_bats : 0;
       stats.batting = {
         games: row.games_bat,
         atBats: row.at_bats,
         runs: row.runs,
         hits: row.hits,
-        doubles: 0,
-        triples: 0,
+        doubles: row.doubles ?? 0,
+        triples: row.triples ?? 0,
         homeRuns: row.home_runs,
         rbi: row.rbis,
         walks: row.walks_bat,
         strikeouts: row.strikeouts_bat,
         stolenBases: row.stolen_bases,
+        caughtStealing: row.caught_stealing ?? 0,
+        hitByPitch: row.hit_by_pitch ?? 0,
+        sacrificeFlies: row.sacrifice_flies ?? 0,
+        sacrificeHits: row.sacrifice_hits ?? 0,
+        totalBases: row.total_bases ?? 0,
         battingAverage: Math.round(avg * 1000) / 1000,
         onBasePercentage: Math.round(obp * 1000) / 1000,
-        sluggingPercentage: 0,
-        ops: 0,
+        sluggingPercentage: Math.round(slg * 1000) / 1000,
+        ops: Math.round((obp + slg) * 1000) / 1000,
       };
     }
 
@@ -124,19 +145,24 @@ export async function getD1PlayerStats(
       const ip = row.innings_pitched_thirds / 3;
       const era = ip > 0 ? (row.earned_runs * 9) / ip : 0;
       const whip = ip > 0 ? (row.hits_allowed + row.walks_pitch) / ip : 0;
+      // BAA requires at-bats-faced, which D1 doesn't store — approximate from IP
+      const approxBF = Math.round(ip * 3 + row.hits_allowed + row.walks_pitch);
+      const baa = approxBF > 0 ? row.hits_allowed / approxBF : 0;
       stats.pitching = {
         games: row.games_pitch,
-        gamesStarted: 0,
-        wins: 0,
-        losses: 0,
-        saves: 0,
+        wins: row.wins ?? 0,
+        losses: row.losses ?? 0,
+        saves: row.saves ?? 0,
         inningsPitched: Math.round(ip * 10) / 10,
         hits: row.hits_allowed,
+        runs: row.runs_allowed ?? 0,
         earnedRuns: row.earned_runs,
         walks: row.walks_pitch,
         strikeouts: row.strikeouts_pitch,
+        homeRunsAllowed: row.home_runs_allowed ?? 0,
         era: Math.round(era * 100) / 100,
         whip: Math.round(whip * 100) / 100,
+        battingAvgAgainst: Math.round(baa * 1000) / 1000,
       };
     }
 
@@ -145,6 +171,74 @@ export async function getD1PlayerStats(
     console.error('[d1] player stats lookup failed:', err instanceof Error ? err.message : err);
     return null;
   }
+}
+
+/**
+ * Build the full stats object for a roster player from a D1 row.
+ * Returns both batting and pitching sub-objects when applicable.
+ */
+function buildPlayerStats(d1: D1PlayerStats): Record<string, unknown> {
+  const stats: Record<string, unknown> = {};
+
+  if (d1.at_bats > 0 || d1.games_bat > 0) {
+    const avg = d1.at_bats > 0 ? Math.round((d1.hits / d1.at_bats) * 1000) / 1000 : 0;
+    const pa = d1.at_bats + d1.walks_bat + (d1.hit_by_pitch ?? 0) + (d1.sacrifice_flies ?? 0);
+    const obp = (d1.on_base_pct ?? 0) > 0 ? d1.on_base_pct
+      : pa > 0 ? Math.round(((d1.hits + d1.walks_bat + (d1.hit_by_pitch ?? 0)) / pa) * 1000) / 1000 : 0;
+    const slg = (d1.slugging_pct ?? 0) > 0 ? d1.slugging_pct
+      : d1.at_bats > 0 ? Math.round(((d1.total_bases ?? 0) / d1.at_bats) * 1000) / 1000 : 0;
+
+    stats.avg = avg;
+    stats.obp = Math.round(obp * 1000) / 1000;
+    stats.slg = Math.round(slg * 1000) / 1000;
+    stats.ops = Math.round((obp + slg) * 1000) / 1000;
+    stats.hr = d1.home_runs;
+    stats.rbi = d1.rbis;
+    stats.r = d1.runs;
+    stats.h = d1.hits;
+    stats.ab = d1.at_bats;
+    stats.doubles = d1.doubles ?? 0;
+    stats.triples = d1.triples ?? 0;
+    stats.bb = d1.walks_bat;
+    stats.k = d1.strikeouts_bat;
+    stats.sb = d1.stolen_bases;
+    stats.cs = d1.caught_stealing ?? 0;
+    stats.hbp = d1.hit_by_pitch ?? 0;
+    stats.sf = d1.sacrifice_flies ?? 0;
+    stats.sh = d1.sacrifice_hits ?? 0;
+    stats.tb = d1.total_bases ?? 0;
+    stats.gp = d1.games_bat;
+  }
+
+  if (d1.innings_pitched_thirds > 0 || d1.games_pitch > 0) {
+    const ip = d1.innings_pitched_thirds / 3;
+    const era = ip > 0 ? Math.round((d1.earned_runs * 9 / ip) * 100) / 100 : 0;
+    const whip = ip > 0 ? Math.round(((d1.hits_allowed + d1.walks_pitch) / ip) * 100) / 100 : 0;
+
+    stats.era = era;
+    stats.whip = whip;
+    stats.w = d1.wins ?? 0;
+    stats.l = d1.losses ?? 0;
+    stats.sv = d1.saves ?? 0;
+    stats.ip = Math.round(ip * 10) / 10;
+    stats.ha = d1.hits_allowed;
+    stats.ra = d1.runs_allowed ?? 0;
+    stats.er = d1.earned_runs;
+    stats.pitchBB = d1.walks_pitch;
+    stats.so = d1.strikeouts_pitch;
+    stats.hra = d1.home_runs_allowed ?? 0;
+    stats.gpPitch = d1.games_pitch;
+  }
+
+  return stats;
+}
+
+/** Normalize a player name for matching — strips accents, parenthesized suffixes, non-alpha chars. */
+function normalizeName(raw: string): string {
+  return raw
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')     // strip accents
+    .replace(/\s*\([^)]*\)\s*/g, ' ')                      // strip (P), (H), (RHP), etc.
+    .toLowerCase().replace(/[^a-z ]/g, '').trim();
 }
 
 /**
@@ -172,11 +266,15 @@ export async function enrichTeamWithD1Stats(
     let playerRows: D1PlayerStats[] = [];
     for (const tid of idsToTry) {
       const { results } = await env.DB.prepare(
-        `SELECT espn_id, name, position, headshot,
+        `SELECT espn_id, name, team, team_id, position, headshot,
                 games_bat, at_bats, runs, hits, home_runs, rbis,
                 walks_bat, strikeouts_bat, stolen_bases,
+                doubles, triples, hit_by_pitch, sacrifice_flies,
+                sacrifice_hits, caught_stealing, total_bases,
+                on_base_pct, slugging_pct,
                 games_pitch, innings_pitched_thirds, earned_runs,
-                strikeouts_pitch, walks_pitch, hits_allowed
+                strikeouts_pitch, walks_pitch, hits_allowed,
+                runs_allowed, home_runs_allowed, wins, losses, saves
          FROM player_season_stats
          WHERE sport = 'college-baseball' AND season = ? AND team_id = ?`
       ).bind(SEASON, tid).all<D1PlayerStats>();
@@ -186,15 +284,13 @@ export async function enrichTeamWithD1Stats(
       }
     }
 
-    if (playerRows.length === 0) return;
-
     // Build lookup by ESPN ID and by normalized name (fallback)
     const statsById = new Map<string, D1PlayerStats>();
     const statsByName = new Map<string, D1PlayerStats>();
     for (const r of playerRows) {
       statsById.set(r.espn_id, r);
-      const normName = r.name.toLowerCase().replace(/[^a-z ]/g, '').trim();
-      if (normName) statsByName.set(normName, r);
+      const nn = normalizeName(r.name);
+      if (nn) statsByName.set(nn, r);
     }
 
     // Enrich roster players — try ID match first, then name match
@@ -204,21 +300,12 @@ export async function enrichTeamWithD1Stats(
 
     for (const player of roster) {
       const pid = String(player.id || '');
-      const playerName = ((player.name ?? player.displayName ?? '') as string)
-        .toLowerCase().replace(/[^a-z ]/g, '').replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+      const playerName = normalizeName((player.name ?? player.displayName ?? '') as string);
       const d1 = statsById.get(pid) ?? (playerName ? statsByName.get(playerName) : undefined);
       if (!d1) continue;
 
       matchedD1Ids.add(d1.espn_id);
-      const avg = d1.at_bats > 0 ? Math.round((d1.hits / d1.at_bats) * 1000) / 1000 : 0;
-      const ip = d1.innings_pitched_thirds / 3;
-      const era = ip > 0 ? Math.round((d1.earned_runs * 9 / ip) * 100) / 100 : 0;
-
-      if (d1.at_bats > 0 || d1.games_bat > 0) {
-        player.stats = { avg, hr: d1.home_runs, rbi: d1.rbis };
-      } else if (d1.innings_pitched_thirds > 0 || d1.games_pitch > 0) {
-        player.stats = { era, wins: 0, so: d1.strikeouts_pitch };
-      }
+      player.stats = buildPlayerStats(d1);
 
       if (!player.headshot && d1.headshot) {
         (player as Record<string, unknown>).headshot = d1.headshot;
@@ -226,13 +313,18 @@ export async function enrichTeamWithD1Stats(
     }
 
     // Append D1 players who weren't matched to the roster (current season players
-    // often missing from ESPN's historical roster endpoint)
+    // often missing from ESPN's historical roster endpoint).
+    // Build name set from current roster to prevent duplicates.
+    const rosterNames = new Set(
+      roster.map(p => normalizeName((p.name ?? '') as string)).filter(Boolean)
+    );
+
     for (const r of playerRows) {
       if (matchedD1Ids.has(r.espn_id)) continue;
 
-      const avg = r.at_bats > 0 ? Math.round((r.hits / r.at_bats) * 1000) / 1000 : 0;
-      const ip = r.innings_pitched_thirds / 3;
-      const era = ip > 0 ? Math.round((r.earned_runs * 9 / ip) * 100) / 100 : 0;
+      // Skip if a roster entry with similar name already exists
+      const normName = normalizeName(r.name);
+      if (normName && rosterNames.has(normName)) continue;
 
       const entry: Record<string, unknown> = {
         id: r.espn_id,
@@ -240,30 +332,101 @@ export async function enrichTeamWithD1Stats(
         position: r.position || 'UN',
         headshot: r.headshot || undefined,
         source: 'd1',
+        stats: buildPlayerStats(r),
       };
 
-      if (r.at_bats > 0 || r.games_bat > 0) {
-        entry.stats = { avg, hr: r.home_runs, rbi: r.rbis };
-      } else if (r.innings_pitched_thirds > 0 || r.games_pitch > 0) {
-        entry.stats = { era, wins: 0, so: r.strikeouts_pitch };
-      }
-
       roster.push(entry);
+      rosterNames.add(normName);
     }
 
-    // Compute team aggregate stats
+    // Final dedup pass — forward scan, keep the entry with stats when names collide
+    const dedupMap = new Map<string, number>();
+    const toRemove = new Set<number>();
+    for (let i = 0; i < roster.length; i++) {
+      const rawName = normalizeName((roster[i].name ?? '') as string);
+      if (!rawName) continue;
+      if (dedupMap.has(rawName)) {
+        const prev = dedupMap.get(rawName)!;
+        // Keep whichever entry has stats; if both or neither have stats, keep first
+        if (roster[i].stats && !roster[prev].stats) {
+          toRemove.add(prev);
+          dedupMap.set(rawName, i);
+        } else {
+          toRemove.add(i);
+        }
+      } else {
+        dedupMap.set(rawName, i);
+      }
+    }
+    if (toRemove.size > 0) {
+      const indices = [...toRemove].sort((a, b) => b - a);
+      for (const idx of indices) roster.splice(idx, 1);
+    }
+
+    // Filter out historical players from multi-season Highlightly dumps.
+    // Strategy depends on whether D1 has data for this team.
+    if (playerRows.length > 0) {
+      // D1 path: keep players with stats or whose name matches a D1 row (current season)
+      const d1Names = new Set(playerRows.map(r => normalizeName(r.name)));
+      const filtered = roster.filter((p: Record<string, unknown>) => {
+        if (p.stats && typeof p.stats === 'object' && Object.keys(p.stats as object).length > 0) return true;
+        const name = normalizeName((p.name ?? '') as string);
+        if (name && d1Names.has(name)) return true;
+        return false;
+      });
+      if (filtered.length >= Math.min(roster.length, 10)) {
+        roster.length = 0;
+        roster.push(...filtered);
+      }
+    } else if (roster.length > 60) {
+      // No D1 data but roster is oversized — Highlightly returned historical dump.
+      // Keep players with: stats, jersey number, or a real position (not UN/empty).
+      const filtered = roster.filter((p: Record<string, unknown>) => {
+        if (p.stats && typeof p.stats === 'object' && Object.keys(p.stats as object).length > 0) return true;
+        const num = String(p.number ?? p.jersey ?? '').trim();
+        if (num && num !== '0') return true;
+        const pos = String(p.position ?? '').toUpperCase().trim();
+        if (pos && pos !== 'UN' && pos !== 'UNKNOWN') return true;
+        return false;
+      });
+      if (filtered.length >= 10) {
+        roster.length = 0;
+        roster.push(...filtered);
+      } else {
+        // Highlightly returned no usable metadata — truncate to reasonable roster size.
+        // Highlightly tends to return most recent players first.
+        const MAX_ROSTER = 50;
+        if (roster.length > MAX_ROSTER) {
+          roster.length = MAX_ROSTER;
+        }
+      }
+    }
+
+    // Compute team aggregate stats (only meaningful when D1 data exists)
+    if (playerRows.length === 0) return;
     let teamAB = 0, teamH = 0, teamHR = 0, teamRBI = 0, teamR = 0, teamK = 0;
+    let teamBB = 0, teamSB = 0, team2B = 0, team3B = 0, teamTB = 0, teamHBP = 0;
     let teamIP3 = 0, teamER = 0, teamPitchK = 0, teamPitchBB = 0, teamHA = 0;
+    let teamW = 0, teamL = 0, teamSV = 0, teamRA = 0, teamHRA = 0;
 
     for (const r of playerRows) {
       teamAB += r.at_bats; teamH += r.hits; teamHR += r.home_runs;
       teamRBI += r.rbis; teamR += r.runs; teamK += r.strikeouts_bat;
+      teamBB += r.walks_bat; teamSB += r.stolen_bases;
+      team2B += r.doubles ?? 0; team3B += r.triples ?? 0;
+      teamTB += r.total_bases ?? 0; teamHBP += r.hit_by_pitch ?? 0;
       teamIP3 += r.innings_pitched_thirds; teamER += r.earned_runs;
       teamPitchK += r.strikeouts_pitch; teamPitchBB += r.walks_pitch;
-      teamHA += r.hits_allowed;
+      teamHA += r.hits_allowed; teamRA += r.runs_allowed ?? 0;
+      teamHRA += r.home_runs_allowed ?? 0;
+      teamW += r.wins ?? 0; teamL += r.losses ?? 0; teamSV += r.saves ?? 0;
     }
 
     const teamAvg = teamAB > 0 ? Math.round((teamH / teamAB) * 1000) / 1000 : 0;
+    const teamSF = playerRows.reduce((s, r) => s + (r.sacrifice_flies ?? 0), 0);
+    const teamPA = teamAB + teamBB + teamHBP + teamSF;
+    const teamOBP = teamPA > 0 ? Math.round(((teamH + teamBB + teamHBP) / teamPA) * 1000) / 1000 : 0;
+    const teamSLG = teamAB > 0 ? Math.round((teamTB / teamAB) * 1000) / 1000 : 0;
     const teamIP = teamIP3 / 3;
     const teamERA = teamIP > 0 ? Math.round((teamER * 9 / teamIP) * 100) / 100 : 0;
     const teamWHIP = teamIP > 0 ? Math.round(((teamHA + teamPitchBB) / teamIP) * 100) / 100 : 0;
@@ -272,12 +435,17 @@ export async function enrichTeamWithD1Stats(
       batting: {
         atBats: teamAB, hits: teamH, homeRuns: teamHR, rbi: teamRBI,
         runs: teamR, strikeouts: teamK, battingAverage: teamAvg,
+        walks: teamBB, stolenBases: teamSB, doubles: team2B, triples: team3B,
+        totalBases: teamTB, hitByPitch: teamHBP,
+        obp: teamOBP, slg: teamSLG, ops: Math.round((teamOBP + teamSLG) * 1000) / 1000,
         players: playerRows.filter((r) => r.at_bats > 0).length,
       },
       pitching: {
         inningsPitched: Math.round(teamIP * 10) / 10, earnedRuns: teamER,
         strikeouts: teamPitchK, walks: teamPitchBB, hitsAllowed: teamHA,
         era: teamERA, whip: teamWHIP,
+        wins: teamW, losses: teamL, saves: teamSV,
+        runsAllowed: teamRA, homeRunsAllowed: teamHRA,
         pitchers: playerRows.filter((r) => r.innings_pitched_thirds > 0).length,
       },
     };
@@ -401,7 +569,10 @@ export async function queryPlayersFromD1(
   const where = conditions.join(' AND ');
   const sql = `SELECT espn_id, name, team, team_id, position, headshot,
     games_bat, at_bats, runs, hits, rbis, home_runs, walks_bat, strikeouts_bat, stolen_bases,
-    games_pitch, innings_pitched_thirds, earned_runs, walks_pitch, strikeouts_pitch, hits_allowed
+    doubles, triples, hit_by_pitch, sacrifice_flies, sacrifice_hits, caught_stealing,
+    total_bases, on_base_pct, slugging_pct,
+    games_pitch, innings_pitched_thirds, earned_runs, walks_pitch, strikeouts_pitch,
+    hits_allowed, runs_allowed, home_runs_allowed, wins, losses, saves
     FROM player_season_stats
     WHERE ${where}
     ORDER BY ${orderClause}
@@ -415,9 +586,11 @@ export async function queryPlayersFromD1(
 
   return results.map((r) => {
     const avg = r.at_bats > 0 ? Math.round((r.hits / r.at_bats) * 1000) / 1000 : 0;
-    const obp = (r.at_bats + r.walks_bat) > 0
-      ? Math.round(((r.hits + r.walks_bat) / (r.at_bats + r.walks_bat)) * 1000) / 1000
-      : 0;
+    const pa = r.at_bats + r.walks_bat + (r.hit_by_pitch ?? 0) + (r.sacrifice_flies ?? 0);
+    const obp = (r.on_base_pct ?? 0) > 0 ? Math.round(r.on_base_pct * 1000) / 1000
+      : pa > 0 ? Math.round(((r.hits + r.walks_bat + (r.hit_by_pitch ?? 0)) / pa) * 1000) / 1000 : 0;
+    const slg = (r.slugging_pct ?? 0) > 0 ? Math.round(r.slugging_pct * 1000) / 1000
+      : r.at_bats > 0 ? Math.round(((r.total_bases ?? 0) / r.at_bats) * 1000) / 1000 : 0;
     const ip = r.innings_pitched_thirds / 3;
     const era = ip > 0 ? Math.round((r.earned_runs * 9 / ip) * 100) / 100 : 0;
     const whip = ip > 0 ? Math.round(((r.hits_allowed + r.walks_pitch) / ip) * 100) / 100 : 0;
@@ -436,19 +609,23 @@ export async function queryPlayersFromD1(
 
     if (r.at_bats > 0 || r.games_bat > 0) {
       player.battingStats = {
-        avg, homeRuns: r.home_runs, rbi: r.rbis, ops: 0, games: r.games_bat,
-        atBats: r.at_bats, runs: r.runs, hits: r.hits, doubles: 0, triples: 0,
+        avg, homeRuns: r.home_runs, rbi: r.rbis, ops: Math.round((obp + slg) * 1000) / 1000,
+        games: r.games_bat, atBats: r.at_bats, runs: r.runs, hits: r.hits,
+        doubles: r.doubles ?? 0, triples: r.triples ?? 0,
         walks: r.walks_bat, strikeouts: r.strikeouts_bat, stolenBases: r.stolen_bases,
-        obp, slg: 0,
+        caughtStealing: r.caught_stealing ?? 0, hitByPitch: r.hit_by_pitch ?? 0,
+        sacrificeFlies: r.sacrifice_flies ?? 0, sacrificeHits: r.sacrifice_hits ?? 0,
+        totalBases: r.total_bases ?? 0, obp, slg,
       };
     }
 
     if (r.innings_pitched_thirds > 0 || r.games_pitch > 0) {
       player.pitchingStats = {
-        era, wins: 0, losses: 0, strikeouts: r.strikeouts_pitch, whip,
-        games: r.games_pitch, gamesStarted: 0, completeGames: 0, shutouts: 0, saves: 0,
+        era, wins: r.wins ?? 0, losses: r.losses ?? 0, strikeouts: r.strikeouts_pitch, whip,
+        games: r.games_pitch, saves: r.saves ?? 0,
         inningsPitched: Math.round(ip * 10) / 10, hits: r.hits_allowed,
         runs: r.runs_allowed ?? 0, earnedRuns: r.earned_runs, walks: r.walks_pitch,
+        homeRunsAllowed: r.home_runs_allowed ?? 0,
       };
     }
 

@@ -42,6 +42,10 @@ export async function handleCollegeBaseballTeam(
           playersResult.success ? (playersResult.data?.data ?? []) : []
         );
         if (team.name) {
+          // Override logo with known-good CDN URL when teamMetadata has a logoId
+          if (slugMeta) {
+            team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);
+          }
           const payload: Record<string, unknown> = { team, meta: { dataSource: 'highlightly', lastUpdated: teamResult.timestamp, timezone: 'America/Chicago' } };
           await enrichTeamWithD1Stats(payload, String(numericId), env);
           await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);

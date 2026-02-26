@@ -296,6 +296,7 @@ function notFoundHtml(): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
   <title>Blaze Field — Not Found</title>
   <style>
     body { margin:0; background:#0a0a0a; color:#f5f5f5; font-family:system-ui,sans-serif;

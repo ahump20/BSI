@@ -19,18 +19,36 @@ export function transformHighlightlyTeam(
     logo: team.logo,
     location: { city: '', state: '', stadium: undefined, capacity: undefined },
     colors: team.primaryColor ? { primary: team.primaryColor, secondary: team.secondaryColor ?? '' } : undefined,
-    roster: players.map((p) => ({
-      id: String(p.id),
-      name: p.name,
-      number: p.jerseyNumber ?? '',
-      position: p.position ?? '',
-      year: '',
-      stats: p.statistics?.batting
-        ? { avg: p.statistics.batting.battingAverage, hr: p.statistics.batting.homeRuns, rbi: p.statistics.batting.rbi }
-        : p.statistics?.pitching
-          ? { era: p.statistics.pitching.era, wins: p.statistics.pitching.wins, so: p.statistics.pitching.strikeouts }
-          : undefined,
-    })),
+    roster: players.map((p) => {
+      const b = p.statistics?.batting;
+      const pt = p.statistics?.pitching;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stats: Record<string, any> = {};
+      if (b && (b.atBats > 0 || b.games > 0)) {
+        stats.avg = b.battingAverage; stats.obp = b.onBasePercentage;
+        stats.slg = b.sluggingPercentage; stats.ops = b.ops;
+        stats.hr = b.homeRuns; stats.rbi = b.rbi; stats.r = b.runs;
+        stats.h = b.hits; stats.ab = b.atBats; stats.doubles = b.doubles;
+        stats.triples = b.triples; stats.bb = b.walks; stats.k = b.strikeouts;
+        stats.sb = b.stolenBases; stats.cs = b.caughtStealing; stats.gp = b.games;
+      }
+      if (pt && (pt.inningsPitched > 0 || pt.games > 0)) {
+        stats.era = pt.era; stats.whip = pt.whip;
+        stats.w = pt.wins; stats.l = pt.losses; stats.sv = pt.saves;
+        stats.ip = pt.inningsPitched; stats.ha = pt.hits;
+        stats.ra = pt.runs; stats.er = pt.earnedRuns;
+        stats.pitchBB = pt.walks; stats.so = pt.strikeouts;
+        stats.hra = pt.homeRunsAllowed; stats.gpPitch = pt.games;
+      }
+      return {
+        id: String(p.id),
+        name: p.name,
+        number: p.jerseyNumber ?? '',
+        position: p.position ?? '',
+        year: '',
+        stats: Object.keys(stats).length > 0 ? stats : undefined,
+      };
+    }),
   };
 }
 

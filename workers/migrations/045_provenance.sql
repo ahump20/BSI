@@ -71,4 +71,7 @@ VALUES
   ('espn', 'ESPN Site API', 'public', 'Public site API — no commercial redistribution', 0),
   ('highlightly', 'Highlightly Pro (RapidAPI)', 'licensed', 'RapidAPI Pro license — redistribution per terms', 0),
   ('sportsdataio', 'SportsDataIO', 'licensed', 'Ocp-Apim subscription — redistribution per contract', 0),
-  ('bsi-internal', 'BSI Internal (derived)', 'internal', 'BSI-computed metrics and analytics', 1);
+  ('bsi-internal', 'BSI Internal (derived)', 'internal', 'BSI-computed metrics and analytics', 1),
+  ('bsi-savant', 'BSI Savant Compute', 'internal', 'BSI-derived advanced metrics (wOBA, FIP, wRC+)', 1),
+  ('cbb-api-sync', 'CBB API Sync Pipeline', 'internal', 'ESPN box score ingestion into D1', 1),
+  ('bsi-savant-compute', 'BSI Savant Compute Worker', 'internal', 'Cron-driven advanced analytics computation', 1);
