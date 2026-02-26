@@ -18,12 +18,12 @@ export async function handleCollegeBaseballStandings(
     return cachedJson(cached, 200, HTTP_CACHE.standings, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
-  const wrap = (data: unknown[], source: string, ts: string) => ({
+  const wrap = (data: unknown[], src: string, ts: string) => ({
     success: true,
     data,
     conference,
     timestamp: ts,
-    meta: { dataSource: source, lastUpdated: ts, sport: 'college-baseball' },
+    meta: { source: src, fetched_at: ts, timezone: 'America/Chicago', sport: 'college-baseball' },
   });
 
   // Try Highlightly first
@@ -155,7 +155,7 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       const result = await hlClient.getRankings();
       if (result.success && result.data) {
         await rotatePrevious();
-        const payload = { rankings: result.data, meta: { dataSource: 'highlightly', lastUpdated: result.timestamp, sport: 'college-baseball' } };
+        const payload = { rankings: result.data, meta: { source: 'highlightly', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' } };
         await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
         return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
           ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
@@ -181,7 +181,7 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       const payload = {
         rankings,
         timestamp: now,
-        meta: { dataSource: 'espn', lastUpdated: now, sport: 'college-baseball' },
+        meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball' },
       };
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.rankings);
       return cachedJson({ ...payload, previousRankings: null }, 200, HTTP_CACHE.rankings, {
@@ -201,7 +201,7 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     const payload = {
       rankings,
       timestamp: result.timestamp,
-      meta: { dataSource: 'ncaa', lastUpdated: result.timestamp, sport: 'college-baseball' },
+      meta: { source: 'ncaa', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' },
     };
 
     if (result.success) {
@@ -212,7 +212,7 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json({ rankings: [], previousRankings: null, meta: { dataSource: 'error', lastUpdated: now, sport: 'college-baseball' } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+    return json({ rankings: [], previousRankings: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball' } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
 }
 
@@ -229,14 +229,14 @@ export async function handleCollegeBaseballLeaders(env: Env): Promise<Response> 
 
     const payload = {
       categories,
-      meta: { lastUpdated: now, dataSource: 'd1-accumulated' },
+      meta: { source: 'd1-accumulated', fetched_at: now, timezone: 'America/Chicago' },
     };
 
     await kvPut(env.KV, cacheKey, payload, 300); // 5 min TTL
     return cachedJson(payload, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   } catch {
     // Fallback: empty categories so the UI renders its placeholder state
-    const empty = { categories: [], meta: { lastUpdated: now, dataSource: 'unavailable' } };
+    const empty = { categories: [], meta: { source: 'unavailable', fetched_at: now, timezone: 'America/Chicago' } };
     await kvPut(env.KV, cacheKey, empty, 300);
     return cachedJson(empty, 200, HTTP_CACHE.standings, { 'X-Cache': 'MISS' });
   }

@@ -104,7 +104,19 @@ export function toDateString(dateStr?: string | null): string | undefined {
   return dateStr.replace(/-/g, '');
 }
 
-export function cvApiResponse<T>(data: T, source: string, cacheHit: boolean): object {
+interface MetaOptions {
+  ttlSeconds?: number;
+  sport?: string;
+  sources?: string[];
+  degraded?: boolean;
+}
+
+export function cvApiResponse<T>(
+  data: T,
+  source: string,
+  cacheHit: boolean,
+  opts: MetaOptions = {},
+): object {
   return {
     data,
     meta: {
@@ -112,6 +124,10 @@ export function cvApiResponse<T>(data: T, source: string, cacheHit: boolean): ob
       fetched_at: new Date().toISOString(),
       timezone: 'America/Chicago',
       cache_hit: cacheHit,
+      ...(opts.ttlSeconds !== undefined && { ttl_seconds: opts.ttlSeconds }),
+      ...(opts.sport && { sport: opts.sport }),
+      ...(opts.sources && { sources: opts.sources }),
+      ...(opts.degraded !== undefined && { degraded: opts.degraded }),
     },
   };
 }
