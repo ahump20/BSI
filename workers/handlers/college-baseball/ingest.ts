@@ -4,6 +4,7 @@
  */
 
 import type { Env } from './shared';
+import { DateTime } from 'luxon';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, getScoreboard, getGameSummary, parseInningsToThirds, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
 import { parseEspnBattingLine, parseEspnPitchingLine } from '../../../lib/api-clients/espn-college-baseball';
 
@@ -326,10 +327,10 @@ export async function syncTeamCumulativeStats(
       errors.push(`Scoreboard fetch failed for ${currentDate}`);
     }
 
-    // Increment date by 1 day
-    const d = new Date(currentDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'));
-    d.setDate(d.getDate() + 1);
-    currentDate = d.toISOString().split('T')[0].replace(/-/g, '');
+    // Increment date by 1 day — use America/Chicago to avoid UTC midnight drift
+    currentDate = DateTime.fromFormat(currentDate, 'yyyyMMdd', { zone: 'America/Chicago' })
+      .plus({ days: 1 })
+      .toFormat('yyyyMMdd');
 
     // Rate limit: 50ms between scoreboard fetches
     await new Promise((r) => setTimeout(r, 50));

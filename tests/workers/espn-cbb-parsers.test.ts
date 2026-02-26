@@ -110,19 +110,13 @@ describe('parseEspnBattingLine', () => {
     expect(result!.ab).toBe(0);
   });
 
-  it('derives total bases from SLG × AB', () => {
-    // 4 AB, SLG .750 → TB = round(0.75 * 4) = 3
-    const stats = ['3-4', '4', '1', '3', '1', '0', '0', '1', '45', '.300', '.350', '.750'];
+  it('keeps batter with zero AB but non-zero BB (walk-only appearance)', () => {
+    // Pinch hitter who walked: 0 AB, 0 R, 0 H, 1 BB
+    const stats = ['0-0', '0', '0', '0', '0', '0', '1', '0', '0', '.000', '.000', '.000'];
     const result = parseEspnBattingLine(BATTING_LABELS, stats, mockAthlete());
-    expect(result!.tb).toBe(3); // round(0.750 * 4) = 3
-  });
-
-  it('falls back to h + hr*3 when SLG is zero', () => {
-    // SLG is 0 — should use h + hr*3 fallback
-    const stats = ['2-4', '4', '1', '2', '0', '0', '0', '1', '40', '.250', '.250', '.000'];
-    const result = parseEspnBattingLine(BATTING_LABELS, stats, mockAthlete());
-    // h=2, hr=0, fallback: tb = 2 + 0*3 = 2
-    expect(result!.tb).toBe(2);
+    expect(result).not.toBeNull();
+    expect(result!.bb).toBe(1);
+    expect(result!.ab).toBe(0);
   });
 
   it('estimates HBP from OBP equation', () => {
@@ -147,15 +141,6 @@ describe('parseEspnBattingLine', () => {
     expect(result!.pa).toBeGreaterThanOrEqual(5); // at minimum AB + BB
   });
 
-  it('computes singles from total bases and HR count', () => {
-    // AB=4, H=3, HR=1, SLG=1.000 → TB=4
-    // singles = 2*3 - 4 + 2*1 = 6-4+2 = 4... but clamped to H-HR
-    // More realistic: AB=4, H=2, HR=0, SLG=.500 → TB=2, singles = 2*2-2+0 = 2
-    const stats = ['2-4', '4', '1', '2', '1', '0', '0', '0', '40', '.500', '.500', '.500'];
-    const result = parseEspnBattingLine(BATTING_LABELS, stats, mockAthlete());
-    expect(result!.singles).toBeGreaterThanOrEqual(0);
-  });
-
   it('MSST Ace Reese verification — derivations match wOBA 0.649 test case', () => {
     // This is the verified derivation that produced wOBA 0.649, wRC+ 168
     // AB=3, H=2, HR=1, BB=1, OBP=.700, SLG=1.333
@@ -168,7 +153,6 @@ describe('parseEspnBattingLine', () => {
     expect(result!.h).toBe(2);
     expect(result!.hr).toBe(1);
     expect(result!.bb).toBe(1);
-    expect(result!.tb).toBe(4); // round(1.333 * 3) = 4
     expect(result!.hbp).toBe(0);
   });
 

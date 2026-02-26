@@ -43,12 +43,8 @@ export interface CollegeBaseballBattingLine {
   slg: number;
   /** Derived: AB + BB + estimated HBP + estimated SF */
   pa: number;
-  /** Derived: round(SLG * AB) when SLG > 0 */
-  tb: number;
   /** Estimated from OBP equation */
   hbp: number;
-  /** H - 2B - 3B - HR (when derivable from TB) */
-  singles: number;
 }
 
 /** Parsed pitching line from an ESPN college baseball box score row. */
@@ -126,7 +122,7 @@ export interface CollegeBaseballRankingsResponse {
     rankings: CollegeBaseballRanking[];
     updatedAt: string;
   }[];
-  meta: { lastUpdated: string; dataSource: string };
+  meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
 }
 
 /** Athlete stats — batting and/or pitching with derived metrics. */
@@ -163,7 +159,7 @@ export interface CollegeBaseballGameSummary {
   };
   plays: unknown[];
   winProbability: unknown[];
-  meta: { lastUpdated: string; dataSource: string };
+  meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
 }
 
 // ---------------------------------------------------------------------------
@@ -232,17 +228,14 @@ export function parseEspnBattingLine(
   const ab = num('AB');
   const r = num('R');
   const h = num('H');
+  const bb = num('BB');
 
-  // Skip DNP entries — no AB, no runs, no hits
-  if (ab === 0 && r === 0 && h === 0) return null;
+  // Skip true DNP entries — no plate appearances of any kind
+  if (ab === 0 && r === 0 && h === 0 && bb === 0) return null;
 
   const hr = num('HR');
-  const bb = num('BB');
   const obp = dec('OBP');
   const slg = dec('SLG');
-
-  // Derive total bases from season SLG: TB = round(SLG * AB)
-  const tb = slg > 0 && ab > 0 ? Math.round(slg * ab) : h + hr * 3;
 
   // Derive HBP from OBP equation:
   // OBP = (H + BB + HBP) / (AB + BB + HBP + SF)
@@ -256,12 +249,6 @@ export function parseEspnBattingLine(
 
   // PA = AB + BB + HBP + SF (SF unknown, approximate as 0 for per-game)
   const pa = ab + bb + hbp;
-
-  // Singles = H - 2B - 3B - HR, but we don't have 2B/3B from ESPN
-  // Approximate: singles = H - HR - extraBaseHits
-  // TB = 1B + 2*2B + 3*3B + 4*HR → 2B+3B = TB - H - 3*HR
-  // Without splitting 2B/3B: singles = H - HR - (TB - H - 3*HR) = 2*H - TB + 2*HR
-  const singles = Math.max(0, 2 * h - tb + 2 * hr);
 
   return {
     playerId: String(athlete.id || ''),
@@ -280,9 +267,7 @@ export function parseEspnBattingLine(
     obp,
     slg,
     pa,
-    tb,
     hbp,
-    singles,
   };
 }
 
@@ -307,7 +292,8 @@ export function parseEspnPitchingLine(
     return i >= 0 ? (parseFloat(stats[i] || '0') || 0) : 0;
   };
 
-  const ipStr = stats[idx('IP')] || '0';
+  const ipIdx = idx('IP');
+  const ipStr = ipIdx >= 0 ? (stats[ipIdx] || '0') : '0';
   const ipThirds = parseInningsToThirds(ipStr);
 
   // Skip pitchers who didn't record an out
@@ -570,7 +556,7 @@ export function transformCollegeBaseballGameSummary(
     decisions,
     plays: (raw?.plays || []) as unknown[],
     winProbability: (raw?.winprobability || []) as unknown[],
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -623,7 +609,7 @@ export function transformCollegeBaseballRankings(
 
   return {
     polls,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -742,7 +728,7 @@ export function transformCollegeBaseballAthlete(
 export function transformCollegeBaseballStandings(
   raw: Record<string, unknown>,
   conferenceByName?: Record<string, string>,
-): { standings: { name: string; teams: CollegeBaseballStandingTeam[] }[]; meta: { lastUpdated: string; dataSource: string } } {
+): { standings: { name: string; teams: CollegeBaseballStandingTeam[] }[]; meta: { source: string; fetched_at: string; timezone: 'America/Chicago' } } {
   const groups = (raw?.children || []) as Record<string, unknown>[];
   const allTeams: CollegeBaseballStandingTeam[] = [];
 
@@ -822,7 +808,7 @@ export function transformCollegeBaseballStandings(
 
   return {
     standings,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 

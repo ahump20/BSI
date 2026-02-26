@@ -366,8 +366,9 @@ interface TransformedGameSummary {
 }
 
 interface ApiMeta {
-  lastUpdated: string;
-  dataSource: string;
+  source: string;
+  fetched_at: string;
+  timezone: 'America/Chicago';
 }
 
 // Division lookup tables — ESPN standings only group by league/conference,
@@ -454,7 +455,7 @@ export function transformStandings(
       teams.sort((a: NbaStandingTeam, b: NbaStandingTeam) => b.wins - a.wins || b.pct - a.pct);
       standings.push({ name: (group.name || 'Unknown') as string, teams });
     }
-    return { standings, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+    return { standings, meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const } };
   }
 
   // College baseball: group by conference with conf W-L and run differential
@@ -574,7 +575,7 @@ export function transformStandings(
           teams: teams.sort((a: NflStandingTeam, b: NflStandingTeam) => b.wins - a.wins || b.pct - a.pct),
         })),
     }));
-    return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+    return { standings: nested, meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const } };
   }
 
   // CFB: group by conference like NFL
@@ -591,12 +592,12 @@ export function transformStandings(
         name: confName,
         teams: teams.sort((a: CfbStandingTeam, b: CfbStandingTeam) => b.wins - a.wins || b.pct - a.pct),
       }));
-    return { standings: nested, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+    return { standings: nested, meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const } };
   }
 
   return {
     standings,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -647,7 +648,7 @@ export function transformScoreboard(
     games,
     timestamp: new Date().toISOString(),
     date: (day?.date || new Date().toISOString().slice(0, 10)) as string,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -673,7 +674,7 @@ export function transformTeams(
 
   return {
     teams,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -719,7 +720,7 @@ export function transformTeamDetail(
   return {
     team,
     roster,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -753,7 +754,7 @@ export function transformAthlete(
       },
       stats: (athlete.statistics || []) as unknown[],
     },
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -777,7 +778,7 @@ export function transformNews(
 
   return {
     articles,
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
 
@@ -800,6 +801,6 @@ export function transformGameSummary(
       plays: (raw?.plays || []) as unknown[],
       winProbability: (raw?.winprobability || []) as unknown[],
     },
-    meta: { lastUpdated: new Date().toISOString(), dataSource: 'espn' },
+    meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' as const },
   };
 }
