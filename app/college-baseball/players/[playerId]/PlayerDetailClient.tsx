@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
@@ -11,6 +12,7 @@ import { DataAttribution } from '@/components/ui/DataAttribution';
 import { IntelSignup } from '@/components/home/IntelSignup';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AdvancedStatsCard } from '@/components/analytics/AdvancedStatsCard';
+import { getPlayerHighlights } from '@/lib/data/player-highlights';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -27,6 +29,8 @@ interface PlayerData {
     height?: string;
     weight?: number;
     dateOfBirth?: string;
+    headshot?: string;
+    classYear?: string;
     team?: { id: number; name: string; shortName?: string; conference?: { name: string } };
   } | null;
   statistics: {
@@ -73,6 +77,48 @@ interface SavantData {
   } | null;
 }
 
+interface GameLogEntry {
+  gameId: string;
+  date: string;
+  opponent: string | null;
+  isHome: boolean;
+  result: string | null;
+  batting?: {
+    ab: number; r: number; h: number; rbi: number;
+    hr: number; bb: number; k: number; sb: number;
+    avg: number;
+  };
+  pitching?: {
+    ip: number; h: number; er: number; so: number; bb: number;
+    w: number; l: number; sv: number; era: number;
+  };
+}
+
+interface GameLogData {
+  playerId: string;
+  games: GameLogEntry[];
+}
+
+// ---------------------------------------------------------------------------
+// Draft profile links — connects player profiles to editorial content
+// ---------------------------------------------------------------------------
+
+const DRAFT_PROFILE_SLUGS: Record<string, { slug: string; title: string }> = {
+  'cholowsky': { slug: 'roch-cholowsky-2026-draft-profile', title: 'Roch Cholowsky: The No. 1 Pick Through Two Weekends' },
+  'volantis': { slug: 'dylan-volantis-2026-draft-profile', title: 'Dylan Volantis: 14 IP. 0 ER. The Conversion Is Real.' },
+  'peterson': { slug: 'liam-peterson-2026-draft-profile', title: 'Liam Peterson: The Walk Problem and the No. 9 Pick' },
+  'flora': { slug: 'jackson-flora-2026-draft-profile', title: 'Jackson Flora: 100 MPH and a New Arsenal' },
+  'armstrong': { slug: 'tyce-armstrong-2026-draft-profile', title: 'Tyce Armstrong: Three Grand Slams and a 50-Year Record' },
+};
+
+function findDraftProfile(playerName: string): { slug: string; title: string } | null {
+  const nameLower = playerName.toLowerCase();
+  for (const [key, profile] of Object.entries(DRAFT_PROFILE_SLUGS)) {
+    if (nameLower.includes(key)) return profile;
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // HAV-F Bar Component
 // ---------------------------------------------------------------------------
@@ -94,6 +140,12 @@ function HAVFBar({ label, score, color }: { label: string; score: number; color:
 }
 
 // ---------------------------------------------------------------------------
+// Tab type
+// ---------------------------------------------------------------------------
+
+type ProfileTab = 'season' | 'gamelog';
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -103,17 +155,19 @@ export default function PlayerDetailClient() {
   const [data, setData] = useState<PlayerData | null>(null);
   const [havf, setHavf] = useState<HAVFData | null>(null);
   const [savant, setSavant] = useState<SavantData | null>(null);
+  const [gameLog, setGameLog] = useState<GameLogData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [activeTab, setActiveTab] = useState<ProfileTab>('season');
 
   useEffect(() => {
     async function load() {
       try {
-        // Fetch player data, HAV-F, and Savant in parallel
-        const [playerRes, havfRes, savantRes] = await Promise.all([
+        const [playerRes, havfRes, savantRes, gameLogRes] = await Promise.all([
           fetch(`/api/college-baseball/players/${playerId}`),
           fetch(`/api/analytics/havf/player/${playerId}`).catch(() => null),
           fetch(`/api/savant/player/${playerId}`).catch(() => null),
+          fetch(`/api/college-baseball/players/${playerId}/game-log`).catch(() => null),
         ]);
 
         const playerJson = await playerRes.json();
@@ -128,6 +182,11 @@ export default function PlayerDetailClient() {
         if (savantRes?.ok) {
           const savantJson = await savantRes.json();
           setSavant(savantJson as SavantData);
+        }
+
+        if (gameLogRes?.ok) {
+          const glJson = await gameLogRes.json();
+          setGameLog(glJson as GameLogData);
         }
       } catch {
         setData(null);
@@ -155,6 +214,10 @@ export default function PlayerDetailClient() {
   const player = data?.player;
   const stats = data?.statistics;
   const havfPlayer = havf?.player;
+  const draftProfile = player ? findDraftProfile(player.name) : null;
+  const highlights = getPlayerHighlights(playerId);
+  const gameLogGames = gameLog?.games ?? [];
+  const hasGameLog = gameLogGames.length > 0;
 
   if (!player) {
     return (
@@ -191,19 +254,34 @@ export default function PlayerDetailClient() {
               <span className="text-text-primary">{player.name}</span>
             </div>
 
-            {/* Player Header */}
-            <div className="mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
-                {player.name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-3 mt-2">
-                {player.position && <Badge variant="primary">{player.position}</Badge>}
-                {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
-                {player.team && (
-                  <Link href={`/college-baseball/teams/${player.team.id}`} className="text-text-tertiary hover:text-burnt-orange transition-colors text-sm">
-                    {player.team.name}
-                  </Link>
-                )}
+            {/* Player Header — with headshot */}
+            <div className="flex items-start gap-4 mb-8">
+              {player.headshot && (
+                <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-border-strong bg-surface-light">
+                  <Image
+                    src={player.headshot}
+                    alt={player.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                    unoptimized
+                  />
+                </div>
+              )}
+              <div>
+                <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
+                  {player.name}
+                </h1>
+                <div className="flex flex-wrap items-center gap-3 mt-2">
+                  {player.position && <Badge variant="primary">{player.position}</Badge>}
+                  {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
+                  {player.classYear && <Badge variant="secondary">{player.classYear}</Badge>}
+                  {player.team && (
+                    <Link href={`/college-baseball/teams/${player.team.id}`} className="text-text-tertiary hover:text-burnt-orange transition-colors text-sm">
+                      {player.team.name}
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -235,15 +313,12 @@ export default function PlayerDetailClient() {
                 </div>
                 <div className="p-4 md:p-6">
                   <div className="grid md:grid-cols-[1fr_auto] gap-6">
-                    {/* Component bars */}
                     <div className="space-y-3">
                       <HAVFBar label="H" score={havfPlayer.h_score} color="var(--bsi-primary)" />
                       <HAVFBar label="A" score={havfPlayer.a_score} color="var(--bsi-accent)" />
                       <HAVFBar label="V" score={havfPlayer.v_score} color="#FDB913" />
                       <HAVFBar label="F" score={havfPlayer.f_score} color="var(--bsi-texas-soil)" />
                     </div>
-
-                    {/* Composite score */}
                     <div className="flex flex-col items-center justify-center md:border-l md:border-border-subtle md:pl-6">
                       <span className="text-xs text-text-muted uppercase tracking-widest mb-1">Composite</span>
                       <span className="font-display text-4xl md:text-5xl font-bold text-burnt-orange">
@@ -252,7 +327,6 @@ export default function PlayerDetailClient() {
                       <span className="text-xs text-text-muted mt-1">percentile</span>
                     </div>
                   </div>
-
                   <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
                     <span className="text-[10px] text-text-muted">
                       Hitting &middot; At-Bat Quality &middot; Velocity &middot; Fielding
@@ -295,77 +369,264 @@ export default function PlayerDetailClient() {
               />
             )}
 
-            {/* Batting Stats */}
-            {stats?.batting && (
-              <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                  <h2 className="font-display text-lg font-bold text-text-primary">Batting Statistics</h2>
+            {/* Stats Tabs — Season / Game Log */}
+            {(stats?.batting || stats?.pitching) && (
+              <div className="mb-6">
+                <div className="flex gap-1 mb-4">
+                  <button
+                    onClick={() => setActiveTab('season')}
+                    className={`px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-t transition-colors ${
+                      activeTab === 'season'
+                        ? 'bg-charcoal text-text-primary border-b-2 border-burnt-orange'
+                        : 'bg-surface-light text-text-muted hover:text-text-secondary'
+                    }`}
+                  >
+                    Season Stats
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('gamelog')}
+                    className={`px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-t transition-colors ${
+                      activeTab === 'gamelog'
+                        ? 'bg-charcoal text-text-primary border-b-2 border-burnt-orange'
+                        : 'bg-surface-light text-text-muted hover:text-text-secondary'
+                    }`}
+                  >
+                    Game Log{hasGameLog ? ` (${gameLogGames.length})` : ''}
+                  </button>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border-strong">
-                        {['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-border">
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.games}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.atBats}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.runs}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.hits}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.doubles}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.triples}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold">{stats.batting.homeRuns}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.rbi}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.walks}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.strikeouts}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.stolenBases}</td>
-                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+
+                {/* Season Stats Tab */}
+                {activeTab === 'season' && (
+                  <>
+                    {/* Batting Stats */}
+                    {stats?.batting && (
+                      <Card padding="none" className="mb-6 overflow-hidden">
+                        <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
+                          <h2 className="font-display text-lg font-bold text-text-primary">Batting Statistics</h2>
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-border-strong">
+                                {['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS'].map((h) => (
+                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b border-border">
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.games}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.atBats}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.runs}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.hits}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.doubles}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.triples}</td>
+                                <td className="py-3 px-3 text-center text-burnt-orange font-bold">{stats.batting.homeRuns}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.rbi}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.walks}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.strikeouts}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.batting.stolenBases}</td>
+                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
+                                <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
+                    )}
+
+                    {/* Pitching Stats */}
+                    {stats?.pitching && (
+                      <Card padding="none" className="mb-6 overflow-hidden">
+                        <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
+                          <h2 className="font-display text-lg font-bold text-text-primary">Pitching Statistics</h2>
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-border-strong">
+                                {['G', 'GS', 'W', 'L', 'SV', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA', 'WHIP'].map((h) => (
+                                  <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="border-b border-border">
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
+                                <td className="py-3 px-3 text-center text-[#2E7D32] font-bold">{stats.pitching.wins}</td>
+                                <td className="py-3 px-3 text-center text-[#C62828] font-bold">{stats.pitching.losses}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.earnedRuns}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.walks}</td>
+                                <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.strikeouts}</td>
+                                <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
+                                <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.pitching.whip.toFixed(2)}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </Card>
+                    )}
+                  </>
+                )}
+
+                {/* Game Log Tab */}
+                {activeTab === 'gamelog' && (
+                  <Card padding="none" className="mb-6 overflow-hidden">
+                    <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
+                      <h2 className="font-display text-lg font-bold text-text-primary">
+                        2026 Game Log
+                      </h2>
+                    </div>
+                    {hasGameLog ? (
+                      <div className="overflow-x-auto">
+                        {/* Batting game log */}
+                        {gameLogGames.some((g) => g.batting) && (
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b border-border-strong">
+                                {['Date', 'OPP', '', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', 'AVG'].map((h) => (
+                                  <th key={h} className="py-2 px-2 text-xs font-semibold text-text-muted uppercase text-center whitespace-nowrap">{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {gameLogGames.filter((g) => g.batting).map((g) => (
+                                <tr key={`bat-${g.gameId}`} className="border-b border-border hover:bg-surface-light/50 transition-colors">
+                                  <td className="py-2 px-2 text-center text-text-secondary text-xs whitespace-nowrap">{g.date}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs whitespace-nowrap">
+                                    {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
+                                  </td>
+                                  <td className="py-2 px-2 text-center text-xs">
+                                    <span className={g.result === 'W' ? 'text-[#2E7D32] font-bold' : 'text-[#C62828] font-bold'}>
+                                      {g.result || '—'}
+                                    </span>
+                                  </td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.ab}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.r}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.h}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.rbi}</td>
+                                  <td className="py-2 px-2 text-center text-burnt-orange font-bold text-xs">{g.batting!.hr || '—'}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.bb}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary text-xs">{g.batting!.k}</td>
+                                  <td className="py-2 px-2 text-center text-text-primary font-mono text-xs">{g.batting!.avg.toFixed(3)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+
+                        {/* Pitching game log */}
+                        {gameLogGames.some((g) => g.pitching) && (
+                          <>
+                            {gameLogGames.some((g) => g.batting) && (
+                              <div className="px-4 py-2 bg-surface-light border-y border-border">
+                                <span className="text-xs text-text-muted uppercase tracking-widest">Pitching</span>
+                              </div>
+                            )}
+                            <table className="w-full">
+                              <thead>
+                                <tr className="border-b border-border-strong">
+                                  {['Date', 'OPP', '', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA'].map((h) => (
+                                    <th key={h} className="py-2 px-2 text-xs font-semibold text-text-muted uppercase text-center whitespace-nowrap">{h}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {gameLogGames.filter((g) => g.pitching).map((g) => (
+                                  <tr key={`pitch-${g.gameId}`} className="border-b border-border hover:bg-surface-light/50 transition-colors">
+                                    <td className="py-2 px-2 text-center text-text-secondary text-xs whitespace-nowrap">{g.date}</td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs whitespace-nowrap">
+                                      {g.isHome ? 'vs' : '@'} {g.opponent || '—'}
+                                    </td>
+                                    <td className="py-2 px-2 text-center text-xs">
+                                      <span className={g.result === 'W' ? 'text-[#2E7D32] font-bold' : 'text-[#C62828] font-bold'}>
+                                        {g.result || '—'}
+                                      </span>
+                                    </td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.ip.toFixed(1)}</td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.h}</td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.er}</td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.bb}</td>
+                                    <td className="py-2 px-2 text-center text-text-primary text-xs">{g.pitching!.so}</td>
+                                    <td className="py-2 px-2 text-center text-burnt-orange font-bold font-mono text-xs">{g.pitching!.era.toFixed(2)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-6 text-center text-text-muted text-sm">
+                        Game log data populates as games are ingested. Check back after upcoming games.
+                      </div>
+                    )}
+                  </Card>
+                )}
+              </div>
+            )}
+
+            {/* Career & Scouting — links to editorial draft profiles */}
+            {draftProfile && (
+              <Card padding="lg" className="mb-6">
+                <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-3">
+                  Scouting Report
+                </h2>
+                <Link
+                  href={`/college-baseball/editorial/${draftProfile.slug}`}
+                  className="block p-3 rounded-lg border border-border hover:border-burnt-orange/40 transition-colors group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-burnt-orange uppercase tracking-widest font-semibold">Draft Profile</span>
+                      <p className="text-text-primary font-medium mt-1 group-hover:text-burnt-orange transition-colors">
+                        {draftProfile.title}
+                      </p>
+                    </div>
+                    <span className="text-text-muted group-hover:text-burnt-orange transition-colors">&rarr;</span>
+                  </div>
+                </Link>
               </Card>
             )}
 
-            {/* Pitching Stats */}
-            {stats?.pitching && (
+            {/* Video Highlights — renders only when curated content exists */}
+            {highlights.length > 0 && (
               <Card padding="none" className="mb-6 overflow-hidden">
                 <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
-                  <h2 className="font-display text-lg font-bold text-text-primary">Pitching Statistics</h2>
+                  <h2 className="font-display text-lg font-bold text-text-primary">Highlights</h2>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border-strong">
-                        {['G', 'GS', 'W', 'L', 'SV', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA', 'WHIP'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-border">
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
-                        <td className="py-3 px-3 text-center text-[#2E7D32] font-bold">{stats.pitching.wins}</td>
-                        <td className="py-3 px-3 text-center text-[#C62828] font-bold">{stats.pitching.losses}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.earnedRuns}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.walks}</td>
-                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.strikeouts}</td>
-                        <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
-                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.pitching.whip.toFixed(2)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div className="p-4 grid gap-3 sm:grid-cols-2">
+                  {highlights.map((hl) => (
+                    <a
+                      key={hl.id}
+                      href={hl.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-3 rounded-lg border border-border hover:border-burnt-orange/40 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        {hl.thumbnailUrl && (
+                          <div className="w-16 h-12 rounded overflow-hidden bg-surface-light shrink-0">
+                            <Image src={hl.thumbnailUrl} alt={hl.title} width={64} height={48} className="w-full h-full object-cover" unoptimized />
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="text-sm text-text-primary font-medium truncate group-hover:text-burnt-orange transition-colors">
+                            {hl.title}
+                          </p>
+                          <p className="text-xs text-text-muted mt-0.5">
+                            {hl.gameContext || hl.date}{hl.duration ? ` · ${hl.duration}` : ''}
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </Card>
             )}

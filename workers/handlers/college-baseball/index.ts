@@ -18,7 +18,7 @@ export { handleCollegeBaseballStandings, handleCollegeBaseballRankings, handleCo
 export { handleCollegeBaseballTeam, handleCollegeBaseballTeamSchedule, handleCollegeBaseballTrends } from './teams';
 
 // Players
-export { handleCollegeBaseballPlayer, handleCollegeBaseballPlayersList, handleCollegeBaseballPlayerCompare } from './players';
+export { handleCollegeBaseballPlayer, handleCollegeBaseballPlayersList, handleCollegeBaseballPlayerCompare, handlePlayerGameLog } from './players';
 
 // Editorial, news, trending
 export { handleCollegeBaseballTrending, handleCollegeBaseballDaily, handleCollegeBaseballNews, handleCollegeBaseballNewsEnhanced, handleCollegeBaseballTransferPortal, handleCollegeBaseballEditorialList, handleCollegeBaseballEditorialContent } from './editorial';

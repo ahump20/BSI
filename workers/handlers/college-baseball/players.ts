@@ -32,10 +32,18 @@ export async function handleCollegeBaseballPlayer(
           playerResult.data,
           statsResult.success ? (statsResult.data ?? null) : null
         );
-        // Enrich with D1 stats if Highlightly returned no statistics
-        if (!payload.statistics) {
+        // Enrich with D1 stats/headshot if Highlightly returned no statistics
+        if (!payload.statistics || !(payload.player as Record<string, unknown>)?.headshot) {
           const d1Stats = await getD1PlayerStats(playerId, env);
-          if (d1Stats) payload.statistics = d1Stats;
+          if (d1Stats && !payload.statistics) payload.statistics = d1Stats;
+          // Backfill headshot from D1 (ESPN CDN URL) if Highlightly doesn't have one
+          const pObj = payload.player as Record<string, unknown> | undefined;
+          if (pObj && !pObj.headshot) {
+            const row = await env.DB.prepare(
+              `SELECT headshot FROM player_season_stats WHERE espn_id = ? AND sport = 'college-baseball' AND season = 2026`
+            ).bind(playerId).first<{ headshot: string }>();
+            if (row?.headshot) pObj.headshot = row.headshot;
+          }
         }
         const source = payload.statistics && !(statsResult.success && statsResult.data) ? 'highlightly+d1' : 'highlightly';
         const wrapped = { ...payload, meta: { source, fetched_at: playerResult.timestamp, timezone: 'America/Chicago' } };
@@ -322,6 +330,75 @@ export async function handleCollegeBaseballPlayerCompare(
     });
   } catch (err) {
     return json({ error: err instanceof Error ? err.message : 'Comparison failed', meta: { source: 'bsi', fetched_at: now, timezone: 'America/Chicago' } }, 500);
+  }
+}
+
+// =============================================================================
+// Game Log
+// =============================================================================
+
+interface GameLogRow {
+  espn_id: string;
+  game_id: string;
+  game_date: string;
+  opponent: string | null;
+  is_home: number;
+  result: string | null;
+  ab: number; r: number; h: number; rbi: number; hr: number; bb: number; k: number; sb: number;
+  ip_thirds: number; ha: number; er: number; so: number; bb_p: number; w: number; l: number; sv: number;
+}
+
+export async function handlePlayerGameLog(
+  playerId: string,
+  env: Env,
+): Promise<Response> {
+  const now = new Date().toISOString();
+
+  try {
+    const { results } = await env.DB.prepare(
+      `SELECT * FROM player_game_log
+       WHERE espn_id = ? AND sport = 'college-baseball'
+       ORDER BY game_date DESC
+       LIMIT 100`
+    ).bind(playerId).all<GameLogRow>();
+
+    const games = (results || []).map((row) => {
+      const isBatting = row.ab > 0 || row.h > 0 || row.bb > 0 || row.k > 0;
+      const isPitching = row.ip_thirds > 0;
+      const ip = row.ip_thirds / 3;
+
+      return {
+        gameId: row.game_id,
+        date: row.game_date,
+        opponent: row.opponent,
+        isHome: row.is_home === 1,
+        result: row.result,
+        batting: isBatting ? {
+          ab: row.ab, r: row.r, h: row.h, rbi: row.rbi,
+          hr: row.hr, bb: row.bb, k: row.k, sb: row.sb,
+          avg: row.ab > 0 ? Math.round((row.h / row.ab) * 1000) / 1000 : 0,
+        } : undefined,
+        pitching: isPitching ? {
+          ip: Math.round(ip * 10) / 10,
+          h: row.ha, er: row.er, so: row.so, bb: row.bb_p,
+          w: row.w, l: row.l, sv: row.sv,
+          era: ip > 0 ? Math.round((row.er * 9 / ip) * 100) / 100 : 0,
+        } : undefined,
+      };
+    });
+
+    return json({
+      playerId,
+      games,
+      meta: { source: 'd1-game-log', fetched_at: now, timezone: 'America/Chicago' },
+    });
+  } catch (err) {
+    console.error('[game-log]', err instanceof Error ? err.message : err);
+    return json({
+      playerId,
+      games: [],
+      meta: { source: 'd1-game-log', fetched_at: now, timezone: 'America/Chicago' },
+    });
   }
 }
 

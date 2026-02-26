@@ -38,6 +38,7 @@ import {
   handleCollegeBaseballEditorialContent,
   handleCollegeBaseballNewsEnhanced,
   handleCollegeBaseballPlayerCompare,
+  handlePlayerGameLog,
   handleCollegeBaseballTrends,
   handleCollegeBaseballTeamSchedule,
   handleCollegeBaseballLeaders,
@@ -379,6 +380,7 @@ app.get('/api/college-baseball/teams/:teamId', (c) => {
   return handleCollegeBaseballTeam(c.req.param('teamId'), c.env, ctx);
 });
 app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
+app.get('/api/college-baseball/players/:playerId/game-log', (c) => handlePlayerGameLog(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));
 app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));

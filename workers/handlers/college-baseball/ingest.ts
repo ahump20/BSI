@@ -71,6 +71,22 @@ export async function processFinishedGames(
       const teamRunsFromBox = new Map<string, number>();
       const playerEspnIds = new Set<string>();
 
+      // Extract competitor info for game log + downstream use
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const competitions = event.competitions || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const competitors = (competitions[0] as any)?.competitors || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const homeCompetitor = competitors.find((c: any) => c.homeAway === 'home');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const awayCompetitor = competitors.find((c: any) => c.homeAway === 'away');
+      const homeTeam = homeCompetitor?.team?.displayName || '';
+      const awayTeam = awayCompetitor?.team?.displayName || '';
+      const homeTeamId = String(homeCompetitor?.team?.id ?? '');
+      const awayTeamId = String(awayCompetitor?.team?.id ?? '');
+      const homeScore = Number(homeCompetitor?.score ?? 0);
+      const awayScore = Number(awayCompetitor?.score ?? 0);
+
       // Parse box scores using centralized label-based parser
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const teamBox of boxPlayers as any[]) {
@@ -129,6 +145,23 @@ export async function processFinishedGames(
                 line.ab, line.r, line.h, line.rbi, line.hr, line.bb, line.k,
                 line.obp, line.slg,
               ));
+
+              // Game log: per-game batting line
+              const opponentBat = teamId === homeTeamId ? awayTeam : homeTeam;
+              const isHomeBat = teamId === homeTeamId ? 1 : 0;
+              const resultBat = teamId === homeTeamId
+                ? (homeScore > awayScore ? 'W' : 'L')
+                : (awayScore > homeScore ? 'W' : 'L');
+              stmts.push(env.DB.prepare(`
+                INSERT OR IGNORE INTO player_game_log
+                  (espn_id, game_id, game_date, season, sport, opponent, is_home, result,
+                   ab, r, h, rbi, hr, bb, k, sb)
+                VALUES (?, ?, ?, 2026, 'college-baseball', ?, ?, ?,
+                        ?, ?, ?, ?, ?, ?, ?, 0)
+              `).bind(
+                espnId, gameId, date, opponentBat, isHomeBat, resultBat,
+                line.ab, line.r, line.h, line.rbi, line.hr, line.bb, line.k,
+              ));
             }
 
             if (isPitching && stats.length > 0) {
@@ -162,28 +195,29 @@ export async function processFinishedGames(
                 espnId, line.name, teamName, teamId, line.position, line.headshot,
                 line.ipThirds, line.h, line.r, line.er, line.bb, line.k, line.hr,
               ));
+
+              // Game log: per-game pitching line
+              const opponentPitch = teamId === homeTeamId ? awayTeam : homeTeam;
+              const isHomePitch = teamId === homeTeamId ? 1 : 0;
+              const resultPitch = teamId === homeTeamId
+                ? (homeScore > awayScore ? 'W' : 'L')
+                : (awayScore > homeScore ? 'W' : 'L');
+              stmts.push(env.DB.prepare(`
+                INSERT OR IGNORE INTO player_game_log
+                  (espn_id, game_id, game_date, season, sport, opponent, is_home, result,
+                   ip_thirds, ha, er, so, bb_p, w, l, sv)
+                VALUES (?, ?, ?, 2026, 'college-baseball', ?, ?, ?,
+                        ?, ?, ?, ?, ?, 0, 0, 0)
+              `).bind(
+                espnId, gameId, date, opponentPitch, isHomePitch, resultPitch,
+                line.ipThirds, line.h, line.er, line.k, line.bb,
+              ));
             }
           }
         }
       }
 
       // Batch upsert player stats + mark game as processed
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const competitions = event.competitions || [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const competitors = competitions[0]?.competitors || [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const homeTeam = competitors.find((c: any) => c.homeAway === 'home')?.team?.displayName || '';
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const awayTeam = competitors.find((c: any) => c.homeAway === 'away')?.team?.displayName || '';
-
-      // Extract team IDs and scores for RPI/SOS computation
-      const homeCompetitor = competitors.find((c: any) => c.homeAway === 'home');
-      const awayCompetitor = competitors.find((c: any) => c.homeAway === 'away');
-      const homeTeamId = String(homeCompetitor?.team?.id ?? '');
-      const awayTeamId = String(awayCompetitor?.team?.id ?? '');
-      const homeScore = Number(homeCompetitor?.score ?? 0);
-      const awayScore = Number(awayCompetitor?.score ?? 0);
 
       // Track affected teams for cache invalidation
       if (homeTeamId) affectedTeamIdSet.add(homeTeamId);

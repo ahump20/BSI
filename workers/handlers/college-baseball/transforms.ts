@@ -188,6 +188,7 @@ export function transformHighlightlyPlayer(
       height: player.height,
       weight: player.weight,
       dateOfBirth: player.dateOfBirth,
+      headshot: (player as unknown as Record<string, unknown>).headshot as string | undefined,
       team: player.team
         ? { id: player.team.id, name: player.team.name, shortName: player.team.shortName, conference: player.team.conference ? { name: player.team.conference.name } : undefined }
         : undefined,
@@ -237,6 +238,7 @@ export function transformEspnPlayer(
     height: (athlete.displayHeight as string) ?? undefined,
     weight: athlete.weight != null ? Number(athlete.weight) : undefined,
     dateOfBirth: (athlete.dateOfBirth as string) ?? undefined,
+    headshot: ((athlete.headshot as Record<string, unknown>)?.href as string) ?? undefined,
     team: team
       ? {
             id: Number(team.id ?? 0),
