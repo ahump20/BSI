@@ -6,7 +6,7 @@
  */
 
 // Transforms (used by other handlers, sometimes directly by tests)
-export { transformHighlightlyTeam, transformEspnTeam, transformHighlightlyPlayer, transformEspnPlayer, transformHighlightlyGame, transformEspnGameSummary } from './transforms';
+export { transformHighlightlyTeam, transformEspnTeam, transformCollegeBaseballTeamDetail, transformHighlightlyPlayer, transformEspnPlayer, transformHighlightlyGame, transformEspnGameSummary } from './transforms';
 
 // Scores, game detail, schedule
 export { handleCollegeBaseballScores, handleCollegeBaseballGame, handleCollegeBaseballSchedule } from './scores';

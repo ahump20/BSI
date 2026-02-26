@@ -5,6 +5,7 @@
 
 import type { Env } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, getScoreboard, getGameSummary, parseInningsToThirds, teamMetadata, metaByEspnId, getLogoUrl } from './shared';
+import { parseEspnBattingLine, parseEspnPitchingLine } from '../../../lib/api-clients/espn-college-baseball';
 
 /**
  * Process finished college baseball games from today's scoreboard.
@@ -69,6 +70,7 @@ export async function processFinishedGames(
       const teamRunsFromBox = new Map<string, number>();
       const playerEspnIds = new Set<string>();
 
+      // Parse box scores using centralized label-based parser
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for (const teamBox of boxPlayers as any[]) {
         const teamName = teamBox.team?.displayName || teamBox.team?.shortDisplayName || '';
@@ -85,33 +87,15 @@ export async function processFinishedGames(
             const espnId = String(athlete.id || '');
             if (!espnId) continue;
 
-            const name = athlete.displayName || '';
-            const position = athlete.position?.abbreviation || '';
-            const headshot = athlete.headshot?.href || '';
             const stats: string[] = athleteEntry.stats || [];
 
             if (isBatting && stats.length > 0) {
-              // Batting labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG']
-              // NOTE: ESPN college baseball box scores do NOT include 2B, 3B, HBP, SF labels.
-              // OBP and SLG at position 10/11 are SEASON averages (university-reported),
-              // stored here and used by sabermetrics handlers to derive missing stats.
-              const idx = (label: string) => labels.indexOf(label);
-              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
-              const dec = (label: string) => {
-                const i = idx(label);
-                return i >= 0 ? parseFloat(stats[i] || '0') || 0 : 0;
-              };
-
-              const ab = num('AB');
-              if (ab === 0 && num('R') === 0 && num('H') === 0) continue; // skip DNP entries
+              const line = parseEspnBattingLine(labels, stats, athlete);
+              if (!line) continue; // DNP entries filtered by parser
 
               // Track for box score proving
-              teamRunsFromBox.set(teamId, (teamRunsFromBox.get(teamId) || 0) + num('R'));
+              teamRunsFromBox.set(teamId, (teamRunsFromBox.get(teamId) || 0) + line.r);
               playerEspnIds.add(espnId);
-
-              // Season averages from box score — overwrite each game (always latest)
-              const seasonObp = dec('OBP');
-              const seasonSlg = dec('SLG');
 
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
@@ -140,19 +124,15 @@ export async function processFinishedGames(
                   stats_source = COALESCE(player_season_stats.stats_source, 'espn-box-score'),
                   updated_at = datetime('now')
               `).bind(
-                espnId, name, teamName, teamId, position, headshot,
-                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'),
-                seasonObp, seasonSlg,
+                espnId, line.name, teamName, teamId, line.position, line.headshot,
+                line.ab, line.r, line.h, line.rbi, line.hr, line.bb, line.k,
+                line.obp, line.slg,
               ));
             }
 
             if (isPitching && stats.length > 0) {
-              const idx = (label: string) => labels.indexOf(label);
-              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
-              const ipStr = stats[idx('IP')] || '0';
-              const ipThirds = parseInningsToThirds(ipStr);
-
-              if (ipThirds === 0) continue; // skip pitchers who didn't record an out
+              const line = parseEspnPitchingLine(labels, stats, athlete);
+              if (!line) continue; // Filtered by parser (0 IP)
 
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
@@ -178,8 +158,8 @@ export async function processFinishedGames(
                   stats_source = COALESCE(player_season_stats.stats_source, 'espn-box-score'),
                   updated_at = datetime('now')
               `).bind(
-                espnId, name, teamName, teamId, position, headshot,
-                ipThirds, num('H'), num('R'), num('ER'), num('BB'), num('K'), num('HR'),
+                espnId, line.name, teamName, teamId, line.position, line.headshot,
+                line.ipThirds, line.h, line.r, line.er, line.bb, line.k, line.hr,
               ));
             }
           }
@@ -421,7 +401,7 @@ export async function syncTeamCumulativeStats(
         continue;
       }
 
-      // Process box score — same logic as processFinishedGames
+      // Parse box scores using centralized label-based parser
       const stmts: D1PreparedStatement[] = [];
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -441,21 +421,11 @@ export async function syncTeamCumulativeStats(
             const espnId = String(athlete.id || '');
             if (!espnId) continue;
 
-            const name = athlete.displayName || '';
-            const position = athlete.position?.abbreviation || '';
-            const headshot = athlete.headshot?.href || '';
             const stats: string[] = athleteEntry.stats || [];
 
             if (isBatting && stats.length > 0) {
-              const idx = (label: string) => labels.indexOf(label);
-              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
-              const dec = (label: string) => {
-                const i = idx(label);
-                return i >= 0 ? parseFloat(stats[i] || '0') || 0 : 0;
-              };
-
-              const ab = num('AB');
-              if (ab === 0 && num('R') === 0 && num('H') === 0) continue;
+              const line = parseEspnBattingLine(labels, stats, athlete);
+              if (!line) continue;
 
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
@@ -483,19 +453,15 @@ export async function syncTeamCumulativeStats(
                   slugging_pct = excluded.slugging_pct,
                   updated_at = datetime('now')
               `).bind(
-                espnId, name, tbName, tbId, position, headshot,
-                ab, num('R'), num('H'), num('RBI'), num('HR'), num('BB'), num('K'),
-                dec('OBP'), dec('SLG'),
+                espnId, line.name, tbName, tbId, line.position, line.headshot,
+                line.ab, line.r, line.h, line.rbi, line.hr, line.bb, line.k,
+                line.obp, line.slg,
               ));
             }
 
             if (isPitching && stats.length > 0) {
-              const idx = (label: string) => labels.indexOf(label);
-              const num = (label: string) => parseInt(stats[idx(label)] || '0', 10) || 0;
-              const ipStr = stats[idx('IP')] || '0';
-              const ipThirds = parseInningsToThirds(ipStr);
-
-              if (ipThirds === 0) continue;
+              const line = parseEspnPitchingLine(labels, stats, athlete);
+              if (!line) continue;
 
               stmts.push(env.DB.prepare(`
                 INSERT INTO player_season_stats
@@ -520,8 +486,8 @@ export async function syncTeamCumulativeStats(
                   home_runs_allowed = player_season_stats.home_runs_allowed + excluded.home_runs_allowed,
                   updated_at = datetime('now')
               `).bind(
-                espnId, name, tbName, tbId, position, headshot,
-                ipThirds, num('H'), num('R'), num('ER'), num('BB'), num('K'), num('HR'),
+                espnId, line.name, tbName, tbId, line.position, line.headshot,
+                line.ipThirds, line.h, line.r, line.er, line.bb, line.k, line.hr,
               ));
             }
           }

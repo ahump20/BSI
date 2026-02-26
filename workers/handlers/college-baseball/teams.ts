@@ -4,7 +4,7 @@
 
 import type { Env } from './shared';
 import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
-import { transformHighlightlyTeam, transformEspnTeam } from './transforms';
+import { transformHighlightlyTeam, transformCollegeBaseballTeamDetail } from './transforms';
 
 export async function handleCollegeBaseballTeam(
   teamId: string,
@@ -108,7 +108,7 @@ export async function handleCollegeBaseballTeam(
 
   // ESPN skeleton only
   if (espnTeam) {
-    const team = transformEspnTeam(espnTeam, espnPlayers);
+    const team = transformCollegeBaseballTeamDetail(espnTeam, espnPlayers, slugMeta?.conference);
     const payload: Record<string, unknown> = {
       team,
       meta: { source: 'espn', fetched_at: espnTimestamp, timezone: 'America/Chicago', sources, degraded },

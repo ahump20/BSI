@@ -17,6 +17,33 @@ import type {
 } from '../../../lib/api-clients/highlightly-api';
 import { teamMetadata, getLogoUrl } from '../../../lib/data/team-metadata';
 import { getLeaders, getScoreboard, getGameSummary } from '../../../lib/api-clients/espn-api';
+import {
+  parseEspnBattingLine,
+  parseEspnPitchingLine,
+  parseBoxScoreTeam,
+  transformCollegeBaseballBoxScore,
+  transformCollegeBaseballGameSummary,
+  transformCollegeBaseballRankings,
+  transformCollegeBaseballAthlete,
+  transformCollegeBaseballStandings,
+  getCollegeBaseballRankings,
+  getConferenceScoreboard,
+  getCollegeBaseballSchedule,
+  getAthleteOverview,
+  parseInningsToThirds as parseInningsToThirdsCbb,
+  ESPN_CBB_CONFERENCE_GROUPS,
+} from '../../../lib/api-clients/espn-college-baseball';
+export type {
+  CollegeBaseballBattingLine,
+  CollegeBaseballPitchingLine,
+  CollegeBaseballBoxScore,
+  CollegeBaseballBoxScoreTeam,
+  CollegeBaseballStandingTeam,
+  CollegeBaseballRanking,
+  CollegeBaseballRankingsResponse,
+  CollegeBaseballAthleteStats,
+  CollegeBaseballGameSummary,
+} from '../../../lib/api-clients/espn-college-baseball';
 
 // Re-export everything domain modules need
 export type { Env };
@@ -25,6 +52,22 @@ export { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighl
 export { HTTP_CACHE, CACHE_TTL };
 export { teamMetadata, getLogoUrl };
 export { getLeaders, getScoreboard, getGameSummary };
+export {
+  parseEspnBattingLine,
+  parseEspnPitchingLine,
+  parseBoxScoreTeam,
+  transformCollegeBaseballBoxScore,
+  transformCollegeBaseballGameSummary,
+  transformCollegeBaseballRankings,
+  transformCollegeBaseballAthlete,
+  transformCollegeBaseballStandings,
+  getCollegeBaseballRankings,
+  getConferenceScoreboard,
+  getCollegeBaseballSchedule,
+  getAthleteOverview,
+  parseInningsToThirdsCbb,
+  ESPN_CBB_CONFERENCE_GROUPS,
+};
 
 /** Current season — single source of truth for all D1 queries across college-baseball handlers. */
 export const SEASON = 2026;

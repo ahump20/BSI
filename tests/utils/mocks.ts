@@ -162,15 +162,15 @@ export const ESPN_GAME_SUMMARY = {
       {
         team: { id: '2633' },
         statistics: [
-          { name: 'batting', athletes: [{ athlete: { id: '1', displayName: 'Jared Thomas', position: { abbreviation: 'CF' } }, stats: ['4', '2', '3', '2', '0', '1', '.345'] }] },
-          { name: 'pitching', athletes: [{ athlete: { id: '2', displayName: 'Lucas Gordon' }, stats: ['7.0', '5', '3', '2', '2', '8', '2.85'] }] },
+          { name: 'batting', labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG'], athletes: [{ athlete: { id: '1', displayName: 'Jared Thomas', position: { abbreviation: 'CF' } }, stats: ['3-4', '4', '2', '3', '2', '0', '0', '1', '52', '.345', '.380', '.520'] }] },
+          { name: 'pitching', labels: ['IP', 'H', 'R', 'ER', 'BB', 'K', 'HR', '#P', 'ERA'], athletes: [{ athlete: { id: '2', displayName: 'Lucas Gordon' }, stats: ['7.0', '5', '3', '2', '2', '8', '0', '95', '2.85'] }] },
         ],
       },
       {
         team: { id: '2641' },
         statistics: [
-          { name: 'batting', athletes: [{ athlete: { id: '3', displayName: 'Ryan Miller', position: { abbreviation: 'SS' } }, stats: ['4', '1', '1', '1', '0', '2', '.280'] }] },
-          { name: 'pitching', athletes: [{ athlete: { id: '4', displayName: 'Jake Foster' }, stats: ['5.0', '7', '5', '4', '3', '4', '4.20'] }] },
+          { name: 'batting', labels: ['H-AB', 'AB', 'R', 'H', 'RBI', 'HR', 'BB', 'K', '#P', 'AVG', 'OBP', 'SLG'], athletes: [{ athlete: { id: '3', displayName: 'Ryan Miller', position: { abbreviation: 'SS' } }, stats: ['1-4', '4', '1', '1', '1', '0', '0', '2', '45', '.280', '.340', '.420'] }] },
+          { name: 'pitching', labels: ['IP', 'H', 'R', 'ER', 'BB', 'K', 'HR', '#P', 'ERA'], athletes: [{ athlete: { id: '4', displayName: 'Jake Foster' }, stats: ['5.0', '7', '5', '4', '3', '4', '0', '80', '4.20'] }] },
         ],
       },
     ],

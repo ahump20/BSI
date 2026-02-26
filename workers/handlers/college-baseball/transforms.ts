@@ -4,6 +4,7 @@
  */
 
 import type { HighlightlyTeamDetail, HighlightlyPlayer, HighlightlyPlayerStats, HighlightlyMatch, HighlightlyBoxScore } from './shared';
+import { parseBoxScoreTeam } from './shared';
 
 export function transformHighlightlyTeam(
   team: HighlightlyTeamDetail,
@@ -109,6 +110,63 @@ export function transformEspnTeam(
       }));
     }).flat(),
   };
+}
+
+// ---------------------------------------------------------------------------
+// CBB-Specific Team Detail — enriches base ESPN transform with conf record,
+// runs scored/allowed, and conference override from teamMetadata.
+// ---------------------------------------------------------------------------
+
+export function transformCollegeBaseballTeamDetail(
+  raw: Record<string, unknown>,
+  athletes: unknown[],
+  conferenceOverride?: string,
+): Record<string, unknown> {
+  const team = transformEspnTeam(raw, athletes);
+
+  // Override conference with teamMetadata value when available
+  if (conferenceOverride) {
+    team.conference = conferenceOverride;
+  }
+
+  const teamObj = (raw.team ?? raw) as Record<string, unknown>;
+  const record = (teamObj.record as Record<string, unknown>) ?? {};
+  const items = (record.items as Array<Record<string, unknown>>) ?? [];
+
+  // Conference record from record.items[type=vsconf]
+  const vsconf = items.find((it) => (it.type as string) === 'vsconf');
+  if (vsconf) {
+    const confStats = (vsconf.stats as Array<Record<string, unknown>>) ?? [];
+    const getConfStat = (name: string): number => {
+      const s = confStats.find((st) => st.name === name || st.abbreviation === name);
+      return Number(s?.value ?? 0);
+    };
+    const stats = team.stats as Record<string, unknown> | undefined;
+    if (stats) {
+      stats.confWins = getConfStat('wins');
+      stats.confLosses = getConfStat('losses');
+    }
+  }
+
+  // Runs scored/allowed from the overall record stats
+  const overall = items.find((it) => (it.type as string) === 'total') ?? items[0];
+  if (overall) {
+    const overallStats = (overall.stats as Array<Record<string, unknown>>) ?? [];
+    const getOverall = (name: string): number => {
+      const s = overallStats.find((st) => st.name === name || st.abbreviation === name);
+      return Number(s?.value ?? 0);
+    };
+    const stats = team.stats as Record<string, unknown> | undefined;
+    if (stats) {
+      const rs = getOverall('pointsFor') || getOverall('runsScored') || getOverall('runs');
+      const ra = getOverall('pointsAgainst') || getOverall('runsAllowed');
+      stats.runsScored = rs;
+      stats.runsAllowed = ra;
+      stats.runDiff = rs - ra;
+    }
+  }
+
+  return team;
 }
 
 // ---------------------------------------------------------------------------
@@ -449,47 +507,34 @@ export function transformEspnGameSummary(summary: Record<string, unknown>): Reco
     };
   }
 
-  // Box score from ESPN summary format
+  // Box score from ESPN summary format — centralized label-based parser
   const espnBox = summary.boxscore as Record<string, unknown> | undefined;
   if (espnBox) {
     const players = (espnBox.players as Record<string, unknown>[]) ?? [];
     const awayBox = players.find((p) => (p.team as Record<string, unknown>)?.id === String(awayTeam.id));
     const homeBox = players.find((p) => (p.team as Record<string, unknown>)?.id === String(homeTeam.id));
 
-    const extractBattingLines = (teamBox: Record<string, unknown> | undefined) => {
-      const stats = (teamBox?.statistics as Record<string, unknown>[]) ?? [];
-      const batting = stats.find((s) => (s.name as string) === 'batting' || (s.type as string) === 'batting');
-      const athletes = (batting?.athletes as Record<string, unknown>[]) ?? [];
-      return athletes.map((a) => {
-        const athlete = a.athlete as Record<string, unknown> | undefined;
-        const st = (a.stats as string[]) ?? [];
-        return {
-          player: { id: String(athlete?.id ?? ''), name: (athlete?.displayName as string) ?? '', position: (athlete?.position as Record<string, unknown>)?.abbreviation ?? '' },
-          ab: Number(st[0] ?? 0), r: Number(st[1] ?? 0), h: Number(st[2] ?? 0), rbi: Number(st[3] ?? 0),
-          bb: Number(st[4] ?? 0), so: Number(st[5] ?? 0), avg: st[6] ?? '.000',
-        };
-      });
-    };
-
-    const extractPitchingLines = (teamBox: Record<string, unknown> | undefined) => {
-      const stats = (teamBox?.statistics as Record<string, unknown>[]) ?? [];
-      const pitching = stats.find((s) => (s.name as string) === 'pitching' || (s.type as string) === 'pitching');
-      const athletes = (pitching?.athletes as Record<string, unknown>[]) ?? [];
-      return athletes.map((a) => {
-        const athlete = a.athlete as Record<string, unknown> | undefined;
-        const st = (a.stats as string[]) ?? [];
-        return {
-          player: { id: String(athlete?.id ?? ''), name: (athlete?.displayName as string) ?? '' },
-          ip: st[0] ?? '0', h: Number(st[1] ?? 0), r: Number(st[2] ?? 0),
-          er: Number(st[3] ?? 0), bb: Number(st[4] ?? 0), so: Number(st[5] ?? 0),
-          era: st[6] ?? '0.00',
-        };
-      });
+    const mapTeamBox = (teamBox: Record<string, unknown> | undefined) => {
+      if (!teamBox) return { batting: [] as Record<string, unknown>[], pitching: [] as Record<string, unknown>[] };
+      const parsed = parseBoxScoreTeam(teamBox);
+      return {
+        batting: parsed.batting.map((b) => ({
+          player: { id: b.playerId, name: b.name, position: b.position },
+          ab: b.ab, r: b.r, h: b.h, rbi: b.rbi,
+          bb: b.bb, so: b.k, avg: b.avg > 0 ? b.avg.toFixed(3) : '.000',
+        })),
+        pitching: parsed.pitching.map((p) => ({
+          player: { id: p.playerId, name: p.name },
+          ip: p.ipDisplay, h: p.h, r: p.r,
+          er: p.er, bb: p.bb, so: p.k,
+          era: p.era > 0 ? p.era.toFixed(2) : '0.00',
+        })),
+      };
     };
 
     game.boxscore = {
-      away: { batting: extractBattingLines(awayBox), pitching: extractPitchingLines(awayBox) },
-      home: { batting: extractBattingLines(homeBox), pitching: extractPitchingLines(homeBox) },
+      away: mapTeamBox(awayBox),
+      home: mapTeamBox(homeBox),
     };
   }
 

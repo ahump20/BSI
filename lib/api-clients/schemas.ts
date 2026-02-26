@@ -85,6 +85,42 @@ export const EspnStandingsSchema = z.object({
 }).passthrough();
 
 // ---------------------------------------------------------------------------
+// ESPN College Baseball Rankings Schema
+// ---------------------------------------------------------------------------
+
+/** ESPN rankings poll entry (a ranked team) */
+const EspnRankingEntrySchema = z.object({
+  current: z.number().optional(),
+  rank: z.number().optional(),
+  previous: z.number().nullable().optional(),
+  previousRank: z.number().nullable().optional(),
+  points: z.number().nullable().optional(),
+  firstPlaceVotes: z.number().nullable().optional(),
+  recordSummary: z.string().optional(),
+  team: z.object({
+    id: z.string().optional(),
+    nickname: z.string().optional(),
+    displayName: z.string().optional(),
+    name: z.string().optional(),
+    abbreviation: z.string().optional(),
+    logos: z.array(z.object({ href: z.string() }).passthrough()).optional(),
+  }).passthrough().optional(),
+}).passthrough();
+
+/** ESPN rankings poll (e.g. USA TODAY Coaches Poll) */
+const EspnRankingPollSchema = z.object({
+  name: z.string().optional(),
+  shortName: z.string().optional(),
+  date: z.string().optional(),
+  ranks: z.array(EspnRankingEntrySchema).optional(),
+}).passthrough();
+
+/** ESPN college baseball rankings top-level response */
+export const EspnCollegeBaseballRankingsSchema = z.object({
+  rankings: z.array(EspnRankingPollSchema).optional(),
+}).passthrough();
+
+// ---------------------------------------------------------------------------
 // Highlightly Schemas (college baseball)
 // ---------------------------------------------------------------------------
 

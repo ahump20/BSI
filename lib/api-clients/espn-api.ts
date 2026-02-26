@@ -8,6 +8,7 @@
  */
 
 import { EspnScoreboardSchema, EspnStandingsSchema, validateApiResponse } from './schemas';
+import { transformCollegeBaseballStandings, type CollegeBaseballStandingTeam } from './espn-college-baseball';
 
 export type ESPNSport = 'mlb' | 'nfl' | 'nba' | 'cfb' | 'college-baseball';
 
@@ -26,7 +27,7 @@ interface FetchOptions {
   timeout?: number;
 }
 
-async function espnFetch<T>(path: string, opts?: FetchOptions): Promise<T> {
+export async function espnFetch<T>(path: string, opts?: FetchOptions): Promise<T> {
   const controller = new AbortController();
   const timeoutMs = opts?.timeout ?? 10000;
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -242,7 +243,7 @@ interface CfbStandingTeam {
   conference: string;
 }
 
-type StandingTeam = NbaStandingTeam | MlbStandingTeam | NflStandingTeam | CfbStandingTeam;
+type StandingTeam = NbaStandingTeam | MlbStandingTeam | NflStandingTeam | CfbStandingTeam | CollegeBaseballStandingTeam;
 
 interface NbaStandingsGroup {
   name: string;
@@ -259,7 +260,12 @@ interface CfbStandingsGroup {
   teams: CfbStandingTeam[];
 }
 
-type StandingsGroup = NbaStandingsGroup | NflStandingsGroup | CfbStandingsGroup;
+interface CbbStandingsGroup {
+  name: string;
+  teams: CollegeBaseballStandingTeam[];
+}
+
+type StandingsGroup = NbaStandingsGroup | NflStandingsGroup | CfbStandingsGroup | CbbStandingsGroup;
 
 interface TransformedGame {
   id: string | undefined;
@@ -449,6 +455,11 @@ export function transformStandings(
       standings.push({ name: (group.name || 'Unknown') as string, teams });
     }
     return { standings, meta: { lastUpdated: new Date().toISOString(), dataSource: 'ESPN' } };
+  }
+
+  // College baseball: group by conference with conf W-L and run differential
+  if (sport === 'college-baseball') {
+    return transformCollegeBaseballStandings(raw);
   }
 
   // MLB and NFL: return flat array with division/league fields
