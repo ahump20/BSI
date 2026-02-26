@@ -46,8 +46,8 @@ interface TeamDetailResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-graphite rounded-lg">
-      <p className="text-2xl md:text-3xl font-bold text-white">{value}</p>
+    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
     </div>
   );
@@ -57,13 +57,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-graphite rounded-lg flex-shrink-0" />
+        <div className="w-32 h-32 bg-background-tertiary rounded-lg flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-graphite rounded w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-graphite/50 rounded w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-background-tertiary rounded w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-background-tertiary/50 rounded w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 bg-graphite rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
             ))}
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {loading ? 'Loading...' : team?.displayName || team?.name || 'Team'}
               </span>
             </nav>
@@ -225,7 +225,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
 
                   {/* Team Info */}
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
                       {team.displayName || team.name}
                     </h1>
 
@@ -260,7 +260,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             <Container>
               <ScrollReveal direction="up">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                  <h2 className="font-display text-2xl font-bold text-white">
+                  <h2 className="font-display text-2xl font-bold text-text-primary">
                     Roster ({roster.length})
                   </h2>
 
@@ -273,7 +273,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                           positionFilter === pos
                             ? 'bg-burnt-orange text-white'
-                            : 'bg-graphite text-text-secondary hover:bg-white/10'
+                            : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                         }`}
                       >
                         {pos}
@@ -285,7 +285,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         onChange={(e) => {
                           if (e.target.value) setPositionFilter(e.target.value);
                         }}
-                        className="px-2 py-1.5 bg-graphite border border-border-subtle rounded-lg text-text-secondary text-xs focus:outline-none focus:border-burnt-orange"
+                        className="px-2 py-1.5 bg-background-tertiary border border-border-subtle rounded-lg text-text-secondary text-xs focus:outline-none focus:border-burnt-orange"
                       >
                         <option value="">More...</option>
                         {positions.slice(8).map((pos) => (
@@ -321,7 +321,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                         {displayRoster.map((player) => (
                           <tr
                             key={player.id}
-                            className="border-b border-border-subtle last:border-0 hover:bg-white/5 transition-colors"
+                            className="border-b border-border-subtle last:border-0 hover:bg-surface-light transition-colors"
                           >
                             <td className="p-3 font-mono text-burnt-orange font-bold">
                               {player.jersey || '-'}
@@ -329,7 +329,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
                             <td className="p-3">
                               <Link
                                 href={`/cfb/players/${player.id}`}
-                                className="text-white hover:text-burnt-orange transition-colors font-medium"
+                                className="text-text-primary hover:text-burnt-orange transition-colors font-medium"
                               >
                                 {player.name}
                               </Link>
@@ -372,19 +372,19 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/cfb/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 All Teams
               </Link>
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores
               </Link>
               <Link
                 href="/cfb/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings
               </Link>

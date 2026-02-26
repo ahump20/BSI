@@ -408,7 +408,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
           <Section padding="lg" background="charcoal">
             <Container>
               <Card variant="default" padding="lg" className="text-center">
-                <h1 className="text-2xl font-bold text-white mb-4">Team Not Found</h1>
+                <h1 className="text-2xl font-bold text-text-primary mb-4">Team Not Found</h1>
                 <p className="text-text-secondary mb-6">
                   The team you're looking for doesn't exist.
                 </p>
@@ -459,7 +459,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">{fullName}</span>
+              <span className="text-text-primary font-medium">{fullName}</span>
             </nav>
           </Container>
         </Section>
@@ -485,7 +485,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display mb-4">
                 <span style={{ color: team.primaryColor }}>{team.city}</span>{' '}
-                <span className="text-white">{team.name}</span>
+                <span className="text-text-primary">{team.name}</span>
               </h1>
             </ScrollReveal>
 
@@ -523,7 +523,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                       <Skeleton variant="text" width="100%" height={60} />
                     ) : stats ? (
                       <div className="text-center">
-                        <div className="text-4xl font-bold text-white mb-2">
+                        <div className="text-4xl font-bold text-text-primary mb-2">
                           {stats.wins}-{stats.losses}
                           {stats.ties > 0 ? `-${stats.ties}` : ''}
                         </div>

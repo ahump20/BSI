@@ -64,8 +64,8 @@ interface PlayerResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-graphite rounded-lg">
-      <p className="text-2xl md:text-3xl font-bold text-white">{value}</p>
+    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
     </div>
   );
@@ -75,13 +75,13 @@ function SkeletonProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="w-48 h-48 bg-graphite rounded-full flex-shrink-0" />
+        <div className="w-48 h-48 bg-background-tertiary rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-graphite rounded w-2/3" />
-          <div className="h-6 bg-graphite/50 rounded w-1/3" />
+          <div className="h-8 bg-background-tertiary rounded w-2/3" />
+          <div className="h-6 bg-background-tertiary/50 rounded w-1/3" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-graphite rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
             ))}
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                 Players
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {loading ? 'Loading...' : player?.name || 'Player'}
               </span>
             </nav>
@@ -229,7 +229,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                       </Link>
                     </div>
 
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
                       {player.name}
                     </h1>
 
@@ -260,14 +260,14 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                 {/* Personal Info */}
                 <ScrollReveal direction="up">
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Personal Information
                     </h2>
                     <dl className="space-y-3">
                       {player.birthDate && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Born</dt>
-                          <dd className="text-white">
+                          <dd className="text-text-primary">
                             {new Date(player.birthDate).toLocaleDateString('en-US', {
                               month: 'long',
                               day: 'numeric',
@@ -279,13 +279,13 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                       {player.birthPlace && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Birthplace</dt>
-                          <dd className="text-white">{player.birthPlace}</dd>
+                          <dd className="text-text-primary">{player.birthPlace}</dd>
                         </div>
                       )}
                       {player.college && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">College</dt>
-                          <dd className="text-white">{player.college}</dd>
+                          <dd className="text-text-primary">{player.college}</dd>
                         </div>
                       )}
                     </dl>
@@ -295,26 +295,26 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
                 {/* Draft Info */}
                 <ScrollReveal direction="up" delay={100}>
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Draft Information
                     </h2>
                     {player.draft ? (
                       <dl className="space-y-3">
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Year</dt>
-                          <dd className="text-white">{player.draft.year}</dd>
+                          <dd className="text-text-primary">{player.draft.year}</dd>
                         </div>
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Round</dt>
-                          <dd className="text-white">{player.draft.round}</dd>
+                          <dd className="text-text-primary">{player.draft.round}</dd>
                         </div>
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Pick</dt>
-                          <dd className="text-white">#{player.draft.pick}</dd>
+                          <dd className="text-text-primary">#{player.draft.pick}</dd>
                         </div>
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Team</dt>
-                          <dd className="text-white">{player.draft.team}</dd>
+                          <dd className="text-text-primary">{player.draft.team}</dd>
                         </div>
                       </dl>
                     ) : (
@@ -332,7 +332,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
           <Section padding="lg" background="midnight">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl font-bold text-white mb-6">
+                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
                   {stats.season} Season Stats
                 </h2>
               </ScrollReveal>
@@ -366,21 +366,21 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/players"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 ← All Players
               </Link>
               {player?.team?.id && (
                 <Link
                   href={`/nba/teams/${player.team.id}`}
-                  className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                  className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
                 >
                   {player.team.name} Roster →
                 </Link>
               )}
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores →
               </Link>

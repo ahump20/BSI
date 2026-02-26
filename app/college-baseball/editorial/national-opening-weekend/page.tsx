@@ -34,18 +34,18 @@ export default function NationalOpeningWeekendPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">National Opening Weekend</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">National Opening Weekend</span>
             </nav>
           </Container>
         </Section>
@@ -58,14 +58,14 @@ export default function NationalOpeningWeekendPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">National Preview</Badge>
-                  <span className="text-white/40 text-sm">February 13, 2026</span>
-                  <span className="text-white/40 text-sm">10 min read</span>
+                  <span className="text-text-muted text-sm">February 13, 2026</span>
+                  <span className="text-text-muted text-sm">10 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   National Opening Weekend:{' '}
                   <span className="text-gradient-blaze">The Season Starts Now</span>
                 </h1>
-                <p className="font-serif text-xl text-white/50 leading-relaxed">
+                <p className="font-serif text-xl text-text-tertiary leading-relaxed">
                   118 games. 300+ programs. The college baseball season opens with 14 ranked teams in action and storylines that will define the road to Omaha.
                 </p>
               </div>
@@ -90,7 +90,7 @@ export default function NationalOpeningWeekendPage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Every pitch thrown this weekend is the first sentence of a story that won&rsquo;t end until June in Omaha. Some of those stories will be predictable — Texas A&amp;M defending a title, LSU being LSU, Wake Forest reloading after a CWS finals run. Others will surprise. A freshman arm nobody saw coming. A transfer who transforms a lineup. A mid-major that announces itself against a ranked opponent.
                 </p>
@@ -115,10 +115,10 @@ export default function NationalOpeningWeekendPage() {
                 <ScrollReveal key={s.matchup} direction="up" delay={Math.min(i * 50, 250)}>
                   <Card variant="default" padding="md">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <span className="font-display text-sm font-bold uppercase tracking-wide text-white">{s.matchup}</span>
+                      <span className="font-display text-sm font-bold uppercase tracking-wide text-text-primary">{s.matchup}</span>
                       <Badge variant="outline">{s.conf}</Badge>
                     </div>
-                    <p className="font-serif text-sm text-white/60 leading-relaxed">{s.capsule}</p>
+                    <p className="font-serif text-sm text-text-tertiary leading-relaxed">{s.capsule}</p>
                   </Card>
                 </ScrollReveal>
               ))}
@@ -138,19 +138,19 @@ export default function NationalOpeningWeekendPage() {
               {confPreviews.map((c, i) => (
                 <ScrollReveal key={c.name} direction="up" delay={i * 60}>
                   <Link href={c.href} className="block group">
-                    <Card variant="default" padding="md" className="h-full hover:border-white/20 transition-all relative overflow-hidden">
+                    <Card variant="default" padding="md" className="h-full hover:border-border-strong transition-all relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: c.accent }} />
                       <div className="mt-1">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-display text-lg font-bold uppercase tracking-wide group-hover:transition-colors" style={{ color: c.accent }}>
                             {c.name}
                           </h3>
-                          <div className="flex gap-3 text-xs text-white/30">
+                          <div className="flex gap-3 text-xs text-text-muted">
                             <span>{c.ranked} ranked</span>
                             <span>{c.teams} teams</span>
                           </div>
                         </div>
-                        <p className="font-serif text-sm text-white/50 leading-relaxed">{c.note}</p>
+                        <p className="font-serif text-sm text-text-tertiary leading-relaxed">{c.note}</p>
                         <div className="mt-3 flex items-center gap-1.5 text-sm font-semibold group-hover:translate-x-1 transition-transform" style={{ color: c.accent }}>
                           Full Preview &rarr;
                         </div>

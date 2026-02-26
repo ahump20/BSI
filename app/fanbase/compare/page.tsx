@@ -52,7 +52,7 @@ export default function FanbaseComparePage() {
                 Fanbase
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Compare</span>
+              <span className="text-text-primary font-medium">Compare</span>
             </nav>
           </Container>
         </Section>
@@ -90,7 +90,7 @@ export default function FanbaseComparePage() {
                     value={teamA}
                     onChange={(e) => setTeamA(e.target.value)}
                     placeholder="e.g. Texas Longhorns"
-                    className="w-full px-4 py-3 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-tertiary focus:border-burnt-orange focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:border-burnt-orange focus:outline-none transition-colors"
                   />
                 </div>
                 <div>
@@ -103,7 +103,7 @@ export default function FanbaseComparePage() {
                     value={teamB}
                     onChange={(e) => setTeamB(e.target.value)}
                     placeholder="e.g. Oklahoma Sooners"
-                    className="w-full px-4 py-3 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-tertiary focus:border-burnt-orange focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:border-burnt-orange focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function FanbaseComparePage() {
                 <div className="mt-8 grid md:grid-cols-2 gap-6">
                   {[result.teamA, result.teamB].map((team, i) => (
                     <Card key={i} variant="default" padding="md" className="text-center">
-                      <h3 className="font-display text-lg font-bold text-white uppercase mb-3">
+                      <h3 className="font-display text-lg font-bold text-text-primary uppercase mb-3">
                         {team.name}
                       </h3>
                       <div className="text-3xl font-bold font-mono text-burnt-orange mb-1">

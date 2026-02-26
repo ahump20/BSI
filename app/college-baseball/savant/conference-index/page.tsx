@@ -32,19 +32,19 @@ export default function ConferenceIndexPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   Home
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball/savant" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   Savant
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/70">Conference Index</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-secondary">Conference Index</span>
               </nav>
             </ScrollReveal>
 
@@ -54,10 +54,10 @@ export default function ConferenceIndexPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">CONFERENCE ANALYTICS</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-white">
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
                   Conference <span className="text-[#BF5700]">Strength Index</span>
                 </h1>
-                <p className="text-white/50 mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   Composite ranking of conference competitiveness. Weighs inter-conference
                   record, RPI, collective offense (OPS, wOBA), and pitching (ERA). Updated
                   weekly as the sample size grows.
@@ -71,7 +71,7 @@ export default function ConferenceIndexPage() {
                 <ChartSkeleton />
               ) : error ? (
                 <Card padding="lg" className="text-center">
-                  <p className="text-red-400 mb-4">{error}</p>
+                  <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
                     className="px-5 py-2 bg-[#BF5700]/20 text-[#BF5700] rounded-lg text-sm font-medium hover:bg-[#BF5700]/30 transition-colors"
@@ -87,10 +87,10 @@ export default function ConferenceIndexPage() {
             {/* Methodology note */}
             <ScrollReveal direction="up" delay={150}>
               <Card padding="md" className="mt-8">
-                <h3 className="font-display text-sm uppercase tracking-wider text-white mb-2">
+                <h3 className="font-display text-sm uppercase tracking-wider text-text-primary mb-2">
                   Methodology
                 </h3>
-                <p className="text-[11px] text-white/40 leading-relaxed max-w-3xl">
+                <p className="text-[11px] text-text-muted leading-relaxed max-w-3xl">
                   The Conference Strength Index is a 0-100 composite. Inter-conference win
                   percentage contributes 30%, average RPI 25%, collective OPS and wOBA 25%,
                   and collective ERA 20%. The index stabilizes after approximately 4 weeks
@@ -110,16 +110,16 @@ export default function ConferenceIndexPage() {
 function ChartSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-white/[0.04]">
-        <div className="h-5 w-48 bg-white/[0.06] rounded animate-pulse" />
+      <div className="px-5 py-4 border-b border-border-subtle">
+        <div className="h-5 w-48 bg-surface-medium rounded animate-pulse" />
       </div>
       <div className="px-5 py-4 space-y-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-white/[0.04] rounded animate-pulse" />
-            <div className="h-4 w-20 bg-white/[0.06] rounded animate-pulse" />
-            <div className="flex-1 h-[10px] bg-white/[0.04] rounded-full animate-pulse" />
-            <div className="h-4 w-8 bg-white/[0.04] rounded animate-pulse" />
+            <div className="h-4 w-4 bg-surface-light rounded animate-pulse" />
+            <div className="h-4 w-20 bg-surface-medium rounded animate-pulse" />
+            <div className="flex-1 h-[10px] bg-surface-light rounded-full animate-pulse" />
+            <div className="h-4 w-8 bg-surface-light rounded animate-pulse" />
           </div>
         ))}
       </div>

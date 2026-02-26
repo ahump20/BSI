@@ -36,14 +36,14 @@ function SkeletonNewsCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex gap-4">
-        <div className="w-24 h-24 bg-graphite rounded-lg flex-shrink-0 hidden sm:block" />
+        <div className="w-24 h-24 bg-background-tertiary rounded-lg flex-shrink-0 hidden sm:block" />
         <div className="flex-1 space-y-3">
-          <div className="h-5 bg-graphite rounded w-3/4" />
-          <div className="h-4 bg-graphite/50 rounded w-full" />
-          <div className="h-4 bg-graphite/50 rounded w-2/3" />
+          <div className="h-5 bg-background-tertiary rounded w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-full" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-2/3" />
           <div className="flex gap-2">
-            <div className="h-5 w-16 bg-graphite rounded" />
-            <div className="h-5 w-12 bg-graphite/50 rounded" />
+            <div className="h-5 w-16 bg-background-tertiary rounded" />
+            <div className="h-5 w-12 bg-background-tertiary/50 rounded" />
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ function NewsCard({ item }: { item: NewsItem }) {
           )}
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-white text-lg leading-tight group-hover:text-burnt-orange transition-colors line-clamp-2">
+            <h3 className="font-display font-bold text-text-primary text-lg leading-tight group-hover:text-burnt-orange transition-colors line-clamp-2">
               {item.title}
             </h3>
 
@@ -144,7 +144,7 @@ export default function NBANewsPage() {
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">News</span>
+              <span className="text-text-primary font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -246,7 +246,7 @@ export default function NBANewsPage() {
                               </span>
                             </div>
 
-                            <h2 className="font-display font-bold text-white text-xl md:text-2xl leading-tight group-hover:text-burnt-orange transition-colors">
+                            <h2 className="font-display font-bold text-text-primary text-xl md:text-2xl leading-tight group-hover:text-burnt-orange transition-colors">
                               {news[0].title}
                             </h2>
 
@@ -288,19 +288,19 @@ export default function NBANewsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 All Teams →
               </Link>

@@ -75,7 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-gray-600';
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-background-tertiary';
 }
 
 // ============================================================================
@@ -224,7 +224,7 @@ function SearchContent() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       filters.sport === option.value
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                     }`}
                   >
                     {option.label}
@@ -265,7 +265,7 @@ function SearchContent() {
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="text-6xl mb-4">🔍</div>
-                <h2 className="text-xl font-semibold text-white mb-2">No Results Found</h2>
+                <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
                 <p className="text-text-secondary mb-6">
                   No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
@@ -273,19 +273,19 @@ function SearchContent() {
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse NFL Teams
                   </Link>
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse NCAA Baseball
                   </Link>
@@ -297,33 +297,33 @@ function SearchContent() {
             {!isLoading && !initialQuery && (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="text-6xl mb-4">🏟️</div>
-                <h2 className="text-xl font-semibold text-white mb-2">Search Across All Sports</h2>
+                <h2 className="text-xl font-semibold text-text-primary mb-2">Search Across All Sports</h2>
                 <p className="text-text-secondary mb-6">
                   Find teams, players, and games across MLB, NFL, NBA, and NCAA sports.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl mx-auto">
                   <Link
                     href="/mlb"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     <div className="text-2xl mb-2">⚾</div>
-                    <p className="font-medium text-white">MLB</p>
+                    <p className="font-medium text-text-primary">MLB</p>
                     <p className="text-xs text-text-tertiary">Major League Baseball</p>
                   </Link>
                   <Link
                     href="/nfl"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     <div className="text-2xl mb-2">🏈</div>
-                    <p className="font-medium text-white">NFL</p>
+                    <p className="font-medium text-text-primary">NFL</p>
                     <p className="text-xs text-text-tertiary">National Football League</p>
                   </Link>
                   <Link
                     href="/college-baseball"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     <div className="text-2xl mb-2">🎓</div>
-                    <p className="font-medium text-white">NCAA Baseball</p>
+                    <p className="font-medium text-text-primary">NCAA Baseball</p>
                     <p className="text-xs text-text-tertiary">College Baseball</p>
                   </Link>
                 </div>
@@ -335,7 +335,7 @@ function SearchContent() {
               <div className="space-y-8">
                 {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}
                         aria-hidden="true"
@@ -363,7 +363,7 @@ function SearchContent() {
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
+                                  <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
                                     {item.name}
                                   </p>
                                   <p className="text-xs text-text-tertiary truncate capitalize">

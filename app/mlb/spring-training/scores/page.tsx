@@ -57,7 +57,7 @@ export default function SpringTrainingScoresPage() {
               <span className="text-text-tertiary">/</span>
               <Link href="/mlb/spring-training" className="text-text-tertiary hover:text-burnt-orange transition-colors">Spring Training</Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Scores</span>
+              <span className="text-text-primary font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -89,7 +89,7 @@ export default function SpringTrainingScoresPage() {
             <div className="flex items-center gap-2 mb-6">
               <button
                 onClick={() => setDateOffset((d) => d - 1)}
-                className="px-3 py-1.5 bg-graphite rounded-lg text-text-secondary hover:text-white text-sm transition-colors"
+                className="px-3 py-1.5 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary text-sm transition-colors"
               >
                 &larr; Previous
               </button>
@@ -98,14 +98,14 @@ export default function SpringTrainingScoresPage() {
                 className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                   dateOffset === 0
                     ? 'bg-burnt-orange text-white'
-                    : 'bg-graphite text-text-secondary hover:text-white'
+                    : 'bg-background-tertiary text-text-secondary hover:text-text-primary'
                 }`}
               >
                 Today
               </button>
               <button
                 onClick={() => setDateOffset((d) => d + 1)}
-                className="px-3 py-1.5 bg-graphite rounded-lg text-text-secondary hover:text-white text-sm transition-colors"
+                className="px-3 py-1.5 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary text-sm transition-colors"
               >
                 Next &rarr;
               </button>

@@ -80,7 +80,7 @@ export default function GameBriefsIndexPage() {
   return (
     <>
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -95,10 +95,10 @@ export default function GameBriefsIndexPage() {
           <Container>
             <div className="max-w-3xl mb-8">
               <Badge variant="primary" className="mb-4">Analysis</Badge>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-3">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-3">
                 Game Briefs
               </h1>
-              <p className="text-white/50 text-lg leading-relaxed">
+              <p className="text-text-tertiary text-lg leading-relaxed">
                 Post-game analysis with leverage moments, deciding stats, and win probability context.
                 Each brief covers what happened, why it happened, and what it means going forward.
               </p>
@@ -107,19 +107,19 @@ export default function GameBriefsIndexPage() {
             {loading && (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 animate-pulse">
-                    <div className="h-4 bg-white/[0.06] rounded w-1/3 mb-3" />
-                    <div className="h-5 bg-white/[0.06] rounded w-3/4 mb-2" />
-                    <div className="h-3 bg-white/[0.04] rounded w-1/2" />
+                  <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4 animate-pulse">
+                    <div className="h-4 bg-border-subtle rounded w-1/3 mb-3" />
+                    <div className="h-5 bg-border-subtle rounded w-3/4 mb-2" />
+                    <div className="h-3 bg-surface-light rounded w-1/2" />
                   </div>
                 ))}
               </div>
             )}
 
             {error && (
-              <div className="mb-4 text-xs text-white/30 flex items-center gap-3">
+              <div className="mb-4 text-xs text-text-muted flex items-center gap-3">
                 <span>Could not load latest briefs</span>
-                <button onClick={retry} className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
                   Retry
                 </button>
               </div>
@@ -131,30 +131,30 @@ export default function GameBriefsIndexPage() {
                   <Card variant="default" padding="md" className="h-full hover:border-[#BF5700]/30 transition-all">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="secondary" size="sm">{brief.sport}</Badge>
-                      {brief.readTime && <span className="text-white/20 text-xs">{brief.readTime}</span>}
+                      {brief.readTime && <span className="text-text-muted text-xs">{brief.readTime}</span>}
                     </div>
-                    <h2 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-[#BF5700] transition-colors mb-1.5">
+                    <h2 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                       {brief.headline}
                     </h2>
                     {brief.teams && (
-                      <p className="text-white/30 text-xs">{brief.teams}{brief.score ? ` \u00B7 ${brief.score}` : ''}</p>
+                      <p className="text-text-muted text-xs">{brief.teams}{brief.score ? ` \u00B7 ${brief.score}` : ''}</p>
                     )}
-                    {brief.date && <p className="text-white/20 text-[10px] mt-3">{brief.date}</p>}
+                    {brief.date && <p className="text-text-muted text-[10px] mt-3">{brief.date}</p>}
                   </Card>
                 </Link>
               ))}
             </div>
 
             {briefs.length <= 1 && (
-              <div className="mt-8 bg-white/[0.02] border border-dashed border-white/10 rounded-xl p-6 text-center">
-                <p className="text-sm text-white/30">
+              <div className="mt-8 bg-surface-light border border-dashed border-border rounded-xl p-6 text-center">
+                <p className="text-sm text-text-muted">
                   More game briefs publishing as the 2026 season progresses.
                 </p>
               </div>
             )}
 
             {lastUpdated && (
-              <p className="mt-4 text-[10px] text-white/15">
+              <p className="mt-4 text-[10px] text-text-muted">
                 Last checked {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
               </p>
             )}

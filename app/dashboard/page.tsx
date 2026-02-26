@@ -28,7 +28,7 @@ function ChartLoadingPlaceholder() {
     return (
       <div className="h-64 flex items-center justify-center">
         <div className="text-center">
-          <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="12" cy="12" r="10" />
             <path d="M12 6v6l4 2" />
           </svg>
@@ -314,10 +314,10 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                   className="rounded-lg"
                 />
                 <div>
-                  <h1 className="text-3xl md:text-4xl font-display text-white mb-1">
+                  <h1 className="text-3xl md:text-4xl font-display text-text-primary mb-1">
                     COMMAND CENTER
                   </h1>
-                  <p className="text-white/60 text-sm">
+                  <p className="text-text-secondary text-sm">
                     Real-time scores, standings, and analytics across all leagues
                   </p>
                 </div>
@@ -330,7 +330,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 )}
                 <LiveBadge />
                 {stats.liveGames > 0 && (
-                  <span className="px-3 py-1 bg-green-600/20 text-green-400 rounded-full text-sm font-medium animate-pulse">
+                  <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm font-medium animate-pulse">
                     {stats.liveGames} Live Now
                   </span>
                 )}
@@ -344,7 +344,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                 )}
                 <button
                   onClick={handleSignOut}
-                  className="px-3 py-1.5 text-xs text-white/40 hover:text-white/70 border border-white/10 hover:border-white/20 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs text-text-muted hover:text-text-secondary border border-border hover:border-border-subtle rounded-lg transition-colors"
                 >
                   Sign Out
                 </button>
@@ -364,11 +364,11 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
 
           {/* Error Banner */}
           {fetchError && (
-            <div className="mb-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-between">
-              <span className="text-red-400 text-sm">{fetchError}</span>
+            <div className="mb-6 px-4 py-3 bg-error/10 border border-error/20 rounded-lg flex items-center justify-between">
+              <span className="text-error text-sm">{fetchError}</span>
               <button
                 onClick={() => { setFetchError(null); setIsLoading(true); }}
-                className="text-xs text-red-400 hover:text-red-300 underline"
+                className="text-xs text-error hover:text-error/80 underline"
               >
                 Retry
               </button>
@@ -441,13 +441,13 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             <ScrollReveal direction="up" delay={400}>
               <Card padding="lg" className="h-full">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">Win Distribution</h3>
-                  <span className="text-xs text-white/30 uppercase tracking-wider">Top 8 Teams</span>
+                  <h3 className="text-lg font-semibold text-text-primary">Win Distribution</h3>
+                  <span className="text-xs text-text-muted uppercase tracking-wider">Top 8 Teams</span>
                 </div>
                 {fetchError || (!isLoading && standingsChartData.length === 0) ? (
                   <div className="h-64 flex items-center justify-center">
                     <div className="text-center">
-                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <rect x="3" y="3" width="18" height="18" rx="2" />
                         <path d="M3 9h18M9 21V9" />
                       </svg>
@@ -465,15 +465,15 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             <ScrollReveal direction="up" delay={450}>
               <Card padding="lg" className="h-full">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white">Coverage Overview</h3>
-                  <span className="text-xs text-white/30 uppercase tracking-wider">All Sports</span>
+                  <h3 className="text-lg font-semibold text-text-primary">Coverage Overview</h3>
+                  <span className="text-xs text-text-muted uppercase tracking-wider">All Sports</span>
                 </div>
                 {hasCoverageData ? (
                   <SportCoveragePieChart data={sportDistributionData} />
                 ) : (
                   <div className="h-64 flex items-center justify-center">
                     <div className="text-center">
-                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-white/15 mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 6v6l4 2" />
                       </svg>
@@ -512,7 +512,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
           <div className="mt-4 text-center">
             <Link
               href="/data-sources"
-              className="text-xs text-white/30 hover:text-white/50 transition-colors underline underline-offset-2"
+              className="text-xs text-text-muted hover:text-text-tertiary transition-colors underline underline-offset-2"
             >
               View all data sources and refresh cadences →
             </Link>
@@ -544,9 +544,9 @@ const SPORT_DISPLAY: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
-  ok: { dot: 'bg-green-500', text: 'text-green-400' },
+  ok: { dot: 'bg-success', text: 'text-success' },
   degraded: { dot: 'bg-yellow-500', text: 'text-yellow-400' },
-  down: { dot: 'bg-red-500', text: 'text-red-400' },
+  down: { dot: 'bg-error', text: 'text-error' },
 };
 
 function ProviderHealthPanel() {
@@ -562,10 +562,10 @@ function ProviderHealthPanel() {
   if (!health || !health.checkedAt || Object.keys(health.providers).length === 0) return null;
 
   return (
-    <div className="mb-6 bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
+    <div className="mb-6 bg-surface-light border border-border rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-white/30 uppercase tracking-wider font-medium">Data Pipeline</span>
-        <span className="text-[10px] text-white/20">
+        <span className="text-xs text-text-muted uppercase tracking-wider font-medium">Data Pipeline</span>
+        <span className="text-[10px] text-text-muted">
           Checked {new Date(health.checkedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}
         </span>
       </div>
@@ -575,7 +575,7 @@ function ProviderHealthPanel() {
           return (
             <div key={key} className="flex items-center gap-2">
               <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
-              <span className="text-sm text-white/60">{SPORT_DISPLAY[key] || key}</span>
+              <span className="text-sm text-text-secondary">{SPORT_DISPLAY[key] || key}</span>
               <span className={`text-[10px] ${colors.text}`}>{provider.status}</span>
             </div>
           );
@@ -600,15 +600,15 @@ function StatCard({ label, value, subtitle, trend, icon }: StatCardProps) {
     <Card className="p-4">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">{label}</p>
+          <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{label}</p>
           <p className={`text-2xl font-bold ${
-            trend === 'live' ? 'text-green-400' : trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-400' : 'text-white'
+            trend === 'live' ? 'text-success' : trend === 'up' ? 'text-success' : trend === 'down' ? 'text-error' : 'text-text-primary'
           }`}>
             {value}
           </p>
-          {subtitle && <p className="text-xs text-white/30 mt-0.5">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-text-muted mt-0.5">{subtitle}</p>}
         </div>
-        {icon && <div className="text-white/20">{icon}</div>}
+        {icon && <div className="text-text-muted">{icon}</div>}
       </div>
     </Card>
   );
@@ -619,11 +619,11 @@ function StatCardSkeleton() {
     <Card className="p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="h-3 w-16 bg-white/10 rounded animate-pulse mb-2" />
-          <div className="h-7 w-12 bg-white/10 rounded animate-pulse mb-1" />
-          <div className="h-3 w-20 bg-white/5 rounded animate-pulse" />
+          <div className="h-3 w-16 bg-surface-medium rounded animate-pulse mb-2" />
+          <div className="h-7 w-12 bg-surface-medium rounded animate-pulse mb-1" />
+          <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
         </div>
-        <div className="w-6 h-6 bg-white/5 rounded animate-pulse" />
+        <div className="w-6 h-6 bg-surface-light rounded animate-pulse" />
       </div>
     </Card>
   );
@@ -640,13 +640,13 @@ function QuickLinkCard({ href, icon, title, subtitle }: QuickLinkCardProps) {
   return (
     <Link
       href={href}
-      className="block p-4 bg-white/5 rounded-lg hover:bg-white/8 hover:border-[#BF5700] border border-transparent transition-all group"
+      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-[#BF5700] border border-transparent transition-all group"
     >
       <Image src={icon} alt="" width={28} height={28} className="mb-2 opacity-60 group-hover:opacity-100 transition-opacity" />
-      <p className="font-semibold text-white group-hover:text-[#BF5700] transition-colors text-sm">
+      <p className="font-semibold text-text-primary group-hover:text-[#BF5700] transition-colors text-sm">
         {title}
       </p>
-      <p className="text-xs text-white/40">{subtitle}</p>
+      <p className="text-xs text-text-muted">{subtitle}</p>
     </Link>
   );
 }
@@ -655,17 +655,17 @@ function ArcadeQuickLinkCard() {
   return (
     <Link
       href="/arcade"
-      className="block p-4 bg-white/5 rounded-lg hover:bg-white/8 hover:border-[#BF5700] border border-transparent transition-all group"
+      className="block p-4 bg-surface-light rounded-lg hover:bg-surface-medium hover:border-[#BF5700] border border-transparent transition-all group"
     >
       <svg viewBox="0 0 24 24" className="w-7 h-7 mb-2 opacity-60 group-hover:opacity-100 transition-opacity text-[var(--bsi-gold,#D4A843)]" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="2" y="6" width="20" height="12" rx="2" />
         <circle cx="9" cy="12" r="2" />
         <path d="M15 10v4M13 12h4" />
       </svg>
-      <p className="font-semibold text-white group-hover:text-[#BF5700] transition-colors text-sm">
+      <p className="font-semibold text-text-primary group-hover:text-[#BF5700] transition-colors text-sm">
         Arcade
       </p>
-      <p className="text-xs text-white/40">Mini-games</p>
+      <p className="text-xs text-text-muted">Mini-games</p>
     </Link>
   );
 }

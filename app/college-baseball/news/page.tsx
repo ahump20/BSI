@@ -108,7 +108,7 @@ export default function CollegeBaseballNewsPage() {
                 College Baseball
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">News</span>
+              <span className="text-text-primary font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -143,7 +143,7 @@ export default function CollegeBaseballNewsPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     categoryFilter === cat.id
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {cat.label}
@@ -157,8 +157,8 @@ export default function CollegeBaseballNewsPage() {
                   onClick={() => setSourceFilter(src.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                     sourceFilter === src.id
-                      ? 'bg-white/15 text-white border border-white/20'
-                      : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'
+                      ? 'bg-surface-medium text-text-primary border border-border-strong'
+                      : 'bg-surface-light text-text-muted hover:bg-surface-medium hover:text-text-tertiary'
                   }`}
                 >
                   {src.label}
@@ -204,7 +204,7 @@ export default function CollegeBaseballNewsPage() {
                 <div className="space-y-8">
                   {grouped.map((group) => (
                     <div key={group.label}>
-                      <h2 className="text-sm font-semibold text-white/40 uppercase tracking-wider mb-4">
+                      <h2 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-4">
                         {group.label}
                       </h2>
                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

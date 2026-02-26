@@ -127,8 +127,8 @@ export default function SavantPlayerClient() {
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
-                <h2 className="text-xl font-bold text-white mb-2">Player not found</h2>
-                <p className="text-white/40 mb-4 text-sm">
+                <h2 className="text-xl font-bold text-text-primary mb-2">Player not found</h2>
+                <p className="text-text-muted mb-4 text-sm">
                   Advanced metrics may not be available for this player yet.
                 </p>
                 <Link
@@ -156,15 +156,15 @@ export default function SavantPlayerClient() {
           <Container>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm mb-6">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/savant" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
                 Savant
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white/70">{player.player_name}</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-secondary">{player.player_name}</span>
             </nav>
 
             {/* Header */}
@@ -173,21 +173,21 @@ export default function SavantPlayerClient() {
                 {player.position && <Badge variant="primary">{player.position}</Badge>}
                 <Badge variant="secondary">{player.team}</Badge>
                 {player.conference && (
-                  <span className="text-xs text-white/30">{player.conference}</span>
+                  <span className="text-xs text-text-muted">{player.conference}</span>
                 )}
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wider text-white">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wider text-text-primary">
                 {player.player_name}
               </h1>
-              <p className="text-white/40 text-sm mt-1">
+              <p className="text-text-muted text-sm mt-1">
                 {player.season} Season · Advanced Sabermetric Profile
               </p>
             </div>
 
             {/* Percentile Bars — Free Metrics */}
             <Card padding="none" className="mb-6 overflow-hidden">
-              <div className="px-5 py-3 border-b border-white/[0.04]">
-                <h2 className="font-display text-sm uppercase tracking-wider text-white">
+              <div className="px-5 py-3 border-b border-border-subtle">
+                <h2 className="font-display text-sm uppercase tracking-wider text-text-primary">
                   Percentile Rankings
                 </h2>
               </div>
@@ -250,8 +250,8 @@ export default function SavantPlayerClient() {
 
             {/* Traditional Stats */}
             <Card padding="none" className="mb-6 overflow-hidden">
-              <div className="px-5 py-3 border-b border-white/[0.04]">
-                <h2 className="font-display text-sm uppercase tracking-wider text-white">
+              <div className="px-5 py-3 border-b border-border-subtle">
+                <h2 className="font-display text-sm uppercase tracking-wider text-text-primary">
                   {isBatter ? 'Batting' : 'Pitching'} — Traditional
                 </h2>
               </div>
@@ -277,8 +277,8 @@ export default function SavantPlayerClient() {
 
             {/* Free Advanced */}
             <Card padding="none" className="mb-6 overflow-hidden">
-              <div className="px-5 py-3 border-b border-white/[0.04]">
-                <h2 className="font-display text-sm uppercase tracking-wider text-white">
+              <div className="px-5 py-3 border-b border-border-subtle">
+                <h2 className="font-display text-sm uppercase tracking-wider text-text-primary">
                   Advanced Metrics
                 </h2>
               </div>
@@ -308,8 +308,8 @@ export default function SavantPlayerClient() {
               className="mb-6"
             >
               <Card padding="none" className="overflow-hidden">
-                <div className="px-5 py-3 border-b border-white/[0.04]">
-                  <h2 className="font-display text-sm uppercase tracking-wider text-white">
+                <div className="px-5 py-3 border-b border-border-subtle">
+                  <h2 className="font-display text-sm uppercase tracking-wider text-text-primary">
                     Pro Metrics
                   </h2>
                 </div>
@@ -342,11 +342,11 @@ export default function SavantPlayerClient() {
                 className="mb-6"
               >
                 <Card padding="none" className="overflow-hidden">
-                  <div className="px-5 py-3 border-b border-white/[0.04]">
-                    <h2 className="font-display text-sm uppercase tracking-wider text-white">
+                  <div className="px-5 py-3 border-b border-border-subtle">
+                    <h2 className="font-display text-sm uppercase tracking-wider text-text-primary">
                       Estimated Stats
                     </h2>
-                    <p className="text-[10px] text-white/25 mt-0.5">
+                    <p className="text-[10px] text-text-muted mt-0.5">
                       Regression-based estimates from box-score proxies. Transparently labeled with &quot;e&quot; prefix.
                     </p>
                   </div>
@@ -363,13 +363,13 @@ export default function SavantPlayerClient() {
             <div className="flex items-center gap-6 mt-8">
               <Link
                 href={`/college-baseball/players/${playerId}`}
-                className="text-xs text-white/30 hover:text-[#BF5700] transition-colors uppercase tracking-widest"
+                className="text-xs text-text-muted hover:text-[#BF5700] transition-colors uppercase tracking-widest"
               >
                 Full Player Profile &rarr;
               </Link>
               <Link
                 href="/college-baseball/savant"
-                className="text-xs text-white/30 hover:text-[#BF5700] transition-colors uppercase tracking-widest"
+                className="text-xs text-text-muted hover:text-[#BF5700] transition-colors uppercase tracking-widest"
               >
                 Savant Leaderboard &rarr;
               </Link>
@@ -390,10 +390,10 @@ export default function SavantPlayerClient() {
 function StatCell({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-[10px] text-white/30 font-display uppercase tracking-widest block">
+      <span className="text-[10px] text-text-muted font-display uppercase tracking-widest block">
         {label}
       </span>
-      <span className="text-sm text-white font-mono tabular-nums">{value}</span>
+      <span className="text-sm text-text-primary font-mono tabular-nums">{value}</span>
     </div>
   );
 }

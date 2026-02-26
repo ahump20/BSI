@@ -150,7 +150,7 @@ function TeamCard({ team }: { team: TeamEntry }) {
               loading="lazy"
             />
           )}
-          <span className="text-white font-medium text-sm">{team.name}</span>
+          <span className="text-text-primary font-medium text-sm">{team.name}</span>
           {preseason && (
             <Badge variant="primary" size="sm">#{preseason.rank}</Badge>
           )}

@@ -88,8 +88,8 @@ function formatGameDate(dateString: string): string {
 
 function StatCard({ label, value, subValue }: { label: string; value: string | number; subValue?: string }) {
   return (
-    <div className="text-center p-4 bg-graphite rounded-lg">
-      <p className="text-2xl md:text-3xl font-bold text-white">{value}</p>
+    <div className="text-center p-4 bg-background-tertiary rounded-lg">
+      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
       {subValue && <p className="text-xs text-text-secondary mt-1">{subValue}</p>}
     </div>
@@ -100,13 +100,13 @@ function SkeletonTeamProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-32 h-32 bg-graphite rounded-lg flex-shrink-0" />
+        <div className="w-32 h-32 bg-background-tertiary rounded-lg flex-shrink-0" />
         <div className="flex-1 space-y-4 text-center md:text-left">
-          <div className="h-10 bg-graphite rounded w-2/3 mx-auto md:mx-0" />
-          <div className="h-6 bg-graphite/50 rounded w-1/3 mx-auto md:mx-0" />
+          <div className="h-10 bg-background-tertiary rounded w-2/3 mx-auto md:mx-0" />
+          <div className="h-6 bg-background-tertiary/50 rounded w-1/3 mx-auto md:mx-0" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-graphite rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
             ))}
           </div>
         </div>
@@ -132,7 +132,7 @@ function RosterCard({ player, teamColor }: { player: RosterPlayer; teamColor: st
             #{player.jersey || '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="font-display font-bold text-white truncate group-hover:text-burnt-orange transition-colors">
+            <h4 className="font-display font-bold text-text-primary truncate group-hover:text-burnt-orange transition-colors">
               {player.name}
             </h4>
             <p className="text-text-secondary text-sm">{player.position}</p>
@@ -169,7 +169,7 @@ function ScheduleCard({ game, teamId }: { game: ScheduleGame; teamId: string }) 
               {isHome ? 'HOME' : 'AWAY'}
             </Badge>
           </div>
-          <p className="text-white font-semibold truncate">
+          <p className="text-text-primary font-semibold truncate">
             {isHome ? 'vs' : '@'} {opponent.team.displayName}
           </p>
         </div>
@@ -278,7 +278,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {loading ? 'Loading...' : team?.name || 'Team'}
               </span>
             </nav>
@@ -337,7 +337,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                   {/* Team Info */}
                   <div className="flex-1 text-center md:text-left">
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
                       {team.name}
                     </h1>
 
@@ -380,7 +380,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   className={`px-6 py-2 rounded-lg font-semibold transition-all ${
                     activeTab === 'roster'
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
                   }`}
                 >
                   Roster ({roster.length})
@@ -390,7 +390,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   className={`px-6 py-2 rounded-lg font-semibold transition-all ${
                     activeTab === 'schedule'
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
                   }`}
                 >
                   Schedule
@@ -405,7 +405,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
           <Section padding="lg" background="charcoal">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl font-bold text-white mb-6">
+                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
                   Team Roster
                 </h2>
               </ScrollReveal>
@@ -435,7 +435,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {/* Recent Games */}
                 <ScrollReveal direction="up">
                   <div>
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Recent Games
                     </h2>
                     {recentGames.length === 0 ? (
@@ -455,7 +455,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 {/* Upcoming Games */}
                 <ScrollReveal direction="up" delay={100}>
                   <div>
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Upcoming Games
                     </h2>
                     {upcomingGames.length === 0 ? (
@@ -489,25 +489,25 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 ← All Teams
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/players"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 All Players →
               </Link>

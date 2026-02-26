@@ -57,7 +57,7 @@ export default function BaseballRankingsPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Rankings</span>
+                <span className="text-text-primary">Rankings</span>
               </div>
 
               <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
@@ -77,7 +77,7 @@ export default function BaseballRankingsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full" aria-label="College baseball rankings">
                     <thead>
-                      <tr className="bg-charcoal border-b border-border-subtle">
+                      <tr className="bg-background-secondary border-b border-border-subtle">
                         <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
                           Rank
                         </th>
@@ -104,14 +104,14 @@ export default function BaseballRankingsPage() {
                           <td className="py-4 px-4">
                             <span
                               className={`font-display text-xl font-bold ${
-                                team.rank <= 5 ? 'text-burnt-orange' : 'text-white'
+                                team.rank <= 5 ? 'text-burnt-orange' : 'text-text-primary'
                               }`}
                             >
                               {team.rank}
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="font-semibold text-white">{team.team}</span>
+                            <span className="font-semibold text-text-primary">{team.team}</span>
                             <span className="text-text-tertiary text-sm ml-2 sm:hidden">
                               ({team.conference})
                             </span>

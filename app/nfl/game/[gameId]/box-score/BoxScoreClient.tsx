@@ -176,7 +176,7 @@ export default function BoxScoreClient() {
                   return (
                     <div key={gIdx}>
                       {groupName && (
-                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-graphite rounded">
+                        <div className="px-2 py-1.5 mb-2 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary rounded">
                           {groupName}
                         </div>
                       )}
@@ -201,9 +201,9 @@ export default function BoxScoreClient() {
                             {activePlayers.map((player, pIdx) => (
                               <tr
                                 key={pIdx}
-                                className="border-b border-border-subtle last:border-0 hover:bg-white/5"
+                                className="border-b border-border-subtle last:border-0 hover:bg-surface-light"
                               >
-                                <td className="p-2 text-white font-medium whitespace-nowrap sticky left-0 bg-inherit">
+                                <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
                                   <span>
                                     {player.athlete?.shortName || player.athlete?.displayName || '-'}
                                   </span>

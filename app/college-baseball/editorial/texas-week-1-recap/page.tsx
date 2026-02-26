@@ -163,12 +163,12 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
       <div className="overflow-x-auto">
         <table className="w-full min-w-[540px]">
           <thead>
-            <tr className="font-display text-[11px] uppercase tracking-widest text-white/30 bg-black/30">
+            <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
               <th className="text-left py-2.5 px-4 w-36" />
               {Array.from({ length: inningCount }, (_, i) => (
                 <th key={i} className="text-center py-2.5 w-10">{i + 1}</th>
               ))}
-              <th className="text-center py-2.5 w-12 border-l border-white/5">R</th>
+              <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
               <th className="text-center py-2.5 w-12">H</th>
               <th className="text-center py-2.5 w-12">E</th>
             </tr>
@@ -177,20 +177,20 @@ function LineScoreTable({ scores, label }: { scores: InningScore[]; label: strin
             {scores.map((row) => {
               const isTexas = row.team === 'Texas';
               return (
-                <tr key={row.team} className="border-t border-white/5">
-                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-white/50'}`}>
+                <tr key={row.team} className="border-t border-border-subtle">
+                  <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
                     {row.team}
                   </td>
                   {row.innings.map((val, i) => (
-                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-white/20' : Number(val) > 0 ? (isTexas ? 'text-white font-semibold' : 'text-white/70 font-medium') : 'text-white/20'}`}>
+                    <td key={i} className={`text-center py-3 ${typeof val === 'string' ? 'text-text-muted' : Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
                       {val}
                     </td>
                   ))}
-                  <td className={`text-center py-3 border-l border-white/5 font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-white/60'}`}>
+                  <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
                     {row.r}
                   </td>
-                  <td className="text-center py-3 text-white/40">{row.h}</td>
-                  <td className="text-center py-3 text-white/40">{row.e}</td>
+                  <td className="text-center py-3 text-text-muted">{row.h}</td>
+                  <td className="text-center py-3 text-text-muted">{row.e}</td>
                 </tr>
               );
             })}
@@ -209,7 +209,7 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
         <div className="overflow-x-auto">
           <table className="w-full min-w-[400px] font-mono text-sm">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wider text-white/30 bg-black/20">
+              <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
                 <th className="text-left py-2 px-3">Pitcher</th>
                 <th className="text-center py-2 w-10">IP</th>
                 <th className="text-center py-2 w-8">H</th>
@@ -222,18 +222,18 @@ function PitchingTable({ pitchers, teamLabel }: { pitchers: PitchingLine[]; team
             </thead>
             <tbody>
               {pitchers.map((p) => (
-                <tr key={p.name} className="border-t border-white/5">
-                  <td className="py-2 px-3 text-white/70">
+                <tr key={p.name} className="border-t border-border-subtle">
+                  <td className="py-2 px-3 text-text-secondary">
                     {p.name}
                     {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
                   </td>
-                  <td className="text-center text-white/60">{p.ip}</td>
-                  <td className="text-center text-white/40">{p.h}</td>
-                  <td className="text-center text-white/40">{p.r}</td>
-                  <td className="text-center text-white/40">{p.er}</td>
-                  <td className="text-center text-white/40">{p.bb}</td>
-                  <td className="text-center text-white font-medium">{p.so}</td>
-                  <td className="text-center text-white/30">{p.pitches ?? '—'}</td>
+                  <td className="text-center text-text-tertiary">{p.ip}</td>
+                  <td className="text-center text-text-muted">{p.h}</td>
+                  <td className="text-center text-text-muted">{p.r}</td>
+                  <td className="text-center text-text-muted">{p.er}</td>
+                  <td className="text-center text-text-muted">{p.bb}</td>
+                  <td className="text-center text-text-primary font-medium">{p.so}</td>
+                  <td className="text-center text-text-muted">{p.pitches ?? '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -262,18 +262,18 @@ export default function TexasWeek1RecapPage() {
     <>
       <main id="main-content">
         {/* ── Breadcrumb ── */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white/70">Texas Week 1</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-secondary">Texas Week 1</span>
             </nav>
           </Container>
         </Section>
@@ -289,23 +289,23 @@ export default function TexasWeek1RecapPage() {
                   <Badge variant="primary">Week 1 Recap</Badge>
                   <Badge variant="accent">No. 3 Texas</Badge>
                   <Badge variant="outline">3-0</Badge>
-                  <span className="font-mono text-xs text-white/30">Sweep</span>
+                  <span className="font-mono text-xs text-text-muted">Sweep</span>
                 </div>
 
                 <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
                   <span className="block text-gradient-blaze text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-1">
                     27 Runs. One Hit Allowed by Volantis.
                   </span>
-                  <span className="block text-white text-2xl sm:text-3xl md:text-4xl mt-2">
+                  <span className="block text-text-primary text-2xl sm:text-3xl md:text-4xl mt-2">
                     The Opening Statement.
                   </span>
                 </h1>
 
-                <p className="font-serif text-lg sm:text-xl text-white/50 italic leading-relaxed mb-6">
+                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
                   Texas swept UC Davis 27-7 behind a rotation that posted a 0.75 WHIP, a lineup that drew 25 walks in three games, and a Sunday starter who carried a no-hit bid into the sixth. Volantis earned SEC Co-Pitcher of the Week. Now comes Lamar on Tuesday and Michigan State &mdash; fresh off an upset series at No. 8 Louisville &mdash; for Weekend 2.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-white/30 tracking-wide">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
                   <span>February 13&ndash;15, 2026</span>
                   <span className="hidden sm:inline">&middot;</span>
                   <span>UFCU Disch-Falk Field</span>
@@ -315,7 +315,7 @@ export default function TexasWeek1RecapPage() {
                   <span>Austin, TX</span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-white/25 mt-4">
+                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
                   <span>By Blaze Sports Intel</span>
                   <span>|</span>
                   <span>~15 min read</span>
@@ -353,10 +353,10 @@ export default function TexasWeek1RecapPage() {
               <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
                 Texas walked out of Opening Weekend 3-0, outscoring UC Davis 27-7, and doing it with two traits that usually age well: strike-throwing starters and a lineup that refused to chase early-count outs. If Week 1 is about establishing a baseline, this one was loud.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-white/70 mb-6">
-                The Longhorns posted <strong className="text-white/90">25 walks against 19 strikeouts</strong>, hit .330 as a team, and opened the year with an on-base percentage north of .460. The rotation set the tone &mdash; 0.75 starter WHIP across 17.1 innings &mdash; and the offense repeatedly turned &ldquo;one run&rdquo; innings into &ldquo;four run&rdquo; innings.
+              <p className="font-serif text-lg leading-relaxed text-text-secondary mb-6">
+                The Longhorns posted <strong className="text-text-primary">25 walks against 19 strikeouts</strong>, hit .330 as a team, and opened the year with an on-base percentage north of .460. The rotation set the tone &mdash; 0.75 starter WHIP across 17.1 innings &mdash; and the offense repeatedly turned &ldquo;one run&rdquo; innings into &ldquo;four run&rdquo; innings.
               </p>
-              <p className="font-serif text-lg leading-relaxed text-white/60">
+              <p className="font-serif text-lg leading-relaxed text-text-tertiary">
                 Three different games, three different shapes, one consistent identity. That&rsquo;s the takeaway worth holding.
               </p>
             </ScrollReveal>
@@ -372,7 +372,7 @@ export default function TexasWeek1RecapPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
                   Game 1: Texas 12, UC Davis 2
                 </h2>
-                <span className="font-mono text-xs text-white/30">7 inn &middot; 10-run rule</span>
+                <span className="font-mono text-xs text-text-muted">7 inn &middot; 10-run rule</span>
               </div>
 
               <div className="mb-6">
@@ -380,11 +380,11 @@ export default function TexasWeek1RecapPage() {
               </div>
 
               <Container size="narrow">
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-4 mb-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4 mb-6">
                   <p>
                     The opener looked like a normal feel-out game until it didn&rsquo;t. UC Davis grabbed a 1-0 lead in the first, Riojas settled and dominated the middle innings (6 K in 5.0 IP on just 78 pitches), and then Texas detonated: a three-spot in the third on Robbins&rsquo; 450-foot HR and Rodriguez&rsquo;s RBI single, a four-run fifth built on walks and small ball, and a five-run seventh capped by Mendoza&rsquo;s walk-off three-run blast to trigger the run rule.
                   </p>
-                  <p className="text-white/60">
+                  <p className="text-text-tertiary">
                     Pack Jr. went 3-for-4 with 2 RBI and a stolen base from the nine-hole. Texas hit .367, drew 7 walks, and committed zero errors.
                   </p>
                 </div>
@@ -409,7 +409,7 @@ export default function TexasWeek1RecapPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
                   Game 2: Texas 6, UC Davis 4
                 </h2>
-                <span className="font-mono text-xs text-white/30">Saturday &middot; Feb 14</span>
+                <span className="font-mono text-xs text-text-muted">Saturday &middot; Feb 14</span>
               </div>
 
               <div className="mb-6">
@@ -419,7 +419,7 @@ export default function TexasWeek1RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
                     This one required real work. UC Davis hung a deuce in the first off Harrison and Texas spent four innings punching air &mdash; trailing 2-0 through four complete. Harrison kept dealing despite the deficit: 90 pitches, 6 strikeouts, and enough composure to keep his team within striking distance. The bullpen would need to be good. The offense would need to be better.
                   </p>
@@ -436,7 +436,7 @@ export default function TexasWeek1RecapPage() {
                     The bullpen chain held. Burns came in and struck out four in 1.2 innings of hitless relief. Higgins worked through a two-run eighth &mdash; UC Davis made him earn it with a pair of walks and an RBI single &mdash; but he struck out three to limit the damage. Hamilton inherited two runners in the ninth, threw five pitches, and struck out the final batter to collect the save.
                   </p>
 
-                  <p className="text-white/60">
+                  <p className="text-text-tertiary">
                     Texas drew 9 walks against 8 strikeouts. Nine free bases in a game you trailed 2-0 &mdash; that&rsquo;s how a lineup erases a deficit without needing to string together five singles.
                   </p>
                 </div>
@@ -460,7 +460,7 @@ export default function TexasWeek1RecapPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange">
                   Game 3: Texas 9, UC Davis 1
                 </h2>
-                <span className="font-mono text-xs text-white/30">Sunday &middot; Feb 15</span>
+                <span className="font-mono text-xs text-text-muted">Sunday &middot; Feb 15</span>
               </div>
 
               <div className="mb-6">
@@ -470,9 +470,9 @@ export default function TexasWeek1RecapPage() {
 
             <Container size="narrow">
               <ScrollReveal direction="up" delay={100}>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
-                    Sunday was the ceiling game. If Friday was the proof of concept and Saturday was the stress test, Volantis turned Sunday into a statement of dominance: <strong className="text-white/90">7.0 innings, 1 hit, 0 earned runs, 8 strikeouts on 78 pitches.</strong> He carried a no-hitter into the sixth inning, retired 14 of his first 16 batters, and threw with the efficiency of a pitcher who knew exactly what he wanted to do and did it.
+                    Sunday was the ceiling game. If Friday was the proof of concept and Saturday was the stress test, Volantis turned Sunday into a statement of dominance: <strong className="text-text-primary">7.0 innings, 1 hit, 0 earned runs, 8 strikeouts on 78 pitches.</strong> He carried a no-hitter into the sixth inning, retired 14 of his first 16 batters, and threw with the efficiency of a pitcher who knew exactly what he wanted to do and did it.
                   </p>
 
                   <p>
@@ -493,13 +493,13 @@ export default function TexasWeek1RecapPage() {
                       SEC Co-Pitcher of the Week
                     </div>
                   </div>
-                  <div className="font-display text-lg font-semibold text-white uppercase tracking-wide mb-1">
+                  <div className="font-display text-lg font-semibold text-text-primary uppercase tracking-wide mb-1">
                     Dylan Volantis
                   </div>
                   <div className="font-mono text-sm text-[#C9A227] mb-3">
                     7.0 IP &middot; 1 H &middot; 0 ER &middot; 8 K &middot; 78 P
                   </div>
-                  <p className="font-serif text-sm text-white/50 leading-relaxed">
+                  <p className="font-serif text-sm text-text-tertiary leading-relaxed">
                     Shared with Oklahoma&rsquo;s Cord Rager and Florida&rsquo;s Cash Strayer. Volantis&rsquo; no-hit bid into the sixth was the weekend&rsquo;s cleanest pitching sentence across the SEC.
                   </p>
                 </div>
@@ -539,7 +539,7 @@ export default function TexasWeek1RecapPage() {
                     <div className="font-mono text-[10px] uppercase tracking-wider text-burnt-orange mb-2">
                       {p.pos}
                     </div>
-                    <div className="font-mono text-[13px] text-white/40 leading-relaxed">
+                    <div className="font-mono text-[13px] text-text-muted leading-relaxed">
                       <span className="text-ember font-medium">{p.line}</span>
                       <br />
                       {p.context}
@@ -559,9 +559,9 @@ export default function TexasWeek1RecapPage() {
                 What This Series Actually Told Us
               </h2>
 
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-8">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-8">
                 <div>
-                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-3">
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
                     1. Free Bases Were a Feature, Not a Fluke
                   </h3>
                   <p>
@@ -570,7 +570,7 @@ export default function TexasWeek1RecapPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-3">
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
                     2. The Rotation Is Set: Riojas&ndash;Harrison&ndash;Volantis
                   </h3>
                   <p>
@@ -579,7 +579,7 @@ export default function TexasWeek1RecapPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-3">
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
                     3. The Portal Additions Are Real
                   </h3>
                   <p>
@@ -588,7 +588,7 @@ export default function TexasWeek1RecapPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-white mb-3">
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
                     4. Bullpen Depth Is Elite
                   </h3>
                   <p>
@@ -635,38 +635,38 @@ export default function TexasWeek1RecapPage() {
               <div className="max-w-2xl mx-auto">
                 <Card variant="default" padding="lg">
                   <div className="text-center space-y-3 mb-6">
-                    <h3 className="font-display text-xl uppercase tracking-wider text-white">
+                    <h3 className="font-display text-xl uppercase tracking-wider text-text-primary">
                       Lamar at No. 3 Texas
                     </h3>
                     <div className="font-mono text-sm text-burnt-orange">
                       Tuesday, February 17 &middot; 5:00 PM CT &middot; SEC Network+
                     </div>
-                    <div className="font-mono text-xs text-white/30">
+                    <div className="font-mono text-xs text-text-muted">
                       UFCU Disch-Falk Field &middot; Austin, TX
                     </div>
                   </div>
 
-                  <div className="border-t border-white/5 pt-5">
-                    <h4 className="font-display text-sm uppercase tracking-wider text-white/60 mb-3">
+                  <div className="border-t border-border-subtle pt-5">
+                    <h4 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-3">
                       What Lamar Is Bringing to Austin
                     </h4>
-                    <div className="font-serif text-base text-white/70 leading-relaxed space-y-3">
+                    <div className="font-serif text-base text-text-secondary leading-relaxed space-y-3">
                       <p>
                         Lamar opened 2-1, splitting a home series against Oakland &mdash; wins of 8-2 and 9-7 before a 3-2 loss in 10 innings. The WAC program out of Beaumont received Baseball America preseason national attention and plays with a profile you&rsquo;d expect from a capable midweek opponent: they can score in chunks and are comfortable playing close late.
                       </p>
-                      <p className="text-white/50">
+                      <p className="text-text-tertiary">
                         In Lamar&rsquo;s opener, Beau Durbin&rsquo;s two-run double and Tab Tracy&rsquo;s two-RBI single turned the second inning into a separator. That&rsquo;s the kind of damage Texas&rsquo; midweek arm needs to prevent.
                       </p>
                     </div>
 
-                    <div className="bg-white/[0.03] border border-white/[0.06] rounded p-4 mt-5">
+                    <div className="bg-surface-light border border-border-subtle rounded p-4 mt-5">
                       <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-3">
                         Keys for Texas
                       </h4>
-                      <div className="font-serif text-sm text-white/60 leading-relaxed space-y-2">
-                        <p><strong className="text-white/80">Keep the walk edge.</strong> Week 1&rsquo;s plate discipline is a repeatable advantage in midweeks, where pitching plans are usually thinner.</p>
-                        <p><strong className="text-white/80">Win the first pitch.</strong> Lamar&rsquo;s best path is early-count damage. If Texas&rsquo; staff gets strike one, it forces the game into Texas&rsquo; depth.</p>
-                        <p><strong className="text-white/80">Play clean.</strong> Midweeks are where extra outs become cheap runs. Routine plays, clean defense &mdash; the errors from Sunday need to stay in Sunday.</p>
+                      <div className="font-serif text-sm text-text-tertiary leading-relaxed space-y-2">
+                        <p><strong className="text-text-secondary">Keep the walk edge.</strong> Week 1&rsquo;s plate discipline is a repeatable advantage in midweeks, where pitching plans are usually thinner.</p>
+                        <p><strong className="text-text-secondary">Win the first pitch.</strong> Lamar&rsquo;s best path is early-count damage. If Texas&rsquo; staff gets strike one, it forces the game into Texas&rsquo; depth.</p>
+                        <p><strong className="text-text-secondary">Play clean.</strong> Midweeks are where extra outs become cheap runs. Routine plays, clean defense &mdash; the errors from Sunday need to stay in Sunday.</p>
                       </div>
                     </div>
                   </div>
@@ -685,7 +685,7 @@ export default function TexasWeek1RecapPage() {
               </div>
 
               <div className="max-w-3xl mx-auto">
-                <h3 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-white text-center mb-2">
+                <h3 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary text-center mb-2">
                   Michigan State at No. 3 Texas
                 </h3>
                 <div className="text-center font-mono text-sm text-burnt-orange mb-8">
@@ -697,36 +697,36 @@ export default function TexasWeek1RecapPage() {
                   <h4 className="font-display text-sm uppercase tracking-wider text-[#C9A227] mb-4 pb-2 border-b border-[#C9A227]/15">
                     What Michigan State Just Did at Louisville
                   </h4>
-                  <div className="font-serif text-base text-white/70 leading-relaxed space-y-4">
+                  <div className="font-serif text-base text-text-secondary leading-relaxed space-y-4">
                     <p>
                       The Spartans took a road series from No. 8 Louisville, going 2-1. This is not a team that&rsquo;s going to blink at Disch-Falk.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div className="bg-white/[0.03] border border-white/[0.06] rounded p-4">
-                        <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 1</div>
-                        <div className="font-display text-lg font-bold text-white">MSU 4, Louisville 3</div>
-                        <div className="font-mono text-[11px] text-white/40 mt-1">
+                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                        <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 1</div>
+                        <div className="font-display text-lg font-bold text-text-primary">MSU 4, Louisville 3</div>
+                        <div className="font-mono text-[11px] text-text-muted mt-1">
                           Seymour 2-4, 3 RBI, HR &middot; Broski HR &middot; Donovan 5 IP starter &middot; Szczepanski 1.1 IP, 3K save
                         </div>
                       </div>
-                      <div className="bg-white/[0.03] border border-white/[0.06] rounded p-4">
-                        <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 2</div>
-                        <div className="font-display text-lg font-bold text-white">MSU 13, Louisville 4</div>
-                        <div className="font-mono text-[11px] text-white/40 mt-1">
+                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                        <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 2</div>
+                        <div className="font-display text-lg font-bold text-text-primary">MSU 13, Louisville 4</div>
+                        <div className="font-mono text-[11px] text-text-muted mt-1">
                           Parker Picot: 8 RBI &mdash; grand slam + 3-run HR
                         </div>
                       </div>
-                      <div className="bg-white/[0.03] border border-white/[0.06] rounded p-4">
-                        <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 3</div>
-                        <div className="font-display text-lg font-bold text-white/50">Louisville 9, MSU 1</div>
-                        <div className="font-mono text-[11px] text-white/30 mt-1">
+                      <div className="bg-surface-light border border-border-subtle rounded p-4">
+                        <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 3</div>
+                        <div className="font-display text-lg font-bold text-text-tertiary">Louisville 9, MSU 1</div>
+                        <div className="font-mono text-[11px] text-text-muted mt-1">
                           Louisville salvaged the finale
                         </div>
                       </div>
                     </div>
 
-                    <p className="text-white/50">
+                    <p className="text-text-tertiary">
                       It was Michigan State&rsquo;s first series win at Louisville since 1993. Louisville dropped from No. 8 to No. 15 &mdash; their first home opening series loss since 2011. Coach Jake Boss Jr., now in his 18th season at MSU, sent a message: the Spartans are capable of beating ranked teams on the road.
                     </p>
                   </div>
@@ -734,7 +734,7 @@ export default function TexasWeek1RecapPage() {
 
                 {/* MSU key players */}
                 <div className="mb-8">
-                  <h4 className="font-display text-sm uppercase tracking-wider text-white/60 mb-4 pb-2 border-b border-white/10">
+                  <h4 className="font-display text-sm uppercase tracking-wider text-text-tertiary mb-4 pb-2 border-b border-border">
                     Spartans to Watch
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -744,23 +744,23 @@ export default function TexasWeek1RecapPage() {
                       { name: 'Broski', note: 'HR in Game 1 upset' },
                       { name: 'Donovan', note: '5 IP, 3K — Game 1 starter' },
                     ].map((player) => (
-                      <div key={player.name} className="bg-white/[0.03] border border-white/[0.06] rounded p-3">
-                        <div className="font-display text-sm font-semibold uppercase tracking-wide text-white">{player.name}</div>
-                        <div className="font-mono text-[10px] text-white/40 mt-1">{player.note}</div>
+                      <div key={player.name} className="bg-surface-light border border-border-subtle rounded p-3">
+                        <div className="font-display text-sm font-semibold uppercase tracking-wide text-text-primary">{player.name}</div>
+                        <div className="font-mono text-[10px] text-text-muted mt-1">{player.note}</div>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Series keys */}
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded p-5 mb-8">
+                <div className="bg-surface-light border border-border-subtle rounded p-5 mb-8">
                   <h4 className="font-display text-[11px] uppercase tracking-[3px] text-burnt-orange mb-4">
                     Series Keys for Texas
                   </h4>
-                  <div className="font-serif text-sm text-white/60 leading-relaxed space-y-3">
-                    <p><strong className="text-white/80">Start fast offensively.</strong> Michigan State has already shown it can win on the road. Turning Disch into a factor early matters &mdash; don&rsquo;t let the Spartans settle into the rhythm they found at Louisville.</p>
-                    <p><strong className="text-white/80">Protect the strike zone.</strong> The Spartans&rsquo; power plays if you give them free baserunners. Texas&rsquo; best version is simple: strike one, expand later. The 0.75 starter WHIP needs to hold.</p>
-                    <p><strong className="text-white/80">Convert leverage at-bats.</strong> Texas created traffic all weekend. Against a better opponent, the separator is two-out execution, not total hits. The walks set the table &mdash; now the lineup needs to clear it.</p>
+                  <div className="font-serif text-sm text-text-tertiary leading-relaxed space-y-3">
+                    <p><strong className="text-text-secondary">Start fast offensively.</strong> Michigan State has already shown it can win on the road. Turning Disch into a factor early matters &mdash; don&rsquo;t let the Spartans settle into the rhythm they found at Louisville.</p>
+                    <p><strong className="text-text-secondary">Protect the strike zone.</strong> The Spartans&rsquo; power plays if you give them free baserunners. Texas&rsquo; best version is simple: strike one, expand later. The 0.75 starter WHIP needs to hold.</p>
+                    <p><strong className="text-text-secondary">Convert leverage at-bats.</strong> Texas created traffic all weekend. Against a better opponent, the separator is two-out execution, not total hits. The walks set the table &mdash; now the lineup needs to clear it.</p>
                   </div>
                 </div>
 
@@ -768,22 +768,22 @@ export default function TexasWeek1RecapPage() {
                 <Card variant="default" padding="md">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 1</div>
-                      <div className="font-display text-sm font-semibold text-white uppercase">Friday</div>
+                      <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 1</div>
+                      <div className="font-display text-sm font-semibold text-text-primary uppercase">Friday</div>
                       <div className="font-mono text-sm text-burnt-orange">6:30 PM CT</div>
                     </div>
                     <div>
-                      <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 2</div>
-                      <div className="font-display text-sm font-semibold text-white uppercase">Saturday</div>
+                      <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 2</div>
+                      <div className="font-display text-sm font-semibold text-text-primary uppercase">Saturday</div>
                       <div className="font-mono text-sm text-burnt-orange">2:00 PM CT</div>
                     </div>
                     <div>
-                      <div className="font-display text-[10px] uppercase tracking-[3px] text-white/30 mb-1">Game 3</div>
-                      <div className="font-display text-sm font-semibold text-white uppercase">Sunday</div>
+                      <div className="font-display text-[10px] uppercase tracking-[3px] text-text-muted mb-1">Game 3</div>
+                      <div className="font-display text-sm font-semibold text-text-primary uppercase">Sunday</div>
                       <div className="font-mono text-sm text-burnt-orange">12:00 PM CT</div>
                     </div>
                   </div>
-                  <div className="text-center font-mono text-xs text-white/30 mt-3 pt-3 border-t border-white/5">
+                  <div className="text-center font-mono text-xs text-text-muted mt-3 pt-3 border-t border-border-subtle">
                     All games at UFCU Disch-Falk Field &middot; Austin, TX
                   </div>
                 </Card>
@@ -798,7 +798,7 @@ export default function TexasWeek1RecapPage() {
             <ScrollReveal direction="up">
               <div className="text-center mb-8">
                 <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
-                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mt-2">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
                   Go Deeper
                 </h2>
               </div>
@@ -808,14 +808,14 @@ export default function TexasWeek1RecapPage() {
                   className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
-                  <div className="text-white/40 text-xs">Anthropic-powered series breakdown</div>
+                  <div className="text-text-muted text-xs">Anthropic-powered series breakdown</div>
                 </button>
                 <button
                   onClick={() => openAI('gemini')}
                   className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
                 >
                   <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
-                  <div className="text-white/40 text-xs">Google-powered scouting insights</div>
+                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
                 </button>
               </div>
             </ScrollReveal>
@@ -827,11 +827,11 @@ export default function TexasWeek1RecapPage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="text-center">
-                <span className="font-mono text-[10px] uppercase tracking-[3px] text-white/30 block mb-2">NotebookLM Integration</span>
-                <h3 className="font-display text-lg uppercase tracking-wider text-white mb-4">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
                   Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-white/40 text-sm mb-6 max-w-md mx-auto">
+                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
                   One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
                 <NotebookLMExport articleText={ARTICLE_TEXT} />
@@ -849,7 +849,7 @@ export default function TexasWeek1RecapPage() {
                 <DataSourceBadge source="msuspartans.com" timestamp="February 15, 2026 CT" />
                 <DataSourceBadge source="lamarcardinals.com" timestamp="February 16, 2026 CT" />
               </div>
-              <div className="font-mono text-[11px] text-white/30 leading-relaxed">
+              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
                 Box scores sourced from Texas Longhorns official stats. Michigan State &amp; Lamar data from official athletic sites.
               </div>
               <div className="flex flex-wrap gap-6 pt-2">

@@ -66,7 +66,7 @@ export default function CFBArticlesPage() {
                 CFB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Articles</span>
+              <span className="text-text-primary font-medium">Articles</span>
             </nav>
           </Container>
         </Section>
@@ -95,7 +95,7 @@ export default function CFBArticlesPage() {
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-graphite rounded-lg p-6 animate-pulse">
+                  <div key={i} className="bg-background-tertiary rounded-lg p-6 animate-pulse">
                     <div className="h-4 bg-surface-secondary rounded w-1/4 mb-3" />
                     <div className="h-6 bg-surface-secondary rounded w-3/4 mb-2" />
                     <div className="h-4 bg-surface-secondary rounded w-full" />
@@ -130,7 +130,7 @@ export default function CFBArticlesPage() {
                             <Badge variant="secondary" size="sm">{article.conference}</Badge>
                           )}
                         </div>
-                        <h3 className="font-display text-lg font-bold text-white uppercase tracking-wide mb-2 line-clamp-2">
+                        <h3 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide mb-2 line-clamp-2">
                           {article.title}
                         </h3>
                         {article.summary && (

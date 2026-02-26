@@ -55,8 +55,8 @@ export default function AdminDashboardPage() {
           <Container>
             <div className="max-w-sm mx-auto">
               <Card padding="lg" className="text-center">
-                <h1 className="text-xl font-bold text-white mb-4">Admin Access</h1>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-[#222] border border-[#333] rounded-lg px-3 py-2 text-sm text-white mb-4 focus:outline-none focus:border-[#BF5700]" />
+                <h1 className="text-xl font-bold text-text-primary mb-4">Admin Access</h1>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && login()} placeholder="Password" className="w-full bg-background-tertiary border border-border rounded-lg px-3 py-2 text-sm text-text-primary mb-4 focus:outline-none focus:border-[#BF5700]" />
                 <button onClick={login} className="w-full py-2.5 bg-[#BF5700] text-white rounded-lg font-medium">Enter</button>
               </Card>
             </div>
@@ -73,8 +73,8 @@ export default function AdminDashboardPage() {
       <Section padding="lg">
         <Container>
           <div className="mb-8">
-            <h1 className="font-display text-3xl font-bold uppercase text-white">API Health Dashboard</h1>
-            <p className="text-[#999] text-sm mt-1">{health?.timestamp ? new Date(health.timestamp).toLocaleString() : ''}</p>
+            <h1 className="font-display text-3xl font-bold uppercase text-text-primary">API Health Dashboard</h1>
+            <p className="text-text-secondary text-sm mt-1">{health?.timestamp ? new Date(health.timestamp).toLocaleString() : ''}</p>
           </div>
 
           {loading && !health ? (
@@ -82,30 +82,30 @@ export default function AdminDashboardPage() {
           ) : health ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card padding="lg">
-                <h3 className="text-xs text-[#666] uppercase tracking-wider mb-2">KV Namespace</h3>
+                <h3 className="text-xs text-text-muted uppercase tracking-wider mb-2">KV Namespace</h3>
                 <Badge variant={statusColor(health.checks.kv.status)}>{health.checks.kv.status}</Badge>
-                {health.checks.kv.error && <p className="text-xs text-[#C62828] mt-2">{health.checks.kv.error}</p>}
+                {health.checks.kv.error && <p className="text-xs text-error mt-2">{health.checks.kv.error}</p>}
               </Card>
               <Card padding="lg">
-                <h3 className="text-xs text-[#666] uppercase tracking-wider mb-2">D1 Database</h3>
+                <h3 className="text-xs text-text-muted uppercase tracking-wider mb-2">D1 Database</h3>
                 <Badge variant={statusColor(health.checks.d1.status)}>{health.checks.d1.status}</Badge>
-                {health.checks.d1.error && <p className="text-xs text-[#C62828] mt-2">{health.checks.d1.error}</p>}
+                {health.checks.d1.error && <p className="text-xs text-error mt-2">{health.checks.d1.error}</p>}
               </Card>
               <Card padding="lg">
-                <h3 className="text-xs text-[#666] uppercase tracking-wider mb-2">Highlightly API</h3>
+                <h3 className="text-xs text-text-muted uppercase tracking-wider mb-2">Highlightly API</h3>
                 <Badge variant={statusColor(health.checks.highlightly.status)}>{health.checks.highlightly.status}</Badge>
-                {health.checks.highlightly.latency_ms != null && <p className="text-xs text-[#999] mt-2">{health.checks.highlightly.latency_ms}ms latency</p>}
-                {health.checks.highlightly.rateLimitRemaining != null && <p className="text-xs text-[#999]">{health.checks.highlightly.rateLimitRemaining} requests remaining</p>}
+                {health.checks.highlightly.latency_ms != null && <p className="text-xs text-text-secondary mt-2">{health.checks.highlightly.latency_ms}ms latency</p>}
+                {health.checks.highlightly.rateLimitRemaining != null && <p className="text-xs text-text-secondary">{health.checks.highlightly.rateLimitRemaining} requests remaining</p>}
               </Card>
               <Card padding="lg">
-                <h3 className="text-xs text-[#666] uppercase tracking-wider mb-2">Recent Errors</h3>
-                <span className={`text-2xl font-bold ${health.checks.recentErrors > 0 ? 'text-[#C62828]' : 'text-[#2E7D32]'}`}>{health.checks.recentErrors}</span>
-                <p className="text-xs text-[#666] mt-1">Last 7 days</p>
+                <h3 className="text-xs text-text-muted uppercase tracking-wider mb-2">Recent Errors</h3>
+                <span className={`text-2xl font-bold ${health.checks.recentErrors > 0 ? 'text-error' : 'text-success'}`}>{health.checks.recentErrors}</span>
+                <p className="text-xs text-text-muted mt-1">Last 7 days</p>
               </Card>
             </div>
           ) : null}
 
-          <button onClick={fetchHealth} disabled={loading} className="mt-6 px-4 py-2 bg-[#222] text-[#999] hover:text-white rounded-lg text-sm transition-colors disabled:opacity-50">
+          <button onClick={fetchHealth} disabled={loading} className="mt-6 px-4 py-2 bg-background-tertiary text-text-secondary hover:text-text-primary rounded-lg text-sm transition-colors disabled:opacity-50">
             {loading ? 'Refreshing...' : 'Refresh'}
           </button>
         </Container>

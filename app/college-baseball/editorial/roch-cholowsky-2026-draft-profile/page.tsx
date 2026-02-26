@@ -90,8 +90,8 @@ const SCOUTING_GRADES: ScoutingGrade[] = [
 function gradeColor(grade: number): string {
   if (grade >= 70) return 'text-[#C9A227]';
   if (grade >= 60) return 'text-burnt-orange';
-  if (grade >= 55) return 'text-white/80';
-  return 'text-white/50';
+  if (grade >= 55) return 'text-text-secondary';
+  return 'text-text-tertiary';
 }
 
 // ── Weekend game log ────────────────────────────────────────────────
@@ -126,15 +126,15 @@ export default function CholowskyDraftProfilePage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4 text-sm">
-                <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Editorial
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/60">Draft Profile</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-tertiary">Draft Profile</span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -143,11 +143,11 @@ export default function CholowskyDraftProfilePage() {
                 <DataSourceBadge source="BSI Analytics" />
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-white leading-[0.95] mb-4">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary leading-[0.95] mb-4">
                 Roch Cholowsky
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/50 mb-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-tertiary mb-6">
                 <span>SS &middot; UCLA Bruins</span>
                 <span className="hidden sm:inline">&middot;</span>
                 <span>Consensus No. 1 Overall Pick</span>
@@ -155,7 +155,7 @@ export default function CholowskyDraftProfilePage() {
                 <span>February 25, 2026</span>
               </div>
 
-              <p className="font-serif text-xl md:text-2xl leading-relaxed text-white/70">
+              <p className="font-serif text-xl md:text-2xl leading-relaxed text-text-secondary">
                 Six home runs in seven games. Three of them against No. 7 TCU in a sweep that settled the No. 1 ranking and widened the gap between Cholowsky and every other name on the 2026 draft board.
               </p>
             </ScrollReveal>
@@ -180,7 +180,7 @@ export default function CholowskyDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Why He&rsquo;s No. 1
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Roch Cholowsky entered 2026 as the consensus No. 1 overall pick, and two weekends of live competition have done nothing to challenge that status. If anything, the TCU series expanded the case. The grand slam in Game 1&rsquo;s second inning &mdash; off a ranked team&rsquo;s Friday starter, with the bases loaded and two outs &mdash; was a draft-night highlight before February ended. The solo shot in the fifth was redundant by then. The third homer, in Game 3&rsquo;s run-rule, was punctuation on a series that UCLA had already won in spirit by Saturday afternoon.
                 </p>
@@ -199,42 +199,42 @@ export default function CholowskyDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mb-6 pb-2 border-b border-white/10">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
                 Weekend 2 vs No. 7 TCU &mdash; Game Log
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/15">
+                    <tr className="border-b border-border-strong">
                       {['Game', 'Result', 'AB', 'H', 'HR', 'RBI', 'BB', 'SO', 'Note'].map((h) => (
-                        <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-left">{h}</th>
+                        <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-left">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {UCLA_TCU_SERIES.map((g) => (
-                      <tr key={g.game} className="border-b border-white/10">
-                        <td className="py-3 px-3 text-white text-sm font-medium">{g.game}</td>
-                        <td className="py-3 px-3 text-green-500 text-sm font-semibold">{g.result}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.ab}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.h}</td>
+                      <tr key={g.game} className="border-b border-border">
+                        <td className="py-3 px-3 text-text-primary text-sm font-medium">{g.game}</td>
+                        <td className="py-3 px-3 text-success text-sm font-semibold">{g.result}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.ab}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.h}</td>
                         <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">{g.hr}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.rbi}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.bb}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.so}</td>
-                        <td className="py-3 px-3 text-white/60 text-sm">{g.note}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.rbi}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.bb}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.so}</td>
+                        <td className="py-3 px-3 text-text-tertiary text-sm">{g.note}</td>
                       </tr>
                     ))}
                     {/* Series totals */}
-                    <tr className="border-t-2 border-burnt-orange/30 bg-white/[0.02]">
-                      <td className="py-3 px-3 text-white text-sm font-bold" colSpan={2}>Series Total</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">12</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">5</td>
+                    <tr className="border-t-2 border-burnt-orange/30 bg-surface-light">
+                      <td className="py-3 px-3 text-text-primary text-sm font-bold" colSpan={2}>Series Total</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">12</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">5</td>
                       <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">3</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">7</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">2</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">1</td>
-                      <td className="py-3 px-3 text-white/60 text-sm italic">UCLA swept 30-8</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">7</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">2</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">1</td>
+                      <td className="py-3 px-3 text-text-tertiary text-sm italic">UCLA swept 30-8</td>
                     </tr>
                   </tbody>
                 </table>
@@ -250,7 +250,7 @@ export default function CholowskyDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 Scouting Report
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Cholowsky&rsquo;s calling card is the hit tool &mdash; quick hands, natural feel for the barrel, and an approach at the plate that belies his age. He doesn&rsquo;t chase. He doesn&rsquo;t expand. When pitchers miss over the plate, he punishes them. When they don&rsquo;t, he takes his walk and moves to the next at-bat. That discipline is what makes the power numbers sustainable rather than streaky.
                 </p>
@@ -269,28 +269,28 @@ export default function CholowskyDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mb-6 pb-2 border-b border-white/10">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
                 BSI Scouting Grades (20&ndash;80 Scale)
               </h2>
-              <p className="text-xs text-white/30 mb-4 uppercase tracking-widest">
+              <p className="text-xs text-text-muted mb-4 uppercase tracking-widest">
                 Based on early-season performance + pre-draft consensus. Not a final evaluation.
               </p>
               <div className="space-y-4">
                 {SCOUTING_GRADES.map((g) => (
-                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-white/[0.06]">
-                    <span className="font-display text-sm font-bold uppercase tracking-wider text-white/60 w-16 shrink-0 pt-0.5">{g.tool}</span>
+                  <div key={g.tool} className="flex items-start gap-4 py-3 border-b border-border-subtle">
+                    <span className="font-display text-sm font-bold uppercase tracking-wider text-text-tertiary w-16 shrink-0 pt-0.5">{g.tool}</span>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="text-center">
-                        <span className="text-[10px] text-white/30 block uppercase tracking-widest">Now</span>
+                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Now</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.current)}`}>{g.current}</span>
                       </div>
-                      <span className="text-white/20">&rarr;</span>
+                      <span className="text-text-muted">&rarr;</span>
                       <div className="text-center">
-                        <span className="text-[10px] text-white/30 block uppercase tracking-widest">Proj</span>
+                        <span className="text-[10px] text-text-muted block uppercase tracking-widest">Proj</span>
                         <span className={`font-mono text-lg font-bold ${gradeColor(g.future)}`}>{g.future}</span>
                       </div>
                     </div>
-                    <span className="text-sm text-white/50 leading-snug">{g.note}</span>
+                    <span className="text-sm text-text-tertiary leading-snug">{g.note}</span>
                   </div>
                 ))}
               </div>
@@ -305,7 +305,7 @@ export default function CholowskyDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 The UCLA Factor
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Cholowsky doesn&rsquo;t operate in a vacuum. UCLA is the No. 1 team in the country for a reason, and it starts with the lineup around him. Will Gasparino, hitting behind Cholowsky in the 4-hole, went 7-for-13 (.538) in the TCU series. Together, the 3-4 hitters produced 6 home runs and 16 RBI across three games. TCU&rsquo;s pitching staff &mdash; which had limited two ranked teams to single-digit run totals a week earlier &mdash; couldn&rsquo;t pitch around Cholowsky because Gasparino was waiting behind him. And they couldn&rsquo;t pitch to him because the result was a grand slam.
                 </p>
@@ -342,49 +342,49 @@ export default function CholowskyDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-white/40 mb-4">More 2026 Draft Profiles</h3>
+              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/dylan-volantis-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Dylan Volantis &mdash; 14 IP, 0 ER, The Conversion
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Jackson Flora &mdash; 100 MPH, New Arsenal
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Liam Peterson &mdash; The Walk Problem
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Tyce Armstrong &mdash; 3 Grand Slams, 50 Years
                   </p>
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/weekend-2-recap" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Related</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/weekend-2-recap" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Weekend 2 Recap: Full National Breakdown
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/ucla-2026" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Team Preview</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/ucla-2026" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Team Preview</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     UCLA 2026 Season Preview
                   </p>
                 </Link>
               </div>
 
-              <Link href="/college-baseball/players" className="text-xs text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/college-baseball/players" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
                 Full Player Database &rarr;
               </Link>
             </ScrollReveal>

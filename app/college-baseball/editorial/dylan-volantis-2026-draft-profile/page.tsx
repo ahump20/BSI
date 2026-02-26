@@ -113,15 +113,15 @@ export default function VolantisDraftProfilePage() {
           <Container size="narrow">
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4 text-sm">
-                <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+                <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                   Editorial
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/60">Draft Profile</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-tertiary">Draft Profile</span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -130,11 +130,11 @@ export default function VolantisDraftProfilePage() {
                 <DataSourceBadge source="BSI Analytics" />
               </div>
 
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-white leading-[0.95] mb-4">
+              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-text-primary leading-[0.95] mb-4">
                 Dylan Volantis
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/50 mb-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-tertiary mb-6">
                 <span>LHP &middot; Texas Longhorns</span>
                 <span className="hidden sm:inline">&middot;</span>
                 <span>2025 SEC Freshman of the Year</span>
@@ -142,7 +142,7 @@ export default function VolantisDraftProfilePage() {
                 <span>February 25, 2026</span>
               </div>
 
-              <p className="font-serif text-xl md:text-2xl leading-relaxed text-white/70">
+              <p className="font-serif text-xl md:text-2xl leading-relaxed text-text-secondary">
                 Fourteen innings. Zero earned runs. Seventeen strikeouts. The converted closer hasn&rsquo;t allowed a run as a starter &mdash; and if the workload holds through SEC play, the draft conversation shifts from &ldquo;interesting reliever&rdquo; to first-round starter.
               </p>
             </ScrollReveal>
@@ -167,7 +167,7 @@ export default function VolantisDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 The Closer-to-Starter Conversion
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Dylan Volantis was the most dominant reliever in college baseball last spring. A 1.94 ERA with 74 strikeouts and 12 saves in 51 innings &mdash; as a freshman. His 11 SEC saves broke a conference freshman record that had stood for 22 years. He entered 2026 as the reigning SEC Freshman of the Year with a simple question hanging over his season: can the closer become a starter?
                 </p>
@@ -186,43 +186,43 @@ export default function VolantisDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container>
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mb-6 pb-2 border-b border-white/10">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
                 2026 Sunday Starts
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/15">
+                    <tr className="border-b border-border-strong">
                       {['Start', 'Opp', 'Result', 'IP', 'H', 'ER', 'BB', 'SO', 'P', 'Note'].map((h) => (
-                        <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-left">{h}</th>
+                        <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-left">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {STARTS_2026.map((g) => (
-                      <tr key={g.game} className="border-b border-white/10">
-                        <td className="py-3 px-3 text-white text-sm font-medium">{g.game}</td>
-                        <td className="py-3 px-3 text-white text-sm">{g.opponent}</td>
-                        <td className="py-3 px-3 text-green-500 text-sm font-semibold">{g.result}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center font-mono">{g.ip}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.h}</td>
+                      <tr key={g.game} className="border-b border-border">
+                        <td className="py-3 px-3 text-text-primary text-sm font-medium">{g.game}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm">{g.opponent}</td>
+                        <td className="py-3 px-3 text-success text-sm font-semibold">{g.result}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center font-mono">{g.ip}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.h}</td>
                         <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">{g.er}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.bb}</td>
-                        <td className="py-3 px-3 text-white text-sm text-center">{g.so}</td>
-                        <td className="py-3 px-3 text-white/50 text-sm text-center font-mono">{g.pitches}</td>
-                        <td className="py-3 px-3 text-white/60 text-sm">{g.note}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.bb}</td>
+                        <td className="py-3 px-3 text-text-primary text-sm text-center">{g.so}</td>
+                        <td className="py-3 px-3 text-text-tertiary text-sm text-center font-mono">{g.pitches}</td>
+                        <td className="py-3 px-3 text-text-tertiary text-sm">{g.note}</td>
                       </tr>
                     ))}
                     {/* Totals */}
-                    <tr className="border-t-2 border-burnt-orange/30 bg-white/[0.02]">
-                      <td className="py-3 px-3 text-white text-sm font-bold" colSpan={3}>2026 Total (2 starts)</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-mono font-bold">14.0</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">6</td>
+                    <tr className="border-t-2 border-burnt-orange/30 bg-surface-light">
+                      <td className="py-3 px-3 text-text-primary text-sm font-bold" colSpan={3}>2026 Total (2 starts)</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-mono font-bold">14.0</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">6</td>
                       <td className="py-3 px-3 text-burnt-orange font-bold text-sm text-center">0</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">2</td>
-                      <td className="py-3 px-3 text-white text-sm text-center font-bold">17</td>
-                      <td className="py-3 px-3 text-white/50 text-sm text-center">&mdash;</td>
-                      <td className="py-3 px-3 text-white/60 text-sm italic">0.00 ERA, 0.57 WHIP</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">2</td>
+                      <td className="py-3 px-3 text-text-primary text-sm text-center font-bold">17</td>
+                      <td className="py-3 px-3 text-text-tertiary text-sm text-center">&mdash;</td>
+                      <td className="py-3 px-3 text-text-tertiary text-sm italic">0.00 ERA, 0.57 WHIP</td>
                     </tr>
                   </tbody>
                 </table>
@@ -238,7 +238,7 @@ export default function VolantisDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 The Stuff
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Volantis throws from the left side with a fastball that parks in the low-90s and a slider that acts as the putaway pitch. In the bullpen last year, the slider was a weapon because hitters saw it once, maybe twice, and couldn&rsquo;t adjust. The starter test is whether the slider holds up the third time through a lineup &mdash; whether right-handed hitters who&rsquo;ve tracked it once can time it when they see it again in the sixth inning.
                 </p>
@@ -257,28 +257,28 @@ export default function VolantisDraftProfilePage() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-white mb-6 pb-2 border-b border-white/10">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mb-6 pb-2 border-b border-border">
                 2025 Freshman Season
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-white/30 block uppercase tracking-widest">ERA</span>
+                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                  <span className="text-[10px] text-text-muted block uppercase tracking-widest">ERA</span>
                   <span className="font-mono text-2xl font-bold text-burnt-orange">{FRESHMAN_STATS.era}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-white/30 block uppercase tracking-widest">IP</span>
-                  <span className="font-mono text-2xl font-bold text-white">{FRESHMAN_STATS.ip}</span>
+                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                  <span className="text-[10px] text-text-muted block uppercase tracking-widest">IP</span>
+                  <span className="font-mono text-2xl font-bold text-text-primary">{FRESHMAN_STATS.ip}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-white/30 block uppercase tracking-widest">Strikeouts</span>
-                  <span className="font-mono text-2xl font-bold text-white">{FRESHMAN_STATS.so}</span>
+                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                  <span className="text-[10px] text-text-muted block uppercase tracking-widest">Strikeouts</span>
+                  <span className="font-mono text-2xl font-bold text-text-primary">{FRESHMAN_STATS.so}</span>
                 </div>
-                <div className="p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-white/30 block uppercase tracking-widest">Saves</span>
+                <div className="p-3 rounded-lg bg-surface-light border border-border-subtle">
+                  <span className="text-[10px] text-text-muted block uppercase tracking-widest">Saves</span>
                   <span className="font-mono text-2xl font-bold text-burnt-orange">{FRESHMAN_STATS.sv}</span>
                 </div>
               </div>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-4">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-4">
                 <p>
                   The 2025 resume is what made the 2026 conversion possible. Volantis posted a 1.94 ERA across 51 innings with 74 strikeouts as a freshman closer &mdash; elite production in a high-leverage role where most freshmen either crumble or cap out at 20 innings. He threw 51. He saved 12 games, 11 in SEC play, breaking a conference freshman record that had stood since 2003. He earned SEC Freshman of the Year honors.
                 </p>
@@ -297,7 +297,7 @@ export default function VolantisDraftProfilePage() {
               <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
                 The Texas Pitching Machine
               </h2>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Volantis doesn&rsquo;t pitch in isolation. Texas&rsquo;s staff has a 1.53 ERA through seven games. The Riojas&ndash;Harrison&ndash;Volantis rotation has posted a 0.75 WHIP across three-game weekends. The Sunday pitching formula &mdash; Volantis into the bullpen (Crossland and Burns combining for scoreless relief innings) &mdash; hasn&rsquo;t allowed an earned run through two weekends.
                 </p>
@@ -337,49 +337,49 @@ export default function VolantisDraftProfilePage() {
         <Section padding="lg">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-white/40 mb-4">More 2026 Draft Profiles</h3>
+              <h3 className="font-display text-sm font-semibold uppercase tracking-widest text-text-muted mb-4">More 2026 Draft Profiles</h3>
               <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/roch-cholowsky-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Roch Cholowsky &mdash; No. 1 Overall Pick
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/jackson-flora-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Jackson Flora &mdash; 100 MPH, New Arsenal
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/liam-peterson-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Liam Peterson &mdash; The Walk Problem
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Draft Profile</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/tyce-armstrong-2026-draft-profile" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Draft Profile</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Tyce Armstrong &mdash; 3 Grand Slams, 50 Years
                   </p>
                 </Link>
               </div>
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <Link href="/college-baseball/editorial/texas-week-2-recap" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Related</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/texas-week-2-recap" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Related</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Texas Week 2: Robbins Cycle, Volantis Shutout
                   </p>
                 </Link>
-                <Link href="/college-baseball/editorial/texas-2026" className="group block p-4 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:border-burnt-orange/30 transition-colors">
-                  <span className="text-[10px] text-white/30 uppercase tracking-widest">Team Preview</span>
-                  <p className="text-sm font-display uppercase tracking-wide text-white group-hover:text-burnt-orange transition-colors mt-1">
+                <Link href="/college-baseball/editorial/texas-2026" className="group block p-4 rounded-lg border border-border-subtle bg-surface-light hover:border-burnt-orange/30 transition-colors">
+                  <span className="text-[10px] text-text-muted uppercase tracking-widest">Team Preview</span>
+                  <p className="text-sm font-display uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mt-1">
                     Texas 2026 Season Preview
                   </p>
                 </Link>
               </div>
 
-              <Link href="/college-baseball/players" className="text-xs text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/college-baseball/players" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
                 Full Player Database &rarr;
               </Link>
             </ScrollReveal>

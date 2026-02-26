@@ -210,9 +210,9 @@ export default function NBAPage() {
                               </thead>
                               <tbody>
                                 {conf.teams.sort((a, b) => b.wins - a.wins).map((team, idx) => (
-                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-white/5 transition-colors">
+                                  <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                    <td className="p-3 font-semibold text-white">{team.teamName}</td>
+                                    <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                     <td className="p-3 text-text-secondary">{team.wins}</td>
                                     <td className="p-3 text-text-secondary">{team.losses}</td>
                                     <td className="p-3 text-text-secondary">{team.winPercentage.toFixed(3).replace('0.', '.')}</td>
@@ -283,7 +283,7 @@ export default function NBAPage() {
                       {conf.teams.sort((a, b) => b.wins - a.wins).map((team) => (
                         <Link key={team.teamName} href={`/nba/teams/${team.teamName.toLowerCase().replace(/\s+/g, '-')}`}>
                           <Card variant="hover" padding="sm" className="flex items-center justify-between px-4 py-3">
-                            <span className="font-medium text-white">{team.teamName}</span>
+                            <span className="font-medium text-text-primary">{team.teamName}</span>
                             <span className="text-sm text-text-tertiary">{team.wins}-{team.losses}</span>
                           </Card>
                         </Link>

@@ -62,7 +62,7 @@ export function MonteCarloClient() {
         }}
       />
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -77,10 +77,10 @@ export function MonteCarloClient() {
         <Section padding="lg">
           <Container size="narrow">
             <Badge variant="warning" className="mb-4">In Development — v0.1</Badge>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
               Monte Carlo Simulation
             </h1>
-            <p className="text-white/50 text-lg leading-relaxed mb-12">
+            <p className="text-text-tertiary text-lg leading-relaxed mb-12">
               Project season outcomes by simulating thousands of remaining schedules. Each
               simulation plays out every unplayed game using team strength estimates, then
               aggregates results into probability distributions for standings, tournament bids,
@@ -89,10 +89,10 @@ export function MonteCarloClient() {
 
             {/* Definition */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Definition
               </h2>
-              <p className="text-sm text-white/50 leading-relaxed">
+              <p className="text-sm text-text-tertiary leading-relaxed">
                 Monte Carlo simulation is a computational technique that runs a model thousands of
                 times with randomized inputs to estimate the probability distribution of outcomes.
                 In sports: simulate the remaining schedule 10,000 times, vary game results based on
@@ -102,7 +102,7 @@ export function MonteCarloClient() {
 
             {/* Inputs */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Inputs
               </h2>
               <div className="space-y-3">
@@ -115,12 +115,12 @@ export function MonteCarloClient() {
                 ].map((input) => (
                   <div
                     key={input.label}
-                    className="flex gap-4 items-start bg-white/[0.03] border border-white/[0.06] rounded-lg p-4"
+                    className="flex gap-4 items-start bg-surface-light border border-border-subtle rounded-lg p-4"
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#BF5700] mt-0.5 shrink-0 w-32">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-32">
                       {input.label}
                     </span>
-                    <p className="text-sm text-white/50 leading-relaxed">{input.detail}</p>
+                    <p className="text-sm text-text-tertiary leading-relaxed">{input.detail}</p>
                   </div>
                 ))}
               </div>
@@ -128,23 +128,23 @@ export function MonteCarloClient() {
 
             {/* Assumptions */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Assumptions
               </h2>
-              <ul className="space-y-2 text-sm text-white/50 leading-relaxed">
+              <ul className="space-y-2 text-sm text-text-tertiary leading-relaxed">
                 <li className="flex gap-2">
-                  <span className="text-[#BF5700] mt-1 shrink-0">&#8226;</span>
+                  <span className="text-burnt-orange mt-1 shrink-0">&#8226;</span>
                   Team strength is treated as a fixed value that doesn&#39;t change across the
                   remaining schedule. In reality, injuries, transfers, and development alter team
                   quality mid-season.
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-[#BF5700] mt-1 shrink-0">&#8226;</span>
+                  <span className="text-burnt-orange mt-1 shrink-0">&#8226;</span>
                   Each game outcome is independent. Series momentum, fatigue effects from
                   back-to-back games, and travel impact are not modeled.
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-[#BF5700] mt-1 shrink-0">&#8226;</span>
+                  <span className="text-burnt-orange mt-1 shrink-0">&#8226;</span>
                   10,000 simulations is the default run count. This produces stable probability
                   estimates (standard error &lt;1% for most outcomes) without excessive computation
                   time.
@@ -154,35 +154,35 @@ export function MonteCarloClient() {
 
             {/* Live Simulation Example */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Validation
               </h2>
-              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
-                <p className="text-sm text-white/50 leading-relaxed mb-3">
-                  <strong className="text-white/70">Backtest approach:</strong> run the simulation at
+              <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+                <p className="text-sm text-text-tertiary leading-relaxed mb-3">
+                  <strong className="text-text-secondary">Backtest approach:</strong> run the simulation at
                   multiple points during past seasons and compare projected standings to actual final
                   standings.
                 </p>
 
                 {loading && (
                   <div className="mt-4 space-y-2 animate-pulse">
-                    <div className="h-4 bg-white/[0.06] rounded w-3/4" />
-                    <div className="h-32 bg-white/[0.04] rounded-lg" />
+                    <div className="h-4 bg-surface-light rounded w-3/4" />
+                    <div className="h-32 bg-surface-light rounded-lg" />
                   </div>
                 )}
 
                 {mcData?.example && (
-                  <div className="mt-4 bg-white/[0.02] rounded-lg p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#BF5700] mb-1">
+                  <div className="mt-4 bg-surface-light rounded-lg p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-burnt-orange mb-1">
                       Sample: {mcData.example.conference} Conference
                     </p>
-                    <p className="text-[10px] text-white/20 mb-3">
+                    <p className="text-[10px] text-text-muted mb-3">
                       {mcData.example.simulations.toLocaleString()} simulations — {mcData.example.date}
                     </p>
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs">
                         <thead>
-                          <tr className="text-white/25 uppercase tracking-wider border-b border-white/[0.06]">
+                          <tr className="text-text-muted uppercase tracking-wider border-b border-border-subtle">
                             <th className="text-left py-2 pr-3">Team</th>
                             <th className="text-right py-2 px-2">W-L</th>
                             <th className="text-right py-2 px-2">Tourney</th>
@@ -192,18 +192,18 @@ export function MonteCarloClient() {
                         </thead>
                         <tbody>
                           {mcData.example.projectedStandings.map((team) => (
-                            <tr key={team.team} className="border-b border-white/[0.03]">
-                              <td className="py-2 pr-3 text-white/60 font-medium">{team.team}</td>
-                              <td className="py-2 px-2 text-right text-white/40 font-mono">
+                            <tr key={team.team} className="border-b border-border-subtle">
+                              <td className="py-2 pr-3 text-text-secondary font-medium">{team.team}</td>
+                              <td className="py-2 px-2 text-right text-text-muted font-mono">
                                 {team.projectedWins.toFixed(1)}-{team.projectedLosses.toFixed(1)}
                               </td>
-                              <td className="py-2 px-2 text-right text-white/40 font-mono">
+                              <td className="py-2 px-2 text-right text-text-muted font-mono">
                                 {(team.tournamentOdds * 100).toFixed(0)}%
                               </td>
-                              <td className="py-2 px-2 text-right text-white/40 font-mono">
+                              <td className="py-2 px-2 text-right text-text-muted font-mono">
                                 {(team.cwsOdds * 100).toFixed(0)}%
                               </td>
-                              <td className="py-2 pl-2 text-right text-white/40 font-mono">
+                              <td className="py-2 pl-2 text-right text-text-muted font-mono">
                                 {(team.nationalSeedOdds * 100).toFixed(0)}%
                               </td>
                             </tr>
@@ -211,15 +211,15 @@ export function MonteCarloClient() {
                         </tbody>
                       </table>
                     </div>
-                    <p className="text-[10px] text-white/15 mt-3">
+                    <p className="text-[10px] text-text-muted mt-3">
                       Model: {mcData.methodology.model} — {mcData.methodology.simCount.toLocaleString()} sims
                     </p>
                   </div>
                 )}
 
                 {!loading && !mcData?.example && (
-                  <p className="text-sm text-white/50 leading-relaxed mt-3">
-                    <strong className="text-white/70">Current status:</strong> backtest framework is
+                  <p className="text-sm text-text-tertiary leading-relaxed mt-3">
+                    <strong className="text-text-secondary">Current status:</strong> backtest framework is
                     built. 2024-2025 college baseball season is the primary validation target.
                   </p>
                 )}
@@ -228,7 +228,7 @@ export function MonteCarloClient() {
 
             {/* Failure Modes */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Failure Modes
               </h2>
               <div className="space-y-3">
@@ -240,10 +240,10 @@ export function MonteCarloClient() {
                 ].map((mode, i) => (
                   <div
                     key={i}
-                    className="flex gap-3 items-start bg-red-500/5 border border-red-500/10 rounded-lg p-4"
+                    className="flex gap-3 items-start bg-error/5 border border-error/10 rounded-lg p-4"
                   >
-                    <span className="text-red-400/60 text-xs font-bold mt-0.5 shrink-0">!</span>
-                    <p className="text-sm text-white/50 leading-relaxed">{mode}</p>
+                    <span className="text-error/60 text-xs font-bold mt-0.5 shrink-0">!</span>
+                    <p className="text-sm text-text-tertiary leading-relaxed">{mode}</p>
                   </div>
                 ))}
               </div>
@@ -251,16 +251,16 @@ export function MonteCarloClient() {
 
             {/* Version History */}
             <section className="mb-12">
-              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                 Version History
               </h2>
-              <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
+              <div className="bg-surface-light border border-border-subtle rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-[#BF5700]">v0.1</span>
-                  <span className="text-white/20">|</span>
-                  <span className="text-xs text-white/30">February 2026</span>
+                  <span className="font-mono text-xs text-burnt-orange">v0.1</span>
+                  <span className="text-text-muted">|</span>
+                  <span className="text-xs text-text-muted">February 2026</span>
                 </div>
-                <p className="text-sm text-white/40 mt-1">
+                <p className="text-sm text-text-muted mt-1">
                   Initial methodology documentation. Simulation engine scaffolded. Backtest
                   validation pending 2025 season completion.
                 </p>
@@ -275,11 +275,11 @@ export function MonteCarloClient() {
             />
 
             {/* Navigation */}
-            <div className="mt-12 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/models" className="hover:text-white/60 transition-colors">
+            <div className="mt-12 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/models" className="hover:text-text-secondary transition-colors">
                 &#8592; All Models
               </Link>
-              <Link href="/models/win-probability" className="hover:text-white/60 transition-colors">
+              <Link href="/models/win-probability" className="hover:text-text-secondary transition-colors">
                 Win Probability &#8594;
               </Link>
             </div>

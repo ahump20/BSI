@@ -33,19 +33,19 @@ export default function ParkFactorsPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   Home
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <Link href="/college-baseball/savant" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <span className="text-text-muted">/</span>
+                <Link href="/college-baseball/savant" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   Savant
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/70">Park Factors</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-secondary">Park Factors</span>
               </nav>
             </ScrollReveal>
 
@@ -55,10 +55,10 @@ export default function ParkFactorsPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">VENUE ANALYTICS</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-white">
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
                   Park <span className="text-[#BF5700]">Factors</span>
                 </h1>
-                <p className="text-white/50 mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   How venues inflate or suppress offense. A runs factor above 1.000 means
                   the park produces more runs than average; below 1.000 means fewer. Computed
                   from home/away run differentials across all games played at each venue.
@@ -73,16 +73,16 @@ export default function ParkFactorsPage() {
                   <span className="text-xs text-[#BF5700] font-display uppercase tracking-widest block mb-1">
                     Hitter-Friendly
                   </span>
-                  <p className="text-[11px] text-white/40 leading-relaxed">
+                  <p className="text-[11px] text-text-muted leading-relaxed">
                     Runs factor &ge; 1.050. Thin air, short fences, or dry climate conditions
                     that boost offensive production.
                   </p>
                 </Card>
                 <Card padding="md">
-                  <span className="text-xs text-white/40 font-display uppercase tracking-widest block mb-1">
+                  <span className="text-xs text-text-muted font-display uppercase tracking-widest block mb-1">
                     Neutral
                   </span>
-                  <p className="text-[11px] text-white/40 leading-relaxed">
+                  <p className="text-[11px] text-text-muted leading-relaxed">
                     Runs factor between 0.950 and 1.050. No significant offensive skew
                     in either direction.
                   </p>
@@ -91,7 +91,7 @@ export default function ParkFactorsPage() {
                   <span className="text-xs text-[#5b9bd5] font-display uppercase tracking-widest block mb-1">
                     Pitcher-Friendly
                   </span>
-                  <p className="text-[11px] text-white/40 leading-relaxed">
+                  <p className="text-[11px] text-text-muted leading-relaxed">
                     Runs factor &le; 0.950. Dense air, deep outfields, or marine climate
                     that suppresses offense.
                   </p>
@@ -105,7 +105,7 @@ export default function ParkFactorsPage() {
                 <TableSkeleton />
               ) : error ? (
                 <Card padding="lg" className="text-center">
-                  <p className="text-red-400 mb-4">{error}</p>
+                  <p className="text-error mb-4">{error}</p>
                   <button
                     onClick={retry}
                     className="px-5 py-2 bg-[#BF5700]/20 text-[#BF5700] rounded-lg text-sm font-medium hover:bg-[#BF5700]/30 transition-colors"
@@ -129,14 +129,14 @@ export default function ParkFactorsPage() {
 function TableSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-white/[0.04]">
-        <div className="h-5 w-32 bg-white/[0.06] rounded animate-pulse" />
+      <div className="px-5 py-4 border-b border-border-subtle">
+        <div className="h-5 w-32 bg-surface-medium rounded animate-pulse" />
       </div>
       {Array.from({ length: 8 }).map((_, i) => (
         <div key={i} className="px-5 py-3 flex items-center gap-4 border-b border-white/[0.02]">
-          <div className="h-4 w-32 bg-white/[0.06] rounded animate-pulse" />
-          <div className="h-4 w-24 bg-white/[0.04] rounded animate-pulse hidden sm:block" />
-          <div className="h-4 w-16 bg-white/[0.04] rounded animate-pulse ml-auto" />
+          <div className="h-4 w-32 bg-surface-medium rounded animate-pulse" />
+          <div className="h-4 w-24 bg-surface-light rounded animate-pulse hidden sm:block" />
+          <div className="h-4 w-16 bg-surface-light rounded animate-pulse ml-auto" />
         </div>
       ))}
     </Card>

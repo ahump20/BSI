@@ -45,7 +45,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
 
 function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagChange: (tag: FilterTag) => void }) {
   return (
-    <Section padding="sm" className="border-b border-white/10 sticky top-0 z-30 bg-charcoal/95 backdrop-blur-sm">
+    <Section padding="sm" className="border-b border-border sticky top-0 z-30 bg-background-secondary/95 backdrop-blur-sm">
       <Container>
         <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1" aria-label="Filter articles by tag">
           {FILTER_TAGS.map((tag) => {
@@ -59,7 +59,7 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
                   border transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                    : 'bg-white/[0.03] text-white/40 border-white/10 hover:text-white/60 hover:border-white/20'
+                    : 'bg-surface-light text-text-muted border-border hover:text-text-secondary hover:border-border-subtle'
                   }
                 `}
                 aria-pressed={isActive}
@@ -90,14 +90,14 @@ export default function MLBEditorialPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/mlb" className="text-text-muted hover:text-burnt-orange transition-colors">
                 MLB
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Editorial</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Editorial</span>
             </nav>
           </Container>
         </Section>
@@ -113,7 +113,7 @@ export default function MLBEditorialPage() {
                   MLB{' '}
                   <span className="text-gradient-blaze">Editorial</span>
                 </h1>
-                <p className="text-white/50 text-lg leading-relaxed">
+                <p className="text-text-tertiary text-lg leading-relaxed">
                   Season previews, division analysis, and long-form coverage of all 30 teams.
                   The depth this sport has always deserved.
                 </p>
@@ -129,13 +129,13 @@ export default function MLBEditorialPage() {
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-3">
                         <Badge variant="secondary">{featured.badge}</Badge>
-                        <span className="text-white/30 text-sm">{featured.date}</span>
-                        <span className="text-white/30 text-sm">{featured.readTime}</span>
+                        <span className="text-text-muted text-sm">{featured.date}</span>
+                        <span className="text-text-muted text-sm">{featured.readTime}</span>
                       </div>
-                      <h2 className="font-display text-2xl md:text-3xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
+                      <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
                         {featured.title}
                       </h2>
-                      <p className="text-white/50 max-w-xl">{featured.description}</p>
+                      <p className="text-text-tertiary max-w-xl">{featured.description}</p>
                       <div className="mt-4 flex items-center gap-2 text-burnt-orange text-sm font-semibold group-hover:text-ember transition-colors">
                         Read article
                         <svg viewBox="0 0 24 24" className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
@@ -158,7 +158,7 @@ export default function MLBEditorialPage() {
           <Section padding="lg" background="charcoal" borderTop>
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-secondary mb-6">
                   All Articles
                 </h2>
               </ScrollReveal>
@@ -169,13 +169,13 @@ export default function MLBEditorialPage() {
                       <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary">{article.badge}</Badge>
-                          <span className="text-white/20 text-xs">{article.readTime}</span>
+                          <span className="text-text-muted text-xs">{article.readTime}</span>
                         </div>
-                        <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                           {article.title}
                         </h3>
-                        <p className="text-white/40 text-xs leading-relaxed">{article.description}</p>
-                        <p className="text-white/20 text-[10px] mt-3">{article.date}</p>
+                        <p className="text-text-muted text-xs leading-relaxed">{article.description}</p>
+                        <p className="text-text-muted text-[10px] mt-3">{article.date}</p>
                       </Card>
                     </Link>
                   </ScrollReveal>
@@ -190,7 +190,7 @@ export default function MLBEditorialPage() {
           <Section padding="lg">
             <Container>
               <div className="text-center py-12">
-                <p className="text-white/30 text-sm">No editorial content matches this filter yet.</p>
+                <p className="text-text-muted text-sm">No editorial content matches this filter yet.</p>
                 <button
                   onClick={() => setActiveTag('All')}
                   className="mt-4 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
@@ -209,19 +209,19 @@ export default function MLBEditorialPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">30</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">MLB Teams</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">MLB Teams</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">6</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Divisions</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Divisions</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-[#C9A227]">162</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Games / Season</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Games / Season</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">1</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Feature Article</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Feature Article</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -241,7 +241,7 @@ export default function MLBEditorialPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-white/20 text-xs">
+              <p className="text-text-muted text-xs">
                 Data: MLB / ESPN / FanGraphs / Baseball Prospectus &mdash; February 2026
               </p>
               <Link href="/mlb" className="text-sm text-burnt-orange hover:text-ember transition-colors">

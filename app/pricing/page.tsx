@@ -105,7 +105,7 @@ export default function PricingPage() {
                     )}
 
                     <div className="text-center mb-6">
-                      <h2 className="font-display text-2xl font-bold text-white mb-2">
+                      <h2 className="font-display text-2xl font-bold text-text-primary mb-2">
                         {tier.name}
                       </h2>
                       <p className="text-text-tertiary text-sm">{tier.description}</p>
@@ -180,7 +180,7 @@ export default function PricingPage() {
               ].map((item, index) => (
                 <ScrollReveal key={item.title} direction="up" delay={index * 100}>
                   <Card padding="lg" className="text-center h-full">
-                    <h3 className="font-semibold text-white text-lg mb-3">{item.title}</h3>
+                    <h3 className="font-semibold text-text-primary text-lg mb-3">{item.title}</h3>
                     <p className="text-text-tertiary text-sm">{item.description}</p>
                   </Card>
                 </ScrollReveal>

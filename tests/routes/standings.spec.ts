@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
 const MOCK_STANDINGS = [
   {
     rank: 1,
-    team: { id: 'texas', name: 'Texas Longhorns', shortName: 'Texas', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/126.png' },
+    team: { id: 'texas', name: 'Texas Longhorns', shortName: 'Texas', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' },
     conferenceRecord: { wins: 12, losses: 3, pct: 0 },
     overallRecord: { wins: 35, losses: 10 },
     winPct: 0.778,
@@ -20,7 +20,7 @@ const MOCK_STANDINGS = [
   },
   {
     rank: 2,
-    team: { id: 'texas-am', name: 'Texas A&M Aggies', shortName: 'Texas A&M', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/123.png' },
+    team: { id: 'texas-am', name: 'Texas A&M Aggies', shortName: 'Texas A&M', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' },
     conferenceRecord: { wins: 10, losses: 5, pct: 0 },
     overallRecord: { wins: 30, losses: 12 },
     winPct: 0.714,

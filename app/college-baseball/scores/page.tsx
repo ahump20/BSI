@@ -6,11 +6,12 @@ import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, DataSourceBadge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface Game {
   id: string;
@@ -107,14 +108,14 @@ export default function CollegeBaseballScoresPage() {
     return (
       <Link href={gameHref} className="block">
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+          className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
           {/* Game Status Bar */}
           <div
             className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+              isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
             }`}
           >
             <span
@@ -145,11 +146,11 @@ export default function CollegeBaseballScoresPage() {
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                   {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
                 </div>
                 <div>
-                  <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                     {game.awayTeam.name}
                   </p>
                   {game.awayTeam.record && (
@@ -170,7 +171,7 @@ export default function CollegeBaseballScoresPage() {
                     isScheduled
                       ? 'text-text-tertiary'
                       : awayWon
-                        ? 'text-white'
+                        ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
@@ -182,11 +183,11 @@ export default function CollegeBaseballScoresPage() {
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                   {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
                 </div>
                 <div>
-                  <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
+                  <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                     {game.homeTeam.name}
                   </p>
                   {game.homeTeam.record && (
@@ -207,7 +208,7 @@ export default function CollegeBaseballScoresPage() {
                     isScheduled
                       ? 'text-text-tertiary'
                       : homeWon
-                        ? 'text-white'
+                        ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
@@ -243,7 +244,7 @@ export default function CollegeBaseballScoresPage() {
                 College Baseball
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Scores</span>
+              <span className="text-text-primary font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -285,7 +286,7 @@ export default function CollegeBaseballScoresPage() {
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -310,7 +311,7 @@ export default function CollegeBaseballScoresPage() {
                     className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                     }`}
                   >
                     {option.label}
@@ -320,7 +321,7 @@ export default function CollegeBaseballScoresPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -344,7 +345,7 @@ export default function CollegeBaseballScoresPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:text-white hover:bg-slate'
+                      : 'bg-background-tertiary text-text-secondary hover:text-text-primary hover:bg-slate'
                   }`}
                 >
                   {conf}
@@ -399,7 +400,7 @@ export default function CollegeBaseballScoresPage() {
                 {/* Live Games Section */}
                 {games.some((g) => g.status === 'live') && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -418,7 +419,7 @@ export default function CollegeBaseballScoresPage() {
                 {/* Final Games */}
                 {games.some((g) => g.status === 'final') && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => g.status === 'final')
@@ -434,7 +435,7 @@ export default function CollegeBaseballScoresPage() {
                 {/* Scheduled Games */}
                 {games.some((g) => g.status === 'scheduled') && (
                   <div>
-                    <h2 className="text-lg font-semibold text-white mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => g.status === 'scheduled')
@@ -447,17 +448,14 @@ export default function CollegeBaseballScoresPage() {
                   </div>
                 )}
 
-                {/* Data Source Footer */}
-                <div className="mt-8 pt-4 border-t border-border-subtle flex items-center justify-between flex-wrap gap-4">
-                  <DataSourceBadge
-                    source={meta?.dataSource || 'ESPN College Baseball API'}
-                    timestamp={formatTimestamp(meta?.lastUpdated)}
+                {/* Data Freshness Footer */}
+                <div className="mt-8 pt-4 border-t border-border-subtle">
+                  <DataFreshnessIndicator
+                    lastUpdated={meta?.lastUpdated ? new Date(meta.lastUpdated) : undefined}
+                    source={meta?.dataSource || 'ESPN'}
+                    refreshInterval={hasLiveGames ? 30 : undefined}
+                    isCached={!hasLiveGames && !!rawData}
                   />
-                  {hasLiveGames && (
-                    <span className="text-xs text-text-tertiary">
-                      Auto-refreshing every 30 seconds
-                    </span>
-                  )}
                 </div>
               </>
             )}

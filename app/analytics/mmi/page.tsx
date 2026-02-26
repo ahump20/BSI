@@ -103,7 +103,7 @@ export default function MMITrendingPage() {
                 Analytics
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Momentum Index</span>
+              <span className="text-text-primary font-medium">Momentum Index</span>
             </nav>
           </Container>
         </Section>
@@ -140,7 +140,7 @@ export default function MMITrendingPage() {
           <Container>
             <ScrollReveal>
               <Card variant="default" padding="lg">
-                <h2 className="font-display text-xl uppercase tracking-wide font-semibold text-white mb-4">
+                <h2 className="font-display text-xl uppercase tracking-wide font-semibold text-text-primary mb-4">
                   How It Works
                 </h2>
                 <p className="text-text-secondary text-sm mb-6 max-w-3xl">
@@ -154,17 +154,17 @@ export default function MMITrendingPage() {
                   {methodologyWeights.map((w) => (
                     <div
                       key={w.abbr}
-                      className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4"
+                      className="bg-surface-light border border-border rounded-lg p-4"
                     >
                       <div className="flex items-baseline gap-2 mb-1">
                         <span className="font-mono text-burnt-orange font-bold text-lg">
                           {w.weight}
                         </span>
-                        <span className="font-display text-xs uppercase tracking-wider text-white/40">
+                        <span className="font-display text-xs uppercase tracking-wider text-text-muted">
                           {w.abbr}
                         </span>
                       </div>
-                      <p className="text-sm font-medium text-white mb-1">{w.name}</p>
+                      <p className="text-sm font-medium text-text-primary mb-1">{w.name}</p>
                       <p className="text-xs text-text-tertiary">{w.description}</p>
                     </div>
                   ))}
@@ -180,7 +180,7 @@ export default function MMITrendingPage() {
             <ScrollReveal direction="up">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-white">
+                  <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-display text-text-primary">
                     Trending Games
                   </h2>
                   <p className="text-text-tertiary text-sm mt-1">
@@ -188,7 +188,7 @@ export default function MMITrendingPage() {
                   </p>
                 </div>
                 {data?.meta && (
-                  <div className="hidden md:flex items-center gap-2 text-xs text-white/40">
+                  <div className="hidden md:flex items-center gap-2 text-xs text-text-muted">
                     <span className="font-medium">{data.meta.source}</span>
                     <span>|</span>
                     <span>{data.meta.fetched_at}</span>
@@ -203,12 +203,12 @@ export default function MMITrendingPage() {
                 {Array.from({ length: 4 }).map((_, i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse space-y-4">
-                      <div className="h-5 bg-white/10 rounded w-2/3" />
-                      <div className="h-14 bg-white/[0.04] rounded-xl" />
+                      <div className="h-5 bg-surface-medium rounded w-2/3" />
+                      <div className="h-14 bg-surface-light rounded-xl" />
                       <div className="flex gap-4">
-                        <div className="h-4 bg-white/[0.06] rounded w-24" />
-                        <div className="h-4 bg-white/[0.06] rounded w-28" />
-                        <div className="h-4 bg-white/[0.06] rounded w-20" />
+                        <div className="h-4 bg-surface-light rounded w-24" />
+                        <div className="h-4 bg-surface-light rounded w-28" />
+                        <div className="h-4 bg-surface-light rounded w-20" />
                       </div>
                     </div>
                   </Card>
@@ -219,7 +219,7 @@ export default function MMITrendingPage() {
             {/* Error State */}
             {error && !loading && (
               <Card variant="default" padding="lg" className="text-center">
-                <p className="text-red-400 mb-4">{error}</p>
+                <p className="text-error mb-4">{error}</p>
                 <button
                   onClick={retry}
                   className="px-6 py-2.5 rounded-lg font-semibold text-sm bg-burnt-orange text-white hover:bg-burnt-orange/80 transition-colors"
@@ -257,7 +257,7 @@ export default function MMITrendingPage() {
                       >
                         {/* Game Header */}
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-semibold text-white">
+                          <h3 className="font-semibold text-text-primary">
                             {game.away_team} at {game.home_team}
                           </h3>
                           <Badge variant={excitement.variant} size="sm">
@@ -278,7 +278,7 @@ export default function MMITrendingPage() {
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                           <div className="flex items-center gap-1.5">
                             <span className="text-text-tertiary">Swings:</span>
-                            <span className="font-mono font-bold text-white tabular-nums">
+                            <span className="font-mono font-bold text-text-primary tabular-nums">
                               {game.momentum_swings}
                             </span>
                           </div>

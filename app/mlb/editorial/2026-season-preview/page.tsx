@@ -34,18 +34,18 @@ export default function MLBSeasonPreview2026() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/mlb" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/mlb" className="text-text-muted hover:text-burnt-orange transition-colors">
                 MLB
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/mlb/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/mlb/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">2026 Season Preview</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">2026 Season Preview</span>
             </nav>
           </Container>
         </Section>
@@ -58,14 +58,14 @@ export default function MLBSeasonPreview2026() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">2026 Season Preview</Badge>
-                  <span className="text-white/40 text-sm">February 25, 2026</span>
-                  <span className="text-white/40 text-sm">22 min read</span>
+                  <span className="text-text-muted text-sm">February 25, 2026</span>
+                  <span className="text-text-muted text-sm">22 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wide mb-6">
                   The Offseason That{' '}
                   <span className="text-gradient-blaze">Reshuffled Everything</span>
                 </h1>
-                <p className="font-serif text-xl text-white/50 leading-relaxed italic">
+                <p className="font-serif text-xl text-text-tertiary leading-relaxed italic">
                   Kyle Tucker broke the AAV record. The Mets gutted their roster and rebuilt it
                   around Juan Soto. The Cardinals tore it all down. Robot umpires finally arrived.
                   And the Dodgers &mdash; already the Dodgers &mdash; added the best available bat
@@ -94,7 +94,7 @@ export default function MLBSeasonPreview2026() {
         <Section padding="lg" background="charcoal">
           <Container size="narrow">
             <ScrollReveal direction="up">
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   The 2025&ndash;26 offseason moved more money, more players, and more managers
                   than any winter in recent memory. Nine teams changed skippers &mdash; the
@@ -135,7 +135,7 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   PECOTA projects the Dodgers at 103.8 wins. That number deserves a beat of
                   silence. No other team in baseball is projected above 94. The gap between
@@ -143,7 +143,7 @@ export default function MLBSeasonPreview2026() {
                   wider than the gap between second and tenth. The Dodgers own 98.1% division
                   odds and somewhere between 23% and 28% World Series odds depending on the
                   model &mdash; and those numbers existed <em>before</em>{' '}
-                  <strong className="text-white font-semibold">Kyle Tucker</strong> signed for
+                  <strong className="text-text-primary font-semibold">Kyle Tucker</strong> signed for
                   $60&nbsp;million per year.
                 </p>
                 <p>
@@ -154,7 +154,7 @@ export default function MLBSeasonPreview2026() {
                   peace&rdquo; between MLB and the MLBPA heading into CBA negotiations. But the
                   Dodgers aren&rsquo;t thinking about labor peace. They&rsquo;re thinking
                   about{' '}
-                  <strong className="text-white font-semibold">Shohei Ohtani</strong> throwing
+                  <strong className="text-text-primary font-semibold">Shohei Ohtani</strong> throwing
                   99&nbsp;mph in live batting practice this spring &mdash; striking out Mookie
                   Betts and Freddie Freeman in the process &mdash; and the fact that the version
                   of Ohtani they signed for $700&nbsp;million has never actually played a full
@@ -167,12 +167,12 @@ export default function MLBSeasonPreview2026() {
                   The rest of the NL West is competing for second place, and that competition
                   produced the offseason&rsquo;s most interesting managerial hire. The Giants
                   named{' '}
-                  <strong className="text-white font-semibold">Tony Vitello</strong> &mdash; the
+                  <strong className="text-text-primary font-semibold">Tony Vitello</strong> &mdash; the
                   first college baseball coach ever hired directly to manage an MLB team. Vitello
                   built Tennessee into a national power, reaching the College World Series and
                   producing a pipeline of professional talent. Whether that translates to managing
                   a 162-game season with a roster built around{' '}
-                  <strong className="text-white font-semibold">Luis Arraez</strong> is the
+                  <strong className="text-text-primary font-semibold">Luis Arraez</strong> is the
                   experiment San&nbsp;Francisco is running. ZiPS projects the Giants at 84 wins,
                   which would make them a credible second-place team in a division the Dodgers
                   have locked down. The Padres (Craig Stammen managing, projecting around 80
@@ -195,7 +195,7 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   The AL East has four teams projected at or near 90 wins. ZiPS puts the Yankees,
                   Blue Jays, and Red Sox all at approximately 90, with the Orioles close behind at
@@ -204,26 +204,26 @@ export default function MLBSeasonPreview2026() {
                   just competitive. It&rsquo;s a filter. Surviving it is a credential.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Yankees</strong> lost Juan
+                  The <strong className="text-text-primary font-semibold">Yankees</strong> lost Juan
                   Soto to the Mets after the 2024 season &mdash; the $765&nbsp;million man chose
                   Queens over the Bronx &mdash; and responded by re-signing{' '}
-                  <strong className="text-white font-semibold">Cody Bellinger</strong> to a
+                  <strong className="text-text-primary font-semibold">Cody Bellinger</strong> to a
                   five-year, $162.5&nbsp;million deal. Bellinger hit .272/.334/.480 with 29 home
                   runs and 5.1 WAR in 2025, and he gives the lineup a left-handed complement
                   to{' '}
-                  <strong className="text-white font-semibold">Aaron Judge</strong> that the
+                  <strong className="text-text-primary font-semibold">Aaron Judge</strong> that the
                   Yankees needed. It&rsquo;s not Soto. Nothing is Soto. But Bellinger at $32.5M
                   AAV is a credible anchor in a lineup that still has Judge producing at a
                   generational level.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Blue Jays</strong> came off an
+                  The <strong className="text-text-primary font-semibold">Blue Jays</strong> came off an
                   ALCS appearance powered by{' '}
-                  <strong className="text-white font-semibold">Vladimir Guerrero&nbsp;Jr.</strong>,
+                  <strong className="text-text-primary font-semibold">Vladimir Guerrero&nbsp;Jr.</strong>,
                   who hit .397 with 8 home runs and a 1.289 OPS across 18 playoff games to win
                   ALCS MVP. Toronto locked him up with a $500&nbsp;million, 14-year extension and
                   added{' '}
-                  <strong className="text-white font-semibold">Kazuma Okamoto</strong> from NPB
+                  <strong className="text-text-primary font-semibold">Kazuma Okamoto</strong> from NPB
                   on a four-year, $60&nbsp;million deal. Okamoto hit .322 with 15 home runs in
                   Japan and will play first base alongside Guerrero at third. The Jays have the
                   most obvious window in the division &mdash; Guerrero is 27, the roster is built
@@ -231,12 +231,12 @@ export default function MLBSeasonPreview2026() {
                   tightens.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Red Sox</strong> were the
+                  The <strong className="text-text-primary font-semibold">Red Sox</strong> were the
                   offseason&rsquo;s most aggressive acquirers via trade. They picked up{' '}
-                  <strong className="text-white font-semibold">Sonny Gray</strong> and{' '}
-                  <strong className="text-white font-semibold">Willson Contreras</strong> from the
+                  <strong className="text-text-primary font-semibold">Sonny Gray</strong> and{' '}
+                  <strong className="text-text-primary font-semibold">Willson Contreras</strong> from the
                   Cardinals fire sale, signed{' '}
-                  <strong className="text-white font-semibold">Ranger Suarez</strong> to a
+                  <strong className="text-text-primary font-semibold">Ranger Suarez</strong> to a
                   five-year, $130&nbsp;million deal, and acquired Caleb Durbin from the Brewers
                   and Johan Oviedo from the Pirates. Boston built the kind of offseason that
                   either looks brilliant in retrospect or looks like a team that acquired
@@ -245,20 +245,20 @@ export default function MLBSeasonPreview2026() {
                   lineup produces enough to support it.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Orioles</strong> signed{' '}
-                  <strong className="text-white font-semibold">Pete Alonso</strong> to a
+                  The <strong className="text-text-primary font-semibold">Orioles</strong> signed{' '}
+                  <strong className="text-text-primary font-semibold">Pete Alonso</strong> to a
                   five-year, $155&nbsp;million deal and added{' '}
-                  <strong className="text-white font-semibold">Chris Bassitt</strong> on a
+                  <strong className="text-text-primary font-semibold">Chris Bassitt</strong> on a
                   one-year, $18.5&nbsp;million contract. Baltimore bounces back from a
                   disappointing 75&ndash;87 in 2025 with new manager{' '}
-                  <strong className="text-white font-semibold">Craig Albernaz</strong> and a
+                  <strong className="text-text-primary font-semibold">Craig Albernaz</strong> and a
                   lineup anchored by Alonso&rsquo;s power &mdash; 38 home runs and 126 RBI last
                   season. FanGraphs gives them 55% playoff odds, which feels about right: they
                   have the talent to contend and the track record of a team that just went
                   backwards when it was supposed to take the next step.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Rays</strong> are rebuilding.
+                  The <strong className="text-text-primary font-semibold">Rays</strong> are rebuilding.
                   Tampa acquired pieces in the three-team Donovan deal but projects in the
                   low-to-mid 70s. The division has four real teams. Tampa isn&rsquo;t one of them
                   this year.
@@ -277,24 +277,24 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   What the Mets did this offseason doesn&rsquo;t have a clean precedent. One year
                   after signing Juan Soto for $765&nbsp;million, they replaced nearly every other
                   starter on the roster. The departures &mdash; Alonso, Nimmo, Diaz,
                   McNeil &mdash; were familiar names who defined the Mets&rsquo; identity during
                   their competitive window. The arrivals &mdash;{' '}
-                  <strong className="text-white font-semibold">Bo Bichette</strong> (three-year,
+                  <strong className="text-text-primary font-semibold">Bo Bichette</strong> (three-year,
                   $126&nbsp;million, moving to third base),{' '}
-                  <strong className="text-white font-semibold">Freddy Peralta</strong> (traded
+                  <strong className="text-text-primary font-semibold">Freddy Peralta</strong> (traded
                   from Milwaukee for Jett Williams and Brandon Sproat),{' '}
-                  <strong className="text-white font-semibold">Luis Robert&nbsp;Jr.</strong>{' '}
+                  <strong className="text-text-primary font-semibold">Luis Robert&nbsp;Jr.</strong>{' '}
                   (acquired from the White Sox),{' '}
-                  <strong className="text-white font-semibold">Marcus Semien</strong> (from the
+                  <strong className="text-text-primary font-semibold">Marcus Semien</strong> (from the
                   Rangers for Nimmo),{' '}
-                  <strong className="text-white font-semibold">Devin Williams</strong>{' '}
+                  <strong className="text-text-primary font-semibold">Devin Williams</strong>{' '}
                   (three-year, $51&nbsp;million to close), and{' '}
-                  <strong className="text-white font-semibold">Jorge Polanco</strong> &mdash; are
+                  <strong className="text-text-primary font-semibold">Jorge Polanco</strong> &mdash; are
                   a mix of proven production and bet-on-upside gambles.
                 </p>
                 <p>
@@ -309,17 +309,17 @@ export default function MLBSeasonPreview2026() {
                   gambles land.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Braves</strong> are
+                  The <strong className="text-text-primary font-semibold">Braves</strong> are
                   PECOTA&rsquo;s NL East pick at 92 wins. New manager{' '}
-                  <strong className="text-white font-semibold">Walt Weiss</strong> was promoted
+                  <strong className="text-text-primary font-semibold">Walt Weiss</strong> was promoted
                   from eight years as bench coach, the kind of continuity move a team makes when
                   the infrastructure is sound and the clubhouse culture is worth protecting.
                   Atlanta didn&rsquo;t have a splashy offseason. They didn&rsquo;t need one. The
                   rotation and lineup were already built.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Phillies</strong> re-signed{' '}
-                  <strong className="text-white font-semibold">Kyle Schwarber</strong> to a
+                  The <strong className="text-text-primary font-semibold">Phillies</strong> re-signed{' '}
+                  <strong className="text-text-primary font-semibold">Kyle Schwarber</strong> to a
                   five-year, $150&nbsp;million deal after he finished second in NL MVP
                   voting &mdash; 56 home runs and 132 RBI in 2025, with a .240/.365/.563 slash
                   line. Philadelphia&rsquo;s strategy is status quo: run it back with the same
@@ -344,46 +344,46 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Detroit signed{' '}
-                  <strong className="text-white font-semibold">Framber Valdez</strong> to a
+                  <strong className="text-text-primary font-semibold">Framber Valdez</strong> to a
                   three-year, $115&nbsp;million contract &mdash; $38.3&nbsp;million AAV, a record
                   for a left-handed pitcher &mdash; and then brought{' '}
-                  <strong className="text-white font-semibold">Justin Verlander</strong> back to
+                  <strong className="text-text-primary font-semibold">Justin Verlander</strong> back to
                   the organization that drafted him No.&nbsp;2 overall in 2004 on a one-year,
                   $13&nbsp;million deal. Verlander joins Valdez and{' '}
-                  <strong className="text-white font-semibold">Tarik Skubal</strong> in a rotation
+                  <strong className="text-text-primary font-semibold">Tarik Skubal</strong> in a rotation
                   that has three arms capable of pitching Game&nbsp;1 in October. The Tigers have
                   made the postseason in two straight years and PECOTA projects them at 83.9
                   wins &mdash; half a game behind the Royals for the division. What&rsquo;s
                   different about Detroit in 2026 is the lineup.{' '}
-                  <strong className="text-white font-semibold">Kevin McGonigle</strong>, the
+                  <strong className="text-text-primary font-semibold">Kevin McGonigle</strong>, the
                   minor-league MVP who hit .308/.410/.512 with more walks than strikeouts, is
                   trending toward the Opening Day roster at shortstop. If McGonigle is the real
                   thing, the Tigers have a lineup that matches the rotation for the first time in
                   this competitive window.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Royals</strong> are
+                  The <strong className="text-text-primary font-semibold">Royals</strong> are
                   PECOTA&rsquo;s projected division champ at 84.4 wins. Kansas&nbsp;City
                   doesn&rsquo;t have a blockbuster addition &mdash; their story is continuity and
                   a roster that overperformed projections in 2025 and now has those projections
                   catching up to the results. The{' '}
-                  <strong className="text-white font-semibold">Twins</strong> hired{' '}
-                  <strong className="text-white font-semibold">Derek Shelton</strong> as manager
+                  <strong className="text-text-primary font-semibold">Twins</strong> hired{' '}
+                  <strong className="text-text-primary font-semibold">Derek Shelton</strong> as manager
                   and project around 79 wins &mdash; watchable but not threatening. Minnesota
                   traded ten players at the 2025 deadline; the rebuild is still in its early
                   stages.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Guardians</strong> are the most
+                  The <strong className="text-text-primary font-semibold">Guardians</strong> are the most
                   interesting decline story in the division. Cleveland won the AL Central in 2025
                   and now projects at 75.8 wins after losing Josh Naylor in free agency and
                   watching the core age another year. PECOTA&rsquo;s projected drop &mdash; from
                   division champ to fourth place &mdash; is aggressive, but it reflects a roster
                   that relied on overperformance rather than top-end talent. The{' '}
-                  <strong className="text-white font-semibold">White Sox</strong> moved Luis
+                  <strong className="text-text-primary font-semibold">White Sox</strong> moved Luis
                   Robert&nbsp;Jr. and continue rebuilding; they project in the mid-60s. The AL
                   Central has two real contenders, one team treading water, and two teams building
                   for a different year.
@@ -402,10 +402,10 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
-                  The <strong className="text-white font-semibold">Cubs</strong> signed{' '}
-                  <strong className="text-white font-semibold">Alex Bregman</strong> to a
+                  The <strong className="text-text-primary font-semibold">Cubs</strong> signed{' '}
+                  <strong className="text-text-primary font-semibold">Alex Bregman</strong> to a
                   five-year, $175&nbsp;million deal &mdash; the largest in franchise history, with
                   a full no-trade clause. Bregman gives Chicago a third baseman who has played in
                   the postseason every year of his career and brings a competitive infrastructure
@@ -416,9 +416,9 @@ export default function MLBSeasonPreview2026() {
                   presence &mdash; tips the balance.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Pirates</strong> are the
+                  The <strong className="text-text-primary font-semibold">Pirates</strong> are the
                   division&rsquo;s most interesting long-term story.{' '}
-                  <strong className="text-white font-semibold">Konnor Griffin</strong>, the
+                  <strong className="text-text-primary font-semibold">Konnor Griffin</strong>, the
                   No.&nbsp;1 overall prospect in baseball, is in major-league camp this spring.
                   Manager Don Kelly said he&rsquo;s unlikely to make the Opening Day roster
                   &mdash; the plan is Double-A to start &mdash; but FanGraphs&rsquo; projections
@@ -430,25 +430,25 @@ export default function MLBSeasonPreview2026() {
                   contending today. They might be contending in August.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Cardinals</strong> tore it all
+                  The <strong className="text-text-primary font-semibold">Cardinals</strong> tore it all
                   down. Under Chaim Bloom&rsquo;s direction, St.&nbsp;Louis traded Arenado to the
                   Diamondbacks, sent Gray and Contreras to the Red Sox, and shipped Donovan to the
                   Mariners in a three-team deal. The franchise ate approximately $59&nbsp;million
                   in salary across these trades to accelerate the rebuild. What they got in return,
                   beyond prospects, was a path to playing time for{' '}
-                  <strong className="text-white font-semibold">JJ Wetherholt</strong>, the former
+                  <strong className="text-text-primary font-semibold">JJ Wetherholt</strong>, the former
                   first-round pick who had been blocked at every position by veteran contracts.
                   Wetherholt is the reason the teardown makes sense &mdash; if he&rsquo;s a
                   cornerstone, clearing the roster to let him play every day is a net positive
                   even if the 2026 record lands in the mid-70s.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Brewers</strong> lost Peralta
+                  The <strong className="text-text-primary font-semibold">Brewers</strong> lost Peralta
                   in the trade to the Mets but received Jett Williams (No.&nbsp;30 overall
                   prospect) and Brandon Sproat. Milwaukee projects at 83 wins with 42% playoff
                   odds &mdash; the kind of team that won&rsquo;t lead the division but could grab
                   a wild card if the pitching development pipeline keeps producing. The{' '}
-                  <strong className="text-white font-semibold">Reds</strong> are treading water at
+                  <strong className="text-text-primary font-semibold">Reds</strong> are treading water at
                   roughly 74 projected wins.
                 </p>
               </div>
@@ -465,18 +465,18 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   PECOTA projects the{' '}
-                  <strong className="text-white font-semibold">Mariners</strong> at 93.6
+                  <strong className="text-text-primary font-semibold">Mariners</strong> at 93.6
                   wins &mdash; the best record in the American League. Seattle re-signed{' '}
-                  <strong className="text-white font-semibold">Josh Naylor</strong> to a
+                  <strong className="text-text-primary font-semibold">Josh Naylor</strong> to a
                   five-year, $92.5&nbsp;million deal and acquired{' '}
-                  <strong className="text-white font-semibold">Brendan Donovan</strong> from the
+                  <strong className="text-text-primary font-semibold">Brendan Donovan</strong> from the
                   Cardinals in a three-team trade. Those additions join{' '}
-                  <strong className="text-white font-semibold">Julio Rodriguez</strong>,{' '}
-                  <strong className="text-white font-semibold">Cal Raleigh</strong>, and{' '}
-                  <strong className="text-white font-semibold">Randy Arozarena</strong> &mdash;
+                  <strong className="text-text-primary font-semibold">Julio Rodriguez</strong>,{' '}
+                  <strong className="text-text-primary font-semibold">Cal Raleigh</strong>, and{' '}
+                  <strong className="text-text-primary font-semibold">Randy Arozarena</strong> &mdash;
                   five players who made All-Star teams in the past two seasons, all in the same
                   lineup. The Mariners have historically been a team that pitched its way to
                   October relevance and then lost because the bats couldn&rsquo;t sustain contact
@@ -485,30 +485,30 @@ export default function MLBSeasonPreview2026() {
                   staffs that rely on swing-and-miss.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Astros</strong> lost Valdez but
+                  The <strong className="text-text-primary font-semibold">Astros</strong> lost Valdez but
                   signed{' '}
-                  <strong className="text-white font-semibold">Tatsuya Imai</strong> from NPB on a
+                  <strong className="text-text-primary font-semibold">Tatsuya Imai</strong> from NPB on a
                   three-year, $54&nbsp;million deal. Imai is 27, a three-time NPB All-Star with a
                   1.92 ERA in 2025, and brings the kind of pitching pedigree that Houston has
                   historically maximized.{' '}
-                  <strong className="text-white font-semibold">Yordan Alvarez</strong> and{' '}
-                  <strong className="text-white font-semibold">Jose Altuve</strong> are still the
+                  <strong className="text-text-primary font-semibold">Yordan Alvarez</strong> and{' '}
+                  <strong className="text-text-primary font-semibold">Jose Altuve</strong> are still the
                   lineup. Writing off the Astros is a mistake people make every offseason and
                   regret every October. Houston projects at 84&ndash;86 wins, which in a weaker
                   AL West might be enough for a wild card.
                 </p>
                 <p>
-                  The <strong className="text-white font-semibold">Rangers</strong> lost Semien in
+                  The <strong className="text-text-primary font-semibold">Rangers</strong> lost Semien in
                   the Mets trade and hired{' '}
-                  <strong className="text-white font-semibold">Skip Schumaker</strong> as manager.
+                  <strong className="text-text-primary font-semibold">Skip Schumaker</strong> as manager.
                   Texas is in a transitional year, projecting in the high 70s. The{' '}
-                  <strong className="text-white font-semibold">Athletics</strong> are still
+                  <strong className="text-text-primary font-semibold">Athletics</strong> are still
                   building in Las Vegas, and the{' '}
-                  <strong className="text-white font-semibold">Angels</strong> hired former
+                  <strong className="text-text-primary font-semibold">Angels</strong> hired former
                   catcher{' '}
-                  <strong className="text-white font-semibold">Kurt Suzuki</strong> as manager
+                  <strong className="text-text-primary font-semibold">Kurt Suzuki</strong> as manager
                   with{' '}
-                  <strong className="text-white font-semibold">Mike Trout&rsquo;s</strong>{' '}
+                  <strong className="text-text-primary font-semibold">Mike Trout&rsquo;s</strong>{' '}
                   durability remaining the franchise&rsquo;s most important unanswered question.
                   The AL West is Seattle&rsquo;s to lose unless Houston&rsquo;s history of
                   postseason overperformance extends into the regular season.
@@ -527,7 +527,7 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   The ABS challenge system works like this: human umpires call every pitch. Each
                   team gets two challenges per game. The batter, pitcher, or catcher &mdash; not
@@ -565,34 +565,34 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
                   Nine new managers. Six first-timers. The headline hires tell a story about where
                   baseball thinks leadership comes from now.{' '}
-                  <strong className="text-white font-semibold">Tony Vitello</strong> going from
+                  <strong className="text-text-primary font-semibold">Tony Vitello</strong> going from
                   Tennessee to the Giants is the first time a college baseball coach has been hired
                   directly to manage an MLB team &mdash; ever. The hiring signals that
                   San&nbsp;Francisco values program-building and player development culture over
                   major-league coaching experience.{' '}
-                  <strong className="text-white font-semibold">Blake Butera</strong>, at 33,
+                  <strong className="text-text-primary font-semibold">Blake Butera</strong>, at 33,
                   became the youngest MLB manager since Frank Quilici in 1972 when Washington
                   hired him.{' '}
-                  <strong className="text-white font-semibold">Kurt Suzuki</strong> in Anaheim
+                  <strong className="text-text-primary font-semibold">Kurt Suzuki</strong> in Anaheim
                   and{' '}
-                  <strong className="text-white font-semibold">Craig Stammen</strong> in
+                  <strong className="text-text-primary font-semibold">Craig Stammen</strong> in
                   San&nbsp;Diego represent the recently-retired-player-to-manager pipeline that
                   baseball has leaned into more heavily in recent years.
                 </p>
                 <p>
                   The continuity hires are just as telling.{' '}
-                  <strong className="text-white font-semibold">Walt Weiss</strong> spent eight
+                  <strong className="text-text-primary font-semibold">Walt Weiss</strong> spent eight
                   years as the Braves&rsquo; bench coach before being promoted &mdash; the kind
                   of succession plan that only works when the organization trusts its own
                   infrastructure.{' '}
-                  <strong className="text-white font-semibold">Derek Shelton</strong> moving from
+                  <strong className="text-text-primary font-semibold">Derek Shelton</strong> moving from
                   the Pirates to the Twins brings a manager who knows how to develop young talent,
                   which is exactly what Minnesota&rsquo;s post-teardown roster needs. And{' '}
-                  <strong className="text-white font-semibold">Craig Albernaz</strong> in
+                  <strong className="text-text-primary font-semibold">Craig Albernaz</strong> in
                   Baltimore is a bet on someone who saw how winning organizations operate from
                   inside Cleveland&rsquo;s coaching staff.
                 </p>
@@ -610,9 +610,9 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
-                  <strong className="text-white font-semibold">Shohei Ohtani</strong> (Dodgers)
+                  <strong className="text-text-primary font-semibold">Shohei Ohtani</strong> (Dodgers)
                   is the story of the season before a single regular-season pitch is thrown. The
                   Dodgers signed the full package &mdash; pitcher and hitter &mdash; and have only
                   had the hitter for 18 months. Ohtani hitting 99&nbsp;mph this spring and
@@ -622,27 +622,27 @@ export default function MLBSeasonPreview2026() {
                   talented team baseball has ever assembled on a 26-man roster.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Konnor Griffin</strong> (Pirates)
+                  <strong className="text-text-primary font-semibold">Konnor Griffin</strong> (Pirates)
                   is the No.&nbsp;1 overall prospect in baseball and the player most likely to
                   alter a division race the moment he arrives. Griffin isn&rsquo;t making the
                   Opening Day roster, but the Pirates are building their 2026 projections around a
                   mid-season call-up. The talent evaluators who have seen him in camp haven&rsquo;t
                   changed their assessment: franchise-caliber shortstop with an above-average hit
                   tool and plus power.{' '}
-                  <strong className="text-white font-semibold">Kevin McGonigle</strong> (Tigers)
+                  <strong className="text-text-primary font-semibold">Kevin McGonigle</strong> (Tigers)
                   is the prospect most likely to impact Opening Day &mdash; he&rsquo;s trending
                   toward the 26-man roster and brings a profile (.308/.410/.512 in the minors,
                   more walks than strikeouts) that addresses Detroit&rsquo;s biggest lineup
                   weakness.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">Kyle Tucker</strong> in Dodger Blue
+                  <strong className="text-text-primary font-semibold">Kyle Tucker</strong> in Dodger Blue
                   is the free agent whose production will define the offseason&rsquo;s narrative.
                   If Tucker posts another 5+&nbsp;WAR season alongside Ohtani, Betts, and Freeman,
                   the Dodgers become the team that spent their way to a historically great roster
                   and had it work. If his production dips in the pressure of a three-peat pursuit,
                   the $60M AAV becomes the story.{' '}
-                  <strong className="text-white font-semibold">Bo Bichette&rsquo;s</strong>{' '}
+                  <strong className="text-text-primary font-semibold">Bo Bichette&rsquo;s</strong>{' '}
                   position change &mdash; shortstop to third base &mdash; with the Mets is a
                   less-discussed swing factor. Bichette signed for $126&nbsp;million partly
                   because the Mets believe his bat plays at a corner infield spot where the
@@ -665,9 +665,9 @@ export default function MLBSeasonPreview2026() {
               </h2>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={50}>
-              <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                 <p>
-                  <strong className="text-white font-semibold">1. The Tigers win the AL
+                  <strong className="text-text-primary font-semibold">1. The Tigers win the AL
                   Central.</strong> PECOTA has them half a game behind the Royals, but the
                   rotation &mdash; Skubal, Valdez, Verlander, with depth behind them &mdash; is
                   the best in the division by a wide margin. Rotations win divisions over 162
@@ -676,7 +676,7 @@ export default function MLBSeasonPreview2026() {
                   contact-and-OBP profile it has lacked.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">2. The Mets finish third in the NL
+                  <strong className="text-text-primary font-semibold">2. The Mets finish third in the NL
                   East.</strong> The variance is too high. Robert&rsquo;s health,
                   Bichette&rsquo;s position change, a rotation built around one ace (Peralta) and
                   a collection of back-end starters, and a bullpen anchored by a closer changing
@@ -685,7 +685,7 @@ export default function MLBSeasonPreview2026() {
                   more often than it doesn&rsquo;t.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">3. The ABS challenge system
+                  <strong className="text-text-primary font-semibold">3. The ABS challenge system
                   produces fewer controversies than expected.</strong> The two-second window and
                   the player-only challenge rule will keep the system from dominating broadcasts.
                   Most marginal pitches will go unchallenged because the batter or pitcher
@@ -694,7 +694,7 @@ export default function MLBSeasonPreview2026() {
                   stopped thinking about it.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">4. The Blue Jays reach the World
+                  <strong className="text-text-primary font-semibold">4. The Blue Jays reach the World
                   Series.</strong> Guerrero&rsquo;s playoff performance last October wasn&rsquo;t
                   a fluke &mdash; it was a player entering his prime in the moment when prime-age
                   players historically make the leap from &ldquo;great season&rdquo; to
@@ -703,7 +703,7 @@ export default function MLBSeasonPreview2026() {
                   the AL team best built for a short-series tournament.
                 </p>
                 <p>
-                  <strong className="text-white font-semibold">5. The Cardinals&rsquo; teardown
+                  <strong className="text-text-primary font-semibold">5. The Cardinals&rsquo; teardown
                   produces a 90-win team within three years.</strong> Wetherholt at the center,
                   the prospect capital they acquired, and Bloom&rsquo;s track record of building
                   from the ground up &mdash; this rebuild has a clearer blueprint than most. The
@@ -760,10 +760,10 @@ export default function MLBSeasonPreview2026() {
                 <Link href="/mlb/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
                   All MLB Editorial &rarr;
                 </Link>
-                <Link href="/mlb/standings" className="font-display text-[13px] uppercase tracking-widest text-white/40 hover:text-burnt-orange transition-colors">
+                <Link href="/mlb/standings" className="font-display text-[13px] uppercase tracking-widest text-text-muted hover:text-burnt-orange transition-colors">
                   MLB Standings &rarr;
                 </Link>
-                <Link href="/mlb/scores" className="font-display text-[13px] uppercase tracking-widest text-white/40 hover:text-burnt-orange transition-colors">
+                <Link href="/mlb/scores" className="font-display text-[13px] uppercase tracking-widest text-text-muted hover:text-burnt-orange transition-colors">
                   Live Scores &rarr;
                 </Link>
               </div>

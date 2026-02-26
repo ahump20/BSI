@@ -47,18 +47,18 @@ export default function Weekend3PreviewPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <Link href="/college-baseball/editorial" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Editorial
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Weekend 3 Preview</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Weekend 3 Preview</span>
             </nav>
           </Container>
         </Section>
@@ -71,9 +71,9 @@ export default function Weekend3PreviewPage() {
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-6">
                   <Badge variant="primary">Weekend 3 Preview</Badge>
-                  <span className="text-white/40 text-sm">February 25, 2026</span>
-                  <span className="text-white/20">|</span>
-                  <span className="text-white/40 text-sm">~12 min read</span>
+                  <span className="text-text-muted text-sm">February 25, 2026</span>
+                  <span className="text-text-muted">|</span>
+                  <span className="text-text-muted text-sm">~12 min read</span>
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold uppercase tracking-tight leading-[0.95] mb-4">
                   Globe Life Gets the{' '}
@@ -81,7 +81,7 @@ export default function Weekend3PreviewPage() {
                     Real Test.
                   </span>
                 </h1>
-                <p className="font-serif text-xl md:text-2xl italic text-white/50 leading-relaxed max-w-2xl">
+                <p className="font-serif text-xl md:text-2xl italic text-text-tertiary leading-relaxed max-w-2xl">
                   Eight undefeated Top 25 teams enter Weekend 3. The Amegy Bank series in Arlington
                   puts four of them on the same field. Not all of them leave with zeroes in the loss column.
                 </p>
@@ -106,7 +106,7 @@ export default function Weekend3PreviewPage() {
           <Container>
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
                     Two weekends told us who was prepared. Weekend 3 tells us who can sustain it.
                     The distinction matters more than it sounds: Opening Weekend rewards roster depth and
@@ -135,14 +135,14 @@ export default function Weekend3PreviewPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
                   Tuesday Night Changed the Conversation
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
                     Before we look ahead, the midweek results reshaped the landscape. On Tuesday night, both
                     No. 1 UCLA and No. 2 LSU lost &mdash; the first stumbles for the season&rsquo;s top two teams.
                     The losses do not change the rankings math much, but they change the narrative entirely.
                   </p>
                   <p>
-                    <strong className="text-white font-semibold">San Diego State 4, No. 1 UCLA 3.</strong>{' '}
+                    <strong className="text-text-primary font-semibold">San Diego State 4, No. 1 UCLA 3.</strong>{' '}
                     At Jackie Robinson Stadium &mdash; UCLA&rsquo;s own building. The Bruins managed three hits
                     total, just one after the fourth inning. A team that outscored No. 7 TCU 30&ndash;8 over
                     the weekend could not solve San Diego State&rsquo;s staff. Zane Kelly launched a two-run
@@ -151,7 +151,7 @@ export default function Weekend3PreviewPage() {
                     pressure.
                   </p>
                   <p>
-                    <strong className="text-white font-semibold">McNeese 7, No. 2 LSU 6.</strong>{' '}
+                    <strong className="text-text-primary font-semibold">McNeese 7, No. 2 LSU 6.</strong>{' '}
                     At Alex Box Stadium &mdash; arguably the hardest place in college baseball to steal a win.
                     LSU used ten pitchers. The first six either walked a batter, hit a batter, or both. McNeese
                     built a 7&ndash;2 lead after four innings on just five hits because LSU kept putting runners
@@ -161,7 +161,7 @@ export default function Weekend3PreviewPage() {
                     depth that looked like a strength coming out of the Jax Classic is now a genuine question mark.
                   </p>
                   <p>
-                    <strong className="text-white font-semibold">Elsewhere:</strong> Auburn fell 8&ndash;0 to
+                    <strong className="text-text-primary font-semibold">Elsewhere:</strong> Auburn fell 8&ndash;0 to
                     Cincinnati, three days after going 3&ndash;0 at Globe Life with a comeback win over Florida
                     State. Texas beat Lamar 14&ndash;4. Florida swept Stetson 12&ndash;2. Mississippi State
                     handled Troy 13&ndash;7. The midweek slate sorted itself into two categories: the teams
@@ -186,17 +186,17 @@ export default function Weekend3PreviewPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
                   Globe Life Field: The Matchups That Matter
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-10">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-10">
 
                   {/* UCLA vs Tennessee */}
                   <div>
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
-                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white">
+                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
                         No. 20 Tennessee vs. No. 1 UCLA
                       </h3>
-                      <span className="text-sm font-mono text-white/30">Saturday, Feb 28 &mdash; 4:00 PM CT</span>
+                      <span className="text-sm font-mono text-text-muted">Saturday, Feb 28 &mdash; 4:00 PM CT</span>
                     </div>
-                    <p className="italic text-white/50 mb-3">
+                    <p className="italic text-text-tertiary mb-3">
                       Can Tennessee arrest a seven-spot slide, or does UCLA prove the TCU sweep was just the beginning?
                     </p>
                     <p>
@@ -213,12 +213,12 @@ export default function Weekend3PreviewPage() {
                   {/* Texas A&M vs Arizona State */}
                   <div>
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
-                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white">
+                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
                         No. 23 Texas A&amp;M vs. Arizona State
                       </h3>
-                      <span className="text-sm font-mono text-white/30">Saturday, Feb 28 &mdash; 7:00 PM CT</span>
+                      <span className="text-sm font-mono text-text-muted">Saturday, Feb 28 &mdash; 7:00 PM CT</span>
                     </div>
-                    <p className="italic text-white/50 mb-3">
+                    <p className="italic text-text-tertiary mb-3">
                       What does A&amp;M&rsquo;s portal-loaded roster look like against real pitching?
                     </p>
                     <p>
@@ -232,12 +232,12 @@ export default function Weekend3PreviewPage() {
                   {/* Mississippi State vs Virginia Tech */}
                   <div>
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
-                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white">
+                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
                         No. 4 Mississippi State vs. Virginia Tech
                       </h3>
-                      <span className="text-sm font-mono text-white/30">Friday, Feb 27 &mdash; Globe Life Field</span>
+                      <span className="text-sm font-mono text-text-muted">Friday, Feb 27 &mdash; Globe Life Field</span>
                     </div>
-                    <p className="italic text-white/50 mb-3">
+                    <p className="italic text-text-tertiary mb-3">
                       Is Mississippi State&rsquo;s 58&ndash;12 scoring margin a product of schedule or identity?
                     </p>
                     <p>
@@ -253,12 +253,12 @@ export default function Weekend3PreviewPage() {
                   {/* Tennessee vs Virginia Tech */}
                   <div>
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-3">
-                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white">
+                      <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary">
                         No. 20 Tennessee vs. Virginia Tech
                       </h3>
-                      <span className="text-sm font-mono text-white/30">Sunday, Mar 1 &mdash; 11:30 AM CT</span>
+                      <span className="text-sm font-mono text-text-muted">Sunday, Mar 1 &mdash; 11:30 AM CT</span>
                     </div>
-                    <p className="italic text-white/50 mb-3">
+                    <p className="italic text-text-tertiary mb-3">
                       Does Tennessee&rsquo;s bullpen hold on short rest after facing UCLA the day before?
                     </p>
                     <p>
@@ -281,12 +281,12 @@ export default function Weekend3PreviewPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
                   Beyond Arlington
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-8">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-8">
                   <div>
-                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-2">
+                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-2">
                       No. 5 Georgia Tech vs. No. 1 UCLA
                     </h3>
-                    <p className="text-sm font-mono text-white/30 mb-3">Sunday, Mar 1 &mdash; Neutral Site</p>
+                    <p className="text-sm font-mono text-text-muted mb-3">Sunday, Mar 1 &mdash; Neutral Site</p>
                     <p>
                       Potentially the game of the weekend. Georgia Tech set a program record with six straight
                       games of 10-plus runs to open the season. Vahn Lackey went 9-for-16 with three home runs
@@ -295,10 +295,10 @@ export default function Weekend3PreviewPage() {
                     </p>
                   </div>
                   <div>
-                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-2">
+                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-2">
                       Arizona vs. Vanderbilt
                     </h3>
-                    <p className="text-sm font-mono text-white/30 mb-3">Saturday, Feb 28 &mdash; 7:00 PM CT</p>
+                    <p className="text-sm font-mono text-text-muted mb-3">Saturday, Feb 28 &mdash; 7:00 PM CT</p>
                     <p>
                       Vanderbilt just went 5&ndash;0 with four run-rule victories. Arizona is rebuilding after
                       losing its entire weekend rotation to the portal. First real test of the
@@ -307,10 +307,10 @@ export default function Weekend3PreviewPage() {
                     </p>
                   </div>
                   <div>
-                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-2">
+                    <h3 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-2">
                       Oregon vs. UC Irvine
                     </h3>
-                    <p className="text-sm font-mono text-white/30 mb-3">Saturday, Feb 28 &mdash; 3:00 PM CT</p>
+                    <p className="text-sm font-mono text-text-muted mb-3">Saturday, Feb 28 &mdash; 3:00 PM CT</p>
                     <p>
                       Oregon enters quietly after a solid 5&ndash;2 start. UC Irvine has been a mid-major
                       sleeper for a decade &mdash; the kind of program that makes Omaha runs when nobody is
@@ -331,7 +331,7 @@ export default function Weekend3PreviewPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
                   The Undefeated Problem
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
                     Eight unbeaten Top 25 teams sounds impressive until you look at who they have beaten.
                     Oklahoma is 7&ndash;0 with a 99&ndash;13 scoring margin &mdash; the longest streak of
@@ -365,7 +365,7 @@ export default function Weekend3PreviewPage() {
             <ScrollReveal>
               <div className="max-w-3xl mx-auto">
                 <blockquote className="border-l-[3px] border-burnt-orange pl-6 py-4">
-                  <p className="font-serif text-2xl italic text-white/70 leading-relaxed">
+                  <p className="font-serif text-2xl italic text-text-secondary leading-relaxed">
                     Weekend 3 is not about who wins. It is about who looks like themselves winning
                     &mdash; and who looks like a different team losing.
                   </p>
@@ -383,9 +383,9 @@ export default function Weekend3PreviewPage() {
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-8">
                   What Weekend 2 Set Up
                 </h2>
-                <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                   <p>
-                    <strong className="text-white font-semibold">UCLA established a ceiling.</strong> The
+                    <strong className="text-text-primary font-semibold">UCLA established a ceiling.</strong> The
                     Bruins outscored No. 7 TCU 30&ndash;8 in a sweep that was never competitive after
                     Friday&rsquo;s first pitch. Gasparino&rsquo;s second multi-homer outing in three games
                     and Cholowsky&rsquo;s towering solo shots gave the lineup a 1&ndash;2 punch that no
@@ -394,7 +394,7 @@ export default function Weekend3PreviewPage() {
                     with tighter turnarounds.
                   </p>
                   <p>
-                    <strong className="text-white font-semibold">Auburn announced itself.</strong> The Tigers
+                    <strong className="text-text-primary font-semibold">Auburn announced itself.</strong> The Tigers
                     went 3&ndash;0 at Globe Life, beating Kansas State, No. 12 Florida State, and Louisville.
                     The Florida State game was the statement: Auburn trailed 4&ndash;0 heading into the fifth
                     and outscored the Seminoles 8&ndash;1 from there. Bristol Carter earned Most Outstanding
@@ -402,7 +402,7 @@ export default function Weekend3PreviewPage() {
                     looks like a team built to survive the SEC grind.
                   </p>
                   <p>
-                    <strong className="text-white font-semibold">Dax Whitney threw a masterpiece.</strong>{' '}
+                    <strong className="text-text-primary font-semibold">Dax Whitney threw a masterpiece.</strong>{' '}
                     Oregon State&rsquo;s sophomore right-hander tied the program record with 17 strikeouts in
                     seven shutout innings against Baylor, touching 100.1 mph on the gun. He allowed two hits.
                     Whitney is the third Beaver to reach 17 strikeouts in a single game, joining Cooper Hjerpe
@@ -426,7 +426,7 @@ export default function Weekend3PreviewPage() {
                   </span>
                 </div>
                 <div className="bg-gradient-to-br from-burnt-orange/8 to-[#8B4513]/5 border border-burnt-orange/15 rounded-lg p-8 pt-10">
-                  <div className="font-serif text-lg leading-[1.78] text-white/80 space-y-6">
+                  <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
                     <p>
                       Weekend 3 is the weekend that separates record from identity. Eight undefeated Top 25
                       teams sounds like parity; it is actually a measurement problem. The first two weekends
@@ -451,23 +451,23 @@ export default function Weekend3PreviewPage() {
         </Section>
 
         {/* Attribution */}
-        <Section padding="md" className="border-t border-white/10">
+        <Section padding="md" className="border-t border-border">
           <Container>
             <div className="max-w-3xl mx-auto">
               <DataSourceBadge
                 source="D1Baseball / Baseball America / NCAA.com / Globe Life Field"
                 timestamp="February 25, 2026 — 10:00 AM CT"
               />
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <Link
                   href="/college-baseball/editorial"
-                  className="text-white/40 hover:text-burnt-orange transition-colors text-sm"
+                  className="text-text-muted hover:text-burnt-orange transition-colors text-sm"
                 >
                   &larr; All Editorial
                 </Link>
                 <Link
                   href="/college-baseball/editorial/weekend-2-recap"
-                  className="text-white/40 hover:text-burnt-orange transition-colors text-sm"
+                  className="text-text-muted hover:text-burnt-orange transition-colors text-sm"
                 >
                   Weekend 2 Recap &rarr;
                 </Link>

@@ -155,7 +155,7 @@ export default function MLBStandingsPage() {
   }) => (
     <th
       scope="col"
-      className={`text-left p-3 text-copper font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
+      className={`text-left p-3 text-text-tertiary font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
     >
       <div className="flex items-center gap-1">
@@ -180,19 +180,19 @@ export default function MLBStandingsPage() {
       <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr className="border-b-2 border-burnt-orange">
-            <th scope="col" className="text-left p-3 text-copper font-semibold w-8">#</th>
-            <SortableHeader column="team" label="Team" className="sticky left-0 bg-charcoal z-10" />
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">#</th>
+            <SortableHeader column="team" label="Team" className="sticky left-0 bg-background-secondary z-10" />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th scope="col" className="text-left p-3 text-copper font-semibold">HOME</th>
-            <th scope="col" className="text-left p-3 text-copper font-semibold">AWAY</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">HOME</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
-            <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -201,13 +201,13 @@ export default function MLBStandingsPage() {
             return (
               <tr
                 key={team.teamName}
-                className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                className="border-b border-border-subtle hover:bg-surface-light transition-colors"
               >
                 <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                <td className="p-3 sticky left-0 bg-charcoal z-10">
+                <td className="p-3 sticky left-0 bg-background-secondary z-10">
                   <Link
                     href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="font-semibold text-white hover:text-burnt-orange transition-colors flex items-center gap-2"
+                    className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                   >
                     {team.teamName}
                     {showDivision && (
@@ -272,14 +272,14 @@ export default function MLBStandingsPage() {
         <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr className="border-b-2 border-burnt-orange">
-              <th scope="col" className="text-left p-3 text-copper font-semibold w-8">WC</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">Team</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">W</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">L</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">PCT</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">WCGB</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">STRK</th>
-              <th scope="col" className="text-left p-3 text-copper font-semibold">L10</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">WC</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">Team</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">W</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">PCT</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">WCGB</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -293,7 +293,7 @@ export default function MLBStandingsPage() {
               return (
                 <tr
                   key={team.teamName}
-                  className={`border-b border-border-subtle hover:bg-white/5 transition-colors ${
+                  className={`border-b border-border-subtle hover:bg-surface-light transition-colors ${
                     isInWCSpot
                       ? 'bg-success/5'
                       : idx === wcSpots
@@ -309,7 +309,7 @@ export default function MLBStandingsPage() {
                   <td className="p-3">
                     <Link
                       href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="font-semibold text-white hover:text-burnt-orange transition-colors flex items-center gap-2"
+                      className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                     >
                       {team.teamName}
                       <span className="text-text-tertiary text-xs">{team.division}</span>
@@ -357,7 +357,7 @@ export default function MLBStandingsPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -400,7 +400,7 @@ export default function MLBStandingsPage() {
                   className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                     viewType === view.id
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                   }`}
                 >
                   {view.label}
@@ -435,7 +435,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} scope="col" className="text-left p-3 text-copper font-semibold">
+                                <th key={h} scope="col" className="text-left p-3 text-text-tertiary font-semibold">
                                   {h}
                                 </th>
                               ))}

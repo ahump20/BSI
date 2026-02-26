@@ -100,7 +100,7 @@ export default function PlayByPlayClient() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === 'all'
                 ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-white/10'
+                : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
             }`}
           >
             All Plays ({plays.length})
@@ -110,7 +110,7 @@ export default function PlayByPlayClient() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === 'scoring'
                 ? 'bg-burnt-orange text-white'
-                : 'bg-graphite text-text-secondary hover:bg-white/10'
+                : 'bg-background-tertiary text-text-secondary hover:bg-surface-light'
             }`}
           >
             Scoring ({scoringCount})
@@ -132,7 +132,7 @@ export default function PlayByPlayClient() {
                 {/* Quarter Header */}
                 <button
                   onClick={() => toggleQuarter(q)}
-                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-surface-light transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-burnt-orange font-semibold uppercase text-sm tracking-wide">

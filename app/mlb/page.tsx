@@ -290,7 +290,7 @@ export default function MLBPage() {
                           <Badge variant="warning">Spring Training</Badge>
                           <LiveBadge />
                         </div>
-                        <h3 className="text-white font-semibold">Cactus & Grapefruit League</h3>
+                        <h3 className="text-text-primary font-semibold">Cactus & Grapefruit League</h3>
                         <p className="text-text-tertiary text-sm mt-1">Live scores, standings, rosters, and schedules across both spring leagues.</p>
                       </div>
                     </div>
@@ -333,7 +333,7 @@ export default function MLBPage() {
                         {feature.icon}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-white mb-3">{feature.title}</h3>
+                      <h3 className="text-lg font-semibold text-text-primary mb-3">{feature.title}</h3>
                       <p className="text-text-tertiary text-sm leading-relaxed mb-4">
                         {feature.description}
                       </p>
@@ -388,7 +388,7 @@ export default function MLBPage() {
                                   (h) => (
                                     <th scope="col"
                                       key={h}
-                                      className="text-left p-3 text-copper font-semibold"
+                                      className="text-left p-3 text-text-tertiary font-semibold"
                                     >
                                       {h}
                                     </th>
@@ -438,19 +438,19 @@ export default function MLBPage() {
                             <table className="w-full" aria-label="MLB division standings">
                               <thead>
                                 <tr className="border-b-2 border-burnt-orange">
-                                  <th scope="col" className="text-left p-3 text-copper font-semibold">
+                                  <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">
                                     Rank
                                   </th>
-                                  <th scope="col" className="text-left p-3 text-copper font-semibold">
+                                  <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">
                                     Team
                                   </th>
-                                  <th className="text-left p-3 text-copper font-semibold">W</th>
-                                  <th className="text-left p-3 text-copper font-semibold">L</th>
-                                  <th className="text-left p-3 text-copper font-semibold">PCT</th>
-                                  <th className="text-left p-3 text-copper font-semibold">GB</th>
-                                  <th className="text-left p-3 text-copper font-semibold">RS</th>
-                                  <th className="text-left p-3 text-copper font-semibold">RA</th>
-                                  <th className="text-left p-3 text-copper font-semibold">
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">W</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">L</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">PCT</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">GB</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">RS</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">RA</th>
+                                  <th className="text-left p-3 text-text-tertiary font-semibold">
                                     STRK
                                   </th>
                                 </tr>
@@ -459,10 +459,10 @@ export default function MLBPage() {
                                 {standingsByDivision[division].map((team, idx) => (
                                   <tr
                                     key={team.teamName}
-                                    className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                                    className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                                   >
                                     <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                    <td className="p-3 font-semibold text-white">
+                                    <td className="p-3 font-semibold text-text-primary">
                                       {team.teamName}
                                     </td>
                                     <td className="p-3 text-text-secondary">{team.wins}</td>
@@ -513,8 +513,8 @@ export default function MLBPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/teams" className="group block">
-                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
-                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">All 30 Teams</h3>
+                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">All 30 Teams</h3>
                         <p className="text-text-tertiary text-sm">Full team directory with profiles, rosters, and season stats.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           Browse Teams
@@ -523,8 +523,8 @@ export default function MLBPage() {
                       </div>
                     </Link>
                     <Link href="/mlb/standings" className="group block">
-                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
-                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Division Standings</h3>
+                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Division Standings</h3>
                         <p className="text-text-tertiary text-sm">AL &amp; NL standings with win percentage, games back, and streaks.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Standings
@@ -554,8 +554,8 @@ export default function MLBPage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link href="/mlb/players" className="group block">
-                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
-                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Browse Players</h3>
+                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Browse Players</h3>
                         <p className="text-text-tertiary text-sm">Search and explore player profiles with batting, pitching, and fielding stats.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Players
@@ -564,8 +564,8 @@ export default function MLBPage() {
                       </div>
                     </Link>
                     <Link href="/mlb/stats" className="group block">
-                      <div className="bg-graphite rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
-                        <h3 className="text-white font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Statcast Analytics</h3>
+                      <div className="bg-background-tertiary rounded-lg p-6 border border-border-subtle hover:border-burnt-orange transition-colors">
+                        <h3 className="text-text-primary font-semibold mb-2 group-hover:text-burnt-orange transition-colors">Statcast Analytics</h3>
                         <p className="text-text-tertiary text-sm">Exit velocity, launch angle, sprint speed, and pitch movement data.</p>
                         <span className="text-burnt-orange text-sm font-semibold mt-3 inline-flex items-center gap-1">
                           View Analytics

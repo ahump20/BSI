@@ -144,16 +144,16 @@ function PlayerSearchInput({
   if (selected) {
     return (
       <div className="relative">
-        <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">{label}</label>
-        <div className={`flex items-center justify-between p-3 rounded-lg border bg-white/5`} style={{ borderColor: accentColor + '40' }}>
+        <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</label>
+        <div className={`flex items-center justify-between p-3 rounded-lg border bg-surface-light`} style={{ borderColor: accentColor + '40' }}>
           <div>
-            <span className="text-white font-medium">{selected.name}</span>
-            <span className="text-white/40 text-sm ml-2">{selected.team}</span>
-            {selected.position && <span className="text-white/30 text-xs ml-2">{selected.position}</span>}
+            <span className="text-text-primary font-medium">{selected.name}</span>
+            <span className="text-text-muted text-sm ml-2">{selected.team}</span>
+            {selected.position && <span className="text-text-muted text-xs ml-2">{selected.position}</span>}
           </div>
           <button
             onClick={onClear}
-            className="text-white/40 hover:text-white transition-colors text-sm px-2"
+            className="text-text-muted hover:text-text-primary transition-colors text-sm px-2"
             aria-label={`Clear ${label}`}
           >
             Clear
@@ -165,7 +165,7 @@ function PlayerSearchInput({
 
   return (
     <div className="relative" ref={wrapperRef}>
-      <label className="block text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">{label}</label>
+      <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{label}</label>
       <input
         type="text"
         value={query}
@@ -175,21 +175,21 @@ function PlayerSearchInput({
         }}
         onFocus={() => { if (results.length > 0) setOpen(true); }}
         placeholder="Search by name..."
-        className="w-full p-3 rounded-lg border border-white/15 bg-white/5 text-white placeholder-white/30 focus:outline-none focus:border-[#BF5700] transition-colors"
+        className="w-full p-3 rounded-lg border border-border-strong bg-surface-light text-text-primary placeholder-text-muted focus:outline-none focus:border-[#BF5700] transition-colors"
       />
       {searching && (
         <div className="absolute right-3 top-[38px] mt-0.5">
-          <div className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-border border-t-text-tertiary rounded-full animate-spin" />
         </div>
       )}
 
       {/* Dropdown */}
       {open && results.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full bg-[#1A1A1A] border border-white/15 rounded-lg shadow-xl max-h-64 overflow-y-auto">
+        <ul className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-lg shadow-xl max-h-64 overflow-y-auto">
           {results.map((p) => (
             <li key={p.id}>
               <button
-                className="w-full text-left px-4 py-3 hover:bg-white/10 transition-colors flex items-center justify-between"
+                className="w-full text-left px-4 py-3 hover:bg-surface-medium transition-colors flex items-center justify-between"
                 onClick={() => {
                   onSelect(p);
                   setQuery('');
@@ -197,12 +197,12 @@ function PlayerSearchInput({
                 }}
               >
                 <div>
-                  <span className="text-white text-sm font-medium">{p.name}</span>
-                  {p.team && <span className="text-white/40 text-xs ml-2">{p.team}</span>}
+                  <span className="text-text-primary text-sm font-medium">{p.name}</span>
+                  {p.team && <span className="text-text-muted text-xs ml-2">{p.team}</span>}
                 </div>
                 <div className="flex items-center gap-2">
-                  {p.position && <span className="text-white/30 text-xs">{p.position}</span>}
-                  {p.classYear && <span className="text-white/20 text-xs">{p.classYear}</span>}
+                  {p.position && <span className="text-text-muted text-xs">{p.position}</span>}
+                  {p.classYear && <span className="text-text-muted text-xs">{p.classYear}</span>}
                 </div>
               </button>
             </li>
@@ -211,8 +211,8 @@ function PlayerSearchInput({
       )}
 
       {open && query.length >= 2 && !searching && results.length === 0 && (
-        <div className="absolute z-50 mt-1 w-full bg-[#1A1A1A] border border-white/15 rounded-lg shadow-xl px-4 py-3">
-          <span className="text-white/40 text-sm">No players found</span>
+        <div className="absolute z-50 mt-1 w-full bg-background-secondary border border-border-strong rounded-lg shadow-xl px-4 py-3">
+          <span className="text-text-muted text-sm">No players found</span>
         </div>
       )}
     </div>
@@ -245,22 +245,22 @@ export default function PlayerComparePage() {
           <Container>
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-[#BF5700] transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/40">/</span>
-              <Link href="/college-baseball/players" className="text-white/40 hover:text-[#BF5700] transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/players" className="text-text-muted hover:text-[#BF5700] transition-colors">
                 Players
               </Link>
-              <span className="text-white/40">/</span>
-              <span className="text-white">Compare</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Compare</span>
             </div>
 
             {/* Title */}
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-[0.04em] text-white mb-2">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-[0.04em] text-text-primary mb-2">
               Player Comparison
             </h1>
-            <p className="text-white/50 text-sm mb-8">
+            <p className="text-text-tertiary text-sm mb-8">
               Select two players to compare their statistics side by side.
             </p>
 
@@ -292,7 +292,7 @@ export default function PlayerComparePage() {
             {/* Error */}
             {error && !loading && (
               <Card padding="lg" className="text-center mb-8">
-                <p className="text-red-400 mb-3">{error}</p>
+                <p className="text-error mb-3">{error}</p>
                 <button
                   onClick={retry}
                   className="px-4 py-2 bg-[#BF5700] text-white rounded-lg hover:bg-[#BF5700]/80 transition-colors text-sm"
@@ -321,8 +321,8 @@ export default function PlayerComparePage() {
             {/* API error (e.g. player not found) */}
             {data?.error && !loading && (
               <Card padding="lg" className="text-center">
-                <p className="text-white/50 mb-2">{data.error}</p>
-                <p className="text-white/30 text-sm">Try selecting different players.</p>
+                <p className="text-text-tertiary mb-2">{data.error}</p>
+                <p className="text-text-muted text-sm">Try selecting different players.</p>
               </Card>
             )}
 
@@ -330,8 +330,8 @@ export default function PlayerComparePage() {
             {!player1 && !player2 && !loading && (
               <Card padding="lg" className="text-center mt-4">
                 <div className="py-8">
-                  <p className="text-white/40 text-lg mb-2">Search for two players to get started</p>
-                  <p className="text-white/25 text-sm">Compare batting averages, home runs, ERA, and more.</p>
+                  <p className="text-text-muted text-lg mb-2">Search for two players to get started</p>
+                  <p className="text-text-muted text-sm">Compare batting averages, home runs, ERA, and more.</p>
                 </div>
               </Card>
             )}

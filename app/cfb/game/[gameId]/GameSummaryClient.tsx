@@ -85,7 +85,7 @@ export default function GameSummaryClient() {
                   <Badge variant={variant}>{label}</Badge>
                   <span className="text-text-tertiary text-sm">Leader</span>
                 </div>
-                <p className="text-white font-semibold text-lg">
+                <p className="text-text-primary font-semibold text-lg">
                   {topPerformer.athlete?.displayName || 'Unknown'}
                 </p>
                 <p className="text-text-secondary text-sm mt-1">
@@ -105,7 +105,7 @@ export default function GameSummaryClient() {
       {/* Key Stat Comparison */}
       {hasStats && (
         <Card variant="default" padding="md">
-          <h3 className="text-lg font-semibold text-white mb-4">Key Stats</h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-4">Key Stats</h3>
           <div className="space-y-4">
             {comparisonStats.map((item) => {
               const awayVal = getStatValue(awayTeam, item.stat);
@@ -154,7 +154,7 @@ export default function GameSummaryClient() {
                       {homeVal || '-'}
                     </span>
                   </div>
-                  <div className="flex h-2 rounded-full overflow-hidden bg-graphite">
+                  <div className="flex h-2 rounded-full overflow-hidden bg-background-tertiary">
                     <div
                       className={`transition-all ${
                         !tied && awayBetter ? 'bg-success' : 'bg-burnt-orange/50'

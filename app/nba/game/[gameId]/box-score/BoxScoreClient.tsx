@@ -160,8 +160,8 @@ export default function BoxScoreClient() {
 
         const renderPlayerRows = (players: BoxscorePlayerAthlete[]) =>
           players.map((player, pIdx) => (
-            <tr key={pIdx} className="border-b border-border-subtle last:border-0 hover:bg-white/5">
-              <td className="p-2 text-white font-medium whitespace-nowrap sticky left-0 bg-inherit">
+            <tr key={pIdx} className="border-b border-border-subtle last:border-0 hover:bg-surface-light">
+              <td className="p-2 text-text-primary font-medium whitespace-nowrap sticky left-0 bg-inherit">
                 <span>{player.athlete?.shortName || player.athlete?.displayName || '-'}</span>
                 {player.athlete?.position?.abbreviation && (
                   <span className="text-text-tertiary text-xs ml-1.5">
@@ -206,7 +206,7 @@ export default function BoxScoreClient() {
                         <tr>
                           <td
                             colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-graphite"
+                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
                           >
                             Starters
                           </td>
@@ -219,7 +219,7 @@ export default function BoxScoreClient() {
                         <tr>
                           <td
                             colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-graphite"
+                            className="px-2 py-1 text-xs text-burnt-orange font-semibold uppercase tracking-wide bg-background-tertiary"
                           >
                             Bench
                           </td>
@@ -232,7 +232,7 @@ export default function BoxScoreClient() {
                         <tr>
                           <td
                             colSpan={headers.length + 1}
-                            className="px-2 py-1 text-xs text-text-tertiary font-semibold uppercase tracking-wide bg-graphite"
+                            className="px-2 py-1 text-xs text-text-tertiary font-semibold uppercase tracking-wide bg-background-tertiary"
                           >
                             Did Not Play
                           </td>

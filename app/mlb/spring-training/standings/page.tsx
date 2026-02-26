@@ -50,7 +50,7 @@ export default function SpringTrainingStandingsPage() {
               <span className="text-text-tertiary">/</span>
               <Link href="/mlb/spring-training" className="text-text-tertiary hover:text-burnt-orange transition-colors">Spring Training</Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>

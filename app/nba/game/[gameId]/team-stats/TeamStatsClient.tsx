@@ -117,7 +117,7 @@ export default function TeamStatsClient() {
           {/* Team Headers */}
           <div className="flex items-center justify-between mb-6 px-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
                 {getTeamLogo(awayTeam) ? (
                   <img
                     src={getTeamLogo(awayTeam)!}
@@ -131,7 +131,7 @@ export default function TeamStatsClient() {
                 )}
               </div>
               <div>
-                <p className="font-semibold text-white">
+                <p className="font-semibold text-text-primary">
                   {awayTeam?.team?.displayName || 'Away'}
                 </p>
                 <p className="text-text-tertiary text-sm">
@@ -141,7 +141,7 @@ export default function TeamStatsClient() {
             </div>
             <span className="text-text-tertiary text-sm font-semibold">VS</span>
             <div className="flex items-center gap-3 flex-row-reverse">
-              <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
                 {getTeamLogo(homeTeam) ? (
                   <img
                     src={getTeamLogo(homeTeam)!}
@@ -155,7 +155,7 @@ export default function TeamStatsClient() {
                 )}
               </div>
               <div className="text-right">
-                <p className="font-semibold text-white">
+                <p className="font-semibold text-text-primary">
                   {homeTeam?.team?.displayName || 'Home'}
                 </p>
                 <p className="text-text-tertiary text-sm">
@@ -199,7 +199,7 @@ export default function TeamStatsClient() {
                       {stat.home}
                     </span>
                   </div>
-                  <div className="flex h-2 rounded-full overflow-hidden bg-graphite">
+                  <div className="flex h-2 rounded-full overflow-hidden bg-background-tertiary">
                     <div
                       className={`transition-all ${
                         !tied && awayWins ? 'bg-success' : 'bg-burnt-orange/50'

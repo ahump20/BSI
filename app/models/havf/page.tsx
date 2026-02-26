@@ -116,7 +116,7 @@ export default function HAVFMethodologyPage() {
         }}
       />
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -130,21 +130,21 @@ export default function HAVFMethodologyPage() {
 
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#BF5700]/8 via-transparent to-white/[0.02] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-burnt-orange/8 via-transparent to-white/[0.02] pointer-events-none" />
           <Container size="narrow">
             <Badge variant="success" className="mb-4">Live — v1.0</Badge>
-            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-white mb-4">
+            <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wide text-text-primary mb-4">
               HAV-F{' '}
-              <span className="bg-gradient-to-r from-[#BF5700] to-[#FDB913] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-burnt-orange to-gold bg-clip-text text-transparent">
                 Methodology
               </span>
             </h1>
-            <p className="text-white/50 text-lg leading-relaxed mb-6">
+            <p className="text-text-tertiary text-lg leading-relaxed mb-6">
               Hitting. At-Bat Quality. Velocity. Fielding. Four measurable dimensions of player
               performance, compressed into a single composite score that tells you what batting
               average and ERA alone never will.
             </p>
-            <p className="text-white/35 text-sm leading-relaxed">
+            <p className="text-text-muted text-sm leading-relaxed">
               HAV-F is BSI&apos;s proprietary player evaluation framework for college baseball
               scouting analytics. Every player is scored 0-100 on each component via percentile
               rank against their cohort, then the four components are weighted into a composite.
@@ -156,10 +156,10 @@ export default function HAVFMethodologyPage() {
         {/* Why HAV-F Exists */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Why This Exists
             </h2>
-            <div className="text-sm text-white/50 leading-relaxed space-y-4">
+            <div className="text-sm text-text-tertiary leading-relaxed space-y-4">
               <p>
                 MLB has Statcast — Hawk-Eye cameras in all 30 ballparks tracking every pitch,
                 swing, and throw at 300 frames per second. FanGraphs, Baseball Savant, and
@@ -187,12 +187,12 @@ export default function HAVFMethodologyPage() {
         {/* How It Works */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               How It Works
             </h2>
-            <div className="text-sm text-white/50 leading-relaxed space-y-4 mb-10">
+            <div className="text-sm text-text-tertiary leading-relaxed space-y-4 mb-10">
               <p>
-                HAV-F scores are <strong className="text-white/70">percentile-based</strong>,
+                HAV-F scores are <strong className="text-text-secondary">percentile-based</strong>,
                 not raw. A player with an 80 H-Score isn&apos;t &ldquo;80% good at hitting&rdquo; — he&apos;s
                 better than 80% of the players in his cohort at hitting. This means scores
                 automatically adjust as the cohort changes. A player who looks elite in a weak
@@ -222,20 +222,20 @@ export default function HAVFMethodologyPage() {
                 },
               ].map((item) => (
                 <div key={item.step} className="flex gap-4 items-start">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#BF5700] mt-0.5 shrink-0 w-48">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-48">
                     {item.step}
                   </span>
-                  <p className="text-sm text-white/50 leading-relaxed">{item.detail}</p>
+                  <p className="text-sm text-text-tertiary leading-relaxed">{item.detail}</p>
                 </div>
               ))}
             </div>
 
             {/* Composite formula */}
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-white/25 block mb-3">
+            <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block mb-3">
                 Composite Formula
               </span>
-              <pre className="text-sm font-mono text-white/60 leading-relaxed overflow-x-auto">
+              <pre className="text-sm font-mono text-text-secondary leading-relaxed overflow-x-auto">
 {`HAV-F = (H × 0.30) + (A × 0.25) + (V × 0.25) + (F × 0.20)
 
 where H, A, V, F ∈ [0, 100]
@@ -248,13 +248,13 @@ and   HAV-F ∈ [0, 100]`}
         {/* The Four Components */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-8">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-8">
               The Four Components
             </h2>
 
             <div className="space-y-10">
               {COMPONENTS.map((comp) => (
-                <div key={comp.key} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6">
+                <div key={comp.key} className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
                   {/* Component header */}
                   <div className="flex items-baseline gap-3 mb-3">
                     <span
@@ -264,41 +264,41 @@ and   HAV-F ∈ [0, 100]`}
                       {comp.key}
                     </span>
                     <div>
-                      <span className="font-display text-sm uppercase tracking-widest text-white/60">
+                      <span className="font-display text-sm uppercase tracking-widest text-text-secondary">
                         {comp.name}
                       </span>
-                      <span className="text-[10px] font-mono text-white/25 ml-2">
+                      <span className="text-[10px] font-mono text-text-muted ml-2">
                         {(comp.weight * 100).toFixed(0)}% of composite
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-sm text-white/50 leading-relaxed mb-5">
+                  <p className="text-sm text-text-tertiary leading-relaxed mb-5">
                     {comp.description}
                   </p>
 
                   {/* Sub-stat weights */}
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/25 block mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block mb-2">
                       Sub-stat weights
                     </span>
                     {comp.subStats.map((sub) => (
                       <div key={sub.stat} className="flex items-start gap-3">
                         <div className="flex items-center gap-2 shrink-0 w-28">
-                          <code className="text-xs font-mono text-white/70 bg-white/[0.04] px-1.5 py-0.5 rounded">
+                          <code className="text-xs font-mono text-text-secondary bg-surface-light px-1.5 py-0.5 rounded">
                             {sub.stat}
                           </code>
-                          <span className="text-[10px] font-mono text-white/25">
+                          <span className="text-[10px] font-mono text-text-muted">
                             {(sub.weight * 100).toFixed(0)}%
                           </span>
                         </div>
-                        <p className="text-xs text-white/40 leading-relaxed">{sub.description}</p>
+                        <p className="text-xs text-text-muted leading-relaxed">{sub.description}</p>
                       </div>
                     ))}
                   </div>
 
                   {/* Weight bar visualization */}
-                  <div className="mt-4 h-2 rounded-full bg-white/[0.04] overflow-hidden flex">
+                  <div className="mt-4 h-2 rounded-full bg-surface-light overflow-hidden flex">
                     {comp.subStats.map((sub) => (
                       <div
                         key={sub.stat}
@@ -321,13 +321,13 @@ and   HAV-F ∈ [0, 100]`}
         {/* Interpreting Scores */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Interpreting Scores
             </h2>
-            <div className="text-sm text-white/50 leading-relaxed space-y-4 mb-8">
+            <div className="text-sm text-text-tertiary leading-relaxed space-y-4 mb-8">
               <p>
                 The composite tells you where a player sits overall. The component breakdown
-                tells you <em className="text-white/70">why</em>. A 70 composite could be a
+                tells you <em className="text-text-secondary">why</em>. A 70 composite could be a
                 well-rounded player (65/70/72/68) or a specialist (90/80/60/30). The shape
                 of the radar chart matters as much as the number.
               </p>
@@ -342,7 +342,7 @@ and   HAV-F ∈ [0, 100]`}
               {INTERPRETATION_TIERS.map((tier) => (
                 <div
                   key={tier.range}
-                  className="flex items-start gap-4 bg-white/[0.03] border border-white/[0.06] rounded-xl p-4"
+                  className="flex items-start gap-4 bg-surface-light border border-border-subtle rounded-xl p-4"
                 >
                   <div className="shrink-0 w-20 text-center">
                     <span
@@ -353,8 +353,8 @@ and   HAV-F ∈ [0, 100]`}
                     </span>
                   </div>
                   <div>
-                    <span className="text-sm text-white/70 font-medium">{tier.label}</span>
-                    <p className="text-xs text-white/40 mt-0.5">{tier.description}</p>
+                    <span className="text-sm text-text-secondary font-medium">{tier.label}</span>
+                    <p className="text-xs text-text-muted mt-0.5">{tier.description}</p>
                   </div>
                 </div>
               ))}
@@ -365,15 +365,15 @@ and   HAV-F ∈ [0, 100]`}
         {/* Data Sources & Limitations */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Data Sources & Limitations
             </h2>
             <div className="space-y-6">
-              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6">
-                <h3 className="text-sm font-display uppercase tracking-wide text-white mb-3">
+              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+                <h3 className="text-sm font-display uppercase tracking-wide text-text-primary mb-3">
                   What Feeds HAV-F
                 </h3>
-                <div className="text-sm text-white/50 leading-relaxed space-y-3">
+                <div className="text-sm text-text-tertiary leading-relaxed space-y-3">
                   <p>
                     Player batting statistics from the Highlightly Pro API, supplemented by
                     ESPN&apos;s college baseball endpoints where Highlightly coverage is thin.
@@ -390,8 +390,8 @@ and   HAV-F ∈ [0, 100]`}
                 </div>
               </div>
 
-              <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6">
-                <h3 className="text-sm font-display uppercase tracking-wide text-white mb-3">
+              <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6">
+                <h3 className="text-sm font-display uppercase tracking-wide text-text-primary mb-3">
                   Known Limitations
                 </h3>
                 <div className="space-y-3">
@@ -423,10 +423,10 @@ and   HAV-F ∈ [0, 100]`}
                     },
                   ].map((item) => (
                     <div key={item.limitation} className="flex gap-4 items-start">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#BF5700] mt-0.5 shrink-0 w-48">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-burnt-orange mt-0.5 shrink-0 w-48">
                         {item.limitation}
                       </span>
-                      <p className="text-sm text-white/40 leading-relaxed">{item.detail}</p>
+                      <p className="text-sm text-text-muted leading-relaxed">{item.detail}</p>
                     </div>
                   ))}
                 </div>
@@ -438,14 +438,14 @@ and   HAV-F ∈ [0, 100]`}
         {/* Technical Implementation */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Technical Implementation
             </h2>
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 sm:p-6 space-y-4">
-              <div className="text-sm text-white/50 leading-relaxed space-y-3">
+            <div className="bg-surface-light border border-border-subtle rounded-xl p-5 sm:p-6 space-y-4">
+              <div className="text-sm text-text-tertiary leading-relaxed space-y-3">
                 <p>
                   The computation engine lives in{' '}
-                  <code className="text-white/70 bg-white/[0.06] px-1.5 py-0.5 rounded text-xs font-mono">
+                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs font-mono">
                     lib/analytics/havf.ts
                   </code>
                   {' '}— pure math with no external dependencies. It takes an array of player stat
@@ -458,7 +458,7 @@ and   HAV-F ∈ [0, 100]`}
                 </p>
                 <p>
                   Computed scores are persisted to Cloudflare D1 (the{' '}
-                  <code className="text-white/70 bg-white/[0.06] px-1.5 py-0.5 rounded text-xs font-mono">
+                  <code className="text-text-secondary bg-surface-light px-1.5 py-0.5 rounded text-xs font-mono">
                     havf_scores
                   </code>{' '}
                   table) with raw input stats preserved for audit trail. The leaderboard API
@@ -467,11 +467,11 @@ and   HAV-F ∈ [0, 100]`}
               </div>
 
               {/* Storage schema summary */}
-              <div className="bg-white/[0.02] rounded-lg p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/25 block mb-2">
+              <div className="bg-surface-light rounded-lg p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block mb-2">
                   D1 Schema Highlights
                 </span>
-                <pre className="text-xs font-mono text-white/40 leading-relaxed overflow-x-auto">
+                <pre className="text-xs font-mono text-text-muted leading-relaxed overflow-x-auto">
 {`havf_scores
 ├── player_id       TEXT (unique per league+season)
 ├── h_score         REAL [0-100]
@@ -492,29 +492,29 @@ and   HAV-F ∈ [0, 100]`}
         {/* Explore the Data */}
         <Section padding="lg" borderTop>
           <Container size="narrow">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-white mb-6">
+            <h2 className="font-display text-xl font-semibold uppercase tracking-wide text-text-primary mb-6">
               Explore the Data
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href="/college-baseball/analytics" className="block group">
-                <Card variant="default" padding="lg" className="h-full hover:border-[#BF5700]/40 hover:bg-white/[0.06] transition-all">
+                <Card variant="default" padding="lg" className="h-full hover:border-border-accent hover:bg-surface-light transition-all">
                   <Badge variant="accent" size="sm" className="mb-2">Live</Badge>
-                  <h3 className="font-display text-sm uppercase tracking-wide text-white group-hover:text-[#BF5700] transition-colors mb-1">
+                  <h3 className="font-display text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mb-1">
                     HAV-F Leaderboard
                   </h3>
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-text-muted">
                     Top 50 college baseball players ranked by HAV-F composite with radar charts
                     and component breakdowns.
                   </p>
                 </Card>
               </Link>
               <Link href="/college-baseball/players" className="block group">
-                <Card variant="default" padding="lg" className="h-full hover:border-[#BF5700]/40 hover:bg-white/[0.06] transition-all">
+                <Card variant="default" padding="lg" className="h-full hover:border-border-accent hover:bg-surface-light transition-all">
                   <Badge variant="primary" size="sm" className="mb-2">15 Profiles</Badge>
-                  <h3 className="font-display text-sm uppercase tracking-wide text-white group-hover:text-[#BF5700] transition-colors mb-1">
+                  <h3 className="font-display text-sm uppercase tracking-wide text-text-primary group-hover:text-burnt-orange transition-colors mb-1">
                     Player Pages
                   </h3>
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-text-muted">
                     Individual player profiles with HAV-F scores, stat tables, and scouting
                     analytics for top prospects.
                   </p>
@@ -534,11 +534,11 @@ and   HAV-F ∈ [0, 100]`}
             />
 
             {/* Navigation */}
-            <div className="mt-12 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/models" className="hover:text-white/60 transition-colors">
+            <div className="mt-12 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/models" className="hover:text-text-secondary transition-colors">
                 &#8592; All Models
               </Link>
-              <Link href="/college-baseball/analytics" className="hover:text-white/60 transition-colors">
+              <Link href="/college-baseball/analytics" className="hover:text-text-secondary transition-colors">
                 HAV-F Leaderboard &#8594;
               </Link>
             </div>

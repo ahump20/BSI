@@ -213,7 +213,7 @@ export default function CollegeBaseballPlayersPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Players</span>
+                <span className="text-text-primary">Players</span>
               </div>
 
               <div className="mb-8">
@@ -240,7 +240,7 @@ export default function CollegeBaseballPlayersPage() {
                       onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                       onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       placeholder="Search by player name, team, or hometown..."
-                      className="flex-1 px-4 py-2 bg-charcoal border border-border-subtle rounded-lg text-white placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="flex-1 px-4 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Search players"
                     />
                     <button
@@ -257,7 +257,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.team}
                       onChange={(e) => setFilters({ ...filters, team: e.target.value })}
-                      className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by team"
                     >
                       {conferences.map((conf) => (
@@ -270,7 +270,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.position}
                       onChange={(e) => setFilters({ ...filters, position: e.target.value })}
-                      className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by position"
                     >
                       {positions.map((pos) => (
@@ -283,7 +283,7 @@ export default function CollegeBaseballPlayersPage() {
                     <select
                       value={filters.classYear}
                       onChange={(e) => setFilters({ ...filters, classYear: e.target.value })}
-                      className="px-3 py-2 bg-charcoal border border-border-subtle rounded-lg text-white focus:outline-none focus:border-burnt-orange transition-colors"
+                      className="px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                       aria-label="Filter by class year"
                     >
                       {classYears.map((year) => (
@@ -293,14 +293,14 @@ export default function CollegeBaseballPlayersPage() {
                       ))}
                     </select>
 
-                    <label className="flex items-center gap-2 px-3 py-2 bg-charcoal border border-border-subtle rounded-lg cursor-pointer hover:border-burnt-orange/50 transition-colors">
+                    <label className="flex items-center gap-2 px-3 py-2 bg-background-secondary border border-border-subtle rounded-lg cursor-pointer hover:border-burnt-orange/50 transition-colors">
                       <input
                         type="checkbox"
                         checked={filters.draftOnly}
                         onChange={(e) => setFilters({ ...filters, draftOnly: e.target.checked })}
                         className="w-4 h-4 accent-burnt-orange"
                       />
-                      <span className="text-sm text-white">Draft Prospects Only</span>
+                      <span className="text-sm text-text-primary">Draft Prospects Only</span>
                     </label>
                   </div>
                 </div>
@@ -352,7 +352,7 @@ export default function CollegeBaseballPlayersPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-3 py-1.5 bg-charcoal border border-border-subtle rounded text-white text-sm focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-3 py-1.5 bg-background-secondary border border-border-subtle rounded text-text-primary text-sm focus:outline-none focus:border-burnt-orange transition-colors"
                   aria-label="Sort players"
                 >
                   {sortOptions.map((opt) => (
@@ -373,13 +373,13 @@ export default function CollegeBaseballPlayersPage() {
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Error Loading Players</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Players</h3>
                 <p className="text-text-secondary">{error}</p>
               </Card>
             ) : sortedPlayers.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-text-tertiary text-4xl mb-4">?</div>
-                <h3 className="text-xl font-semibold text-white mb-2">No Players Found</h3>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">No Players Found</h3>
                 <p className="text-text-secondary">Try adjusting your search or filter criteria.</p>
               </Card>
             ) : (
@@ -391,10 +391,10 @@ export default function CollegeBaseballPlayersPage() {
                       <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border-subtle">
                         <div className="flex items-center gap-3">
                           {player.headshot && (
-                            <img src={player.headshot} alt="" className="w-10 h-10 rounded-full object-cover bg-charcoal" loading="lazy" />
+                            <img src={player.headshot} alt="" className="w-10 h-10 rounded-full object-cover bg-background-secondary" loading="lazy" />
                           )}
                           <div className="min-w-0">
-                            <h3 className="font-display text-xl font-bold text-white">
+                            <h3 className="font-display text-xl font-bold text-text-primary">
                               <Link href={`/college-baseball/players/${player.id}`} className="hover:text-burnt-orange transition-colors">
                                 {player.name}
                               </Link>
@@ -419,31 +419,31 @@ export default function CollegeBaseballPlayersPage() {
                           {player.bio.height && (
                             <div>
                               <div className="text-text-tertiary text-xs uppercase">Height</div>
-                              <div className="text-white font-medium">{player.bio.height}</div>
+                              <div className="text-text-primary font-medium">{player.bio.height}</div>
                             </div>
                           )}
                           {player.bio.weight > 0 && (
                             <div>
                               <div className="text-text-tertiary text-xs uppercase">Weight</div>
-                              <div className="text-white font-medium">{player.bio.weight} lbs</div>
+                              <div className="text-text-primary font-medium">{player.bio.weight} lbs</div>
                             </div>
                           )}
                           {player.bio.bats && (
                             <div>
                               <div className="text-text-tertiary text-xs uppercase">Bats</div>
-                              <div className="text-white font-medium">{player.bio.bats}</div>
+                              <div className="text-text-primary font-medium">{player.bio.bats}</div>
                             </div>
                           )}
                           {player.bio.throws && (
                             <div>
                               <div className="text-text-tertiary text-xs uppercase">Throws</div>
-                              <div className="text-white font-medium">{player.bio.throws}</div>
+                              <div className="text-text-primary font-medium">{player.bio.throws}</div>
                             </div>
                           )}
                           {player.bio.hometown && (
                             <div>
                               <div className="text-text-tertiary text-xs uppercase">Hometown</div>
-                              <div className="text-white font-medium truncate">{player.bio.hometown}</div>
+                              <div className="text-text-primary font-medium truncate">{player.bio.hometown}</div>
                             </div>
                           )}
                         </div>

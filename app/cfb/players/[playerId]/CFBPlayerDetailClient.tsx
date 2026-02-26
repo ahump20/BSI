@@ -60,8 +60,8 @@ interface PlayerResponse {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center p-4 bg-graphite rounded-lg">
-      <p className="text-2xl md:text-3xl font-bold text-white">{value}</p>
+    <div className="text-center p-4 bg-background-secondary rounded-lg">
+      <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
       <p className="text-xs text-text-tertiary uppercase tracking-wider mt-1">{label}</p>
     </div>
   );
@@ -71,13 +71,13 @@ function SkeletonProfile() {
   return (
     <div className="animate-pulse">
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="w-48 h-48 bg-graphite rounded-full flex-shrink-0" />
+        <div className="w-48 h-48 bg-background-tertiary rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-graphite rounded w-2/3" />
-          <div className="h-6 bg-graphite/50 rounded w-1/3" />
+          <div className="h-8 bg-background-tertiary rounded w-2/3" />
+          <div className="h-6 bg-background-tertiary/50 rounded w-1/3" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-20 bg-graphite rounded-lg" />
+              <div key={i} className="h-20 bg-background-tertiary rounded-lg" />
             ))}
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
               <span className="text-text-tertiary">/</span>
               <span className="text-text-tertiary">Players</span>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {loading ? 'Loading...' : player?.name || 'Player'}
               </span>
             </nav>
@@ -224,7 +224,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                       )}
                     </div>
 
-                    <h1 className="font-display text-3xl md:text-4xl font-bold text-white">
+                    <h1 className="font-display text-3xl md:text-4xl font-bold text-text-primary">
                       {player.name}
                     </h1>
 
@@ -264,38 +264,38 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                 {/* Personal Info */}
                 <ScrollReveal direction="up">
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Player Information
                     </h2>
                     <dl className="space-y-3">
                       {player.position && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Position</dt>
-                          <dd className="text-white">{player.positionFull || player.position}</dd>
+                          <dd className="text-text-primary">{player.positionFull || player.position}</dd>
                         </div>
                       )}
                       {player.height && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Height</dt>
-                          <dd className="text-white">{player.height}</dd>
+                          <dd className="text-text-primary">{player.height}</dd>
                         </div>
                       )}
                       {player.weight && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Weight</dt>
-                          <dd className="text-white">{player.weight} lbs</dd>
+                          <dd className="text-text-primary">{player.weight} lbs</dd>
                         </div>
                       )}
                       {player.year && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Class</dt>
-                          <dd className="text-white">{player.year}</dd>
+                          <dd className="text-text-primary">{player.year}</dd>
                         </div>
                       )}
                       {player.birthDate && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Born</dt>
-                          <dd className="text-white">
+                          <dd className="text-text-primary">
                             {new Date(player.birthDate).toLocaleDateString('en-US', {
                               month: 'long',
                               day: 'numeric',
@@ -307,13 +307,13 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                       {player.birthPlace && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Hometown</dt>
-                          <dd className="text-white">{player.birthPlace}</dd>
+                          <dd className="text-text-primary">{player.birthPlace}</dd>
                         </div>
                       )}
                       {player.hometown && !player.birthPlace && (
                         <div className="flex justify-between">
                           <dt className="text-text-tertiary">Hometown</dt>
-                          <dd className="text-white">{player.hometown}</dd>
+                          <dd className="text-text-primary">{player.hometown}</dd>
                         </div>
                       )}
                     </dl>
@@ -323,7 +323,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                 {/* Team Info */}
                 <ScrollReveal direction="up" delay={100}>
                   <Card variant="default" padding="lg">
-                    <h2 className="font-display text-xl font-bold text-white mb-4">
+                    <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                       Team
                     </h2>
                     {player.team ? (
@@ -339,7 +339,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
                           />
                         )}
                         <div>
-                          <p className="text-white font-semibold text-lg">{player.team.name}</p>
+                          <p className="text-text-primary font-semibold text-lg">{player.team.name}</p>
                           <p className="text-text-tertiary">{player.team.abbreviation}</p>
                         </div>
                       </div>
@@ -366,7 +366,7 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
           <Section padding="lg" background="midnight">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-2xl font-bold text-white mb-6">
+                <h2 className="font-display text-2xl font-bold text-text-primary mb-6">
                   {stats.season || 'Season'} Stats
                 </h2>
               </ScrollReveal>
@@ -401,20 +401,20 @@ export default function CFBPlayerDetailClient({ playerId }: CFBPlayerDetailClien
               {player?.team?.id && (
                 <Link
                   href={`/cfb/teams/${player.team.id}`}
-                  className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                  className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
                 >
                   {player.team.name} Roster
                 </Link>
               )}
               <Link
                 href="/cfb/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 All Teams
               </Link>
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores
               </Link>

@@ -152,7 +152,7 @@ export default function MLBTeamsPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Teams</span>
+              <span className="text-text-primary font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -205,7 +205,7 @@ export default function MLBTeamsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search teams, cities, venues..."
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-graphite border border-border-subtle text-white text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-background-tertiary border border-border-subtle text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
               </div>
 
@@ -218,7 +218,7 @@ export default function MLBTeamsPage() {
                     className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                       selectedLeague === league
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                     }`}
                   >
                     {league === 'all'
@@ -239,7 +239,7 @@ export default function MLBTeamsPage() {
 
                 return (
                   <div key={division} className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <svg
                         viewBox="0 0 24 24"
                         className="w-5 h-5 text-burnt-orange"
@@ -280,7 +280,7 @@ export default function MLBTeamsPage() {
                     setSearchQuery('');
                     setSelectedLeague('all');
                   }}
-                  className="mt-4 px-4 py-2 text-sm text-burnt-orange hover:text-white transition-colors"
+                  className="mt-4 px-4 py-2 text-sm text-burnt-orange hover:text-text-primary transition-colors"
                 >
                   Clear filters
                 </button>
@@ -337,7 +337,7 @@ function TeamCard({ team }: { team: TeamWithRecord }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
+            <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
               {team.city} {team.name}
             </p>
             <p className="text-xs text-text-tertiary">

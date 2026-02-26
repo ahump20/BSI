@@ -26,7 +26,7 @@ export default function PrivacyPage() {
               <div className="prose prose-invert max-w-none space-y-8">
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">1. Who We Are</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">1. Who We Are</h2>
                   <p className="text-text-secondary leading-relaxed">
                     Blaze Sports Intel (&ldquo;BSI,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;) is a product of
                     Blaze Intelligence LLC, a Texas limited liability company. We provide sports analytics,
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">2. Information We Collect</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">2. Information We Collect</h2>
                   <p className="text-text-secondary leading-relaxed font-medium mb-3">Information you provide directly:</p>
                   <ul className="list-disc pl-5 space-y-1 text-text-secondary">
                     <li>Account information: name, email address</li>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">3. How We Use Your Information</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">3. How We Use Your Information</h2>
                   <ul className="list-disc pl-5 space-y-1 text-text-secondary">
                     <li>Provide and operate the BSI platform and services</li>
                     <li>Process payments and manage subscriptions</li>
@@ -69,7 +69,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">4. Third-Party Service Providers</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">4. Third-Party Service Providers</h2>
                   <p className="text-text-secondary leading-relaxed mb-3">
                     We share data only with service providers necessary to operate BSI:
                   </p>
@@ -77,9 +77,9 @@ export default function PrivacyPage() {
                     <table className="w-full text-sm text-text-secondary">
                       <thead>
                         <tr className="text-left border-b border-border-subtle">
-                          <th className="pb-2 pr-4 text-white/50">Provider</th>
-                          <th className="pb-2 pr-4 text-white/50">Purpose</th>
-                          <th className="pb-2 text-white/50">Data Shared</th>
+                          <th className="pb-2 pr-4 text-text-tertiary">Provider</th>
+                          <th className="pb-2 pr-4 text-text-tertiary">Purpose</th>
+                          <th className="pb-2 text-text-tertiary">Data Shared</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border-subtle/50">
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">5. Data Retention</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">5. Data Retention</h2>
                   <ul className="list-disc pl-5 space-y-1 text-text-secondary">
                     <li>Contact form submissions: retained for 90 days, then automatically deleted</li>
                     <li>Newsletter subscriptions: retained until you unsubscribe</li>
@@ -105,17 +105,17 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">6. Your Rights</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">6. Your Rights</h2>
                   <p className="text-text-secondary leading-relaxed mb-3">
                     Depending on your location, you may have the following rights regarding your personal data:
                   </p>
                   <ul className="list-disc pl-5 space-y-1 text-text-secondary">
-                    <li><strong className="text-white">Access:</strong> Request a copy of the personal data we hold about you</li>
-                    <li><strong className="text-white">Correction:</strong> Request correction of inaccurate data</li>
-                    <li><strong className="text-white">Deletion:</strong> Request deletion of your personal data</li>
-                    <li><strong className="text-white">Portability:</strong> Request your data in a portable format</li>
-                    <li><strong className="text-white">Opt-out:</strong> Opt out of marketing communications at any time</li>
-                    <li><strong className="text-white">Non-discrimination:</strong> We will not discriminate against you for exercising your privacy rights</li>
+                    <li><strong className="text-text-primary">Access:</strong> Request a copy of the personal data we hold about you</li>
+                    <li><strong className="text-text-primary">Correction:</strong> Request correction of inaccurate data</li>
+                    <li><strong className="text-text-primary">Deletion:</strong> Request deletion of your personal data</li>
+                    <li><strong className="text-text-primary">Portability:</strong> Request your data in a portable format</li>
+                    <li><strong className="text-text-primary">Opt-out:</strong> Opt out of marketing communications at any time</li>
+                    <li><strong className="text-text-primary">Non-discrimination:</strong> We will not discriminate against you for exercising your privacy rights</li>
                   </ul>
                   <p className="text-text-secondary leading-relaxed mt-3">
                     To exercise any of these rights, email{' '}
@@ -126,7 +126,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">7. Texas Data Privacy and Security Act (TDPSA)</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">7. Texas Data Privacy and Security Act (TDPSA)</h2>
                   <p className="text-text-secondary leading-relaxed">
                     As a Texas-based company, we comply with the Texas Data Privacy and Security Act.
                     Texas residents have the right to access, correct, delete, and obtain a copy of their
@@ -138,7 +138,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">8. California Consumer Privacy Act (CCPA)</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">8. California Consumer Privacy Act (CCPA)</h2>
                   <p className="text-text-secondary leading-relaxed">
                     If you are a California resident, you have additional rights under the CCPA including
                     the right to know what personal information we collect, the right to delete, and the
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">9. Cookies</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">9. Cookies</h2>
                   <p className="text-text-secondary leading-relaxed">
                     BSI uses only essential cookies required for the platform to function (session management,
                     security). We do not use advertising cookies, tracking cookies, or third-party analytics
@@ -157,7 +157,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">10. Data Security</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">10. Data Security</h2>
                   <p className="text-text-secondary leading-relaxed">
                     We implement industry-standard security measures including encryption in transit (TLS),
                     encryption at rest, access controls, and regular security reviews. Our infrastructure
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">11. Data Breach Notification</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">11. Data Breach Notification</h2>
                   <p className="text-text-secondary leading-relaxed">
                     In the event of a data breach affecting your personal information, we will notify
                     affected individuals and the Texas Attorney General within 60 days as required by
@@ -178,7 +178,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">12. Children&apos;s Privacy</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">12. Children&apos;s Privacy</h2>
                   <p className="text-text-secondary leading-relaxed">
                     BSI is not directed at individuals under the age of 16. We do not knowingly collect
                     personal information from children. If we learn we have collected data from a child
@@ -187,7 +187,7 @@ export default function PrivacyPage() {
                 </section>
 
                 <section>
-                  <h2 className="text-xl font-semibold text-white mb-4">13. Changes to This Policy</h2>
+                  <h2 className="text-xl font-semibold text-text-primary mb-4">13. Changes to This Policy</h2>
                   <p className="text-text-secondary leading-relaxed">
                     We may update this policy from time to time. Material changes will be communicated
                     via email to registered users and posted on this page with an updated date. Continued

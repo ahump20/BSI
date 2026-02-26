@@ -103,13 +103,9 @@ const loadTensorFlow = (): Promise<TensorFlowAPI> => {
 // ═══════════════════════════════════════════════════════════════════════════
 const COLORS = {
   orange: '#bf5700',
-  soil: '#8b4513',
-  ember: '#ff6b35',
-  midnight: '#0d0d0d',
-  charcoal: '#1a1a1a',
   bone: '#f5f2eb',
   dust: '#c4b8a5',
-  pro: '#22c55e', // Pro form overlay color
+  pro: '#22c55e',
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1521,7 +1517,7 @@ export default function VisionAIIntelligencePage() {
           onKeyDown={(e) => {
             if (e.key === 'Escape') setActiveTooltip(null);
           }}
-          className="p-0.5 text-white/40 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
+          className="p-0.5 text-text-muted hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
           aria-label={`Help for ${help.title}`}
           aria-expanded={isActive}
           aria-describedby={isActive ? `tooltip-${metricKey}` : undefined}
@@ -1533,7 +1529,7 @@ export default function VisionAIIntelligencePage() {
           <div
             id={`tooltip-${metricKey}`}
             role="tooltip"
-            className="absolute z-50 left-0 top-full mt-2 w-64 p-3 bg-charcoal border border-primary/30 rounded-lg shadow-xl"
+            className="absolute z-50 left-0 top-full mt-2 w-64 p-3 bg-background-secondary border border-primary/30 rounded-lg shadow-xl"
           >
             <div className="flex items-center justify-between mb-2">
               <span className="font-display text-xs tracking-wider uppercase text-primary">
@@ -1541,14 +1537,14 @@ export default function VisionAIIntelligencePage() {
               </span>
               <button
                 onClick={() => setActiveTooltip(null)}
-                className="p-0.5 text-white/40 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
+                className="p-0.5 text-text-muted hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
                 aria-label="Close tooltip"
               >
                 <X size={12} />
               </button>
             </div>
-            <p className="text-xs text-white/70 leading-relaxed mb-2">{help.description}</p>
-            <div className="flex items-center gap-1.5 text-[10px] text-green-500">
+            <p className="text-xs text-text-secondary leading-relaxed mb-2">{help.description}</p>
+            <div className="flex items-center gap-1.5 text-[10px] text-success">
               <CheckCircle2 size={10} />
               Ideal: {help.ideal}
             </div>
@@ -1569,10 +1565,10 @@ export default function VisionAIIntelligencePage() {
       <span
         className={`ml-1.5 text-xs ${
           d.cls === 'positive'
-            ? 'text-green-500'
+            ? 'text-success'
             : d.cls === 'negative'
-              ? 'text-red-500'
-              : 'text-[#c4b8a5]'
+              ? 'text-error'
+              : 'text-text-tertiary'
         }`}
       >
         {d.text}
@@ -1600,7 +1596,7 @@ export default function VisionAIIntelligencePage() {
 
       <main
         id="main-content"
-        className="min-h-screen font-body text-base text-[#f5f2eb] bg-gradient-to-b from-[#050505] via-midnight to-[#080808] pt-16 md:pt-20"
+        className="min-h-screen font-body text-base text-text-primary bg-background-primary pt-16 md:pt-20"
         tabIndex={-1}
       >
         {/* Radial glow */}
@@ -1614,7 +1610,7 @@ export default function VisionAIIntelligencePage() {
         {/* Permission Prompt Modal (Mobile Safari) */}
         {showPermissionPrompt && (
           <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4">
-            <div className="bg-charcoal border border-primary/30 rounded-xl max-w-md w-full p-6">
+            <div className="bg-background-secondary border border-primary/30 rounded-xl max-w-md w-full p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Smartphone className="text-primary" size={24} />
                 <h2 className="font-display text-lg font-medium tracking-wider uppercase">
@@ -1622,7 +1618,7 @@ export default function VisionAIIntelligencePage() {
                 </h2>
               </div>
 
-              <p className="text-white/70 text-sm mb-4">
+              <p className="text-text-secondary text-sm mb-4">
                 Vision AI needs access to your camera and microphone to analyze your form. All
                 processing happens locally on your device—no data leaves your phone.
               </p>
@@ -1631,27 +1627,27 @@ export default function VisionAIIntelligencePage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Camera
                     size={16}
-                    className={cameraPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                    className={cameraPermission === 'granted' ? 'text-success' : 'text-text-tertiary'}
                   />
-                  <span className={cameraPermission === 'granted' ? 'text-green-500' : ''}>
+                  <span className={cameraPermission === 'granted' ? 'text-success' : ''}>
                     Camera: {cameraPermission === 'granted' ? 'Granted' : 'Required'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Mic
                     size={16}
-                    className={micPermission === 'granted' ? 'text-green-500' : 'text-white/50'}
+                    className={micPermission === 'granted' ? 'text-success' : 'text-text-tertiary'}
                   />
-                  <span className={micPermission === 'granted' ? 'text-green-500' : ''}>
+                  <span className={micPermission === 'granted' ? 'text-success' : ''}>
                     Microphone: {micPermission === 'granted' ? 'Granted' : 'Required'}
                   </span>
                 </div>
               </div>
 
               {(cameraPermission === 'denied' || micPermission === 'denied') && (
-                <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg mb-4">
-                  <AlertCircle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-red-400">
+                <div className="flex items-start gap-2 p-3 bg-error/10 border border-error/30 rounded-lg mb-4">
+                  <AlertCircle size={16} className="text-error mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-error-light">
                     Permissions were denied. Please enable camera and microphone access in your
                     device settings, then reload this page.
                   </p>
@@ -1661,7 +1657,7 @@ export default function VisionAIIntelligencePage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowPermissionPrompt(false)}
-                  className="flex-1 px-4 py-2.5 text-sm font-medium text-white/70 bg-midnight border border-white/20 rounded-lg hover:bg-white/5"
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-text-secondary bg-background-primary border border-border-strong rounded-lg hover:bg-surface-light"
                 >
                   Cancel
                 </button>
@@ -1678,16 +1674,16 @@ export default function VisionAIIntelligencePage() {
         )}
 
         {/* Sub-header */}
-        <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-midnight/75 backdrop-blur-xl">
+        <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-background-primary/75 backdrop-blur-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-midnight/30 text-xl">
+            <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-background-primary/30 text-xl">
               🔥
             </div>
             <div>
               <h1 className="font-display text-sm font-medium tracking-[0.28em] uppercase">
                 Vision AI Intelligence
               </h1>
-              <p className="text-sm text-white/65">
+              <p className="text-sm text-text-secondary">
                 {playbackSession
                   ? 'Reviewing recorded session'
                   : 'Signals, not mind-reading — All processing runs locally'}
@@ -1696,31 +1692,31 @@ export default function VisionAIIntelligencePage() {
           </div>
 
           <div className="flex gap-2 flex-wrap justify-end">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-text-secondary bg-background-secondary/50 border border-primary/15 rounded-full">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
                   running
-                    ? 'bg-green-500 animate-pulse'
+                    ? 'bg-success animate-pulse'
                     : playbackSession
-                      ? 'bg-blue-500'
-                      : 'bg-gray-500'
+                      ? 'bg-info'
+                      : 'bg-text-muted'
                 }`}
               />
               {status}
             </div>
             {!playbackSession && (
-              <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+              <div className="px-3 py-1.5 font-display text-xs tracking-wider uppercase text-text-secondary bg-background-secondary/50 border border-primary/15 rounded-full">
                 FPS: {fps}
               </div>
             )}
             {isRecording && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-red-500 bg-red-500/10 border border-red-500/30 rounded-full animate-pulse">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-error bg-error/10 border border-error/30 rounded-full animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-error" />
                 REC
               </div>
             )}
             {calibrated && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-white/70 bg-charcoal/50 border border-primary/15 rounded-full">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs tracking-wider uppercase text-text-secondary bg-background-secondary/50 border border-primary/15 rounded-full">
                 <CheckCircle2 size={12} className="text-primary" />
                 Baseline Set
               </div>
@@ -1731,7 +1727,7 @@ export default function VisionAIIntelligencePage() {
         {/* Getting Started Instructions Panel */}
         <div className="max-w-7xl mx-auto px-4 md:px-6 pt-6 relative z-10">
           <section
-            className="bg-gradient-to-r from-primary/10 via-midnight/80 to-midnight/80 border border-primary/20 rounded-lg backdrop-blur-xl overflow-hidden"
+            className="bg-gradient-to-r from-primary/10 via-background-primary/80 to-background-primary/80 border border-primary/20 rounded-lg backdrop-blur-xl overflow-hidden"
             aria-labelledby="instructions-heading"
           >
             <button
@@ -1744,7 +1740,7 @@ export default function VisionAIIntelligencePage() {
                 <Info size={16} className="text-primary" />
                 <span
                   id="instructions-heading"
-                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85"
+                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-text-primary"
                 >
                   Getting Started
                 </span>
@@ -1753,9 +1749,9 @@ export default function VisionAIIntelligencePage() {
                 </span>
               </div>
               {showInstructions ? (
-                <ChevronUp size={16} className="text-white/50" />
+                <ChevronUp size={16} className="text-text-tertiary" />
               ) : (
-                <ChevronDown size={16} className="text-white/50" />
+                <ChevronDown size={16} className="text-text-tertiary" />
               )}
             </button>
 
@@ -1763,48 +1759,48 @@ export default function VisionAIIntelligencePage() {
               <div id="instructions-content" className="px-4 pb-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Step 1 */}
-                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="p-4 bg-background-primary/50 rounded-lg border border-primary/10">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
                         1
                       </div>
-                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      <h3 className="font-display text-sm tracking-wider uppercase text-text-primary">
                         Position Yourself
                       </h3>
                     </div>
-                    <p className="text-xs text-white/60 leading-relaxed">
+                    <p className="text-xs text-text-secondary leading-relaxed">
                       Stand 6-8 feet from your camera with your full body visible. Ensure good
                       lighting from the front—avoid backlighting.
                     </p>
                   </div>
 
                   {/* Step 2 */}
-                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="p-4 bg-background-primary/50 rounded-lg border border-primary/10">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
                         2
                       </div>
-                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      <h3 className="font-display text-sm tracking-wider uppercase text-text-primary">
                         Calibrate Baseline
                       </h3>
                     </div>
-                    <p className="text-xs text-white/60 leading-relaxed">
+                    <p className="text-xs text-text-secondary leading-relaxed">
                       Start a session, then click "Calibrate" and hold still for 5 seconds. This
                       sets your personal baseline for tracking improvements.
                     </p>
                   </div>
 
                   {/* Step 3 */}
-                  <div className="p-4 bg-midnight/50 rounded-lg border border-primary/10">
+                  <div className="p-4 bg-background-primary/50 rounded-lg border border-primary/10">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">
                         3
                       </div>
-                      <h3 className="font-display text-sm tracking-wider uppercase text-white/90">
+                      <h3 className="font-display text-sm tracking-wider uppercase text-text-primary">
                         Compare to Pros
                       </h3>
                     </div>
-                    <p className="text-xs text-white/60 leading-relaxed">
+                    <p className="text-xs text-text-secondary leading-relaxed">
                       Enable "Pro Form" to overlay ideal positioning. Match your skeleton to the
                       green reference for optimal form.
                     </p>
@@ -1812,17 +1808,17 @@ export default function VisionAIIntelligencePage() {
                 </div>
 
                 {/* Quick tips */}
-                <div className="mt-4 p-3 bg-charcoal/30 rounded-lg border border-white/5">
+                <div className="mt-4 p-3 bg-background-secondary/30 rounded-lg border border-border-subtle">
                   <div className="flex items-start gap-2">
                     <HelpCircle size={14} className="text-primary mt-0.5 flex-shrink-0" />
-                    <div className="text-xs text-white/50">
-                      <strong className="text-white/70">Keyboard shortcuts:</strong> Press{' '}
-                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">Space</kbd> to
+                    <div className="text-xs text-text-tertiary">
+                      <strong className="text-text-secondary">Keyboard shortcuts:</strong> Press{' '}
+                      <kbd className="px-1 py-0.5 bg-background-primary rounded text-text-secondary">Space</kbd> to
                       start/stop,{' '}
-                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">C</kbd> to
+                      <kbd className="px-1 py-0.5 bg-background-primary rounded text-text-secondary">C</kbd> to
                       calibrate,{' '}
-                      <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">R</kbd> to
-                      record, <kbd className="px-1 py-0.5 bg-midnight rounded text-white/70">P</kbd>{' '}
+                      <kbd className="px-1 py-0.5 bg-background-primary rounded text-text-secondary">R</kbd> to
+                      record, <kbd className="px-1 py-0.5 bg-background-primary rounded text-text-secondary">P</kbd>{' '}
                       to toggle pro overlay. Click the <HelpCircle size={10} className="inline" />{' '}
                       icons next to metrics for detailed explanations.
                     </div>
@@ -1839,14 +1835,14 @@ export default function VisionAIIntelligencePage() {
           <div className="flex flex-col gap-4">
             {/* Controls panel */}
             <section
-              className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl"
+              className="bg-background-primary/80 border border-primary/15 rounded-lg backdrop-blur-xl"
               aria-labelledby="controls-heading"
             >
               <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-                <span className="font-display text-xs tracking-[0.2em] text-white/50">01</span>
+                <span className="font-display text-xs tracking-[0.2em] text-text-tertiary">01</span>
                 <span
                   id="controls-heading"
-                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85"
+                  className="font-display text-xs font-medium tracking-[0.22em] uppercase text-text-primary"
                 >
                   Controls
                 </span>
@@ -1855,14 +1851,14 @@ export default function VisionAIIntelligencePage() {
               <div className="p-4">
                 <div className="flex gap-3 flex-wrap mb-4">
                   <div className="flex-1 min-w-[150px]">
-                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-text-secondary mb-1.5">
                       Mode
                     </label>
                     <select
                       value={mode}
                       onChange={(e) => setMode(e.target.value as 'sports' | 'body')}
                       disabled={running || !!playbackSession}
-                      className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
+                      className="w-full px-3 py-2.5 font-body text-sm text-text-primary bg-background-primary/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40 disabled:opacity-50"
                     >
                       <option value="sports">Sports Performance</option>
                       <option value="body">Body Language</option>
@@ -1871,13 +1867,13 @@ export default function VisionAIIntelligencePage() {
 
                   {/* Pro Form Overlay Select */}
                   <div className="flex-1 min-w-[150px]">
-                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-white/60 mb-1.5">
+                    <label className="block font-display text-[10px] font-medium tracking-[0.2em] uppercase text-text-secondary mb-1.5">
                       Reference Form
                     </label>
                     <select
                       value={selectedProForm}
                       onChange={(e) => setSelectedProForm(e.target.value)}
-                      className="w-full px-3 py-2.5 font-body text-sm text-[#f5f2eb] bg-midnight/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
+                      className="w-full px-3 py-2.5 font-body text-sm text-text-primary bg-background-primary/60 border border-primary/15 rounded-md cursor-pointer focus:outline-none focus:border-primary/40"
                     >
                       {Object.entries(PRO_FORMS).map(([key, form]) => (
                         <option key={key} value={key}>
@@ -1894,7 +1890,7 @@ export default function VisionAIIntelligencePage() {
                       <button
                         onClick={start}
                         disabled={running}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/30 to-midnight/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-gradient-to-b from-primary/30 to-background-primary/50 border border-primary/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-primary/40 transition-all"
                       >
                         <Play size={14} />
                         Start Session
@@ -1903,7 +1899,7 @@ export default function VisionAIIntelligencePage() {
                       <button
                         onClick={stop}
                         disabled={!running}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-900/20 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-background-primary/60 border border-error/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-error-dark/20 transition-all"
                       >
                         <StopCircle size={14} />
                         Stop
@@ -1912,7 +1908,7 @@ export default function VisionAIIntelligencePage() {
                       <button
                         onClick={startCalibration}
                         disabled={!running || calibrating}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-[#8b4513]/30 to-midnight/50 border border-[#8b4513]/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-[#8b4513]/40 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-gradient-to-b from-texas-soil/30 to-background-primary/50 border border-texas-soil/40 rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:from-texas-soil/40 transition-all"
                       >
                         <Target size={14} />
                         {calibrated ? 'Re-Calibrate' : 'Calibrate'}
@@ -1923,8 +1919,8 @@ export default function VisionAIIntelligencePage() {
                         disabled={!running}
                         className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-all ${
                           isRecording
-                            ? 'text-red-500 bg-red-500/10 border border-red-500/40'
-                            : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                            ? 'text-error bg-error/10 border border-error/40'
+                            : 'text-text-primary bg-background-primary/60 border border-primary/15 hover:border-primary/40'
                         }`}
                       >
                         {isRecording ? <StopCircle size={14} /> : <Download size={14} />}
@@ -1935,7 +1931,7 @@ export default function VisionAIIntelligencePage() {
                     <>
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-blue-500/30 to-midnight/50 border border-blue-500/40 rounded-md hover:from-blue-500/40 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-gradient-to-b from-info/30 to-background-primary/50 border border-info/40 rounded-md hover:from-info/40 transition-all"
                       >
                         {isPlaying ? <StopCircle size={14} /> : <Play size={14} />}
                         {isPlaying ? 'Pause' : 'Play'}
@@ -1943,7 +1939,7 @@ export default function VisionAIIntelligencePage() {
 
                       <button
                         onClick={() => setPlaybackIndex(0)}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-primary/15 rounded-md hover:border-primary/40 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-background-primary/60 border border-primary/15 rounded-md hover:border-primary/40 transition-all"
                       >
                         <RotateCcw size={14} />
                         Restart
@@ -1956,7 +1952,7 @@ export default function VisionAIIntelligencePage() {
                           setPoseSignals(null);
                           setAudioSignals(null);
                         }}
-                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-midnight/60 border border-red-500/40 rounded-md hover:bg-red-900/20 transition-all"
+                        className="inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-background-primary/60 border border-error/40 rounded-md hover:bg-error-dark/20 transition-all"
                       >
                         <StopCircle size={14} />
                         Exit Playback
@@ -1969,8 +1965,8 @@ export default function VisionAIIntelligencePage() {
                     onClick={() => setShowProOverlay(!showProOverlay)}
                     className={`inline-flex items-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 rounded-md transition-all ${
                       showProOverlay
-                        ? 'text-green-500 bg-green-500/10 border border-green-500/40'
-                        : 'text-white/90 bg-midnight/60 border border-primary/15 hover:border-primary/40'
+                        ? 'text-success bg-success/10 border border-success/40'
+                        : 'text-text-primary bg-background-primary/60 border border-primary/15 hover:border-primary/40'
                     }`}
                   >
                     {showProOverlay ? <Eye size={14} /> : <EyeOff size={14} />}
@@ -1981,7 +1977,7 @@ export default function VisionAIIntelligencePage() {
                 {/* Pro overlay opacity slider */}
                 {showProOverlay && (
                   <div className="mt-4 flex items-center gap-3">
-                    <span className="text-xs text-white/50">Overlay Opacity:</span>
+                    <span className="text-xs text-text-tertiary">Overlay Opacity:</span>
                     <input
                       type="range"
                       min="0.1"
@@ -1989,9 +1985,9 @@ export default function VisionAIIntelligencePage() {
                       step="0.1"
                       value={proOverlayOpacity}
                       onChange={(e) => setProOverlayOpacity(parseFloat(e.target.value))}
-                      className="flex-1 h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
+                      className="flex-1 h-1 bg-surface-medium rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
                     />
-                    <span className="text-xs text-white/50">
+                    <span className="text-xs text-text-tertiary">
                       {Math.round(proOverlayOpacity * 100)}%
                     </span>
                   </div>
@@ -2000,7 +1996,7 @@ export default function VisionAIIntelligencePage() {
                 {/* Playback scrubber */}
                 {playbackSession && playbackFrames.length > 0 && (
                   <div className="mt-4">
-                    <div className="flex items-center justify-between text-xs text-white/50 mb-1">
+                    <div className="flex items-center justify-between text-xs text-text-tertiary mb-1">
                       <span>
                         Frame {playbackIndex + 1} / {playbackFrames.length}
                       </span>
@@ -2012,7 +2008,7 @@ export default function VisionAIIntelligencePage() {
                       max={playbackFrames.length - 1}
                       value={playbackIndex}
                       onChange={(e) => setPlaybackIndex(parseInt(e.target.value))}
-                      className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                      className="w-full h-1 bg-surface-medium rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-info"
                     />
                   </div>
                 )}
@@ -2031,10 +2027,10 @@ export default function VisionAIIntelligencePage() {
                   />
 
                   {/* Status badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-white/85 bg-midnight/80 border border-white/15 rounded-full backdrop-blur-sm">
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-text-primary bg-background-primary/80 border border-border-strong rounded-full backdrop-blur-sm">
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        running ? 'bg-green-500' : playbackSession ? 'bg-blue-500' : 'bg-red-500'
+                        running ? 'bg-success' : playbackSession ? 'bg-info' : 'bg-error'
                       }`}
                     />
                     {running ? 'LIVE' : playbackSession ? 'PLAYBACK' : 'STANDBY'}
@@ -2042,23 +2038,23 @@ export default function VisionAIIntelligencePage() {
 
                   {/* Pro form legend */}
                   {showProOverlay && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-green-500 bg-midnight/80 border border-green-500/30 rounded-full backdrop-blur-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 text-xs text-success bg-background-primary/80 border border-success/30 rounded-full backdrop-blur-sm">
+                      <span className="w-1.5 h-1.5 rounded-full bg-success" />
                       {PRO_FORMS[selectedProForm]?.name}
                     </div>
                   )}
 
                   {/* Calibration overlay */}
                   {calibrating && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 text-[#f5f2eb] text-center z-10">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 text-text-primary text-center z-10">
                       <h3 className="font-display text-lg tracking-[0.25em] uppercase mb-3 text-primary">
                         Calibrating
                       </h3>
-                      <p className="text-sm text-white/75 max-w-xs">
+                      <p className="text-sm text-text-secondary max-w-xs">
                         Hold still in your neutral position. This sets your baseline for delta
                         tracking.
                       </p>
-                      <div className="mt-5 w-48 h-1 bg-white/10 rounded-sm overflow-hidden">
+                      <div className="mt-5 w-48 h-1 bg-surface-medium rounded-sm overflow-hidden">
                         <div
                           className="h-full bg-primary transition-[width] duration-100"
                           style={{ width: `${calibProgress}%` }}
@@ -2072,15 +2068,15 @@ export default function VisionAIIntelligencePage() {
 
             {/* Recorded Sessions */}
             {recordedSessions.length > 0 && !playbackSession && (
-              <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+              <section className="bg-background-primary/80 border border-primary/15 rounded-lg backdrop-blur-xl">
                 <div className="flex items-center justify-between px-4 py-3.5 border-b border-primary/15">
                   <div className="flex items-center gap-2.5">
-                    <span className="font-display text-xs tracking-[0.2em] text-white/50">02</span>
-                    <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                    <span className="font-display text-xs tracking-[0.2em] text-text-tertiary">02</span>
+                    <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-text-primary">
                       Recorded Sessions
                     </span>
                   </div>
-                  <span className="text-xs text-white/50">{recordedSessions.length} sessions</span>
+                  <span className="text-xs text-text-tertiary">{recordedSessions.length} sessions</span>
                 </div>
 
                 <div className="p-4 max-h-44 overflow-y-auto">
@@ -2088,18 +2084,18 @@ export default function VisionAIIntelligencePage() {
                     <button
                       key={session.id}
                       onClick={() => loadPlaybackSession(session)}
-                      className="w-full flex items-center justify-between p-3 mb-2 bg-midnight/50 border border-primary/10 rounded-md hover:border-primary/30 transition-colors text-left"
+                      className="w-full flex items-center justify-between p-3 mb-2 bg-background-primary/50 border border-primary/10 rounded-md hover:border-primary/30 transition-colors text-left"
                     >
                       <div>
-                        <div className="text-sm text-white/90">
+                        <div className="text-sm text-text-primary">
                           {new Date(session.createdAt).toLocaleDateString()} —{' '}
                           {session.mode.toUpperCase()}
                         </div>
-                        <div className="text-xs text-white/50">
+                        <div className="text-xs text-text-tertiary">
                           {session.frameCount} frames • {session.duration.toFixed(1)}s
                         </div>
                       </div>
-                      <Upload size={14} className="text-white/40" />
+                      <Upload size={14} className="text-text-muted" />
                     </button>
                   ))}
                 </div>
@@ -2107,19 +2103,19 @@ export default function VisionAIIntelligencePage() {
             )}
 
             {/* Logs panel */}
-            <section className="bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+            <section className="bg-background-primary/80 border border-primary/15 rounded-lg backdrop-blur-xl">
               <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-                <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                <span className="font-display text-xs tracking-[0.2em] text-text-tertiary">
                   {recordedSessions.length > 0 && !playbackSession ? '03' : '02'}
                 </span>
-                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-text-primary">
                   Coaching Log
                 </span>
               </div>
 
               <div className="p-4 max-h-44 overflow-y-auto">
                 {logs.length === 0 ? (
-                  <div className="text-white/40 italic text-sm">
+                  <div className="text-text-muted italic text-sm">
                     Logs will appear here during analysis...
                   </div>
                 ) : (
@@ -2128,11 +2124,11 @@ export default function VisionAIIntelligencePage() {
                       key={log.id}
                       className="flex gap-3 py-2 border-l-2 border-primary/15 pl-3 ml-1 mb-1"
                     >
-                      <span className="font-mono text-xs text-white/40 min-w-[42px]">{log.t}s</span>
+                      <span className="font-mono text-xs text-text-muted min-w-[42px]">{log.t}s</span>
                       <span className="font-display text-[10px] tracking-[0.15em] uppercase text-primary min-w-[80px]">
                         {log.tag}
                       </span>
-                      <span className="text-sm text-white/80 flex-1">{log.msg}</span>
+                      <span className="text-sm text-text-primary flex-1">{log.msg}</span>
                     </div>
                   ))
                 )}
@@ -2142,19 +2138,19 @@ export default function VisionAIIntelligencePage() {
 
           {/* Right column - Signals */}
           <aside className="flex flex-col gap-4">
-            <section className="flex-1 bg-midnight/80 border border-primary/15 rounded-lg backdrop-blur-xl">
+            <section className="flex-1 bg-background-primary/80 border border-primary/15 rounded-lg backdrop-blur-xl">
               <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-primary/15">
-                <span className="font-display text-xs tracking-[0.2em] text-white/50">
+                <span className="font-display text-xs tracking-[0.2em] text-text-tertiary">
                   {recordedSessions.length > 0 && !playbackSession ? '04' : '03'}
                 </span>
-                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-white/85">
+                <span className="font-display text-xs font-medium tracking-[0.22em] uppercase text-text-primary">
                   Live Signals
                 </span>
               </div>
 
               <div className="p-4">
                 {/* Pose Card */}
-                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
+                <div className="bg-background-primary/50 border border-primary/15 rounded-md p-3 mb-3">
                   <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
                     <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
                       <Activity size={14} />
@@ -2163,12 +2159,12 @@ export default function VisionAIIntelligencePage() {
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
                         poseSignals?.confidence === 'High'
-                          ? 'bg-green-500/20 text-green-500'
+                          ? 'bg-success/20 text-success'
                           : poseSignals?.confidence === 'Medium'
-                            ? 'bg-yellow-500/20 text-yellow-500'
+                            ? 'bg-warning/20 text-warning'
                             : poseSignals?.confidence === 'Playback'
-                              ? 'bg-blue-500/20 text-blue-500'
-                              : 'bg-white/10 text-white/50'
+                              ? 'bg-info/20 text-info'
+                              : 'bg-surface-medium text-text-tertiary'
                       }`}
                     >
                       {poseSignals?.confidence || 'Low'}
@@ -2177,32 +2173,32 @@ export default function VisionAIIntelligencePage() {
 
                   <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
                     <MetricTooltip metricKey="shoulderSym">
-                      <span className="text-white/65">Shoulder Symmetry</span>
+                      <span className="text-text-secondary">Shoulder Symmetry</span>
                     </MetricTooltip>
-                    <span className="text-white/90 text-right">
+                    <span className="text-text-primary text-right">
                       {poseSignals?.shoulderSym ?? '—'}/100
                       {renderDelta(poseSignals?.shoulderSym, 'shoulderSym')}
                     </span>
 
                     <MetricTooltip metricKey="hipSym">
-                      <span className="text-white/65">Hip Symmetry</span>
+                      <span className="text-text-secondary">Hip Symmetry</span>
                     </MetricTooltip>
-                    <span className="text-white/90 text-right">
+                    <span className="text-text-primary text-right">
                       {poseSignals?.hipSym ?? '—'}/100
                       {renderDelta(poseSignals?.hipSym, 'hipSym')}
                     </span>
 
                     <MetricTooltip metricKey="spineLean">
-                      <span className="text-white/65">Spine Lean</span>
+                      <span className="text-text-secondary">Spine Lean</span>
                     </MetricTooltip>
-                    <span className="text-white/90 text-right">
+                    <span className="text-text-primary text-right">
                       {poseSignals?.spineLean ?? '—'}°
                     </span>
 
                     <MetricTooltip metricKey="stability">
-                      <span className="text-white/65">Stability Score</span>
+                      <span className="text-text-secondary">Stability Score</span>
                     </MetricTooltip>
-                    <span className="text-white/90 font-semibold text-right">
+                    <span className="text-text-primary font-semibold text-right">
                       {poseSignals?.stability ?? '—'}
                       {renderDelta(poseSignals?.stability, 'stability')}
                     </span>
@@ -2210,7 +2206,7 @@ export default function VisionAIIntelligencePage() {
                 </div>
 
                 {/* Audio Card */}
-                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3 mb-3">
+                <div className="bg-background-primary/50 border border-primary/15 rounded-md p-3 mb-3">
                   <div className="flex justify-between items-center mb-2.5 pb-2 border-b border-primary/12">
                     <span className="flex items-center gap-1.5 font-display text-xs tracking-[0.2em] uppercase text-primary">
                       <Mic size={14} />
@@ -2219,12 +2215,12 @@ export default function VisionAIIntelligencePage() {
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
                         audioSignals?.confidence === 'High'
-                          ? 'bg-green-500/20 text-green-500'
+                          ? 'bg-success/20 text-success'
                           : audioSignals?.confidence === 'Medium'
-                            ? 'bg-yellow-500/20 text-yellow-500'
+                            ? 'bg-warning/20 text-warning'
                             : audioSignals?.confidence === 'Playback'
-                              ? 'bg-blue-500/20 text-blue-500'
-                              : 'bg-white/10 text-white/50'
+                              ? 'bg-info/20 text-info'
+                              : 'bg-surface-medium text-text-tertiary'
                       }`}
                     >
                       {audioSignals?.confidence || 'Low'}
@@ -2233,17 +2229,17 @@ export default function VisionAIIntelligencePage() {
 
                   <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 text-sm">
                     <MetricTooltip metricKey="energy">
-                      <span className="text-white/65">Energy</span>
+                      <span className="text-text-secondary">Energy</span>
                     </MetricTooltip>
-                    <span className="text-white/90 text-right">
+                    <span className="text-text-primary text-right">
                       {audioSignals?.energy ?? '—'}/100
                       {renderDelta(audioSignals?.energy, 'energy')}
                     </span>
 
                     <MetricTooltip metricKey="steadiness">
-                      <span className="text-white/65">Steadiness</span>
+                      <span className="text-text-secondary">Steadiness</span>
                     </MetricTooltip>
-                    <span className="text-white/90 font-semibold text-right">
+                    <span className="text-text-primary font-semibold text-right">
                       {audioSignals?.steadiness ?? '—'}
                     </span>
                   </div>
@@ -2254,7 +2250,7 @@ export default function VisionAIIntelligencePage() {
                   <button
                     onClick={saveBaselineToCloud}
                     disabled={savingBaseline}
-                    className="w-full inline-flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-white/90 bg-gradient-to-b from-primary/20 to-midnight/50 border border-primary/30 rounded-md hover:from-primary/30 disabled:opacity-50 transition-all mb-3"
+                    className="w-full inline-flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.18em] uppercase px-4 py-2.5 text-text-primary bg-gradient-to-b from-primary/20 to-background-primary/50 border border-primary/30 rounded-md hover:from-primary/30 disabled:opacity-50 transition-all mb-3"
                   >
                     {savingBaseline ? (
                       <>Saving...</>
@@ -2269,7 +2265,7 @@ export default function VisionAIIntelligencePage() {
                 )}
 
                 {/* Simple Chart */}
-                <div className="bg-midnight/50 border border-primary/15 rounded-md p-3">
+                <div className="bg-background-primary/50 border border-primary/15 rounded-md p-3">
                   <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-primary/12">
                     <span className="font-display text-xs tracking-[0.2em] uppercase text-primary">
                       Signal History
@@ -2339,11 +2335,11 @@ export default function VisionAIIntelligencePage() {
                   </svg>
 
                   <div className="flex gap-4 mt-2 justify-center">
-                    <span className="flex items-center gap-1 text-[10px] text-white/60">
+                    <span className="flex items-center gap-1 text-[10px] text-text-secondary">
                       <span className="w-3 h-0.5" style={{ background: COLORS.orange }} />
                       Stability
                     </span>
-                    <span className="flex items-center gap-1 text-[10px] text-white/60">
+                    <span className="flex items-center gap-1 text-[10px] text-text-secondary">
                       <span
                         className="w-3 h-0.5 border-dashed border-b"
                         style={{ borderColor: COLORS.dust }}
@@ -2356,8 +2352,8 @@ export default function VisionAIIntelligencePage() {
             </section>
 
             {/* Privacy note */}
-            <div className="p-3 text-xs leading-relaxed text-white/65 bg-charcoal/40 border border-primary/15 rounded-md">
-              <strong className="text-white/85">Privacy:</strong> All processing runs locally in
+            <div className="p-3 text-xs leading-relaxed text-text-secondary bg-background-secondary/40 border border-primary/15 rounded-md">
+              <strong className="text-text-primary">Privacy:</strong> All processing runs locally in
               your browser. No video or audio leaves your device. This tool reports observable
               signals—posture geometry, voice energy—not emotion, intent, or truthfulness.
             </div>

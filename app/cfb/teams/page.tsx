@@ -52,10 +52,10 @@ function SkeletonTeamCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 bg-graphite rounded-full" />
+        <div className="w-14 h-14 bg-background-tertiary rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-graphite rounded w-3/4" />
-          <div className="h-4 bg-graphite/50 rounded w-1/2" />
+          <div className="h-5 bg-background-tertiary rounded w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-1/2" />
         </div>
       </div>
     </Card>
@@ -96,7 +96,7 @@ function TeamCard({ team }: { team: CFBTeam }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-white text-base truncate">
+            <h3 className="font-display font-bold text-text-primary text-base truncate">
               {team.displayName || team.name}
             </h3>
             <div className="flex items-center gap-2 mt-1">
@@ -202,7 +202,7 @@ export default function CFBTeamsPage() {
                 CFB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Teams</span>
+              <span className="text-text-primary font-medium">Teams</span>
             </nav>
           </Container>
         </Section>
@@ -245,7 +245,7 @@ export default function CFBTeamsPage() {
                     className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm whitespace-nowrap ${
                       selectedConference === conf
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                     }`}
                   >
                     {conf === 'All' ? 'All Teams' : conf}
@@ -261,7 +261,7 @@ export default function CFBTeamsPage() {
                     onChange={(e) => {
                       if (e.target.value) setSelectedConference(e.target.value);
                     }}
-                    className="px-3 py-2 bg-graphite border border-border-subtle rounded-lg text-text-secondary text-sm focus:outline-none focus:border-burnt-orange"
+                    className="px-3 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-secondary text-sm focus:outline-none focus:border-burnt-orange"
                   >
                     <option value="">More...</option>
                     {availableConferences.slice(6).map((conf) => (
@@ -280,12 +280,12 @@ export default function CFBTeamsPage() {
                   placeholder="Search teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
                   >
                     x
                   </button>
@@ -387,19 +387,19 @@ export default function CFBTeamsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/cfb/scores"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores
               </Link>
               <Link
                 href="/cfb/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings
               </Link>
               <Link
                 href="/cfb"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 CFB Home
               </Link>

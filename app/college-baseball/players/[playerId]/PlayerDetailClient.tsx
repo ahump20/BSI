@@ -81,14 +81,14 @@ function HAVFBar({ label, score, color }: { label: string; score: number; color:
   const pct = Math.min(score * 100, 100);
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-white/40 uppercase tracking-widest w-8 shrink-0 font-mono">{label}</span>
-      <div className="flex-1 h-2 bg-white/[0.06] rounded-full overflow-hidden">
+      <span className="text-xs text-text-muted uppercase tracking-widest w-8 shrink-0 font-mono">{label}</span>
+      <div className="flex-1 h-2 bg-surface-light rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
-      <span className="text-sm font-mono text-white/70 w-12 text-right">{(score * 100).toFixed(0)}</span>
+      <span className="text-sm font-mono text-text-secondary w-12 text-right">{(score * 100).toFixed(0)}</span>
     </div>
   );
 }
@@ -162,7 +162,7 @@ export default function PlayerDetailClient() {
         <Section padding="lg">
           <Container>
             <Card padding="lg" className="text-center">
-              <h2 className="text-xl font-bold text-white mb-2">Player not found</h2>
+              <h2 className="text-xl font-bold text-text-primary mb-2">Player not found</h2>
               <Link href="/college-baseball/players" className="text-burnt-orange hover:text-ember">
                 Back to Players
               </Link>
@@ -180,27 +180,27 @@ export default function PlayerDetailClient() {
           <Container>
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-2">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/40">/</span>
-              <Link href="/college-baseball/players" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/players" className="text-text-muted hover:text-burnt-orange transition-colors">
                 Players
               </Link>
-              <span className="text-white/40">/</span>
-              <span className="text-white">{player.name}</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">{player.name}</span>
             </div>
 
             {/* Player Header */}
             <div className="mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
+              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
                 {player.name}
               </h1>
               <div className="flex flex-wrap items-center gap-3 mt-2">
                 {player.position && <Badge variant="primary">{player.position}</Badge>}
                 {player.jerseyNumber && <Badge variant="secondary">#{player.jerseyNumber}</Badge>}
                 {player.team && (
-                  <Link href={`/college-baseball/teams/${player.team.id}`} className="text-white/60 hover:text-burnt-orange transition-colors text-sm">
+                  <Link href={`/college-baseball/teams/${player.team.id}`} className="text-text-tertiary hover:text-burnt-orange transition-colors text-sm">
                     {player.team.name}
                   </Link>
                 )}
@@ -210,24 +210,24 @@ export default function PlayerDetailClient() {
             {/* Bio Card */}
             <Card padding="lg" className="mb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {player.height && <div><span className="text-xs text-white/40 block">Height</span><span className="text-white font-medium">{player.height}</span></div>}
-                {player.weight && <div><span className="text-xs text-white/40 block">Weight</span><span className="text-white font-medium">{player.weight} lbs</span></div>}
-                {player.dateOfBirth && <div><span className="text-xs text-white/40 block">DOB</span><span className="text-white font-medium">{player.dateOfBirth}</span></div>}
-                {player.team?.conference?.name && <div><span className="text-xs text-white/40 block">Conference</span><span className="text-white font-medium">{player.team.conference.name}</span></div>}
+                {player.height && <div><span className="text-xs text-text-muted block">Height</span><span className="text-text-primary font-medium">{player.height}</span></div>}
+                {player.weight && <div><span className="text-xs text-text-muted block">Weight</span><span className="text-text-primary font-medium">{player.weight} lbs</span></div>}
+                {player.dateOfBirth && <div><span className="text-xs text-text-muted block">DOB</span><span className="text-text-primary font-medium">{player.dateOfBirth}</span></div>}
+                {player.team?.conference?.name && <div><span className="text-xs text-text-muted block">Conference</span><span className="text-text-primary font-medium">{player.team.conference.name}</span></div>}
               </div>
             </Card>
 
             {/* HAV-F Analytics Section */}
             {havfPlayer && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/20 to-transparent border-b border-white/[0.08]">
+                <div className="px-4 py-3 bg-gradient-to-r from-[#BF5700]/20 to-transparent border-b border-border">
                   <div className="flex items-center justify-between">
-                    <h2 className="font-display text-lg font-bold text-white uppercase tracking-wide">
+                    <h2 className="font-display text-lg font-bold text-text-primary uppercase tracking-wide">
                       HAV-F Evaluation
                     </h2>
                     <Link
                       href="/models/havf"
-                      className="text-[10px] text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest"
+                      className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest"
                     >
                       Methodology &rarr;
                     </Link>
@@ -244,22 +244,22 @@ export default function PlayerDetailClient() {
                     </div>
 
                     {/* Composite score */}
-                    <div className="flex flex-col items-center justify-center md:border-l md:border-white/[0.06] md:pl-6">
-                      <span className="text-xs text-white/30 uppercase tracking-widest mb-1">Composite</span>
+                    <div className="flex flex-col items-center justify-center md:border-l md:border-border-subtle md:pl-6">
+                      <span className="text-xs text-text-muted uppercase tracking-widest mb-1">Composite</span>
                       <span className="font-display text-4xl md:text-5xl font-bold text-burnt-orange">
                         {(havfPlayer.havf_composite * 100).toFixed(0)}
                       </span>
-                      <span className="text-xs text-white/20 mt-1">percentile</span>
+                      <span className="text-xs text-text-muted mt-1">percentile</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between">
-                    <span className="text-[10px] text-white/20">
+                  <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between">
+                    <span className="text-[10px] text-text-muted">
                       Hitting &middot; At-Bat Quality &middot; Velocity &middot; Fielding
                     </span>
                     <Link
                       href="/college-baseball/analytics"
-                      className="text-[10px] text-white/30 hover:text-burnt-orange transition-colors"
+                      className="text-[10px] text-text-muted hover:text-burnt-orange transition-colors"
                     >
                       Full Leaderboard &rarr;
                     </Link>
@@ -298,34 +298,34 @@ export default function PlayerDetailClient() {
             {/* Batting Stats */}
             {stats?.batting && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-white/15">
-                  <h2 className="font-display text-lg font-bold text-white">Batting Statistics</h2>
+                <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
+                  <h2 className="font-display text-lg font-bold text-text-primary">Batting Statistics</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-white/15">
+                      <tr className="border-b border-border-strong">
                         {['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'BB', 'SO', 'SB', 'AVG', 'OBP', 'SLG', 'OPS'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-center">{h}</th>
+                          <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-white/10">
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.games}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.atBats}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.runs}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.hits}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.doubles}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.triples}</td>
+                      <tr className="border-b border-border">
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.games}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.atBats}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.runs}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.hits}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.doubles}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.triples}</td>
                         <td className="py-3 px-3 text-center text-burnt-orange font-bold">{stats.batting.homeRuns}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.rbi}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.walks}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.strikeouts}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.batting.stolenBases}</td>
-                        <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
-                        <td className="py-3 px-3 text-center text-white font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.rbi}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.walks}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.strikeouts}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.batting.stolenBases}</td>
+                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.battingAverage.toFixed(3)}</td>
+                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.onBasePercentage.toFixed(3)}</td>
+                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.batting.sluggingPercentage.toFixed(3)}</td>
                         <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.batting.ops.toFixed(3)}</td>
                       </tr>
                     </tbody>
@@ -337,32 +337,32 @@ export default function PlayerDetailClient() {
             {/* Pitching Stats */}
             {stats?.pitching && (
               <Card padding="none" className="mb-6 overflow-hidden">
-                <div className="px-4 py-3 bg-charcoal border-b border-white/15">
-                  <h2 className="font-display text-lg font-bold text-white">Pitching Statistics</h2>
+                <div className="px-4 py-3 bg-charcoal border-b border-border-strong">
+                  <h2 className="font-display text-lg font-bold text-text-primary">Pitching Statistics</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-white/15">
+                      <tr className="border-b border-border-strong">
                         {['G', 'GS', 'W', 'L', 'SV', 'IP', 'H', 'ER', 'BB', 'SO', 'ERA', 'WHIP'].map((h) => (
-                          <th key={h} className="py-3 px-3 text-xs font-semibold text-white/40 uppercase text-center">{h}</th>
+                          <th key={h} className="py-3 px-3 text-xs font-semibold text-text-muted uppercase text-center">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-white/10">
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.games}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.gamesStarted}</td>
+                      <tr className="border-b border-border">
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.games}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.gamesStarted}</td>
                         <td className="py-3 px-3 text-center text-[#2E7D32] font-bold">{stats.pitching.wins}</td>
                         <td className="py-3 px-3 text-center text-[#C62828] font-bold">{stats.pitching.losses}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.saves}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.inningsPitched.toFixed(1)}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.hits}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.earnedRuns}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.walks}</td>
-                        <td className="py-3 px-3 text-center text-white">{stats.pitching.strikeouts}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.saves}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.inningsPitched.toFixed(1)}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.hits}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.earnedRuns}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.walks}</td>
+                        <td className="py-3 px-3 text-center text-text-primary">{stats.pitching.strikeouts}</td>
                         <td className="py-3 px-3 text-center text-burnt-orange font-bold font-mono">{stats.pitching.era.toFixed(2)}</td>
-                        <td className="py-3 px-3 text-center text-white font-mono">{stats.pitching.whip.toFixed(2)}</td>
+                        <td className="py-3 px-3 text-center text-text-primary font-mono">{stats.pitching.whip.toFixed(2)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -372,7 +372,7 @@ export default function PlayerDetailClient() {
 
             {/* HAV-F methodology link */}
             <div className="mt-8 mb-2">
-              <Link href="/models/havf" className="text-xs text-white/30 hover:text-burnt-orange transition-colors uppercase tracking-widest">
+              <Link href="/models/havf" className="text-xs text-text-muted hover:text-burnt-orange transition-colors uppercase tracking-widest">
                 How BSI evaluates players &rarr;
               </Link>
             </div>

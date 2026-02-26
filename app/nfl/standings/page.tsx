@@ -581,7 +581,7 @@ export default function NFLStandingsPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -622,7 +622,7 @@ export default function NFLStandingsPage() {
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {conf}
@@ -649,10 +649,10 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-graphite rounded w-32 mb-4"></div>
+                      <div className="h-6 bg-background-tertiary rounded w-32 mb-4"></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 bg-graphite rounded"></div>
+                          <div key={j} className="h-10 bg-background-tertiary rounded"></div>
                         ))}
                       </div>
                     </div>
@@ -711,22 +711,22 @@ export default function NFLStandingsPage() {
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                    <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                                       {team.abbreviation}
                                     </span>
-                                    <span className="font-semibold text-white">{team.name}</span>
+                                    <span className="font-semibold text-text-primary">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.losses}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.ties}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.pct.toFixed(3)}
                                 </td>
                                 <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">

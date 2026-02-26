@@ -61,7 +61,7 @@ export function WeeklyBriefClient() {
   return (
     <>
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -77,10 +77,10 @@ export function WeeklyBriefClient() {
             <Badge variant={hasBrief ? 'success' : 'warning'} className="mb-4">
               {hasBrief ? `Week of ${brief!.date}` : 'Framework — Populating Weekly'}
             </Badge>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
               Weekly Intel Brief
             </h1>
-            <p className="text-white/50 text-lg leading-relaxed mb-12">
+            <p className="text-text-tertiary text-lg leading-relaxed mb-12">
               BSI&#39;s editorial operating system, published weekly. What decisions were made,
               what content was prioritized, and why. Transparency about how BSI decides what to
               cover and what to skip.
@@ -88,17 +88,17 @@ export function WeeklyBriefClient() {
 
             {loading && (
               <div className="space-y-4 animate-pulse mb-8">
-                <div className="h-6 bg-white/[0.06] rounded w-1/3" />
-                <div className="h-32 bg-white/[0.04] rounded-xl" />
-                <div className="h-6 bg-white/[0.06] rounded w-1/4" />
-                <div className="h-24 bg-white/[0.04] rounded-xl" />
+                <div className="h-6 bg-border-subtle rounded w-1/3" />
+                <div className="h-32 bg-surface-light rounded-xl" />
+                <div className="h-6 bg-border-subtle rounded w-1/4" />
+                <div className="h-24 bg-surface-light rounded-xl" />
               </div>
             )}
 
             {error && (
-              <div className="mb-8 text-xs text-white/30 flex items-center gap-3">
+              <div className="mb-8 text-xs text-text-muted flex items-center gap-3">
                 <span>Could not load weekly brief</span>
-                <button onClick={retry} className="text-[#BF5700] hover:text-[#FF6B35] transition-colors">
+                <button onClick={retry} className="text-burnt-orange hover:text-ember transition-colors">
                   Retry
                 </button>
               </div>
@@ -110,15 +110,15 @@ export function WeeklyBriefClient() {
                 {/* Decision Register */}
                 {brief!.decisions && brief!.decisions.length > 0 && (
                   <section>
-                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                       Decision Register
                     </h2>
                     <div className="space-y-3">
                       {brief!.decisions.map((d, i) => (
-                        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4">
-                          <p className="text-sm text-white/70 font-medium mb-1">{d.topic}</p>
-                          <p className="text-sm text-[#BF5700] mb-2">{d.decision}</p>
-                          <p className="text-xs text-white/30">{d.rationale}</p>
+                        <div key={i} className="bg-surface-light border border-border-subtle rounded-xl p-4">
+                          <p className="text-sm text-text-secondary font-medium mb-1">{d.topic}</p>
+                          <p className="text-sm text-burnt-orange mb-2">{d.decision}</p>
+                          <p className="text-xs text-text-muted">{d.rationale}</p>
                         </div>
                       ))}
                     </div>
@@ -128,15 +128,15 @@ export function WeeklyBriefClient() {
                 {/* Five Feeds */}
                 {brief!.feeds && brief!.feeds.length > 0 && (
                   <section>
-                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                       Five Feeds
                     </h2>
                     <div className="space-y-3">
                       {brief!.feeds.map((f, i) => (
-                        <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#BF5700]">{f.feed}</span>
-                          <p className="text-sm text-white/60 mt-1">{f.headline}</p>
-                          {f.detail && <p className="text-xs text-white/30 mt-1">{f.detail}</p>}
+                        <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-4">
+                          <span className="text-xs font-bold uppercase tracking-wider text-burnt-orange">{f.feed}</span>
+                          <p className="text-sm text-text-secondary mt-1">{f.headline}</p>
+                          {f.detail && <p className="text-xs text-text-muted mt-1">{f.detail}</p>}
                         </div>
                       ))}
                     </div>
@@ -146,15 +146,15 @@ export function WeeklyBriefClient() {
                 {/* KPIs */}
                 {brief!.kpis && brief!.kpis.length > 0 && (
                   <section>
-                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                    <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                       KPIs
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {brief!.kpis.map((kpi) => (
-                        <div key={kpi.label} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4 text-center">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/50">{kpi.label}</span>
-                          <p className="text-lg font-display text-white mt-1">{kpi.value}</p>
-                          {kpi.change && <p className="text-[10px] text-white/25 mt-0.5">{kpi.change}</p>}
+                        <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                          <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{kpi.label}</span>
+                          <p className="text-lg font-display text-text-primary mt-1">{kpi.value}</p>
+                          {kpi.change && <p className="text-[10px] text-text-muted mt-0.5">{kpi.change}</p>}
                         </div>
                       ))}
                     </div>
@@ -162,7 +162,7 @@ export function WeeklyBriefClient() {
                 )}
 
                 {lastUpdated && (
-                  <p className="text-[10px] text-white/15">
+                  <p className="text-[10px] text-text-muted">
                     Fetched {lastUpdated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </p>
                 )}
@@ -173,16 +173,16 @@ export function WeeklyBriefClient() {
             {!hasBrief && !loading && (
               <div className="space-y-8">
                 <section>
-                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     Decision Register
                   </h2>
-                  <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
-                    <p className="text-sm text-white/40 leading-relaxed mb-3">
+                  <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+                    <p className="text-sm text-text-muted leading-relaxed mb-3">
                       10–15 editorial decisions per week, documented with rationale. What got covered,
                       what got cut, and why.
                     </p>
-                    <div className="bg-white/[0.02] border border-dashed border-white/10 rounded-lg p-4 text-center">
-                      <p className="text-xs text-white/25">
+                    <div className="bg-surface-light border border-dashed border-border rounded-lg p-4 text-center">
+                      <p className="text-xs text-text-muted">
                         {data?.message || 'First decision register publishes Week 2 of the 2026 season.'}
                       </p>
                     </div>
@@ -190,7 +190,7 @@ export function WeeklyBriefClient() {
                 </section>
 
                 <section>
-                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     Five Feeds
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -203,23 +203,23 @@ export function WeeklyBriefClient() {
                     ].map((feed) => (
                       <div
                         key={feed.name}
-                        className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4"
+                        className="bg-surface-light border border-border-subtle rounded-lg p-4"
                       >
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#BF5700]">
+                        <span className="text-xs font-bold uppercase tracking-wider text-burnt-orange">
                           {feed.name}
                         </span>
-                        <p className="text-xs text-white/40 mt-1">{feed.description}</p>
+                        <p className="text-xs text-text-muted mt-1">{feed.description}</p>
                       </div>
                     ))}
                   </div>
                 </section>
 
                 <section>
-                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     ICE Scoring
                   </h2>
-                  <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5">
-                    <p className="text-sm text-white/40 leading-relaxed mb-3">
+                  <div className="bg-surface-light border border-border-subtle rounded-xl p-5">
+                    <p className="text-sm text-text-muted leading-relaxed mb-3">
                       Content prioritization using Impact, Confidence, and Ease scores. Each piece of
                       potential content gets scored 1–10 on each dimension. Highest composite score
                       gets published first.
@@ -230,9 +230,9 @@ export function WeeklyBriefClient() {
                         { label: 'Confidence', description: 'How confident are we in the analysis?' },
                         { label: 'Ease', description: 'How quickly can we produce it at quality?' },
                       ].map((dim) => (
-                        <div key={dim.label} className="bg-white/[0.02] rounded-lg p-3">
-                          <span className="text-xs font-bold uppercase tracking-wider text-white/50">{dim.label}</span>
-                          <p className="text-[10px] text-white/25 mt-1">{dim.description}</p>
+                        <div key={dim.label} className="bg-surface-light rounded-lg p-3">
+                          <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{dim.label}</span>
+                          <p className="text-[10px] text-text-muted mt-1">{dim.description}</p>
                         </div>
                       ))}
                     </div>
@@ -240,7 +240,7 @@ export function WeeklyBriefClient() {
                 </section>
 
                 <section>
-                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-white mb-4">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-text-primary mb-4">
                     KPIs
                   </h2>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -250,9 +250,9 @@ export function WeeklyBriefClient() {
                       { label: 'Returning Users', description: 'Weekly active readers' },
                       { label: 'Model Views', description: 'Methodology page traffic' },
                     ].map((kpi) => (
-                      <div key={kpi.label} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4 text-center">
-                        <span className="text-xs font-bold uppercase tracking-wider text-white/50">{kpi.label}</span>
-                        <p className="text-[10px] text-white/25 mt-1">{kpi.description}</p>
+                      <div key={kpi.label} className="bg-surface-light border border-border-subtle rounded-lg p-4 text-center">
+                        <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">{kpi.label}</span>
+                        <p className="text-[10px] text-text-muted mt-1">{kpi.description}</p>
                       </div>
                     ))}
                   </div>
@@ -260,8 +260,8 @@ export function WeeklyBriefClient() {
               </div>
             )}
 
-            <div className="mt-12 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/intel" className="hover:text-white/60 transition-colors">
+            <div className="mt-12 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/intel" className="hover:text-text-secondary transition-colors">
                 &#8592; Intel Dashboard
               </Link>
             </div>

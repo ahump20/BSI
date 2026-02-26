@@ -15,7 +15,7 @@ export default function CWSPage() {
   return (
     <>
       <main id="main-content">
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
               items={[
@@ -30,25 +30,25 @@ export default function CWSPage() {
         <Section padding="lg">
           <Container size="narrow">
             <Badge variant="warning" className="mb-4">Coming June 2026</Badge>
-            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-white mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide text-text-primary mb-4">
               College World Series
             </h1>
-            <p className="text-white/50 text-lg leading-relaxed mb-8">
+            <p className="text-text-tertiary text-lg leading-relaxed mb-8">
               The road to Omaha. Super regional matchups, CWS bracket, game briefs, and
               championship series coverage. Eight teams. Double elimination. One champion.
             </p>
 
-            <div className="bg-white/[0.02] border border-dashed border-white/10 rounded-xl p-8 text-center">
-              <p className="text-sm text-white/30 mb-2">
+            <div className="bg-surface-light border border-dashed border-border rounded-xl p-8 text-center">
+              <p className="text-sm text-text-muted mb-2">
                 CWS data populates when super regionals are set (mid-June).
               </p>
-              <p className="text-xs text-white/20">
+              <p className="text-xs text-text-muted">
                 Live game briefs and bracket tracking will publish in real time once the CWS begins.
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 text-sm text-white/30">
-              <Link href="/college-baseball/tournament" className="hover:text-white/60 transition-colors">
+            <div className="mt-8 flex flex-wrap gap-4 text-sm text-text-muted">
+              <Link href="/college-baseball/tournament" className="hover:text-text-secondary transition-colors">
                 &#8592; Tournament HQ
               </Link>
             </div>

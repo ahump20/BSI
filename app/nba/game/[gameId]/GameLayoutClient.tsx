@@ -244,7 +244,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                 Games
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {awayTeam && homeTeam
                   ? `${awayTeam.team?.abbreviation || 'Away'} vs ${homeTeam.team?.abbreviation || 'Home'}`
                   : `Game ${gameId}`}
@@ -296,7 +296,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                   <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
                     {/* Away Team */}
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
+                      <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
                         {getTeamLogo(awayTeam) ? (
                           <img
                             src={getTeamLogo(awayTeam)!}
@@ -309,7 +309,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </span>
                         )}
                       </div>
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-text-primary">
                         {awayTeam?.team?.shortDisplayName || awayTeam?.team?.displayName || 'Away'}
                       </p>
                       <p className="text-xs text-text-tertiary">
@@ -317,7 +317,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       </p>
                       <p
                         className={`text-4xl font-bold font-mono mt-2 ${
-                          final && awayTeam?.winner ? 'text-white' : 'text-text-secondary'
+                          final && awayTeam?.winner ? 'text-text-primary' : 'text-text-secondary'
                         }`}
                       >
                         {awayTeam?.score || '-'}
@@ -342,7 +342,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
 
                     {/* Home Team */}
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
+                      <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden mx-auto mb-2">
                         {getTeamLogo(homeTeam) ? (
                           <img
                             src={getTeamLogo(homeTeam)!}
@@ -355,7 +355,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </span>
                         )}
                       </div>
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-text-primary">
                         {homeTeam?.team?.shortDisplayName || homeTeam?.team?.displayName || 'Home'}
                       </p>
                       <p className="text-xs text-text-tertiary">
@@ -363,7 +363,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       </p>
                       <p
                         className={`text-4xl font-bold font-mono mt-2 ${
-                          final && homeTeam?.winner ? 'text-white' : 'text-text-secondary'
+                          final && homeTeam?.winner ? 'text-text-primary' : 'text-text-secondary'
                         }`}
                       >
                         {homeTeam?.score || '-'}
@@ -391,7 +391,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </thead>
                           <tbody className="text-text-secondary">
                             <tr className="border-b border-border-subtle">
-                              <td className="p-1.5 font-semibold text-white">
+                              <td className="p-1.5 font-semibold text-text-primary">
                                 {awayTeam?.team?.abbreviation || 'AWY'}
                               </td>
                               {Array.from({ length: maxPeriods }, (_, i) => (
@@ -399,12 +399,12 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                                   {awayTeam?.linescores?.[i]?.value ?? '-'}
                                 </td>
                               ))}
-                              <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
+                              <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                                 {awayTeam?.score || '-'}
                               </td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-white">
+                              <td className="p-1.5 font-semibold text-text-primary">
                                 {homeTeam?.team?.abbreviation || 'HME'}
                               </td>
                               {Array.from({ length: maxPeriods }, (_, i) => (
@@ -412,7 +412,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                                   {homeTeam?.linescores?.[i]?.value ?? '-'}
                                 </td>
                               ))}
-                              <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
+                              <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                                 {homeTeam?.score || '-'}
                               </td>
                             </tr>
@@ -436,7 +436,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
                         activeTab === tab.id
                           ? 'text-burnt-orange border-burnt-orange'
-                          : 'text-text-tertiary border-transparent hover:text-white'
+                          : 'text-text-tertiary border-transparent hover:text-text-primary'
                       }`}
                     >
                       {tab.label}

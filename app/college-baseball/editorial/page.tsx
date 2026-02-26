@@ -43,10 +43,10 @@ type Tier = 'Omaha Favorite' | 'Contender' | 'Dark Horse' | 'Bubble' | 'Sleeper'
 const tierStyles: Record<Tier, string> = {
   'Omaha Favorite': 'bg-[#C9A227]/20 text-[#C9A227] border-[#C9A227]/30',
   Contender: 'bg-burnt-orange/20 text-ember border-burnt-orange/30',
-  'Dark Horse': 'bg-white/10 text-white/70 border-white/20',
-  Bubble: 'bg-white/5 text-white/40 border-white/10',
-  Sleeper: 'bg-white/5 text-white/30 border-white/10',
-  Rebuilding: 'bg-white/[0.03] text-white/25 border-white/5',
+  'Dark Horse': 'bg-surface-medium text-text-secondary border-border-strong',
+  Bubble: 'bg-surface-light text-text-muted border-border',
+  Sleeper: 'bg-surface-light text-text-muted border-border',
+  Rebuilding: 'bg-surface-light text-text-muted border-border-subtle',
 };
 
 function TierBadge({ tier }: { tier: string }) {
@@ -134,9 +134,13 @@ interface FeatureArticle {
   readTime: string;
   badge: string;
   tags: FilterTag[];
+  /** Team slugs this article covers (matches teamMetadata keys) */
+  teams?: string[];
 }
 
-const FEATURE_ARTICLES: FeatureArticle[] = [
+export type { FeatureArticle };
+
+export const FEATURE_ARTICLES: FeatureArticle[] = [
   {
     title: 'Weekend 3 Preview: Globe Life Gets the Real Test',
     slug: 'weekend-3-preview',
@@ -145,6 +149,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '12 min',
     badge: 'Weekly Preview',
     tags: ['National', 'Weekly'],
+    teams: ['ucla', 'tennessee', 'mississippi-state', 'texas', 'auburn'],
   },
   {
     title: 'What Two Weekends of College Baseball Actually Told Us',
@@ -154,6 +159,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '12 min',
     badge: 'Analysis',
     tags: ['National'],
+    teams: ['ucla', 'mississippi-state', 'texas', 'florida', 'lsu', 'tennessee', 'auburn'],
   },
   {
     title: 'Roch Cholowsky: The No. 1 Pick Through Two Weekends',
@@ -163,6 +169,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '10 min',
     badge: 'Draft Profile',
     tags: ['National'],
+    teams: ['ucla'],
   },
   {
     title: 'Liam Peterson: The Walk Problem and the No. 9 Pick',
@@ -172,6 +179,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '9 min',
     badge: 'Draft Profile',
     tags: ['SEC'],
+    teams: ['florida'],
   },
   {
     title: 'Dylan Volantis: 14 IP. 0 ER. The Conversion Is Real.',
@@ -181,6 +189,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '10 min',
     badge: 'Draft Profile',
     tags: ['SEC'],
+    teams: ['texas'],
   },
   {
     title: 'Tyce Armstrong: Three Grand Slams and a 50-Year Record',
@@ -190,6 +199,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '8 min',
     badge: 'Draft Profile',
     tags: ['Big 12'],
+    teams: ['baylor'],
   },
   {
     title: 'Jackson Flora: 100 MPH and a New Arsenal',
@@ -199,6 +209,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '8 min',
     badge: 'Draft Profile',
     tags: ['National'],
+    teams: ['uc-santa-barbara'],
   },
   {
     title: 'Weekend 2 Recap: The No. 1 Showed Up. The Rest Got Sorted.',
@@ -208,6 +219,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '15 min',
     badge: 'Weekend 2 Recap',
     tags: ['Weekly', 'National'],
+    teams: ['ucla', 'tcu', 'auburn', 'texas', 'mississippi-state', 'lsu'],
   },
   {
     title: 'Texas Week 1: 27 Runs. One Hit Allowed by Volantis.',
@@ -217,6 +229,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '15 min',
     badge: 'Texas Weekly',
     tags: ['SEC', 'Weekly', 'Team Preview'],
+    teams: ['texas'],
   },
   {
     title: 'Week 1 Recap: Three Grand Slams. One Record Book.',
@@ -226,6 +239,7 @@ const FEATURE_ARTICLES: FeatureArticle[] = [
     readTime: '18 min',
     badge: 'Week 1 Recap',
     tags: ['Weekly', 'National'],
+    teams: ['baylor', 'texas', 'ucla', 'oklahoma', 'auburn'],
   },
   {
     title: 'National Opening Weekend Preview',
@@ -327,7 +341,7 @@ const CONFERENCE_SECTIONS: { tag: FilterTag; title: string; tagline: string; tea
 
 function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagChange: (tag: FilterTag) => void }) {
   return (
-    <Section padding="sm" className="border-b border-white/10 sticky top-0 z-30 bg-charcoal/95 backdrop-blur-sm">
+    <Section padding="sm" className="border-b border-border sticky top-0 z-30 bg-background-secondary/95 backdrop-blur-sm">
       <Container>
         <nav className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 py-1" aria-label="Filter articles by tag">
           {FILTER_TAGS.map((tag) => {
@@ -341,7 +355,7 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
                   border transition-all whitespace-nowrap
                   ${isActive
                     ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/40'
-                    : 'bg-white/[0.03] text-white/40 border-white/10 hover:text-white/60 hover:border-white/20'
+                    : 'bg-surface-light text-text-muted border-border hover:text-text-tertiary hover:border-border-subtle'
                   }
                 `}
                 aria-pressed={isActive}
@@ -361,19 +375,19 @@ function TagFilterBar({ activeTag, onTagChange }: { activeTag: FilterTag; onTagC
 function TeamPreviewCard({ team }: { team: TeamCard }) {
   return (
     <Link href={`/college-baseball/editorial/${team.slug}-2026`} className="block group">
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-white/[0.06] transition-all h-full">
+      <div className="bg-surface-light border border-border-subtle rounded-lg p-4 hover:border-burnt-orange/40 hover:bg-surface-medium transition-all h-full">
         <div className="flex items-start justify-between mb-2">
           <div className="min-w-0">
-            <h4 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
+            <h4 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors truncate">
               {team.name}
             </h4>
-            <p className="text-white/30 text-xs">{team.mascot}</p>
+            <p className="text-text-muted text-xs">{team.mascot}</p>
           </div>
           <TierBadge tier={team.tier} />
         </div>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-white/40 text-xs font-mono">{team.record}</span>
-          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white/15 group-hover:text-burnt-orange/60 transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
+          <span className="text-text-muted text-xs font-mono">{team.record}</span>
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-text-muted group-hover:text-burnt-orange/60 transition-colors" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </div>
@@ -403,11 +417,11 @@ function ConferenceSection({
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 rounded-full" style={{ backgroundColor: accent }} />
-                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-white">
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                   {title}
                 </h2>
               </div>
-              <p className="text-white/40 text-sm ml-4 pl-3">{tagline} — {teams.length} team previews</p>
+              <p className="text-text-muted text-sm ml-4 pl-3">{tagline} — {teams.length} team previews</p>
             </div>
             <Link href={confHref} className="hidden md:flex items-center gap-1.5 text-sm font-semibold hover:text-ember transition-colors" style={{ color: accent }}>
               Full {title} Preview
@@ -456,11 +470,11 @@ function DailyDigestSection() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 rounded-full bg-ember" />
-                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-white">
+                <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
                   Daily AI Digest
                 </h2>
               </div>
-              <p className="text-white/40 text-sm ml-4 pl-3">
+              <p className="text-text-muted text-sm ml-4 pl-3">
                 AI-generated analysis from BSI's editorial pipeline
               </p>
             </div>
@@ -470,11 +484,11 @@ function DailyDigestSection() {
         {loading && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-5 animate-pulse">
-                <div className="h-3 bg-white/5 rounded w-24 mb-3" />
-                <div className="h-5 bg-white/5 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-white/5 rounded w-full" />
-                <div className="h-3 bg-white/5 rounded w-5/6 mt-1" />
+              <div key={i} className="bg-surface-light border border-border-subtle rounded-lg p-5 animate-pulse">
+                <div className="h-3 bg-surface-light rounded w-24 mb-3" />
+                <div className="h-5 bg-surface-light rounded w-3/4 mb-2" />
+                <div className="h-3 bg-surface-light rounded w-full" />
+                <div className="h-3 bg-surface-light rounded w-5/6 mt-1" />
               </div>
             ))}
           </div>
@@ -491,23 +505,23 @@ function DailyDigestSection() {
                   <Card variant="default" padding="md" className="h-full hover:border-ember/30 transition-all">
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="secondary">AI Digest</Badge>
-                      <span className="text-white/20 text-xs">
+                      <span className="text-text-muted text-xs">
                         {new Date(editorial.date + 'T12:00:00').toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                         })}
                       </span>
                       {editorial.wordCount > 0 && (
-                        <span className="text-white/15 text-xs">
+                        <span className="text-text-muted text-xs">
                           {Math.ceil(editorial.wordCount / 250)} min
                         </span>
                       )}
                     </div>
-                    <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-ember transition-colors mb-1.5">
+                    <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-ember transition-colors mb-1.5">
                       {editorial.title}
                     </h3>
                     {editorial.preview && (
-                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
                         {editorial.preview}
                       </p>
                     )}
@@ -516,13 +530,13 @@ function DailyDigestSection() {
                         {editorial.teams.slice(0, 3).map((team) => (
                           <span
                             key={team}
-                            className="text-[10px] text-white/25 bg-white/[0.03] px-1.5 py-0.5 rounded"
+                            className="text-[10px] text-text-muted bg-surface-light px-1.5 py-0.5 rounded"
                           >
                             {team}
                           </span>
                         ))}
                         {editorial.teams.length > 3 && (
-                          <span className="text-[10px] text-white/15">
+                          <span className="text-[10px] text-text-muted">
                             +{editorial.teams.length - 3}
                           </span>
                         )}
@@ -575,14 +589,14 @@ export default function EditorialHubPage() {
     <>
       <main id="main-content">
         {/* Breadcrumb */}
-        <Section padding="sm" className="border-b border-white/10">
+        <Section padding="sm" className="border-b border-border">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
-              <Link href="/college-baseball" className="text-white/40 hover:text-burnt-orange transition-colors">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
                 College Baseball
               </Link>
-              <span className="text-white/20">/</span>
-              <span className="text-white">Editorial</span>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-primary">Editorial</span>
             </nav>
           </Container>
         </Section>
@@ -598,7 +612,7 @@ export default function EditorialHubPage() {
                   College Baseball{' '}
                   <span className="text-gradient-blaze">Editorial</span>
                 </h1>
-                <p className="text-white/50 text-lg leading-relaxed">
+                <p className="text-text-tertiary text-lg leading-relaxed">
                   47 team season previews. 3 conference breakdowns. Scouting grades on the 20-80 scale.
                   Projection tiers from Omaha Favorite to Rebuilding. The depth this sport has always deserved.
                 </p>
@@ -614,13 +628,13 @@ export default function EditorialHubPage() {
                     <div className="relative">
                       <div className="flex items-center gap-3 mb-3">
                         <Badge variant="secondary">{featured.badge}</Badge>
-                        <span className="text-white/30 text-sm">{featured.date}</span>
-                        <span className="text-white/30 text-sm">{featured.readTime}</span>
+                        <span className="text-text-muted text-sm">{featured.date}</span>
+                        <span className="text-text-muted text-sm">{featured.readTime}</span>
                       </div>
-                      <h2 className="font-display text-2xl md:text-3xl font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
+                      <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-2">
                         {featured.title}
                       </h2>
-                      <p className="text-white/50 max-w-xl">{featured.description}</p>
+                      <p className="text-text-tertiary max-w-xl">{featured.description}</p>
                       <div className="mt-4 flex items-center gap-2 text-burnt-orange text-sm font-semibold group-hover:text-ember transition-colors">
                         Read article
                         <svg viewBox="0 0 24 24" className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
@@ -647,11 +661,11 @@ export default function EditorialHubPage() {
                   <div>
                     <div className="flex items-center gap-3 mb-2">
                       <div className="w-1 h-8 rounded-full bg-burnt-orange" />
-                      <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-white">
+                      <h2 className="font-display text-xl md:text-2xl font-bold uppercase tracking-wide text-text-primary">
                         Weekly Recaps
                       </h2>
                     </div>
-                    <p className="text-white/40 text-sm ml-4 pl-3">
+                    <p className="text-text-muted text-sm ml-4 pl-3">
                       National-scope breakdowns of each weekend&apos;s results, rankings movement, and matchups to watch
                     </p>
                   </div>
@@ -663,13 +677,13 @@ export default function EditorialHubPage() {
                     <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                       <div className="flex items-center gap-2 mb-3">
                         <Badge variant="primary">Weekend 2</Badge>
-                        <span className="text-white/20 text-xs">Feb 24, 2026</span>
-                        <span className="text-white/15 text-xs">15 min</span>
+                        <span className="text-text-muted text-xs">Feb 24, 2026</span>
+                        <span className="text-text-muted text-xs">15 min</span>
                       </div>
-                      <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                      <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                         The No. 1 Showed Up. The Rest Got Sorted.
                       </h3>
-                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
                         UCLA swept TCU 30-8. Two cycles hit. Auburn announced itself at Globe Life. Plus Weekend 3 preview.
                       </p>
                     </Card>
@@ -680,13 +694,13 @@ export default function EditorialHubPage() {
                     <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                       <div className="flex items-center gap-2 mb-3">
                         <Badge variant="primary">Week 1</Badge>
-                        <span className="text-white/20 text-xs">Feb 16, 2026</span>
-                        <span className="text-white/15 text-xs">18 min</span>
+                        <span className="text-text-muted text-xs">Feb 16, 2026</span>
+                        <span className="text-text-muted text-xs">18 min</span>
                       </div>
-                      <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                      <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                         Three Grand Slams. One Record Book. The Season Starts Now.
                       </h3>
-                      <p className="text-white/40 text-xs leading-relaxed line-clamp-2">
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
                         Tyce Armstrong ties a 50-year record. Michigan State stuns Louisville. Oklahoma storms the Shriners.
                       </p>
                     </Card>
@@ -705,7 +719,7 @@ export default function EditorialHubPage() {
           <Section padding="md">
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
                   Conference Previews
                 </h2>
               </ScrollReveal>
@@ -713,14 +727,14 @@ export default function EditorialHubPage() {
                 {filteredConferences.map((conf, i) => (
                   <ScrollReveal key={conf.name} direction="up" delay={i * 80}>
                     <Link href={conf.href} className="block group">
-                      <Card variant="default" padding="lg" className="h-full hover:border-white/20 transition-all relative overflow-hidden">
+                      <Card variant="default" padding="lg" className="h-full hover:border-border-strong transition-all relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 rounded-t-lg" style={{ backgroundColor: conf.accent }} />
                         <div className="mt-2">
                           <h3 className="font-display text-xl font-bold uppercase tracking-wide group-hover:transition-colors" style={{ color: conf.accent }}>
                             {conf.name}
                           </h3>
-                          <p className="text-white/40 text-sm mt-1 italic">{conf.tagline}</p>
-                          <div className="flex items-center gap-4 mt-4 text-xs text-white/30">
+                          <p className="text-text-muted text-sm mt-1 italic">{conf.tagline}</p>
+                          <div className="flex items-center gap-4 mt-4 text-xs text-text-muted">
                             <span>{conf.teams} teams</span>
                             <span>{conf.ranked} ranked</span>
                           </div>
@@ -745,7 +759,7 @@ export default function EditorialHubPage() {
           <Section padding="lg" background="charcoal" borderTop>
             <Container>
               <ScrollReveal direction="up">
-                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white/60 mb-6">
+                <h2 className="font-display text-xl font-bold uppercase tracking-wide text-text-tertiary mb-6">
                   Feature Articles
                 </h2>
               </ScrollReveal>
@@ -756,13 +770,13 @@ export default function EditorialHubPage() {
                       <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                         <div className="flex items-center gap-2 mb-3">
                           <Badge variant="secondary">{article.badge}</Badge>
-                          <span className="text-white/20 text-xs">{article.readTime}</span>
+                          <span className="text-text-muted text-xs">{article.readTime}</span>
                         </div>
-                        <h3 className="font-display text-sm font-bold text-white uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
                           {article.title}
                         </h3>
-                        <p className="text-white/40 text-xs leading-relaxed">{article.description}</p>
-                        <p className="text-white/20 text-[10px] mt-3">{article.date}</p>
+                        <p className="text-text-muted text-xs leading-relaxed">{article.description}</p>
+                        <p className="text-text-muted text-[10px] mt-3">{article.date}</p>
                       </Card>
                     </Link>
                   </ScrollReveal>
@@ -789,7 +803,7 @@ export default function EditorialHubPage() {
           <Section padding="lg">
             <Container>
               <div className="text-center py-12">
-                <p className="text-white/30 text-sm">No editorial content matches this filter yet.</p>
+                <p className="text-text-muted text-sm">No editorial content matches this filter yet.</p>
                 <button
                   onClick={() => setActiveTag('All')}
                   className="mt-4 text-burnt-orange hover:text-ember text-sm font-semibold transition-colors"
@@ -808,19 +822,19 @@ export default function EditorialHubPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">47</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Team Previews</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Team Previews</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">3</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Conferences</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Conferences</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-[#C9A227]">20-80</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
                 </div>
                 <div>
                   <div className="font-display text-3xl font-bold text-burnt-orange">15</div>
-                  <div className="text-white/30 text-xs uppercase tracking-wider mt-1">Feature Articles</div>
+                  <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Feature Articles</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -840,7 +854,7 @@ export default function EditorialHubPage() {
         <Section padding="sm" borderTop>
           <Container>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-white/20 text-xs">
+              <p className="text-text-muted text-xs">
                 Data: ESPN / SportsDataIO / D1Baseball — February 2026
               </p>
               <Link href="/college-baseball" className="text-sm text-burnt-orange hover:text-ember transition-colors">

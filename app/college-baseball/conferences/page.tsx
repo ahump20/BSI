@@ -124,7 +124,7 @@ export default function ConferencesHubPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Conferences</span>
+                <span className="text-text-primary">Conferences</span>
               </div>
 
               <div className="mb-8">
@@ -144,22 +144,22 @@ export default function ConferencesHubPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 <Card padding="md" className="text-center">
                   <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">{totalRanked}</div>
+                  <div className="font-display text-2xl font-bold text-text-primary">{totalRanked}</div>
                   <div className="text-text-tertiary text-sm">Ranked Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">4</div>
+                  <div className="font-display text-2xl font-bold text-text-primary">4</div>
                   <div className="text-text-tertiary text-sm">Power Conferences</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">{topConf.name}</div>
+                  <div className="font-display text-2xl font-bold text-text-primary">{topConf.name}</div>
                   <div className="text-text-tertiary text-sm">#1 Team ({topConf.topTeam})</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">{mostRankedConf.name}</div>
+                  <div className="font-display text-2xl font-bold text-text-primary">{mostRankedConf.name}</div>
                   <div className="text-text-tertiary text-sm">Most Ranked ({mostRankedConf.rankedTeams})</div>
                 </Card>
               </div>
@@ -177,7 +177,7 @@ export default function ConferencesHubPage() {
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h2 className="font-display text-2xl font-bold text-white group-hover:text-burnt-orange transition-colors">
+                            <h2 className="font-display text-2xl font-bold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {conf.fullName}
                             </h2>
                             {conf.rankedTeams > 0 && (
@@ -199,7 +199,7 @@ export default function ConferencesHubPage() {
                           {conf.topTeam && (
                             <>
                               <div className="text-sm text-text-tertiary mb-1">Preseason Leader</div>
-                              <div className="text-white font-medium">#{conf.topRank} {conf.topTeam}</div>
+                              <div className="text-text-primary font-medium">#{conf.topRank} {conf.topTeam}</div>
                             </>
                           )}
                         </div>
@@ -213,7 +213,7 @@ export default function ConferencesHubPage() {
             {/* Mid-Major & D1 Conferences */}
             {midMajorConfs.length > 0 && (
               <ScrollReveal direction="up" delay={400}>
-                <h2 className="font-display text-2xl font-bold text-white mt-12 mb-6">
+                <h2 className="font-display text-2xl font-bold text-text-primary mt-12 mb-6">
                   Mid-Major &amp; D1 Conferences
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -224,7 +224,7 @@ export default function ConferencesHubPage() {
                         className="hover:border-burnt-orange/50 transition-all cursor-pointer group h-full"
                       >
                         <div className="flex items-center justify-between">
-                          <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors">
+                          <h3 className="font-display text-lg font-bold text-text-primary group-hover:text-burnt-orange transition-colors">
                             {conf.name}
                           </h3>
                           {conf.ranked > 0 && (

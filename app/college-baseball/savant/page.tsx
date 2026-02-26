@@ -162,18 +162,18 @@ export default function SavantHubPage() {
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-2 text-sm mb-6">
-                <Link href="/" className="text-white/40 hover:text-[#BF5700] transition-colors">
+                <Link href="/" className="text-text-muted hover:text-[#BF5700] transition-colors">
                   Home
                 </Link>
-                <span className="text-white/20">/</span>
+                <span className="text-text-muted">/</span>
                 <Link
                   href="/college-baseball"
-                  className="text-white/40 hover:text-[#BF5700] transition-colors"
+                  className="text-text-muted hover:text-[#BF5700] transition-colors"
                 >
                   College Baseball
                 </Link>
-                <span className="text-white/20">/</span>
-                <span className="text-white/70">Savant</span>
+                <span className="text-text-muted">/</span>
+                <span className="text-text-secondary">Savant</span>
               </nav>
             </ScrollReveal>
 
@@ -183,10 +183,10 @@ export default function SavantHubPage() {
                 <div className="flex items-center gap-3 mb-3">
                   <Badge variant="accent" size="sm">ADVANCED ANALYTICS</Badge>
                 </div>
-                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-white">
+                <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-wider text-text-primary">
                   College Baseball <span className="text-[#BF5700]">Savant</span>
                 </h1>
-                <p className="text-white/50 mt-3 max-w-2xl text-base leading-relaxed">
+                <p className="text-text-tertiary mt-3 max-w-2xl text-base leading-relaxed">
                   The metrics MLB Savant tracks — wOBA, FIP, wRC+, park factors, conference
                   strength indices — applied to 300+ D1 programs. No other public platform
                   does this for the college game.
@@ -196,8 +196,8 @@ export default function SavantHubPage() {
 
             {/* Data Coverage Banner */}
             <ScrollReveal direction="up" delay={75}>
-              <Card padding="sm" className="mb-8 border-white/[0.04]">
-                <p className="text-[11px] font-mono text-white/30 leading-relaxed">
+              <Card padding="sm" className="mb-8 border-border-subtle">
+                <p className="text-[11px] font-mono text-text-muted leading-relaxed">
                   Data coverage: SEC, ACC, Big 12, Big Ten — sourced from ESPN box scores (~30% of D1 games).
                   Full D1 coverage coming via Highlightly Pro integration.
                 </p>
@@ -220,18 +220,18 @@ export default function SavantHubPage() {
                       </div>
                       {leader ? (
                         <div className="mb-2">
-                          <span className="text-sm text-white font-medium">{leader.name}</span>
-                          <span className="ml-1.5 text-[10px] text-white/25">{leader.team}</span>
+                          <span className="text-sm text-text-primary font-medium">{leader.name}</span>
+                          <span className="ml-1.5 text-[10px] text-text-muted">{leader.team}</span>
                           <span className="block text-lg font-mono font-bold tabular-nums mt-0.5" style={{ color }}>
                             {spot.format(leader.value)}
                           </span>
                         </div>
                       ) : (
                         <div className="mb-2 h-12 flex items-center">
-                          <span className="text-xs text-white/20">Loading...</span>
+                          <span className="text-xs text-text-muted">Loading...</span>
                         </div>
                       )}
-                      <p className="text-[10px] text-white/25 leading-relaxed">
+                      <p className="text-[10px] text-text-muted leading-relaxed">
                         {spot.description}
                       </p>
                     </Card>
@@ -242,7 +242,7 @@ export default function SavantHubPage() {
 
             {/* Tab navigation */}
             <ScrollReveal direction="up" delay={150}>
-              <div className="flex items-center gap-1 border-b border-white/[0.06] mb-4 overflow-x-auto">
+              <div className="flex items-center gap-1 border-b border-border mb-4 overflow-x-auto">
                 {TABS.map((tab) => (
                   <button
                     key={tab.key}
@@ -250,7 +250,7 @@ export default function SavantHubPage() {
                     className={`px-4 py-3 text-sm font-display uppercase tracking-wider whitespace-nowrap transition-colors border-b-2 ${
                       activeTab === tab.key
                         ? 'text-[#BF5700] border-[#BF5700]'
-                        : 'text-white/30 border-transparent hover:text-white/50'
+                        : 'text-text-muted border-transparent hover:text-text-tertiary'
                     }`}
                   >
                     {tab.label}
@@ -344,7 +344,7 @@ export default function SavantHubPage() {
 
             {/* Data attribution */}
             {battingRes && (
-              <div className="mt-8 text-center text-xs text-white/25">
+              <div className="mt-8 text-center text-xs text-text-muted">
                 <p>
                   Source: BSI College Baseball Savant | Methodology:{' '}
                   <Link
@@ -391,14 +391,14 @@ function FilterSelect({
 }) {
   return (
     <div className="flex items-center gap-1.5">
-      <span className="text-[10px] font-display uppercase tracking-widest text-white/25">{label}</span>
+      <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-white/[0.04] border border-white/[0.08] rounded-md px-2.5 py-1.5 text-xs text-white/60 font-mono appearance-none cursor-pointer hover:border-white/[0.12] transition-colors focus:outline-none focus:border-[#BF5700]/40"
+        className="bg-surface-light border border-border rounded-md px-2.5 py-1.5 text-xs text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-[#BF5700]/40"
       >
         {options.map(opt => (
-          <option key={opt} value={opt} className="bg-[#1A1A1A] text-white">
+          <option key={opt} value={opt} className="bg-background-secondary text-text-primary">
             {opt || allLabel}
           </option>
         ))}
@@ -458,18 +458,18 @@ function computeQuickPercentile(
 function LeaderboardSkeleton() {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className="px-5 py-4 border-b border-white/[0.04] flex items-center justify-between">
-        <div className="h-4 w-48 bg-white/[0.06] rounded animate-pulse" />
-        <div className="h-3 w-20 bg-white/[0.04] rounded animate-pulse" />
+      <div className="px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+        <div className="h-4 w-48 bg-surface-medium rounded animate-pulse" />
+        <div className="h-3 w-20 bg-surface-light rounded animate-pulse" />
       </div>
       <div className="divide-y divide-white/[0.02]">
         {Array.from({ length: 10 }).map((_, i) => (
           <div key={i} className="px-5 py-3 flex items-center gap-4">
-            <div className="h-4 w-6 bg-white/[0.04] rounded animate-pulse" />
-            <div className="h-4 flex-1 max-w-[200px] bg-white/[0.06] rounded animate-pulse" />
-            <div className="h-4 w-16 bg-white/[0.04] rounded animate-pulse hidden sm:block" />
-            <div className="h-4 w-12 bg-white/[0.04] rounded animate-pulse" />
-            <div className="h-4 w-12 bg-white/[0.04] rounded animate-pulse hidden md:block" />
+            <div className="h-4 w-6 bg-surface-light rounded animate-pulse" />
+            <div className="h-4 flex-1 max-w-[200px] bg-surface-medium rounded animate-pulse" />
+            <div className="h-4 w-16 bg-surface-light rounded animate-pulse hidden sm:block" />
+            <div className="h-4 w-12 bg-surface-light rounded animate-pulse" />
+            <div className="h-4 w-12 bg-surface-light rounded animate-pulse hidden md:block" />
           </div>
         ))}
       </div>

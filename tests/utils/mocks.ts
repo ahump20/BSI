@@ -241,8 +241,8 @@ export const ESPN_STANDINGS = {
       name: 'Southeastern Conference',
       standings: {
         entries: [
-          { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/126.png' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.80, streak: 'W5', pointDifferential: 62 },
-          { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/123.png' }, wins: 25, losses: 15, winPercent: 0.625, leagueWinPercent: 0.60, streak: 'L1', pointDifferential: 18 },
+          { team: { id: '126', displayName: 'Texas Longhorns', abbreviation: 'TEX', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/251.png' }, wins: 30, losses: 10, winPercent: 0.75, leagueWinPercent: 0.80, streak: 'W5', pointDifferential: 62 },
+          { team: { id: '123', displayName: 'Texas A&M Aggies', abbreviation: 'TAMU', logo: 'https://a.espncdn.com/i/teamlogos/ncaa/500/245.png' }, wins: 25, losses: 15, winPercent: 0.625, leagueWinPercent: 0.60, streak: 'L1', pointDifferential: 18 },
         ],
       },
     },

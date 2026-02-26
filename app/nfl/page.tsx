@@ -199,9 +199,9 @@ export default function NFLPage() {
                             </thead>
                             <tbody>
                               {standingsByDivision[division].map((team, idx) => (
-                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-white/5 transition-colors">
+                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                  <td className="p-3 font-semibold text-white">{team.teamName}</td>
+                                  <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
                                   <td className="p-3 text-text-secondary">{team.wins}</td>
                                   <td className="p-3 text-text-secondary">{team.losses}</td>
                                   <td className="p-3 text-text-secondary">{team.ties || 0}</td>

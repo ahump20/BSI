@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
                 Home
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Analytics</span>
+              <span className="text-text-primary font-medium">Analytics</span>
             </nav>
           </Container>
         </Section>
@@ -192,7 +192,7 @@ export default function AnalyticsPage() {
                 {quickStats.map((stat) => (
                   <Card key={stat.label} variant="default" padding="md" className="text-center">
                     <p className="text-2xl md:text-3xl font-bold text-burnt-orange">{stat.value}</p>
-                    <p className="text-sm text-white font-medium">{stat.label}</p>
+                    <p className="text-sm text-text-primary font-medium">{stat.label}</p>
                     <p className="text-xs text-text-tertiary">{stat.sublabel}</p>
                   </Card>
                 ))}
@@ -212,7 +212,7 @@ export default function AnalyticsPage() {
                   className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                     selectedSport === sport
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                   }`}
                 >
                   {sport === 'all' ? 'All Sports' : sport.toUpperCase()}
@@ -241,7 +241,7 @@ export default function AnalyticsPage() {
                         <span className="text-3xl">{tool.icon}</span>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-white">{tool.name}</h3>
+                            <h3 className="font-semibold text-text-primary">{tool.name}</h3>
                             {tool.status === 'coming-soon' && (
                               <Badge variant="secondary" size="sm">
                                 Coming Soon
@@ -272,7 +272,7 @@ export default function AnalyticsPage() {
           <Container>
             <ScrollReveal>
               <Card variant="hover" padding="lg" className="text-center border-burnt-orange/30">
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-4">
+                <h2 className="font-display text-2xl md:text-3xl font-bold text-text-primary mb-4">
                   Unlock Full Analytics Access
                 </h2>
                 <p className="text-text-secondary max-w-xl mx-auto mb-6">

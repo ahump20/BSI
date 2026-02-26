@@ -106,14 +106,14 @@ export default function MLBScoresPage() {
     return (
       <Link href={`/mlb/game/${gameId}`} className="block">
         <div
-          className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+          className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
             isLive ? 'border-success' : 'border-border-subtle'
           }`}
         >
           {/* Game Status Bar */}
           <div
             className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+              isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
             }`}
           >
             <span
@@ -138,12 +138,12 @@ export default function MLBScoresPage() {
             {/* Away Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                   {game.teams.away.abbreviation}
                 </div>
                 <div>
                   <p
-                    className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-white' : 'text-text-secondary'}`}
+                    className={`font-semibold ${isFinal && game.teams.away.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                   >
                     {game.teams.away.name}
                   </p>
@@ -163,7 +163,7 @@ export default function MLBScoresPage() {
                     isScheduled
                       ? 'text-text-tertiary'
                       : isFinal && game.teams.away.isWinner
-                        ? 'text-white'
+                        ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
@@ -175,12 +175,12 @@ export default function MLBScoresPage() {
             {/* Home Team */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                   {game.teams.home.abbreviation}
                 </div>
                 <div>
                   <p
-                    className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-white' : 'text-text-secondary'}`}
+                    className={`font-semibold ${isFinal && game.teams.home.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
                   >
                     {game.teams.home.name}
                   </p>
@@ -200,7 +200,7 @@ export default function MLBScoresPage() {
                     isScheduled
                       ? 'text-text-tertiary'
                       : isFinal && game.teams.home.isWinner
-                        ? 'text-white'
+                        ? 'text-text-primary'
                         : 'text-text-secondary'
                   }`}
                 >
@@ -252,7 +252,7 @@ export default function MLBScoresPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Scores</span>
+              <span className="text-text-primary font-medium">Scores</span>
             </nav>
           </Container>
         </Section>
@@ -288,7 +288,7 @@ export default function MLBScoresPage() {
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -313,7 +313,7 @@ export default function MLBScoresPage() {
                     className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                     }`}
                   >
                     {option.label}
@@ -323,7 +323,7 @@ export default function MLBScoresPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -380,7 +380,7 @@ export default function MLBScoresPage() {
                 {/* Live Games Section */}
                 {games.some((g) => g.status.isLive) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -399,7 +399,7 @@ export default function MLBScoresPage() {
                 {/* Final Games */}
                 {games.some((g) => g.status.isFinal) && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => g.status.isFinal)
@@ -415,7 +415,7 @@ export default function MLBScoresPage() {
                 {/* Scheduled Games */}
                 {games.some((g) => !g.status.isLive && !g.status.isFinal) && (
                   <div>
-                    <h2 className="text-lg font-semibold text-white mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {games
                         .filter((g) => !g.status.isLive && !g.status.isFinal)

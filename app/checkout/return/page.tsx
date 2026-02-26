@@ -165,7 +165,7 @@ function CheckoutReturnContent() {
                         </p>
                       </div>
                     )}
-                    <div className="bg-charcoal/50 border border-white/10 rounded-lg p-4 mb-8">
+                    <div className="bg-background-secondary/50 border border-border rounded-lg p-4 mb-8">
                       <p className="text-text-secondary text-sm">
                         Check your inbox for an email from BSI with your API key.
                         Enter it on the login page to access your dashboard.

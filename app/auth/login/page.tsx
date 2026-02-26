@@ -101,7 +101,7 @@ export default function LoginPage() {
 
                 {/* Section 1: Send My Key */}
                 <Card padding="lg" className="mb-6">
-                  <h2 className="text-lg font-semibold text-white mb-1">
+                  <h2 className="text-lg font-semibold text-text-primary mb-1">
                     Need Your Key?
                   </h2>
                   <p className="text-text-tertiary text-sm mb-4">
@@ -152,7 +152,7 @@ export default function LoginPage() {
 
                 {/* Section 2: I Have My Key */}
                 <Card padding="lg">
-                  <h2 className="text-lg font-semibold text-white mb-1">
+                  <h2 className="text-lg font-semibold text-text-primary mb-1">
                     Have Your Key?
                   </h2>
                   <p className="text-text-tertiary text-sm mb-4">

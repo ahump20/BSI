@@ -74,7 +74,7 @@ export default function NILToolsPage() {
                 NIL Valuation
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Tools</span>
+              <span className="text-text-primary font-medium">Tools</span>
             </nav>
           </Container>
         </Section>
@@ -139,7 +139,7 @@ export default function NILToolsPage() {
             {/* CTA */}
             <ScrollReveal delay={400}>
               <Card variant="default" padding="lg" className="mt-12 text-center">
-                <h3 className="font-display text-xl font-bold text-white mb-4">
+                <h3 className="font-display text-xl font-bold text-text-primary mb-4">
                   Need a Custom Analysis?
                 </h3>
                 <p className="text-text-secondary mb-6 max-w-xl mx-auto">

@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, LiveBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { CitationFooter, DataDisclaimer } from '@/components/sports';
+import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 
 interface SportSection {
   id: string;
@@ -194,7 +194,7 @@ export default function ScoresHubPage() {
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{sport.icon}</span>
                           <div>
-                            <h2 className="text-xl font-display font-bold text-white">
+                            <h2 className="text-xl font-display font-bold text-text-primary">
                               {sport.name}
                             </h2>
                             <p className="text-xs text-text-tertiary">Season: {sport.season}</p>
@@ -242,8 +242,8 @@ export default function ScoresHubPage() {
 
             {/* Quick Links */}
             <ScrollReveal direction="up" delay={400}>
-              <div className="mt-12 p-6 bg-graphite rounded-lg border border-border-subtle">
-                <h3 className="text-lg font-semibold text-white mb-4">Quick Access</h3>
+              <div className="mt-12 p-6 bg-background-tertiary rounded-lg border border-border-subtle">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Access</h3>
                 <div className="flex flex-wrap gap-3">
                   <Link
                     href="/college-baseball/scores"
@@ -259,19 +259,19 @@ export default function ScoresHubPage() {
                   </Link>
                   <Link
                     href="/college-baseball/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     College Baseball Standings
                   </Link>
                   <Link
                     href="/mlb/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     MLB Standings
                   </Link>
                   <Link
                     href="/nil-valuation"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     NIL Valuations
                   </Link>
@@ -279,15 +279,14 @@ export default function ScoresHubPage() {
               </div>
             </ScrollReveal>
 
-            {/* Data Attribution */}
-            <CitationFooter
-              source="SportsDataIO"
-              fetchedAt={fetchedAt}
-              additionalSources={['ESPN', 'NCAA.org', 'D1Baseball']}
-              showFreshness={!!fetchedAt}
-              className="mt-8"
-            />
-            <DataDisclaimer className="mt-4" />
+            {/* Data Freshness */}
+            <div className="mt-8 pt-4 border-t border-border-subtle">
+              <DataFreshnessIndicator
+                lastUpdated={fetchedAt ? new Date(fetchedAt) : undefined}
+                source="BSI Multi-Source"
+                refreshInterval={60}
+              />
+            </div>
           </Container>
         </Section>
       </main>

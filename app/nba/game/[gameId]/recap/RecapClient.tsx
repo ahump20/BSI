@@ -72,7 +72,7 @@ export default function RecapClient() {
           </div>
           <p className="text-text-secondary">
             Live recap updates as the game unfolds. Currently in{' '}
-            <span className="text-white font-semibold">
+            <span className="text-text-primary font-semibold">
               Q{game.status?.period || '?'} {game.status?.displayClock || ''}
             </span>
             .
@@ -90,7 +90,7 @@ export default function RecapClient() {
                 {scoringPlays.slice(-10).map((play, idx) => (
                   <div
                     key={play.id || idx}
-                    className="p-3 bg-graphite rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -136,7 +136,7 @@ export default function RecapClient() {
     <div className="space-y-6">
       {/* Headline */}
       <Card variant="default" padding="lg">
-        <h2 className="text-2xl font-display font-bold text-white mb-4">
+        <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
           {winner?.team?.displayName || 'Winner'} defeat{' '}
           {loser?.team?.displayName || 'Loser'}, {winnerScore}-{loserScore}
         </h2>
@@ -169,10 +169,10 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               {pointsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
                   <Badge variant="primary">PTS</Badge>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-text-primary">
                       {pointsLeader.athlete?.displayName}
                     </p>
                     <p className="text-text-secondary text-sm">{pointsLeader.displayValue}</p>
@@ -180,10 +180,10 @@ export default function RecapClient() {
                 </div>
               )}
               {reboundsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
                   <Badge variant="success">REB</Badge>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-text-primary">
                       {reboundsLeader.athlete?.displayName}
                     </p>
                     <p className="text-text-secondary text-sm">{reboundsLeader.displayValue}</p>
@@ -191,10 +191,10 @@ export default function RecapClient() {
                 </div>
               )}
               {assistsLeader && (
-                <div className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
+                <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
                   <Badge variant="secondary">AST</Badge>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-text-primary">
                       {assistsLeader.athlete?.displayName}
                     </p>
                     <p className="text-text-secondary text-sm">{assistsLeader.displayValue}</p>
@@ -220,7 +220,7 @@ export default function RecapClient() {
                 .map((play, idx) => (
                   <div
                     key={play.id || idx}
-                    className="p-3 bg-graphite rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -251,8 +251,8 @@ export default function RecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {/* Away */}
-              <div className="p-4 bg-graphite rounded-lg">
-                <p className="text-white font-semibold mb-3">
+              <div className="p-4 bg-background-tertiary rounded-lg">
+                <p className="text-text-primary font-semibold mb-3">
                   {awayTeam?.team?.displayName || 'Away'}
                 </p>
                 <div className="flex gap-3">
@@ -261,14 +261,14 @@ export default function RecapClient() {
                       <span className="text-text-tertiary text-xs block mb-1">
                         {getPeriodShortLabel(i + 1)}
                       </span>
-                      <span className="text-white font-mono font-bold">{ls.value ?? '-'}</span>
+                      <span className="text-text-primary font-mono font-bold">{ls.value ?? '-'}</span>
                     </div>
                   ))}
                 </div>
               </div>
               {/* Home */}
-              <div className="p-4 bg-graphite rounded-lg">
-                <p className="text-white font-semibold mb-3">
+              <div className="p-4 bg-background-tertiary rounded-lg">
+                <p className="text-text-primary font-semibold mb-3">
                   {homeTeam?.team?.displayName || 'Home'}
                 </p>
                 <div className="flex gap-3">
@@ -277,7 +277,7 @@ export default function RecapClient() {
                       <span className="text-text-tertiary text-xs block mb-1">
                         {getPeriodShortLabel(i + 1)}
                       </span>
-                      <span className="text-white font-mono font-bold">{ls.value ?? '-'}</span>
+                      <span className="text-text-primary font-mono font-bold">{ls.value ?? '-'}</span>
                     </div>
                   ))}
                 </div>

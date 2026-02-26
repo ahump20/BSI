@@ -211,14 +211,14 @@ export default function NFLGamesPage() {
 
     const cardInner = (
       <div
-        className={`bg-graphite rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/5 ${
+        className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
           isLive ? 'border-success' : 'border-border-subtle'
         }`}
       >
         {/* Status Bar */}
         <div
           className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-            isLive ? 'bg-success/20' : isFinal ? 'bg-charcoal' : 'bg-burnt-orange/20'
+            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
           }`}
         >
           <span
@@ -254,7 +254,7 @@ export default function NFLGamesPage() {
           {/* Away Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
                 {getTeamLogo(awayTeam) ? (
                   <img
                     src={getTeamLogo(awayTeam)!}
@@ -268,7 +268,7 @@ export default function NFLGamesPage() {
                 )}
               </div>
               <div>
-                <p className={`font-semibold ${awayWon ? 'text-white' : 'text-text-secondary'}`}>
+                <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                   {awayTeam.team.shortDisplayName || awayTeam.team.displayName}
                 </p>
                 {awayRecords?.[0] && (
@@ -287,7 +287,7 @@ export default function NFLGamesPage() {
                   isScheduled
                     ? 'text-text-tertiary'
                     : awayWon
-                      ? 'text-white'
+                      ? 'text-text-primary'
                       : 'text-text-secondary'
                 }`}
               >
@@ -299,7 +299,7 @@ export default function NFLGamesPage() {
           {/* Home Team */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center overflow-hidden">
                 {getTeamLogo(homeTeam) ? (
                   <img
                     src={getTeamLogo(homeTeam)!}
@@ -313,7 +313,7 @@ export default function NFLGamesPage() {
                 )}
               </div>
               <div>
-                <p className={`font-semibold ${homeWon ? 'text-white' : 'text-text-secondary'}`}>
+                <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
                   {homeTeam.team.shortDisplayName || homeTeam.team.displayName}
                 </p>
                 {homeRecords?.[0] && (
@@ -332,7 +332,7 @@ export default function NFLGamesPage() {
                   isScheduled
                     ? 'text-text-tertiary'
                     : homeWon
-                      ? 'text-white'
+                      ? 'text-text-primary'
                       : 'text-text-secondary'
                 }`}
               >
@@ -381,7 +381,7 @@ export default function NFLGamesPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Games</span>
+              <span className="text-text-primary font-medium">Games</span>
             </nav>
           </Container>
         </Section>
@@ -423,7 +423,7 @@ export default function NFLGamesPage() {
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedDate(getDateOffset(-3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Previous days"
               >
                 <svg
@@ -448,7 +448,7 @@ export default function NFLGamesPage() {
                     className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
                       isSelected
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                     }`}
                   >
                     {option.label}
@@ -458,7 +458,7 @@ export default function NFLGamesPage() {
 
               <button
                 onClick={() => setSelectedDate(getDateOffset(3))}
-                className="p-2 text-text-tertiary hover:text-white transition-colors"
+                className="p-2 text-text-tertiary hover:text-text-primary transition-colors"
                 aria-label="Next days"
               >
                 <svg
@@ -506,7 +506,7 @@ export default function NFLGamesPage() {
                 {/* Live Games */}
                 {live.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
                       Live Games
                     </h2>
@@ -523,7 +523,7 @@ export default function NFLGamesPage() {
                 {/* Final Games */}
                 {final.length > 0 && (
                   <div className="mb-8">
-                    <h2 className="text-lg font-semibold text-white mb-4">Final</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Final</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {final.map((game) => (
                         <ScrollReveal key={game.id || game.name}>
@@ -537,7 +537,7 @@ export default function NFLGamesPage() {
                 {/* Scheduled Games */}
                 {scheduled.length > 0 && (
                   <div>
-                    <h2 className="text-lg font-semibold text-white mb-4">Upcoming</h2>
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Upcoming</h2>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {scheduled.map((game) => (
                         <ScrollReveal key={game.id || game.name}>

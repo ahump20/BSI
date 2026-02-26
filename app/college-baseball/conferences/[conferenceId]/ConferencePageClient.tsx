@@ -1580,14 +1580,14 @@ function RankChange({ current, previous }: { current: number | null; previous: n
   const change = previous - current;
   if (change > 0) {
     return (
-      <span className="flex items-center text-green-500 text-sm">
+      <span className="flex items-center text-success text-sm">
         <ChevronUp className="w-4 h-4" />
         {change}
       </span>
     );
   } else if (change < 0) {
     return (
-      <span className="flex items-center text-red-500 text-sm">
+      <span className="flex items-center text-error text-sm">
         <ChevronDown className="w-4 h-4" />
         {Math.abs(change)}
       </span>
@@ -1695,7 +1695,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             <Section padding="lg" className="pt-24">
               <Container>
                 <div className="text-center py-20">
-                  <h1 className="font-display text-3xl font-bold text-white mb-4">
+                  <h1 className="font-display text-3xl font-bold text-text-primary mb-4">
                     Conference Not Found
                   </h1>
                   <p className="text-text-secondary mb-6">
@@ -1732,7 +1732,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 </Link>
 
                 <div className="mb-8">
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
                     {auto.fullName}
                   </h1>
                   <p className="text-text-secondary mt-2 max-w-3xl">
@@ -1749,21 +1749,21 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
                   <Card padding="md" className="text-center">
                     <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-white">
+                    <div className="font-display text-2xl font-bold text-text-primary">
                       {auto.teams.length}
                     </div>
                     <div className="text-text-tertiary text-sm">{auto.teams.length === 1 ? 'Team' : 'Teams'}</div>
                   </Card>
                   <Card padding="md" className="text-center">
                     <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-white">
+                    <div className="font-display text-2xl font-bold text-text-primary">
                       {auto.region}
                     </div>
                     <div className="text-text-tertiary text-sm">Region</div>
                   </Card>
                   <Card padding="md" className="text-center col-span-2 md:col-span-1">
                     <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                    <div className="font-display text-2xl font-bold text-white">D1</div>
+                    <div className="font-display text-2xl font-bold text-text-primary">D1</div>
                     <div className="text-text-tertiary text-sm">Division</div>
                   </Card>
                 </div>
@@ -1771,7 +1771,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
               {/* Team Grid */}
               <ScrollReveal direction="up" delay={200}>
-                <h2 className="font-display text-xl font-bold text-white mb-4">
+                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                   Conference Teams
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -1799,7 +1799,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <h3 className="font-display text-lg font-bold text-white group-hover:text-burnt-orange transition-colors truncate">
+                                <h3 className="font-display text-lg font-bold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
                                   {team.fullName}
                                 </h3>
                                 {rank && (
@@ -1860,7 +1860,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-white">
+                  <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary">
                     {conference.fullName}
                   </h1>
                   <Badge variant="primary">{rankedTeams.length} Ranked</Badge>
@@ -1874,21 +1874,21 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 <Card padding="md" className="text-center">
                   <Trophy className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">
+                  <div className="font-display text-2xl font-bold text-text-primary">
                     {rankedTeams.length}
                   </div>
                   <div className="text-text-tertiary text-sm">Ranked Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <Users className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">
+                  <div className="font-display text-2xl font-bold text-text-primary">
                     {conference.teams.length}
                   </div>
                   <div className="text-text-tertiary text-sm">Total Teams</div>
                 </Card>
                 <Card padding="md" className="text-center">
                   <TrendingUp className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">
+                  <div className="font-display text-2xl font-bold text-text-primary">
                     {rankedTeams[0]?.name || '—'}
                   </div>
                   <div className="text-text-tertiary text-sm">
@@ -1897,7 +1897,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 </Card>
                 <Card padding="md" className="text-center">
                   <MapPin className="w-6 h-6 text-burnt-orange mx-auto mb-2" />
-                  <div className="font-display text-2xl font-bold text-white">
+                  <div className="font-display text-2xl font-bold text-text-primary">
                     {conference.region}
                   </div>
                   <div className="text-text-tertiary text-sm">Region</div>
@@ -1908,7 +1908,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Preseason Storylines */}
             <ScrollReveal direction="up" delay={150}>
               <Card padding="lg" className="mb-10">
-                <h2 className="font-display text-xl font-bold text-white mb-4">
+                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                   2026 Preseason Storylines
                 </h2>
                 <ul className="space-y-3">
@@ -1927,7 +1927,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Ranked Teams */}
             {rankedTeams.length > 0 && (
               <ScrollReveal direction="up" delay={200}>
-                <h2 className="font-display text-xl font-bold text-white mb-4">
+                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                   Ranked Teams ({rankedTeams.length})
                 </h2>
                 <div className="grid gap-4 mb-10">
@@ -1956,7 +1956,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h3 className="font-display text-lg font-bold text-white">
+                                  <h3 className="font-display text-lg font-bold text-text-primary">
                                     {team.name} {team.mascot}
                                   </h3>
                                   {logoUrl && (
@@ -1996,7 +1996,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             {/* Other Teams */}
             {unrankedTeams.length > 0 && (
               <ScrollReveal direction="up" delay={250}>
-                <h2 className="font-display text-xl font-bold text-white mb-4">
+                <h2 className="font-display text-xl font-bold text-text-primary mb-4">
                   Other Conference Teams ({unrankedTeams.length})
                 </h2>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -2015,7 +2015,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                             <img src={logoUrl} alt="" className="w-8 h-8 object-contain shrink-0" loading="lazy" />
                           )}
                           <div>
-                            <h3 className="font-display text-lg font-bold text-white">
+                            <h3 className="font-display text-lg font-bold text-text-primary">
                               {team.name} {team.mascot}
                             </h3>
                             {team.previewNote && (

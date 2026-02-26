@@ -189,10 +189,10 @@ export function HomePageClient() {
               <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
                 Intelligence
               </span>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase tracking-wide">
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary uppercase tracking-wide">
                 Six Sports. One Platform.
               </h2>
-              <p className="mt-3 text-base text-white/50 max-w-2xl mx-auto">
+              <p className="mt-3 text-base text-text-tertiary max-w-2xl mx-auto">
                 College baseball roster intelligence leads. MLB, NFL, NBA, and college football
                 analytics round out the picture.
               </p>
@@ -215,7 +215,7 @@ export function HomePageClient() {
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className={`relative p-6 rounded-2xl border bg-white/[0.03] backdrop-blur-sm border-white/10 ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-white/[0.06] h-full flex flex-col items-center text-center`}
+                      className={`relative p-6 rounded-2xl border bg-surface-light backdrop-blur-sm border-border ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-surface-medium h-full flex flex-col items-center text-center`}
                     >
                       {/* Live game badge — replaces static Flagship/Soon badges */}
                       <LiveGameBadge
@@ -225,15 +225,15 @@ export function HomePageClient() {
                       />
 
                       <div
-                        className={`w-16 h-16 rounded-xl bg-white/5 ${sport.bgAccent} flex items-center justify-center mb-4 transition-all duration-300 text-white/60 ${sport.accent}`}
+                        className={`w-16 h-16 rounded-xl bg-surface-light ${sport.bgAccent} flex items-center justify-center mb-4 transition-all duration-300 text-text-secondary ${sport.accent}`}
                       >
                         <sport.icon />
                       </div>
 
-                      <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-[#BF5700] transition-colors">
+                      <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-[#BF5700] transition-colors">
                         {sport.name}
                       </h3>
-                      <p className="text-sm text-white/50 leading-relaxed">{sport.description}</p>
+                      <p className="text-sm text-text-tertiary leading-relaxed">{sport.description}</p>
                     </div>
                   </Link>
                 </ScrollReveal>
@@ -257,7 +257,7 @@ export function HomePageClient() {
               <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-[#BF5700] mb-3">
                 Cross-Sport Intel
               </span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-white uppercase tracking-wide">
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide">
                 What&apos;s Happening Now
               </h2>
             </div>
@@ -278,7 +278,7 @@ export function HomePageClient() {
               <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-[#BF5700] to-[#BF5700]/20" />
 
               <div>
-                <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl text-white/90 leading-relaxed mb-6">
+                <blockquote className="font-serif text-xl md:text-2xl lg:text-3xl text-text-primary/90 leading-relaxed mb-6">
                   ESPN shows you scores. They don&apos;t tell you which portal pickup just changed a
                   conference race, or which freshman&apos;s exit velo projects him as a day-two pick.
                   <span className="text-[#BF5700]">
@@ -292,8 +292,8 @@ export function HomePageClient() {
                     AH
                   </div>
                   <div>
-                    <div className="text-white font-semibold text-sm">Austin Humphrey</div>
-                    <div className="text-white/40 text-xs">Founder, Blaze Sports Intel</div>
+                    <div className="text-text-primary font-semibold text-sm">Austin Humphrey</div>
+                    <div className="text-text-muted text-xs">Founder, Blaze Sports Intel</div>
                   </div>
                 </div>
               </div>
@@ -306,10 +306,10 @@ export function HomePageClient() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#1A1A1A]">
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal direction="up">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-4">
               Built for the people who run the game.
             </h2>
-            <p className="text-base text-white/50 mb-10 max-w-2xl mx-auto">
+            <p className="text-base text-text-tertiary mb-10 max-w-2xl mx-auto">
               Join fans, scouts, and analysts who track roster markets, not just scoreboards.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -329,7 +329,7 @@ export function HomePageClient() {
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center gap-2 border-2 border-white/20 hover:border-[#BF5700] text-white hover:text-[#BF5700] px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-[#BF5700] text-text-primary hover:text-[#BF5700] px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
               >
                 Learn Our Story
               </Link>

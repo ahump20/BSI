@@ -400,7 +400,7 @@ export default function CollegeBaseballPage() {
                 { label: 'Scores', href: '/college-baseball/scores' },
               ].map((link) => (
                 <Link key={link.href} href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium text-white/40 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all whitespace-nowrap">
+                  className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text-primary bg-surface-light hover:bg-surface-medium rounded-lg transition-all whitespace-nowrap">
                   {link.label}
                 </Link>
               ))}
@@ -436,15 +436,15 @@ export default function CollegeBaseballPage() {
                   <div>
                     <Card variant="default" padding="lg" className="mb-6">
                       <div className="text-center py-8">
-                        <p className="text-white/60">Season hasn&apos;t started yet. Browse conferences below.</p>
+                        <p className="text-text-tertiary">Season hasn&apos;t started yet. Browse conferences below.</p>
                       </div>
                     </Card>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                       {conferenceList.map((conf) => (
                         <Link key={conf.name} href={conf.href}>
                           <Card variant="hover" padding="md" className="text-center h-full">
-                            <div className="font-semibold text-white">{conf.name}</div>
-                            <div className="text-xs text-white/40 mt-1">{conf.teams} Teams</div>
+                            <div className="font-semibold text-text-primary">{conf.name}</div>
+                            <div className="text-xs text-text-muted mt-1">{conf.teams} Teams</div>
                           </Card>
                         </Link>
                       ))}
@@ -460,25 +460,25 @@ export default function CollegeBaseballPage() {
                             <thead>
                               <tr className="border-b-2 border-burnt-orange">
                                 {['#', 'Team', 'Conf', 'W', 'L', 'Conf W-L'].map((h) => (
-                                  <th key={h} className="text-left p-3 text-white/40 font-semibold text-xs">{h}</th>
+                                  <th key={h} className="text-left p-3 text-text-muted font-semibold text-xs">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody>
                               {standings.map((team, idx) => (
-                                <tr key={team.teamName} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <tr key={team.teamName} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                                   <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                                  <td className="p-3 font-semibold text-white">{team.teamName}</td>
-                                  <td className="p-3 text-white/60">{team.conference || '-'}</td>
-                                  <td className="p-3 text-white/60">{team.wins}</td>
-                                  <td className="p-3 text-white/60">{team.losses}</td>
-                                  <td className="p-3 text-white/60">{team.conferenceWins != null ? `${team.conferenceWins}-${team.conferenceLosses}` : '-'}</td>
+                                  <td className="p-3 font-semibold text-text-primary">{team.teamName}</td>
+                                  <td className="p-3 text-text-tertiary">{team.conference || '-'}</td>
+                                  <td className="p-3 text-text-tertiary">{team.wins}</td>
+                                  <td className="p-3 text-text-tertiary">{team.losses}</td>
+                                  <td className="p-3 text-text-tertiary">{team.conferenceWins != null ? `${team.conferenceWins}-${team.conferenceLosses}` : '-'}</td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-white/10">
+                        <div className="mt-4 pt-4 border-t border-border">
                           <DataSourceBadge source="NCAA / D1Baseball" timestamp={formatTimestamp(lastUpdated)} />
                         </div>
                       </CardContent>
@@ -495,7 +495,7 @@ export default function CollegeBaseballPage() {
                     onClick={() => setSelectedDate(getDateOffset(
                       Math.round((new Date(selectedDate).getTime() - new Date().getTime()) / 86400000) - 3
                     ))}
-                    className="p-2 text-white/40 hover:text-white transition-colors flex-shrink-0"
+                    className="p-2 text-text-muted hover:text-text-primary transition-colors flex-shrink-0"
                     aria-label="Previous days"
                   >
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -513,7 +513,7 @@ export default function CollegeBaseballPage() {
                         className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                           isSelected
                             ? 'bg-burnt-orange text-white'
-                            : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white'
+                            : 'bg-surface-light text-text-tertiary hover:bg-surface-medium hover:text-text-primary'
                         }`}
                       >
                         {option.label}
@@ -525,7 +525,7 @@ export default function CollegeBaseballPage() {
                     onClick={() => setSelectedDate(getDateOffset(
                       Math.round((new Date(selectedDate).getTime() - new Date().getTime()) / 86400000) + 3
                     ))}
-                    className="p-2 text-white/40 hover:text-white transition-colors flex-shrink-0"
+                    className="p-2 text-text-muted hover:text-text-primary transition-colors flex-shrink-0"
                     aria-label="Next days"
                   >
                     <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -543,7 +543,7 @@ export default function CollegeBaseballPage() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedConference === conf
                           ? 'bg-burnt-orange text-white'
-                          : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
+                          : 'bg-surface-light text-text-tertiary hover:text-text-primary hover:bg-surface-medium'
                       }`}
                     >
                       {conf}
@@ -552,7 +552,7 @@ export default function CollegeBaseballPage() {
                   {!showAllConferences && hiddenCount > 0 && (
                     <button
                       onClick={() => setShowAllConferences(true)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 text-burnt-orange hover:bg-white/10 transition-all"
+                      className="px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-light text-burnt-orange hover:bg-surface-medium transition-all"
                     >
                       +{hiddenCount} More
                     </button>
@@ -570,14 +570,14 @@ export default function CollegeBaseballPage() {
                 ) : filteredGames.length === 0 ? (
                   <Card variant="default" padding="lg">
                     <div className="text-center py-8">
-                      <svg viewBox="0 0 24 24" className="w-16 h-16 text-white/20 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg viewBox="0 0 24 24" className="w-16 h-16 text-text-muted mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                         <line x1="16" y1="2" x2="16" y2="6" />
                         <line x1="8" y1="2" x2="8" y2="6" />
                         <line x1="3" y1="10" x2="21" y2="10" />
                       </svg>
-                      <p className="text-white/60">No games scheduled for {formatScheduleDate(selectedDate)}</p>
-                      <p className="text-white/30 text-sm mt-2">
+                      <p className="text-text-tertiary">No games scheduled for {formatScheduleDate(selectedDate)}</p>
+                      <p className="text-text-muted text-sm mt-2">
                         D1 baseball season runs February through June. Try navigating to a game day.
                       </p>
                     </div>
@@ -586,7 +586,7 @@ export default function CollegeBaseballPage() {
                   <>
                     {filteredGames.some((g) => g.status === 'live') && (
                       <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-text-primary mb-3 flex items-center gap-2">
                           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                           Live Games
                         </h3>
@@ -599,7 +599,7 @@ export default function CollegeBaseballPage() {
                     )}
                     {filteredGames.some((g) => g.status === 'scheduled') && (
                       <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-white mb-3">Upcoming</h3>
+                        <h3 className="text-sm font-semibold text-text-primary mb-3">Upcoming</h3>
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                           {filteredGames.filter((g) => g.status === 'scheduled').map((game) => (
                             <ScheduleGameCard key={game.id} game={game} />
@@ -609,7 +609,7 @@ export default function CollegeBaseballPage() {
                     )}
                     {filteredGames.some((g) => g.status === 'final') && (
                       <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-white/60 mb-3">Final</h3>
+                        <h3 className="text-sm font-semibold text-text-tertiary mb-3">Final</h3>
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                           {filteredGames.filter((g) => g.status === 'final').map((game) => (
                             <ScheduleGameCard key={game.id} game={game} />
@@ -617,7 +617,7 @@ export default function CollegeBaseballPage() {
                         </div>
                       </div>
                     )}
-                    <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between flex-wrap gap-4">
+                    <div className="mt-6 pt-4 border-t border-border flex items-center justify-between flex-wrap gap-4">
                       <DataSourceBadge
                         source={dataSource || 'ESPN College Baseball API'}
                         timestamp={formatTimestamp(lastUpdated)}
@@ -639,12 +639,12 @@ export default function CollegeBaseballPage() {
                     value={teamSearch}
                     onChange={(e) => setTeamSearch(e.target.value)}
                     placeholder="Search teams..."
-                    className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                    className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
                   />
                   <select
                     value={teamConfFilter}
                     onChange={(e) => setTeamConfFilter(e.target.value)}
-                    className="px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
+                    className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
                   >
                     <option value="All">All Conferences</option>
                     {conferenceList.filter(c => c.name !== 'All Conferences').map(c => (
@@ -656,12 +656,12 @@ export default function CollegeBaseballPage() {
                 {teamsLoading ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="bg-white/5 rounded-lg p-4 animate-pulse">
+                      <div key={i} className="bg-surface-light rounded-lg p-4 animate-pulse">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-white/10 rounded-full" />
+                          <div className="w-8 h-8 bg-surface-medium rounded-full" />
                           <div>
-                            <div className="h-4 bg-white/10 rounded w-24 mb-1" />
-                            <div className="h-3 bg-white/5 rounded w-16" />
+                            <div className="h-4 bg-surface-medium rounded w-24 mb-1" />
+                            <div className="h-3 bg-surface-light rounded w-16" />
                           </div>
                         </div>
                       </div>
@@ -683,8 +683,8 @@ export default function CollegeBaseballPage() {
                                 </div>
                               )}
                               <div className="min-w-0">
-                                <div className="font-semibold text-white text-sm truncate">{team.name}</div>
-                                <div className="text-xs text-white/40">{team.conference || ''}</div>
+                                <div className="font-semibold text-text-primary text-sm truncate">{team.name}</div>
+                                <div className="text-xs text-text-muted">{team.conference || ''}</div>
                               </div>
                             </div>
                           </Card>
@@ -697,8 +697,8 @@ export default function CollegeBaseballPage() {
                     {conferenceList.map((conf) => (
                       <Link key={conf.name} href={conf.href}>
                         <Card variant="hover" padding="md" className="text-center h-full">
-                          <div className="font-semibold text-white">{conf.name}</div>
-                          <div className="text-xs text-white/40 mt-1">
+                          <div className="font-semibold text-text-primary">{conf.name}</div>
+                          <div className="text-xs text-text-muted mt-1">
                             {conf.name === 'All Conferences' ? `View All ${conf.teams}` : `${conf.teams} Teams`}
                           </div>
                         </Card>
@@ -707,7 +707,7 @@ export default function CollegeBaseballPage() {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-white/40">No teams match &quot;{teamSearch}&quot;</p>
+                    <p className="text-text-muted">No teams match &quot;{teamSearch}&quot;</p>
                   </div>
                 )}
 
@@ -751,18 +751,18 @@ export default function CollegeBaseballPage() {
                 <ul className="space-y-3 text-sm text-text-secondary">
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">TrackMan:</strong> pitch velocity, spin rate, extension — D1 standard since 2018, installed at 300+ programs</span>
+                    <span><strong className="text-text-primary">TrackMan:</strong> pitch velocity, spin rate, extension — D1 standard since 2018, installed at 300+ programs</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">Yakkertech:</strong> batted-ball data — exit velo, launch angle, spray charts at programs using optical tracking</span>
+                    <span><strong className="text-text-primary">Yakkertech:</strong> batted-ball data — exit velo, launch angle, spray charts at programs using optical tracking</span>
                   </li>
                   <li className="flex gap-2">
                     <span className="text-burnt-orange mt-1 shrink-0">&bull;</span>
-                    <span><strong className="text-white">BSI HAV-F &amp; MMI:</strong> proprietary analytics layered on tracking data — hit quality, at-bat grading, velocity trends, fielding value, and in-game momentum shifts</span>
+                    <span><strong className="text-text-primary">BSI HAV-F &amp; MMI:</strong> proprietary analytics layered on tracking data — hit quality, at-bat grading, velocity trends, fielding value, and in-game momentum shifts</span>
                   </li>
                 </ul>
-                <div className="mt-5 pt-4 border-t border-white/5">
+                <div className="mt-5 pt-4 border-t border-border-subtle">
                   <Link href="/vision-ai">
                     <Button variant="ghost" size="sm">Full Vision AI Landscape &rarr;</Button>
                   </Link>

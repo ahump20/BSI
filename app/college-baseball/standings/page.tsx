@@ -102,7 +102,7 @@ export default function CollegeBaseballStandingsPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Standings</span>
+                <span className="text-text-primary">Standings</span>
               </div>
 
               <div className="mb-8">
@@ -125,7 +125,7 @@ export default function CollegeBaseballStandingsPage() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedConference === conf.id
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-charcoal text-text-secondary hover:text-white hover:bg-slate'
+                        : 'bg-background-secondary text-text-secondary hover:text-text-primary hover:bg-slate'
                     }`}
                   >
                     {conf.name}
@@ -133,7 +133,7 @@ export default function CollegeBaseballStandingsPage() {
                 ))}
                 <button
                   onClick={() => setShowMoreConferences(!showMoreConferences)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium bg-charcoal text-text-tertiary hover:text-white hover:bg-slate transition-all"
+                  className="px-4 py-2 rounded-lg text-sm font-medium bg-background-secondary text-text-tertiary hover:text-text-primary hover:bg-slate transition-all"
                 >
                   {showMoreConferences ? 'Less' : `+${moreConferences.length} More`}
                 </button>
@@ -147,7 +147,7 @@ export default function CollegeBaseballStandingsPage() {
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedConference === conf.id
                           ? 'bg-burnt-orange text-white'
-                          : 'bg-charcoal text-text-secondary hover:text-white hover:bg-slate'
+                          : 'bg-background-secondary text-text-secondary hover:text-text-primary hover:bg-slate'
                       }`}
                     >
                       {conf.name}
@@ -163,7 +163,7 @@ export default function CollegeBaseballStandingsPage() {
               <Card padding="lg" className="mb-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div>
-                    <h2 className="font-display text-2xl font-bold text-white">
+                    <h2 className="font-display text-2xl font-bold text-text-primary">
                       {currentConf?.fullName}
                     </h2>
                     <p className="text-text-tertiary text-sm mt-1">{seasonYear} Conference Standings</p>
@@ -219,7 +219,7 @@ export default function CollegeBaseballStandingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full" aria-label="College baseball standings by conference">
                       <thead>
-                        <tr className="bg-charcoal border-b border-border-subtle">
+                        <tr className="bg-background-secondary border-b border-border-subtle">
                           <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-12">
                             #
                           </th>
@@ -249,7 +249,7 @@ export default function CollegeBaseballStandingsPage() {
                         {standings.map((standing, index) => (
                           <tr
                             key={standing.team?.id || index}
-                            className={`border-b border-border-subtle hover:bg-charcoal/50 transition-colors ${
+                            className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
                               index < 4 ? 'bg-success/5' : ''
                             }`}
                           >
@@ -273,14 +273,14 @@ export default function CollegeBaseballStandingsPage() {
                                     unoptimized
                                   />
                                 )}
-                                <span className="font-semibold text-white">
+                                <span className="font-semibold text-text-primary">
                                   {standing.team?.name || standing.team?.shortName || 'Unknown'}
                                 </span>
                               </Link>
                             </td>
                             {hasConferencePlay && (
                               <td className="py-3 px-4 text-center">
-                                <span className="text-white">
+                                <span className="text-text-primary">
                                   {(standing.conferenceRecord?.wins > 0 || standing.conferenceRecord?.losses > 0)
                                     ? `${standing.conferenceRecord.wins}-${standing.conferenceRecord.losses}`
                                     : standing.conferenceRecord?.pct != null && standing.conferenceRecord.pct > 0
@@ -290,7 +290,7 @@ export default function CollegeBaseballStandingsPage() {
                               </td>
                             )}
                             <td className="py-3 px-4 text-center">
-                              <span className="text-white font-medium">
+                              <span className="text-text-primary font-medium">
                                 {standing.overallRecord?.wins ?? 0}-
                                 {standing.overallRecord?.losses ?? 0}
                               </span>
@@ -302,8 +302,8 @@ export default function CollegeBaseballStandingsPage() {
                             </td>
                             <td className="py-3 px-4 text-center hidden md:table-cell">
                               <span className={`text-sm ${
-                                standing.streak?.startsWith('W') ? 'text-green-400' :
-                                standing.streak?.startsWith('L') ? 'text-red-400' : 'text-text-tertiary'
+                                standing.streak?.startsWith('W') ? 'text-success' :
+                                standing.streak?.startsWith('L') ? 'text-error' : 'text-text-tertiary'
                               }`}>
                                 {standing.streak || '—'}
                               </span>
@@ -311,8 +311,8 @@ export default function CollegeBaseballStandingsPage() {
                             <td className="py-3 px-4 text-center hidden lg:table-cell">
                               {standing.pointDifferential != null ? (
                                 <span className={`text-sm font-medium ${
-                                  standing.pointDifferential > 0 ? 'text-green-400' :
-                                  standing.pointDifferential < 0 ? 'text-red-400' : 'text-text-tertiary'
+                                  standing.pointDifferential > 0 ? 'text-success' :
+                                  standing.pointDifferential < 0 ? 'text-error' : 'text-text-tertiary'
                                 }`}>
                                   {standing.pointDifferential > 0 ? '+' : ''}{standing.pointDifferential}
                                 </span>
@@ -327,7 +327,7 @@ export default function CollegeBaseballStandingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-charcoal border-t border-border-subtle">
+                  <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
                     <div className="flex items-center gap-4 text-xs text-text-tertiary">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-success/20 rounded" />
