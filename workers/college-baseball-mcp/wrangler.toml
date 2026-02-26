@@ -1,0 +1,41 @@
+# College Baseball Sabermetrics MCP Server
+# Serves JSON-RPC 2.0 MCP at /mcp — proxies through BSI's worker API.
+# Auth: Bearer token via BSI_API_KEY secret.
+# Rate limit: 30 req/min per token via RATE_LIMIT_KV.
+#
+# Secrets to set after first deploy:
+#   wrangler secret put BSI_API_KEY           (BLAZE_PRODUCTION_API_KEY value)
+#   wrangler secret put HIGHLIGHTLY_API_KEY
+#   wrangler secret put SPORTSDATAIO_API_KEY
+#
+# Deploy: wrangler deploy --config workers/college-baseball-mcp/wrangler.toml
+
+name = "college-baseball-mcp"
+main = "src/worker.ts"
+compatibility_date = "2025-01-01"
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "f5601b09f5184739b4792b86fb73151b"
+
+[[kv_namespaces]]
+binding = "TEAM_STATS_KV"
+id = "622451b613db45398cba3d07875358d9"
+
+[[routes]]
+pattern = "sabermetrics.blazesportsintel.com"
+zone_name = "blazesportsintel.com"
+custom_domain = true
+
+[[services]]
+binding = "BSI_WORKER"
+service = "blazesportsintel-worker-prod"
+
+[triggers]
+crons = ["0 */6 * * *"]
+
+[dev]
+port = 8796
