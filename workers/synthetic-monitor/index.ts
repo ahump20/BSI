@@ -24,11 +24,12 @@ interface CheckResult {
 const ENDPOINTS = [
   { url: 'https://blazesportsintel.com/', name: 'Homepage' },
   { url: 'https://blazesportsintel.com/api/health', name: 'API Health' },
+  { url: 'https://blazesportsintel.com/api/status', name: 'System Status' },
   { url: 'https://blazesportsintel.com/api/college-baseball/scores', name: 'CB Scores' },
   { url: 'https://blazesportsintel.com/api/college-baseball/standings?conference=SEC', name: 'CB Standings' },
   { url: 'https://blazesportsintel.com/scores/', name: 'Scores Page' },
-  { url: 'https://api.blazesportsintel.com/health', name: 'CBB API Health' },
-  { url: 'https://cbb-api-sync.humphrey-austin20.workers.dev/status', name: 'CBB Sync Status' },
+  { url: 'https://blazesportsintel.com/api/savant/batting/leaderboard', name: 'Savant Leaderboard' },
+  { url: 'https://blazesportsintel.com/api/savant/conference-strength?conference=SEC', name: 'Savant Conference' },
 ] as const;
 
 const TIMEOUT_MS = 10_000;
