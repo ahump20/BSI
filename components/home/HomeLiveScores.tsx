@@ -386,7 +386,7 @@ export function HomeLiveScores() {
             <h2 className="text-sm font-semibold uppercase tracking-widest text-text-secondary">
               Today&apos;s Games
             </h2>
-            {hasLiveGames && <FreshnessBadge isLive />}
+            {hasLiveGames && <FreshnessBadge isLive fetchedAt={lastFetched?.toISOString()} />}
             {!loading && allGames.length > 0 && (
               <span className="text-[10px] text-text-muted tabular-nums">
                 {allGames.length} game{allGames.length !== 1 ? 's' : ''}
