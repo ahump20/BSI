@@ -173,7 +173,7 @@ export function GameGrid({
                         {marquee.map((g) => (
                           <span
                             key={g.id}
-                            className="w-1.5 h-1.5 rounded-full bg-white/20"
+                            className="w-1.5 h-1.5 rounded-full bg-surface-medium"
                             aria-hidden
                           />
                         ))}

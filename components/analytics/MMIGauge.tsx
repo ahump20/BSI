@@ -90,10 +90,10 @@ export function MMIGauge({
   }
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.06] rounded-xl p-5 ${className}`}>
+    <div className={`bg-background-primary border border-border-subtle rounded-xl p-5 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-display text-sm uppercase tracking-widest text-white/60">
+        <h4 className="font-display text-sm uppercase tracking-widest text-text-secondary">
           Momentum
         </h4>
         <div className="flex items-center gap-2">
@@ -116,17 +116,17 @@ export function MMIGauge({
 
       {/* Team labels */}
       <div className="flex justify-between mb-2">
-        <span className={`text-xs font-medium transition-colors ${isAway ? 'text-[#6B8DB2]' : 'text-white/30'}`}>
+        <span className={`text-xs font-medium transition-colors ${isAway ? 'text-[#6B8DB2]' : 'text-text-muted'}`}>
           {awayTeam}
         </span>
-        <span className="text-[10px] text-white/15 uppercase tracking-wider">Neutral</span>
-        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-[#BF5700]' : 'text-white/30'}`}>
+        <span className="text-[10px] text-text-muted uppercase tracking-wider">Neutral</span>
+        <span className={`text-xs font-medium transition-colors ${isHome ? 'text-[#BF5700]' : 'text-text-muted'}`}>
           {homeTeam}
         </span>
       </div>
 
       {/* Gauge track */}
-      <div className="relative h-3 rounded-full bg-white/[0.04] overflow-hidden">
+      <div className="relative h-3 rounded-full bg-surface-light overflow-hidden">
         {/* Away half gradient */}
         <div
           className="absolute inset-y-0 left-0 w-1/2 rounded-l-full"
@@ -144,7 +144,7 @@ export function MMIGauge({
           }}
         />
         {/* Center line */}
-        <div className="absolute top-0 bottom-0 left-1/2 w-px bg-white/10" />
+        <div className="absolute top-0 bottom-0 left-1/2 w-px bg-surface" />
 
         {/* Indicator */}
         <motion.div

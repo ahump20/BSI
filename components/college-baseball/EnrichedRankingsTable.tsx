@@ -167,20 +167,20 @@ export function EnrichedRankingsTable({
               <table className="w-full">
                 <thead>
                   <tr className="border-b-2 border-burnt-orange">
-                    <th className="text-left p-3 text-white/40 font-semibold text-xs w-12">Rank</th>
+                    <th className="text-left p-3 text-text-muted font-semibold text-xs w-12">Rank</th>
                     {prevMap && (
-                      <th className="text-center p-3 text-white/40 font-semibold text-xs w-10">+/-</th>
+                      <th className="text-center p-3 text-text-muted font-semibold text-xs w-10">+/-</th>
                     )}
-                    <th className="text-left p-3 text-white/40 font-semibold text-xs">Team</th>
-                    <th className="text-left p-3 text-white/40 font-semibold text-xs hidden sm:table-cell">Conference</th>
-                    <th className="text-left p-3 text-white/40 font-semibold text-xs">Record</th>
+                    <th className="text-left p-3 text-text-muted font-semibold text-xs">Team</th>
+                    <th className="text-left p-3 text-text-muted font-semibold text-xs hidden sm:table-cell">Conference</th>
+                    <th className="text-left p-3 text-text-muted font-semibold text-xs">Record</th>
                   </tr>
                 </thead>
                 <tbody>
                   {enriched.map((team) => (
                     <tr
                       key={team.rank}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                      className="border-b border-border-subtle hover:bg-surface-light transition-colors"
                     >
                       <td className="p-3 text-burnt-orange font-bold text-lg tabular-nums">
                         {team.rank}
@@ -205,19 +205,19 @@ export function EnrichedRankingsTable({
                           {team.slug ? (
                             <Link
                               href={`/college-baseball/teams/${team.slug}`}
-                              className="font-semibold text-white hover:text-burnt-orange transition-colors"
+                              className="font-semibold text-text-primary hover:text-burnt-orange transition-colors"
                             >
                               {team.team}
                             </Link>
                           ) : (
-                            <span className="font-semibold text-white">{team.team}</span>
+                            <span className="font-semibold text-text-primary">{team.team}</span>
                           )}
                         </div>
                       </td>
-                      <td className="p-3 text-white/60 hidden sm:table-cell">
+                      <td className="p-3 text-text-secondary hidden sm:table-cell">
                         {team.conference || '—'}
                       </td>
-                      <td className="p-3 text-white/60 tabular-nums">
+                      <td className="p-3 text-text-secondary tabular-nums">
                         {team.record || '—'}
                       </td>
                     </tr>
@@ -226,7 +226,7 @@ export function EnrichedRankingsTable({
               </table>
             </div>
           )}
-          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DataSourceBadge source="D1Baseball / NCAA" timestamp={formatTimestamp(lastUpdated)} />
               {!isLive && !loading && !error && (

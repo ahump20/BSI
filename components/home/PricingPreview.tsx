@@ -10,7 +10,7 @@ import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
 export function PricingPreview() {
   return (
     <div>
-      <h2 className="text-2xl md:text-3xl font-display text-white uppercase tracking-wide mb-8 text-center">
+      <h2 className="text-2xl md:text-3xl font-display text-text-primary uppercase tracking-wide mb-8 text-center">
         <span className="text-gradient-brand">Plans</span>
       </h2>
 
@@ -21,7 +21,7 @@ export function PricingPreview() {
             className={`glass-default rounded-2xl p-6 sm:p-8 relative border transition-all duration-300 hover:shadow-glow-sm ${
               tier.popular
                 ? 'border-[#BF5700]/50 hover:border-[#BF5700]'
-                : 'border-white/[0.06] hover:border-white/[0.12]'
+                : 'border-border-subtle hover:border-border-strong'
             }`}
           >
             {tier.popular && (

@@ -194,7 +194,7 @@ export function SportHubCards() {
       {/* CFB */}
       <Link href="/cfb" className="group">
         <div
-          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-white/[0.06] hover:border-white/[0.12] card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
+          className={`glass-default rounded-2xl p-6 h-full flex flex-col gap-3 transition-all duration-300 border border-border-subtle hover:border-border-strong card-accent-line hover:scale-[1.02] hover:-translate-y-1 ${
             isInSeason('cfb') ? 'hover:shadow-glow-sm' : 'opacity-60'
           }`}
           style={{ '--card-accent': '#8B4513' } as React.CSSProperties}
@@ -206,10 +206,10 @@ export function SportHubCards() {
             >
               <SportIcon sport="cfb" className="w-6 h-6" />
             </div>
-            <h3 className="font-display text-lg text-white uppercase tracking-wide group-hover:text-[#FF6B35] transition-colors">CFB</h3>
+            <h3 className="font-display text-lg text-text-primary uppercase tracking-wide group-hover:text-ember transition-colors">CFB</h3>
           </div>
           <div className="flex-1 flex items-end">
-            <span className="text-xs text-white/30">
+            <span className="text-xs text-text-muted">
               {isInSeason('cfb') ? 'Scores & Standings' : `Returns ${getReturnMonth('cfb')}`}
             </span>
           </div>

@@ -63,22 +63,22 @@ export function SpringTrainingStandingsTable({ title, teams }: SpringTrainingSta
                       <span className="text-text-muted text-xs">{team.abbreviation}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-white">{team.wins}</td>
-                  <td className="px-4 py-3 text-right font-mono text-white/70">{team.losses}</td>
+                  <td className="px-4 py-3 text-right font-mono text-text-primary">{team.wins}</td>
+                  <td className="px-4 py-3 text-right font-mono text-text-secondary">{team.losses}</td>
                   <td className="px-4 py-3 text-right font-mono text-burnt-orange font-semibold">
                     {team.winPct.toFixed(3).replace(/^0/, '')}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-white/50">
+                  <td className="px-4 py-3 text-right font-mono text-text-muted">
                     {team.runsFor ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-white/50">
+                  <td className="px-4 py-3 text-right font-mono text-text-muted">
                     {team.runsAgainst ?? '—'}
                   </td>
                 </tr>
               ))}
               {sorted.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-white/30">
+                  <td colSpan={7} className="px-4 py-8 text-center text-text-muted">
                     No standings data available
                   </td>
                 </tr>

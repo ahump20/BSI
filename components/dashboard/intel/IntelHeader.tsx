@@ -47,7 +47,7 @@ export function IntelHeader({
       <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
         <div className="flex items-center gap-3">
           <div
-            className="grid h-10 w-10 place-items-center border border-white/10"
+            className="grid h-10 w-10 place-items-center border border-border"
             style={{
               background: 'linear-gradient(135deg, var(--bsi-intel-accent, var(--bsi-primary, #BF5700)), var(--bsi-ember, #FF6B35))',
               borderRadius: '2px',
@@ -118,7 +118,7 @@ export function IntelHeader({
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
-          <span className="inline-flex items-center gap-1 text-white/30">
+          <span className="inline-flex items-center gap-1 text-text-muted">
             <Info className="h-3.5 w-3.5" />
             <span className="intel-caption">{MODE_LABELS[mode]}</span>
           </span>
@@ -143,7 +143,7 @@ export function IntelHeader({
           <select
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
-            className="h-8 border border-white/10 bg-white/5 px-2 text-[11px] text-white/60 outline-none focus:border-white/30"
+            className="h-8 border border-border bg-surface-light px-2 text-[11px] text-text-secondary outline-none focus:border-border-strong"
             style={{ fontFamily: 'var(--intel-mono)', borderRadius: '2px' }}
           >
             <option value="">Team lens...</option>
