@@ -56,7 +56,7 @@ export function TrendingPlayers() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card padding="md">
-        <h3 className="font-display text-lg font-bold text-white mb-4">Trending Players</h3>
+        <h3 className="font-display text-lg font-bold text-text-primary mb-4">Trending Players</h3>
         {players.length === 0 ? (
           <p className="text-text-tertiary text-sm">No trending data available yet.</p>
         ) : (
@@ -68,7 +68,7 @@ export function TrendingPlayers() {
                 className="flex items-center justify-between py-2 border-b border-border-subtle last:border-0 hover:bg-charcoal/50 -mx-2 px-2 rounded transition-colors"
               >
                 <div>
-                  <span className="text-white font-medium">{p.name}</span>
+                  <span className="text-text-primary font-medium">{p.name}</span>
                   <span className="text-text-tertiary text-xs ml-2">{p.team} &middot; {p.position}</span>
                 </div>
                 <div className="flex items-center gap-2">

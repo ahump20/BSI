@@ -25,23 +25,23 @@ export function PricingPreview() {
             }`}
           >
             {tier.popular && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-[#BF5700] text-white">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-burnt-orange text-white">
                 Popular
               </span>
             )}
 
             <div className="text-center mb-4">
-              <h3 className="text-lg font-display text-white uppercase tracking-wide mb-1">
+              <h3 className="text-lg font-display text-text-primary uppercase tracking-wide mb-1">
                 {tier.name}
               </h3>
-              <p className="text-xs text-white/40">{tier.audience}</p>
+              <p className="text-xs text-text-muted">{tier.audience}</p>
             </div>
 
             <div className="text-center mb-6">
-              <span className="text-4xl font-display font-bold text-[#BF5700]">
+              <span className="text-4xl font-display font-bold text-burnt-orange">
                 ${tier.price}
               </span>
-              <span className="text-white/40 text-sm">/{tier.period}</span>
+              <span className="text-text-muted text-sm">/{tier.period}</span>
             </div>
 
             <Link

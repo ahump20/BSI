@@ -39,14 +39,14 @@ export function ScheduleGameCard({ game }: { game: ScheduleGame }) {
 
   return (
     <Link href={`/college-baseball/game/${game.id}`} className="block">
-      <div className={`bg-white/5 rounded-lg border transition-all hover:border-burnt-orange hover:bg-white/[0.07] ${
-        isLive ? 'border-green-500/30' : 'border-white/10'
+      <div className={`bg-surface-light rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface ${
+        isLive ? 'border-green-500/30' : 'border-border'
       }`}>
         <div className={`px-3 py-1.5 rounded-t-lg flex items-center justify-between ${
-          isLive ? 'bg-green-500/10' : isFinal ? 'bg-white/5' : 'bg-burnt-orange/10'
+          isLive ? 'bg-green-500/10' : isFinal ? 'bg-surface-light' : 'bg-burnt-orange/10'
         }`}>
           <span className={`text-xs font-semibold uppercase ${
-            isLive ? 'text-green-400' : isFinal ? 'text-white/30' : 'text-burnt-orange'
+            isLive ? 'text-green-400' : isFinal ? 'text-text-muted' : 'text-burnt-orange'
           }`}>
             {isLive ? (
               <span className="flex items-center gap-1.5">

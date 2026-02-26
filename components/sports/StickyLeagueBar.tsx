@@ -25,7 +25,7 @@ export function StickyLeagueBar() {
   if (!onSportPage) return null;
 
   return (
-    <div className="sticky top-14 z-30 bg-midnight/95 backdrop-blur-md border-b border-white/10">
+    <div className="sticky top-14 z-30 bg-midnight/95 backdrop-blur-md border-b border-border">
       <nav
         className="max-w-7xl mx-auto overflow-x-auto scrollbar-hide"
         role="navigation"
@@ -44,8 +44,8 @@ export function StickyLeagueBar() {
                   href={href}
                   className={`block px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 ${
                     active
-                      ? 'border-[#BF5700] text-white'
-                      : 'border-transparent text-white/50 hover:text-white/80'
+                      ? 'border-burnt-orange text-text-primary'
+                      : 'border-transparent text-text-muted hover:text-text-primary'
                   }`}
                   aria-current={active ? 'page' : undefined}
                 >

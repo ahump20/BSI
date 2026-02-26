@@ -24,7 +24,7 @@ export function IntelSkeleton() {
       </div>
 
       {/* Masthead rule skeleton */}
-      <div className="mb-5 h-px bg-white/[0.08]" />
+      <div className="mb-5 h-px bg-surface" />
 
       {/* Sport filter skeleton */}
       <div className="flex gap-2 mb-5">
@@ -83,11 +83,11 @@ export function IntelSkeleton() {
         </div>
 
         {/* Sidebar column */}
-        <div className="space-y-4 lg:border-l lg:border-white/[0.08] lg:pl-6">
+        <div className="space-y-4 lg:border-l lg:border-surface lg:pl-6">
           {/* Signal feed skeleton */}
           <div className="intel-panel p-4">
             <Skeleton variant="text" width={100} height={16} className="mb-3" />
-            <div className="h-px bg-white/[0.08] mb-3" />
+            <div className="h-px bg-surface mb-3" />
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="intel-panel-elevated p-3 mb-3">
                 <Skeleton variant="text" width="90%" height={12} />
@@ -99,7 +99,7 @@ export function IntelSkeleton() {
           {/* Standings skeleton */}
           <div className="intel-panel p-4">
             <Skeleton variant="text" width={80} height={16} className="mb-3" />
-            <div className="h-px bg-white/[0.08] mb-3" />
+            <div className="h-px bg-surface mb-3" />
             {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} variant="text" width="100%" height={14} className="mb-2" />
             ))}

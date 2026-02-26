@@ -162,9 +162,9 @@ export function MMIGauge({
 
       {/* Scale markers */}
       <div className="flex justify-between mt-1">
-        <span className="text-[9px] font-mono text-white/15 tabular-nums">-100</span>
-        <span className="text-[9px] font-mono text-white/15 tabular-nums">0</span>
-        <span className="text-[9px] font-mono text-white/15 tabular-nums">+100</span>
+        <span className="text-[9px] font-mono text-text-muted tabular-nums">-100</span>
+        <span className="text-[9px] font-mono text-text-muted tabular-nums">0</span>
+        <span className="text-[9px] font-mono text-text-muted tabular-nums">+100</span>
       </div>
     </div>
   );

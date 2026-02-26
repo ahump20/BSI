@@ -46,14 +46,14 @@ function CustomTooltip({
   const favoring = val > 5 ? homeTeam : val < -5 ? awayTeam : 'Neutral';
 
   return (
-    <div className="bg-[#1A1A1A] border border-white/10 rounded-lg px-3 py-2 shadow-xl">
-      <p className="text-[10px] font-display uppercase tracking-wider text-white/40 mb-1">
+    <div className="bg-background-secondary border border-border rounded-lg px-3 py-2 shadow-xl">
+      <p className="text-[10px] font-display uppercase tracking-wider text-text-muted mb-1">
         {point.payload.label}
       </p>
       <p className="text-sm font-mono font-bold tabular-nums" style={{ color: val > 0 ? '#BF5700' : val < 0 ? '#6B8DB2' : 'rgba(255,255,255,0.5)' }}>
         {val > 0 ? '+' : ''}{val.toFixed(1)}
       </p>
-      <p className="text-[10px] text-white/30 mt-0.5">
+      <p className="text-[10px] text-text-muted mt-0.5">
         Favoring {favoring}
       </p>
     </div>
