@@ -3,6 +3,7 @@
 import { useGameData } from './layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { LiveGameWidget } from '@/components/LiveGameWidget';
 
 /**
  * College Baseball Game Summary Page
@@ -63,6 +64,13 @@ export default function CollegeGameSummaryClient() {
 
   return (
     <div className="space-y-6">
+      {/* Live Game Widget - embedded for live games */}
+      {game.status.isLive && (
+        <div className="mb-6">
+          <LiveGameWidget gameId={game.id} />
+        </div>
+      )}
+
       {/* Game Status */}
       {game.status.isLive && (
         <Card variant="default" padding="md" className="border-success/30 bg-success/5">
