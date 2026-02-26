@@ -505,11 +505,24 @@ export function calculateLinearWeightRuns(
  * Formula: 6.145 - 16.986*(K/BF) + 11.434*(BB/BF) + 1.858*(HR/BF)*9
  * Derived from the SIERA equation stripped of batted-ball terms.
  * Clamped [0, 12].
+ *
+ * Optionally accepts hits (h) and hit-by-pitch (hbp) to improve the batters-faced
+ * estimate. When h/hbp are omitted, BF is approximated and SIERA-Lite will be
+ * less accurate for pitchers who allow many non-HR hits or HBP.
  */
-export function calculateSIERALite(so: number, bb: number, hr: number, ip: number): number {
+export function calculateSIERALite(
+  so: number,
+  bb: number,
+  hr: number,
+  ip: number,
+  h: number = 0,
+  hbp: number = 0,
+): number {
   if (ip <= 0) return 0;
-  // Estimate batters faced: IP × 3 + H proxy (we only have K/BB/HR here)
-  const bfEst = Math.max(ip * 3 + bb + hr, 1);
+  // Estimate batters faced:
+  // - When hits/HBP are provided: BF ≈ IP × 3 + H + BB + HBP
+  // - When h/hbp are left as 0: rough approximation that undercounts BF
+  const bfEst = Math.max(ip * 3 + h + bb + hbp, 1);
   const kPct = so / bfEst;
   const bbPct = bb / bfEst;
   const hrPer9 = (hr / ip) * 9;
