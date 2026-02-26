@@ -81,7 +81,7 @@ interface RosterPlayer {
     hr?: number; rbi?: number; r?: number; h?: number; ab?: number;
     doubles?: number; triples?: number; bb?: number; k?: number;
     sb?: number; cs?: number; hbp?: number; sf?: number; sh?: number;
-    tb?: number; gp?: number;
+    gp?: number;
     // Pitching
     era?: number; whip?: number; w?: number; l?: number; sv?: number;
     ip?: number; ha?: number; ra?: number; er?: number;
