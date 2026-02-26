@@ -6,7 +6,7 @@
  * NCAA fallback, missing API key, total failure (502), and Cache-Control.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockEnv, HIGHLIGHTLY_SCORES } from '../utils/mocks';
+import { createMockEnv, createMockCtx, HIGHLIGHTLY_SCORES } from '../utils/mocks';
 
 // ---------------------------------------------------------------------------
 // Fetch mocks scoped to this endpoint
@@ -77,7 +77,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);
@@ -92,7 +92,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('MISS');
@@ -108,7 +108,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores?date=2026-02-15');
-    await worker.fetch(req, env);
+    await worker.fetch(req, env, createMockCtx());
 
     expect(env.KV.put).toHaveBeenCalledWith(
       'cb:scores:2026-02-15',
@@ -121,7 +121,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockNcaaOnly();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('MISS');
@@ -133,7 +133,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockNcaaOnly();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Data-Source')).toBe('espn');
@@ -145,7 +145,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(502);
@@ -157,7 +157,7 @@ describe('handleCollegeBaseballScores', () => {
     globalThis.fetch = mockHighlightlyScores();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/scores');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=30');
   });
@@ -206,7 +206,7 @@ describe('handleCollegeBaseballSchedule', () => {
     ) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     // Schedule endpoint powers the live scores page — must use short cache
@@ -224,7 +224,7 @@ describe('handleCollegeBaseballSchedule', () => {
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('HIT');
@@ -237,7 +237,7 @@ describe('handleCollegeBaseballSchedule', () => {
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/schedule?date=2026-02-25');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(502);
     // Even errors should use the short cache, not 3600s

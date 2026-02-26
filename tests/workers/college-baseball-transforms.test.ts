@@ -8,6 +8,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createMockEnv,
+  createMockCtx,
   HIGHLIGHTLY_MATCH,
   HIGHLIGHTLY_BOXSCORE,
   mockFetchForHighlightly,
@@ -43,7 +44,7 @@ describe('College Baseball Transforms', () => {
     it('returns { game, meta } shape with CollegeGameData fields', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -55,7 +56,7 @@ describe('College Baseball Transforms', () => {
     it('transforms status correctly for finished game', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.status.isFinal).toBe(true);
@@ -66,7 +67,7 @@ describe('College Baseball Transforms', () => {
     it('transforms teams with name, abbreviation, score, isWinner', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.teams.home.name).toBe('Texas Longhorns');
@@ -81,7 +82,7 @@ describe('College Baseball Transforms', () => {
     it('transforms linescore with innings and totals', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.linescore).toBeDefined();
@@ -94,7 +95,7 @@ describe('College Baseball Transforms', () => {
     it('transforms boxscore with batting and pitching lines', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.boxscore).toBeDefined();
@@ -111,7 +112,7 @@ describe('College Baseball Transforms', () => {
     it('transforms venue', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.venue.name).toBe('UFCU Disch-Falk Field');
@@ -122,7 +123,7 @@ describe('College Baseball Transforms', () => {
     it('caches to KV on success', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      await worker.fetch(req, env);
+      await worker.fetch(req, env, createMockCtx());
 
       expect(env.KV.put).toHaveBeenCalledWith(
         'cb:game:401234567',
@@ -134,10 +135,10 @@ describe('College Baseball Transforms', () => {
     it('returns cached data on second request', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req1 = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      await worker.fetch(req1, env);
+      await worker.fetch(req1, env, createMockCtx());
 
       const req2 = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res2 = await worker.fetch(req2, env);
+      const res2 = await worker.fetch(req2, env, createMockCtx());
 
       expect(res2.headers.get('X-Cache')).toBe('HIT');
     });
@@ -151,29 +152,29 @@ describe('College Baseball Transforms', () => {
     it('falls back to ESPN when Highlightly fails', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
       expect(body.game).toBeDefined();
-      expect(body.meta.dataSource).toBe('espn');
+      expect(body.meta.source).toBe('espn');
     });
 
     it('falls back to ESPN when no RAPIDAPI_KEY', async () => {
       env = createMockEnv({ RAPIDAPI_KEY: undefined });
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game).toBeDefined();
-      expect(body.meta.dataSource).toBe('espn');
+      expect(body.meta.source).toBe('espn');
     });
 
     it('transforms ESPN summary to correct shape', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.teams.home.name).toBe('Texas Longhorns');
@@ -186,7 +187,7 @@ describe('College Baseball Transforms', () => {
     it('extracts ESPN boxscore batting/pitching lines', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.boxscore).toBeDefined();
@@ -203,7 +204,7 @@ describe('College Baseball Transforms', () => {
     it('returns { team, meta } shape with Team fields', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/teams/2633');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -217,20 +218,20 @@ describe('College Baseball Transforms', () => {
     it('falls back to ESPN for team data', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/teams/2633');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.team).toBeDefined();
       expect(body.team.name).toBe('Texas Longhorns');
       expect(body.team.abbreviation).toBe('TEX');
       expect(body.team.mascot).toBe('Longhorns');
-      expect(body.meta.dataSource).toBe('espn');
+      expect(body.meta.source).toBe('espn');
     });
 
     it('includes roster from ESPN', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/teams/2633');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.team.roster).toBeDefined();
@@ -246,7 +247,7 @@ describe('College Baseball Transforms', () => {
     it('returns { player, statistics, meta } shape', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/players/1');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -258,7 +259,7 @@ describe('College Baseball Transforms', () => {
     it('transforms Highlightly player with batting stats', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/players/1');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.player.name).toBe('Jared Thomas');
@@ -271,18 +272,18 @@ describe('College Baseball Transforms', () => {
     it('falls back to ESPN for player data', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/players/1');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.player).toBeDefined();
       expect(body.player.name).toBe('Jared Thomas');
-      expect(body.meta.dataSource).toBe('espn');
+      expect(body.meta.source).toBe('espn');
     });
 
     it('extracts batting stats from ESPN overview', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/players/1');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.statistics).toBeDefined();
@@ -300,7 +301,7 @@ describe('College Baseball Transforms', () => {
     it('returns empty entries when KV has no data', async () => {
       globalThis.fetch = mockFetchForHighlightly();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -320,13 +321,13 @@ describe('College Baseball Transforms', () => {
       globalThis.fetch = mockFetchForHighlightly();
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.entries).toHaveLength(1);
       expect(body.entries[0].playerName).toBe('Test Player');
       expect(body.totalEntries).toBe(1);
-      expect(body.meta.dataSource).toBe('portal-sync');
+      expect(body.meta.source).toBe('portal-sync');
     });
   });
 
@@ -338,7 +339,7 @@ describe('College Baseball Transforms', () => {
     it('returns { articles, meta } with category classification', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/news');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -351,7 +352,7 @@ describe('College Baseball Transforms', () => {
     it('transforms ESPN articles to expected shape', async () => {
       globalThis.fetch = mockFetchForEspn();
       const req = new Request('https://blazesportsintel.com/api/college-baseball/news');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.articles.length).toBeGreaterThan(0);
@@ -372,7 +373,7 @@ describe('College Baseball Transforms', () => {
     it('returns 502 with null game when both sources fail', async () => {
       globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/999999');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(502);
@@ -382,7 +383,7 @@ describe('College Baseball Transforms', () => {
     it('returns 502 with null team when both sources fail', async () => {
       globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
       const req = new Request('https://blazesportsintel.com/api/college-baseball/teams/999999');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(502);
@@ -392,7 +393,7 @@ describe('College Baseball Transforms', () => {
     it('returns 502 with null player when both sources fail', async () => {
       globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network down')) as unknown as typeof fetch;
       const req = new Request('https://blazesportsintel.com/api/college-baseball/players/999999');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(502);
@@ -415,7 +416,7 @@ describe('College Baseball Transforms', () => {
       }) as unknown as typeof fetch;
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.teams.home.isWinner).toBe(false);
@@ -432,7 +433,7 @@ describe('College Baseball Transforms', () => {
       }) as unknown as typeof fetch;
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(body.game.status.isLive).toBe(true);
@@ -449,7 +450,7 @@ describe('College Baseball Transforms', () => {
       }) as unknown as typeof fetch;
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/game/401234567');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
@@ -463,13 +464,13 @@ describe('College Baseball Transforms', () => {
       globalThis.fetch = mockFetchForHighlightly();
 
       const req = new Request('https://blazesportsintel.com/api/college-baseball/transfer-portal');
-      const res = await worker.fetch(req, env);
+      const res = await worker.fetch(req, env, createMockCtx());
       const body = await res.json() as any;
 
       expect(res.status).toBe(200);
       expect(body.entries).toEqual([]);
       expect(body.totalEntries).toBe(0);
-      expect(body.meta.dataSource).toBe('portal-sync');
+      expect(body.meta.source).toBe('portal-sync');
     });
   });
 });

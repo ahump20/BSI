@@ -6,7 +6,7 @@
  * meta wrapping, Highlightly fallback, and array safety.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockEnv, HIGHLIGHTLY_STANDINGS, ESPN_STANDINGS } from '../utils/mocks';
+import { createMockEnv, createMockCtx, HIGHLIGHTLY_STANDINGS, ESPN_STANDINGS } from '../utils/mocks';
 
 // ---------------------------------------------------------------------------
 // Fetch mocks
@@ -79,7 +79,7 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Cache')).toBe('HIT');
@@ -90,7 +90,7 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = mockHighlightlyStandings();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
-    await worker.fetch(req, env);
+    await worker.fetch(req, env, createMockCtx());
 
     expect(env.KV.put).toHaveBeenCalledWith(
       'cb:standings:v3:SEC',
@@ -103,7 +103,7 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = mockHighlightlyStandings();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings');
-    await worker.fetch(req, env);
+    await worker.fetch(req, env, createMockCtx());
 
     expect(env.KV.put).toHaveBeenCalledWith(
       'cb:standings:v3:NCAA',
@@ -116,14 +116,14 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = mockHighlightlyStandings();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(body.success).toBe(true);
     expect(body.conference).toBe('SEC');
     expect(body.timestamp).toBeDefined();
     expect(body.meta).toBeDefined();
-    expect(body.meta.dataSource).toBe('highlightly');
+    expect(body.meta.source).toBe('highlightly');
     expect(body.meta.sport).toBe('college-baseball');
   });
 
@@ -131,7 +131,7 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = mockNcaaStandings();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Data-Source')).toBe('espn-v2');
@@ -158,7 +158,7 @@ describe('handleCollegeBaseballStandings', () => {
     }) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(Array.isArray(body.data)).toBe(true);
@@ -168,7 +168,7 @@ describe('handleCollegeBaseballStandings', () => {
     globalThis.fetch = mockHighlightlyStandings();
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
 
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=300');
   });
@@ -208,7 +208,7 @@ describe('handleCollegeBaseballStandings', () => {
     }) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=NCAA');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);
@@ -260,7 +260,7 @@ describe('handleCollegeBaseballStandings', () => {
     }) as unknown as typeof fetch;
 
     const req = new Request('https://blazesportsintel.com/api/college-baseball/standings?conference=SEC');
-    const res = await worker.fetch(req, env);
+    const res = await worker.fetch(req, env, createMockCtx());
     const body = await res.json() as any;
 
     expect(res.status).toBe(200);

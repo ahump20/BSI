@@ -22,6 +22,14 @@ export function createMockKV() {
 }
 
 // ---------------------------------------------------------------------------
+// Mock ExecutionContext
+// ---------------------------------------------------------------------------
+
+export function createMockCtx() {
+  return { waitUntil: vi.fn(), passThroughOnException: vi.fn() };
+}
+
+// ---------------------------------------------------------------------------
 // Mock Env
 // ---------------------------------------------------------------------------
 
@@ -39,6 +47,7 @@ export function createMockEnv(overrides: Record<string, unknown> = {}) {
     CACHE: {} as any,
     PORTAL_POLLER: {} as any,
     ASSETS_BUCKET: {} as any,
+    DATA_LAKE: { put: vi.fn().mockResolvedValue(undefined) } as any,
     ENVIRONMENT: 'test',
     API_VERSION: '1.0.0-test',
     PAGES_ORIGIN: 'https://test.pages.dev',
@@ -274,6 +283,7 @@ export function mockFetchForHighlightly() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
 
+    // --- Highlightly (RapidAPI) paths ---
     if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/matches/')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_MATCH), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
@@ -291,6 +301,11 @@ export function mockFetchForHighlightly() {
     }
     if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/players/')) {
       return new Response(JSON.stringify({ id: 1, name: 'Jared Thomas', position: 'CF', jerseyNumber: '7', team: HIGHLIGHTLY_MATCH.homeTeam }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // --- ESPN paths (team handler now calls ESPN first as skeleton) ---
+    if (urlStr.includes('espn.com') && urlStr.includes('/teams/')) {
+      return new Response(JSON.stringify(ESPN_TEAM), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
 
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
