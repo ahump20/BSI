@@ -6,7 +6,7 @@
  */
 
 import type { Env } from '../../shared/types';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient } from '../../shared/helpers';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse } from '../../shared/helpers';
 import { HTTP_CACHE, CACHE_TTL } from '../../shared/constants';
 import type {
   HighlightlyMatch,
@@ -21,7 +21,7 @@ import { getLeaders, getScoreboard, getGameSummary } from '../../../lib/api-clie
 // Re-export everything domain modules need
 export type { Env };
 export type { HighlightlyMatch, HighlightlyTeamDetail, HighlightlyPlayer, HighlightlyPlayerStats, HighlightlyBoxScore };
-export { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient };
+export { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse };
 export { HTTP_CACHE, CACHE_TTL };
 export { teamMetadata, getLogoUrl };
 export { getLeaders, getScoreboard, getGameSummary };
@@ -366,12 +366,15 @@ export async function enrichTeamWithD1Stats(
     // Filter out historical players from multi-season Highlightly dumps.
     // Strategy depends on whether D1 has data for this team.
     if (playerRows.length > 0) {
-      // D1 path: keep players with stats or whose name matches a D1 row (current season)
+      // D1 path: keep only players whose name matches a D1 row (current season).
+      // Highlightly returns stats for historical players too, so "has stats" alone
+      // is not a reliable signal — D1 names are the truth source for who's rostered.
       const d1Names = new Set(playerRows.map(r => normalizeName(r.name)));
       const filtered = roster.filter((p: Record<string, unknown>) => {
-        if (p.stats && typeof p.stats === 'object' && Object.keys(p.stats as object).length > 0) return true;
         const name = normalizeName((p.name ?? '') as string);
         if (name && d1Names.has(name)) return true;
+        // Also keep D1-appended players (source = 'd1') who have stats
+        if (p.source === 'd1' && p.stats) return true;
         return false;
       });
       if (filtered.length >= Math.min(roster.length, 10)) {

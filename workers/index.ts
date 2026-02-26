@@ -277,8 +277,16 @@ app.get('/api/admin/errors', (c) => handleAdminErrors(new URL(c.req.url), c.env)
 app.get('/api/intel/news', (c) => handleIntelNews(new URL(c.req.url), c.env));
 
 // --- College Baseball ---
-app.get('/api/college-baseball/scores', (c) => handleCollegeBaseballScores(new URL(c.req.url), c.env));
-app.get('/api/college-baseball/standings', (c) => handleCollegeBaseballStandings(new URL(c.req.url), c.env));
+app.get('/api/college-baseball/scores', (c) => {
+  let ctx: ExecutionContext | undefined;
+  try { ctx = c.executionCtx; } catch { /* test env */ }
+  return handleCollegeBaseballScores(new URL(c.req.url), c.env, ctx);
+});
+app.get('/api/college-baseball/standings', (c) => {
+  let ctx: ExecutionContext | undefined;
+  try { ctx = c.executionCtx; } catch { /* test env */ }
+  return handleCollegeBaseballStandings(new URL(c.req.url), c.env, ctx);
+});
 app.get('/api/college-baseball/rankings', (c) => handleCollegeBaseballRankings(c.env));
 app.get('/api/college-baseball/leaders', (c) => handleCollegeBaseballLeaders(c.env));
 app.get('/api/college-baseball/ingest-stats', (c) => {
@@ -300,7 +308,11 @@ app.get('/api/college-baseball/sync-stats', (c) => handleCBBBulkSync(new URL(c.r
 app.get('/api/college-baseball/sync-highlightly', (c) => handleHighlightlySync(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/teams/:teamId/sos', (c) => handleCBBTeamSOS(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/conferences/:conf/power-index', (c) => handleCBBConferencePowerIndex(c.req.param('conf'), c.env));
-app.get('/api/college-baseball/teams/:teamId', (c) => handleCollegeBaseballTeam(c.req.param('teamId'), c.env));
+app.get('/api/college-baseball/teams/:teamId', (c) => {
+  let ctx: ExecutionContext | undefined;
+  try { ctx = c.executionCtx; } catch { /* test env */ }
+  return handleCollegeBaseballTeam(c.req.param('teamId'), c.env, ctx);
+});
 app.get('/api/college-baseball/players/compare/:p1/:p2', (c) => handleCollegeBaseballPlayerCompare(c.req.param('p1'), c.req.param('p2'), c.env));
 app.get('/api/college-baseball/players/:playerId', (c) => handleCollegeBaseballPlayer(c.req.param('playerId'), c.env));
 app.get('/api/college-baseball/game/:gameId', (c) => handleCollegeBaseballGame(c.req.param('gameId'), c.env));

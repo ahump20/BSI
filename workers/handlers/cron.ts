@@ -159,7 +159,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
         if (result.success && result.data) {
           const payload = {
             rankings: result.data,
-            meta: { dataSource: 'highlightly', lastUpdated: result.timestamp, sport: 'college-baseball' },
+            meta: { source: 'highlightly', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' },
           };
           await kvPut(env.KV, key, payload, 86400); // 24 hours
           // Also write to the handler's cache key so the handler reads it
@@ -185,7 +185,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
         const payload = {
           rankings,
           timestamp: now,
-          meta: { dataSource: 'espn', lastUpdated: now, sport: 'college-baseball' },
+          meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball' },
         };
         await kvPut(env.KV, key, payload, 86400);
         await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);
@@ -200,7 +200,7 @@ async function cacheRankings(env: Env): Promise<boolean> {
       const payload = {
         rankings: result.data,
         timestamp: result.timestamp,
-        meta: { dataSource: 'ncaa', lastUpdated: result.timestamp, sport: 'college-baseball' },
+        meta: { source: 'ncaa', fetched_at: result.timestamp, timezone: 'America/Chicago', sport: 'college-baseball' },
       };
       await kvPut(env.KV, key, payload, 86400);
       await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);

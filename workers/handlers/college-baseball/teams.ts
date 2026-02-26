@@ -3,12 +3,13 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, teamMetadata, metaByEspnId, getLogoUrl, enrichTeamWithD1Stats, transformTeamSchedule, computeTrendSummary } from './shared';
 import { transformHighlightlyTeam, transformEspnTeam } from './transforms';
 
 export async function handleCollegeBaseballTeam(
   teamId: string,
-  env: Env
+  env: Env,
+  ctx?: ExecutionContext,
 ): Promise<Response> {
   // Resolve slug → ESPN numeric ID via team metadata
   const slugMeta = teamMetadata[teamId];
@@ -27,7 +28,40 @@ export async function handleCollegeBaseballTeam(
     return cachedJson(cached, 200, HTTP_CACHE.team, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
-  // Highlightly first
+  const sources: string[] = [];
+
+  // ---------------------------------------------------------------------------
+  // Step 1: ESPN skeleton (stable IDs, conference membership, basic roster)
+  // ---------------------------------------------------------------------------
+  let espnTeam: Record<string, unknown> | null = null;
+  let espnPlayers: unknown[] = [];
+  let espnTimestamp = now;
+
+  try {
+    const client = getCollegeClient();
+    const [teamResult, playersResult] = await Promise.all([
+      client.getTeam(numericId),
+      client.getTeamPlayers(numericId),
+    ]);
+
+    if (teamResult.success && teamResult.data) {
+      ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'espn', `college-baseball-team-${teamId}`, teamResult.data));
+      espnTeam = teamResult.data as Record<string, unknown>;
+      espnPlayers = playersResult.data?.data ?? [];
+      espnTimestamp = teamResult.timestamp;
+      sources.push('espn');
+    }
+  } catch (err) {
+    console.error('[espn] team critical failure:', err instanceof Error ? err.message : err);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Step 2: Highlightly enrichment (richer team details, advanced stats)
+  // ---------------------------------------------------------------------------
+  let hlTeamData: unknown = null;
+  let hlPlayers: unknown[] = [];
+  let hlTimestamp = now;
+
   const hlClient = getHighlightlyClient(env);
   if (hlClient) {
     try {
@@ -37,53 +71,60 @@ export async function handleCollegeBaseballTeam(
       ]);
 
       if (teamResult.success && teamResult.data) {
-        const team = transformHighlightlyTeam(
-          teamResult.data,
-          playersResult.success ? (playersResult.data?.data ?? []) : []
-        );
-        if (team.name) {
-          // Override logo with known-good CDN URL when teamMetadata has a logoId
-          if (slugMeta) {
-            team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);
-          }
-          const payload: Record<string, unknown> = { team, meta: { source: 'highlightly', fetched_at: teamResult.timestamp, timezone: 'America/Chicago' } };
-          await enrichTeamWithD1Stats(payload, String(numericId), env);
-          await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
-          return cachedJson(payload, 200, HTTP_CACHE.team, {
-            ...dataHeaders(teamResult.timestamp, 'highlightly'), 'X-Cache': 'MISS',
-          });
-        }
+        ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'highlightly', `college-baseball-team-${teamId}`, teamResult.data));
+        hlTeamData = teamResult.data;
+        hlPlayers = playersResult.success ? (playersResult.data?.data ?? []) : [];
+        hlTimestamp = teamResult.timestamp;
+        sources.push('highlightly');
       }
     } catch (err) {
-      console.error('[highlightly] team fallback:', err instanceof Error ? err.message : err);
+      console.error('[highlightly] team enrichment failed:', err instanceof Error ? err.message : err);
     }
   }
 
-  // ESPN/NCAA fallback
-  try {
-    const client = getCollegeClient();
-    const [teamResult, playersResult] = await Promise.all([
-      client.getTeam(numericId),
-      client.getTeamPlayers(numericId),
-    ]);
+  // ---------------------------------------------------------------------------
+  // Step 3: Resolve — prefer Highlightly when available (richer), ESPN as skeleton
+  // ---------------------------------------------------------------------------
+  const degraded = !hlTeamData && !!espnTeam;
 
-    if (teamResult.success && teamResult.data) {
-      const team = transformEspnTeam(
-        teamResult.data as Record<string, unknown>,
-        playersResult.data?.data ?? []
-      );
-      const payload: Record<string, unknown> = { team, meta: { source: 'espn', fetched_at: teamResult.timestamp, timezone: 'America/Chicago' } };
+  // Highlightly available: use its richer transform
+  if (hlTeamData) {
+    const team = transformHighlightlyTeam(hlTeamData, hlPlayers);
+    if (team.name) {
+      if (slugMeta) {
+        team.logo = getLogoUrl(slugMeta.espnId, slugMeta.logoId);
+      }
+      const payload: Record<string, unknown> = {
+        team,
+        meta: { source: sources.join('+'), fetched_at: hlTimestamp, timezone: 'America/Chicago', sources, degraded: false },
+      };
       await enrichTeamWithD1Stats(payload, String(numericId), env);
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
       return cachedJson(payload, 200, HTTP_CACHE.team, {
-        ...dataHeaders(teamResult.timestamp, 'espn'), 'X-Cache': 'MISS',
+        ...dataHeaders(hlTimestamp, sources.join('+')), 'X-Cache': 'MISS',
       });
     }
-
-    return json({ team: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
-  } catch {
-    return json({ team: null }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
+
+  // ESPN skeleton only
+  if (espnTeam) {
+    const team = transformEspnTeam(espnTeam, espnPlayers);
+    const payload: Record<string, unknown> = {
+      team,
+      meta: { source: 'espn', fetched_at: espnTimestamp, timezone: 'America/Chicago', sources, degraded },
+    };
+    await enrichTeamWithD1Stats(payload, String(numericId), env);
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.teams);
+    return cachedJson(payload, 200, HTTP_CACHE.team, {
+      ...dataHeaders(espnTimestamp, 'espn'), 'X-Cache': 'MISS',
+    });
+  }
+
+  return json(
+    { team: null, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago', sources: [], degraded: true } },
+    502,
+    { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' },
+  );
 }
 
 export async function handleCollegeBaseballTeamSchedule(

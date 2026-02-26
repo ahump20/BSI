@@ -38,7 +38,7 @@ export async function handleCollegeBaseballPlayer(
           if (d1Stats) payload.statistics = d1Stats;
         }
         const source = payload.statistics && !(statsResult.success && statsResult.data) ? 'highlightly+d1' : 'highlightly';
-        const wrapped = { ...payload, meta: { dataSource: source, lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
+        const wrapped = { ...payload, meta: { source, fetched_at: playerResult.timestamp, timezone: 'America/Chicago' } };
         await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
         return cachedJson(wrapped, 200, HTTP_CACHE.player, {
           ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
@@ -72,7 +72,7 @@ export async function handleCollegeBaseballPlayer(
         }
       }
       const source = d1Enriched ? 'espn+d1' : 'espn';
-      const wrapped = { ...payload, meta: { dataSource: source, lastUpdated: playerResult.timestamp, timezone: 'America/Chicago' } };
+      const wrapped = { ...payload, meta: { source, fetched_at: playerResult.timestamp, timezone: 'America/Chicago' } };
       await kvPut(env.KV, cacheKey, wrapped, CACHE_TTL.players);
       return cachedJson(wrapped, 200, HTTP_CACHE.player, {
         ...dataHeaders(playerResult.timestamp, source), 'X-Cache': 'MISS',
@@ -101,7 +101,7 @@ export async function handleCollegeBaseballPlayer(
           headshot: row.headshot || undefined,
         },
         statistics: d1Stats,
-        meta: { dataSource: 'd1', lastUpdated: now, timezone: 'America/Chicago' },
+        meta: { source: 'd1', fetched_at: now, timezone: 'America/Chicago' },
       };
       await kvPut(env.KV, cacheKey, payload, CACHE_TTL.players);
       return cachedJson(payload, 200, HTTP_CACHE.player, {

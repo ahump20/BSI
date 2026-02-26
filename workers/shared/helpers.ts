@@ -93,7 +93,7 @@ export async function safeESPN(
     const msg = err instanceof Error ? err.message : 'Unknown ESPN error';
     await logError(env, msg, `espn:${fallbackKey}`);
     return json(
-      { [fallbackKey]: fallbackValue, meta: { error: msg, dataSource: 'espn' } },
+      { [fallbackKey]: fallbackValue, meta: { error: msg, source: 'espn' } },
       502,
     );
   }
@@ -130,6 +130,25 @@ export function cvApiResponse<T>(
       ...(opts.degraded !== undefined && { degraded: opts.degraded }),
     },
   };
+}
+
+export async function archiveRawResponse(
+  bucket: R2Bucket | undefined,
+  source: string,
+  endpoint: string,
+  data: unknown,
+): Promise<void> {
+  if (!bucket) return;
+  try {
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const time = now.toISOString().split('T')[1].replace(/[:.]/g, '-').slice(0, 8);
+    const key = `raw-responses/${source}/${endpoint}/${date}/${time}.json`;
+    await bucket.put(key, JSON.stringify(data), {
+      httpMetadata: { contentType: 'application/json' },
+      customMetadata: { source, endpoint, archived_at: now.toISOString() },
+    });
+  } catch { /* non-critical — archiving must never block the request */ }
 }
 
 export async function responseToJson(res: Response): Promise<unknown> {

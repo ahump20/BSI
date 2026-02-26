@@ -246,7 +246,7 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
         entries,
         totalEntries: entries.length,
         lastUpdated: data.lastUpdated ?? null,
-        meta: { dataSource: 'portal-sync', lastUpdated: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
+        meta: { source: 'portal-sync', fetched_at: (data.lastUpdated as string) ?? new Date().toISOString(), timezone: 'America/Chicago' },
       }, 200, HTTP_CACHE.trending);
     } catch {
       // Corrupt KV entry — fall through
@@ -254,7 +254,7 @@ export async function handleCollegeBaseballTransferPortal(env: Env): Promise<Res
   }
   return json({
     entries: [], totalEntries: 0, lastUpdated: null,
-    meta: { dataSource: 'none', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' },
+    meta: { source: 'none', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     message: 'No portal data available yet',
   }, 200);
 }

@@ -225,8 +225,8 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
       category,
       stat,
       meta: {
-        dataSource: 'ESPN',
-        lastUpdated: new Date().toISOString(),
+        source: 'espn',
+        fetched_at: new Date().toISOString(),
         timezone: 'America/Chicago',
       },
     };
@@ -239,8 +239,8 @@ export async function handleMLBStatsLeaders(url: URL, env: Env): Promise<Respons
       category,
       stat,
       meta: {
-        dataSource: 'ESPN',
-        lastUpdated: new Date().toISOString(),
+        source: 'espn',
+        fetched_at: new Date().toISOString(),
         timezone: 'America/Chicago',
         error: err instanceof Error ? err.message : 'Failed to fetch leaders',
       },
@@ -295,7 +295,7 @@ export async function handleMLBLeaderboard(category: string, url: URL, env: Env)
       leaderboard: { category, type: stat, season: Number(season), sortBy },
       data,
       pagination: { page: 1, pageSize: limit, totalResults: data.length, totalPages: 1 },
-      meta: { dataSource: 'ESPN', lastUpdated: new Date().toISOString(), timezone: 'America/Chicago' },
+      meta: { source: 'espn', fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
     };
 
     await kvPut(env.KV, cacheKey, payload, 1800);
@@ -306,8 +306,8 @@ export async function handleMLBLeaderboard(category: string, url: URL, env: Env)
       data: [],
       pagination: { page, pageSize: limit, totalResults: 0, totalPages: 0 },
       meta: {
-        dataSource: 'none',
-        lastUpdated: new Date().toISOString(),
+        source: 'none',
+        fetched_at: new Date().toISOString(),
         timezone: 'America/Chicago',
         error: err instanceof Error ? err.message : 'Failed to fetch leaderboard',
       },

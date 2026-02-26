@@ -3,12 +3,13 @@
  */
 
 import type { Env } from './shared';
-import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId } from './shared';
+import { json, cachedJson, kvGet, kvPut, dataHeaders, getCollegeClient, getHighlightlyClient, archiveRawResponse, HTTP_CACHE, CACHE_TTL, lookupConference, getScoreboard, getGameSummary, getLogoUrl, metaByEspnId } from './shared';
 import { transformHighlightlyGame, transformEspnGameSummary } from './transforms';
 
 export async function handleCollegeBaseballScores(
   url: URL,
-  env: Env
+  env: Env,
+  ctx?: ExecutionContext,
 ): Promise<Response> {
   const date = url.searchParams.get('date') || undefined;
   const cacheKey = `cb:scores:${date || 'today'}`;
@@ -20,23 +21,14 @@ export async function handleCollegeBaseballScores(
     return cachedJson(cached, 200, HTTP_CACHE.scores, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
-  // Try Highlightly first if key is available
-  const hlClient = getHighlightlyClient(env);
-  if (hlClient) {
-    try {
-      const result = await hlClient.getMatches('NCAA', date);
-      if (result.success && result.data) {
-        await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
-        return cachedJson(result.data, 200, HTTP_CACHE.scores, {
-          ...dataHeaders(result.timestamp, 'highlightly'), 'X-Cache': 'MISS',
-        });
-      }
-    } catch (err) {
-      console.error('[highlightly] scores fallback:', err instanceof Error ? err.message : err);
-    }
-  }
+  const sources: string[] = [];
+  let degraded = false;
 
-  // ESPN college baseball scoreboard fallback
+  // ---------------------------------------------------------------------------
+  // Step 1: ESPN scoreboard (skeleton — game status, team names, basic scores)
+  // ---------------------------------------------------------------------------
+  let espnData: { data: unknown[]; totalCount: number } | null = null;
+
   try {
     const espnDate = date ? date.replace(/-/g, '') : undefined;
     const espnUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/scoreboard${espnDate ? `?dates=${espnDate}` : ''}`;
@@ -46,19 +38,78 @@ export async function handleCollegeBaseballScores(
     });
     if (espnRes.ok) {
       const espnRaw = await espnRes.json() as { events?: unknown[] };
+      ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'espn', 'college-baseball-scores', espnRaw));
       if (espnRaw.events && espnRaw.events.length > 0) {
-        const espnData = { data: espnRaw.events, totalCount: espnRaw.events.length };
-        await kvPut(env.KV, cacheKey, espnData, CACHE_TTL.scores);
-        return cachedJson(espnData, 200, HTTP_CACHE.scores, {
-          ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
-        });
+        espnData = { data: espnRaw.events, totalCount: espnRaw.events.length };
+        sources.push('espn');
       }
     }
   } catch (err) {
-    console.error('[espn] college baseball scores fallback:', err instanceof Error ? err.message : err);
+    console.error('[espn] college baseball scores critical failure:', err instanceof Error ? err.message : err);
   }
 
-  // NCAA client fallback
+  // ---------------------------------------------------------------------------
+  // Step 2: Highlightly enrichment (box scores, detailed inning state, rankings)
+  // ---------------------------------------------------------------------------
+  let hlData: unknown | null = null;
+
+  const hlClient = getHighlightlyClient(env);
+  if (hlClient) {
+    try {
+      const result = await hlClient.getMatches('NCAA', date);
+      if (result.success && result.data) {
+        ctx?.waitUntil(archiveRawResponse(env.DATA_LAKE, 'highlightly', 'college-baseball-scores', result.data));
+        hlData = result.data;
+        sources.push('highlightly');
+      }
+    } catch (err) {
+      console.error('[highlightly] scores enrichment failed:', err instanceof Error ? err.message : err);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Step 3: Resolve — prefer Highlightly when both available (richer data)
+  // ---------------------------------------------------------------------------
+
+  // Both available: serve Highlightly (richer) with full source attribution
+  if (hlData && espnData) {
+    const payload = {
+      ...(hlData as Record<string, unknown>),
+      meta: { source: 'highlightly+espn', fetched_at: now, timezone: 'America/Chicago', sources, degraded: false },
+    };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, {
+      ...dataHeaders(now, 'highlightly+espn'), 'X-Cache': 'MISS',
+    });
+  }
+
+  // ESPN only: skeleton mode
+  if (espnData) {
+    degraded = true;
+    const payload = {
+      ...espnData,
+      meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sources, degraded },
+    };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, {
+      ...dataHeaders(now, 'espn'), 'X-Cache': 'MISS',
+    });
+  }
+
+  // Highlightly only (ESPN failed): serve Highlightly as sole source
+  if (hlData) {
+    degraded = true;
+    const payload = {
+      ...(hlData as Record<string, unknown>),
+      meta: { source: 'highlightly', fetched_at: now, timezone: 'America/Chicago', sources, degraded },
+    };
+    await kvPut(env.KV, cacheKey, payload, CACHE_TTL.scores);
+    return cachedJson(payload, 200, HTTP_CACHE.scores, {
+      ...dataHeaders(now, 'highlightly'), 'X-Cache': 'MISS',
+    });
+  }
+
+  // Both failed — NCAA client as last resort
   try {
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);

@@ -225,8 +225,9 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
     roster,
     schedule,
     meta: {
-      dataSource: 'espn',
-      lastUpdated: new Date().toISOString(),
+      source: 'espn',
+      fetched_at: new Date().toISOString(),
+      timezone: 'America/Chicago',
       season: '2024-25',
     },
   };
