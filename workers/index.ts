@@ -52,6 +52,22 @@ import {
 } from './handlers/college-baseball';
 
 import {
+  handleV1Seasons,
+  handleV1Teams,
+  handleV1Team,
+  handleV1Players,
+  handleV1Player,
+  handleV1Games,
+  handleV1Game,
+  handleV1Boxscore,
+  handleV1PBP,
+  handleV1MetricsPlayers,
+  handleV1MetricsTeams,
+  handleV1PlayerSplits,
+  handleV1Provenance,
+} from './handlers/college-baseball/ncaa-v1';
+
+import {
   handleMLBScores,
   handleMLBStandings,
   handleMLBGame,
@@ -375,6 +391,21 @@ app.get('/api/college-baseball/scores/ws', (c) => {
   }
   return c.json({ error: 'WebSocket scores available at bsi-live-scores worker', redirect: true }, 501);
 });
+
+// --- NCAA Baseball v1 API ---
+app.get('/v1/seasons', (c) => handleV1Seasons(new URL(c.req.url), c.env));
+app.get('/v1/teams', (c) => handleV1Teams(new URL(c.req.url), c.env));
+app.get('/v1/teams/:teamId', (c) => handleV1Team(c.req.param('teamId'), c.env));
+app.get('/v1/players', (c) => handleV1Players(new URL(c.req.url), c.env));
+app.get('/v1/players/:playerId/splits', (c) => handleV1PlayerSplits(c.req.param('playerId'), new URL(c.req.url), c.env));
+app.get('/v1/players/:playerId', (c) => handleV1Player(c.req.param('playerId'), c.env));
+app.get('/v1/games', (c) => handleV1Games(new URL(c.req.url), c.env));
+app.get('/v1/games/:gameId/boxscore', (c) => handleV1Boxscore(c.req.param('gameId'), new URL(c.req.url), c.env));
+app.get('/v1/games/:gameId/pbp', (c) => handleV1PBP(c.req.param('gameId'), new URL(c.req.url), c.env));
+app.get('/v1/games/:gameId', (c) => handleV1Game(c.req.param('gameId'), c.env));
+app.get('/v1/metrics/players', (c) => handleV1MetricsPlayers(new URL(c.req.url), c.env));
+app.get('/v1/metrics/teams', (c) => handleV1MetricsTeams(new URL(c.req.url), c.env));
+app.get('/v1/provenance/:resource', (c) => handleV1Provenance(c.req.param('resource'), new URL(c.req.url), c.env));
 
 // --- CFB ---
 app.get('/api/cfb/transfer-portal', (c) => handleCFBTransferPortal(c.env));
