@@ -5,6 +5,11 @@ import Link from 'next/link';
 
 type HealthLevel = 'healthy' | 'degraded' | 'down' | 'unknown';
 
+interface StatusApiRaw {
+  endpoints?: { status: string }[];
+  results?: { status: string }[];
+}
+
 const dotColors: Record<HealthLevel, string> = {
   healthy: 'bg-green-400',
   degraded: 'bg-yellow-400',
@@ -35,9 +40,10 @@ export function HealthDot() {
         if (!res.ok) throw new Error();
         return res.json();
       })
-      .then((data) => {
+      .then((data: unknown) => {
         if (!mounted) return;
-        const endpoints = data.endpoints || data.results || [];
+        const raw = data as StatusApiRaw;
+        const endpoints = raw.endpoints || raw.results || [];
         const failed = endpoints.filter((e: { status: string }) => e.status !== 'ok').length;
         if (failed === 0) setHealth('healthy');
         else if (failed < endpoints.length) setHealth('degraded');

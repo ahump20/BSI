@@ -6,42 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { mainNavItems, getMainNavItems } from '@/lib/navigation';
-
-describe('Main Navigation — Legacy Flat List', () => {
-  it('includes Intel and Models in the nav items', () => {
-    const labels = mainNavItems.map((item) => item.label);
-    expect(labels).toContain('Intel');
-    expect(labels).toContain('Models');
-  });
-
-  it('includes Glossary in the nav items', () => {
-    const glossary = mainNavItems.find((item) => item.label === 'Glossary');
-    expect(glossary).toBeDefined();
-    expect(glossary!.href).toBe('/glossary');
-  });
-
-  it('still contains all sport pages', () => {
-    const labels = mainNavItems.map((item) => item.label);
-    expect(labels).toContain('MLB');
-    expect(labels).toContain('NFL');
-    expect(labels).toContain('NBA');
-    expect(labels).toContain('CFB');
-    expect(labels).toContain('College Baseball');
-    expect(labels).toContain('Dashboard');
-    expect(labels).toContain('Arcade');
-  });
-
-  it('places Intel and Models before sport pages', () => {
-    const labels = mainNavItems.map((item) => item.label);
-    const intelIndex = labels.indexOf('Intel');
-    const modelsIndex = labels.indexOf('Models');
-    const mlbIndex = labels.indexOf('MLB');
-
-    expect(intelIndex).toBeLessThan(mlbIndex);
-    expect(modelsIndex).toBeLessThan(mlbIndex);
-  });
-});
+import { getMainNavItems } from '@/lib/navigation';
 
 describe('Main Navigation — Structured (getMainNavItems)', () => {
   const { primary, secondary } = getMainNavItems();

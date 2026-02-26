@@ -209,4 +209,53 @@ describe('computeSavantData', () => {
     expect(result.league.wobaScale).toBeGreaterThanOrEqual(0.8);
     expect(result.league.wobaScale).toBeLessThanOrEqual(1.4);
   });
+
+  it('e-stats use conference strength from pre-pass (not neutral 50)', () => {
+    // Two conferences with meaningfully different offensive profiles.
+    // SEC batter has high wOBA inputs; weak-conf batter has low.
+    // If confStrengthMap is empty at Step 3, all confStrength values are 50
+    // and eBA/eWOBA for both batters would be identical (modulo babip/hr differences).
+    // The pre-pass ensures SEC gets a higher strength index than the weak conference,
+    // producing a measurably lower eBA for the SEC batter (stronger pitching adjustment).
+    const secBatter = makeRow({
+      espn_id: 'sec-1',
+      team: 'Texas Longhorns',
+      at_bats: 100, hits: 38, home_runs: 8, doubles: 10, triples: 1,
+      walks_bat: 15, hit_by_pitch: 3, strikeouts_bat: 18, sacrifice_flies: 2,
+    });
+    const weakBatter = makeRow({
+      espn_id: 'weak-1',
+      team: 'TCU Horned Frogs',
+      at_bats: 100, hits: 20, home_runs: 1, doubles: 3, triples: 0,
+      walks_bat: 8, hit_by_pitch: 1, strikeouts_bat: 30, sacrifice_flies: 1,
+    });
+    // Give SEC a strong pitcher to push conference strength up
+    const secPitcher = makePitcher({
+      espn_id: 'sec-p1',
+      team: 'Texas Longhorns',
+      innings_pitched_thirds: 60, // 20 IP
+      earned_runs: 12,            // 5.40 ERA — not dominant but present
+      strikeouts_pitch: 25, walks_pitch: 8, home_runs_allowed: 2,
+    });
+
+    const result = computeSavantData([secBatter, weakBatter, secPitcher], teamMap);
+
+    const sec = result.batting.find(b => b.player_id === 'sec-1')!;
+    const weak = result.batting.find(b => b.player_id === 'weak-1')!;
+
+    // Both should have non-null e-stats
+    expect(sec.e_ba).not.toBeNull();
+    expect(weak.e_ba).not.toBeNull();
+
+    // SEC conference should have a computed strength (not the neutral 50 default),
+    // producing a different eBA than if strength were always 50.
+    // Specifically: SEC has higher offense → higher confStrength → more negative confAdj → lower eBA.
+    // Weak conf has lower offense → lower strength → less adjustment.
+    // The SEC batter's raw BABIP is higher, so without adjustment SEC eBA > weak eBA.
+    // With the strength adjustment applied, the gap should narrow (SEC gets penalized).
+    // We verify the adjustment is non-zero by checking e_ba differs from a neutral-strength calculation.
+    const neutralEBA = 0.3 + ((sec.babip - 0.3) * 0.6) * (1 - sec.k_pct) + (sec.hr / sec.ab);
+    // The actual e_ba should differ from neutral (confAdj != 0 means pre-pass worked)
+    expect(sec.e_ba).not.toBeCloseTo(neutralEBA, 4);
+  });
 });

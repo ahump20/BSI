@@ -22,6 +22,14 @@ interface StatusSummary {
   endpoints: EndpointStatus[];
 }
 
+interface StatusApiRaw {
+  endpoints?: EndpointStatus[];
+  results?: EndpointStatus[];
+  overall?: 'healthy' | 'degraded' | 'down';
+  timestamp?: string;
+  checked_at?: string;
+}
+
 function getOverallFromEndpoints(endpoints: EndpointStatus[]): 'healthy' | 'degraded' | 'down' {
   const failed = endpoints.filter((e) => e.status !== 'ok').length;
   if (failed === 0) return 'healthy';
@@ -47,7 +55,7 @@ export default function StatusPage() {
       try {
         const res = await fetch('/api/status');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
+        const json = (await res.json()) as StatusApiRaw;
 
         if (!mounted) return;
 

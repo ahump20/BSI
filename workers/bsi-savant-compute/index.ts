@@ -102,6 +102,30 @@ function calcWOBAScale(obp: number, woba: number, avg: number) {
   return clamp((obp - woba) / d, 0.8, 1.4);
 }
 
+/** Conference strength index [0–100]. estWinPct and estRPI are placeholders (0.50 each). */
+function calcConfStrength(avgWOBA: number, avgERA: number): number {
+  const offScore = clamp((avgWOBA / 0.400) * 50, 0, 100);
+  const pitchScore = clamp((1 - avgERA / 10) * 100, 0, 100);
+  // Without inter-conf or RPI data, blend 50/50 off+pitching
+  return clamp(offScore * 0.50 + pitchScore * 0.50, 0, 100);
+}
+
+/** eBA — Expected Batting Average. Regresses BABIP 40% toward .300, adjusts for conference strength. */
+function calcEBA(babip: number, hrRate: number, kPct: number, confStrength: number): number {
+  const expectedBABIP = 0.3 + (babip - 0.3) * 0.6;
+  const confAdj = (confStrength - 50) * -0.001;
+  return safe(expectedBABIP * (1 - kPct) + hrRate + confAdj);
+}
+
+/** eSLG — Estimated Slugging. ISO + eBA. */
+function calcESLG(iso: number, eBA: number): number { return safe(eBA + iso); }
+
+/** eWOBA — Estimated wOBA. Simplified wOBA-like combination of eBA, eSLG, and BB%. */
+function calcEWOBA(eBA: number, eSLG: number, bbPct: number): number {
+  const approxOBP = eBA + bbPct;
+  return safe(MLB_WEIGHTS.wBB * bbPct + 0.5 * (approxOBP + eSLG * 0.8));
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -483,6 +507,36 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
     }
   }
 
+  // Pre-pass: build conference strength map so e-stats read correct values in the batting loop.
+  // Without this, confStrengthMap.get() always returns undefined and eBA/eSLG/eWOBA default to neutral.
+  const rawConfAgg = new Map<string, { woba: number; wobaCount: number; era: number; eraCount: number }>();
+  for (const row of rawRows) {
+    const conf = TEAM_CONF[row.team];
+    if (!conf) continue;
+    if (!rawConfAgg.has(conf)) rawConfAgg.set(conf, { woba: 0, wobaCount: 0, era: 0, eraCount: 0 });
+    const agg = rawConfAgg.get(conf)!;
+    if (row.games_bat > 0) {
+      const pa = row.at_bats + row.walks_bat + row.hit_by_pitch + row.sacrifice_flies;
+      if (pa >= MIN_PA) {
+        agg.woba += calcWOBA(W, pa, row.walks_bat, row.hit_by_pitch, row.hits, row.doubles, row.triples, row.home_runs);
+        agg.wobaCount += 1;
+      }
+    }
+    if (row.games_pitch > 0) {
+      const ip = thirdsToIP(row.innings_pitched_thirds);
+      if (ip >= MIN_IP) {
+        agg.era += ip > 0 ? (row.earned_runs * 9) / ip : 0;
+        agg.eraCount += 1;
+      }
+    }
+  }
+  const confStrengthMap = new Map<string, number>();
+  for (const [conf, agg] of rawConfAgg) {
+    const avgWOBA = agg.wobaCount > 0 ? agg.woba / agg.wobaCount : 0.320;
+    const avgERA = agg.eraCount > 0 ? agg.era / agg.eraCount : 4.50;
+    confStrengthMap.set(conf, calcConfStrength(avgWOBA, avgERA));
+  }
+
   for (const row of rawRows) {
     const conf = TEAM_CONF[row.team] || null;
 
@@ -510,9 +564,16 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
         const wrcPlus = rPA > 0 ? safe((wrcPerPA / rPA) * 100) : 100;
         const opsPlus = lgOBP > 0 && lgSLG > 0 ? safe(100 * (obp / lgOBP + slg / lgSLG - 1)) : 100;
 
+        // Estimated metrics — require confStrengthMap to be populated (pre-pass above)
+        const hrRate = ab > 0 ? row.home_runs / ab : 0;
+        const confStrength = confStrengthMap.get(conf ?? '') ?? 50;
+        const eBA = calcEBA(babip, hrRate, kPct, confStrength);
+        const eSLG = calcESLG(iso, eBA);
+        const eWOBA = calcEWOBA(eBA, eSLG, bbPct);
+
         batStmts.push(db.prepare(
-          `INSERT INTO cbb_batting_advanced (player_id, player_name, team, team_id, conference, season, position, g, ab, pa, r, h, doubles, triples, hr, rbi, bb, so, sb, cs, avg, obp, slg, ops, k_pct, bb_pct, iso, babip, woba, wrc_plus, ops_plus, park_adjusted, data_source, computed_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
+          `INSERT INTO cbb_batting_advanced (player_id, player_name, team, team_id, conference, season, position, g, ab, pa, r, h, doubles, triples, hr, rbi, bb, so, sb, cs, avg, obp, slg, ops, k_pct, bb_pct, iso, babip, woba, wrc_plus, ops_plus, e_ba, e_slg, e_woba, park_adjusted, data_source, computed_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'bsi-savant', ?)
            ON CONFLICT(player_id, season) DO UPDATE SET
              player_name=excluded.player_name, team=excluded.team, conference=excluded.conference,
              position=CASE WHEN excluded.position IS NOT NULL AND excluded.position != '' THEN excluded.position ELSE COALESCE(cbb_batting_advanced.position, excluded.position) END,
@@ -521,13 +582,16 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
              rbi=excluded.rbi, bb=excluded.bb, so=excluded.so, sb=excluded.sb, cs=excluded.cs,
              avg=excluded.avg, obp=excluded.obp, slg=excluded.slg, ops=excluded.ops,
              k_pct=excluded.k_pct, bb_pct=excluded.bb_pct, iso=excluded.iso, babip=excluded.babip,
-             woba=excluded.woba, wrc_plus=excluded.wrc_plus, ops_plus=excluded.ops_plus, computed_at=excluded.computed_at`
+             woba=excluded.woba, wrc_plus=excluded.wrc_plus, ops_plus=excluded.ops_plus,
+             e_ba=excluded.e_ba, e_slg=excluded.e_slg, e_woba=excluded.e_woba,
+             computed_at=excluded.computed_at`
         ).bind(
           row.espn_id, row.name, row.team, row.team_id, conf, SEASON, pos,
           row.games_bat, ab, pa, row.runs, row.hits, row.doubles, row.triples, row.home_runs,
           row.rbis, row.walks_bat, row.strikeouts_bat, row.stolen_bases, row.caught_stealing,
           round(avg), round(obp), round(slg), round(ops), round(kPct), round(bbPct),
-          round(iso), round(babip), round(woba), round(wrcPlus, 1), round(opsPlus, 1), now
+          round(iso), round(babip), round(woba), round(wrcPlus, 1), round(opsPlus, 1),
+          round(eBA), round(eSLG), round(eWOBA), now
         ));
         batCount++;
       }

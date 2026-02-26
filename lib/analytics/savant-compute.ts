@@ -11,12 +11,11 @@
  * Used by: scripts/seed-savant.ts, workers/bsi-savant-compute/
  */
 
-import type { BattingLine, PitchingLine, LeagueContext, WOBAWeights } from './savant-metrics';
+import type { BattingLine, PitchingLine, LeagueContext } from './savant-metrics';
 import {
   MLB_WOBA_WEIGHTS,
   computeFullBattingLine,
   computeFullPitchingLine,
-  calculateParkFactor,
   calculateConferenceStrength,
   calculateFIPConstant,
   calculateWOBAScale,
@@ -24,10 +23,6 @@ import {
   calculateEBA,
   calculateESLG,
   calculateEWOBA,
-  calculateISO,
-  calculateBABIP,
-  calculateKPct,
-  calculateBBPct,
 } from './savant-metrics';
 
 // ---------------------------------------------------------------------------
@@ -264,7 +259,8 @@ export function computeSavantData(
   const leagueCtx = deriveLeagueContext(rows);
 
   // ── Step 2: Build conference strength lookup for e-stat adjustments ──
-  const confStrengthMap = new Map<string, number>();
+  // Pre-pass over raw rows so confStrengthMap is populated before Step 3 reads it.
+  const confStrengthMap = buildInitialConferenceStrengthMap(rows, teamMap);
 
   // ── Step 3: Compute batting advanced ─────────────────────────────────
   const batting: BattingAdvancedRow[] = [];
@@ -494,7 +490,8 @@ export function computeSavantData(
     });
   }
 
-  // Backfill conference strength into confStrengthMap for future park-adjusted runs
+  // Update confStrengthMap with post-compute values (uses averaged batting+pitching output).
+  // No reads occur after this point — harmless update, available for future park-factor use.
   for (const cs of conferenceStrength) {
     confStrengthMap.set(cs.conference, cs.strength_index);
   }
@@ -513,6 +510,62 @@ export function computeSavantData(
       conferences: conferenceStrength.length,
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// Conference strength pre-pass
+// ---------------------------------------------------------------------------
+
+/**
+ * Pre-pass: derive per-conference strength from raw rows.
+ * Runs before the main batting/pitching compute so confStrengthMap
+ * is populated when Step 3 reads it.
+ */
+function buildInitialConferenceStrengthMap(
+  rows: RawPlayerRow[],
+  teamMap: TeamConferenceMap,
+): Map<string, number> {
+  const confAgg = new Map<string, {
+    woba: number; wobaCount: number;
+    era: number; eraCount: number;
+  }>();
+
+  for (const row of rows) {
+    const conf = teamMap[row.team]?.conference;
+    if (!conf) continue;
+
+    if (!confAgg.has(conf)) confAgg.set(conf, { woba: 0, wobaCount: 0, era: 0, eraCount: 0 });
+    const agg = confAgg.get(conf)!;
+
+    if (row.games_bat > 0) {
+      const pa = row.at_bats + row.walks_bat + row.hit_by_pitch + row.sacrifice_flies;
+      if (pa >= MIN_PA) {
+        const line: BattingLine = {
+          pa, ab: row.at_bats, h: row.hits,
+          doubles: row.doubles, triples: row.triples, hr: row.home_runs,
+          bb: row.walks_bat, hbp: row.hit_by_pitch, so: row.strikeouts_bat, sf: row.sacrifice_flies,
+        };
+        agg.woba += calculateWOBA(line);
+        agg.wobaCount += 1;
+      }
+    }
+
+    if (row.games_pitch > 0) {
+      const ip = thirdsToIP(row.innings_pitched_thirds);
+      if (ip >= MIN_IP) {
+        agg.era += ip > 0 ? (row.earned_runs * 9) / ip : 0;
+        agg.eraCount += 1;
+      }
+    }
+  }
+
+  const map = new Map<string, number>();
+  for (const [conf, agg] of confAgg) {
+    const avgWOBA = agg.wobaCount > 0 ? agg.woba / agg.wobaCount : 0.320;
+    const avgERA = agg.eraCount > 0 ? agg.era / agg.eraCount : 4.50;
+    map.set(conf, calculateConferenceStrength(0.50, 0.50, avgWOBA, avgERA));
+  }
+  return map;
 }
 
 // ---------------------------------------------------------------------------
