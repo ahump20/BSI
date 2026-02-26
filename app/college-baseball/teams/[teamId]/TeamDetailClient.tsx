@@ -15,6 +15,7 @@ import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
+import { getFeaturedInsight } from '@/lib/data/featured-team-insights';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -191,6 +192,32 @@ function lightenHex(hex: string, amount: number): string {
   return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`;
 }
 
+// ─── Player Avatar ────────────────────────────────────────────────────────
+
+function PlayerAvatar({ name, headshot, size = 40 }: { name: string; headshot?: string; size?: number }) {
+  const initials = name.split(' ').map(n => n[0]).join('');
+  const px = `${size}px`;
+  if (headshot) {
+    return (
+      <img
+        src={headshot}
+        alt={name}
+        className="rounded-full object-cover bg-surface-light shrink-0"
+        style={{ width: px, height: px }}
+        loading="lazy"
+      />
+    );
+  }
+  return (
+    <div
+      className="rounded-full bg-surface-light flex items-center justify-center text-xs font-bold text-text-muted shrink-0"
+      style={{ width: px, height: px }}
+    >
+      {initials}
+    </div>
+  );
+}
+
 // ─── Component ─────────────────────────────────────────────────────────────
 
 interface TeamDetailClientProps {
@@ -203,6 +230,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   const meta = teamMetadata[teamId];
   const preseason = preseason2026[teamId];
+  const featuredInsight = getFeaturedInsight(teamId);
 
   // Team data (roster, stats, record) — always fetched
   const { data: teamData, error: statsError } = useSportData<Record<string, unknown>>(
@@ -490,6 +518,129 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   </ScrollReveal>
                 )}
 
+                {/* Featured Scouting Insights — only for teams with editorial analysis */}
+                {featuredInsight && (
+                  <ScrollReveal direction="up" className="mb-8">
+                    <Card padding="lg">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide">BSI Scouting Report</h2>
+                        <span className="text-text-muted text-xs">Updated {new Date(featuredInsight.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+
+                      <p className="text-text-tertiary leading-relaxed mb-6">{featuredInsight.snapshot}</p>
+
+                      {/* What to Watch */}
+                      <div className="mb-6">
+                        <h3 className="text-xs uppercase tracking-wider text-text-muted font-semibold mb-3">What to Watch</h3>
+                        <div className="space-y-2">
+                          {featuredInsight.whatToWatch.map((item, i) => (
+                            <div key={i} className="flex gap-2 text-sm">
+                              <span className="shrink-0 mt-0.5" style={{ color: accent }}>&bull;</span>
+                              <span className="text-text-tertiary">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Offense + Pitching Analysis */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="rounded-lg bg-surface-light border border-border-subtle p-4">
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Offense</h3>
+                          <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.offenseAnalysis.headline}</div>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {featuredInsight.offenseAnalysis.indicators.slice(0, 4).map((ind) => (
+                              <div key={ind.label} className="bg-charcoal rounded px-2 py-1">
+                                <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
+                                <span className="text-text-muted text-xs ml-1">{ind.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.offenseAnalysis.narrative}</p>
+                        </div>
+                        <div className="rounded-lg bg-surface-light border border-border-subtle p-4">
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-3" style={{ color: accent }}>Pitching</h3>
+                          <div className="text-sm font-semibold text-text-primary mb-2">{featuredInsight.pitchingAnalysis.headline}</div>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {featuredInsight.pitchingAnalysis.indicators.slice(0, 4).map((ind) => (
+                              <div key={ind.label} className="bg-charcoal rounded px-2 py-1">
+                                <span className="font-mono text-sm font-bold" style={{ color: accent }}>{ind.value}</span>
+                                <span className="text-text-muted text-xs ml-1">{ind.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.pitchingAnalysis.narrative}</p>
+                        </div>
+                      </div>
+
+                      {/* Key Contributors */}
+                      <div className="mb-6">
+                        <h3 className="text-xs uppercase tracking-wider text-text-muted font-semibold mb-3">Key Contributors</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {featuredInsight.keyContributors.slice(0, 6).map((c) => {
+                            const rosterMatch = rosterPlayers.find(p => p.name.toLowerCase().includes(c.name.split(' ').pop()?.toLowerCase() ?? ''));
+                            return (
+                              <div key={c.name} className="flex gap-3 p-3 rounded-lg bg-surface-light border border-border-subtle">
+                                <PlayerAvatar name={c.name} headshot={rosterMatch?.headshot} size={48} />
+                                <div className="min-w-0">
+                                  <div className="text-text-primary font-semibold text-sm">{c.name}</div>
+                                  <div className="text-text-muted text-xs">{c.role}</div>
+                                  <div className="font-mono text-xs mt-1" style={{ color: accent }}>{c.statLine.split(',').slice(0, 3).join(',')}</div>
+                                  <p className="text-text-muted text-xs mt-1 line-clamp-2">{c.scoutingSentence}</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Strengths + Pressure Points */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-success">Strengths</h3>
+                          <div className="space-y-1">
+                            {featuredInsight.strengths.map((s, i) => (
+                              <div key={i} className="text-text-tertiary text-sm flex gap-2">
+                                <span className="text-success shrink-0">&bull;</span>{s}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className="text-xs uppercase tracking-wider font-semibold mb-2 text-yellow-500">Pressure Points</h3>
+                          <div className="space-y-1">
+                            {featuredInsight.pressurePoints.map((p, i) => (
+                              <div key={i} className="text-text-tertiary text-sm flex gap-2">
+                                <span className="text-yellow-500 shrink-0">&bull;</span>{p}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Coaching + Program Context */}
+                      <div className="border-t border-border-subtle pt-4">
+                        <details className="group">
+                          <summary className="text-xs uppercase tracking-wider text-text-muted font-semibold cursor-pointer hover:text-text-tertiary transition-colors">
+                            Coaching &amp; Program Context
+                          </summary>
+                          <div className="mt-3 space-y-3">
+                            <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.coachingContext}</p>
+                            <p className="text-text-muted text-xs leading-relaxed">{featuredInsight.programContext}</p>
+                          </div>
+                        </details>
+                      </div>
+
+                      {/* Data Provenance */}
+                      <div className="mt-4 pt-3 border-t border-border-subtle flex flex-wrap gap-4 text-xs text-text-muted">
+                        <div>
+                          <span className="font-semibold">Sources:</span>{' '}
+                          {featuredInsight.dataProvenance.sources.map(s => `${s.name} (${s.date})`).join(' · ')}
+                        </div>
+                      </div>
+                    </Card>
+                  </ScrollReveal>
+                )}
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {hasPreseason && preseason.keyPlayers.length > 0 && (
                     <ScrollReveal direction="up">
@@ -677,25 +828,28 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                       <h2 className="font-display text-xl font-bold text-text-primary uppercase tracking-wide mb-6">Team Leaders</h2>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         {teamLeaders.battingAvg && (
-                          <div className="text-center">
+                          <div className="flex flex-col items-center text-center">
                             <div className="text-text-muted text-xs uppercase tracking-wider mb-2">Batting Avg</div>
-                            <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamLeaders.battingAvg.stats?.avg?.toFixed(3)}</div>
+                            <PlayerAvatar name={teamLeaders.battingAvg.name} headshot={teamLeaders.battingAvg.headshot} size={48} />
+                            <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.battingAvg.stats?.avg?.toFixed(3)}</div>
                             <div className="text-text-primary font-semibold mt-1">{teamLeaders.battingAvg.name}</div>
                             <div className="text-text-muted text-xs">{teamLeaders.battingAvg.position}</div>
                           </div>
                         )}
                         {teamLeaders.homeRuns && (
-                          <div className="text-center">
+                          <div className="flex flex-col items-center text-center">
                             <div className="text-text-muted text-xs uppercase tracking-wider mb-2">Home Runs</div>
-                            <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamLeaders.homeRuns.stats?.hr}</div>
+                            <PlayerAvatar name={teamLeaders.homeRuns.name} headshot={teamLeaders.homeRuns.headshot} size={48} />
+                            <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.homeRuns.stats?.hr}</div>
                             <div className="text-text-primary font-semibold mt-1">{teamLeaders.homeRuns.name}</div>
                             <div className="text-text-muted text-xs">{teamLeaders.homeRuns.position}</div>
                           </div>
                         )}
                         {teamLeaders.era && (
-                          <div className="text-center">
+                          <div className="flex flex-col items-center text-center">
                             <div className="text-text-muted text-xs uppercase tracking-wider mb-2">ERA</div>
-                            <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamLeaders.era.stats?.era?.toFixed(2)}</div>
+                            <PlayerAvatar name={teamLeaders.era.name} headshot={teamLeaders.era.headshot} size={48} />
+                            <div className="font-mono text-2xl font-bold mt-2" style={{ color: accent }}>{teamLeaders.era.stats?.era?.toFixed(2)}</div>
                             <div className="text-text-primary font-semibold mt-1">{teamLeaders.era.name}</div>
                             <div className="text-text-muted text-xs">{teamLeaders.era.position}</div>
                           </div>
@@ -806,6 +960,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                               <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-light border border-border-subtle">
                                 <div className="flex items-center gap-3 min-w-0">
                                   <span className="font-mono text-xs text-text-muted w-5">{['FRI', 'SAT', 'SUN', 'MID'][i]}</span>
+                                  <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
                                   <div className="min-w-0">
                                     <div className="text-text-primary font-semibold text-sm truncate">
                                       {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
@@ -846,11 +1001,14 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                             <div className="space-y-2">
                               {positionGroups.find(g => g.group === 'Bullpen')?.players.map((p) => (
                                 <div key={p.id || p.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-light border border-border-subtle">
-                                  <div className="min-w-0">
-                                    <div className="text-text-primary font-semibold text-sm truncate">
-                                      {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <PlayerAvatar name={p.name} headshot={p.headshot} size={36} />
+                                    <div className="min-w-0">
+                                      <div className="text-text-primary font-semibold text-sm truncate">
+                                        {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
+                                      </div>
+                                      <div className="text-text-muted text-xs">{p.position}{(p.stats?.sv ?? 0) > 0 ? ' \u00b7 Closer' : ''}</div>
                                     </div>
-                                    <div className="text-text-muted text-xs">{p.position}{(p.stats?.sv ?? 0) > 0 ? ' \u00b7 Closer' : ''}</div>
                                   </div>
                                   <div className="flex gap-4 text-xs font-mono shrink-0">
                                     <div className="text-center">
@@ -926,7 +1084,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                                 {groupPlayers.map((p) => (
                                   <tr key={p.id || p.name} className="border-b border-border-subtle hover:bg-surface-light transition-colors">
                                     <td className="px-4 py-2.5 text-text-primary font-semibold sticky left-0 bg-charcoal whitespace-nowrap">
-                                      {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
+                                      <div className="flex items-center gap-2">
+                                        <PlayerAvatar name={p.name} headshot={p.headshot} size={32} />
+                                        {p.id ? <Link href={`/college-baseball/players/${p.id}`} className="hover:underline">{p.name}</Link> : p.name}
+                                      </div>
                                     </td>
                                     <td className="px-3 py-2.5 text-text-tertiary text-xs">{p.position}</td>
                                     {isPitcherGroup ? (
