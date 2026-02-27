@@ -659,6 +659,12 @@ export default function NFLStandingsPage() {
                   </Card>
                 ))}
               </div>
+            ) : isOffSeason ? (
+              <div className="text-center py-12">
+                <p className="text-text-tertiary text-sm">
+                  Standings will populate automatically when the 2026 NFL season begins.
+                </p>
+              </div>
             ) : (
               <div className="space-y-8">
                 {currentConference?.divisions.map((division, index) => (
