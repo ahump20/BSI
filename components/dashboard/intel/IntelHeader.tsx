@@ -116,7 +116,7 @@ export function IntelHeader({
           value={mode}
           onValueChange={onModeChange}
           options={MODE_OPTIONS}
-          accentColor="var(--bsi-intel-accent, var(--bsi-cyan))"
+          accentColor="var(--bsi-intel-accent, var(--bsi-primary))"
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
