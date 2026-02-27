@@ -307,7 +307,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
   if (!meta) {
     return (
       <>
-        <main className="min-h-screen pt-24 bg-gradient-to-b from-charcoal to-background-primary">
+        <div className="min-h-screen pt-6 bg-gradient-to-b from-charcoal to-background-primary">
           <Container>
             <Card padding="lg" className="text-center mt-12">
               <div className="text-burnt-orange text-4xl mb-4 font-display">?</div>
@@ -318,7 +318,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               </Link>
             </Card>
           </Container>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -334,10 +334,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <main id="main-content" style={teamStyles}>
+      <div style={teamStyles}>
         {/* Hero */}
         <div style={{ backgroundImage: `linear-gradient(to bottom, ${withAlpha(accent, 0.10)}, var(--bsi-charcoal), var(--bsi-midnight))` }}>
-          <Section padding="lg" className="pt-24">
+          <Section padding="lg" className="pt-6">
             <Container>
               <ScrollReveal direction="up">
                 <nav className="flex items-center gap-3 mb-8 text-sm">
@@ -1165,7 +1165,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

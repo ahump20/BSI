@@ -161,7 +161,7 @@ export default function NBATeamsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -359,7 +359,7 @@ export default function NBATeamsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

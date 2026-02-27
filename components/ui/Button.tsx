@@ -13,10 +13,10 @@ type ButtonAsLink = BaseProps & AnchorHTMLAttributes<HTMLAnchorElement> & { href
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const variantClasses: Record<string, string> = {
-  primary: 'bg-burnt-orange hover:bg-burnt-orange/80 text-white border-transparent',
-  secondary: 'bg-transparent hover:bg-surface text-text-primary border-border-strong',
+  primary: 'bg-burnt-orange hover:brightness-110 text-white border-transparent',
+  secondary: 'bg-transparent hover:bg-surface-light text-text-primary border-border',
   ghost: 'bg-transparent hover:bg-surface-light text-text-secondary border-transparent',
-  outline: 'bg-transparent hover:bg-surface text-text-primary border-border-strong hover:border-text-tertiary',
+  outline: 'bg-transparent text-text-primary border-border hover:border-burnt-orange hover:text-burnt-orange',
 };
 
 const sizeClasses: Record<string, string> = {
@@ -33,7 +33,7 @@ export function Button({
   href,
   ...props
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center font-semibold rounded-lg border transition-colors ${variantClasses[variant] ?? variantClasses.primary} ${sizeClasses[size] ?? sizeClasses.md} ${className}`;
+  const classes = `inline-flex items-center justify-center font-semibold rounded-lg border transition-all duration-300 uppercase tracking-wider ${variantClasses[variant] ?? variantClasses.primary} ${sizeClasses[size] ?? sizeClasses.md} ${className}`;
 
   if (href) {
     return (

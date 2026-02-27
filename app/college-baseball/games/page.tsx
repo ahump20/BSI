@@ -10,7 +10,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 export default function CollegeBaseballGamesPage() {
   return (
     <>
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             <div className="flex items-center gap-3 mb-2">
@@ -31,7 +31,7 @@ export default function CollegeBaseballGamesPage() {
             <DataAttribution lastUpdated="" source="ESPN" className="mt-6" />
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

@@ -148,7 +148,7 @@ export default function NBAPage() {
   return (
     <div className="bsi-theme-basketball">
       <>
-        <main id="main-content">
+        <div>
         {/* Hero */}
         <SportHero
           sport="NBA"
@@ -330,7 +330,7 @@ export default function NBAPage() {
             />
           </Container>
         </Section>
-      </main>
+      </div>
         <Footer />
       </>
     </div>

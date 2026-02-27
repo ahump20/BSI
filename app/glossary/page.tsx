@@ -100,7 +100,7 @@ export default function GlossaryPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Glossary' }]} />
@@ -204,7 +204,7 @@ export default function GlossaryPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

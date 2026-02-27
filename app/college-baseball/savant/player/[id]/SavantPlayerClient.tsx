@@ -108,7 +108,7 @@ export default function SavantPlayerClient() {
 
   if (loading) {
     return (
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
@@ -116,14 +116,14 @@ export default function SavantPlayerClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
     );
   }
 
   if (!player) {
     return (
       <>
-        <main id="main-content" className="pt-24">
+        <div className="pt-6">
           <Section padding="lg">
             <Container>
               <Card padding="lg" className="text-center">
@@ -140,7 +140,7 @@ export default function SavantPlayerClient() {
               </Card>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -151,8 +151,8 @@ export default function SavantPlayerClient() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm mb-6">
@@ -376,7 +376,7 @@ export default function SavantPlayerClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

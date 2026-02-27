@@ -112,8 +112,8 @@ const midMajorConfs = (() => {
 export default function ConferencesHubPage() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-2">
@@ -254,7 +254,7 @@ export default function ConferencesHubPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

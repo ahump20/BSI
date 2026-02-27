@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
@@ -150,8 +150,8 @@ export default function SabermetricsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
 
             {/* Breadcrumb */}
@@ -242,7 +242,7 @@ export default function SabermetricsPage() {
 
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

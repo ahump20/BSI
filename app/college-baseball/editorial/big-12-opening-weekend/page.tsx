@@ -25,7 +25,7 @@ const storylines = [
 export default function Big12OpeningWeekendPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -164,7 +164,7 @@ export default function Big12OpeningWeekendPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

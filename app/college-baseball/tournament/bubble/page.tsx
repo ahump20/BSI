@@ -69,7 +69,7 @@ export default function BubbleWatchPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -169,7 +169,7 @@ export default function BubbleWatchPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

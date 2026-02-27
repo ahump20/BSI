@@ -62,7 +62,7 @@ const tools = [
 export default function NILToolsPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -153,7 +153,7 @@ export default function NILToolsPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -66,8 +66,8 @@ export default function CollegeBaseballAnalyticsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -241,7 +241,7 @@ export default function CollegeBaseballAnalyticsPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -41,7 +41,7 @@ export default function SpringTrainingStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -103,7 +103,7 @@ export default function SpringTrainingStandingsPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -73,7 +73,7 @@ export default function DataQualityPage() {
           description: 'Data quality methodology, source documentation, and freshness guarantees.',
         }}
       />
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -409,7 +409,7 @@ export default function DataQualityPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

@@ -146,8 +146,8 @@ export default function CollegeBaseballRankingsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
@@ -451,7 +451,7 @@ export default function CollegeBaseballRankingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

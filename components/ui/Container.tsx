@@ -1,38 +1,26 @@
-import type { ElementType, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-type ContainerSize = 'default' | 'narrow' | 'wide' | 'full';
-
-type ContainerProps<T extends ElementType = 'div'> = {
-  as?: T;
+interface ContainerProps {
   children: ReactNode;
   className?: string;
+  size?: 'narrow' | 'sm' | 'md' | 'lg' | 'wide' | 'xl' | 'full';
   center?: boolean;
-  size?: ContainerSize;
-};
-
-const SIZE_CLASS: Record<ContainerSize, string> = {
-  default: 'max-w-6xl',
-  narrow: 'max-w-4xl',
-  wide: 'max-w-7xl',
-  full: 'max-w-none',
-};
-
-export function Container<T extends ElementType = 'div'>({
-  as,
-  children,
-  className = '',
-  center = false,
-  size = 'default',
-}: ContainerProps<T>) {
-  const Tag = (as || 'div') as ElementType;
-
-  return (
-    <Tag
-      className={`w-full mx-auto px-4 sm:px-6 lg:px-8 ${SIZE_CLASS[size]} ${center ? 'text-center' : ''} ${className}`.trim()}
-    >
-      {children}
-    </Tag>
-  );
 }
 
-export default Container;
+const sizeClasses: Record<string, string> = {
+  narrow: 'max-w-3xl',
+  sm: 'max-w-3xl',
+  md: 'max-w-5xl',
+  lg: 'max-w-6xl',
+  wide: 'max-w-7xl',
+  xl: 'max-w-7xl',
+  full: 'max-w-full',
+};
+
+export function Container({ children, className = '', size = 'xl', center }: ContainerProps) {
+  return (
+    <div className={`mx-auto px-4 sm:px-6 lg:px-8 w-full ${sizeClasses[size]} ${center ? 'text-center' : ''} ${className}`}>
+      {children}
+    </div>
+  );
+}

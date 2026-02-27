@@ -111,9 +111,9 @@ export default function TrendsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Header */}
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-background-primary">
+        <Section padding="lg" className="pt-6 bg-gradient-to-b from-charcoal to-background-primary">
           <Container>
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
@@ -370,7 +370,7 @@ export default function TrendsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

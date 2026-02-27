@@ -85,8 +85,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen">
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-md mx-auto">
@@ -212,7 +212,7 @@ export default function LoginPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

@@ -31,7 +31,7 @@ const storylines = [
 export default function Week1PreviewPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -154,7 +154,7 @@ export default function Week1PreviewPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

@@ -240,7 +240,7 @@ export default function CollegeBaseballScoresPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -459,7 +459,7 @@ export default function CollegeBaseballScoresPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

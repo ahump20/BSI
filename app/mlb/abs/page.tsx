@@ -104,7 +104,7 @@ export default function ABSTrackerPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -486,7 +486,7 @@ export default function ABSTrackerPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

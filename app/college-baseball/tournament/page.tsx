@@ -83,7 +83,7 @@ export default function TournamentHubPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -188,7 +188,7 @@ export default function TournamentHubPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

@@ -58,9 +58,9 @@ const quickStats = [
 export default function PreseasonHubPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero Section */}
-        <Section padding="lg" className="pt-24 pb-12">
+        <Section padding="lg" className="pt-6 pb-12">
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4">
@@ -214,7 +214,7 @@ export default function PreseasonHubPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

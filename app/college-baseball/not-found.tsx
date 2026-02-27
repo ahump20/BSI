@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/Button';
 
 export default function CollegebaseballNotFound() {
   return (
-    <main id="main-content">
-      <Section padding="lg" className="pt-24 min-h-[70vh] flex items-center">
+    <div>
+      <Section padding="lg" className="pt-6 min-h-[70vh] flex items-center">
         <Container center>
           <div className="max-w-lg mx-auto text-center">
             <h1 className="font-display text-8xl font-bold text-burnt-orange mb-4">404</h1>
@@ -31,6 +31,6 @@ export default function CollegebaseballNotFound() {
           </div>
         </Container>
       </Section>
-    </main>
+    </div>
   );
 }

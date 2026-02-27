@@ -271,7 +271,7 @@ export default function SECPreviewPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
         <Section padding="none" className="relative">
           <div className="bg-gradient-to-br from-[#500000] via-charcoal to-[#461D7C] relative overflow-hidden">
@@ -504,7 +504,7 @@ export default function SECPreviewPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

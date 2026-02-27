@@ -45,7 +45,7 @@ const STATS = [
 export default function Weekend3PreviewPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -475,7 +475,7 @@ export default function Weekend3PreviewPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

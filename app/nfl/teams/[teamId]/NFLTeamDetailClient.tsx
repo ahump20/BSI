@@ -404,7 +404,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
   if (!team) {
     return (
       <>
-        <main id="main-content">
+        <div>
           <Section padding="lg" background="charcoal">
             <Container>
               <Card variant="default" padding="lg" className="text-center">
@@ -418,7 +418,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
               </Card>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -440,7 +440,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -670,7 +670,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

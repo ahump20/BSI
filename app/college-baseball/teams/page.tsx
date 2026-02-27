@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +9,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { preseason2026 } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
+import { AllTeamsSearch } from './AllTeamsSearch';
 
 export const metadata: Metadata = {
   title: 'College Baseball Teams | Blaze Sports Intel',
@@ -143,11 +145,13 @@ function TeamCard({ team }: { team: TeamEntry }) {
       >
         <div className="flex flex-col items-center gap-2">
           {logoUrl && (
-            <img
+            <Image
               src={logoUrl}
               alt=""
-              className="w-8 h-8 object-contain"
-              loading="lazy"
+              width={32}
+              height={32}
+              className="object-contain"
+              unoptimized
             />
           )}
           <span className="text-text-primary font-medium text-sm">{team.name}</span>
@@ -163,8 +167,8 @@ function TeamCard({ team }: { team: TeamEntry }) {
 export default function TeamsPage() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <div className="text-center mb-12">
@@ -180,6 +184,9 @@ export default function TeamsPage() {
                 </p>
               </div>
             </ScrollReveal>
+
+            {/* Client-side searchable team browser */}
+            <AllTeamsSearch />
 
             <div className="space-y-12">
               {conferences.map((conference, confIndex) => (
@@ -210,7 +217,7 @@ export default function TeamsPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

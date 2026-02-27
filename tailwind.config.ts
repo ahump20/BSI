@@ -55,16 +55,16 @@ const config: Config = {
         // Semantic Colors
         'texas-soil': '#8B4513',
         'texas-cream': '#F5E6D3',
-        midnight: '#0d0d12',
+        midnight: '#0D0D0D',
         ember: '#FF6B35',
         flame: '#E85D04',
         graphite: '#242424',
         // Text Colors
         text: {
-          primary: '#fafafa',
-          secondary: '#a3a3a3',
+          primary: '#F5F0EB',
+          secondary: '#A89F95',
           tertiary: '#737373',
-          muted: '#525252',
+          muted: 'rgba(245, 240, 235, 0.40)',
         },
         // Border Colors
         border: {
@@ -75,10 +75,10 @@ const config: Config = {
         },
         // Background variants
         background: {
-          primary: '#0d0d12',
-          secondary: '#161620',
-          tertiary: '#1f1f2e',
-          elevated: '#28283c',
+          primary: '#0D0D0D',
+          secondary: '#1A1A1A',
+          tertiary: '#242424',
+          elevated: '#2E2E2E',
         },
         // Surface/Glass
         surface: {
@@ -156,9 +156,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         display: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'Cambria', 'serif'],
+        serif: ['var(--font-cormorant)', 'Cormorant Garamond', 'Georgia', 'Cambria', 'serif'],
         mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
       },
       fontSize: {

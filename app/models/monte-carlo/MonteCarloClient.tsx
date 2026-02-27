@@ -61,7 +61,7 @@ export function MonteCarloClient() {
           description: 'Season projection methodology using Monte Carlo simulation.',
         }}
       />
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -285,7 +285,7 @@ export function MonteCarloClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

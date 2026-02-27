@@ -101,7 +101,7 @@ export default async function ComparisonPage({ params }: PageProps) {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -246,7 +246,7 @@ export default async function ComparisonPage({ params }: PageProps) {
             </Card>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

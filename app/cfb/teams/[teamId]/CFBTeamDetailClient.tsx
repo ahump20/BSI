@@ -147,7 +147,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -391,7 +391,7 @@ export default function CFBTeamDetailClient({ teamId }: CFBTeamDetailClientProps
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

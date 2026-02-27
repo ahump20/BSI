@@ -1692,8 +1692,8 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
     if (!auto) {
       return (
         <>
-          <main id="main-content">
-            <Section padding="lg" className="pt-24">
+          <div>
+            <Section padding="lg" className="pt-6">
               <Container>
                 <div className="text-center py-20">
                   <h1 className="font-display text-3xl font-bold text-text-primary mb-4">
@@ -1711,7 +1711,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                 </div>
               </Container>
             </Section>
-          </main>
+          </div>
           <Footer />
         </>
       );
@@ -1719,8 +1719,8 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
     return (
       <>
-        <main id="main-content">
-          <Section padding="lg" className="pt-24">
+        <div>
+          <Section padding="lg" className="pt-6">
             <Container>
               {/* Breadcrumb */}
               <ScrollReveal direction="up">
@@ -1835,7 +1835,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
               </div>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -1846,8 +1846,8 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -2050,7 +2050,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

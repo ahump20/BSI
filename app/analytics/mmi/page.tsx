@@ -84,7 +84,7 @@ export default function MMITrendingPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -298,7 +298,7 @@ export default function MMITrendingPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

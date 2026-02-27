@@ -177,7 +177,7 @@ export default function TexasUCDavisOpener2026Page() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* ── Breadcrumb ── */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -834,7 +834,7 @@ export default function TexasUCDavisOpener2026Page() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
 

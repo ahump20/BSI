@@ -6,7 +6,7 @@
  * Full search results page with filtering by sport and entity type.
  * Displays teams, players, and games across all covered sports.
  *
- * Last Updated: 2025-01-07
+ * Last Updated: 2026-02-27
  */
 
 import { Suspense, useState, useEffect } from 'react';
@@ -85,14 +85,14 @@ function getSportColor(sport: string): string {
 function SearchLoading() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen flex items-center justify-center">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
             <p className="text-text-secondary">Loading search...</p>
           </div>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );
@@ -179,7 +179,7 @@ function SearchContent() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
@@ -264,7 +264,7 @@ function SearchContent() {
             {/* No Results */}
             {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🔍</div>
+                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
                 <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
                 <p className="text-text-secondary mb-6">
                   No matches for &ldquo;{initialQuery}&rdquo;
@@ -296,7 +296,7 @@ function SearchContent() {
             {/* Empty State - No Query */}
             {!isLoading && !initialQuery && (
               <Card variant="default" padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🏟️</div>
+                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><path d="M3 21V10L12 3L21 10V21" /><path d="M3 14H21" /><rect x="8" y="14" width="8" height="7" /></svg></div>
                 <h2 className="text-xl font-semibold text-text-primary mb-2">Search Across All Sports</h2>
                 <p className="text-text-secondary mb-6">
                   Find teams, players, and games across MLB, NFL, NBA, and NCAA sports.
@@ -306,7 +306,7 @@ function SearchContent() {
                     href="/mlb"
                     className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">⚾</div>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" /><path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" /></svg></div>
                     <p className="font-medium text-text-primary">MLB</p>
                     <p className="text-xs text-text-tertiary">Major League Baseball</p>
                   </Link>
@@ -314,7 +314,7 @@ function SearchContent() {
                     href="/nfl"
                     className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">🏈</div>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" /><path d="M12 7L12 17M9 10L15 14M15 10L9 14" /></svg></div>
                     <p className="font-medium text-text-primary">NFL</p>
                     <p className="text-xs text-text-tertiary">National Football League</p>
                   </Link>
@@ -322,7 +322,7 @@ function SearchContent() {
                     href="/college-baseball"
                     className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">🎓</div>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><path d="M2 10L12 5L22 10L12 15L2 10Z" /><path d="M6 12V17C6 17 9 20 12 20C15 20 18 17 18 17V12" /></svg></div>
                     <p className="font-medium text-text-primary">NCAA Baseball</p>
                     <p className="text-xs text-text-tertiary">College Baseball</p>
                   </Link>
@@ -393,7 +393,7 @@ function SearchContent() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

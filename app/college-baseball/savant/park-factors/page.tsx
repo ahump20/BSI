@@ -28,13 +28,13 @@ export default function ParkFactorsPage() {
 
   const isPro = useMemo(() => {
     const firstRow = data?.data?.[0];
-    return firstRow ? (firstRow as Record<string, unknown>)._tier_gated !== true : false;
+    return firstRow ? (firstRow as unknown as Record<string, unknown>)._tier_gated !== true : false;
   }, [data]);
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -125,7 +125,7 @@ export default function ParkFactorsPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>
