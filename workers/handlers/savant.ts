@@ -96,10 +96,10 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'woba';
 
   const cacheKey = `savant:bat:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -137,7 +137,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
       output = output.slice(0, 10).map(stripProFields);
     }
 
-    await kvPut(env.KV, cacheKey, output, 300);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);
     return cachedJson(
       {
         data: output,
@@ -177,10 +177,10 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'fip';
 
   const cacheKey = `savant:pitch:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -216,7 +216,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
       output = output.slice(0, 10).map(stripProFields);
     }
 
-    await kvPut(env.KV, cacheKey, output, 300);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);
     return cachedJson(
       {
         data: output,
@@ -307,10 +307,10 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:parks:${conference || 'all'}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -339,7 +339,7 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
     // Free tier: top 5 only
     const output = tier !== 'pro' ? results.slice(0, 5) : results;
 
-    await kvPut(env.KV, cacheKey, output, 600);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(
       {
         data: output,
@@ -368,10 +368,10 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:conf:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -390,7 +390,7 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
     // Free tier: top 5 only
     const output = tier !== 'pro' ? results.slice(0, 5) : results;
 
-    await kvPut(env.KV, cacheKey, output, 600);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(
       {
         data: output,
