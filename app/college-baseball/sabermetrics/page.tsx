@@ -192,7 +192,7 @@ export default function SabermetricsPage() {
             <ScrollReveal direction="up" delay={75}>
               <Card padding="sm" className="mb-8 border-burnt-orange/20 bg-burnt-orange/5">
                 <div className="flex items-start gap-3">
-                  <span className="text-burnt-orange text-base mt-0.5">⚡</span>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-burnt-orange mt-0.5 flex-shrink-0"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                   <div>
                     <p className="text-xs font-mono text-text-secondary">
                       MCP endpoint active at{' '}

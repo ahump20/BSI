@@ -200,7 +200,10 @@ export default function NBANewsPage() {
             ) : news.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">📰</div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-16 h-16 mx-auto mb-4 text-text-tertiary">
+                    <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z" />
+                    <path d="M7 7h4v4H7zM13 7h4M13 11h4M7 15h10" />
+                  </svg>
                   <p className="text-text-secondary text-lg">No NBA news available right now</p>
                   <p className="text-text-tertiary text-sm mt-2">
                     Check back soon for the latest updates from around the league.

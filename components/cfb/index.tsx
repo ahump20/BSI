@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SportIcon } from '@/components/icons/SportIcon';
 
 /**
  * CFB placeholder components — college football is under active development.
@@ -18,7 +19,7 @@ export function CFBGamesList({ limit = 6 }: CFBGamesListProps) {
         <Card key={i} variant="default" padding="md" className="text-center">
           <div className="py-8">
             <div className="w-12 h-12 mx-auto mb-4 bg-surface-light rounded-full flex items-center justify-center">
-              <span className="text-2xl">🏈</span>
+              <SportIcon sport="cfb" className="w-6 h-6 text-text-tertiary" />
             </div>
             <p className="text-text-muted text-sm">Game data coming soon</p>
             <Badge variant="warning" className="mt-3">

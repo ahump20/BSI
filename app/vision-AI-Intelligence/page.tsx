@@ -1675,8 +1675,8 @@ export default function VisionAIIntelligencePage() {
         {/* Sub-header */}
         <header className="sticky top-16 md:top-20 z-50 flex justify-between items-center gap-4 px-4 md:px-6 py-3.5 border-b border-primary/15 bg-background-primary/75 backdrop-blur-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-background-primary/30 text-xl">
-              🔥
+            <div className="w-10 h-10 grid place-items-center border border-primary/25 rounded-lg bg-gradient-to-b from-primary/20 to-background-primary/30">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-burnt-orange"><path d="M12 23c-3.6 0-7-2.5-7-7 0-3 1.5-5.3 3.8-8.3.5-.7 1.1-1.4 1.7-2.2.3-.4.9-.4 1.2 0 .6.8 1.2 1.5 1.7 2.2C15.5 10.7 19 13 19 16c0 4.5-3.4 7-7 7zm0-16.8c-1.5 2-3.6 4.5-4.5 6.8C6.5 15 7 18 12 18s5.5-3 4.5-5c-.9-2.3-3-4.8-4.5-6.8z"/></svg>
             </div>
             <div>
               <h1 className="font-display text-sm font-medium tracking-[0.28em] uppercase">

@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/icons/SportIcon';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface ESPNGame {
@@ -219,7 +220,7 @@ export default function CFBScoresPage() {
             ) : games.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">🏈</div>
+                  <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                   <p className="text-text-secondary text-lg">No games scheduled for this date</p>
                   <p className="text-text-tertiary text-sm mt-2">College football season typically runs August through January</p>
                 </div>
