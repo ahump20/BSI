@@ -10,6 +10,8 @@
 
 :root {
   /* Semantic Colors — portfolio midnight, not Labs depth */
+  --color-burnt-orange: #BF5700;
+  --color-burnt-orange-600: #BF5700;
   --color-midnight: #0d0d0d;
   --color-texas-soil: #8b4513;
   --color-ember: #ff6b35;
