@@ -2,7 +2,7 @@
  * Shared game normalization — single source of truth for parsing
  * ESPN, SportsDataIO, and transformed API responses into GameScore[].
  *
- * Used by LiveScoresPanel and SportHubCards.
+ * Used by LiveScoresPanel and HomeLiveScores.
  */
 
 export interface GameScore {
