@@ -1,8 +1,19 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
+
+export const metadata: Metadata = {
+  title: 'Big 12 Opening Weekend 2026: Series Previews & Predictions | Blaze Sports Intel',
+  description: 'Big 12 opening weekend college baseball preview. Series-by-series breakdowns for TCU, Texas Tech, Oklahoma State, and the full conference slate. Feb 14-16, 2026.',
+  openGraph: {
+    title: 'Big 12 Opening Weekend 2026 | Blaze Sports Intel',
+    description: 'Every Big 12 opening series previewed. Pitching matchups, lineup projections, and what to watch for across the conference.',
+    type: 'article',
+  },
+};
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 

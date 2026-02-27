@@ -1,5 +1,16 @@
+import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+
+export const metadata: Metadata = {
+  title: 'Mississippi State Bulldogs 2026 Season Preview | Blaze Sports Intel',
+  description: 'Mississippi State Bulldogs 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
+  openGraph: {
+    title: 'Mississippi State Bulldogs — 2026 Season Preview | BSI',
+    description: 'Full scouting report on the Mississippi State Bulldogs heading into the 2026 college baseball season.',
+    type: 'article',
+  },
+};
 
 const data: TeamPreviewData = {
   teamName: 'Mississippi State',

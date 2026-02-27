@@ -15,24 +15,23 @@ import { createMockEnv, createMockCtx, HIGHLIGHTLY_STANDINGS, ESPN_STANDINGS } f
 function mockBothSources() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
-    const urlObj = new URL(urlStr, 'http://localhost');
 
     // Highlightly standings
-    if (urlObj.hostname === 'mlb-college-baseball-api' && urlObj.pathname.includes('/standings')) {
+    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/standings')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN standings
-    if (urlObj.hostname === 'espn.com' && urlObj.pathname.includes('/standings')) {
+    if (urlStr.includes('espn.com') && urlStr.includes('/standings')) {
       return new Response(JSON.stringify(ESPN_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN rankings (handler also fetches these)
-    if (urlObj.hostname === 'espn.com' && urlObj.pathname.includes('/rankings')) {
+    if (urlStr.includes('espn.com') && urlStr.includes('/rankings')) {
       return new Response(JSON.stringify({ rankings: [] }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -46,14 +45,14 @@ function mockHighlightlyOnly() {
   return vi.fn(async (url: string | URL | Request) => {
     const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
 
-    if (urlObj.hostname === 'mlb-college-baseball-api' && urlObj.pathname.includes('/standings')) {
+    if (urlStr.includes('mlb-college-baseball-api') && urlStr.includes('/standings')) {
       return new Response(JSON.stringify(HIGHLIGHTLY_STANDINGS), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
     // ESPN fails
-    if (urlObj.hostname === 'espn.com') {
+    if (urlStr.includes('espn.com')) {
       return new Response('Service Unavailable', { status: 503 });
     }
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
