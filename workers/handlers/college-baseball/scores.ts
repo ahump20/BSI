@@ -114,15 +114,20 @@ export async function handleCollegeBaseballScores(
     const client = getCollegeClient();
     const result = await client.getMatches('NCAA', date);
 
+    const ncaaPayload = {
+      ...(result.data as Record<string, unknown> ?? empty),
+      meta: { source: 'ncaa', fetched_at: now, timezone: 'America/Chicago', sources: ['ncaa'], degraded: true },
+    };
+
     if (result.success && result.data) {
-      await kvPut(env.KV, cacheKey, result.data, CACHE_TTL.scores);
+      await kvPut(env.KV, cacheKey, ncaaPayload, CACHE_TTL.scores);
     }
 
-    return cachedJson(result.data ?? empty, result.success ? 200 : 502, HTTP_CACHE.scores, {
+    return cachedJson(ncaaPayload, result.success ? 200 : 502, HTTP_CACHE.scores, {
       ...dataHeaders(result.timestamp, 'ncaa'), 'X-Cache': 'MISS',
     });
   } catch {
-    return json(empty, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
+    return json({ ...empty, meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago', sources: [], degraded: true } }, 502, { ...dataHeaders(now, 'error'), 'X-Cache': 'ERROR' });
   }
 }
 
