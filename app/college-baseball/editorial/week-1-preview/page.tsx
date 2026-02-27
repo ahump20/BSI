@@ -5,6 +5,17 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'College Baseball Week 1 Preview 2026: What to Watch | Blaze Sports Intel',
+  description: 'Transfer portal grade cards, the SEC gauntlet begins, ACC realignment day one, and freshman impact players to watch. Everything that matters in college baseball Week 1 of 2026.',
+  openGraph: {
+    title: 'College Baseball Week 1 Preview 2026 | Blaze Sports Intel',
+    description: 'The matchups, pitching duels, and storylines that matter most in opening weekend of the 2026 college baseball season.',
+    type: 'article',
+  },
+};
 
 const topMatchups = [
   { away: 'UC Davis', home: 'No. 3 Texas', date: 'Feb 13–15', network: 'SEC Network+', why: 'Schlossnagle debuts a portal-loaded roster. Riojas on Friday, Harrison on Saturday, Volantis on Sunday. The Longhorns are built to win it all — this is the first data point.' },

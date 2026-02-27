@@ -23,7 +23,7 @@ export function ScrollReveal({ children, direction = 'up', delay = 0, className 
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

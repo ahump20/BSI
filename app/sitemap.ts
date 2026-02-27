@@ -60,6 +60,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/week-1-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-2-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-2-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
