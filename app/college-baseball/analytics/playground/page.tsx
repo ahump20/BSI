@@ -31,7 +31,6 @@ export default function SabermetricsPlaygroundPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/bsi-logo-nav.png" alt="BSI" style={{ height: '28px' }} />
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'rgba(250,248,245,0.4)' }}>

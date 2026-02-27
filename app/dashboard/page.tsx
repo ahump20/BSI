@@ -213,9 +213,13 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
   const [healthData, setHealthData] = useState<HealthData | null>(null);
 
   // Determine which sport keys the user cares about
-  const favoriteSportKeys = (prefs.favoriteSports.length > 0
-    ? [...new Set(prefs.favoriteSports.map((s) => SPORT_LABEL_TO_KEY[s]).filter((k): k is Sport => !!k))]
-    : ['mlb', 'nfl', 'nba', 'ncaa']) as Sport[];
+  const favoriteSportKeys = useMemo<Sport[]>(
+    () =>
+      prefs.favoriteSports.length > 0
+        ? [...new Set(prefs.favoriteSports.map((s) => SPORT_LABEL_TO_KEY[s]).filter((k): k is Sport => !!k))]
+        : ['mlb', 'nfl', 'nba', 'ncaa'],
+    [prefs.favoriteSports]
+  );
 
   // Auto-switch if active sport is no longer favorited
   useEffect(() => {
