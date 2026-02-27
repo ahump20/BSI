@@ -597,7 +597,7 @@ describe('calculateSIERALite', () => {
   it('returns a reasonable ERA-scale value for a solid pitcher', () => {
     // 180 K, 45 BB, 15 HR, 180 IP
     const result = calculateSIERALite(180, 45, 15, 180);
-    expect(result).toBeGreaterThan(1.5);
+    expect(result).toBeGreaterThan(2.0);
     expect(result).toBeLessThan(6.0);
   });
 
