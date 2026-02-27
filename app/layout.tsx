@@ -59,12 +59,13 @@ export const metadata: Metadata = {
     'college baseball',
   ],
   authors: [{ name: 'Austin Humphrey', url: 'https://blazesportsintel.com' }],
-  creator: 'Blaze Intelligence',
+  creator: 'Blaze Sports Intel',
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
     title: 'Blaze Sports Intel | Real-Time Sports Analytics',
-    description: 'Enterprise sports intelligence platform with real MLB, NFL, NBA data',
+    description:
+      'Live scores, sabermetrics, and deep analytics for college baseball, MLB, NFL, and NBA.',
     type: 'website',
     locale: 'en_US',
     url: 'https://blazesportsintel.com',

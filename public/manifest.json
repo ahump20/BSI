@@ -1,10 +1,10 @@
 {
-  "name": "Blaze Sports Intel - Professional Sports Analytics",
-  "short_name": "Blaze Sports",
-  "description": "Real-time sports analytics platform covering MLB, NFL, NCAA Baseball, and more. Advanced Statcast metrics, live scores, and comprehensive team analysis.",
+  "name": "Blaze Sports Intel",
+  "short_name": "BSI",
+  "description": "Live scores, sabermetrics, and deep analytics for college baseball, MLB, NFL, and NBA.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
+  "background_color": "#0D0D0D",
   "theme_color": "#BF5700",
   "orientation": "portrait-primary",
   "scope": "/",
@@ -61,35 +61,9 @@
   ],
   "shortcuts": [
     {
-      "name": "MLB Analytics",
-      "short_name": "MLB",
-      "description": "View MLB Statcast analytics and live scores",
-      "url": "/mlb",
-      "icons": [
-        {
-          "src": "/icons/mlb-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "NFL Analytics",
-      "short_name": "NFL",
-      "description": "View NFL team analytics and live scores",
-      "url": "/nfl",
-      "icons": [
-        {
-          "src": "/icons/nfl-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
       "name": "College Baseball",
       "short_name": "NCAA BB",
-      "description": "View NCAA baseball standings and box scores",
+      "description": "Live scores, standings, and advanced sabermetrics",
       "url": "/college-baseball",
       "icons": [
         {
@@ -100,23 +74,10 @@
       ]
     },
     {
-      "name": "MLB Draft Board",
-      "short_name": "Draft",
-      "description": "View 2025 MLB Draft prospect rankings",
-      "url": "/college-baseball/draft",
-      "icons": [
-        {
-          "src": "/icons/ncaa-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Player Compare",
-      "short_name": "Compare",
-      "description": "Compare players side-by-side",
-      "url": "/college-baseball/tools/compare.html",
+      "name": "Live Scores",
+      "short_name": "Scores",
+      "description": "Cross-sport live scoreboard",
+      "url": "/scores",
       "icons": [
         {
           "src": "/icons/analytics-96x96.png",
@@ -126,47 +87,32 @@
       ]
     },
     {
-      "name": "Analytics Dashboard",
-      "short_name": "Analytics",
-      "description": "View comprehensive sports analytics dashboard",
-      "url": "/analytics",
+      "name": "MLB",
+      "short_name": "MLB",
+      "description": "MLB scores, standings, and team analytics",
+      "url": "/mlb",
       "icons": [
         {
-          "src": "/icons/analytics-96x96.png",
+          "src": "/icons/mlb-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "NFL",
+      "short_name": "NFL",
+      "description": "NFL scores, standings, and team analytics",
+      "url": "/nfl",
+      "icons": [
+        {
+          "src": "/icons/nfl-96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
       ]
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/desktop-home.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Blaze Sports Intel Home Dashboard"
-    },
-    {
-      "src": "/screenshots/mobile-analytics.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobile Analytics View"
-    }
-  ],
-  "share_target": {
-    "action": "/share",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
-  "related_applications": [],
-  "prefer_related_applications": false,
   "lang": "en-US",
   "dir": "ltr"
 }
