@@ -500,15 +500,6 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {!dataFresh && (
-              <Card variant="default" padding="md" className="mb-6 bg-info/10 border-info/30">
-                <p className="text-info font-semibold">Placeholder Data</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  Live standings will populate once the NBA API responds with current data.
-                </p>
-              </Card>
-            )}
-
             {loading ? (
               <Card variant="default" padding="lg">
                 <div className="animate-pulse space-y-4">
@@ -517,6 +508,12 @@ export default function NBAStandingsPage() {
                   ))}
                 </div>
               </Card>
+            ) : !dataFresh && currentConference?.teams.every((t) => t.wins === 0 && t.losses === 0) ? (
+              <div className="text-center py-12">
+                <p className="text-text-tertiary text-sm">
+                  Live standings data is temporarily unavailable. Check back shortly.
+                </p>
+              </div>
             ) : (
               <ScrollReveal direction="up">
                 <Card variant="default" padding="lg">
