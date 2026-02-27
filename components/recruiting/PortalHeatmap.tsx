@@ -30,7 +30,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-// @ts-expect-error d3 types not installed - install @types/d3 for full type support
 import * as d3 from 'd3';
 
 // ============================================================================
@@ -289,7 +288,7 @@ export function PortalHeatmap() {
         .scaleExtent([0.5, 4])
         .on('zoom', (event: { transform: string }) => {
           g.attr('transform', event.transform);
-        }) as unknown
+        }) as any
     );
 
     // Create arrow markers
@@ -334,7 +333,7 @@ export function PortalHeatmap() {
           .drag<SVGGElement, ConferenceNode>()
           .on('start', dragstarted)
           .on('drag', dragged)
-          .on('end', dragended) as unknown
+          .on('end', dragended) as any
       );
 
     // Node circles
@@ -481,7 +480,7 @@ export function PortalHeatmap() {
       .data(chords)
       .enter()
       .append('path')
-      .attr('d', ribbon)
+      .attr('d', ribbon as any)
       .style('fill', (d: unknown) => data.nodes[(d as ChordDatum).source.index].color)
       .style('stroke', '#ffffff')
       .style('stroke-width', 0.5)
