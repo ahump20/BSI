@@ -358,6 +358,11 @@ textarea:focus-visible,
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   }
 
+  /* Card accent line — thin top border using per-card --card-accent */
+  .card-accent-line {
+    border-top: 2px solid var(--card-accent, var(--bsi-primary));
+  }
+
   /* Chart panel — glass card with left accent (from Labs) */
   .chart-panel {
     background: var(--glass-default-bg);
