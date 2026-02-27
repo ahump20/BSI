@@ -81,7 +81,7 @@ export default function StatusPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -178,7 +178,7 @@ export default function StatusPage() {
             ) : null}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -240,7 +240,7 @@ export default function PlayerComparePage() {
 
   return (
     <>
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             {/* Breadcrumb */}
@@ -337,7 +337,7 @@ export default function PlayerComparePage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

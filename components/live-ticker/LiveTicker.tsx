@@ -68,12 +68,23 @@ const PRIORITY_COLORS: Record<Priority, string> = {
   3: 'bg-charcoal', // Standard
 };
 
-const LEAGUE_ICONS: Record<League, string> = {
-  MLB: '⚾',
-  NFL: '🏈',
-  NCAAF: '🏈',
-  NBA: '🏀',
-  NCAABB: '🏀',
+// ── SVG league markers (renders consistently across devices) ──
+const TickerBaseballIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}><circle cx="8" cy="8" r="6.5" /><path d="M4.5 3c1 1.5 1 3.5 0 5s-1 3.5 0 5" /><path d="M11.5 3c-1 1.5-1 3.5 0 5s1 3.5 0 5" /></svg>
+);
+const TickerFootballIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}><ellipse cx="8" cy="8" rx="6.5" ry="4" transform="rotate(-45 8 8)" /><path d="M5.5 5.5l5 5" /></svg>
+);
+const TickerBasketballIcon = () => (
+  <svg viewBox="0 0 16 16" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={1.5}><circle cx="8" cy="8" r="6.5" /><path d="M1.5 8h13M8 1.5v13" /></svg>
+);
+
+const LEAGUE_ICON_COMPONENTS: Record<League, React.FC> = {
+  MLB: TickerBaseballIcon,
+  NFL: TickerFootballIcon,
+  NCAAF: TickerFootballIcon,
+  NBA: TickerBasketballIcon,
+  NCAABB: TickerBasketballIcon,
 };
 
 const TYPE_LABELS: Record<TickerType, string> = {
@@ -228,7 +239,7 @@ export function LiveTicker({
             transition={{ duration: 0.3 }}
             className="flex items-center gap-2"
           >
-            <span className="text-lg">{LEAGUE_ICONS[currentItem.league]}</span>
+            {(() => { const LeagueIcon = LEAGUE_ICON_COMPONENTS[currentItem.league]; return <LeagueIcon />; })()}
             <span
               className={`px-1.5 py-0.5 text-[10px] font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
             >
@@ -278,7 +289,7 @@ export function LiveTicker({
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xl">{LEAGUE_ICONS[currentItem.league]}</span>
+              {(() => { const LeagueIcon = LEAGUE_ICON_COMPONENTS[currentItem.league]; return <LeagueIcon />; })()}
               <span
                 className={`px-2 py-0.5 text-xs font-bold uppercase rounded ${PRIORITY_COLORS[currentItem.priority]} text-white`}
               >

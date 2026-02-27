@@ -11,7 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 export default function NILMethodologyPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -282,7 +282,7 @@ export default function NILMethodologyPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

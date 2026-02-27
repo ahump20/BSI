@@ -180,7 +180,7 @@ export default function IntelDashboard() {
           
             {/* Main grid: content + sidebar */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
-                        <main className="min-w-0">
+                        <div className="min-w-0">
                                   <GameGrid
                                                 hero={hero}
                                                 marquee={marquee}
@@ -209,7 +209,7 @@ export default function IntelDashboard() {
                                                 }
                                               />
                                   <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
-                        </main>
+                        </div>
                 
                         <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
                                   <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />

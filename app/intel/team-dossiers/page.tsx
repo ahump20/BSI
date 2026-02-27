@@ -98,7 +98,7 @@ export default function TeamDossiersIndexPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -193,7 +193,7 @@ export default function TeamDossiersIndexPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

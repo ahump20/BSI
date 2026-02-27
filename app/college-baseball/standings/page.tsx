@@ -97,8 +97,8 @@ export default function CollegeBaseballStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-2">
@@ -368,7 +368,7 @@ export default function CollegeBaseballStandingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

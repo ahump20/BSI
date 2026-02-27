@@ -196,7 +196,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -781,7 +781,7 @@ export default function PlayerDetailClient({ playerId }: PlayerDetailClientProps
             </Section>
           </>
         ) : null}
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -163,8 +163,8 @@ export default function SavantHubPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -198,6 +198,28 @@ export default function SavantHubPage() {
                   strength indices — applied to 300+ D1 programs. No other public platform
                   does this for the college game.
                 </p>
+                <div className="mt-4 flex items-center gap-6 flex-wrap">
+                  <Link
+                    href="/college-baseball/savant/visuals"
+                    className="inline-flex items-center gap-2 text-sm text-burnt-orange hover:text-ember transition-colors group"
+                  >
+                    <span className="font-display uppercase tracking-wider">Interactive Visuals</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <a
+                    href="https://labs.blazesportsintel.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-tertiary transition-colors group"
+                  >
+                    <span className="font-display uppercase tracking-wider">Labs Portal</span>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M7 17L17 7M17 7H7M17 7v10" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </ScrollReveal>
 
@@ -374,7 +396,7 @@ export default function SavantHubPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>
@@ -426,16 +448,20 @@ function findLeader(
   higherIsBetter: boolean,
 ): { name: string; team: string; value: number } | null {
   if (data.length === 0) return null;
-  let best = data[0];
-  let bestVal = (best[key] as number) ?? (higherIsBetter ? -Infinity : Infinity);
 
-  for (let i = 1; i < data.length; i++) {
-    const val = (data[i][key] as number) ?? (higherIsBetter ? -Infinity : Infinity);
-    if (higherIsBetter ? val > bestVal : val < bestVal) {
-      best = data[i];
-      bestVal = val;
+  let best: Record<string, unknown> | null = null;
+  let bestVal = higherIsBetter ? -Infinity : Infinity;
+
+  for (const row of data) {
+    const raw = row[key];
+    if (raw == null || typeof raw !== 'number' || !Number.isFinite(raw)) continue;
+    if (higherIsBetter ? raw > bestVal : raw < bestVal) {
+      best = row;
+      bestVal = raw;
     }
   }
+
+  if (!best || !Number.isFinite(bestVal)) return null;
 
   return {
     name: best.player_name as string,

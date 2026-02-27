@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <h1 className="font-display text-4xl font-bold uppercase tracking-display mb-8">
@@ -206,7 +206,7 @@ export default function TermsPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

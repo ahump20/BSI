@@ -206,7 +206,7 @@ export default function BlogPostFeedPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -215,7 +215,7 @@ export default function BlogPostFeedPage() {
                 BSI
               </Link>
               <span>/</span>
-              <span className="text-text-primary font-medium">Writing</span>
+              <span className="text-text-primary font-medium">Editorial</span>
             </nav>
           </Container>
         </Section>
@@ -327,7 +327,7 @@ export default function BlogPostFeedPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

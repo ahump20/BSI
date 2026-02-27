@@ -326,7 +326,7 @@ export function BlogPostClient() {
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-background-primary">
+      <div className="min-h-screen bg-background-primary">
         {/* Hero */}
         <Section
           padding="lg"
@@ -350,7 +350,7 @@ export function BlogPostClient() {
                       href="/blog-post-feed"
                       className="hover:text-burnt-orange transition-colors"
                     >
-                      Writing
+                      Editorial
                     </Link>
                   </li>
                   <li>/</li>
@@ -372,7 +372,7 @@ export function BlogPostClient() {
                     This article doesn&apos;t exist or hasn&apos;t been published yet.
                   </p>
                   <Link href="/blog-post-feed">
-                    <Button variant="primary">← Back to Writing</Button>
+                    <Button variant="primary">← Back to Editorial</Button>
                   </Link>
                 </Card>
               ) : post ? (
@@ -456,14 +456,14 @@ export function BlogPostClient() {
                 {/* Back link */}
                 <div className="mt-8 text-center">
                   <Link href="/blog-post-feed">
-                    <Button variant="secondary">← Back to Writing</Button>
+                    <Button variant="secondary">← Back to Editorial</Button>
                   </Link>
                 </div>
               </div>
             </Container>
           </Section>
         )}
-      </main>
+      </div>
 
       <Footer />
     </>

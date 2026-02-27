@@ -9,39 +9,62 @@ import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 
+// ── SVG Feature Icons ──
+const NilDollarIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v12M9 9.5C9 8.12 10.34 7 12 7s3 1.12 3 2.5S13.66 12 12 12s-3 1.12-3 2.5S10.34 17 12 17s3-1.12 3-2.5" /></svg>
+);
+const NilChartIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
+);
+const NilPortalIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
+);
+const NilTrendIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><path d="M3 17l5-5 4 4 9-11" /><path d="M17 5h4v4" /></svg>
+);
+const NilTargetIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>
+);
+const NilGlobeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
+);
+
+const NIL_ICONS: Record<string, React.FC> = {
+  'Fair Market Value': NilDollarIcon,
+  'Program Rankings': NilChartIcon,
+  'Transfer Portal Intel': NilPortalIcon,
+  'WAR Calculations': NilTrendIcon,
+  'Roster Optimization': NilTargetIcon,
+  'Market Intelligence': NilGlobeIcon,
+};
+
 const features = [
   {
-    icon: '💰',
     title: 'Fair Market Value',
     description:
       'Our proprietary FMNV model calculates what an athlete is actually worth in the NIL marketplace based on performance, exposure, and market demand.',
   },
   {
-    icon: '📊',
     title: 'Program Rankings',
     description:
       'Total roster NIL value by program. See which schools have built the most valuable collectives and where your program stands.',
   },
   {
-    icon: '🔄',
     title: 'Transfer Portal Intel',
     description:
       'Real-time portal activity with projected NIL values. Identify fits before your competition does.',
   },
   {
-    icon: '📈',
     title: 'WAR Calculations',
     description:
       'Wins Above Replacement adapted for college athletics. Understand the actual on-field value a player brings to your program.',
   },
   {
-    icon: '🎯',
     title: 'Roster Optimization',
     description:
       'Maximize your NIL budget with data-driven roster construction. Know what positions need investment and where you can find value.',
   },
   {
-    icon: '📱',
     title: 'Market Intelligence',
     description:
       'Track year-over-year trends, regional variations, and sport-specific dynamics in the NIL marketplace.',
@@ -65,9 +88,9 @@ const sportBreakdown = [
 
 export default function NILValuationPage() {
   return (
-    <main className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-background-primary text-text-primary">
       {/* Hero Section */}
-      <Section className="pt-32 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
@@ -167,7 +190,9 @@ export default function NILValuationPage() {
               <ScrollReveal key={feature.title} delay={index * 100}>
                 <Card className="h-full">
                   <CardContent className="p-6">
-                    <span className="text-3xl mb-4 block">{feature.icon}</span>
+                    <span className="text-text-secondary mb-4 block">
+                      {(() => { const Icon = NIL_ICONS[feature.title]; return Icon ? <Icon /> : null; })()}
+                    </span>
                     <h3 className="text-lg font-semibold text-text-primary mb-2">{feature.title}</h3>
                     <p className="text-text-tertiary text-sm">{feature.description}</p>
                   </CardContent>
@@ -273,7 +298,7 @@ export default function NILValuationPage() {
           </div>
 
           <p className="text-center text-xs text-text-muted mt-8">
-            Illustrative estimates based on public reporting. Live NIL analytics coming soon.
+            Illustrative estimates based on public reporting. Live NIL analytics tools are in active development.
           </p>
         </Container>
       </Section>
@@ -353,6 +378,6 @@ export default function NILValuationPage() {
       </Section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

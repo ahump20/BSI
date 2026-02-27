@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BSI Savant Visual System — Interactive Playground</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bsi-primary: #BF5700;
+      --bsi-accent: #FF6B35;
+      --bsi-surface: #0D0D0D;
+      --bsi-surface-raised: #1A1A1A;
+      --bsi-surface-overlay: #242424;
+      --bsi-text: #F5F0EB;
+      --bsi-text-muted: #A89F95;
+      --bsi-border: rgba(245, 240, 235, 0.04);
+      --bsi-border-hover: rgba(191, 87, 0, 0.3);
+      --savant-elite: #c0392b;
+      --savant-great: #e74c3c;
+      --savant-above: #d4775c;
+      --savant-avg: #aaaaaa;
+      --savant-below: #5b9bd5;
+      --savant-poor: #2980b9;
+      --savant-very-poor: #1a5276;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bsi-surface);
+      color: var(--bsi-text);
+      font-family: 'JetBrains Mono', monospace;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .card {
+      background: var(--bsi-surface-raised);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.08); }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .card-body { padding: 12px; }
+
+    .font-display {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .section-title {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 10px;
+      color: var(--bsi-text-muted);
+      margin-bottom: 16px;
+    }
+
+    .nav-tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--bsi-text-muted);
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav-tab:hover { color: var(--bsi-text); }
+    .nav-tab.active { color: var(--bsi-primary); border-bottom-color: var(--bsi-primary); }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: 12px;
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      background: rgba(191, 87, 0, 0.15);
+      color: var(--bsi-primary);
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useRef, useEffect, useMemo } = React;
+
+    // ── Color helpers ──
+    function getPercentileColor(pct, higherIsBetter) {
+      const effective = higherIsBetter ? pct : 100 - pct;
+      if (effective >= 90) return '#c0392b';
+      if (effective >= 75) return '#e74c3c';
+      if (effective >= 60) return '#d4775c';
+      if (effective >= 40) return '#aaaaaa';
+      if (effective >= 25) return '#5b9bd5';
+      if (effective >= 10) return '#2980b9';
+      return '#1a5276';
+    }
+
+    // ── Mock Data ──
+    const MOCK_BATTING = [
+      { name: 'Jac Caglianone', team: 'Florida', conf: 'SEC', avg: .391, obp: .515, slg: .812, iso: .421, woba: .529, wrc_plus: 198, ops_plus: 215, k_pct: 0.22, bb_pct: 0.18, babip: .345, pa: 180 },
+      { name: 'Charlie Condon', team: 'Georgia', conf: 'SEC', avg: .432, obp: .540, slg: .890, iso: .458, woba: .560, wrc_plus: 218, ops_plus: 230, k_pct: 0.18, bb_pct: 0.16, babip: .370, pa: 165 },
+      { name: 'Travis Bazzana', team: 'Oregon State', conf: 'Pac-12', avg: .407, obp: .520, slg: .715, iso: .308, woba: .490, wrc_plus: 185, ops_plus: 195, k_pct: 0.09, bb_pct: 0.20, babip: .360, pa: 175 },
+      { name: 'Braden Montgomery', team: 'Texas A&M', conf: 'SEC', avg: .333, obp: .445, slg: .698, iso: .365, woba: .462, wrc_plus: 165, ops_plus: 170, k_pct: 0.28, bb_pct: 0.14, babip: .310, pa: 160 },
+      { name: 'Vance Honeycutt', team: 'North Carolina', conf: 'ACC', avg: .312, obp: .412, slg: .678, iso: .366, woba: .445, wrc_plus: 155, ops_plus: 160, k_pct: 0.32, bb_pct: 0.12, babip: .325, pa: 155 },
+      { name: 'Luke Keaschall', team: 'Arizona State', conf: 'Big 12', avg: .374, obp: .455, slg: .620, iso: .246, woba: .440, wrc_plus: 152, ops_plus: 155, k_pct: 0.12, bb_pct: 0.11, babip: .340, pa: 170 },
+      { name: 'Max Anderson', team: 'Nebraska', conf: 'Big Ten', avg: .356, obp: .430, slg: .589, iso: .233, woba: .418, wrc_plus: 142, ops_plus: 145, k_pct: 0.15, bb_pct: 0.10, babip: .330, pa: 150 },
+      { name: 'Dylan Crews', team: 'LSU', conf: 'SEC', avg: .348, obp: .470, slg: .650, iso: .302, woba: .460, wrc_plus: 168, ops_plus: 175, k_pct: 0.14, bb_pct: 0.17, babip: .350, pa: 185 },
+      { name: 'Wyatt Langford', team: 'Florida', conf: 'SEC', avg: .380, obp: .490, slg: .740, iso: .360, woba: .510, wrc_plus: 195, ops_plus: 205, k_pct: 0.16, bb_pct: 0.15, babip: .355, pa: 178 },
+      { name: 'Nick Kurtz', team: 'Wake Forest', conf: 'ACC', avg: .310, obp: .415, slg: .580, iso: .270, woba: .410, wrc_plus: 138, ops_plus: 140, k_pct: 0.25, bb_pct: 0.13, babip: .315, pa: 145 },
+      { name: 'James Tibbs', team: 'Florida State', conf: 'ACC', avg: .365, obp: .440, slg: .610, iso: .245, woba: .430, wrc_plus: 148, ops_plus: 150, k_pct: 0.11, bb_pct: 0.09, babip: .335, pa: 162 },
+      { name: 'Cade Horton', team: 'Oklahoma', conf: 'Big 12', avg: .290, obp: .380, slg: .510, iso: .220, woba: .370, wrc_plus: 118, ops_plus: 120, k_pct: 0.20, bb_pct: 0.08, babip: .290, pa: 140 },
+      { name: 'Trey Yesavage', team: 'East Carolina', conf: 'AAC', avg: .280, obp: .360, slg: .480, iso: .200, woba: .350, wrc_plus: 108, ops_plus: 110, k_pct: 0.30, bb_pct: 0.07, babip: .280, pa: 135 },
+      { name: 'Gavin Turley', team: 'Arizona State', conf: 'Big 12', avg: .340, obp: .400, slg: .560, iso: .220, woba: .395, wrc_plus: 130, ops_plus: 132, k_pct: 0.17, bb_pct: 0.09, babip: .320, pa: 158 },
+      { name: 'Ryan Lasko', team: 'Rutgers', conf: 'Big Ten', avg: .298, obp: .395, slg: .520, iso: .222, woba: .385, wrc_plus: 125, ops_plus: 128, k_pct: 0.19, bb_pct: 0.14, babip: .305, pa: 148 },
+    ];
+
+    const MOCK_CONFERENCES = [
+      { conference: 'SEC', strength_index: 82, avg_era: 3.45, avg_ops: .780, avg_woba: .345, is_power: 1 },
+      { conference: 'ACC', strength_index: 76, avg_era: 3.72, avg_ops: .745, avg_woba: .330, is_power: 1 },
+      { conference: 'Big 12', strength_index: 72, avg_era: 4.05, avg_ops: .760, avg_woba: .338, is_power: 1 },
+      { conference: 'Big Ten', strength_index: 68, avg_era: 3.90, avg_ops: .720, avg_woba: .322, is_power: 1 },
+      { conference: 'Pac-12', strength_index: 65, avg_era: 3.55, avg_ops: .710, avg_woba: .318, is_power: 1 },
+      { conference: 'AAC', strength_index: 58, avg_era: 4.20, avg_ops: .700, avg_woba: .312, is_power: 0 },
+      { conference: 'Sun Belt', strength_index: 55, avg_era: 4.35, avg_ops: .695, avg_woba: .308, is_power: 0 },
+      { conference: 'Mountain West', strength_index: 50, avg_era: 4.50, avg_ops: .680, avg_woba: .300, is_power: 0 },
+      { conference: 'WCC', strength_index: 48, avg_era: 4.60, avg_ops: .670, avg_woba: .295, is_power: 0 },
+      { conference: 'Conference USA', strength_index: 45, avg_era: 4.70, avg_ops: .660, avg_woba: .290, is_power: 0 },
+    ];
+
+    // ── 1. Percentile Player Card ──
+    function PercentilePlayerCard({ player }) {
+      const svgRef = useRef(null);
+      const stats = [
+        { label: 'AVG', val: player.avg, pctl: 88, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+        { label: 'OBP', val: player.obp, pctl: 95, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+        { label: 'SLG', val: player.slg, pctl: 97, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+        { label: 'ISO', val: player.iso, pctl: 96, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+        { label: 'wOBA', val: player.woba, pctl: 98, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+        { label: 'wRC+', val: player.wrc_plus, pctl: 97, hib: true, fmt: v => Math.round(v).toString() },
+        { label: 'K%', val: player.k_pct, pctl: 35, hib: false, fmt: v => (v*100).toFixed(1)+'%' },
+        { label: 'BB%', val: player.bb_pct, pctl: 85, hib: true, fmt: v => (v*100).toFixed(1)+'%' },
+        { label: 'BABIP', val: player.babip, pctl: 72, hib: true, fmt: v => v.toFixed(3).replace(/^0/,'') },
+      ];
+
+      useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('*').remove();
+        const w = svgRef.current.clientWidth;
+        const barH = 24, gap = 5, padL = 50, padR = 80;
+        const barW = w - padL - padR;
+        const h = stats.length * (barH + gap) + 10;
+        svg.attr('height', h);
+
+        const g = svg.append('g').attr('transform', `translate(0,5)`);
+        const x = d3.scaleLinear().domain([0,100]).range([0, barW]);
+
+        stats.forEach((s, i) => {
+          const y = i * (barH + gap);
+          const color = getPercentileColor(s.pctl, s.hib);
+
+          g.append('text').attr('x', 0).attr('y', y + 16)
+            .attr('fill', '#A89F95').attr('font-size', '10px')
+            .attr('font-family', "'JetBrains Mono'").text(s.label);
+
+          g.append('rect').attr('x', padL).attr('y', y + 2)
+            .attr('width', barW).attr('height', barH - 4)
+            .attr('rx', 3).attr('fill', 'rgba(255,255,255,0.03)');
+
+          g.append('rect').attr('x', padL).attr('y', y + 2)
+            .attr('width', 0).attr('height', barH - 4)
+            .attr('rx', 3).attr('fill', color).attr('opacity', 0.8)
+            .transition().duration(700).ease(d3.easeCubicOut)
+            .attr('width', Math.max(4, x(s.pctl)));
+
+          g.append('text').attr('x', padL + barW + 6).attr('y', y + 16)
+            .attr('fill', '#F5F0EB').attr('font-size', '11px')
+            .attr('font-weight', 600).attr('font-family', "'JetBrains Mono'")
+            .text(s.fmt(s.val));
+
+          g.append('text').attr('x', w).attr('y', y + 16)
+            .attr('text-anchor', 'end').attr('fill', color)
+            .attr('font-size', '11px').attr('font-weight', 700)
+            .attr('font-family', "'JetBrains Mono'")
+            .text(Math.round(s.pctl));
+        });
+      }, []);
+
+      return (
+        <div className="card">
+          <div className="card-header">
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div>
+                <div className="font-display" style={{fontSize:18,fontWeight:700,color:'#F5F0EB'}}>{player.name}</div>
+                <div style={{fontSize:11,color:'#A89F95',marginTop:2}}>{player.team} · {player.conf}</div>
+              </div>
+              <div style={{fontSize:9,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Percentile Rankings</div>
+            </div>
+          </div>
+          <div className="card-body" style={{padding:'12px 16px'}}>
+            <svg ref={svgRef} width="100%" height={300} style={{display:'block'}} />
+          </div>
+          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:16}}>
+            {[{l:'Elite',c:'#c0392b'},{l:'Great',c:'#e74c3c'},{l:'Avg',c:'#aaaaaa'},{l:'Below',c:'#5b9bd5'},{l:'Poor',c:'#1a5276'}].map(i =>
+              <span key={i.l} className="legend-item">
+                <span className="legend-dot" style={{background:i.c}} />
+                <span style={{fontSize:9,color:'#A89F95'}}>{i.l}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ── 2. Plate Discipline Scatter ──
+    function PlateDisciplineScatter({ data }) {
+      const svgRef = useRef(null);
+      const containerRef = useRef(null);
+      const [tip, setTip] = useState(null);
+
+      const confColors = { SEC:'#BF5700', ACC:'#5b9bd5', 'Big 12':'#D4722A', 'Big Ten':'#2980b9', 'Pac-12':'#6B8E23', AAC:'#c0392b' };
+
+      useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('*').remove();
+        const w = containerRef.current.clientWidth;
+        const h = Math.min(420, w * 0.7);
+        svg.attr('height', h);
+
+        const m = {top:20,right:20,bottom:45,left:52};
+        const iw = w-m.left-m.right, ih = h-m.top-m.bottom;
+        const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+        const x = d3.scaleLinear().domain([0.05, 0.38]).range([0,iw]);
+        const y = d3.scaleLinear().domain([0.04, 0.22]).range([ih,0]);
+        const r = d3.scaleSqrt().domain([130,190]).range([4,14]);
+
+        const medK = 0.18, medBB = 0.12;
+
+        // Quadrant fills
+        [{x1:0,y1:0,x2:x(medK),y2:y(medBB),f:'rgba(16,185,129,0.04)'},{x1:0,y1:y(medBB),x2:x(medK),y2:ih,f:'rgba(170,170,170,0.02)'},
+         {x1:x(medK),y1:0,x2:iw,y2:y(medBB),f:'rgba(255,107,53,0.04)'},{x1:x(medK),y1:y(medBB),x2:iw,y2:ih,f:'rgba(192,57,43,0.04)'}
+        ].forEach(q => g.append('rect').attr('x',q.x1).attr('y',q.y1).attr('width',q.x2-q.x1).attr('height',q.y2-q.y1).attr('fill',q.f));
+
+        // Median lines
+        g.append('line').attr('x1',x(medK)).attr('x2',x(medK)).attr('y1',0).attr('y2',ih).attr('stroke','rgba(255,255,255,0.12)').attr('stroke-dasharray','4,3');
+        g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(medBB)).attr('y2',y(medBB)).attr('stroke','rgba(255,255,255,0.12)').attr('stroke-dasharray','4,3');
+
+        // Quadrant labels
+        [{t:'ELITE EYE',x:8,y:14},{t:'PATIENT CONTACT',x:8,y:ih-8},{t:'AGGRESSIVE POWER',x:iw-8,y:14,a:'end'},{t:'FREE SWINGER',x:iw-8,y:ih-8,a:'end'}]
+          .forEach(l => g.append('text').attr('x',l.x).attr('y',l.y).attr('text-anchor',l.a||'start').attr('fill','rgba(255,255,255,0.15)').attr('font-family',"'Oswald'").attr('font-size',9).attr('letter-spacing','0.12em').text(l.t));
+
+        // Axes
+        g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(6).tickFormat(d=>`${(d*100).toFixed(0)}%`))
+          .call(g=>{g.selectAll('text').attr('fill','#A89F95').attr('font-size',10);g.selectAll('line').attr('stroke','rgba(255,255,255,0.08)');g.select('.domain').attr('stroke','rgba(255,255,255,0.08)')});
+        g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d=>`${(d*100).toFixed(0)}%`))
+          .call(g=>{g.selectAll('text').attr('fill','#A89F95').attr('font-size',10);g.selectAll('line').attr('stroke','rgba(255,255,255,0.08)');g.select('.domain').attr('stroke','rgba(255,255,255,0.08)')});
+
+        g.append('text').attr('x',iw/2).attr('y',ih+38).attr('text-anchor','middle').attr('fill','#A89F95').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('STRIKEOUT RATE (K%)');
+        g.append('text').attr('transform',`translate(-40,${ih/2}) rotate(-90)`).attr('text-anchor','middle').attr('fill','#A89F95').attr('font-family',"'Oswald'").attr('font-size',11).attr('letter-spacing','0.08em').text('WALK RATE (BB%)');
+
+        // Dots
+        g.selectAll('.dot').data(data).enter().append('circle')
+          .attr('cx', d=>x(d.k_pct)).attr('cy', d=>y(d.bb_pct))
+          .attr('r', 0)
+          .attr('fill', d=>confColors[d.conf]||'#666')
+          .attr('fill-opacity', 0.7)
+          .attr('stroke', d=>confColors[d.conf]||'#666')
+          .attr('stroke-opacity', 0.3)
+          .attr('cursor', 'pointer')
+          .on('mouseenter', function(e, d) {
+            d3.select(this).attr('fill-opacity',1).attr('stroke-opacity',1).attr('stroke-width',2);
+            const rect = containerRef.current.getBoundingClientRect();
+            setTip({x:e.clientX-rect.left, y:e.clientY-rect.top, p:d});
+          })
+          .on('mouseleave', function() {
+            d3.select(this).attr('fill-opacity',0.7).attr('stroke-opacity',0.3).attr('stroke-width',1);
+            setTip(null);
+          })
+          .transition().duration(500).delay((_,i)=>i*30).ease(d3.easeCubicOut)
+          .attr('r', d=>r(d.pa));
+      }, [data]);
+
+      return (
+        <div className="card">
+          <div className="card-header">
+            <div className="font-display" style={{fontSize:14}}>Plate Discipline</div>
+            <div style={{fontSize:10,color:'#A89F95',marginTop:2}}>K% vs BB% · Bubble size = plate appearances</div>
+          </div>
+          <div ref={containerRef} className="card-body" style={{position:'relative'}}>
+            <svg ref={svgRef} width="100%" height={420} style={{display:'block'}} />
+            {tip && (
+              <div style={{position:'absolute',left:tip.x+12,top:tip.y-10,background:'#1A1A1A',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 12px',pointerEvents:'none',zIndex:50}}>
+                <div style={{fontSize:13,fontWeight:500,color:'#F5F0EB'}}>{tip.p.name}</div>
+                <div style={{fontSize:10,color:'#A89F95'}}>{tip.p.team} · {tip.p.conf}</div>
+                <div style={{display:'flex',gap:12,marginTop:6}}>
+                  <div><span style={{fontSize:9,color:'#A89F95'}}>K%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.k_pct*100).toFixed(1)}%</div></div>
+                  <div><span style={{fontSize:9,color:'#A89F95'}}>BB%</span><div style={{fontSize:12,fontWeight:600}}>{(tip.p.bb_pct*100).toFixed(1)}%</div></div>
+                  <div><span style={{fontSize:9,color:'#A89F95'}}>PA</span><div style={{fontSize:12,fontWeight:600}}>{tip.p.pa}</div></div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap'}}>
+            {Object.entries(confColors).map(([c,color]) =>
+              <span key={c} className="legend-item">
+                <span style={{width:8,height:8,borderRadius:'50%',background:color}} />
+                <span style={{fontSize:9,color:'#A89F95'}}>{c}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ── 3. Conference Strength Heatmap ──
+    function ConferenceHeatmap({ data }) {
+      const svgRef = useRef(null);
+      const containerRef = useRef(null);
+
+      const metrics = [
+        {key:'strength_index',label:'STR',hib:true,fmt:v=>v.toFixed(0)},
+        {key:'avg_era',label:'ERA',hib:false,fmt:v=>v.toFixed(2)},
+        {key:'avg_woba',label:'wOBA',hib:true,fmt:v=>v.toFixed(3)},
+        {key:'avg_ops',label:'OPS',hib:true,fmt:v=>v.toFixed(3)},
+      ];
+
+      const sorted = [...data].sort((a,b)=>b.strength_index-a.strength_index);
+
+      useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('*').remove();
+        const w = containerRef.current.clientWidth;
+        const rh = 34, hh = 36, lw = 110, cp = 2;
+        const h = hh + sorted.length * rh + 8;
+        svg.attr('height', h);
+        const g = svg.append('g');
+        const cw = (w - lw - 24) / metrics.length;
+
+        // Compute percentiles
+        const pctls = {};
+        metrics.forEach(m => {
+          const vals = sorted.map(d=>d[m.key]);
+          const s = [...vals].sort((a,b)=>a-b);
+          pctls[m.key] = {};
+          sorted.forEach(d => {
+            const v = d[m.key];
+            const below = s.filter(sv=>sv<v).length;
+            pctls[m.key][d.conference] = s.length>1 ? (below/(s.length-1))*100 : 50;
+          });
+        });
+
+        // Headers
+        metrics.forEach((m,i) => {
+          g.append('text').attr('x', lw+i*cw+cw/2).attr('y', 22)
+            .attr('text-anchor','middle').attr('fill','#A89F95')
+            .attr('font-family',"'Oswald'").attr('font-size',10)
+            .attr('letter-spacing','0.1em').text(m.label);
+        });
+
+        // Rows
+        sorted.forEach((row, ri) => {
+          const y = hh + ri * rh;
+          g.append('text').attr('x',12).attr('y',y+rh/2+4)
+            .attr('fill','#F5F0EB').attr('font-family',"'JetBrains Mono'")
+            .attr('font-size',11).text(row.conference);
+
+          if (row.is_power) {
+            g.append('text').attr('x',lw-8).attr('y',y+rh/2+3)
+              .attr('text-anchor','end').attr('fill','#BF5700')
+              .attr('font-family',"'JetBrains Mono'").attr('font-size',7).text('P5');
+          }
+
+          metrics.forEach((m,mi) => {
+            const v = row[m.key];
+            const p = pctls[m.key][row.conference];
+            const color = getPercentileColor(p, m.hib);
+            const cx = lw+mi*cw+cp, cy = y+cp;
+            const cellW = cw-cp*2, cellH = rh-cp*2;
+
+            g.append('rect').attr('x',cx).attr('y',cy).attr('width',cellW).attr('height',cellH)
+              .attr('rx',4).attr('fill',color).attr('fill-opacity',0)
+              .transition().duration(400).delay(ri*25+mi*50).attr('fill-opacity',0.15);
+
+            g.append('text').attr('x',cx+cellW/2).attr('y',cy+cellH/2+4)
+              .attr('text-anchor','middle').attr('fill',color)
+              .attr('font-family',"'JetBrains Mono'").attr('font-size',11)
+              .attr('font-weight',600).text(m.fmt(v));
+          });
+        });
+      }, []);
+
+      return (
+        <div className="card">
+          <div className="card-header">
+            <div className="font-display" style={{fontSize:14}}>Conference Strength Heatmap</div>
+            <div style={{fontSize:10,color:'#A89F95',marginTop:2}}>Ranked by composite index · Cell color = percentile</div>
+          </div>
+          <div ref={containerRef} className="card-body" style={{overflowX:'auto'}}>
+            <svg ref={svgRef} width="100%" height={400} style={{display:'block',minWidth:380}} />
+          </div>
+          <div style={{padding:'12px 20px',borderTop:'1px solid rgba(255,255,255,0.04)',display:'flex',justifyContent:'center',gap:12}}>
+            {[{l:'Elite',c:'#c0392b'},{l:'Above Avg',c:'#d4775c'},{l:'Average',c:'#aaaaaa'},{l:'Below Avg',c:'#5b9bd5'},{l:'Poor',c:'#1a5276'}].map(i =>
+              <span key={i.l} className="legend-item">
+                <span className="legend-dot" style={{background:i.c}} />
+                <span style={{fontSize:9,color:'#A89F95'}}>{i.l}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ── 4. Gallery Cards ──
+    function VisualGallery({ onSelect, active }) {
+      const tools = [
+        {id:'percentile',title:'Percentile Player Card',desc:'Savant-style horizontal bar scouting report. One scan, full profile.',cat:'Player',avail:true},
+        {id:'scatter',title:'Plate Discipline Scatter',desc:'K% vs BB% with conference color-coding and quadrant labels.',cat:'Batting',avail:true},
+        {id:'heatmap',title:'Conference Heatmap',desc:'Strength grid — conferences x metrics, percentile-colored cells.',cat:'Team',avail:true},
+        {id:'power-speed',title:'Power vs Speed',desc:'ISO vs stolen base rate. Five-tool outlier detection.',cat:'Batting',avail:false},
+        {id:'pitch-arsenal',title:'Pitch Arsenal',desc:'Velocity curves and usage by pitch type.',cat:'Pitching',avail:false},
+        {id:'era-fip',title:'ERA vs FIP Gap',desc:'Luck separator — which pitchers are over/under-performing.',cat:'Pitching',avail:false},
+      ];
+
+      return (
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))',gap:16}}>
+          {tools.map(t => (
+            <button key={t.id} onClick={()=>t.avail&&onSelect(t.id)}
+              disabled={!t.avail}
+              style={{textAlign:'left',border:'none',background:'none',cursor:t.avail?'pointer':'not-allowed',opacity:t.avail?1:0.35}}>
+              <div className="card" style={{height:'100%',borderColor:active===t.id?'rgba(191,87,0,0.4)':'rgba(255,255,255,0.04)',boxShadow:active===t.id?'0 0 20px rgba(191,87,0,0.1)':'none'}}>
+                <div style={{height:80,background:'linear-gradient(135deg, #1A1A1A, #242424)',display:'flex',alignItems:'center',justifyContent:'center',borderRadius:'12px 12px 0 0'}}>
+                  {t.avail ? (
+                    <svg viewBox="0 0 48 48" style={{width:36,height:36,color:'rgba(191,87,0,0.4)'}}>
+                      <rect x="4" y="4" width="40" height="40" rx="4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="16" cy="28" r="4" fill="currentColor" opacity="0.5" />
+                      <circle cx="28" cy="18" r="3" fill="currentColor" opacity="0.3" />
+                      <circle cx="36" cy="32" r="5" fill="currentColor" opacity="0.4" />
+                    </svg>
+                  ) : (
+                    <span style={{fontSize:9,fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em',color:'#A89F95'}}>Coming Soon</span>
+                  )}
+                </div>
+                <div style={{padding:'12px 16px'}}>
+                  <span className="badge" style={{marginBottom:6,display:'inline-block'}}>{t.cat}</span>
+                  <div className="font-display" style={{fontSize:13,color:'#F5F0EB',marginBottom:4}}>{t.title}</div>
+                  <div style={{fontSize:10,color:'#A89F95',lineHeight:1.5}}>{t.desc}</div>
+                  {t.avail && (
+                    <div style={{marginTop:8,display:'flex',alignItems:'center',gap:4}}>
+                      <span style={{width:5,height:5,borderRadius:'50%',background:'#10B981'}} />
+                      <span style={{fontSize:8,color:'#A89F95',textTransform:'uppercase',letterSpacing:'0.1em'}}>
+                        {active===t.id?'Active':'Click to explore'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      );
+    }
+
+    // ── 5. Enhanced Leaderboard Row ──
+    function EnhancedLeaderboard({ data }) {
+      const cols = [
+        {key:'avg',label:'AVG',fmt:v=>v.toFixed(3).replace(/^0/,''),hib:true},
+        {key:'obp',label:'OBP',fmt:v=>v.toFixed(3).replace(/^0/,''),hib:true},
+        {key:'slg',label:'SLG',fmt:v=>v.toFixed(3).replace(/^0/,''),hib:true},
+        {key:'woba',label:'wOBA',fmt:v=>v.toFixed(3).replace(/^0/,''),hib:true},
+        {key:'wrc_plus',label:'wRC+',fmt:v=>Math.round(v).toString(),hib:true},
+      ];
+
+      // Compute percentiles
+      const pctls = {};
+      cols.forEach(c => {
+        const vals = data.map(d=>d[c.key]).sort((a,b)=>a-b);
+        pctls[c.key] = data.map(d => {
+          const below = vals.filter(v=>v<d[c.key]).length;
+          return vals.length>1?(below/(vals.length-1))*100:50;
+        });
+      });
+
+      const sorted = [...data].sort((a,b)=>b.woba-a.woba).slice(0,10);
+
+      return (
+        <div className="card">
+          <div className="card-header" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div className="font-display" style={{fontSize:14}}>Batting Leaders — Enhanced</div>
+            <span style={{fontSize:10,color:'#A89F95'}}>{data.length} players</span>
+          </div>
+          <div style={{overflowX:'auto'}}>
+            <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+              <thead>
+                <tr style={{borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+                  <th style={{padding:'10px 16px',textAlign:'left',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>#</th>
+                  <th style={{padding:'10px 8px',textAlign:'left',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>Player</th>
+                  {cols.map(c=> <th key={c.key} style={{padding:'10px 6px',textAlign:'center',fontSize:10,color:'#A89F95',fontFamily:"'Oswald'",textTransform:'uppercase',letterSpacing:'0.1em'}}>{c.label}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map((row, i) => {
+                  const origIdx = data.indexOf(row);
+                  return (
+                    <tr key={row.name} style={{borderBottom:'1px solid rgba(255,255,255,0.04)'}}>
+                      <td style={{padding:'8px 16px',color:i<3?'#BF5700':'#A89F95',fontWeight:i<3?700:400}}>{i+1}</td>
+                      <td style={{padding:'8px 8px'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                          <div style={{width:24,height:24,borderRadius:4,background:'rgba(255,255,255,0.05)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:'#A89F95'}}>
+                            {row.team.slice(0,2).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{fontWeight:500,color:'#F5F0EB'}}>{row.name}</div>
+                            <div style={{fontSize:10,color:'#A89F95'}}>{row.team}</div>
+                          </div>
+                        </div>
+                      </td>
+                      {cols.map(c => {
+                        const p = pctls[c.key][origIdx];
+                        const color = getPercentileColor(p, c.hib);
+                        return (
+                          <td key={c.key} style={{padding:'8px 6px',textAlign:'center'}}>
+                            <div style={{position:'relative',display:'inline-block',padding:'2px 6px',borderRadius:4}}>
+                              <div style={{position:'absolute',inset:0,backgroundColor:color,opacity:0.12,borderRadius:4}} />
+                              <span style={{position:'relative',color,fontWeight:500}}>{c.fmt(row[c.key])}</span>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
+    // ── App ──
+    function App() {
+      const [activeTab, setActiveTab] = useState('gallery');
+      const [activeViz, setActiveViz] = useState(null);
+      const tabs = [
+        {key:'gallery',label:'Visual Gallery'},
+        {key:'percentile',label:'Player Card'},
+        {key:'scatter',label:'Plate Discipline'},
+        {key:'heatmap',label:'Conference Heatmap'},
+        {key:'leaderboard',label:'Enhanced Table'},
+      ];
+
+      return (
+        <div>
+          {/* Header */}
+          <div style={{borderBottom:'1px solid rgba(255,255,255,0.04)',padding:'40px 0 0'}}>
+            <div className="container">
+              <span className="badge" style={{marginBottom:12}}>PLAYGROUND</span>
+              <h1 className="font-display" style={{fontSize:32,fontWeight:700,color:'#F5F0EB',marginBottom:4}}>
+                Savant <span style={{color:'#BF5700'}}>Visual System</span>
+              </h1>
+              <p style={{fontSize:13,color:'#A89F95',maxWidth:560,lineHeight:1.7,marginBottom:20}}>
+                Interactive prototypes for BSI College Baseball Savant visualizations.
+                D3 + React rendering against mock data. Each view below becomes a production component.
+              </p>
+              <div style={{display:'flex',gap:0,overflowX:'auto'}}>
+                {tabs.map(t =>
+                  <button key={t.key} className={`nav-tab ${activeTab===t.key?'active':''}`}
+                    onClick={()=>{setActiveTab(t.key);setActiveViz(null)}}>
+                    {t.label}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="container" style={{paddingTop:32,paddingBottom:60}}>
+            {activeTab === 'gallery' && (
+              <div>
+                <div className="section-title">DATA VISUALIZATION TOOLS</div>
+                <VisualGallery onSelect={(id)=>{setActiveViz(id);setActiveTab(id==='percentile'?'percentile':id==='scatter'?'scatter':id==='heatmap'?'heatmap':'gallery')}} active={activeViz} />
+              </div>
+            )}
+            {activeTab === 'percentile' && (
+              <div style={{maxWidth:500,margin:'0 auto'}}>
+                <div className="section-title">PERCENTILE PLAYER CARD</div>
+                <PercentilePlayerCard player={MOCK_BATTING[1]} />
+              </div>
+            )}
+            {activeTab === 'scatter' && (
+              <div>
+                <div className="section-title">PLATE DISCIPLINE SCATTER</div>
+                <PlateDisciplineScatter data={MOCK_BATTING} />
+              </div>
+            )}
+            {activeTab === 'heatmap' && (
+              <div>
+                <div className="section-title">CONFERENCE STRENGTH HEATMAP</div>
+                <ConferenceHeatmap data={MOCK_CONFERENCES} />
+              </div>
+            )}
+            {activeTab === 'leaderboard' && (
+              <div>
+                <div className="section-title">ENHANCED LEADERBOARD</div>
+                <EnhancedLeaderboard data={MOCK_BATTING} />
+              </div>
+            )}
+
+            {/* Attribution */}
+            <div style={{textAlign:'center',marginTop:48,fontSize:10,color:'#A89F95'}}>
+              BSI Savant Visual System · Prototype · blazesportsintel.com
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

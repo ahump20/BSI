@@ -1,10 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SportTabs, SportTabsCompact, type Sport } from '@/components/sports/SportTabs';
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { DashboardWidget } from '@/components/dashboard/DashboardWidget';
+import { DashboardConfigurator, useDashboardPrefs } from '@/components/dashboard/DashboardConfigurator';
+import { TeamBrowser } from '@/components/dashboard/TeamBrowser';
+import { MyTeamsPanel } from '@/components/dashboard/MyTeamsPanel';
 
 const StandingsBarChart = dynamic(
   () => import('@/components/dashboard/DashboardCharts').then((mod) => mod.StandingsBarChart),
@@ -116,6 +122,20 @@ const SPORT_TEAM_COUNTS: Record<Sport, number> = {
   ncaa: 300,
 };
 
+/** Map DashboardConfigurator sport labels to Sport keys */
+const SPORT_LABEL_TO_KEY: Record<string, Sport> = {
+  'College Baseball': 'ncaa',
+  'MLB': 'mlb',
+  'NFL': 'nfl',
+  'NBA': 'nba',
+  'College Football': 'ncaa', // shares ncaa key
+  'College Basketball': 'ncaa',
+};
+
+const SPORT_DISPLAY: Record<string, string> = {
+  mlb: 'MLB', nfl: 'NFL', nba: 'NBA', ncaa: 'NCAA', rankings: 'Rankings',
+};
+
 type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
 
 export default function DashboardPage() {
@@ -150,12 +170,12 @@ export default function DashboardPage() {
 
   if (authStatus === 'checking') {
     return (
-      <main id="main-content" className="min-h-screen pt-24 md:pt-28 flex items-center justify-center">
+      <div className="min-h-screen pt-6 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mx-auto mb-4" />
           <p className="text-text-secondary text-sm">Verifying access...</p>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -169,6 +189,13 @@ export default function DashboardPage() {
   return <DashboardContent tier={authTier} hasBilling={hasBilling} />;
 }
 
+// ── Sport content transition variants ───────────────────────────────────────
+const contentVariants = {
+  enter: { opacity: 0, x: 30 },
+  center: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -30 },
+};
+
 function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBilling: boolean }) {
   const [activeSport, setActiveSport] = useState<Sport>('mlb');
   const [stats, setStats] = useState<DashboardStats>({
@@ -181,6 +208,21 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(60);
+  const [configuratorOpen, setConfiguratorOpen] = useState(false);
+  const [prefs, savePrefs] = useDashboardPrefs();
+  const [healthData, setHealthData] = useState<HealthData | null>(null);
+
+  // Determine which sport keys the user cares about
+  const favoriteSportKeys = (prefs.favoriteSports.length > 0
+    ? [...new Set(prefs.favoriteSports.map((s) => SPORT_LABEL_TO_KEY[s]).filter((k): k is Sport => !!k))]
+    : ['mlb', 'nfl', 'nba', 'ncaa']) as Sport[];
+
+  // Auto-switch if active sport is no longer favorited
+  useEffect(() => {
+    if (favoriteSportKeys.length > 0 && !favoriteSportKeys.includes(activeSport)) {
+      setActiveSport(favoriteSportKeys[0]);
+    }
+  }, [favoriteSportKeys, activeSport]);
 
   const handleSignOut = () => {
     localStorage.removeItem('bsi-api-key');
@@ -200,7 +242,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
         window.location.href = data.url;
       }
     } catch {
-      // Portal unavailable — non-critical, fail silently
+      // Portal unavailable — non-critical
     }
   };
 
@@ -208,6 +250,14 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
   const lastUpdatedLabel = stats.lastUpdated && timezoneLoaded
     ? formatDateTime(new Date(stats.lastUpdated)).split(',')[1]?.trim() || 'Now'
     : 'Now';
+
+  // Fetch provider health once for coverage chart
+  useEffect(() => {
+    fetch('/api/health/providers')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => { if (data) setHealthData(data as HealthData); })
+      .catch(() => {});
+  }, []);
 
   // Countdown timer for auto-refresh
   useEffect(() => {
@@ -289,20 +339,25 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
     winPct: team.winPct || team.wins / (team.wins + team.losses) || 0,
   }));
 
-  // Coverage pie chart — show real data only when available
-  const hasCoverageData = false; // No live-scores endpoint wired yet; show empty state
-  const sportDistributionData = [
-    { name: 'MLB', value: 25, color: '#C41E3A' },
-    { name: 'NFL', value: 25, color: '#013369' },
-    { name: 'NBA', value: 25, color: '#1D428A' },
-    { name: 'NCAA', value: 25, color: 'var(--bsi-primary)' },
-  ];
+  // Build coverage pie from real provider health data
+  const hasCoverageData = !!(healthData && Object.keys(healthData.providers).length > 0);
+  const sportDistributionData = useMemo(() => {
+    if (!healthData) return [];
+    const sportColors: Record<string, string> = {
+      mlb: '#C41E3A', nfl: '#013369', nba: '#1D428A', ncaa: '#BF5700', rankings: '#D4A843',
+    };
+    return Object.entries(healthData.providers).map(([key, provider]) => ({
+      name: (SPORT_DISPLAY[key] || key).toUpperCase(),
+      value: provider.status === 'ok' ? 100 : provider.status === 'degraded' ? 50 : 10,
+      color: sportColors[key] || '#666',
+    }));
+  }, [healthData]);
 
   return (
-    <main id="main-content" className="min-h-screen pt-24 md:pt-28">
+    <div className="min-h-screen pt-6">
       <Section padding="lg" className="pt-8">
         <Container size="wide">
-          {/* Header with Logo */}
+          {/* Header */}
           <ScrollReveal direction="up">
             <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
@@ -352,14 +407,16 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             </div>
           </ScrollReveal>
 
-          {/* Sport Tabs */}
-          <ScrollReveal direction="up" delay={100}>
-            <div className="hidden md:block mb-8">
-              <SportTabs defaultSport={activeSport} onSportChange={setActiveSport} />
+          {/* Mobile sport tabs — sidebar handles desktop */}
+          <div className="lg:hidden mb-6">
+            <ScrollReveal direction="up" delay={100}>
+              <div className="hidden md:block lg:hidden mb-6">
+                <SportTabs defaultSport={activeSport} onSportChange={setActiveSport} />
+              </div>
+            </ScrollReveal>
+            <div className="md:hidden">
+              <SportTabsCompact defaultSport={activeSport} onSportChange={setActiveSport} />
             </div>
-          </ScrollReveal>
-          <div className="md:hidden mb-6">
-            <SportTabsCompact defaultSport={activeSport} onSportChange={setActiveSport} />
           </div>
 
           {/* Error Banner */}
@@ -375,153 +432,218 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
             </div>
           )}
 
-          {/* KPI Stats Row */}
-          <ScrollReveal direction="up" delay={150}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              {isLoading ? (
-                <>
-                  <StatCardSkeleton />
-                  <StatCardSkeleton />
-                  <StatCardSkeleton />
-                  <StatCardSkeleton />
-                </>
-              ) : (
-                <>
-                  <StatCard
-                    label="Live Games"
-                    value={stats.liveGames}
-                    trend={stats.liveGames > 0 ? 'live' : undefined}
-                    icon={<LiveIcon />}
-                  />
-                  <StatCard
-                    label="Today's Games"
-                    value={stats.todaysGames}
-                    subtitle={activeSport.toUpperCase()}
-                    icon={<CalendarIcon />}
-                  />
-                  <StatCard
-                    label="Teams"
-                    value={stats.totalTeams}
-                    subtitle="in standings"
-                    icon={<TeamIcon />}
-                  />
-                  <StatCard
-                    label="Last Updated"
-                    value={lastUpdatedLabel}
-                    subtitle={`${countdown}s`}
-                    icon={<CountdownRing seconds={countdown} total={60} />}
-                  />
-                </>
-              )}
-            </div>
-          </ScrollReveal>
+          {/* ═══ Sidebar + Main Content ═══ */}
+          <div className="flex gap-6">
+            {/* Desktop Sidebar */}
+            <DashboardSidebar
+              activeSport={activeSport}
+              onSportChange={setActiveSport}
+              onOpenConfigurator={() => setConfiguratorOpen(true)}
+              visibleSports={favoriteSportKeys}
+            />
 
-          {/* Main Grid: Scores + Standings */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            <ScrollReveal direction="left" delay={200} className="lg:col-span-2">
-              <LiveScoresPanel sport={activeSport} />
-            </ScrollReveal>
-            <ScrollReveal direction="right" delay={300}>
-              <StandingsTable
-                sport={activeSport}
-                limit={5}
-                groupBy={activeSport === 'nba' ? 'conference' : activeSport === 'nfl' ? 'conference' : 'none'}
-                showLogos={activeSport === 'nba'}
-              />
-            </ScrollReveal>
-          </div>
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSport}
+                  variants={contentVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                >
+                  {/* My Teams */}
+                  {prefs.favoriteTeams.length > 0 && (
+                    <DashboardWidget title="My Teams" className="mb-6">
+                      <MyTeamsPanel teamSlugs={prefs.favoriteTeams} />
+                    </DashboardWidget>
+                  )}
 
-          {/* Leaders Section */}
-          <ScrollReveal direction="up" delay={350}>
-            <SportLeaders sport={activeSport} className="mb-8" />
-          </ScrollReveal>
-
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <ScrollReveal direction="up" delay={400}>
-              <Card padding="lg" className="h-full">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-text-primary">Win Distribution</h3>
-                  <span className="text-xs text-text-muted uppercase tracking-wider">Top 8 Teams</span>
-                </div>
-                {fetchError || (!isLoading && standingsChartData.length === 0) ? (
-                  <div className="h-64 flex items-center justify-center">
-                    <div className="text-center">
-                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <path d="M3 9h18M9 21V9" />
-                      </svg>
-                      <p className="text-text-tertiary text-sm">
-                        {fetchError ? 'Standings data unavailable' : `No standings data for ${activeSport.toUpperCase()}`}
-                      </p>
-                    </div>
+                  {/* KPI Stats Row */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    {isLoading ? (
+                      <>
+                        <StatCardSkeleton />
+                        <StatCardSkeleton />
+                        <StatCardSkeleton />
+                        <StatCardSkeleton />
+                      </>
+                    ) : (
+                      <>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
+                          <StatCard
+                            label="Live Games"
+                            value={stats.liveGames}
+                            trend={stats.liveGames > 0 ? 'live' : undefined}
+                            icon={<LiveIcon />}
+                          />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+                          <StatCard
+                            label="Today's Games"
+                            value={stats.todaysGames}
+                            subtitle={activeSport.toUpperCase()}
+                            icon={<CalendarIcon />}
+                          />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                          <StatCard
+                            label="Teams"
+                            value={stats.totalTeams}
+                            subtitle="in standings"
+                            icon={<TeamIcon />}
+                          />
+                        </motion.div>
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+                          <StatCard
+                            label="Last Updated"
+                            value={lastUpdatedLabel}
+                            subtitle={`${countdown}s`}
+                            icon={<CountdownRing seconds={countdown} total={60} />}
+                          />
+                        </motion.div>
+                      </>
+                    )}
                   </div>
-                ) : (
-                  <StandingsBarChart data={standingsChartData} isLoading={isLoading} />
-                )}
-              </Card>
-            </ScrollReveal>
 
-            <ScrollReveal direction="up" delay={450}>
-              <Card padding="lg" className="h-full">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-text-primary">Coverage Overview</h3>
-                  <span className="text-xs text-text-muted uppercase tracking-wider">All Sports</span>
-                </div>
-                {hasCoverageData ? (
-                  <SportCoveragePieChart data={sportDistributionData} />
-                ) : (
-                  <div className="h-64 flex items-center justify-center">
-                    <div className="text-center">
-                      <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 6v6l4 2" />
-                      </svg>
-                      <p className="text-text-tertiary text-sm">Coverage data unavailable</p>
-                      <p className="text-text-tertiary/60 text-xs mt-1">Live scores integration pending</p>
-                    </div>
+                  {/* Live Scores + Standings */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <DashboardWidget title="Live Scores" className="lg:col-span-2" layoutId={`scores-${activeSport}`}>
+                      <LiveScoresPanel sport={activeSport} />
+                    </DashboardWidget>
+                    <DashboardWidget title="Standings" layoutId={`standings-${activeSport}`}>
+                      <StandingsTable
+                        sport={activeSport}
+                        limit={5}
+                        groupBy={activeSport === 'nba' ? 'conference' : activeSport === 'nfl' ? 'conference' : 'none'}
+                        showLogos={activeSport === 'nba'}
+                      />
+                    </DashboardWidget>
                   </div>
-                )}
-              </Card>
-            </ScrollReveal>
-          </div>
 
-          {/* Quick Links — 4-column grid with Arcade included */}
-          <ScrollReveal direction="up" delay={500}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <QuickLinkCard href="/mlb" icon="/icons/baseball.svg" title="MLB" subtitle="Scores & Standings" />
-              <QuickLinkCard href="/nfl" icon="/icons/football.svg" title="NFL" subtitle="Games & Stats" />
-              <QuickLinkCard href="/nba" icon="/icons/basketball.svg" title="NBA" subtitle="Scores & Stats" />
-              <QuickLinkCard href="/college-baseball" icon="/icons/baseball.svg" title="NCAA Baseball" subtitle="Rankings & Scores" />
-              <QuickLinkCard href="/cfb" icon="/icons/football.svg" title="CFB" subtitle="Rankings & Standings" />
-              <ArcadeQuickLinkCard />
+                  {/* Leaders */}
+                  <DashboardWidget title="Leaders" subtitle={activeSport.toUpperCase()} className="mb-6">
+                    <SportLeaders sport={activeSport} />
+                  </DashboardWidget>
+
+                  {/* Team Browser — NCAA only */}
+                  {activeSport === 'ncaa' && (
+                    <DashboardWidget title="Team Browser" subtitle="NCAA Baseball" className="mb-6">
+                      <TeamBrowser />
+                    </DashboardWidget>
+                  )}
+
+                  {/* Charts */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <DashboardWidget title="Win Distribution" subtitle="Top 8 Teams">
+                      {fetchError || (!isLoading && standingsChartData.length === 0) ? (
+                        <div className="h-64 flex items-center justify-center">
+                          <div className="text-center">
+                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <rect x="3" y="3" width="18" height="18" rx="2" />
+                              <path d="M3 9h18M9 21V9" />
+                            </svg>
+                            <p className="text-text-tertiary text-sm">
+                              {fetchError ? 'Standings data unavailable' : `No standings data for ${activeSport.toUpperCase()}`}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <StandingsBarChart data={standingsChartData} isLoading={isLoading} />
+                      )}
+                    </DashboardWidget>
+
+                    <DashboardWidget title="Coverage Overview" subtitle="All Sports">
+                      {hasCoverageData ? (
+                        <SportCoveragePieChart data={sportDistributionData} />
+                      ) : (
+                        <div className="h-64 flex items-center justify-center">
+                          <div className="text-center">
+                            <svg viewBox="0 0 24 24" className="w-10 h-10 mx-auto text-text-muted mb-3" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 6v6l4 2" />
+                            </svg>
+                            <p className="text-text-tertiary text-sm">Coverage data unavailable</p>
+                            <p className="text-text-tertiary/60 text-xs mt-1">Live scores integration pending</p>
+                          </div>
+                        </div>
+                      )}
+                    </DashboardWidget>
+                  </div>
+
+                  {/* Quick Links — mobile/tablet only (sidebar has them on desktop) */}
+                  <div className="lg:hidden mb-6">
+                    <DashboardWidget title="Quick Links">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <QuickLinkCard href="/mlb" icon="/icons/baseball.svg" title="MLB" subtitle="Scores & Standings" />
+                        <QuickLinkCard href="/nfl" icon="/icons/football.svg" title="NFL" subtitle="Games & Stats" />
+                        <QuickLinkCard href="/nba" icon="/icons/basketball.svg" title="NBA" subtitle="Scores & Stats" />
+                        <QuickLinkCard href="/college-baseball" icon="/icons/baseball.svg" title="NCAA Baseball" subtitle="Rankings & Scores" />
+                        <QuickLinkCard href="/cfb" icon="/icons/football.svg" title="CFB" subtitle="Rankings & Standings" />
+                        <ArcadeQuickLinkCard />
+                      </div>
+                    </DashboardWidget>
+                  </div>
+
+                  {/* Provider Health */}
+                  <ProviderHealthPanel />
+
+                  {/* Data Attribution */}
+                  <DataSourcePanel
+                    sources={getDashboardSources(activeSport, stats.lastUpdated)}
+                    lastUpdated={stats.lastUpdated}
+                    refreshInterval={60}
+                    className="mb-6"
+                  />
+                  <DataDisclaimer />
+                  <div className="mt-4 text-center">
+                    <Link
+                      href="/data-sources"
+                      className="text-xs text-text-muted hover:text-text-tertiary transition-colors underline underline-offset-2"
+                    >
+                      View all data sources and refresh cadences →
+                    </Link>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
-          </ScrollReveal>
-
-          {/* Provider Health */}
-          <ProviderHealthPanel />
-
-          {/* Data Attribution */}
-          <DataSourcePanel
-            sources={getDashboardSources(activeSport, stats.lastUpdated)}
-            lastUpdated={stats.lastUpdated}
-            refreshInterval={60}
-            className="mb-6"
-          />
-          <DataDisclaimer />
-          <div className="mt-4 text-center">
-            <Link
-              href="/data-sources"
-              className="text-xs text-text-muted hover:text-text-tertiary transition-colors underline underline-offset-2"
-            >
-              View all data sources and refresh cadences →
-            </Link>
           </div>
         </Container>
       </Section>
 
+      {/* Configurator slide-over */}
+      <AnimatePresence>
+        {configuratorOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfiguratorOpen(false)}
+            />
+            <motion.div
+              className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-midnight border-l border-border overflow-y-auto"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 350 }}
+            >
+              <div className="p-6">
+                <DashboardConfigurator
+                  prefs={prefs}
+                  onChange={savePrefs}
+                  onClose={() => setConfiguratorOpen(false)}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <Footer />
-    </main>
+    </div>
   );
 }
 
@@ -539,10 +661,6 @@ interface HealthData {
   activeSports: string[];
 }
 
-const SPORT_DISPLAY: Record<string, string> = {
-  mlb: 'MLB', nfl: 'NFL', nba: 'NBA', ncaa: 'NCAA', rankings: 'Rankings',
-};
-
 const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
   ok: { dot: 'bg-success', text: 'text-success' },
   degraded: { dot: 'bg-yellow-500', text: 'text-yellow-400' },
@@ -556,15 +674,14 @@ function ProviderHealthPanel() {
     fetch('/api/health/providers')
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => { if (data) setHealth(data as HealthData); })
-      .catch(() => {}); // Non-critical — panel hides gracefully
+      .catch(() => {});
   }, []);
 
   if (!health || !health.checkedAt || Object.keys(health.providers).length === 0) return null;
 
   return (
-    <div className="mb-6 bg-surface-light border border-border rounded-xl p-4">
+    <DashboardWidget title="Data Pipeline" className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-text-muted uppercase tracking-wider font-medium">Data Pipeline</span>
         <span className="text-[10px] text-text-muted">
           Checked {new Date(health.checkedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })}
         </span>
@@ -581,7 +698,7 @@ function ProviderHealthPanel() {
           );
         })}
       </div>
-    </div>
+    </DashboardWidget>
   );
 }
 
@@ -597,7 +714,7 @@ interface StatCardProps {
 
 function StatCard({ label, value, subtitle, trend, icon }: StatCardProps) {
   return (
-    <Card className="p-4">
+    <Card className="p-4 border-border/50 bg-surface-light/30 backdrop-blur-sm">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs text-text-muted uppercase tracking-wider mb-1">{label}</p>
@@ -710,12 +827,14 @@ function CountdownRing({ seconds, total }: { seconds: number; total: number }) {
   const circumference = 2 * Math.PI * radius;
   const progress = seconds / total;
   const dashOffset = circumference * (1 - progress);
+  const isUrgent = seconds <= 10;
 
   return (
-    <svg className="w-7 h-7" viewBox="0 0 24 24">
-      {/* Background track */}
+    <svg
+      className={`w-7 h-7 transition-all ${isUrgent ? 'drop-shadow-[0_0_4px_var(--bsi-primary)]' : ''}`}
+      viewBox="0 0 24 24"
+    >
       <circle cx="12" cy="12" r={radius} fill="none" stroke="currentColor" strokeWidth="2" opacity="0.1" />
-      {/* Progress arc */}
       <circle
         cx="12" cy="12" r={radius}
         fill="none"
@@ -727,7 +846,6 @@ function CountdownRing({ seconds, total }: { seconds: number; total: number }) {
         className="transition-[stroke-dashoffset] duration-1000 ease-linear"
         style={{ transform: 'rotate(-90deg)', transformOrigin: 'center' }}
       />
-      {/* Center text */}
       <text x="12" y="12" textAnchor="middle" dominantBaseline="central" fill="currentColor" fontSize="7" fontFamily="monospace">
         {seconds}
       </text>

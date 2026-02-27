@@ -200,7 +200,7 @@ export function DailyClient({ date }: { date: string }) {
   if (loading) {
     return (
       <>
-        <main id="main-content" className="pt-24">
+        <div className="pt-6">
           <Section padding="lg">
             <Container>
               <div className="animate-pulse space-y-4">
@@ -210,7 +210,7 @@ export function DailyClient({ date }: { date: string }) {
               </div>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -219,7 +219,7 @@ export function DailyClient({ date }: { date: string }) {
   if (err || !data) {
     return (
       <>
-        <main id="main-content" className="pt-24">
+        <div className="pt-6">
           <Section padding="lg">
             <Container>
               <h1 className="font-display text-3xl font-bold uppercase text-text-primary mb-4">Daily Report Unavailable</h1>
@@ -232,7 +232,7 @@ export function DailyClient({ date }: { date: string }) {
               </Link>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -243,7 +243,7 @@ export function DailyClient({ date }: { date: string }) {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -393,7 +393,7 @@ export function DailyClient({ date }: { date: string }) {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

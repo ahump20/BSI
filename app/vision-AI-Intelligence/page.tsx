@@ -1594,9 +1594,8 @@ export default function VisionAIIntelligencePage() {
         {announcement}
       </div>
 
-      <main
-        id="main-content"
-        className="min-h-screen font-body text-base text-text-primary bg-background-primary pt-16 md:pt-20"
+      <div
+        className="min-h-screen font-body text-base text-text-primary bg-background-primary pt-6"
         tabIndex={-1}
       >
         {/* Radial glow */}
@@ -2359,7 +2358,7 @@ export default function VisionAIIntelligencePage() {
             </div>
           </aside>
         </div>
-      </main>
+      </div>
     </>
   );
 }

@@ -69,8 +69,8 @@ export default function DailyEditorialClient() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 bg-gradient-to-b from-charcoal to-midnight">
+      <div>
+        <Section padding="lg" className="pt-6 bg-gradient-to-b from-charcoal to-midnight">
           <Container size="narrow">
             <ScrollReveal direction="up">
               <nav className="flex items-center gap-3 mb-6 text-sm">
@@ -155,7 +155,7 @@ export default function DailyEditorialClient() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

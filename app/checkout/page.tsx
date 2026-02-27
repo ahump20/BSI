@@ -31,14 +31,14 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
 function LoadingState() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen flex items-center justify-center">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
             <p className="text-text-secondary">Loading checkout...</p>
           </div>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );
@@ -51,8 +51,8 @@ function LoadingState() {
 function ErrorState({ message }: { message: string }) {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container center>
             <ScrollReveal direction="up">
               <Card padding="lg" className="max-w-lg mx-auto text-center">
@@ -89,7 +89,7 @@ function ErrorState({ message }: { message: string }) {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );
@@ -152,8 +152,8 @@ function CheckoutContent() {
   // Render checkout
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen">
           <Container>
             <ScrollReveal direction="up">
               <div className="max-w-3xl mx-auto">
@@ -196,7 +196,7 @@ function CheckoutContent() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

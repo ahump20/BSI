@@ -78,7 +78,7 @@ const STATS = [
 export default function Week1RecapPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -487,7 +487,7 @@ export default function Week1RecapPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

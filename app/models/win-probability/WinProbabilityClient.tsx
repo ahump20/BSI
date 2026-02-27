@@ -59,7 +59,7 @@ export function WinProbabilityClient() {
           description: 'How BSI calculates real-time win probability during live games.',
         }}
       />
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -263,7 +263,7 @@ export function WinProbabilityClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

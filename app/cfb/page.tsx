@@ -31,7 +31,7 @@ interface PortalEntry {
   status?: string;
 }
 
-type TabType = 'rankings' | 'conferences' | 'portal' | 'analytics';
+type TabType = 'rankings' | 'conferences' | 'portal';
 
 const conferences = [
   { name: 'SEC', teams: 16, description: 'Southeastern Conference' },
@@ -123,12 +123,11 @@ export default function CFBPage() {
     { id: 'rankings', label: 'Rankings' },
     { id: 'conferences', label: 'Conferences' },
     { id: 'portal', label: 'Transfer Portal' },
-    { id: 'analytics', label: 'Analytics' },
   ];
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/20 via-transparent to-transparent pointer-events-none" />
@@ -327,31 +326,6 @@ export default function CFBPage() {
               </Card>
             )}
 
-            {/* Analytics Tab */}
-            {activeTab === 'analytics' && (
-              <Card variant="default" padding="lg">
-                <CardHeader><CardTitle>Advanced Analytics</CardTitle></CardHeader>
-                <CardContent>
-                  <p className="text-text-secondary mb-4">
-                    SP+ ratings, EPA metrics, and advanced statistics for teams and players across all FBS programs.
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-burnt-orange">SP+</div>
-                      <div className="text-xs text-text-muted mt-1">Team Efficiency Ratings</div>
-                    </Card>
-                    <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-burnt-orange">EPA</div>
-                      <div className="text-xs text-text-muted mt-1">Expected Points Added</div>
-                    </Card>
-                    <Card variant="default" padding="md" className="text-center">
-                      <div className="font-display text-2xl font-bold text-burnt-orange">CFP</div>
-                      <div className="text-xs text-text-muted mt-1">Playoff Projections</div>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </Container>
         </Section>
         {/* Live Data Hub */}
@@ -393,13 +367,15 @@ export default function CFBPage() {
                 </Link>
               </ScrollReveal>
               <ScrollReveal delay={200}>
-                <Card variant="default" padding="lg" className="h-full">
-                  <h3 className="text-lg font-semibold text-text-primary mb-3">Rankings & Analytics</h3>
-                  <p className="text-text-muted text-sm leading-relaxed mb-4">
-                    AP Top 25, playoff projections, and advanced analytics.
-                  </p>
-                  <Badge variant="warning">Coming Soon</Badge>
-                </Card>
+                <Link href="/cfb/transfer-portal">
+                  <Card variant="hover" padding="lg" className="h-full">
+                    <h3 className="text-lg font-semibold text-text-primary mb-3">Transfer Portal</h3>
+                    <p className="text-text-muted text-sm leading-relaxed mb-4">
+                      Real-time portal entries, commitments, and recruiting intel.
+                    </p>
+                    <Badge variant="success">Live</Badge>
+                  </Card>
+                </Link>
               </ScrollReveal>
             </div>
           </Container>
@@ -449,7 +425,7 @@ export default function CFBPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

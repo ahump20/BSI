@@ -328,7 +328,7 @@ export default function NFLTeamsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -404,7 +404,7 @@ export default function NFLTeamsPage() {
             })}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

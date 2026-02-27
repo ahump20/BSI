@@ -133,7 +133,7 @@ export default function NFLPage() {
   return (
     <div className="bsi-theme-football">
       <>
-        <main id="main-content">
+        <div>
         {/* Hero */}
         <SportHero
           sport="NFL"
@@ -324,7 +324,7 @@ export default function NFLPage() {
             />
           </Container>
         </Section>
-      </main>
+      </div>
         <Footer />
       </>
     </div>

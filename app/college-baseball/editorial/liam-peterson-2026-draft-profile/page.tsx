@@ -99,7 +99,7 @@ function gradeColor(grade: number): string {
 export default function PetersonDraftProfilePage() {
   return (
     <>
-      <main id="main-content" className="pt-24 bg-midnight">
+      <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">
           <Container size="narrow">
@@ -363,7 +363,7 @@ export default function PetersonDraftProfilePage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

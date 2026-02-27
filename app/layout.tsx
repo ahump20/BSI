@@ -1,25 +1,26 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono, Oswald, Playfair_Display } from 'next/font/google';
+import { Cormorant_Garamond, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import { KonamiCodeWrapper } from '@/components/easter-eggs';
-import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
-import { NavbarWrapper } from '@/components/layout-ds/NavbarWrapper';
+import { AppSidebar } from '@/components/layout-ds/AppSidebar';
+import { AppTopBar } from '@/components/layout-ds/AppTopBar';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
 import { FeedbackButton } from '@/components/ui/FeedbackModal';
 import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
-import { StickyLeagueBar } from '@/components/sports/StickyLeagueBar';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
 import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { PageTracker } from '@/components/analytics/PageTracker';
 
-// 3-font system: Display (Oswald) + Body (Inter) + Mono (JetBrains Mono)
-const inter = Inter({
+// 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
+const cormorant = Cormorant_Garamond({
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-cormorant',
   display: 'swap',
 });
 
@@ -36,14 +37,8 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-serif',
-  display: 'swap',
-});
-
 export const viewport: Viewport = {
-  themeColor: '#bf5700', // token: --bsi-primary (browser meta tag requires raw hex)
+  themeColor: '#bf5700',
   width: 'device-width',
   initialScale: 1,
 };
@@ -101,8 +96,11 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
-/** Structured data (JSON-LD) for SEO -- Organization + WebSite */
-const jsonLd = {
+/**
+ * Structured data (JSON-LD) for SEO — Organization + WebSite.
+ * Content is hardcoded (no user input) — safe for inline script.
+ */
+const jsonLdContent = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
     {
@@ -125,43 +123,42 @@ const jsonLd = {
       },
     },
   ],
-};
+});
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${oswald.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
+      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        {/* Preconnect to Cloudflare Stream for hero video poster/playback */}
         <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
-        {/* Static JSON-LD for SEO -- safe: hardcoded content, no user input */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        {/* Static JSON-LD for SEO — hardcoded content, no user input */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
         <BreadcrumbJsonLd />
       </head>
-      <body className="bg-midnight text-text-primary antialiased min-h-screen font-sans pb-20 md:pb-0">
-        <NoiseOverlay cssOnly />
-        <CustomCursor />
+      <body className="bg-midnight text-[#F5F0EB] antialiased min-h-screen">
         <Providers>
           <MotionProvider>
             <a href="#main-content" className="skip-link">
               Skip to main content
             </a>
-            <NavbarWrapper />
-            <ScrollProgress />
-            <StickyLeagueBar />
-            <BreadcrumbBar />
-            <CommandPalette />
-            <KonamiCodeWrapper />
-            <PageTracker />
-            <PageTransition>{children}</PageTransition>
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col min-w-0">
+                <AppTopBar />
+                <ScrollProgress />
+                <BreadcrumbBar />
+                <CommandPalette />
+                <KonamiCodeWrapper />
+                <PageTracker />
+                <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
+                  <PageTransition>{children}</PageTransition>
+                </main>
+              </div>
+            </div>
             <FeedbackButton />
             <ScrollToTopButton />
-            {/* Mobile Bottom Navigation - hidden on desktop */}
             <BottomNavWrapper />
           </MotionProvider>
         </Providers>

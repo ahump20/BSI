@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function MethodologyPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -152,7 +152,7 @@ export default function MethodologyPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

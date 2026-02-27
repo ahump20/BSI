@@ -107,7 +107,7 @@ const FRESHMAN_STATS = {
 export default function VolantisDraftProfilePage() {
   return (
     <>
-      <main id="main-content" className="pt-24 bg-midnight">
+      <div className="pt-6 bg-midnight">
         {/* ── Hero ── */}
         <Section padding="lg">
           <Container size="narrow">
@@ -389,7 +389,7 @@ export default function VolantisDraftProfilePage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

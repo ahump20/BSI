@@ -26,8 +26,8 @@ const paddingClasses: Record<string, string> = {
 const variantClasses: Record<string, string> = {
   default: 'bg-surface-light border border-border rounded-xl',
   hover:
-    'bg-surface-light border border-border rounded-xl hover:bg-surface-medium hover:border-border-strong transition-bsi-normal',
-  elevated: 'bg-surface-light border border-border rounded-xl shadow-lg',
+    'bg-surface-light border border-border rounded-xl hover:-translate-y-1 hover:border-burnt-orange/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300',
+  elevated: 'bg-surface-medium border border-border rounded-xl shadow-lg',
 };
 
 export function Card({

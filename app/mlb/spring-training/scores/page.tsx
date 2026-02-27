@@ -48,7 +48,7 @@ export default function SpringTrainingScoresPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -169,7 +169,7 @@ export default function SpringTrainingScoresPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -91,8 +91,8 @@ const SEASONAL_CAVEATS = [
 export default function DataSourcesPage() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-28">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <div className="max-w-4xl mx-auto">
               <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-display text-text-primary mb-3">
@@ -255,7 +255,7 @@ export default function DataSourcesPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

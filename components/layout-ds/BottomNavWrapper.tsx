@@ -23,10 +23,10 @@ import { BottomNav, type BottomNavItem } from '@/components/sports';
 
 /** Secondary pages shown in the "More" slide-up panel. */
 const MORE_ITEMS = [
-  { label: 'College Baseball', href: '/college-baseball', icon: Volleyball },
+  { label: 'NBA', href: '/nba', icon: Circle },
   { label: 'College Football', href: '/cfb', icon: Award },
   { label: 'Scores', href: '/scores', icon: BarChart3 },
-  { label: 'Writing', href: '/blog-post-feed', icon: BookOpen },
+  { label: 'Editorial', href: '/college-baseball/editorial', icon: BookOpen },
   { label: 'NIL Valuation', href: '/nil-valuation', icon: Trophy },
   { label: 'Arcade', href: '/arcade', icon: Gamepad2 },
   { label: 'Dashboard', href: '/dashboard', icon: Target },
@@ -71,9 +71,9 @@ export function BottomNavWrapper() {
 
   const items: BottomNavItem[] = [
     { label: 'Home', href: '/', icon: Home },
+    { label: 'CBB', href: '/college-baseball', icon: Volleyball },
     { label: 'MLB', href: '/mlb', icon: CircleDot },
     { label: 'NFL', href: '/nfl', icon: Hexagon },
-    { label: 'NBA', href: '/nba', icon: Circle },
     { label: 'More', href: '#more', icon: MoreHorizontal, onPress: toggleMore },
   ];
 

@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
 
   if (!authenticated) {
     return (
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             <div className="max-w-sm mx-auto">
@@ -62,14 +62,14 @@ export default function AdminDashboardPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
     );
   }
 
   const statusColor = (s: string) => s === 'healthy' ? 'success' : s === 'degraded' ? 'warning' : 'error';
 
   return (
-    <main id="main-content" className="pt-24">
+    <div className="pt-6">
       <Section padding="lg">
         <Container>
           <div className="mb-8">
@@ -110,6 +110,6 @@ export default function AdminDashboardPage() {
           </button>
         </Container>
       </Section>
-    </main>
+    </div>
   );
 }

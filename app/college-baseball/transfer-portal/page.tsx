@@ -110,7 +110,7 @@ export default function TransferPortalPage() {
 
   return (
     <>
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         {/* Hero */}
         <Section padding="lg" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
@@ -287,7 +287,7 @@ export default function TransferPortalPage() {
             <DataAttribution lastUpdated="" source="BSI Portal Tracker" className="mt-6" />
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

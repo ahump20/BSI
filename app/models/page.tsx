@@ -98,7 +98,7 @@ export default function ModelsHubPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Models' }]} />
@@ -225,7 +225,7 @@ export default function ModelsHubPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

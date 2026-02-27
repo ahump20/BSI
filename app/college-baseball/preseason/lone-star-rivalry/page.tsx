@@ -60,7 +60,7 @@ export default function LoneStarRivalryPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
         <Section padding="none" className="relative">
           <div className="bg-gradient-to-br from-burnt-orange via-[#5C0F0F] to-[#500000] relative overflow-hidden">
@@ -375,7 +375,7 @@ export default function LoneStarRivalryPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -231,7 +231,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
 
   return (
     <GameContext.Provider value={{ game, loading, error, meta, refresh: fetchGame }}>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -492,7 +492,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
             </Section>
           </>
         ) : null}
-      </main>
+      </div>
 
       <Footer />
     </GameContext.Provider>

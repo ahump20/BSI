@@ -277,7 +277,7 @@ export function SavantLeaderboard({
                         {isGated ? (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded">
                             <span className="font-mono tabular-nums text-xs text-text-muted/30 blur-[3px] select-none" aria-hidden="true">
-                              {col.format ? col.format(0.350) : '0.0'}
+                              {col.format ? col.format(col.key === 'wrc_plus' || col.key === 'ops_plus' || col.key === 'era_minus' ? 105 : col.key === 'fip' || col.key === 'era' ? 3.85 : col.key === 'k_bb' ? 2.80 : col.key === 'lob_pct' ? 0.72 : 0.320) : '0.0'}
                             </span>
                             <svg className="w-2.5 h-2.5 text-burnt-orange/60" viewBox="0 0 16 16" fill="currentColor">
                               <path d="M8 1a4 4 0 0 0-4 4v2H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1V5a4 4 0 0 0-4-4zm2 6H6V5a2 2 0 1 1 4 0v2z"/>

@@ -9,9 +9,9 @@ import { Footer } from '@/components/layout-ds/Footer';
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background-primary text-text-primary pt-16 md:pt-20">
+    <div className="min-h-screen bg-background-primary text-text-primary pt-6">
       {/* Hero — product thesis first */}
-      <Section className="pt-28 md:pt-36 pb-20 relative overflow-hidden">
+      <Section className="pt-6 md:pt-10 pb-20 relative overflow-hidden">
         {/* Ambient hero glow */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(191,87,0,0.08) 0%, transparent 70%)' }} />
         <Container size="narrow" center className="relative z-10">
@@ -190,6 +190,6 @@ export default function AboutPage() {
       </Section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

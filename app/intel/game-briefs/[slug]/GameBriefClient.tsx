@@ -127,7 +127,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
   if (loading && !brief) {
     return (
       <>
-        <main id="main-content">
+        <div>
           <Section padding="lg">
             <Container>
               <div className="max-w-3xl animate-pulse space-y-4">
@@ -139,7 +139,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
               </div>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -148,7 +148,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
   if (!brief) {
     return (
       <>
-        <main id="main-content">
+        <div>
           <Section padding="lg">
             <Container>
               <h1 className="font-display text-2xl font-bold text-text-primary uppercase">Brief Not Found</h1>
@@ -160,7 +160,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
               </p>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -179,7 +179,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
           url: `https://blazesportsintel.com/intel/game-briefs/${brief.slug}`,
         }}
       />
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -214,7 +214,7 @@ export function GameBriefClient({ slug }: { slug: string }) {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

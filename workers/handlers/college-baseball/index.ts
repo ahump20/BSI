@@ -15,7 +15,7 @@ export { handleCollegeBaseballScores, handleCollegeBaseballGame, handleCollegeBa
 export { handleCollegeBaseballStandings, handleCollegeBaseballRankings, handleCollegeBaseballLeaders } from './standings';
 
 // Teams
-export { handleCollegeBaseballTeam, handleCollegeBaseballTeamSchedule, handleCollegeBaseballTrends } from './teams';
+export { handleCollegeBaseballTeam, handleCollegeBaseballTeamSchedule, handleCollegeBaseballTrends, handleCollegeBaseballTeamsAll } from './teams';
 
 // Players
 export { handleCollegeBaseballPlayer, handleCollegeBaseballPlayersList, handleCollegeBaseballPlayerCompare, handlePlayerGameLog } from './players';

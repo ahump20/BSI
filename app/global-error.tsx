@@ -17,7 +17,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           }
         `}</style>
       </head>
-      <body style={{ background: 'var(--bsi-midnight)', color: '#FAF8F5', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <body style={{ background: 'var(--bsi-midnight)', color: '#FAF8F5', fontFamily: 'Cormorant Garamond, Georgia, serif' }}>
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ maxWidth: '28rem', width: '100%', background: 'var(--bsi-charcoal)', border: '1px solid #333', borderRadius: '0.75rem', padding: '2rem', textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>&#9888;</div>
