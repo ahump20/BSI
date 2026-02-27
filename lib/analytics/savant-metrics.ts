@@ -525,8 +525,8 @@ export function calculateSIERALite(
   const bfEst = Math.max(ip * 3 + h + bb + hbp, 1);
   const kPct = so / bfEst;
   const bbPct = bb / bfEst;
-  const hrPer9 = (hr / ip) * 9;
-  const raw = 6.145 - 16.986 * kPct + 11.434 * bbPct + 1.858 * hrPer9;
+  const hrPerBfTimes9 = (hr / bfEst) * 9;
+  const raw = 6.145 - 16.986 * kPct + 11.434 * bbPct + 1.858 * hrPerBfTimes9;
   return clamp(safe(raw), 0, 12);
 }
 
