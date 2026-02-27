@@ -23,17 +23,6 @@ interface PlateDisciplineScatterProps {
   className?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Quadrant definitions
-// ---------------------------------------------------------------------------
-
-const QUADRANTS = [
-  { label: 'Elite Eye', x: 'low', y: 'high', description: 'Low K%, High BB%' },
-  { label: 'Patient Contact', x: 'low', y: 'low', description: 'Low K%, Low BB%' },
-  { label: 'Aggressive Power', x: 'high', y: 'high', description: 'High K%, High BB%' },
-  { label: 'Free Swinger', x: 'high', y: 'low', description: 'High K%, Low BB%' },
-] as const;
-
 // Conference color map
 const CONF_COLORS: Record<string, string> = {
   SEC: '#BF5700',
