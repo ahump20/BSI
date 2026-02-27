@@ -131,7 +131,7 @@ function TeamPreviewCard({ team }: { team: TeamCard }) {
 export default function Big12EditorialPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -410,7 +410,7 @@ export default function Big12EditorialPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

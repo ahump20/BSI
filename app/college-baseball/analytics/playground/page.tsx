@@ -95,11 +95,11 @@ export default function SabermetricsPlaygroundPage() {
       </div>
 
       {/* Main content */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem 4rem' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem 4rem' }}>
         {activeTab === 'metrics' && <PlaygroundMetrics />}
         {activeTab === 'api' && <PlaygroundApiSim />}
         {activeTab === 'schema' && <PlaygroundERD />}
-      </main>
+      </div>
 
       <Footer />
     </div>

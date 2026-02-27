@@ -569,7 +569,7 @@ export default function NFLStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -593,7 +593,7 @@ export default function NFLStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                2025-26 Season
               </Badge>
             </ScrollReveal>
 
@@ -636,10 +636,10 @@ export default function NFLStandingsPage() {
         <Section padding="lg" background="charcoal">
           <Container>
             {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">Off-Season</p>
+              <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
+                <p className="text-text-primary font-semibold">Off-Season</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  The 2025 NFL season begins in September. Standings shown are placeholder data.
+                  The 2025-26 NFL season has concluded. Final standings will display when live data is available from our API. The 2026 season kicks off in September.
                 </p>
               </Card>
             )}
@@ -761,7 +761,7 @@ export default function NFLStandingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

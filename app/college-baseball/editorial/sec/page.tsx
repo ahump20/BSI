@@ -133,7 +133,7 @@ function TeamPreviewCard({ team }: { team: TeamCard }) {
 export default function SECEditorialPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -425,7 +425,7 @@ export default function SECEditorialPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

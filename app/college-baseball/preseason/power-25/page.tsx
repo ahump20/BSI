@@ -423,7 +423,7 @@ export default function Power25Page() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
         <Section padding="none" className="relative">
           <div className="bg-gradient-to-br from-burnt-orange via-texas-soil to-charcoal relative overflow-hidden">
@@ -750,7 +750,7 @@ export default function Power25Page() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

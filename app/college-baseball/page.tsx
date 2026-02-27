@@ -356,7 +356,7 @@ export default function CollegeBaseballPage() {
   return (
     <div className="bsi-theme-baseball">
       <>
-        <main id="main-content">
+        <div>
         {/* Hero */}
         <HubHero
           searchQuery={searchQuery}
@@ -728,6 +728,41 @@ export default function CollegeBaseballPage() {
         {/* League Leaders — live from ESPN */}
         <LeagueLeaders />
 
+        {/* BSI Labs Portal CTA */}
+        <Section padding="lg" borderTop>
+          <Container>
+            <ScrollReveal>
+              <Card variant="default" padding="lg" className="relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-radial from-burnt-orange/10 to-transparent pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
+                        <path d="M4 6h16M4 12h16M4 18h8" />
+                        <circle cx="19" cy="18" r="3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <CardTitle size="md">BSI Labs Portal</CardTitle>
+                      <p className="text-text-tertiary text-xs mt-0.5">Advanced sabermetrics dashboard</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-text-secondary mb-4 max-w-xl">
+                    Sortable leaderboards, team comparison tools, conference strength rankings, park factor analysis, bubble watch — all in one portal with percentile-scaled heatmaps and team-branded visuals.
+                  </p>
+                  <a
+                    href="https://labs.blazesportsintel.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="primary" size="sm">Explore Labs Portal &rarr;</Button>
+                  </a>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
         {/* Tracking & Vision AI Section */}
         <Section padding="lg" background="midnight" borderTop>
           <Container>
@@ -773,7 +808,7 @@ export default function CollegeBaseballPage() {
           </Container>
         </Section>
 
-      </main>
+      </div>
         <Footer />
       </>
     </div>

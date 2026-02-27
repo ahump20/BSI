@@ -259,7 +259,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -514,7 +514,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

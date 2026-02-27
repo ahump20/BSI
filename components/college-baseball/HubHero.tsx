@@ -111,6 +111,24 @@ export function HubHero({
             </div>
           </div>
         </ScrollReveal>
+
+        {/* Labs Portal CTA */}
+        <ScrollReveal direction="up" delay={300}>
+          <div className="mt-6 text-center">
+            <a
+              href="https://labs.blazesportsintel.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-burnt-orange/10 border border-burnt-orange/20 rounded-xl text-sm text-burnt-orange hover:bg-burnt-orange/20 hover:border-burnt-orange/30 transition-all group"
+            >
+              <span className="font-display uppercase tracking-wider font-semibold">BSI Labs Portal</span>
+              <span className="text-text-muted text-xs">Sabermetrics · Leaderboards · Compare</span>
+              <svg viewBox="0 0 24 24" className="w-4 h-4 opacity-60 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M7 17L17 7M17 7H7M17 7v10" />
+              </svg>
+            </a>
+          </div>
+        </ScrollReveal>
       </Container>
     </Section>
   );

@@ -60,7 +60,7 @@ export function WeeklyBriefClient() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -267,7 +267,7 @@ export function WeeklyBriefClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

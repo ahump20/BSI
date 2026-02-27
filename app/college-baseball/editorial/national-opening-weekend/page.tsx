@@ -32,7 +32,7 @@ const confPreviews = [
 export default function NationalOpeningWeekendPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -197,7 +197,7 @@ export default function NationalOpeningWeekendPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

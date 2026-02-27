@@ -298,7 +298,7 @@ export default function VisionAIPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* ── Hero ──────────────────────────────────────────────── */}
         <Section padding="xl" className="relative overflow-hidden">
           {/* Background treatment */}
@@ -770,7 +770,7 @@ export default function VisionAIPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

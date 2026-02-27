@@ -32,8 +32,8 @@ export default function ConferenceIndexPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -106,7 +106,7 @@ export default function ConferenceIndexPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

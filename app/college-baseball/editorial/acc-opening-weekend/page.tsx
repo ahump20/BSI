@@ -27,7 +27,7 @@ const storylines = [
 export default function ACCOpeningWeekendPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -196,7 +196,7 @@ export default function ACCOpeningWeekendPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

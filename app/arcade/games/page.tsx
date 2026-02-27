@@ -48,7 +48,7 @@ const ARCADE_GAMES: ArcadeGame[] = [
 
 export default function ArcadeGamesPage() {
   return (
-    <main className="min-h-screen bg-background-primary pt-24 md:pt-28 pb-16">
+    <div className="min-h-screen bg-background-primary pt-6 pb-16">
       <section className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
@@ -101,6 +101,6 @@ export default function ArcadeGamesPage() {
           ))}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

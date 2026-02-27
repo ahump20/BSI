@@ -345,7 +345,7 @@ export default function MLBStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -574,7 +574,7 @@ export default function MLBStandingsPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

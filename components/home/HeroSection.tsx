@@ -1,89 +1,101 @@
 'use client';
 
 import Link from 'next/link';
-import { isInSeason, SPORT_LABELS, type SportKey } from '@/lib/season';
 import { HeroScoreStrip } from './HeroScoreStrip';
-import { ProofChips } from '@/components/ui/ProofChips';
-
-const ALL_SPORTS: SportKey[] = ['ncaa', 'mlb', 'nfl', 'nba', 'cfb'];
-
-function getBadgeText(): string {
-  const inSeason = ALL_SPORTS.filter((s) => isInSeason(s));
-  if (inSeason.length === 0) return 'Sports Intelligence Platform';
-  if (inSeason.length === 1) return `${SPORT_LABELS[inSeason[0]]} Season Live`;
-  if (inSeason.length <= 3) return `${inSeason.map((s) => SPORT_LABELS[s]).join(' \u2022 ')} Live`;
-  return `${inSeason.length} Sports In Season`;
-}
 
 /**
- * HeroSection — cinematic landing hero with gradient background.
- * Reduced from min-h-screen to min-h-[70vh] so live scores are visible faster.
+ * HeroSection — portfolio-style hero adapted for BSI.
+ * Massive Oswald headline with text-stroke "INTEL",
+ * Cormorant italic quote, JetBrains Mono section label,
+ * editorial button pair, score strip, mono marquee.
  */
 export function HeroSection() {
-  const badgeText = getBadgeText();
-
   return (
     <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Layered gradient background — warm center glow + cool offset for depth */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--bsi-primary) 15%, transparent) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(253, 185, 19, 0.06) 0%, transparent 50%), var(--bsi-surface)',
-        }}
-      />
-
       <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-burnt-orange-500/20 text-burnt-orange-400 mb-8">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+        {/* Section label — JetBrains Mono, burnt-orange, tracked */}
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-8">
+          <span className="section-label">
+            Old-School Instinct &middot; New-School Metrics
           </span>
-          {badgeText}
         </div>
 
-        <h1 className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-bold text-text-primary uppercase tracking-tight leading-none mb-6">
-          Every Game Covered
+        {/* H1 — Oswald 700, massive, text-stroke on second line */}
+        <h1
+          className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.15s_forwards] uppercase tracking-tight leading-none mb-8"
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: 'clamp(4rem, 12vw, 8rem)',
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          Blaze Sports
           <br />
-          <span className="text-gradient-animated">
-            Like It Matters
+          <span className="text-stroke text-burnt-orange">
+            Intel
           </span>
         </h1>
 
-        <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] text-lg md:text-xl text-text-secondary max-w-3xl mx-auto mb-10 leading-relaxed">
-          The Wednesday night game between Rice and Sam Houston gets the same depth as a
-          Saturday showcase on ESPN. Five sports. College and pro. Built for fans who follow
-          the game past the highlights.
+        {/* Quote — Cormorant italic, muted */}
+        <p
+          className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] italic text-lg md:text-xl tracking-wide mb-10"
+          style={{
+            fontFamily: 'var(--font-cormorant), "Cormorant Garamond", Georgia, serif',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          The gap between interest in the game and access to meaningful analytics is the product.
         </p>
 
+        {/* CTAs — Oswald uppercase, editorial button style */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.45s_forwards] flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/scores"
-            className="bsi-btn-glow inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-glow-sm"
-          >
-            Explore Live Scores
-          </Link>
-          <Link
             href="/college-baseball"
-            className="inline-flex items-center justify-center gap-2 border-2 border-border-strong hover:border-burnt-orange text-text-primary hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            className="hero-btn-primary"
           >
             College Baseball
           </Link>
           <Link
-            href="/college-baseball/transfer-portal"
-            className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-border-strong text-text-secondary hover:text-text-primary px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+            href="/scores"
+            className="hero-btn-outline"
           >
-            Transfer Portal Intel
+            Live Scores
           </Link>
         </div>
 
-        {/* Trust signals — proof chips linking to data quality */}
-        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.6s_forwards]">
-          <ProofChips />
+        {/* Live proof — score strip */}
+        <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.6s_forwards] mt-12">
+          <HeroScoreStrip />
         </div>
 
-        {/* Live proof — score strip shows the site has real data */}
-        <HeroScoreStrip />
+        {/* Mono marquee — platform stats */}
+        <div className="mt-8 overflow-hidden opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.8s_ease-out_0.8s_forwards]">
+          <div
+            className="marquee-track text-[10px] uppercase tracking-[0.15em] whitespace-nowrap"
+            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-text-dim)' }}
+          >
+            {/* Duplicated for seamless loop */}
+            {[0, 1].map((i) => (
+              <span key={i} className="inline-flex items-center gap-8 mr-8">
+                <span>5 Sports</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>16 Workers</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>Live Scores</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>Real Analytics</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>College Baseball Flagship</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>BSI Savant</span>
+                <span className="text-burnt-orange">&middot;</span>
+                <span>wOBA &middot; FIP &middot; wRC+</span>
+                <span className="text-burnt-orange">&middot;</span>
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

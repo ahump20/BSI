@@ -41,7 +41,7 @@ export default function ArcadePage() {
   const leaderboard = leaderboardData?.leaderboard || [];
 
   return (
-    <main id="main-content" className="min-h-screen bg-midnight pt-24 md:pt-28">
+    <div className="min-h-screen bg-midnight pt-6">
       <Section padding="lg" className="pt-8">
         <Container size="wide">
           {/* Header */}
@@ -247,7 +247,7 @@ export default function ArcadePage() {
         </Container>
       </Section>
       <Footer />
-    </main>
+    </div>
   );
 }
 

@@ -32,8 +32,8 @@ export default function ContactPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 relative overflow-hidden">
+      <div>
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
@@ -137,7 +137,7 @@ export default function ContactPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

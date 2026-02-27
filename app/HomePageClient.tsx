@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
 import { HomeLiveScores } from '@/components/home/HomeLiveScores';
-
 import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
@@ -50,7 +49,6 @@ const StadiumIcon = () => (
 // Sports Hub data
 // ────────────────────────────────────────
 
-/** Map sport card names to the keys used by useMultiSportCounts */
 const SPORT_COUNT_KEYS: Record<string, string> = {
   'College Baseball': 'college-baseball',
   'MLB': 'mlb',
@@ -64,8 +62,6 @@ interface SportCardData {
   icon: React.FC;
   href: string;
   description: string;
-  accent: string;
-  bgAccent: string;
   color: string;
 }
 
@@ -75,8 +71,6 @@ const sports: SportCardData[] = [
     icon: BaseballIcon,
     href: '/college-baseball',
     description: 'Every D1 team. Live scores, box scores, standings, rankings, portal tracking, and weekly editorial.',
-    accent: 'group-hover:text-burnt-orange group-hover:border-burnt-orange/50',
-    bgAccent: 'group-hover:bg-burnt-orange/10',
     color: 'var(--bsi-primary)',
   },
   {
@@ -84,8 +78,6 @@ const sports: SportCardData[] = [
     icon: BaseballIcon,
     href: '/mlb',
     description: 'Live scores, standings, and the advanced metrics — wOBA, FIP, wRC+ — that tell you what the box score won\u2019t.',
-    accent: 'group-hover:text-red-500 group-hover:border-red-500/50',
-    bgAccent: 'group-hover:bg-red-500/10',
     color: '#C41E3A',
   },
   {
@@ -93,8 +85,6 @@ const sports: SportCardData[] = [
     icon: FootballIcon,
     href: '/nfl',
     description: 'Live scores, standings, and team coverage built for the fan who watches past the primetime window.',
-    accent: 'group-hover:text-blue-400 group-hover:border-blue-400/50',
-    bgAccent: 'group-hover:bg-blue-400/10',
     color: '#013369',
   },
   {
@@ -102,8 +92,6 @@ const sports: SportCardData[] = [
     icon: BasketballIcon,
     href: '/nba',
     description: 'Live scores, standings, and game analytics across the full league — not just the coasts.',
-    accent: 'group-hover:text-orange-400 group-hover:border-orange-400/50',
-    bgAccent: 'group-hover:bg-orange-400/10',
     color: 'var(--bsi-accent)',
   },
   {
@@ -111,8 +99,6 @@ const sports: SportCardData[] = [
     icon: StadiumIcon,
     href: '/cfb',
     description: 'Scores, standings, and conference coverage from the Big 12 to the Sun Belt.',
-    accent: 'group-hover:text-amber-500 group-hover:border-amber-500/50',
-    bgAccent: 'group-hover:bg-amber-500/10',
     color: '#D97706',
   },
 ];
@@ -165,35 +151,26 @@ export function HomePageClient() {
   const sportCounts = useMultiSportCounts();
 
   return (
-    <main id="main-content" className="min-h-screen bg-background-primary">
+    <div className="min-h-screen">
       {/* ─── 1. Hero ─── */}
       <HeroSection />
 
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <HomeLiveScores />
 
-      {/* ─── 3. Sports Hub — Glass Cards with live badges ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-primary to-background-secondary relative">
-        {/* Subtle grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-            backgroundSize: '50px 50px',
-          }}
-        />
-
+      {/* ─── 3. Sports Hub — Portfolio-style cards ─── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
             <div className="text-center mb-12">
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
-                Coverage
-              </span>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary uppercase tracking-wide">
-                Five Sports. One Platform.
+              <span className="section-label block mb-3">Coverage</span>
+              <h2
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+              >
+                Five Sports. No Blind Spots.
               </h2>
-              <p className="mt-3 text-base text-text-tertiary max-w-2xl mx-auto">
+              <p className="mt-3 text-base max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
                 College baseball is the flagship. MLB, NFL, NBA, and college football round out the coverage.
               </p>
             </div>
@@ -203,7 +180,6 @@ export function HomePageClient() {
             {sports.map((sport, index) => {
               const countKey = SPORT_COUNT_KEYS[sport.name];
               const counts = countKey ? sportCounts.get(countKey) : undefined;
-
               const isLast = index === sports.length - 1;
 
               return (
@@ -215,10 +191,13 @@ export function HomePageClient() {
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className={`card-accent-line relative p-6 rounded-2xl border bg-surface-light backdrop-blur-sm border-border ${sport.accent} transition-all duration-500 hover:scale-[1.02] hover:bg-surface-medium h-full flex flex-col items-center text-center`}
-                      style={{ '--card-accent': sport.color } as React.CSSProperties}
+                      className="relative p-6 rounded-xl h-full flex flex-col items-center text-center
+                        transition-all duration-300 hover:-translate-y-1
+                        bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]
+                        hover:border-burnt-orange/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)]
+                        backdrop-blur-sm"
+                      style={{ ['--card-accent' as string]: sport.color }}
                     >
-                      {/* Live game badge — replaces static Flagship/Soon badges */}
                       <LiveGameBadge
                         live={counts?.live ?? 0}
                         today={counts?.today ?? 0}
@@ -226,15 +205,24 @@ export function HomePageClient() {
                       />
 
                       <div
-                        className={`w-16 h-16 rounded-xl bg-surface-light ${sport.bgAccent} flex items-center justify-center mb-4 transition-all duration-300 text-text-secondary ${sport.accent}`}
+                        className="w-16 h-16 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.025)',
+                          color: 'var(--color-text-secondary)',
+                        }}
                       >
                         <sport.icon />
                       </div>
 
-                      <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-burnt-orange transition-colors">
+                      <h3
+                        className="text-lg font-semibold mb-2 transition-colors group-hover:text-burnt-orange"
+                        style={{ color: 'var(--color-text-primary)' }}
+                      >
                         {sport.name}
                       </h3>
-                      <p className="text-sm text-text-tertiary leading-relaxed">{sport.description}</p>
+                      <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+                        {sport.description}
+                      </p>
                     </div>
                   </Link>
                 </ScrollReveal>
@@ -247,17 +235,16 @@ export function HomePageClient() {
       {/* ─── 4. Editorial Feed (D1-backed) ─── */}
       <EditorialPreview />
 
-      {/* ─── 5. (Evidence Strip removed — sport hub + live scores are the proof) ─── */}
-
-      {/* ─── 6. Trending Intel Feed ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background-primary to-background-secondary">
+      {/* ─── 5. Trending Intel Feed ─── */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
             <div className="mb-8">
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.2em] text-burnt-orange mb-3">
-                Cross-Sport Intel
-              </span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold text-text-primary uppercase tracking-wide">
+              <span className="section-label block mb-3">Cross-Sport Intel</span>
+              <h2
+                className="text-3xl md:text-4xl font-bold uppercase tracking-wide"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+              >
                 What&apos;s Happening Now
               </h2>
             </div>
@@ -266,24 +253,19 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. Garrido + Austin Quote ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-primary relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-burnt-orange/5 rounded-full blur-3xl pointer-events-none" />
-
+      {/* ─── 6. Garrido + Austin Quote ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
-            {/* Kicker */}
             <span className="kicker mb-6 block">The Standard</span>
 
             <div className="flex gap-6 md:gap-8">
-              {/* Burnt-orange left border */}
               <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-burnt-orange via-burnt-orange/40 to-transparent" />
 
               <div className="space-y-10 relative">
-                {/* Decorative oversized quote mark */}
                 <span
-                  className="absolute -top-6 -left-2 font-serif text-[8rem] leading-none text-burnt-orange/[0.07] pointer-events-none select-none"
+                  className="absolute -top-6 -left-2 leading-none pointer-events-none select-none"
+                  style={{ fontFamily: 'var(--bsi-font-body)', fontSize: '8rem', color: 'rgba(191, 87, 0, 0.07)' }}
                   aria-hidden="true"
                 >
                   &ldquo;
@@ -291,29 +273,34 @@ export function HomePageClient() {
 
                 {/* Garrido */}
                 <div className="relative">
-                  <blockquote className="font-serif text-xl md:text-2xl text-text-primary/90 leading-relaxed mb-6">
+                  <blockquote
+                    className="text-xl md:text-2xl leading-relaxed mb-6"
+                    style={{ fontFamily: 'var(--bsi-font-body)', color: 'rgba(245, 240, 235, 0.9)' }}
+                  >
                     &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
                     — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
                     uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
                   </blockquote>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bsi-gradient-brand flex items-center justify-center text-white text-sm font-bold">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #bf5700, #cc6600)' }}>
                       AG
                     </div>
                     <div>
-                      <div className="text-text-primary font-semibold text-sm">Augie Garrido, 1939&ndash;2018</div>
-                      <div className="text-text-muted text-xs">Winningest coach in college baseball history</div>
+                      <div className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>Augie Garrido, 1939&ndash;2018</div>
+                      <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Winningest coach in college baseball history</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Accent divider */}
                 <div className="divider-accent h-px w-full" />
 
                 {/* Austin */}
                 <div>
-                  <blockquote className="font-serif text-lg md:text-xl text-text-secondary leading-relaxed mb-6">
+                  <blockquote
+                    className="text-lg md:text-xl leading-relaxed mb-6"
+                    style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--color-text-secondary)' }}
+                  >
                     &ldquo;That&apos;s who shows up here. The one checking scores at midnight.
                     The one who cares about the Tuesday game as much as the Saturday showcase.&rdquo;
                   </blockquote>
@@ -323,8 +310,8 @@ export function HomePageClient() {
                       AH
                     </div>
                     <div>
-                      <div className="text-text-primary font-semibold text-sm">Austin Humphrey</div>
-                      <div className="text-text-muted text-xs">Founder, Blaze Sports Intel</div>
+                      <div className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>Austin Humphrey</div>
+                      <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Founder, Blaze Sports Intel</div>
                     </div>
                   </div>
                 </div>
@@ -334,37 +321,25 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 8. CTA ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background-secondary relative overflow-hidden">
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-burnt-orange/[0.04] rounded-full blur-3xl pointer-events-none" />
+      {/* ─── 7. CTA ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: 'var(--bsi-bg-secondary)' }}>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-text-primary mb-4">
+            <span className="section-label block mb-4">Get Started</span>
+            <h2
+              className="text-3xl md:text-4xl font-bold mb-4"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+            >
               Start with college baseball. Go from there.
             </h2>
-            <p className="text-base text-text-tertiary mb-10 max-w-2xl mx-auto">
-              Five sports. Live scores. Real analytics. See for yourself.
+            <p className="text-base mb-10 max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
+              Five sports. Live scores. Real analytics.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/pricing"
-                className="bsi-btn-glow inline-flex items-center justify-center gap-2 bg-gradient-to-r from-burnt-orange to-burnt-orange/80 hover:from-burnt-orange/90 hover:to-burnt-orange text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:shadow-glow-sm"
-              >
+              <Link href="/pricing" className="btn-primary px-8 py-4 text-lg">
                 Start Free Trial
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
               </Link>
-              <Link
-                href="/about"
-                className="inline-flex items-center justify-center gap-2 border-2 border-border hover:border-burnt-orange text-text-primary hover:text-burnt-orange px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
-              >
+              <Link href="/about" className="btn-outline px-8 py-4 text-lg">
                 About BSI
               </Link>
             </div>
@@ -372,8 +347,8 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 9. Footer ─── */}
+      {/* ─── 8. Footer ─── */}
       <Footer />
-    </main>
+    </div>
   );
 }

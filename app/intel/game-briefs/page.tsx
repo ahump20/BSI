@@ -79,7 +79,7 @@ export default function GameBriefsIndexPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -160,7 +160,7 @@ export default function GameBriefsIndexPage() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

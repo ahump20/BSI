@@ -115,7 +115,7 @@ export default function HAVFMethodologyPage() {
           },
         }}
       />
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -544,7 +544,7 @@ and   HAV-F ∈ [0, 100]`}
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

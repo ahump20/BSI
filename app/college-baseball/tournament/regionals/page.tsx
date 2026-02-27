@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RegionalsPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border">
           <Container>
             <Breadcrumb
@@ -54,7 +54,7 @@ export default function RegionalsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

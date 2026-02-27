@@ -26,7 +26,7 @@ export function EcosystemBar() {
     <div
       className="fixed top-0 left-0 right-0 z-[1090] h-6 sm:h-8 flex items-center px-3 sm:px-4"
       style={{
-        background: 'rgba(13, 13, 18, 0.75)',
+        background: 'rgba(13, 13, 13, 0.75)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         borderLeft: '3px solid var(--bsi-primary)',

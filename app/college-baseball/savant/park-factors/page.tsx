@@ -33,8 +33,8 @@ export default function ParkFactorsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container size="wide">
             {/* Breadcrumb */}
             <ScrollReveal direction="up">
@@ -125,7 +125,7 @@ export default function ParkFactorsPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

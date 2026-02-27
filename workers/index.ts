@@ -41,6 +41,7 @@ import {
   handlePlayerGameLog,
   handleCollegeBaseballTrends,
   handleCollegeBaseballTeamSchedule,
+  handleCollegeBaseballTeamsAll,
   handleCollegeBaseballLeaders,
   handleIngestStats,
   processFinishedGames,
@@ -368,6 +369,7 @@ app.get('/api/college-baseball/players', (c) => handleCollegeBaseballPlayersList
 app.get('/api/college-baseball/transfer-portal', (c) => handleCollegeBaseballTransferPortal(c.env));
 app.get('/api/college-baseball/daily', (c) => handleCollegeBaseballDaily(new URL(c.req.url), c.env));
 app.get('/api/college-baseball/sabermetrics', (c) => handleCBBLeagueSabermetrics(c.env));
+app.get('/api/college-baseball/teams/all', (c) => handleCollegeBaseballTeamsAll(c.env));
 app.get('/api/college-baseball/teams/:teamId/schedule', (c) => handleCollegeBaseballTeamSchedule(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/teams/:teamId/sabermetrics', (c) => handleCBBTeamSabermetrics(c.req.param('teamId'), c.env));
 // Diagnostics endpoint removed after ESPN verification (2026-02-25)

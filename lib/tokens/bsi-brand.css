@@ -1,17 +1,16 @@
 /* ==========================================================================
    BSI BRAND TOKEN LAYER — Single source of truth
-   Imported by blazesportsintel.com
+   Labs navigation + portfolio atmosphere + BSI brand colors
    ========================================================================== */
 
 :root {
   /* ---- Anchor Palette ---- */
   --bsi-primary: #BF5700;
   --bsi-primary-rgb: 191, 87, 0;
+  --bsi-primary-light: #D4722A;
   --bsi-accent: #FF6B35;
   --bsi-accent-rgb: 255, 107, 53;
-  --bsi-surface: #0D0D12;
   --bsi-gold: #FDB913;
-  --bsi-text: #FAFAFA;
 
   /* ---- Extended Brand Scale ---- */
   --bsi-primary-50: #fff5ed;
@@ -25,10 +24,38 @@
   --bsi-primary-800: #5e2900;
   --bsi-primary-900: #3f1c00;
 
+  /* ---- Surfaces (portfolio depth) ---- */
+  --bsi-surface: #0D0D0D;
+  --bsi-surface-raised: #1A1A1A;
+  --bsi-surface-overlay: #242424;
+  --bsi-text: #F5F0EB;
+  --bsi-text-muted: #A89F95;
+  --bsi-text-dim: rgba(245, 240, 235, 0.22);
+  /* text-muted bumped from 0.22 to 0.40 for WCAG AA large text (3.5:1 on #0D0D0D) */
+
+  /* ---- Semantic ---- */
+  --bsi-error: #EF4444;
+  --bsi-warning: #F59E0B;
+  --bsi-success: #10B981;
+  --bsi-info: #3B82F6;
+
   /* ---- Typography ---- */
   --bsi-font-display: 'Oswald', system-ui, sans-serif;
-  --bsi-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bsi-font-body: 'Cormorant Garamond', 'Georgia', serif;
   --bsi-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Aliases used by Labs and globals */
+  --font-display: var(--bsi-font-display);
+  --font-body: var(--bsi-font-body);
+  --font-mono: var(--bsi-font-mono);
+
+  /* ---- Type Scale (from Labs) ---- */
+  --font-size-micro: 0.5625rem;   /* 9px — metadata, timestamps */
+  --font-size-label: 0.625rem;    /* 10px — column headers, badges */
+  --font-size-caption: 0.6875rem; /* 11px — secondary text, scores */
+  --font-size-body: 0.875rem;     /* 14px — body text */
+  --font-size-stat: 1.5rem;       /* 24px — stat values */
+  --font-size-stat-lg: 2.25rem;   /* 36px — hero stats */
 
   /* ---- Spacing Scale (4px base) ---- */
   --bsi-space-1: 0.25rem;
@@ -51,23 +78,71 @@
   --bsi-ease-out: cubic-bezier(0, 0, 0.2, 1);
   --bsi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* ---- Glass Tiers ---- */
+  /* ---- Glass System — Labs opacity values ---- */
   --glass-subtle-blur: 8px;
-  --glass-subtle-bg: rgba(255, 255, 255, 0.04);
-  --glass-subtle-border: rgba(255, 255, 255, 0.06);
+  --glass-subtle-bg: rgba(255, 255, 255, 0.025);
+  --glass-subtle-border: rgba(255, 255, 255, 0.04);
 
   --glass-default-blur: 16px;
-  --glass-default-bg: rgba(255, 255, 255, 0.08);
-  --glass-default-border: rgba(255, 255, 255, 0.12);
+  --glass-default-bg: rgba(255, 255, 255, 0.04);
+  --glass-default-border: rgba(255, 255, 255, 0.06);
 
   --glass-elevated-blur: 24px;
-  --glass-elevated-bg: rgba(255, 255, 255, 0.12);
-  --glass-elevated-border: rgba(255, 255, 255, 0.18);
+  --glass-elevated-bg: rgba(255, 255, 255, 0.06);
+  --glass-elevated-border: rgba(255, 255, 255, 0.10);
 
-  /* ---- Shadows ---- */
+  /* ---- Borders (portfolio values) ---- */
+  --bsi-border: rgba(245, 240, 235, 0.04);
+  --bsi-border-hover: rgba(191, 87, 0, 0.3);
+
+  /* ---- Glow (from Labs) ---- */
+  --glow-primary: 0 0 30px rgba(191, 87, 0, 0.2);
+  --glow-primary-strong: 0 0 60px rgba(191, 87, 0, 0.3);
+  --glow-primary-subtle: 0 0 20px rgba(191, 87, 0, 0.1);
+  --glow-error: 0 0 20px rgba(239, 68, 68, 0.2);
+  --glow-success: 0 0 20px rgba(16, 185, 129, 0.2);
+
+  /* Legacy aliases (consumed across 50+ component files) */
   --bsi-glow-sm: 0 0 20px rgba(191, 87, 0, 0.3);
   --bsi-glow-md: 0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2);
   --bsi-glow-lg: 0 0 60px rgba(204, 102, 0, 0.5), 0 0 100px rgba(191, 87, 0, 0.3);
+
+  /* ---- Savant Percentile Scale (from Labs) ---- */
+  --savant-elite: #c0392b;
+  --savant-great: #e74c3c;
+  --savant-above: #d4775c;
+  --savant-avg: #aaaaaa;
+  --savant-below: #5b9bd5;
+  --savant-poor: #2980b9;
+  --savant-very-poor: #1a5276;
+}
+
+/* ---- Animations (from Labs) ---- */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: var(--glow-primary-subtle); }
+  50% { box-shadow: var(--glow-primary); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes count-up-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Animations (from portfolio) ---- */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* ==========================================================================
@@ -99,7 +174,7 @@
 }
 
 /* ==========================================================================
-   LIVE INDICATOR SYSTEM — unified across both apps
+   LIVE INDICATOR SYSTEM
    ========================================================================== */
 
 .live-indicator {

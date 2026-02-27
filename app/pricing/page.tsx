@@ -57,16 +57,16 @@ export default function PricingPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
-        <Section padding="lg" className="pt-28 relative overflow-hidden">
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
           {/* Ambient video background */}
           <HeroVideo />
           <div
             className="absolute inset-0 z-[1]"
             style={{
               background:
-                'linear-gradient(to bottom, rgba(13,13,18,0.92) 0%, rgba(13,13,18,0.8) 50%, rgba(13,13,18,0.95) 100%)',
+                'linear-gradient(to bottom, rgba(13,13,13,0.92) 0%, rgba(13,13,13,0.8) 50%, rgba(13,13,13,0.95) 100%)',
             }}
           />
 
@@ -208,7 +208,7 @@ export default function PricingPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

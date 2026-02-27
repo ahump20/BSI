@@ -11,10 +11,50 @@ import { withAlpha } from '@/lib/utils/color';
 // Navbar is rendered by the root layout — no page-level import needed
 import { Footer } from '@/components/layout-ds/Footer';
 
+// ── SVG Sport Icons ──
+
+const CoverageBaseballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
+    <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
+  </svg>
+);
+const CoverageFootballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
+    <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
+  </svg>
+);
+const CoverageBasketballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2V22M2 12H22" />
+    <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
+  </svg>
+);
+const CoverageStadiumSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <path d="M3 21V10L12 3L21 10V21" /><path d="M3 14H21" /><rect x="8" y="14" width="8" height="7" />
+  </svg>
+);
+const CoverageGradCapSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <path d="M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" /><path d="M22 10v6" />
+  </svg>
+);
+
+const COVERAGE_ICONS: Record<string, React.FC> = {
+  'College Baseball': CoverageGradCapSvg,
+  MLB: CoverageBaseballSvg,
+  NFL: CoverageFootballSvg,
+  NBA: CoverageBasketballSvg,
+  'College Football': CoverageStadiumSvg,
+};
+
 const sportsCoverage = [
   {
     name: 'College Baseball',
-    icon: '🎓',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/college-baseball',
@@ -32,7 +72,6 @@ const sportsCoverage = [
   },
   {
     name: 'MLB',
-    icon: '⚾',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/mlb',
@@ -50,7 +89,6 @@ const sportsCoverage = [
   },
   {
     name: 'NFL',
-    icon: '🏈',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/nfl',
@@ -67,7 +105,6 @@ const sportsCoverage = [
   },
   {
     name: 'NBA',
-    icon: '🏀',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/nba',
@@ -83,7 +120,6 @@ const sportsCoverage = [
   },
   {
     name: 'College Football',
-    icon: '🏟️',
     status: 'Coming Soon',
     statusColor: '#F59E0B',
     href: '/cfb',
@@ -141,11 +177,11 @@ const dataSources = [
 
 export default function CoveragePage() {
   return (
-    <main className="min-h-screen bg-background-primary text-text-primary">
+    <div className="min-h-screen bg-background-primary text-text-primary">
       {/* Navbar provided by root layout */}
 
       {/* Hero Section */}
-      <Section className="pt-32 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
+      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
@@ -217,7 +253,9 @@ export default function CoveragePage() {
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-4xl">{sport.icon}</span>
+                          <span className="text-text-secondary">
+                            {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
+                          </span>
                           <div>
                             <h3 className="text-xl font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {sport.name}
@@ -316,7 +354,7 @@ export default function CoveragePage() {
                 <CardContent className="p-8">
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">📊</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
                       <div>
                         <h3 className="text-lg font-semibold text-text-primary mb-2">Cross-Referenced Data</h3>
                         <p className="text-text-tertiary">
@@ -325,7 +363,7 @@ export default function CoveragePage() {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🕐</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
                       <div>
                         <h3 className="text-lg font-semibold text-text-primary mb-2">America/Chicago Timestamps</h3>
                         <p className="text-text-tertiary">
@@ -334,7 +372,7 @@ export default function CoveragePage() {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🔗</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
                       <div>
                         <h3 className="text-lg font-semibold text-text-primary mb-2">Source Citations</h3>
                         <p className="text-text-tertiary">
@@ -343,7 +381,7 @@ export default function CoveragePage() {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🚫</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
                       <div>
                         <h3 className="text-lg font-semibold text-text-primary mb-2">Zero Placeholders</h3>
                         <p className="text-text-tertiary">
@@ -391,6 +429,6 @@ export default function CoveragePage() {
       </Section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

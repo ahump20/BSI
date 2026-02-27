@@ -162,6 +162,136 @@ export async function handleCollegeBaseballTeamSchedule(
   return json({ schedule: [], meta: { source: 'error', fetched_at: now, timezone: 'America/Chicago' } }, 502);
 }
 
+// ── Bulk teams endpoint ─────────────────────────────────────────────────────
+
+interface BulkTeamItem {
+  id: number;
+  name: string;
+  abbreviation: string;
+  slug: string;
+  logo: string;
+  primaryColor: string;
+  conference: string;
+  conferenceId: number;
+  record: { wins: number; losses: number };
+  ranking?: number;
+  source: 'highlightly' | 'espn' | 'merged';
+}
+
+/**
+ * GET /api/college-baseball/teams/all
+ * Returns all ~300 college baseball teams with logos, conferences, and records.
+ * Merges ESPN bulk data with teamMetadata for logo overrides.
+ */
+export async function handleCollegeBaseballTeamsAll(
+  env: Env,
+): Promise<Response> {
+  const cacheKey = 'cb:teams:all';
+  const now = new Date().toISOString();
+
+  // KV cache — 1 hour TTL
+  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  if (cached) {
+    return cachedJson(cached, 200, HTTP_CACHE.team, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
+  }
+
+  const teams: BulkTeamItem[] = [];
+  const sources: string[] = [];
+
+  // Step 1: ESPN bulk teams (direct fetch — no client method for bulk)
+  try {
+    const res = await fetch(
+      'https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/teams?limit=400',
+      { signal: AbortSignal.timeout(10000) },
+    );
+    if (res.ok) {
+      const data = await res.json() as Record<string, unknown>;
+      const sports = (data.sports as unknown[]) ?? [];
+      const sport0 = sports[0] as Record<string, unknown> | undefined;
+      const leagues = (sport0?.leagues as unknown[]) ?? [];
+      const league = leagues[0] as Record<string, unknown> | undefined;
+      const rawTeams = (league?.teams ?? []) as Array<{ team: Record<string, unknown> }>;
+
+      for (const entry of rawTeams) {
+        const t = entry.team ?? entry;
+        const espnId = String(t.id ?? '');
+        const name = String(t.displayName ?? t.name ?? '');
+        const abbr = String(t.abbreviation ?? '');
+        const slug = String(t.slug ?? name.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+        const logos = (t.logos as Array<{ href: string }>) ?? [];
+        const logo = logos[0]?.href ?? '';
+        const color = String(t.color ?? '333333');
+        const group = t.groups as Record<string, unknown> | undefined;
+        const confName = String(group?.name ?? group?.shortName ?? 'Independent');
+        const confId = Number(group?.id ?? 0);
+
+        // Check if we have a teamMetadata override for logo
+        const metaEntry = metaByEspnId[espnId];
+        const resolvedLogo = metaEntry ? getLogoUrl(metaEntry.espnId, metaEntry.logoId) : logo;
+
+        // Record from ESPN
+        const recordObj = (t.record as Record<string, unknown>) ?? {};
+        const items = (recordObj.items ?? []) as Array<{ summary?: string }>;
+        const overall = items[0]?.summary ?? '0-0';
+        const [wins, losses] = overall.split('-').map(Number);
+
+        teams.push({
+          id: Number(espnId),
+          name,
+          abbreviation: abbr,
+          slug: metaEntry ? Object.entries(teamMetadata).find(([, v]) => v.espnId === espnId)?.[0] ?? slug : slug,
+          logo: resolvedLogo,
+          primaryColor: `#${color}`,
+          conference: metaEntry?.conference ?? confName,
+          conferenceId: confId,
+          record: { wins: wins || 0, losses: losses || 0 },
+          source: metaEntry ? 'merged' : 'espn',
+        });
+      }
+
+      sources.push('espn');
+    }
+  } catch (err) {
+    console.error('[teams/all] ESPN bulk fetch failed:', err instanceof Error ? err.message : err);
+  }
+
+  // Step 2: Fill in any teams from teamMetadata not in ESPN response
+  for (const [slug, meta] of Object.entries(teamMetadata)) {
+    const exists = teams.some((t) => String(t.id) === meta.espnId);
+    if (!exists) {
+      teams.push({
+        id: Number(meta.espnId),
+        name: meta.name,
+        abbreviation: meta.abbreviation,
+        slug,
+        logo: getLogoUrl(meta.espnId, meta.logoId),
+        primaryColor: meta.colors.primary,
+        conference: meta.conference,
+        conferenceId: 0,
+        record: { wins: 0, losses: 0 },
+        source: 'merged',
+      });
+    }
+  }
+
+  // Sort by conference then name
+  teams.sort((a, b) => a.conference.localeCompare(b.conference) || a.name.localeCompare(b.name));
+
+  const payload = {
+    teams,
+    meta: {
+      source: sources.join('+') || 'metadata',
+      fetched_at: now,
+      timezone: 'America/Chicago' as const,
+      teamCount: teams.length,
+    },
+  };
+
+  // Cache for 1 hour
+  await kvPut(env.KV, cacheKey, payload, 3600);
+  return cachedJson(payload, 200, HTTP_CACHE.team, { ...dataHeaders(now, sources.join('+') || 'metadata'), 'X-Cache': 'MISS' });
+}
+
 export async function handleCollegeBaseballTrends(teamId: string, env: Env): Promise<Response> {
   const now = new Date().toISOString();
 

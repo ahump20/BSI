@@ -199,7 +199,7 @@ export default function PlayerDetailClient() {
 
   if (loading) {
     return (
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             <div className="flex items-center justify-center py-20">
@@ -207,7 +207,7 @@ export default function PlayerDetailClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
     );
   }
 
@@ -221,7 +221,7 @@ export default function PlayerDetailClient() {
 
   if (!player) {
     return (
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             <Card padding="lg" className="text-center">
@@ -232,13 +232,13 @@ export default function PlayerDetailClient() {
             </Card>
           </Container>
         </Section>
-      </main>
+      </div>
     );
   }
 
   return (
     <>
-      <main id="main-content" className="pt-24">
+      <div className="pt-6">
         <Section padding="lg">
           <Container>
             {/* Breadcrumb */}
@@ -646,7 +646,7 @@ export default function PlayerDetailClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

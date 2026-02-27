@@ -32,7 +32,7 @@ const STATS = [
 export default function MLBSeasonPreview2026() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -770,7 +770,7 @@ export default function MLBSeasonPreview2026() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

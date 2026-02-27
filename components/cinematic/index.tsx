@@ -1,84 +1,70 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
+
+/* ==========================================================================
+   Cinematic barrel — ScrollReveal is real, NoiseOverlay/CustomCursor are stubs
+   (noise and cursor removed in the Labs-structure redesign)
+   ========================================================================== */
 
 interface ScrollRevealProps {
   children: ReactNode;
-  direction?: 'up' | 'down' | 'left' | 'right';
+  direction?: 'up' | 'left' | 'right' | 'scale';
   delay?: number;
   className?: string;
 }
 
+/**
+ * Intersection-observer scroll reveal.
+ * Applies CSS `.reveal` / `.revealed` classes defined in globals.css.
+ */
 export function ScrollReveal({ children, direction = 'up', delay = 0, className = '' }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // If already in/near viewport on mount, reveal immediately
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 50 && rect.bottom > -50) {
-      setIsVisible(true);
-      return;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+          el.classList.add('revealed');
           observer.unobserve(el);
         }
       },
-      { threshold: 0, rootMargin: '50px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
 
     observer.observe(el);
-
-    // Safety: never leave content permanently hidden
-    const fallback = setTimeout(() => setIsVisible(true), 3000);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallback);
-    };
+    return () => observer.disconnect();
   }, []);
 
-  const translateMap: Record<string, string> = {
-    up: 'translate-y-8',
-    down: '-translate-y-8',
-    left: 'translate-x-8',
-    right: '-translate-x-8',
-  };
+  const dirClass =
+    direction === 'left'
+      ? 'reveal reveal-left'
+      : direction === 'right'
+        ? 'reveal reveal-right'
+        : direction === 'scale'
+          ? 'reveal reveal-scale'
+          : 'reveal';
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
-        isVisible ? 'opacity-100 translate-x-0 translate-y-0' : `opacity-0 ${translateMap[direction]}`
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      className={`${dirClass} ${className}`}
+      style={{ transitionDelay: delay ? `${delay}ms` : undefined }}
     >
       {children}
     </div>
   );
 }
 
-export function NoiseOverlay({ cssOnly }: { cssOnly?: boolean }) {
-  if (cssOnly) {
-    return (
-      <div
-        className="pointer-events-none fixed inset-0 z-50 opacity-[0.035]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-        }}
-      />
-    );
-  }
+/** Stub — noise overlay removed in redesign */
+export function NoiseOverlay(_props: { cssOnly?: boolean }) {
   return null;
 }
 
+/** Stub — custom cursor removed in redesign */
 export function CustomCursor() {
   return null;
 }

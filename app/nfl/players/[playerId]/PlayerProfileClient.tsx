@@ -132,7 +132,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -387,7 +387,7 @@ export default function PlayerProfileClient({ playerId }: PlayerProfileClientPro
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

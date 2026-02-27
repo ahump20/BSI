@@ -40,7 +40,7 @@ export default function FanbaseComparePage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
@@ -153,7 +153,7 @@ export default function FanbaseComparePage() {
             </Card>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

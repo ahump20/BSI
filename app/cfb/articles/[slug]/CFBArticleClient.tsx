@@ -85,7 +85,7 @@ export function CFBArticleClient() {
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-midnight">
         {/* Hero Section */}
         <Section
           padding="lg"
@@ -249,7 +249,7 @@ export function CFBArticleClient() {
             </Container>
           </Section>
         )}
-      </main>
+      </div>
 
       <Footer />
     </>

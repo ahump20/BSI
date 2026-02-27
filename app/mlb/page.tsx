@@ -257,7 +257,7 @@ export default function MLBPage() {
   return (
     <div className="bsi-theme-baseball">
       <>
-        <main id="main-content">
+        <div>
         {/* Hero Section */}
         <SportHero
           sport="MLB"
@@ -692,7 +692,7 @@ export default function MLBPage() {
             />
           </Container>
         </Section>
-      </main>
+      </div>
 
         <Footer />
       </>

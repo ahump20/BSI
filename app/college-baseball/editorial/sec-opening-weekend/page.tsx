@@ -27,7 +27,7 @@ const storylines = [
 export default function SECOpeningWeekendPage() {
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border">
           <Container>
@@ -171,7 +171,7 @@ export default function SECOpeningWeekendPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

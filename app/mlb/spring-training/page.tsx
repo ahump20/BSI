@@ -87,7 +87,7 @@ export default function SpringTrainingPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <SportHero
           sport="MLB"
           leagueName="Spring Training"
@@ -278,7 +278,7 @@ export default function SpringTrainingPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>
