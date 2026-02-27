@@ -132,7 +132,10 @@ function JsonView({ json }: { json: string }): ReactNode {
   return (
     <>
       {lines.map((line, i) => (
-        <div key={i}>{colorJsonLine(line)}</div>
+        <span key={i}>
+          {colorJsonLine(line)}
+          {i < lines.length - 1 ? '\n' : ''}
+        </span>
       ))}
     </>
   );
