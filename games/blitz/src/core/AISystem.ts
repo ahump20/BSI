@@ -720,7 +720,7 @@ export class AISystem {
     const vel = ballCarrierVel || Vector3.Zero();
     const blitzTarget_: SteeringTarget = { position: target, velocity: vel };
 
-    let force = this.steering.pursuit(state.agent, blitzTarget_);
+    const force = this.steering.pursuit(state.agent, blitzTarget_);
     // Blitzers get a speed boost
     force.scaleInPlace(1.15);
 

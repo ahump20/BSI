@@ -1,275 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>Sandlot Sluggers | BSI Arcade</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0D0D12;overflow:hidden;touch-action:none;font-family:'Inter',system-ui,sans-serif}
-canvas{display:block;margin:0 auto}
-#menu{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.95);z-index:10}
-#menu h1{font-size:clamp(28px,6vw,48px);color:#BF5700;text-transform:uppercase;letter-spacing:3px;margin-bottom:8px}
-#menu p{color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:24px}
-#menu .controls{color:rgba(255,255,255,0.35);font-size:12px;margin-bottom:20px;text-align:center;line-height:1.8}
-.btn{background:#BF5700;color:#fff;border:none;padding:14px 40px;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:2px;border-radius:10px;cursor:pointer}
-.btn:hover{background:#d46300}
-#gameover{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.95);z-index:10}
-#gameover h2{font-size:36px;color:#BF5700;margin-bottom:8px;text-transform:uppercase}
-#gameover .final{font-size:64px;font-weight:900;color:#fff;margin-bottom:4px}
-#gameover .sub{color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:24px}
-#hit-flash{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:5;transition:opacity 0.15s}
-</style>
-</head>
-<body>
-<canvas id="c"></canvas>
-<div id="hit-flash"></div>
-<div id="menu">
-  <h1>Sandlot Sluggers</h1>
-  <p>Timing-Based Baseball</p>
-  <div class="controls">SPACE / Tap = Swing<br>Time it perfectly for home runs. Build streaks for multipliers.<br>Watch for pitch type indicators!</div>
-  <button class="btn" onclick="startGame()">Play Ball</button>
-</div>
-<div id="gameover">
-  <h2>Game Over</h2>
-  <div class="final" id="finalScore">0</div>
-  <div class="sub" id="finalHits">0 Hits</div>
-  <button class="btn" onclick="startGame()">Play Again</button>
-</div>
-<script>
-const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
-let W,H;
-function resize(){W=canvas.width=Math.min(window.innerWidth,800);H=canvas.height=Math.min(window.innerHeight,600);}
-window.addEventListener('resize',resize);resize();
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a0a1a" />
+    <meta name="description" content="Sandlot Sluggers - Step up to the plate in this arcade baseball game." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Sandlot Sluggers | Blaze Sports Intel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      html,body{width:100%;height:100%;overflow:hidden;background:#0a0a1a;font-family:'Oswald','Segoe UI',system-ui,-apple-system,sans-serif;color:#e0e0e0}
+      #game-container{width:100%;height:100%;position:relative}
+      #game-canvas{width:100%;height:100%;display:block;touch-action:none}
 
-let state='menu',score=0,timeLeft=60,streak=0,hits=0,totalSwings=0,homeRuns=0;
-let pitch={active:false,x:0,y:0,speed:0,type:'fastball',shadow:0};
-let swinging=false,swingFrame=0,result='',resultTimer=0,resultColor='';
-let particles=[],floatingTexts=[],ballFlight=null,crowdNoise=0;
-let outfielders=[],screenShake=0;
+      /* Loading */
+      #loading-screen{position:absolute;inset:0;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity .5s}
+      #loading-screen.hidden{opacity:0;pointer-events:none}
+      .loading-title{font-size:42px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#ffd700,#ff6b00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+      .loading-subtitle{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:32px;letter-spacing:2px;text-transform:uppercase}
+      .loading-spinner{width:40px;height:40px;border:3px solid rgba(255,215,0,.15);border-top-color:#ffd700;border-radius:50%;animation:spin .8s linear infinite}
+      @keyframes spin{to{transform:rotate(360deg)}}
 
-const PLATE_X=()=>W/2,PLATE_Y=()=>H*0.78,MOUND_Y=()=>H*0.32;
-const PITCH_TYPES=[
-  {name:'fastball',speed:340,color:'#ff4444',curve:0,label:'FB'},
-  {name:'curve',speed:240,color:'#60a5fa',curve:80,label:'CB'},
-  {name:'slider',speed:280,color:'#a78bfa',curve:50,label:'SL'},
-  {name:'change',speed:200,color:'#4ade80',curve:0,label:'CH'}
-];
+      /* Mode Select Overlay */
+      #mode-select{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,26,.95) 0%,rgba(30,15,5,.92) 60%,rgba(191,87,0,.15) 100%);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
+      #mode-select::before{content:'';position:absolute;bottom:0;left:0;right:0;height:35%;background:linear-gradient(180deg,transparent 0%,rgba(191,87,0,.06) 50%,rgba(191,87,0,.12) 100%);pointer-events:none}
+      #mode-select::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 80'%3E%3Cpath d='M0 80V50 Q50 30 100 40 Q200 55 250 35 Q280 25 300 28 L310 10 L320 28 Q340 25 370 35 Q420 55 500 40 Q600 20 650 35 Q700 50 750 40 Q780 35 800 50V80z' fill='%230a0a1a' opacity='0.6'/%3E%3C/svg%3E") repeat-x bottom/800px 80px;pointer-events:none;opacity:.7}
+      #mode-select.hidden{opacity:0;pointer-events:none}
+      .mode-title{font-family:'Oswald',sans-serif;font-size:52px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#ffd700 0%,#BF5700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;text-transform:uppercase}
+      .mode-sub{color:rgba(255,255,255,.4);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;font-family:'Oswald',sans-serif}
+      .mode-btn{font-family:'Oswald',sans-serif;width:280px;padding:16px 0;margin:8px 0;border:2px solid rgba(191,87,0,.35);border-radius:10px;background:rgba(191,87,0,.08);color:#ffd700;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase}
+      .mode-btn:hover{background:rgba(255,215,0,.15);border-color:#ffd700;transform:scale(1.03)}
+      .mode-desc{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;font-weight:400}
 
-function startGame(){
-  score=0;timeLeft=60;streak=0;hits=0;totalSwings=0;homeRuns=0;
-  state='play';result='';resultTimer=0;particles=[];floatingTexts=[];ballFlight=null;screenShake=0;crowdNoise=0;
-  outfielders=[{x:W*0.2,y:H*0.2},{x:W*0.4,y:H*0.15},{x:W*0.6,y:H*0.15},{x:W*0.8,y:H*0.2}];
-  document.getElementById('menu').style.display='none';
-  document.getElementById('gameover').style.display='none';
-  throwPitch();
-  if(!window._loop){window._loop=true;requestAnimationFrame(loop);}
-}
+      /* Game Over Overlay */
+      #game-over{position:absolute;inset:0;background:rgba(10,10,26,.92);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
+      #game-over.hidden{opacity:0;pointer-events:none}
+      .go-title{font-size:40px;font-weight:800;color:#ff4444;margin-bottom:24px}
+      .go-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px}
+      .go-stat{text-align:center}
+      .go-stat-val{font-size:28px;font-weight:700;color:#ffd700}
+      .go-stat-label{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+      .go-lb{margin-bottom:24px;width:300px;max-height:180px;overflow-y:auto}
+      .go-lb-title{font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;text-align:center}
+      .go-lb-row{display:flex;justify-content:space-between;padding:6px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.06)}
+      .go-lb-row.you{color:#ffd700;font-weight:600}
 
-function throwPitch(){
-  const type=PITCH_TYPES[Math.floor(Math.random()*PITCH_TYPES.length)];
-  const wobble=(Math.random()-0.5)*30;
-  pitch={active:true,x:W/2+wobble,y:MOUND_Y(),speed:type.speed,type:type.name,
-    curve:(Math.random()>0.5?1:-1)*type.curve,color:type.color,label:type.label,shadow:0};
-  swinging=false;swingFrame=0;ballFlight=null;
-}
+      /* CRT arcade scanlines */
+      #scanlines{position:absolute;inset:0;pointer-events:none;z-index:150;background:repeating-linear-gradient(0deg,rgba(0,0,0,.03) 0px,rgba(0,0,0,.03) 1px,transparent 1px,transparent 2px);mix-blend-mode:multiply}
 
-let lastT=0,timerAcc=0;
-function loop(ts){
-  const dt=Math.min((ts-lastT)/1000,0.05);lastT=ts;
-  if(state==='play'){timerAcc+=dt;if(timerAcc>=1){timerAcc-=1;timeLeft--;if(timeLeft<=0)endGame();}}
-  update(dt);draw();
-  requestAnimationFrame(loop);
-}
+      @media(max-width:600px){
+        .mode-title,.loading-title{font-size:32px}
+        .mode-btn{width:240px;padding:14px 0;font-size:15px}
+        .go-title{font-size:28px}
+        .go-stat-val{font-size:22px}
+      }
+    </style>
+    <script type="module" crossorigin src="/games/sandlot-sluggers/assets/index-DB8NoQwk.js"></script>
+    <link rel="modulepreload" crossorigin href="/games/sandlot-sluggers/assets/three-MQ5Yf3mD.js">
+  </head>
+  <body>
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+      <div id="scanlines"></div>
 
-function update(dt){
-  if(screenShake>0)screenShake-=dt*6;
-  crowdNoise=Math.max(0,crowdNoise-dt*0.5);
-  if(pitch.active){
-    pitch.y+=pitch.speed*dt;
-    pitch.x+=pitch.curve*dt*0.8;
-    pitch.shadow=Math.min(1,(pitch.y-MOUND_Y())/(PLATE_Y()-MOUND_Y()));
-    if(pitch.y>PLATE_Y()+80&&!swinging){
-      result='BALL';resultTimer=0.8;resultColor='#64748b';streak=0;pitch.active=false;
-      setTimeout(throwPitch,700);
-    }
-  }
-  if(swinging){swingFrame+=dt*14;if(swingFrame>5)swinging=false;}
-  if(ballFlight){
-    ballFlight.t+=dt;
-    ballFlight.x+=ballFlight.vx*dt;
-    ballFlight.y+=ballFlight.vy*dt;
-    ballFlight.vy+=100*dt;
-    ballFlight.scale=Math.max(0.2,1-ballFlight.t*0.4);
-    // outfielders react
-    outfielders.forEach(o=>{
-      const dx=ballFlight.x-o.x,dy=ballFlight.y-o.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist>5){o.x+=dx/dist*80*dt;o.y+=dy/dist*60*dt;}
-    });
-    if(ballFlight.t>2.5)ballFlight=null;
-  }
-  if(resultTimer>0)resultTimer-=dt;
-  particles=particles.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=400*dt;p.life-=dt;return p.life>0;});
-  floatingTexts=floatingTexts.filter(f=>{f.y-=45*dt;f.life-=dt;return f.life>0;});
-}
+      <div id="loading-screen">
+        <div class="loading-title">Sandlot Sluggers</div>
+        <div class="loading-subtitle">Blaze Sports Intel</div>
+        <div class="loading-spinner"></div>
+      </div>
 
-function swing(){
-  if(!pitch.active||swinging||state!=='play')return;
-  swinging=true;swingFrame=0;totalSwings++;
-  const dist=Math.abs(pitch.y-PLATE_Y());
-  const norm=dist/(H*0.5);
-  let res,pts,color,flightAngle;
-  if(norm<0.05){res='HOME RUN';pts=500;color='#FDB913';flightAngle=-1.2;homeRuns++;screenShake=0.8;crowdNoise=1;
-    spawnParticles(PLATE_X(),PLATE_Y(),30,'#FDB913');spawnParticles(PLATE_X(),PLATE_Y(),15,'#FF6B35');
-    document.getElementById('hit-flash').style.background='rgba(253,185,19,0.2)';document.getElementById('hit-flash').style.opacity='1';setTimeout(()=>document.getElementById('hit-flash').style.opacity='0',150);
-  }else if(norm<0.12){res='TRIPLE';pts=350;color='#FF6B35';flightAngle=-0.9;spawnParticles(PLATE_X(),PLATE_Y(),15,'#FF6B35');}
-  else if(norm<0.22){res=Math.random()>0.4?'DOUBLE':'SINGLE';pts=res==='DOUBLE'?200:100;color='#BF5700';flightAngle=-0.6;spawnParticles(PLATE_X(),PLATE_Y(),8,'#BF5700');}
-  else if(norm<0.38){res='FOUL';pts=10;color='#666';streak=0;flightAngle=Math.random()>0.5?-0.3:0.3;}
-  else{res='STRIKE';pts=0;color='#ef4444';streak=0;flightAngle=0;}
-  if(pts>=100){streak++;hits++;
-    ballFlight={x:PLATE_X(),y:PLATE_Y(),vx:Math.cos(flightAngle)*200+(Math.random()-0.5)*60,vy:Math.sin(flightAngle)*250-100,t:0,scale:1,type:res};
-  }else if(res==='FOUL'){
-    ballFlight={x:PLATE_X(),y:PLATE_Y(),vx:flightAngle*200,vy:-150,t:0,scale:0.8,type:'FOUL'};
-  }
-  const mult=Math.min(1+streak*0.25,4);
-  const total=Math.round(pts*mult);
-  score+=total;
-  result=res;resultTimer=1.3;resultColor=color;
-  if(total>0)floatingTexts.push({x:PLATE_X(),y:PLATE_Y()-40,text:'+'+total+(mult>1?' (x'+mult.toFixed(1)+')':''),color,life:1.5});
-  pitch.active=false;
-  setTimeout(throwPitch,1000);
-}
+      <div id="mode-select" class="hidden">
+        <div class="mode-title">Sandlot Sluggers</div>
+        <div class="mode-sub">Choose Your Mode</div>
+        <button class="mode-btn" data-mode="practice">Practice<div class="mode-desc">Unlimited at-bats, no outs</div></button>
+        <button class="mode-btn" data-mode="quickPlay">Quick Play<div class="mode-desc">3-inning game</div></button>
+        <button class="mode-btn" data-mode="hrDerby">HR Derby<div class="mode-desc">10 outs, max dingers</div></button>
+      </div>
 
-function spawnParticles(x,y,n,color){
-  for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-0.5)*350,vy:-200-Math.random()*250,color,life:1+Math.random()});
-}
+      <div id="game-over" class="hidden">
+        <div class="go-title">GAME OVER</div>
+        <div class="go-stats" id="go-stats"></div>
+        <div class="go-lb" id="go-leaderboard"></div>
+        <button class="mode-btn" id="go-restart">Play Again</button>
+        <button class="mode-btn" id="go-menu" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);background:transparent;margin-top:4px">Main Menu</button>
+      </div>
+    </div>
 
-function draw(){
-  ctx.save();
-  if(screenShake>0)ctx.translate((Math.random()-0.5)*screenShake*8,(Math.random()-0.5)*screenShake*8);
-  ctx.fillStyle='#0D0D12';ctx.fillRect(0,0,W,H);
-  // sky
-  const sky=ctx.createLinearGradient(0,0,0,H*0.35);
-  sky.addColorStop(0,'#0f1729');sky.addColorStop(1,'#162040');
-  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H*0.35);
-  // stars
-  ctx.fillStyle='rgba(255,255,255,0.3)';
-  for(let i=0;i<20;i++){const sx=(i*137.5)%W,sy=(i*97.3)%H*0.3;ctx.fillRect(sx,sy,1.5,1.5);}
-  // stadium lights
-  ctx.fillStyle='rgba(253,185,19,0.06)';ctx.beginPath();ctx.arc(W*0.15,H*0.08,80,0,Math.PI*2);ctx.fill();
-  ctx.beginPath();ctx.arc(W*0.85,H*0.08,80,0,Math.PI*2);ctx.fill();
-  // crowd (rows of dots)
-  for(let row=0;row<3;row++){
-    for(let i=0;i<Math.floor(W/8);i++){
-      const cx=i*8+4,cy=H*0.08+row*10+Math.sin(i*0.5+crowdNoise*10+row)*2;
-      const bright=crowdNoise>0.3?0.3+Math.random()*0.2:0.1+Math.random()*0.05;
-      ctx.fillStyle=`rgba(255,255,255,${bright})`;
-      ctx.fillRect(cx,cy,4,5);
-    }
-  }
-  // outfield grass
-  ctx.fillStyle='#1a5c2a';ctx.beginPath();ctx.moveTo(0,H*0.35);ctx.quadraticCurveTo(W/2,H*0.2,W,H*0.35);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
-  // infield dirt
-  ctx.fillStyle='#8B6914';ctx.beginPath();ctx.ellipse(W/2,H*0.62,W*0.38,H*0.28,0,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#1a5c2a';ctx.beginPath();ctx.ellipse(W/2,H*0.55,W*0.2,H*0.13,0,0,Math.PI*2);ctx.fill();
-  // base paths
-  ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(PLATE_X(),PLATE_Y());ctx.lineTo(W*0.7,H*0.55);ctx.lineTo(W/2,H*0.38);ctx.lineTo(W*0.3,H*0.55);ctx.closePath();ctx.stroke();
-  // bases
-  ctx.fillStyle='#fff';
-  [[W*0.7,H*0.55],[W/2,H*0.38],[W*0.3,H*0.55]].forEach(([bx,by])=>{ctx.save();ctx.translate(bx,by);ctx.rotate(Math.PI/4);ctx.fillRect(-5,-5,10,10);ctx.restore();});
-  // outfielders
-  outfielders.forEach(o=>{ctx.fillStyle='#334155';ctx.beginPath();ctx.arc(o.x,o.y,5,0,Math.PI*2);ctx.fill();});
-  // mound
-  ctx.fillStyle='#8B6914';ctx.beginPath();ctx.ellipse(W/2,MOUND_Y(),22,12,0,0,Math.PI*2);ctx.fill();
-  // plate
-  ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(PLATE_X(),PLATE_Y()+6);ctx.lineTo(PLATE_X()-10,PLATE_Y());ctx.lineTo(PLATE_X()-8,PLATE_Y()-6);ctx.lineTo(PLATE_X()+8,PLATE_Y()-6);ctx.lineTo(PLATE_X()+10,PLATE_Y());ctx.closePath();ctx.fill();
-  // strike zone
-  ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.strokeRect(PLATE_X()-28,PLATE_Y()-48,56,56);
-  // pitcher
-  ctx.fillStyle='#334155';ctx.beginPath();ctx.arc(W/2,MOUND_Y()-16,9,0,Math.PI*2);ctx.fill();
-  ctx.fillRect(W/2-4,MOUND_Y()-7,8,18);
-  ctx.fillStyle='#fff';ctx.fillRect(W/2-3,MOUND_Y()-7,6,3); // cap
-  // batter
-  const bx=PLATE_X()+38,by=PLATE_Y()-8;
-  ctx.fillStyle='#BF5700';ctx.beginPath();ctx.arc(bx,by-18,9,0,Math.PI*2);ctx.fill();
-  ctx.fillRect(bx-4,by-9,8,22);
-  ctx.fillStyle='#FF6B35';ctx.fillRect(bx-3,by-18,6,3); // helmet
-  // bat
-  if(swinging&&swingFrame<3.5){
-    ctx.save();ctx.translate(bx-12,by-3);ctx.rotate(-1.8+swingFrame*1.4);
-    ctx.fillStyle='#DEB887';ctx.fillRect(0,-2.5,42,5);ctx.fillStyle='#8B6914';ctx.fillRect(36,-3,8,6);ctx.restore();
-  }else{
-    ctx.save();ctx.translate(bx-10,by-14);ctx.rotate(-0.9);
-    ctx.fillStyle='#DEB887';ctx.fillRect(0,-2,38,4);ctx.restore();
-  }
-  // pitch ball with shadow
-  if(pitch.active){
-    const sz=4+pitch.shadow*3;
-    // shadow on ground
-    ctx.fillStyle='rgba(0,0,0,0.2)';ctx.beginPath();ctx.ellipse(pitch.x,PLATE_Y()+2,sz*1.2,sz*0.4,0,0,Math.PI*2);ctx.fill();
-    // ball
-    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(pitch.x,pitch.y,sz,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle='#cc0000';ctx.lineWidth=1;ctx.beginPath();ctx.arc(pitch.x,pitch.y,sz,0.5,1.8);ctx.stroke();ctx.beginPath();ctx.arc(pitch.x,pitch.y,sz,3.6,5);ctx.stroke();
-    // pitch type indicator
-    ctx.fillStyle=pitch.color;ctx.font='bold 10px sans-serif';ctx.textAlign='center';
-    ctx.fillText(pitch.label,pitch.x,pitch.y-sz-6);
-    // speed lines
-    if(pitch.type==='fastball'){
-      ctx.strokeStyle='rgba(255,68,68,0.2)';ctx.lineWidth=1;
-      for(let i=1;i<=3;i++){ctx.beginPath();ctx.moveTo(pitch.x-8+i*4,pitch.y-15);ctx.lineTo(pitch.x-8+i*4,pitch.y-30);ctx.stroke();}
-    }
-  }
-  // ball flight
-  if(ballFlight){
-    const s=ballFlight.scale;
-    ctx.fillStyle=ballFlight.type==='HOME RUN'?'#FDB913':'#fff';
-    ctx.beginPath();ctx.arc(ballFlight.x,ballFlight.y,5*s,0,Math.PI*2);ctx.fill();
-    if(ballFlight.type==='HOME RUN'){ctx.strokeStyle='rgba(253,185,19,0.3)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(ballFlight.x,ballFlight.y,10*s,0,Math.PI*2);ctx.stroke();}
-  }
-  // particles
-  particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();});
-  ctx.globalAlpha=1;
-  // floating texts
-  floatingTexts.forEach(f=>{ctx.globalAlpha=Math.min(1,f.life);ctx.fillStyle=f.color;ctx.font='bold 20px sans-serif';ctx.textAlign='center';
-    ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=3;ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);});
-  ctx.globalAlpha=1;
-  // result
-  if(resultTimer>0){
-    ctx.fillStyle=resultColor;ctx.font='bold 32px sans-serif';ctx.textAlign='center';
-    ctx.strokeStyle='rgba(0,0,0,0.6)';ctx.lineWidth=4;
-    ctx.strokeText(result,W/2,H*0.18);ctx.fillText(result,W/2,H*0.18);
-  }
-  // HUD
-  ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,W,34);
-  ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';
-  ctx.textAlign='left';ctx.fillText('Score: '+score,12,22);
-  ctx.textAlign='center';
-  const mult=Math.min(1+streak*0.25,4);
-  ctx.fillStyle=streak>=3?'#FDB913':'#fff';
-  ctx.fillText(timeLeft+'s  |  Streak: '+streak+(mult>1?' (x'+mult.toFixed(1)+')':''),W/2,22);
-  ctx.textAlign='right';ctx.fillStyle='#BF5700';ctx.fillText('HR: '+homeRuns,W-12,22);
-  ctx.restore();
-}
-
-function endGame(){
-  state='over';
-  document.getElementById('gameover').style.display='flex';
-  document.getElementById('finalScore').textContent=score;
-  document.getElementById('finalHits').textContent=hits+' Hit'+(hits!==1?'s':'')+' ('+homeRuns+' HR) / '+totalSwings+' Swings';
-  submitScore();
-}
-
-function submitScore(){
-  const name=localStorage.getItem('bsi_player_name')||'Player';
-  const avatar=localStorage.getItem('bsi_player_avatar')||'\u26BE';
-  fetch('/api/multiplayer/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({game:'sandlot-sluggers',name,avatar,score})}).catch(()=>{});
-}
-
-document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();swing();}});
-canvas.addEventListener('touchstart',e=>{e.preventDefault();swing();},{passive:false});
-</script>
-</body>
+    <noscript><p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">Sandlot Sluggers requires JavaScript.</p></noscript>
+  </body>
 </html>

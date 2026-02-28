@@ -1130,7 +1130,7 @@ export class BlitzGameEngine {
     // TD light flicker — animate lights with sine wave over 2s
     const lights = this.scene.lights;
     const originalIntensities = lights.map(l => l.intensity);
-    let flickerStart = performance.now();
+    const flickerStart = performance.now();
     const flickerInterval = setInterval(() => {
       const elapsed = (performance.now() - flickerStart) / 1000;
       if (elapsed > 2) {
