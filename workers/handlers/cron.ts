@@ -23,6 +23,19 @@ import {
   transformSDIONFLScores,
   transformSDIONBAScores,
 } from '../../lib/api-clients/sportsdataio-api';
+import {
+  computeMMI,
+  computeGameSummary,
+  type MMIInput,
+  type InningScore,
+  type MMISnapshot,
+} from '../../lib/analytics/mmi';
+import type {
+  HighlightlyMatch,
+  HighlightlyPlay,
+  HighlightlyInning,
+  HighlightlyBoxScore,
+} from '../../lib/api-clients/highlightly-api';
 
 /** KV key pattern for cached scores: `scores:cached:{sport}:{date}` */
 function scoresCacheKey(sport: string, date: string): string {
@@ -303,6 +316,198 @@ async function populateSearchIndex(env: Env): Promise<void> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// MMI Computation from Highlightly
+// ---------------------------------------------------------------------------
+
+/** Build cumulative inning scores from a Highlightly innings array. */
+function buildCumulativeInnings(innings: HighlightlyInning[]): InningScore[] {
+  return innings.map((inn) => ({
+    inning: inn.inning,
+    homeRuns: inn.homeRuns,
+    awayRuns: inn.awayRuns,
+  }));
+}
+
+/** Derive recent completed innings relative to the current inning. */
+function deriveRecentInnings(innings: InningScore[], currentInning: number): InningScore[] {
+  return innings.filter((inn) => inn.inning < currentInning).slice(-2);
+}
+
+/** Convert a Highlightly play to an MMIInput. */
+function playToMMIInput(gameId: string, play: HighlightlyPlay, innings: InningScore[]): MMIInput {
+  return {
+    gameId,
+    inning: play.inning,
+    inningHalf: play.half,
+    outs: play.outs,
+    homeScore: play.homeScore,
+    awayScore: play.awayScore,
+    runnersOn: [
+      play.bases?.first ?? false,
+      play.bases?.second ?? false,
+      play.bases?.third ?? false,
+    ],
+    recentInnings: deriveRecentInnings(innings, play.inning),
+  };
+}
+
+/** Convert a Highlightly inning entry to an end-of-inning MMIInput (fallback). */
+function inningToMMIInput(
+  gameId: string,
+  innings: InningScore[],
+  index: number,
+): MMIInput {
+  // Accumulate scores through this inning
+  let cumulativeHome = 0;
+  let cumulativeAway = 0;
+  for (let i = 0; i <= index; i++) {
+    cumulativeHome += innings[i].homeRuns;
+    cumulativeAway += innings[i].awayRuns;
+  }
+
+  return {
+    gameId,
+    inning: innings[index].inning,
+    inningHalf: 'bottom',
+    outs: 3,
+    homeScore: cumulativeHome,
+    awayScore: cumulativeAway,
+    runnersOn: [false, false, false],
+    recentInnings: innings.slice(Math.max(0, index - 1), index + 1),
+  };
+}
+
+/**
+ * Compute MMI for finished games and write snapshots + summaries to D1.
+ * Uses Highlightly play-by-play when available, falls back to per-inning data.
+ */
+async function computeAndStoreMMI(env: Env): Promise<{ processed: number; errors: string[] }> {
+  const hlClient = getHighlightlyClient(env);
+  if (!hlClient) return { processed: 0, errors: ['No Highlightly API key'] };
+
+  const date = todayCST();
+  const matchesResult = await hlClient.getMatches('NCAA', date);
+
+  if (!matchesResult.success || !matchesResult.data) {
+    return { processed: 0, errors: [matchesResult.error || 'Failed to fetch matches'] };
+  }
+
+  const finishedGames = matchesResult.data.data.filter(
+    (m: HighlightlyMatch) => m.status.type === 'finished',
+  );
+
+  if (finishedGames.length === 0) {
+    return { processed: 0, errors: [] };
+  }
+
+  let processed = 0;
+  const errors: string[] = [];
+
+  for (const game of finishedGames) {
+    const gameId = String(game.id);
+
+    try {
+      // Check if we already computed MMI for this game
+      const existing = await env.DB.prepare(
+        'SELECT game_id FROM mmi_game_summary WHERE game_id = ?',
+      ).bind(gameId).first();
+
+      if (existing) continue; // Already processed
+
+      const boxResult = await hlClient.getBoxScore(game.id);
+      if (!boxResult.success || !boxResult.data) {
+        errors.push(`Box score fetch failed for game ${gameId}`);
+        continue;
+      }
+
+      const box = boxResult.data;
+      const innings = buildCumulativeInnings(box.linescores || []);
+      let snapshots: MMISnapshot[];
+
+      if (box.plays && box.plays.length > 0) {
+        // Source A: play-by-play (max granularity)
+        snapshots = box.plays.map((play: HighlightlyPlay) =>
+          computeMMI(playToMMIInput(gameId, play, innings)),
+        );
+      } else if (innings.length > 0) {
+        // Source B: per-inning linescore (fallback)
+        snapshots = innings.map((_inn: InningScore, i: number) =>
+          computeMMI(inningToMMIInput(gameId, innings, i)),
+        );
+      } else {
+        continue; // No data to compute from
+      }
+
+      if (snapshots.length === 0) continue;
+
+      const summary = computeGameSummary(gameId, snapshots);
+
+      // Write snapshots to D1
+      const snapshotStmt = env.DB.prepare(
+        `INSERT INTO mmi_snapshots
+         (game_id, league, inning, inning_half, outs, home_score, away_score,
+          mmi_value, sd_component, rs_component, gp_component, bs_component,
+          runners_on, computed_at)
+         VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      );
+
+      // Batch in chunks of 50 to stay within D1 batch limits
+      const CHUNK = 50;
+      for (let i = 0; i < snapshots.length; i += CHUNK) {
+        const chunk = snapshots.slice(i, i + CHUNK);
+        const batch = chunk.map((snap: MMISnapshot, idx: number) => {
+          // Reconstruct inning info from original inputs where possible
+          const inputIdx = i + idx;
+          const play = box.plays?.[inputIdx];
+          const inning = play?.inning ?? (innings[inputIdx]?.inning ?? 1);
+          const half = play?.half ?? 'bottom';
+          const outs = play?.outs ?? 3;
+          const homeScore = play?.homeScore ?? game.homeScore;
+          const awayScore = play?.awayScore ?? game.awayScore;
+          const runners = play?.bases
+            ? [play.bases.first, play.bases.second, play.bases.third].filter(Boolean).map((_, ri) => ri + 1).join(',')
+            : null;
+
+          return snapshotStmt.bind(
+            gameId, inning, half, outs, homeScore, awayScore,
+            snap.value, snap.components.sd, snap.components.rs,
+            snap.components.gp, snap.components.bs,
+            runners, snap.meta.computed_at,
+          );
+        });
+        await env.DB.batch(batch);
+      }
+
+      // Upsert game summary
+      await env.DB.prepare(
+        `INSERT OR REPLACE INTO mmi_game_summary
+         (game_id, league, game_date, home_team, away_team,
+          final_home_score, final_away_score,
+          max_mmi, min_mmi, avg_mmi, mmi_volatility,
+          lead_changes, max_swing, swing_inning,
+          excitement_rating, computed_at)
+         VALUES (?, 'college-baseball', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(
+        gameId, date,
+        game.homeTeam?.name || 'Unknown',
+        game.awayTeam?.name || 'Unknown',
+        game.homeScore, game.awayScore,
+        summary.maxMmi, summary.minMmi, summary.avgMmi, summary.volatility,
+        summary.leadChanges, summary.maxSwing, summary.swingInning,
+        summary.excitementRating,
+        new Date().toISOString(),
+      ).run();
+
+      processed++;
+    } catch (err) {
+      errors.push(`Game ${gameId}: ${err instanceof Error ? err.message : 'unknown'}`);
+    }
+  }
+
+  return { processed, errors };
+}
+
 /**
  * Main cron entry point. Called by the Workers runtime on schedule.
  */
@@ -437,6 +642,29 @@ export async function handleScheduled(env: Env): Promise<void> {
     }
   } catch (err) {
     await logError(env, `cron:search-index: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-search');
+  }
+
+  // Compute MMI for finished college baseball games (gated: max once per hour)
+  if (ncaaActive) {
+    try {
+      const mmiGateKey = 'mmi:last-compute';
+      const lastMMI = await kvGet<string>(env.KV, mmiGateKey);
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      if (!lastMMI || lastMMI < oneHourAgo) {
+        const mmiResult = await computeAndStoreMMI(env);
+        await kvPut(env.KV, mmiGateKey, now, 3600);
+        if (mmiResult.processed > 0) {
+          // Clear trending cache so next request picks up new data
+          await env.KV.delete('mmi:trending');
+          console.log(`[cron] MMI computed: ${mmiResult.processed} games`);
+        }
+        if (mmiResult.errors.length > 0) {
+          console.log(`[cron] MMI errors: ${mmiResult.errors.join('; ')}`);
+        }
+      }
+    } catch (err) {
+      await logError(env, `cron:mmi: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-mmi');
+    }
   }
 }
 

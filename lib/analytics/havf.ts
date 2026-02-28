@@ -242,7 +242,7 @@ export function computeFScore(
   }
 
   // Normalize to 0-100 if only partial fielding data exists
-  return round1(totalWeight > 0 ? score / totalWeight * 100 / 100 : 50);
+  return round1(totalWeight > 0 ? score / totalWeight : 50);
 }
 
 // ---------------------------------------------------------------------------
