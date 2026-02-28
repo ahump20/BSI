@@ -220,6 +220,28 @@ export default function SavantVisualsPage() {
   const { data: confRes, loading: confLoading } =
     useSportData<{ data: ConferenceHeatmapRow[] }>('/api/savant/conference-strength');
 
+  // Fetch trending MMI games (most volatile today)
+  const { data: mmiTrending } = useSportData<{
+    games: Array<{
+      game_id: string;
+      home_team: string;
+      away_team: string;
+      mmi_volatility: number;
+      lead_changes: number;
+      excitement_rating: string;
+      snapshots?: Array<{
+        inning: number;
+        inning_half: string;
+        mmi_value: number;
+        direction: string;
+        magnitude: string;
+        event_description?: string;
+        home_score?: number;
+        away_score?: number;
+      }>;
+    }>;
+  }>('/api/analytics/mmi/trending');
+
   // Build scatter data from batting leaderboard
   const scatterData: ScatterPlayer[] = useMemo(() => {
     if (!battingRes?.data) return [];
@@ -605,28 +627,52 @@ export default function SavantVisualsPage() {
                   )}
 
                   {/* Momentum Flow */}
-                  {activeViz === 'momentum-flow' && (
-                    <div>
-                      <div className="mb-3">
-                        <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
-                          Demo: Sample 9-inning game with walk-off finish
-                        </span>
+                  {activeViz === 'momentum-flow' && (() => {
+                    // Use real MMI data if available, otherwise demo
+                    const topGame = mmiTrending?.games?.[0];
+                    const hasRealData = topGame?.snapshots && topGame.snapshots.length >= 2;
+                    const snaps: MomentumSnapshot[] = hasRealData
+                      ? topGame.snapshots!.map(s => ({
+                          inning: s.inning,
+                          inning_half: s.inning_half as 'top' | 'bottom',
+                          mmi_value: s.mmi_value,
+                          direction: s.direction as 'home' | 'away' | 'neutral',
+                          magnitude: s.magnitude as 'low' | 'medium' | 'high' | 'extreme',
+                          event_description: s.event_description,
+                          home_score: s.home_score,
+                          away_score: s.away_score,
+                        }))
+                      : demoSnapshots;
+
+                    return (
+                      <div>
+                        <div className="mb-3">
+                          <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                            {hasRealData
+                              ? `${topGame.away_team} @ ${topGame.home_team} — ${topGame.excitement_rating?.replace('-', ' ')}`
+                              : 'Demo: Sample 9-inning game with walk-off finish'}
+                          </span>
+                        </div>
+                        <MomentumFlow
+                          snapshots={snaps}
+                          homeTeam={hasRealData ? topGame.home_team : 'Texas'}
+                          awayTeam={hasRealData ? topGame.away_team : 'Oklahoma'}
+                          volatility={hasRealData ? topGame.mmi_volatility : 42.3}
+                          leadChanges={hasRealData ? topGame.lead_changes : 3}
+                          excitementRating={
+                            hasRealData
+                              ? (topGame.excitement_rating as 'routine' | 'competitive' | 'thriller' | 'instant-classic')
+                              : 'instant-classic'
+                          }
+                        />
+                        <p className="text-[11px] text-text-muted mt-3 leading-relaxed max-w-xl">
+                          {hasRealData
+                            ? 'Showing the most volatile game from today. Each scoring event is a node on the river — hover to see what happened.'
+                            : 'During live games, momentum data populates automatically from the MMI engine. Each scoring event becomes a node on the river — hover to see what happened.'}
+                        </p>
                       </div>
-                      <MomentumFlow
-                        snapshots={demoSnapshots}
-                        homeTeam="Texas"
-                        awayTeam="Oklahoma"
-                        volatility={42.3}
-                        leadChanges={3}
-                        excitementRating="instant-classic"
-                      />
-                      <p className="text-[11px] text-text-muted mt-3 leading-relaxed max-w-xl">
-                        During live games, momentum data populates automatically from the MMI engine.
-                        Each scoring event becomes a node on the river — hover to see what happened.
-                        The area fill shifts between home (orange) and away (blue) as momentum changes hands.
-                      </p>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Matchup Theater */}
                   {activeViz === 'matchup-theater' && (

@@ -19,6 +19,7 @@ import {
 } from '../../lib/api-clients/espn-api';
 import { processFinishedGames } from './college-baseball';
 import { batchComputeHAVF, type HAVFInput } from '../../lib/analytics/havf';
+import { computeMMI, computeGameSummary, type MMIInput, type InningScore } from '../../lib/analytics/mmi';
 import {
   transformSDIOMLBScores,
   transformSDIONFLScores,
@@ -373,6 +374,228 @@ async function computeHAVFDaily(env: Env): Promise<void> {
 }
 
 /**
+ * Compute MMI snapshots for recently finished games that don't have momentum data yet.
+ * Reads linescore from ESPN game summaries archived in R2 (or re-fetches if missing),
+ * reconstructs game state inning by inning, and writes snapshots + summary to D1.
+ */
+async function computeMMIForNewGames(env: Env, date: string): Promise<number> {
+  if (!env.DB) return 0;
+
+  // Find games processed today that lack MMI summaries
+  const { results: unprocessed } = await env.DB.prepare(
+    `SELECT pg.game_id, pg.home_team, pg.away_team, pg.home_score, pg.away_score, pg.game_date
+     FROM processed_games pg
+     LEFT JOIN mmi_game_summary ms ON pg.game_id = ms.game_id
+     WHERE pg.game_date = ? AND ms.game_id IS NULL
+     LIMIT 20`
+  ).bind(date).all<{
+    game_id: string; home_team: string; away_team: string;
+    home_score: number; away_score: number; game_date: string;
+  }>();
+
+  if (!unprocessed || unprocessed.length === 0) return 0;
+
+  let computed = 0;
+
+  for (const game of unprocessed) {
+    try {
+      // Try to read linescore from R2 archive first, fall back to live fetch
+      let linescore: Array<{ home: number; away: number }> | null = null;
+
+      if (env.DATA_LAKE) {
+        try {
+          const r2Key = `espn/college-baseball/games/${game.game_id}/${date}.json`;
+          const obj = await env.DATA_LAKE.get(r2Key);
+          if (obj) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const archived = JSON.parse(await obj.text()) as any;
+            linescore = extractLinescore(archived);
+          }
+        } catch {
+          // R2 read failed — will try live fetch below
+        }
+      }
+
+      if (!linescore) {
+        // Fetch fresh from ESPN
+        try {
+          const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/college-baseball/summary?event=${game.game_id}`;
+          const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+          if (res.ok) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const data = await res.json() as any;
+            linescore = extractLinescore(data);
+          }
+        } catch {
+          // ESPN fetch failed — skip this game
+        }
+      }
+
+      if (!linescore || linescore.length === 0) continue;
+
+      // Reconstruct game state inning-by-inning and compute MMI at each point
+      const snapshots = [];
+      let homeRunning = 0;
+      let awayRunning = 0;
+      const totalInnings = linescore.length;
+
+      for (let inn = 0; inn < totalInnings; inn++) {
+        const { home: homeRuns, away: awayRuns } = linescore[inn];
+
+        // Top of inning — away scores
+        awayRunning += awayRuns;
+        const recentTop: InningScore[] = [];
+        for (let r = Math.max(0, inn - 1); r <= inn; r++) {
+          recentTop.push({
+            inning: r + 1,
+            homeRuns: r < inn ? linescore[r].home : 0,
+            awayRuns: linescore[r].away,
+          });
+        }
+
+        const topInput: MMIInput = {
+          gameId: game.game_id,
+          inning: inn + 1,
+          inningHalf: 'top',
+          outs: 3,
+          homeScore: homeRunning,
+          awayScore: awayRunning,
+          runnersOn: [false, false, false],
+          recentInnings: recentTop,
+          totalInnings: Math.max(9, totalInnings),
+        };
+        const topSnap = computeMMI(topInput);
+        snapshots.push({
+          ...topSnap,
+          inning: inn + 1,
+          inningHalf: 'top' as const,
+          homeScore: homeRunning,
+          awayScore: awayRunning,
+          eventDescription: awayRuns > 0 ? `${awayRuns} run${awayRuns > 1 ? 's' : ''} scored` : undefined,
+        });
+
+        // Bottom of inning — home scores
+        homeRunning += homeRuns;
+        const recentBottom: InningScore[] = [];
+        for (let r = Math.max(0, inn - 1); r <= inn; r++) {
+          recentBottom.push({
+            inning: r + 1,
+            homeRuns: linescore[r].home,
+            awayRuns: linescore[r].away,
+          });
+        }
+
+        const bottomInput: MMIInput = {
+          gameId: game.game_id,
+          inning: inn + 1,
+          inningHalf: 'bottom',
+          outs: 3,
+          homeScore: homeRunning,
+          awayScore: awayRunning,
+          runnersOn: [false, false, false],
+          recentInnings: recentBottom,
+          totalInnings: Math.max(9, totalInnings),
+        };
+        const bottomSnap = computeMMI(bottomInput);
+        snapshots.push({
+          ...bottomSnap,
+          inning: inn + 1,
+          inningHalf: 'bottom' as const,
+          homeScore: homeRunning,
+          awayScore: awayRunning,
+          eventDescription: homeRuns > 0 ? `${homeRuns} run${homeRuns > 1 ? 's' : ''} scored` : undefined,
+        });
+      }
+
+      // Write snapshots to D1
+      const CHUNK = 25;
+      for (let i = 0; i < snapshots.length; i += CHUNK) {
+        const chunk = snapshots.slice(i, i + CHUNK);
+        const stmts = chunk.map(s =>
+          env.DB.prepare(
+            `INSERT INTO mmi_snapshots
+             (game_id, inning, inning_half, outs, home_score, away_score,
+              mmi_value, direction, magnitude, components, event_description)
+             VALUES (?, ?, ?, 3, ?, ?, ?, ?, ?, ?, ?)`
+          ).bind(
+            game.game_id, s.inning, s.inningHalf,
+            s.homeScore, s.awayScore,
+            s.value, s.direction, s.magnitude,
+            JSON.stringify(s.components),
+            s.eventDescription ?? null,
+          )
+        );
+        await env.DB.batch(stmts);
+      }
+
+      // Write game summary
+      const summary = computeGameSummary(
+        game.game_id,
+        snapshots.map(s => ({
+          value: s.value,
+          direction: s.direction,
+          magnitude: s.magnitude,
+          components: s.components,
+          meta: s.meta,
+        })),
+      );
+
+      await env.DB.prepare(
+        `INSERT OR IGNORE INTO mmi_game_summary
+         (game_id, game_date, home_team, away_team, final_home_score, final_away_score,
+          max_mmi, min_mmi, avg_mmi, mmi_volatility, lead_changes, max_swing,
+          swing_inning, excitement_rating)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        game.game_id, game.game_date, game.home_team, game.away_team,
+        game.home_score, game.away_score,
+        summary.maxMmi, summary.minMmi, summary.avgMmi, summary.volatility,
+        summary.leadChanges, summary.maxSwing, summary.swingInning,
+        summary.excitementRating,
+      ).run();
+
+      computed++;
+    } catch (err) {
+      console.error(`[mmi] Failed for game ${game.game_id}:`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  return computed;
+}
+
+/**
+ * Extract inning-by-inning run totals from an ESPN game summary.
+ * Returns [{home: N, away: N}, ...] for each inning, or null if linescore is absent.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractLinescore(summary: any): Array<{ home: number; away: number }> | null {
+  // ESPN format: header.competitions[0].competitors[].linescores[{value}]
+  const comps = summary?.header?.competitions?.[0]?.competitors
+    ?? summary?.competitions?.[0]?.competitors
+    ?? [];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const home = comps.find((c: any) => c.homeAway === 'home');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const away = comps.find((c: any) => c.homeAway === 'away');
+
+  if (!home?.linescores?.length || !away?.linescores?.length) return null;
+
+  const innings = Math.min(home.linescores.length, away.linescores.length);
+  if (innings === 0) return null;
+
+  const result: Array<{ home: number; away: number }> = [];
+  for (let i = 0; i < innings; i++) {
+    result.push({
+      home: Number(home.linescores[i]?.value ?? 0),
+      away: Number(away.linescores[i]?.value ?? 0),
+    });
+  }
+
+  return result;
+}
+
+/**
  * Main cron entry point. Called by the Workers runtime on schedule.
  */
 export async function handleScheduled(env: Env): Promise<void> {
@@ -486,6 +709,18 @@ export async function handleScheduled(env: Env): Promise<void> {
       }
     } catch (err) {
       await logError(env, `cron:stats-ingest: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-ingest');
+    }
+  }
+
+  // Compute MMI momentum snapshots for newly finished games
+  if (ncaaActive) {
+    try {
+      const mmiComputed = await computeMMIForNewGames(env, date);
+      if (mmiComputed > 0) {
+        console.log(`[cron] MMI computed for ${mmiComputed} game(s)`);
+      }
+    } catch (err) {
+      await logError(env, `cron:mmi: ${err instanceof Error ? err.message : 'unknown'}`, 'cron-mmi');
     }
   }
 

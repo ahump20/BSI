@@ -321,7 +321,7 @@ export async function handleMMITrending(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { trending: cached, meta: analyticsMeta('bsi-mmi', true) },
+      { games: cached, meta: analyticsMeta('bsi-mmi', true) },
       200,
       60,
       { 'X-Cache': 'HIT' },
@@ -330,16 +330,32 @@ export async function handleMMITrending(env: Env): Promise<Response> {
 
   try {
     const today = new Date().toISOString().split('T')[0];
-    const { results } = await env.DB.prepare(
+    const { results: summaries } = await env.DB.prepare(
       `SELECT * FROM mmi_game_summary
        WHERE game_date = ?
        ORDER BY mmi_volatility DESC
        LIMIT 10`,
     ).bind(today).all();
 
-    await kvPut(env.KV, cacheKey, results, 60);
+    // Attach snapshots to the top game so the Momentum Flow viz can render it
+    const games = [...(summaries || [])];
+    if (games.length > 0) {
+      const topGameId = (games[0] as Record<string, unknown>).game_id as string;
+      if (topGameId) {
+        const { results: snaps } = await env.DB.prepare(
+          `SELECT inning, inning_half, mmi_value, direction, magnitude,
+                  event_description, home_score, away_score
+           FROM mmi_snapshots
+           WHERE game_id = ?
+           ORDER BY id ASC`
+        ).bind(topGameId).all();
+        (games[0] as Record<string, unknown>).snapshots = snaps || [];
+      }
+    }
+
+    await kvPut(env.KV, cacheKey, games, 60);
     return cachedJson(
-      { trending: results, meta: analyticsMeta('bsi-mmi', false) },
+      { games, meta: analyticsMeta('bsi-mmi', false) },
       200,
       60,
       { 'X-Cache': 'MISS' },
