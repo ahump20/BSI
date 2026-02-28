@@ -50,7 +50,10 @@ export function getMainNavItems(date?: Date): {
 
   const secondary: MainNavItem[] = [
     { label: 'Savant', href: '/college-baseball/savant' },
-    { label: 'Portal', href: '/college-baseball/portal' },
+    { label: 'Portal', href: '/college-baseball/transfer-portal' },
+    { label: 'HAV-F', href: '/models/havf' },
+    { label: 'Vision AI', href: '/vision-ai' },
+    { label: 'Search', href: '/search' },
     { label: 'Writing', href: '/blog-post-feed' },
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Glossary', href: '/glossary' },
