@@ -417,6 +417,101 @@ const TEAM_CONF: Record<string, string> = {
   'Seattle U Redhawks': 'WCC',
 };
 
+// Venue map — home stadium for park factor attribution (Power 4 + select mid-majors)
+const TEAM_VENUE: Record<string, string> = {
+  // SEC
+  'Texas Longhorns': 'UFCU Disch-Falk Field',
+  'Texas A&M Aggies': 'Olsen Field at Blue Bell Park',
+  'Florida Gators': 'Florida Ballpark',
+  'LSU Tigers': 'Alex Box Stadium',
+  'Arkansas Razorbacks': 'Baum-Walker Stadium',
+  'Tennessee Volunteers': 'Lindsey Nelson Stadium',
+  'Vanderbilt Commodores': 'Hawkins Field',
+  'Ole Miss Rebels': 'Swayze Field',
+  'Georgia Bulldogs': 'Foley Field',
+  'Auburn Tigers': 'Plainsman Park',
+  'Alabama Crimson Tide': 'Sewell-Thomas Stadium',
+  'Mississippi State Bulldogs': 'Dudy Noble Field',
+  'South Carolina Gamecocks': 'Founders Park',
+  'Kentucky Wildcats': 'Kentucky Proud Park',
+  'Missouri Tigers': 'Taylor Stadium',
+  'Oklahoma Sooners': 'L. Dale Mitchell Park',
+  // ACC
+  'Wake Forest Demon Deacons': 'David F. Couch Ballpark',
+  'Virginia Cavaliers': 'Disharoon Park',
+  'NC State Wolfpack': 'Doak Field',
+  'Clemson Tigers': 'Doug Kingsmore Stadium',
+  'Florida State Seminoles': 'Dick Howser Stadium',
+  'Miami Hurricanes': 'Mark Light Field',
+  'Louisville Cardinals': 'Jim Patterson Stadium',
+  'Duke Blue Devils': 'Jack Coombs Field',
+  'North Carolina Tar Heels': 'Boshamer Stadium',
+  'Stanford Cardinal': 'Klein Field at Sunken Diamond',
+  'California Golden Bears': 'Evans Diamond',
+  'Georgia Tech Yellow Jackets': 'Russ Chandler Stadium',
+  'Boston College Eagles': 'Shea Field',
+  'Notre Dame Fighting Irish': 'Frank Eck Stadium',
+  'Pittsburgh Panthers': 'Charles L. Cost Field',
+  'SMU Mustangs': 'Wacker Field',
+  'Syracuse Orange': 'NBT Bank Stadium',
+  'Virginia Tech Hokies': 'English Field',
+  // Big 12
+  'TCU Horned Frogs': 'Lupton Stadium',
+  'Texas Tech Red Raiders': 'Dan Law Field',
+  "Oklahoma State Cowboys": "O'Brate Stadium",
+  'Baylor Bears': 'Baylor Ballpark',
+  'West Virginia Mountaineers': 'Monongalia County Ballpark',
+  'Kansas State Wildcats': 'Tointon Family Stadium',
+  'Arizona Wildcats': 'Hi Corbett Field',
+  'Arizona State Sun Devils': 'Phoenix Municipal Stadium',
+  'BYU Cougars': 'Larry H. Miller Field',
+  'Cincinnati Bearcats': 'Marge Schott Stadium',
+  'Colorado Buffaloes': 'Kittredge Field',
+  'Houston Cougars': 'Schroeder Park',
+  'Iowa State Cyclones': 'Cap Timm Field',
+  'Kansas Jayhawks': 'Hoglund Ballpark',
+  'UCF Knights': 'John Euliano Park',
+  'Utah Utes': "Smith's Ballpark",
+  // Big Ten
+  'UCLA Bruins': 'Jackie Robinson Stadium',
+  'USC Trojans': 'Dedeaux Field',
+  'Illinois Fighting Illini': 'Illinois Field',
+  'Indiana Hoosiers': 'Bart Kaufman Field',
+  'Iowa Hawkeyes': 'Duane Banks Field',
+  'Maryland Terrapins': 'Bob Smith Stadium',
+  'Michigan Wolverines': 'Ray Fisher Stadium',
+  'Michigan State Spartans': 'McLane Stadium',
+  'Minnesota Golden Gophers': 'Siebert Field',
+  'Nebraska Cornhuskers': 'Hawks Field',
+  'Northwestern Wildcats': 'Rocky Miller Park',
+  'Ohio State Buckeyes': 'Bill Davis Stadium',
+  'Oregon Ducks': 'PK Park',
+  'Penn State Nittany Lions': 'Medlar Field',
+  'Purdue Boilermakers': 'Alexander Field',
+  'Rutgers Scarlet Knights': 'Bainton Field',
+  'Washington Huskies': 'Husky Ballpark',
+  'Wisconsin Badgers': 'UW-Madison Baseball Stadium',
+  // Independent
+  'Oregon State Beavers': 'Goss Stadium',
+  // Select mid-majors with strong baseball programs
+  'Coastal Carolina Chanticleers': 'Springs Brooks Stadium',
+  'East Carolina Pirates': 'Clark-LeClair Stadium',
+  'Rice Owls': 'Reckling Park',
+  'Tulane Green Wave': 'Greer Field',
+  'Southern Miss Golden Eagles': 'Pete Taylor Park',
+  'Dallas Baptist Patriots': 'Horner Ballpark',
+  'Fresno State Bulldogs': 'Pete Beiden Field',
+  'San Diego State Aztecs': 'Tony Gwynn Stadium',
+  'Gonzaga Bulldogs': 'Patterson Baseball Complex',
+  'Wichita State Shockers': 'Eck Stadium',
+  'Florida Atlantic Owls': 'FAU Baseball Stadium',
+  'Oral Roberts Golden Eagles': 'J.L. Johnson Stadium',
+  'Liberty Flames': 'Worthington Field',
+  'Pepperdine Waves': 'Eddy D. Field Stadium',
+  'Sam Houston Bearkats': 'Don Sanders Stadium',
+  'Louisiana Tech Bulldogs': 'J.C. Love Field',
+};
+
 // ---------------------------------------------------------------------------
 // Main compute
 // ---------------------------------------------------------------------------
@@ -696,10 +791,91 @@ async function compute(db: D1Database, kv: KVNamespace): Promise<{ batters: numb
     await db.batch(confStmts);
   }
 
-  // 6. Store last-compute timestamp
+  // 6. Park factors — derive from processed game results
+  //
+  // Formula: PF = (total_runs_at_home / home_games) / (total_runs_on_road / road_games)
+  // where total_runs = home_score + away_score (both teams' runs in that game)
+  //
+  // Minimum 5 home games required for a meaningful factor.
+  const MIN_PARK_GAMES = 5;
+
+  // Query all completed games this season
+  const { results: gameRows } = await db.prepare(
+    `SELECT home_team, away_team, home_score, away_score
+     FROM processed_games
+     WHERE sport = 'college-baseball'
+       AND game_date LIKE '2026-%'
+       AND home_score IS NOT NULL
+       AND away_score IS NOT NULL`
+  ).all() as { results: { home_team: string; away_team: string; home_score: number; away_score: number }[] };
+
+  // Aggregate per-team: home runs total + count, road runs total + count
+  const parkAgg = new Map<string, { homeRuns: number; homeGames: number; roadRuns: number; roadGames: number }>();
+
+  for (const g of gameRows || []) {
+    const totalRuns = g.home_score + g.away_score;
+
+    // Home team accumulates home stats
+    let hAgg = parkAgg.get(g.home_team);
+    if (!hAgg) { hAgg = { homeRuns: 0, homeGames: 0, roadRuns: 0, roadGames: 0 }; parkAgg.set(g.home_team, hAgg); }
+    hAgg.homeRuns += totalRuns;
+    hAgg.homeGames += 1;
+
+    // Away team accumulates road stats
+    let aAgg = parkAgg.get(g.away_team);
+    if (!aAgg) { aAgg = { homeRuns: 0, homeGames: 0, roadRuns: 0, roadGames: 0 }; parkAgg.set(g.away_team, aAgg); }
+    aAgg.roadRuns += totalRuns;
+    aAgg.roadGames += 1;
+  }
+
+  // Compute league average runs per game (baseline for normalization)
+  let leagueTotalRuns = 0;
+  let leagueTotalGames = 0;
+  for (const g of gameRows || []) {
+    leagueTotalRuns += g.home_score + g.away_score;
+    leagueTotalGames += 1;
+  }
+  const leagueAvgRPG = leagueTotalGames > 0 ? leagueTotalRuns / leagueTotalGames : 10;
+
+  const parkStmts: D1PreparedStatement[] = [];
+  let venueCount = 0;
+
+  for (const [team, agg] of parkAgg) {
+    if (agg.homeGames < MIN_PARK_GAMES) continue;
+
+    const homeRPG = agg.homeRuns / agg.homeGames;
+    const roadRPG = agg.roadGames > 0 ? agg.roadRuns / agg.roadGames : leagueAvgRPG;
+
+    // Park factor: ratio of runs at home vs on road
+    // Regress toward 1.0 for small samples: PF = (raw * games + 1.0 * 20) / (games + 20)
+    const rawPF = roadRPG > 0 ? homeRPG / roadRPG : 1.0;
+    const regressedPF = (rawPF * agg.homeGames + 1.0 * 20) / (agg.homeGames + 20);
+    const runsFactor = clamp(round(regressedPF, 3), 0.70, 1.40);
+
+    const venue = TEAM_VENUE[team] || team;
+    const conf = TEAM_CONF[team] || null;
+
+    parkStmts.push(db.prepare(
+      `INSERT INTO cbb_park_factors (team, venue_name, conference, season, runs_factor, sample_games, methodology_note, computed_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(team, season) DO UPDATE SET
+         venue_name=excluded.venue_name, conference=excluded.conference,
+         runs_factor=excluded.runs_factor, sample_games=excluded.sample_games,
+         methodology_note=excluded.methodology_note, computed_at=excluded.computed_at`
+    ).bind(team, venue, conf, SEASON, runsFactor, agg.homeGames, 'home-road-RPG-regressed', now));
+    venueCount++;
+  }
+
+  if (parkStmts.length > 0) {
+    for (let i = 0; i < parkStmts.length; i += BATCH_SIZE) {
+      await db.batch(parkStmts.slice(i, i + BATCH_SIZE));
+    }
+  }
+
+  // 7. Store last-compute timestamp
   await kv.put('savant:last-compute', now);
 
-  return { batters: batCount, pitchers: pitchCount, conferences: confAgg.size, venues: 0 };
+  return { batters: batCount, pitchers: pitchCount, conferences: confAgg.size, venues: venueCount };
 }
 
 // ---------------------------------------------------------------------------
@@ -744,7 +920,7 @@ export default {
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
     try {
       const result = await compute(env.DB, env.KV);
-      console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences`);
+      console.log(`[savant-compute] Cron complete: ${result.batters} batters, ${result.pitchers} pitchers, ${result.conferences} conferences, ${result.venues} venues`);
     } catch (err) {
       console.error(`[savant-compute] Cron failed:`, err);
     }
