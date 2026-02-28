@@ -17,6 +17,8 @@ import {
   PercentilePlayerCard,
   type StatGroup,
 } from '@/components/analytics/PercentilePlayerCard';
+import { MomentumFlow, type MomentumSnapshot } from '@/components/analytics/MomentumFlow';
+import { MatchupTheater, type BatterProfile, type PitcherProfile } from '@/components/analytics/MatchupTheater';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -98,6 +100,20 @@ const VISUAL_TOOLS: VisualTool[] = [
     description: 'Velocity distribution curves and usage rates by pitch type. Shows how a pitcher attacks the zone.',
     category: 'pitching',
     available: false,
+  },
+  {
+    id: 'momentum-flow',
+    title: 'Momentum Flow',
+    description: 'Full-game river chart tracking momentum shifts inning by inning. Area fills change team color as energy swings between sides.',
+    category: 'team',
+    available: true,
+  },
+  {
+    id: 'matchup-theater',
+    title: 'Matchup Theater',
+    description: 'Split-screen batter vs pitcher comparison. Mirrored stat bars animate to reveal who owns the matchup.',
+    category: 'player',
+    available: true,
   },
 ];
 
@@ -194,6 +210,8 @@ function buildPlayerCard(
 export default function SavantVisualsPage() {
   const [activeViz, setActiveViz] = useState<string | null>(null);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string>('');
+  const [matchupBatterId, setMatchupBatterId] = useState<string>('');
+  const [matchupPitcherId, setMatchupPitcherId] = useState<string>('');
 
   const { data: battingRes, loading: battingLoading } =
     useSportData<LeaderboardResponse>('/api/savant/batting/leaderboard?limit=100');
@@ -282,6 +300,94 @@ export default function SavantVisualsPage() {
       : undefined;
     return buildPlayerCard(battingRes.data, target);
   }, [battingRes, selectedPlayerId]);
+
+  // Matchup Theater: build batter / pitcher profiles from leaderboard data
+  const matchupBatter: BatterProfile | null = useMemo(() => {
+    if (!matchupBatterId || !battingRes?.data) return null;
+    const row = battingRes.data.find(r => r.player_id === matchupBatterId);
+    if (!row) return null;
+    return {
+      player_id: row.player_id as string,
+      player_name: row.player_name as string,
+      team: row.team as string,
+      conference: (row.conference as string) ?? undefined,
+      position: (row.position as string) ?? undefined,
+      stats: {
+        avg: row.avg as number | undefined,
+        obp: row.obp as number | undefined,
+        slg: row.slg as number | undefined,
+        ops: row.ops as number | undefined,
+        woba: row.woba as number | undefined,
+        wrc_plus: row.wrc_plus as number | undefined,
+        ops_plus: row.ops_plus as number | undefined,
+        iso: row.iso as number | undefined,
+        k_pct: row.k_pct as number | undefined,
+        bb_pct: row.bb_pct as number | undefined,
+        pa: row.pa as number | undefined,
+        hr: row.hr as number | undefined,
+      },
+    };
+  }, [battingRes, matchupBatterId]);
+
+  const matchupPitcher: PitcherProfile | null = useMemo(() => {
+    if (!matchupPitcherId || !pitchingRes?.data) return null;
+    const row = pitchingRes.data.find(r => r.player_id === matchupPitcherId);
+    if (!row) return null;
+    return {
+      player_id: row.player_id as string,
+      player_name: row.player_name as string,
+      team: row.team as string,
+      conference: (row.conference as string) ?? undefined,
+      position: 'P',
+      stats: {
+        era: row.era as number | undefined,
+        fip: row.fip as number | undefined,
+        whip: row.whip as number | undefined,
+        k_9: row.k_9 as number | undefined,
+        bb_9: row.bb_9 as number | undefined,
+        hr_9: row.hr_9 as number | undefined,
+        era_minus: row.era_minus as number | undefined,
+        ip: row.ip as number | undefined,
+        k_pct: row.k_pct as number | undefined,
+        bb_pct: row.bb_pct as number | undefined,
+      },
+    };
+  }, [pitchingRes, matchupPitcherId]);
+
+  const pitcherOptions = useMemo(() => {
+    if (!pitchingRes?.data) return [];
+    return pitchingRes.data
+      .filter(r => r.player_name && r.player_id)
+      .map(r => ({
+        id: r.player_id as string,
+        name: r.player_name as string,
+        team: r.team as string,
+      }));
+  }, [pitchingRes]);
+
+  // Momentum Flow: demo data (real data comes from MMI API during live games)
+  const demoSnapshots: MomentumSnapshot[] = useMemo(() => {
+    return [
+      { inning: 1, inning_half: 'top', mmi_value: 0, direction: 'neutral', magnitude: 'low' },
+      { inning: 1, inning_half: 'bottom', mmi_value: 15, direction: 'home', magnitude: 'low', event_description: 'Solo HR', home_score: 1, away_score: 0 },
+      { inning: 2, inning_half: 'top', mmi_value: -10, direction: 'away', magnitude: 'low' },
+      { inning: 2, inning_half: 'bottom', mmi_value: 5, direction: 'home', magnitude: 'low' },
+      { inning: 3, inning_half: 'top', mmi_value: -35, direction: 'away', magnitude: 'medium', event_description: '2-run double', home_score: 1, away_score: 2 },
+      { inning: 3, inning_half: 'bottom', mmi_value: -20, direction: 'away', magnitude: 'low' },
+      { inning: 4, inning_half: 'top', mmi_value: -45, direction: 'away', magnitude: 'medium', event_description: 'Bases loaded walk', home_score: 1, away_score: 3 },
+      { inning: 4, inning_half: 'bottom', mmi_value: -10, direction: 'away', magnitude: 'low' },
+      { inning: 5, inning_half: 'top', mmi_value: -15, direction: 'away', magnitude: 'low' },
+      { inning: 5, inning_half: 'bottom', mmi_value: 40, direction: 'home', magnitude: 'medium', event_description: '3-run homer', home_score: 4, away_score: 3 },
+      { inning: 6, inning_half: 'top', mmi_value: 25, direction: 'home', magnitude: 'low' },
+      { inning: 6, inning_half: 'bottom', mmi_value: 55, direction: 'home', magnitude: 'high', event_description: 'RBI triple', home_score: 5, away_score: 3 },
+      { inning: 7, inning_half: 'top', mmi_value: 30, direction: 'home', magnitude: 'medium' },
+      { inning: 7, inning_half: 'bottom', mmi_value: 45, direction: 'home', magnitude: 'medium' },
+      { inning: 8, inning_half: 'top', mmi_value: -20, direction: 'away', magnitude: 'medium', event_description: '2-run single', home_score: 5, away_score: 5 },
+      { inning: 8, inning_half: 'bottom', mmi_value: -5, direction: 'neutral', magnitude: 'low' },
+      { inning: 9, inning_half: 'top', mmi_value: -30, direction: 'away', magnitude: 'medium', event_description: 'Go-ahead sac fly', home_score: 5, away_score: 6 },
+      { inning: 9, inning_half: 'bottom', mmi_value: 75, direction: 'home', magnitude: 'extreme', event_description: 'Walk-off 2-run HR', home_score: 7, away_score: 6 },
+    ];
+  }, []);
 
   // Group tools by category
   const toolsByCategory = useMemo(() => {
@@ -495,6 +601,48 @@ export default function SavantVisualsPage() {
                           </Card>
                         )}
                       </div>
+                    )
+                  )}
+
+                  {/* Momentum Flow */}
+                  {activeViz === 'momentum-flow' && (
+                    <div>
+                      <div className="mb-3">
+                        <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                          Demo: Sample 9-inning game with walk-off finish
+                        </span>
+                      </div>
+                      <MomentumFlow
+                        snapshots={demoSnapshots}
+                        homeTeam="Texas"
+                        awayTeam="Oklahoma"
+                        volatility={42.3}
+                        leadChanges={3}
+                        excitementRating="instant-classic"
+                      />
+                      <p className="text-[11px] text-text-muted mt-3 leading-relaxed max-w-xl">
+                        During live games, momentum data populates automatically from the MMI engine.
+                        Each scoring event becomes a node on the river — hover to see what happened.
+                        The area fill shifts between home (orange) and away (blue) as momentum changes hands.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Matchup Theater */}
+                  {activeViz === 'matchup-theater' && (
+                    (battingLoading || pitchingLoading) ? (
+                      <Card padding="lg" className="text-center">
+                        <span className="text-xs text-text-muted font-mono">Loading player data...</span>
+                      </Card>
+                    ) : (
+                      <MatchupTheater
+                        batter={matchupBatter}
+                        pitcher={matchupPitcher}
+                        batters={playerOptions}
+                        pitchers={pitcherOptions}
+                        onSelectBatter={setMatchupBatterId}
+                        onSelectPitcher={setMatchupPitcherId}
+                      />
                     )
                   )}
                 </div>
