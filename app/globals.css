@@ -9,131 +9,64 @@
 /* ========================================================================== */
 
 :root {
-  /* Semantic Colors — portfolio midnight, not Labs depth */
-  --color-burnt-orange: #BF5700;
-  --color-burnt-orange-600: #BF5700;
-  --color-midnight: #0d0d0d;
-  --color-texas-soil: #8b4513;
-  --color-ember: #ff6b35;
+  /* ---- Semantic Aliases (reference bsi-brand.css tokens) ---- */
+  --color-burnt-orange: var(--bsi-primary);
+  --color-burnt-orange-600: var(--bsi-primary);
+  --color-midnight: var(--bsi-midnight);
+  --color-texas-soil: var(--bsi-texas-soil);
+  --color-ember: var(--bsi-accent);
   --color-flame: #e85d04;
-  --color-surface: rgba(255, 255, 255, 0.04);
-  --color-graphite: #242424;
-  --color-charcoal: #1a1a1a;
+  --color-surface: var(--glass-default-bg);
+  --color-graphite: var(--bsi-surface-overlay);
+  --color-charcoal: var(--bsi-charcoal);
 
-  /* Text Colors — portfolio bone palette */
-  --color-text-primary: #F5F0EB;
-  --color-text-secondary: #A89F95;
+  /* Text (aliased from bsi-brand.css) */
+  --color-text-primary: var(--bsi-text);
+  --color-text-secondary: var(--bsi-text-muted);
   --color-text-tertiary: rgba(245, 240, 235, 0.55);
   --color-text-muted: rgba(245, 240, 235, 0.40);
 
-  /* Border Colors */
-  --color-border-subtle: rgba(245, 240, 235, 0.04);
-  --color-border-default: rgba(245, 240, 235, 0.06);
-  --color-border-strong: rgba(245, 240, 235, 0.10);
-  --color-border-accent: rgba(191, 87, 0, 0.4);
+  /* Borders (aliased) */
+  --color-border-subtle: var(--bsi-border);
+  --color-border-default: var(--glass-default-border);
+  --color-border-strong: var(--glass-elevated-border);
+  --color-border-accent: var(--bsi-border-hover);
 
-  /* Status Colors */
-  --color-success: #10b981;
+  /* Status (aliased) */
+  --color-success: var(--bsi-success);
   --color-success-light: #34d399;
-  --color-warning: #f59e0b;
+  --color-warning: var(--bsi-warning);
   --color-warning-light: #fbbf24;
-  --color-error: #ef4444;
+  --color-error: var(--bsi-error);
   --color-error-light: #f87171;
-  --color-info: #3b82f6;
+  --color-info: var(--bsi-info);
   --color-info-light: #60a5fa;
 
-  /* Shadows */
-  --shadow-glow-sm: 0 0 20px rgba(191, 87, 0, 0.3);
-  --shadow-glow-md: 0 0 40px rgba(191, 87, 0, 0.4), 0 0 60px rgba(191, 87, 0, 0.2);
-  --shadow-glow-lg: 0 0 60px rgba(204, 102, 0, 0.5), 0 0 100px rgba(191, 87, 0, 0.3);
+  /* Shadows (aliased) */
+  --shadow-glow-sm: var(--bsi-glow-sm);
+  --shadow-glow-md: var(--bsi-glow-md);
+  --shadow-glow-lg: var(--bsi-glow-lg);
 
-  /* BSI Design System Tokens */
-  --bsi-burnt-orange-600: #bf5700;
-  --bsi-gold-500: #fdb913;
-  --bsi-texas-orange: #ff6600;
-  --bsi-ember: #ff6b35;
-  --bsi-texas-soil: #8b4513;
+  /* Additional brand accents */
   --bsi-blaze: #ff4500;
-
-  /* Sport-Specific Palettes */
-  --bsi-baseball-primary: #bf5700;
-  --bsi-baseball-diamond: #6b8e23;
-  --bsi-baseball-dirt: #8b7355;
-  --bsi-baseball-grass: #228b22;
-  --bsi-baseball-leather: #8b4513;
-
-  --bsi-football-primary: #8b4513;
-  --bsi-football-grass: #228b22;
-  --bsi-football-field: #355e3b;
-  --bsi-football-endzone: #dc2626;
-
-  --bsi-basketball-primary: #ff6b35;
-  --bsi-basketball-court: #e25822;
-  --bsi-basketball-hardwood: #8b4513;
-  --bsi-basketball-paint: #1e40af;
-
-  --bsi-track-primary: #f59e0b;
-  --bsi-track-surface: #dc143c;
-  --bsi-track-lane: #ffd700;
-  --bsi-track-field: #10b981;
-
-  /* Team Colors */
-  --bsi-cardinals-red: #c41e3a;
-  --bsi-cardinals-navy: #0c2340;
-  --bsi-cardinals-gold: #fedb00;
-
-  --bsi-titans-navy: #002244;
-  --bsi-titans-blue: #4b92db;
-  --bsi-titans-red: #c8102e;
-
-  --bsi-longhorns-orange: #bf5700;
-  --bsi-longhorns-white: #ffffff;
-
-  --bsi-grizzlies-blue: #5d76a9;
-  --bsi-grizzlies-gold: #fdb927;
-
-  /* Motion Tokens */
-  --bsi-duration-instant: 100ms;
-  --bsi-duration-fast: 200ms;
-  --bsi-duration-normal: 300ms;
-  --bsi-duration-slow: 500ms;
-  --bsi-duration-slower: 800ms;
-
-  --bsi-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --bsi-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --bsi-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --bsi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-  /* Background Tokens */
-  --bsi-bg-primary: #0d0d0d;
-  --bsi-bg-secondary: #1a1a1a;
-  --bsi-bg-tertiary: #242424;
-  --bsi-bg-elevated: #2d2d2d;
-
-  /* Surface Tokens */
-  --bsi-surface-base: rgba(255, 255, 255, 0.04);
-  --bsi-surface-hover: rgba(255, 255, 255, 0.06);
-  --bsi-surface-active: rgba(255, 255, 255, 0.08);
-
-  /* Text Tokens */
-  --bsi-text-primary: #F5F0EB;
-  --bsi-text-secondary: #A89F95;
-  --bsi-text-tertiary: rgba(245, 240, 235, 0.55);
-  --bsi-text-muted: rgba(245, 240, 235, 0.40);
-
-  /* Border Tokens */
-  --bsi-border-subtle: rgba(245, 240, 235, 0.04);
-  --bsi-border-base: rgba(245, 240, 235, 0.06);
-  --bsi-border-strong: rgba(245, 240, 235, 0.10);
-  --bsi-border-accent: rgba(191, 87, 0, 0.4);
+  --bsi-texas-orange: #ff6600;
   --bsi-intel-accent: var(--bsi-primary);
 
-  /* Typography */
-  --font-sans: var(--font-oswald), 'Oswald', Impact, sans-serif;
-  --font-display: var(--font-oswald), 'Oswald', Impact, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  /* Background (derived from surfaces) */
+  --bsi-bg-primary: var(--bsi-surface);
+  --bsi-bg-secondary: var(--bsi-surface-raised);
+  --bsi-bg-tertiary: var(--bsi-surface-overlay);
+  --bsi-bg-elevated: #2d2d2d;
 
-  /* Section spacing */
+  /* Surface interaction states */
+  --bsi-surface-base: var(--glass-default-bg);
+  --bsi-surface-hover: var(--glass-default-border);
+  --bsi-surface-active: var(--glass-elevated-bg);
+
+  /* Typography (Next.js font vars + fallbacks) */
+  --font-sans: var(--font-oswald), 'Oswald', Impact, sans-serif;
+
+  /* Section spacing (unique to main site) */
   --section-padding: clamp(3rem, 8vw, 6rem);
   --container-padding: clamp(1rem, 4vw, 2rem);
 }

@@ -47,21 +47,10 @@ export function AppTopBar() {
   const title = getPageTitle(pathname);
 
   return (
-    <header
-      className="h-14 border-b border-white/[0.05] flex items-center justify-between px-4 md:px-6 shrink-0 relative"
-      style={{
-        background: 'color-mix(in srgb, var(--bsi-surface) 80%, transparent)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        boxShadow: '0 1px 0 rgba(var(--bsi-primary-rgb), 0.06)',
-      }}
-    >
+    <header className="h-14 border-b border-white/[0.05] flex items-center justify-between px-4 md:px-6 shrink-0 relative bg-[color-mix(in_srgb,var(--bsi-surface)_80%,transparent)] backdrop-blur-glass shadow-[0_1px_0_rgba(var(--bsi-primary-rgb),0.06)]">
       {/* Left: page title (shifted right on mobile to avoid hamburger) */}
       <div className="flex items-center gap-4 ml-10 md:ml-0">
-        <h1
-          className="text-sm font-semibold tracking-wider uppercase hidden sm:block"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
+        <h1 className="font-display text-sm font-semibold tracking-wider uppercase hidden sm:block">
           {title}
         </h1>
       </div>
@@ -70,18 +59,12 @@ export function AppTopBar() {
       <div className="flex items-center gap-4">
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-[var(--bsi-success)] pulse-dot" />
-          <span
-            className="text-[10px] uppercase tracking-wider"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-text-dim)' }}
-          >
+          <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--bsi-text-dim)]">
             Live
           </span>
         </span>
         <div className="w-px h-4 bg-white/[0.06]" />
-        <span
-          className="text-[11px] uppercase tracking-wider hidden sm:inline"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-text-muted)' }}
-        >
+        <span className="font-mono text-[11px] uppercase tracking-wider hidden sm:inline text-text-muted">
           ⌘K
         </span>
       </div>

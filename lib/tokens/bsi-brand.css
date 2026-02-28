@@ -120,9 +120,43 @@
   --savant-below: #5b9bd5;
   --savant-poor: #2980b9;
   --savant-very-poor: #1a5276;
+
+  /* ---- Accessibility ---- */
+  --a11y-focus-ring: 2px solid var(--bsi-primary);
+  --a11y-min-target: 44px;
+
+  /* ---- Chart System ---- */
+  --chart-grid: rgba(255, 255, 255, 0.04);
+  --chart-axis-text: var(--bsi-text-dim);
+  --chart-label: var(--bsi-text-muted);
+
+  /* ---- Radar Bands ---- */
+  --radar-band-50: rgba(170, 170, 170, 0.08);
+  --radar-band-75: rgba(91, 155, 213, 0.08);
+  --radar-band-90: rgba(231, 76, 60, 0.08);
+  --radar-band-99: rgba(192, 57, 43, 0.08);
+
+  /* ---- Atmospheric ---- */
+  --grid-line-color: rgba(255, 255, 255, 0.02);
+  --grid-line-strong: rgba(255, 255, 255, 0.04);
+  --scan-line-color: rgba(191, 87, 0, 0.06);
+
+  /* ---- Glass Aliases (Labs compat) ---- */
+  --glass-bg: var(--glass-default-bg);
+  --glass-border: var(--glass-default-border);
+  --glass-bg-elevated: var(--glass-elevated-bg);
+  --glass-border-elevated: var(--glass-elevated-border);
+  --glass-bg-top: rgba(255, 255, 255, 0.08);
+  --glass-border-top: rgba(255, 255, 255, 0.16);
+  --glass-blur: 20px;
 }
 
-/* ---- Animations (from Labs) ---- */
+/* ---- Animations ---- */
+@keyframes scan-line {
+  0% { transform: translateY(-100vh); }
+  100% { transform: translateY(100vh); }
+}
+
 @keyframes glow-pulse {
   0%, 100% { box-shadow: var(--glow-primary-subtle); }
   50% { box-shadow: var(--glow-primary); }
@@ -138,7 +172,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---- Animations (from portfolio) ---- */
 @keyframes gradient-shift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
