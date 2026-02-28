@@ -25,6 +25,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
 import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCard';
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface RankedTeam {
   rank: number;
@@ -409,6 +410,7 @@ export default function CollegeBaseballPage() {
 
             {/* Rankings Tab */}
             <TabPanel id="rankings" activeTab={activeTab}>
+              <DataErrorBoundary name="College Baseball Rankings">
               <EnrichedRankingsTable
                 rankings={rankings}
                 loading={rankingsLoading}
@@ -421,10 +423,12 @@ export default function CollegeBaseballPage() {
                 preseasonFallback={preseasonRankings}
                 previousRankings={previousRankings}
               />
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+                <DataErrorBoundary name="College Baseball Standings">
                 {standingsLoading ? (
                   <Card variant="default" padding="lg">
                     <CardContent><table className="w-full"><tbody>{Array.from({ length: 10 }).map((_, i) => <SkeletonTableRow key={i} columns={6} />)}</tbody></table></CardContent>
@@ -486,6 +490,7 @@ export default function CollegeBaseballPage() {
                     </Card>
                   </ScrollReveal>
                 )}
+                </DataErrorBoundary>
             </TabPanel>
 
             {/* Schedule Tab */}

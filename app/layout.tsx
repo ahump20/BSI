@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     siteName: 'Blaze Sports Intel',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: '/images/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Blaze Sports Intel - Real-Time Sports Analytics',
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
     description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
-    images: ['/images/og-image.jpg'],
+    images: ['/images/og-image.png'],
   },
   alternates: { canonical: '/' },
   robots: {

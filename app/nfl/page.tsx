@@ -18,6 +18,7 @@ import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface Team {
   teamName: string;
@@ -154,6 +155,7 @@ export default function NFLPage() {
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+              <DataErrorBoundary name="NFL Standings">
               {loading ? (
                 <div className="space-y-6">
                   {[1, 2, 3].map((i) => (
@@ -221,10 +223,12 @@ export default function NFLPage() {
                   </ScrollReveal>
                 ))
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Scores Tab */}
             <TabPanel id="scores" activeTab={activeTab}>
+              <DataErrorBoundary name="NFL Scores">
               {loading ? (
                 <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
               ) : error ? (
@@ -261,6 +265,7 @@ export default function NFLPage() {
                   </Card>
                 </ScrollReveal>
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Teams Tab */}

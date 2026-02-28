@@ -17,6 +17,7 @@ import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 const mlbFeatures = [
   {
@@ -372,6 +373,7 @@ export default function MLBPage() {
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+              <DataErrorBoundary name="MLB Standings">
               {loading ? (
                 <div className="space-y-6">
                   {[1, 2, 3].map((i) => (
@@ -494,6 +496,7 @@ export default function MLBPage() {
                     </ScrollReveal>
                   ))
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Teams Tab */}
@@ -580,6 +583,7 @@ export default function MLBPage() {
 
             {/* Schedule Tab */}
             <TabPanel id="schedule" activeTab={activeTab}>
+              <DataErrorBoundary name="MLB Scores">
               {loading ? (
                 <div className="space-y-4">
                   {[1, 2, 3, 4].map((i) => (
@@ -668,6 +672,7 @@ export default function MLBPage() {
                   </Card>
                 </ScrollReveal>
               )}
+              </DataErrorBoundary>
             </TabPanel>
           </Container>
         </Section>

@@ -12,12 +12,14 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
+    images: [{ url: 'https://blazesportsintel.com/images/og-image.png', width: 1200, height: 630, alt: 'Blaze Sports Intel' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
     description:
       'Old-school scouting instinct fused with new-school sabermetrics. Five sports, live scores, real analytics.',
+    images: ['https://blazesportsintel.com/images/og-image.png'],
   },
 };
 
