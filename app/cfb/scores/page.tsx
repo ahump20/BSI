@@ -9,7 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SportIcon } from '@/components/icons/SportIcon';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface ESPNGame {
   id: string;
@@ -38,20 +38,7 @@ interface ESPNGame {
   venue?: { fullName?: string };
 }
 
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const formatDate = formatScheduleDate;
 
 
 function GameCard({ game }: { game: ESPNGame }) {

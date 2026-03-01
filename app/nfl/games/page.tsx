@@ -9,7 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 /* ------------------------------------------------------------------ */
 /*  BSI Scoreboard Types (matches Worker /api/nfl/scores response)    */
@@ -69,15 +69,7 @@ interface ScoreboardResponse {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const formatDate = formatScheduleDate;
 
 function formatGameTime(isoDate: string): string {
   const date = new Date(isoDate);
@@ -87,12 +79,6 @@ function formatGameTime(isoDate: string): string {
     minute: '2-digit',
     hour12: true,
   });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
 }
 
 /* ------------------------------------------------------------------ */

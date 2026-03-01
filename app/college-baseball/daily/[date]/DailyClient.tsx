@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 import type {
   DailyBundle,
   UpcomingGame,
@@ -19,11 +20,7 @@ import type {
 // ---------------------------------------------------------------------------
 
 function formatDate(dateStr: string): string {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  return dt.toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
-  });
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'full');
 }
 
 function teamDisplay(team: { team: string; rank?: string | null }) {

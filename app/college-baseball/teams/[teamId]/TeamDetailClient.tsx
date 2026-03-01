@@ -13,6 +13,7 @@ import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPan
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 import { withAlpha } from '@/lib/utils/color';
 import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
 import { getFeaturedInsight } from '@/lib/data/featured-team-insights';
@@ -156,15 +157,8 @@ interface ScheduleGame {
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'America/Chicago',
-    });
-  } catch {
-    return iso;
-  }
+  const result = formatDateInTimezone(iso, undefined, 'compact');
+  return result === 'Invalid date' ? iso : result;
 }
 
 function getAccentColor(primary: string, secondary: string): string {

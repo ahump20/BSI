@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface BlogPost {
   id: number;
@@ -269,13 +270,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 // ---------------------------------------------------------------------------
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    timeZone: 'America/Chicago',
-  });
+  return formatDateInTimezone(dateString, undefined, 'full');
 }
 
 const CATEGORY_VARIANTS: Record<string, 'primary' | 'success' | 'secondary'> = {

@@ -282,7 +282,9 @@ export function formatTimestamp(isoString?: string): string {
  * Appends T12:00:00 to avoid date-shift from timezone offset.
  */
 export function formatScheduleDate(dateString: string): string {
-  const date = new Date(dateString + 'T12:00:00');
+  const date = dateString.includes('T')
+    ? new Date(dateString)
+    : new Date(dateString + 'T12:00:00');
   return date.toLocaleDateString('en-US', {
     timeZone: BSI_TIMEZONE,
     weekday: 'short',
