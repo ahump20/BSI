@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { withAlpha } from '@/lib/utils/color';
 
 interface ParkFactorRow {
@@ -166,8 +166,8 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
               const width = thermometerWidth(row.runs_factor);
 
               return (
-                <>{confHeader}
-                <tr key={`${row.team}-${i}`} className="border-b border-border-subtle">
+                <React.Fragment key={`${row.team}-${i}`}>{confHeader}
+                <tr className="border-b border-border-subtle">
                   <td className="pl-5 pr-2 py-3">
                     <span className="text-text-primary text-sm font-medium">{row.team}</span>
                     {row.conference && !groupByConf && (
@@ -197,7 +197,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                   <td className="px-2 py-3 text-center hidden md:table-cell">
                     <span className="text-text-muted text-xs font-mono">{row.sample_games}</span>
                   </td>
-                </tr></>
+                </tr></React.Fragment>
               );
             })}
           </tbody>

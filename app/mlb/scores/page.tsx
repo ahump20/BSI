@@ -60,6 +60,150 @@ interface DataMeta {
 }
 const formatDate = formatScheduleDate;
 
+function GameCard({ game }: { game: Game }) {
+  const isLive = game.status?.isLive;
+  const isFinal = game.status?.isFinal;
+  const isScheduled = !isLive && !isFinal;
+  const gameId = game.gamePk || game.id;
+
+  const away = game.teams?.away;
+  const home = game.teams?.home;
+
+  return (
+    <Link href={`/mlb/game/${gameId}`} className="block">
+      <div
+        className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
+          isLive ? 'border-success' : 'border-border-subtle'
+        }`}
+      >
+        {/* Game Status Bar */}
+        <div
+          className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
+          }`}
+        >
+          <span
+            className={`text-xs font-semibold uppercase ${
+              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+            }`}
+          >
+            {isLive ? (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                {game.status?.inningState} {game.status?.inning}
+              </span>
+            ) : (
+              game.status?.detailedState
+            )}
+          </span>
+          <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
+        </div>
+
+        {/* Teams */}
+        <div className="p-4 space-y-3">
+          {/* Away Team */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {away?.abbreviation ?? '???'}
+              </div>
+              <div>
+                <p
+                  className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                >
+                  {away?.name ?? 'Away'}
+                </p>
+                {away?.record && (
+                  <p className="text-xs text-text-tertiary">{away.record}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {isFinal && away?.isWinner && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : isFinal && away?.isWinner
+                      ? 'text-text-primary'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {isScheduled ? '-' : away?.score ?? '-'}
+              </span>
+            </div>
+          </div>
+
+          {/* Home Team */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {home?.abbreviation ?? '???'}
+              </div>
+              <div>
+                <p
+                  className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
+                >
+                  {home?.name ?? 'Home'}
+                </p>
+                {home?.record && (
+                  <p className="text-xs text-text-tertiary">{home.record}</p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {isFinal && home?.isWinner && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : isFinal && home?.isWinner
+                      ? 'text-text-primary'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {isScheduled ? '-' : home?.score ?? '-'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Game Details Footer */}
+        {(isFinal || isLive) && (
+          <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            <span>
+              H: {away?.hits ?? 0}-{home?.hits ?? 0}
+            </span>
+            <span>
+              E: {away?.errors ?? 0}-{home?.errors ?? 0}
+            </span>
+            <span className="text-burnt-orange hover:text-ember">Box Score →</span>
+          </div>
+        )}
+
+        {/* Probable Pitchers for Scheduled Games */}
+        {isScheduled && game.probablePitchers && (
+          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            <div className="flex justify-between">
+              <span>{game.probablePitchers.away?.name || 'TBD'}</span>
+              <span>vs</span>
+              <span>{game.probablePitchers.home?.name || 'TBD'}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
 export default function MLBScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>(getDateOffset(0));
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
@@ -84,150 +228,6 @@ export default function MLBScoresPage() {
     { offset: 1, label: 'Tomorrow' },
     { offset: 2, label: formatDate(getDateOffset(2)) },
   ];
-
-  const GameCard = ({ game }: { game: Game }) => {
-    const isLive = game.status?.isLive;
-    const isFinal = game.status?.isFinal;
-    const isScheduled = !isLive && !isFinal;
-    const gameId = game.gamePk || game.id;
-
-    const away = game.teams?.away;
-    const home = game.teams?.home;
-
-    return (
-      <Link href={`/mlb/game/${gameId}`} className="block">
-        <div
-          className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-            isLive ? 'border-success' : 'border-border-subtle'
-          }`}
-        >
-          {/* Game Status Bar */}
-          <div
-            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
-            }`}
-          >
-            <span
-              className={`text-xs font-semibold uppercase ${
-                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
-              }`}
-            >
-              {isLive ? (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                  {game.status?.inningState} {game.status?.inning}
-                </span>
-              ) : (
-                game.status?.detailedState
-              )}
-            </span>
-            <span className="text-xs text-text-tertiary">{game.venue?.name || 'TBD'}</span>
-          </div>
-
-          {/* Teams */}
-          <div className="p-4 space-y-3">
-            {/* Away Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {away?.abbreviation ?? '???'}
-                </div>
-                <div>
-                  <p
-                    className={`font-semibold ${isFinal && away?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
-                  >
-                    {away?.name ?? 'Away'}
-                  </p>
-                  {away?.record && (
-                    <p className="text-xs text-text-tertiary">{away.record}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {isFinal && away?.isWinner && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : isFinal && away?.isWinner
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {isScheduled ? '-' : away?.score ?? '-'}
-                </span>
-              </div>
-            </div>
-
-            {/* Home Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {home?.abbreviation ?? '???'}
-                </div>
-                <div>
-                  <p
-                    className={`font-semibold ${isFinal && home?.isWinner ? 'text-text-primary' : 'text-text-secondary'}`}
-                  >
-                    {home?.name ?? 'Home'}
-                  </p>
-                  {home?.record && (
-                    <p className="text-xs text-text-tertiary">{home.record}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {isFinal && home?.isWinner && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : isFinal && home?.isWinner
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {isScheduled ? '-' : home?.score ?? '-'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Game Details Footer */}
-          {(isFinal || isLive) && (
-            <div className="px-4 pb-3 flex items-center justify-between text-xs text-text-tertiary border-t border-border-subtle pt-3">
-              <span>
-                H: {away?.hits ?? 0}-{home?.hits ?? 0}
-              </span>
-              <span>
-                E: {away?.errors ?? 0}-{home?.errors ?? 0}
-              </span>
-              <span className="text-burnt-orange hover:text-ember">Box Score →</span>
-            </div>
-          )}
-
-          {/* Probable Pitchers for Scheduled Games */}
-          {isScheduled && game.probablePitchers && (
-            <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
-              <div className="flex justify-between">
-                <span>{game.probablePitchers.away?.name || 'TBD'}</span>
-                <span>vs</span>
-                <span>{game.probablePitchers.home?.name || 'TBD'}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </Link>
-    );
-  };
 
   return (
     <>

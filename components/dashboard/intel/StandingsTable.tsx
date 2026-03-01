@@ -20,6 +20,8 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
     })
     .slice(0, 10);
 
+  const thStyle: React.CSSProperties = { fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' };
+
   if (rows.length === 0) return null;
 
   return (
@@ -41,12 +43,12 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
         <table className="w-full text-left" aria-label="Dashboard standings" style={{ fontFamily: 'var(--intel-mono)', fontSize: '11px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--intel-border-rule)' }}>
-              <th scope="col" className="pb-2 pr-2 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>#</th>
-              <th scope="col" className="pb-2 pr-3 font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Team</th>
-              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>W</th>
-              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>L</th>
-              <th scope="col" className="pb-2 px-2 text-center font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>Pct</th>
-              <th scope="col" className="pb-2 pl-2 text-right font-medium" style={{ fontFamily: 'var(--intel-display)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--intel-text-caption)' }}>NRtg</th>
+              <th scope="col" className="pb-2 pr-2 font-medium" style={thStyle}>#</th>
+              <th scope="col" className="pb-2 pr-3 font-medium" style={thStyle}>Team</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={thStyle}>W</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={thStyle}>L</th>
+              <th scope="col" className="pb-2 px-2 text-center font-medium" style={thStyle}>Pct</th>
+              <th scope="col" className="pb-2 pl-2 text-right font-medium" style={thStyle}>NRtg</th>
             </tr>
           </thead>
           <tbody>

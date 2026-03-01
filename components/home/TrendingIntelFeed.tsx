@@ -138,12 +138,13 @@ export function TrendingIntelFeed() {
               </div>
             );
 
+            const stableKey = article.url || article.headline || String(i);
             return article.url ? (
-              <a key={i} href={article.url} target="_blank" rel="noopener noreferrer">
+              <a key={stableKey} href={article.url} target="_blank" rel="noopener noreferrer">
                 {inner}
               </a>
             ) : (
-              <div key={i}>{inner}</div>
+              <div key={stableKey}>{inner}</div>
             );
           })
         )}
