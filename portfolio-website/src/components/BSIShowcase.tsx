@@ -148,7 +148,7 @@ export default function BSIShowcase() {
                     <p className="font-mono text-[0.6rem] text-warm-gray mt-0.5">{node.sub}</p>
                   </div>
                   {i < 3 && (
-                    <span className="text-burnt-orange font-mono text-lg hidden sm:block">→</span>
+                    <span aria-hidden="true" className="text-burnt-orange font-mono text-lg hidden sm:block">→</span>
                   )}
                 </div>
               ))}
