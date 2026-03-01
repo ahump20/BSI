@@ -20,6 +20,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { BottomNav, type BottomNavItem } from '@/components/sports';
+import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 /** Secondary pages shown in the "More" slide-up panel. */
 const MORE_ITEMS = [
@@ -57,14 +58,14 @@ export function BottomNavWrapper() {
   useEffect(() => {
     if (!moreOpen) return;
 
-    document.body.style.overflow = 'hidden';
+    lockScroll();
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeMore();
     };
     document.addEventListener('keydown', handleKey);
 
     return () => {
-      document.body.style.overflow = '';
+      unlockScroll();
       document.removeEventListener('keydown', handleKey);
     };
   }, [moreOpen, closeMore]);
