@@ -283,7 +283,7 @@ async function readStandingsFromKV(env: Env): Promise<ConferenceStanding[]> {
   const standings: ConferenceStanding[] = [];
 
   for (const conf of CONFERENCES) {
-    const raw = await env.KV.get(`cb:standings:v3:${conf}`, 'text');
+    const raw = await env.KV.get(`cb:standings:raw:${conf}`, 'text');
     if (!raw) continue;
 
     try {

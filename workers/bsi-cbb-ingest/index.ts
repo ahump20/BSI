@@ -136,7 +136,7 @@ async function ingestStandings(env: Env): Promise<{ source: string; conferences:
         highlightlyHeaders(env.RAPIDAPI_KEY)
       );
       if (result.ok && result.data) {
-        await env.KV.put(`cb:standings:v3:${conf}`, JSON.stringify(result.data), { expirationTtl: TTL.standings });
+        await env.KV.put(`cb:standings:raw:${conf}`, JSON.stringify(result.data), { expirationTtl: TTL.standings });
         hlSuccess++;
       }
     }
@@ -144,12 +144,18 @@ async function ingestStandings(env: Env): Promise<{ source: string; conferences:
   }
 
   // ESPN fallback — single standings endpoint
+  // NOTE: Must use /apis/v2/ (not /apis/site/v2/ which returns empty for college baseball)
   const result = await safeFetch<Record<string, unknown>>(
-    `${ESPN_BASE}/apis/site/v2/sports/${SPORT_PATH}/standings`
+    `${ESPN_BASE}/apis/v2/sports/${SPORT_PATH}/standings`
   );
 
   if (result.ok && result.data) {
     const children = (result.data.children ?? []) as Record<string, unknown>[];
+
+    // Guard: don't cache empty results — ESPN may be temporarily degraded
+    if (children.length === 0) {
+      return { source: 'espn', conferences: 0, error: 'ESPN returned empty children' };
+    }
 
     // Write per-conference
     let written = 0;
@@ -158,13 +164,13 @@ async function ingestStandings(env: Env): Promise<{ source: string; conferences:
         ((c.name as string) ?? '').toLowerCase().includes(conf.toLowerCase())
       );
       if (match) {
-        await env.KV.put(`cb:standings:v3:${conf}`, JSON.stringify([match]), { expirationTtl: TTL.standings });
+        await env.KV.put(`cb:standings:raw:${conf}`, JSON.stringify([match]), { expirationTtl: TTL.standings });
         written++;
       }
     }
 
     // Also write NCAA-level (all)
-    await env.KV.put('cb:standings:v3:NCAA', JSON.stringify(children), { expirationTtl: TTL.standings });
+    await env.KV.put('cb:standings:raw:NCAA', JSON.stringify(children), { expirationTtl: TTL.standings });
     return { source: 'espn', conferences: written };
   }
 
@@ -295,7 +301,7 @@ export default {
       // Check cache freshness
       const scoresFresh = !!(await env.KV.get('cb:scores:today', 'text'));
       const rankingsFresh = !!(await env.KV.get('cb:rankings', 'text'));
-      const standingsFresh = !!(await env.KV.get('cb:standings:v3:NCAA', 'text'));
+      const standingsFresh = !!(await env.KV.get('cb:standings:raw:NCAA', 'text'));
 
       return new Response(JSON.stringify({
         season: isBaseballSeason(),

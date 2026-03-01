@@ -1,19 +1,22 @@
 import type { Metadata, Viewport } from 'next';
+import dynamic from 'next/dynamic';
 import { Cormorant_Garamond, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { PageTransition, MotionProvider } from '@/components/motion';
 import { AppSidebar } from '@/components/layout-ds/AppSidebar';
 import { AppTopBar } from '@/components/layout-ds/AppTopBar';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
-import { FeedbackButton } from '@/components/ui/FeedbackModal';
-import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
-import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { PageTracker } from '@/components/analytics/PageTracker';
+
+// Lazy-load interaction-triggered components (not visible on initial render)
+const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then(m => ({ default: m.KonamiCodeWrapper })));
+const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then(m => ({ default: m.FeedbackButton })));
+const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then(m => ({ default: m.ScrollToTopButton })));
 
 // 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
 const cormorant = Cormorant_Garamond({

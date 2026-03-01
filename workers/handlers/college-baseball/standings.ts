@@ -15,7 +15,8 @@ export async function handleCollegeBaseballStandings(
   const now = new Date().toISOString();
 
   const cached = await kvGet<unknown>(env.KV, cacheKey);
-  if (cached) {
+  // Guard: skip cache if value is an empty array (poisoned by a previous bad ingest)
+  if (cached && !(Array.isArray(cached) && cached.length === 0)) {
     return cachedJson(cached, 200, HTTP_CACHE.standings, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
