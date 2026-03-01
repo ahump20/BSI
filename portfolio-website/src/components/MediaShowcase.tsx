@@ -56,6 +56,7 @@ export default function MediaShowcase() {
                 controls={playing}
                 preload="metadata"
                 playsInline
+                aria-label="Talking Sports: The Analytical Lens"
                 className="w-full h-full object-cover"
                 onPlay={() => setPlaying(true)}
               >
