@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { usePlatformHealth } from '../hooks/usePlatformHealth';
 
 interface PlatformStatusProps {
   className?: string;
@@ -12,35 +12,8 @@ const STATUS_CONFIG: Record<StatusLevel, { label: string; dot: string; text: str
   offline:  { label: 'Offline',  dot: 'bg-red-500',    text: 'text-red-400' },
 };
 
-const BSI_HEALTH_URL = 'https://blazesportsintel.com/api/health';
-const POLL_INTERVAL = 60_000;
-
 export default function PlatformStatus({ className = '' }: PlatformStatusProps) {
-  const [status, setStatus] = useState<StatusLevel>('offline');
-  const [loading, setLoading] = useState(true);
-
-  const checkHealth = useCallback(async () => {
-    try {
-      const res = await fetch(BSI_HEALTH_URL, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) {
-        setStatus('degraded');
-        return;
-      }
-      const data = await res.json();
-      setStatus(data.status === 'ok' ? 'online' : 'degraded');
-    } catch {
-      setStatus('offline');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkHealth();
-    const interval = setInterval(checkHealth, POLL_INTERVAL);
-    return () => clearInterval(interval);
-  }, [checkHealth]);
-
+  const { status, loading } = usePlatformHealth();
   const config = STATUS_CONFIG[status];
 
   return (

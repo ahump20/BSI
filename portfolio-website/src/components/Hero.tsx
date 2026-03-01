@@ -136,14 +136,6 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Hero mesh animation keyframes */}
-      <style>{`
-        @keyframes hero-mesh {
-          0% { transform: scale(1) rotate(0deg); }
-          50% { transform: scale(1.05) rotate(0.5deg); }
-          100% { transform: scale(1) rotate(-0.5deg); }
-        }
-      `}</style>
     </section>
   );
 }
