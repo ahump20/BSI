@@ -9,7 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 
 /* ------------------------------------------------------------------ */
 /*  BSI Scoreboard Types (matches Worker /api/nfl/scores response)    */
@@ -71,15 +71,6 @@ interface ScoreboardResponse {
 
 const formatDate = formatScheduleDate;
 
-function formatGameTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  return date.toLocaleTimeString('en-US', {
-    timeZone: 'America/Chicago',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
 
 /* ------------------------------------------------------------------ */
 /*  Football Icon SVG                                                  */
@@ -221,7 +212,7 @@ export default function NFLGamesPage() {
               game.status.type.detail || 'Final'
             ) : isScheduled && game.date ? (
               <span className="flex items-center gap-1.5">
-                {formatGameTime(game.date)} CT
+                {formatGameTime(game.date)}
                 {broadcast && (
                   <span className="text-text-tertiary ml-1">- {broadcast}</span>
                 )}

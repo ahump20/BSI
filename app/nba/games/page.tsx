@@ -9,7 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 
 interface NBATeam {
   id: string;
@@ -64,15 +64,6 @@ interface ScoreboardResponse {
 }
 const formatDate = formatScheduleDate;
 
-function formatGameTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  return date.toLocaleTimeString('en-US', {
-    timeZone: 'America/Chicago',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
 
 const conferences = ['All', 'Eastern', 'Western'];
 
