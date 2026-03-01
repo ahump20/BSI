@@ -54,7 +54,7 @@ export function Card({
         if (!interactive || event.defaultPrevented) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          onClick?.(event as unknown as React.MouseEvent<HTMLDivElement>);
+          event.currentTarget.click();
         }
       }}
       {...props}
