@@ -167,9 +167,7 @@ const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'Al
 
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
+  const [selectedDate, setSelectedDate] = useState(() => getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const hasAutoAdvanced = useRef(false);

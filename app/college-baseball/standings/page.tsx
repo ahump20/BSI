@@ -129,6 +129,7 @@ export default function CollegeBaseballStandingsPage() {
                   <button
                     key={conf.id}
                     onClick={() => setSelectedConference(conf.id)}
+                    aria-pressed={selectedConference === conf.id}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedConference === conf.id
                         ? 'bg-burnt-orange text-white'
@@ -151,6 +152,7 @@ export default function CollegeBaseballStandingsPage() {
                     <button
                       key={conf.id}
                       onClick={() => setSelectedConference(conf.id)}
+                      aria-pressed={selectedConference === conf.id}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedConference === conf.id
                           ? 'bg-burnt-orange text-white'
