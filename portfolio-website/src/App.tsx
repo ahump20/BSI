@@ -18,6 +18,9 @@ import AIChatWidget from './components/AIChatWidget';
 function App() {
   return (
     <div className="min-h-screen bg-midnight text-bone">
+      <a href="#origin" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-burnt-orange focus:text-white focus:rounded focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest">
+        Skip to content
+      </a>
       <Navigation />
       <Hero />
 

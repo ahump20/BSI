@@ -16,6 +16,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -25,6 +26,7 @@
     <meta property="og:image" content="https://austinhumphrey.com/assets/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Austin Humphrey — Sports Intelligence Architect and Founder of Blaze Sports Intel" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -32,6 +34,8 @@
     <meta name="twitter:title" content="Austin Humphrey | Sports Intelligence Architect & AI-Powered Analytics" />
     <meta name="twitter:description" content="Founder of Blaze Sports Intel. 27-Worker Cloudflare architecture serving real-time sports analytics. Born in Memphis with Texas soil." />
     <meta name="twitter:image" content="https://austinhumphrey.com/assets/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Austin Humphrey — Sports Intelligence Architect and Founder of Blaze Sports Intel" />
+    <meta name="twitter:creator" content="@BlazeSportsIntel" />
 
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
@@ -107,10 +111,9 @@
     }
     </script>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <!-- Self-hosted fonts — preload hero fonts for instant LCP -->
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/oswald.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/cormorant-400.woff2" />
     <!-- PostHog Analytics -->
     <script>
       !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once unregister opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing identify alias people.set people.set_once set_config reset get_config get_property getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
