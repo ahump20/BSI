@@ -45,7 +45,7 @@ export class DataErrorBoundary extends Component<DataErrorBoundaryProps, State> 
       const label = name ? `${name} temporarily unavailable` : 'Section temporarily unavailable';
 
       return (
-        <div className={`flex flex-col items-center justify-center text-center ${compact ? 'py-6 px-4' : 'py-12 px-4'}`}>
+        <div role="alert" className={`flex flex-col items-center justify-center text-center ${compact ? 'py-6 px-4' : 'py-12 px-4'}`}>
           <p className="text-xs font-display font-bold uppercase tracking-wider text-text-muted mb-3">
             {label}
           </p>

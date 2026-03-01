@@ -66,7 +66,7 @@ export function HeroSection() {
               <span key={i} className="inline-flex items-center gap-8 mr-8">
                 <span>5 Sports</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>16 Workers</span>
+                <span>27 Workers</span>
                 <span className="text-burnt-orange">&middot;</span>
                 <span>Live Scores</span>
                 <span className="text-burnt-orange">&middot;</span>
