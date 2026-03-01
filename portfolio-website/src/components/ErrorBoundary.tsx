@@ -40,6 +40,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               Something went wrong
             </p>
             <button
+              type="button"
               onClick={() => window.location.reload()}
               style={{
                 background: 'none',
