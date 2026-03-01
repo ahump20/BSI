@@ -14,9 +14,10 @@ export async function handleCollegeBaseballStandings(
   const cacheKey = `cb:standings:v3:${conference}`;
   const now = new Date().toISOString();
 
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
-  // Guard: skip cache if value is an empty array (poisoned by a previous bad ingest)
-  if (cached && !(Array.isArray(cached) && cached.length === 0)) {
+  const cached = await kvGet<Record<string, unknown>>(env.KV, cacheKey);
+  // Only serve cache if it's a properly formatted response (has success + data keys).
+  // Raw ESPN arrays from the ingest worker or empty arrays are skipped.
+  if (cached && typeof cached === 'object' && !Array.isArray(cached) && 'success' in cached && 'data' in cached) {
     return cachedJson(cached, 200, HTTP_CACHE.standings, { ...dataHeaders(now, 'cache'), 'X-Cache': 'HIT' });
   }
 
@@ -201,6 +202,31 @@ export async function handleCollegeBaseballStandings(
   });
 }
 
+/** Flatten ESPN nested poll format into simple { rank, team, record, ... } entries. */
+function flattenESPNPolls(polls: unknown[]): unknown[] {
+  if (!polls?.length) return [];
+  // ESPN returns an array of polls — take the first (D1Baseball Top 25)
+  const poll = polls[0] as Record<string, unknown>;
+  const ranks = poll?.ranks as Array<Record<string, unknown>> | undefined;
+  if (!ranks?.length) return polls; // Not ESPN format, pass through
+  return ranks.map((entry) => {
+    const team = entry.team as Record<string, unknown> | undefined;
+    const teamName = team?.location
+      ? `${team.location} ${team.name}`
+      : (team?.nickname as string) || (team?.name as string) || 'Unknown';
+    return {
+      rank: entry.current,
+      prev_rank: entry.previous,
+      team: teamName,
+      record: entry.recordSummary || '',
+      points: entry.points,
+      firstPlaceVotes: entry.firstPlaceVotes,
+      espnId: team?.id || null,
+      slug: teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    };
+  });
+}
+
 export async function handleCollegeBaseballRankings(env: Env): Promise<Response> {
   const cacheKey = 'cb:rankings:v2';
   const prevKey = 'cb:rankings:prev';
@@ -251,9 +277,10 @@ export async function handleCollegeBaseballRankings(env: Env): Promise<Response>
     }
   }
 
-  // Step 3: Resolve — prefer Highlightly when both available (richer data), ESPN as fallback
-  const finalRankings = hlRankings || espnRankings;
-  const degraded = !hlRankings && !!espnRankings;
+  // Step 3: Resolve — prefer Highlightly (richer data), ESPN flattened as fallback
+  const flatEspn = espnRankings ? flattenESPNPolls(espnRankings) : null;
+  const finalRankings = hlRankings || flatEspn;
+  const degraded = !hlRankings && !!flatEspn;
 
   if (finalRankings) {
     await rotatePrevious();

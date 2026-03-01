@@ -89,32 +89,49 @@ interface RankingsApiResponse {
   };
 }
 
-// Transform ESPN rankings to our internal format
+// Transform rankings API response to our internal format.
+// Handles both flat format (handler-normalized) and legacy ESPN nested format.
 function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
-  // If we have the old format with poll, use it directly
-  if (data.poll) {
-    return data.poll;
+  if (data.poll) return data.poll;
+
+  const rankings = data.rankings;
+  if (!rankings?.length) return null;
+
+  const first = rankings[0] as Record<string, unknown>;
+
+  // Flat format: each entry has { rank, team, record, prev_rank }
+  if ('rank' in first && typeof first.rank === 'number') {
+    return {
+      id: 'espn',
+      name: 'D1Baseball Top 25',
+      lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
+      teams: (rankings as Array<Record<string, unknown>>).map((entry) => ({
+        rank: entry.rank as number,
+        previousRank: (entry.prev_rank as number) ?? undefined,
+        team: (entry.team as string) || 'Unknown',
+        conference: '',
+        record: (entry.record as string) || '',
+        points: (entry.points as number) ?? 0,
+        firstPlace: (entry.firstPlaceVotes as number) ?? 0,
+      })),
+    };
   }
 
-  // Transform ESPN format
-  const firstPoll = data.rankings?.[0];
-  if (!firstPoll || !firstPoll.ranks) {
-    return null;
-  }
+  // Legacy nested ESPN format: { name, ranks: [{ current, team: { location, name } }] }
+  const poll = first as ESPNRankingPoll;
+  if (!poll.ranks) return null;
 
   return {
     id: 'espn',
-    name: firstPoll.name || 'ESPN Top 25',
+    name: poll.name || 'ESPN Top 25',
     lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
-    teams: firstPoll.ranks.map((entry) => ({
+    teams: poll.ranks.map((entry) => ({
       rank: entry.current,
       previousRank: entry.previous,
-      // Use location (school name) + name (mascot) for full team name
-      // e.g., "UCLA" + "Bruins" = "UCLA Bruins"
       team: entry.team?.location
         ? `${entry.team.location} ${entry.team.name}`
         : entry.team?.nickname || entry.team?.name || 'Unknown',
-      conference: '', // ESPN doesn't include conference in rankings
+      conference: '',
       record: entry.recordSummary || '',
       points: entry.points,
       firstPlace: entry.firstPlaceVotes,
