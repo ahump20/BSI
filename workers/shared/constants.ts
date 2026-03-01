@@ -96,8 +96,10 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/scores/daily': '/scores',
   '/baseball/rankings': '/college-baseball/rankings',
   '/baseball/rankings/': '/college-baseball/rankings',
-  '/vision-ai': '/vision-AI-Intelligence',
-  '/vision-ai/': '/vision-AI-Intelligence',
+  '/vision-ai': '/vision-ai-intelligence',
+  '/vision-ai/': '/vision-ai-intelligence',
+  '/vision-AI-Intelligence': '/vision-ai-intelligence',
+  '/vision-AI-Intelligence/': '/vision-ai-intelligence',
   // Legacy .html variants
   '/pricing.html': '/pricing',
   '/analytics.html': '/analytics',
