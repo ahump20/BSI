@@ -71,6 +71,7 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
             <button
               key={f}
               onClick={() => setFormat(f)}
+              aria-pressed={format === f}
               className={`px-2.5 py-1 rounded text-[10px] font-semibold uppercase tracking-wider border transition-all ${
                 format === f
                   ? 'bg-burnt-orange/20 text-burnt-orange border-burnt-orange/30'
