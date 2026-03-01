@@ -8,43 +8,9 @@ import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
 import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
 import { withAlpha } from '@/lib/utils/color';
-
-// ────────────────────────────────────────
-// SVG Sport Icons (crisp at any size)
-// ────────────────────────────────────────
-
-const BaseballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
-    <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
-  </svg>
-);
-
-const FootballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
-    <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
-  </svg>
-);
-
-const BasketballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 2V22M2 12H22" />
-    <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
-  </svg>
-);
-
-const StadiumIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <path d="M3 21V10L12 3L21 10V21" />
-    <path d="M3 14H21" />
-    <rect x="8" y="14" width="8" height="7" />
-  </svg>
-);
 
 // ────────────────────────────────────────
 // Sports Hub data
@@ -60,7 +26,7 @@ const SPORT_COUNT_KEYS: Record<string, string> = {
 
 interface SportCardData {
   name: string;
-  icon: React.FC;
+  icon: React.FC<{ className?: string }>;
   href: string;
   description: string;
   color: string;
@@ -210,7 +176,7 @@ export function HomePageClient() {
                       />
 
                       <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3 transition-colors duration-300 bg-surface-light text-text-secondary">
-                        <sport.icon />
+                        <sport.icon className="w-10 h-10" />
                       </div>
 
                       <h3 className="text-base font-semibold mb-1.5 transition-colors group-hover:text-burnt-orange text-text-primary">

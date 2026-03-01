@@ -9,38 +9,7 @@ import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
-
-// ── SVG Sport Icons ──
-
-const BaseballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
-    <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
-  </svg>
-);
-
-const FootballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
-    <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
-    <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
-  </svg>
-);
-
-const BasketballSvg = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 2V22M2 12H22" />
-    <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
-  </svg>
-);
-
-const SPORT_ICONS: Record<string, React.FC> = {
-  'college-baseball': BaseballSvg,
-  mlb: BaseballSvg,
-  nfl: FootballSvg,
-  nba: BasketballSvg,
-};
+import { SPORT_ICONS } from '@/components/icons/SportIcons';
 
 interface SportSection {
   id: string;
