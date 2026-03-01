@@ -18,6 +18,7 @@ import {
   transformScoreboard,
 } from '../../lib/api-clients/espn-api';
 import { processFinishedGames } from './college-baseball';
+import { flattenESPNPolls } from './college-baseball/standings';
 import {
   transformSDIOMLBScores,
   transformSDIONFLScores,
@@ -193,12 +194,13 @@ async function cacheRankings(env: Env): Promise<boolean> {
 
     if (res.ok) {
       const raw = (await res.json()) as Record<string, unknown>;
-      const rankings = (raw.rankings as unknown[]) || [];
-      if (rankings.length > 0) {
+      const rawRankings = (raw.rankings as unknown[]) || [];
+      if (rawRankings.length > 0) {
+        const rankings = flattenESPNPolls(rawRankings);
         const payload = {
           rankings,
           timestamp: now,
-          meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball' },
+          meta: { source: 'espn', fetched_at: now, timezone: 'America/Chicago', sport: 'college-baseball', degraded: true },
         };
         await kvPut(env.KV, key, payload, 86400);
         await kvPut(env.KV, 'cb:rankings:v2', payload, CACHE_TTL.rankings);

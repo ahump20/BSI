@@ -203,7 +203,7 @@ export async function handleCollegeBaseballStandings(
 }
 
 /** Flatten ESPN nested poll format into simple { rank, team, record, ... } entries. */
-function flattenESPNPolls(polls: unknown[]): unknown[] {
+export function flattenESPNPolls(polls: unknown[]): unknown[] {
   if (!polls?.length) return [];
   // ESPN returns an array of polls — take the first (D1Baseball Top 25)
   const poll = polls[0] as Record<string, unknown>;
