@@ -52,7 +52,7 @@ export default function BSIShowcase() {
             <p className="section-label">// The Platform</p>
             <h2 id="bsi-heading" className="section-title">Blaze Sports Intel</h2>
             <p className="font-sans font-semibold text-burnt-orange uppercase tracking-[0.2em] text-sm mb-10">
-              Born to Blaze the Path Less Beaten
+              Born to Blaze the Path Beaten Less
             </p>
           </motion.div>
 
