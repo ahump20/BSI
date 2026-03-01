@@ -9,6 +9,7 @@ import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { SPORT_ICONS } from '@/components/icons/SportIcons';
 
 interface SportSection {
@@ -180,6 +181,7 @@ export default function ScoresHubPage() {
         {/* Sports Grid */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="Sports Grid">
             <div className="grid gap-6 md:grid-cols-2">
               {sports.map((sport, index) => (
                 <ScrollReveal key={sport.id} direction="up" delay={index * 100}>
@@ -290,6 +292,7 @@ export default function ScoresHubPage() {
                 refreshInterval={60}
               />
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

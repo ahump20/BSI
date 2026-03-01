@@ -68,6 +68,7 @@ import { FreshnessBadge } from '@/components/ui/Badge';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
@@ -186,7 +187,11 @@ export default function DashboardPage() {
     return null;
   }
 
-  return <DashboardContent tier={authTier} hasBilling={hasBilling} />;
+  return (
+    <DataErrorBoundary name="Dashboard">
+      <DashboardContent tier={authTier} hasBilling={hasBilling} />
+    </DataErrorBoundary>
+  );
 }
 
 // ── Sport content transition variants ───────────────────────────────────────
