@@ -44,7 +44,8 @@ export function CommandPalette({
     if (open) {
       setQuery('');
       setActiveIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
+      const raf = requestAnimationFrame(() => inputRef.current?.focus());
+      return () => cancelAnimationFrame(raf);
     }
   }, [open]);
 
@@ -105,6 +106,9 @@ export function CommandPalette({
           />
           {/* Palette */}
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
             className="fixed left-1/2 top-[15%] z-50 w-[90vw] max-w-lg -translate-x-1/2 overflow-hidden shadow-2xl"
             style={{
               background: 'var(--intel-bg-panel)',
