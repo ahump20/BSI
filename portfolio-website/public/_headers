@@ -1,0 +1,9 @@
+# Cloudflare Pages headers — portfolio
+
+# Hashed assets — immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# All pages — HSTS (other security headers via Cloudflare Transform Rules)
+/*
+  Strict-Transport-Security: max-age=15552000; includeSubDomains
