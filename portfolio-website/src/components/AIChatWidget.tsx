@@ -10,7 +10,7 @@ interface Message {
 const FALLBACK_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ['bsi', 'blaze', 'sports intel', 'platform'],
-    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 14 Cloudflare Workers with 5 D1 databases — all maintained by Austin.',
+    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 27 Cloudflare Workers with 7 D1 databases — all maintained by Austin.',
   },
   {
     keywords: ['contact', 'email', 'hire', 'reach'],
