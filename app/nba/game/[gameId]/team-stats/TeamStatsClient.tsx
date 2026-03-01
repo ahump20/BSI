@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useGameData } from '../layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { getTeamLogo } from '@/lib/utils/game-helpers';
 
 /**
  * Team Stats Page
@@ -34,10 +35,6 @@ const STAT_CONFIG: Array<{ name: string; label: string; inverse?: boolean }> = [
   { name: 'pointsOffTurnovers', label: 'Points off Turnovers' },
   { name: 'largestLead', label: 'Largest Lead' },
 ];
-
-function getTeamLogo(competitor: { team?: { logos?: Array<{ href?: string }>; logo?: string } } | undefined): string | null {
-  return competitor?.team?.logos?.[0]?.href || competitor?.team?.logo || null;
-}
 
 export default function TeamStatsClient() {
   const { game, loading, error } = useGameData();

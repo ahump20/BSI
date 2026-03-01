@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useGameData, type Play } from '../layout';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { getQuarterLabel } from '@/lib/utils/game-helpers';
 
 /**
  * Play-by-Play Page
@@ -12,10 +13,7 @@ import { Badge } from '@/components/ui/Badge';
  * ESPN plays shape: [{id, text, period: {number}, clock: {displayValue}, scoringPlay, scoreValue, homeScore, awayScore, team}]
  */
 
-function getPeriodLabel(num: number): string {
-  if (num <= 4) return `Quarter ${num}`;
-  return `OT${num - 4}`;
-}
+const getPeriodLabel = getQuarterLabel;
 
 export default function PlayByPlayClient() {
   const { game, loading, error } = useGameData();

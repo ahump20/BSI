@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { getTeamLogo, getPeriodLabel } from '@/lib/utils/game-helpers';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CitationFooter } from '@/components/sports';
@@ -118,15 +119,6 @@ export function useGameData() {
 // ============================================================================
 // HELPERS
 // ============================================================================
-
-function getTeamLogo(competitor?: Competitor): string | null {
-  return competitor?.team?.logos?.[0]?.href || competitor?.team?.logo || null;
-}
-
-function getPeriodLabel(index: number): string {
-  if (index < 4) return `Q${index + 1}`;
-  return `OT${index - 3}`;
-}
 
 function isGameLive(game: GameData): boolean {
   return game.status?.type?.state === 'in';
