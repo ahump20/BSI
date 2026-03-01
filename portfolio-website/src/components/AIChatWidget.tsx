@@ -125,6 +125,7 @@ export default function AIChatWidget() {
           <motion.div
             ref={panelRef}
             role="dialog"
+            aria-modal="true"
             aria-label="Chat with Austin's AI assistant"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

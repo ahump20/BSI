@@ -125,6 +125,7 @@ export default function Navigation() {
             className="md:hidden text-bone/70 hover:text-burnt-orange transition-colors p-2"
             aria-label="Navigation menu"
             aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-menu"
           >
             <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               {mobileOpen ? (
@@ -144,6 +145,7 @@ export default function Navigation() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
+              id="mobile-nav-menu"
               ref={mobileMenuRef}
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
