@@ -1,12 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { streamAnalysis } from '@/lib/bsi-stream-client';
+import { streamAnalysis, type Sport, type AnalysisType } from '@/lib/bsi-stream-client';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-type Sport = 'college-baseball' | 'mlb' | 'ncaa-football' | 'nfl';
-type AnalysisType = 'live' | 'postgame' | 'pregame' | 'stat';
 
 interface GameContext {
   sport: Sport;

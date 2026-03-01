@@ -20,8 +20,8 @@
  *   abort();
  */
 
-type Sport = 'college-baseball' | 'mlb' | 'ncaa-football' | 'nfl';
-type AnalysisType = 'live' | 'postgame' | 'pregame' | 'stat';
+export type Sport = 'college-baseball' | 'mlb' | 'ncaa-football' | 'nfl';
+export type AnalysisType = 'live' | 'postgame' | 'pregame' | 'stat';
 
 interface GameContext {
   sport: Sport;
