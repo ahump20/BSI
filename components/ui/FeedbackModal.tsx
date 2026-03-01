@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const CATEGORIES = ['Bug Report', 'Feature Request', 'Data Issue', 'General Feedback'];
 
@@ -11,6 +11,28 @@ export function FeedbackButton() {
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap + Escape to close
+  useEffect(() => {
+    if (!open) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusable = dialog.querySelectorAll<HTMLElement>('button, textarea, input, [tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setOpen(false); return; }
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open]);
 
   const submit = async () => {
     if (!text.trim()) return;
@@ -28,14 +50,14 @@ export function FeedbackButton() {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div role="dialog" aria-modal="true" aria-label="Send feedback" className="bg-background-secondary border border-border rounded-xl p-6 w-full max-w-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="feedback-heading" className="bg-background-secondary border border-border rounded-xl p-6 w-full max-w-md">
             {submitted ? (
               <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-text-primary font-medium">Thanks for your feedback!</p></div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-text-primary">Send Feedback</h2>
+                  <h2 id="feedback-heading" className="text-lg font-bold text-text-primary">Send Feedback</h2>
                   <button onClick={() => setOpen(false)} className="text-text-muted hover:text-text-primary" aria-label="Close">&times;</button>
                 </div>
                 <div className="mb-4">
