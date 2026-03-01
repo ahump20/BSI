@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   getActiveSports,
   normalizeCollegeBaseball,
@@ -20,7 +20,8 @@ export interface SportCounts {
  */
 export function useMultiSportCounts(): Map<string, SportCounts> {
   const [counts, setCounts] = useState<Map<string, SportCounts>>(new Map());
-  const activeSports = getActiveSports();
+  // Memoize once per mount — active sports don't change mid-session
+  const activeSports = useMemo(() => getActiveSports(), []);
 
   const fetchCounts = useCallback(async () => {
     const today = getDateOffset(0);

@@ -175,6 +175,7 @@ export function IntelStream({
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask about this game…"
+              aria-label="Ask a question about this game"
               disabled={isStreaming}
               className="flex-1 bg-surface-light border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 disabled:opacity-40 transition-colors"
             />

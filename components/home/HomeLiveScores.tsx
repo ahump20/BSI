@@ -410,6 +410,7 @@ export function HomeLiveScores() {
           <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1">
             <button
               onClick={() => setFilter('all')}
+              aria-pressed={filter === 'all'}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                 filter === 'all'
                   ? 'bg-surface-medium text-text-primary'
@@ -424,6 +425,7 @@ export function HomeLiveScores() {
                 <button
                   key={sport.key}
                   onClick={() => setFilter(sport.key)}
+                  aria-pressed={filter === sport.key}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                     filter === sport.key
                       ? 'text-text-primary'

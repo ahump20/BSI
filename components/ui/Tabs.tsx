@@ -62,8 +62,11 @@ export function Tab({ value, children, className }: TabProps) {
   const isActive = active === value;
   return (
     <button
+      id={`tab-${value}`}
       role="tab"
       aria-selected={isActive}
+      aria-controls={`panel-${value}`}
+      tabIndex={isActive ? 0 : -1}
       onClick={() => setActive(value)}
       className={clsx(
         'px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.15em] transition-all',
@@ -88,7 +91,7 @@ export function TabPanel({ value, children, className }: TabPanelProps) {
   const { active } = useTabs();
   if (active !== value) return null;
   return (
-    <div role="tabpanel" className={className}>
+    <div id={`panel-${value}`} role="tabpanel" aria-labelledby={`tab-${value}`} className={className}>
       {children}
     </div>
   );

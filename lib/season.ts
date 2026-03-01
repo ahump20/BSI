@@ -124,11 +124,6 @@ export function isInSeason(sport: SportKey, date: Date = new Date()): boolean {
   return getSeasonPhase(sport, date).phase !== 'offseason';
 }
 
-/** Get the month name when an off-season sport returns. */
-export function getReturnMonth(sport: SportKey): string {
-  return RETURN_MONTHS[sport];
-}
-
 /** Human-readable label for a sport. */
 export const SPORT_LABELS: Record<SportKey, string> = {
   mlb: 'MLB',
