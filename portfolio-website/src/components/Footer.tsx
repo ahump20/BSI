@@ -9,9 +9,10 @@ const quickLinks = [
 
 const bsiLinks = [
   { label: 'BlazeSportsIntel.com', href: 'https://blazesportsintel.com' },
+  { label: 'BSI Radar Lab', href: 'https://labs.blazesportsintel.com' },
   { label: 'BlazeCraft Dashboard', href: 'https://blazecraft.app' },
-  { label: 'BSI Editorial', href: 'https://blazesportsintel.com/college-baseball/editorial' },
-  { label: 'BSI Arcade', href: 'https://blazesportsintel.com/arcade' },
+  { label: 'BSI Arcade', href: 'https://arcade.blazesportsintel.com' },
+  { label: 'A Documented Heritage', href: 'https://dna.austinhumphrey.com' },
 ];
 
 const socialLinks = [

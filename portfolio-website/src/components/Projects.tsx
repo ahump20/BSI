@@ -5,26 +5,35 @@ const projects = [
   {
     name: 'Blaze Sports Intel',
     description:
-      'Production-grade sports analytics platform covering 6 leagues with real-time data pipelines, AI-powered editorial, and 58+ deep-dive articles. 14 Cloudflare Workers, 5 D1 databases, 9 KV caches, 18 R2 buckets — built and maintained solo.',
+      'Production-grade sports analytics platform covering 6 leagues with real-time data pipelines, AI-powered editorial, and 58+ deep-dive articles. 27 Cloudflare Workers, 7 D1 databases, 15 KV caches, 18 R2 buckets — built and maintained solo.',
     tech: ['Next.js', 'Cloudflare Workers', 'Hono', 'D1', 'KV', 'R2', 'TypeScript'],
     url: 'https://blazesportsintel.com',
     highlight: 'Flagship',
     featured: true,
   },
   {
-    name: 'BSI Editorial Hub',
+    name: 'A Documented Heritage',
     description:
-      'College baseball editorial engine with conference-level team previews, weekly recaps, and scouting analysis. 58+ articles covering SEC, Big 12, and Big Ten programs with tag-based filtering and full SEO metadata.',
-    tech: ['Next.js', 'Static Export', 'Tailwind', 'JSON-LD'],
-    url: 'https://blazesportsintel.com/college-baseball/editorial',
-    highlight: 'Content',
+      'Personal data archive with 12+ interactive D3 charts, a Three.js swing biomechanics viewer, and an ancestry globe. Cross-references 8 data sources — Spotify, 23andMe, natal chart, personality instruments, writing corpus, and more.',
+    tech: ['React', 'D3.js', 'Three.js', 'TypeScript', 'Tailwind'],
+    url: 'https://dna.austinhumphrey.com',
+    highlight: 'Data Viz',
+    featured: false,
+  },
+  {
+    name: 'BSI Radar Lab',
+    description:
+      'Physics-based quality auditor for TrackMan pitch data. Six validation layers — Magnus model, SSW detection, calibration drift, physical bounds, release clustering, and fatigue tracking. All processing runs locally in the browser.',
+    tech: ['React', 'Recharts', 'TypeScript', 'Vite'],
+    url: 'https://labs.blazesportsintel.com',
+    highlight: 'Analytics',
     featured: false,
   },
   {
     name: 'BlazeCraft',
     description:
       'Warcraft 3: Frozen Throne–style system health dashboard for BSI infrastructure. Real-time monitoring of Workers, D1, KV, and R2 with game-inspired UI, leaderboards, and Durable Object state management.',
-    tech: ['Cloudflare Pages', 'Workers', 'Durable Objects', 'WebSockets'],
+    tech: ['Cloudflare Pages', 'Workers', 'Durable Objects', 'Canvas2D'],
     url: 'https://blazecraft.app',
     highlight: 'DevOps',
     featured: false,
@@ -32,9 +41,9 @@ const projects = [
   {
     name: 'Sandlot Sluggers',
     description:
-      'Browser-based baseball game built with vanilla JavaScript and HTML5 Canvas. Retro pixel art, physics-based batting, and real-time scoring — deployed on Cloudflare Pages.',
-    tech: ['JavaScript', 'Canvas API', 'Cloudflare Pages'],
-    url: 'https://blazesportsintel.com/arcade',
+      'Browser-based 3D baseball arcade with four game modes, real college baseball rosters via BSI API, and leaderboard integration. Deployed at arcade.blazesportsintel.com.',
+    tech: ['Three.js', 'JavaScript', 'Cloudflare Pages'],
+    url: 'https://arcade.blazesportsintel.com',
     highlight: 'Game',
     featured: false,
   },

@@ -2,13 +2,13 @@ import { motion } from 'framer-motion';
 import PlatformStatus from './PlatformStatus';
 
 const marqueeItems = [
-  '14 Workers',
+  '27 Workers',
   '6 Leagues',
   '58+ Articles',
-  '5 Databases',
-  '9 KV Caches',
+  '7 Databases',
+  '15 KV Caches',
   '18 R2 Buckets',
-  '165 Tests Passing',
+  '511 Tests Passing',
 ];
 
 const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];

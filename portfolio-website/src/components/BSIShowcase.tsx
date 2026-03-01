@@ -80,8 +80,8 @@ export default function BSIShowcase() {
                   data is the product.
                 </p>
                 <p>
-                  Fourteen Workers handle every API call, data transformation, and cache layer.
-                  Five databases store historical and live game data. Eighteen storage buckets
+                  Twenty-seven Workers handle every API call, data transformation, and cache layer.
+                  Seven databases store historical and live game data. Eighteen storage buckets
                   hold everything from box scores to editorial assets. One person built all of it
                   &mdash; old-school scouting instinct fused with new-school sabermetrics, running
                   on Cloudflare&rsquo;s edge.
@@ -110,9 +110,9 @@ export default function BSIShowcase() {
 
             {/* Stat cards — right column */}
             <motion.div variants={staggerItem} className="grid grid-cols-2 gap-4 content-start">
-              <StatCard target={14} label="Workers" inView={inView} />
-              <StatCard target={5} label="D1 Databases" inView={inView} />
-              <StatCard target={9} label="KV Namespaces" inView={inView} />
+              <StatCard target={27} label="Workers" inView={inView} />
+              <StatCard target={7} label="D1 Databases" inView={inView} />
+              <StatCard target={15} label="KV Namespaces" inView={inView} />
               <StatCard target={18} label="R2 Buckets" inView={inView} />
             </motion.div>
           </div>
@@ -138,7 +138,7 @@ export default function BSIShowcase() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0 text-center">
               {[
                 { label: 'External APIs', sub: 'Highlightly · SportsDataIO · ESPN' },
-                { label: 'Workers', sub: '14 Hono-powered edge functions' },
+                { label: 'Workers', sub: '27 Hono-powered edge functions' },
                 { label: 'Storage', sub: 'D1 · KV · R2' },
                 { label: 'UI', sub: 'Next.js static export' },
               ].map((node, i) => (
