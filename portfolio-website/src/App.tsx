@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -13,7 +14,8 @@ import Philosophy from './components/Philosophy';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import AthleticArc from './components/AthleticArc';
-import AIChatWidget from './components/AIChatWidget';
+
+const AIChatWidget = lazy(() => import('./components/AIChatWidget'));
 
 function App() {
   return (
@@ -55,7 +57,9 @@ function App() {
       <Contact />
       <Footer />
 
-      <AIChatWidget />
+      <Suspense fallback={null}>
+        <AIChatWidget />
+      </Suspense>
     </div>
   );
 }

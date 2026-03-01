@@ -39,7 +39,7 @@ const features = [
   {
     title: 'Edge-First Architecture',
     description:
-      '14 Cloudflare Workers running at the edge — sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a single traditional server. The infrastructure is the product.',
+      '27 Cloudflare Workers running at the edge — sub-50ms response times globally. Data pipelines that fetch, transform, and cache without a single traditional server. The infrastructure is the product.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth="1.5">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round" />

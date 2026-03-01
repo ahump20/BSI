@@ -9,7 +9,7 @@ const experiences = [
     period: '2023 – Present',
     accent: '#BF5700',
     description:
-      'Built a production-grade sports analytics platform from scratch, covering MLB, NFL, NCAA football, NBA, and college baseball. 14 Cloudflare Workers, 5 D1 databases, 9 KV namespaces, and 18 R2 buckets — architecture designed, deployed, and maintained by one person. Real-time data pipelines with 30-second update cadence for live scoring across six leagues. 58+ editorial deep-dives across SEC, Big 12, and Big Ten programs. AI-powered predictive modules and Claude-driven analytics.',
+      'Built a production-grade sports analytics platform from scratch, covering MLB, NFL, NCAA football, NBA, and college baseball. 27 Cloudflare Workers, 7 D1 databases, 15 KV namespaces, and 18 R2 buckets — architecture designed, deployed, and maintained by one person. Real-time data pipelines with 30-second update cadence for live scoring across six leagues. 58+ editorial deep-dives across SEC, Big 12, and Big Ten programs. AI-powered predictive modules and Claude-driven analytics.',
   },
   {
     title: 'Advertising Account Executive',
