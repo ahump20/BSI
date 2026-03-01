@@ -11,7 +11,7 @@ export default function SandlotSluggersPage() {
       <div className="flex items-center justify-between px-4 py-2 bg-background-primary border-b border-border">
         <h1 className="font-display text-lg text-text-primary uppercase tracking-wide">Sandlot Sluggers</h1>
         <a
-          href="/games/sandlot-sluggers/"
+          href="/Sandlot-Sluggers/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-burnt-orange hover:underline"
@@ -20,7 +20,7 @@ export default function SandlotSluggersPage() {
         </a>
       </div>
       <iframe
-        src="/games/sandlot-sluggers/"
+        src="/Sandlot-Sluggers/"
         title="Sandlot Sluggers"
         className="flex-1 w-full border-0"
         allow="autoplay"
