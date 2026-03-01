@@ -2,7 +2,7 @@ import { Variants } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
-const EASE_OUT_EXPO: [number, number, number, number] = [0.19, 1, 0.22, 1];
+export const EASE_OUT_EXPO: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 export const staggerContainer: Variants = {
   hidden: {},

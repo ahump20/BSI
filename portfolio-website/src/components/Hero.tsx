@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import PlatformStatus from './PlatformStatus';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { EASE_OUT_EXPO } from '../utils/animations';
 
 const marqueeItems = [
   '27 Workers',
@@ -11,8 +12,6 @@ const marqueeItems = [
   '18 R2 Buckets',
   '511 Tests Passing',
 ];
-
-const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 export default function Hero() {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -40,7 +39,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
           className="section-label mb-6"
         >
           Sports Intelligence Architect
@@ -49,7 +48,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
+          transition={{ duration: 0.7, delay: 0.2, ease: EASE_OUT_EXPO }}
         >
           <h1
             id="hero-heading"
@@ -65,7 +64,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: EASE }}
+          transition={{ duration: 0.7, delay: 0.4, ease: EASE_OUT_EXPO }}
           className="font-display italic text-warm-gray text-lg md:text-xl max-w-2xl mx-auto mb-4 leading-relaxed"
         >
           "The gap between interest in the game and access to meaningful analytics
@@ -84,7 +83,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6, ease: EASE }}
+          transition={{ duration: 0.7, delay: 0.6, ease: EASE_OUT_EXPO }}
           className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <a href="#origin" className="btn-primary">
