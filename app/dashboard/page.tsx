@@ -596,7 +596,7 @@ function DashboardContent({ tier, hasBilling }: { tier: string | null; hasBillin
                   </div>
 
                   {/* Provider Health */}
-                  <ProviderHealthPanel />
+                  <ProviderHealthPanel health={healthData} />
 
                   {/* Data Attribution */}
                   <DataSourcePanel
@@ -676,16 +676,7 @@ const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
   down: { dot: 'bg-error', text: 'text-error' },
 };
 
-function ProviderHealthPanel() {
-  const [health, setHealth] = useState<HealthData | null>(null);
-
-  useEffect(() => {
-    fetch('/api/health/providers')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => { if (data) setHealth(data as HealthData); })
-      .catch(() => {});
-  }, []);
-
+function ProviderHealthPanel({ health }: { health: HealthData | null }) {
   if (!health || !health.checkedAt || Object.keys(health.providers).length === 0) return null;
 
   return (

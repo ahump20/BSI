@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
@@ -9,7 +10,6 @@ import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
-import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
 import { withAlpha } from '@/lib/utils/color';
 
 // ────────────────────────────────────────
@@ -115,7 +115,10 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
 // ────────────────────────────────────────
 
 export function HomePageClient() {
-  const sportCounts = useMultiSportCounts();
+  const [sportCounts, setSportCounts] = useState<Map<string, { live: number; today: number }>>(new Map());
+  const handleCountsChange = useCallback((counts: Map<string, { live: number; today: number }>) => {
+    setSportCounts(counts);
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -126,7 +129,7 @@ export function HomePageClient() {
 
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
       <DataErrorBoundary name="Live Scores" compact>
-        <HomeLiveScores />
+        <HomeLiveScores onCountsChange={handleCountsChange} />
       </DataErrorBoundary>
 
       {/* ─── 3. Editorial Feed (D1-backed) — elevated above sport hub ─── */}

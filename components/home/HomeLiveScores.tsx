@@ -285,7 +285,11 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
  * Fetches all in-season sport endpoints in parallel, normalizes into a common shape,
  * and auto-refreshes (30s when live, 5min otherwise).
  */
-export function HomeLiveScores() {
+interface HomeLiveScoresProps {
+  onCountsChange?: (counts: Map<string, { live: number; today: number }>) => void;
+}
+
+export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   const [today, setToday] = useState('');
   const [allGames, setAllGames] = useState<NormalizedGame[]>([]);
   const [loading, setLoading] = useState(true);
@@ -330,6 +334,19 @@ export function HomeLiveScores() {
       setAllGames(games);
       setLastFetched(new Date());
       setError(false);
+
+      // Emit per-sport counts so parent can avoid a duplicate fetch
+      if (onCountsChange) {
+        const counts = new Map<string, { live: number; today: number }>();
+        for (const g of games) {
+          const prev = counts.get(g.sport) ?? { live: 0, today: 0 };
+          counts.set(g.sport, {
+            live: prev.live + (g.status === 'live' ? 1 : 0),
+            today: prev.today + 1,
+          });
+        }
+        onCountsChange(counts);
+      }
     } catch {
       setError(true);
     } finally {
