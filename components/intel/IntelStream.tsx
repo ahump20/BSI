@@ -81,13 +81,12 @@ export function IntelStream({
     });
   }, [context, analysisType, status]);
 
-  // Auto-fire if question pre-populated
+  // Auto-fire if question pre-populated (capture initial value to avoid re-firing)
+  const initialQuestionRef = useRef(initialQuestion);
   useEffect(() => {
-    if (initialQuestion) fire(initialQuestion);
-    // Cleanup on unmount
+    if (initialQuestionRef.current) fire(initialQuestionRef.current);
     return () => { abortRef.current?.(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fire]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

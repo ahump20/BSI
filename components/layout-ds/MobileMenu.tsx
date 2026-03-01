@@ -39,13 +39,12 @@ export function MobileMenu({ isOpen, onClose, items, actions }: MobileMenuProps)
   const firstFocusableRef = useRef<HTMLElement | null>(null);
   const lastFocusableRef = useRef<HTMLElement | null>(null);
 
-  // Close on route change
+  // Close on route change — ref avoids stale closure on onClose
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
   useEffect(() => {
-    if (isOpen) {
-      onClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+    if (isOpen) onCloseRef.current();
+  }, [pathname, isOpen]);
 
   // Body scroll lock
   useEffect(() => {
