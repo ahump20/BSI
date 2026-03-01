@@ -29,9 +29,9 @@ export function FeedbackButton() {
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-background-secondary border border-border rounded-xl p-6 w-full max-w-md">
+          <div role="dialog" aria-modal="true" aria-label="Send feedback" className="bg-background-secondary border border-border rounded-xl p-6 w-full max-w-md">
             {submitted ? (
-              <div className="text-center py-8"><div className="text-4xl mb-3">&#10003;</div><p className="text-text-primary font-medium">Thanks for your feedback!</p></div>
+              <div className="text-center py-8"><div aria-hidden="true" className="text-4xl mb-3">&#10003;</div><p className="text-text-primary font-medium">Thanks for your feedback!</p></div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4">
