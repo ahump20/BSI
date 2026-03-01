@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { teamMetadata } from '@/lib/data/team-metadata';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
@@ -213,6 +214,7 @@ export default function CollegeBaseballRankingsPage() {
             </ScrollReveal>
 
             {/* Rankings Table */}
+            <DataErrorBoundary name="Rankings">
             {loading ? (
               <div className="text-center py-16">
                 <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
@@ -449,6 +451,7 @@ export default function CollegeBaseballRankingsPage() {
                 </p>
               )}
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

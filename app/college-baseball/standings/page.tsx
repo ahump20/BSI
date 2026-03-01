@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 const primaryConferences = [
   { id: 'SEC', name: 'SEC', fullName: 'Southeastern Conference' },
@@ -191,183 +192,185 @@ export default function CollegeBaseballStandingsPage() {
               </Card>
             </ScrollReveal>
 
-            {/* Loading State */}
-            {loading && standings.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-16">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
-                <p className="text-text-secondary">Loading standings...</p>
-              </div>
-            )}
+            <DataErrorBoundary name="Standings">
+              {/* Loading State */}
+              {loading && standings.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mb-4"></div>
+                  <p className="text-text-secondary">Loading standings...</p>
+                </div>
+              )}
 
-            {/* Error State */}
-            {error && (
-              <Card padding="lg" className="text-center">
-                <p className="text-warning mb-4">{error}</p>
-                <p className="text-text-tertiary text-sm">
-                  {isInSeason
-                    ? 'Standings data is updating — check back shortly.'
-                    : 'College baseball returns in February.'}
-                </p>
-              </Card>
-            )}
+              {/* Error State */}
+              {error && (
+                <Card padding="lg" className="text-center">
+                  <p className="text-warning mb-4">{error}</p>
+                  <p className="text-text-tertiary text-sm">
+                    {isInSeason
+                      ? 'Standings data is updating — check back shortly.'
+                      : 'College baseball returns in February.'}
+                  </p>
+                </Card>
+              )}
 
-            {/* Empty State */}
-            {!loading && !error && standings.length === 0 && (
-              <Card padding="lg" className="text-center">
-                <p className="text-text-secondary mb-2">
-                  No standings data available for {currentConf?.fullName || currentConf?.name}.
-                </p>
-                <p className="text-text-tertiary text-sm">
-                  {isInSeason
-                    ? 'Conference play may not have started yet. Overall records update daily.'
-                    : 'College baseball returns in February.'}
-                </p>
-                {isInSeason && (
-                  <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block">
-                    Browse preseason editorial previews →
-                  </Link>
-                )}
-              </Card>
-            )}
+              {/* Empty State */}
+              {!loading && !error && standings.length === 0 && (
+                <Card padding="lg" className="text-center">
+                  <p className="text-text-secondary mb-2">
+                    No standings data available for {currentConf?.fullName || currentConf?.name}.
+                  </p>
+                  <p className="text-text-tertiary text-sm">
+                    {isInSeason
+                      ? 'Conference play may not have started yet. Overall records update daily.'
+                      : 'College baseball returns in February.'}
+                  </p>
+                  {isInSeason && (
+                    <Link href="/college-baseball/editorial" className="text-burnt-orange hover:text-ember text-sm mt-3 inline-block">
+                      Browse preseason editorial previews →
+                    </Link>
+                  )}
+                </Card>
+              )}
 
-            {/* Standings Table */}
-            {standings.length > 0 && (
-              <ScrollReveal direction="up" delay={200}>
-                <Card padding="none" className="overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full" aria-label="College baseball standings by conference">
-                      <thead>
-                        <tr className="bg-background-secondary border-b border-border-subtle">
-                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-12">
-                            #
-                          </th>
-                          <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                            Team
-                          </th>
-                          {hasConferencePlay && (
-                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                              Conf
+              {/* Standings Table */}
+              {standings.length > 0 && (
+                <ScrollReveal direction="up" delay={200}>
+                  <Card padding="none" className="overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="w-full" aria-label="College baseball standings by conference">
+                        <thead>
+                          <tr className="bg-background-secondary border-b border-border-subtle">
+                            <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-12">
+                              #
                             </th>
-                          )}
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
-                            Overall
-                          </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
-                            Win%
-                          </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
-                            Streak
-                          </th>
-                          <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
-                            Diff
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {standings.map((standing, index) => (
-                          <tr
-                            key={standing.team?.id || index}
-                            className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
-                              index < 4 ? 'bg-success/5' : ''
-                            }`}
-                          >
-                            <td className="py-3 px-4">
-                              <span className="font-display text-lg font-bold text-burnt-orange">
-                                {standing.rank || index + 1}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              <Link
-                                href={`/college-baseball/teams/${standing.team?.id}`}
-                                className="flex items-center gap-3 hover:text-burnt-orange transition-colors"
-                              >
-                                {standing.team?.logo && (
-                                  <Image
-                                    src={standing.team.logo}
-                                    alt=""
-                                    width={28}
-                                    height={28}
-                                    className="object-contain flex-shrink-0"
-                                    unoptimized
-                                  />
-                                )}
-                                <span className="font-semibold text-text-primary">
-                                  {standing.team?.name || standing.team?.shortName || 'Unknown'}
-                                </span>
-                              </Link>
-                            </td>
+                            <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                              Team
+                            </th>
                             {hasConferencePlay && (
-                              <td className="py-3 px-4 text-center">
-                                <span className="text-text-primary">
-                                  {(standing.conferenceRecord?.wins > 0 || standing.conferenceRecord?.losses > 0)
-                                    ? `${standing.conferenceRecord.wins}-${standing.conferenceRecord.losses}`
-                                    : standing.conferenceRecord?.pct != null && standing.conferenceRecord.pct > 0
-                                      ? `${(standing.conferenceRecord.pct * 100).toFixed(0)}%`
-                                      : '—'}
+                              <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                                Conf
+                              </th>
+                            )}
+                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                              Overall
+                            </th>
+                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                              Win%
+                            </th>
+                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                              Streak
+                            </th>
+                            <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden lg:table-cell">
+                              Diff
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {standings.map((standing, index) => (
+                            <tr
+                              key={standing.team?.id || index}
+                              className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
+                                index < 4 ? 'bg-success/5' : ''
+                              }`}
+                            >
+                              <td className="py-3 px-4">
+                                <span className="font-display text-lg font-bold text-burnt-orange">
+                                  {standing.rank || index + 1}
                                 </span>
                               </td>
-                            )}
-                            <td className="py-3 px-4 text-center">
-                              <span className="text-text-primary font-medium">
-                                {standing.overallRecord?.wins ?? 0}-
-                                {standing.overallRecord?.losses ?? 0}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-center hidden md:table-cell">
-                              <span className="text-text-secondary">
-                                {standing.winPct ? (standing.winPct * 100).toFixed(1) + '%' : '—'}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-center hidden md:table-cell">
-                              <span className={`text-sm ${
-                                standing.streak?.startsWith('W') ? 'text-success' :
-                                standing.streak?.startsWith('L') ? 'text-error' : 'text-text-tertiary'
-                              }`}>
-                                {standing.streak || '—'}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-center hidden lg:table-cell">
-                              {standing.pointDifferential != null ? (
-                                <span className={`text-sm font-medium ${
-                                  standing.pointDifferential > 0 ? 'text-success' :
-                                  standing.pointDifferential < 0 ? 'text-error' : 'text-text-tertiary'
-                                }`}>
-                                  {standing.pointDifferential > 0 ? '+' : ''}{standing.pointDifferential}
-                                </span>
-                              ) : (
-                                <span className="text-text-tertiary">—</span>
+                              <td className="py-3 px-4">
+                                <Link
+                                  href={`/college-baseball/teams/${standing.team?.id}`}
+                                  className="flex items-center gap-3 hover:text-burnt-orange transition-colors"
+                                >
+                                  {standing.team?.logo && (
+                                    <Image
+                                      src={standing.team.logo}
+                                      alt=""
+                                      width={28}
+                                      height={28}
+                                      className="object-contain flex-shrink-0"
+                                      unoptimized
+                                    />
+                                  )}
+                                  <span className="font-semibold text-text-primary">
+                                    {standing.team?.name || standing.team?.shortName || 'Unknown'}
+                                  </span>
+                                </Link>
+                              </td>
+                              {hasConferencePlay && (
+                                <td className="py-3 px-4 text-center">
+                                  <span className="text-text-primary">
+                                    {(standing.conferenceRecord?.wins > 0 || standing.conferenceRecord?.losses > 0)
+                                      ? `${standing.conferenceRecord.wins}-${standing.conferenceRecord.losses}`
+                                      : standing.conferenceRecord?.pct != null && standing.conferenceRecord.pct > 0
+                                        ? `${(standing.conferenceRecord.pct * 100).toFixed(0)}%`
+                                        : '—'}
+                                  </span>
+                                </td>
                               )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                              <td className="py-3 px-4 text-center">
+                                <span className="text-text-primary font-medium">
+                                  {standing.overallRecord?.wins ?? 0}-
+                                  {standing.overallRecord?.losses ?? 0}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-center hidden md:table-cell">
+                                <span className="text-text-secondary">
+                                  {standing.winPct ? (standing.winPct * 100).toFixed(1) + '%' : '—'}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-center hidden md:table-cell">
+                                <span className={`text-sm ${
+                                  standing.streak?.startsWith('W') ? 'text-success' :
+                                  standing.streak?.startsWith('L') ? 'text-error' : 'text-text-tertiary'
+                                }`}>
+                                  {standing.streak || '—'}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-center hidden lg:table-cell">
+                                {standing.pointDifferential != null ? (
+                                  <span className={`text-sm font-medium ${
+                                    standing.pointDifferential > 0 ? 'text-success' :
+                                    standing.pointDifferential < 0 ? 'text-error' : 'text-text-tertiary'
+                                  }`}>
+                                    {standing.pointDifferential > 0 ? '+' : ''}{standing.pointDifferential}
+                                  </span>
+                                ) : (
+                                  <span className="text-text-tertiary">—</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-                  {/* Legend */}
-                  <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
-                    <div className="flex items-center gap-4 text-xs text-text-tertiary">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-success/20 rounded" />
-                        <span>NCAA Tournament Projection</span>
+                    {/* Legend */}
+                    <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
+                      <div className="flex items-center gap-4 text-xs text-text-tertiary">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 bg-success/20 rounded" />
+                          <span>NCAA Tournament Projection</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              </ScrollReveal>
-            )}
-
-            {/* Data Attribution */}
-            <div className="mt-8 text-center text-xs text-text-tertiary">
-              <p>Data sourced from ESPN College Baseball API. RPI rankings from NCAA.</p>
-              {lastUpdated && (
-                <p className="mt-1">
-                  Last updated:{' '}
-                  {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
-                  CT
-                </p>
+                  </Card>
+                </ScrollReveal>
               )}
-            </div>
+
+              {/* Data Attribution */}
+              <div className="mt-8 text-center text-xs text-text-tertiary">
+                <p>Data sourced from ESPN College Baseball API. RPI rankings from NCAA.</p>
+                {lastUpdated && (
+                  <p className="mt-1">
+                    Last updated:{' '}
+                    {new Date(lastUpdated).toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
+                    CT
+                  </p>
+                )}
+              </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

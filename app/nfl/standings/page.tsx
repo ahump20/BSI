@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface Team {
   name: string;
@@ -635,6 +636,7 @@ export default function NFLStandingsPage() {
         {/* Standings Tables */}
         <Section padding="lg" background="charcoal">
           <Container>
+            <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
               <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
                 <p className="text-text-primary font-semibold">Off-Season</p>
@@ -765,6 +767,7 @@ export default function NFLStandingsPage() {
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

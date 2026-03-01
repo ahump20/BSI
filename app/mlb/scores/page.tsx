@@ -12,6 +12,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface Game {
   id: number;
@@ -330,6 +331,7 @@ export default function MLBScoresPage() {
             </div>
 
             {/* Games Grid */}
+            <DataErrorBoundary name="MLB Scores">
             {loading ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -419,6 +421,7 @@ export default function MLBScoresPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

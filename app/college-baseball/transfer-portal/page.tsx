@@ -7,6 +7,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { DataAttribution } from '@/components/ui/DataAttribution';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { IntelSignup } from '@/components/home/IntelSignup';
@@ -223,6 +224,7 @@ export default function TransferPortalPage() {
               </h2>
             </ScrollReveal>
 
+            <DataErrorBoundary name="Transfer Portal">
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <div className="w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin" />
@@ -285,6 +287,7 @@ export default function TransferPortalPage() {
             )}
 
             <DataAttribution lastUpdated="" source="BSI Portal Tracker" className="mt-6" />
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

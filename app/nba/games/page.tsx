@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
 
 interface NBATeam {
@@ -347,6 +348,7 @@ export default function NBAGamesPage() {
         {/* Filters & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="NBA Games">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
@@ -516,6 +518,7 @@ export default function NBAGamesPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

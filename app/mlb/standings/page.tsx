@@ -11,6 +11,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface Team {
   teamName: string;
@@ -408,6 +409,7 @@ export default function MLBStandingsPage() {
               ))}
             </div>
 
+            <DataErrorBoundary name="MLB Standings">
             {loading ? (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -572,6 +574,7 @@ export default function MLBStandingsPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

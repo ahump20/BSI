@@ -12,6 +12,7 @@ import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface Game {
@@ -288,6 +289,7 @@ export default function CollegeBaseballScoresPage() {
         {/* Filters & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="College Baseball Scores">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
@@ -455,6 +457,7 @@ export default function CollegeBaseballScoresPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>
