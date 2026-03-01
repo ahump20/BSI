@@ -57,7 +57,6 @@ export default function MediaShowcase() {
                 preload="metadata"
                 playsInline
                 className="w-full h-full object-cover"
-                poster="/assets/video-poster.jpg"
                 onPlay={() => setPlaying(true)}
               >
                 <source
