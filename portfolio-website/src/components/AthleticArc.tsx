@@ -8,24 +8,28 @@ const photos = [
     srcSet: '/assets/optimized/running-vs-tivy-640w.webp 640w, /assets/optimized/running-vs-tivy-1024w.webp 1024w',
     alt: 'Chargers #20 — corner route vs Tivy',
     aspect: 'wide' as const,
+    featured: false,
   },
   {
     src: '/assets/chargers-with-dad.jpg',
     srcSet: '/assets/optimized/chargers-with-dad-640w.webp 640w, /assets/optimized/chargers-with-dad-1024w.webp 1024w',
     alt: 'Post-game with Dad — Friday night lights',
     aspect: 'tall' as const,
+    featured: false,
   },
   {
     src: '/assets/last-game-silhouette.jpg',
     srcSet: '/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w',
     alt: 'Last game — vs Seguin, 2013',
     aspect: 'wide' as const,
+    featured: true,
   },
   {
     src: '/assets/friendsgiving.jpg',
     srcSet: '/assets/optimized/friendsgiving-640w.webp 640w, /assets/optimized/friendsgiving-1024w.webp 1024w',
     alt: 'Friendsgiving — Austin, TX',
     aspect: 'wide' as const,
+    featured: false,
   },
 ];
 
@@ -70,7 +74,7 @@ export default function AthleticArc() {
               // Alternate alignment for visual rhythm
               const isWide = photo.aspect === 'wide';
               const colSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
-              const isLastGame = photo.alt.includes('Last game');
+              const isLastGame = photo.featured;
 
               return (
                 <motion.div
@@ -124,7 +128,7 @@ export default function AthleticArc() {
           <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
             <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
               {photos.map((photo) => {
-                const isLastGame = photo.alt.includes('Last game');
+                const isLastGame = photo.featured;
                 return (
                   <div
                     key={photo.alt}
