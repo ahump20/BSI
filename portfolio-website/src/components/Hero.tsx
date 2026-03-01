@@ -111,7 +111,7 @@ export default function Hero() {
         <div className="marquee-track" aria-hidden="true">
           {/* Duplicate for seamless loop */}
           {[...marqueeItems, ...marqueeItems].map((item, i) => (
-            <span key={i} className="font-mono text-xs text-warm-gray/60 uppercase tracking-[0.3em] mx-8 whitespace-nowrap">
+            <span key={i} className="font-mono text-xs text-warm-gray/80 uppercase tracking-[0.3em] mx-8 whitespace-nowrap">
               {item}
               <span className="text-burnt-orange/40 ml-8">·</span>
             </span>

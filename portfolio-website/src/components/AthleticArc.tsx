@@ -106,8 +106,8 @@ export default function AthleticArc() {
                       isLastGame
                         ? 'text-burnt-orange text-center'
                         : i % 2 === 0
-                          ? 'text-warm-gray/60 text-left'
-                          : 'text-warm-gray/60 text-right'
+                          ? 'text-warm-gray/80 text-left'
+                          : 'text-warm-gray/80 text-right'
                     }`}
                   >
                     {photo.alt}
@@ -139,7 +139,7 @@ export default function AthleticArc() {
                     </div>
                     <p
                       className={`text-xs font-mono mt-2 ${
-                        isLastGame ? 'text-burnt-orange' : 'text-warm-gray/60'
+                        isLastGame ? 'text-burnt-orange' : 'text-warm-gray/80'
                       }`}
                     >
                       {photo.alt}
