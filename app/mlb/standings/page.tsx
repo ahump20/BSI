@@ -14,7 +14,7 @@ import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Team {
   teamName: string;
-  teamAbbreviation?: string;
+  abbreviation?: string;
   wins: number;
   losses: number;
   winPercentage: number;
@@ -30,6 +30,18 @@ interface Team {
   runDiff?: number;
   wcRank?: number;
   wcGamesBack?: number;
+}
+
+/** Map API abbreviation to the route slug used in generateStaticParams */
+const ABBR_TO_SLUG: Record<string, string> = {
+  CHW: 'cws',
+  ATH: 'oak',
+};
+
+function teamSlug(team: Team): string {
+  const abbr = team.abbreviation;
+  if (!abbr) return team.teamName.toLowerCase().replace(/\s+/g, '-');
+  return (ABBR_TO_SLUG[abbr] ?? abbr).toLowerCase();
 }
 
 interface DataMeta {
@@ -206,7 +218,7 @@ export default function MLBStandingsPage() {
                 <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
                 <td className="p-3 sticky left-0 bg-background-secondary z-10">
                   <Link
-                    href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
+                    href={`/mlb/teams/${teamSlug(team)}`}
                     className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                   >
                     {team.teamName}
@@ -308,7 +320,7 @@ export default function MLBStandingsPage() {
                   </td>
                   <td className="p-3">
                     <Link
-                      href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
+                      href={`/mlb/teams/${teamSlug(team)}`}
                       className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                     >
                       {team.teamName}

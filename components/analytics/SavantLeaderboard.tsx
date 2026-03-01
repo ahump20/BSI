@@ -241,7 +241,7 @@ export function SavantLeaderboard({
                       <span className="text-text-primary font-medium text-sm">
                         {row.player_name as string}
                       </span>
-                      {row.position && (
+                      {row.position && (row.position as string) !== 'UN' && (
                         <span className="ml-1.5 text-[10px] text-text-muted uppercase">
                           {row.position as string}
                         </span>
