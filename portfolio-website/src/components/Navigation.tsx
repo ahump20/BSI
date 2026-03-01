@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring, AnimatePresence } from 'framer-motion';
 import PlatformStatus from './PlatformStatus';
 
@@ -15,6 +15,7 @@ export default function Navigation() {
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress, scrollY } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
@@ -47,6 +48,11 @@ export default function Navigation() {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMobileOpen(false);
     };
+    // Focus first menu link when menu opens
+    requestAnimationFrame(() => {
+      const firstLink = mobileMenuRef.current?.querySelector('a');
+      firstLink?.focus();
+    });
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [mobileOpen]);
@@ -136,6 +142,7 @@ export default function Navigation() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
+              ref={mobileMenuRef}
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
