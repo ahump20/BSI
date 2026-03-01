@@ -7,7 +7,6 @@ export default {
         'texas-soil': '#8B4513',
         'charcoal': '#1A1A1A',
         'midnight': '#0D0D0D',
-        'sand': '#F4EEE7',
         'ember': '#FF6B35',
         'bone': '#F5F0EB',
         'warm-gray': '#A89F95',

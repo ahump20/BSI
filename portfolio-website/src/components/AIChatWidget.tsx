@@ -2,9 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
+  id: number;
   role: 'user' | 'assistant';
   text: string;
 }
+
+let msgId = 0;
 
 // Fallback keyword responses when API is unavailable
 const FALLBACK_RESPONSES: { keywords: string[]; response: string }[] = [
@@ -35,7 +38,7 @@ function getFallbackResponse(input: string): string {
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
+    { id: ++msgId, role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,7 +52,7 @@ export default function AIChatWidget() {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
-    const userMsg: Message = { role: 'user', text: trimmed };
+    const userMsg: Message = { id: ++msgId, role: 'user', text: trimmed };
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
@@ -70,11 +73,11 @@ export default function AIChatWidget() {
       if (!res.ok) throw new Error('API error');
 
       const data = await res.json() as { text: string };
-      setMessages((prev) => [...prev, { role: 'assistant', text: data.text }]);
+      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: data.text }]);
     } catch {
       // Fall back to local keyword matching
       const fallback = getFallbackResponse(trimmed);
-      setMessages((prev) => [...prev, { role: 'assistant', text: fallback }]);
+      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: fallback }]);
     } finally {
       setLoading(false);
     }
@@ -123,9 +126,9 @@ export default function AIChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0" aria-live="polite" aria-atomic="false">
-              {messages.map((msg, i) => (
+              {messages.map((msg) => (
                 <div
-                  key={i}
+                  key={msg.id}
                   className={`text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'text-bone ml-8 text-right'

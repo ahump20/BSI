@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { staggerContainer, staggerItem } from '../utils/animations';
 
 export default function MediaShowcase() {
   const [playing, setPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handlePlay = () => {
     setPlaying(true);
-    const video = document.getElementById('media-video') as HTMLVideoElement | null;
-    video?.play();
+    videoRef.current?.play();
   };
 
   return (
@@ -52,7 +52,7 @@ export default function MediaShowcase() {
 
             <div className="aspect-video">
               <video
-                id="media-video"
+                ref={videoRef}
                 controls={playing}
                 preload="metadata"
                 playsInline

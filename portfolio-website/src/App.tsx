@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -19,6 +20,7 @@ const AIChatWidget = lazy(() => import('./components/AIChatWidget'));
 
 function App() {
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-midnight text-bone">
       <a href="#origin" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-burnt-orange focus:text-white focus:rounded focus:font-mono focus:text-xs focus:uppercase focus:tracking-widest">
         Skip to content
@@ -61,6 +63,7 @@ function App() {
         <AIChatWidget />
       </Suspense>
     </div>
+    </ErrorBoundary>
   );
 }
 

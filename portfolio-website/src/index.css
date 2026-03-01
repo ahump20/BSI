@@ -57,7 +57,6 @@
     --gradient-mesh-1: rgba(191, 87, 0, 0.04);
     --gradient-mesh-2: rgba(139, 69, 19, 0.03);
     --gradient-mesh-3: rgba(255, 107, 53, 0.02);
-    --scroll-progress: 0;
   }
 
   html {
@@ -205,13 +204,6 @@
     background: linear-gradient(to right, #BF5700, #FF6B35);
     z-index: 9998;
     transform-origin: left;
-  }
-
-  /* Diagonal section divider */
-  .section-divider-top {
-    clip-path: polygon(0 2rem, 100% 0, 100% 100%, 0 100%);
-    margin-top: -2rem;
-    padding-top: 4rem;
   }
 
   /* Stats marquee */
