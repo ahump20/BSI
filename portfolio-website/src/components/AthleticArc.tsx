@@ -90,6 +90,7 @@ export default function AthleticArc() {
                       sizes="(max-width: 768px) 85vw, 60vw"
                       alt={photo.alt}
                       loading="lazy"
+                      decoding="async"
                       className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] ${
                         isLastGame ? 'object-center' : ''
                       }`}
@@ -138,6 +139,7 @@ export default function AthleticArc() {
                         sizes="85vw"
                         alt={photo.alt}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                     </div>
