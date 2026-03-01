@@ -379,7 +379,7 @@ export function HomeLiveScores() {
   if (!loading && !error && allGames.length === 0) return null;
 
   return (
-    <section className="py-6 px-4 sm:px-6 lg:px-8">
+    <section className="py-6 px-4 sm:px-6 lg:px-8" aria-label="Today's live scores">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -441,7 +441,12 @@ export function HomeLiveScores() {
         )}
 
         {/* Score cards — horizontal scroll on mobile */}
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div
+          className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0"
+          aria-live={hasLiveGames ? 'polite' : 'off'}
+          aria-atomic="false"
+          aria-relevant="additions text"
+        >
           {loading ? (
             <>
               {[1, 2, 3, 4].map((i) => (

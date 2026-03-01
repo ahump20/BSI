@@ -47,19 +47,19 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback for older browsers
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      // Clipboard API unavailable — select the text so user can Cmd+C / Ctrl+C
+      const pre = document.querySelector<HTMLPreElement>('[data-cite-text]');
+      if (pre) {
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
     }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -82,7 +82,7 @@ export function CiteWidget({ title, path, date = '2026-02-17', author = 'Austin 
           ))}
         </div>
       </div>
-      <pre className="text-xs text-text-muted bg-surface-light rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
+      <pre data-cite-text className="text-xs text-text-muted bg-surface-light rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed">
         {text}
       </pre>
       <button
