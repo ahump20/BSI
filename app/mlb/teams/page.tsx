@@ -18,16 +18,11 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface TeamWithRecord extends MLBTeamInfo {
   wins?: number;
   losses?: number;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 /** ESPN CDN logo URL for a given MLB team abbreviation */

@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface StatLeader {
   rank: number;
@@ -21,12 +22,6 @@ interface StatLeader {
   };
   value: number | string;
   supportingStats?: Record<string, string | number>;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 type CategoryType = 'batting' | 'pitching';

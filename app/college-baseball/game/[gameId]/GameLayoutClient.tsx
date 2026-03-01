@@ -11,6 +11,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CitationFooter } from '@/components/sports';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 // ============================================================================
 // TYPES
@@ -98,12 +99,6 @@ export interface CollegeGameData {
   plays?: Play[];
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
-}
-
 interface GameApiResponse {
   game?: CollegeGameData;
   meta?: DataMeta;
@@ -129,25 +124,6 @@ export function useGameData() {
     throw new Error('useGameData must be used within a CollegeGameDetailLayout');
   }
   return context;
-}
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-function _formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
 }
 
 // ============================================================================

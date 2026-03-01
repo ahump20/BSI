@@ -20,6 +20,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useUserSettings } from '@/lib/hooks';
 import { getTeamBySlug } from '@/lib/utils/mlb-teams';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Player {
   id: string;
@@ -45,12 +46,6 @@ interface TeamData {
   venue?: {
     name: string;
   };
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 interface QuickStats {

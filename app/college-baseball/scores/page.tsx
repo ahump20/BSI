@@ -14,6 +14,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Game {
   id: string;
@@ -40,17 +41,6 @@ interface Game {
   venue: string;
   tv?: string;
   situation?: string;
-}
-
-interface DataMeta {
-  source: string;
-  fetched_at: string;
-  timezone: string;
-  degraded?: boolean;
-  sources?: string[];
-  // Backward-compat during rollout
-  dataSource?: string;
-  lastUpdated?: string;
 }
 
 interface ScoresApiResponse {
@@ -217,13 +207,20 @@ export default function CollegeBaseballScoresPage() {
 
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
   const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
-  const meta: DataMeta | null = useMemo(() => rawData ? {
-    source: rawData.meta?.source || rawData.meta?.dataSource || 'ESPN',
-    fetched_at: rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
-    timezone: rawData.meta?.timezone || 'America/Chicago',
-    degraded: rawData.meta?.degraded,
-    sources: rawData.meta?.sources,
-  } : null, [rawData]);
+  const meta: DataMeta | null = useMemo(() => {
+    if (!rawData) return null;
+    const src = rawData.meta?.source || rawData.meta?.dataSource || 'ESPN';
+    const ts = rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString();
+    return {
+      dataSource: src,
+      lastUpdated: ts,
+      source: src,
+      fetched_at: ts,
+      timezone: rawData.meta?.timezone || 'America/Chicago',
+      degraded: rawData.meta?.degraded,
+      sources: rawData.meta?.sources,
+    };
+  }, [rawData]);
 
   // Sync live detection to enable auto-refresh
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);

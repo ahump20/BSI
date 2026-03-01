@@ -13,6 +13,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Game {
   id: number;
@@ -53,12 +54,6 @@ interface Game {
   };
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
-  degraded?: boolean;
-}
 const formatDate = formatScheduleDate;
 
 function GameCard({ game }: { game: Game }) {

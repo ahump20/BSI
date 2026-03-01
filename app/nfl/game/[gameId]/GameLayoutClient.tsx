@@ -12,6 +12,7 @@ import { getTeamLogo, getPeriodLabel } from '@/lib/utils/game-helpers';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CitationFooter } from '@/components/sports';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 // ============================================================================
 // TYPES
@@ -85,11 +86,6 @@ export interface GameData {
   boxscore?: Record<string, unknown>;
   leaders?: Leader[];
   plays?: Play[];
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
 }
 
 interface GameApiResponse {

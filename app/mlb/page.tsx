@@ -18,6 +18,7 @@ import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { getSeasonPhase } from '@/lib/season';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 const mlbFeatures = [
   {
@@ -139,12 +140,6 @@ interface Game {
     };
   };
   venue: { name: string };
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 type TabType = 'standings' | 'teams' | 'players' | 'schedule';

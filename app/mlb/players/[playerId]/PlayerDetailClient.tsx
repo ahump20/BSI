@@ -19,6 +19,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface PlayerInfo {
   id: number;
@@ -83,13 +84,6 @@ interface Stats {
     opponent: string;
     stat: Record<string, number | string>;
   }>;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
-  isPitcher: boolean;
 }
 
 interface PlayerAPIResponse {

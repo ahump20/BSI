@@ -12,6 +12,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
   teamName: string;
@@ -31,12 +32,6 @@ interface Team {
   runDiff?: number;
   wcRank?: number;
   wcGamesBack?: number;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 type ViewType = 'division' | 'league' | 'wildcard';

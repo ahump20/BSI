@@ -11,6 +11,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 /* ------------------------------------------------------------------ */
 /*  BSI Scoreboard Types (matches Worker /api/nfl/scores response)    */
@@ -50,13 +51,6 @@ interface NFLGame {
   venue: string | undefined;
   broadcasts: { names: string[] }[] | undefined;
   odds: { details: string; overUnder?: number }[] | undefined;
-}
-
-interface DataMeta {
-  source: string;
-  fetched_at: string;
-  timezone?: string;
-  [key: string]: unknown;
 }
 
 interface ScoreboardResponse {
