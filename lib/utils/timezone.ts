@@ -294,7 +294,7 @@ export function formatScheduleDate(dateString: string): string {
 export function getDateOffset(offset: number): string {
   const date = new Date();
   date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
+  return new Intl.DateTimeFormat('en-CA', { timeZone: BSI_TIMEZONE }).format(date);
 }
 
 /**

@@ -18,7 +18,6 @@ const conferences = [
   { id: 'ACC', name: 'ACC' },
   { id: 'Big 12', name: 'Big 12' },
   { id: 'Big Ten', name: 'Big Ten' },
-  { id: 'Pac-12', name: 'Pac-12' },
 ];
 
 /** Teams available for trend lookup — keyed by team metadata slug */

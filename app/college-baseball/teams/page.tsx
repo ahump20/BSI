@@ -211,7 +211,7 @@ export default function TeamsPage() {
             <ScrollReveal direction="up" delay={300}>
               <div className="mt-16 text-center">
                 <p className="text-text-tertiary text-sm">
-                  All Power 5 and Pac-12 team profiles are live. Mid-major coverage expanding through the 2026 season.
+                  All Power 4, Pac-12, and featured mid-major team profiles are live. Coverage expanding through the 2026 season.
                 </p>
               </div>
             </ScrollReveal>
