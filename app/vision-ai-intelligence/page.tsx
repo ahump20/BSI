@@ -59,14 +59,19 @@ interface TensorFlowAPI {
   getBackend: () => string;
   memory: () => { numTensors: number; numBytes: number };
   loadGraphModel: (modelUrl: string, options?: { fromTFHub?: boolean }) => Promise<TFGraphModel>;
+  browser: { fromPixels: (source: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement) => TFTensor };
+  image: { resizeBilinear: (images: TFTensor, size: [number, number]) => TFTensor };
 }
 
 interface TFTensor {
   dataSync: () => Float32Array | Int32Array;
   data: () => Promise<Float32Array | Int32Array>;
+  array: () => Promise<number[] | number[][] | number[][][] | number[][][][]>;
   arraySync: () => number[] | number[][] | number[][][];
   dispose: () => void;
   shape: number[];
+  toInt: () => TFTensor;
+  expandDims: (axis?: number) => TFTensor;
 }
 
 declare global {
@@ -488,10 +493,8 @@ export default function VisionAIIntelligencePage() {
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tfRef = useRef<any>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const modelRef = useRef<any>(null);
+  const tfRef = useRef<TensorFlowAPI | null>(null);
+  const modelRef = useRef<TFGraphModel | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -826,8 +829,7 @@ export default function VisionAIIntelligencePage() {
           });
 
           // Run inference
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const result = (await modelRef.current.predict(input)) as any;
+          const result = modelRef.current.predict(input);
           const data = (await result.array()) as number[][][][];
           input.dispose();
           result.dispose();
