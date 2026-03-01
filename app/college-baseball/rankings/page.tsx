@@ -97,7 +97,7 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
   const rankings = data.rankings;
   if (!rankings?.length) return null;
 
-  const first = rankings[0] as Record<string, unknown>;
+  const first = rankings[0] as unknown as Record<string, unknown>;
 
   // Flat format: each entry has { rank, team, record, prev_rank }
   if ('rank' in first && typeof first.rank === 'number') {
@@ -105,7 +105,7 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
       id: 'espn',
       name: 'D1Baseball Top 25',
       lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
-      teams: (rankings as Array<Record<string, unknown>>).map((entry) => ({
+      teams: (rankings as unknown as Array<Record<string, unknown>>).map((entry) => ({
         rank: entry.rank as number,
         previousRank: (entry.prev_rank as number) ?? undefined,
         team: (entry.team as string) || 'Unknown',
@@ -118,7 +118,7 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
   }
 
   // Legacy nested ESPN format: { name, ranks: [{ current, team: { location, name } }] }
-  const poll = first as ESPNRankingPoll;
+  const poll = first as unknown as ESPNRankingPoll;
   if (!poll.ranks) return null;
 
   return {
