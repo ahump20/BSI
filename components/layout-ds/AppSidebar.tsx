@@ -170,6 +170,16 @@ export function AppSidebar() {
     closeMobile();
   }, [pathname, closeMobile]);
 
+  // Escape key closes mobile drawer
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMobile();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen, closeMobile]);
+
   /** Match active state — exact for "/", prefix for everything else */
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -227,14 +237,14 @@ export function AppSidebar() {
                     />
                   </>
                 )}
-                <span className="relative w-4 shrink-0 flex items-center justify-center">
+                <span aria-hidden="true" className="relative w-4 shrink-0 flex items-center justify-center">
                   {item.icon}
                 </span>
                 {!collapsed && (
                   <span className="relative truncate">
                     {item.label}
                     {item.external && (
-                      <span className="ml-1 text-[9px] opacity-40">↗</span>
+                      <span aria-hidden="true" className="ml-1 text-[9px] opacity-40">↗</span>
                     )}
                   </span>
                 )}
@@ -281,7 +291,7 @@ export function AppSidebar() {
             className="ml-auto text-xs cursor-pointer transition-colors text-[var(--bsi-text-dim)]"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? '▸' : '◂'}
+            <span aria-hidden="true">{collapsed ? '▸' : '◂'}</span>
           </button>
         </div>
 
@@ -322,6 +332,9 @@ export function AppSidebar() {
               onClick={closeMobile}
             />
             <motion.aside
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site navigation"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
