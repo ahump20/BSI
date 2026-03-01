@@ -134,6 +134,8 @@ export default function AthleticArc() {
                     <div className="overflow-hidden rounded-sm max-h-[240px]">
                       <img
                         src={photo.src}
+                        srcSet={photo.srcSet}
+                        sizes="85vw"
                         alt={photo.alt}
                         loading="lazy"
                         className="w-full h-full object-cover"

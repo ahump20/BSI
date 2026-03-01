@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import PlatformStatus from './PlatformStatus';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 const marqueeItems = [
   '27 Workers',
@@ -14,6 +15,8 @@ const marqueeItems = [
 const EASE: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 export default function Hero() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
   return (
     <section id="hero" aria-labelledby="hero-heading" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-midnight">
       {/* CSS gradient mesh background — no JS, no canvas */}
@@ -27,7 +30,7 @@ export default function Hero() {
               'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,107,53,0.03) 0%, transparent 50%)',
               'radial-gradient(ellipse 90% 40% at 80% 10%, rgba(191,87,0,0.04) 0%, transparent 50%)',
             ].join(', '),
-            animation: 'hero-mesh 20s ease-in-out infinite alternate',
+            animation: prefersReducedMotion ? 'none' : 'hero-mesh 20s ease-in-out infinite alternate',
           }}
         />
       </div>
@@ -127,8 +130,8 @@ export default function Hero() {
         className="absolute bottom-6 left-1/2 -translate-x-1/2"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+          animate={prefersReducedMotion ? {} : { y: [0, 8, 0] }}
+          transition={prefersReducedMotion ? {} : { repeat: Infinity, duration: 2, ease: 'easeInOut' }}
         >
           <svg width="20" height="12" viewBox="0 0 20 12" fill="none" className="text-bone/30">
             <path d="M1 1L10 10L19 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -44,11 +44,26 @@ export default function AIChatWidget() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const send = async () => {
+  // Focus input when panel opens + Escape to close
+  useEffect(() => {
+    if (!open) return;
+    requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+    });
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [open]);
+
+  const send = useCallback(async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
@@ -81,7 +96,7 @@ export default function AIChatWidget() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, loading, messages]);
 
   return (
     <>
@@ -108,6 +123,9 @@ export default function AIChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-label="Chat with Austin's AI assistant"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
