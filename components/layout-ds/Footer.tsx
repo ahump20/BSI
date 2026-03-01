@@ -14,7 +14,7 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-start justify-between gap-8 mb-12">
           <div className="max-w-xs">
             <div className="flex items-center gap-3 mb-3">
-              <img src="/images/brand/bsi-logo-primary.png" alt="BSI" className="h-10 w-auto opacity-80" />
+              <img src="/images/brand/bsi-logo-primary.png" alt="BSI" className="h-10 w-auto opacity-80" loading="lazy" decoding="async" />
               <div>
                 <span className="font-display text-lg font-bold uppercase tracking-wider text-text-primary">BSI</span>
                 <span className="block text-[9px] font-mono uppercase tracking-[0.2em] text-text-muted">

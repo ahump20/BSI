@@ -84,7 +84,7 @@ function GameCard({ game }: { game: ESPNGame }) {
             <div key={team.id} className="flex items-center justify-between">
               <div className="flex items-center gap-3 min-w-0">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="" className="w-8 h-8 object-contain" />
+                  <img src={logoUrl} alt="" className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                     {team.team.abbreviation}

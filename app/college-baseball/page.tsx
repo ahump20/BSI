@@ -682,7 +682,7 @@ export default function CollegeBaseballPage() {
                           <Card variant="hover" padding="md" className="h-full">
                             <div className="flex items-center gap-3">
                               {meta ? (
-                                <img src={getLogoUrl(meta.espnId, meta.logoId)} alt="" className="w-8 h-8 object-contain" />
+                                <img src={getLogoUrl(meta.espnId, meta.logoId)} alt="" className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                               ) : (
                                 <div className="w-8 h-8 bg-burnt-orange/15 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                   {(team.shortName || team.name).slice(0, 3).toUpperCase()}

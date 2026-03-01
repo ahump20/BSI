@@ -31,7 +31,7 @@ export default function SabermetricsPlaygroundPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}>
-              <img src="/images/bsi-logo-nav.png" alt="BSI" style={{ height: '28px' }} />
+              <img src="/images/bsi-logo-nav.png" alt="BSI" style={{ height: '28px' }} loading="lazy" decoding="async" />
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: 'rgba(250,248,245,0.4)' }}>
               <Link href="/college-baseball/analytics" style={{ color: 'rgba(250,248,245,0.5)', textDecoration: 'none' }}>Analytics</Link>

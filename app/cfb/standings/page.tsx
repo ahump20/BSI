@@ -133,7 +133,7 @@ export default function CFBStandingsPage() {
                                 <td className="py-2.5 px-4">
                                   <div className="flex items-center gap-3">
                                     {team.logo ? (
-                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" />
+                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
                                     ) : (
                                       <div className="w-6 h-6 bg-background-secondary rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                         {team.abbreviation}
