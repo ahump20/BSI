@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useMemo } from 'react';
 import * as d3 from 'd3';
-import { getConfColor } from '@/lib/data/conference-colors';
+import { CONF_COLORS, getConfColor } from '@/lib/data/conference-colors';
 
 // ---------------------------------------------------------------------------
 // Types
