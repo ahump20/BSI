@@ -19,6 +19,7 @@ export function IntelSearch({ query, onChange, onFocus, className = '' }: IntelS
         onChange={(e) => onChange(e.target.value)}
         onFocus={onFocus}
         placeholder="Search teams, games, signals... (press /)"
+        aria-label="Search teams, games, and signals"
         className="h-9 w-full rounded-lg border border-border bg-surface-light pl-8 pr-3 font-mono text-[12px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-border-strong focus:bg-surface-light"
       />
     </div>

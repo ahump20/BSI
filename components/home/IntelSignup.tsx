@@ -81,6 +81,7 @@ export function IntelSignup({ sport, onSignup }: IntelSignupProps = {}) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@email.com"
           required
+          aria-label="Email address for intel signup"
           className="flex-1 min-w-0 bg-surface-light border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
         />
         <button

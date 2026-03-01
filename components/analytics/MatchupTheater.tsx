@@ -174,6 +174,7 @@ function PlayerSelector({
         {label}
       </span>
       <select
+        aria-label={`Select ${label.toLowerCase()}`}
         value={selected}
         onChange={(e) => onSelect(e.target.value)}
         className={`w-full bg-surface-light border border-border rounded-md px-3 py-2 text-sm text-text-tertiary font-mono appearance-none cursor-pointer hover:border-border-strong transition-colors focus:outline-none focus:border-burnt-orange/40 ${align === 'right' ? 'text-right' : ''}`}

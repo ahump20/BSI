@@ -132,6 +132,7 @@ export function CommandPalette({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search games, signals, teams..."
+                aria-label="Command palette search"
                 className="flex-1 bg-transparent text-[13px] outline-none"
                 style={{
                   fontFamily: 'var(--intel-mono)',

@@ -52,9 +52,11 @@ export function PlayersTabContent() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name (min 2 chars)..."
+            aria-label="Search players by name"
             className="flex-1 px-4 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
           />
           <select
+            aria-label="Filter by position"
             value={posFilter}
             onChange={(e) => setPosFilter(e.target.value)}
             className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"
@@ -65,6 +67,7 @@ export function PlayersTabContent() {
             ))}
           </select>
           <select
+            aria-label="Filter by class year"
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
             className="px-3 py-2.5 bg-surface-light border border-border rounded-lg text-text-primary text-sm focus:outline-none focus:border-burnt-orange/50 transition-all"

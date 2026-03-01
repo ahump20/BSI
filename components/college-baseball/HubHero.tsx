@@ -70,6 +70,7 @@ export function HubHero({
                 onFocus={() => onSearchOpen(true)}
                 onBlur={() => setTimeout(() => onSearchOpen(false), 200)}
                 placeholder="Search teams, players, articles..."
+                aria-label="Search teams, players, and articles"
                 className="w-full pl-10 pr-4 py-2.5 bg-surface-light border border-border rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 focus:bg-surface transition-colors"
               />
             </div>

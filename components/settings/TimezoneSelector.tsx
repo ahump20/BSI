@@ -15,8 +15,9 @@ const TIMEZONES = [
 export function TimezoneSelector({ value, onChange }: TimezoneSelectorProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-text-secondary mb-2">Timezone</label>
+      <label htmlFor="tz-select" className="block text-sm font-medium text-text-secondary mb-2">Timezone</label>
       <select
+        id="tz-select"
         value={value || 'America/Chicago'}
         onChange={(e) => onChange?.(e.target.value)}
         className="w-full bg-charcoal border border-border-subtle rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-burnt-orange"
