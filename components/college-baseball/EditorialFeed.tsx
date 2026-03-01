@@ -7,6 +7,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,14 +50,8 @@ function readTime(words: number): string {
   return `${mins} min read`;
 }
 
-/** Format date as "Feb 14, 2026" */
 function formatDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'medium');
 }
 
 // ---------------------------------------------------------------------------

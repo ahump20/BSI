@@ -11,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { DateTime } from 'luxon';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface TrendDataPoint {
   date: string;
@@ -31,8 +31,7 @@ interface TrendChartProps {
 }
 
 function formatDate(dateStr: string): string {
-  const dt = DateTime.fromISO(dateStr, { zone: 'America/Chicago' });
-  return dt.isValid ? dt.toFormat('M/d') : dateStr;
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'short');
 }
 
 interface TooltipPayloadEntry {
@@ -54,8 +53,7 @@ function CustomTooltip({
 
   const entry = payload[0];
   const dateStr = entry.payload.date;
-  const dt = DateTime.fromISO(dateStr, { zone: 'America/Chicago' });
-  const formattedDate = dt.isValid ? dt.toFormat('MMM d, yyyy') : dateStr;
+  const formattedDate = formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'medium');
   const formattedValue = valueFormatter
     ? valueFormatter(entry.value)
     : String(entry.value);

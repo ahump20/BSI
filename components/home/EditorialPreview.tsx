@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Badge } from '@/components/ui/Badge';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 // ────────────────────────────────────────
 // Types — matches EditorialFeed.tsx
@@ -60,12 +61,7 @@ function readTime(words: number): string {
 }
 
 function formatDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'compact');
 }
 
 // ────────────────────────────────────────

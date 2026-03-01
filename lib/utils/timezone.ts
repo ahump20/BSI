@@ -106,7 +106,7 @@ export interface FormatOptions {
   includeTime?: boolean;
   includeDate?: boolean;
   includeTimezone?: boolean;
-  format?: 'short' | 'medium' | 'long' | 'full';
+  format?: 'short' | 'compact' | 'medium' | 'long' | 'full';
 }
 
 /**
@@ -144,6 +144,10 @@ export function formatInTimezone(input: string | Date, options: FormatOptions = 
     switch (format) {
       case 'short':
         dateOptions.month = 'numeric';
+        dateOptions.day = 'numeric';
+        break;
+      case 'compact':
+        dateOptions.month = 'short';
         dateOptions.day = 'numeric';
         break;
       case 'medium':
