@@ -30,7 +30,7 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {game.away.logo && (
-                <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <span className="intel-team-name text-[0.75rem] truncate">
                 {rankPrefix(game.away.rank)}{game.away.abbreviation || game.away.name}
@@ -46,7 +46,7 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
           <div className="flex items-center justify-between gap-2 mt-0.5">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {game.home.logo && (
-                <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <span className="intel-team-name text-[0.75rem] truncate">
                 {rankPrefix(game.home.rank)}{game.home.abbreviation || game.home.name}

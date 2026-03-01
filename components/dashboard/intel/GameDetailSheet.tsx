@@ -77,7 +77,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
           <div className="flex items-center justify-center gap-6">
             <div className="flex items-center gap-2 text-right">
               {game.away.logo && (
-                <img src={game.away.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" />
+                <img src={game.away.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <div>
                 <div className="font-display text-base font-semibold uppercase text-text-primary">
@@ -107,7 +107,7 @@ export function GameDetailSheet({ game, open, onClose }: GameDetailSheetProps) {
                 <div className="font-mono text-[11px] text-text-muted">{game.home.record}</div>
               </div>
               {game.home.logo && (
-                <img src={game.home.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" />
+                <img src={game.home.logo} alt="" className="h-9 w-9 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
             </div>
           </div>

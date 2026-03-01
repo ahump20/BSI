@@ -59,7 +59,7 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {game.away.logo && (
-              <img src={game.away.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
+              <img src={game.away.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" decoding="async" />
             )}
             <span className="intel-team-name text-[0.75rem] truncate">
               {rankPrefix(game.away.rank)}{game.away.abbreviation || game.away.name}
@@ -75,7 +75,7 @@ export function GameCardMarquee({ game, onClick }: GameCardMarqueeProps) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {game.home.logo && (
-              <img src={game.home.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" />
+              <img src={game.home.logo} alt="" className="h-5 w-5 shrink-0 object-contain" loading="lazy" decoding="async" />
             )}
             <span className="intel-team-name text-[0.75rem] truncate">
               {rankPrefix(game.home.rank)}{game.home.abbreviation || game.home.name}

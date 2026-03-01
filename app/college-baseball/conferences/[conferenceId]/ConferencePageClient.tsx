@@ -1948,7 +1948,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-lg bg-burnt-orange/20 flex items-center justify-center overflow-hidden">
                                 {logoUrl ? (
-                                  <img src={logoUrl} alt="" className="w-9 h-9 object-contain" loading="lazy" />
+                                  <img src={logoUrl} alt="" className="w-9 h-9 object-contain" loading="lazy" decoding="async" />
                                 ) : (
                                   <span className="font-display text-xl font-bold text-burnt-orange">
                                     #{team.rank}
@@ -2013,7 +2013,7 @@ export default function ConferencePageClient({ conferenceId }: ConferencePageCli
                       >
                         <div className="flex items-center gap-3">
                           {logoUrl && (
-                            <img src={logoUrl} alt="" className="w-8 h-8 object-contain shrink-0" loading="lazy" />
+                            <img src={logoUrl} alt="" className="w-8 h-8 object-contain shrink-0" loading="lazy" decoding="async" />
                           )}
                           <div>
                             <h3 className="font-display text-lg font-bold text-text-primary">

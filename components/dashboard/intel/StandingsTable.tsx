@@ -66,7 +66,7 @@ export function StandingsTable({ standings, sport }: StandingsTableProps) {
                   <td className="py-1.5 pr-3" style={{ maxWidth: 140 }}>
                     <div className="flex items-center gap-2 min-w-0">
                       {team.logo && (
-                        <img src={team.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                        <img src={team.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" decoding="async" />
                       )}
                       <span className="intel-team-name text-[0.7rem] truncate">
                         {team.rank ? `#${team.rank} ` : ''}{shortName}
