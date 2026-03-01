@@ -42,15 +42,26 @@ export default function Navigation() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen]);
+
   return (
     <>
       {/* Scroll progress bar */}
       <motion.div
+        aria-hidden="true"
         className="scroll-progress"
         style={{ scaleX }}
       />
 
       <motion.nav
+        aria-label="Main navigation"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
