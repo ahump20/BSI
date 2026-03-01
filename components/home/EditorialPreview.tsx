@@ -6,59 +6,12 @@ import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Badge } from '@/components/ui/Badge';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
-
-// ────────────────────────────────────────
-// Types — matches EditorialFeed.tsx
-// ────────────────────────────────────────
-
-interface Editorial {
-  id: number;
-  slug?: string;
-  date: string;
-  title: string;
-  preview: string;
-  teams: string[];
-  wordCount: number;
-  createdAt: string;
-}
-
-interface EditorialListResponse {
-  editorials: Editorial[];
-  meta?: { source?: string; fetched_at?: string };
-}
-
-// ────────────────────────────────────────
-// Slug derivation — identical to EditorialFeed.tsx
-// ────────────────────────────────────────
-
-function titleToSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-const SLUG_OVERRIDES: Record<string, string> = {
-  'texas-week-1-27-runs-one-hit-allowed-by-volantis': 'texas-week-1-recap',
-  'sec-opening-weekend-preview': 'sec-opening-weekend',
-  'week-1-national-recap': 'week-1-recap',
-};
-
-function getEditorialHref(article: Editorial): string {
-  if (article.slug) return `/college-baseball/editorial/${article.slug}`;
-  const raw = titleToSlug(article.title);
-  const slug = SLUG_OVERRIDES[raw] || raw;
-  return `/college-baseball/editorial/${slug}`;
-}
-
-function readTime(words: number): string {
-  const mins = Math.max(1, Math.round(words / 250));
-  return `${mins} min read`;
-}
+import {
+  type Editorial,
+  type EditorialListResponse,
+  getEditorialHref,
+  readTime,
+} from '@/lib/editorial';
 
 function formatDate(dateStr: string): string {
   return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'compact');

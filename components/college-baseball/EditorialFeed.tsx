@@ -8,54 +8,19 @@ import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-interface Editorial {
-  id: number;
-  slug?: string;
-  date: string;
-  title: string;
-  preview: string;
-  teams: string[];
-  wordCount: number;
-  createdAt: string;
-}
-
-interface EditorialListResponse {
-  editorials: Editorial[];
-  meta?: { source?: string; fetched_at?: string };
-}
-
-// ---------------------------------------------------------------------------
-// Slug derivation — maps D1 titles to filesystem editorial routes
-// ---------------------------------------------------------------------------
-
-function titleToSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/['']/g, '')        // curly/straight apostrophes
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9\s-]/g, '') // strip punctuation except hyphens
-    .replace(/\s+/g, '-')         // spaces → hyphens
-    .replace(/-+/g, '-')          // collapse multiple hyphens
-    .replace(/^-|-$/g, '');       // trim leading/trailing hyphens
-}
-
-/** Approximate read time from word count */
-function readTime(words: number): string {
-  const mins = Math.max(1, Math.round(words / 250));
-  return `${mins} min read`;
-}
+import {
+  type Editorial,
+  type EditorialListResponse,
+  getEditorialHref,
+  readTime,
+} from '@/lib/editorial';
 
 function formatDate(dateStr: string): string {
   return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'medium');
 }
 
 // ---------------------------------------------------------------------------
-// Hardcoded fallback — the 4 links currently in page.tsx
+// Hardcoded fallback — used when API is down
 // ---------------------------------------------------------------------------
 
 const FALLBACK_ARTICLES: Editorial[] = [
@@ -96,20 +61,6 @@ const FALLBACK_ARTICLES: Editorial[] = [
     createdAt: '2026-02-14',
   },
 ];
-
-// Slug overrides for known articles where title → slug doesn't map cleanly
-const SLUG_OVERRIDES: Record<string, string> = {
-  'texas-week-1-27-runs-one-hit-allowed-by-volantis': 'texas-week-1-recap',
-  'sec-opening-weekend-preview': 'sec-opening-weekend',
-  'week-1-national-recap': 'week-1-recap',
-};
-
-function getEditorialHref(article: Editorial): string {
-  if (article.slug) return `/college-baseball/editorial/${article.slug}`;
-  const raw = titleToSlug(article.title);
-  const slug = SLUG_OVERRIDES[raw] || raw;
-  return `/college-baseball/editorial/${slug}`;
-}
 
 // ---------------------------------------------------------------------------
 // Skeleton loaders
