@@ -17,7 +17,7 @@ export function HeroSection() {
         {/* Section label — JetBrains Mono, burnt-orange, tracked */}
         <div className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-fade-in_0.6s_ease-out_forwards] mb-8">
           <span className="section-label">
-            Old-School Instinct &middot; New-School Metrics
+            College Baseball Savant
           </span>
         </div>
 
@@ -32,7 +32,7 @@ export function HeroSection() {
 
         {/* Quote — Cormorant italic, muted */}
         <p className="opacity-0 motion-reduce:opacity-100 motion-safe:animate-[bsi-slide-up_0.7s_ease-out_0.3s_forwards] font-serif italic text-lg md:text-xl tracking-wide mb-10 text-text-secondary">
-          The gap between interest in the game and access to meaningful analytics is the product.
+          The only free, park-adjusted sabermetrics platform for D1 college baseball.
         </p>
 
         {/* CTAs — Oswald uppercase, editorial button style */}
@@ -44,10 +44,10 @@ export function HeroSection() {
             College Baseball
           </Link>
           <Link
-            href="/scores"
+            href="/college-baseball/savant"
             className="hero-btn-outline"
           >
-            Live Scores
+            BSI Savant
           </Link>
         </div>
 
@@ -64,19 +64,19 @@ export function HeroSection() {
             {/* Duplicated for seamless loop */}
             {[0, 1].map((i) => (
               <span key={i} className="inline-flex items-center gap-8 mr-8">
-                <span>5 Sports</span>
+                <span>Park-Adjusted wOBA</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>27 Workers</span>
+                <span>wRC+</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Live Scores</span>
+                <span>FIP</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>Real Analytics</span>
+                <span>Park Factors</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>College Baseball Flagship</span>
+                <span>Conference Strength</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>BSI Savant</span>
+                <span>Updated Every 6 Hours</span>
                 <span className="text-burnt-orange">&middot;</span>
-                <span>wOBA &middot; FIP &middot; wRC+</span>
+                <span>300+ D1 Teams</span>
                 <span className="text-burnt-orange">&middot;</span>
               </span>
             ))}

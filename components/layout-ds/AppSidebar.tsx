@@ -130,6 +130,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/college-baseball', label: 'College Baseball', icon: <IconBaseball /> },
       { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
+      { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
       { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
@@ -139,7 +140,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Tools',
     items: [
-      { href: 'https://labs.blazesportsintel.com', label: 'BSI Savant', icon: <IconTarget />, external: true },
       { href: '/models', label: 'Models', icon: <IconChart /> },
       { href: '/glossary', label: 'Glossary', icon: <IconBook /> },
       { href: '/pricing', label: 'Pricing', icon: <IconTag /> },

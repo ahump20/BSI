@@ -10,7 +10,93 @@ import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
+import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
+
+// ────────────────────────────────────────
+// Savant Preview Strip — top 5 wOBA leaders
+// ────────────────────────────────────────
+
+interface LeaderboardRow {
+  player_name?: string;
+  name?: string;
+  team?: string;
+  woba?: number;
+  wrc_plus?: number;
+  [key: string]: unknown;
+}
+
+interface LeaderboardResponse {
+  data: LeaderboardRow[];
+  meta?: { source: string; fetched_at: string; timezone: string };
+}
+
+function SavantPreviewStrip() {
+  const { data, loading, error } = useSportData<LeaderboardResponse>(
+    '/api/savant/batting/leaderboard?limit=5&sort=woba&dir=desc'
+  );
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-3">
+        <div className="h-4 w-48 bg-surface-light rounded animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error || !data?.data?.length) return null;
+
+  const rows = data.data;
+  const fmtWoba = (v: number) => v.toFixed(3).replace(/^0/, '');
+
+  return (
+    <section className="py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <ScrollReveal direction="up">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <span className="section-label block mb-1">Live Proof</span>
+              <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide text-text-primary">
+                wOBA Leaders — D1 College Baseball
+              </h2>
+            </div>
+            <Link
+              href="/college-baseball/savant"
+              className="text-burnt-orange text-xs font-semibold uppercase tracking-wider hover:text-ember transition-colors"
+            >
+              Full Leaderboard
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {rows.map((row, i) => {
+              const name = row.player_name || row.name || 'Unknown';
+              const woba = row.woba ?? 0;
+              return (
+                <div
+                  key={name + i}
+                  className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1 p-3 rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]"
+                >
+                  <span className="text-burnt-orange font-mono text-xs font-bold w-5 text-center shrink-0">
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 sm:text-center min-w-0">
+                    <div className="text-sm font-semibold text-text-primary truncate">{name}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-text-muted">{row.team || ''}</div>
+                  </div>
+                  <span className="font-mono text-lg font-bold text-burnt-orange shrink-0">
+                    {fmtWoba(woba)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
 // ────────────────────────────────────────
 // Sports Hub data
@@ -132,12 +218,17 @@ export function HomePageClient() {
         <HomeLiveScores onCountsChange={handleCountsChange} />
       </DataErrorBoundary>
 
-      {/* ─── 3. Editorial Feed (D1-backed) — elevated above sport hub ─── */}
+      {/* ─── 3. Savant Preview — wOBA leaders as live proof ─── */}
+      <DataErrorBoundary name="Savant Preview" compact>
+        <SavantPreviewStrip />
+      </DataErrorBoundary>
+
+      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
       <DataErrorBoundary name="Editorial">
         <EditorialPreview />
       </DataErrorBoundary>
 
-      {/* ─── 4. Sports Hub — compact horizontal strip ─── */}
+      {/* ─── 5. Sports Hub — compact horizontal strip, secondary framing ─── */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
@@ -145,7 +236,7 @@ export function HomePageClient() {
               <div>
                 <span className="section-label block mb-2">Coverage</span>
                 <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
-                  Five Sports. No Blind Spots.
+                  Also Covering
                 </h2>
               </div>
             </div>
@@ -197,7 +288,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 5. Trending Intel Feed ─── */}
+      {/* ─── 6. Trending Intel Feed ─── */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
@@ -214,7 +305,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 6. Garrido + Austin Quote ─── */}
+      {/* ─── 7. Garrido + Austin Quote ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
@@ -275,7 +366,7 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. CTA ─── */}
+      {/* ─── 8. CTA ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background-secondary">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
@@ -284,21 +375,21 @@ export function HomePageClient() {
               Start with college baseball. Go from there.
             </h2>
             <p className="text-base mb-10 max-w-2xl mx-auto text-text-secondary">
-              Five sports. Live scores. Real analytics.
+              Park-adjusted sabermetrics. Live scores. Free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/pricing" className="btn-primary px-8 py-4 text-lg">
-                Start Free Trial
+              <Link href="/college-baseball/savant" className="btn-primary px-8 py-4 text-lg">
+                Explore BSI Savant
               </Link>
-              <Link href="/about" className="btn-outline px-8 py-4 text-lg">
-                About BSI
+              <Link href="/college-baseball" className="btn-outline px-8 py-4 text-lg">
+                College Baseball Hub
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── 8. Footer ─── */}
+      {/* ─── 9. Footer ─── */}
       <Footer />
     </div>
   );
