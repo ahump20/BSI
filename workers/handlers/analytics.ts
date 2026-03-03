@@ -40,7 +40,7 @@ export async function handleHAVFLeaderboard(url: URL, env: Env): Promise<Respons
   const season = parseInt(url.searchParams.get('season') || String(new Date().getFullYear()), 10);
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
 
-  const cacheKey = `havf:leaderboard:${league}:${season}:${team || 'all'}:${position || 'all'}`;
+  const cacheKey = `havf:leaderboard:${league}:${season}:${team || 'all'}:${position || 'all'}:${conference || 'all'}`;
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(

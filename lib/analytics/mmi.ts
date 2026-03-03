@@ -89,10 +89,11 @@ export interface MMIGameSummary {
 // Constants
 // ---------------------------------------------------------------------------
 
+/** Additive weights for directional components. GP is a multiplier applied
+ *  to the weighted sum — not an additive term — so it's excluded here. */
 export const MMI_WEIGHTS = {
   SD: 0.40,
   RS: 0.30,
-  GP: 0.15,
   BS: 0.15,
 } as const;
 

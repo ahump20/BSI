@@ -16,17 +16,18 @@ interface TrendingGame {
   game_id: string;
   home_team: string;
   away_team: string;
-  final_mmi: number;
   max_mmi: number;
   min_mmi: number;
-  momentum_swings: number;
-  biggest_swing: number;
-  excitement_rating: number;
-  sport: string;
+  avg_mmi: number;
+  mmi_volatility: number;
+  lead_changes: number;
+  max_swing: number;
+  excitement_rating: string;
+  game_date: string;
 }
 
 interface TrendingResponse {
-  data: TrendingGame[];
+  trending: TrendingGame[];
   meta: { source: string; fetched_at: string; timezone: string };
 }
 
@@ -57,11 +58,13 @@ const methodologyWeights = [
   },
 ];
 
-function getExcitementLabel(rating: number): { label: string; variant: 'primary' | 'warning' | 'success' | 'secondary' } {
-  if (rating >= 80) return { label: 'ELECTRIC', variant: 'primary' };
-  if (rating >= 60) return { label: 'HIGH DRAMA', variant: 'warning' };
-  if (rating >= 40) return { label: 'COMPETITIVE', variant: 'success' };
-  return { label: 'ROUTINE', variant: 'secondary' };
+function getExcitementLabel(rating: string): { label: string; variant: 'primary' | 'warning' | 'success' | 'secondary' } {
+  switch (rating) {
+    case 'instant-classic': return { label: 'INSTANT CLASSIC', variant: 'primary' };
+    case 'thriller': return { label: 'THRILLER', variant: 'warning' };
+    case 'competitive': return { label: 'COMPETITIVE', variant: 'success' };
+    default: return { label: 'ROUTINE', variant: 'secondary' };
+  }
 }
 
 function getMagnitude(value: number): 'low' | 'medium' | 'high' | 'extreme' {
@@ -78,8 +81,8 @@ export default function MMITrendingPage() {
   );
 
   const sortedGames = useMemo(() => {
-    if (!data?.data) return [];
-    return [...data.data].sort((a, b) => b.biggest_swing - a.biggest_swing);
+    if (!data?.trending) return [];
+    return [...data.trending].sort((a, b) => b.mmi_volatility - a.mmi_volatility);
   }, [data]);
 
   return (
@@ -184,7 +187,7 @@ export default function MMITrendingPage() {
                     Trending Games
                   </h2>
                   <p className="text-text-tertiary text-sm mt-1">
-                    Today&apos;s most dramatic momentum shifts, sorted by biggest swing.
+                    Today&apos;s most dramatic momentum shifts, sorted by volatility.
                   </p>
                 </div>
                 {data?.meta && (
@@ -246,7 +249,7 @@ export default function MMITrendingPage() {
               <div className="grid gap-6 md:grid-cols-2">
                 {sortedGames.map((game, index) => {
                   const excitement = getExcitementLabel(game.excitement_rating);
-                  const magnitude = getMagnitude(game.final_mmi);
+                  const magnitude = getMagnitude(game.avg_mmi);
 
                   return (
                     <ScrollReveal key={game.game_id} delay={index * 60}>
@@ -267,7 +270,7 @@ export default function MMITrendingPage() {
 
                         {/* Gauge */}
                         <MMIGauge
-                          value={game.final_mmi}
+                          value={game.avg_mmi}
                           awayTeam={game.away_team}
                           homeTeam={game.home_team}
                           magnitude={magnitude}
@@ -277,18 +280,18 @@ export default function MMITrendingPage() {
                         {/* Stats Row */}
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-text-tertiary">Swings:</span>
+                            <span className="text-text-tertiary">Lead Changes:</span>
                             <span className="font-mono font-bold text-text-primary tabular-nums">
-                              {game.momentum_swings}
+                              {game.lead_changes}
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-text-tertiary">Biggest Swing:</span>
+                            <span className="text-text-tertiary">Max Swing:</span>
                             <span className="font-mono font-bold text-burnt-orange tabular-nums">
-                              {game.biggest_swing.toFixed(1)}
+                              {game.max_swing.toFixed(1)}
                             </span>
                           </div>
-                          <MMIMiniIndicator value={game.final_mmi} />
+                          <MMIMiniIndicator value={game.avg_mmi} />
                         </div>
                       </Card>
                     </ScrollReveal>

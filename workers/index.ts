@@ -499,7 +499,7 @@ app.get('/api/cv/adoption', (c) => handleCVAdoption(new URL(c.req.url), c.env));
 app.get('/api/analytics/havf/leaderboard', (c) => handleHAVFLeaderboard(new URL(c.req.url), c.env));
 app.get('/api/analytics/havf/player/:id', (c) => handleHAVFPlayer(c.req.param('id'), c.env));
 app.get('/api/analytics/havf/compare/:p1/:p2', (c) => handleHAVFCompare(c.req.param('p1'), c.req.param('p2'), c.env));
-app.post('/api/analytics/havf/compute', (c) => handleHAVFCompute(c.req.raw, c.env));
+app.post('/api/analytics/havf/compute', requireApiKey, (c) => handleHAVFCompute(c.req.raw, c.env));
 
 // --- Analytics: MMI ---
 app.get('/api/analytics/mmi/live/:gameId', (c) => handleMMILive(c.req.param('gameId'), c.env));

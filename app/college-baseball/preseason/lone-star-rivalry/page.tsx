@@ -24,7 +24,7 @@ const texasStats = {
   cws: 'Regional Final',
   keyReturners: 12,
   allAmericans: 3,
-  headCoach: 'David Pierce',
+  headCoach: 'Jim Schlossnagle',
   stadium: 'UFCU Disch-Falk Field',
   capacity: '7,273',
 };

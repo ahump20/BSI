@@ -130,6 +130,8 @@
 
   .section-padding {
     @apply py-20 px-6 md:py-28 md:px-12 lg:px-16;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
   }
 
   .container-custom {

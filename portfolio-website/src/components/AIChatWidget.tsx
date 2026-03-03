@@ -138,7 +138,7 @@ export default function AIChatWidget() {
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-burnt-orange font-medium">
                 Ask About Austin
               </p>
-              <span className="font-mono text-[0.5rem] text-warm-gray/40 uppercase tracking-wider">
+              <span className="font-mono text-[0.5rem] text-warm-gray/70 uppercase tracking-wider">
                 AI-Powered
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function AIChatWidget() {
                   placeholder="Ask a question..."
                   aria-label="Ask a question about Austin"
                   disabled={loading}
-                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/50 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
+                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
                 />
                 <button
                   onClick={send}

@@ -113,8 +113,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     setLoading(true);
     setError(null);
     try {
-      // Use the slug - API now accepts both numeric IDs and slugs
-      const res = await fetch(`/api/mlb/teams/${teamId}`);
+      // API expects abbreviation-based slug (e.g. "nyy"), not name slug (e.g. "yankees")
+      const apiSlug = teamInfo ? teamInfo.abbreviation.toLowerCase() : teamId;
+      const res = await fetch(`/api/mlb/teams/${apiSlug}`);
       if (!res.ok) {
         const errorData: APIResponse = await res.json().catch(() => ({}));
         throw new Error(errorData.message || 'Failed to fetch team data');
@@ -140,7 +141,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     } finally {
       setLoading(false);
     }
-  }, [teamId]);
+  }, [teamId, teamInfo]);
 
   useEffect(() => {
     fetchTeam();

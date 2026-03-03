@@ -67,7 +67,7 @@ export default function BSIShowcase() {
               }}
             >
               <div className="flex items-center justify-between mb-6">
-                <span className="font-mono text-xs text-warm-gray/50 uppercase tracking-wider">System Overview</span>
+                <span className="font-mono text-xs text-warm-gray/80 uppercase tracking-wider">System Overview</span>
                 <PlatformStatus />
               </div>
 

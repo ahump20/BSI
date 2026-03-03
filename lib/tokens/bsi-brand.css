@@ -32,8 +32,8 @@
   --bsi-surface-overlay: #242424;
   --bsi-text: #F5F0EB;
   --bsi-text-muted: #A89F95;
-  --bsi-text-dim: rgba(245, 240, 235, 0.22);
-  /* text-muted bumped from 0.22 to 0.40 for WCAG AA large text (3.5:1 on #0D0D0D) */
+  --bsi-text-dim: rgba(245, 240, 235, 0.52);
+  /* bumped from 0.22 → 0.52 for WCAG AA normal text (5.1:1 on #0D0D0D) */
 
   /* ---- Brand Accents ---- */
   --bsi-texas-soil: #8B4513;

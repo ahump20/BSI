@@ -88,7 +88,9 @@ function deriveCollegeWeights(
 
 function calcFIP(hr: number, bb: number, hbp: number, so: number, ip: number, c: number) {
   if (ip <= 0) return 0;
-  return safe((13 * hr + 3 * (bb + hbp) - 2 * so) / ip + c);
+  // Clamp to >= 0 — negative FIP is mathematically possible in small samples
+  // (dominant K rate with zero HR/BB) but misleading to readers
+  return Math.max(0, safe((13 * hr + 3 * (bb + hbp) - 2 * so) / ip + c));
 }
 
 function calcFIPConst(era: number, hr: number, bb: number, k: number, ip: number) {

@@ -66,7 +66,7 @@ export default function MLBTeamsPage() {
           const data = (await res.json()) as {
             standings?: Array<{
               teamName: string;
-              teamAbbreviation?: string;
+              abbreviation?: string;
               wins?: number;
               losses?: number;
             }>;
@@ -78,7 +78,7 @@ export default function MLBTeamsPage() {
                 // Match by abbreviation first (reliable), fall back to name
                 const standing = data.standings?.find(
                   (s) =>
-                    s.teamAbbreviation?.toUpperCase() === team.abbreviation ||
+                    s.abbreviation?.toUpperCase() === team.abbreviation ||
                     s.teamName.toLowerCase() === team.name.toLowerCase() ||
                     s.teamName.toLowerCase() === team.shortName.toLowerCase()
                 );

@@ -69,59 +69,60 @@ interface TeamCard {
 }
 
 const SEC_TEAMS: TeamCard[] = [
-  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '8-0', tier: 'Omaha Favorite' },
-  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '7-0', tier: 'Omaha Favorite' },
-  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '8-0', tier: 'Omaha Favorite' },
-  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '7-0', tier: 'Omaha Favorite' },
-  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '6-1', tier: 'Contender' },
-  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '6-1', tier: 'Contender' },
-  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '8-0', tier: 'Contender' },
-  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '7-0', tier: 'Contender' },
-  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '6-1', tier: 'Contender' },
-  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '5-2', tier: 'Contender' },
-  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '5-2', tier: 'Contender' },
-  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '5-2', tier: 'Dark Horse' },
-  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '5-2', tier: 'Dark Horse' },
-  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '8-0', tier: 'Dark Horse' },
-  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '4-3', tier: 'Bubble' },
-  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '3-4', tier: 'Rebuilding' },
+  { name: 'Texas', slug: 'texas', mascot: 'Longhorns', record: '11-0', tier: 'Omaha Favorite' },
+  { name: 'LSU', slug: 'lsu', mascot: 'Tigers', record: '11-1', tier: 'Omaha Favorite' },
+  { name: 'Florida', slug: 'florida', mascot: 'Gators', record: '11-1', tier: 'Omaha Favorite' },
+  { name: 'Mississippi State', slug: 'mississippi-state', mascot: 'Bulldogs', record: '11-1', tier: 'Omaha Favorite' },
+  { name: 'Arkansas', slug: 'arkansas', mascot: 'Razorbacks', record: '9-3', tier: 'Contender' },
+  { name: 'Auburn', slug: 'auburn', mascot: 'Tigers', record: '9-2', tier: 'Contender' },
+  { name: 'Georgia', slug: 'georgia', mascot: 'Bulldogs', record: '10-1', tier: 'Contender' },
+  { name: 'Texas A&M', slug: 'texas-am', mascot: 'Aggies', record: '8-3', tier: 'Contender' },
+  { name: 'Oklahoma', slug: 'oklahoma', mascot: 'Sooners', record: '9-2', tier: 'Contender' },
+  { name: 'Tennessee', slug: 'tennessee', mascot: 'Volunteers', record: '7-4', tier: 'Contender' },
+  { name: 'Kentucky', slug: 'kentucky', mascot: 'Wildcats', record: '8-3', tier: 'Dark Horse' },
+  { name: 'South Carolina', slug: 'south-carolina', mascot: 'Gamecocks', record: '7-5', tier: 'Dark Horse' },
+  { name: 'Vanderbilt', slug: 'vanderbilt', mascot: 'Commodores', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Ole Miss', slug: 'ole-miss', mascot: 'Rebels', record: '8-4', tier: 'Bubble' },
+  { name: 'Alabama', slug: 'alabama', mascot: 'Crimson Tide', record: '7-4', tier: 'Bubble' },
+  { name: 'Missouri', slug: 'missouri', mascot: 'Tigers', record: '5-6', tier: 'Rebuilding' },
 ];
 
 const BIG12_TEAMS: TeamCard[] = [
-  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '5-2', tier: 'Dark Horse' },
-  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '4-3', tier: 'Dark Horse' },
-  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '4-3', tier: 'Dark Horse' },
-  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '4-3', tier: 'Dark Horse' },
-  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '5-1', tier: 'Bubble' },
-  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '5-2', tier: 'Bubble' },
-  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '2-5', tier: 'Bubble' },
-  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '4-3', tier: 'Bubble' },
-  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '4-3', tier: 'Bubble' },
-  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '3-4', tier: 'Rebuilding' },
-  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '3-4', tier: 'Rebuilding' },
-  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '3-4', tier: 'Rebuilding' },
-  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
-  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '2-5', tier: 'Rebuilding' },
+  { name: 'West Virginia', slug: 'west-virginia', mascot: 'Mountaineers', record: '10-2', tier: 'Dark Horse' },
+  { name: 'TCU', slug: 'tcu', mascot: 'Horned Frogs', record: '8-4', tier: 'Dark Horse' },
+  { name: 'Kansas', slug: 'kansas', mascot: 'Jayhawks', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Oklahoma State', slug: 'oklahoma-state', mascot: 'Cowboys', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Arizona', slug: 'arizona', mascot: 'Wildcats', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Arizona State', slug: 'arizona-state', mascot: 'Sun Devils', record: '7-5', tier: 'Dark Horse' },
+  { name: 'Baylor', slug: 'baylor', mascot: 'Bears', record: '7-5', tier: 'Bubble' },
+  { name: 'Houston', slug: 'houston', mascot: 'Cougars', record: '7-5', tier: 'Bubble' },
+  { name: 'UCF', slug: 'ucf', mascot: 'Knights', record: '7-5', tier: 'Bubble' },
+  { name: 'Texas Tech', slug: 'texas-tech', mascot: 'Red Raiders', record: '6-5', tier: 'Bubble' },
+  { name: 'Cincinnati', slug: 'cincinnati', mascot: 'Bearcats', record: '6-5', tier: 'Rebuilding' },
+  { name: 'BYU', slug: 'byu', mascot: 'Cougars', record: '5-7', tier: 'Rebuilding' },
+  { name: 'Kansas State', slug: 'kansas-state', mascot: 'Wildcats', record: '5-6', tier: 'Rebuilding' },
+  { name: 'Utah', slug: 'utah', mascot: 'Utes', record: '3-8', tier: 'Rebuilding' },
 ];
 
 const BIGTEN_TEAMS: TeamCard[] = [
-  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '8-0', tier: 'Omaha Favorite' },
-  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '5-2', tier: 'Contender' },
-  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '4-3', tier: 'Contender' },
-  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '4-3', tier: 'Dark Horse' },
-  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '4-3', tier: 'Dark Horse' },
-  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '5-2', tier: 'Bubble' },
-  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '5-2', tier: 'Bubble' },
-  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '4-3', tier: 'Bubble' },
-  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '4-3', tier: 'Bubble' },
-  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '4-3', tier: 'Bubble' },
-  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '4-3', tier: 'Bubble' },
-  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '3-4', tier: 'Bubble' },
-  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '3-4', tier: 'Bubble' },
-  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '2-5', tier: 'Rebuilding' },
-  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '3-4', tier: 'Rebuilding' },
-  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '3-4', tier: 'Rebuilding' },
-  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '3-4', tier: 'Rebuilding' },
+  { name: 'UCLA', slug: 'ucla', mascot: 'Bruins', record: '9-2', tier: 'Omaha Favorite' },
+  { name: 'USC', slug: 'usc', mascot: 'Trojans', record: '11-0', tier: 'Contender' },
+  { name: 'Oregon', slug: 'oregon', mascot: 'Ducks', record: '8-3', tier: 'Contender' },
+  { name: 'Oregon State', slug: 'oregon-state', mascot: 'Beavers', record: '7-4', tier: 'Dark Horse' },
+  { name: 'Nebraska', slug: 'nebraska', mascot: 'Cornhuskers', record: '8-3', tier: 'Dark Horse' },
+  { name: 'Illinois', slug: 'illinois', mascot: 'Fighting Illini', record: '8-3', tier: 'Bubble' },
+  { name: 'Michigan', slug: 'michigan', mascot: 'Wolverines', record: '6-5', tier: 'Bubble' },
+  { name: 'Indiana', slug: 'indiana', mascot: 'Hoosiers', record: '7-4', tier: 'Bubble' },
+  { name: 'Iowa', slug: 'iowa', mascot: 'Hawkeyes', record: '6-5', tier: 'Bubble' },
+  { name: 'Penn State', slug: 'penn-state', mascot: 'Nittany Lions', record: '7-4', tier: 'Bubble' },
+  { name: 'Michigan State', slug: 'michigan-state', mascot: 'Spartans', record: '5-6', tier: 'Bubble' },
+  { name: 'Purdue', slug: 'purdue', mascot: 'Boilermakers', record: '5-6', tier: 'Bubble' },
+  { name: 'Rutgers', slug: 'rutgers', mascot: 'Scarlet Knights', record: '5-6', tier: 'Bubble' },
+  { name: 'Washington', slug: 'washington', mascot: 'Huskies', record: '5-7', tier: 'Bubble' },
+  { name: 'Ohio State', slug: 'ohio-state', mascot: 'Buckeyes', record: '5-7', tier: 'Rebuilding' },
+  { name: 'Maryland', slug: 'maryland', mascot: 'Terrapins', record: '5-6', tier: 'Rebuilding' },
+  { name: 'Minnesota', slug: 'minnesota', mascot: 'Golden Gophers', record: '4-7', tier: 'Rebuilding' },
+  { name: 'Northwestern', slug: 'northwestern', mascot: 'Wildcats', record: '5-7', tier: 'Rebuilding' },
 ];
 
 // ── Standalone articles ────────────────────────────────────────────────
@@ -141,6 +142,46 @@ interface FeatureArticle {
 export type { FeatureArticle };
 
 export const FEATURE_ARTICLES: FeatureArticle[] = [
+  {
+    title: 'Week 4 Preview: The Last Non-Conference Weekend',
+    slug: 'week-4-preview',
+    description: 'Conference play starts March 13. Virginia at North Carolina headlines the final non-conference weekend. Texas hosts USC Upstate. The tune-up window closes Friday.',
+    date: 'March 3, 2026',
+    readTime: '10 min',
+    badge: 'Weekly Preview',
+    tags: ['National', 'Weekly'],
+    teams: ['texas', 'ucla', 'lsu', 'mississippi-state', 'florida'],
+  },
+  {
+    title: 'No. 3 Texas vs. Houston Christian: Tuesday Night at Disch-Falk',
+    slug: 'texas-houston-christian-preview',
+    description: 'Texas (11-0) hosts the defending Southland champs in a midweek tune-up. Sam Cozart vs. Kenan Elarton. The final prep game before the last non-conference weekend.',
+    date: 'March 3, 2026',
+    readTime: '6 min',
+    badge: 'Game Preview',
+    tags: ['SEC'],
+    teams: ['texas'],
+  },
+  {
+    title: 'Weekend 3 Recap: Three Weeks. One Undefeated.',
+    slug: 'weekend-3-recap',
+    description: 'UCLA won the Amegy Bank series with a 10-inning thriller over No. 4 Mississippi State. Texas stayed perfect at 11-0. UT Arlington stunned Arkansas. The full national breakdown.',
+    date: 'March 3, 2026',
+    readTime: '14 min',
+    badge: 'Weekend 3 Recap',
+    tags: ['Weekly', 'National'],
+    teams: ['ucla', 'texas', 'mississippi-state', 'arkansas', 'florida', 'clemson'],
+  },
+  {
+    title: 'Texas Week 3: Swept, Celebrated, Still Perfect.',
+    slug: 'texas-week-3-recap',
+    description: 'Texas went 3-0 at the BRUCE BOLT Classic: beat No. 9 Coastal Carolina, Baylor (Schlossnagle\'s 1,000th win), and Ohio State. Full box scores and analysis.',
+    date: 'March 3, 2026',
+    readTime: '14 min',
+    badge: 'Texas Weekly',
+    tags: ['SEC', 'Weekly'],
+    teams: ['texas', 'coastal-carolina'],
+  },
   {
     title: 'Weekend 3 Preview: Globe Life Gets the Real Test',
     slug: 'weekend-3-preview',
@@ -720,6 +761,23 @@ export default function EditorialHubPage() {
               </ScrollReveal>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <ScrollReveal direction="up" delay={0}>
+                  <Link href="/college-baseball/editorial/weekend-3-recap" className="block group">
+                    <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="primary">Weekend 3</Badge>
+                        <span className="text-text-muted text-xs">Mar 3, 2026</span>
+                        <span className="text-text-muted text-xs">14 min</span>
+                      </div>
+                      <h3 className="font-display text-sm font-bold text-text-primary uppercase tracking-wide group-hover:text-burnt-orange transition-colors mb-1.5">
+                        Three Weeks. One Undefeated.
+                      </h3>
+                      <p className="text-text-muted text-xs leading-relaxed line-clamp-2">
+                        UCLA won the Amegy Bank series in 10 innings. Texas stayed perfect at 11-0. UT Arlington stunned Arkansas. The full national breakdown.
+                      </p>
+                    </Card>
+                  </Link>
+                </ScrollReveal>
+                <ScrollReveal direction="up" delay={60}>
                   <Link href="/college-baseball/editorial/weekend-2-recap" className="block group">
                     <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                       <div className="flex items-center gap-2 mb-3">
@@ -736,7 +794,7 @@ export default function EditorialHubPage() {
                     </Card>
                   </Link>
                 </ScrollReveal>
-                <ScrollReveal direction="up" delay={60}>
+                <ScrollReveal direction="up" delay={120}>
                   <Link href="/college-baseball/editorial/week-1-recap" className="block group">
                     <Card variant="default" padding="md" className="h-full hover:border-burnt-orange/30 transition-all">
                       <div className="flex items-center gap-2 mb-3">
@@ -880,7 +938,7 @@ export default function EditorialHubPage() {
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Scouting Scale</div>
                 </div>
                 <div>
-                  <div className="font-display text-3xl font-bold text-burnt-orange">15</div>
+                  <div className="font-display text-3xl font-bold text-burnt-orange">19</div>
                   <div className="text-text-muted text-xs uppercase tracking-wider mt-1">Feature Articles</div>
                 </div>
               </div>
