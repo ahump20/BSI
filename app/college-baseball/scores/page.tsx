@@ -67,14 +67,19 @@ const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Be
 
 export default function CollegeBaseballScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
+  const [mounted, setMounted] = useState(false);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
+  // Hydration-safe: only compute date-dependent values on the client
+  useEffect(() => {
+    setMounted(true);
+    setSelectedDate(getDateOffset(0));
+  }, []);
+
   const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
   const { data: rawData, loading, error, retry } = useSportData<ScoresApiResponse>(
-    `/api/college-baseball/schedule?date=${selectedDate}${confParam}`,
+    selectedDate ? `/api/college-baseball/schedule?date=${selectedDate}${confParam}` : null,
     { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
   );
 
@@ -91,14 +96,20 @@ export default function CollegeBaseballScoresPage() {
   // Sync live detection to enable auto-refresh
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
-  // Date navigation
-  const dateOptions = [
+  // Date navigation — computed client-side only to avoid hydration mismatch
+  const dateOptions = useMemo(() => mounted ? [
     { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
     { offset: -1, label: 'Yesterday' },
     { offset: 0, label: 'Today' },
     { offset: 1, label: 'Tomorrow' },
     { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
-  ];
+  ] : [
+    { offset: -2, label: '\u00A0' },
+    { offset: -1, label: 'Yesterday' },
+    { offset: 0, label: 'Today' },
+    { offset: 1, label: 'Tomorrow' },
+    { offset: 2, label: '\u00A0' },
+  ], [mounted]);
 
   const GameCard = ({ game }: { game: Game }) => {
     const isLive = game.status === 'live';

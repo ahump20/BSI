@@ -32,7 +32,7 @@ const secTeams: SECTeam[] = [
     lastSeason: '48-22',
     postseason: 'Regional Final',
     keyReturners: 12,
-    headCoach: 'David Pierce',
+    headCoach: 'Jim Schlossnagle',
     outlook:
       'Three projected first-round picks anchor the deepest pitching staff in America. The Longhorns return their entire middle infield and enter SEC play with championship expectations.',
     isNew: true,

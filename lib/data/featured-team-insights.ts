@@ -41,14 +41,14 @@ export interface FeaturedTeamInsight {
 export const featuredTeamInsights: Record<string, FeaturedTeamInsight> = {
   texas: {
     teamId: 'texas',
-    lastUpdated: '2026-02-26',
+    lastUpdated: '2026-03-03',
     snapshot:
-      '8-0 through four series (UC Davis, Lamar, Michigan State, UTRGV). The Longhorns are hitting .340 as a team with a 1.36 ERA — outscoring opponents 70-13 with a +57 run differential. The pitching staff has not allowed a home run in 66 innings.',
+      '11-0 through five series including the BRUCE BOLT Classic (UC Davis, Lamar, Michigan State, UTRGV, then Coastal Carolina/Baylor/Ohio State). The Longhorns beat No. 9 Coastal Carolina 8-1, Baylor 5-2 (Schlossnagle\'s 1,000th career D1 win), and Ohio State 10-3 for the tournament title. First ranked win of the season. +17 run differential in Classic alone.',
 
     whatToWatch: [
-      'Dylan Volantis moved from closer to starter — 0.00 ERA in 14 IP with 17 K. The conversion has been seamless.',
-      'BB/K ratio of 0.98 (50 BB vs 51 K) — this lineup almost never chases. That discipline matters when SEC pitching arrives.',
-      'Zero home runs allowed in 66 IP. Elite, but untested against power-heavy SEC lineups.',
+      'Dylan Volantis moved from closer to starter — extended his scoreless streak through Classic play. The conversion has been seamless.',
+      'Aiden Robbins hit for the cycle earlier in the season and went deep in the Classic. Power is emerging.',
+      'Ethan Mendoza has reached base in all 11 games — .381 with on-base consistency that anchors the lineup.',
       'First SEC series: Ole Miss at home, March 13-15. That weekend answers the real questions.',
     ],
 
@@ -99,10 +99,10 @@ export const featuredTeamInsights: Record<string, FeaturedTeamInsight> = {
     ],
 
     pressurePoints: [
-      'Schedule so far: UC Davis, Lamar, Michigan State, UTRGV — no power programs',
-      'Zero conference games played; SEC pitching will be a different animal',
+      'Beat No. 9 Coastal Carolina 8-1 — first ranked win — but still no conference games played',
+      'Zero SEC games; conference pitching will be a different animal starting March 13',
       'No pitch tracking or batted-ball data available yet — can\'t assess swing quality',
-      'Pythagorean W% of .966 will regress; the question is how far',
+      'Pythagorean W% will regress once SEC play begins; the question is how far',
       'Volantis transition from closer to starter is working but untested in weekend series grind',
     ],
 
@@ -165,14 +165,15 @@ export const featuredTeamInsights: Record<string, FeaturedTeamInsight> = {
 
     dataProvenance: {
       sources: [
-        { name: 'Texas Season Stats (8 GP)', date: 'February 24, 2026' },
+        { name: 'Texas Season Stats (11 GP)', date: 'March 3, 2026' },
+        { name: 'BRUCE BOLT Classic Results', date: 'March 1, 2026' },
         { name: '2026 Texas Baseball Media Guide', date: 'February 2026' },
       ],
       notAvailable: [
         'Pitch tracking / batted-ball data (exit velo, launch angle, spin rate)',
         'Defensive metrics beyond FLD% (no DRS, UZR, OAA)',
         'Conference-only splits (0 SEC games played)',
-        'Opponent-strength-adjusted stats (early schedule: UC Davis, Lamar, MSU, UTRGV)',
+        'Opponent-strength-adjusted stats (Coastal Carolina only ranked opponent so far)',
       ],
     },
   },

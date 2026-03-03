@@ -49,7 +49,7 @@ const featuredStories = [
 ];
 
 const quickStats = [
-  { label: 'Days Until Opening Day', value: '42', icon: Calendar },
+  { label: 'Season Week', value: '3', icon: Calendar },
   { label: 'Ranked Texas Teams', value: '4', icon: Star },
   { label: 'SEC Teams in Top 25', value: '4', icon: TrendingUp },
   { label: 'Conference Realignment Teams', value: '8', icon: Users },

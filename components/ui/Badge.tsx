@@ -79,12 +79,12 @@ interface DataSourceBadgeProps {
 
 export function DataSourceBadge({ source, timestamp, className = '' }: DataSourceBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
+    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`} suppressHydrationWarning>
       <span className="font-medium">{source}</span>
       {timestamp && (
         <>
           <span>|</span>
-          <span>{timestamp}</span>
+          <span suppressHydrationWarning>{timestamp}</span>
         </>
       )}
     </div>
