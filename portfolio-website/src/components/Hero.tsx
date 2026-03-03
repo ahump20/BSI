@@ -10,7 +10,7 @@ const marqueeItems = [
   '7 Databases',
   '15 KV Caches',
   '18 R2 Buckets',
-  '511 Tests Passing',
+  '539 Tests Passing',
 ];
 
 export default function Hero() {
