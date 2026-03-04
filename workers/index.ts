@@ -52,6 +52,8 @@ import {
   handleCBBBulkSync,
   handleHighlightlySync,
   handleGameLogBackfill,
+  handleSocialIntelFeed,
+  handleSocialIntelTeam,
 } from './handlers/college-baseball';
 
 import {
@@ -391,6 +393,8 @@ app.get('/api/college-baseball/games/:gameId', (c) => handleCollegeBaseballGame(
 app.get('/api/college-baseball/trends/:teamId', (c) => handleCollegeBaseballTrends(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/editorial/list', (c) => handleCollegeBaseballEditorialList(c.env));
 app.get('/api/college-baseball/editorial/daily/:date', (c) => handleCollegeBaseballEditorialContent(c.req.param('date'), c.env));
+app.get('/api/college-baseball/social-intel', (c) => handleSocialIntelFeed(c.env));
+app.get('/api/college-baseball/social-intel/team/:teamId', (c) => handleSocialIntelTeam(c.req.param('teamId'), c.env));
 app.get('/api/college-baseball/scores/ws', (c) => {
   if (c.req.header('Upgrade') !== 'websocket') {
     return c.json({ error: 'Expected websocket upgrade' }, 400);
