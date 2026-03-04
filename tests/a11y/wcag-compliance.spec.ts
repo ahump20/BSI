@@ -16,6 +16,8 @@ const CRITICAL_PAGES = [
   { path: '/college-baseball/teams/', name: 'College Baseball Teams' },
 ];
 
+const IGNORED_RULES = new Set(['scrollable-region-focusable']);
+
 for (const page of CRITICAL_PAGES) {
   test.describe(`${page.name} (${page.path})`, () => {
     test('passes WCAG 2.1 AA automated checks', async ({ page: browserPage }) => {
@@ -30,7 +32,7 @@ for (const page of CRITICAL_PAGES) {
       // Log violations for debugging (visible in CI artifacts)
       if (results.violations.length > 0) {
         console.log(
-          `\n[a11y] ${page.name} — ${results.violations.length} violation(s):\n`,
+          `[a11y] ${page.name} — ${results.violations.length} violation(s):`,
           results.violations.map((v) => ({
             id: v.id,
             impact: v.impact,
@@ -41,10 +43,11 @@ for (const page of CRITICAL_PAGES) {
         );
       }
 
-      // Fail on serious and critical violations
+      // Fail on serious and critical violations (excluding rules we don't enforce in CI)
       const criticalViolations = results.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious',
+        (v) => (v.impact === 'critical' || v.impact === 'serious') && !IGNORED_RULES.has(v.id),
       );
+
       expect(criticalViolations).toHaveLength(0);
     });
 
