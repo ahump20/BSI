@@ -402,6 +402,7 @@ export default function CollegeBaseballPage() {
                 { label: 'Sabermetrics', href: '/college-baseball/sabermetrics' },
                 { label: 'Portal', href: '/college-baseball/transfer-portal' },
                 { label: 'Editorial', href: '/college-baseball/editorial' },
+                { label: 'Social Intel', href: '/college-baseball/social-intel' },
                 { label: 'News', href: '/college-baseball/news' },
                 { label: 'Compare', href: '/college-baseball/compare' },
                 { label: 'Conferences', href: '/college-baseball/conferences' },

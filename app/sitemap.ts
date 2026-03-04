@@ -22,6 +22,7 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/games', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/players', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/news', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/college-baseball/social-intel', changeFrequency: 'hourly', priority: 0.8 },
   { path: '/college-baseball/teams', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/transfer-portal', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
@@ -66,6 +67,7 @@ const editorial: SitemapEntry[] = [
   { path: '/college-baseball/editorial/weekend-3-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-week-3-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/texas-houston-christian-preview', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
