@@ -6,7 +6,6 @@
  *
  * Run: pnpm exec playwright test tests/a11y/
  */
-
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -32,7 +31,7 @@ for (const page of CRITICAL_PAGES) {
       if (results.violations.length > 0) {
         console.log(
           `\n[a11y] ${page.name} — ${results.violations.length} violation(s):\n`,
-          results.violations.map(v => ({
+          results.violations.map((v) => ({
             id: v.id,
             impact: v.impact,
             description: v.description,
@@ -44,13 +43,9 @@ for (const page of CRITICAL_PAGES) {
 
       // Fail on serious and critical violations
       const criticalViolations = results.violations.filter(
-        v => v.impact === 'critical' || v.impact === 'serious',
+        (v) => v.impact === 'critical' || v.impact === 'serious',
       );
-
-      expect(
-        criticalViolations,
-        `${page.name} has ${criticalViolations.length} critical/serious a11y violation(s)`,
-      ).toHaveLength(0);
+      expect(criticalViolations).toHaveLength(0);
     });
 
     test('has no images without alt text', async ({ page: browserPage }) => {
