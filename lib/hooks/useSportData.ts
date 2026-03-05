@@ -66,7 +66,7 @@ export function useSportData<T>(
         setLastUpdated(new Date());
         hasFetchedRef.current = true;
       } catch (err) {
-        if ((err as Error).name === 'AbortError') {
+        if (err instanceof DOMException && err.name === 'AbortError') {
           setError('Request timed out');
           return;
         }

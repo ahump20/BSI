@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { withAlpha } from '@/lib/utils/color';
 
 interface ParkFactorRow {
@@ -101,7 +101,14 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border-subtle">
-              <th className="pl-5 pr-2 py-3 text-left cursor-pointer" onClick={() => handleSort('team')}>
+              <th
+                className="pl-5 pr-2 py-3 text-left cursor-pointer"
+                onClick={() => handleSort('team')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('team'); } }}
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortKey === 'team' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+              >
                 <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'team' ? 'text-burnt-orange' : 'text-text-muted'}`}>
                   Team {sortKey === 'team' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
@@ -109,7 +116,14 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
               <th className="px-2 py-3 text-left hidden sm:table-cell">
                 <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Venue</span>
               </th>
-              <th className="px-2 py-3 text-center cursor-pointer" onClick={() => handleSort('runs_factor')}>
+              <th
+                className="px-2 py-3 text-center cursor-pointer"
+                onClick={() => handleSort('runs_factor')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('runs_factor'); } }}
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortKey === 'runs_factor' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+              >
                 <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'runs_factor' ? 'text-burnt-orange' : 'text-text-muted'}`}>
                   Runs {sortKey === 'runs_factor' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
@@ -117,7 +131,14 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
               <th className="px-2 py-3 hidden md:table-cell">
                 <span className="text-[10px] font-display uppercase tracking-widest text-text-muted">Factor</span>
               </th>
-              <th className="px-2 py-3 text-center hidden md:table-cell cursor-pointer" onClick={() => handleSort('sample_games')}>
+              <th
+                className="px-2 py-3 text-center hidden md:table-cell cursor-pointer"
+                onClick={() => handleSort('sample_games')}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSort('sample_games'); } }}
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortKey === 'sample_games' ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
+              >
                 <span className={`text-[10px] font-display uppercase tracking-widest ${sortKey === 'sample_games' ? 'text-burnt-orange' : 'text-text-muted'}`}>
                   Games {sortKey === 'sample_games' && (sortDir === 'asc' ? '▲' : '▼')}
                 </span>
@@ -145,8 +166,8 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
               const width = thermometerWidth(row.runs_factor);
 
               return (
-                <>{confHeader}
-                <tr key={`${row.team}-${i}`} className="border-b border-border-subtle">
+                <React.Fragment key={`${row.team}-${i}`}>{confHeader}
+                <tr className="border-b border-border-subtle">
                   <td className="pl-5 pr-2 py-3">
                     <span className="text-text-primary text-sm font-medium">{row.team}</span>
                     {row.conference && !groupByConf && (
@@ -176,7 +197,7 @@ export function ParkFactorTable({ data, isPro = false, className = '' }: ParkFac
                   <td className="px-2 py-3 text-center hidden md:table-cell">
                     <span className="text-text-muted text-xs font-mono">{row.sample_games}</span>
                   </td>
-                </tr></>
+                </tr></React.Fragment>
               );
             })}
           </tbody>

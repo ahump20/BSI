@@ -32,8 +32,8 @@ describe('Main Navigation — Structured (getMainNavItems)', () => {
     expect(labels).toContain('Data Sources');
   });
 
-  it('does not include Vision AI in secondary nav', () => {
+  it('includes Vision AI in secondary nav', () => {
     const labels = secondary.map((item) => item.label);
-    expect(labels).not.toContain('Vision AI');
+    expect(labels).toContain('Vision AI');
   });
 });

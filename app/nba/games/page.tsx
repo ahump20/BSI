@@ -9,7 +9,9 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface NBATeam {
   id: string;
@@ -51,42 +53,14 @@ interface NBAGame {
   };
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-}
-
 interface ScoreboardResponse {
   timestamp: string;
   date: string;
   games: NBAGame[];
   meta: DataMeta;
 }
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const formatDate = formatScheduleDate;
 
-function formatGameTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  return date.toLocaleTimeString('en-US', {
-    timeZone: 'America/Chicago',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
 
 const conferences = ['All', 'Eastern', 'Western'];
 
@@ -370,6 +344,7 @@ export default function NBAGamesPage() {
         {/* Filters & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="NBA Games">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
@@ -539,6 +514,7 @@ export default function NBAGamesPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

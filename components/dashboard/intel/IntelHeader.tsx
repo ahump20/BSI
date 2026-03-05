@@ -116,7 +116,7 @@ export function IntelHeader({
           value={mode}
           onValueChange={onModeChange}
           options={MODE_OPTIONS}
-          accentColor="var(--bsi-intel-accent, var(--bsi-cyan))"
+          accentColor="var(--bsi-intel-accent, var(--bsi-primary))"
         />
 
         <Tooltip content={MODE_DESCRIPTIONS[mode]} side="bottom">
@@ -143,6 +143,7 @@ export function IntelHeader({
           </button>
         ) : allTeams.length > 0 ? (
           <select
+            aria-label="Select team lens"
             value=""
             onChange={(e) => e.target.value && onTeamLensChange(e.target.value)}
             className="h-8 border border-border bg-surface-light px-2 text-[11px] text-text-secondary outline-none focus:border-border-strong"

@@ -5,67 +5,16 @@ import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { useSportData } from '@/lib/hooks/useSportData';
 import { Badge } from '@/components/ui/Badge';
-
-// ────────────────────────────────────────
-// Types — matches EditorialFeed.tsx
-// ────────────────────────────────────────
-
-interface Editorial {
-  id: number;
-  slug?: string;
-  date: string;
-  title: string;
-  preview: string;
-  teams: string[];
-  wordCount: number;
-  createdAt: string;
-}
-
-interface EditorialListResponse {
-  editorials: Editorial[];
-  meta?: { source?: string; fetched_at?: string };
-}
-
-// ────────────────────────────────────────
-// Slug derivation — identical to EditorialFeed.tsx
-// ────────────────────────────────────────
-
-function titleToSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/&/g, 'and')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-const SLUG_OVERRIDES: Record<string, string> = {
-  'texas-week-1-27-runs-one-hit-allowed-by-volantis': 'texas-week-1-recap',
-  'sec-opening-weekend-preview': 'sec-opening-weekend',
-  'week-1-national-recap': 'week-1-recap',
-};
-
-function getEditorialHref(article: Editorial): string {
-  if (article.slug) return `/college-baseball/editorial/${article.slug}`;
-  const raw = titleToSlug(article.title);
-  const slug = SLUG_OVERRIDES[raw] || raw;
-  return `/college-baseball/editorial/${slug}`;
-}
-
-function readTime(words: number): string {
-  const mins = Math.max(1, Math.round(words / 250));
-  return `${mins} min read`;
-}
+import { formatDateInTimezone } from '@/lib/utils/timezone';
+import {
+  type Editorial,
+  type EditorialListResponse,
+  getEditorialHref,
+  readTime,
+} from '@/lib/editorial';
 
 function formatDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'compact');
 }
 
 // ────────────────────────────────────────
@@ -75,39 +24,43 @@ function formatDate(dateStr: string): string {
 const FALLBACK_ARTICLES: Editorial[] = [
   {
     id: 0,
-    date: '2026-02-17',
-    title: 'Texas Week 1: 27 Runs. One Hit Allowed by Volantis.',
-    preview: 'UC Davis swept 27–7. Volantis earns SEC honors. Michigan State arrives for Weekend 2.',
-    teams: ['Texas'],
-    wordCount: 2800,
-    createdAt: '2026-02-17',
+    slug: 'week-4-preview',
+    date: '2026-03-03',
+    title: 'Week 4 Preview: Last Call Before Conference Play',
+    preview: 'Final non-conference weekend before SEC and Big 12 open. Rotation order finalized, bullpen roles locked.',
+    teams: [],
+    wordCount: 3200,
+    createdAt: '2026-03-03',
   },
   {
     id: 1,
-    date: '2026-02-16',
-    title: 'Week 1 National Recap: Three Grand Slams. One Record Book.',
-    preview: 'Opening weekend delivered chaos across the SEC, Big 12, and ACC.',
+    slug: 'weekend-3-recap',
+    date: '2026-03-02',
+    title: 'Weekend 3 Recap: Six Ranked Teams Fall, Texas Stays Perfect',
+    preview: 'UCLA survives 10 innings against Mississippi State. Texas sweeps the BRUCE BOLT Classic at 11-0.',
     teams: [],
     wordCount: 3500,
-    createdAt: '2026-02-16',
+    createdAt: '2026-03-02',
   },
   {
     id: 2,
-    date: '2026-02-14',
-    title: 'SEC Opening Weekend Preview',
-    preview: '13 ranked teams. The deepest conference in college baseball.',
-    teams: [],
-    wordCount: 3000,
-    createdAt: '2026-02-14',
+    slug: 'texas-week-3-recap',
+    date: '2026-03-01',
+    title: 'Texas Week 3: BRUCE BOLT Classic Sweep, Schlossnagle Hits 1,000',
+    preview: 'Three wins. First ranked victory. A coaching milestone. The Longhorns are 11-0.',
+    teams: ['Texas'],
+    wordCount: 4000,
+    createdAt: '2026-03-01',
   },
   {
     id: 3,
-    date: '2026-02-10',
-    title: 'Texas 2026 Season Preview',
-    preview: '3,818 wins. 130 years. The definitive deep dive.',
+    slug: 'texas-houston-christian-preview',
+    date: '2026-03-03',
+    title: 'Texas vs. Houston Christian Preview',
+    preview: 'Midweek at Disch-Falk. Cozart on the mound. Texas 11-0 vs. a Southland team that walked off from 7 down.',
     teams: ['Texas'],
-    wordCount: 4200,
-    createdAt: '2026-02-10',
+    wordCount: 2200,
+    createdAt: '2026-03-03',
   },
 ];
 

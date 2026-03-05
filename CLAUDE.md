@@ -90,44 +90,71 @@ meta: { source: string; fetched_at: string; timezone: 'America/Chicago' }
 
 This is what actually exists in Cloudflare right now. Use `wrangler` or the Cloudflare MCP tools to verify current state — don't trust this list if something feels off.
 
-### Workers (16 deployed)
+### Workers (27 deployed)
 
 **Site and API (Hono router + handler modules):**
-`blazesportsintel-worker-prod` · `blazesportsintel-worker` · `blazesportsintel-worker-canary`
+`blazesportsintel-worker-prod` · `blazesportsintel-worker` · `blazesportsintel-worker-canary` · `bsi-production` · `bsi`
 
 **Ingest pipeline:**
-`bsi-cbb-ingest` · `bsi-sportradar-ingest` · `bsi-portal-sync` · `bsi-prediction-api`
+`bsi-cbb-ingest` · `bsi-sportradar-ingest` · `bsi-portal-sync` · `cbb-api-sync`
 
-**Analytics:**
-`bsi-analytics-events` (behavioral events → D1) · `bsi-savant-compute` (cron every 6h — wOBA, FIP, wRC+)
+**College Baseball API:**
+`cbb-api` (standalone CBB API) · `college-baseball-mcp` (JSON-RPC 2.0 MCP server at `sabermetrics.blazesportsintel.com`, binds to main worker as service)
+
+**Analytics & Compute:**
+`bsi-analytics-events` (behavioral events → D1) · `bsi-savant-compute` (cron every 6h — wOBA, FIP, wRC+) · `bsi-cbb-analytics` (cron daily 6 AM CT — park factors, conference strength, Sunday full-recalculate)
+
+**Real-time & AI:**
+`bsi-live-scores` (WebSocket via Durable Object `LiveScoresBroadcaster`, routes `live.blazesportsintel.com/*`) · `bsi-intelligence-stream` (SSE streaming AI analysis via Anthropic API, routes `/api/intelligence/*`) · `bsi-college-baseball-daily` (daily digest bundles + Claude API matchup takes, dual cron 5 AM + 11 PM CT)
 
 **Operations:**
-`bsi-error-tracker` (tail consumer) · `bsi-synthetic-monitor` (cron) · `bsi-news-ticker` · `bsi-ticker`
+`bsi-error-tracker` (tail consumer) · `bsi-synthetic-monitor` (cron every 5 min) · `bsi-news-ticker` · `bsi-ticker` · `bsi-prediction-api`
 
 **BlazeCraft:**
-`blaze-field-site` · `blaze-field-do`
+`blaze-field-site` · `blaze-field-site-prod` · `blaze-field-do`
 
 **Games:**
 `mini-games-api`
 
-### D1 Databases (6)
+**Other:**
+`moltbot-sandbox`
+
+**Note:** `bsi-savant-compute` and `bsi-cbb-analytics` both write to `cbb_batting_advanced`/`cbb_pitching_advanced`. If metrics change unexpectedly overnight, check both workers.
+
+### D1 Databases (7)
 
 | Name | Size | Purpose |
 |------|------|---------|
+| `bsi-prod-db` | 5.1 MB | Production data (main worker + savant compute) |
 | `bsi-historical-db` | 4.5 MB | Historical archives |
 | `bsi-game-db` | 3.3 MB | Live/recent game data (sportradar-ingest) |
-| `bsi-prod-db` | 3.8 MB | Production data (main worker + savant compute) |
-| `bsi-events-db` | 284 KB | Behavioral analytics (bsi-analytics-events) |
+| `bsi-events-db` | 1.6 MB | Behavioral analytics (bsi-analytics-events) |
+| `cbb-api-db` | 1.0 MB | College baseball API (cbb-api + cbb-api-sync) |
 | `bsi-fanbase-db` | 197 KB | Fan sentiment |
 | `blazecraft-leaderboards` | 45 KB | Leaderboards (mini-games-api) |
 
-### KV Namespaces (9)
+### KV Namespaces (15)
 
-**Bound to active workers:**
-`BSI_PROD_CACHE` · `BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `BSI_KEYS` (API key → tier lookup) · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
+**Core:**
+`BSI_PROD_CACHE` · `BSI_KEYS` (API key → tier lookup) · `RATE_LIMIT` · `BSI_DEV_CACHE` (preview_id)
+
+**Worker-specific:**
+`BSI_SPORTRADAR_CACHE` · `BSI_ERROR_LOG` · `BSI_MONITOR_KV` · `BSI_AI_CACHE` (intelligence-stream) · `PREDICTION_CACHE`
+
+**College Baseball API:**
+`CBB_API_KEYS` · `CBB_API_CACHE` · `CBB_SYNC_STATE` · `RATE_LIMIT_KV` (college-baseball-mcp) · `TEAM_STATS_KV` (college-baseball-mcp)
 
 **Other:**
-`PREDICTION_CACHE` · `portfolio-contacts`
+`portfolio-contacts`
+
+### Durable Objects
+
+| DO Class | Worker | Purpose |
+|----------|--------|---------|
+| `CacheObject` | `blazesportsintel-worker-prod` | Coordinated cache |
+| `PortalPoller` | `blazesportsintel-worker-prod` | Transfer portal polling |
+| `LiveScoresBroadcaster` | `bsi-live-scores` | WebSocket score push |
+| `GameRoom` | `blaze-field-do` | BlazeCraft multiplayer |
 
 ### R2 Buckets (18)
 
@@ -145,28 +172,55 @@ This is what actually exists in Cloudflare right now. Use `wrangler` or the Clou
 app/                    # Next.js App Router pages
   college-baseball/     # Flagship — games, scores, standings, teams, rankings, news
   mlb/ nfl/ nba/ cfb/   # Other sports
+  auth/                 # Login/signup (Stripe-keyed auth)
+  intel/                # Game briefs, team dossiers, weekly brief
+  models/               # HAV-F, monte-carlo, win-probability, data-quality
+  search/               # Site search
+  transfer-portal/      # Transfer portal tracker
+  vision-ai/            # Vision AI analysis
   nil-valuation/        # NIL analytics
   arcade/               # Browser games
   scores/               # Cross-sport scoreboard
+  pricing/              # Subscription tiers
+  status/               # System status
+  dashboard/            # Admin + intel sub-routes
 components/             # Shared React components
-lib/                    # Core logic (api/, utils/, hooks/, tokens/, analytics/)
+lib/                    # Core logic
+  api-clients/          # ESPN, Highlightly, SportsDataIO adapters
+  analytics/            # HAV-F, MMI, savant-compute, PostHog
+  intel/                # Intelligence hooks, outcome-tracker
+  genie-dynamics/       # Game AI: action-inferrer, dynamics-predictor
+  scores/               # Score normalization
+  data/                 # Static data (pricing tiers, team metadata, glossary)
+  utils/ hooks/ tokens/ # Shared utilities
 workers/                # Main Hono worker (blazesportsintel-worker-prod)
-  index.ts              # Route declarations + middleware (382 lines)
+  index.ts              # Route declarations + middleware (~900 lines)
   handlers/             # Handler functions by sport/domain
-  shared/               # Types, helpers, constants, cors, rate-limit, proxy
+    college-baseball/   # 12 files: scores, standings, teams, players, savant, ingest, etc.
+  shared/               # Types, helpers, constants, cors, rate-limit, auth, proxy
   wrangler.toml         # Bindings, routes, environments
 workers/bsi-cbb-ingest/ # College baseball ingest pipeline
 workers/bsi-savant-compute/ # Cron: advanced metrics (wOBA, FIP, wRC+)
+workers/bsi-cbb-analytics/  # Cron: park factors + conference strength (daily)
+workers/bsi-live-scores/    # WebSocket Durable Object for live score push
+workers/bsi-intelligence-stream/ # SSE streaming AI analysis
+workers/bsi-college-baseball-daily/ # Daily digest bundles
+workers/college-baseball-mcp/ # MCP server (sabermetrics.blazesportsintel.com)
 workers/sportradar-ingest/ # Sportradar data pipeline
 workers/mini-games-api/ # Arcade leaderboard API
 workers/blaze-field-*/  # BlazeCraft game workers
 workers/error-tracker/  # Tail consumer for error logging
 workers/synthetic-monitor/ # Cron-based uptime checks
-functions/              # Cloudflare Pages Functions
+functions/              # Cloudflare Pages Functions (own tsconfig.functions.json)
 games/                  # Browser arcade games
 external/               # Standalone projects (Sandlot-Sluggers)
 scripts/                # Build/deploy/data scripts
-tests/                  # Test suites (511 passing)
+tests/                  # Test suites
+  workers/              # Worker-specific tests (Vitest)
+  analytics/            # HAV-F, MMI tests (Vitest)
+  routes/               # Smoke tests (Playwright only — excluded from Vitest)
+  flows/                # Auth, checkout, navigation (Playwright only)
+  a11y/                 # Accessibility (Playwright only)
 docs/                   # Infrastructure and operations docs
 ```
 
@@ -177,23 +231,40 @@ npm run dev              # Next.js dev server
 npm run dev:worker       # Worker dev server (wrangler)
 npm run dev:hybrid       # Both in parallel
 npm run build            # Static export to out/
-npm run test             # Vitest (watch)
-npm run test:all         # Full test suite (API + integration + validation)
-npm run test:routes      # Playwright route tests
+npm run test             # Vitest (watch mode)
+npm run test:all         # Vitest run (no watch) — does NOT run Playwright tests
+npm run test:workers     # Vitest targeting tests/workers/ only
+npm run test:routes      # Playwright route smoke tests
 npm run test:a11y        # Playwright accessibility tests
+npm run test:coverage    # Vitest with coverage
 npm run typecheck        # tsc --noEmit
+npm run typecheck:strict # tsc with tsconfig.strict.json
 npm run lint             # ESLint
+npm run lint:fix         # ESLint autofix
+npm run format           # Prettier check
+npm run format:fix       # Prettier write
 
 # Single test file
 vitest run tests/api/some-file.test.ts
 
-# Deploy
-npm run deploy:production  # Cloudflare Pages (main)
-npm run deploy:worker      # Default worker
-npm run deploy:hybrid      # Both
+# Deploy — production goes through deploy:stage (rsync to /tmp/bsi-deploy-out) first
+npm run deploy:production  # build → stage → wrangler pages deploy
+npm run deploy:worker      # Main worker (--env production)
+npm run deploy:hybrid      # deploy:production + deploy:worker:production
+npm run deploy:all         # Runs pre-deploy-check.sh, then deploy:safe + worker
+npm run deploy:preview     # Deploy to preview branch
 
-# Deploy a specific worker
+# Deploy specific workers
+npm run deploy:live-scores    # bsi-live-scores
+npm run deploy:daily-digest   # bsi-college-baseball-daily
+npm run deploy:arcade-api     # mini-games-api
 wrangler deploy --config workers/bsi-news-ticker/wrangler.toml
+
+# Data operations
+npm run db:migrate:production  # D1 migrations
+npm run db:seed:production     # D1 seed
+npm run data:freshness         # Check data staleness
+npm run cache:warm             # Warm KV caches
 ```
 
 ## Conventions
@@ -221,12 +292,28 @@ wrangler deploy --config workers/bsi-news-ticker/wrangler.toml
 
 Headings: Oswald (uppercase). Body: Cormorant Garamond. Mono: JetBrains Mono. Mobile-first. Clean backgrounds — no film grain, noise, or particles.
 
+## Auth Model
+
+Stripe-keyed, no passwords. Signup triggers Stripe checkout → webhook provisions API key into `BSI_KEYS` KV. Login is `POST /api/auth/login` with email — looks up key, re-sends via Resend. Client stores key in `localStorage`, sends as `X-BSI-Key` header. `requireApiKey` middleware in `workers/shared/auth.ts` gates pro-tier routes.
+
+Key files: `app/auth/`, `workers/handlers/auth.ts`, `workers/shared/auth.ts`.
+
 ## Environment
 
 ```bash
-SPORTSDATAIO_API_KEY=...    # Required, never commit
-HIGHLIGHTLY_API_KEY=...     # Required, never commit
+# Required for workers — never commit
+SPORTSDATAIO_API_KEY=...
+HIGHLIGHTLY_API_KEY=...
+SPORTRADAR_API_KEY=...
+ANTHROPIC_API_KEY=...       # intelligence-stream + daily-digest
+RESEND_API_KEY=...          # Auth email delivery
+TURNSTILE_SECRET_KEY=...    # Cloudflare bot protection
+NOTION_TOKEN=...
+AMPLITUDE_API_KEY=...
+
+# Client-side
 NEXT_PUBLIC_APP_URL=http://localhost:3000  # Optional
+# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is hardcoded in next.config.ts
 ```
 
 ## KV TTL
@@ -236,8 +323,11 @@ Live scores: 15–30s. Standings: 60s. Final games: 5 min. Rosters: 1 hour.
 ## Gotchas
 
 - Repo lives on iCloud Drive — `git status`, pre-commit hooks, and ripgrep searches may hang. Use `--no-verify` on commits if hooks stall. If git hangs, check for stale `.git/index.lock` and remove it.
-- `next.config.ts` is configured to skip TypeScript build errors — ESLint errors are handled separately in CI
-- `tsconfig.json` excludes `workers/**/*` — workers have their own configs
+- `next.config.ts`: skips TypeScript build errors, sets `trailingSlash: true` (Cloudflare Pages needs this), and `images: { unoptimized: true }` (no Next.js image optimization)
+- `tsconfig.json` excludes `workers/**/*` — workers have their own configs. `functions/` also has its own `tsconfig.functions.json`. A `tsconfig.strict.json` exists for stricter checks.
+- `npm run test:all` (Vitest) does NOT run Playwright tests. Route smoke tests, auth/checkout flows, and accessibility tests are Playwright-only — run them separately with `test:routes`, `test:a11y`, or directly via Playwright.
 - ESPN dates labeled UTC are actually ET — always verify timezone
 - `external/` projects have their own CLAUDE.md and build systems
 - Husky handles git hooks via `prepare` script
+- `deploy:production` goes through an intermediate `deploy:stage` step (rsync to `/tmp/bsi-deploy-out`) before uploading to Cloudflare Pages — this matters if the `/tmp` dir is missing or stale
+- Two analytics cron workers (`bsi-savant-compute` every 6h, `bsi-cbb-analytics` daily) both write advanced metrics tables — check both when debugging unexpected metric changes

@@ -130,6 +130,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { href: '/college-baseball', label: 'College Baseball', icon: <IconBaseball /> },
       { href: '/college-baseball/rankings', label: 'Rankings', icon: <IconList /> },
+      { href: '/college-baseball/savant', label: 'Savant / Advanced Stats', icon: <IconTarget /> },
       { href: '/mlb', label: 'MLB', icon: <IconBaseball /> },
       { href: '/nfl', label: 'NFL', icon: <IconFootball /> },
       { href: '/nba', label: 'NBA', icon: <IconBasketball /> },
@@ -139,10 +140,16 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: 'Tools',
     items: [
-      { href: 'https://labs.blazesportsintel.com', label: 'BSI Savant', icon: <IconTarget />, external: true },
       { href: '/models', label: 'Models', icon: <IconChart /> },
       { href: '/glossary', label: 'Glossary', icon: <IconBook /> },
       { href: '/pricing', label: 'Pricing', icon: <IconTag /> },
+    ],
+  },
+  {
+    label: 'Ecosystem',
+    items: [
+      { href: 'https://blazecraft.app', label: 'BlazeCraft', icon: <IconGrid />, external: true },
+      { href: '/arcade', label: 'Arcade', icon: <IconActivity /> },
     ],
   },
 ] as const;
@@ -163,6 +170,16 @@ export function AppSidebar() {
     closeMobile();
   }, [pathname, closeMobile]);
 
+  // Escape key closes mobile drawer
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMobile();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen, closeMobile]);
+
   /** Match active state — exact for "/", prefix for everything else */
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -181,8 +198,7 @@ export function AppSidebar() {
           {/* Section label */}
           {!collapsed && (
             <span
-              className="block px-3 pt-3 pb-1.5 text-[9px] uppercase tracking-[0.15em]"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-text-dim)' }}
+              className="block px-3 pt-3 pb-1.5 text-[9px] uppercase tracking-[0.15em] font-mono text-[var(--bsi-text-dim)]"
             >
               {group.label}
             </span>
@@ -211,11 +227,7 @@ export function AppSidebar() {
                   <>
                     <motion.div
                       layoutId="sidebar-active"
-                      className="absolute inset-0 rounded-lg"
-                      style={{
-                        background: 'rgba(191, 87, 0, 0.12)',
-                        boxShadow: '0 0 20px rgba(191, 87, 0, 0.08)',
-                      }}
+                      className="absolute inset-0 rounded-lg bg-burnt-orange/[0.12] shadow-[0_0_20px_rgba(191,87,0,0.08)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 35 }}
                     />
                     <motion.div
@@ -225,14 +237,14 @@ export function AppSidebar() {
                     />
                   </>
                 )}
-                <span className="relative w-4 shrink-0 flex items-center justify-center">
+                <span aria-hidden="true" className="relative w-4 shrink-0 flex items-center justify-center">
                   {item.icon}
                 </span>
                 {!collapsed && (
                   <span className="relative truncate">
                     {item.label}
                     {item.external && (
-                      <span className="ml-1 text-[9px] opacity-40">↗</span>
+                      <span aria-hidden="true" className="ml-1 text-[9px] opacity-40">↗</span>
                     )}
                   </span>
                 )}
@@ -248,37 +260,27 @@ export function AppSidebar() {
     <>
       {/* ── Desktop sidebar ── */}
       <aside
-        className={`hidden md:flex flex-col border-r border-white/[0.05] transition-all duration-300 relative shrink-0 ${
+        className={`hidden md:flex flex-col border-r border-white/[0.05] transition-all duration-300 relative shrink-0 bg-midnight shadow-[inset_-1px_0_0_rgba(255,255,255,0.03)] ${
           collapsed ? 'w-16' : 'w-56'
         }`}
-        style={{
-          backgroundColor: 'var(--bsi-surface)',
-          boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.03)',
-        }}
       >
         {/* Logo bar */}
         <div className="flex items-center gap-3 px-4 h-14 border-b border-white/[0.05]">
           <span
-            className="text-xl font-bold"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: 'var(--bsi-primary)',
-              textShadow: '0 0 20px rgba(191, 87, 0, 0.3)',
-            }}
+            className="text-xl font-bold font-display text-burnt-orange"
+            style={{ textShadow: '0 0 20px rgba(191, 87, 0, 0.3)' }}
           >
             B
           </span>
           {!collapsed && (
             <div className="flex flex-col">
               <span
-                className="text-xs font-semibold tracking-wider uppercase"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className="text-xs font-semibold tracking-wider uppercase font-display"
               >
                 BSI
               </span>
               <span
-                className="text-[9px] uppercase tracking-[0.2em]"
-                style={{ color: 'var(--bsi-text-dim)' }}
+                className="text-[9px] uppercase tracking-[0.2em] text-[var(--bsi-text-dim)]"
               >
                 Sports Intel
               </span>
@@ -286,11 +288,10 @@ export function AppSidebar() {
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto text-xs cursor-pointer transition-colors"
-            style={{ color: 'var(--bsi-text-dim)' }}
+            className="ml-auto text-xs cursor-pointer transition-colors text-[var(--bsi-text-dim)]"
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? '▸' : '◂'}
+            <span aria-hidden="true">{collapsed ? '▸' : '◂'}</span>
           </button>
         </div>
 
@@ -302,8 +303,7 @@ export function AppSidebar() {
           <div className="px-4 py-3 border-t border-white/[0.05]">
             <a
               href="https://blazesportsintel.com"
-              className="text-[9px] hover:text-[var(--bsi-text-muted)] transition-colors uppercase tracking-[0.15em]"
-              style={{ fontFamily: 'var(--font-mono)', color: 'var(--bsi-text-dim)' }}
+              className="text-[9px] hover:text-[var(--bsi-text-muted)] transition-colors uppercase tracking-[0.15em] font-mono text-[var(--bsi-text-dim)]"
             >
               blazesportsintel.com
             </a>
@@ -314,8 +314,7 @@ export function AppSidebar() {
       {/* ── Mobile hamburger ── */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-lg glass-default cursor-pointer"
-        style={{ color: 'var(--bsi-text)' }}
+        className="md:hidden fixed top-3 left-3 z-50 p-2 rounded-lg glass-default cursor-pointer text-text-primary"
         aria-label="Open navigation"
       >
         <IconMenu />
@@ -333,24 +332,25 @@ export function AppSidebar() {
               onClick={closeMobile}
             />
             <motion.aside
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site navigation"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="md:hidden fixed inset-y-0 left-0 z-50 w-64 border-r border-white/[0.06] flex flex-col"
-              style={{ backgroundColor: 'var(--bsi-surface)' }}
+              className="md:hidden fixed inset-y-0 left-0 z-50 w-64 border-r border-white/[0.06] flex flex-col bg-midnight"
+              style={{ paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
               <div className="flex items-center justify-between px-4 h-14 border-b border-white/[0.06]">
                 <span
-                  className="text-sm font-semibold tracking-wider uppercase"
-                  style={{ fontFamily: 'var(--font-display)' }}
+                  className="text-sm font-semibold tracking-wider uppercase font-display"
                 >
                   BSI
                 </span>
                 <button
                   onClick={closeMobile}
-                  className="cursor-pointer p-1"
-                  style={{ color: 'var(--bsi-text-dim)' }}
+                  className="cursor-pointer p-1 text-[var(--bsi-text-dim)]"
                   aria-label="Close navigation"
                 >
                   <IconX />

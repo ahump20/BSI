@@ -12,7 +12,9 @@ import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Game {
   id: string;
@@ -41,17 +43,6 @@ interface Game {
   situation?: string;
 }
 
-interface DataMeta {
-  source: string;
-  fetched_at: string;
-  timezone: string;
-  degraded?: boolean;
-  sources?: string[];
-  // Backward-compat during rollout
-  dataSource?: string;
-  lastUpdated?: string;
-}
-
 interface ScoresApiResponse {
   success?: boolean;
   data?: Game[];
@@ -63,180 +54,198 @@ interface ScoresApiResponse {
 }
 // formatScheduleDate, getDateOffset imported from lib/utils/timezone
 
-const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Pac-12', 'Sun Belt', 'AAC'];
+const conferences = ['All', 'SEC', 'ACC', 'Big 12', 'Big Ten', 'Sun Belt', 'AAC'];
+
+function GameCard({ game }: { game: Game }) {
+  const isLive = game.status === 'live';
+  const isFinal = game.status === 'final';
+  const isScheduled = game.status === 'scheduled';
+  const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
+  const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
+
+  const gameHref = isLive
+    ? `/college-baseball/game/${game.id}/live`
+    : isFinal
+      ? `/college-baseball/game/${game.id}/box-score`
+      : `/college-baseball/game/${game.id}`;
+
+  return (
+    <Link href={gameHref} className="block">
+      <div
+        className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
+          isLive ? 'border-success' : 'border-border-subtle'
+        }`}
+      >
+        {/* Game Status Bar */}
+        <div
+          className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
+            isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
+          }`}
+        >
+          <span
+            className={`text-xs font-semibold uppercase ${
+              isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
+            }`}
+          >
+            {isLive ? (
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                {game.inning ? `Inning ${game.inning}` : 'Live'}
+              </span>
+            ) : isFinal ? (
+              'Final'
+            ) : game.status === 'postponed' ? (
+              'Postponed'
+            ) : (
+              game.time
+            )}
+          </span>
+          <Badge variant="default" className="text-xs">
+            {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
+          </Badge>
+        </div>
+
+        {/* Teams */}
+        <div className="p-4 space-y-3">
+          {/* Away Team */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
+              </div>
+              <div>
+                <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  {game.awayTeam.name}
+                </p>
+                {game.awayTeam.record && (
+                  <p className="text-xs text-text-tertiary">
+                    {game.awayTeam.record.wins}-{game.awayTeam.record.losses}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {awayWon && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : awayWon
+                      ? 'text-text-primary'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
+              </span>
+            </div>
+          </div>
+
+          {/* Home Team */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
+              </div>
+              <div>
+                <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
+                  {game.homeTeam.name}
+                </p>
+                {game.homeTeam.record && (
+                  <p className="text-xs text-text-tertiary">
+                    {game.homeTeam.record.wins}-{game.homeTeam.record.losses}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {homeWon && (
+                <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              )}
+              <span
+                className={`text-2xl font-bold font-mono ${
+                  isScheduled
+                    ? 'text-text-tertiary'
+                    : homeWon
+                      ? 'text-text-primary'
+                      : 'text-text-secondary'
+                }`}
+              >
+                {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Venue Footer */}
+        {game.venue && game.venue !== 'TBD' && (
+          <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
+            {game.venue}
+            {game.tv && <span className="ml-2 text-burnt-orange">• {game.tv}</span>}
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
 
 export default function CollegeBaseballScoresPage() {
   const [selectedDate, setSelectedDate] = useState<string>("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
+  const [mounted, setMounted] = useState(false);
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
 
+  // Hydration-safe: only compute date-dependent values on the client
+  useEffect(() => {
+    setMounted(true);
+    setSelectedDate(getDateOffset(0));
+  }, []);
+
   const confParam = selectedConference !== 'All' ? `&conference=${selectedConference}` : '';
   const { data: rawData, loading, error, retry } = useSportData<ScoresApiResponse>(
-    `/api/college-baseball/schedule?date=${selectedDate}${confParam}`,
+    selectedDate ? `/api/college-baseball/schedule?date=${selectedDate}${confParam}` : null,
     { refreshInterval: 30000, refreshWhen: liveGamesDetected, timeout: 10000 }
   );
 
   const games = useMemo(() => rawData?.data || rawData?.games || [], [rawData]);
   const hasLiveGames = useMemo(() => games.some((g) => g.status === 'live'), [games]);
-  const meta: DataMeta | null = useMemo(() => rawData ? {
-    source: rawData.meta?.source || rawData.meta?.dataSource || 'ESPN',
-    fetched_at: rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString(),
-    timezone: rawData.meta?.timezone || 'America/Chicago',
-    degraded: rawData.meta?.degraded,
-    sources: rawData.meta?.sources,
-  } : null, [rawData]);
+  const meta: DataMeta | null = useMemo(() => {
+    if (!rawData) return null;
+    const src = rawData.meta?.source || rawData.meta?.dataSource || 'ESPN';
+    const ts = rawData.meta?.fetched_at || rawData.meta?.lastUpdated || rawData.timestamp || new Date().toISOString();
+    return {
+      dataSource: src,
+      lastUpdated: ts,
+      source: src,
+      fetched_at: ts,
+      timezone: rawData.meta?.timezone || 'America/Chicago',
+      degraded: rawData.meta?.degraded,
+      sources: rawData.meta?.sources,
+    };
+  }, [rawData]);
 
   // Sync live detection to enable auto-refresh
   useEffect(() => { setLiveGamesDetected(hasLiveGames); }, [hasLiveGames]);
 
-  // Date navigation
-  const dateOptions = [
+  // Date navigation — computed client-side only to avoid hydration mismatch
+  const dateOptions = useMemo(() => mounted ? [
     { offset: -2, label: formatScheduleDate(getDateOffset(-2)) },
     { offset: -1, label: 'Yesterday' },
     { offset: 0, label: 'Today' },
     { offset: 1, label: 'Tomorrow' },
     { offset: 2, label: formatScheduleDate(getDateOffset(2)) },
-  ];
-
-  const GameCard = ({ game }: { game: Game }) => {
-    const isLive = game.status === 'live';
-    const isFinal = game.status === 'final';
-    const isScheduled = game.status === 'scheduled';
-    const awayWon = isFinal && (game.awayTeam.score ?? 0) > (game.homeTeam.score ?? 0);
-    const homeWon = isFinal && (game.homeTeam.score ?? 0) > (game.awayTeam.score ?? 0);
-
-    const gameHref = isLive
-      ? `/college-baseball/game/${game.id}/live`
-      : isFinal
-        ? `/college-baseball/game/${game.id}/box-score`
-        : `/college-baseball/game/${game.id}`;
-
-    return (
-      <Link href={gameHref} className="block">
-        <div
-          className={`bg-background-tertiary rounded-lg border transition-all hover:border-burnt-orange hover:bg-surface-light ${
-            isLive ? 'border-success' : 'border-border-subtle'
-          }`}
-        >
-          {/* Game Status Bar */}
-          <div
-            className={`px-4 py-2 rounded-t-lg flex items-center justify-between ${
-              isLive ? 'bg-success/20' : isFinal ? 'bg-background-secondary' : 'bg-burnt-orange/20'
-            }`}
-          >
-            <span
-              className={`text-xs font-semibold uppercase ${
-                isLive ? 'text-success' : isFinal ? 'text-text-tertiary' : 'text-burnt-orange'
-              }`}
-            >
-              {isLive ? (
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                  {game.inning ? `Inning ${game.inning}` : 'Live'}
-                </span>
-              ) : isFinal ? (
-                'Final'
-              ) : game.status === 'postponed' ? (
-                'Postponed'
-              ) : (
-                game.time
-              )}
-            </span>
-            <Badge variant="default" className="text-xs">
-              {game.homeTeam.conference || game.awayTeam.conference || 'NCAA'}
-            </Badge>
-          </div>
-
-          {/* Teams */}
-          <div className="p-4 space-y-3">
-            {/* Away Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.awayTeam.shortName?.slice(0, 3).toUpperCase() || 'AWY'}
-                </div>
-                <div>
-                  <p className={`font-semibold ${awayWon ? 'text-text-primary' : 'text-text-secondary'}`}>
-                    {game.awayTeam.name}
-                  </p>
-                  {game.awayTeam.record && (
-                    <p className="text-xs text-text-tertiary">
-                      {game.awayTeam.record.wins}-{game.awayTeam.record.losses}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {awayWon && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : awayWon
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {game.awayTeam.score !== null ? game.awayTeam.score : '-'}
-                </span>
-              </div>
-            </div>
-
-            {/* Home Team */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
-                  {game.homeTeam.shortName?.slice(0, 3).toUpperCase() || 'HME'}
-                </div>
-                <div>
-                  <p className={`font-semibold ${homeWon ? 'text-text-primary' : 'text-text-secondary'}`}>
-                    {game.homeTeam.name}
-                  </p>
-                  {game.homeTeam.record && (
-                    <p className="text-xs text-text-tertiary">
-                      {game.homeTeam.record.wins}-{game.homeTeam.record.losses}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {homeWon && (
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-success" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                )}
-                <span
-                  className={`text-2xl font-bold font-mono ${
-                    isScheduled
-                      ? 'text-text-tertiary'
-                      : homeWon
-                        ? 'text-text-primary'
-                        : 'text-text-secondary'
-                  }`}
-                >
-                  {game.homeTeam.score !== null ? game.homeTeam.score : '-'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Venue Footer */}
-          {game.venue && game.venue !== 'TBD' && (
-            <div className="px-4 pb-3 text-xs text-text-tertiary border-t border-border-subtle pt-3">
-              {game.venue}
-              {game.tv && <span className="ml-2 text-burnt-orange">• {game.tv}</span>}
-            </div>
-          )}
-        </div>
-      </Link>
-    );
-  };
+  ] : [
+    { offset: -2, label: '\u00A0' },
+    { offset: -1, label: 'Yesterday' },
+    { offset: 0, label: 'Today' },
+    { offset: 1, label: 'Tomorrow' },
+    { offset: 2, label: '\u00A0' },
+  ], [mounted]);
 
   return (
     <>
@@ -290,6 +299,7 @@ export default function CollegeBaseballScoresPage() {
         {/* Filters & Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="College Baseball Scores">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
               <button
@@ -350,6 +360,7 @@ export default function CollegeBaseballScoresPage() {
                 <button
                   key={conf}
                   onClick={() => setSelectedConference(conf)}
+                  aria-pressed={selectedConference === conf}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
@@ -370,10 +381,9 @@ export default function CollegeBaseballScoresPage() {
               </div>
             ) : error ? (
               <Card variant="default" padding="lg" className="bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">No Games Found</p>
+                <p className="text-warning font-semibold">Unable to Load Scores</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  College baseball season runs February through June. Check back during the season
-                  for live games.
+                  The scores API returned an error. This is usually temporary — try again in a moment.
                 </p>
                 <button
                   onClick={() => retry()}
@@ -457,6 +467,7 @@ export default function CollegeBaseballScoresPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

@@ -76,7 +76,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
         {/* Away */}
         <div className="flex items-center gap-3">
           {game.away.logo && (
-            <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+            <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" decoding="async" />
           )}
           <div>
             <div className="intel-team-name text-sm md:text-base truncate">
@@ -125,7 +125,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
             <div className="intel-caption">{game.home.record}</div>
           </div>
           {game.home.logo && (
-            <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+            <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" decoding="async" />
           )}
         </div>
       </div>

@@ -18,19 +18,14 @@ import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
-
-interface Team {
-  teamName: string;
-  wins: number;
-  losses: number;
-  ties?: number;
-  winPercentage: number;
-  division: string;
-  conference: string;
-  pointsFor?: number;
-  pointsAgainst?: number;
-  streak?: string;
-}
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import {
+  type NFLApiConference,
+  type NFLStandingsTeam,
+  flattenNFLStandings,
+  groupNFLByDivision,
+  NFL_DIVISION_ORDER,
+} from '@/lib/utils/standings';
 
 interface Game {
   id: string | number;
@@ -44,11 +39,6 @@ interface Game {
 }
 
 type TabType = 'standings' | 'scores' | 'teams' | 'players';
-
-const DIVISION_ORDER = [
-  'AFC East', 'AFC North', 'AFC South', 'AFC West',
-  'NFC East', 'NFC North', 'NFC South', 'NFC West',
-];
 
 const NFL_HERO_STATS = [
   { value: '32', label: 'NFL Teams' },
@@ -71,8 +61,13 @@ export default function NFLPage() {
   // Standings — fetched when standings or teams tab is active
   const standingsUrl = (activeTab === 'standings' || activeTab === 'teams') ? '/api/nfl/standings' : null;
   const { data: standingsRaw, loading: standingsLoading, error: standingsError, retry: retryStandings } =
-    useSportData<{ standings?: Team[]; teams?: Team[]; meta?: { lastUpdated?: string } }>(standingsUrl);
-  const standings = (standingsRaw?.standings || standingsRaw?.teams || []) as Team[];
+    useSportData<{ standings?: NFLApiConference[]; meta?: { lastUpdated?: string } }>(standingsUrl);
+
+  // Flatten nested conference/division structure using shared utility
+  const standings = useMemo<NFLStandingsTeam[]>(
+    () => flattenNFLStandings(standingsRaw?.standings || []),
+    [standingsRaw],
+  );
 
   // Scores — fetched when scores tab is active, auto-refreshes when live
   const scoresUrl = activeTab === 'scores' ? '/api/nfl/scores' : null;
@@ -115,13 +110,7 @@ export default function NFLPage() {
   const error = standingsError || scoresError;
   const lastUpdated = standingsRaw?.meta?.lastUpdated || scoresRaw?.meta?.lastUpdated || '';
 
-  const standingsByDivision: Record<string, Team[]> = {};
-  standings.forEach((team) => {
-    const key = `${team.conference} ${team.division}`;
-    if (!standingsByDivision[key]) standingsByDivision[key] = [];
-    standingsByDivision[key].push(team);
-  });
-  Object.values(standingsByDivision).forEach((div) => div.sort((a, b) => b.wins - a.wins));
+  const standingsByDivision = useMemo(() => groupNFLByDivision(standings), [standings]);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'standings', label: 'Standings' },
@@ -154,6 +143,7 @@ export default function NFLPage() {
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+              <DataErrorBoundary name="NFL Standings">
               {loading ? (
                 <div className="space-y-6">
                   {[1, 2, 3].map((i) => (
@@ -178,7 +168,7 @@ export default function NFLPage() {
                   <EmptyState type="offseason" sport="NFL" />
                 </Card>
               ) : (
-                DIVISION_ORDER.filter((div) => standingsByDivision[div]?.length > 0).map((division) => (
+                NFL_DIVISION_ORDER.filter((div) => standingsByDivision[div]?.length > 0).map((division) => (
                   <ScrollReveal key={division}>
                     <Card variant="default" padding="lg" className="mb-6">
                       <CardHeader>
@@ -221,10 +211,12 @@ export default function NFLPage() {
                   </ScrollReveal>
                 ))
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Scores Tab */}
             <TabPanel id="scores" activeTab={activeTab}>
+              <DataErrorBoundary name="NFL Scores">
               {loading ? (
                 <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
               ) : error ? (
@@ -261,6 +253,7 @@ export default function NFLPage() {
                   </Card>
                 </ScrollReveal>
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Teams Tab */}
@@ -270,7 +263,7 @@ export default function NFLPage() {
                   <div key={conf}>
                     <h3 className="text-xl font-display font-bold text-burnt-orange mb-4">{conf}</h3>
                     <div className="space-y-3">
-                      {DIVISION_ORDER.filter((d) => d.startsWith(conf)).map((div) => (
+                      {NFL_DIVISION_ORDER.filter((d) => d.startsWith(conf)).map((div) => (
                         <Card key={div} variant="default" padding="md">
                           <h4 className="text-sm font-semibold text-text-tertiary uppercase tracking-wider mb-3">{div}</h4>
                           <div className="flex flex-wrap gap-2">

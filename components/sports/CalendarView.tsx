@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface CalendarGame {
   id: string;
@@ -38,8 +39,7 @@ function getWeekDates(dateStr: string): string[] {
 }
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'compact');
 }
 
 interface CalendarViewProps {

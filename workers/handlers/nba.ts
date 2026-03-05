@@ -186,27 +186,32 @@ export async function handleNBATeamFull(teamId: string, env: Env): Promise<Respo
   const { team, roster } = transformTeamDetail(teamRaw as Record<string, unknown>, rosterRaw as Record<string, unknown>);
 
   // Extract schedule events
-  const events = (scheduleRaw as any)?.events || [];
-  const schedule = events.map((e: any) => ({
+  const scheduleData = scheduleRaw as Record<string, unknown>;
+  const events = ((scheduleData?.events || []) as Record<string, unknown>[]);
+  const schedule = events.map((e) => ({
     id: e.id,
     date: e.date,
-    name: e.name || '',
-    shortName: e.shortName || '',
-    competitions: e.competitions?.map((c: any) => ({
-      competitors: c.competitors?.map((comp: any) => ({
-        id: comp.id,
-        homeAway: comp.homeAway,
-        team: {
-          id: comp.team?.id,
-          displayName: comp.team?.displayName || '',
-          abbreviation: comp.team?.abbreviation || '',
-          logo: comp.team?.logo || comp.team?.logos?.[0]?.href || '',
-        },
-        score: comp.score?.displayValue || comp.score,
-        winner: comp.winner,
-      })) || [],
+    name: (e.name as string) || '',
+    shortName: (e.shortName as string) || '',
+    competitions: ((e.competitions || []) as Record<string, unknown>[]).map((c) => ({
+      competitors: ((c.competitors || []) as Record<string, unknown>[]).map((comp) => {
+        const compTeam = (comp.team || {}) as Record<string, unknown>;
+        const compLogos = (compTeam.logos || []) as Record<string, unknown>[];
+        return {
+          id: comp.id,
+          homeAway: comp.homeAway,
+          team: {
+            id: compTeam.id,
+            displayName: (compTeam.displayName as string) || '',
+            abbreviation: (compTeam.abbreviation as string) || '',
+            logo: (compTeam.logo as string) || (compLogos[0]?.href as string) || '',
+          },
+          score: ((comp.score as Record<string, unknown>)?.displayValue as string) || comp.score,
+          winner: comp.winner,
+        };
+      }),
       status: c.status || {},
-    })) || [],
+    })),
   }));
 
   const payload = {

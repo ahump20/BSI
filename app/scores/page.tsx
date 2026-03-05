@@ -9,6 +9,8 @@ import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { SPORT_ICONS } from '@/components/icons/SportIcons';
 
 // ── SVG Sport Icons ──
 
@@ -107,6 +109,7 @@ export default function ScoresHubPage() {
 
   useEffect(() => {
     async function fetchLiveCounts() {
+      try {
       const [mlbResult, cbResult, nflResult, nbaResult] = await Promise.allSettled([
         fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { isLive?: boolean } }> }> : null),
         fetch('/api/college-baseball/schedule').then(r => r.ok ? r.json() as Promise<{ data?: Array<{ status?: string }>; games?: Array<{ status?: string }> }> : null),
@@ -151,6 +154,10 @@ export default function ScoresHubPage() {
 
       setTotalLive(live);
       setFetchedAt(new Date().toISOString());
+      } catch {
+        // Mark all sports as loaded even on failure to avoid infinite loading state
+        setSports((prev) => prev.map((s) => ({ ...s, loaded: true })));
+      }
     }
 
     fetchLiveCounts();
@@ -206,6 +213,7 @@ export default function ScoresHubPage() {
         {/* Sports Grid */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="Sports Grid">
             <div className="grid gap-6 md:grid-cols-2">
               {sports.map((sport, index) => (
                 <ScrollReveal key={sport.id} direction="up" delay={index * 100}>
@@ -316,6 +324,7 @@ export default function ScoresHubPage() {
                 refreshInterval={60}
               />
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

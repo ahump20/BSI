@@ -23,7 +23,7 @@ export function Tooltip({ content, children, side = 'top', className = '' }: Too
           pointer-events-none absolute ${positionClass} z-[1070]
           whitespace-nowrap rounded-md border border-border px-2 py-1
           bg-[var(--bsi-bg-secondary)] text-text-primary font-mono text-[10px]
-          opacity-0 transition-opacity group-hover:opacity-100
+          opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100
         `}
       >
         {content}

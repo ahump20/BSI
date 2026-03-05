@@ -8,7 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { SportIcon } from '@/components/icons/SportIcon';
+import { formatTimestamp, formatScheduleDate, getDateOffset } from '@/lib/utils/timezone';
 
 interface ESPNGame {
   id: string;
@@ -37,20 +38,7 @@ interface ESPNGame {
   venue?: { fullName?: string };
 }
 
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const formatDate = formatScheduleDate;
 
 
 function GameCard({ game }: { game: ESPNGame }) {
@@ -83,7 +71,7 @@ function GameCard({ game }: { game: ESPNGame }) {
             <div key={team.id} className="flex items-center justify-between">
               <div className="flex items-center gap-3 min-w-0">
                 {logoUrl ? (
-                  <img src={logoUrl} alt="" className="w-8 h-8 object-contain" />
+                  <img src={logoUrl} alt="" className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                 ) : (
                   <div className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                     {team.team.abbreviation}
@@ -219,7 +207,7 @@ export default function CFBScoresPage() {
             ) : games.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">🏈</div>
+                  <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                   <p className="text-text-secondary text-lg">No games scheduled for this date</p>
                   <p className="text-text-tertiary text-sm mt-2">College football season typically runs August through January</p>
                 </div>

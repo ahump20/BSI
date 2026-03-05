@@ -129,6 +129,7 @@ export function TeamBrowser() {
           value={search}
           onChange={handleSearchChange}
           placeholder="Search teams..."
+          aria-label="Search teams"
           className="w-full px-4 py-2.5 bg-surface-light border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
         />
       </div>

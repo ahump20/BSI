@@ -63,7 +63,7 @@ const SEED_BRIEFS: Record<string, GameBriefData> = {
       {
         stat: 'First-Inning Runs',
         value: '2 (5 total in first 2 inn.)',
-        context: 'Setting the tone early is a David Pierce hallmark. Texas has scored in the first inning in 68% of their wins over the last two seasons.',
+        context: 'Setting the tone early is a Jim Schlossnagle hallmark. Texas has scored in the first inning in 68% of their wins over the last two seasons.',
         source: 'BSI Historical',
         timestamp: '2026-02-14T22:30:00Z',
       },

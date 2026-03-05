@@ -153,7 +153,7 @@ export default function Contact() {
                 rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
                 className="card p-5 text-center group flex flex-col items-center gap-2"
               >
-                <div className="text-warm-gray group-hover:text-burnt-orange transition-colors duration-300">
+                <div className="text-warm-gray group-hover:text-burnt-orange transition-colors duration-300" aria-hidden="true">
                   {link.icon}
                 </div>
                 <p className="text-xs font-mono text-warm-gray">{link.label}</p>
@@ -197,7 +197,7 @@ export default function Contact() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/40 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
+                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/60 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
                   placeholder="Your name"
                 />
               </div>
@@ -211,7 +211,7 @@ export default function Contact() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/40 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
+                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/60 focus:outline-none focus:border-burnt-orange transition-colors duration-300"
                   placeholder="your@email.com"
                 />
               </div>
@@ -225,7 +225,7 @@ export default function Contact() {
                   rows={4}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/40 focus:outline-none focus:border-burnt-orange transition-colors duration-300 resize-none"
+                  className="w-full bg-transparent border-0 border-b border-bone/15 px-0 py-2 text-sm text-bone placeholder-warm-gray/60 focus:outline-none focus:border-burnt-orange transition-colors duration-300 resize-none"
                   placeholder="What's on your mind?"
                 />
               </div>

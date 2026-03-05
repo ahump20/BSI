@@ -233,7 +233,7 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
       >
         <span className="flex items-center gap-1.5">
           {isLive && (
-            <span className="relative flex h-1.5 w-1.5">
+            <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
             </span>
@@ -285,7 +285,11 @@ function CompactGameCard({ game }: { game: NormalizedGame }) {
  * Fetches all in-season sport endpoints in parallel, normalizes into a common shape,
  * and auto-refreshes (30s when live, 5min otherwise).
  */
-export function HomeLiveScores() {
+interface HomeLiveScoresProps {
+  onCountsChange?: (counts: Map<string, { live: number; today: number }>) => void;
+}
+
+export function HomeLiveScores({ onCountsChange }: HomeLiveScoresProps = {}) {
   const [today, setToday] = useState('');
   const [allGames, setAllGames] = useState<NormalizedGame[]>([]);
   const [loading, setLoading] = useState(true);
@@ -330,6 +334,19 @@ export function HomeLiveScores() {
       setAllGames(games);
       setLastFetched(new Date());
       setError(false);
+
+      // Emit per-sport counts so parent can avoid a duplicate fetch
+      if (onCountsChange) {
+        const counts = new Map<string, { live: number; today: number }>();
+        for (const g of games) {
+          const prev = counts.get(g.sport) ?? { live: 0, today: 0 };
+          counts.set(g.sport, {
+            live: prev.live + (g.status === 'live' ? 1 : 0),
+            today: prev.today + 1,
+          });
+        }
+        onCountsChange(counts);
+      }
     } catch {
       setError(true);
     } finally {
@@ -379,7 +396,7 @@ export function HomeLiveScores() {
   if (!loading && !error && allGames.length === 0) return null;
 
   return (
-    <section className="py-6 px-4 sm:px-6 lg:px-8">
+    <section className="py-6 px-4 sm:px-6 lg:px-8" aria-label="Today's live scores">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -410,6 +427,7 @@ export function HomeLiveScores() {
           <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1">
             <button
               onClick={() => setFilter('all')}
+              aria-pressed={filter === 'all'}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                 filter === 'all'
                   ? 'bg-surface-medium text-text-primary'
@@ -424,6 +442,7 @@ export function HomeLiveScores() {
                 <button
                   key={sport.key}
                   onClick={() => setFilter(sport.key)}
+                  aria-pressed={filter === sport.key}
                   className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                     filter === sport.key
                       ? 'text-text-primary'
@@ -441,7 +460,12 @@ export function HomeLiveScores() {
         )}
 
         {/* Score cards — horizontal scroll on mobile */}
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div
+          className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0"
+          aria-live={hasLiveGames ? 'polite' : 'off'}
+          aria-atomic="false"
+          aria-relevant="additions text"
+        >
           {loading ? (
             <>
               {[1, 2, 3, 4].map((i) => (

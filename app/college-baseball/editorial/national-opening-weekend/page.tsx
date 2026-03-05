@@ -5,6 +5,17 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'National Opening Weekend Preview: 118 Games, 300+ Programs | Blaze Sports Intel',
+  description: '118 games across 300+ programs. The 2026 college baseball season opens with Wake Forest, Texas, UCLA, and the SEC all entering as legitimate Omaha contenders. Every conference, every storyline.',
+  openGraph: {
+    title: 'National Opening Weekend Preview 2026 | Blaze Sports Intel',
+    description: '118 games. 300+ programs. The college baseball season starts now. Full national preview with conference breakdowns, matchups to watch, and transfer portal grades.',
+    type: 'article',
+  },
+};
 
 const byTheNumbers = [
   { label: 'Games', value: '118+', helper: 'Opening weekend' },

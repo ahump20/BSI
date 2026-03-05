@@ -28,3 +28,6 @@ export { processFinishedGames, handleIngestStats, syncTeamCumulativeStats, handl
 
 // Sabermetrics
 export { handleCBBLeagueSabermetrics, handleCBBTeamSabermetrics, handleCBBTeamSOS, handleCBBConferencePowerIndex } from './savant';
+
+// Social intelligence
+export { handleSocialIntelFeed, handleSocialIntelTeam } from './social-intel';

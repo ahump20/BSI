@@ -21,6 +21,7 @@ import {
 import { ParkFactorTable } from '@/components/analytics/ParkFactorTable';
 import { ConferenceStrengthChart } from '@/components/analytics/ConferenceStrengthChart';
 import { getPercentileColor } from '@/components/analytics/PercentileBar';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -233,6 +234,7 @@ export default function SavantHubPage() {
               </Card>
             </ScrollReveal>
 
+            <DataErrorBoundary name="Savant Analytics">
             {/* Spotlight cards — dynamic, data-driven */}
             <ScrollReveal direction="up" delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
@@ -394,6 +396,7 @@ export default function SavantHubPage() {
                 </p>
               </div>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

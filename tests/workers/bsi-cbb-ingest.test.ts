@@ -171,8 +171,8 @@ describe('BSI CBB Ingest Worker', () => {
 
       vi.useRealTimers();
 
-      // ESPN writes NCAA-level standings (v3 key format — matches main worker handler)
-      expect(env.KV._store.has('cb:standings:v3:NCAA')).toBe(true);
+      // ESPN writes NCAA-level standings (raw key — main handler transforms on read)
+      expect(env.KV._store.has('cb:standings:raw:NCAA')).toBe(true);
     });
   });
 

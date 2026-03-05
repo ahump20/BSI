@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, ArrowRight, Clock, ExternalLink } from 'lucide-react';
+import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -128,13 +129,10 @@ export function CommandPalette() {
   // Focus input when opened
   useEffect(() => {
     if (open) {
-      // Small delay to ensure the DOM is ready
       requestAnimationFrame(() => inputRef.current?.focus());
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      lockScroll();
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => { if (open) unlockScroll(); };
   }, [open]);
 
   // -----------------------------------------------------------------------

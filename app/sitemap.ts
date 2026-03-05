@@ -22,6 +22,7 @@ const flagship: SitemapEntry[] = [
   { path: '/college-baseball/games', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/players', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/news', changeFrequency: 'daily', priority: 0.9 },
+  { path: '/college-baseball/social-intel', changeFrequency: 'hourly', priority: 0.8 },
   { path: '/college-baseball/teams', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/transfer-portal', changeFrequency: 'daily', priority: 0.9 },
   { path: '/college-baseball/conferences', changeFrequency: 'daily', priority: 0.8 },
@@ -59,8 +60,15 @@ const editorial: SitemapEntry[] = [
   // Weekly features
   { path: '/college-baseball/editorial/week-1-preview', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-1-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-2-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-2-recap', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/college-baseball/editorial/weekend-3-preview', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/weekend-3-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-week-3-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-houston-christian-preview', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/texas-houston-christian-recap', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/college-baseball/editorial/week-4-preview', changeFrequency: 'monthly', priority: 0.8 },
   // Game features
   { path: '/college-baseball/editorial/texas-uc-davis-opener-2026', changeFrequency: 'monthly', priority: 0.7 },
   // 2026 team previews (SEC)
@@ -166,13 +174,10 @@ const features: SitemapEntry[] = [
   { path: '/intel', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation', changeFrequency: 'daily', priority: 0.7 },
   { path: '/nil-valuation/methodology', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/nil-valuation/tools', changeFrequency: 'monthly', priority: 0.5 },
-  { path: '/fanbase', changeFrequency: 'daily', priority: 0.6 },
-  { path: '/fanbase/compare', changeFrequency: 'daily', priority: 0.6 },
   { path: '/analytics', changeFrequency: 'daily', priority: 0.6 },
   { path: '/college-baseball/analytics/playground', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/transfer-portal', changeFrequency: 'daily', priority: 0.7 },
-  { path: '/vision-AI-Intelligence', changeFrequency: 'weekly', priority: 0.5 },
+  { path: '/vision-ai-intelligence', changeFrequency: 'weekly', priority: 0.5 },
   { path: '/search', changeFrequency: 'daily', priority: 0.5 },
 ];
 

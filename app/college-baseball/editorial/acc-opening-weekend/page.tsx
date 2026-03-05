@@ -5,6 +5,17 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'ACC Baseball Opening Weekend 2026: Stanford and Cal Debut | Blaze Sports Intel',
+  description: 'Stanford and Cal join the ACC from the Pac-12, making it a coast-to-coast conference. Wake Forest enters as the favorite. Virginia, NC State reload. Full ACC opening weekend breakdown.',
+  openGraph: {
+    title: 'ACC Baseball Opening Weekend 2026 | Blaze Sports Intel',
+    description: 'Conference realignment, day one. Stanford and Cal play their first ACC games. Wake Forest — one win from a national title last year — opens as the prohibitive favorite.',
+    type: 'article',
+  },
+};
 
 const accTeams = [
   { rank: 4, team: 'Wake Forest', record: '54-11', postseason: 'CWS Final', opener: 'vs William & Mary (Feb 14)', capsule: 'One game from a national title. Bennett, Wilken, Hartle all return. The Deacs ran roughshod over the ACC and reload with enough talent for another Omaha run.', keyPlayer: 'Josh Hartle (LHP)', slug: 'wake-forest' },

@@ -10,9 +10,12 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { AITeamPreview } from '@/components/college-baseball/AITeamPreview';
 import { SabermetricsPanel } from '@/components/college-baseball/SabermetricsPanel';
+import { SocialIntelTeamPanel } from '@/components/college-baseball/SocialIntelTeamPanel';
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
+import { fmt3 } from '@/lib/utils/format';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 import { withAlpha } from '@/lib/utils/color';
 import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
 import { getFeaturedInsight } from '@/lib/data/featured-team-insights';
@@ -156,15 +159,8 @@ interface ScheduleGame {
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'America/Chicago',
-    });
-  } catch {
-    return iso;
-  }
+  const result = formatDateInTimezone(iso, undefined, 'compact');
+  return result === 'Invalid date' ? iso : result;
 }
 
 function getAccentColor(primary: string, secondary: string): string {
@@ -336,8 +332,13 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     <>
       <div style={teamStyles}>
         {/* Hero */}
-        <div style={{ backgroundImage: `linear-gradient(to bottom, ${withAlpha(accent, 0.10)}, var(--bsi-charcoal), var(--bsi-midnight))` }}>
-          <Section padding="lg" className="pt-6">
+        <div className="relative" style={{ backgroundImage: `linear-gradient(to bottom, ${withAlpha(accent, 0.10)}, var(--bsi-charcoal), var(--bsi-midnight))` }}>
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.06]"
+              style={{ background: `radial-gradient(circle, ${accent} 0%, transparent 70%)` }}
+            />
+          </div>
+          <Section padding="lg" className="pt-6 relative">
             <Container>
               <ScrollReveal direction="up">
                 <nav className="flex items-center gap-3 mb-8 text-sm">
@@ -427,7 +428,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-4 font-semibold text-sm uppercase tracking-wider transition-colors ${activeTab === tab ? 'border-b-2' : 'text-text-muted hover:text-text-tertiary'}`}
+                  className={`px-6 py-4 font-display font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${activeTab === tab ? 'border-b-2' : 'text-text-muted hover:text-text-secondary'}`}
                   style={activeTab === tab ? { color: accent, borderColor: accent } : undefined}
                 >
                   {tab === 'advanced' ? 'Advanced Stats' : tab}
@@ -745,11 +746,11 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           <div className="text-xs uppercase tracking-wider text-text-muted mb-4 font-semibold">Batting</div>
                           <div className="grid grid-cols-4 gap-3">
                             <div>
-                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.batting.battingAverage.toFixed(3).replace(/^0/, '')}</div>
+                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{fmt3(teamStats.batting.battingAverage)}</div>
                               <div className="text-text-muted text-xs uppercase mt-1">AVG</div>
                             </div>
                             <div>
-                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.batting.ops?.toFixed(3).replace(/^0/, '') ?? '\u2014'}</div>
+                              <div className="font-mono text-2xl font-bold" style={{ color: accent }}>{teamStats.batting.ops != null ? fmt3(teamStats.batting.ops) : '\u2014'}</div>
                               <div className="text-text-muted text-xs uppercase mt-1">OPS</div>
                             </div>
                             <div>
@@ -893,6 +894,10 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
                 <ScrollReveal direction="up" className="mt-8">
                   <AITeamPreview teamId={teamId} teamName={meta.name} stats={liveStats ?? undefined} conference={meta.conference} />
+                </ScrollReveal>
+
+                <ScrollReveal direction="up" className="mt-6">
+                  <SocialIntelTeamPanel teamId={teamId} />
                 </ScrollReveal>
               </>
             )}
@@ -1092,29 +1097,29 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                                     <td className="px-3 py-2.5 text-text-tertiary text-xs">{p.position}</td>
                                     {isPitcherGroup ? (
                                       <>
-                                        <td className="px-3 py-2.5 text-right font-mono" style={{ color: accent }}>{p.stats?.era?.toFixed(2) ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.sv ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.ip ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.so ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary">{p.stats?.pitchBB ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden md:table-cell">{p.stats?.ha ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden md:table-cell">{p.stats?.er ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden lg:table-cell">{p.stats?.hra ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums" style={{ color: accent }}>{p.stats?.era?.toFixed(2) ?? '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.whip?.toFixed(2) ?? '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.w ?? 0}-{p.stats?.l ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.sv ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.ip ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.so ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary">{p.stats?.pitchBB ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.ha ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.er ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.hra ?? 0}</td>
                                       </>
                                     ) : (
                                       <>
-                                        <td className="px-3 py-2.5 text-right font-mono" style={{ color: accent }}>{p.stats?.avg?.toFixed(3).replace(/^0/, '') ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.ops?.toFixed(3).replace(/^0/, '') ?? '\u2014'}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.hr ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.rbi ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-secondary">{p.stats?.r ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden md:table-cell">{p.stats?.h ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden md:table-cell">{p.stats?.doubles ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden md:table-cell">{p.stats?.bb ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden lg:table-cell">{p.stats?.sb ?? 0}</td>
-                                        <td className="px-3 py-2.5 text-right font-mono text-text-tertiary hidden lg:table-cell">{p.stats?.k ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums" style={{ color: accent }}>{p.stats?.avg != null ? fmt3(p.stats.avg) : '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.ops != null ? fmt3(p.stats.ops) : '\u2014'}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.hr ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.rbi ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-secondary">{p.stats?.r ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.h ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.doubles ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden md:table-cell">{p.stats?.bb ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.sb ?? 0}</td>
+                                        <td className="px-3 py-2.5 text-right font-mono tabular-nums text-text-tertiary hidden lg:table-cell">{p.stats?.k ?? 0}</td>
                                       </>
                                     )}
                                   </tr>

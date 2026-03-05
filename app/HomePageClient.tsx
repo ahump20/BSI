@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { ScrollReveal } from '@/components/cinematic';
 import { HeroSection } from '@/components/home/HeroSection';
@@ -7,43 +8,95 @@ import { HomeLiveScores } from '@/components/home/HomeLiveScores';
 import { EditorialPreview } from '@/components/home/EditorialPreview';
 import { TrendingIntelFeed } from '@/components/home/TrendingIntelFeed';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { BaseballIcon, FootballIcon, BasketballIcon, StadiumIcon } from '@/components/icons/SportIcons';
 import { useMultiSportCounts } from '@/lib/hooks/useMultiSportCounts';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { withAlpha } from '@/lib/utils/color';
 
 // ────────────────────────────────────────
-// SVG Sport Icons (crisp at any size)
+// Savant Preview Strip — top 5 wOBA leaders
 // ────────────────────────────────────────
 
-const BaseballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
-    <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
-  </svg>
-);
+interface LeaderboardRow {
+  player_name?: string;
+  name?: string;
+  team?: string;
+  woba?: number;
+  wrc_plus?: number;
+  [key: string]: unknown;
+}
 
-const FootballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
-    <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
-  </svg>
-);
+interface LeaderboardResponse {
+  data: LeaderboardRow[];
+  meta?: { source: string; fetched_at: string; timezone: string };
+}
 
-const BasketballIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <circle cx="12" cy="12" r="10" />
-    <path d="M12 2V22M2 12H22" />
-    <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
-  </svg>
-);
+function SavantPreviewStrip() {
+  const { data, loading, error } = useSportData<LeaderboardResponse>(
+    '/api/savant/batting/leaderboard?limit=5&sort=woba&dir=desc'
+  );
 
-const StadiumIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-10 h-10" stroke="currentColor" strokeWidth={1.5}>
-    <path d="M3 21V10L12 3L21 10V21" />
-    <path d="M3 14H21" />
-    <rect x="8" y="14" width="8" height="7" />
-  </svg>
-);
+  if (loading) {
+    return (
+      <div className="flex justify-center py-3">
+        <div className="h-4 w-48 bg-surface-light rounded animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error || !data?.data?.length) return null;
+
+  const rows = data.data;
+  const fmtWoba = (v: number) => v.toFixed(3).replace(/^0/, '');
+
+  return (
+    <section className="py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <ScrollReveal direction="up">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <span className="section-label block mb-1">Live Proof</span>
+              <h2 className="font-display text-lg md:text-xl font-bold uppercase tracking-wide text-text-primary">
+                wOBA Leaders — D1 College Baseball
+              </h2>
+            </div>
+            <Link
+              href="/college-baseball/savant"
+              className="text-burnt-orange text-xs font-semibold uppercase tracking-wider hover:text-ember transition-colors"
+            >
+              Full Leaderboard
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {rows.map((row, i) => {
+              const name = row.player_name || row.name || 'Unknown';
+              const woba = row.woba ?? 0;
+              return (
+                <div
+                  key={name + i}
+                  className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-1 p-3 rounded-xl bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]"
+                >
+                  <span className="text-burnt-orange font-mono text-xs font-bold w-5 text-center shrink-0">
+                    {i + 1}
+                  </span>
+                  <div className="flex-1 sm:text-center min-w-0">
+                    <div className="text-sm font-semibold text-text-primary truncate">{name}</div>
+                    <div className="text-[10px] uppercase tracking-wider text-text-muted">{row.team || ''}</div>
+                  </div>
+                  <span className="font-mono text-lg font-bold text-burnt-orange shrink-0">
+                    {fmtWoba(woba)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+}
 
 // ────────────────────────────────────────
 // Sports Hub data
@@ -59,7 +112,7 @@ const SPORT_COUNT_KEYS: Record<string, string> = {
 
 interface SportCardData {
   name: string;
-  icon: React.FC;
+  icon: React.FC<{ className?: string }>;
   href: string;
   description: string;
   color: string;
@@ -148,50 +201,62 @@ function LiveGameBadge({ live, today, color }: { live: number; today: number; co
 // ────────────────────────────────────────
 
 export function HomePageClient() {
-  const sportCounts = useMultiSportCounts();
+  const [sportCounts, setSportCounts] = useState<Map<string, { live: number; today: number }>>(new Map());
+  const handleCountsChange = useCallback((counts: Map<string, { live: number; today: number }>) => {
+    setSportCounts(counts);
+  }, []);
 
   return (
     <div className="min-h-screen">
       {/* ─── 1. Hero ─── */}
-      <HeroSection />
+      <DataErrorBoundary name="Hero" compact>
+        <HeroSection />
+      </DataErrorBoundary>
 
       {/* ─── 2. Multi-Sport Live Scores Strip ─── */}
-      <HomeLiveScores />
+      <DataErrorBoundary name="Live Scores" compact>
+        <HomeLiveScores onCountsChange={handleCountsChange} />
+      </DataErrorBoundary>
 
-      {/* ─── 3. Sports Hub — Portfolio-style cards ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 relative">
+      {/* ─── 3. Savant Preview — wOBA leaders as live proof ─── */}
+      <DataErrorBoundary name="Savant Preview" compact>
+        <SavantPreviewStrip />
+      </DataErrorBoundary>
+
+      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
+      <DataErrorBoundary name="Editorial">
+        <EditorialPreview />
+      </DataErrorBoundary>
+
+      {/* ─── 5. Sports Hub — compact horizontal strip, secondary framing ─── */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-6xl mx-auto relative z-10">
           <ScrollReveal direction="up">
-            <div className="text-center mb-12">
-              <span className="section-label block mb-3">Coverage</span>
-              <h2
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wide"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-              >
-                Five Sports. No Blind Spots.
-              </h2>
-              <p className="mt-3 text-base max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-                College baseball is the flagship. MLB, NFL, NBA, and college football round out the coverage.
-              </p>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="section-label block mb-2">Coverage</span>
+                <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
+                  Also Covering
+                </h2>
+              </div>
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-5 lg:overflow-visible">
             {sports.map((sport, index) => {
               const countKey = SPORT_COUNT_KEYS[sport.name];
               const counts = countKey ? sportCounts.get(countKey) : undefined;
-              const isLast = index === sports.length - 1;
 
               return (
                 <ScrollReveal
                   key={sport.name}
                   direction="up"
                   delay={index * 80}
-                  className={isLast ? 'sm:col-span-2 md:col-span-1' : undefined}
+                  className="flex-shrink-0 w-56 sm:w-60 lg:w-auto"
                 >
                   <Link href={sport.href} className="group block h-full">
                     <div
-                      className="relative p-6 rounded-xl h-full flex flex-col items-center text-center
+                      className="relative p-5 rounded-xl h-full flex flex-col items-center text-center
                         transition-all duration-300 hover:-translate-y-1
                         bg-[rgba(26,26,26,0.6)] border border-[rgba(245,240,235,0.04)]
                         hover:border-burnt-orange/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)]
@@ -204,23 +269,14 @@ export function HomePageClient() {
                         color={sport.color}
                       />
 
-                      <div
-                        className="w-16 h-16 rounded-xl flex items-center justify-center mb-4 transition-colors duration-300"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.025)',
-                          color: 'var(--color-text-secondary)',
-                        }}
-                      >
-                        <sport.icon />
+                      <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3 transition-colors duration-300 bg-surface-light text-text-secondary">
+                        <sport.icon className="w-10 h-10" />
                       </div>
 
-                      <h3
-                        className="text-lg font-semibold mb-2 transition-colors group-hover:text-burnt-orange"
-                        style={{ color: 'var(--color-text-primary)' }}
-                      >
+                      <h3 className="text-base font-semibold mb-1.5 transition-colors group-hover:text-burnt-orange text-text-primary">
                         {sport.name}
                       </h3>
-                      <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+                      <p className="text-xs leading-relaxed text-text-secondary line-clamp-2">
                         {sport.description}
                       </p>
                     </div>
@@ -232,28 +288,24 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 4. Editorial Feed (D1-backed) ─── */}
-      <EditorialPreview />
-
-      {/* ─── 5. Trending Intel Feed ─── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      {/* ─── 6. Trending Intel Feed ─── */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal direction="up">
-            <div className="mb-8">
-              <span className="section-label block mb-3">Cross-Sport Intel</span>
-              <h2
-                className="text-3xl md:text-4xl font-bold uppercase tracking-wide"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-              >
+            <div className="mb-6">
+              <span className="section-label block mb-2">Cross-Sport Intel</span>
+              <h2 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wide text-text-primary">
                 What&apos;s Happening Now
               </h2>
             </div>
-            <TrendingIntelFeed />
+            <DataErrorBoundary name="Intel Feed">
+              <TrendingIntelFeed />
+            </DataErrorBoundary>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── 6. Garrido + Austin Quote ─── */}
+      {/* ─── 7. Garrido + Austin Quote ─── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <ScrollReveal direction="left">
@@ -264,8 +316,7 @@ export function HomePageClient() {
 
               <div className="space-y-10 relative">
                 <span
-                  className="absolute -top-6 -left-2 leading-none pointer-events-none select-none"
-                  style={{ fontFamily: 'var(--bsi-font-body)', fontSize: '8rem', color: 'rgba(191, 87, 0, 0.07)' }}
+                  className="absolute -top-6 -left-2 leading-none pointer-events-none select-none font-serif text-[8rem] text-burnt-orange/[0.07]"
                   aria-hidden="true"
                 >
                   &ldquo;
@@ -273,22 +324,19 @@ export function HomePageClient() {
 
                 {/* Garrido */}
                 <div className="relative">
-                  <blockquote
-                    className="text-xl md:text-2xl leading-relaxed mb-6"
-                    style={{ fontFamily: 'var(--bsi-font-body)', color: 'rgba(245, 240, 235, 0.9)' }}
-                  >
+                  <blockquote className="font-serif text-xl md:text-2xl leading-relaxed mb-6 text-text-primary/90">
                     &ldquo;Where is that ten-year-old that loved to play baseball? Remember that kid
                     — twelve o&apos;clock game on Saturday morning, sitting on the edge of the bed in
                     uniform at five AM, putting on that glove, can&apos;t wait to get there.&rdquo;
                   </blockquote>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg, #bf5700, #cc6600)' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold gradient-brand">
                       AG
                     </div>
                     <div>
-                      <div className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>Augie Garrido, 1939&ndash;2018</div>
-                      <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Winningest coach in college baseball history</div>
+                      <div className="font-semibold text-sm text-text-primary">Augie Garrido, 1939&ndash;2018</div>
+                      <div className="text-xs text-text-secondary">Winningest coach in college baseball history</div>
                     </div>
                   </div>
                 </div>
@@ -297,10 +345,7 @@ export function HomePageClient() {
 
                 {/* Austin */}
                 <div>
-                  <blockquote
-                    className="text-lg md:text-xl leading-relaxed mb-6"
-                    style={{ fontFamily: 'var(--bsi-font-body)', color: 'var(--color-text-secondary)' }}
-                  >
+                  <blockquote className="font-serif text-lg md:text-xl leading-relaxed mb-6 text-text-secondary">
                     &ldquo;That&apos;s who shows up here. The one checking scores at midnight.
                     The one who cares about the Tuesday game as much as the Saturday showcase.&rdquo;
                   </blockquote>
@@ -310,8 +355,8 @@ export function HomePageClient() {
                       AH
                     </div>
                     <div>
-                      <div className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>Austin Humphrey</div>
-                      <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Founder, Blaze Sports Intel</div>
+                      <div className="font-semibold text-sm text-text-primary">Austin Humphrey</div>
+                      <div className="text-xs text-text-secondary">Founder, Blaze Sports Intel</div>
                     </div>
                   </div>
                 </div>
@@ -321,33 +366,30 @@ export function HomePageClient() {
         </div>
       </section>
 
-      {/* ─── 7. CTA ─── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: 'var(--bsi-bg-secondary)' }}>
+      {/* ─── 8. CTA ─── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background-secondary">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <ScrollReveal direction="up">
             <span className="section-label block mb-4">Get Started</span>
-            <h2
-              className="text-3xl md:text-4xl font-bold mb-4"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-            >
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 text-text-primary">
               Start with college baseball. Go from there.
             </h2>
-            <p className="text-base mb-10 max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-              Five sports. Live scores. Real analytics.
+            <p className="text-base mb-10 max-w-2xl mx-auto text-text-secondary">
+              Park-adjusted sabermetrics. Live scores. Free.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/pricing" className="btn-primary px-8 py-4 text-lg">
-                Start Free Trial
+              <Link href="/college-baseball/savant" className="btn-primary px-8 py-4 text-lg">
+                Explore BSI Savant
               </Link>
-              <Link href="/about" className="btn-outline px-8 py-4 text-lg">
-                About BSI
+              <Link href="/college-baseball" className="btn-outline px-8 py-4 text-lg">
+                College Baseball Hub
               </Link>
             </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ─── 8. Footer ─── */}
+      {/* ─── 9. Footer ─── */}
       <Footer />
     </div>
   );

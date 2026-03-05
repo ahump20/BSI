@@ -12,8 +12,10 @@ function getSessionId(): string {
 
 function send(payload: Record<string, unknown>): void {
   const body = JSON.stringify(payload);
-  navigator.sendBeacon?.(BSI_ANALYTICS, body)
-    || fetch(BSI_ANALYTICS, { method: 'POST', body, keepalive: true }).catch(() => {});
+  const sent = navigator.sendBeacon?.(BSI_ANALYTICS, body);
+  if (!sent) {
+    fetch(BSI_ANALYTICS, { method: 'POST', body, keepalive: true }).catch(() => {});
+  }
 }
 
 export function trackPageView(path: string): void {

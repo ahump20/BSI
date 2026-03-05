@@ -7,6 +7,7 @@
 
 export interface Editorial {
   id: number;
+  slug?: string;
   date: string;
   title: string;
   preview: string;
@@ -80,7 +81,8 @@ export function articleMatchesTag(article: Editorial, tag: EditorialTag): boolea
 
 /** Estimated read time from word count (250 wpm). */
 export function readTime(words: number): string {
-  return `${Math.max(1, Math.ceil(words / 250))} min`;
+  const mins = Math.max(1, Math.round(words / 250));
+  return `${mins} min read`;
 }
 
 /** Format a YYYY-MM-DD date string for display. */
@@ -100,7 +102,32 @@ export function formatShortDate(dateStr: string): string {
   });
 }
 
-/** Build the href for an editorial article. */
+// ── Slug derivation ───────────────────────────────────────────────────
+// Maps D1 article titles to filesystem editorial routes.
+
+/** Convert an article title to a URL-safe slug. */
+export function titleToSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+/** Overrides for known articles where title-derived slug doesn't match the route. */
+export const SLUG_OVERRIDES: Record<string, string> = {
+  'texas-week-1-27-runs-one-hit-allowed-by-volantis': 'texas-week-1-recap',
+  'sec-opening-weekend-preview': 'sec-opening-weekend',
+  'week-1-national-recap': 'week-1-recap',
+};
+
+/** Build the href for an editorial article (slug-based routing). */
 export function getEditorialHref(article: Editorial): string {
-  return `/college-baseball/editorial/daily/${article.date}`;
+  if (article.slug) return `/college-baseball/editorial/${article.slug}`;
+  const raw = titleToSlug(article.title);
+  const slug = SLUG_OVERRIDES[raw] || raw;
+  return `/college-baseball/editorial/${slug}`;
 }

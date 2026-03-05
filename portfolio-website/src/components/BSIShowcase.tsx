@@ -52,7 +52,7 @@ export default function BSIShowcase() {
             <p className="section-label">// The Platform</p>
             <h2 id="bsi-heading" className="section-title">Blaze Sports Intel</h2>
             <p className="font-sans font-semibold text-burnt-orange uppercase tracking-[0.2em] text-sm mb-10">
-              Born to Blaze the Path Less Beaten
+              Born to Blaze the Path Beaten Less
             </p>
           </motion.div>
 
@@ -67,7 +67,7 @@ export default function BSIShowcase() {
               }}
             >
               <div className="flex items-center justify-between mb-6">
-                <span className="font-mono text-xs text-warm-gray/50 uppercase tracking-wider">System Overview</span>
+                <span className="font-mono text-xs text-warm-gray/80 uppercase tracking-wider">System Overview</span>
                 <PlatformStatus />
               </div>
 
@@ -80,8 +80,8 @@ export default function BSIShowcase() {
                   data is the product.
                 </p>
                 <p>
-                  Fourteen Workers handle every API call, data transformation, and cache layer.
-                  Five databases store historical and live game data. Eighteen storage buckets
+                  Twenty-seven Workers handle every API call, data transformation, and cache layer.
+                  Seven databases store historical and live game data. Eighteen storage buckets
                   hold everything from box scores to editorial assets. One person built all of it
                   &mdash; old-school scouting instinct fused with new-school sabermetrics, running
                   on Cloudflare&rsquo;s edge.
@@ -110,9 +110,9 @@ export default function BSIShowcase() {
 
             {/* Stat cards — right column */}
             <motion.div variants={staggerItem} className="grid grid-cols-2 gap-4 content-start">
-              <StatCard target={14} label="Workers" inView={inView} />
-              <StatCard target={5} label="D1 Databases" inView={inView} />
-              <StatCard target={9} label="KV Namespaces" inView={inView} />
+              <StatCard target={27} label="Workers" inView={inView} />
+              <StatCard target={7} label="D1 Databases" inView={inView} />
+              <StatCard target={15} label="KV Namespaces" inView={inView} />
               <StatCard target={18} label="R2 Buckets" inView={inView} />
             </motion.div>
           </div>
@@ -138,7 +138,7 @@ export default function BSIShowcase() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0 text-center">
               {[
                 { label: 'External APIs', sub: 'Highlightly · SportsDataIO · ESPN' },
-                { label: 'Workers', sub: '14 Hono-powered edge functions' },
+                { label: 'Workers', sub: '27 Hono-powered edge functions' },
                 { label: 'Storage', sub: 'D1 · KV · R2' },
                 { label: 'UI', sub: 'Next.js static export' },
               ].map((node, i) => (
@@ -148,7 +148,7 @@ export default function BSIShowcase() {
                     <p className="font-mono text-[0.6rem] text-warm-gray mt-0.5">{node.sub}</p>
                   </div>
                   {i < 3 && (
-                    <span className="text-burnt-orange font-mono text-lg hidden sm:block">→</span>
+                    <span aria-hidden="true" className="text-burnt-orange font-mono text-lg hidden sm:block">→</span>
                   )}
                 </div>
               ))}

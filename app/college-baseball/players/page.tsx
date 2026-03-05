@@ -391,7 +391,7 @@ export default function CollegeBaseballPlayersPage() {
                       <div className="p-4 bg-gradient-to-r from-burnt-orange/20 to-transparent border-b border-border-subtle">
                         <div className="flex items-center gap-3">
                           {player.headshot && (
-                            <img src={player.headshot} alt="" className="w-10 h-10 rounded-full object-cover bg-background-secondary" loading="lazy" />
+                            <img src={player.headshot} alt="" className="w-10 h-10 rounded-full object-cover bg-background-secondary" loading="lazy" decoding="async" />
                           )}
                           <div className="min-w-0">
                             <h3 className="font-display text-xl font-bold text-text-primary">

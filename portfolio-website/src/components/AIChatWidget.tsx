@@ -1,16 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
+  id: number;
   role: 'user' | 'assistant';
   text: string;
 }
+
+let msgId = 0;
 
 // Fallback keyword responses when API is unavailable
 const FALLBACK_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ['bsi', 'blaze', 'sports intel', 'platform'],
-    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 14 Cloudflare Workers with 5 D1 databases — all maintained by Austin.',
+    response: 'Blaze Sports Intel is a production-grade sports analytics platform covering MLB, NFL, NBA, NCAA football, and college baseball. Built on 27 Cloudflare Workers with 7 D1 databases — all maintained by Austin.',
   },
   {
     keywords: ['contact', 'email', 'hire', 'reach'],
@@ -35,21 +38,36 @@ function getFallbackResponse(input: string): string {
 export default function AIChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
+    { id: ++msgId, role: 'assistant', text: 'Hey — ask me anything about Austin or Blaze Sports Intel.' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  const send = async () => {
+  // Focus input when panel opens + Escape to close
+  useEffect(() => {
+    if (!open) return;
+    requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+    });
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [open]);
+
+  const send = useCallback(async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
 
-    const userMsg: Message = { role: 'user', text: trimmed };
+    const userMsg: Message = { id: ++msgId, role: 'user', text: trimmed };
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
@@ -70,15 +88,15 @@ export default function AIChatWidget() {
       if (!res.ok) throw new Error('API error');
 
       const data = await res.json() as { text: string };
-      setMessages((prev) => [...prev, { role: 'assistant', text: data.text }]);
+      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: data.text }]);
     } catch {
       // Fall back to local keyword matching
       const fallback = getFallbackResponse(trimmed);
-      setMessages((prev) => [...prev, { role: 'assistant', text: fallback }]);
+      setMessages((prev) => [...prev, { id: ++msgId, role: 'assistant', text: fallback }]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, loading, messages]);
 
   return (
     <>
@@ -105,6 +123,10 @@ export default function AIChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Chat with Austin's AI assistant"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -116,16 +138,16 @@ export default function AIChatWidget() {
               <p className="font-sans text-xs uppercase tracking-[0.2em] text-burnt-orange font-medium">
                 Ask About Austin
               </p>
-              <span className="font-mono text-[0.5rem] text-warm-gray/40 uppercase tracking-wider">
+              <span className="font-mono text-[0.5rem] text-warm-gray/70 uppercase tracking-wider">
                 AI-Powered
               </span>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
-              {messages.map((msg, i) => (
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0" aria-live="polite" aria-atomic="false">
+              {messages.map((msg) => (
                 <div
-                  key={i}
+                  key={msg.id}
                   className={`text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'text-bone ml-8 text-right'
@@ -163,8 +185,9 @@ export default function AIChatWidget() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && send()}
                   placeholder="Ask a question..."
+                  aria-label="Ask a question about Austin"
                   disabled={loading}
-                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/50 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
+                  className="flex-1 bg-midnight border border-bone/10 rounded px-3 py-2 text-sm text-bone placeholder-warm-gray/70 focus:outline-none focus:border-burnt-orange/50 disabled:opacity-50"
                 />
                 <button
                   onClick={send}

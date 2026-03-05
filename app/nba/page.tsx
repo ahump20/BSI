@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
@@ -17,19 +17,13 @@ import { SportHero } from '@/components/sports/SportHero';
 import { GameScoreCard } from '@/components/sports/GameScoreCard';
 import { SportInfoCard } from '@/components/sports/SportInfoCard';
 import { formatTimestamp } from '@/lib/utils/timezone';
-
-interface Team {
-  teamName: string;
-  wins: number;
-  losses: number;
-  winPercentage: number;
-  conference: string;
-  division?: string;
-  gamesBack?: number;
-  streak?: string;
-  ppg?: number;
-  oppg?: number;
-}
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import {
+  type NBAApiConference,
+  type NBAStandingsTeam,
+  flattenNBAStandings,
+  splitNBAByConference,
+} from '@/lib/utils/standings';
 
 interface Game {
   id: string | number;
@@ -60,7 +54,7 @@ const COURT_VISION_BULLETS = [
 
 export default function NBAPage() {
   const [activeTab, setActiveTab] = useState<TabType>('standings');
-  const [standings, setStandings] = useState<Team[]>([]);
+  const [standings, setStandings] = useState<NBAStandingsTeam[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,8 +67,8 @@ export default function NBAPage() {
     try {
       const res = await fetch('/api/nba/standings');
       if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = await res.json() as { standings?: Team[]; teams?: Team[]; meta?: { lastUpdated?: string } };
-      setStandings((data.standings || data.teams || []) as Team[]);
+      const data = await res.json() as { standings?: NBAApiConference[]; meta?: { lastUpdated?: string } };
+      setStandings(flattenNBAStandings(data.standings || []));
       setLastUpdated(data.meta?.lastUpdated || new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -135,8 +129,7 @@ export default function NBAPage() {
     }
   }, [activeTab, hasLiveGames, fetchScores]);
 
-  const eastern = standings.filter((t) => t.conference === 'Eastern' || t.conference === 'East');
-  const western = standings.filter((t) => t.conference === 'Western' || t.conference === 'West');
+  const { eastern, western } = useMemo(() => splitNBAByConference(standings), [standings]);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'standings', label: 'Standings' },
@@ -169,6 +162,7 @@ export default function NBAPage() {
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+              <DataErrorBoundary name="NBA Standings">
               {loading ? (
                 <div className="space-y-6">
                   {[1, 2].map((i) => (
@@ -231,10 +225,12 @@ export default function NBAPage() {
                     </ScrollReveal>
                   ))
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Scores Tab */}
             <TabPanel id="scores" activeTab={activeTab}>
+              <DataErrorBoundary name="NBA Scores">
               {loading ? (
                 <div className="space-y-4">{[1, 2, 3, 4].map((i) => <SkeletonScoreCard key={i} />)}</div>
               ) : error ? (
@@ -271,6 +267,7 @@ export default function NBAPage() {
                   </Card>
                 </ScrollReveal>
               )}
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Teams Tab */}

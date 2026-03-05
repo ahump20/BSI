@@ -52,7 +52,7 @@ export function LiveBadge({ className = '' }: { className?: string }) {
   );
 }
 
-export type GameStatus = 'scheduled' | 'live' | 'final' | 'postponed' | 'cancelled';
+export type GameStatus = 'scheduled' | 'live' | 'final' | 'postponed' | 'cancelled' | 'canceled' | 'delayed';
 
 const statusConfig: Record<GameStatus, { label: string; variant: BadgeProps['variant'] }> = {
   scheduled: { label: 'Scheduled', variant: 'secondary' },
@@ -60,6 +60,8 @@ const statusConfig: Record<GameStatus, { label: string; variant: BadgeProps['var
   final: { label: 'Final', variant: 'default' },
   postponed: { label: 'PPD', variant: 'warning' },
   cancelled: { label: 'Cancelled', variant: 'error' },
+  canceled: { label: 'Cancelled', variant: 'error' },
+  delayed: { label: 'Delayed', variant: 'warning' },
 };
 
 export function GameStatusBadge({ status, className = '' }: { status: GameStatus; className?: string }) {
@@ -79,12 +81,12 @@ interface DataSourceBadgeProps {
 
 export function DataSourceBadge({ source, timestamp, className = '' }: DataSourceBadgeProps) {
   return (
-    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`}>
+    <div className={`flex items-center gap-2 text-xs text-text-muted ${className}`} suppressHydrationWarning>
       <span className="font-medium">{source}</span>
       {timestamp && (
         <>
           <span>|</span>
-          <span>{timestamp}</span>
+          <span suppressHydrationWarning>{timestamp}</span>
         </>
       )}
     </div>

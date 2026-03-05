@@ -9,7 +9,9 @@ import { Badge, DataSourceBadge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { SkeletonScoreCard } from '@/components/ui/Skeleton';
-import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { formatTimestamp, formatScheduleDate, getDateOffset, formatGameTime } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 /* ------------------------------------------------------------------ */
 /*  BSI Scoreboard Types (matches Worker /api/nfl/scores response)    */
@@ -51,13 +53,6 @@ interface NFLGame {
   odds: { details: string; overUnder?: number }[] | undefined;
 }
 
-interface DataMeta {
-  source: string;
-  fetched_at: string;
-  timezone?: string;
-  [key: string]: unknown;
-}
-
 interface ScoreboardResponse {
   games: NFLGame[];
   timestamp: string;
@@ -69,31 +64,8 @@ interface ScoreboardResponse {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    timeZone: 'America/Chicago',
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+const formatDate = formatScheduleDate;
 
-function formatGameTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  return date.toLocaleTimeString('en-US', {
-    timeZone: 'America/Chicago',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
-
-function getDateOffset(offset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + offset);
-  return date.toISOString().split('T')[0];
-}
 
 /* ------------------------------------------------------------------ */
 /*  Football Icon SVG                                                  */
@@ -235,7 +207,7 @@ export default function NFLGamesPage() {
               game.status.type.detail || 'Final'
             ) : isScheduled && game.date ? (
               <span className="flex items-center gap-1.5">
-                {formatGameTime(game.date)} CT
+                {formatGameTime(game.date)}
                 {broadcast && (
                   <span className="text-text-tertiary ml-1">- {broadcast}</span>
                 )}
@@ -419,6 +391,7 @@ export default function NFLGamesPage() {
         {/* Date Navigation + Games */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="NFL Games">
             {/* Date Selector */}
             <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
               <button
@@ -562,6 +535,7 @@ export default function NFLGamesPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
       </div>

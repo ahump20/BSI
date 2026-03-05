@@ -225,7 +225,7 @@ export class FootballPhysicsV2 {
     this.lastThrowParams = params;
 
     // Lead the receiver if moving
-    let actualTarget = params.target.clone();
+    const actualTarget = params.target.clone();
     if (params.receiverVelocity && params.leadAmount > 0) {
       const leadTime = params.leadAmount * 0.6; // seconds of lead
       actualTarget.addInPlace(params.receiverVelocity.scale(leadTime));

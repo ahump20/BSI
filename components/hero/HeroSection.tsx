@@ -41,7 +41,7 @@ export function HeroSection() {
           Born to Blaze
           <br />
           <span className="bg-gradient-to-r from-burnt-orange to-[#FDB913] bg-clip-text text-transparent">
-            the Path Less Beaten
+            the Path Beaten Less
           </span>
         </h1>
 

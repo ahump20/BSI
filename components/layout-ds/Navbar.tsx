@@ -56,12 +56,17 @@ function useNewsTicker(): string {
     return () => controller.abort();
   }, []);
 
+  const itemsLengthRef = useRef(items.length);
+  useEffect(() => { itemsLengthRef.current = items.length; }, [items.length]);
+
+  const hasMultiple = items.length > 1;
   useEffect(() => {
+    if (!hasMultiple) return;
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % items.length);
+      setIndex((prev) => (prev + 1) % itemsLengthRef.current);
     }, 6000);
     return () => clearInterval(timer);
-  }, [items.length]);
+  }, [hasMultiple]);
 
   return items[index] ?? '';
 }
@@ -105,6 +110,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
         }`}
         aria-expanded={open}
         aria-haspopup="true"
+        aria-controls="leagues-menu"
       >
         Leagues
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -112,6 +118,7 @@ function LeaguesDropdown({ items }: { items: LeagueNavItem[] }) {
 
       {open && (
         <div
+          id="leagues-menu"
           className="absolute top-full left-0 mt-2 w-56 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50"
           role="menu"
         >
@@ -179,13 +186,14 @@ function MoreDropdown({ items }: { items: NavItem[] }) {
         className="flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium text-text-muted hover:text-text-primary hover:bg-surface-light transition-all"
         aria-expanded={open}
         aria-haspopup="true"
+        aria-controls="more-menu"
       >
         More
         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50" role="menu">
+        <div id="more-menu" className="absolute top-full right-0 mt-2 w-48 bg-midnight/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl py-1 z-50" role="menu">
           {items.map((item) => (
             <Link
               key={item.href}

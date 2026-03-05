@@ -9,7 +9,8 @@
  *   GET /api/savant/conference-strength   — Conference rankings
  *
  * Query params for leaderboards:
- *   ?metric=woba&conference=SEC&position=OF&limit=50&sort=desc
+ *   ?metric=woba&conference=SEC&position=OF&limit=50&sort=desc&min_pa=25
+ *   Pitching uses min_ip instead of min_pa.
  *
  * Tier gating: Free tier sees basic metrics (K%, BB%, ISO, BABIP, K/9, BB/9).
  * Pro tier sees full metrics (wOBA, wRC+, OPS+, FIP, ERA-, eBA, eSLG, ewOBA).
@@ -78,6 +79,7 @@ function stripProFields(row: Record<string, unknown>): Record<string, unknown> {
  *   position   — filter by position
  *   limit      — default 25, max 100
  *   sort       — asc or desc (default: desc)
+ *   min_pa     — minimum plate appearances (default: 25)
  *   tier       — 'pro' for full metrics, omit for free tier
  */
 export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers?: Headers): Promise<Response> {
@@ -86,6 +88,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   const position = url.searchParams.get('position') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'asc' ? 'ASC' : 'DESC';
+  const minPA = Math.max(0, parseInt(url.searchParams.get('min_pa') || '25', 10) || 25);
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   // Validate metric column to prevent SQL injection
@@ -95,11 +98,11 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
   ];
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'woba';
 
-  const cacheKey = `savant:bat:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cacheKey = `savant:bat:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minPA}:${tier}`;
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -113,9 +116,9 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
              avg, obp, slg, ops, k_pct, bb_pct, iso, babip,
              woba, wrc_plus, ops_plus, e_ba, e_slg, e_woba
       FROM cbb_batting_advanced
-      WHERE season = ?
+      WHERE season = ? AND pa >= ?
     `;
-    const binds: (string | number)[] = [SEASON];
+    const binds: (string | number)[] = [SEASON, minPA];
 
     if (conference) {
       query += ' AND conference = ?';
@@ -137,7 +140,7 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
       output = output.slice(0, 10).map(stripProFields);
     }
 
-    await kvPut(env.KV, cacheKey, output, 300);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);
     return cachedJson(
       {
         data: output,
@@ -161,6 +164,8 @@ export async function handleSavantBattingLeaderboard(url: URL, env: Env, headers
 
 /**
  * GET /api/savant/pitching/leaderboard
+ *
+ * Query params: same as batting, plus min_ip (default: 10) instead of min_pa.
  */
 export async function handleSavantPitchingLeaderboard(url: URL, env: Env, headers?: Headers): Promise<Response> {
   const metric = url.searchParams.get('metric') || 'fip';
@@ -168,6 +173,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   const position = url.searchParams.get('position') || '';
   const limit = Math.min(parseInt(url.searchParams.get('limit') || '25', 10) || 25, 100);
   const sortDir = url.searchParams.get('sort') === 'desc' ? 'DESC' : 'ASC';
+  const minIP = Math.max(0, parseFloat(url.searchParams.get('min_ip') || '10') || 10);
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const allowedMetrics = [
@@ -176,11 +182,11 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
   ];
   const safeMetric = allowedMetrics.includes(metric) ? metric : 'fip';
 
-  const cacheKey = `savant:pitch:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cacheKey = `savant:pitch:lb:${safeMetric}:${conference || 'all'}:${position || 'all'}:${limit}:${sortDir}:${minIP}:${tier}`;
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -193,9 +199,9 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
              g, gs, w, l, sv, ip, h, er, bb, hbp, so, era, whip,
              k_9, bb_9, hr_9, fip, x_fip, era_minus, k_bb, lob_pct, babip
       FROM cbb_pitching_advanced
-      WHERE season = ?
+      WHERE season = ? AND ip >= ?
     `;
-    const binds: (string | number)[] = [SEASON];
+    const binds: (string | number)[] = [SEASON, minIP];
 
     if (conference) {
       query += ' AND conference = ?';
@@ -216,7 +222,7 @@ export async function handleSavantPitchingLeaderboard(url: URL, env: Env, header
       output = output.slice(0, 10).map(stripProFields);
     }
 
-    await kvPut(env.KV, cacheKey, output, 300);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 300);
     return cachedJson(
       {
         data: output,
@@ -307,10 +313,10 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:parks:${conference || 'all'}:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -339,7 +345,7 @@ export async function handleSavantParkFactors(url: URL, env: Env, headers?: Head
     // Free tier: top 5 only
     const output = tier !== 'pro' ? results.slice(0, 5) : results;
 
-    await kvPut(env.KV, cacheKey, output, 600);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(
       {
         data: output,
@@ -368,10 +374,10 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
   const tier = await resolveTier(url, headers ?? new Headers(), env);
 
   const cacheKey = `savant:conf:${tier}`;
-  const cached = await kvGet<unknown>(env.KV, cacheKey);
+  const cached = await kvGet<{ data: unknown; total: number }>(env.KV, cacheKey);
   if (cached) {
     return cachedJson(
-      { data: cached, meta: savantMeta('bsi-savant', true) },
+      { data: cached.data, total: cached.total, tier, meta: savantMeta('bsi-savant', true) },
       200,
       HTTP_CACHE.standings,
       { 'X-Cache': 'HIT' },
@@ -390,7 +396,7 @@ export async function handleSavantConferenceStrength(url: URL, env: Env, headers
     // Free tier: top 5 only
     const output = tier !== 'pro' ? results.slice(0, 5) : results;
 
-    await kvPut(env.KV, cacheKey, output, 600);
+    await kvPut(env.KV, cacheKey, { data: output, total: results.length }, 600);
     return cachedJson(
       {
         data: output,

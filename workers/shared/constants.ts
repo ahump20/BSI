@@ -5,6 +5,7 @@ export const PROD_ORIGINS = new Set([
   'https://austinhumphrey.com',
   'https://www.austinhumphrey.com',
   'https://blazecraft.app',
+  'https://arcade.blazesportsintel.com',
 ]);
 
 export const DEV_ORIGINS = new Set([
@@ -13,7 +14,7 @@ export const DEV_ORIGINS = new Set([
   'http://localhost:5173',
 ]);
 
-export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev', 'austinhumphrey.com'];
+export const ALLOWED_PAGES_DOMAINS = ['blazesportsintel.pages.dev', 'blazecraft.pages.dev', 'bsi-arcade.pages.dev', 'austinhumphrey.com'];
 
 export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
@@ -27,8 +28,9 @@ export const SECURITY_HEADERS: Record<string, string> = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
+    "media-src 'self' blob: https://*.cloudflarestream.com https://*.videodelivery.net",
     "connect-src 'self' https://*.posthog.com https://us.i.posthog.com https://api.stripe.com wss://live.blazesportsintel.com",
-    "frame-src 'self' https://*.cloudflarestream.com https://js.stripe.com https://challenges.cloudflare.com",
+    "frame-src 'self' https://*.cloudflarestream.com https://*.videodelivery.net https://js.stripe.com https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -96,8 +98,10 @@ export const GHOST_REDIRECTS: Record<string, string> = {
   '/scores/daily': '/scores',
   '/baseball/rankings': '/college-baseball/rankings',
   '/baseball/rankings/': '/college-baseball/rankings',
-  '/vision-ai': '/vision-AI-Intelligence',
-  '/vision-ai/': '/vision-AI-Intelligence',
+  '/vision-ai': '/vision-ai-intelligence',
+  '/vision-ai/': '/vision-ai-intelligence',
+  '/vision-AI-Intelligence': '/vision-ai-intelligence',
+  '/vision-AI-Intelligence/': '/vision-ai-intelligence',
   // Legacy .html variants
   '/pricing.html': '/pricing',
   '/analytics.html': '/analytics',

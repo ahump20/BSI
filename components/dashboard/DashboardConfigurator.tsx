@@ -196,6 +196,7 @@ export function DashboardConfigurator({ prefs, onChange, onClose }: DashboardCon
               setTimeout(() => setShowDropdown(false), 200);
             }}
             placeholder="Search teams to add..."
+            aria-label="Search teams to add to dashboard"
             className="w-full px-3 py-2 bg-charcoal border border-border rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 transition-colors"
           />
 

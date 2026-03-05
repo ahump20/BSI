@@ -20,6 +20,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useUserSettings } from '@/lib/hooks';
 import { getTeamBySlug } from '@/lib/utils/mlb-teams';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Player {
   id: string;
@@ -45,12 +46,6 @@ interface TeamData {
   venue?: {
     name: string;
   };
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 interface QuickStats {
@@ -118,8 +113,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     setLoading(true);
     setError(null);
     try {
-      // Use the slug - API now accepts both numeric IDs and slugs
-      const res = await fetch(`/api/mlb/teams/${teamId}`);
+      // API expects abbreviation-based slug (e.g. "nyy"), not name slug (e.g. "yankees")
+      const apiSlug = teamInfo ? teamInfo.abbreviation.toLowerCase() : teamId;
+      const res = await fetch(`/api/mlb/teams/${apiSlug}`);
       if (!res.ok) {
         const errorData: APIResponse = await res.json().catch(() => ({}));
         throw new Error(errorData.message || 'Failed to fetch team data');
@@ -145,7 +141,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     } finally {
       setLoading(false);
     }
-  }, [teamId]);
+  }, [teamId, teamInfo]);
 
   useEffect(() => {
     fetchTeam();

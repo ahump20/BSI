@@ -24,7 +24,7 @@ export default function Philosophy() {
           </motion.div>
 
           {/* Geometric accent lines */}
-          <motion.div variants={staggerItem} className="flex items-center justify-center gap-4 mb-8">
+          <motion.div aria-hidden="true" variants={staggerItem} className="flex items-center justify-center gap-4 mb-8">
             <div className="h-px w-16 bg-gradient-to-r from-transparent to-burnt-orange/40" />
             <div className="w-2 h-2 rotate-45 border border-burnt-orange/40" />
             <div className="h-px w-16 bg-gradient-to-l from-transparent to-burnt-orange/40" />

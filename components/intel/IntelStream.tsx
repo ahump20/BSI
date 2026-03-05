@@ -1,12 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { streamAnalysis } from '@/lib/bsi-stream-client';
+import { streamAnalysis, type Sport, type AnalysisType } from '@/lib/bsi-stream-client';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-type Sport = 'college-baseball' | 'mlb' | 'ncaa-football' | 'nfl';
-type AnalysisType = 'live' | 'postgame' | 'pregame' | 'stat';
 
 interface GameContext {
   sport: Sport;
@@ -84,13 +81,12 @@ export function IntelStream({
     });
   }, [context, analysisType, status]);
 
-  // Auto-fire if question pre-populated
+  // Auto-fire if question pre-populated (capture initial value to avoid re-firing)
+  const initialQuestionRef = useRef(initialQuestion);
   useEffect(() => {
-    if (initialQuestion) fire(initialQuestion);
-    // Cleanup on unmount
+    if (initialQuestionRef.current) fire(initialQuestionRef.current);
     return () => { abortRef.current?.(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fire]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -175,6 +171,7 @@ export function IntelStream({
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask about this game…"
+              aria-label="Ask a question about this game"
               disabled={isStreaming}
               className="flex-1 bg-surface-light border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 disabled:opacity-40 transition-colors"
             />

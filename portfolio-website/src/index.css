@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted fonts — eliminates Google Fonts CDN dependency */
+@font-face {
+  font-family: 'Oswald';
+  src: url('/fonts/oswald.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-400.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-400i.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Libre Baskerville';
+  src: url('/fonts/libre-baskerville.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Libre Baskerville';
+  src: url('/fonts/libre-baskerville-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --color-bg: #0D0D0D;
@@ -13,30 +57,18 @@
     --gradient-mesh-1: rgba(191, 87, 0, 0.04);
     --gradient-mesh-2: rgba(139, 69, 19, 0.03);
     --gradient-mesh-3: rgba(255, 107, 53, 0.02);
-    --scroll-progress: 0;
   }
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply font-serif;
     background-color: var(--color-bg);
     color: var(--color-text);
-  }
-
-  /* Subtle noise overlay — lighter than the old feTurbulence grain */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0.12;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 256px 256px;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -98,6 +130,8 @@
 
   .section-padding {
     @apply py-20 px-6 md:py-28 md:px-12 lg:px-16;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
   }
 
   .container-custom {
@@ -174,13 +208,6 @@
     background: linear-gradient(to right, #BF5700, #FF6B35);
     z-index: 9998;
     transform-origin: left;
-  }
-
-  /* Diagonal section divider */
-  .section-divider-top {
-    clip-path: polygon(0 2rem, 100% 0, 100% 100%, 0 100%);
-    margin-top: -2rem;
-    padding-top: 4rem;
   }
 
   /* Stats marquee */
@@ -267,4 +294,10 @@
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes hero-mesh {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(0.5deg); }
+  100% { transform: scale(1) rotate(-0.5deg); }
 }

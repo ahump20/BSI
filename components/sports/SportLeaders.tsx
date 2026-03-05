@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Sport } from './SportTabs';
 
@@ -90,7 +90,7 @@ interface SportLeadersProps {
 export function SportLeaders({ sport, className = '' }: SportLeadersProps) {
   const [leaders, setLeaders] = useState<Leader[]>([]);
   const [loading, setLoading] = useState(true);
-  const config = useMemo(() => sportConfigs[sport], [sport]);
+  const config = sportConfigs[sport];
 
   useEffect(() => {
     async function fetchLeaders() {

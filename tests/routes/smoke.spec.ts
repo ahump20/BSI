@@ -116,11 +116,6 @@ const ROUTES: { path: string; label: string }[] = [
   // NIL
   { path: '/nil-valuation', label: 'NIL Valuation' },
   { path: '/nil-valuation/methodology', label: 'NIL Methodology' },
-  { path: '/nil-valuation/tools', label: 'NIL Tools' },
-
-  // Fanbase
-  { path: '/fanbase', label: 'Fanbase' },
-  { path: '/fanbase/compare', label: 'Fanbase Compare' },
 
   // Arcade
   { path: '/arcade', label: 'Arcade' },

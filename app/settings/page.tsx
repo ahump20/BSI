@@ -67,7 +67,7 @@ export default function SettingsPage() {
         {/* Team Preferences */}
         <section>
           <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <span className="text-2xl">🏟️</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6 text-text-secondary"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 9h.01M15 9h.01M9 13h.01M15 13h.01"/></svg>
             Favorite Teams
           </h2>
           <TeamPreferenceSelector />

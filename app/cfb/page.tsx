@@ -13,6 +13,8 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { TabBar } from '@/components/ui/TabBar';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { SportHero } from '@/components/sports/SportHero';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface RankedTeam {
   rank: number;
@@ -128,65 +130,28 @@ export default function CFBPage() {
   return (
     <>
       <div>
-        {/* Hero */}
-        <Section padding="lg" className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/20 via-transparent to-transparent pointer-events-none" />
-          <Container center>
-            <ScrollReveal direction="up">
-              <Badge variant="success" className="mb-4">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2" />
-                NCAA Division I FBS
-              </Badge>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={100}>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-center uppercase tracking-wide mb-4">
-                College <span className="text-gradient-blaze">Football</span>
-              </h1>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={150}>
-              <p className="text-burnt-orange font-semibold text-lg tracking-wide text-center mb-4">
-                Longhorns. SEC. Big Ten. Every conference, every rivalry, covered right.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={200}>
-              <p className="text-text-secondary text-center max-w-2xl mx-auto mb-8">
-                Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs.
-              </p>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={250}>
-              <div className="flex flex-wrap gap-4 justify-center">
-                <Link href="/dashboard"><Button variant="primary" size="lg">View Dashboard</Button></Link>
-                <Link href="/cfb/transfer-portal"><Button variant="secondary" size="lg">Transfer Portal</Button></Link>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal direction="up" delay={300}>
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-surface-light border border-border rounded-2xl">
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">134</div>
-                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">FBS Teams</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">10</div>
-                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Conferences</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">12</div>
-                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Playoff Teams</div>
-                </div>
-                <div className="text-center p-4">
-                  <div className="font-display text-3xl font-bold text-burnt-orange">SP+</div>
-                  <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Advanced Data</div>
-                </div>
-              </div>
-            </ScrollReveal>
-          </Container>
-        </Section>
+        <SportHero
+          sport="College Football"
+          leagueName="NCAA Division I FBS"
+          tagline="Longhorns. SEC. Big Ten. Every conference, every rivalry, covered right."
+          description="Conference standings, AP Top 25 rankings, transfer portal tracking, and advanced analytics for all 134 FBS programs."
+          dataSource="ESPN"
+          primaryCta={{ label: 'View Dashboard', href: '/dashboard' }}
+          secondaryCta={{ label: 'Transfer Portal', href: '/cfb/transfer-portal' }}
+          stats={[
+            { value: '134', label: 'FBS Teams' },
+            { value: '10', label: 'Conferences' },
+            { value: '12', label: 'Playoff Teams' },
+            { value: 'SP+', label: 'Advanced Data' },
+          ]}
+        />
 
         {/* Tabs and Content */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
 
+            <DataErrorBoundary>
             {/* Rankings Tab */}
             {activeTab === 'rankings' && (
               <>
@@ -325,6 +290,7 @@ export default function CFBPage() {
                 </CardContent>
               </Card>
             )}
+            </DataErrorBoundary>
 
           </Container>
         </Section>

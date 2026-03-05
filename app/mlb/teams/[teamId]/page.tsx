@@ -1,45 +1,13 @@
 import TeamDetailClient from './TeamDetailClient';
+import { MLB_TEAMS } from '@/lib/utils/mlb-teams';
+
 // Force static generation with dynamic params disabled
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
-// Generate static params for static export
+// Generate static params from canonical MLB_TEAMS slugs
 export async function generateStaticParams() {
-  // Pre-generate all 30 MLB team pages
-  const teams = [
-    'bal',
-    'bos',
-    'nyy',
-    'tb',
-    'tor', // AL East
-    'cws',
-    'cle',
-    'det',
-    'kc',
-    'min', // AL Central
-    'hou',
-    'laa',
-    'oak',
-    'sea',
-    'tex', // AL West
-    'atl',
-    'mia',
-    'nym',
-    'phi',
-    'wsh', // NL East
-    'chc',
-    'cin',
-    'mil',
-    'pit',
-    'stl', // NL Central
-    'ari',
-    'col',
-    'lad',
-    'sd',
-    'sf', // NL West
-  ];
-
-  return teams.map((teamId) => ({ teamId }));
+  return MLB_TEAMS.map((team) => ({ teamId: team.slug }));
 }
 
 interface PageProps {

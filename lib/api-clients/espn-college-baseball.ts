@@ -17,6 +17,122 @@
 import { espnFetch } from './espn-api';
 
 // ---------------------------------------------------------------------------
+// ESPN Raw Response Shapes (loosely typed to handle API inconsistency)
+// ---------------------------------------------------------------------------
+
+/** ESPN athlete reference in a box score or stat line */
+interface EspnRawAthlete {
+  id?: string;
+  displayName?: string;
+  position?: { abbreviation?: string };
+  headshot?: { href?: string };
+}
+
+/** ESPN stat group in a box score team entry */
+interface EspnRawStatGroup {
+  labels?: string[];
+  athletes?: { athlete?: EspnRawAthlete; stats?: string[] }[];
+}
+
+/** ESPN box score team entry (boxscore.players[]) */
+interface EspnRawBoxScoreTeam {
+  team?: { id?: string | number; displayName?: string; shortDisplayName?: string };
+  statistics?: EspnRawStatGroup[];
+}
+
+/** ESPN competitor in game header */
+interface EspnRawCompetitor {
+  homeAway?: string;
+  score?: string | number;
+  team?: {
+    id?: string | number;
+    displayName?: string;
+    name?: string;
+    abbreviation?: string;
+    logo?: string;
+    logos?: { href: string }[];
+    color?: string;
+  };
+}
+
+/** ESPN linescore inning entry */
+interface EspnRawLinescoreItem {
+  linescores?: { value?: number }[];
+}
+
+/** ESPN game summary raw response */
+interface EspnRawGameSummary {
+  header?: {
+    id?: string;
+    competitions?: {
+      competitors?: EspnRawCompetitor[];
+      status?: { type?: { state?: string; completed?: boolean; shortDetail?: string; detail?: string } };
+      venue?: { fullName?: string; displayName?: string; address?: { city?: string; state?: string } };
+      linescoreAvailable?: boolean;
+    }[];
+  };
+  gameId?: string;
+  boxscore?: { players?: EspnRawBoxScoreTeam[] };
+  linescores?: EspnRawLinescoreItem[];
+  gameInfo?: { venue?: { fullName?: string; displayName?: string; address?: { city?: string; state?: string } } };
+  leaders?: { displayName?: string; leaders?: { athlete?: { id?: string | number; displayName?: string } }[] }[];
+  plays?: unknown[];
+  winprobability?: unknown[];
+}
+
+/** ESPN rankings raw response */
+interface EspnRawRankingsResponse {
+  rankings?: {
+    name?: string;
+    shortName?: string;
+    date?: string;
+    ranks?: {
+      current?: number;
+      rank?: number;
+      previous?: number | null;
+      previousRank?: number | null;
+      points?: number | null;
+      firstPlaceVotes?: number | null;
+      recordSummary?: string;
+      team?: {
+        id?: string | number;
+        nickname?: string;
+        displayName?: string;
+        name?: string;
+        abbreviation?: string;
+        logos?: { href: string }[];
+      };
+    }[];
+  }[];
+}
+
+/** ESPN athlete stats raw response */
+interface EspnRawAthleteResponse {
+  athlete?: {
+    statistics?: EspnRawStatCategory[];
+    statsSummary?: { statistics?: EspnRawStatCategory[] };
+  };
+  statistics?: EspnRawStatCategory[];
+  statsSummary?: { statistics?: EspnRawStatCategory[] };
+}
+
+/** ESPN stat category (batting/pitching) */
+interface EspnRawStatCategory {
+  name?: string;
+  displayName?: string;
+  stats?: EspnRawStatEntry[];
+  splits?: { categories?: { stats?: EspnRawStatEntry[] }[] };
+}
+
+/** Individual stat entry */
+interface EspnRawStatEntry {
+  name?: string;
+  abbreviation?: string;
+  value?: number;
+  displayValue?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Interfaces
 // ---------------------------------------------------------------------------
 
@@ -330,8 +446,7 @@ export function parseEspnPitchingLine(
  * Returns flat arrays of parsed batting/pitching lines plus team totals.
  */
 export function parseBoxScoreTeam(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  teamBox: any,
+  teamBox: EspnRawBoxScoreTeam,
 ): { team: { id: string; name: string }; batting: CollegeBaseballBattingLine[]; pitching: CollegeBaseballPitchingLine[]; runsFromBatting: number } {
   const teamName = teamBox.team?.displayName || teamBox.team?.shortDisplayName || '';
   const teamId = String(teamBox.team?.id || '');
@@ -344,8 +459,7 @@ export function parseBoxScoreTeam(
     const isBatting = labels.includes('AB') || labels.includes('H-AB');
     const isPitching = labels.includes('IP') || labels.includes('ERA');
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const athleteEntry of (statGroup.athletes || []) as any[]) {
+    for (const athleteEntry of (statGroup.athletes || [])) {
       const athlete = athleteEntry.athlete || {};
       const stats: string[] = athleteEntry.stats || [];
 
@@ -379,29 +493,23 @@ export function parseBoxScoreTeam(
  * home/away assignment.
  */
 export function transformCollegeBaseballBoxScore(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  boxscorePlayers: any[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  competitors: any[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  linescoreRaw?: any[],
+  boxscorePlayers: EspnRawBoxScoreTeam[],
+  competitors: EspnRawCompetitor[],
+  linescoreRaw?: EspnRawLinescoreItem[],
 ): CollegeBaseballBoxScore {
   // Build home/away team ID map from competitors
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const homeComp = competitors.find((c: any) => c.homeAway === 'home') || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const awayComp = competitors.find((c: any) => c.homeAway === 'away') || {};
+  const homeComp = competitors.find((c) => c.homeAway === 'home') || {};
+  const awayComp = competitors.find((c) => c.homeAway === 'away') || {};
   const homeTeamId = String(homeComp.team?.id ?? '');
   const awayTeamId = String(awayComp.team?.id ?? '');
 
-  const makeTeamInfo = (comp: Record<string, unknown>) => {
-    const t = (comp.team || {}) as Record<string, unknown>;
-    const logos = t.logos as Array<{ href: string }> | undefined;
+  const makeTeamInfo = (comp: EspnRawCompetitor) => {
+    const t = comp.team || {};
     return {
       id: String(t.id ?? ''),
-      name: (t.displayName || t.name || '') as string,
-      abbreviation: (t.abbreviation || '') as string,
-      logo: (t.logo || logos?.[0]?.href || '') as string,
+      name: t.displayName || t.name || '',
+      abbreviation: t.abbreviation || '',
+      logo: t.logo || t.logos?.[0]?.href || '',
     };
   };
 
@@ -470,8 +578,7 @@ export function transformCollegeBaseballBoxScore(
  * competitors, decisions, linescore, plays, and win probability.
  */
 export function transformCollegeBaseballGameSummary(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  raw: any,
+  raw: EspnRawGameSummary,
 ): CollegeBaseballGameSummary {
   const header = raw?.header || {};
   const competitions = header?.competitions || [];
@@ -479,24 +586,21 @@ export function transformCollegeBaseballGameSummary(
   const competitors = competition.competitors || [];
   const statusType = competition.status?.type || {};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const homeComp = competitors.find((c: any) => c.homeAway === 'home') || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const awayComp = competitors.find((c: any) => c.homeAway === 'away') || {};
+  const homeComp = competitors.find((c) => c.homeAway === 'home') || {};
+  const awayComp = competitors.find((c) => c.homeAway === 'away') || {};
 
   const homeScore = Number(homeComp.score ?? 0);
   const awayScore = Number(awayComp.score ?? 0);
   const isFinal = statusType.completed === true || statusType.state === 'post';
   const isLive = statusType.state === 'in';
 
-  const makeTeamSummary = (comp: Record<string, unknown>, score: number, isWinner: boolean) => {
-    const t = (comp.team || {}) as Record<string, unknown>;
-    const logos = t.logos as Array<{ href: string }> | undefined;
+  const makeTeamSummary = (comp: EspnRawCompetitor, score: number, isWinner: boolean) => {
+    const t = comp.team || {};
     return {
       id: String(t.id ?? ''),
-      name: (t.displayName || t.name || '') as string,
-      abbreviation: (t.abbreviation || '') as string,
-      logo: (t.logo || logos?.[0]?.href || '') as string,
+      name: t.displayName || t.name || '',
+      abbreviation: t.abbreviation || '',
+      logo: t.logo || t.logos?.[0]?.href || '',
       score,
       isWinner,
     };
@@ -528,8 +632,7 @@ export function transformCollegeBaseballGameSummary(
   // Decisions (winning/losing pitcher, save)
   const decisionsRaw = raw?.leaders || [];
   const decisions: CollegeBaseballGameSummary['decisions'] = { winner: null, loser: null, save: null };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const leader of decisionsRaw as any[]) {
+  for (const leader of decisionsRaw) {
     const type = leader.displayName?.toLowerCase() || '';
     const athlete = leader.leaders?.[0]?.athlete;
     if (!athlete) continue;
@@ -566,14 +669,11 @@ export function transformCollegeBaseballGameSummary(
  * ESPN endpoint: /apis/site/v2/sports/baseball/college-baseball/rankings
  */
 export function transformCollegeBaseballRankings(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  raw: any,
+  raw: EspnRawRankingsResponse,
 ): CollegeBaseballRankingsResponse {
   const rankings = raw?.rankings || [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const polls = rankings.map((poll: any) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const entries = (poll.ranks || []).map((entry: any) => {
+  const polls = rankings.map((poll) => {
+    const entries = (poll.ranks || []).map((entry) => {
       const team = entry.team || {};
       const logos = team.logos || [];
       const prevRank = entry.previous ?? entry.previousRank ?? null;
@@ -620,22 +720,19 @@ export function transformCollegeBaseballRankings(
  * and computes derived metrics (ISO, BABIP, K%, BB%, K/9, BB/9).
  */
 export function transformCollegeBaseballAthlete(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  raw: any,
+  raw: EspnRawAthleteResponse,
 ): CollegeBaseballAthleteStats {
   const athlete = raw?.athlete || raw || {};
-  const categories = athlete.statistics || athlete.statsSummary?.statistics || [];
+  const categories: EspnRawStatCategory[] = athlete.statistics || athlete.statsSummary?.statistics || [];
   const stats: CollegeBaseballAthleteStats = {};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const category of categories as any[]) {
+  for (const category of categories) {
     const catName = (category.name || category.displayName || '').toLowerCase();
-    const statEntries = category.stats || category.splits?.categories?.[0]?.stats || [];
+    const statEntries: EspnRawStatEntry[] = category.stats || category.splits?.categories?.[0]?.stats || [];
 
     // Build name → value map from stat entries
     const statMap: Record<string, number> = {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const s of statEntries as any[]) {
+    for (const s of statEntries) {
       const name = s.name || s.abbreviation || '';
       statMap[name] = Number(s.value ?? s.displayValue ?? 0);
     }
@@ -818,7 +915,7 @@ export function transformCollegeBaseballStandings(
 
 /** Fetch college baseball rankings (Coaches Poll, D1Baseball, etc.) */
 export async function getCollegeBaseballRankings(): Promise<CollegeBaseballRankingsResponse> {
-  const raw = await espnFetch<Record<string, unknown>>(
+  const raw = await espnFetch<EspnRawRankingsResponse>(
     'baseball/college-baseball/rankings',
   );
   return transformCollegeBaseballRankings(raw);

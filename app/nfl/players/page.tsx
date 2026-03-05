@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { SportIcon } from '@/components/icons/SportIcon';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
@@ -400,7 +401,7 @@ export default function NFLPlayersPage() {
             ) : filteredPlayers.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">🏈</div>
+                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                   <p className="text-text-secondary text-lg">
                     {searchQuery || selectedPosition !== 'All' || selectedTeam !== 'All'
                       ? 'No players match your filters'

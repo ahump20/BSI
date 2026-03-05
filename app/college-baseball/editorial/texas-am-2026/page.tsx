@@ -1,5 +1,16 @@
+import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+
+export const metadata: Metadata = {
+  title: 'Texas A&M Aggies 2026 Season Preview | Blaze Sports Intel',
+  description: 'Texas A&M Aggies 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
+  openGraph: {
+    title: 'Texas A&M Aggies — 2026 Season Preview | BSI',
+    description: 'Full scouting report on the Texas A&M Aggies heading into the 2026 college baseball season.',
+    type: 'article',
+  },
+};
 
 const data: TeamPreviewData = {
   teamName: 'Texas A&M',

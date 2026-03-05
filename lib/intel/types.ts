@@ -69,16 +69,6 @@ export interface ModelHealthPoint {
   accuracy: number;
 }
 
-// Maps intel sport keys to API route prefixes
-export const SPORT_API_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
-  mlb: '/api/mlb',
-  nfl: '/api/nfl',
-  nba: '/api/nba',
-  ncaafb: '/api/cfb',
-  cbb: '/api/cbb',
-  'd1bb': '/api/college-baseball',
-};
-
 export const SPORT_LABELS: Record<IntelSport, string> = {
   all: 'ALL',
   nfl: 'NFL',

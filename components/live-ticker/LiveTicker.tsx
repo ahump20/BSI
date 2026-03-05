@@ -229,7 +229,7 @@ export function LiveTicker({
 
   if (compact) {
     return (
-      <div className={`overflow-hidden ${className}`}>
+      <div className={`overflow-hidden ${className}`} aria-live="polite" aria-atomic="true">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentItem.id}
@@ -279,7 +279,7 @@ export function LiveTicker({
       </div>
 
       {/* Ticker Content */}
-      <div className="p-3 min-h-[60px]">
+      <div className="p-3 min-h-[60px]" aria-live="polite" aria-atomic="true">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentItem.id}

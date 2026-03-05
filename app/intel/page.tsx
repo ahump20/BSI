@@ -25,6 +25,7 @@ const NetRatingBar = dynamic(
 );
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
 import { PitcherFatigue } from '@/components/dashboard/intel/PitcherFatigue';
 import { SPORT_ACCENT } from '@/lib/intel/types';
@@ -145,6 +146,7 @@ export default function IntelDashboard() {
   }
   
     return (
+          <DataErrorBoundary name="Intel Dashboard">
           <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
                 <IntelHeader
                           mode={mode}
@@ -237,5 +239,6 @@ export default function IntelDashboard() {
                           onSelectTeam={handleSelectTeamFromPalette}
                         />
           </div>
+          </DataErrorBoundary>
         );
 }

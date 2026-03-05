@@ -8,24 +8,28 @@ const photos = [
     srcSet: '/assets/optimized/running-vs-tivy-640w.webp 640w, /assets/optimized/running-vs-tivy-1024w.webp 1024w',
     alt: 'Chargers #20 — corner route vs Tivy',
     aspect: 'wide' as const,
+    featured: false,
   },
   {
     src: '/assets/chargers-with-dad.jpg',
     srcSet: '/assets/optimized/chargers-with-dad-640w.webp 640w, /assets/optimized/chargers-with-dad-1024w.webp 1024w',
     alt: 'Post-game with Dad — Friday night lights',
     aspect: 'tall' as const,
+    featured: false,
   },
   {
     src: '/assets/last-game-silhouette.jpg',
     srcSet: '/assets/optimized/last-game-silhouette-640w.webp 640w, /assets/optimized/last-game-silhouette-1024w.webp 1024w',
     alt: 'Last game — vs Seguin, 2013',
     aspect: 'wide' as const,
+    featured: true,
   },
   {
     src: '/assets/friendsgiving.jpg',
     srcSet: '/assets/optimized/friendsgiving-640w.webp 640w, /assets/optimized/friendsgiving-1024w.webp 1024w',
     alt: 'Friendsgiving — Austin, TX',
     aspect: 'wide' as const,
+    featured: false,
   },
 ];
 
@@ -35,6 +39,8 @@ export default function AthleticArc() {
 
   return (
     <section
+      id="athletic-arc"
+      aria-label="Athletic arc — Friday Night Lights to the Forty Acres"
       className="relative py-16 overflow-hidden"
       style={{
         background: 'linear-gradient(180deg, #0D0D0D 0%, rgba(26,26,26,0.4) 50%, #0D0D0D 100%)',
@@ -68,7 +74,7 @@ export default function AthleticArc() {
               // Alternate alignment for visual rhythm
               const isWide = photo.aspect === 'wide';
               const colSpan = isWide ? 'md:col-span-7' : 'md:col-span-5';
-              const isLastGame = photo.alt.includes('Last game');
+              const isLastGame = photo.featured;
 
               return (
                 <motion.div
@@ -88,6 +94,7 @@ export default function AthleticArc() {
                       sizes="(max-width: 768px) 85vw, 60vw"
                       alt={photo.alt}
                       loading="lazy"
+                      decoding="async"
                       className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02] ${
                         isLastGame ? 'object-center' : ''
                       }`}
@@ -106,8 +113,8 @@ export default function AthleticArc() {
                       isLastGame
                         ? 'text-burnt-orange text-center'
                         : i % 2 === 0
-                          ? 'text-warm-gray/60 text-left'
-                          : 'text-warm-gray/60 text-right'
+                          ? 'text-warm-gray/80 text-left'
+                          : 'text-warm-gray/80 text-right'
                     }`}
                   >
                     {photo.alt}
@@ -121,7 +128,7 @@ export default function AthleticArc() {
           <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
             <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
               {photos.map((photo) => {
-                const isLastGame = photo.alt.includes('Last game');
+                const isLastGame = photo.featured;
                 return (
                   <div
                     key={photo.alt}
@@ -132,14 +139,17 @@ export default function AthleticArc() {
                     <div className="overflow-hidden rounded-sm max-h-[240px]">
                       <img
                         src={photo.src}
+                        srcSet={photo.srcSet}
+                        sizes="85vw"
                         alt={photo.alt}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <p
                       className={`text-xs font-mono mt-2 ${
-                        isLastGame ? 'text-burnt-orange' : 'text-warm-gray/60'
+                        isLastGame ? 'text-burnt-orange' : 'text-warm-gray/80'
                       }`}
                     >
                       {photo.alt}

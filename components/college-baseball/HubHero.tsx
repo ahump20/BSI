@@ -52,7 +52,7 @@ export function HubHero({
         </ScrollReveal>
         <ScrollReveal direction="up" delay={150}>
           <p className="text-[#C9A227] font-semibold text-lg tracking-wide text-center mb-6">
-            Roster intelligence. Pro projections. The depth ESPN doesn&apos;t build.
+            Park-adjusted advanced metrics. Updated every 6 hours. Free.
           </p>
         </ScrollReveal>
 
@@ -70,6 +70,7 @@ export function HubHero({
                 onFocus={() => onSearchOpen(true)}
                 onBlur={() => setTimeout(() => onSearchOpen(false), 200)}
                 placeholder="Search teams, players, articles..."
+                aria-label="Search teams, players, and articles"
                 className="w-full pl-10 pr-4 py-2.5 bg-surface-light border border-border rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-burnt-orange/50 focus:bg-surface transition-colors"
               />
             </div>
@@ -94,20 +95,20 @@ export function HubHero({
         <ScrollReveal direction="up" delay={250}>
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-surface-light border border-border rounded-2xl">
             <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">300+</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Division I Teams</div>
+              <div className="font-display text-3xl font-bold text-burnt-orange">wOBA</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Weighted On-Base</div>
             </div>
             <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">32</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Conferences</div>
+              <div className="font-display text-3xl font-bold text-burnt-orange">wRC+</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Runs Created</div>
             </div>
             <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">Live</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Real-Time Scores</div>
+              <div className="font-display text-3xl font-bold text-burnt-orange">FIP</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Fielding Indep.</div>
             </div>
             <div className="text-center p-4">
-              <div className="font-display text-3xl font-bold text-burnt-orange">RPI</div>
-              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Advanced Data</div>
+              <div className="font-display text-3xl font-bold text-burnt-orange">PF</div>
+              <div className="text-xs uppercase tracking-wider text-text-muted mt-1">Park Factors</div>
             </div>
           </div>
         </ScrollReveal>

@@ -29,7 +29,7 @@ export const ARCADE_GAMES: ArcadeGame[] = [
     id: 'sandlot-sluggers',
     title: 'Sandlot Sluggers',
     description:
-      'Time your swing to crush pitches. Streak multipliers and home run bonuses.',
+      '3D backyard baseball — Practice, Quick Play, and HR Derby modes with leaderboard.',
     color: 'var(--bsi-primary)',
     icon: '\u26BE',
     url: '/arcade/games/sandlot-sluggers',

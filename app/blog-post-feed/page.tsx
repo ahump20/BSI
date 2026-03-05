@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface BlogPost {
   id: number;
@@ -45,14 +46,8 @@ const CATEGORY_VARIANTS: Record<string, 'primary' | 'success' | 'secondary'> = {
   leadership: 'secondary',
 };
 
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'America/Chicago',
-  });
-}
+const formatDate = (dateString: string): string =>
+  formatDateInTimezone(dateString, undefined, 'full');
 
 function categoryLabel(cat: string): string {
   const found = CATEGORIES.find((c) => c.key === cat);

@@ -37,20 +37,12 @@ const config: Config = {
           900: '#92400E',
           DEFAULT: '#FDB913',
         },
-        // Charcoal/Neutral Scale
+        // Charcoal — BSI brand neutral (not Tailwind's blue-tinted gray)
         charcoal: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
+          DEFAULT: '#1A1A1A',
           800: '#1f2937',
           900: '#111827',
           950: '#0a0a0f',
-          DEFAULT: '#1f2937',
         },
         // Semantic Colors
         'texas-soil': '#8B4513',
@@ -80,12 +72,11 @@ const config: Config = {
           tertiary: '#242424',
           elevated: '#2E2E2E',
         },
-        // Surface/Glass
+        // Surface/Glass — must match globals.css utility overrides
         surface: {
-          DEFAULT: 'rgba(255, 255, 255, 0.08)',
-          light: 'rgba(255, 255, 255, 0.08)',
-          medium: 'rgba(255, 255, 255, 0.12)',
-          heavy: 'rgba(255, 255, 255, 0.16)',
+          DEFAULT: 'rgba(255, 255, 255, 0.04)',
+          light: 'rgba(255, 255, 255, 0.025)',
+          medium: 'rgba(255, 255, 255, 0.04)',
         },
         // Status Colors
         success: {

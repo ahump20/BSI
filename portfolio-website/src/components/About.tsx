@@ -30,6 +30,7 @@ function PhotoCard({ src, srcSet, alt, rotate = '2deg' }: PhotoProps) {
         sizes="(max-width: 640px) 200px, 260px"
         alt={alt}
         loading="lazy"
+        decoding="async"
         className="w-full h-auto block"
       />
       <p className="text-xs text-charcoal/70 text-center mt-1 font-serif italic">{alt}</p>

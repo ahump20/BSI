@@ -1,5 +1,16 @@
+import type { Metadata } from 'next';
 import { SECTeamPreviewTemplate } from '@/components/editorial/SECTeamPreviewTemplate';
 import type { TeamPreviewData } from '@/components/editorial/types';
+
+export const metadata: Metadata = {
+  title: 'LSU Tigers 2026 Season Preview | Blaze Sports Intel',
+  description: 'LSU Tigers 2026 college baseball season preview. Roster breakdown, pitching staff analysis, key players, and predictions for the SEC season.',
+  openGraph: {
+    title: 'LSU Tigers — 2026 Season Preview | BSI',
+    description: 'Full scouting report on the LSU Tigers heading into the 2026 college baseball season.',
+    type: 'article',
+  },
+};
 
 const data: TeamPreviewData = {
   teamName: 'LSU',

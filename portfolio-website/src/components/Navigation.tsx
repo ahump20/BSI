@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring, AnimatePresence } from 'framer-motion';
 import PlatformStatus from './PlatformStatus';
 
@@ -15,6 +15,7 @@ export default function Navigation() {
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress, scrollY } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
@@ -42,15 +43,31 @@ export default function Navigation() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    // Focus first menu link when menu opens
+    requestAnimationFrame(() => {
+      const firstLink = mobileMenuRef.current?.querySelector('a');
+      firstLink?.focus();
+    });
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [mobileOpen]);
+
   return (
     <>
       {/* Scroll progress bar */}
       <motion.div
+        aria-hidden="true"
         className="scroll-progress"
         style={{ scaleX }}
       />
 
       <motion.nav
+        aria-label="Main navigation"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
@@ -82,6 +99,7 @@ export default function Navigation() {
               <li key={item.id}>
                 <a
                   href={`#${item.id}`}
+                  aria-current={activeSection === item.id ? 'location' : undefined}
                   className={`relative px-3 py-2 font-sans text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-300 ${
                     activeSection === item.id
                       ? 'text-burnt-orange'
@@ -105,7 +123,9 @@ export default function Navigation() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden text-bone/70 hover:text-burnt-orange transition-colors p-2"
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-label="Navigation menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-menu"
           >
             <svg width="20" height="14" viewBox="0 0 20 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               {mobileOpen ? (
@@ -125,6 +145,8 @@ export default function Navigation() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
+              id="mobile-nav-menu"
+              ref={mobileMenuRef}
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -137,6 +159,7 @@ export default function Navigation() {
                     <a
                       href={`#${item.id}`}
                       onClick={() => setMobileOpen(false)}
+                      aria-current={activeSection === item.id ? 'location' : undefined}
                       className={`block px-4 py-3 font-sans text-xs uppercase tracking-[0.2em] rounded transition-colors duration-300 ${
                         activeSection === item.id
                           ? 'text-burnt-orange bg-burnt-orange/10'

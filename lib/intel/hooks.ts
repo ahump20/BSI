@@ -113,10 +113,12 @@ function parseStatus(status: unknown): { gameStatus: GameStatus; detail?: string
   return { gameStatus: 'scheduled' };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function dig(obj: any, ...paths: string[]): unknown {
+function dig(obj: unknown, ...paths: string[]): unknown {
   for (const p of paths) {
-    const v = p.split('.').reduce((o, k) => o?.[k], obj);
+    const v = p.split('.').reduce<unknown>((o, k) => {
+      if (typeof o === 'object' && o !== null) return (o as Record<string, unknown>)[k];
+      return undefined;
+    }, obj);
     if (v !== undefined && v !== null && v !== '') return v;
   }
   return undefined;
@@ -1001,7 +1003,10 @@ export function useIntelDashboard(sport: IntelSport, mode: IntelMode, teamLens: 
   const standard = useMemo(() => enrichedGames.filter((g) => g.tier === 'standard'), [enrichedGames]);
 
   // Most recent successful fetch timestamp across all score queries
-  const lastFetched = Math.max(...scoreQueryResults.map(r => r.dataUpdatedAt ?? 0)) || undefined;
+  const lastFetched = useMemo(
+    () => Math.max(...scoreQueryResults.map(r => r.dataUpdatedAt ?? 0)) || undefined,
+    [scoreQueryResults],
+  );
 
   return {
     games: enrichedGames,

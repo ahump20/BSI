@@ -721,7 +721,7 @@ export default function VisionAIPage() {
               </ScrollReveal>
 
               <ScrollReveal delay={120}>
-                <Link href="/vision-AI-Intelligence" className="block group">
+                <Link href="/vision-ai-intelligence" className="block group">
                   <Card variant="hover" padding="lg" className="h-full relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-burnt-orange to-ember opacity-0 group-hover:opacity-100 transition-opacity" />
                     <Badge variant="info" size="sm" className="mb-3">Interactive Tool</Badge>

@@ -194,7 +194,7 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
     const payload = {
       timestamp: new Date().toISOString(),
       team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: (team.logos?.[0] as Record<string, unknown>)?.href as string | undefined },
-      players: roster.map((p: any) => ({
+      players: roster.map((p) => ({
         ...p,
         team: { id: team.id, name: team.name, abbreviation: team.abbreviation, logo: (team.logos?.[0] as Record<string, unknown>)?.href as string | undefined },
       })),
@@ -211,7 +211,7 @@ export async function handleNFLPlayers(url: URL, env: Env): Promise<Response> {
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.player, { 'X-Cache': 'HIT' });
 
   const popularTeamIds = ['12', '6', '21', '8', '34', '25', '2', '33']; // KC, DAL, PHI, DET, HOU, SF, BUF, BAL
-  const allPlayers: any[] = [];
+  const allPlayers: Array<Record<string, unknown>> = [];
 
   const results = await Promise.allSettled(
     popularTeamIds.map(async (id) => {
@@ -252,21 +252,29 @@ export async function handleNFLLeaders(env: Env): Promise<Response> {
   const cached = await kvGet<unknown>(env.KV, cacheKey);
   if (cached) return cachedJson(cached, 200, HTTP_CACHE.standings, { 'X-Cache': 'HIT' });
 
-  const raw = await getLeaders('nfl') as any;
+  const raw = await getLeaders('nfl') as Record<string, unknown>;
 
-  const categories = (raw?.leaders || []).map((cat: any) => ({
-    name: cat.name || cat.displayName || '',
-    abbreviation: cat.abbreviation || '',
-    leaders: (cat.leaders || []).slice(0, 10).map((leader: any) => ({
-      name: leader.athlete?.displayName || '',
-      id: leader.athlete?.id,
-      team: leader.athlete?.team?.abbreviation || '',
-      teamId: leader.athlete?.team?.id,
-      headshot: leader.athlete?.headshot?.href || '',
-      value: leader.displayValue || leader.value || '',
-      stat: cat.abbreviation || cat.name || '',
-    })),
-  }));
+  const categories = ((raw?.leaders || []) as Record<string, unknown>[]).map((cat) => {
+    const catLeaders = (cat.leaders || []) as Record<string, unknown>[];
+    return {
+      name: (cat.name as string) || (cat.displayName as string) || '',
+      abbreviation: (cat.abbreviation as string) || '',
+      leaders: catLeaders.slice(0, 10).map((leader) => {
+        const athlete = (leader.athlete || {}) as Record<string, unknown>;
+        const team = (athlete.team || {}) as Record<string, unknown>;
+        const headshot = (athlete.headshot || {}) as Record<string, unknown>;
+        return {
+          name: (athlete.displayName as string) || '',
+          id: athlete.id,
+          team: (team.abbreviation as string) || '',
+          teamId: team.id,
+          headshot: (headshot.href as string) || '',
+          value: (leader.displayValue as string) || leader.value || '',
+          stat: (cat.abbreviation as string) || (cat.name as string) || '',
+        };
+      }),
+    };
+  });
 
   const payload = {
     categories,

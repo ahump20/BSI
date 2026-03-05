@@ -80,7 +80,7 @@ interface Storyline {
 const STORYLINES: Storyline[] = [
   {
     title: 'Texas: The New Standard',
-    body: 'The Longhorns arrived in the SEC and immediately established themselves as the program to beat. David Pierce built a roster that blends veteran leadership with elite freshman talent, and the pitching staff is the deepest in the conference. Texas went 44-14 in 2025 and returns nearly every impact player. The Longhorns are the SEC\'s best team — and they know it.',
+    body: 'The Longhorns arrived in the SEC and immediately established themselves as the program to beat. Jim Schlossnagle built a roster that blends veteran leadership with elite freshman talent, and the pitching staff is the deepest in the conference. Texas went 44-14 in 2025 and returns nearly every impact player. The Longhorns are the SEC\'s best team — and they know it.',
   },
   {
     title: 'Four Omaha Favorites',

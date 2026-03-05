@@ -17,6 +17,7 @@ import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { HubHero } from '@/components/college-baseball/HubHero';
 import { LiveScoreStrip } from '@/components/college-baseball/LiveScoreStrip';
 import { EditorialFeed } from '@/components/college-baseball/EditorialFeed';
+import { SocialIntelFeed } from '@/components/college-baseball/SocialIntelFeed';
 import { EnrichedRankingsTable } from '@/components/college-baseball/EnrichedRankingsTable';
 import { LeagueLeaders } from '@/components/college-baseball/LeagueLeaders';
 import { IntelSignup } from '@/components/home/IntelSignup';
@@ -25,6 +26,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ScheduleGameCard } from '@/components/college-baseball/ScheduleGameCard';
 import type { ScheduleGame } from '@/components/college-baseball/ScheduleGameCard';
 import { PlayersTabContent } from '@/components/college-baseball/PlayersTabContent';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface RankedTeam {
   rank: number;
@@ -166,9 +168,7 @@ const scheduleConferences = ['All', ...conferenceList.filter(c => c.name !== 'Al
 
 export default function CollegeBaseballPage() {
   const [activeTab, setActiveTab] = useState<TabType>('rankings');
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { if (!selectedDate) setSelectedDate(getDateOffset(0)); }, []);
+  const [selectedDate, setSelectedDate] = useState(() => getDateOffset(0));
   const [selectedConference, setSelectedConference] = useState('All');
   const [liveGamesDetected, setLiveGamesDetected] = useState(false);
   const hasAutoAdvanced = useRef(false);
@@ -375,6 +375,13 @@ export default function CollegeBaseballPage() {
         {/* Editorial Feed — dynamic from D1 */}
         <EditorialFeed />
 
+        {/* Social Intelligence Feed — Reddit + Twitter signals */}
+        <Section padding="md">
+          <Container>
+            <SocialIntelFeed />
+          </Container>
+        </Section>
+
         {/* Intel Signup — email capture for roster-market intelligence */}
         <Section padding="md">
           <Container>
@@ -388,20 +395,23 @@ export default function CollegeBaseballPage() {
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
             <TabBar tabs={tabs} active={activeTab} onChange={(id) => setActiveTab(id as TabType)} size="sm" />
-            {/* Secondary nav */}
-            <div className="flex gap-3 mb-8 overflow-x-auto pb-1">
+            {/* Secondary nav — editorial monospace strip */}
+            <div className="flex gap-1 mb-8 overflow-x-auto pb-1 scrollbar-hide">
               {[
                 { label: 'Savant', href: '/college-baseball/savant' },
                 { label: 'Sabermetrics', href: '/college-baseball/sabermetrics' },
                 { label: 'Portal', href: '/college-baseball/transfer-portal' },
                 { label: 'Editorial', href: '/college-baseball/editorial' },
+                { label: 'Social Intel', href: '/college-baseball/social-intel' },
                 { label: 'News', href: '/college-baseball/news' },
                 { label: 'Compare', href: '/college-baseball/compare' },
                 { label: 'Conferences', href: '/college-baseball/conferences' },
                 { label: 'Scores', href: '/college-baseball/scores' },
-              ].map((link) => (
+              ].map((link, i) => (
                 <Link key={link.href} href={link.href}
-                  className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text-primary bg-surface-light hover:bg-surface-medium rounded-lg transition-all whitespace-nowrap">
+                  className={`px-3 py-1.5 text-[11px] font-mono uppercase tracking-wider text-text-muted hover:text-burnt-orange transition-colors whitespace-nowrap ${
+                    i === 0 ? 'border-l-2 border-burnt-orange/40 pl-3' : ''
+                  }`}>
                   {link.label}
                 </Link>
               ))}
@@ -409,6 +419,7 @@ export default function CollegeBaseballPage() {
 
             {/* Rankings Tab */}
             <TabPanel id="rankings" activeTab={activeTab}>
+              <DataErrorBoundary name="College Baseball Rankings">
               <EnrichedRankingsTable
                 rankings={rankings}
                 loading={rankingsLoading}
@@ -421,10 +432,12 @@ export default function CollegeBaseballPage() {
                 preseasonFallback={preseasonRankings}
                 previousRankings={previousRankings}
               />
+              </DataErrorBoundary>
             </TabPanel>
 
             {/* Standings Tab */}
             <TabPanel id="standings" activeTab={activeTab}>
+                <DataErrorBoundary name="College Baseball Standings">
                 {standingsLoading ? (
                   <Card variant="default" padding="lg">
                     <CardContent><table className="w-full"><tbody>{Array.from({ length: 10 }).map((_, i) => <SkeletonTableRow key={i} columns={6} />)}</tbody></table></CardContent>
@@ -486,6 +499,7 @@ export default function CollegeBaseballPage() {
                     </Card>
                   </ScrollReveal>
                 )}
+                </DataErrorBoundary>
             </TabPanel>
 
             {/* Schedule Tab */}
@@ -677,7 +691,7 @@ export default function CollegeBaseballPage() {
                           <Card variant="hover" padding="md" className="h-full">
                             <div className="flex items-center gap-3">
                               {meta ? (
-                                <img src={getLogoUrl(meta.espnId, meta.logoId)} alt="" className="w-8 h-8 object-contain" />
+                                <img src={getLogoUrl(meta.espnId, meta.logoId)} alt="" className="w-8 h-8 object-contain" loading="lazy" decoding="async" />
                               ) : (
                                 <div className="w-8 h-8 bg-burnt-orange/15 rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                   {(team.shortName || team.name).slice(0, 3).toUpperCase()}
@@ -732,33 +746,31 @@ export default function CollegeBaseballPage() {
         <Section padding="lg" borderTop>
           <Container>
             <ScrollReveal>
-              <Card variant="default" padding="lg" className="relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-radial from-burnt-orange/10 to-transparent pointer-events-none" />
-                <div className="relative">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-burnt-orange/15 flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 stroke-burnt-orange fill-none stroke-[1.5]">
-                        <path d="M4 6h16M4 12h16M4 18h8" />
-                        <circle cx="19" cy="18" r="3" />
-                      </svg>
-                    </div>
-                    <div>
-                      <CardTitle size="md">BSI Labs Portal</CardTitle>
-                      <p className="text-text-tertiary text-xs mt-0.5">Advanced sabermetrics dashboard</p>
-                    </div>
+              <div className="relative rounded-2xl overflow-hidden border border-burnt-orange/15">
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ background: 'linear-gradient(135deg, rgba(191,87,0,0.06) 0%, transparent 40%, rgba(191,87,0,0.03) 100%)' }}
+                />
+                <div className="relative p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                  <div className="max-w-xl">
+                    <span className="section-label block mb-3">Advanced Analytics</span>
+                    <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-text-primary mb-3">
+                      BSI Labs Portal
+                    </h3>
+                    <p className="text-sm text-text-secondary leading-relaxed">
+                      Sortable leaderboards, team comparison tools, conference strength rankings, park factor analysis, bubble watch — all in one portal with percentile-scaled heatmaps and team-branded visuals.
+                    </p>
                   </div>
-                  <p className="text-sm text-text-secondary mb-4 max-w-xl">
-                    Sortable leaderboards, team comparison tools, conference strength rankings, park factor analysis, bubble watch — all in one portal with percentile-scaled heatmaps and team-branded visuals.
-                  </p>
                   <a
                     href="https://labs.blazesportsintel.com"
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="shrink-0"
                   >
-                    <Button variant="primary" size="sm">Explore Labs Portal &rarr;</Button>
+                    <Button variant="primary" size="lg">Explore Labs &rarr;</Button>
                   </a>
                 </div>
-              </Card>
+              </div>
             </ScrollReveal>
           </Container>
         </Section>

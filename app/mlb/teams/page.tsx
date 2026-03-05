@@ -18,16 +18,11 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { useUserSettings } from '@/lib/hooks';
 import { MLB_TEAMS, DIVISION_ORDER, type MLBTeamInfo } from '@/lib/utils/mlb-teams';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface TeamWithRecord extends MLBTeamInfo {
   wins?: number;
   losses?: number;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 /** ESPN CDN logo URL for a given MLB team abbreviation */
@@ -71,7 +66,7 @@ export default function MLBTeamsPage() {
           const data = (await res.json()) as {
             standings?: Array<{
               teamName: string;
-              teamAbbreviation?: string;
+              abbreviation?: string;
               wins?: number;
               losses?: number;
             }>;
@@ -83,7 +78,7 @@ export default function MLBTeamsPage() {
                 // Match by abbreviation first (reliable), fall back to name
                 const standing = data.standings?.find(
                   (s) =>
-                    s.teamAbbreviation?.toUpperCase() === team.abbreviation ||
+                    s.abbreviation?.toUpperCase() === team.abbreviation ||
                     s.teamName.toLowerCase() === team.name.toLowerCase() ||
                     s.teamName.toLowerCase() === team.shortName.toLowerCase()
                 );

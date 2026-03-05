@@ -125,7 +125,7 @@ describe('Vision AI Hub Page', () => {
     const hrefs = links.map((a) => a.getAttribute('href'));
 
     expect(hrefs).toContain('/mlb/abs');
-    expect(hrefs).toContain('/vision-AI-Intelligence');
+    expect(hrefs).toContain('/vision-ai-intelligence');
     expect(hrefs).toContain('/college-baseball');
   });
 

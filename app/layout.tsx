@@ -1,19 +1,22 @@
 import type { Metadata, Viewport } from 'next';
+import dynamic from 'next/dynamic';
 import { Cormorant_Garamond, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { KonamiCodeWrapper } from '@/components/easter-eggs';
 import { PageTransition, MotionProvider } from '@/components/motion';
 import { AppSidebar } from '@/components/layout-ds/AppSidebar';
 import { AppTopBar } from '@/components/layout-ds/AppTopBar';
 import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
-import { FeedbackButton } from '@/components/ui/FeedbackModal';
-import { ScrollToTopButton } from '@/components/ui/ScrollToTopButton';
 import { ScrollProgress } from '@/components/ui/ScrollProgress';
 import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
-import { CommandPalette } from '@/components/layout-ds/CommandPalette';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 import { PageTracker } from '@/components/analytics/PageTracker';
+
+// Lazy-load interaction-triggered components (not visible on initial render)
+const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then(m => ({ default: m.KonamiCodeWrapper })));
+const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then(m => ({ default: m.FeedbackButton })));
+const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then(m => ({ default: m.ScrollToTopButton })));
 
 // 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
 const cormorant = Cormorant_Garamond({
@@ -39,50 +42,55 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const viewport: Viewport = {
   themeColor: '#bf5700',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
 };
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Real-Time Sports Analytics',
+  title: 'Blaze Sports Intel | College Baseball Sabermetrics',
   description:
-    'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics. Live scores, predictions, and data-driven insights.',
+    'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours. Plus live scores across MLB, NFL, NBA, and NCAA.',
   keywords: [
-    'sports analytics',
-    'MLB',
-    'NFL',
-    'NBA',
-    'NCAA',
-    'real-time data',
-    'sports intelligence',
-    'live stats',
     'college baseball',
+    'college baseball analytics',
+    'sabermetrics',
+    'wOBA',
+    'wRC+',
+    'FIP',
+    'park factors',
+    'D1 baseball',
+    'college baseball stats',
+    'NCAA baseball',
+    'sports analytics',
+    'live scores',
   ],
   authors: [{ name: 'Austin Humphrey', url: 'https://blazesportsintel.com' }],
-  creator: 'Blaze Intelligence',
+  creator: 'Blaze Sports Intel',
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
-    title: 'Blaze Sports Intel | Real-Time Sports Analytics',
-    description: 'Enterprise sports intelligence platform with real MLB, NFL, NBA data',
+    title: 'Blaze Sports Intel | College Baseball Sabermetrics',
+    description:
+      'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours.',
     type: 'website',
     locale: 'en_US',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Blaze Sports Intel - Real-Time Sports Analytics',
+        alt: 'Blaze Sports Intel - College Baseball Sabermetrics',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
-    description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
-    images: ['/images/og-image.jpg'],
+    description: 'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors. Updated every 6 hours.',
+    images: ['/images/og-image.png'],
   },
   alternates: { canonical: '/' },
   robots: {
@@ -110,7 +118,7 @@ const jsonLdContent = JSON.stringify({
       logo: 'https://blazesportsintel.com/images/logo/blaze-logo.png',
       founder: { '@type': 'Person', name: 'Austin Humphrey' },
       description:
-        'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics.',
+        'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors, conference strength. Plus live scores across MLB, NFL, NBA, and NCAA.',
     },
     {
       '@type': 'WebSite',

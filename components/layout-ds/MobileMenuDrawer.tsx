@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { X, ChevronDown } from 'lucide-react';
 import type { LeagueNavItem } from '@/lib/navigation';
+import { lockScroll, unlockScroll } from '@/lib/utils/scroll-lock';
 
 interface MenuItem {
   label: string;
@@ -99,11 +100,11 @@ export function MobileMenuDrawer({
     if (open) {
       document.addEventListener('keydown', handleKeyDown);
       closeButtonRef.current?.focus();
-      document.body.style.overflow = 'hidden';
+      lockScroll();
     }
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      if (open) unlockScroll();
     };
   }, [open, handleKeyDown]);
 

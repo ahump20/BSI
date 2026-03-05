@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/icons/SportIcon';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface CFBTeam {
@@ -100,7 +101,7 @@ export default function CFBStandingsPage() {
               </Card>
             ) : conferences.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🏈</div>
+                <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                 <p className="text-text-secondary text-lg">Standings not available</p>
                 <p className="text-text-tertiary text-sm mt-2">Standings are updated during the college football season</p>
               </Card>
@@ -132,7 +133,7 @@ export default function CFBStandingsPage() {
                                 <td className="py-2.5 px-4">
                                   <div className="flex items-center gap-3">
                                     {team.logo ? (
-                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" />
+                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
                                     ) : (
                                       <div className="w-6 h-6 bg-background-secondary rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                         {team.abbreviation}
