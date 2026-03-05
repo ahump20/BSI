@@ -1,0 +1,22 @@
+{
+  "name": "@bsi/genie-dynamics",
+  "version": "2.0.0",
+  "description": "DeepMind Genie-inspired dynamics: state tokenization, action inference, dynamics prediction, ghost rendering",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./state-tokenizer": "./state-tokenizer.js",
+    "./action-inferrer": "./action-inferrer.js",
+    "./dynamics-predictor": "./dynamics-predictor.js",
+    "./ghost-renderer": "./ghost-renderer.js",
+    "./ghost-renderer-3d": "./ghost-renderer-3d.js",
+    "./adapters/*": "./adapters/*.js"
+  },
+  "peerDependencies": {
+    "@babylonjs/core": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@babylonjs/core": { "optional": true }
+  }
+}

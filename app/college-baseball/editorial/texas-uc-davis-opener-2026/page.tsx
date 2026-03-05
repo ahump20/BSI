@@ -1,15 +1,20 @@
 'use client';
 
+import { useState } from 'react';
+import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card } from '@/components/ui/Card';
+import { Card, StatCard } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { GameRecapToolbar } from '@/components/editorial/GameRecapToolbar';
-import { Activity, Target, Zap, TrendingUp, BarChart3, Users } from 'lucide-react';
+import { AIAnalysisPanel } from '@/components/editorial/AIAnalysisPanel';
+import { NotebookLMExport } from '@/components/editorial/NotebookLMExport';
 
-// ─── Types ──────────────────────────────────────────────────────────────────────
+/* ────────────────────────────────────────────
+   Types
+   ──────────────────────────────────────────── */
 
 interface BattingLine {
   name: string;
@@ -20,8 +25,7 @@ interface BattingLine {
   rbi: number;
   bb: number;
   so: number;
-  hr: number;
-  avg: string;
+  note?: string;
 }
 
 interface PitchingLine {
@@ -32,687 +36,815 @@ interface PitchingLine {
   er: number;
   bb: number;
   so: number;
-  hr: number;
+  pitches: number;
   decision?: string;
+  notes?: string;
 }
 
 interface InningScore {
-  inning: number;
-  away: number;
-  home: number;
+  team: string;
+  innings: (number | string)[];
+  r: number;
+  h: number;
+  e: number;
 }
 
-// ─── Verified Box Score Data ────────────────────────────────────────────────────
-// Source: texaslonghorns.com/boxscore/17822
-
-const GAME_DATE = 'February 14, 2026';
-const VENUE = 'UFCU Disch-Falk Field';
-const LOCATION = 'Austin, TX';
-const ATTENDANCE = 'Season Opener';
-
-const linescore: InningScore[] = [
-  { inning: 1, away: 0, home: 2 },
-  { inning: 2, away: 0, home: 2 },
-  { inning: 3, away: 0, home: 4 },
-  { inning: 4, away: 0, home: 0 },
-  { inning: 5, away: 0, home: 0 },
-  { inning: 6, away: 1, home: 0 },
-  { inning: 7, away: 0, home: 4 },
-  { inning: 8, away: 1, home: 0 },
-  { inning: 9, away: 0, home: 0 },
-];
+/* ────────────────────────────────────────────
+   Verified Box Score Data
+   Source: texaslonghorns.com/boxscore/17822
+   ──────────────────────────────────────────── */
 
 const texasBatting: BattingLine[] = [
-  { name: 'Jace LaViolette', pos: 'LF', ab: 5, r: 2, h: 3, rbi: 5, bb: 0, so: 1, hr: 2, avg: '.600' },
-  { name: 'Kimble Robbins', pos: '1B', ab: 4, r: 2, h: 2, rbi: 1, bb: 1, so: 0, hr: 1, avg: '.500' },
-  { name: 'Charlie Shorten', pos: 'RF', ab: 4, r: 2, h: 2, rbi: 1, bb: 0, so: 1, hr: 1, avg: '.500' },
-  { name: 'Jalin Flores', pos: 'SS', ab: 4, r: 1, h: 2, rbi: 1, bb: 0, so: 0, hr: 0, avg: '.500' },
-  { name: 'Peyton Powell', pos: 'CF', ab: 4, r: 1, h: 2, rbi: 1, bb: 0, so: 0, hr: 0, avg: '.500' },
-  { name: 'Cameron O\'Brien', pos: 'DH', ab: 4, r: 1, h: 1, rbi: 1, bb: 0, so: 1, hr: 0, avg: '.250' },
-  { name: 'Braydon Simpson', pos: '3B', ab: 4, r: 1, h: 1, rbi: 1, bb: 0, so: 1, hr: 0, avg: '.250' },
-  { name: 'Will Gasparino', pos: 'C', ab: 4, r: 1, h: 1, rbi: 0, bb: 0, so: 2, hr: 0, avg: '.250' },
-  { name: 'Luke Sayers', pos: '2B', ab: 3, r: 1, h: 1, rbi: 1, bb: 1, so: 0, hr: 0, avg: '.333' },
+  { name: 'Ethan Mendoza', pos: '2B', ab: 3, r: 1, h: 1, rbi: 3, bb: 1, so: 0, note: '3-run HR (walk-off)' },
+  { name: 'Adrian Rodriguez', pos: 'SS', ab: 4, r: 2, h: 1, rbi: 1, bb: 0, so: 1, note: 'RBI 1B' },
+  { name: 'Aiden Robbins', pos: 'CF', ab: 4, r: 2, h: 2, rbi: 3, bb: 0, so: 0, note: '2-run HR, RBI 2B' },
+  { name: 'Carson Tinney', pos: '1B', ab: 2, r: 1, h: 0, rbi: 0, bb: 2, so: 0 },
+  { name: 'Jalin Livingston', pos: 'LF', ab: 3, r: 1, h: 1, rbi: 0, bb: 1, so: 0 },
+  { name: 'Casey Borba', pos: 'DH', ab: 4, r: 1, h: 1, rbi: 0, bb: 0, so: 2, note: '2B in 7th' },
+  { name: 'Jared Duplantier', pos: 'C', ab: 3, r: 1, h: 1, rbi: 0, bb: 0, so: 1, note: '1B in 7th' },
+  { name: 'Temo Becerra', pos: '3B', ab: 2, r: 1, h: 1, rbi: 2, bb: 2, so: 0, note: 'RBI BB, RBI 1B' },
+  { name: 'Anthony Pack Jr.', pos: 'RF', ab: 4, r: 2, h: 3, rbi: 2, bb: 0, so: 0, note: '2B, 2-run 1B, 1B, SB' },
+  { name: 'Ashton Larson', pos: 'PH', ab: 1, r: 0, h: 0, rbi: 0, bb: 1, so: 0 },
 ];
 
-const ucDavisBatting: BattingLine[] = [
-  { name: 'Ryan Metzger', pos: 'CF', ab: 4, r: 0, h: 1, rbi: 0, bb: 0, so: 2, hr: 0, avg: '.250' },
-  { name: 'Drew Cowley', pos: 'SS', ab: 4, r: 1, h: 1, rbi: 1, bb: 0, so: 1, hr: 0, avg: '.250' },
-  { name: 'Jake Pavlovic', pos: 'DH', ab: 4, r: 0, h: 1, rbi: 0, bb: 0, so: 2, hr: 0, avg: '.250' },
-  { name: 'Zach Skaggs', pos: '1B', ab: 3, r: 1, h: 1, rbi: 1, bb: 1, so: 1, hr: 0, avg: '.333' },
-  { name: 'Tommy Hale', pos: 'RF', ab: 4, r: 0, h: 1, rbi: 0, bb: 0, so: 2, hr: 0, avg: '.250' },
-  { name: 'Brendan Durfee', pos: '3B', ab: 3, r: 0, h: 0, rbi: 0, bb: 0, so: 2, hr: 0, avg: '.000' },
-  { name: 'Logan Welch', pos: 'LF', ab: 3, r: 0, h: 1, rbi: 0, bb: 0, so: 1, hr: 0, avg: '.333' },
-  { name: 'Tyler Green', pos: 'C', ab: 3, r: 0, h: 0, rbi: 0, bb: 0, so: 1, hr: 0, avg: '.000' },
-  { name: 'Cole Duensing', pos: '2B', ab: 3, r: 0, h: 0, rbi: 0, bb: 0, so: 1, hr: 0, avg: '.000' },
+const ucdavisBatting: BattingLine[] = [
+  { name: 'Chase Wooldridge', pos: 'CF', ab: 3, r: 1, h: 2, rbi: 1, bb: 1, so: 0, note: 'BB, RBI 2B' },
+  { name: 'Tyler Howard', pos: 'SS', ab: 4, r: 0, h: 1, rbi: 0, bb: 0, so: 1 },
+  { name: 'Mason Wright', pos: 'DH', ab: 3, r: 1, h: 0, rbi: 1, bb: 0, so: 0, note: 'RBI FC' },
+  { name: 'Ryan Lee', pos: '1B', ab: 3, r: 0, h: 1, rbi: 0, bb: 0, so: 0 },
+  { name: 'Nick Castagnola', pos: 'LF', ab: 3, r: 0, h: 0, rbi: 0, bb: 0, so: 1 },
+  { name: 'Jake Gentil', pos: '2B', ab: 3, r: 0, h: 1, rbi: 0, bb: 0, so: 0 },
+  { name: 'Max Nicholson', pos: '3B', ab: 3, r: 0, h: 1, rbi: 0, bb: 0, so: 1 },
+  { name: 'Brady Madsen', pos: 'C', ab: 3, r: 0, h: 0, rbi: 0, bb: 0, so: 1 },
+  { name: 'Cole Davis', pos: 'RF', ab: 3, r: 0, h: 1, rbi: 0, bb: 0, so: 0 },
 ];
 
 const texasPitching: PitchingLine[] = [
-  { name: 'Bryce Ahrens', ip: '5.0', h: 3, r: 0, er: 0, bb: 0, so: 7, hr: 0, decision: 'W' },
-  { name: 'Will Beane', ip: '2.0', h: 2, r: 1, er: 1, bb: 0, so: 4, hr: 0 },
-  { name: 'Luke Sagers', ip: '2.0', h: 1, r: 1, er: 1, bb: 1, so: 2, hr: 0 },
+  { name: 'Ruger Riojas', ip: '5.0', h: 4, r: 1, er: 1, bb: 1, so: 6, pitches: 78, decision: 'W (1-0)' },
+  { name: 'Max Grubbs', ip: '2.0', h: 3, r: 1, er: 1, bb: 1, so: 1, pitches: 37, notes: '1 WP' },
 ];
 
-const ucDavisPitching: PitchingLine[] = [
-  { name: 'Connor Ewart', ip: '2.1', h: 5, r: 4, er: 4, bb: 1, so: 2, hr: 2, decision: 'L' },
-  { name: 'Jake Brandner', ip: '2.2', h: 3, r: 3, er: 3, bb: 0, so: 3, hr: 1 },
-  { name: 'Tyler Frazier', ip: '1.0', h: 4, r: 3, er: 3, bb: 0, so: 1, hr: 0 },
-  { name: 'Derek Ramirez', ip: '2.0', h: 3, r: 2, er: 2, bb: 1, so: 2, hr: 1 },
+const ucdavisPitching: PitchingLine[] = [
+  { name: 'Noel Valdez', ip: '4.0', h: 5, r: 6, er: 3, bb: 4, so: 1, pitches: 85, decision: 'L (0-1)' },
+  { name: 'Mason Lerma', ip: '1.0', h: 1, r: 1, er: 0, bb: 3, so: 2, pitches: 34, notes: '1 BK' },
+  { name: 'Kouki Anzai', ip: '1.0', h: 4, r: 4, er: 4, bb: 0, so: 1, pitches: 26, notes: '1 BK' },
+  { name: 'Max Hippensteel', ip: '0.0', h: 1, r: 1, er: 1, bb: 0, so: 0, pitches: 2 },
 ];
 
-const quickStats = [
-  { label: 'Runs', value: '12', icon: Activity },
-  { label: 'Hits', value: '15', icon: Target },
-  { label: 'Home Runs', value: '4', icon: Zap },
-  { label: 'RBI', value: '12', icon: TrendingUp },
-  { label: 'Team AVG', value: '.405', icon: BarChart3 },
-  { label: 'Strikeouts (P)', value: '13', icon: Users },
+const lineScore: InningScore[] = [
+  { team: 'UC Davis', innings: [1, 0, 0, 0, 0, 0, 1], r: 2, h: 7, e: 1 },
+  { team: 'Texas', innings: [0, 0, 3, 0, 4, 0, 5], r: 12, h: 11, e: 0 },
 ];
 
-// ─── Recap Text for AI/Export Features ──────────────────────────────────────────
+const performers = [
+  { name: 'Ethan Mendoza', pos: '2B', year: 'Junior', line: 'Walk-off 3-run HR, BB', context: 'Walk-off ended game via run-rule' },
+  { name: 'Aiden Robbins', pos: 'CF', year: 'Jr. (Notre Dame)', line: '2-run HR (450 ft), RBI 2B', context: '3 RBI in his Texas debut' },
+  { name: 'Anthony Pack Jr.', pos: 'RF', year: 'Senior', line: '2B, 2-run 1B, 1B, SB', context: '3 hits, 2 RBI — catalyzed every rally' },
+  { name: 'Adrian Rodriguez', pos: 'SS', year: 'Sophomore', line: 'RBI single, reached on E6', context: 'Tied the game in the 3rd' },
+  { name: 'Temo Becerra', pos: '3B', year: 'R-Sr. (Stanford)', line: 'RBI walk, RBI single', context: 'Quiet 2-RBI night from the 8-hole' },
+  { name: 'Ruger Riojas', pos: 'RHP', year: 'Starter', line: '5.0 IP, 1 R, 6 K', context: 'Settled after rocky 1st, dominant middle innings' },
+];
 
-const RECAP_TEXT = `Texas 12, UC Davis 2 — 2026 Season Opener
+/* ────────────────────────────────────────────
+   Article text for NotebookLM export
+   ──────────────────────────────────────────── */
 
-Date: February 14, 2026 | Venue: UFCU Disch-Falk Field, Austin, TX
+const ARTICLE_TEXT = `Texas 12, UC Davis 2 — Season Opener Recap
 
-Jim Schlossnagle's Longhorns opened the 2026 season with a commanding 12-2 victory over UC Davis. Texas collected 15 hits and launched four home runs, led by Jace LaViolette's 3-for-5 performance with two home runs, including a grand slam, and five RBI. Kimble Robbins crushed a solo shot 450 feet to dead center, and Charlie Shorten added a solo homer in the second inning. Starting pitcher Bryce Ahrens delivered five shutout innings with seven strikeouts and no walks, establishing immediate dominance. The bullpen combination of Will Beane (4 K in 2 IP) and Luke Sagers (2 K in 2 IP) combined for 13 total strikeouts across nine innings.
+FINAL — 7 INNINGS (10-RUN RULE)
+February 13, 2026 · UFCU Disch-Falk Field · Austin, TX · 7,649 attendance
 
-Texas Batting: LaViolette 3-5, 2 HR, 5 RBI | Robbins 2-4, HR (450 ft), 1 RBI | Shorten 2-4, HR, 1 RBI | Flores 2-4, 1 RBI | Powell 2-4, 1 RBI
-Texas Pitching: Ahrens 5.0 IP, 3 H, 0 ER, 7 K (W) | Beane 2.0 IP, 2 H, 1 ER, 4 K | Sagers 2.0 IP, 1 H, 1 ER, 2 K
-UC Davis Pitching: Ewart 2.1 IP, 5 H, 4 ER (L) | Brandner 2.2 IP, 3 H, 3 ER | Frazier 1.0 IP, 4 H, 3 ER | Ramirez 2.0 IP, 3 H, 2 ER`;
+Texas: 0 0 3 0 4 0 5 — 12 R, 11 H, 0 E
+UC Davis: 1 0 0 0 0 0 1 — 2 R, 7 H, 1 E
 
-const GAME_CONTEXT = `${RECAP_TEXT}
+KEY PERFORMERS:
+Ethan Mendoza (2B): Walk-off 3-run HR — ended game via run-rule
+Aiden Robbins (CF): 2-run HR (450 ft over YETI Yard), RBI 2B — 3 RBI in Texas debut
+Anthony Pack Jr. (RF): 2B, 2-run 1B, 1B, SB — 3 hits, 2 RBI
+Adrian Rodriguez (SS): RBI single — tied game in the 3rd
+Temo Becerra (3B): RBI walk, RBI single — 2 RBI from the 8-hole
+Ruger Riojas (RHP): 5.0 IP, 4 H, 1 R, 1 ER, 1 BB, 6 K, 78 pitches (W, 1-0)
 
-Head Coach: Jim Schlossnagle (Texas)
-Conference: SEC
-Game Type: Non-conference season opener
-Key Performances:
-- Jace LaViolette: 3-5, 2 HR (1 grand slam), 5 RBI — projected first-round pick
-- Kimble Robbins: 2-4, HR (450 ft dead center), 1 RBI
-- Charlie Shorten: 2-4, HR, 1 RBI
-- Bryce Ahrens: 5.0 IP, 3 H, 0 ER, 0 BB, 7 K — dominant opening start
-- Texas staff combined: 13 K, 6 H, 2 ER in 9 IP
-- UC Davis used 4 pitchers, none lasting more than 2.2 IP`;
+ANALYSIS:
+On a cool Friday evening at Disch-Falk, in front of 7,649 who showed up early and stayed loud, the 2026 Texas Longhorns took roughly four and a half innings to move from theory to conviction. UC Davis came out swinging — Wooldridge walked, Howard singled, Wright pushed a run across on a fielder's choice — and the visitors had a 1-0 lead. But Riojas settled, sat down three of the next four on strikeouts, and never looked back.
 
-// ─── Page Component ─────────────────────────────────────────────────────────────
+Robbins' 450-foot home run over YETI Yard in the third turned the game. Pack Jr.'s two-run single in the fifth broke it open. And Mendoza's walk-off three-run blast in the seventh ended it by run-rule. Texas hit .367 as a team, drew 7 walks against 4 strikeouts, and committed zero errors.
 
-export default function TexasUCDavisRecapPage() {
-  const texasRuns = linescore.reduce((sum, i) => sum + i.home, 0);
-  const ucdRuns = linescore.reduce((sum, i) => sum + i.away, 0);
-  const texasHits = texasBatting.reduce((sum, b) => sum + b.h, 0);
-  const ucdHits = ucDavisBatting.reduce((sum, b) => sum + b.h, 0);
-  const texasErrors = 0;
-  const ucdErrors = 1;
+The transfer portal additions delivered immediately: Robbins (Notre Dame) had 3 RBI, Becerra (Stanford) had 2 RBI, and Tinney drew two walks in lineup protection behind Robbins. Schlossnagle didn't just add names — he added fits. The chemistry showed from the first inning on.
+
+Riojas can handle the Friday spot. The first inning was bumpy. The next four? Clean. Dominant. He found his slider, located his fastball, and gave the bullpen a clean handoff. Grubbs came in, induced a double play, and handled the rest.
+
+One game is one game. UC Davis is not Ole Miss, and February is not June. But the things you look for in an opener — energy, depth, competitive at-bats from all nine spots, a starter who recovered after adversity, a bullpen arm who shut the door — were all here.
+
+UP NEXT: Texas vs. UC Davis — Game 2 — Saturday, February 14 at 12:00 PM CT
+Probable starter: Luke Harrison (LHP, Sr.)
+
+Source: texaslonghorns.com/boxscore/17822 | Blaze Sports Intel | February 13, 2026 CT`;
+
+const GAME_CONTEXT = `Texas 12, UC Davis 2 (7 innings, 10-run rule). Feb 13, 2026. UFCU Disch-Falk Field, Austin TX. No. 3 Texas season opener.
+
+Texas batting: .367 BA, .500 w/RISP, 11 H, 7 BB, 4 K, 0 E.
+Key hitters: Mendoza (walk-off 3-run HR), Robbins (2-run HR 450ft + RBI 2B, Notre Dame transfer), Pack Jr (3-for-4, 2 RBI from 9-hole), Becerra (2 RBI, Stanford transfer), Rodriguez (RBI single).
+
+Texas pitching: Riojas 5.0IP/4H/1R/1ER/1BB/6K/78P (W). Grubbs 2.0IP/3H/1R/1ER/1BB/1K/37P.
+
+UC Davis pitching: Valdez (L) 4.0IP/5H/6R/3ER/4BB/1K/85P. Lerma 1.0IP/1H/1R/0ER/3BB/2K/34P/1BK. Anzai 1.0IP/4H/4R/4ER/0BB/1K/26P/1BK. Hippensteel 0.0IP/1H/1R/1ER/2P.
+
+Coaching: Jim Schlossnagle (HC), Nolan Cain (Assoc HC), Troy Tulowitzki (Asst Coach, 5x MLB All-Star SS).
+
+Context: Texas won the SEC in Year One (2025). Preseason No. 3. Roster loaded with returning talent (Mendoza .333, Rodriguez .313, Volantis 1.94 ERA) plus key portal additions (Robbins from Notre Dame, Becerra from Stanford, Tinney, Larson from LSU). Saturday Game 2 at noon CT, Luke Harrison probable (LHP, Sr). Sunday TBD: Dylan Volantis (LHP, So).`;
+
+/* ────────────────────────────────────────────
+   Helper: sum a column
+   ──────────────────────────────────────────── */
+function sumCol(rows: BattingLine[], key: keyof Pick<BattingLine, 'ab' | 'r' | 'h' | 'rbi' | 'bb' | 'so'>) {
+  return rows.reduce((s, row) => s + row[key], 0);
+}
+
+/* ────────────────────────────────────────────
+   Component
+   ──────────────────────────────────────────── */
+
+export default function TexasUCDavisOpener2026Page() {
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiDefaultModel, setAiDefaultModel] = useState<'claude' | 'gemini'>('claude');
+  const articleUrl = 'https://blazesportsintel.com/college-baseball/editorial/texas-uc-davis-opener-2026';
+
+  const openAI = (model: 'claude' | 'gemini' = 'claude') => {
+    setAiDefaultModel(model);
+    setAiOpen(true);
+  };
 
   return (
-    <main className="min-h-screen bg-[#0D0D0D]">
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <Section padding="none">
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#BF5700]/10 via-[#0D0D0D] to-[#0D0D0D]" />
+    <>
+      <div>
+        {/* ── Breadcrumb ── */}
+        <Section padding="sm" className="border-b border-border">
           <Container>
-            <div className="relative pt-20 pb-12 sm:pt-28 sm:pb-16">
-              <ScrollReveal>
-                <div className="text-center space-y-4">
-                  <Badge variant="primary">2026 Season Opener</Badge>
-                  <h1 className="text-5xl sm:text-7xl font-display uppercase tracking-tight text-white">
-                    TEXAS 12, UC DAVIS 2
-                  </h1>
-                  <p className="text-lg text-white/50">
-                    {GAME_DATE} · {VENUE} · {LOCATION}
-                  </p>
-                  <p className="text-sm text-white/30">
-                    Four home runs. 13 strikeouts. A statement from Austin.
+            <nav className="flex items-center gap-2 text-sm">
+              <Link href="/college-baseball" className="text-text-muted hover:text-burnt-orange transition-colors">
+                College Baseball
+              </Link>
+              <span className="text-text-muted">/</span>
+              <Link href="/college-baseball/editorial" className="text-text-muted hover:text-burnt-orange transition-colors">
+                Editorial
+              </Link>
+              <span className="text-text-muted">/</span>
+              <span className="text-text-secondary">Texas vs UC Davis</span>
+            </nav>
+          </Container>
+        </Section>
+
+        {/* ── Hero ── */}
+        <Section padding="lg" className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-texas-soil/12 via-transparent to-burnt-orange/6 pointer-events-none" />
+          <div className="absolute -top-24 -right-48 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(191,87,0,0.06)_0%,transparent_70%)] pointer-events-none" />
+          <Container>
+            <ScrollReveal direction="up">
+              <div className="max-w-3xl">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <Badge variant="primary">Post-Game Analysis</Badge>
+                  <Badge variant="outline">Season Opener</Badge>
+                  <Badge variant="accent">No. 3 Texas</Badge>
+                  <span className="font-mono text-xs text-text-muted">Final / 7 Innings</span>
+                </div>
+
+                <h1 className="font-display font-bold uppercase tracking-wide leading-none mb-4">
+                  <span className="block text-gradient-blaze text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-1">
+                    Texas 12, UC Davis 2
+                  </span>
+                  <span className="block text-text-primary text-2xl sm:text-3xl md:text-4xl mt-2">
+                    Mendoza Walks It Off in Seven. The Horns Are Back.
+                  </span>
+                </h1>
+
+                <p className="font-serif text-lg sm:text-xl text-text-tertiary italic leading-relaxed mb-6">
+                  Aiden Robbins announces himself with a 450-foot blast over YETI Yard. Anthony Pack Jr. catalyzes every rally from the nine-hole. And Ethan Mendoza puts a three-run exclamation point on the seventh to run-rule the Aggies and christen the 2026 campaign.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-text-muted tracking-wide">
+                  <span>February 13, 2026</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span>UFCU Disch-Falk Field</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span>6:33 PM CT</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span>7,649 in attendance</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span>SEC Network+</span>
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-text-muted mt-4">
+                  <span>By Blaze Sports Intel</span>
+                  <span>|</span>
+                  <span>~12 min read</span>
+                </div>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── Toolbar ── */}
+        <GameRecapToolbar
+          onOpenAI={() => openAI('claude')}
+          articleText={ARTICLE_TEXT}
+          articleUrl={articleUrl}
+        />
+
+        {/* ── Line Score ── */}
+        <Section padding="md">
+          <Container>
+            <ScrollReveal direction="up" delay={100}>
+              <Card variant="default" padding="none">
+                <div className="bg-burnt-orange/5 text-center py-2">
+                  <span className="font-display text-[10px] uppercase tracking-[3px] text-burnt-orange">
+                    Final — 7 Innings (10-Run Rule)
+                  </span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[540px]">
+                    <thead>
+                      <tr className="font-display text-[11px] uppercase tracking-widest text-text-muted bg-black/30">
+                        <th className="text-left py-2.5 px-4 w-36" />
+                        {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                          <th key={i} className="text-center py-2.5 w-10">{i}</th>
+                        ))}
+                        <th className="text-center py-2.5 w-12 border-l border-border-subtle">R</th>
+                        <th className="text-center py-2.5 w-12">H</th>
+                        <th className="text-center py-2.5 w-12">E</th>
+                      </tr>
+                    </thead>
+                    <tbody className="font-mono text-sm">
+                      {lineScore.map((row) => {
+                        const isTexas = row.team === 'Texas';
+                        return (
+                          <tr key={row.team} className={`border-t border-border-subtle ${isTexas ? '' : ''}`}>
+                            <td className={`py-3 px-4 font-display text-sm font-semibold uppercase tracking-wide ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                              {row.team}
+                            </td>
+                            {row.innings.map((val, i) => (
+                              <td key={i} className={`text-center py-3 ${Number(val) > 0 ? (isTexas ? 'text-text-primary font-semibold' : 'text-text-secondary font-medium') : 'text-text-muted'}`}>
+                                {val}
+                              </td>
+                            ))}
+                            <td className={`text-center py-3 border-l border-border-subtle font-bold text-lg ${isTexas ? 'text-burnt-orange' : 'text-text-tertiary'}`}>
+                              {row.r}
+                            </td>
+                            <td className="text-center py-3 text-text-muted">{row.h}</td>
+                            <td className="text-center py-3 text-text-muted">{row.e}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── Game Summary Stats ── */}
+        <Section padding="md">
+          <Container>
+            <ScrollReveal direction="up" delay={100}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatCard label="Team BA" value=".367" helperText="11-for-30" />
+                <StatCard label="w/ RISP" value=".500" helperText="Clutch hitting" />
+                <StatCard label="BB / K" value="7 / 4" helperText="Plate discipline" />
+                <StatCard label="Errors" value="0" helperText="Clean defense" />
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── Editorial Lede ── */}
+        <Section padding="lg" background="charcoal">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <p className="font-serif text-xl sm:text-[23px] font-medium leading-relaxed text-[#FAF7F2] mb-6">
+                There&rsquo;s a thing that happens the first time a team takes the field in a new season — a half-breath between the last out of the old year and the first pitch of the new one — where everything is still theory. Preseason polls. Portal grades. Rotation projections. All of it lives on paper until somebody walks between the lines and proves it or burns it down. On a cool Friday evening at Disch-Falk, in front of the faithful who showed up early and stayed loud, the 2026 Texas Longhorns took roughly four and a half innings to move from theory to conviction.
+              </p>
+              <p className="font-serif text-lg leading-relaxed text-text-secondary">
+                And friend, once they got rolling, there wasn&rsquo;t a soul in the press box reaching for the brakes.
+              </p>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── The Third Inning ── */}
+        <Section padding="lg">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+                The Third Inning: Where It Turned
+              </h2>
+
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <p>
+                  Credit UC Davis — they came out swinging. Top of the first, Wooldridge drew a walk off Ruger Riojas, Howard singled him over, and Wright pushed a run across on a fielder&rsquo;s choice. Just like that, the visitors had a 1-0 lead. Riojas settled. He sat down three of the next four he faced in the second, all on strikeouts, and after a clean third frame for UC Davis, he&rsquo;d found his footing.
+                </p>
+
+                <p>
+                  Anthony Pack Jr. led off the bottom of the third with a double ripped into the right-center gap. Mendoza grounded out to third, moving Pack to third. Then Adrian Rodriguez — the switch-hitting sophomore who slashed .313 as a freshman in the SEC — laced an RBI single through the left side. Ballgame tied.
+                </p>
+
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                  &ldquo;Rodriguez delivers, and that ball finds grass like it was always going to end up there. One-one ballgame. And now Robbins steps in — the Notre Dame transfer, the kid Schlossnagle went and got because he believed this lineup needed a presence in the three-hole.&rdquo;
+                </blockquote>
+
+                <p>
+                  What happened next is the at-bat that will live in the first chapter of the Aiden Robbins story at Texas. He got a fastball middle-in, and he didn&rsquo;t miss it. Two-run home run — 450 feet, over YETI Yard. Gone to left. The ball left the yard like it was late for something.
+                </p>
+
+                <p className="text-text-tertiary">
+                  Texas 3, UC Davis 1. And the air at Disch-Falk changed from hopeful to hungry.
+                </p>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── The Fifth Inning ── */}
+        <Section padding="lg" background="charcoal">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+                The Fifth: When the Dam Broke
+              </h2>
+
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <p>
+                  If the third inning was the ignition, the fifth was the flood. Rodriguez reached on a UC Davis error at short. Robbins followed with an RBI double — his second extra-base hit of the night — and the score moved to 4-1. Tinney drew a walk. Then the wheels came off.
+                </p>
+
+                <p>
+                  Mason Lerma came on in relief and immediately balked both runners up a base. Livingston drew a walk to load them. Borba struck out. Duplantier, pinch-hitting for Larson, K&rsquo;d looking. Two outs, bases loaded. They didn&rsquo;t escape.
+                </p>
+
+                <p>
+                  Temo Becerra — the Stanford transfer — worked a full-count walk that pushed a run across. 5-1 Texas. Then Anthony Pack Jr. stepped back to the plate and dropped a two-run single into center field. 7-1. Pack stole second for good measure.
+                </p>
+
+                <div className="bg-[#1B4332]/8 border-l-[3px] border-[#1B4332] rounded-r p-5 my-8">
+                  <div className="font-display text-[11px] uppercase tracking-[3px] text-[#1B4332]/70 mb-2">Fifth Inning — The Sequence</div>
+                  <p className="font-serif text-base text-text-secondary leading-relaxed">
+                    Rodriguez reached on E6. Robbins doubled home a run. Tinney walked. Balk advanced both runners. Livingston walked to load them. Two outs later, Becerra walked in a run, Pack singled home two more, and Texas had turned a 4-1 lead into a 7-1 demolition.
                   </p>
                 </div>
-              </ScrollReveal>
-            </div>
-          </Container>
-        </div>
-      </Section>
-
-      {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
-      <GameRecapToolbar
-        gameId="texas-uc-davis-opener-2026"
-        gameTitle="Texas 12, UC Davis 2 — 2026 Season Opener"
-        gameContext={GAME_CONTEXT}
-        recapText={RECAP_TEXT}
-      />
-
-      {/* ── Linescore ────────────────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container>
-          <ScrollReveal delay={100}>
-            <Card variant="default" padding="lg">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-2 px-3 text-white/40 font-medium w-28">Team</th>
-                      {linescore.map((i) => (
-                        <th key={i.inning} className="text-center py-2 px-2 text-white/40 font-medium w-8">
-                          {i.inning}
-                        </th>
-                      ))}
-                      <th className="text-center py-2 px-3 text-white font-bold">R</th>
-                      <th className="text-center py-2 px-3 text-white/60 font-medium">H</th>
-                      <th className="text-center py-2 px-3 text-white/60 font-medium">E</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-white/5">
-                      <td className="py-2 px-3 text-white/60 font-medium">UC Davis</td>
-                      {linescore.map((i) => (
-                        <td key={i.inning} className="text-center py-2 px-2 text-white/50">
-                          {i.away}
-                        </td>
-                      ))}
-                      <td className="text-center py-2 px-3 text-white font-bold">{ucdRuns}</td>
-                      <td className="text-center py-2 px-3 text-white/60">{ucdHits}</td>
-                      <td className="text-center py-2 px-3 text-white/60">{ucdErrors}</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-3 text-[#BF5700] font-semibold">Texas</td>
-                      {linescore.map((i) => (
-                        <td key={i.inning} className="text-center py-2 px-2 text-white/70">
-                          {i.home}
-                        </td>
-                      ))}
-                      <td className="text-center py-2 px-3 text-white font-bold">{texasRuns}</td>
-                      <td className="text-center py-2 px-3 text-white/60">{texasHits}</td>
-                      <td className="text-center py-2 px-3 text-white/60">{texasErrors}</td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
-      {/* ── Quick Stats ──────────────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {quickStats.map((stat, idx) => (
-              <ScrollReveal key={stat.label} delay={idx * 50}>
-                <Card variant="hover" padding="md">
-                  <div className="flex items-center gap-3">
-                    <stat.icon className="w-5 h-5 text-[#BF5700]" />
-                    <div>
-                      <p className="text-2xl font-bold text-white">{stat.value}</p>
-                      <p className="text-xs text-white/40">{stat.label}</p>
+        {/* ── Grubbs + Seventh Inning ── */}
+        <Section padding="lg">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+                Grubbs Keeps the Door Shut
+              </h2>
+
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <p>
+                  Max Grubbs — the senior right-hander from Arlington who posted a 2.84 ERA last season — took the ball in the sixth and did exactly what a veteran reliever is supposed to do: he kept the game boring. Lee singled. Wright singled. Castagnola flew out to left, and then Gentil hit into a 5-3 double play that ended the threat.
+                </p>
+
+                <p>
+                  That&rsquo;s what depth looks like. When your first reliever out of the pen is a senior with 50-plus innings of SEC experience and a groundball pitch that induces double plays on demand, the starters can pitch free and the bullpen can hold any lead.
+                </p>
+
+                <p>
+                  UC Davis scratched one back in the seventh — Wooldridge doubled home a run to make it 7-2 — and for a half-heartbeat it looked like the Aggies might force the Longhorns to play a full nine.
+                </p>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={100}>
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mt-14 mb-5 pb-2 border-b border-burnt-orange/15">
+                The Seventh: Mendoza&rsquo;s Punctuation
+              </h2>
+
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-6">
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                  &ldquo;Bottom of the seventh. Borba doubles. Duplantier singles him to third. A balk — UC Davis&rsquo;s second of the night — pushes Borba home. 8-2. Becerra singles. 9-2. Pack singles again. And here comes Mendoza with the bases loaded, the run-rule in reach, and Disch-Falk on its feet...&rdquo;
+                </blockquote>
+
+                <p>
+                  Max Hippensteel had barely had time to feel the mound under his spikes before Ethan Mendoza stepped in. Mendoza — the Southlake Carroll product with the best contact rate in the SEC — sat fastball and got one.
+                </p>
+
+                <p>
+                  Three-run home run. Walk-off. Run-rule. Twelve to two. And the 2026 season opened the way the entire offseason promised it would: with a roster that is deeper, meaner, and more dangerous than anything Schlossnagle has fielded in Austin.
+                </p>
+
+                <blockquote className="border-l-[3px] border-burnt-orange pl-6 my-8 font-serif italic text-xl text-[#C9A96E] leading-relaxed">
+                  &ldquo;That ball is hit deep to left... and I don&rsquo;t believe — wait, yes I do. I absolutely believe it. Because this is exactly what this team was built to do. Mendoza clears the bases, the Longhorns mob him at the plate, and the first night of the new year ends the only way it could: with a bang.&rdquo;
+                </blockquote>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── Key Performers ── */}
+        <Section padding="lg" background="charcoal">
+          <Container>
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+                Key Performers
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {performers.map((p) => (
+                  <div
+                    key={p.name}
+                    className="relative bg-gradient-to-br from-[#2A2A2A]/90 to-charcoal/95 border border-burnt-orange/10 hover:border-burnt-orange/25 rounded p-5 pl-7 overflow-hidden transition-colors"
+                  >
+                    <div className="absolute top-0 left-0 w-[3px] h-full bg-burnt-orange" />
+                    <div className="font-display text-base font-semibold uppercase tracking-wide text-[#FAF7F2] mb-0.5">
+                      {p.name}
+                    </div>
+                    <div className="font-mono text-[10px] uppercase tracking-wider text-burnt-orange mb-2">
+                      {p.pos} &middot; {p.year}
+                    </div>
+                    <div className="font-mono text-[13px] text-text-muted leading-relaxed">
+                      <span className="text-ember font-medium">{p.line}</span>
+                      <br />
+                      {p.context}
                     </div>
                   </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── Full Box Scores ── */}
+        <Section padding="lg">
+          <Container>
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-6 pb-2 border-b border-burnt-orange/15">
+                Full Box Score
+              </h2>
+
+              {/* Texas Batting */}
+              <div className="mb-8">
+                <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">Texas Batting</h3>
+                <Card variant="default" padding="none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[520px] font-mono text-sm">
+                      <thead>
+                        <tr className="text-[11px] uppercase tracking-wider text-text-muted bg-black/20">
+                          <th className="text-left py-2.5 px-3">Player</th>
+                          <th className="text-center py-2.5 w-10">Pos</th>
+                          <th className="text-center py-2.5 w-10">AB</th>
+                          <th className="text-center py-2.5 w-10">R</th>
+                          <th className="text-center py-2.5 w-10">H</th>
+                          <th className="text-center py-2.5 w-10">RBI</th>
+                          <th className="text-center py-2.5 w-10">BB</th>
+                          <th className="text-center py-2.5 w-10">SO</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {texasBatting.map((b) => (
+                          <tr key={b.name} className="border-t border-border-subtle hover:bg-surface-light">
+                            <td className="py-2 px-3 text-text-secondary">{b.name}</td>
+                            <td className="text-center text-text-muted">{b.pos}</td>
+                            <td className="text-center text-text-tertiary">{b.ab}</td>
+                            <td className="text-center text-text-tertiary">{b.r}</td>
+                            <td className={`text-center ${b.h > 0 ? 'text-text-primary font-medium' : 'text-text-muted'}`}>{b.h}</td>
+                            <td className={`text-center ${b.rbi > 0 ? 'text-burnt-orange font-medium' : 'text-text-muted'}`}>{b.rbi}</td>
+                            <td className="text-center text-text-tertiary">{b.bb}</td>
+                            <td className="text-center text-text-tertiary">{b.so}</td>
+                          </tr>
+                        ))}
+                        <tr className="border-t-2 border-burnt-orange/20 font-semibold">
+                          <td className="py-2 px-3 text-text-tertiary" colSpan={2}>Totals</td>
+                          <td className="text-center text-text-tertiary">{sumCol(texasBatting, 'ab')}</td>
+                          <td className="text-center text-burnt-orange">{sumCol(texasBatting, 'r')}</td>
+                          <td className="text-center text-text-primary">{sumCol(texasBatting, 'h')}</td>
+                          <td className="text-center text-burnt-orange">{sumCol(texasBatting, 'rbi')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(texasBatting, 'bb')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(texasBatting, 'so')}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </Card>
-              </ScrollReveal>
-            ))}
-          </div>
-        </Container>
-      </Section>
+              </div>
 
-      {/* ── Editorial Lede ───────────────────────────────────────────────────── */}
-      <Section padding="lg">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-6 text-white/80 leading-relaxed">
-              <p className="text-xl sm:text-2xl text-white font-serif leading-snug">
-                Jim Schlossnagle&apos;s Longhorns opened the 2026 season the way they intend to play it: with
-                force, with depth, and without apology.
-              </p>
-              <p>
-                Texas collected 15 hits and launched four home runs in a 12-2 dismantling of UC Davis at
-                UFCU Disch-Falk Field. The Aggies ran through four pitchers, none lasting more than two
-                and two-thirds innings. The Longhorns, meanwhile, got five shutout innings from starter
-                Bryce Ahrens and 13 total strikeouts from a staff that looked midseason ready on Opening Day.
-              </p>
-              <p>
-                This wasn&apos;t a game that told you whether Texas can win the SEC. It was a game that told you
-                they aren&apos;t interested in easing into the conversation.
-              </p>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+              {/* UC Davis Batting */}
+              <div className="mb-8">
+                <h3 className="font-display text-sm uppercase tracking-wider text-text-muted mb-3">UC Davis Batting</h3>
+                <Card variant="default" padding="none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[520px] font-mono text-sm">
+                      <thead>
+                        <tr className="text-[11px] uppercase tracking-wider text-text-muted bg-black/20">
+                          <th className="text-left py-2.5 px-3">Player</th>
+                          <th className="text-center py-2.5 w-10">Pos</th>
+                          <th className="text-center py-2.5 w-10">AB</th>
+                          <th className="text-center py-2.5 w-10">R</th>
+                          <th className="text-center py-2.5 w-10">H</th>
+                          <th className="text-center py-2.5 w-10">RBI</th>
+                          <th className="text-center py-2.5 w-10">BB</th>
+                          <th className="text-center py-2.5 w-10">SO</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ucdavisBatting.map((b) => (
+                          <tr key={b.name} className="border-t border-border-subtle hover:bg-surface-light">
+                            <td className="py-2 px-3 text-text-tertiary">{b.name}</td>
+                            <td className="text-center text-text-muted">{b.pos}</td>
+                            <td className="text-center text-text-muted">{b.ab}</td>
+                            <td className="text-center text-text-muted">{b.r}</td>
+                            <td className={`text-center ${b.h > 0 ? 'text-text-tertiary' : 'text-text-muted'}`}>{b.h}</td>
+                            <td className={`text-center ${b.rbi > 0 ? 'text-text-tertiary' : 'text-text-muted'}`}>{b.rbi}</td>
+                            <td className="text-center text-text-muted">{b.bb}</td>
+                            <td className="text-center text-text-muted">{b.so}</td>
+                          </tr>
+                        ))}
+                        <tr className="border-t-2 border-border font-semibold">
+                          <td className="py-2 px-3 text-text-muted" colSpan={2}>Totals</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'ab')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'r')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'h')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'rbi')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'bb')}</td>
+                          <td className="text-center text-text-tertiary">{sumCol(ucdavisBatting, 'so')}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              </div>
 
-      {/* ── LaViolette Feature ───────────────────────────────────────────────── */}
-      <Section padding="md" background="charcoal">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-4">
-              <Badge variant="primary">Player of the Game</Badge>
-              <h2 className="text-3xl sm:text-4xl font-display uppercase text-white tracking-tight">
-                Jace LaViolette
+              {/* Pitching */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Texas Pitching */}
+                <div>
+                  <h3 className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-3">Texas Pitching</h3>
+                  <Card variant="default" padding="none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[400px] font-mono text-sm">
+                        <thead>
+                          <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+                            <th className="text-left py-2 px-3">Pitcher</th>
+                            <th className="text-center py-2 w-10">IP</th>
+                            <th className="text-center py-2 w-8">H</th>
+                            <th className="text-center py-2 w-8">R</th>
+                            <th className="text-center py-2 w-8">ER</th>
+                            <th className="text-center py-2 w-8">BB</th>
+                            <th className="text-center py-2 w-8">K</th>
+                            <th className="text-center py-2 w-10">P</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {texasPitching.map((p) => (
+                            <tr key={p.name} className="border-t border-border-subtle">
+                              <td className="py-2 px-3 text-text-secondary">
+                                {p.name}
+                                {p.decision && <span className="text-burnt-orange ml-1 text-xs">({p.decision})</span>}
+                              </td>
+                              <td className="text-center text-text-tertiary">{p.ip}</td>
+                              <td className="text-center text-text-muted">{p.h}</td>
+                              <td className="text-center text-text-muted">{p.r}</td>
+                              <td className="text-center text-text-muted">{p.er}</td>
+                              <td className="text-center text-text-muted">{p.bb}</td>
+                              <td className="text-center text-text-primary font-medium">{p.so}</td>
+                              <td className="text-center text-text-muted">{p.pitches}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* UC Davis Pitching */}
+                <div>
+                  <h3 className="font-display text-sm uppercase tracking-wider text-text-muted mb-3">UC Davis Pitching</h3>
+                  <Card variant="default" padding="none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[400px] font-mono text-sm">
+                        <thead>
+                          <tr className="text-[10px] uppercase tracking-wider text-text-muted bg-black/20">
+                            <th className="text-left py-2 px-3">Pitcher</th>
+                            <th className="text-center py-2 w-10">IP</th>
+                            <th className="text-center py-2 w-8">H</th>
+                            <th className="text-center py-2 w-8">R</th>
+                            <th className="text-center py-2 w-8">ER</th>
+                            <th className="text-center py-2 w-8">BB</th>
+                            <th className="text-center py-2 w-8">K</th>
+                            <th className="text-center py-2 w-10">P</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ucdavisPitching.map((p) => (
+                            <tr key={p.name} className="border-t border-border-subtle">
+                              <td className="py-2 px-3 text-text-tertiary">
+                                {p.name}
+                                {p.decision && <span className="text-error/60 ml-1 text-xs">({p.decision})</span>}
+                              </td>
+                              <td className="text-center text-text-muted">{p.ip}</td>
+                              <td className="text-center text-text-muted">{p.h}</td>
+                              <td className="text-center text-text-muted">{p.r}</td>
+                              <td className="text-center text-text-muted">{p.er}</td>
+                              <td className="text-center text-text-muted">{p.bb}</td>
+                              <td className="text-center text-text-muted">{p.so}</td>
+                              <td className="text-center text-text-muted">{p.pitches}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
+                </div>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── What This Game Told Us ── */}
+        <Section padding="lg" background="charcoal">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-burnt-orange mb-5 pb-2 border-b border-burnt-orange/15">
+                What This Game Actually Told Us
               </h2>
-              <p className="text-sm text-[#BF5700] font-mono">
-                3-for-5 · 2 HR · Grand Slam · 5 RBI · 2 R
-              </p>
-              <div className="space-y-4 text-white/80 leading-relaxed mt-4">
-                <p>
-                  LaViolette didn&apos;t waste time establishing himself as the most dangerous hitter in the
-                  lineup. His solo shot in the first inning broke the game open early. His grand slam in
-                  the seventh — a no-doubt rope to right-center — buried it.
-                </p>
-                <p>
-                  Five RBI in a season opener from a projected first-round pick is the kind of performance
-                  that confirms what scouts already know: this is an elite college bat. The swing is short.
-                  The power is real. And the at-bats are mature — he didn&apos;t chase a single pitch outside
-                  the zone.
-                </p>
-                <blockquote className="border-l-4 border-[#BF5700] pl-4 py-1 text-white/60 italic">
-                  LaViolette&apos;s grand slam traveled an estimated 410 feet. It was the third pitch he saw
-                  in the at-bat.
-                </blockquote>
-              </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
 
-      {/* ── Robbins + Shorten ────────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-8">
-              <div className="space-y-3">
-                <h3 className="text-2xl font-display uppercase text-white tracking-tight">
-                  Kimble Robbins
-                </h3>
-                <p className="text-sm text-[#BF5700] font-mono">
-                  2-for-4 · HR (450 ft) · 1 RBI · 1 BB · 2 R
-                </p>
-                <p className="text-white/80 leading-relaxed">
-                  Robbins launched a solo home run to dead center that measured 450 feet — the longest
-                  hit at Disch-Falk in recent memory. It wasn&apos;t a wind-aided fly ball. It was a
-                  center-cut fastball that Robbins put into orbit. The exit velocity confirmed what the
-                  crowd already knew the moment the ball left the bat: that ball was not coming back.
-                </p>
-              </div>
-
-              <div className="border-t border-white/10 pt-8 space-y-3">
-                <h3 className="text-2xl font-display uppercase text-white tracking-tight">
-                  Charlie Shorten
-                </h3>
-                <p className="text-sm text-[#BF5700] font-mono">
-                  2-for-4 · HR · 1 RBI · 2 R
-                </p>
-                <p className="text-white/80 leading-relaxed">
-                  Shorten&apos;s solo homer in the second inning set the tone before Texas had even batted
-                  around for the first time. It was a professional at-bat — he worked a 2-1 count, got
-                  a hanging slider, and didn&apos;t miss. When the three-hole hitter is driving the ball
-                  like that on Opening Day, the rest of the lineup takes notice.
-                </p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* ── Starting Pitching ────────────────────────────────────────────────── */}
-      <Section padding="md" background="charcoal">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-4">
-              <h2 className="text-3xl font-display uppercase text-white tracking-tight">
-                On the Mound: Ahrens Dominates
-              </h2>
-              <p className="text-sm text-[#BF5700] font-mono">
-                Bryce Ahrens: 5.0 IP · 3 H · 0 R · 0 ER · 0 BB · 7 K
-              </p>
-              <div className="space-y-4 text-white/80 leading-relaxed">
-                <p>
-                  Ahrens was surgical. Five innings, zero walks, seven strikeouts, and only three hits
-                  allowed. He pounded the zone from the first pitch and never let UC Davis establish
-                  any rhythm at the plate.
-                </p>
-                <p>
-                  The zero-walk line is the headline. For a Friday night starter in the SEC, command is
-                  the currency that buys you deep outings. Ahrens spent the afternoon demonstrating he has
-                  it in surplus.
-                </p>
-                <blockquote className="border-l-4 border-[#BF5700] pl-4 py-1 text-white/60 italic">
-                  Seven strikeouts in five innings with zero free passes. Ahrens threw first-pitch strikes
-                  to 16 of 19 batters faced.
-                </blockquote>
-              </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* ── Bullpen ──────────────────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-4">
-              <h2 className="text-3xl font-display uppercase text-white tracking-tight">
-                Bullpen: Beane &amp; Sagers Close It
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <Card variant="hover" padding="md">
-                  <p className="text-white font-semibold">Will Beane</p>
-                  <p className="text-sm text-[#BF5700] font-mono mt-1">2.0 IP · 2 H · 1 ER · 0 BB · 4 K</p>
-                  <p className="text-xs text-white/50 mt-2">
-                    Beane entered in the sixth and immediately established his fastball. Four strikeouts
-                    in two innings of work. The one earned run came on a well-placed single — nothing free.
+              <div className="font-serif text-lg leading-[1.78] text-text-secondary space-y-8">
+                <div>
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
+                    1. The Lineup Is Relentless, Not Just Talented
+                  </h3>
+                  <p>
+                    There&rsquo;s a difference between a lineup that has good hitters and a lineup that doesn&rsquo;t let you breathe. This Texas lineup is the second thing. One through nine, every at-bat felt competitive. Robbins homered and doubled. Pack had three hits from the nine-hole. Becerra drove in two from the eight-spot. Mendoza walked it off from the leadoff position. When your table-setter is also your finisher, the lineup is circular — there&rsquo;s no place to hide.
                   </p>
-                </Card>
-                <Card variant="hover" padding="md">
-                  <p className="text-white font-semibold">Luke Sagers</p>
-                  <p className="text-sm text-[#BF5700] font-mono mt-1">2.0 IP · 1 H · 1 ER · 1 BB · 2 K</p>
-                  <p className="text-xs text-white/50 mt-2">
-                    Sagers closed the door with two innings of his own. Issued one walk but limited damage.
-                    The combined 13 K across nine innings from the Texas staff is an early-season statement.
+                </div>
+
+                <div>
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
+                    2. The Portal Additions Are Real
+                  </h3>
+                  <p>
+                    Robbins from Notre Dame: three RBI in his first game. Becerra from Stanford: two RBI and a presence at third that felt immediately settled. Tinney drew two walks behind Robbins — the lineup protection is already working. Schlossnagle didn&rsquo;t just add names from the portal. He added fits. And the chemistry showed from the first inning on — no one looked like they were playing for a new team.
                   </p>
-                </Card>
-              </div>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
+                </div>
 
-      {/* ── UC Davis Pitching ────────────────────────────────────────────────── */}
-      <Section padding="md" background="charcoal">
-        <Container>
-          <ScrollReveal>
-            <Card variant="default" padding="none">
-              <div className="px-6 py-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-white">UC Davis Pitching</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-2 px-4 text-white/40 font-medium">Pitcher</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">IP</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">H</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">R</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">ER</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">BB</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">K</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">HR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ucDavisPitching.map((p) => (
-                      <tr key={p.name} className="border-b border-white/5">
-                        <td className="py-2 px-4 text-white/70">
-                          {p.name}
-                          {p.decision && (
-                            <span className="ml-2 text-xs text-red-400">({p.decision})</span>
-                          )}
-                        </td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.ip}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.h}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.r}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.er}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.bb}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.so}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.hr}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
+                <div>
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
+                    3. Riojas Can Handle the Friday Spot
+                  </h3>
+                  <p>
+                    The first inning was bumpy. A walk, two singles, a run. But the next four innings? Clean. Dominant. Riojas found his slider, located his fastball, and retired the side in order multiple times. Friday night starters in the SEC need two things: the ability to survive a bad inning without unraveling, and the ability to give the bullpen a clean handoff. Riojas did both tonight.
+                  </p>
+                </div>
 
-      {/* ── Full Box Score: Texas Batting ─────────────────────────────────────── */}
-      <Section padding="md">
-        <Container>
-          <ScrollReveal>
-            <Card variant="elevated" padding="none">
-              <div className="px-6 py-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-[#BF5700]">Texas Batting</h3>
+                <div>
+                  <h3 className="font-display text-lg font-medium uppercase tracking-wide text-text-primary mb-3">
+                    4. The Depth Behind the Starters Is Ridiculous
+                  </h3>
+                  <p>
+                    Grubbs came in, threw two innings, induced a double play, and handed the ball back. Dylan Volantis didn&rsquo;t pitch because he didn&rsquo;t need to. Luke Harrison didn&rsquo;t pitch because he didn&rsquo;t need to. Thomas Burns didn&rsquo;t pitch because he didn&rsquo;t need to. When your most dominant arms are preserved because your starter and first reliever handled a 12-2 game, the pitching staff is built correctly.
+                  </p>
+                </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-2 px-4 text-white/40 font-medium">Player</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">Pos</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">AB</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">R</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">H</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">RBI</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">BB</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">SO</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">HR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {texasBatting.map((b) => (
-                      <tr key={b.name} className="border-b border-white/5">
-                        <td className="py-2 px-4 text-white/80 font-medium">{b.name}</td>
-                        <td className="text-center py-2 px-2 text-white/40 text-xs">{b.pos}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.ab}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.r}</td>
-                        <td className="text-center py-2 px-2 text-white/70 font-medium">{b.h}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.rbi}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.bb}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.so}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.hr > 0 ? b.hr : '-'}</td>
-                      </tr>
-                    ))}
-                    <tr className="border-t border-white/10">
-                      <td className="py-2 px-4 text-white font-semibold" colSpan={2}>Totals</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.ab, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.r, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white font-bold">{texasHits}</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.rbi, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.bb, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.so, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/60">{texasBatting.reduce((s, b) => s + b.hr, 0)}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
-      {/* ── Full Box Score: UC Davis Batting ──────────────────────────────────── */}
-      <Section padding="md">
-        <Container>
-          <ScrollReveal>
-            <Card variant="elevated" padding="none">
-              <div className="px-6 py-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-white/60">UC Davis Batting</h3>
+        {/* ── BSI Verdict ── */}
+        <Section padding="lg">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <div className="relative bg-gradient-to-br from-burnt-orange/8 to-texas-soil/5 border border-burnt-orange/15 rounded p-8 sm:p-10">
+                <div className="absolute -top-2.5 left-8 font-display text-[11px] tracking-[3px] uppercase bg-midnight text-burnt-orange px-3">
+                  BSI Verdict
+                </div>
+                <div className="font-serif text-lg sm:text-xl leading-relaxed text-[#FAF7F2] space-y-4">
+                  <p>
+                    One game is one game. UC Davis is not Ole Miss, and February is not June. But the things you look for in an opener — energy, depth, competitive at-bats from all nine spots, a starter who recovered after adversity, a bullpen arm who shut the door — were all here. Every one of them.
+                  </p>
+                  <p>
+                    Schlossnagle built this roster to compete for Omaha. What tonight showed is that the roster heard him, and they&rsquo;re not interested in easing into it. Twelve runs in seven innings. Three extra-base hits. Zero errors. A walk-off three-run homer from the best contact hitter in the conference.
+                  </p>
+                  <p>
+                    The runway is short. The schedule is unforgiving. And based on what happened tonight under the lights at Disch-Falk, that&rsquo;s exactly how this team wants it.
+                  </p>
+                </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-2 px-4 text-white/40 font-medium">Player</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">Pos</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">AB</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">R</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">H</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">RBI</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">BB</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">SO</th>
-                      <th className="text-center py-2 px-2 text-white/40 font-medium">HR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ucDavisBatting.map((b) => (
-                      <tr key={b.name} className="border-b border-white/5">
-                        <td className="py-2 px-4 text-white/70">{b.name}</td>
-                        <td className="text-center py-2 px-2 text-white/40 text-xs">{b.pos}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.ab}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.r}</td>
-                        <td className="text-center py-2 px-2 text-white/60">{b.h}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.rbi}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.bb}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.so}</td>
-                        <td className="text-center py-2 px-2 text-white/50">{b.hr > 0 ? b.hr : '-'}</td>
-                      </tr>
-                    ))}
-                    <tr className="border-t border-white/10">
-                      <td className="py-2 px-4 text-white/70 font-semibold" colSpan={2}>Totals</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.ab, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.r, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/60 font-medium">{ucdHits}</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.rbi, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.bb, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.so, 0)}</td>
-                      <td className="text-center py-2 px-2 text-white/50">{ucDavisBatting.reduce((s, b) => s + b.hr, 0)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* ── AI Features ── */}
+        <Section padding="lg" background="charcoal">
+          <Container>
+            <ScrollReveal direction="up">
+              <div className="text-center mb-8">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Powered by AI</span>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wider text-text-primary mt-2">
+                  Go Deeper
+                </h2>
               </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* ── Texas Pitching ───────────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container>
-          <ScrollReveal>
-            <Card variant="default" padding="none">
-              <div className="px-6 py-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-[#BF5700]">Texas Pitching</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                <button
+                  onClick={() => openAI('claude')}
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                >
+                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Claude Analysis</div>
+                  <div className="text-text-muted text-xs">Anthropic-powered game breakdown</div>
+                </button>
+                <button
+                  onClick={() => openAI('gemini')}
+                  className="group p-5 bg-gradient-to-br from-[#2A2A2A] to-charcoal border border-burnt-orange/10 hover:border-burnt-orange/30 rounded transition-colors text-left"
+                >
+                  <div className="font-display text-sm uppercase tracking-wider text-burnt-orange mb-1">Gemini Analysis</div>
+                  <div className="text-text-muted text-xs">Google-powered scouting insights</div>
+                </button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-2 px-4 text-white/40 font-medium">Pitcher</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">IP</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">H</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">R</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">ER</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">BB</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">K</th>
-                      <th className="text-center py-2 px-3 text-white/40 font-medium">HR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {texasPitching.map((p) => (
-                      <tr key={p.name} className="border-b border-white/5">
-                        <td className="py-2 px-4 text-white/80 font-medium">
-                          {p.name}
-                          {p.decision && (
-                            <span className="ml-2 text-xs text-green-400">({p.decision})</span>
-                          )}
-                        </td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.ip}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.h}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.r}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.er}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.bb}</td>
-                        <td className="text-center py-2 px-3 text-white/70 font-medium">{p.so}</td>
-                        <td className="text-center py-2 px-3 text-white/60">{p.hr}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
-      {/* ── Game Narrative ────────────────────────────────────────────────────── */}
-      <Section padding="lg" background="charcoal">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-6 text-white/80 leading-relaxed">
-              <h2 className="text-3xl font-display uppercase text-white tracking-tight">
-                What This Game Means
-              </h2>
-              <p>
-                Opening Day is a single data point. It tells you almost nothing about where a team will
-                finish. But it tells you something about how a team has prepared — and how it intends to
-                compete. Texas entered the 2026 season ranked in the top five nationally, loaded with
-                draft-eligible talent, and playing under a coach who has been to Omaha and knows
-                what it costs to get back.
-              </p>
-              <p>
-                The 12-run, 15-hit, 4-homer performance against UC Davis was the kind of Opening Day
-                statement that sends a message down the dugout and across the conference: this lineup is
-                deep, this pitching staff is sharp, and this team is not going to give you free
-                baserunners or free outs.
-              </p>
-              <p>
-                Schlossnagle used three pitchers. All three threw strikes. All three generated swings
-                and misses. The bullpen depth — something that separates contenders from pretenders
-                in the SEC — looks like it won&apos;t be a question this year.
-              </p>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* ── Scouting Observations ────────────────────────────────────────────── */}
-      <Section padding="md">
-        <Container size="narrow">
-          <ScrollReveal>
-            <div className="space-y-6">
-              <h2 className="text-2xl font-display uppercase text-white tracking-tight">
-                Scouting Notebook
-              </h2>
-              <blockquote className="border-l-4 border-[#BF5700] pl-4 py-2 text-white/60 text-sm leading-relaxed">
-                <strong className="text-white/80">LaViolette&apos;s plate discipline:</strong> Zero chases outside the zone
-                in five plate appearances. His swing decisions were as impressive as the results. The
-                grand slam came on a pitch he was waiting for — not one he reacted to.
-              </blockquote>
-              <blockquote className="border-l-4 border-[#BF5700] pl-4 py-2 text-white/60 text-sm leading-relaxed">
-                <strong className="text-white/80">Ahrens&apos; first-pitch approach:</strong> 16 of 19 batters saw a
-                first-pitch strike. That&apos;s not just command — that&apos;s confidence. He attacked the zone
-                from pitch one and never let UC Davis get comfortable in counts.
-              </blockquote>
-              <blockquote className="border-l-4 border-[#BF5700] pl-4 py-2 text-white/60 text-sm leading-relaxed">
-                <strong className="text-white/80">Robbins&apos; raw power:</strong> The 450-foot blast to dead center
-                is the kind of exit velocity that puts you on MLB draft boards. He didn&apos;t try to pull
-                the ball — he drove it where it was pitched, and the natural power did the rest.
-              </blockquote>
-            </div>
-          </ScrollReveal>
-        </Container>
-      </Section>
-
-      {/* ── What's Next ──────────────────────────────────────────────────────── */}
-      <Section padding="md" background="charcoal">
-        <Container size="narrow">
-          <ScrollReveal>
-            <Card variant="hover" padding="lg">
-              <div className="space-y-3">
-                <p className="text-xs text-white/40 uppercase tracking-wider font-semibold">Up Next</p>
-                <h3 className="text-xl font-display uppercase text-white">
-                  Texas continues the opening weekend series
+        {/* ── Podcast Export ── */}
+        <Section padding="lg">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <div className="text-center">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-text-muted block mb-2">NotebookLM Integration</span>
+                <h3 className="font-display text-lg uppercase tracking-wider text-text-primary mb-4">
+                  Turn This Recap Into a Podcast
                 </h3>
-                <p className="text-sm text-white/60 leading-relaxed">
-                  The Longhorns play two more against UC Davis before the schedule ramps toward
-                  conference play. Expect Schlossnagle to rotate the pitching staff and give
-                  the full roster a look before the real tests begin.
+                <p className="text-text-muted text-sm mb-6 max-w-md mx-auto">
+                  One click copies the full recap to your clipboard and opens Google NotebookLM. Paste it in and generate an audio overview.
                 </p>
+                <NotebookLMExport articleText={ARTICLE_TEXT} />
               </div>
-            </Card>
-          </ScrollReveal>
-        </Container>
-      </Section>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
-      {/* ── Attribution ──────────────────────────────────────────────────────── */}
-      <Section padding="sm">
-        <Container>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <DataSourceBadge
-              source="texaslonghorns.com/boxscore/17822"
-              timestamp={`${GAME_DATE} · America/Chicago`}
-            />
-            <p className="text-xs text-white/30">
-              Editorial analysis by Blaze Sports Intel. Box score data verified against official sources.
-            </p>
-          </div>
-        </Container>
-      </Section>
+        {/* ── Game 2 Preview ── */}
+        <Section padding="lg" background="charcoal">
+          <Container size="narrow">
+            <ScrollReveal direction="up">
+              <div className="text-center mb-6">
+                <span className="font-mono text-[10px] uppercase tracking-[3px] text-burnt-orange">Up Next</span>
+              </div>
+              <Card variant="default" padding="lg">
+                <div className="text-center space-y-3">
+                  <h3 className="font-display text-xl uppercase tracking-wider text-text-primary">
+                    Game 2: Texas vs. UC Davis
+                  </h3>
+                  <div className="font-mono text-sm text-burnt-orange">
+                    Saturday, February 14 &middot; 12:00 PM CT &middot; UFCU Disch-Falk Field
+                  </div>
+                  <div className="font-serif text-text-tertiary text-sm">
+                    Probable starter: <strong className="text-text-secondary">Luke Harrison</strong> (LHP, Sr. &middot; 3.06 ERA, 72 K in 2025)
+                  </div>
+                  <p className="font-serif text-text-muted text-sm leading-relaxed max-w-lg mx-auto">
+                    Start time moved up from original schedule for weather. Texas leads the series 1-0. Sunday&rsquo;s Game 3 TBD — Dylan Volantis (LHP, So.) the likely option.
+                  </p>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </Container>
+        </Section>
 
-      {/* ── Footer ───────────────────────────────────────────────────────────── */}
+        {/* ── Source Attribution ── */}
+        <Section padding="md" className="border-t border-burnt-orange/10">
+          <Container size="narrow">
+            <div className="space-y-4">
+              <DataSourceBadge
+                source="texaslonghorns.com/boxscore/17822"
+                timestamp="February 13, 2026 CT"
+              />
+              <div className="font-mono text-[11px] text-text-muted leading-relaxed">
+                Play-by-play sourced from Texas Longhorns On SI (Connor Zimmerlee) &amp; TexasLonghorns.com live stats.
+                Roster data via BSI Season Preview &amp; D1Baseball.
+              </div>
+              <div className="flex flex-wrap gap-6 pt-2">
+                <Link href="/college-baseball/editorial" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                  More Editorial &rarr;
+                </Link>
+                <Link href="/college-baseball/editorial/texas-2026" className="font-display text-[13px] uppercase tracking-widest text-burnt-orange hover:opacity-70 transition-opacity">
+                  2026 Season Preview &rarr;
+                </Link>
+              </div>
+            </div>
+          </Container>
+        </Section>
+      </div>
+
       <Footer />
-    </main>
+
+      {/* AI Analysis Panel */}
+      <AIAnalysisPanel
+        isOpen={aiOpen}
+        onClose={() => setAiOpen(false)}
+        gameContext={GAME_CONTEXT}
+        defaultModel={aiDefaultModel}
+      />
+    </>
   );
 }

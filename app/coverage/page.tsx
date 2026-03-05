@@ -3,37 +3,58 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
-import { Navbar } from '@/components/layout-ds/Navbar';
+import { withAlpha } from '@/lib/utils/color';
+// Navbar is rendered by the root layout — no page-level import needed
 import { Footer } from '@/components/layout-ds/Footer';
 
-const colors = {
-  burntOrange: '#BF5700',
-  texasSoil: '#8B4513',
-  ember: '#FF6B35',
-  charcoal: '#1A1A1A',
-  midnight: '#0D0D0D',
-  cream: '#FAF8F5',
-  gold: '#C9A227',
-};
+// ── SVG Sport Icons ──
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'College Baseball', href: '/college-baseball' },
-  { label: 'MLB', href: '/mlb' },
-  { label: 'NFL', href: '/nfl' },
-  { label: 'NBA', href: '/nba' },
-  { label: 'About', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-];
+const CoverageBaseballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" />
+    <path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" />
+  </svg>
+);
+const CoverageFootballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" />
+    <path d="M12 7L12 17M9 10L15 14M15 10L9 14" />
+  </svg>
+);
+const CoverageBasketballSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2V22M2 12H22" />
+    <path d="M4.5 4.5C8 8 8 16 4.5 19.5M19.5 4.5C16 8 16 16 19.5 19.5" />
+  </svg>
+);
+const CoverageStadiumSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <path d="M3 21V10L12 3L21 10V21" /><path d="M3 14H21" /><rect x="8" y="14" width="8" height="7" />
+  </svg>
+);
+const CoverageGradCapSvg = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9" stroke="currentColor" strokeWidth={1.5}>
+    <path d="M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" /><path d="M22 10v6" />
+  </svg>
+);
+
+const COVERAGE_ICONS: Record<string, React.FC> = {
+  'College Baseball': CoverageGradCapSvg,
+  MLB: CoverageBaseballSvg,
+  NFL: CoverageFootballSvg,
+  NBA: CoverageBasketballSvg,
+  'College Football': CoverageStadiumSvg,
+};
 
 const sportsCoverage = [
   {
     name: 'College Baseball',
-    icon: '🎓',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/college-baseball',
@@ -51,7 +72,6 @@ const sportsCoverage = [
   },
   {
     name: 'MLB',
-    icon: '⚾',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/mlb',
@@ -69,7 +89,6 @@ const sportsCoverage = [
   },
   {
     name: 'NFL',
-    icon: '🏈',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/nfl',
@@ -86,7 +105,6 @@ const sportsCoverage = [
   },
   {
     name: 'NBA',
-    icon: '🏀',
     status: 'Full Coverage',
     statusColor: '#22C55E',
     href: '/nba',
@@ -102,7 +120,6 @@ const sportsCoverage = [
   },
   {
     name: 'College Football',
-    icon: '🏟️',
     status: 'Coming Soon',
     statusColor: '#F59E0B',
     href: '/cfb',
@@ -160,11 +177,11 @@ const dataSources = [
 
 export default function CoveragePage() {
   return (
-    <main className="min-h-screen bg-midnight text-cream">
-      <Navbar items={navItems} />
+    <div className="min-h-screen bg-background-primary text-text-primary">
+      {/* Navbar provided by root layout */}
 
       {/* Hero Section */}
-      <Section className="pt-32 pb-16 bg-gradient-to-b from-charcoal to-midnight">
+      <Section className="pt-6 pb-16 bg-gradient-to-b from-background-secondary to-background-primary">
         <Container>
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
@@ -173,9 +190,9 @@ export default function CoveragePage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
-                <span style={{ color: colors.burntOrange }}>Complete Coverage</span> Where It Matters
+                <span className="text-burnt-orange">Complete Coverage</span> Where It Matters
               </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
                 Real-time data from official sources. MLB, NFL, NBA, and the most comprehensive college baseball coverage anywhere.
               </p>
             </div>
@@ -184,31 +201,31 @@ export default function CoveragePage() {
       </Section>
 
       {/* Stats Bar */}
-      <div className="bg-charcoal border-y border-white/10 py-8">
+      <div className="bg-background-secondary border-y border-border py-8">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <ScrollReveal>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>392+</div>
-                <p className="text-gray-400 mt-1">Teams Tracked</p>
+                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">392+</div>
+                <p className="text-text-tertiary mt-1">Teams Tracked</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={100}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>30s</div>
-                <p className="text-gray-400 mt-1">Update Frequency</p>
+                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">30s</div>
+                <p className="text-text-tertiary mt-1">Update Frequency</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={200}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>6</div>
-                <p className="text-gray-400 mt-1">Data Sources</p>
+                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">6</div>
+                <p className="text-text-tertiary mt-1">Data Sources</p>
               </div>
             </ScrollReveal>
             <ScrollReveal delay={300}>
               <div>
-                <div className="text-3xl md:text-4xl font-bold" style={{ color: colors.burntOrange }}>99.7%</div>
-                <p className="text-gray-400 mt-1">Uptime</p>
+                <div className="text-3xl md:text-4xl font-bold text-burnt-orange">99.7%</div>
+                <p className="text-text-tertiary mt-1">Uptime</p>
               </div>
             </ScrollReveal>
           </div>
@@ -220,8 +237,8 @@ export default function CoveragePage() {
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-4">Sports Coverage</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-text-primary mb-4">Sports Coverage</h2>
+              <p className="text-text-tertiary max-w-2xl mx-auto">
                 Comprehensive coverage across professional and college sports.
               </p>
             </div>
@@ -236,30 +253,32 @@ export default function CoveragePage() {
                     <div className="md:col-span-1">
                       <Link href={sport.href} className="group">
                         <div className="flex items-center gap-3 mb-3">
-                          <span className="text-4xl">{sport.icon}</span>
+                          <span className="text-text-secondary">
+                            {(() => { const Icon = COVERAGE_ICONS[sport.name]; return Icon ? <Icon /> : null; })()}
+                          </span>
                           <div>
-                            <h3 className="text-xl font-semibold text-white group-hover:text-burnt-orange transition-colors">
+                            <h3 className="text-xl font-semibold text-text-primary group-hover:text-burnt-orange transition-colors">
                               {sport.name}
                             </h3>
                             <Badge
                               variant="secondary"
-                              style={{ backgroundColor: `${sport.statusColor}20`, color: sport.statusColor }}
+                              style={{ backgroundColor: withAlpha(sport.statusColor, 0.12), color: sport.statusColor }}
                             >
                               {sport.status}
                             </Badge>
                           </div>
                         </div>
-                        <p className="text-gray-400 text-sm">{sport.teams}</p>
+                        <p className="text-text-tertiary text-sm">{sport.teams}</p>
                       </Link>
                     </div>
 
                     {/* Features */}
                     <div className="md:col-span-2">
-                      <h4 className="text-sm font-semibold text-gray-500 uppercase mb-3">Features</h4>
+                      <h4 className="text-sm font-semibold text-text-muted uppercase mb-3">Features</h4>
                       <ul className="grid grid-cols-2 gap-2">
                         {sport.features.map((feature) => (
-                          <li key={feature} className="flex items-center gap-2 text-gray-300 text-sm">
-                            <span className="text-green-500">✓</span>
+                          <li key={feature} className="flex items-center gap-2 text-text-secondary text-sm">
+                            <span className="text-success">✓</span>
                             {feature}
                           </li>
                         ))}
@@ -269,7 +288,7 @@ export default function CoveragePage() {
                     {/* Sources & Frequency */}
                     <div className="md:col-span-1">
                       <div className="mb-4">
-                        <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">Data Sources</h4>
+                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-2">Data Sources</h4>
                         <div className="flex flex-wrap gap-2">
                           {sport.sources.map((source) => (
                             <Badge key={source} variant="secondary" className="text-xs">
@@ -279,8 +298,8 @@ export default function CoveragePage() {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-gray-500 uppercase mb-1">Updates</h4>
-                        <p className="text-sm" style={{ color: colors.ember }}>{sport.updateFrequency}</p>
+                        <h4 className="text-sm font-semibold text-text-muted uppercase mb-1">Updates</h4>
+                        <p className="text-sm text-ember">{sport.updateFrequency}</p>
                       </div>
                     </div>
                   </div>
@@ -292,12 +311,12 @@ export default function CoveragePage() {
       </Section>
 
       {/* Data Sources */}
-      <Section className="py-20 bg-charcoal">
+      <Section className="py-20 bg-background-secondary">
         <Container>
           <ScrollReveal>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-4">Our Data Sources</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-text-primary mb-4">Our Data Sources</h2>
+              <p className="text-text-tertiary max-w-2xl mx-auto">
                 We pull from official APIs and trusted sources. Every stat is verified and timestamped.
               </p>
             </div>
@@ -310,10 +329,10 @@ export default function CoveragePage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <Badge variant="secondary">{source.sport}</Badge>
-                      <span className="text-xs text-green-500">{source.reliability} Uptime</span>
+                      <span className="text-xs text-success">{source.reliability} Uptime</span>
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{source.name}</h3>
-                    <p className="text-gray-400 text-sm">{source.description}</p>
+                    <h3 className="text-lg font-semibold text-text-primary mb-2">{source.name}</h3>
+                    <p className="text-text-tertiary text-sm">{source.description}</p>
                   </CardContent>
                 </Card>
               </ScrollReveal>
@@ -328,44 +347,44 @@ export default function CoveragePage() {
           <ScrollReveal>
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-white mb-4">Our Data Quality Commitment</h2>
+                <h2 className="text-3xl font-bold text-text-primary mb-4">Our Data Quality Commitment</h2>
               </div>
 
-              <Card className="border-l-4" style={{ borderLeftColor: colors.burntOrange }}>
+              <Card className="border-l-4 border-l-burnt-orange">
                 <CardContent className="p-8">
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">📊</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="3" width="7" height="18" rx="1" /><rect x="14" y="8" width="7" height="13" rx="1" /><path d="M6 7v10M17.5 12v5" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-white mb-2">Cross-Referenced Data</h3>
-                        <p className="text-gray-400">
+                        <h3 className="text-lg font-semibold text-text-primary mb-2">Cross-Referenced Data</h3>
+                        <p className="text-text-tertiary">
                           Every critical statistic is cross-referenced against 3+ sources before publication. We do not guess.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🕐</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-white mb-2">America/Chicago Timestamps</h3>
-                        <p className="text-gray-400">
+                        <h3 className="text-lg font-semibold text-text-primary mb-2">America/Chicago Timestamps</h3>
+                        <p className="text-text-tertiary">
                           All data points include precise timestamps. You always know exactly when information was captured.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🔗</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-white mb-2">Source Citations</h3>
-                        <p className="text-gray-400">
+                        <h3 className="text-lg font-semibold text-text-primary mb-2">Source Citations</h3>
+                        <p className="text-text-tertiary">
                           Every stat includes its source. Full transparency on where our data comes from.
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl">🚫</span>
+                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 mt-0.5 shrink-0 text-burnt-orange" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" /></svg>
                       <div>
-                        <h3 className="text-lg font-semibold text-white mb-2">Zero Placeholders</h3>
-                        <p className="text-gray-400">
+                        <h3 className="text-lg font-semibold text-text-primary mb-2">Zero Placeholders</h3>
+                        <p className="text-text-tertiary">
                           Real numbers or we do not ship it. No estimates, no placeholder data, no made-up statistics.
                         </p>
                       </div>
@@ -379,7 +398,7 @@ export default function CoveragePage() {
       </Section>
 
       {/* CTA Section */}
-      <Section className="py-20 bg-gradient-to-b from-charcoal to-midnight">
+      <Section className="py-20 bg-gradient-to-b from-background-secondary to-background-primary">
         <Container>
           <ScrollReveal>
             <div className="max-w-2xl mx-auto text-center">
@@ -387,14 +406,14 @@ export default function CoveragePage() {
                 className="text-3xl md:text-4xl font-bold mb-6"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
-                See Our <span style={{ color: colors.burntOrange }}>Data in Action</span>
+                See Our <span className="text-burnt-orange">Data in Action</span>
               </h2>
-              <p className="text-xl text-gray-400 mb-8">
+              <p className="text-xl text-text-tertiary mb-8">
                 Start your 14-day free trial and explore the most comprehensive sports data platform built for fans.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/pricing">
-                  <Button size="lg" style={{ backgroundColor: colors.burntOrange }}>
+                  <Button size="lg" className="bg-burnt-orange hover:bg-burnt-orange/90">
                     Start Free Trial
                   </Button>
                 </Link>
@@ -410,6 +429,6 @@ export default function CoveragePage() {
       </Section>
 
       <Footer />
-    </main>
+    </div>
   );
 }

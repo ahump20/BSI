@@ -1,0 +1,19 @@
+name = "mini-games-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blazecraft-leaderboards"
+database_id = "f615ffd3-fd23-417f-b7ef-49b6dbbc8563"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "d0eec42d55aa4c4c87a0dd86b43e4cdb"
+
+[[routes]]
+pattern = "blazecraft.app/api/mini-games/*"
+zone_name = "blazecraft.app"

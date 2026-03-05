@@ -20,6 +20,7 @@ import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useUserSettings } from '@/lib/hooks';
 import { getTeamBySlug } from '@/lib/utils/mlb-teams';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Player {
   id: string;
@@ -45,12 +46,6 @@ interface TeamData {
   venue?: {
     name: string;
   };
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 interface QuickStats {
@@ -118,8 +113,9 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     setLoading(true);
     setError(null);
     try {
-      // Use the slug - API now accepts both numeric IDs and slugs
-      const res = await fetch(`/api/mlb/teams/${teamId}`);
+      // API expects abbreviation-based slug (e.g. "nyy"), not name slug (e.g. "yankees")
+      const apiSlug = teamInfo ? teamInfo.abbreviation.toLowerCase() : teamId;
+      const res = await fetch(`/api/mlb/teams/${apiSlug}`);
       if (!res.ok) {
         const errorData: APIResponse = await res.json().catch(() => ({}));
         throw new Error(errorData.message || 'Failed to fetch team data');
@@ -145,7 +141,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
     } finally {
       setLoading(false);
     }
-  }, [teamId]);
+  }, [teamId, teamInfo]);
 
   useEffect(() => {
     fetchTeam();
@@ -212,7 +208,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               className={`px-4 py-2 rounded-md text-sm transition-all ${
                 positionFilter === group.id
                   ? 'bg-burnt-orange text-white font-semibold'
-                  : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                  : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
               }`}
             >
               {group.label}
@@ -231,12 +227,12 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="flex items-start gap-4">
                 <div
                   className="w-14 h-14 rounded-lg flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
-                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                  style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {player.primaryNumber || '-'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white truncate">{player.fullName}</p>
+                  <p className="font-semibold text-text-primary truncate">{player.fullName}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="secondary" className="text-xs">
                       {player.primaryPosition.abbreviation}
@@ -301,7 +297,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                   (p) => p.primaryPosition.abbreviation === pos.position
                 );
                 return (
-                  <div key={pos.position} className="bg-graphite rounded-lg p-4">
+                  <div key={pos.position} className="bg-background-tertiary rounded-lg p-4">
                     <p className="text-xs text-text-tertiary uppercase tracking-wide mb-2">
                       {pos.label}
                     </p>
@@ -310,7 +306,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                         {players.slice(0, 2).map((player, idx) => (
                           <div
                             key={player.id}
-                            className={`flex items-center gap-2 ${idx === 0 ? 'text-white' : 'text-text-secondary'}`}
+                            className={`flex items-center gap-2 ${idx === 0 ? 'text-text-primary' : 'text-text-secondary'}`}
                           >
                             <span className="text-xs text-burnt-orange font-mono w-6">
                               {player.primaryNumber}
@@ -357,7 +353,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 );
                 return (
                   <div key={role.role}>
-                    <p className="text-sm font-semibold text-white mb-3">{role.label}</p>
+                    <p className="text-sm font-semibold text-text-primary mb-3">{role.label}</p>
                     {pitchers.length > 0 ? (
                       <div className="space-y-2">
                         {pitchers
@@ -365,7 +361,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                           .map((player) => (
                             <div
                               key={player.id}
-                              className="flex items-center justify-between bg-graphite rounded-lg px-3 py-2"
+                              className="flex items-center justify-between bg-background-tertiary rounded-lg px-3 py-2"
                             >
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-burnt-orange font-mono w-6">
@@ -464,7 +460,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
@@ -482,7 +478,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">{displayName}</span>
+              <span className="text-text-primary font-medium">{displayName}</span>
             </nav>
           </Container>
         </Section>
@@ -494,7 +490,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <div className="flex items-center gap-6">
                 <div
                   className="w-24 h-24 rounded-xl flex items-center justify-center text-3xl font-bold text-white"
-                  style={{ backgroundColor: teamInfo?.primaryColor || '#BF5700' }}
+                  style={{ backgroundColor: teamInfo?.primaryColor || 'var(--bsi-primary)' }}
                 >
                   {displayAbbrev}
                 </div>
@@ -536,7 +532,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.id ? 'text-burnt-orange border-burnt-orange' : 'text-text-tertiary border-transparent hover:text-white'}`}
+                  className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${activeTab === tab.id ? 'text-burnt-orange border-burnt-orange' : 'text-text-tertiary border-transparent hover:text-text-primary'}`}
                 >
                   {tab.label}
                 </button>
@@ -547,8 +543,8 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
               <Card variant="default" padding="lg">
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 bg-graphite rounded-lg">
-                      <Skeleton variant="rect" width={56} height={56} className="rounded-lg" />
+                    <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-lg">
+                      <Skeleton variant="rectangular" width={56} height={56} className="rounded-lg" />
                       <div className="flex-1">
                         <Skeleton variant="text" width={150} height={18} />
                         <Skeleton variant="text" width={100} height={14} className="mt-2" />
@@ -585,7 +581,7 @@ export default function TeamDetailClient({ teamId }: TeamDetailClientProps) {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

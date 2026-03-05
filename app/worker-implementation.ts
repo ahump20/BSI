@@ -257,8 +257,7 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
             lead.source || 'API'
           )
           .run();
-      } catch (dbError) {
-        console.error('Database error:', dbError);
+      } catch (_dbError) {
         // Continue even if DB fails - we can still send to other services
       }
     }
@@ -285,8 +284,7 @@ async function handleLead(request: Request, env: Env): Promise<Response> {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-  } catch (error) {
-    console.error('Lead processing error:', error);
+  } catch (_error) {
     return new Response(JSON.stringify({ error: 'Failed to process lead' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -317,7 +315,7 @@ export default {
       }
 
       // Route handlers for GET requests
-      const routes: Record<string, (params?: any) => any> = {
+      const routes: Record<string, (params?: Record<string, string>) => unknown> = {
         '/health': () => ({
           status: 'ok',
           timestamp: new Date().toISOString(),
@@ -368,12 +366,6 @@ export default {
           }
         }, 5000);
 
-        // Handle client messages
-        server.addEventListener('message', (event) => {
-          const data = JSON.parse(event.data as string);
-          console.log('Received:', data);
-        });
-
         return new Response(null, {
           status: 101,
           webSocket: client,
@@ -382,11 +374,10 @@ export default {
       }
 
       return new Response('Not Found', { status: 404, headers });
-    } catch (error: any) {
-      console.error('Worker error:', error);
+    } catch (error: unknown) {
       return new Response(
         JSON.stringify({
-          error: error.message || 'Internal Server Error',
+          error: error instanceof Error ? error.message : 'Internal Server Error',
           timestamp: new Date().toISOString(),
         }),
         { status: 500, headers }
@@ -398,7 +389,7 @@ export default {
 // Durable Object for caching (optional)
 export class CacheObject {
   state: DurableObjectState;
-  cache: Map<string, { data: any; expires: number }>;
+  cache: Map<string, { data: unknown; expires: number }>;
 
   constructor(state: DurableObjectState) {
     this.state = state;

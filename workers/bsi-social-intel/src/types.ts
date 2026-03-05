@@ -1,0 +1,63 @@
+/**
+ * BSI Social Intel — shared types.
+ */
+
+export interface Env {
+  KV: KVNamespace;
+  DB: D1Database;
+  RAPIDAPI_KEY?: string;
+  ANTHROPIC_API_KEY?: string;
+}
+
+/** A raw post collected from Reddit or Twitter before classification. */
+export interface RawPost {
+  platform: 'reddit' | 'twitter';
+  post_id: string;
+  post_url: string | null;
+  post_text: string;
+  author: string | null;
+  posted_at: string; // ISO 8601
+}
+
+/** Claude's classification result for a single post. */
+export interface ClassifiedSignal {
+  platform: 'reddit' | 'twitter';
+  post_id: string;
+  post_url: string | null;
+  post_text: string;
+  author: string | null;
+  posted_at: string;
+  signal_type: 'injury_lineup' | 'transfer_portal' | 'recruiting' | 'sentiment' | 'general';
+  confidence: number; // 0.0–1.0
+  team_mentioned: string | null;
+  player_mentioned: string | null;
+  summary: string | null;
+  raw_entities: { teams: string[]; players: string[] };
+}
+
+/** Per-team daily summary stored in cbb_social_intel_summary. */
+export interface SocialIntelSummary {
+  team_slug: string;
+  summary_date: string; // YYYY-MM-DD CT
+  injury_count: number;
+  transfer_count: number;
+  recruiting_count: number;
+  sentiment_score: number | null; // -1.0 to 1.0
+  top_signals: string[]; // up to 5 one-sentence summaries
+}
+
+/** API response shape for /api/college-baseball/social-intel */
+export interface SocialIntelFeedResponse {
+  signals: ClassifiedSignal[];
+  total: number;
+  generated_at: string;
+  meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
+}
+
+/** API response shape for /api/college-baseball/social-intel/team/:teamId */
+export interface SocialIntelTeamResponse {
+  team_slug: string;
+  signals: ClassifiedSignal[];
+  summary: SocialIntelSummary | null;
+  meta: { source: string; fetched_at: string; timezone: 'America/Chicago' };
+}

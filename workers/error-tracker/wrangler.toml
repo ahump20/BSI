@@ -1,0 +1,20 @@
+# BSI Error Tracker — Tail Worker
+# Consumes logs from the production worker, stores errors in KV.
+#
+# Deploy: wrangler deploy --config workers/error-tracker/wrangler.toml
+#
+# After deploying, add to workers/wrangler.toml (production env):
+#   [env.production.tail_consumers]
+#   - { service = "bsi-error-tracker" }
+
+name = "bsi-error-tracker"
+main = "index.ts"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "ERROR_LOG"
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
+
+# Optional: Discord/Slack webhook for alerting
+# [vars]
+# ALERT_WEBHOOK_URL = ""

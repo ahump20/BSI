@@ -4,7 +4,7 @@
  * Test configuration for BlazeSportsIntel college baseball analytics platform.
  *
  * Test Structure:
- * - /tests/analytics/ - Analytics library tests (ConferenceStrengthModel, ScheduleOptimizer)
+ * - /tests/analytics/ - Analytics library tests (ConferenceStrengthModel)
  * - /tests/api/ - API endpoint tests (scheduling/optimize)
  * - /tests/components/ - React component tests (future)
  *
@@ -39,9 +39,15 @@ export default defineConfig({
     // Global setup
     globals: true,
 
-    // Test file patterns
+    // Test file patterns — exclude Playwright tests (routes, a11y, flows)
     include: [
       'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'
+    ],
+    exclude: [
+      'tests/routes/**',
+      'tests/a11y/**',
+      'tests/flows/**',
+      'node_modules/**',
     ],
 
     // Default timeout (10 seconds)

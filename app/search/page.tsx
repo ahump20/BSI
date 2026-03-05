@@ -6,7 +6,7 @@
  * Full search results page with filtering by sport and entity type.
  * Displays teams, players, and games across all covered sports.
  *
- * Last Updated: 2025-01-07
+ * Last Updated: 2026-02-27
  */
 
 import { Suspense, useState, useEffect } from 'react';
@@ -24,18 +24,13 @@ import { SearchBar } from '@/components/layout-ds/SearchBar';
 // Types
 // ============================================================================
 
-interface TeamResult {
+interface SearchResultItem {
+  type: 'team' | 'player' | 'article' | 'game' | 'page';
   id: string;
   name: string;
-  abbreviation: string;
-  conference: string;
-  division?: string;
-  sport: string;
-  logo?: string;
-  record?: string;
-  ranking?: number;
-  city?: string;
-  state?: string;
+  url: string;
+  sport?: string;
+  score: number;
 }
 
 interface SearchFilters {
@@ -80,27 +75,7 @@ function getSportLabel(sport: string): string {
 }
 
 function getSportColor(sport: string): string {
-  return SPORT_COLORS[sport.toLowerCase()] || 'bg-gray-600';
-}
-
-function buildTeamHref(sport: string, teamId: string): string {
-  const sportLower = sport.toLowerCase();
-  switch (sportLower) {
-    case 'mlb':
-      return `/mlb/teams/${teamId}`;
-    case 'nfl':
-      return `/nfl/teams/${teamId}`;
-    case 'nba':
-      return `/nba/teams/${teamId}`;
-    case 'college_baseball':
-      return `/college-baseball/teams/${teamId}`;
-    case 'cfb':
-      return `/college-football/teams/${teamId}`;
-    case 'cbb':
-      return `/college-basketball/teams/${teamId}`;
-    default:
-      return `/teams/${teamId}`;
-  }
+  return SPORT_COLORS[sport.toLowerCase()] || 'bg-background-tertiary';
 }
 
 // ============================================================================
@@ -110,14 +85,14 @@ function buildTeamHref(sport: string, teamId: string): string {
 function SearchLoading() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen flex items-center justify-center">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
             <p className="text-text-secondary">Loading search...</p>
           </div>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );
@@ -132,7 +107,7 @@ function SearchContent() {
   const initialQuery = searchParams.get('q') || '';
 
   const [_query, setQuery] = useState(initialQuery);
-  const [teams, setTeams] = useState<TeamResult[]>([]);
+  const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<SearchFilters>({
@@ -146,7 +121,7 @@ function SearchContent() {
 
   useEffect(() => {
     if (!initialQuery || initialQuery.length < 2) {
-      setTeams([]);
+      setResults([]);
       return;
     }
 
@@ -157,19 +132,18 @@ function SearchContent() {
       try {
         const sportParam = filters.sport ? `&sport=${filters.sport}` : '';
         const res = await fetch(
-          `/api/teams/search?q=${encodeURIComponent(initialQuery)}&limit=50${sportParam}`
+          `/api/search?q=${encodeURIComponent(initialQuery)}${sportParam}`
         );
 
         if (res.ok) {
-          const data = await res.json();
-          setTeams(Array.isArray(data) ? data : []);
+          const data = await res.json() as { results?: SearchResultItem[] };
+          setResults(data.results ?? []);
         } else {
           throw new Error('Search failed');
         }
-      } catch (err) {
-        console.error('Search error:', err);
+      } catch (_err) {
         setError('Failed to fetch search results. Please try again.');
-        setTeams([]);
+        setResults([]);
       } finally {
         setIsLoading(false);
       }
@@ -183,20 +157,20 @@ function SearchContent() {
     setQuery(initialQuery);
   }, [initialQuery]);
 
-  // Filter teams by sport if filter is applied
-  const filteredTeams = filters.sport
-    ? teams.filter((t) => t.sport.toLowerCase() === filters.sport.toLowerCase())
-    : teams;
+  // Filter results by sport if filter is applied
+  const filteredResults = filters.sport
+    ? results.filter((r) => r.sport?.toLowerCase() === filters.sport.toLowerCase())
+    : results;
 
-  // Group teams by sport
-  const teamsBySport = filteredTeams.reduce(
-    (acc, team) => {
-      const sport = team.sport.toLowerCase();
+  // Group results by sport
+  const resultsBySport = filteredResults.reduce(
+    (acc, item) => {
+      const sport = (item.sport || item.type).toLowerCase();
       if (!acc[sport]) acc[sport] = [];
-      acc[sport].push(team);
+      acc[sport].push(item);
       return acc;
     },
-    {} as Record<string, TeamResult[]>
+    {} as Record<string, SearchResultItem[]>
   );
 
   // ========================================================================
@@ -205,7 +179,7 @@ function SearchContent() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Header */}
         <Section padding="md" className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
@@ -250,7 +224,7 @@ function SearchContent() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       filters.sport === option.value
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                        : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                     }`}
                   >
                     {option.label}
@@ -262,7 +236,7 @@ function SearchContent() {
             {/* Results Count */}
             {!isLoading && initialQuery && (
               <p className="text-text-secondary mb-6">
-                Found {filteredTeams.length} team{filteredTeams.length !== 1 ? 's' : ''}
+                Found {filteredResults.length} result{filteredResults.length !== 1 ? 's' : ''}
                 {filters.sport && ` in ${getSportLabel(filters.sport)}`}
               </p>
             )}
@@ -288,30 +262,30 @@ function SearchContent() {
             )}
 
             {/* No Results */}
-            {!isLoading && !error && initialQuery && filteredTeams.length === 0 && (
+            {!isLoading && !error && initialQuery && filteredResults.length === 0 && (
               <Card variant="default" padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🔍</div>
-                <h2 className="text-xl font-semibold text-white mb-2">No Results Found</h2>
+                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg></div>
+                <h2 className="text-xl font-semibold text-text-primary mb-2">No Results Found</h2>
                 <p className="text-text-secondary mb-6">
-                  We couldn't find any teams matching "{initialQuery}"
+                  No matches for &ldquo;{initialQuery}&rdquo;
                   {filters.sport && ` in ${getSportLabel(filters.sport)}`}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <Link
                     href="/mlb/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse MLB Teams
                   </Link>
                   <Link
                     href="/nfl/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse NFL Teams
                   </Link>
                   <Link
                     href="/college-baseball/teams"
-                    className="px-4 py-2 bg-graphite text-white rounded-lg hover:bg-white/10 transition-colors"
+                    className="px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-surface-light transition-colors"
                   >
                     Browse NCAA Baseball
                   </Link>
@@ -322,34 +296,34 @@ function SearchContent() {
             {/* Empty State - No Query */}
             {!isLoading && !initialQuery && (
               <Card variant="default" padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🏟️</div>
-                <h2 className="text-xl font-semibold text-white mb-2">Search Across All Sports</h2>
+                <div className="mb-4 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-14 h-14 text-text-muted" stroke="currentColor" strokeWidth={1.5}><path d="M3 21V10L12 3L21 10V21" /><path d="M3 14H21" /><rect x="8" y="14" width="8" height="7" /></svg></div>
+                <h2 className="text-xl font-semibold text-text-primary mb-2">Search Across All Sports</h2>
                 <p className="text-text-secondary mb-6">
                   Find teams, players, and games across MLB, NFL, NBA, and NCAA sports.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-3xl mx-auto">
                   <Link
                     href="/mlb"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">⚾</div>
-                    <p className="font-medium text-white">MLB</p>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10" /><path d="M5 12C5 12 8 9 12 9C16 9 19 12 19 12" /><path d="M5 12C5 12 8 15 12 15C16 15 19 12 19 12" /></svg></div>
+                    <p className="font-medium text-text-primary">MLB</p>
                     <p className="text-xs text-text-tertiary">Major League Baseball</p>
                   </Link>
                   <Link
                     href="/nfl"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">🏈</div>
-                    <p className="font-medium text-white">NFL</p>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(45 12 12)" /><path d="M12 7L12 17M9 10L15 14M15 10L9 14" /></svg></div>
+                    <p className="font-medium text-text-primary">NFL</p>
                     <p className="text-xs text-text-tertiary">National Football League</p>
                   </Link>
                   <Link
                     href="/college-baseball"
-                    className="p-4 bg-graphite rounded-lg hover:bg-white/10 transition-colors"
+                    className="p-4 bg-background-tertiary rounded-lg hover:bg-surface-light transition-colors"
                   >
-                    <div className="text-2xl mb-2">🎓</div>
-                    <p className="font-medium text-white">NCAA Baseball</p>
+                    <div className="mb-2 flex justify-center"><svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-text-secondary" stroke="currentColor" strokeWidth={1.5}><path d="M2 10L12 5L22 10L12 15L2 10Z" /><path d="M6 12V17C6 17 9 20 12 20C15 20 18 17 18 17V12" /></svg></div>
+                    <p className="font-medium text-text-primary">NCAA Baseball</p>
                     <p className="text-xs text-text-tertiary">College Baseball</p>
                   </Link>
                 </div>
@@ -357,63 +331,50 @@ function SearchContent() {
             )}
 
             {/* Results - Grouped by Sport */}
-            {!isLoading && !error && filteredTeams.length > 0 && (
+            {!isLoading && !error && filteredResults.length > 0 && (
               <div className="space-y-8">
-                {Object.entries(teamsBySport).map(([sport, sportTeams]) => (
+                {Object.entries(resultsBySport).map(([sport, items]) => (
                   <div key={sport}>
-                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
                       <span
                         className={`w-3 h-3 rounded-full ${getSportColor(sport)}`}
                         aria-hidden="true"
                       />
                       {getSportLabel(sport)}
-                      <span className="text-text-tertiary font-normal">({sportTeams.length})</span>
+                      <span className="text-text-tertiary font-normal">({items.length})</span>
                     </h2>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {sportTeams.map((team) => (
-                        <ScrollReveal key={team.id}>
-                          <Link href={buildTeamHref(team.sport, team.id)} className="block group">
+                      {items.map((item) => (
+                        <ScrollReveal key={`${item.type}-${item.id}`}>
+                          <Link href={item.url} className="block group">
                             <Card
                               variant="default"
                               padding="md"
                               className="h-full transition-all group-hover:border-burnt-orange"
                             >
                               <div className="flex items-center gap-4">
-                                {/* Team Logo/Badge */}
+                                {/* Type Badge */}
                                 <div
-                                  className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-sm ${getSportColor(team.sport)} group-hover:scale-105 transition-transform`}
+                                  className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-sm ${getSportColor(sport)} group-hover:scale-105 transition-transform`}
                                 >
-                                  {team.abbreviation || team.name.substring(0, 2).toUpperCase()}
+                                  {item.name.substring(0, 2).toUpperCase()}
                                 </div>
 
-                                {/* Team Info */}
+                                {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-semibold text-white group-hover:text-burnt-orange transition-colors truncate">
-                                    {team.name}
+                                  <p className="font-semibold text-text-primary group-hover:text-burnt-orange transition-colors truncate">
+                                    {item.name}
                                   </p>
-                                  <p className="text-xs text-text-tertiary truncate">
-                                    {team.conference}
-                                    {team.division && ` • ${team.division}`}
+                                  <p className="text-xs text-text-tertiary truncate capitalize">
+                                    {item.type} {item.sport ? `· ${item.sport}` : ''}
                                   </p>
-                                  {team.record && (
-                                    <p className="text-sm text-text-secondary mt-0.5 font-mono">
-                                      {team.record}
-                                    </p>
-                                  )}
                                 </div>
-
-                                {/* Ranking Badge */}
-                                {team.ranking && (
-                                  <div className="px-2 py-1 bg-gold/20 text-gold rounded text-xs font-bold">
-                                    #{team.ranking}
-                                  </div>
-                                )}
 
                                 {/* Arrow */}
                                 <svg
                                   viewBox="0 0 24 24"
-                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors"
+                                  className="w-5 h-5 text-text-tertiary group-hover:text-burnt-orange transition-colors shrink-0"
                                   fill="none"
                                   stroke="currentColor"
                                   strokeWidth="2"
@@ -432,7 +393,7 @@ function SearchContent() {
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

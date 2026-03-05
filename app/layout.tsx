@@ -1,37 +1,36 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Oswald, Playfair_Display, Bebas_Neue, JetBrains_Mono } from 'next/font/google';
+import dynamic from 'next/dynamic';
+import { Cormorant_Garamond, JetBrains_Mono, Oswald } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { KonamiCodeWrapper } from '@/components/easter-eggs';
-import { NoiseOverlay, CustomCursor } from '../components/cinematic';
 import { PageTransition, MotionProvider } from '@/components/motion';
-import { Navbar } from '@/components/layout-ds/Navbar';
-import { BottomNav, DEFAULT_NAV_ITEMS } from '@/components/sports';
-import { mainNavItems } from '@/lib/navigation';
+import { AppSidebar } from '@/components/layout-ds/AppSidebar';
+import { AppTopBar } from '@/components/layout-ds/AppTopBar';
+import { BottomNavWrapper } from '@/components/layout-ds/BottomNavWrapper';
+import { ScrollProgress } from '@/components/ui/ScrollProgress';
+import { BreadcrumbBar } from '@/components/layout-ds/BreadcrumbBar';
+import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
+import { PageTracker } from '@/components/analytics/PageTracker';
 
-// Optimized font loading - eliminates render-blocking
-const inter = Inter({
+// Lazy-load interaction-triggered components (not visible on initial render)
+const CommandPalette = dynamic(() => import('@/components/layout-ds/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const KonamiCodeWrapper = dynamic(() => import('@/components/easter-eggs').then(m => ({ default: m.KonamiCodeWrapper })));
+const FeedbackButton = dynamic(() => import('@/components/ui/FeedbackModal').then(m => ({ default: m.FeedbackButton })));
+const ScrollToTopButton = dynamic(() => import('@/components/ui/ScrollToTopButton').then(m => ({ default: m.ScrollToTopButton })));
+
+// 3-font system: Display (Oswald) + Body (Cormorant Garamond) + Mono (JetBrains Mono)
+const cormorant = Cormorant_Garamond({
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-cormorant',
   display: 'swap',
 });
 
 const oswald = Oswald({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   variable: '--font-oswald',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const bebasNeue = Bebas_Neue({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-bebas',
   display: 'swap',
 });
 
@@ -43,51 +42,57 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const viewport: Viewport = {
   themeColor: '#bf5700',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
 };
 
 export const metadata: Metadata = {
-  title: 'Blaze Sports Intel | Real-Time Sports Analytics',
+  title: 'Blaze Sports Intel | College Baseball Sabermetrics',
   description:
-    'Professional sports intelligence platform delivering real-time MLB, NFL, NBA, and NCAA analytics. Live scores, predictions, and data-driven insights.',
+    'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours. Plus live scores across MLB, NFL, NBA, and NCAA.',
   keywords: [
-    'sports analytics',
-    'MLB',
-    'NFL',
-    'NBA',
-    'NCAA',
-    'real-time data',
-    'sports intelligence',
-    'live stats',
     'college baseball',
+    'college baseball analytics',
+    'sabermetrics',
+    'wOBA',
+    'wRC+',
+    'FIP',
+    'park factors',
+    'D1 baseball',
+    'college baseball stats',
+    'NCAA baseball',
+    'sports analytics',
+    'live scores',
   ],
   authors: [{ name: 'Austin Humphrey', url: 'https://blazesportsintel.com' }],
-  creator: 'Blaze Intelligence',
+  creator: 'Blaze Sports Intel',
   publisher: 'Blaze Sports Intel',
   metadataBase: new URL('https://blazesportsintel.com'),
   openGraph: {
-    title: 'Blaze Sports Intel | Real-Time Sports Analytics',
-    description: 'Enterprise sports intelligence platform with real MLB, NFL, NBA data',
+    title: 'Blaze Sports Intel | College Baseball Sabermetrics',
+    description:
+      'Free park-adjusted sabermetrics for D1 college baseball — wOBA, wRC+, FIP, park factors, conference strength. Updated every 6 hours.',
     type: 'website',
     locale: 'en_US',
     url: 'https://blazesportsintel.com',
     siteName: 'Blaze Sports Intel',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Blaze Sports Intel - Real-Time Sports Analytics',
+        alt: 'Blaze Sports Intel - College Baseball Sabermetrics',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Blaze Sports Intel',
-    description: 'Real-time sports analytics for MLB, NFL, NBA, and NCAA',
-    images: ['/images/og-image.jpg'],
+    description: 'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors. Updated every 6 hours.',
+    images: ['/images/og-image.png'],
   },
+  alternates: { canonical: '/' },
   robots: {
     index: true,
     follow: true,
@@ -99,25 +104,70 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+/**
+ * Structured data (JSON-LD) for SEO — Organization + WebSite.
+ * Content is hardcoded (no user input) — safe for inline script.
+ */
+const jsonLdContent = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+      logo: 'https://blazesportsintel.com/images/logo/blaze-logo.png',
+      founder: { '@type': 'Person', name: 'Austin Humphrey' },
+      description:
+        'Free park-adjusted sabermetrics for D1 college baseball. wOBA, wRC+, FIP, park factors, conference strength. Plus live scores across MLB, NFL, NBA, and NCAA.',
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Blaze Sports Intel',
+      url: 'https://blazesportsintel.com',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: 'https://blazesportsintel.com/search?q={search_term_string}',
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ],
+});
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${oswald.variable} ${playfair.variable} ${bebasNeue.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${cormorant.variable} ${oswald.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="bg-midnight text-white antialiased min-h-screen font-sans pb-20 md:pb-0">
-        <NoiseOverlay cssOnly />
-        <CustomCursor />
+      <head>
+        <link rel="preconnect" href="https://customer-mpdvoybjqct2pzls.cloudflarestream.com" />
+        {/* Static JSON-LD for SEO — hardcoded content, no user input */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdContent }} />
+        <BreadcrumbJsonLd />
+      </head>
+      <body className="bg-midnight text-[#F5F0EB] antialiased min-h-screen">
         <Providers>
           <MotionProvider>
             <a href="#main-content" className="skip-link">
               Skip to main content
             </a>
-            <Navbar items={mainNavItems} />
-            <KonamiCodeWrapper />
-            <PageTransition>{children}</PageTransition>
-            {/* Mobile Bottom Navigation - hidden on desktop */}
-            <BottomNav items={DEFAULT_NAV_ITEMS} className="md:hidden" />
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col min-w-0">
+                <AppTopBar />
+                <ScrollProgress />
+                <BreadcrumbBar />
+                <CommandPalette />
+                <KonamiCodeWrapper />
+                <PageTracker />
+                <main id="main-content" className="flex-1 overflow-y-auto pb-20 md:pb-0">
+                  <PageTransition>{children}</PageTransition>
+                </main>
+              </div>
+            </div>
+            <FeedbackButton />
+            <ScrollToTopButton />
+            <BottomNavWrapper />
           </MotionProvider>
         </Providers>
       </body>

@@ -7,11 +7,15 @@ Allow: /
 # Sitemap location
 Sitemap: https://blazesportsintel.com/sitemap.xml
 
-# Disallow demo/test pages
+# Disallow demo/test pages and internal paths
 Disallow: /components/
 Disallow: /*-demo.html
 Disallow: /*-optimized.html
 Disallow: /offline.html
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /dashboard/admin/
+Disallow: /settings/
 
 # Allow AI crawlers for AI Search
 User-agent: GPTBot

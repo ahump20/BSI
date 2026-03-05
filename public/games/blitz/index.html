@@ -1,399 +1,474 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Blaze Blitz - A free arcade football microgame from Blaze Sports Intel. Score touchdowns in 60 seconds!">
-  <meta name="theme-color" content="#BF5700">
-
-  <meta property="og:title" content="Blaze Blitz">
-  <meta property="og:description" content="A 60-second touchdown challenge. How many yards can you gain?">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://blazesportsintel.com/games/blitz">
-
-  <title>Blaze Blitz | Blaze Sports Intel</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --blaze-burnt-orange: #BF5700;
-      --blaze-charcoal: #1A1A1A;
-      --blaze-ember: #FF6B35;
-      --blaze-cream: #FAF8F5;
-      --blaze-gold: #C9A227;
-      --blaze-midnight: #0D0D0D;
-      --arcade-neon-green: #39FF14;
-      --arcade-hot-pink: #FF6EC7;
-      --arcade-yellow: #FFD700;
-      --arcade-cyan: #00FFFF;
-      --arcade-purple: #9D00FF;
-      --team-firebirds: #BF5700;
-      --team-wolves: #1A1A1A;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--blaze-midnight);
-      color: var(--blaze-cream);
-      overflow: hidden;
-      width: 100vw;
-      height: 100vh;
-      touch-action: manipulation;
-    }
-
-    .crt-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 9999;
-      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-      opacity: 0.3;
-    }
-
-    #renderCanvas { width: 100%; height: 100%; display: none; touch-action: none; }
-
-    #menuScreen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 2rem 1rem; overflow-y: auto;
-      background: linear-gradient(180deg, var(--blaze-midnight) 0%, #050510 100%);
-    }
-
-    .game-title {
-      font-family: 'Russo One', sans-serif;
-      font-size: clamp(2.5rem, 10vw, 5rem);
-      text-align: center; margin-bottom: 0.25rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      transform: skewX(-5deg);
-      text-shadow: 0 0 10px var(--arcade-neon-green), 0 0 20px var(--arcade-neon-green), 0 0 40px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange);
-      color: var(--arcade-neon-green);
-      animation: titlePulse 2s ease-in-out infinite alternate;
-    }
-    @keyframes titlePulse {
-      from { text-shadow: 0 0 10px var(--arcade-neon-green), 0 0 20px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange); }
-      to { text-shadow: 0 0 20px var(--arcade-neon-green), 0 0 40px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange); }
-    }
-
-    .game-subtitle {
-      font-family: 'Russo One', sans-serif;
-      font-size: clamp(1rem, 4vw, 1.5rem);
-      color: var(--arcade-hot-pink); margin-bottom: 1.5rem;
-      text-transform: uppercase; letter-spacing: 0.2em; transform: skewX(-5deg);
-    }
-
-    .high-score-display {
-      font-family: 'Russo One', sans-serif; font-size: 1.25rem;
-      color: var(--arcade-yellow); margin-bottom: 2rem;
-      text-shadow: 0 0 10px var(--arcade-yellow); transform: skewX(-5deg);
-    }
-
-    .selection-section { width: 100%; max-width: 600px; margin-bottom: 1.5rem; }
-    .section-title {
-      font-family: 'Russo One', sans-serif; font-size: 1.25rem; margin-bottom: 0.75rem;
-      color: var(--arcade-cyan); text-transform: uppercase; letter-spacing: 0.1em;
-      transform: skewX(-10deg); text-shadow: 0 0 5px var(--arcade-cyan);
-    }
-
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-    .team-card {
-      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-      border: 3px solid rgba(255,255,255,0.1); border-radius: 4px;
-      padding: 1rem; cursor: pointer; transition: all 0.2s ease;
-      text-align: center; transform: skewX(-5deg); position: relative; overflow: hidden;
-    }
-    .team-card:hover { border-color: var(--arcade-neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.3); transform: skewX(-5deg) scale(1.02); }
-    .team-card.selected {
-      border-color: var(--arcade-neon-green); background: rgba(57,255,20,0.1);
-      box-shadow: 0 0 20px rgba(57,255,20,0.4), inset 0 0 30px rgba(57,255,20,0.1);
-    }
-    .team-logo {
-      width: 80px; height: 80px; margin: 0 auto 0.75rem; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Russo One', sans-serif; font-size: 2rem; color: white;
-      transform: skewX(5deg); box-shadow: 0 0 15px currentColor;
-    }
-    .team-name {
-      font-family: 'Russo One', sans-serif; font-weight: 400; font-size: 1.25rem;
-      margin-bottom: 0.25rem; text-transform: uppercase; transform: skewX(5deg);
-    }
-    .team-stats { font-size: 0.75rem; color: rgba(255,255,255,0.6); transform: skewX(5deg); }
-    .team-stats span { display: inline-block; margin: 0 0.25rem; padding: 0.125rem 0.5rem; background: rgba(255,255,255,0.1); border-radius: 2px; }
-
-    #playButton {
-      width: 100%; max-width: 400px; padding: 1.25rem 2.5rem;
-      font-family: 'Russo One', sans-serif; font-size: 2rem;
-      text-transform: uppercase; letter-spacing: 0.15em;
-      background: linear-gradient(180deg, var(--arcade-neon-green) 0%, #20CC10 100%);
-      color: var(--blaze-midnight); border: none; border-radius: 4px;
-      cursor: pointer; transition: all 0.2s ease; margin-top: 1.5rem;
-      transform: skewX(-5deg);
-      box-shadow: 0 4px 0 #1A8C0A, 0 0 30px rgba(57,255,20,0.4);
-    }
-    #playButton:hover:not(:disabled) { transform: skewX(-5deg) translateY(-2px); box-shadow: 0 6px 0 #1A8C0A, 0 0 50px rgba(57,255,20,0.6); }
-    #playButton:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .controls-hint {
-      margin-top: 1.5rem; padding: 1rem;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 4px; max-width: 400px; transform: skewX(-3deg);
-    }
-    .controls-hint h3 { font-family: 'Russo One', sans-serif; color: var(--arcade-cyan); margin-bottom: 0.5rem; text-transform: uppercase; transform: skewX(3deg); }
-    .controls-hint p { font-size: 0.875rem; color: rgba(255,255,255,0.7); margin: 0.25rem 0; transform: skewX(3deg); }
-    .controls-hint kbd {
-      display: inline-block; padding: 0.125rem 0.375rem;
-      background: var(--blaze-charcoal); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 3px; font-family: monospace; color: var(--arcade-yellow);
-    }
-
-    #gameUI {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: none; justify-content: space-between; align-items: flex-start;
-      padding: 1rem; pointer-events: none; z-index: 100;
-    }
-    .game-stat {
-      background: rgba(0,0,0,0.85); padding: 0.5rem 1rem;
-      border: 2px solid var(--arcade-neon-green); text-align: center;
-      transform: skewX(-10deg); box-shadow: 0 0 10px rgba(57,255,20,0.3);
-    }
-    .game-stat-label { font-family: 'Russo One', sans-serif; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--arcade-cyan); transform: skewX(10deg); }
-    .game-stat-value { font-family: 'Russo One', sans-serif; font-size: 1.75rem; transform: skewX(10deg); text-shadow: 0 0 10px currentColor; }
-    #score { color: var(--arcade-neon-green); }
-    #timer { color: var(--arcade-yellow); }
-    .timer-warning { color: var(--arcade-hot-pink) !important; animation: timerFlash 0.3s ease infinite alternate; }
-    @keyframes timerFlash { from { opacity: 1; } to { opacity: 0.5; } }
-    #down { color: var(--arcade-cyan); }
-
-    #driveInfo {
-      position: fixed; bottom: 80px; left: 50%;
-      transform: translateX(-50%) skewX(-10deg);
-      background: rgba(0,0,0,0.9); border: 2px solid var(--arcade-yellow);
-      padding: 0.5rem 1.5rem; z-index: 100; display: none;
-    }
-    #driveInfo span { font-family: 'Russo One', sans-serif; font-size: 1.25rem; color: var(--arcade-yellow); transform: skewX(10deg); display: inline-block; }
-
-    #playFeedback {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%) skewX(-10deg);
-      font-family: 'Russo One', sans-serif; font-size: 3rem;
-      text-transform: uppercase; pointer-events: none; z-index: 200;
-      opacity: 0; transition: opacity 0.2s ease;
-    }
-    #playFeedback.show { opacity: 1; animation: feedbackPop 0.6s ease-out; }
-    @keyframes feedbackPop {
-      0% { transform: translate(-50%, -50%) skewX(-10deg) scale(0.5); opacity: 0; }
-      50% { transform: translate(-50%, -50%) skewX(-10deg) scale(1.3); }
-      100% { transform: translate(-50%, -50%) skewX(-10deg) scale(1); opacity: 1; }
-    }
-    .feedback-firstdown { color: var(--arcade-cyan); text-shadow: 0 0 20px var(--arcade-cyan), 0 0 40px var(--arcade-cyan); }
-    .feedback-bigplay { color: var(--arcade-yellow); text-shadow: 0 0 20px var(--arcade-yellow), 0 0 40px var(--arcade-yellow); }
-    .feedback-touchdown { color: var(--arcade-neon-green); text-shadow: 0 0 30px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green); font-size: 4rem; }
-    .feedback-turnover { color: var(--arcade-hot-pink); text-shadow: 0 0 20px var(--arcade-hot-pink); }
-
-    #staminaBar {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      width: 200px; height: 20px; background: rgba(0,0,0,0.8);
-      border: 2px solid var(--arcade-neon-green); z-index: 100; display: none;
-    }
-    #staminaFill { height: 100%; background: linear-gradient(90deg, var(--blaze-ember), var(--arcade-yellow)); transition: width 0.1s ease; box-shadow: 0 0 10px var(--arcade-yellow); }
-    #staminaLabel { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Russo One', sans-serif; font-size: 0.625rem; color: white; text-transform: uppercase; letter-spacing: 0.1em; }
-
-    #gameOverScreen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      padding: 2rem; background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto;
-    }
-    .game-over-title { font-family: 'Russo One', sans-serif; font-size: 3rem; text-transform: uppercase; margin-bottom: 0.5rem; transform: skewX(-10deg); text-shadow: 0 0 20px var(--arcade-hot-pink), 0 0 40px var(--arcade-hot-pink); color: var(--arcade-hot-pink); }
-    .game-over-result { font-family: 'Russo One', sans-serif; font-size: 1.5rem; color: var(--arcade-cyan); margin-bottom: 1rem; transform: skewX(-5deg); }
-    #finalScore { font-family: 'Russo One', sans-serif; font-size: 5rem; color: var(--arcade-neon-green); text-shadow: 0 0 30px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green); margin-bottom: 1.5rem; transform: skewX(-5deg); }
-    #gameStats { width: 100%; max-width: 350px; margin-bottom: 1.5rem; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 1rem; transform: skewX(-3deg); }
-    .stat-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); transform: skewX(3deg); }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-row .label { color: rgba(255,255,255,0.6); }
-    .stat-row .value { font-family: 'Russo One', sans-serif; color: var(--arcade-yellow); }
-
-    #leaderboard { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
-    .leaderboard-title { font-family: 'Russo One', sans-serif; font-weight: 400; margin-bottom: 0.75rem; color: var(--arcade-cyan); text-transform: uppercase; transform: skewX(-5deg); }
-    .leaderboard-entry { display: flex; justify-content: space-between; padding: 0.5rem; font-size: 0.875rem; transform: skewX(-3deg); background: rgba(255,255,255,0.02); margin-bottom: 2px; }
-    .leaderboard-entry .rank { width: 30px; color: rgba(255,255,255,0.5); font-family: 'Russo One', sans-serif; }
-    .leaderboard-entry .player { flex: 1; }
-    .leaderboard-entry .lb-score { color: var(--arcade-yellow); font-family: 'Russo One', sans-serif; }
-
-    .name-input-section { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
-    .name-input-section label { display: block; font-family: 'Russo One', sans-serif; font-size: 0.875rem; color: var(--arcade-cyan); margin-bottom: 0.5rem; text-transform: uppercase; transform: skewX(-3deg); }
-    #playerNameInput { width: 100%; padding: 0.75rem 1rem; font-family: 'Russo One', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; transform: skewX(-3deg); transition: border-color 0.2s ease; }
-    #playerNameInput:focus { outline: none; border-color: var(--arcade-neon-green); box-shadow: 0 0 10px rgba(57,255,20,0.3); }
-    #playerNameInput::placeholder { color: rgba(255,255,255,0.4); }
-    #saveNameBtn { margin-top: 0.5rem; padding: 0.5rem 1rem; font-family: 'Russo One', sans-serif; font-size: 0.875rem; background: var(--arcade-cyan); color: var(--blaze-midnight); border: none; border-radius: 4px; cursor: pointer; transform: skewX(-3deg); }
-    #saveNameBtn:hover { background: var(--arcade-neon-green); }
-
-    .share-section { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
-    .share-title { font-family: 'Russo One', sans-serif; font-size: 0.875rem; color: var(--arcade-cyan); margin-bottom: 0.75rem; text-transform: uppercase; transform: skewX(-3deg); }
-    .share-buttons { display: flex; gap: 0.75rem; justify-content: center; }
-    .share-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; font-family: 'Russo One', sans-serif; font-size: 0.875rem; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; transform: skewX(-3deg); text-decoration: none; }
-    .share-btn-x { background: #000; color: white; border: 2px solid rgba(255,255,255,0.3); }
-    .share-btn-x:hover { background: #1DA1F2; border-color: #1DA1F2; }
-    .share-btn-copy { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); }
-    .share-btn-copy:hover { background: var(--arcade-purple); border-color: var(--arcade-purple); }
-    .share-btn-copy.copied { background: var(--arcade-neon-green); color: var(--blaze-midnight); }
-
-    .game-over-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-    .game-over-button { padding: 1rem 2rem; font-family: 'Russo One', sans-serif; font-size: 1.25rem; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; border: none; transform: skewX(-5deg); }
-    #playAgainButton { background: linear-gradient(180deg, var(--arcade-neon-green) 0%, #20CC10 100%); color: var(--blaze-midnight); box-shadow: 0 4px 0 #1A8C0A; }
-    #playAgainButton:hover { transform: skewX(-5deg) translateY(-2px); box-shadow: 0 6px 0 #1A8C0A, 0 0 20px rgba(57,255,20,0.4); }
-    #menuButton { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); }
-    #menuButton:hover { background: rgba(255,255,255,0.2); border-color: var(--arcade-cyan); }
-
-    .footer { margin-top: auto; padding-top: 1.5rem; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
-    .footer a { color: var(--blaze-burnt-orange); text-decoration: none; }
-
-    #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--blaze-midnight); z-index: 2000; }
-    .loading-text { font-family: 'Russo One', sans-serif; font-size: 1.5rem; color: var(--arcade-neon-green); text-transform: uppercase; animation: loadingPulse 1s ease-in-out infinite; }
-    @keyframes loadingPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-    @media (max-width: 600px) {
-      .team-grid { grid-template-columns: 1fr; }
-      #gameUI { padding: 0.5rem; flex-wrap: wrap; gap: 0.25rem; }
-      .game-stat { padding: 0.375rem 0.5rem; }
-      .game-stat-value { font-size: 1.25rem; }
-      #playButton { font-size: 1.5rem; padding: 1rem 1.5rem; }
-      .game-title { font-size: 2rem; }
-    }
-  </style>
-  <script type="module" crossorigin src="/games/blitz/assets/index-CyDSLlA9.js"></script>
-  <link rel="modulepreload" crossorigin href="/games/blitz/assets/babylon-D8S0YZ6G.js">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Blaze Blitz Football | BSI Arcade</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0D0D12;overflow:hidden;touch-action:none;font-family:'Inter',system-ui,sans-serif}
+canvas{display:block;margin:0 auto}
+#ui{position:absolute;top:0;left:0;width:100%;pointer-events:none;color:#fff;font-family:'Inter',system-ui,sans-serif}
+#hud{display:flex;justify-content:space-between;padding:10px 16px;font-size:14px;font-weight:700}
+#hud span{background:rgba(0,0,0,0.7);padding:4px 12px;border-radius:6px;backdrop-filter:blur(4px)}
+#menu{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.95);pointer-events:auto;z-index:10}
+#menu h1{font-size:clamp(28px,6vw,48px);color:#FF6B35;text-transform:uppercase;letter-spacing:3px;margin-bottom:8px}
+#menu p{color:rgba(255,255,255,0.5);font-size:14px;margin-bottom:24px}
+#menu .controls{color:rgba(255,255,255,0.35);font-size:12px;margin-bottom:20px;text-align:center;line-height:1.8}
+.btn{background:#FF6B35;color:#0D0D12;border:none;padding:14px 40px;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:2px;border-radius:10px;cursor:pointer;pointer-events:auto}
+.btn:hover{background:#ff8555}
+#plays{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:none;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:center}
+#plays button{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:1px;backdrop-filter:blur(4px)}
+#plays button:hover{background:#FF6B35;color:#0D0D12;border-color:#FF6B35}
+#gameover{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,18,0.95);pointer-events:auto;z-index:10}
+#gameover h2{font-size:36px;color:#FF6B35;margin-bottom:8px;text-transform:uppercase}
+#gameover .final{font-size:64px;font-weight:900;color:#fff;margin-bottom:4px}
+#gameover .sub{color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:24px}
+#td-flash{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,107,53,0.3);pointer-events:none;opacity:0;z-index:5;transition:opacity 0.1s}
+</style>
 </head>
 <body>
-  <div class="crt-overlay"></div>
+<canvas id="c"></canvas>
+<div id="td-flash"></div>
+<div id="ui">
+  <div id="hud"><span id="score">0</span><span id="timer">1:30</span><span id="down">1st &amp; 10</span></div>
+</div>
+<div id="menu">
+  <h1>Blaze Blitz</h1>
+  <p>Arcade Football</p>
+  <div class="controls">Arrows / WASD = Move | SPACE = Sprint | 1-4 = Pass to Receiver<br>Pick a play, dodge defenders, score touchdowns</div>
+  <button class="btn" onclick="startGame()">Play</button>
+</div>
+<div id="plays">
+  <button onclick="pickPlay('dive')">HB Dive</button>
+  <button onclick="pickPlay('sweep')">Sweep Left</button>
+  <button onclick="pickPlay('slant')">Slant Routes</button>
+  <button onclick="pickPlay('deep')">Go Deep</button>
+</div>
+<div id="gameover">
+  <h2>Game Over</h2>
+  <div class="final" id="finalScore">0</div>
+  <div class="sub" id="finalTDs">0 Touchdowns</div>
+  <button class="btn" onclick="startGame()">Play Again</button>
+</div>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+let W,H;
+function resize(){W=canvas.width=Math.min(window.innerWidth,800);H=canvas.height=Math.min(window.innerHeight,600);}
+window.addEventListener('resize',resize);resize();
 
-  <div id="loadingScreen">
-    <div class="loading-text">Loading...</div>
-  </div>
+let state='menu',score=0,timeLeft=90,tds=0,ballOn=20,down=1,toGo=10,firstDownLine=30;
+let qb,oLinemen=[],defenders=[],receivers=[],playType=null,playActive=false,sprintStamina=100;
+let passInFlight=null,screenShake=0,tdFlashTimer=0;
+let particles=[],floatingTexts=[],grassOffset=0;
+const keys={};
 
-  <canvas id="renderCanvas"></canvas>
+const FIELD_TOP=44,fieldBot=()=>H-24;
+function yardToY(y){return(1-y/100)*(fieldBot()-FIELD_TOP)+FIELD_TOP;}
+function yToYard(py){return(1-(py-FIELD_TOP)/(fieldBot()-FIELD_TOP))*100;}
 
-  <div id="menuScreen" style="display: none;">
-    <h1 class="game-title">Blaze Blitz</h1>
-    <p class="game-subtitle">60 Second Touchdown Challenge</p>
-    <div class="high-score-display">High Score: <span id="highScore">0</span></div>
+function startGame(){
+  score=0;timeLeft=90;tds=0;ballOn=20;down=1;toGo=10;firstDownLine=30;
+  state='play';playActive=false;sprintStamina=100;passInFlight=null;
+  particles=[];floatingTexts=[];screenShake=0;
+  document.getElementById('menu').style.display='none';
+  document.getElementById('gameover').style.display='none';
+  document.getElementById('plays').style.display='flex';
+  if(!window._loopStarted){window._loopStarted=true;requestAnimationFrame(loop);}
+}
 
-    <div class="selection-section">
-      <div class="section-title">Select Your Team</div>
-      <div id="teamSelect" class="team-grid"></div>
-    </div>
+function resetPlay(){
+  const midX=W/2;
+  qb={x:midX,y:yardToY(ballOn),r:10,speed:2.8,color:'#FF6B35',trail:[]};
+  // offensive linemen (blockers)
+  oLinemen=[];
+  for(let i=-2;i<=2;i++){
+    oLinemen.push({x:midX+i*22,y:yardToY(ballOn)+14,r:9,color:'#FF6B35'});
+  }
+  // defenders with AI roles
+  defenders=[];
+  const dCount=4+Math.min(tds,4);
+  const roles=['rush','rush','zone','zone','spy','zone','rush','zone'];
+  for(let i=0;i<dCount;i++){
+    const dx=midX+(Math.random()-0.5)*W*0.6;
+    const zoneY=ballOn+15+Math.random()*35;
+    defenders.push({
+      x:dx,y:yardToY(zoneY),r:9,
+      speed:1.3+tds*0.12+Math.random()*0.3,
+      color:'#334155',
+      role:roles[i%roles.length],
+      zoneX:dx,zoneY:yardToY(zoneY),
+      pursueTimer:0
+    });
+  }
+  // receivers
+  receivers=[];
+  if(playType==='slant'||playType==='deep'){
+    const routes=playType==='slant'?
+      [{startOff:-70,routeType:'slant'},{startOff:70,routeType:'slant'},{startOff:-35,routeType:'out'}]:
+      [{startOff:-80,routeType:'go'},{startOff:80,routeType:'go'},{startOff:0,routeType:'post'}];
+    routes.forEach((r,i)=>{
+      receivers.push({
+        x:midX+r.startOff,y:qb.y-5,r:8,color:'#FDB913',
+        routeType:r.routeType,progress:0,open:false,
+        number:i+1,routePoints:[]
+      });
+    });
+  }else if(playType==='sweep'){
+    receivers.push({x:midX-50,y:qb.y+10,r:8,color:'#FDB913',routeType:'flat',progress:0,number:1,routePoints:[]});
+  }
+  passInFlight=null;
+  playActive=true;
+}
 
-    <button id="playButton">Start Game</button>
+function pickPlay(type){
+  playType=type;
+  document.getElementById('plays').style.display='none';
+  resetPlay();
+}
 
-    <div class="controls-hint">
-      <h3>Controls</h3>
-      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> - Move</p>
-      <p><kbd>Shift</kbd> - Turbo Boost</p>
-      <p><kbd>Space</kbd> - Snap / Throw</p>
-      <p><kbd>1</kbd>-<kbd>4</kbd> - Select Receiver</p>
-      <p><kbd>J</kbd> - Juke &nbsp; <kbd>K</kbd> - Spin &nbsp; <kbd>L</kbd> - Truck</p>
-      <p><kbd>N</kbd> - Dive &nbsp; <kbd>Q</kbd> - Audible</p>
-      <p><kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8594;</kbd><kbd>&#8595;</kbd> - Hot Routes</p>
-      <p><kbd>E</kbd> - Pump Fake &nbsp; <kbd>G</kbd> - Throw Away</p>
-    </div>
+let lastTime=0,timerAcc=0;
+function loop(ts){
+  const dt=Math.min((ts-lastTime)/1000,0.05);lastTime=ts;
+  if(state==='play'){
+    timerAcc+=dt;if(timerAcc>=1){timerAcc-=1;timeLeft--;if(timeLeft<=0)endGame();}
+    update(dt);
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
 
-    <div class="footer">
-      <a href="https://blazesportsintel.com">Blaze Sports Intel</a> | 100% Original IP
-    </div>
-  </div>
+function update(dt){
+  grassOffset+=dt*60;
+  if(screenShake>0)screenShake-=dt*8;
+  if(tdFlashTimer>0){tdFlashTimer-=dt;document.getElementById('td-flash').style.opacity=tdFlashTimer>0?'1':'0';}
+  particles=particles.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=300*dt;p.life-=dt;return p.life>0;});
+  floatingTexts=floatingTexts.filter(f=>{f.y-=50*dt;f.life-=dt;return f.life>0;});
 
-  <div id="gameUI">
-    <div class="game-stat">
-      <div class="game-stat-label">Score</div>
-      <div class="game-stat-value" id="score">0</div>
-    </div>
-    <div class="game-stat">
-      <div class="game-stat-label">Time</div>
-      <div class="game-stat-value" id="timer">60</div>
-    </div>
-    <div class="game-stat">
-      <div class="game-stat-label">Down</div>
-      <div class="game-stat-value" id="down">1st</div>
-    </div>
-    <div class="game-stat">
-      <div class="game-stat-label">Yards</div>
-      <div class="game-stat-value" id="yards">0</div>
-    </div>
-  </div>
+  if(!playActive)return;
+  // QB movement
+  const sprinting=keys[' ']&&sprintStamina>0;
+  const spd=qb.speed*(sprinting?1.8:1);
+  if(keys[' '])sprintStamina=Math.max(0,sprintStamina-dt*35);
+  else sprintStamina=Math.min(100,sprintStamina+dt*18);
+  let mx=0,my=0;
+  if(keys['ArrowLeft']||keys['a'])mx=-1;
+  if(keys['ArrowRight']||keys['d'])mx=1;
+  if(keys['ArrowUp']||keys['w'])my=-1;
+  if(keys['ArrowDown']||keys['s'])my=1;
+  if(mx||my){const mag=Math.sqrt(mx*mx+my*my);qb.x+=mx/mag*spd*60*dt;qb.y+=my/mag*spd*60*dt;}
+  qb.x=Math.max(24,Math.min(W-24,qb.x));qb.y=Math.max(FIELD_TOP+4,Math.min(fieldBot()-4,qb.y));
+  // QB trail
+  qb.trail.push({x:qb.x,y:qb.y,life:0.3});
+  qb.trail=qb.trail.filter(t=>{t.life-=dt;return t.life>0;});
 
-  <div id="driveInfo">
-    <span id="driveText">1st & 10 at OWN 20</span>
-  </div>
+  // Receiver routes
+  receivers.forEach(r=>{
+    r.progress+=dt;
+    r.routePoints.push({x:r.x,y:r.y});
+    if(r.routePoints.length>30)r.routePoints.shift();
+    const spd=3.2*60*dt;
+    if(r.routeType==='slant'){
+      if(r.progress<0.5)r.y-=spd;
+      else{r.y-=spd*0.5;r.x+=(r.x<W/2?1:-1)*spd*0.8;}
+    }else if(r.routeType==='go'){r.y-=spd;}
+    else if(r.routeType==='post'){
+      if(r.progress<0.6)r.y-=spd;
+      else{r.y-=spd*0.4;r.x+=(r.x<W/2?-1:1)*spd*0.6;}
+    }else if(r.routeType==='out'){
+      if(r.progress<0.4)r.y-=spd;
+      else{r.x+=(r.x<W/2?-1:1)*spd;}
+    }else if(r.routeType==='flat'){
+      r.x-=spd;r.y-=spd*0.2;
+    }
+    // check if open (no defender within 30px)
+    r.open=!defenders.some(d=>{const dx=d.x-r.x,dy=d.y-r.y;return Math.sqrt(dx*dx+dy*dy)<35;});
+  });
 
-  <!-- Play Clock -->
-  <div id="playClock" style="position:fixed;top:80px;left:50%;transform:translateX(-50%) skewX(-10deg);background:rgba(0,0,0,0.9);border:2px solid var(--arcade-yellow);padding:0.25rem 1rem;z-index:100;display:none;">
-    <span id="playClockText" style="font-family:'Russo One',sans-serif;font-size:1.5rem;color:var(--arcade-yellow);transform:skewX(10deg);display:inline-block;">25</span>
-  </div>
+  // Pass in flight
+  if(passInFlight){
+    const p=passInFlight;
+    p.t+=dt*3.5;
+    p.x=p.sx+(p.tx-p.sx)*p.t;
+    p.y=p.sy+(p.ty-p.sy)*p.t-Math.sin(p.t*Math.PI)*40;
+    if(p.t>=1){
+      // check catch
+      const r=p.target;
+      const dx=p.x-r.x,dy=p.y-r.y;
+      if(Math.sqrt(dx*dx+dy*dy)<25){
+        qb.x=r.x;qb.y=r.y;qb.trail=[];
+        floatingTexts.push({x:r.x,y:r.y-20,text:'CATCH!',color:'#4ade80',life:1});
+        spawnParticles(r.x,r.y,8,'#FDB913');
+      }else{
+        floatingTexts.push({x:p.x,y:p.y-20,text:'INCOMPLETE',color:'#ef4444',life:1.2});
+        down++;
+        if(down>4){ballOn=20;down=1;toGo=10;firstDownLine=30;}
+        playActive=false;
+        document.getElementById('plays').style.display='flex';playType=null;
+      }
+      passInFlight=null;
+    }
+  }
 
-  <!-- Score Ticker -->
-  <div id="scoreTicker" style="position:fixed;top:0;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.95);border-bottom:2px solid var(--arcade-neon-green);padding:0.25rem 2rem;z-index:110;display:none;font-family:'Russo One',sans-serif;white-space:nowrap;">
-    <span id="homeTeamName" style="color:var(--blaze-burnt-orange);margin-right:0.5rem;font-size:0.875rem;">HOME</span>
-    <span id="homeTeamScore" style="color:var(--arcade-neon-green);font-size:1.25rem;margin-right:1rem;">0</span>
-    <span style="color:rgba(255,255,255,0.3);font-size:0.75rem;">vs</span>
-    <span id="awayTeamScore" style="color:var(--arcade-hot-pink);font-size:1.25rem;margin-left:1rem;margin-right:0.5rem;">0</span>
-    <span id="awayTeamName" style="color:rgba(255,255,255,0.5);font-size:0.875rem;">AWAY</span>
-    <span id="quarterDisplay" style="color:var(--arcade-cyan);font-size:0.75rem;margin-left:1.5rem;">Q1</span>
-  </div>
+  // Defender AI
+  defenders.forEach(d=>{
+    let tx=qb.x,ty=qb.y;
+    if(d.role==='zone'){
+      // Zone: patrol area, pursue if QB enters zone
+      const distToQB=Math.sqrt((qb.x-d.x)**2+(qb.y-d.y)**2);
+      if(distToQB<120){d.pursueTimer=1.5;} // lock on
+      if(d.pursueTimer>0){d.pursueTimer-=dt;tx=qb.x;ty=qb.y;}
+      else{tx=d.zoneX+Math.sin(grassOffset*0.02+d.zoneX)*30;ty=d.zoneY;}
+    }else if(d.role==='spy'){
+      // Spy: shadow QB x-position, stay 80px ahead
+      tx=qb.x;ty=qb.y-80;
+    }
+    // else rush: direct chase (default)
+    const dx=tx-d.x,dy=ty-d.y,dist=Math.sqrt(dx*dx+dy*dy);
+    const eff=d.role==='rush'?d.speed:(d.pursueTimer>0?d.speed*0.9:d.speed*0.6);
+    if(dist>2){d.x+=dx/dist*eff*60*dt;d.y+=dy/dist*eff*60*dt;}
+    // tackle check
+    const tdx=qb.x-d.x,tdy=qb.y-d.y,tdist=Math.sqrt(tdx*tdx+tdy*tdy);
+    if(tdist<qb.r+d.r&&!passInFlight){tackled();}
+  });
 
-  <!-- Play Call UI -->
-  <div id="playCallOverlay" style="position:fixed;bottom:0;left:0;right:0;display:none;flex-direction:column;align-items:center;padding:1rem;background:linear-gradient(0deg,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 80%,transparent 100%);z-index:120;pointer-events:auto;">
-    <div id="formationPicker" style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;justify-content:center;"></div>
-    <div id="playPicker" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;max-width:600px;"></div>
-    <div style="margin-top:0.5rem;font-size:0.625rem;color:rgba(255,255,255,0.3);font-family:'Russo One',sans-serif;text-transform:uppercase;letter-spacing:0.1em;">Select a play or press <kbd style="padding:0.125rem 0.375rem;background:var(--blaze-charcoal);border:1px solid rgba(255,255,255,0.2);border-radius:3px;font-family:monospace;color:var(--arcade-yellow);">Space</kbd> for recommended</div>
-  </div>
+  // O-line blocking
+  oLinemen.forEach(ol=>{
+    const nearest=defenders.reduce((best,d)=>{
+      const dist=Math.sqrt((d.x-ol.x)**2+(d.y-ol.y)**2);
+      return dist<(best?best.dist:999)?{d,dist}:best;
+    },null);
+    if(nearest&&nearest.dist<50){
+      const d=nearest.d;
+      const dx=d.x-ol.x,dy=d.y-ol.y,dist=nearest.dist;
+      ol.x+=dx/dist*1.5*60*dt;ol.y+=dy/dist*1.5*60*dt;
+      if(dist<ol.r+d.r+2){d.x+=dx/dist*0.8*60*dt;d.y+=dy/dist*0.8*60*dt;}
+    }
+  });
 
-  <!-- Ball Carrier Move Indicators -->
-  <div id="moveIndicators" style="position:fixed;bottom:20px;right:20px;display:none;flex-direction:column;gap:4px;z-index:100;pointer-events:none;">
-    <div id="jukeReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-cyan);text-transform:uppercase;opacity:0.3;">J Juke</div>
-    <div id="spinReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-purple);text-transform:uppercase;opacity:0.3;">K Spin</div>
-    <div id="truckReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-hot-pink);text-transform:uppercase;opacity:0.3;">L Truck</div>
-  </div>
+  // Touchdown check
+  if(yToYard(qb.y)>=100)touchdown();
 
-  <div id="staminaBar">
-    <div id="staminaFill" style="width: 100%"></div>
-    <span id="staminaLabel">Turbo</span>
-  </div>
+  // HUD
+  document.getElementById('score').textContent=score;
+  const m=Math.floor(timeLeft/60),s=timeLeft%60;
+  document.getElementById('timer').textContent=m+':'+(s<10?'0':'')+s;
+  const currentYard=Math.floor(yToYard(qb.y));
+  const gained=currentYard-ballOn;
+  const remaining=toGo-gained;
+  if(remaining<=0&&playActive){down=1;toGo=10;ballOn=currentYard;firstDownLine=Math.min(ballOn+10,100);
+    floatingTexts.push({x:qb.x,y:qb.y-30,text:'FIRST DOWN!',color:'#FDB913',life:1});}
+  const dn=['1st','2nd','3rd','4th'];
+  document.getElementById('down').textContent=dn[Math.min(down-1,3)]+' & '+(remaining>0?remaining:'Goal')+' | Ball on '+currentYard;
+}
 
-  <div id="playFeedback"></div>
+function throwToReceiver(idx){
+  if(!playActive||passInFlight||!receivers[idx])return;
+  const r=receivers[idx];
+  passInFlight={sx:qb.x,sy:qb.y,tx:r.x+(r.routeType==='go'?0:10),ty:r.y-30,x:qb.x,y:qb.y,t:0,target:r};
+}
 
-  <div id="gameOverScreen">
-    <div class="game-over-title">Game Over</div>
-    <div id="gameOverResult" class="game-over-result">Touchdown!</div>
-    <div id="finalScore">0</div>
+function touchdown(){
+  score+=7;tds++;playActive=false;ballOn=20;down=1;toGo=10;firstDownLine=30;
+  screenShake=1;tdFlashTimer=0.4;
+  spawnParticles(qb.x,qb.y,25,'#FF6B35');
+  spawnParticles(qb.x,qb.y,15,'#FDB913');
+  floatingTexts.push({x:W/2,y:H/2-40,text:'TOUCHDOWN!',color:'#FF6B35',life:2});
+  floatingTexts.push({x:W/2,y:H/2,text:'+7',color:'#FDB913',life:1.5});
+  document.getElementById('plays').style.display='flex';playType=null;
+}
 
-    <div class="name-input-section">
-      <label for="playerNameInput">Enter Your Name for Leaderboard</label>
-      <input type="text" id="playerNameInput" placeholder="Your name..." maxlength="20" autocomplete="off">
-      <button id="saveNameBtn">Save Name</button>
-    </div>
+function tackled(){
+  playActive=false;screenShake=0.3;
+  spawnParticles(qb.x,qb.y,10,'#666');
+  const yard=Math.max(1,Math.floor(yToYard(qb.y)));
+  const gained=yard-ballOn;
+  if(gained>=toGo){down=1;toGo=10;ballOn=yard;firstDownLine=Math.min(ballOn+10,100);}
+  else{down++;if(down>4){ballOn=20;down=1;toGo=10;firstDownLine=30;floatingTexts.push({x:W/2,y:H/2,text:'TURNOVER ON DOWNS',color:'#ef4444',life:1.5});}else{ballOn=yard;toGo-=gained;}}
+  document.getElementById('plays').style.display='flex';playType=null;
+}
 
-    <div id="gameStats"></div>
+function spawnParticles(x,y,n,color){
+  for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-0.5)*400,vy:-150-Math.random()*250,color,life:0.8+Math.random()*0.6});
+}
 
-    <div class="share-section">
-      <div class="share-title">Share Your Score</div>
-      <div class="share-buttons">
-        <a id="shareXBtn" class="share-btn share-btn-x" target="_blank" rel="noopener">
-          <span>&#120143;</span> Share
-        </a>
-        <button id="copyLinkBtn" class="share-btn share-btn-copy">
-          <span>&#x1F4CB;</span> Copy Link
-        </button>
-      </div>
-    </div>
+function endGame(){
+  state='over';
+  document.getElementById('plays').style.display='none';
+  document.getElementById('gameover').style.display='flex';
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalTDs').textContent=tds+' Touchdown'+(tds!==1?'s':'');
+  submitScore();
+}
 
-    <div id="leaderboard"></div>
+function draw(){
+  const w=W,h=H;
+  ctx.save();
+  if(screenShake>0){ctx.translate((Math.random()-0.5)*screenShake*6,(Math.random()-0.5)*screenShake*6);}
+  ctx.fillStyle='#0D0D12';ctx.fillRect(0,0,w,h);
+  const fb=fieldBot();
+  // field with grass stripes
+  for(let y=FIELD_TOP;y<fb;y+=12){
+    ctx.fillStyle=Math.floor((y-FIELD_TOP+grassOffset)/(12))%2===0?'#1a5c2a':'#1e6830';
+    ctx.fillRect(14,y,w-28,12);
+  }
+  // sideline borders
+  ctx.fillStyle='#fff';ctx.fillRect(12,FIELD_TOP,2,fb-FIELD_TOP);ctx.fillRect(w-14,FIELD_TOP,2,fb-FIELD_TOP);
+  // hash marks
+  ctx.fillStyle='rgba(255,255,255,0.12)';
+  for(let y=10;y<=90;y+=5){
+    const py=yardToY(y);
+    ctx.fillRect(w*0.33-1,py-1,2,2);ctx.fillRect(w*0.67-1,py-1,2,2);
+  }
+  // yard lines and numbers
+  for(let y=10;y<=90;y+=10){
+    const py=yardToY(y);
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(14,py);ctx.lineTo(w-14,py);ctx.stroke();
+    const num=y>50?100-y:y;
+    ctx.fillStyle='rgba(255,255,255,0.15)';ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(num,28,py+4);ctx.fillText(num,w-28,py+4);
+  }
+  // end zones
+  ctx.fillStyle='rgba(255,107,53,0.25)';
+  const ezTop=yardToY(100),ezBot=yardToY(0);
+  ctx.fillRect(14,FIELD_TOP,w-28,ezTop-FIELD_TOP);
+  ctx.fillStyle='rgba(255,107,53,0.12)';ctx.fillRect(14,ezBot,w-28,fb-ezBot);
+  // end zone text
+  ctx.save();ctx.fillStyle='rgba(255,107,53,0.2)';ctx.font='bold 20px sans-serif';ctx.textAlign='center';
+  ctx.fillText('BLAZE',w/2,(FIELD_TOP+ezTop)/2+6);ctx.restore();
+  // LOS
+  ctx.strokeStyle='#FF6B35';ctx.lineWidth=2.5;ctx.shadowColor='#FF6B35';ctx.shadowBlur=6;
+  let py=yardToY(ballOn);ctx.beginPath();ctx.moveTo(14,py);ctx.lineTo(w-14,py);ctx.stroke();ctx.shadowBlur=0;
+  // first down line
+  ctx.strokeStyle='#FDB913';ctx.lineWidth=2;ctx.setLineDash([6,4]);
+  py=yardToY(firstDownLine);ctx.beginPath();ctx.moveTo(14,py);ctx.lineTo(w-14,py);ctx.stroke();ctx.setLineDash([]);
+  // first down marker
+  ctx.fillStyle='#FDB913';ctx.font='bold 9px sans-serif';ctx.textAlign='left';ctx.fillText('1ST',w-12,py+3);
 
-    <div class="game-over-buttons">
-      <button id="playAgainButton" class="game-over-button">Play Again</button>
-      <button id="menuButton" class="game-over-button">Main Menu</button>
-    </div>
-  </div>
+  // Route lines
+  receivers.forEach(r=>{
+    if(r.routePoints.length>1){
+      ctx.strokeStyle=r.open?'rgba(74,222,128,0.3)':'rgba(253,185,19,0.15)';ctx.lineWidth=2;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.moveTo(r.routePoints[0].x,r.routePoints[0].y);
+      r.routePoints.forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);
+    }
+  });
 
+  // QB trail
+  qb.trail.forEach(t=>{
+    ctx.globalAlpha=t.life*0.3;ctx.fillStyle='#FF6B35';
+    ctx.beginPath();ctx.arc(t.x,t.y,qb.r*0.6,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;
+
+  // O-linemen
+  oLinemen.forEach(ol=>drawPlayer(ol.x,ol.y,ol.r,'#BF5700','OL','#fff'));
+  // Receivers
+  receivers.forEach((r,i)=>{
+    const col=r.open?'#4ade80':'#FDB913';
+    drawPlayer(r.x,r.y,r.r,col,''+(i+1),'#0D0D12');
+    if(r.open){ctx.strokeStyle='rgba(74,222,128,0.4)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(r.x,r.y,r.r+5,0,Math.PI*2);ctx.stroke();}
+  });
+  // Defenders
+  defenders.forEach(d=>{
+    const col=d.pursueTimer>0?'#64748b':'#334155';
+    drawPlayer(d.x,d.y,d.r,col,'D','rgba(255,255,255,0.5)');
+  });
+  // QB
+  if(qb){
+    drawPlayer(qb.x,qb.y,qb.r,qb.color,'QB','#0D0D12');
+    // direction indicator
+    if(keys['ArrowUp']||keys['w']||keys['ArrowDown']||keys['s']||keys['ArrowLeft']||keys['a']||keys['ArrowRight']||keys['d']){
+      let dx=0,dy=0;
+      if(keys['ArrowLeft']||keys['a'])dx=-1;if(keys['ArrowRight']||keys['d'])dx=1;
+      if(keys['ArrowUp']||keys['w'])dy=-1;if(keys['ArrowDown']||keys['s'])dy=1;
+      const mag=Math.sqrt(dx*dx+dy*dy)||1;
+      ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(qb.x,qb.y);ctx.lineTo(qb.x+dx/mag*20,qb.y+dy/mag*20);ctx.stroke();
+    }
+  }
+
+  // Pass in flight
+  if(passInFlight){
+    const p=passInFlight;
+    ctx.fillStyle='#8B4513';ctx.beginPath();ctx.ellipse(p.x,p.y,6,4,Math.atan2(p.ty-p.sy,p.tx-p.sx)+p.t*8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill();
+  }
+
+  // Stamina bar
+  if(playActive){
+    const bx=w-80,by=FIELD_TOP+6;
+    ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(bx,by,60,8);
+    ctx.fillStyle=sprintStamina>30?'#4ade80':'#ef4444';
+    ctx.fillRect(bx+1,by+1,sprintStamina/100*58,6);
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='8px sans-serif';ctx.textAlign='right';ctx.fillText('SPRINT',bx-2,by+7);
+  }
+
+  // Particles
+  particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();});
+  ctx.globalAlpha=1;
+  // Floating texts
+  floatingTexts.forEach(f=>{
+    ctx.globalAlpha=Math.min(1,f.life);ctx.fillStyle=f.color;
+    ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=3;
+    ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);
+  });
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+
+function drawPlayer(x,y,r,fill,label,textColor){
+  // body
+  ctx.fillStyle=fill;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  // outline
+  ctx.strokeStyle='rgba(0,0,0,0.3)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.stroke();
+  // helmet shape
+  ctx.fillStyle='rgba(0,0,0,0.15)';ctx.beginPath();ctx.arc(x,y-2,r*0.65,Math.PI,0);ctx.fill();
+  // label
+  if(label){ctx.fillStyle=textColor;ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x,y+1);}
+}
+
+// Input
+document.addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(e.key>='1'&&e.key<='4')throwToReceiver(parseInt(e.key)-1);
+});
+document.addEventListener('keyup',e=>{keys[e.key]=false;});
+
+let touchId=null,touchStartX=0,touchStartY=0;
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault();const t=e.touches[0];touchId=t.identifier;touchStartX=t.clientX;touchStartY=t.clientY;
+},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  for(const t of e.touches){
+    if(t.identifier===touchId&&qb&&playActive){
+      const dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;
+      qb.x+=dx*0.8;qb.y+=dy*0.8;
+      qb.x=Math.max(24,Math.min(W-24,qb.x));qb.y=Math.max(FIELD_TOP+4,Math.min(fieldBot()-4,qb.y));
+      touchStartX=t.clientX;touchStartY=t.clientY;
+    }
+  }
+},{passive:false});
+canvas.addEventListener('touchend',e=>{
+  // double tap to pass to nearest open receiver
+  if(receivers.length>0&&playActive&&!passInFlight){
+    const open=receivers.filter(r=>r.open);
+    if(open.length>0){
+      const nearest=open.reduce((best,r)=>{const d=Math.sqrt((r.x-qb.x)**2+(r.y-qb.y)**2);return d<best.d?{r,d}:{...best};},{d:999,r:null});
+      if(nearest.r)throwToReceiver(receivers.indexOf(nearest.r));
+    }
+  }
+  touchId=null;
+});
+
+function submitScore(){
+  const name=localStorage.getItem('bsi_player_name')||'Player';
+  const avatar=localStorage.getItem('bsi_player_avatar')||'\uD83C\uDFC8';
+  fetch('/api/multiplayer/leaderboard',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({game:'blitz',name,avatar,score})}).catch(()=>{});
+}
+</script>
 </body>
 </html>

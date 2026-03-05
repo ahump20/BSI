@@ -44,7 +44,7 @@ export default function GameSummaryClient() {
               <Badge variant="success">W</Badge>
               <span className="text-text-tertiary text-sm">Winning Pitcher</span>
             </div>
-            <p className="text-white font-semibold text-lg">{winningPitcher.player.name}</p>
+            <p className="text-text-primary font-semibold text-lg">{winningPitcher.player.name}</p>
             <p className="text-text-secondary text-sm mt-1">
               {winningPitcher.ip} IP, {winningPitcher.h} H, {winningPitcher.er} ER,{' '}
               {winningPitcher.so} K
@@ -59,7 +59,7 @@ export default function GameSummaryClient() {
               <Badge variant="error">L</Badge>
               <span className="text-text-tertiary text-sm">Losing Pitcher</span>
             </div>
-            <p className="text-white font-semibold text-lg">{losingPitcher.player.name}</p>
+            <p className="text-text-primary font-semibold text-lg">{losingPitcher.player.name}</p>
             <p className="text-text-secondary text-sm mt-1">
               {losingPitcher.ip} IP, {losingPitcher.h} H, {losingPitcher.er} ER, {losingPitcher.so}{' '}
               K
@@ -74,7 +74,7 @@ export default function GameSummaryClient() {
               <Badge variant="primary">S</Badge>
               <span className="text-text-tertiary text-sm">Save</span>
             </div>
-            <p className="text-white font-semibold text-lg">{savePitcher.player.name}</p>
+            <p className="text-text-primary font-semibold text-lg">{savePitcher.player.name}</p>
             <p className="text-text-secondary text-sm mt-1">
               {savePitcher.ip} IP, {savePitcher.h} H, {savePitcher.er} ER, {savePitcher.so} K
             </p>
@@ -85,15 +85,15 @@ export default function GameSummaryClient() {
       {/* Batting Leaders */}
       {(topAwayHitter || topHomeHitter) && (
         <Card variant="default" padding="md">
-          <h3 className="text-lg font-semibold text-white mb-4">Batting Leaders</h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-4">Batting Leaders</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {topAwayHitter && (
-              <div className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
-                <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                   {game.teams.away.abbreviation}
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{topAwayHitter.player.name}</p>
+                  <p className="font-semibold text-text-primary">{topAwayHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">
                     {topAwayHitter.h}-{topAwayHitter.ab}, {topAwayHitter.rbi} RBI, {topAwayHitter.r}{' '}
                     R
@@ -102,12 +102,12 @@ export default function GameSummaryClient() {
               </div>
             )}
             {topHomeHitter && (
-              <div className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
-                <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                   {game.teams.home.abbreviation}
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{topHomeHitter.player.name}</p>
+                  <p className="font-semibold text-text-primary">{topHomeHitter.player.name}</p>
                   <p className="text-text-secondary text-sm">
                     {topHomeHitter.h}-{topHomeHitter.ab}, {topHomeHitter.rbi} RBI, {topHomeHitter.r}{' '}
                     R

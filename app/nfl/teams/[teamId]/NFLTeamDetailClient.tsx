@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 // All 32 NFL teams with full data
 export const NFL_TEAMS: Record<
@@ -322,19 +323,6 @@ interface TeamStats {
   streak: number;
 }
 
-function formatTimestamp(): string {
-  return (
-    new Date().toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 interface NFLTeamDetailClientProps {
   teamId: string;
@@ -355,34 +343,50 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
     }
     setLoading(true);
     try {
-      // Try to fetch from standings API
+      // Fetch from BSI standings API (returns nested conference/division/team structure)
       const response = await fetch('/api/nfl/standings');
       if (response.ok) {
         const data = (await response.json()) as {
-          success?: boolean;
-          rawData?: Array<{
-            Team: string;
-            Wins?: number;
-            Losses?: number;
-            Ties?: number;
-            PointsFor?: number;
-            PointsAgainst?: number;
-            Streak?: number;
+          standings?: Array<{
+            name: string;
+            divisions?: Array<{
+              name: string;
+              teams: Array<{
+                abbreviation: string;
+                wins: number;
+                losses: number;
+                ties: number;
+                pf: number;
+                pa: number;
+                streak: string;
+              }>;
+            }>;
           }>;
         };
-        if (data.success && data.rawData) {
-          const teamData = data.rawData.find(
-            (t: { Team: string }) => t.Team?.toUpperCase() === team.abbreviation.toUpperCase()
-          );
-          if (teamData) {
-            setStats({
-              wins: teamData.Wins || 0,
-              losses: teamData.Losses || 0,
-              ties: teamData.Ties || 0,
-              pointsFor: teamData.PointsFor || 0,
-              pointsAgainst: teamData.PointsAgainst || 0,
-              streak: teamData.Streak || 0,
-            });
+        if (data.standings) {
+          // Walk conference -> division -> team to find matching team
+          for (const conf of data.standings) {
+            for (const div of conf.divisions || []) {
+              const match = div.teams.find(
+                (t) => t.abbreviation?.toUpperCase() === team.abbreviation.toUpperCase()
+              );
+              if (match) {
+                const streakNum = typeof match.streak === 'string'
+                  ? (match.streak.startsWith('W') ? parseInt(match.streak.slice(1), 10) || 0
+                    : match.streak.startsWith('L') ? -(parseInt(match.streak.slice(1), 10) || 0)
+                    : 0)
+                  : 0;
+                setStats({
+                  wins: match.wins || 0,
+                  losses: match.losses || 0,
+                  ties: match.ties || 0,
+                  pointsFor: match.pf || 0,
+                  pointsAgainst: match.pa || 0,
+                  streak: streakNum,
+                });
+                break;
+              }
+            }
           }
         }
       }
@@ -400,11 +404,11 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
   if (!team) {
     return (
       <>
-        <main id="main-content">
+        <div>
           <Section padding="lg" background="charcoal">
             <Container>
               <Card variant="default" padding="lg" className="text-center">
-                <h1 className="text-2xl font-bold text-white mb-4">Team Not Found</h1>
+                <h1 className="text-2xl font-bold text-text-primary mb-4">Team Not Found</h1>
                 <p className="text-text-secondary mb-6">
                   The team you're looking for doesn't exist.
                 </p>
@@ -414,7 +418,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
               </Card>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -436,7 +440,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -455,7 +459,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                 Teams
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">{fullName}</span>
+              <span className="text-text-primary font-medium">{fullName}</span>
             </nav>
           </Container>
         </Section>
@@ -481,13 +485,13 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
             <ScrollReveal direction="up" delay={100}>
               <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-display mb-4">
                 <span style={{ color: team.primaryColor }}>{team.city}</span>{' '}
-                <span className="text-white">{team.name}</span>
+                <span className="text-text-primary">{team.name}</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={150}>
               <p className="text-text-secondary">
-                2025 Season · {team.conference} {team.division}
+                {(() => { const now = new Date(); const y = now.getFullYear(); return now.getMonth() < 2 ? y - 1 : y; })()} Season · {team.conference} {team.division}
               </p>
             </ScrollReveal>
           </Container>
@@ -519,7 +523,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
                       <Skeleton variant="text" width="100%" height={60} />
                     ) : stats ? (
                       <div className="text-center">
-                        <div className="text-4xl font-bold text-white mb-2">
+                        <div className="text-4xl font-bold text-text-primary mb-2">
                           {stats.wins}-{stats.losses}
                           {stats.ties > 0 ? `-${stats.ties}` : ''}
                         </div>
@@ -666,7 +670,7 @@ export default function NFLTeamDetailClient({ teamId }: NFLTeamDetailClientProps
             )}
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

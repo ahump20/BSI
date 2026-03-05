@@ -87,7 +87,7 @@ export default function CollegeRecapClient() {
           </div>
           <p className="text-text-secondary">
             Live updates as the game unfolds. Currently in the{' '}
-            <span className="text-white font-semibold">
+            <span className="text-text-primary font-semibold">
               {game.status.inningState} of the {game.status.inning}
               {game.status.inning === 1
                 ? 'st'
@@ -112,7 +112,7 @@ export default function CollegeRecapClient() {
                 {scoringPlays.map((play) => (
                   <div
                     key={play.id}
-                    className="p-3 bg-graphite rounded-lg border-l-4 border-burnt-orange"
+                    className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Badge variant="primary" size="sm">
@@ -145,7 +145,7 @@ export default function CollegeRecapClient() {
     <div className="space-y-6">
       {/* Headline */}
       <Card variant="default" padding="lg">
-        <h2 className="text-2xl font-display font-bold text-white mb-4">
+        <h2 className="text-2xl font-display font-bold text-text-primary mb-4">
           {winner.ranking && `#${winner.ranking} `}
           {winner.name} defeat {loser.ranking && `#${loser.ranking} `}
           {loser.name}, {winner.score}-{loser.score}
@@ -179,12 +179,12 @@ export default function CollegeRecapClient() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               {battingStars.slice(0, 4).map((player, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
-                  <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
+                  <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                     {player.team}
                   </div>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-text-primary">
                       {player.player.name}
                       {player.player.year && (
                         <span className="text-text-tertiary text-xs ml-2">
@@ -216,7 +216,7 @@ export default function CollegeRecapClient() {
               {scoringPlays.map((play) => (
                 <div
                   key={play.id}
-                  className="p-3 bg-graphite rounded-lg border-l-4 border-burnt-orange"
+                  className="p-3 bg-background-tertiary rounded-lg border-l-4 border-burnt-orange"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant="primary" size="sm">
@@ -243,10 +243,10 @@ export default function CollegeRecapClient() {
           <CardContent>
             <div className="space-y-3">
               {qualityStarts.map((pitcher, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 bg-graphite rounded-lg">
+                <div key={idx} className="flex items-center gap-4 p-3 bg-background-tertiary rounded-lg">
                   <Badge variant="success">QS</Badge>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-semibold text-text-primary">
                       {pitcher.player.name}
                       {pitcher.player.year && (
                         <span className="text-text-tertiary text-xs ml-2">

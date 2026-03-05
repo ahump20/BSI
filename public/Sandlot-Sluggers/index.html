@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a0a1a" />
+    <meta name="description" content="Sandlot Sluggers - Step up to the plate in this arcade baseball game." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Sandlot Sluggers | Blaze Sports Intel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      html,body{width:100%;height:100%;overflow:hidden;background:#0a0a1a;font-family:'Oswald','Segoe UI',system-ui,-apple-system,sans-serif;color:#e0e0e0}
+      #game-container{width:100%;height:100%;position:relative}
+      #game-canvas{width:100%;height:100%;display:block;touch-action:none}
+
+      /* Loading */
+      #loading-screen{position:absolute;inset:0;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity .5s}
+      #loading-screen.hidden{opacity:0;pointer-events:none}
+      .loading-title{font-size:42px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#ffd700,#ff6b00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+      .loading-subtitle{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:32px;letter-spacing:2px;text-transform:uppercase}
+      .loading-spinner{width:40px;height:40px;border:3px solid rgba(255,215,0,.15);border-top-color:#ffd700;border-radius:50%;animation:spin .8s linear infinite}
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      /* Mode Select Overlay */
+      #mode-select{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,26,.95) 0%,rgba(30,15,5,.92) 60%,rgba(191,87,0,.15) 100%);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
+      #mode-select::before{content:'';position:absolute;bottom:0;left:0;right:0;height:35%;background:linear-gradient(180deg,transparent 0%,rgba(191,87,0,.06) 50%,rgba(191,87,0,.12) 100%);pointer-events:none}
+      #mode-select::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 80'%3E%3Cpath d='M0 80V50 Q50 30 100 40 Q200 55 250 35 Q280 25 300 28 L310 10 L320 28 Q340 25 370 35 Q420 55 500 40 Q600 20 650 35 Q700 50 750 40 Q780 35 800 50V80z' fill='%230a0a1a' opacity='0.6'/%3E%3C/svg%3E") repeat-x bottom/800px 80px;pointer-events:none;opacity:.7}
+      #mode-select.hidden{opacity:0;pointer-events:none}
+      .mode-title{font-family:'Oswald',sans-serif;font-size:52px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#ffd700 0%,#BF5700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;text-transform:uppercase}
+      .mode-sub{color:rgba(255,255,255,.4);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;font-family:'Oswald',sans-serif}
+      .mode-btn{font-family:'Oswald',sans-serif;width:280px;padding:16px 0;margin:8px 0;border:2px solid rgba(191,87,0,.35);border-radius:10px;background:rgba(191,87,0,.08);color:#ffd700;font-size:17px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase}
+      .mode-btn:hover{background:rgba(255,215,0,.15);border-color:#ffd700;transform:scale(1.03)}
+      .mode-desc{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;font-weight:400}
+
+      /* Game Over Overlay */
+      #game-over{position:absolute;inset:0;background:rgba(10,10,26,.92);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;transition:opacity .4s}
+      #game-over.hidden{opacity:0;pointer-events:none}
+      .go-title{font-size:40px;font-weight:800;color:#ff4444;margin-bottom:24px}
+      .go-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px}
+      .go-stat{text-align:center}
+      .go-stat-val{font-size:28px;font-weight:700;color:#ffd700}
+      .go-stat-label{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+      .go-lb{margin-bottom:24px;width:300px;max-height:180px;overflow-y:auto}
+      .go-lb-title{font-size:13px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;text-align:center}
+      .go-lb-row{display:flex;justify-content:space-between;padding:6px 12px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.06)}
+      .go-lb-row.you{color:#ffd700;font-weight:600}
+
+      /* CRT arcade scanlines */
+      #scanlines{position:absolute;inset:0;pointer-events:none;z-index:150;background:repeating-linear-gradient(0deg,rgba(0,0,0,.03) 0px,rgba(0,0,0,.03) 1px,transparent 1px,transparent 2px);mix-blend-mode:multiply}
+
+      @media(max-width:600px){
+        .mode-title,.loading-title{font-size:32px}
+        .mode-btn{width:240px;padding:14px 0;font-size:15px}
+        .go-title{font-size:28px}
+        .go-stat-val{font-size:22px}
+      }
+    </style>
+    <script type="module" crossorigin src="/Sandlot-Sluggers/assets/index-DB8NoQwk.js"></script>
+    <link rel="modulepreload" crossorigin href="/Sandlot-Sluggers/assets/three-MQ5Yf3mD.js">
+  </head>
+  <body>
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+      <div id="scanlines"></div>
+
+      <div id="loading-screen">
+        <div class="loading-title">Sandlot Sluggers</div>
+        <div class="loading-subtitle">Blaze Sports Intel</div>
+        <div class="loading-spinner"></div>
+      </div>
+
+      <div id="mode-select" class="hidden">
+        <div class="mode-title">Sandlot Sluggers</div>
+        <div class="mode-sub">Choose Your Mode</div>
+        <button class="mode-btn" data-mode="practice">Practice<div class="mode-desc">Unlimited at-bats, no outs</div></button>
+        <button class="mode-btn" data-mode="quickPlay">Quick Play<div class="mode-desc">3-inning game</div></button>
+        <button class="mode-btn" data-mode="hrDerby">HR Derby<div class="mode-desc">10 outs, max dingers</div></button>
+      </div>
+
+      <div id="game-over" class="hidden">
+        <div class="go-title">GAME OVER</div>
+        <div class="go-stats" id="go-stats"></div>
+        <div class="go-lb" id="go-leaderboard"></div>
+        <button class="mode-btn" id="go-restart">Play Again</button>
+        <button class="mode-btn" id="go-menu" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);background:transparent;margin-top:4px">Main Menu</button>
+      </div>
+    </div>
+
+    <noscript><p style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">Sandlot Sluggers requires JavaScript.</p></noscript>
+  </body>
+</html>

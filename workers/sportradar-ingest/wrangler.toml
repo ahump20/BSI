@@ -1,0 +1,38 @@
+# BSI Sportradar Ingest — Cron Worker
+# Polls Sportradar MLB v8 API, archives raw payloads to R2,
+# writes normalized pitch events to D1, computes ABS aggregates in KV.
+#
+# Deploy: wrangler deploy --config workers/sportradar-ingest/wrangler.toml
+
+name = "bsi-sportradar-ingest"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+# Cron triggers:
+#   - Every 2 minutes during game hours (polling active/recently-finished games)
+#   - Every 15 minutes off-hours (corrections/changes only)
+[triggers]
+crons = ["*/2 * * * *", "*/15 * * * *"]
+
+# KV — hot cache for ABS aggregates
+[[kv_namespaces]]
+binding = "KV"
+id = "5763d0076cb744ed9c629b9042a61033"
+preview_id = "5763d0076cb744ed9c629b9042a61033"
+
+# D1 — normalized pitch events and game data
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-game-db"
+database_id = "88eb676f-af0f-470c-a46a-b9429f5b51f3"
+
+# R2 — raw payload archive
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "blaze-sports-data-lake"
+
+# SPORTRADAR_API_KEY must be set via:
+# wrangler secret put SPORTRADAR_API_KEY --config workers/sportradar-ingest/wrangler.toml
+
+[dev]
+port = 8795

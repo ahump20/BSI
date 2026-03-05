@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
@@ -17,8 +17,8 @@ import {
   type FilterState,
 } from '@/components/portal';
 
-// Sample CFB portal data with star ratings
-const MOCK_ENTRIES: PortalEntry[] = [
+// Fallback data shown until the API returns real entries
+const FALLBACK_ENTRIES: PortalEntry[] = [
   {
     id: 'cfb-2025-001',
     player_name: 'Jaylen Carter',
@@ -163,13 +163,26 @@ function StatCard({
 }
 
 export default function CFBTransferPortalPage() {
-  const [entries] = useState<PortalEntry[]>(MOCK_ENTRIES);
+  const [entries, setEntries] = useState<PortalEntry[]>(FALLBACK_ENTRIES);
   const [filters, setFilters] = useState<FilterState>({
     position: '',
     conference: '',
     status: '',
     search: '',
   });
+
+  useEffect(() => {
+    fetch('/api/cfb/transfer-portal')
+      .then((r) => r.json())
+      .then((data: { entries?: PortalEntry[] }) => {
+        if (data.entries && data.entries.length > 0) {
+          setEntries(data.entries);
+        }
+      })
+      .catch(() => {
+        // Keep fallback data on fetch failure
+      });
+  }, []);
 
   // Filter entries locally
   const filteredEntries = entries.filter((entry) => {
@@ -186,15 +199,15 @@ export default function CFBTransferPortalPage() {
     total: entries.length,
     inPortal: entries.filter((e) => e.status === 'in_portal').length,
     committed: entries.filter((e) => e.status === 'committed').length,
-    powerFour: entries.filter((e) => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference))
+    powerFour: entries.filter((e) => ['SEC', 'Big Ten', 'Big 12', 'ACC'].includes(e.conference as string))
       .length,
   };
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-midnight">
         {/* Hero section */}
-        <Section className="relative pt-24 pb-16 overflow-hidden">
+        <Section className="relative pt-6 pb-16 overflow-hidden">
           {/* Background gradient - football brown tones */}
           <div className="absolute inset-0 bg-gradient-radial from-football/10 via-transparent to-transparent opacity-50" />
           <div className="absolute inset-0 bg-[url('/images/grain.png')] opacity-[0.02]" />
@@ -343,7 +356,7 @@ export default function CFBTransferPortalPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

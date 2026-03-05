@@ -1,0 +1,244 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import type { IntelGame } from '@/lib/intel/types';
+import { useIntelDashboard, usePinnedBriefing } from '@/lib/intel/hooks';
+import { useIntelPreferences } from '@/lib/intel/use-preferences';
+import { useOutcomeTracker } from '@/lib/intel/outcome-tracker';
+import { IntelHeader } from '@/components/dashboard/intel/IntelHeader';
+import { SportFilter } from '@/components/dashboard/intel/SportFilter';
+import { IntelSearch } from '@/components/dashboard/intel/IntelSearch';
+import { PrioritySignals } from '@/components/dashboard/intel/PrioritySignals';
+import { GameGrid } from '@/components/dashboard/intel/GameGrid';
+import { GameCardHero } from '@/components/dashboard/intel/GameCardHero';
+import { GameCardMarquee } from '@/components/dashboard/intel/GameCardMarquee';
+import { SignalFeed } from '@/components/dashboard/intel/SignalFeed';
+import { StandingsTable } from '@/components/dashboard/intel/StandingsTable';
+const ModelHealth = dynamic(
+  () => import('@/components/dashboard/intel/ModelHealth').then((m) => m.ModelHealth),
+  { ssr: false }
+);
+const NetRatingBar = dynamic(
+  () => import('@/components/dashboard/intel/NetRatingBar').then((m) => m.NetRatingBar),
+  { ssr: false }
+);
+import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
+import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
+import { PitcherFatigue } from '@/components/dashboard/intel/PitcherFatigue';
+import { SPORT_ACCENT } from '@/lib/intel/types';
+
+// Code-split overlays — only loaded on interaction
+const GameDetailSheet = dynamic(
+    () => import('@/components/dashboard/intel/GameDetailSheet').then((m) => m.GameDetailSheet),
+  { ssr: false },
+  );
+const CommandPalette = dynamic(
+    () => import('@/components/dashboard/intel/CommandPalette').then((m) => m.CommandPalette),
+  { ssr: false },
+  );
+
+// —————————————————————————————————————————————————————————————————————————————
+export default function IntelDashboard() {
+    // Persisted preferences (replaces manual localStorage load/save)
+  const {
+        sport, setSport,
+        mode, setMode,
+        teamLens, setTeamLens,
+  } = useIntelPreferences();
+
+  // Local UI state
+  const [selectedGame, setSelectedGame] = useState<IntelGame | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [paletteOpen, setPaletteOpen] = useState(false);
+    const searchRef = useRef<HTMLDivElement>(null);
+
+  // Data hooks
+  const {
+        games,
+        hero,
+        marquee,
+        standard,
+        signals,
+        prioritySignals,
+        standings,
+        allTeams,
+        news,
+        newsLoading,
+        isLoading,
+        isError,
+        lastFetched,
+  } = useIntelDashboard(sport, mode, teamLens);
+
+  const { toggle: togglePin, isPinned } = usePinnedBriefing();
+
+  // Outcome tracking — automatically records predictions + resolves results
+  const { stats: accuracyStats } = useOutcomeTracker(games);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+        function handleKey(e: KeyboardEvent) {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                          e.preventDefault();
+                          setPaletteOpen((prev) => !prev);
+                }
+                if (e.key === '/' && !e.metaKey && !e.ctrlKey) {
+                          const active = document.activeElement;
+                          const isInput =
+                                      active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
+                          if (!isInput) {
+                                      e.preventDefault();
+                                      searchRef.current?.querySelector('input')?.focus();
+                          }
+                }
+        }
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
+  useEffect(() => {
+        const root = document.documentElement;
+        root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT[sport]);
+        return () => {
+                root.style.setProperty('--bsi-intel-accent', SPORT_ACCENT.all);
+        };
+  }, [sport]);
+
+  // Derived
+  const liveCount = useMemo(() => games.filter((g) => g.status === 'live').length, [games]);
+
+  const briefingLine = useMemo(() => {
+        const parts: string[] = [];
+        if (games.length > 0) parts.push(`${games.length} games tracked`);
+        if (liveCount > 0) parts.push(`${liveCount} live`);
+        if (signals.length > 0) parts.push(`${signals.length} signals`);
+        if (accuracyStats.total > 0)
+                parts.push(`${accuracyStats.accuracy}% model accuracy`);
+        return parts.join(' / ') || 'Waiting for data...';
+  }, [games.length, liveCount, signals.length, accuracyStats]);
+
+  // Handlers
+  const handleSelectGame = useCallback((game: IntelGame) => setSelectedGame(game), []);
+    const handleCloseSheet = useCallback(() => setSelectedGame(null), []);
+    const handleOpenPalette = useCallback(() => setPaletteOpen(true), []);
+    const handleClosePalette = useCallback(() => setPaletteOpen(false), []);
+    const handleSelectTeamFromPalette = useCallback((team: string) => {
+          setTeamLens(team);
+          setPaletteOpen(false);
+    }, [setTeamLens]);
+
+  // ——— Render ————————————————————————————————————————————————————————————
+  if (isLoading) return <IntelSkeleton />;
+
+  if (isError) {
+        return (
+                <div className="flex min-h-[60vh] items-center justify-center">
+                        <div className="text-center">
+                                  <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
+                                  <p className="mt-1 font-mono text-[12px] text-text-muted">
+                                              Check network connection or try refreshing
+                                  </p>
+                        </div>
+                </div>
+              );
+  }
+  
+    return (
+          <DataErrorBoundary name="Intel Dashboard">
+          <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
+                <IntelHeader
+                          mode={mode}
+                          onModeChange={setMode}
+                          teamLens={teamLens}
+                          onTeamLensChange={setTeamLens}
+                          allTeams={allTeams}
+                          onOpenPalette={handleOpenPalette}
+                          liveCount={liveCount}
+                          briefingLine={briefingLine}
+                          fetchedAt={lastFetched ? new Date(lastFetched).toISOString() : undefined}
+                        />
+
+                <hr className="intel-masthead-rule" />
+
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                        <SportFilter value={sport} onChange={setSport} />
+                        <div ref={searchRef} className="flex-1 min-w-[200px]">
+                                  <IntelSearch query={searchQuery} onChange={setSearchQuery} />
+                        </div>
+                </div>
+          
+            {/* Priority signals banner */}
+            {prioritySignals.length > 0 && (
+                    <div className="mb-6">
+                              <PrioritySignals
+                                            signals={prioritySignals}
+                                            isPinned={isPinned}
+                                            onTogglePin={togglePin}
+                                          />
+                    </div>
+                )}
+          
+            {/* Main grid: content + sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+                        <div className="min-w-0">
+                                  <GameGrid
+                                                hero={hero}
+                                                marquee={marquee}
+                                                standard={standard}
+                                                isLoading={false}
+                                                onSelectGame={handleSelectGame}
+                                                sport={sport}
+                                                heroCard={
+                                                                hero ? (
+                                                                                  <GameCardHero game={hero} onClick={() => handleSelectGame(hero)} />
+                                                                                ) : undefined
+                                                }
+                                                marqueeCards={
+                                                                marquee.length > 0 ? (
+                                                                                  <div
+                                                                                                      className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory scroll-smooth"
+                                                                                                      style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+                                                                                                    >
+                                                                                    {marquee.map((g) => (
+                                                                                                                          <div key={g.id} className="min-w-[260px] flex-1 snap-start">
+                                                                                                                                                <GameCardMarquee game={g} onClick={() => handleSelectGame(g)} />
+                                                                                                                            </div>
+                                                                                                                        ))}
+                                                                                  </div>
+                                                                                ) : undefined
+                                                }
+                                              />
+                                  <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
+                        </div>
+                
+                        <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
+                                  <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />
+                                  {(sport === 'mlb' || sport === 'd1bb') && (
+                                    <PitcherFatigue sport={sport === 'd1bb' ? 'college-baseball' : sport} />
+                                  )}
+                                  <StandingsTable standings={standings} sport={sport} />
+                                  <ModelHealth />
+                                  <NetRatingBar standings={standings} />
+                        </IntelSidebar>
+                </div>
+          
+            {/* Overlays */}
+                <GameDetailSheet game={selectedGame} open={!!selectedGame} onClose={handleCloseSheet} />
+                <CommandPalette
+                          open={paletteOpen}
+                          onClose={handleClosePalette}
+                          games={games}
+                          signals={signals}
+                          allTeams={allTeams}
+                          onSelectGame={(game) => {
+                                      setSelectedGame(game);
+                                      setPaletteOpen(false);
+                          }}
+                          onSelectTeam={handleSelectTeamFromPalette}
+                        />
+          </div>
+          </DataErrorBoundary>
+        );
+}

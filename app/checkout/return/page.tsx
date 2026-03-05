@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { trackPaywallConvert, trackTrialStart } from '@/lib/analytics/tracker';
 
 // ============================================================================
 // Types
@@ -29,6 +30,7 @@ interface SessionStatusResponse {
   subscription_id: string | null;
   tier: string | null;
   payment_status: string;
+  trial_end: number | null;
   error?: string;
 }
 
@@ -41,14 +43,14 @@ type CheckoutStatus = 'loading' | 'success' | 'cancelled' | 'error';
 function LoadingState() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 min-h-screen flex items-center justify-center">
+      <div>
+        <Section padding="lg" className="pt-6 min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-burnt-orange mx-auto mb-4" />
             <p className="text-text-secondary">Confirming your subscription...</p>
           </div>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );
@@ -64,6 +66,7 @@ function CheckoutReturnContent() {
   const [status, setStatus] = useState<CheckoutStatus>('loading');
   const [customerEmail, setCustomerEmail] = useState<string | null>(null);
   const [tier, setTier] = useState<string | null>(null);
+  const [trialEnd, setTrialEnd] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -91,6 +94,12 @@ function CheckoutReturnContent() {
           setStatus('success');
           setCustomerEmail(data.customer_email);
           setTier(data.tier);
+          setTrialEnd(data.trial_end);
+          // Fire D1 analytics events for Query 5 (paywall funnel)
+          trackPaywallConvert(undefined, data.tier ?? 'pro');
+          if (data.trial_end) {
+            trackTrialStart(data.tier ?? 'pro');
+          }
         } else if (data.status === 'open') {
           // Session still open - redirect back to checkout
           router.push('/checkout');
@@ -113,8 +122,8 @@ function CheckoutReturnContent() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container center>
             <ScrollReveal direction="up">
               <Card padding="lg" className="max-w-lg mx-auto text-center">
@@ -139,22 +148,33 @@ function CheckoutReturnContent() {
                       active.
                     </p>
                     {customerEmail && (
-                      <p className="text-text-tertiary text-sm mb-8">
-                        Confirmation sent to {customerEmail}
+                      <p className="text-text-tertiary text-sm mb-4">
+                        Your API key has been sent to {customerEmail}. Use it to access your dashboard.
                       </p>
                     )}
-                    {tier === 'pro' && (
-                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-8">
+                    {tier === 'pro' && trialEnd && (
+                      <div className="bg-burnt-orange/10 border border-burnt-orange/30 rounded-lg p-4 mb-6">
                         <p className="text-burnt-orange text-sm">
-                          Your 14-day free trial has started. You won't be charged until the trial
-                          ends.
+                          Your 14-day free trial has started. You won&apos;t be charged until{' '}
+                          {new Date(trialEnd * 1000).toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                          .
                         </p>
                       </div>
                     )}
+                    <div className="bg-background-secondary/50 border border-border rounded-lg p-4 mb-8">
+                      <p className="text-text-secondary text-sm">
+                        Check your inbox for an email from BSI with your API key.
+                        Enter it on the login page to access your dashboard.
+                      </p>
+                    </div>
                     <div className="space-y-4">
-                      <Link href="/dashboard">
+                      <Link href="/auth/login">
                         <Button variant="primary" size="lg" className="w-full">
-                          Go to Dashboard
+                          Enter My Key
                         </Button>
                       </Link>
                       <Link href="/college-baseball">
@@ -250,7 +270,7 @@ function CheckoutReturnContent() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

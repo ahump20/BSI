@@ -9,6 +9,7 @@ import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { formatTimestamp, getRelativeTime } from '@/lib/utils/timezone';
 
 interface NewsItem {
   id: string;
@@ -20,35 +21,6 @@ interface NewsItem {
   category: 'trade' | 'injury' | 'game' | 'draft' | 'free-agency' | 'analysis' | 'general';
   team?: string;
   division?: string;
-}
-
-function formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
-
-function getRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 const categoryColors: Record<string, string> = {
@@ -98,7 +70,7 @@ export default function NFLNewsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -110,7 +82,7 @@ export default function NFLNewsPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">News</span>
+              <span className="text-text-primary font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -141,7 +113,7 @@ export default function NFLNewsPage() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                     filter === cat.id
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {cat.label}
@@ -219,7 +191,7 @@ export default function NFLNewsPage() {
                             rel="noopener noreferrer"
                             className="block"
                           >
-                            <h3 className="text-white font-semibold text-lg group-hover:text-burnt-orange transition-colors">
+                            <h3 className="text-text-primary font-semibold text-lg group-hover:text-burnt-orange transition-colors">
                               {item.title}
                             </h3>
                             <p className="text-text-secondary text-sm mt-1 line-clamp-2">
@@ -244,7 +216,7 @@ export default function NFLNewsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

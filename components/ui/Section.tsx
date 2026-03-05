@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 interface SectionProps {
   children: ReactNode;
+  id?: string;
   padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   background?: 'default' | 'charcoal' | 'midnight' | 'cream';
   borderTop?: boolean;
@@ -18,13 +19,14 @@ const paddingClasses: Record<string, string> = {
 
 const bgClasses: Record<string, string> = {
   default: '',
-  charcoal: 'bg-[#1A1A1A]',
-  midnight: 'bg-[#0D0D0D]',
+  charcoal: 'bg-background-secondary',
+  midnight: 'bg-background-primary',
   cream: 'bg-[#FAF8F5]',
 };
 
 export function Section({
   children,
+  id,
   padding = 'md',
   background = 'default',
   borderTop,
@@ -32,7 +34,8 @@ export function Section({
 }: SectionProps) {
   return (
     <section
-      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-white/10' : ''} ${className}`}
+      id={id}
+      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-border' : ''} ${className}`}
     >
       {children}
     </section>

@@ -45,8 +45,8 @@ const top25Rankings = [
 export default function BaseballRankingsPage() {
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-2">
@@ -57,7 +57,7 @@ export default function BaseballRankingsPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Rankings</span>
+                <span className="text-text-primary">Rankings</span>
               </div>
 
               <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
@@ -75,22 +75,22 @@ export default function BaseballRankingsPage() {
             <ScrollReveal direction="up" delay={100}>
               <Card padding="none" className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full">
+                  <table className="w-full" aria-label="College baseball rankings">
                     <thead>
-                      <tr className="bg-charcoal border-b border-border-subtle">
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
+                      <tr className="bg-background-secondary border-b border-border-subtle">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
                           Rank
                         </th>
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider">
                           Team
                         </th>
-                        <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden sm:table-cell">
+                        <th scope="col" className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden sm:table-cell">
                           Conference
                         </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
+                        <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider hidden md:table-cell">
                           Record
                         </th>
-                        <th className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-20">
+                        <th scope="col" className="text-center py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-20">
                           Change
                         </th>
                       </tr>
@@ -104,14 +104,14 @@ export default function BaseballRankingsPage() {
                           <td className="py-4 px-4">
                             <span
                               className={`font-display text-xl font-bold ${
-                                team.rank <= 5 ? 'text-burnt-orange' : 'text-white'
+                                team.rank <= 5 ? 'text-burnt-orange' : 'text-text-primary'
                               }`}
                             >
                               {team.rank}
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="font-semibold text-white">{team.team}</span>
+                            <span className="font-semibold text-text-primary">{team.team}</span>
                             <span className="text-text-tertiary text-sm ml-2 sm:hidden">
                               ({team.conference})
                             </span>
@@ -185,14 +185,14 @@ export default function BaseballRankingsPage() {
             {/* Data Attribution */}
             <div className="mt-8 text-center text-xs text-text-tertiary">
               <p>Rankings from D1Baseball. Updated every Monday during the season.</p>
-              <p className="mt-1">
+              <p className="mt-1" suppressHydrationWarning>
                 Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
                 CT
               </p>
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

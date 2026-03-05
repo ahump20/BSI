@@ -136,21 +136,21 @@ export default function TeamStatsClient() {
           {/* Team Headers */}
           <div className="flex items-center justify-between mb-6 px-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                 {game.teams.away.abbreviation}
               </div>
               <div>
-                <p className="font-semibold text-white">{game.teams.away.name}</p>
+                <p className="font-semibold text-text-primary">{game.teams.away.name}</p>
                 <p className="text-text-tertiary text-sm">{game.teams.away.record}</p>
               </div>
             </div>
             <span className="text-text-tertiary text-sm font-semibold">VS</span>
             <div className="flex items-center gap-3 flex-row-reverse">
-              <div className="w-12 h-12 bg-charcoal rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
+              <div className="w-12 h-12 bg-background-secondary rounded-full flex items-center justify-center text-sm font-bold text-burnt-orange">
                 {game.teams.home.abbreviation}
               </div>
               <div className="text-right">
-                <p className="font-semibold text-white">{game.teams.home.name}</p>
+                <p className="font-semibold text-text-primary">{game.teams.home.name}</p>
                 <p className="text-text-tertiary text-sm">{game.teams.home.record}</p>
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function TeamStatsClient() {
                       {stat.home}
                     </span>
                   </div>
-                  <div className="flex h-2 rounded-full overflow-hidden bg-graphite">
+                  <div className="flex h-2 rounded-full overflow-hidden bg-background-tertiary">
                     <div
                       className={`transition-all ${awayWins && awayVal !== homeVal ? 'bg-success' : 'bg-burnt-orange/50'}`}
                       style={{ width: `${awayPct}%` }}
@@ -212,14 +212,14 @@ export default function TeamStatsClient() {
           <div className="space-y-4">
             {/* LOB */}
             {game.linescore && (
-              <div className="p-4 bg-graphite rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-lg">
                 <p className="text-text-tertiary text-sm mb-1">Left on Base</p>
                 <div className="flex items-center justify-between">
                   <div className="text-center">
                     <span className="text-text-tertiary text-xs">
                       {game.teams.away.abbreviation}
                     </span>
-                    <p className="text-white font-bold text-lg">
+                    <p className="text-text-primary font-bold text-lg">
                       {awayBattingTotals.h + awayBattingTotals.bb - awayBattingTotals.r}
                     </p>
                   </div>
@@ -227,7 +227,7 @@ export default function TeamStatsClient() {
                     <span className="text-text-tertiary text-xs">
                       {game.teams.home.abbreviation}
                     </span>
-                    <p className="text-white font-bold text-lg">
+                    <p className="text-text-primary font-bold text-lg">
                       {homeBattingTotals.h + homeBattingTotals.bb - homeBattingTotals.r}
                     </p>
                   </div>
@@ -237,13 +237,13 @@ export default function TeamStatsClient() {
 
             {/* Efficiency */}
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="p-4 bg-graphite rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-lg">
                 <p className="text-text-tertiary text-sm mb-2">Hits with RISP</p>
                 <p className="text-text-secondary text-xs">
                   Situational hitting data appears during live games
                 </p>
               </div>
-              <div className="p-4 bg-graphite rounded-lg">
+              <div className="p-4 bg-background-tertiary rounded-lg">
                 <p className="text-text-tertiary text-sm mb-2">Two-Out RBI</p>
                 <p className="text-text-secondary text-xs">
                   Clutch hitting metrics tracked during the game

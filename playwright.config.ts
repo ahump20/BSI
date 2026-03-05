@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   // Test directories (both a11y and visual)
   testDir: './tests',
-  testMatch: ['**/*.spec.ts', '**/*.test.ts'],
+  testMatch: ['**/*.spec.ts'],
 
   // Run tests in files in parallel
   fullyParallel: true,

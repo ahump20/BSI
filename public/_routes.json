@@ -1,7 +1,11 @@
 {
   "version": 1,
-  "include": ["/*"],
+  "include": [
+    "/api/*"
+  ],
   "exclude": [
+    "/api/events",
+    "/api/events/*",
     "/_next/static/*",
     "/images/*",
     "/fonts/*",

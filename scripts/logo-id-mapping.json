@@ -1,0 +1,506 @@
+[
+  {
+    "slug": "nc-state",
+    "espnId": "95",
+    "logoId": "152",
+    "matchedTo": "NC State Wolfpack"
+  },
+  {
+    "slug": "miami",
+    "espnId": "176",
+    "logoId": "2390",
+    "matchedTo": "Miami Hurricanes"
+  },
+  {
+    "slug": "stanford",
+    "espnId": "64",
+    "logoId": "24",
+    "matchedTo": "Stanford Cardinal"
+  },
+  {
+    "slug": "west-virginia",
+    "espnId": "136",
+    "logoId": "277",
+    "matchedTo": "West Virginia Mountaineers"
+  },
+  {
+    "slug": "pittsburgh",
+    "espnId": "115",
+    "logoId": "221",
+    "matchedTo": "Pittsburgh Panthers"
+  },
+  {
+    "slug": "syracuse",
+    "espnId": "439",
+    "logoId": "183",
+    "matchedTo": "Syracuse Orange"
+  },
+  {
+    "slug": "colorado",
+    "espnId": "334",
+    "logoId": "38",
+    "matchedTo": "Colorado Buffaloes"
+  },
+  {
+    "slug": "iowa-state",
+    "espnId": "373",
+    "logoId": "66",
+    "matchedTo": "Iowa State Cyclones"
+  },
+  {
+    "slug": "kansas",
+    "espnId": "168",
+    "logoId": "2305",
+    "matchedTo": "Kansas Jayhawks"
+  },
+  {
+    "slug": "oregon",
+    "espnId": "273",
+    "logoId": "2483",
+    "matchedTo": "Oregon Ducks"
+  },
+  {
+    "slug": "penn-state",
+    "espnId": "414",
+    "logoId": "213",
+    "matchedTo": "Penn State Nittany Lions"
+  },
+  {
+    "slug": "rutgers",
+    "espnId": "102",
+    "logoId": "164",
+    "matchedTo": "Rutgers Scarlet Knights"
+  },
+  {
+    "slug": "wisconsin",
+    "espnId": "464",
+    "logoId": "275",
+    "matchedTo": "Wisconsin Badgers"
+  },
+  {
+    "slug": "rice",
+    "espnId": "122",
+    "logoId": "242",
+    "matchedTo": "Rice Owls"
+  },
+  {
+    "slug": "wichita-state",
+    "espnId": "206",
+    "logoId": "2724",
+    "matchedTo": "Wichita State Shockers"
+  },
+  {
+    "slug": "jax-state",
+    "espnId": "73",
+    "logoId": "55",
+    "matchedTo": "Jacksonville State Gamecocks"
+  },
+  {
+    "slug": "kennesaw-state",
+    "espnId": "307",
+    "logoId": "338",
+    "matchedTo": "Kennesaw State Owls"
+  },
+  {
+    "slug": "uconn",
+    "espnId": "69",
+    "logoId": "41",
+    "matchedTo": "UConn Huskies"
+  },
+  {
+    "slug": "xavier",
+    "espnId": "312",
+    "logoId": "2752",
+    "matchedTo": "Xavier Musketeers"
+  },
+  {
+    "slug": "winthrop",
+    "espnId": "207",
+    "logoId": "2737",
+    "matchedTo": "Winthrop Eagles"
+  },
+  {
+    "slug": "cal-state-fullerton",
+    "espnId": "165",
+    "logoId": "2239",
+    "matchedTo": "Cal State Fullerton Titans"
+  },
+  {
+    "slug": "long-beach-state",
+    "espnId": "141",
+    "logoId": "299",
+    "matchedTo": "Long Beach State Beach"
+  },
+  {
+    "slug": "northeastern",
+    "espnId": "405",
+    "logoId": "111",
+    "matchedTo": "Northeastern Huskies"
+  },
+  {
+    "slug": "mcneese",
+    "espnId": "387",
+    "logoId": "2377",
+    "matchedTo": "McNeese Cowboys"
+  },
+  {
+    "slug": "southern-miss",
+    "espnId": "192",
+    "logoId": "2572",
+    "matchedTo": "Southern Miss Golden Eagles"
+  },
+  {
+    "slug": "grand-canyon",
+    "espnId": "360",
+    "logoId": "2253",
+    "matchedTo": "Grand Canyon Lopes"
+  },
+  {
+    "slug": "sfa",
+    "espnId": "438",
+    "logoId": "2617",
+    "matchedTo": "Stephen F. Austin Lumberjacks"
+  },
+  {
+    "slug": "gonzaga",
+    "espnId": "287",
+    "logoId": "2250",
+    "matchedTo": "Gonzaga Bulldogs"
+  },
+  {
+    "slug": "pepperdine",
+    "espnId": "187",
+    "logoId": "2492",
+    "matchedTo": "Pepperdine Waves"
+  },
+  {
+    "slug": "bellarmine",
+    "espnId": "1143",
+    "logoId": "91",
+    "matchedTo": "Bellarmine Knights"
+  },
+  {
+    "slug": "lipscomb",
+    "espnId": "378",
+    "logoId": "288",
+    "matchedTo": "Lipscomb Bisons"
+  },
+  {
+    "slug": "north-alabama",
+    "espnId": "1103",
+    "logoId": "2453",
+    "matchedTo": "North Alabama Lions"
+  },
+  {
+    "slug": "north-florida",
+    "espnId": "296",
+    "logoId": "2454",
+    "matchedTo": "North Florida Ospreys"
+  },
+  {
+    "slug": "west-georgia",
+    "espnId": "129699",
+    "logoId": "2698",
+    "matchedTo": "West Georgia Wolves"
+  },
+  {
+    "slug": "charlotte",
+    "espnId": "180",
+    "logoId": "2429",
+    "matchedTo": "Charlotte 49ers"
+  },
+  {
+    "slug": "south-florida",
+    "espnId": "76",
+    "logoId": "58",
+    "matchedTo": "South Florida Bulls"
+  },
+  {
+    "slug": "uab",
+    "espnId": "447",
+    "logoId": "5",
+    "matchedTo": "UAB Blazers"
+  },
+  {
+    "slug": "villanova",
+    "espnId": "458",
+    "logoId": "222",
+    "matchedTo": "Villanova Wildcats"
+  },
+  {
+    "slug": "cal-state-bakersfield",
+    "espnId": "327",
+    "logoId": "2934",
+    "matchedTo": "Cal State Bakersfield Roadrunners"
+  },
+  {
+    "slug": "cal-state-northridge",
+    "espnId": "185",
+    "logoId": "2463",
+    "matchedTo": "Cal State Northridge Matadors"
+  },
+  {
+    "slug": "uc-davis",
+    "espnId": "448",
+    "logoId": "302",
+    "matchedTo": "UC Davis Aggies"
+  },
+  {
+    "slug": "uc-san-diego",
+    "espnId": "1147",
+    "logoId": "28",
+    "matchedTo": "UC San Diego Tritons"
+  },
+  {
+    "slug": "elon",
+    "espnId": "303",
+    "logoId": "2210",
+    "matchedTo": "Elon Phoenix"
+  },
+  {
+    "slug": "nc-at",
+    "espnId": "401",
+    "logoId": "2448",
+    "matchedTo": "North Carolina A&T Aggies"
+  },
+  {
+    "slug": "william-mary",
+    "espnId": "289",
+    "logoId": "2729",
+    "matchedTo": "William & Mary Tribe"
+  },
+  {
+    "slug": "middle-tennessee",
+    "espnId": "177",
+    "logoId": "2393",
+    "matchedTo": "Middle Tennessee Blue Raiders"
+  },
+  {
+    "slug": "arkansas-state",
+    "espnId": "320",
+    "logoId": "2032",
+    "matchedTo": "Arkansas State Red Wolves"
+  },
+  {
+    "slug": "marshall",
+    "espnId": "384",
+    "logoId": "276",
+    "matchedTo": "Marshall Thundering Herd"
+  },
+  {
+    "slug": "davidson",
+    "espnId": "337",
+    "logoId": "2166",
+    "matchedTo": "Davidson Wildcats"
+  },
+  {
+    "slug": "la-salle",
+    "espnId": "376",
+    "logoId": "2325",
+    "matchedTo": "La Salle Explorers"
+  },
+  {
+    "slug": "rhode-island",
+    "espnId": "422",
+    "logoId": "227",
+    "matchedTo": "Rhode Island Rams"
+  },
+  {
+    "slug": "saint-josephs",
+    "espnId": "425",
+    "logoId": "2603",
+    "matchedTo": "Saint Joseph's Hawks"
+  },
+  {
+    "slug": "st-bonaventure",
+    "espnId": "105",
+    "logoId": "179",
+    "matchedTo": "St. Bonaventure Bonnies"
+  },
+  {
+    "slug": "umbc",
+    "espnId": "450",
+    "logoId": "2378",
+    "matchedTo": "UMBC Retrievers"
+  },
+  {
+    "slug": "umass-lowell",
+    "espnId": "449",
+    "logoId": "2349",
+    "matchedTo": "UMass Lowell River Hawks"
+  },
+  {
+    "slug": "charleston-southern",
+    "espnId": "329",
+    "logoId": "2127",
+    "matchedTo": "Charleston Southern Buccaneers"
+  },
+  {
+    "slug": "high-point",
+    "espnId": "364",
+    "logoId": "2272",
+    "matchedTo": "High Point Panthers"
+  },
+  {
+    "slug": "longwood",
+    "espnId": "380",
+    "logoId": "2344",
+    "matchedTo": "Longwood Lancers"
+  },
+  {
+    "slug": "radford",
+    "espnId": "421",
+    "logoId": "2515",
+    "matchedTo": "Radford Highlanders"
+  },
+  {
+    "slug": "usc-upstate",
+    "espnId": "453",
+    "logoId": "2908",
+    "matchedTo": "South Carolina Upstate Spartans"
+  },
+  {
+    "slug": "northern-kentucky",
+    "espnId": "410",
+    "logoId": "94",
+    "matchedTo": "Northern Kentucky Norse"
+  },
+  {
+    "slug": "oakland",
+    "espnId": "412",
+    "logoId": "2473",
+    "matchedTo": "Oakland Golden Grizzlies"
+  },
+  {
+    "slug": "murray-state",
+    "espnId": "394",
+    "logoId": "93",
+    "matchedTo": "Murray State Racers"
+  },
+  {
+    "slug": "southern-illinois",
+    "espnId": "432",
+    "logoId": "79",
+    "matchedTo": "Southern Illinois Salukis"
+  },
+  {
+    "slug": "bucknell",
+    "espnId": "313",
+    "logoId": "2083",
+    "matchedTo": "Bucknell Bison"
+  },
+  {
+    "slug": "lehigh",
+    "espnId": "377",
+    "logoId": "2329",
+    "matchedTo": "Lehigh Mountain Hawks"
+  },
+  {
+    "slug": "samford",
+    "espnId": "274",
+    "logoId": "2535",
+    "matchedTo": "Samford Bulldogs"
+  },
+  {
+    "slug": "unc-greensboro",
+    "espnId": "181",
+    "logoId": "2430",
+    "matchedTo": "UNC Greensboro Spartans"
+  },
+  {
+    "slug": "vmi",
+    "espnId": "459",
+    "logoId": "2678",
+    "matchedTo": "VMI Keydets"
+  },
+  {
+    "slug": "wofford",
+    "espnId": "208",
+    "logoId": "2747",
+    "matchedTo": "Wofford Terriers"
+  },
+  {
+    "slug": "incarnate-word",
+    "espnId": "371",
+    "logoId": "2916",
+    "matchedTo": "Incarnate Word Cardinals"
+  },
+  {
+    "slug": "lamar",
+    "espnId": "170",
+    "logoId": "2320",
+    "matchedTo": "Lamar Cardinals"
+  },
+  {
+    "slug": "northwestern-state",
+    "espnId": "186",
+    "logoId": "2466",
+    "matchedTo": "Northwestern State Demons"
+  },
+  {
+    "slug": "tamu-corpus-christi",
+    "espnId": "443",
+    "logoId": "357",
+    "matchedTo": "Texas A&M-Corpus Christi Islanders"
+  },
+  {
+    "slug": "utrgv",
+    "espnId": "932",
+    "logoId": "292",
+    "matchedTo": "UT Rio Grande Valley Vaqueros"
+  },
+  {
+    "slug": "north-dakota-state",
+    "espnId": "310",
+    "logoId": "2449",
+    "matchedTo": "North Dakota State Bison"
+  },
+  {
+    "slug": "northern-colorado",
+    "espnId": "407",
+    "logoId": "2458",
+    "matchedTo": "Northern Colorado Bears"
+  },
+  {
+    "slug": "st-thomas",
+    "espnId": "850",
+    "logoId": "2900",
+    "matchedTo": "St. Thomas-Minnesota Tommies"
+  },
+  {
+    "slug": "cal-baptist",
+    "espnId": "1105",
+    "logoId": "2856",
+    "matchedTo": "California Baptist Lancers"
+  },
+  {
+    "slug": "tarleton-state",
+    "espnId": "1145",
+    "logoId": "2627",
+    "matchedTo": "Tarleton State Texans"
+  },
+  {
+    "slug": "utah-tech",
+    "espnId": "1146",
+    "logoId": "3101",
+    "matchedTo": "Utah Tech Trailblazers"
+  },
+  {
+    "slug": "pacific",
+    "espnId": "413",
+    "logoId": "279",
+    "matchedTo": "Pacific Tigers"
+  },
+  {
+    "slug": "portland",
+    "espnId": "416",
+    "logoId": "2501",
+    "matchedTo": "Portland Pilots"
+  },
+  {
+    "slug": "san-francisco",
+    "espnId": "267",
+    "logoId": "2539",
+    "matchedTo": "San Francisco Dons"
+  }
+]

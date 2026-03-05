@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Blaze Blitz - A free arcade football microgame from Blaze Sports Intel. Score touchdowns in 60 seconds!">
+  <meta name="theme-color" content="#BF5700">
+
+  <meta property="og:title" content="Blaze Blitz">
+  <meta property="og:description" content="A 60-second touchdown challenge. How many yards can you gain?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://blazesportsintel.com/games/blitz">
+
+  <title>Blaze Blitz | Blaze Sports Intel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blaze-burnt-orange: #BF5700;
+      --blaze-charcoal: #1A1A1A;
+      --blaze-ember: #FF6B35;
+      --blaze-cream: #FAF8F5;
+      --blaze-gold: #C9A227;
+      --blaze-midnight: #0D0D0D;
+      --arcade-neon-green: #39FF14;
+      --arcade-hot-pink: #FF6EC7;
+      --arcade-yellow: #FFD700;
+      --arcade-cyan: #00FFFF;
+      --arcade-purple: #9D00FF;
+      --team-firebirds: #BF5700;
+      --team-wolves: #1A1A1A;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--blaze-midnight);
+      color: var(--blaze-cream);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      touch-action: manipulation;
+    }
+
+    .crt-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 9999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+      opacity: 0.3;
+    }
+
+    #renderCanvas { width: 100%; height: 100%; display: none; touch-action: none; }
+
+    #menuScreen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem 1rem; overflow-y: auto;
+      background: linear-gradient(180deg, var(--blaze-midnight) 0%, #050510 100%);
+    }
+
+    .game-title {
+      font-family: 'Russo One', sans-serif;
+      font-size: clamp(2.5rem, 10vw, 5rem);
+      text-align: center; margin-bottom: 0.25rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      transform: skewX(-5deg);
+      text-shadow: 0 0 10px var(--arcade-neon-green), 0 0 20px var(--arcade-neon-green), 0 0 40px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange);
+      color: var(--arcade-neon-green);
+      animation: titlePulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes titlePulse {
+      from { text-shadow: 0 0 10px var(--arcade-neon-green), 0 0 20px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange); }
+      to { text-shadow: 0 0 20px var(--arcade-neon-green), 0 0 40px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green), 4px 4px 0 var(--blaze-burnt-orange); }
+    }
+
+    .game-subtitle {
+      font-family: 'Russo One', sans-serif;
+      font-size: clamp(1rem, 4vw, 1.5rem);
+      color: var(--arcade-hot-pink); margin-bottom: 1.5rem;
+      text-transform: uppercase; letter-spacing: 0.2em; transform: skewX(-5deg);
+    }
+
+    .high-score-display {
+      font-family: 'Russo One', sans-serif; font-size: 1.25rem;
+      color: var(--arcade-yellow); margin-bottom: 2rem;
+      text-shadow: 0 0 10px var(--arcade-yellow); transform: skewX(-5deg);
+    }
+
+    .selection-section { width: 100%; max-width: 600px; margin-bottom: 1.5rem; }
+    .section-title {
+      font-family: 'Russo One', sans-serif; font-size: 1.25rem; margin-bottom: 0.75rem;
+      color: var(--arcade-cyan); text-transform: uppercase; letter-spacing: 0.1em;
+      transform: skewX(-10deg); text-shadow: 0 0 5px var(--arcade-cyan);
+    }
+
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .team-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      border: 3px solid rgba(255,255,255,0.1); border-radius: 4px;
+      padding: 1rem; cursor: pointer; transition: all 0.2s ease;
+      text-align: center; transform: skewX(-5deg); position: relative; overflow: hidden;
+    }
+    .team-card:hover { border-color: var(--arcade-neon-green); box-shadow: 0 0 20px rgba(57,255,20,0.3); transform: skewX(-5deg) scale(1.02); }
+    .team-card.selected {
+      border-color: var(--arcade-neon-green); background: rgba(57,255,20,0.1);
+      box-shadow: 0 0 20px rgba(57,255,20,0.4), inset 0 0 30px rgba(57,255,20,0.1);
+    }
+    .team-logo {
+      width: 80px; height: 80px; margin: 0 auto 0.75rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Russo One', sans-serif; font-size: 2rem; color: white;
+      transform: skewX(5deg); box-shadow: 0 0 15px currentColor;
+    }
+    .team-name {
+      font-family: 'Russo One', sans-serif; font-weight: 400; font-size: 1.25rem;
+      margin-bottom: 0.25rem; text-transform: uppercase; transform: skewX(5deg);
+    }
+    .team-stats { font-size: 0.75rem; color: rgba(255,255,255,0.6); transform: skewX(5deg); }
+    .team-stats span { display: inline-block; margin: 0 0.25rem; padding: 0.125rem 0.5rem; background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    #playButton {
+      width: 100%; max-width: 400px; padding: 1.25rem 2.5rem;
+      font-family: 'Russo One', sans-serif; font-size: 2rem;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      background: linear-gradient(180deg, var(--arcade-neon-green) 0%, #20CC10 100%);
+      color: var(--blaze-midnight); border: none; border-radius: 4px;
+      cursor: pointer; transition: all 0.2s ease; margin-top: 1.5rem;
+      transform: skewX(-5deg);
+      box-shadow: 0 4px 0 #1A8C0A, 0 0 30px rgba(57,255,20,0.4);
+    }
+    #playButton:hover:not(:disabled) { transform: skewX(-5deg) translateY(-2px); box-shadow: 0 6px 0 #1A8C0A, 0 0 50px rgba(57,255,20,0.6); }
+    #playButton:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .controls-hint {
+      margin-top: 1.5rem; padding: 1rem;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px; max-width: 400px; transform: skewX(-3deg);
+    }
+    .controls-hint h3 { font-family: 'Russo One', sans-serif; color: var(--arcade-cyan); margin-bottom: 0.5rem; text-transform: uppercase; transform: skewX(3deg); }
+    .controls-hint p { font-size: 0.875rem; color: rgba(255,255,255,0.7); margin: 0.25rem 0; transform: skewX(3deg); }
+    .controls-hint kbd {
+      display: inline-block; padding: 0.125rem 0.375rem;
+      background: var(--blaze-charcoal); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 3px; font-family: monospace; color: var(--arcade-yellow);
+    }
+
+    #gameUI {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: none; justify-content: space-between; align-items: flex-start;
+      padding: 1rem; pointer-events: none; z-index: 100;
+    }
+    .game-stat {
+      background: rgba(0,0,0,0.85); padding: 0.5rem 1rem;
+      border: 2px solid var(--arcade-neon-green); text-align: center;
+      transform: skewX(-10deg); box-shadow: 0 0 10px rgba(57,255,20,0.3);
+    }
+    .game-stat-label { font-family: 'Russo One', sans-serif; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--arcade-cyan); transform: skewX(10deg); }
+    .game-stat-value { font-family: 'Russo One', sans-serif; font-size: 1.75rem; transform: skewX(10deg); text-shadow: 0 0 10px currentColor; }
+    #score { color: var(--arcade-neon-green); }
+    #timer { color: var(--arcade-yellow); }
+    .timer-warning { color: var(--arcade-hot-pink) !important; animation: timerFlash 0.3s ease infinite alternate; }
+    @keyframes timerFlash { from { opacity: 1; } to { opacity: 0.5; } }
+    #down { color: var(--arcade-cyan); }
+
+    #driveInfo {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%) skewX(-10deg);
+      background: rgba(0,0,0,0.9); border: 2px solid var(--arcade-yellow);
+      padding: 0.5rem 1.5rem; z-index: 100; display: none;
+    }
+    #driveInfo span { font-family: 'Russo One', sans-serif; font-size: 1.25rem; color: var(--arcade-yellow); transform: skewX(10deg); display: inline-block; }
+
+    #playFeedback {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) skewX(-10deg);
+      font-family: 'Russo One', sans-serif; font-size: 3rem;
+      text-transform: uppercase; pointer-events: none; z-index: 200;
+      opacity: 0; transition: opacity 0.2s ease;
+    }
+    #playFeedback.show { opacity: 1; animation: feedbackPop 0.6s ease-out; }
+    @keyframes feedbackPop {
+      0% { transform: translate(-50%, -50%) skewX(-10deg) scale(0.5); opacity: 0; }
+      50% { transform: translate(-50%, -50%) skewX(-10deg) scale(1.3); }
+      100% { transform: translate(-50%, -50%) skewX(-10deg) scale(1); opacity: 1; }
+    }
+    .feedback-firstdown { color: var(--arcade-cyan); text-shadow: 0 0 20px var(--arcade-cyan), 0 0 40px var(--arcade-cyan); }
+    .feedback-bigplay { color: var(--arcade-yellow); text-shadow: 0 0 20px var(--arcade-yellow), 0 0 40px var(--arcade-yellow); }
+    .feedback-touchdown { color: var(--arcade-neon-green); text-shadow: 0 0 30px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green); font-size: 4rem; }
+    .feedback-turnover { color: var(--arcade-hot-pink); text-shadow: 0 0 20px var(--arcade-hot-pink); }
+
+    #staminaBar {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: 200px; height: 20px; background: rgba(0,0,0,0.8);
+      border: 2px solid var(--arcade-neon-green); z-index: 100; display: none;
+    }
+    #staminaFill { height: 100%; background: linear-gradient(90deg, var(--blaze-ember), var(--arcade-yellow)); transition: width 0.1s ease; box-shadow: 0 0 10px var(--arcade-yellow); }
+    #staminaLabel { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Russo One', sans-serif; font-size: 0.625rem; color: white; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    #gameOverScreen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2rem; background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto;
+    }
+    .game-over-title { font-family: 'Russo One', sans-serif; font-size: 3rem; text-transform: uppercase; margin-bottom: 0.5rem; transform: skewX(-10deg); text-shadow: 0 0 20px var(--arcade-hot-pink), 0 0 40px var(--arcade-hot-pink); color: var(--arcade-hot-pink); }
+    .game-over-result { font-family: 'Russo One', sans-serif; font-size: 1.5rem; color: var(--arcade-cyan); margin-bottom: 1rem; transform: skewX(-5deg); }
+    #finalScore { font-family: 'Russo One', sans-serif; font-size: 5rem; color: var(--arcade-neon-green); text-shadow: 0 0 30px var(--arcade-neon-green), 0 0 60px var(--arcade-neon-green); margin-bottom: 1.5rem; transform: skewX(-5deg); }
+    #gameStats { width: 100%; max-width: 350px; margin-bottom: 1.5rem; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); padding: 1rem; transform: skewX(-3deg); }
+    .stat-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); transform: skewX(3deg); }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .label { color: rgba(255,255,255,0.6); }
+    .stat-row .value { font-family: 'Russo One', sans-serif; color: var(--arcade-yellow); }
+
+    #leaderboard { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
+    .leaderboard-title { font-family: 'Russo One', sans-serif; font-weight: 400; margin-bottom: 0.75rem; color: var(--arcade-cyan); text-transform: uppercase; transform: skewX(-5deg); }
+    .leaderboard-entry { display: flex; justify-content: space-between; padding: 0.5rem; font-size: 0.875rem; transform: skewX(-3deg); background: rgba(255,255,255,0.02); margin-bottom: 2px; }
+    .leaderboard-entry .rank { width: 30px; color: rgba(255,255,255,0.5); font-family: 'Russo One', sans-serif; }
+    .leaderboard-entry .player { flex: 1; }
+    .leaderboard-entry .lb-score { color: var(--arcade-yellow); font-family: 'Russo One', sans-serif; }
+
+    .name-input-section { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
+    .name-input-section label { display: block; font-family: 'Russo One', sans-serif; font-size: 0.875rem; color: var(--arcade-cyan); margin-bottom: 0.5rem; text-transform: uppercase; transform: skewX(-3deg); }
+    #playerNameInput { width: 100%; padding: 0.75rem 1rem; font-family: 'Russo One', sans-serif; font-size: 1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; transform: skewX(-3deg); transition: border-color 0.2s ease; }
+    #playerNameInput:focus { outline: none; border-color: var(--arcade-neon-green); box-shadow: 0 0 10px rgba(57,255,20,0.3); }
+    #playerNameInput::placeholder { color: rgba(255,255,255,0.4); }
+    #saveNameBtn { margin-top: 0.5rem; padding: 0.5rem 1rem; font-family: 'Russo One', sans-serif; font-size: 0.875rem; background: var(--arcade-cyan); color: var(--blaze-midnight); border: none; border-radius: 4px; cursor: pointer; transform: skewX(-3deg); }
+    #saveNameBtn:hover { background: var(--arcade-neon-green); }
+
+    .share-section { width: 100%; max-width: 350px; margin-bottom: 1.5rem; }
+    .share-title { font-family: 'Russo One', sans-serif; font-size: 0.875rem; color: var(--arcade-cyan); margin-bottom: 0.75rem; text-transform: uppercase; transform: skewX(-3deg); }
+    .share-buttons { display: flex; gap: 0.75rem; justify-content: center; }
+    .share-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; font-family: 'Russo One', sans-serif; font-size: 0.875rem; text-transform: uppercase; border: none; border-radius: 4px; cursor: pointer; transition: all 0.2s ease; transform: skewX(-3deg); text-decoration: none; }
+    .share-btn-x { background: #000; color: white; border: 2px solid rgba(255,255,255,0.3); }
+    .share-btn-x:hover { background: #1DA1F2; border-color: #1DA1F2; }
+    .share-btn-copy { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); }
+    .share-btn-copy:hover { background: var(--arcade-purple); border-color: var(--arcade-purple); }
+    .share-btn-copy.copied { background: var(--arcade-neon-green); color: var(--blaze-midnight); }
+
+    .game-over-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .game-over-button { padding: 1rem 2rem; font-family: 'Russo One', sans-serif; font-size: 1.25rem; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; border: none; transform: skewX(-5deg); }
+    #playAgainButton { background: linear-gradient(180deg, var(--arcade-neon-green) 0%, #20CC10 100%); color: var(--blaze-midnight); box-shadow: 0 4px 0 #1A8C0A; }
+    #playAgainButton:hover { transform: skewX(-5deg) translateY(-2px); box-shadow: 0 6px 0 #1A8C0A, 0 0 20px rgba(57,255,20,0.4); }
+    #menuButton { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.3); }
+    #menuButton:hover { background: rgba(255,255,255,0.2); border-color: var(--arcade-cyan); }
+
+    .footer { margin-top: auto; padding-top: 1.5rem; text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+    .footer a { color: var(--blaze-burnt-orange); text-decoration: none; }
+
+    #loadingScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--blaze-midnight); z-index: 2000; }
+    .loading-text { font-family: 'Russo One', sans-serif; font-size: 1.5rem; color: var(--arcade-neon-green); text-transform: uppercase; animation: loadingPulse 1s ease-in-out infinite; }
+    @keyframes loadingPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    @media (max-width: 600px) {
+      .team-grid { grid-template-columns: 1fr; }
+      #gameUI { padding: 0.5rem; flex-wrap: wrap; gap: 0.25rem; }
+      .game-stat { padding: 0.375rem 0.5rem; }
+      .game-stat-value { font-size: 1.25rem; }
+      #playButton { font-size: 1.5rem; padding: 1rem 1.5rem; }
+      .game-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="loadingScreen">
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <canvas id="renderCanvas"></canvas>
+
+  <div id="menuScreen" style="display: none;">
+    <h1 class="game-title">Blaze Blitz</h1>
+    <p class="game-subtitle">60 Second Touchdown Challenge</p>
+    <div class="high-score-display">High Score: <span id="highScore">0</span></div>
+
+    <div class="selection-section">
+      <div class="section-title">Select Your Team</div>
+      <div id="teamSelect" class="team-grid"></div>
+    </div>
+
+    <button id="playButton">Start Game</button>
+
+    <div class="controls-hint">
+      <h3>Controls</h3>
+      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> - Move</p>
+      <p><kbd>Shift</kbd> - Turbo Boost</p>
+      <p><kbd>Space</kbd> - Snap / Throw</p>
+      <p><kbd>1</kbd>-<kbd>4</kbd> - Select Receiver</p>
+      <p><kbd>J</kbd> - Juke &nbsp; <kbd>K</kbd> - Spin &nbsp; <kbd>L</kbd> - Truck</p>
+      <p><kbd>N</kbd> - Dive &nbsp; <kbd>Q</kbd> - Audible</p>
+      <p><kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8594;</kbd><kbd>&#8595;</kbd> - Hot Routes</p>
+      <p><kbd>E</kbd> - Pump Fake &nbsp; <kbd>G</kbd> - Throw Away</p>
+    </div>
+
+    <div class="footer">
+      <a href="https://blazesportsintel.com">Blaze Sports Intel</a> | 100% Original IP
+    </div>
+  </div>
+
+  <div id="gameUI">
+    <div class="game-stat">
+      <div class="game-stat-label">Score</div>
+      <div class="game-stat-value" id="score">0</div>
+    </div>
+    <div class="game-stat">
+      <div class="game-stat-label">Time</div>
+      <div class="game-stat-value" id="timer">60</div>
+    </div>
+    <div class="game-stat">
+      <div class="game-stat-label">Down</div>
+      <div class="game-stat-value" id="down">1st</div>
+    </div>
+    <div class="game-stat">
+      <div class="game-stat-label">Yards</div>
+      <div class="game-stat-value" id="yards">0</div>
+    </div>
+  </div>
+
+  <div id="driveInfo">
+    <span id="driveText">1st & 10 at OWN 20</span>
+  </div>
+
+  <!-- Play Clock -->
+  <div id="playClock" style="position:fixed;top:80px;left:50%;transform:translateX(-50%) skewX(-10deg);background:rgba(0,0,0,0.9);border:2px solid var(--arcade-yellow);padding:0.25rem 1rem;z-index:100;display:none;">
+    <span id="playClockText" style="font-family:'Russo One',sans-serif;font-size:1.5rem;color:var(--arcade-yellow);transform:skewX(10deg);display:inline-block;">25</span>
+  </div>
+
+  <!-- Score Ticker -->
+  <div id="scoreTicker" style="position:fixed;top:0;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.95);border-bottom:2px solid var(--arcade-neon-green);padding:0.25rem 2rem;z-index:110;display:none;font-family:'Russo One',sans-serif;white-space:nowrap;">
+    <span id="homeTeamName" style="color:var(--blaze-burnt-orange);margin-right:0.5rem;font-size:0.875rem;">HOME</span>
+    <span id="homeTeamScore" style="color:var(--arcade-neon-green);font-size:1.25rem;margin-right:1rem;">0</span>
+    <span style="color:rgba(255,255,255,0.3);font-size:0.75rem;">vs</span>
+    <span id="awayTeamScore" style="color:var(--arcade-hot-pink);font-size:1.25rem;margin-left:1rem;margin-right:0.5rem;">0</span>
+    <span id="awayTeamName" style="color:rgba(255,255,255,0.5);font-size:0.875rem;">AWAY</span>
+    <span id="quarterDisplay" style="color:var(--arcade-cyan);font-size:0.75rem;margin-left:1.5rem;">Q1</span>
+  </div>
+
+  <!-- Play Call UI -->
+  <div id="playCallOverlay" style="position:fixed;bottom:0;left:0;right:0;display:none;flex-direction:column;align-items:center;padding:1rem;background:linear-gradient(0deg,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 80%,transparent 100%);z-index:120;pointer-events:auto;">
+    <div id="formationPicker" style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;justify-content:center;"></div>
+    <div id="playPicker" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;max-width:600px;"></div>
+    <div style="margin-top:0.5rem;font-size:0.625rem;color:rgba(255,255,255,0.3);font-family:'Russo One',sans-serif;text-transform:uppercase;letter-spacing:0.1em;">Select a play or press <kbd style="padding:0.125rem 0.375rem;background:var(--blaze-charcoal);border:1px solid rgba(255,255,255,0.2);border-radius:3px;font-family:monospace;color:var(--arcade-yellow);">Space</kbd> for recommended</div>
+  </div>
+
+  <!-- Ball Carrier Move Indicators -->
+  <div id="moveIndicators" style="position:fixed;bottom:20px;right:20px;display:none;flex-direction:column;gap:4px;z-index:100;pointer-events:none;">
+    <div id="jukeReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-cyan);text-transform:uppercase;opacity:0.3;">J Juke</div>
+    <div id="spinReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-purple);text-transform:uppercase;opacity:0.3;">K Spin</div>
+    <div id="truckReady" style="font-family:'Russo One',sans-serif;font-size:0.625rem;color:var(--arcade-hot-pink);text-transform:uppercase;opacity:0.3;">L Truck</div>
+  </div>
+
+  <div id="staminaBar">
+    <div id="staminaFill" style="width: 100%"></div>
+    <span id="staminaLabel">Turbo</span>
+  </div>
+
+  <div id="playFeedback"></div>
+
+  <div id="gameOverScreen">
+    <div class="game-over-title">Game Over</div>
+    <div id="gameOverResult" class="game-over-result">Touchdown!</div>
+    <div id="finalScore">0</div>
+
+    <div class="name-input-section">
+      <label for="playerNameInput">Enter Your Name for Leaderboard</label>
+      <input type="text" id="playerNameInput" placeholder="Your name..." maxlength="20" autocomplete="off">
+      <button id="saveNameBtn">Save Name</button>
+    </div>
+
+    <div id="gameStats"></div>
+
+    <div class="share-section">
+      <div class="share-title">Share Your Score</div>
+      <div class="share-buttons">
+        <a id="shareXBtn" class="share-btn share-btn-x" target="_blank" rel="noopener">
+          <span>&#120143;</span> Share
+        </a>
+        <button id="copyLinkBtn" class="share-btn share-btn-copy">
+          <span>&#x1F4CB;</span> Copy Link
+        </button>
+      </div>
+    </div>
+
+    <div id="leaderboard"></div>
+
+    <div class="game-over-buttons">
+      <button id="playAgainButton" class="game-over-button">Play Again</button>
+      <button id="menuButton" class="game-over-button">Main Menu</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

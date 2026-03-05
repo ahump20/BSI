@@ -27,6 +27,42 @@ CREATE TABLE IF NOT EXISTS events (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Model health tracking (weekly accuracy per sport)
+CREATE TABLE IF NOT EXISTS model_health (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sport TEXT NOT NULL,
+    week TEXT NOT NULL,
+    accuracy REAL NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_model_health_sport_week
+    ON model_health(sport, week);
+
+-- Prediction tracking (model predictions before game outcomes)
+CREATE TABLE IF NOT EXISTS predictions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id TEXT NOT NULL,
+    sport TEXT NOT NULL,
+    predicted_winner TEXT NOT NULL,
+    confidence REAL DEFAULT 0,
+    spread REAL,
+    over_under REAL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_predictions_game ON predictions(game_id);
+
+-- Game outcomes (resolved results for accuracy calculation)
+CREATE TABLE IF NOT EXISTS outcomes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id TEXT NOT NULL UNIQUE,
+    sport TEXT NOT NULL,
+    actual_winner TEXT NOT NULL,
+    home_score INTEGER,
+    away_score INTEGER,
+    resolved_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_outcomes_game ON outcomes(game_id);
+
 -- Create a view for lead analytics
 CREATE VIEW IF NOT EXISTS lead_analytics AS
 SELECT 

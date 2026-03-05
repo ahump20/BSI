@@ -1,0 +1,25 @@
+# BSI Savant Compute — Cron Worker
+# Recomputes advanced metrics (wOBA, FIP, wRC+, etc.) from player_season_stats
+# every 6 hours. Manual trigger via GET /compute.
+#
+# Deploy: wrangler deploy --config workers/bsi-savant-compute/wrangler.toml
+
+name = "bsi-savant-compute"
+main = "index.ts"
+compatibility_date = "2025-12-01"
+
+# Run every 6 hours
+[triggers]
+crons = ["0 */6 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bsi-prod-db"
+database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[dev]
+port = 8795

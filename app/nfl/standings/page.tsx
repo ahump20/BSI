@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 
 interface Team {
   name: string;
@@ -34,20 +36,6 @@ interface Conference {
   divisions: Division[];
 }
 
-function formatTimestamp(): string {
-  const date = new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
 
 // Static data for off-season display
 const staticStandings: Conference[] = [
@@ -568,7 +556,7 @@ export default function NFLStandingsPage() {
             setIsOffSeason(false);
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Use static data
       } finally {
         setLoading(false);
@@ -582,7 +570,7 @@ export default function NFLStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -594,7 +582,7 @@ export default function NFLStandingsPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -606,7 +594,7 @@ export default function NFLStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025 Season
+                2025-26 Season
               </Badge>
             </ScrollReveal>
 
@@ -635,7 +623,7 @@ export default function NFLStandingsPage() {
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {conf}
@@ -648,11 +636,12 @@ export default function NFLStandingsPage() {
         {/* Standings Tables */}
         <Section padding="lg" background="charcoal">
           <Container>
+            <DataErrorBoundary name="NFL Standings">
             {isOffSeason && (
-              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">Off-Season</p>
+              <Card variant="default" padding="md" className="mb-6 bg-surface-light border-border-subtle">
+                <p className="text-text-primary font-semibold">Off-Season</p>
                 <p className="text-text-secondary text-sm mt-1">
-                  The 2025 NFL season begins in September. Standings shown are placeholder data.
+                  The 2025-26 NFL season has concluded. Final standings will display when live data is available from our API. The 2026 season kicks off in September.
                 </p>
               </Card>
             )}
@@ -662,15 +651,21 @@ export default function NFLStandingsPage() {
                 {[1, 2, 3, 4].map((i) => (
                   <Card key={i} variant="default" padding="lg">
                     <div className="animate-pulse">
-                      <div className="h-6 bg-graphite rounded w-32 mb-4"></div>
+                      <div className="h-6 bg-background-tertiary rounded w-32 mb-4"></div>
                       <div className="space-y-2">
                         {[1, 2, 3, 4].map((j) => (
-                          <div key={j} className="h-10 bg-graphite rounded"></div>
+                          <div key={j} className="h-10 bg-background-tertiary rounded"></div>
                         ))}
                       </div>
                     </div>
                   </Card>
                 ))}
+              </div>
+            ) : isOffSeason ? (
+              <div className="text-center py-12">
+                <p className="text-text-tertiary text-sm">
+                  Standings will populate automatically when the 2026 NFL season begins.
+                </p>
               </div>
             ) : (
               <div className="space-y-8">
@@ -724,22 +719,22 @@ export default function NFLStandingsPage() {
                               >
                                 <td className="py-3 px-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                    <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                                       {team.abbreviation}
                                     </span>
-                                    <span className="font-semibold text-white">{team.name}</span>
+                                    <span className="font-semibold text-text-primary">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.wins}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.losses}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.ties}
                                 </td>
-                                <td className="text-center py-3 px-2 text-white font-mono">
+                                <td className="text-center py-3 px-2 text-text-primary font-mono">
                                   {team.pct.toFixed(3)}
                                 </td>
                                 <td className="text-center py-3 px-2 text-text-secondary font-mono hidden md:table-cell">
@@ -772,9 +767,10 @@ export default function NFLStandingsPage() {
             <div className="mt-8 pt-4 border-t border-border-subtle">
               <DataSourceBadge source="ESPN NFL API" timestamp={formatTimestamp()} />
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface Team {
   name: string;
@@ -27,26 +28,386 @@ interface Conference {
   teams: Team[];
 }
 
-function formatTimestamp(): string {
-  const date = new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
-}
+
+// Static data for display
+const staticStandings: Conference[] = [
+  {
+    name: 'Eastern Conference',
+    teams: [
+      {
+        name: 'Boston Celtics',
+        abbreviation: 'BOS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Milwaukee Bucks',
+        abbreviation: 'MIL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Cleveland Cavaliers',
+        abbreviation: 'CLE',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'New York Knicks',
+        abbreviation: 'NYK',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Philadelphia 76ers',
+        abbreviation: 'PHI',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Orlando Magic',
+        abbreviation: 'ORL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Indiana Pacers',
+        abbreviation: 'IND',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Miami Heat',
+        abbreviation: 'MIA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Chicago Bulls',
+        abbreviation: 'CHI',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Atlanta Hawks',
+        abbreviation: 'ATL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Brooklyn Nets',
+        abbreviation: 'BKN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Toronto Raptors',
+        abbreviation: 'TOR',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Charlotte Hornets',
+        abbreviation: 'CHA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Washington Wizards',
+        abbreviation: 'WAS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Detroit Pistons',
+        abbreviation: 'DET',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+    ],
+  },
+  {
+    name: 'Western Conference',
+    teams: [
+      {
+        name: 'Oklahoma City Thunder',
+        abbreviation: 'OKC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Denver Nuggets',
+        abbreviation: 'DEN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Minnesota Timberwolves',
+        abbreviation: 'MIN',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Los Angeles Clippers',
+        abbreviation: 'LAC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Dallas Mavericks',
+        abbreviation: 'DAL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Phoenix Suns',
+        abbreviation: 'PHX',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'New Orleans Pelicans',
+        abbreviation: 'NOP',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Sacramento Kings',
+        abbreviation: 'SAC',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Los Angeles Lakers',
+        abbreviation: 'LAL',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Golden State Warriors',
+        abbreviation: 'GSW',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Houston Rockets',
+        abbreviation: 'HOU',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Memphis Grizzlies',
+        abbreviation: 'MEM',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Utah Jazz',
+        abbreviation: 'UTA',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'San Antonio Spurs',
+        abbreviation: 'SAS',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+      {
+        name: 'Portland Trail Blazers',
+        abbreviation: 'POR',
+        wins: 0,
+        losses: 0,
+        pct: 0,
+        gb: '-',
+        home: '0-0',
+        away: '0-0',
+        last10: '0-0',
+        streak: '-',
+      },
+    ],
+  },
+];
 
 export default function NBAStandingsPage() {
-  const [standings, setStandings] = useState<Conference[]>([]);
+  const [standings, setStandings] = useState<Conference[]>(staticStandings);
   const [loading, setLoading] = useState(true);
   const [selectedConference, setSelectedConference] = useState<string>('Eastern Conference');
-  const [error, setError] = useState(false);
+  const [dataFresh, setDataFresh] = useState(false);
 
   useEffect(() => {
     const fetchStandings = async () => {
@@ -56,14 +417,11 @@ export default function NBAStandingsPage() {
           const data = (await res.json()) as { standings?: Conference[] };
           if (data.standings && data.standings.length > 0) {
             setStandings(data.standings);
-          } else {
-            setError(true);
+            setDataFresh(true);
           }
-        } else {
-          setError(true);
         }
-      } catch {
-        setError(true);
+      } catch (_err) {
+        // Use static data
       } finally {
         setLoading(false);
       }
@@ -76,7 +434,7 @@ export default function NBAStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -88,7 +446,7 @@ export default function NBAStandingsPage() {
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -100,7 +458,7 @@ export default function NBAStandingsPage() {
           <Container>
             <ScrollReveal direction="up">
               <Badge variant="primary" className="mb-4">
-                2025-26 Season
+                2024-25 Season
               </Badge>
             </ScrollReveal>
 
@@ -129,7 +487,7 @@ export default function NBAStandingsPage() {
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {conf.split(' ')[0]}
@@ -142,23 +500,20 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {error && (
-              <Card variant="default" padding="md" className="mb-6 bg-warning/10 border-warning/30">
-                <p className="text-warning font-semibold">Unable to load standings</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  Live data is temporarily unavailable. Please try again shortly.
-                </p>
-              </Card>
-            )}
-
             {loading ? (
               <Card variant="default" padding="lg">
                 <div className="animate-pulse space-y-4">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <div key={i} className="h-12 bg-graphite rounded"></div>
+                    <div key={i} className="h-12 bg-background-tertiary rounded"></div>
                   ))}
                 </div>
               </Card>
+            ) : !dataFresh && currentConference?.teams.every((t) => t.wins === 0 && t.losses === 0) ? (
+              <div className="text-center py-12">
+                <p className="text-text-tertiary text-sm">
+                  Live standings data is temporarily unavailable. Check back shortly.
+                </p>
+              </div>
             ) : (
               <ScrollReveal direction="up">
                 <Card variant="default" padding="lg">
@@ -167,37 +522,37 @@ export default function NBAStandingsPage() {
                   </h3>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm" aria-label="NBA standings by conference">
                       <thead>
                         <tr className="border-b border-border-subtle">
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
                             #
                           </th>
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold">
                             Team
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             W
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             L
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             PCT
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             GB
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             HOME
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             AWAY
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             L10
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             STRK
                           </th>
                         </tr>
@@ -217,10 +572,10 @@ export default function NBAStandingsPage() {
                               <td className="py-3 px-2 text-text-tertiary">{index + 1}</td>
                               <td className="py-3 px-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                  <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                                     {team.abbreviation}
                                   </span>
-                                  <span className="font-semibold text-white">{team.name}</span>
+                                  <span className="font-semibold text-text-primary">{team.name}</span>
                                   {isPlayoffSpot && (
                                     <Badge variant="success" className="text-xs hidden sm:inline">
                                       Playoff
@@ -233,13 +588,13 @@ export default function NBAStandingsPage() {
                                   )}
                                 </div>
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.wins}
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.losses}
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.pct.toFixed(3)}
                               </td>
                               <td className="text-center py-3 px-2 text-text-secondary font-mono">
@@ -285,7 +640,7 @@ export default function NBAStandingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

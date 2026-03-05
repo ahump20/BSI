@@ -12,30 +12,29 @@ async function loadJSON<T>(path: string): Promise<T> {
     }
     return await response.json();
   } catch (error) {
-    console.error(`Error loading file ${path}:`, error);
     throw error;
   }
 }
 
 export async function getTeams(league: string): Promise<Team[]> {
   try {
-    const data = await loadJSON<any>(`teams/${league.toLowerCase()}.json`);
+    const data = await loadJSON<unknown>(`teams/${league.toLowerCase()}.json`);
     return schema.teams(data);
-  } catch (error) {
+  } catch (_error) {
     // Fallback to all teams if specific league not found
-    const allTeams = await loadJSON<any>('teams/all.json');
-    const filtered = allTeams.filter((t: any) => t.league === league);
+    const allTeams = await loadJSON<Record<string, unknown>[]>('teams/all.json');
+    const filtered = allTeams.filter((t: Record<string, unknown>) => t.league === league);
     return schema.teams(filtered);
   }
 }
 
 export async function getPortfolio(): Promise<PortfolioItem[]> {
-  const data = await loadJSON<any>('portfolio.json');
+  const data = await loadJSON<unknown>('portfolio.json');
   return schema.portfolio(data);
 }
 
 export async function getHistoricalData(): Promise<SeriesData> {
-  const data = await loadJSON<any>('historical-analytics.json');
+  const data = await loadJSON<unknown>('historical-analytics.json');
   return schema.accuracySeries(data);
 }
 
@@ -48,8 +47,8 @@ export async function preloadStaticData(): Promise<void> {
       loadJSON('teams/nba.json'),
       loadJSON('portfolio.json'),
     ]);
-    console.log('Static data preloaded successfully');
-  } catch (error) {
-    console.warn('Failed to preload some static data:', error);
+    // preload complete
+  } catch (_error) {
+    // handled by UI state
   }
 }
