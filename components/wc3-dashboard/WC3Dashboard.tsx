@@ -101,11 +101,11 @@ interface TooltipProps {
 }
 
 const TOKENS = {
-  burnt: '#BF5700',
-  soil: '#8B4513',
-  charcoal: '#1A1A1A',
-  midnight: '#0D0D0D',
-  ember: '#FF6B35',
+  burnt: '#BF5700', // token: --bsi-primary
+  soil: '#8B4513', // token: --bsi-texas-soil
+  charcoal: '#1A1A1A', // token: --bsi-charcoal
+  midnight: '#0D0D0D', // token: --bsi-midnight
+  ember: '#FF6B35', // token: --bsi-accent
   bone: '#F5F0EB',
   ash: '#2A2A2A',
   slate: '#3A3A3A',
@@ -121,7 +121,7 @@ const TOKENS = {
   cyan: '#06B6D4',
   nfl: '#34D399',
   nba: '#3B82F6',
-  mlb: '#BF5700',
+  mlb: '#BF5700', // token: --bsi-primary
   ncaafb: '#F59E0B',
   cbb: '#A855F7',
   card: '#161616',

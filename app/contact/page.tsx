@@ -32,8 +32,8 @@ export default function ContactPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24 relative overflow-hidden">
+      <div>
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
           <Container>
             <ScrollReveal direction="up">
@@ -111,7 +111,7 @@ export default function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Your message..."
                       required
-                      className="w-full px-4 py-3 bg-charcoal border border-border-subtle rounded-lg text-white placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-burnt-orange focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-background-secondary border border-border-subtle rounded-lg text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-burnt-orange focus:border-transparent transition-all"
                     />
                   </div>
                   <Button type="submit" variant="primary" size="lg" className="w-full">
@@ -137,7 +137,7 @@ export default function ContactPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

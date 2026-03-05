@@ -14,21 +14,21 @@ export default function CollegeBaseballError({ error, reset }: ErrorProps) {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-[#1A1A1A] border border-[#333] rounded-xl p-8 text-center">
+      <div className="max-w-md w-full bg-charcoal border border-white/15 rounded-xl p-8 text-center">
         <div className="text-4xl mb-4">&#9918;</div>
-        <h2 className="text-xl font-bold text-[#FAF8F5] mb-2">College Baseball data unavailable</h2>
-        <p className="text-[#999] text-sm mb-6">
+        <h2 className="text-xl font-bold text-white mb-2">College Baseball data unavailable</h2>
+        <p className="text-white/60 text-sm mb-6">
           {error.message || 'Unable to load college baseball data. This may be a temporary issue with our data provider.'}
         </p>
         <button
           onClick={reset}
-          className="px-6 py-2.5 bg-[#BF5700] hover:bg-[#A34900] text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2.5 bg-burnt-orange hover:bg-burnt-orange/80 text-white rounded-lg font-medium transition-colors"
         >
           Try again
         </button>
         <a
           href="/college-baseball"
-          className="block mt-3 text-sm text-[#BF5700] hover:text-[#FF6B35] transition-colors"
+          className="block mt-3 text-sm text-burnt-orange hover:text-ember transition-colors"
         >
           Back to College Baseball hub
         </a>

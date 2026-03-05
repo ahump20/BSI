@@ -11,3 +11,9 @@ dist/
 .env.*.local
 .worktrees/
 .vercel
+.wrangler/
+workers/**/.wrangler/
+app/.wrangler/
+tests/resume-quality.spec.ts-snapshots/
+playwright-report/
+test-results/

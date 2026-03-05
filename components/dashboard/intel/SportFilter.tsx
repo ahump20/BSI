@@ -28,7 +28,7 @@ export function SportFilter({ value, onChange, className }: SportFilterProps) {
                   'relative shrink-0 border-b-2 px-3 py-1.5 text-[11px] uppercase tracking-[0.15em] transition-colors',
                   active
                     ? 'border-current'
-                    : 'border-transparent text-white/40 hover:text-white/60',
+                    : 'border-transparent text-text-muted hover:text-text-secondary',
                 )}
                 style={{
                   fontFamily: 'var(--intel-display)',

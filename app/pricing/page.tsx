@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
@@ -8,60 +10,63 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { HeroVideo } from '@/components/hero/HeroVideo';
+import { PRICING_TIERS } from '@/lib/data/pricing-tiers';
+import { trackPaywallHit } from '@/lib/analytics/tracker';
 
-const tiers = [
+// Lazy-load HeroVideo — decorative background, not LCP-critical on pricing page
+const HeroVideo = dynamic(
+  () => import('@/components/hero/HeroVideo').then((mod) => ({ default: mod.HeroVideo })),
+  { ssr: false }
+);
+
+const tiers = PRICING_TIERS;
+
+// ---------------------------------------------------------------------------
+// Competitive comparison data
+// ---------------------------------------------------------------------------
+
+const COMPETITORS = [
   {
-    id: 'pro',
-    name: 'Pro',
-    price: 29,
-    period: 'month',
-    description: 'For fans, fantasy players, and amateur coaches who want the edge.',
-    features: [
-      'Live scores across MLB, NFL, NBA, NCAA',
-      'Real-time game updates every 30 seconds',
-      'Complete box scores with batting/pitching lines',
-      'Game predictions & win probability',
-      'Player comparison tools',
-      'Conference standings and rankings',
-      'Basic analytics dashboard',
-      '14-day free trial',
-    ],
-    cta: 'Start Free Trial',
-    popular: false,
+    name: 'BSI Pro',
+    price: '$12/mo',
+    parkAdjusted: true,
+    updateFreq: 'Every 6 hours',
+    mobile: 'Mobile-first',
+    free: 'Generous free tier',
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 199,
-    period: 'month',
-    description: 'For college programs, scouts, and media who need professional-grade intel.',
-    features: [
-      'Everything in Pro',
-      'Advanced player analytics with AI insights',
-      'Historical data access (5+ years)',
-      'Season projections & Monte Carlo simulations',
-      'Custom data exports (CSV, JSON)',
-      'API access for integrations',
-      'Priority support',
-      'Team collaboration tools',
-      'Custom dashboards',
-    ],
-    cta: 'Get Started',
-    popular: true,
+    name: 'D1Baseball',
+    price: '$140/yr',
+    parkAdjusted: false,
+    updateFreq: 'Daily',
+    mobile: '2.0-star app',
+    free: 'Limited free content',
+  },
+  {
+    name: 'FanGraphs',
+    price: 'Free',
+    parkAdjusted: false,
+    updateFreq: 'Weekly',
+    mobile: 'Desktop-oriented',
+    free: 'Free (no park adjustment)',
   },
 ];
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (tier: 'pro' | 'enterprise') => {
-    setLoading(tier);
+  // Fire paywall_hit when user sees pricing — D1 tracks who hit the gate
+  useEffect(() => {
+    trackPaywallHit('/pricing');
+  }, []);
+
+  const handleCheckout = async () => {
+    setLoading('pro');
     try {
       const response = await fetch('/api/stripe/create-embedded-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tier }),
+        body: JSON.stringify({ tier: 'pro' }),
       });
 
       const data = (await response.json()) as { error?: string; clientSecret?: string };
@@ -84,16 +89,16 @@ export default function PricingPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Hero */}
-        <Section padding="lg" className="pt-28 relative overflow-hidden">
+        <Section padding="lg" className="pt-6 relative overflow-hidden">
           {/* Ambient video background */}
           <HeroVideo />
           <div
             className="absolute inset-0 z-[1]"
             style={{
               background:
-                'linear-gradient(to bottom, rgba(13,13,18,0.92) 0%, rgba(13,13,18,0.8) 50%, rgba(13,13,18,0.95) 100%)',
+                'linear-gradient(to bottom, rgba(13,13,13,0.92) 0%, rgba(13,13,13,0.8) 50%, rgba(13,13,13,0.95) 100%)',
             }}
           />
 
@@ -103,11 +108,11 @@ export default function PricingPage() {
                 Simple, Transparent Pricing
               </Badge>
               <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-display text-center mb-4">
-                Choose Your <span className="text-gradient-blaze">Plan</span>
+                Free to Start. <span className="text-gradient-blaze">Pro</span> When You&apos;re Ready.
               </h1>
               <p className="text-text-secondary text-center max-w-2xl mx-auto">
-                Professional sports intelligence at every level. Start with a 14-day free trial on
-                Pro, or go straight to Enterprise for the full toolkit.
+                Scores, standings, and box scores are free — no signup, no paywall. Pro unlocks
+                park-adjusted sabermetrics, conference strength, and the full analytical depth.
               </p>
             </ScrollReveal>
           </Container>
@@ -127,22 +132,30 @@ export default function PricingPage() {
                   >
                     {tier.popular && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                        <Badge variant="accent">Most Popular</Badge>
+                        <Badge variant="accent">Best Value</Badge>
                       </div>
                     )}
 
                     <div className="text-center mb-6">
-                      <h2 className="font-display text-2xl font-bold text-white mb-2">
+                      <h2 className="font-display text-2xl font-bold text-text-primary mb-2">
                         {tier.name}
                       </h2>
                       <p className="text-text-tertiary text-sm">{tier.description}</p>
                     </div>
 
                     <div className="text-center mb-8">
-                      <span className="font-display text-5xl font-bold text-burnt-orange">
-                        ${tier.price}
-                      </span>
-                      <span className="text-text-tertiary">/{tier.period}</span>
+                      {tier.price === 0 ? (
+                        <span className="font-display text-5xl font-bold text-burnt-orange">
+                          Free
+                        </span>
+                      ) : (
+                        <>
+                          <span className="font-display text-5xl font-bold text-burnt-orange">
+                            ${tier.price}
+                          </span>
+                          <span className="text-text-tertiary">/{tier.period}</span>
+                        </>
+                      )}
                     </div>
 
                     <ul className="space-y-3 mb-8">
@@ -162,15 +175,23 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    <Button
-                      variant={tier.popular ? 'primary' : 'secondary'}
-                      size="lg"
-                      className="w-full"
-                      onClick={() => handleCheckout(tier.id as 'pro' | 'enterprise')}
-                      disabled={loading !== null}
-                    >
-                      {loading === tier.id ? 'Loading...' : tier.cta}
-                    </Button>
+                    {tier.directLink ? (
+                      <Link href={tier.directLink} className="block">
+                        <Button variant="secondary" size="lg" className="w-full">
+                          {tier.cta}
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        className="w-full"
+                        onClick={handleCheckout}
+                        disabled={loading !== null}
+                      >
+                        {loading === tier.id ? 'Loading...' : tier.cta}
+                      </Button>
+                    )}
                   </Card>
                 </ScrollReveal>
               ))}
@@ -178,26 +199,100 @@ export default function PricingPage() {
           </Container>
         </Section>
 
-        {/* FAQ / Value Props */}
+        {/* Competitive Comparison */}
         <Section padding="lg">
           <Container>
             <ScrollReveal direction="up">
+              <h2 className="font-display text-3xl font-bold text-center uppercase tracking-display mb-4">
+                How BSI <span className="text-gradient-blaze">Compares</span>
+              </h2>
+              <p className="text-text-secondary text-center max-w-xl mx-auto mb-12">
+                College baseball analytics options, side by side.
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" delay={100}>
+              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+                <table className="w-full max-w-3xl mx-auto text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left py-3 px-4 font-display uppercase tracking-wider text-text-muted text-xs" />
+                      {COMPETITORS.map((c) => (
+                        <th
+                          key={c.name}
+                          className={`text-center py-3 px-4 font-display uppercase tracking-wider text-xs ${
+                            c.name === 'BSI Pro' ? 'text-burnt-orange' : 'text-text-muted'
+                          }`}
+                        >
+                          {c.name}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-white/5">
+                      <td className="py-3 px-4 text-text-secondary">Price</td>
+                      {COMPETITORS.map((c) => (
+                        <td key={c.name} className="py-3 px-4 text-center text-text-primary font-semibold">{c.price}</td>
+                      ))}
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="py-3 px-4 text-text-secondary">Park-Adjusted Metrics</td>
+                      {COMPETITORS.map((c) => (
+                        <td key={c.name} className="py-3 px-4 text-center">
+                          {c.parkAdjusted ? (
+                            <span className="text-green-400 font-bold">Yes</span>
+                          ) : (
+                            <span className="text-text-muted">No</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="py-3 px-4 text-text-secondary">Update Frequency</td>
+                      {COMPETITORS.map((c) => (
+                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.updateFreq}</td>
+                      ))}
+                    </tr>
+                    <tr className="border-b border-white/5">
+                      <td className="py-3 px-4 text-text-secondary">Mobile Experience</td>
+                      {COMPETITORS.map((c) => (
+                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.mobile}</td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-text-secondary">Free Access</td>
+                      {COMPETITORS.map((c) => (
+                        <td key={c.name} className="py-3 px-4 text-center text-text-primary">{c.free}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </ScrollReveal>
+          </Container>
+        </Section>
+
+        {/* Value Props */}
+        <Section padding="lg" background="charcoal">
+          <Container>
+            <ScrollReveal direction="up">
               <h2 className="font-display text-3xl font-bold text-center uppercase tracking-display mb-12">
-                Why <span className="text-gradient-blaze">Blaze Sports Intel</span>?
+                Why <span className="text-gradient-blaze">BSI</span>?
               </h2>
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  title: 'Real Data, Real Sources',
+                  title: 'Park-Adjusted, Not Just Raw',
                   description:
-                    'We pull from official league APIs—MLB, NFL, NBA, NCAA. No scraped garbage, no guesswork.',
+                    'A .350 average at UFCU Disch-Falk is not the same as .350 at Baum-Walker. BSI adjusts for context. Nobody else does this for college baseball — publicly, for free.',
                 },
                 {
-                  title: 'Multi-Sport Coverage',
+                  title: 'Updated Every 6 Hours',
                   description:
-                    'MLB, NFL, NCAA—all in one platform. Live scores, standings, and analytics across every league we cover. No switching between apps.',
+                    'FanGraphs updates college data weekly. D1Baseball updates daily. BSI recomputes wOBA, wRC+, FIP, park factors, and conference strength every 6 hours via automated pipeline.',
                 },
                 {
                   title: 'Built by a Fan, for Fans',
@@ -207,7 +302,7 @@ export default function PricingPage() {
               ].map((item, index) => (
                 <ScrollReveal key={item.title} direction="up" delay={index * 100}>
                   <Card padding="lg" className="text-center h-full">
-                    <h3 className="font-semibold text-white text-lg mb-3">{item.title}</h3>
+                    <h3 className="font-semibold text-text-primary text-lg mb-3">{item.title}</h3>
                     <p className="text-text-tertiary text-sm">{item.description}</p>
                   </Card>
                 </ScrollReveal>
@@ -217,7 +312,7 @@ export default function PricingPage() {
         </Section>
 
         {/* CTA */}
-        <Section padding="lg" background="charcoal">
+        <Section padding="lg">
           <Container center>
             <ScrollReveal direction="up">
               <div className="max-w-xl mx-auto text-center">
@@ -235,7 +330,7 @@ export default function PricingPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

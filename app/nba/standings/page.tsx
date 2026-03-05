@@ -434,7 +434,7 @@ export default function NBAStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -446,7 +446,7 @@ export default function NBAStandingsPage() {
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -487,7 +487,7 @@ export default function NBAStandingsPage() {
                   className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                     selectedConference === conf
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                   }`}
                 >
                   {conf.split(' ')[0]}
@@ -500,23 +500,20 @@ export default function NBAStandingsPage() {
         {/* Standings Table */}
         <Section padding="lg" background="charcoal">
           <Container>
-            {!dataFresh && (
-              <Card variant="default" padding="md" className="mb-6 bg-info/10 border-info/30">
-                <p className="text-info font-semibold">Placeholder Data</p>
-                <p className="text-text-secondary text-sm mt-1">
-                  Live standings will populate once the NBA API responds with current data.
-                </p>
-              </Card>
-            )}
-
             {loading ? (
               <Card variant="default" padding="lg">
                 <div className="animate-pulse space-y-4">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <div key={i} className="h-12 bg-graphite rounded"></div>
+                    <div key={i} className="h-12 bg-background-tertiary rounded"></div>
                   ))}
                 </div>
               </Card>
+            ) : !dataFresh && currentConference?.teams.every((t) => t.wins === 0 && t.losses === 0) ? (
+              <div className="text-center py-12">
+                <p className="text-text-tertiary text-sm">
+                  Live standings data is temporarily unavailable. Check back shortly.
+                </p>
+              </div>
             ) : (
               <ScrollReveal direction="up">
                 <Card variant="default" padding="lg">
@@ -525,37 +522,37 @@ export default function NBAStandingsPage() {
                   </h3>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm" aria-label="NBA standings by conference">
                       <thead>
                         <tr className="border-b border-border-subtle">
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold w-8">
                             #
                           </th>
-                          <th className="text-left py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-left py-2 px-2 text-text-tertiary font-semibold">
                             Team
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             W
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             L
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             PCT
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold">
                             GB
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             HOME
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden md:table-cell">
                             AWAY
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             L10
                           </th>
-                          <th className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
+                          <th scope="col" className="text-center py-2 px-2 text-text-tertiary font-semibold hidden lg:table-cell">
                             STRK
                           </th>
                         </tr>
@@ -575,10 +572,10 @@ export default function NBAStandingsPage() {
                               <td className="py-3 px-2 text-text-tertiary">{index + 1}</td>
                               <td className="py-3 px-2">
                                 <div className="flex items-center gap-2">
-                                  <span className="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
+                                  <span className="w-8 h-8 bg-background-secondary rounded-full flex items-center justify-center text-xs font-bold text-burnt-orange">
                                     {team.abbreviation}
                                   </span>
-                                  <span className="font-semibold text-white">{team.name}</span>
+                                  <span className="font-semibold text-text-primary">{team.name}</span>
                                   {isPlayoffSpot && (
                                     <Badge variant="success" className="text-xs hidden sm:inline">
                                       Playoff
@@ -591,13 +588,13 @@ export default function NBAStandingsPage() {
                                   )}
                                 </div>
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.wins}
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.losses}
                               </td>
-                              <td className="text-center py-3 px-2 text-white font-mono">
+                              <td className="text-center py-3 px-2 text-text-primary font-mono">
                                 {team.pct.toFixed(3)}
                               </td>
                               <td className="text-center py-3 px-2 text-text-secondary font-mono">
@@ -643,7 +640,7 @@ export default function NBAStandingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

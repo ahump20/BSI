@@ -76,7 +76,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
         {/* Away */}
         <div className="flex items-center gap-3">
           {game.away.logo && (
-            <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+            <img src={game.away.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" decoding="async" />
           )}
           <div>
             <div className="intel-team-name text-sm md:text-base truncate">
@@ -100,7 +100,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
                 >
                   {game.away.score}
                 </span>
-                <span className="text-white/20 text-sm">—</span>
+                <span className="text-text-muted text-sm">—</span>
                 <span
                   className="intel-score intel-score-lg"
                   style={{ color: homeScoreColor }}
@@ -125,7 +125,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
             <div className="intel-caption">{game.home.record}</div>
           </div>
           {game.home.logo && (
-            <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" />
+            <img src={game.home.logo} alt="" className="h-10 w-10 shrink-0 object-contain" loading="lazy" decoding="async" />
           )}
         </div>
       </div>
@@ -134,7 +134,7 @@ export function GameCardHero({ game, onClick }: GameCardHeroProps) {
       {winProbData.length > 0 && (
         <div className="intel-panel-elevated p-2">
           <div className="flex items-center gap-1 mb-1">
-            <TrendingUp className="h-3 w-3 text-white/30" />
+            <TrendingUp className="h-3 w-3 text-text-muted" />
             <span className="intel-caption uppercase tracking-wider">Win Probability</span>
           </div>
           <div className="h-[60px]">

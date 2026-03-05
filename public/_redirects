@@ -21,3 +21,37 @@ https://www.blazesportsintel.com/* https://blazesportsintel.com/:splat 301
 # Legal page redirects
 /legal/privacy /privacy 301
 /legal/terms /terms 301
+
+# Legacy .html page redirects (301 permanent)
+/pricing.html /pricing 301
+/analytics.html /analytics 301
+/dashboard.html /dashboard 301
+/about.html /about 301
+/scores.html /scores 301
+/contact.html /contact 301
+/settings.html /settings 301
+/privacy.html /privacy 301
+/terms.html /terms 301
+/intel.html /intel 301
+/mlb.html /mlb 301
+/nfl.html /nfl 301
+/nba.html /nba 301
+/cfb.html /cfb 301
+/mlb/scores.html /mlb/scores 301
+/nfl/scores.html /nfl/scores 301
+/nba/scores.html /nba/scores 301
+/mlb/games.html /mlb/games 301
+/nfl/games.html /nfl/games 301
+/nba/games.html /nba/games 301
+/mlb/news.html /mlb/news 301
+/nfl/news.html /nfl/news 301
+/nba/news.html /nba/news 301
+/mlb/players.html /mlb/players 301
+/nfl/players.html /nfl/players 301
+/nba/players.html /nba/players 301
+/nba/teams.html /nba/teams 301
+/nfl/teams.html /nfl/teams 301
+/college-baseball.html /college-baseball 301
+/college-baseball/rankings.html /college-baseball/rankings 301
+/college-baseball/players.html /college-baseball/players 301
+/data-sources.html /data-sources 301

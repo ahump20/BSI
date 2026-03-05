@@ -28,7 +28,7 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
       {/* Header */}
       <div className="flex items-center justify-between p-4 pb-0">
         <div className="intel-section-label">
-          <Newspaper className="h-4 w-4" style={{ color: 'var(--bsi-intel-accent, var(--bsi-ember, #FF6B35))' }} />
+          <Newspaper className="h-4 w-4" style={{ color: 'var(--bsi-intel-accent, var(--bsi-accent))' }} />
           News Feed
         </div>
         <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export function NewsFeed({ articles, isLoading, sport = 'all' }: NewsFeedProps) 
                 )}
                 <div className="p-3">
                   <div
-                    className="intel-narrative text-[0.8rem] leading-snug line-clamp-3 group-hover:text-white/90"
+                    className="intel-narrative text-[0.8rem] leading-snug line-clamp-3 group-hover:text-text-primary"
                     style={{ fontStyle: 'normal', color: 'var(--intel-text-headline)' }}
                   >
                     {a.headline}

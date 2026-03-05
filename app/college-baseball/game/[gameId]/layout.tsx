@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react';
 import GameLayoutClient, { useGameData, type CollegeGameData } from './GameLayoutClient';
+import { cbbGameParams } from '@/lib/generate-static-params';
 
 // Re-export for child pages
 export { useGameData, type CollegeGameData };
 
-// Generate static params for static export
+// Fetch real game IDs from the production Worker at build time.
+// Falls back to placeholder on any network failure.
 export async function generateStaticParams() {
-  return [{ gameId: 'placeholder' }];
+  return cbbGameParams();
 }
 
 interface LayoutProps {

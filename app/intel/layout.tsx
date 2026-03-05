@@ -1,7 +1,16 @@
-'use client';
-
+import type { Metadata } from 'next';
 import { Oswald, Cormorant_Garamond, IBM_Plex_Mono } from 'next/font/google';
 import './intel-editorial.css';
+
+export const metadata: Metadata = {
+  title: 'Intel | Blaze Sports Intel',
+  description: 'BSI Intelligence — editorial analysis, game briefs, team dossiers, and weekly briefings across MLB, NFL, NBA, and NCAA sports.',
+  alternates: { canonical: '/intel' },
+  openGraph: {
+    title: 'Intel | Blaze Sports Intel',
+    description: 'Editorial intelligence and analysis across all sports.',
+  },
+};
 
 const oswald = Oswald({
   subsets: ['latin'],

@@ -1,6 +1,6 @@
 # BSI Portal Sync — Cron Worker
-# Fetches college baseball transfer portal data every 30 minutes.
-# Writes to the same KV namespace the main worker reads from.
+# Fetches college baseball transfer portal data and writes to KV.
+# The main worker reads from the same KV key to serve portal pages.
 #
 # Deploy: wrangler deploy --config workers/bsi-portal-sync/wrangler.toml
 
@@ -8,12 +8,17 @@ name = "bsi-portal-sync"
 main = "index.ts"
 compatibility_date = "2025-12-01"
 
+# Run every 30 minutes — portal data doesn't change by the second
 [triggers]
 crons = ["*/30 * * * *"]
 
 [[kv_namespaces]]
 binding = "KV"
 id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "e6cb68e815cd45babeee0e10460dbfee"
 
-# Secrets (set via `wrangler secret put`):
-# RAPIDAPI_KEY — for Highlightly (optional; ESPN fallback is free)
+[vars]
+# RAPIDAPI_KEY is set as a secret via: wrangler secret put RAPIDAPI_KEY --config workers/bsi-portal-sync/wrangler.toml
+
+[dev]
+port = 8790

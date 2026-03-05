@@ -2,15 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { formatDateInTimezone } from '@/lib/utils/timezone';
 
 interface CalendarGame {
   id: string;
   date: string;
   time: string;
-  homeTeam: string;
-  awayTeam: string;
+  homeTeam: string | { name: string; shortName?: string; score?: number | null };
+  awayTeam: string | { name: string; shortName?: string; score?: number | null };
   status: string;
   score?: string;
+}
+
+function teamName(t: CalendarGame['homeTeam']): string {
+  if (typeof t === 'string') return t;
+  return t.shortName || t.name || '?';
+}
+
+function teamScore(t: CalendarGame['homeTeam']): number | null {
+  if (typeof t === 'string') return null;
+  return t.score ?? null;
 }
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -28,8 +39,7 @@ function getWeekDates(dateStr: string): string[] {
 }
 
 function formatDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return formatDateInTimezone(dateStr + 'T12:00:00', undefined, 'compact');
 }
 
 interface CalendarViewProps {
@@ -51,7 +61,7 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
     setLoading(true);
     fetch(`/api/college-baseball/schedule?date=${currentDate}&range=week`)
       .then((r) => r.json())
-      .then((data: { games?: CalendarGame[] }) => setGames(data.games ?? []))
+      .then((data: { data?: CalendarGame[]; games?: CalendarGame[] }) => setGames(data.data ?? data.games ?? []))
       .catch(() => setGames([]))
       .finally(() => setLoading(false));
   }, [currentDate]);
@@ -63,16 +73,16 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
   };
 
   const gamesByDate = weekDates.reduce<Record<string, CalendarGame[]>>((acc, date) => {
-    acc[date] = games.filter((g) => g.date === date);
+    acc[date] = games.filter((g) => g.date?.startsWith(date));
     return acc;
   }, {});
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-white transition-colors" aria-label="Previous week">&larr; Prev</button>
-        <span className="text-white font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
-        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-white transition-colors" aria-label="Next week">Next &rarr;</button>
+        <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Previous week">&larr; Prev</button>
+        <span className="text-text-primary font-medium">{formatDate(weekDates[0])} &ndash; {formatDate(weekDates[6])}</span>
+        <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded-lg bg-charcoal text-text-secondary hover:text-text-primary transition-colors" aria-label="Next week">Next &rarr;</button>
       </div>
       {loading ? (
         <div className="grid grid-cols-7 gap-2">
@@ -98,12 +108,19 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
                   {dayGames.length === 0 ? (
                     <p className="text-text-tertiary text-[10px] text-center mt-4">No games</p>
                   ) : (
-                    dayGames.slice(0, 3).map((g) => (
-                      <Link key={g.id} href={`/college-baseball/games/${g.id}`} className="block p-1 rounded bg-charcoal/60 hover:bg-slate/60 transition-colors">
-                        <div className="text-[10px] text-white truncate">{g.awayTeam} @ {g.homeTeam}</div>
-                        <div className="text-[9px] text-text-tertiary">{g.score || g.time}</div>
-                      </Link>
-                    ))
+                    dayGames.slice(0, 3).map((g) => {
+                      const away = teamName(g.awayTeam);
+                      const home = teamName(g.homeTeam);
+                      const aScore = teamScore(g.awayTeam);
+                      const hScore = teamScore(g.homeTeam);
+                      const scoreStr = aScore !== null && hScore !== null ? `${aScore}-${hScore}` : g.time;
+                      return (
+                        <Link key={g.id} href={`/college-baseball/game/${g.id}`} className="block p-1 rounded bg-charcoal/60 hover:bg-slate/60 transition-colors">
+                          <div className="text-[10px] text-text-primary truncate">{away} @ {home}</div>
+                          <div className="text-[9px] text-text-tertiary">{g.score || scoreStr}</div>
+                        </Link>
+                      );
+                    })
                   )}
                   {dayGames.length > 3 && <p className="text-[9px] text-burnt-orange text-center">+{dayGames.length - 3} more</p>}
                 </div>

@@ -61,7 +61,7 @@ interface PortalFiltersProps {
 export function PortalFilters({ onFilterChange }: PortalFiltersProps) {
   return (
     <div className="flex flex-wrap gap-2 mb-6">
-      <select className="bg-charcoal border border-border-subtle rounded-lg px-3 py-1.5 text-white text-sm" onChange={(e) => onFilterChange?.({ sport: e.target.value })}>
+      <select aria-label="Filter by sport" className="bg-charcoal border border-border-subtle rounded-lg px-3 py-1.5 text-white text-sm" onChange={(e) => onFilterChange?.({ sport: e.target.value })}>
         <option value="">All Sports</option>
         <option value="baseball">Baseball</option>
         <option value="football">Football</option>

@@ -31,7 +31,8 @@ const SERVICE = 'bsi';
 
 function isDev(): boolean {
   try {
-    return typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
+    const g = globalThis as unknown as Record<string, Record<string, Record<string, string>>>;
+    return g?.process?.env?.NODE_ENV === 'development';
   } catch {
     return false;
   }

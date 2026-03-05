@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -10,10 +11,12 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton, SkeletonTableRow } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface Team {
   teamName: string;
-  teamAbbreviation?: string;
+  abbreviation?: string;
   wins: number;
   losses: number;
   winPercentage: number;
@@ -31,47 +34,30 @@ interface Team {
   wcGamesBack?: number;
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
+/** Map API abbreviation to the route slug used in generateStaticParams */
+const ABBR_TO_SLUG: Record<string, string> = {
+  CHW: 'cws',
+  ATH: 'oak',
+};
+
+function teamSlug(team: Team): string {
+  const abbr = team.abbreviation;
+  if (!abbr) return team.teamName.toLowerCase().replace(/\s+/g, '-');
+  return (ABBR_TO_SLUG[abbr] ?? abbr).toLowerCase();
 }
+
 
 type ViewType = 'division' | 'league' | 'wildcard';
 export default function MLBStandingsPage() {
-  const [standings, setStandings] = useState<Team[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [meta, setMeta] = useState<DataMeta | null>(null);
   const [viewType, setViewType] = useState<ViewType>('division');
   const [sortColumn, setSortColumn] = useState<string>('wins');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const fetchStandings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/mlb/standings');
-      if (!res.ok) throw new Error('Failed to fetch standings');
-      const data = (await res.json()) as { standings?: Team[]; meta?: DataMeta };
-
-      if (data.standings) {
-        setStandings(data.standings);
-      }
-      if (data.meta) {
-        setMeta(data.meta);
-      }
-      setLoading(false);
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(errorMessage);
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchStandings();
-  }, [fetchStandings]);
+  const { data: rawData, loading, error, retry } = useSportData<{ standings?: Team[]; meta?: DataMeta }>(
+    '/api/mlb/standings'
+  );
+  const standings = rawData?.standings || [];
+  const meta = rawData?.meta || null;
 
   // Sort function
   const sortTeams = (teams: Team[]): Team[] => {
@@ -177,7 +163,8 @@ export default function MLBStandingsPage() {
     className?: string;
   }) => (
     <th
-      className={`text-left p-3 text-copper font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
+      scope="col"
+      className={`text-left p-3 text-text-tertiary font-semibold cursor-pointer hover:text-burnt-orange transition-colors ${className}`}
       onClick={() => handleSort(column)}
     >
       <div className="flex items-center gap-1">
@@ -199,22 +186,22 @@ export default function MLBStandingsPage() {
     showDivision?: boolean;
   }) => (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[700px]">
+      <table className="w-full min-w-[700px]" aria-label="MLB division standings">
         <thead>
           <tr className="border-b-2 border-burnt-orange">
-            <th className="text-left p-3 text-copper font-semibold w-8">#</th>
-            <SortableHeader column="team" label="Team" className="sticky left-0 bg-charcoal z-10" />
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">#</th>
+            <SortableHeader column="team" label="Team" className="sticky left-0 bg-background-secondary z-10" />
             <SortableHeader column="wins" label="W" />
             <SortableHeader column="losses" label="L" />
             <SortableHeader column="pct" label="PCT" />
             <SortableHeader column="gb" label="GB" />
-            <th className="text-left p-3 text-copper font-semibold">HOME</th>
-            <th className="text-left p-3 text-copper font-semibold">AWAY</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">HOME</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">AWAY</th>
             <SortableHeader column="rs" label="RS" />
             <SortableHeader column="ra" label="RA" />
             <SortableHeader column="diff" label="DIFF" />
-            <th className="text-left p-3 text-copper font-semibold">STRK</th>
-            <th className="text-left p-3 text-copper font-semibold">L10</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
+            <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
           </tr>
         </thead>
         <tbody>
@@ -223,13 +210,13 @@ export default function MLBStandingsPage() {
             return (
               <tr
                 key={team.teamName}
-                className="border-b border-border-subtle hover:bg-white/5 transition-colors"
+                className="border-b border-border-subtle hover:bg-surface-light transition-colors"
               >
                 <td className="p-3 text-burnt-orange font-bold">{idx + 1}</td>
-                <td className="p-3 sticky left-0 bg-charcoal z-10">
+                <td className="p-3 sticky left-0 bg-background-secondary z-10">
                   <Link
-                    href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="font-semibold text-white hover:text-burnt-orange transition-colors flex items-center gap-2"
+                    href={`/mlb/teams/${teamSlug(team)}`}
+                    className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                   >
                     {team.teamName}
                     {showDivision && (
@@ -291,17 +278,17 @@ export default function MLBStandingsPage() {
 
     return (
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
+        <table className="w-full min-w-[600px]" aria-label="MLB wild card standings">
           <thead>
             <tr className="border-b-2 border-burnt-orange">
-              <th className="text-left p-3 text-copper font-semibold w-8">WC</th>
-              <th className="text-left p-3 text-copper font-semibold">Team</th>
-              <th className="text-left p-3 text-copper font-semibold">W</th>
-              <th className="text-left p-3 text-copper font-semibold">L</th>
-              <th className="text-left p-3 text-copper font-semibold">PCT</th>
-              <th className="text-left p-3 text-copper font-semibold">WCGB</th>
-              <th className="text-left p-3 text-copper font-semibold">STRK</th>
-              <th className="text-left p-3 text-copper font-semibold">L10</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold w-8">WC</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">Team</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">W</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">PCT</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">WCGB</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">STRK</th>
+              <th scope="col" className="text-left p-3 text-text-tertiary font-semibold">L10</th>
             </tr>
           </thead>
           <tbody>
@@ -315,7 +302,7 @@ export default function MLBStandingsPage() {
               return (
                 <tr
                   key={team.teamName}
-                  className={`border-b border-border-subtle hover:bg-white/5 transition-colors ${
+                  className={`border-b border-border-subtle hover:bg-surface-light transition-colors ${
                     isInWCSpot
                       ? 'bg-success/5'
                       : idx === wcSpots
@@ -330,8 +317,8 @@ export default function MLBStandingsPage() {
                   </td>
                   <td className="p-3">
                     <Link
-                      href={`/mlb/teams/${team.teamAbbreviation?.toLowerCase() || team.teamName.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="font-semibold text-white hover:text-burnt-orange transition-colors flex items-center gap-2"
+                      href={`/mlb/teams/${teamSlug(team)}`}
+                      className="font-semibold text-text-primary hover:text-burnt-orange transition-colors flex items-center gap-2"
                     >
                       {team.teamName}
                       <span className="text-text-tertiary text-xs">{team.division}</span>
@@ -367,7 +354,7 @@ export default function MLBStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -379,7 +366,7 @@ export default function MLBStandingsPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -422,7 +409,7 @@ export default function MLBStandingsPage() {
                   className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                     viewType === view.id
                       ? 'bg-burnt-orange text-white'
-                      : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium hover:text-text-primary'
                   }`}
                 >
                   {view.label}
@@ -430,6 +417,7 @@ export default function MLBStandingsPage() {
               ))}
             </div>
 
+            <DataErrorBoundary name="MLB Standings">
             {loading ? (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -457,7 +445,7 @@ export default function MLBStandingsPage() {
                                 'STRK',
                                 'L10',
                               ].map((h) => (
-                                <th key={h} className="text-left p-3 text-copper font-semibold">
+                                <th key={h} scope="col" className="text-left p-3 text-text-tertiary font-semibold">
                                   {h}
                                 </th>
                               ))}
@@ -479,7 +467,7 @@ export default function MLBStandingsPage() {
                 <p className="text-error font-semibold">Data Unavailable</p>
                 <p className="text-text-secondary text-sm mt-1">{error}</p>
                 <button
-                  onClick={fetchStandings}
+                  onClick={retry}
                   className="mt-4 px-4 py-2 bg-burnt-orange text-white rounded-lg hover:bg-burnt-orange/80 transition-colors"
                 >
                   Retry
@@ -594,9 +582,10 @@ export default function MLBStandingsPage() {
                 </div>
               </>
             )}
+            </DataErrorBoundary>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

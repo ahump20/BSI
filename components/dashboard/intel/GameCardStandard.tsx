@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import type { IntelGame } from '@/lib/intel/types';
 import { SPORT_ACCENT } from '@/lib/intel/types';
 import { WinProbGauge } from './WinProbGauge';
@@ -10,7 +11,7 @@ interface GameCardStandardProps {
   onClick: () => void;
 }
 
-export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
+export const GameCardStandard = memo(function GameCardStandard({ game, onClick }: GameCardStandardProps) {
   const accent = `var(--bsi-intel-accent, ${SPORT_ACCENT[game.sport]})`;
   const isLive = game.status === 'live';
   const isFinal = game.status === 'final';
@@ -30,7 +31,7 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {game.away.logo && (
-                <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                <img src={game.away.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <span className="intel-team-name text-[0.75rem] truncate">
                 {rankPrefix(game.away.rank)}{game.away.abbreviation || game.away.name}
@@ -46,7 +47,7 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
           <div className="flex items-center justify-between gap-2 mt-0.5">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               {game.home.logo && (
-                <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" />
+                <img src={game.home.logo} alt="" className="h-4 w-4 shrink-0 object-contain" loading="lazy" decoding="async" />
               )}
               <span className="intel-team-name text-[0.75rem] truncate">
                 {rankPrefix(game.home.rank)}{game.home.abbreviation || game.home.name}
@@ -92,4 +93,18 @@ export function GameCardStandard({ game, onClick }: GameCardStandardProps) {
       )}
     </button>
   );
-}
+}, (prev, next) => {
+  const a = prev.game;
+  const b = next.game;
+  return (
+    a.id === b.id &&
+    a.status === b.status &&
+    a.away.score === b.away.score &&
+    a.home.score === b.home.score &&
+    a.away.rank === b.away.rank &&
+    a.home.rank === b.home.rank &&
+    a.statusDetail === b.statusDetail &&
+    a.startTime === b.startTime &&
+    a.winProbability?.home === b.winProbability?.home
+  );
+});

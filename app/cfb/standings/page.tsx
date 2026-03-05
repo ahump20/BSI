@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { SportIcon } from '@/components/icons/SportIcon';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
 interface CFBTeam {
@@ -57,13 +58,13 @@ export default function CFBStandingsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/cfb" className="text-text-tertiary hover:text-burnt-orange transition-colors">CFB</Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Standings</span>
+              <span className="text-text-primary font-medium">Standings</span>
             </nav>
           </Container>
         </Section>
@@ -90,7 +91,7 @@ export default function CFBStandingsPage() {
             {loading ? (
               <div className="space-y-6">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-48 bg-graphite rounded-lg animate-pulse" />
+                  <div key={i} className="h-48 bg-background-tertiary rounded-lg animate-pulse" />
                 ))}
               </div>
             ) : error ? (
@@ -100,7 +101,7 @@ export default function CFBStandingsPage() {
               </Card>
             ) : conferences.length === 0 ? (
               <Card padding="lg" className="text-center">
-                <div className="text-6xl mb-4">🏈</div>
+                <SportIcon sport="cfb" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                 <p className="text-text-secondary text-lg">Standings not available</p>
                 <p className="text-text-tertiary text-sm mt-2">Standings are updated during the college football season</p>
               </Card>
@@ -110,7 +111,7 @@ export default function CFBStandingsPage() {
                   <ScrollReveal key={conf.name} delay={ci * 50}>
                     <Card variant="default" padding="none" className="overflow-hidden">
                       <div className="bg-burnt-orange/20 px-4 py-3 border-b border-border-subtle">
-                        <h2 className="font-display text-lg font-bold text-white">{conf.name}</h2>
+                        <h2 className="font-display text-lg font-bold text-text-primary">{conf.name}</h2>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left">
@@ -128,20 +129,20 @@ export default function CFBStandingsPage() {
                           </thead>
                           <tbody className="divide-y divide-border-subtle">
                             {conf.teams.map((team, ti) => (
-                              <tr key={team.abbreviation + ti} className="hover:bg-white/5 transition-colors">
+                              <tr key={team.abbreviation + ti} className="hover:bg-surface-light transition-colors">
                                 <td className="py-2.5 px-4">
                                   <div className="flex items-center gap-3">
                                     {team.logo ? (
-                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" />
+                                      <img src={team.logo} alt="" className="w-6 h-6 object-contain" loading="lazy" decoding="async" />
                                     ) : (
-                                      <div className="w-6 h-6 bg-charcoal rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
+                                      <div className="w-6 h-6 bg-background-secondary rounded-full flex items-center justify-center text-[10px] font-bold text-burnt-orange">
                                         {team.abbreviation}
                                       </div>
                                     )}
-                                    <span className="text-white font-medium text-sm">{team.name}</span>
+                                    <span className="text-text-primary font-medium text-sm">{team.name}</span>
                                   </div>
                                 </td>
-                                <td className="py-2.5 px-4 text-center text-white font-mono text-sm">{team.wins}</td>
+                                <td className="py-2.5 px-4 text-center text-text-primary font-mono text-sm">{team.wins}</td>
                                 <td className="py-2.5 px-4 text-center text-text-secondary font-mono text-sm">{team.losses}</td>
                                 <td className="py-2.5 px-4 text-center text-burnt-orange font-mono text-sm font-semibold">
                                   {team.pct.toFixed(3)}
@@ -168,7 +169,7 @@ export default function CFBStandingsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
       <Footer />
     </>
   );

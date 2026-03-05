@@ -69,16 +69,6 @@ export interface ModelHealthPoint {
   accuracy: number;
 }
 
-// Maps intel sport keys to API route prefixes
-export const SPORT_API_MAP: Record<Exclude<IntelSport, 'all'>, string> = {
-  mlb: '/api/mlb',
-  nfl: '/api/nfl',
-  nba: '/api/nba',
-  ncaafb: '/api/cfb',
-  cbb: '/api/cbb',
-  'd1bb': '/api/college-baseball',
-};
-
 export const SPORT_LABELS: Record<IntelSport, string> = {
   all: 'ALL',
   nfl: 'NFL',
@@ -90,17 +80,17 @@ export const SPORT_LABELS: Record<IntelSport, string> = {
 };
 
 export const SPORT_ACCENT: Record<IntelSport, string> = {
-  all: 'var(--bsi-primary, #BF5700)',
+  all: 'var(--bsi-primary)',
   nfl: '#10b981',
   nba: '#3b82f6',
-  mlb: '#BF5700',
+  mlb: 'var(--bsi-primary)',
   ncaafb: '#f59e0b',
   cbb: '#dc2626',
   'd1bb': '#C75B12',
 };
 
 export const PRIORITY_ACCENT: Record<SignalPriority, string> = {
-  high: '#FF6B35',
+  high: 'var(--bsi-accent)',
   medium: '#f59e0b',
   low: '#737373',
 };

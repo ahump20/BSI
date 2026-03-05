@@ -25,6 +25,7 @@ const NetRatingBar = dynamic(
 );
 import { IntelSidebar } from '@/components/dashboard/intel/IntelSidebar';
 import { IntelSkeleton } from '@/components/dashboard/intel/IntelSkeleton';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
 import { NewsFeed } from '@/components/dashboard/intel/NewsFeed';
 import { PitcherFatigue } from '@/components/dashboard/intel/PitcherFatigue';
 import { SPORT_ACCENT } from '@/lib/intel/types';
@@ -68,6 +69,7 @@ export default function IntelDashboard() {
         newsLoading,
         isLoading,
         isError,
+        lastFetched,
   } = useIntelDashboard(sport, mode, teamLens);
 
   const { toggle: togglePin, isPinned } = usePinnedBriefing();
@@ -134,8 +136,8 @@ export default function IntelDashboard() {
         return (
                 <div className="flex min-h-[60vh] items-center justify-center">
                         <div className="text-center">
-                                  <p className="font-display text-lg text-white/60">Unable to load intel data</p>
-                                  <p className="mt-1 font-mono text-[12px] text-white/30">
+                                  <p className="font-display text-lg text-text-secondary">Unable to load intel data</p>
+                                  <p className="mt-1 font-mono text-[12px] text-text-muted">
                                               Check network connection or try refreshing
                                   </p>
                         </div>
@@ -144,6 +146,7 @@ export default function IntelDashboard() {
   }
   
     return (
+          <DataErrorBoundary name="Intel Dashboard">
           <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
                 <IntelHeader
                           mode={mode}
@@ -154,6 +157,7 @@ export default function IntelDashboard() {
                           onOpenPalette={handleOpenPalette}
                           liveCount={liveCount}
                           briefingLine={briefingLine}
+                          fetchedAt={lastFetched ? new Date(lastFetched).toISOString() : undefined}
                         />
 
                 <hr className="intel-masthead-rule" />
@@ -178,7 +182,7 @@ export default function IntelDashboard() {
           
             {/* Main grid: content + sidebar */}
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
-                        <main className="min-w-0">
+                        <div className="min-w-0">
                                   <GameGrid
                                                 hero={hero}
                                                 marquee={marquee}
@@ -207,7 +211,7 @@ export default function IntelDashboard() {
                                                 }
                                               />
                                   <NewsFeed articles={news} isLoading={newsLoading} sport={sport} />
-                        </main>
+                        </div>
                 
                         <IntelSidebar className="border-l border-[var(--intel-border-rule)]">
                                   <SignalFeed signals={signals} isPinned={isPinned} onTogglePin={togglePin} />
@@ -235,5 +239,6 @@ export default function IntelDashboard() {
                           onSelectTeam={handleSelectTeamFromPalette}
                         />
           </div>
+          </DataErrorBoundary>
         );
 }

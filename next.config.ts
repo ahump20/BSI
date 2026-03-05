@@ -22,6 +22,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
+  // Publishable keys are safe to embed — they're not credentials
+  env: {
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      'pk_live_51RlBWILvpRBk20R2K8sqQVkChQNmI2uIplQkXlwzre0a89T0BitfA56d4igyBYLCdbHJ32FNpYuaGBXixWo9nY6t00AROOs9vh',
+  },
+
 };
 
 export default nextConfig;

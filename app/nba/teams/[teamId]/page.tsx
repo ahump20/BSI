@@ -1,13 +1,12 @@
 import TeamDetailClient from './TeamDetailClient';
-// Force static generation with dynamic params disabled
+import { nbaTeamParams } from '@/lib/generate-static-params';
+
 export const dynamic = 'force-static';
 export const dynamicParams = false;
 
-// Generate static params for static export
+// Fetches all 30 NBA team IDs from the Worker at build time.
 export async function generateStaticParams() {
-  // Return empty array - pages will be generated on-demand at runtime
-  // This allows client-side data fetching while satisfying static export requirements
-  return [{ teamId: 'placeholder' }];
+  return nbaTeamParams();
 }
 
 interface PageProps {

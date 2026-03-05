@@ -45,7 +45,7 @@ interface TabListProps {
 
 export function TabList({ children, className }: TabListProps) {
   return (
-    <div role="tablist" className={clsx('flex gap-1 rounded-lg p-1 bg-white/5 border border-white/10', className)}>
+    <div role="tablist" className={clsx('flex gap-1 rounded-lg p-1 bg-surface-light border border-border', className)}>
       {children}
     </div>
   );
@@ -62,14 +62,17 @@ export function Tab({ value, children, className }: TabProps) {
   const isActive = active === value;
   return (
     <button
+      id={`tab-${value}`}
       role="tab"
       aria-selected={isActive}
+      aria-controls={`panel-${value}`}
+      tabIndex={isActive ? 0 : -1}
       onClick={() => setActive(value)}
       className={clsx(
         'px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.15em] transition-all',
         isActive
-          ? 'bg-[var(--bsi-primary,#BF5700)]/15 text-[var(--bsi-primary,#BF5700)] border border-[var(--bsi-primary,#BF5700)]/30'
-          : 'text-white/40 hover:text-white/70 border border-transparent',
+          ? 'bg-burnt-orange/15 text-burnt-orange border border-burnt-orange/30'
+          : 'text-text-muted hover:text-text-secondary border border-transparent',
         className,
       )}
     >
@@ -88,7 +91,7 @@ export function TabPanel({ value, children, className }: TabPanelProps) {
   const { active } = useTabs();
   if (active !== value) return null;
   return (
-    <div role="tabpanel" className={className}>
+    <div id={`panel-${value}`} role="tabpanel" aria-labelledby={`tab-${value}`} className={className}>
       {children}
     </div>
   );

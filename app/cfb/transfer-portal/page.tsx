@@ -205,9 +205,9 @@ export default function CFBTransferPortalPage() {
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-midnight">
         {/* Hero section */}
-        <Section className="relative pt-24 pb-16 overflow-hidden">
+        <Section className="relative pt-6 pb-16 overflow-hidden">
           {/* Background gradient - football brown tones */}
           <div className="absolute inset-0 bg-gradient-radial from-football/10 via-transparent to-transparent opacity-50" />
           <div className="absolute inset-0 bg-[url('/images/grain.png')] opacity-[0.02]" />
@@ -356,7 +356,7 @@ export default function CFBTransferPortalPage() {
             </ScrollReveal>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

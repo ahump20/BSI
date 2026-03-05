@@ -15,6 +15,10 @@ crons = ["*/5 * * * *"]
 binding = "MONITOR_KV"
 id = "eb5a89bcb6034c97831b358b1a8b2eba"
 
+[[r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
+
 # Optional: Discord/Slack webhook for failure alerts
 # [vars]
 # ALERT_WEBHOOK_URL = ""

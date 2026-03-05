@@ -116,8 +116,8 @@ export function PlayerDetailClient() {
   if (loading) {
     return (
       <>
-        <main id="main-content" className="min-h-screen bg-midnight">
-          <Section className="pt-24 pb-16">
+        <div className="min-h-screen bg-midnight">
+          <Section className="pt-6 pb-16">
             <Container>
               <div className="text-center py-16">
                 <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
@@ -125,7 +125,7 @@ export function PlayerDetailClient() {
               </div>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -134,8 +134,8 @@ export function PlayerDetailClient() {
   if (!player) {
     return (
       <>
-        <main id="main-content" className="min-h-screen bg-midnight">
-          <Section className="pt-24 pb-16">
+        <div className="min-h-screen bg-midnight">
+          <Section className="pt-6 pb-16">
             <Container>
               <div className="text-center py-16">
                 <h1 className="text-2xl font-display font-bold text-text-primary mb-4">
@@ -150,7 +150,7 @@ export function PlayerDetailClient() {
               </div>
             </Container>
           </Section>
-        </main>
+        </div>
         <Footer />
       </>
     );
@@ -158,9 +158,9 @@ export function PlayerDetailClient() {
 
   return (
     <>
-      <main id="main-content" className="min-h-screen bg-midnight">
+      <div className="min-h-screen bg-midnight">
         {/* Breadcrumb */}
-        <Section className="pt-24 pb-4">
+        <Section className="pt-6 pb-4">
           <Container>
             <div className="flex items-center gap-2 text-sm text-text-tertiary">
               <Link href="/college-baseball" className="hover:text-burnt-orange transition-colors">
@@ -400,7 +400,7 @@ export function PlayerDetailClient() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

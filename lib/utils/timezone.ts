@@ -106,7 +106,7 @@ export interface FormatOptions {
   includeTime?: boolean;
   includeDate?: boolean;
   includeTimezone?: boolean;
-  format?: 'short' | 'medium' | 'long' | 'full';
+  format?: 'short' | 'compact' | 'medium' | 'long' | 'full';
 }
 
 /**
@@ -144,6 +144,10 @@ export function formatInTimezone(input: string | Date, options: FormatOptions = 
     switch (format) {
       case 'short':
         dateOptions.month = 'numeric';
+        dateOptions.day = 'numeric';
+        break;
+      case 'compact':
+        dateOptions.month = 'short';
         dateOptions.day = 'numeric';
         break;
       case 'medium':
@@ -271,6 +275,32 @@ export function formatTimestamp(isoString?: string): string {
       hour12: true,
     }) + ' CT'
   );
+}
+
+/**
+ * Format a date string (YYYY-MM-DD) for display as "Mon, Feb 14" etc.
+ * Appends T12:00:00 to avoid date-shift from timezone offset.
+ */
+export function formatScheduleDate(dateString: string): string {
+  const date = dateString.includes('T')
+    ? new Date(dateString)
+    : new Date(dateString + 'T12:00:00');
+  return date.toLocaleDateString('en-US', {
+    timeZone: BSI_TIMEZONE,
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+/**
+ * Get a YYYY-MM-DD date string offset from today by N days.
+ * Positive = future, negative = past, 0 = today.
+ */
+export function getDateOffset(offset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return new Intl.DateTimeFormat('en-CA', { timeZone: BSI_TIMEZONE }).format(date);
 }
 
 /**

@@ -18,16 +18,40 @@ compatibility_date = "2025-12-01"
 [[kv_namespaces]]
 binding = "KV"
 id = "e6cb68e815cd45babeee0e10460dbfee"
-preview_id = "e6cb68e815cd45babeee0e10460dbfee"
+preview_id = "abf84a80fa024f43bc62daf786955e2b"  # BSI_DEV_CACHE — isolated from production
 
 [[d1_databases]]
 binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
+[[kv_namespaces]]
+binding = "ERROR_LOG"
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
+
+[[kv_namespaces]]
+binding = "BSI_KEYS"
+id = "b7ff9178798d4a238afff79522f651e8"
+
+[[kv_namespaces]]
+binding = "PREDICTION_CACHE"
+id = "eebf04d329c0419e92eec884f39a636d"
+
+[[kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
+
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
+
+[[r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
 
 [[durable_objects.bindings]]
 name = "CACHE"
@@ -45,10 +69,18 @@ new_classes = ["CacheObject"]
 tag = "v2"
 new_classes = ["PortalPoller"]
 
+[[analytics_engine_datasets]]
+binding = "OPS_EVENTS"
+dataset = "bsi_ops_events"
+
 [vars]
 ENVIRONMENT = "development"
 API_VERSION = "1.0.0"
 PAGES_ORIGIN = "https://blazesportsintel.pages.dev"
+
+# Cron trigger — warm KV cache for scores + rankings
+[triggers]
+crons = ["*/1 * * * *"]  # Every minute (scores adjust TTL internally based on season)
 
 [dev]
 port = 8787
@@ -82,9 +114,33 @@ binding = "DB"
 database_name = "bsi-prod-db"
 database_id = "6921617f-5351-4df3-aeab-07425e72ec6b"
 
+[[env.production.kv_namespaces]]
+binding = "ERROR_LOG"
+id = "7edf894ff9ba4dd08b5433ed76ebc9c6"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_KEYS"
+id = "b7ff9178798d4a238afff79522f651e8"
+
+[[env.production.kv_namespaces]]
+binding = "PREDICTION_CACHE"
+id = "eebf04d329c0419e92eec884f39a636d"
+
+[[env.production.kv_namespaces]]
+binding = "BSI_PROD_CACHE"
+id = "e6cb68e815cd45babeee0e10460dbfee"
+
+[[env.production.kv_namespaces]]
+binding = "MONITOR_KV"
+id = "eb5a89bcb6034c97831b358b1a8b2eba"
+
 [[env.production.r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "bsi-game-assets"
+
+[[env.production.r2_buckets]]
+binding = "DATA_LAKE"
+bucket_name = "blaze-sports-data-lake"
 
 [[env.production.durable_objects.bindings]]
 name = "CACHE"
@@ -94,9 +150,24 @@ class_name = "CacheObject"
 name = "PORTAL_POLLER"
 class_name = "PortalPoller"
 
+[[env.production.analytics_engine_datasets]]
+binding = "OPS_EVENTS"
+dataset = "bsi_ops_events"
+
+# Cron trigger — warm KV cache for scores + rankings
+[env.production.triggers]
+crons = ["*/1 * * * *"]
+
+[[env.production.tail_consumers]]
+service = "bsi-error-tracker"
+
 # Secrets (set via `wrangler secret put --env production`):
 # SPORTS_DATA_IO_API_KEY (required for canonical SportsDataIO routes)
 # RAPIDAPI_KEY
 # NOTION_TOKEN
 # STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# RESEND_API_KEY
 # AMPLITUDE_API_KEY
+# TURNSTILE_SECRET_KEY (for Cloudflare Turnstile bot protection)
+# ADMIN_KEY (required for /api/admin/* endpoints)

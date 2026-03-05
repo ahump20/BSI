@@ -37,34 +37,26 @@ const config: Config = {
           900: '#92400E',
           DEFAULT: '#FDB913',
         },
-        // Charcoal/Neutral Scale
+        // Charcoal — BSI brand neutral (not Tailwind's blue-tinted gray)
         charcoal: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
+          DEFAULT: '#1A1A1A',
           800: '#1f2937',
           900: '#111827',
           950: '#0a0a0f',
-          DEFAULT: '#1f2937',
         },
         // Semantic Colors
         'texas-soil': '#8B4513',
         'texas-cream': '#F5E6D3',
-        midnight: '#0d0d12',
+        midnight: '#0D0D0D',
         ember: '#FF6B35',
         flame: '#E85D04',
         graphite: '#242424',
         // Text Colors
         text: {
-          primary: '#fafafa',
-          secondary: '#a3a3a3',
+          primary: '#F5F0EB',
+          secondary: '#A89F95',
           tertiary: '#737373',
-          muted: '#525252',
+          muted: 'rgba(245, 240, 235, 0.40)',
         },
         // Border Colors
         border: {
@@ -75,17 +67,16 @@ const config: Config = {
         },
         // Background variants
         background: {
-          primary: '#0d0d12',
-          secondary: '#161620',
-          tertiary: '#1f1f2e',
-          elevated: '#28283c',
+          primary: '#0D0D0D',
+          secondary: '#1A1A1A',
+          tertiary: '#242424',
+          elevated: '#2E2E2E',
         },
-        // Surface/Glass
+        // Surface/Glass — must match globals.css utility overrides
         surface: {
-          DEFAULT: 'rgba(255, 255, 255, 0.08)',
-          light: 'rgba(255, 255, 255, 0.08)',
-          medium: 'rgba(255, 255, 255, 0.12)',
-          heavy: 'rgba(255, 255, 255, 0.16)',
+          DEFAULT: 'rgba(255, 255, 255, 0.04)',
+          light: 'rgba(255, 255, 255, 0.025)',
+          medium: 'rgba(255, 255, 255, 0.04)',
         },
         // Status Colors
         success: {
@@ -156,9 +147,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
         display: ['var(--font-oswald)', 'Oswald', 'Impact', 'Arial Black', 'sans-serif'],
-        serif: ['var(--font-serif)', 'Playfair Display', 'Georgia', 'Cambria', 'serif'],
+        serif: ['var(--font-cormorant)', 'Cormorant Garamond', 'Georgia', 'Cambria', 'serif'],
         mono: ['var(--font-mono)', 'JetBrains Mono', 'SF Mono', 'Consolas', 'Monaco', 'Courier New', 'monospace'],
       },
       fontSize: {

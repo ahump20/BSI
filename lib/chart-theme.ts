@@ -4,7 +4,7 @@
  */
 
 export const BSI_CHART_COLORS = {
-  primary: '#BF5700',
+  primary: '#BF5700', // token: --bsi-primary
   secondary: '#FDB913',
   tertiary: '#5CC8FF',
   success: '#10b981',

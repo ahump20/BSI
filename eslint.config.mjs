@@ -12,7 +12,7 @@ export default tseslint.config(
       'dist/**',
       'app/dist/**',
       '.wrangler/**',
-      'workers/node_modules/**',
+      'workers/**',
       '.cursor/**',
       '.codex/**',
       'lib/genie-dynamics/**',

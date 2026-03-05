@@ -67,7 +67,7 @@ export function Sheet({ open, onClose, children, side = 'right', className = '' 
             animate={v.animate}
             exit={v.exit}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className={`fixed z-[1050] overflow-y-auto bg-[var(--bsi-bg-secondary,#161620)] border-l border-white/10 ${positionClass} ${className}`}
+            className={`fixed z-[1050] overflow-y-auto bg-[var(--bsi-bg-secondary)] border-l border-border ${positionClass} ${className}`}
           >
             {children}
           </motion.div>
@@ -79,7 +79,7 @@ export function Sheet({ open, onClose, children, side = 'right', className = '' 
 
 export function SheetHeader({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`sticky top-0 z-10 px-6 py-4 border-b border-white/10 bg-[var(--bsi-bg-secondary,#161620)] ${className}`}>
+    <div className={`sticky top-0 z-10 px-6 py-4 border-b border-border bg-[var(--bsi-bg-secondary)] ${className}`}>
       {children}
     </div>
   );

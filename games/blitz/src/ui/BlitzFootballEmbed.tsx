@@ -275,7 +275,7 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
       style={{
         width,
         height,
-        background: '#0D0D0D',
+        background: 'var(--bsi-midnight)',
         position: 'relative',
         overflow: 'hidden',
         fontFamily: "'Inter', -apple-system, sans-serif",
@@ -307,7 +307,7 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             padding: '2rem',
-            background: 'linear-gradient(180deg, #0D0D0D 0%, #050510 100%)',
+            background: 'linear-gradient(180deg, var(--bsi-midnight) 0%, #050510 100%)',
           }}
         >
           <h1
@@ -316,7 +316,7 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
               fontSize: 'clamp(2rem, 8vw, 3.5rem)',
               textTransform: 'uppercase',
               color: '#39FF14',
-              textShadow: '0 0 20px #39FF14, 4px 4px 0 #BF5700',
+              textShadow: '0 0 20px #39FF14, 4px 4px 0 var(--bsi-primary)',
               transform: 'skewX(-5deg)',
               marginBottom: '0.5rem',
             }}
@@ -368,7 +368,7 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
               fontSize: '1.5rem',
               textTransform: 'uppercase',
               background: 'linear-gradient(180deg, #39FF14 0%, #20CC10 100%)',
-              color: '#0D0D0D',
+              color: 'var(--bsi-midnight)',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -474,7 +474,7 @@ export const BlitzFootballEmbed: React.FC<BlitzFootballEmbedProps> = ({
                 fontSize: '1rem',
                 textTransform: 'uppercase',
                 background: 'linear-gradient(180deg, #39FF14 0%, #20CC10 100%)',
-                color: '#0D0D0D',
+                color: 'var(--bsi-midnight)',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',

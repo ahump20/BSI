@@ -8,6 +8,7 @@ import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge, DataSourceBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
+import { SportIcon } from '@/components/icons/SportIcon';
 import { Footer } from '@/components/layout-ds/Footer';
 import { formatTimestamp } from '@/lib/utils/timezone';
 
@@ -100,11 +101,11 @@ function SkeletonPlayerCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-graphite rounded-full" />
+        <div className="w-16 h-16 bg-background-tertiary rounded-full" />
         <div className="flex-1 space-y-2">
-          <div className="h-5 bg-graphite rounded w-3/4" />
-          <div className="h-4 bg-graphite/50 rounded w-1/2" />
-          <div className="h-3 bg-graphite/30 rounded w-1/3" />
+          <div className="h-5 bg-background-tertiary rounded w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-1/2" />
+          <div className="h-3 bg-background-tertiary/30 rounded w-1/3" />
         </div>
       </div>
     </Card>
@@ -139,7 +140,7 @@ function PlayerCard({ player }: { player: Player }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-white text-lg truncate group-hover:text-burnt-orange transition-colors">
+            <h3 className="font-display font-bold text-text-primary text-lg truncate group-hover:text-burnt-orange transition-colors">
               {player.name}
             </h3>
             <div className="flex items-center gap-2 text-sm text-text-secondary">
@@ -263,7 +264,7 @@ export default function NFLPlayersPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -275,7 +276,7 @@ export default function NFLPlayersPage() {
                 NFL
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Players</span>
+              <span className="text-text-primary font-medium">Players</span>
             </nav>
           </Container>
         </Section>
@@ -316,12 +317,12 @@ export default function NFLPlayersPage() {
                   placeholder="Search players or teams..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="w-full px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary placeholder-text-tertiary focus:outline-none focus:border-burnt-orange transition-colors"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-primary"
                   >
                     ✕
                   </button>
@@ -338,7 +339,7 @@ export default function NFLPlayersPage() {
                       className={`px-3 py-1.5 rounded-lg font-medium transition-all text-sm ${
                         selectedPosition === pos
                           ? 'bg-burnt-orange text-white'
-                          : 'bg-graphite text-text-secondary hover:bg-white/10'
+                          : 'bg-background-tertiary text-text-secondary hover:bg-surface-medium'
                       }`}
                     >
                       {pos}
@@ -350,7 +351,7 @@ export default function NFLPlayersPage() {
                 <select
                   value={selectedTeam}
                   onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="px-4 py-2 bg-graphite border border-border-subtle rounded-lg text-white focus:outline-none focus:border-burnt-orange transition-colors"
+                  className="px-4 py-2 bg-background-tertiary border border-border-subtle rounded-lg text-text-primary focus:outline-none focus:border-burnt-orange transition-colors"
                 >
                   <option value="All">All Teams</option>
                   {nflTeams
@@ -400,7 +401,7 @@ export default function NFLPlayersPage() {
             ) : filteredPlayers.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">🏈</div>
+                  <SportIcon sport="nfl" className="w-16 h-16 mx-auto mb-4 text-text-tertiary" />
                   <p className="text-text-secondary text-lg">
                     {searchQuery || selectedPosition !== 'All' || selectedTeam !== 'All'
                       ? 'No players match your filters'
@@ -434,26 +435,26 @@ export default function NFLPlayersPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nfl/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nfl/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nfl/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-medium transition-all"
               >
                 All Teams →
               </Link>
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

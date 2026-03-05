@@ -6,11 +6,12 @@ import { usePathname, useParams } from 'next/navigation';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { CitationFooter } from '@/components/sports';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 // ============================================================================
 // TYPES
@@ -98,12 +99,6 @@ export interface CollegeGameData {
   plays?: Play[];
 }
 
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
-}
-
 interface GameApiResponse {
   game?: CollegeGameData;
   meta?: DataMeta;
@@ -129,25 +124,6 @@ export function useGameData() {
     throw new Error('useGameData must be used within a CollegeGameDetailLayout');
   }
   return context;
-}
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-function _formatTimestamp(isoString?: string): string {
-  const date = isoString ? new Date(isoString) : new Date();
-  return (
-    date.toLocaleString('en-US', {
-      timeZone: 'America/Chicago',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    }) + ' CT'
-  );
 }
 
 // ============================================================================
@@ -207,6 +183,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   // Tab navigation
   const tabs = [
     { id: 'summary', label: 'Summary', href: `/college-baseball/game/${gameId}` },
+    { id: 'live', label: 'Game Day', href: `/college-baseball/game/${gameId}/live` },
     { id: 'box-score', label: 'Box Score', href: `/college-baseball/game/${gameId}/box-score` },
     {
       id: 'play-by-play',
@@ -218,6 +195,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
   ];
 
   const getActiveTab = () => {
+    if (pathname?.includes('/live')) return 'live';
     if (pathname?.includes('/box-score')) return 'box-score';
     if (pathname?.includes('/play-by-play')) return 'play-by-play';
     if (pathname?.includes('/team-stats')) return 'team-stats';
@@ -229,7 +207,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
 
   return (
     <GameContext.Provider value={{ game, loading, error, meta, refresh: fetchGame }}>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -248,7 +226,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                 Scores
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">
+              <span className="text-text-primary font-medium">
                 {game
                   ? `${game.teams.away.abbreviation} @ ${game.teams.home.abbreviation}`
                   : `Game ${gameId}`}
@@ -300,7 +278,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                         day: 'numeric',
                       })}
                     </Badge>
-                    {game.status.isLive && <LiveBadge />}
+                    {game.status.isLive && <FreshnessBadge isLive fetchedAt={meta?.lastUpdated} />}
                     {game.teams.away.conference && (
                       <Badge variant="outline">{game.teams.away.conference}</Badge>
                     )}
@@ -310,7 +288,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                   <div className="flex items-center justify-center gap-8 md:gap-16 py-6">
                     {/* Away Team */}
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
+                      <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
                         {game.teams.away.abbreviation}
                         {game.teams.away.ranking && (
                           <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -318,12 +296,12 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </span>
                         )}
                       </div>
-                      <p className="font-semibold text-white">{game.teams.away.name}</p>
+                      <p className="font-semibold text-text-primary">{game.teams.away.name}</p>
                       <p className="text-xs text-text-tertiary">{game.teams.away.record || ''}</p>
                       <p
                         className={`text-4xl font-bold font-mono mt-2 ${
                           game.status.isFinal && game.teams.away.isWinner
-                            ? 'text-white'
+                            ? 'text-text-primary'
                             : 'text-text-secondary'
                         }`}
                       >
@@ -350,7 +328,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
 
                     {/* Home Team */}
                     <div className="text-center">
-                      <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
+                      <div className="w-16 h-16 bg-background-secondary rounded-full flex items-center justify-center text-xl font-bold text-burnt-orange mx-auto mb-2 relative">
                         {game.teams.home.abbreviation}
                         {game.teams.home.ranking && (
                           <span className="absolute -top-1 -right-1 w-6 h-6 bg-burnt-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
@@ -358,12 +336,12 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </span>
                         )}
                       </div>
-                      <p className="font-semibold text-white">{game.teams.home.name}</p>
+                      <p className="font-semibold text-text-primary">{game.teams.home.name}</p>
                       <p className="text-xs text-text-tertiary">{game.teams.home.record || ''}</p>
                       <p
                         className={`text-4xl font-bold font-mono mt-2 ${
                           game.status.isFinal && game.teams.home.isWinner
-                            ? 'text-white'
+                            ? 'text-text-primary'
                             : 'text-text-secondary'
                         }`}
                       >
@@ -397,7 +375,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                           </thead>
                           <tbody className="text-text-secondary">
                             <tr className="border-b border-border-subtle">
-                              <td className="p-1.5 font-semibold text-white">
+                              <td className="p-1.5 font-semibold text-text-primary">
                                 {game.teams.away.abbreviation}
                               </td>
                               {Array.from(
@@ -408,7 +386,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                                   </td>
                                 )
                               )}
-                              <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
+                              <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                                 {game.linescore.totals.away.runs}
                               </td>
                               <td className="text-center p-1.5 font-mono">
@@ -419,7 +397,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                               </td>
                             </tr>
                             <tr>
-                              <td className="p-1.5 font-semibold text-white">
+                              <td className="p-1.5 font-semibold text-text-primary">
                                 {game.teams.home.abbreviation}
                               </td>
                               {Array.from(
@@ -430,7 +408,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                                   </td>
                                 )
                               )}
-                              <td className="text-center p-1.5 font-mono font-bold text-white border-l border-border-subtle">
+                              <td className="text-center p-1.5 font-mono font-bold text-text-primary border-l border-border-subtle">
                                 {game.linescore.totals.home.runs}
                               </td>
                               <td className="text-center p-1.5 font-mono">
@@ -460,7 +438,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
                       className={`px-6 py-3 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 -mb-px ${
                         activeTab === tab.id
                           ? 'text-burnt-orange border-burnt-orange'
-                          : 'text-text-tertiary border-transparent hover:text-white'
+                          : 'text-text-tertiary border-transparent hover:text-text-primary'
                       }`}
                     >
                       {tab.label}
@@ -490,7 +468,7 @@ export default function GameLayoutClient({ children }: GameLayoutClientProps) {
             </Section>
           </>
         ) : null}
-      </main>
+      </div>
 
       <Footer />
     </GameContext.Provider>

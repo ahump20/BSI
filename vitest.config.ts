@@ -4,7 +4,7 @@
  * Test configuration for BlazeSportsIntel college baseball analytics platform.
  *
  * Test Structure:
- * - /tests/analytics/ - Analytics library tests (ConferenceStrengthModel, ScheduleOptimizer)
+ * - /tests/analytics/ - Analytics library tests (ConferenceStrengthModel)
  * - /tests/api/ - API endpoint tests (scheduling/optimize)
  * - /tests/components/ - React component tests (future)
  *

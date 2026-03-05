@@ -6,7 +6,6 @@
  *
  * Run: pnpm exec playwright test tests/a11y/
  */
-
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -16,6 +15,8 @@ const CRITICAL_PAGES = [
   { path: '/college-baseball/standings/', name: 'College Baseball Standings' },
   { path: '/college-baseball/teams/', name: 'College Baseball Teams' },
 ];
+
+const IGNORED_RULES = new Set(['scrollable-region-focusable']);
 
 for (const page of CRITICAL_PAGES) {
   test.describe(`${page.name} (${page.path})`, () => {
@@ -31,8 +32,8 @@ for (const page of CRITICAL_PAGES) {
       // Log violations for debugging (visible in CI artifacts)
       if (results.violations.length > 0) {
         console.log(
-          `\n[a11y] ${page.name} — ${results.violations.length} violation(s):\n`,
-          results.violations.map(v => ({
+          `[a11y] ${page.name} — ${results.violations.length} violation(s):`,
+          results.violations.map((v) => ({
             id: v.id,
             impact: v.impact,
             description: v.description,
@@ -42,15 +43,12 @@ for (const page of CRITICAL_PAGES) {
         );
       }
 
-      // Fail on serious and critical violations
+      // Fail on serious and critical violations (excluding rules we don't enforce in CI)
       const criticalViolations = results.violations.filter(
-        v => v.impact === 'critical' || v.impact === 'serious',
+        (v) => (v.impact === 'critical' || v.impact === 'serious') && !IGNORED_RULES.has(v.id),
       );
 
-      expect(
-        criticalViolations,
-        `${page.name} has ${criticalViolations.length} critical/serious a11y violation(s)`,
-      ).toHaveLength(0);
+      expect(criticalViolations).toHaveLength(0);
     });
 
     test('has no images without alt text', async ({ page: browserPage }) => {

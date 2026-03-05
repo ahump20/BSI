@@ -5,21 +5,23 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { Badge, LiveBadge } from '@/components/ui/Badge';
+import { Badge, FreshnessBadge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
-import { CitationFooter, DataDisclaimer } from '@/components/sports';
+import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { SPORT_ICONS } from '@/components/icons/SportIcons';
 
 interface SportSection {
   id: string;
   name: string;
   href: string;
-  icon: string;
   description: string;
   liveCount: number;
   todayCount: number;
   season: string;
   isActive: boolean;
+  loaded: boolean;
 }
 
 export default function ScoresHubPage() {
@@ -28,148 +30,102 @@ export default function ScoresHubPage() {
       id: 'college-baseball',
       name: 'College Baseball',
       href: '/college-baseball/scores',
-      icon: '⚾',
       description: 'All 300+ D1 programs — live scores, box scores, and recaps',
       liveCount: 0,
       todayCount: 0,
       season: 'Feb - Jun',
-      isActive: false, // Will check API
+      isActive: false,
+      loaded: false,
     },
     {
       id: 'mlb',
       name: 'MLB',
       href: '/mlb/scores',
-      icon: '⚾',
       description: 'Real-time MLB scores from the official Stats API',
       liveCount: 0,
       todayCount: 0,
       season: 'Mar - Oct',
       isActive: true,
+      loaded: false,
     },
     {
       id: 'nfl',
       name: 'NFL',
       href: '/nfl',
-      icon: '🏈',
       description: 'NFL scores, standings, and game analysis',
       liveCount: 0,
       todayCount: 0,
       season: 'Sep - Feb',
       isActive: false,
+      loaded: false,
     },
     {
       id: 'nba',
       name: 'NBA',
       href: '/nba',
-      icon: '🏀',
       description: 'NBA scores and standings',
       liveCount: 0,
       todayCount: 0,
       season: 'Oct - Jun',
       isActive: false,
+      loaded: false,
     },
   ]);
 
   const [totalLive, setTotalLive] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [fetchedAt, setFetchedAt] = useState('');
 
   useEffect(() => {
     async function fetchLiveCounts() {
       try {
-        // Fetch MLB live count
-        const mlbRes = await fetch('/api/mlb/scores');
-        if (mlbRes.ok) {
-          const mlbData = (await mlbRes.json()) as {
-            games?: Array<{ status?: { isLive?: boolean } }>;
-          };
-          const mlbLive =
-            mlbData.games?.filter((g: { status?: { isLive?: boolean } }) => g.status?.isLive)
-              .length || 0;
+      const [mlbResult, cbResult, nflResult, nbaResult] = await Promise.allSettled([
+        fetch('/api/mlb/scores').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { isLive?: boolean } }> }> : null),
+        fetch('/api/college-baseball/schedule').then(r => r.ok ? r.json() as Promise<{ data?: Array<{ status?: string }>; games?: Array<{ status?: string }> }> : null),
+        fetch('/api/nfl/scores').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> }> : null),
+        fetch('/api/nba/scoreboard').then(r => r.ok ? r.json() as Promise<{ games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> }> : null),
+      ]);
+
+      let live = 0;
+
+      setSports((prev) => prev.map((s) => {
+        if (s.id === 'mlb' && mlbResult.status === 'fulfilled' && mlbResult.value) {
+          const mlbData = mlbResult.value;
+          const mlbLive = mlbData.games?.filter(g => g.status?.isLive).length || 0;
           const mlbTotal = mlbData.games?.length || 0;
-
-          setSports((prev) =>
-            prev.map((s) =>
-              s.id === 'mlb'
-                ? { ...s, liveCount: mlbLive, todayCount: mlbTotal, isActive: mlbTotal > 0 }
-                : s
-            )
-          );
-          setTotalLive((prev) => prev + mlbLive);
+          live += mlbLive;
+          return { ...s, liveCount: mlbLive, todayCount: mlbTotal, isActive: mlbTotal > 0, loaded: true };
         }
-      } catch {
-        // Ignore errors, show default state
-      }
-
-      try {
-        // Fetch College Baseball count
-        const cbRes = await fetch('/api/college-baseball/schedule');
-        if (cbRes.ok) {
-          const cbData = (await cbRes.json()) as {
-            data?: Array<{ status?: string }>;
-            games?: Array<{ status?: string }>;
-          };
+        if (s.id === 'college-baseball' && cbResult.status === 'fulfilled' && cbResult.value) {
+          const cbData = cbResult.value;
           const games = cbData.data || cbData.games || [];
-          const cbLive = games.filter((g: { status?: string }) => g.status === 'live').length;
+          const cbLive = games.filter(g => g.status === 'live').length;
           const cbTotal = games.length;
-
-          setSports((prev) =>
-            prev.map((s) =>
-              s.id === 'college-baseball'
-                ? { ...s, liveCount: cbLive, todayCount: cbTotal, isActive: cbTotal > 0 }
-                : s
-            )
-          );
-          setTotalLive((prev) => prev + cbLive);
+          live += cbLive;
+          return { ...s, liveCount: cbLive, todayCount: cbTotal, isActive: cbTotal > 0, loaded: true };
         }
-      } catch {
-        // Ignore errors
-      }
-
-      // Fetch NFL game count
-      try {
-        const nflRes = await fetch('/api/nfl/scores');
-        if (nflRes.ok) {
-          const nflData = (await nflRes.json()) as { games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> };
-          const nflGames = nflData.games || [];
-          const nflLive = nflGames.filter((g) => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
+        if (s.id === 'nfl' && nflResult.status === 'fulfilled' && nflResult.value) {
+          const nflGames = nflResult.value.games || [];
+          const nflLive = nflGames.filter(g => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
           const nflTotal = nflGames.length;
-
-          setSports((prev) =>
-            prev.map((s) =>
-              s.id === 'nfl'
-                ? { ...s, liveCount: nflLive, todayCount: nflTotal, isActive: nflTotal > 0 }
-                : s
-            )
-          );
-          setTotalLive((prev) => prev + nflLive);
+          live += nflLive;
+          return { ...s, liveCount: nflLive, todayCount: nflTotal, isActive: nflTotal > 0, loaded: true };
         }
-      } catch {
-        // Ignore errors
-      }
-
-      // Fetch NBA game count
-      try {
-        const nbaRes = await fetch('/api/nba/scoreboard');
-        if (nbaRes.ok) {
-          const nbaData = (await nbaRes.json()) as { games?: Array<{ status?: { type?: { completed?: boolean }; period?: number } }> };
-          const nbaGames = nbaData.games || [];
-          const nbaLive = nbaGames.filter((g) => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
+        if (s.id === 'nba' && nbaResult.status === 'fulfilled' && nbaResult.value) {
+          const nbaGames = nbaResult.value.games || [];
+          const nbaLive = nbaGames.filter(g => !g.status?.type?.completed && g.status?.period && g.status.period > 0).length;
           const nbaTotal = nbaGames.length;
-
-          setSports((prev) =>
-            prev.map((s) =>
-              s.id === 'nba'
-                ? { ...s, liveCount: nbaLive, todayCount: nbaTotal, isActive: nbaTotal > 0 }
-                : s
-            )
-          );
-          setTotalLive((prev) => prev + nbaLive);
+          live += nbaLive;
+          return { ...s, liveCount: nbaLive, todayCount: nbaTotal, isActive: nbaTotal > 0, loaded: true };
         }
-      } catch {
-        // Ignore errors
-      }
+        return { ...s, loaded: true };
+      }));
 
-      setLoading(false);
+      setTotalLive(live);
+      setFetchedAt(new Date().toISOString());
+      } catch {
+        // Mark all sports as loaded even on failure to avoid infinite loading state
+        setSports((prev) => prev.map((s) => ({ ...s, loaded: true })));
+      }
     }
 
     fetchLiveCounts();
@@ -183,16 +139,16 @@ export default function ScoresHubPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Header */}
-        <Section padding="lg" className="relative overflow-hidden pt-24">
+        <Section padding="lg" className="relative overflow-hidden pt-6">
           <div className="absolute inset-0 bg-gradient-radial from-burnt-orange/10 via-transparent to-transparent pointer-events-none" />
 
           <Container>
             <ScrollReveal direction="up">
               <div className="flex items-center gap-3 mb-4">
                 <Badge variant="primary">All Sports</Badge>
-                {hasAnyLive && <LiveBadge />}
+                {hasAnyLive && <FreshnessBadge isLive fetchedAt={fetchedAt} />}
               </div>
             </ScrollReveal>
 
@@ -225,6 +181,7 @@ export default function ScoresHubPage() {
         {/* Sports Grid */}
         <Section padding="lg" background="charcoal" borderTop>
           <Container>
+            <DataErrorBoundary name="Sports Grid">
             <div className="grid gap-6 md:grid-cols-2">
               {sports.map((sport, index) => (
                 <ScrollReveal key={sport.id} direction="up" delay={index * 100}>
@@ -238,9 +195,11 @@ export default function ScoresHubPage() {
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-3xl">{sport.icon}</span>
+                          <span className="text-text-secondary">
+                            {(() => { const Icon = SPORT_ICONS[sport.id]; return Icon ? <Icon /> : null; })()}
+                          </span>
                           <div>
-                            <h2 className="text-xl font-display font-bold text-white">
+                            <h2 className="text-xl font-display font-bold text-text-primary">
                               {sport.name}
                             </h2>
                             <p className="text-xs text-text-tertiary">Season: {sport.season}</p>
@@ -268,7 +227,7 @@ export default function ScoresHubPage() {
                           View Scores →
                         </span>
 
-                        {loading ? (
+                        {!sport.loaded ? (
                           <span className="text-xs text-text-tertiary">Loading...</span>
                         ) : sport.todayCount > 0 ? (
                           <span className="text-xs text-text-tertiary">
@@ -288,8 +247,8 @@ export default function ScoresHubPage() {
 
             {/* Quick Links */}
             <ScrollReveal direction="up" delay={400}>
-              <div className="mt-12 p-6 bg-graphite rounded-lg border border-border-subtle">
-                <h3 className="text-lg font-semibold text-white mb-4">Quick Access</h3>
+              <div className="mt-12 p-6 bg-background-tertiary rounded-lg border border-border-subtle">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Access</h3>
                 <div className="flex flex-wrap gap-3">
                   <Link
                     href="/college-baseball/scores"
@@ -305,19 +264,19 @@ export default function ScoresHubPage() {
                   </Link>
                   <Link
                     href="/college-baseball/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     College Baseball Standings
                   </Link>
                   <Link
                     href="/mlb/standings"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     MLB Standings
                   </Link>
                   <Link
                     href="/nil-valuation"
-                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-charcoal hover:bg-slate text-text-secondary hover:text-text-primary rounded-lg text-sm font-medium transition-colors"
                   >
                     NIL Valuations
                   </Link>
@@ -325,18 +284,18 @@ export default function ScoresHubPage() {
               </div>
             </ScrollReveal>
 
-            {/* Data Attribution */}
-            <CitationFooter
-              source="SportsDataIO"
-              fetchedAt=""
-              additionalSources={['ESPN', 'NCAA.org', 'D1Baseball']}
-              showFreshness={false}
-              className="mt-8"
-            />
-            <DataDisclaimer className="mt-4" />
+            {/* Data Freshness */}
+            <div className="mt-8 pt-4 border-t border-border-subtle">
+              <DataFreshnessIndicator
+                lastUpdated={fetchedAt ? new Date(fetchedAt) : undefined}
+                source="BSI Multi-Source"
+                refreshInterval={60}
+              />
+            </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

@@ -15,11 +15,11 @@ export function ToggleGroup<T extends string>({
   onValueChange,
   options,
   className,
-  accentColor = 'var(--bsi-primary, #BF5700)',
+  accentColor = 'var(--bsi-primary)',
 }: ToggleGroupProps<T>) {
   return (
     <div
-      className={clsx('inline-flex gap-1 rounded-lg p-1 bg-white/5 border border-white/10', className)}
+      className={clsx('inline-flex gap-1 rounded-lg p-1 bg-surface-light border border-border', className)}
       role="radiogroup"
     >
       {options.map((opt) => {
@@ -32,7 +32,7 @@ export function ToggleGroup<T extends string>({
             onClick={() => onValueChange(opt.value)}
             className={clsx(
               'px-3 py-1.5 rounded-md text-xs font-mono uppercase tracking-[0.12em] transition-all',
-              active ? 'border shadow-sm' : 'text-white/40 hover:text-white/70 border border-transparent',
+              active ? 'border shadow-sm' : 'text-text-muted hover:text-text-secondary border border-transparent',
             )}
             style={
               active

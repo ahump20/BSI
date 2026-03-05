@@ -109,10 +109,10 @@ export function ModelHealth() {
           </ResponsiveContainer>
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="font-mono text-[10px] text-white/25">
+          <span className="font-mono text-[10px] text-text-muted">
             {chartData.length} weeks rolling
           </span>
-          <span className="font-mono text-[10px] text-white/25">
+          <span className="font-mono text-[10px] text-text-muted">
             {isReal ? 'Live prediction accuracy' : 'Sample data — model in training'}
           </span>
         </div>

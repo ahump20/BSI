@@ -18,13 +18,13 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
     <div
       className="intel-panel p-3"
       style={{
-        borderColor: 'color-mix(in srgb, var(--bsi-ember, #FF6B35) 20%, transparent)',
+        borderColor: 'color-mix(in srgb, var(--bsi-accent) 20%, transparent)',
       }}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="intel-section-label">
-          <Flame className="h-4 w-4" style={{ color: 'var(--bsi-ember, #FF6B35)' }} />
+          <Flame className="h-4 w-4" style={{ color: 'var(--bsi-accent)' }} />
           Priority Signals
           <Badge variant="warning" className="text-[10px]" style={{ fontFamily: 'var(--intel-mono)' }}>
             {signals.length}
@@ -70,7 +70,7 @@ export function PrioritySignals({ signals, isPinned, onTogglePin }: PrioritySign
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="intel-caption">{s.timestamp}</span>
-                  <span className="opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: pinState ? 'var(--bsi-ember, #FF6B35)' : 'white' }}>
+                  <span className="opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: pinState ? 'var(--bsi-accent)' : 'white' }}>
                     {pinState ? <Pin className="h-3.5 w-3.5" /> : <PinOff className="h-3.5 w-3.5" />}
                   </span>
                 </div>

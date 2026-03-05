@@ -10,6 +10,7 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimestamp } from '@/lib/utils/timezone';
+import type { DataMeta } from '@/lib/types/data-meta';
 
 interface StatLeader {
   rank: number;
@@ -21,12 +22,6 @@ interface StatLeader {
   };
   value: number | string;
   supportingStats?: Record<string, string | number>;
-}
-
-interface DataMeta {
-  dataSource: string;
-  lastUpdated: string;
-  timezone: string;
 }
 
 type CategoryType = 'batting' | 'pitching';
@@ -104,8 +99,8 @@ export default function MLBStatsPage() {
         rank === 1
           ? 'bg-burnt-orange/10 border border-burnt-orange'
           : rank <= 3
-            ? 'bg-graphite'
-            : 'bg-charcoal'
+            ? 'bg-background-tertiary'
+            : 'bg-background-secondary'
       }`}
     >
       {/* Rank */}
@@ -116,8 +111,8 @@ export default function MLBStatsPage() {
             : rank === 2
               ? 'bg-gold/20 text-gold'
               : rank === 3
-                ? 'bg-copper/20 text-copper'
-                : 'bg-graphite text-text-tertiary'
+                ? 'bg-texas-soil/20 text-texas-soil'
+                : 'bg-background-tertiary text-text-tertiary'
         }`}
       >
         {rank}
@@ -125,7 +120,7 @@ export default function MLBStatsPage() {
 
       {/* Player Info */}
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-white truncate">{leader.player.name}</p>
+        <p className="font-semibold text-text-primary truncate">{leader.player.name}</p>
         <p className="text-xs text-text-tertiary">{leader.player.team}</p>
       </div>
 
@@ -133,7 +128,7 @@ export default function MLBStatsPage() {
       <div className="text-right">
         <p
           className={`text-2xl font-bold font-mono ${
-            rank === 1 ? 'text-burnt-orange' : 'text-white'
+            rank === 1 ? 'text-burnt-orange' : 'text-text-primary'
           }`}
         >
           {currentStatConfig?.format(leader.value as number) || leader.value}
@@ -151,7 +146,7 @@ export default function MLBStatsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -163,7 +158,7 @@ export default function MLBStatsPage() {
                 MLB
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">Stats Leaders</span>
+              <span className="text-text-primary font-medium">Stats Leaders</span>
             </nav>
           </Container>
         </Section>
@@ -204,7 +199,7 @@ export default function MLBStatsPage() {
                 className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                   category === 'batting'
                     ? 'bg-burnt-orange text-white'
-                    : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                    : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                 }`}
               >
                 Batting
@@ -214,7 +209,7 @@ export default function MLBStatsPage() {
                 className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
                   category === 'pitching'
                     ? 'bg-burnt-orange text-white'
-                    : 'bg-graphite text-text-secondary hover:bg-white/10 hover:text-white'
+                    : 'bg-background-tertiary text-text-secondary hover:bg-surface-light hover:text-text-primary'
                 }`}
               >
                 Pitching
@@ -229,8 +224,8 @@ export default function MLBStatsPage() {
                   onClick={() => setSelectedStat(stat.id)}
                   className={`px-4 py-2 rounded-md text-sm transition-all ${
                     selectedStat === stat.id
-                      ? 'bg-white/10 text-white font-semibold border border-burnt-orange'
-                      : 'text-text-tertiary hover:text-white hover:bg-white/5'
+                      ? 'bg-surface-light text-text-primary font-semibold border border-burnt-orange'
+                      : 'text-text-tertiary hover:text-text-primary hover:bg-surface-light'
                   }`}
                 >
                   {stat.label}
@@ -247,7 +242,7 @@ export default function MLBStatsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
-                      <div key={i} className="flex items-center gap-4 p-4 bg-graphite rounded-lg">
+                      <div key={i} className="flex items-center gap-4 p-4 bg-background-tertiary rounded-lg">
                         <Skeleton variant="rectangular" width={40} height={40} className="rounded-full" />
                         <div className="flex-1">
                           <Skeleton variant="text" width={150} height={18} />
@@ -345,7 +340,7 @@ export default function MLBStatsPage() {
                             <p className="text-2xl font-bold text-burnt-orange font-mono">
                               {stat.format(topLeader.value as number)}
                             </p>
-                            <p className="text-sm text-white mt-1">{topLeader.player.name}</p>
+                            <p className="text-sm text-text-primary mt-1">{topLeader.player.name}</p>
                             <p className="text-xs text-text-tertiary">{topLeader.player.team}</p>
                           </>
                         ) : (
@@ -367,7 +362,7 @@ export default function MLBStatsPage() {
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

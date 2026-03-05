@@ -19,8 +19,8 @@ const paddingClasses: Record<string, string> = {
 
 const bgClasses: Record<string, string> = {
   default: '',
-  charcoal: 'bg-[#1A1A1A]',
-  midnight: 'bg-[#0D0D0D]',
+  charcoal: 'bg-background-secondary',
+  midnight: 'bg-background-primary',
   cream: 'bg-[#FAF8F5]',
 };
 
@@ -35,7 +35,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-white/10' : ''} ${className}`}
+      className={`${paddingClasses[padding]} ${bgClasses[background]} ${borderTop ? 'border-t border-border' : ''} ${className}`}
     >
       {children}
     </section>

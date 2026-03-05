@@ -1,13 +1,33 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSportData } from '@/lib/hooks/useSportData';
 import { Container } from '@/components/ui/Container';
 import { Section } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
+import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
+import { teamMetadata } from '@/lib/data/team-metadata';
+import { formatTimestamp } from '@/lib/utils/timezone';
+
+/** Map a full team name (e.g. "Texas Longhorns") to its teamMetadata slug (e.g. "texas"). */
+function teamSlug(fullName: string): string {
+  const lower = fullName.toLowerCase();
+  for (const [slug, meta] of Object.entries(teamMetadata)) {
+    if (meta.name.toLowerCase() === lower || meta.shortName.toLowerCase() === lower) {
+      return slug;
+    }
+  }
+  // Fallback: remove last word (mascot) and slugify
+  const words = fullName.split(' ');
+  if (words.length > 1) {
+    return words.slice(0, -1).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  }
+  return fullName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
 
 interface RankedTeam {
   rank: number;
@@ -70,32 +90,49 @@ interface RankingsApiResponse {
   };
 }
 
-// Transform ESPN rankings to our internal format
+// Transform rankings API response to our internal format.
+// Handles both flat format (handler-normalized) and legacy ESPN nested format.
 function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
-  // If we have the old format with poll, use it directly
-  if (data.poll) {
-    return data.poll;
+  if (data.poll) return data.poll;
+
+  const rankings = data.rankings;
+  if (!rankings?.length) return null;
+
+  const first = rankings[0] as unknown as Record<string, unknown>;
+
+  // Flat format: each entry has { rank, team, record, prev_rank }
+  if ('rank' in first && typeof first.rank === 'number') {
+    return {
+      id: 'espn',
+      name: 'D1Baseball Top 25',
+      lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
+      teams: (rankings as unknown as Array<Record<string, unknown>>).map((entry) => ({
+        rank: entry.rank as number,
+        previousRank: (entry.prev_rank as number) ?? undefined,
+        team: (entry.team as string) || 'Unknown',
+        conference: '',
+        record: (entry.record as string) || '',
+        points: (entry.points as number) ?? 0,
+        firstPlace: (entry.firstPlaceVotes as number) ?? 0,
+      })),
+    };
   }
 
-  // Transform ESPN format
-  const firstPoll = data.rankings?.[0];
-  if (!firstPoll || !firstPoll.ranks) {
-    return null;
-  }
+  // Legacy nested ESPN format: { name, ranks: [{ current, team: { location, name } }] }
+  const poll = first as unknown as ESPNRankingPoll;
+  if (!poll.ranks) return null;
 
   return {
     id: 'espn',
-    name: firstPoll.name || 'ESPN Top 25',
+    name: poll.name || 'ESPN Top 25',
     lastUpdated: data.meta?.lastUpdated || new Date().toISOString(),
-    teams: firstPoll.ranks.map((entry) => ({
+    teams: poll.ranks.map((entry) => ({
       rank: entry.current,
       previousRank: entry.previous,
-      // Use location (school name) + name (mascot) for full team name
-      // e.g., "UCLA" + "Bruins" = "UCLA Bruins"
       team: entry.team?.location
         ? `${entry.team.location} ${entry.team.name}`
         : entry.team?.nickname || entry.team?.name || 'Unknown',
-      conference: '', // ESPN doesn't include conference in rankings
+      conference: '',
       record: entry.recordSummary || '',
       points: entry.points,
       firstPlace: entry.firstPlaceVotes,
@@ -104,36 +141,12 @@ function transformESPNRankings(data: RankingsApiResponse): RankingPoll | null {
 }
 
 export default function CollegeBaseballRankingsPage() {
-  const [rankings, setRankings] = useState<RankingPoll | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedPoll, setSelectedPoll] = useState('d1baseball');
 
-  const loadRankings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Use the unified NCAA API with sport=baseball parameter
-      const response = await fetch(`/api/college-baseball/rankings`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as RankingsApiResponse;
-      const transformed = transformESPNRankings(data);
-      setRankings(transformed);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load rankings');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadRankings();
-  }, [loadRankings]);
+  const { data: rawData, loading, error, retry } = useSportData<RankingsApiResponse>(
+    '/api/college-baseball/rankings'
+  );
+  const rankings = rawData ? transformESPNRankings(rawData) : null;
 
   const getRankChange = (current: number, previous?: number) => {
     if (!previous || current === previous) return null;
@@ -151,8 +164,8 @@ export default function CollegeBaseballRankingsPage() {
 
   return (
     <>
-      <main id="main-content">
-        <Section padding="lg" className="pt-24">
+      <div>
+        <Section padding="lg" className="pt-6">
           <Container>
             {/* Breadcrumb & Header */}
             <ScrollReveal direction="up">
@@ -164,7 +177,7 @@ export default function CollegeBaseballRankingsPage() {
                   College Baseball
                 </Link>
                 <span className="text-text-tertiary">/</span>
-                <span className="text-white">Rankings</span>
+                <span className="text-text-primary">Rankings</span>
               </div>
 
               <div className="mb-8">
@@ -189,7 +202,7 @@ export default function CollegeBaseballRankingsPage() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedPoll === poll.value
                         ? 'bg-burnt-orange text-white'
-                        : 'bg-charcoal text-text-secondary hover:text-white hover:bg-slate'
+                        : 'bg-background-secondary text-text-secondary hover:text-text-primary hover:bg-slate'
                     }`}
                   >
                     {poll.label}
@@ -203,39 +216,53 @@ export default function CollegeBaseballRankingsPage() {
               <Card padding="lg" className="mb-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h2 className="font-display text-2xl font-bold text-white">
+                    <h2 className="font-display text-2xl font-bold text-text-primary">
                       {pollOptions.find((p) => p.value === selectedPoll)?.label}
                     </h2>
                     {rankings && (
                       <p className="text-text-tertiary text-sm mt-1">
-                        Last updated: {rankings.lastUpdated}
+                        Last updated: {formatTimestamp(rankings.lastUpdated)}
                       </p>
                     )}
                   </div>
-                  <Badge variant="primary">2025 Season</Badge>
+                  <Badge variant="primary">{new Date().getMonth() >= 8 ? new Date().getFullYear() + 1 : new Date().getFullYear()} Season</Badge>
                 </div>
               </Card>
             </ScrollReveal>
 
             {/* Rankings Table */}
+            <DataErrorBoundary name="Rankings">
             {loading ? (
               <div className="text-center py-16">
                 <div className="inline-block w-10 h-10 border-4 border-burnt-orange/30 border-t-burnt-orange rounded-full animate-spin mb-4" />
                 <p className="text-text-secondary">Loading rankings...</p>
+                <p className="text-text-tertiary text-xs mt-2">This usually takes a few seconds</p>
               </div>
             ) : error ? (
               <Card padding="lg" className="text-center">
                 <div className="text-error text-4xl mb-4">!</div>
-                <h3 className="text-xl font-semibold text-white mb-2">Error Loading Rankings</h3>
-                <p className="text-text-secondary">{error}</p>
+                <h3 className="text-xl font-semibold text-text-primary mb-2">Error Loading Rankings</h3>
+                <p className="text-text-secondary mb-4">{error}</p>
+                <button
+                  onClick={retry}
+                  className="px-4 py-2 bg-burnt-orange/20 text-burnt-orange rounded-lg text-sm font-medium hover:bg-burnt-orange/30 transition-colors"
+                >
+                  Try again
+                </button>
               </Card>
             ) : !rankings || rankings.teams.length === 0 ? (
               <Card padding="lg" className="text-center">
                 <div className="text-text-tertiary text-4xl mb-4">?</div>
-                <h3 className="text-xl font-semibold text-white mb-2">No Rankings Available</h3>
-                <p className="text-text-secondary">
-                  Rankings for this poll are not currently available.
+                <h3 className="text-xl font-semibold text-text-primary mb-2">No Rankings Available</h3>
+                <p className="text-text-secondary mb-4">
+                  Rankings for this poll are not currently available. Try another source.
                 </p>
+                <button
+                  onClick={retry}
+                  className="px-4 py-2 bg-surface-light text-text-secondary rounded-lg text-sm font-medium hover:bg-surface-medium transition-colors"
+                >
+                  Refresh
+                </button>
               </Card>
             ) : (
               <ScrollReveal direction="up" delay={200}>
@@ -243,7 +270,7 @@ export default function CollegeBaseballRankingsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-charcoal border-b border-border-subtle">
+                        <tr className="bg-background-secondary border-b border-border-subtle">
                           <th className="text-left py-4 px-4 text-xs font-semibold text-text-tertiary uppercase tracking-wider w-16">
                             Rank
                           </th>
@@ -289,14 +316,14 @@ export default function CollegeBaseballRankingsPage() {
                           return (
                             <tr
                               key={`${team.team}-${team.rank}`}
-                              className={`border-b border-border-subtle hover:bg-charcoal/50 transition-colors ${
+                              className={`border-b border-border-subtle hover:bg-background-secondary/50 transition-colors ${
                                 isTopTen ? 'bg-burnt-orange/5' : ''
                               }`}
                             >
                               <td className="py-4 px-4">
                                 <span
                                   className={`font-display text-lg font-bold ${
-                                    isTopTen ? 'text-burnt-orange' : 'text-white'
+                                    isTopTen ? 'text-burnt-orange' : 'text-text-primary'
                                   }`}
                                 >
                                   {team.rank}
@@ -304,8 +331,8 @@ export default function CollegeBaseballRankingsPage() {
                               </td>
                               <td className="py-4 px-4">
                                 <Link
-                                  href={`/college-baseball/teams/${encodeURIComponent(team.team.toLowerCase().replace(/\s+/g, '-'))}`}
-                                  className="font-semibold text-white hover:text-burnt-orange transition-colors"
+                                  href={`/college-baseball/teams/${teamSlug(team.team)}`}
+                                  className="font-semibold text-text-primary hover:text-burnt-orange transition-colors"
                                 >
                                   {team.team}
                                 </Link>
@@ -314,7 +341,7 @@ export default function CollegeBaseballRankingsPage() {
                                 {team.conference}
                               </td>
                               <td className="py-4 px-4 text-center">
-                                <span className="text-white font-mono">{team.record}</span>
+                                <span className="text-text-primary font-mono">{team.record}</span>
                               </td>
                               {selectedPoll === 'rpi' && (
                                 <>
@@ -388,7 +415,7 @@ export default function CollegeBaseballRankingsPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="px-4 py-3 bg-charcoal border-t border-border-subtle">
+                  <div className="px-4 py-3 bg-background-secondary border-t border-border-subtle">
                     <div className="flex flex-wrap items-center gap-4 text-xs text-text-tertiary">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-burnt-orange/20 rounded" />
@@ -413,15 +440,15 @@ export default function CollegeBaseballRankingsPage() {
               <ScrollReveal direction="up" delay={250}>
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-white mb-4">
+                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">
                       Also Receiving Votes
                     </h3>
                     <p className="text-text-secondary text-sm">
-                      Data available during active season. Check back when the 2025 season begins.
+                      Additional teams receiving votes will appear here as the season progresses.
                     </p>
                   </Card>
                   <Card padding="md">
-                    <h3 className="font-display text-lg font-bold text-white mb-4">Dropped Out</h3>
+                    <h3 className="font-display text-lg font-bold text-text-primary mb-4">Dropped Out</h3>
                     <p className="text-text-secondary text-sm">
                       Teams that fell out of the rankings will appear here during the season.
                     </p>
@@ -435,14 +462,16 @@ export default function CollegeBaseballRankingsPage() {
               <p>
                 Rankings sourced from official polls and D1Baseball. Updated weekly during season.
               </p>
-              <p className="mt-1" suppressHydrationWarning>
-                Last updated: {new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}{' '}
-                CT
-              </p>
+              {rankings && (
+                <p className="mt-1">
+                  Source data: {formatTimestamp(rankings.lastUpdated)}
+                </p>
+              )}
             </div>
+            </DataErrorBoundary>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>

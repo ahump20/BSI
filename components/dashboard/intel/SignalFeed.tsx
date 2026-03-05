@@ -18,7 +18,7 @@ export function SignalFeed({ signals, isPinned, onTogglePin }: SignalFeedProps) 
       {/* Header */}
       <div className="flex items-center justify-between p-4 pb-0">
         <div className="intel-section-label">
-          <Sparkles className="h-4 w-4" style={{ color: 'var(--bsi-ember, #FF6B35)' }} />
+          <Sparkles className="h-4 w-4" style={{ color: 'var(--bsi-accent)' }} />
           Signals
         </div>
         <Badge variant="outline" className="text-[10px]" style={{ fontFamily: 'var(--intel-mono)' }}>
@@ -121,7 +121,7 @@ function SignalCard({
         <button
           onClick={onTogglePin}
           className="shrink-0 p-1 opacity-40 transition-opacity group-hover:opacity-80"
-          style={{ color: pinned ? 'var(--bsi-ember, #FF6B35)' : 'white' }}
+          style={{ color: pinned ? 'var(--bsi-accent)' : 'white' }}
           title={pinned ? 'Unpin' : 'Pin to briefing'}
         >
           {pinned ? <Pin className="h-4 w-4" /> : <PinOff className="h-4 w-4" />}

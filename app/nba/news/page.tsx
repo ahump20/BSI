@@ -36,14 +36,14 @@ function SkeletonNewsCard() {
   return (
     <Card variant="default" padding="md" className="animate-pulse">
       <div className="flex gap-4">
-        <div className="w-24 h-24 bg-graphite rounded-lg flex-shrink-0 hidden sm:block" />
+        <div className="w-24 h-24 bg-background-tertiary rounded-lg flex-shrink-0 hidden sm:block" />
         <div className="flex-1 space-y-3">
-          <div className="h-5 bg-graphite rounded w-3/4" />
-          <div className="h-4 bg-graphite/50 rounded w-full" />
-          <div className="h-4 bg-graphite/50 rounded w-2/3" />
+          <div className="h-5 bg-background-tertiary rounded w-3/4" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-full" />
+          <div className="h-4 bg-background-tertiary/50 rounded w-2/3" />
           <div className="flex gap-2">
-            <div className="h-5 w-16 bg-graphite rounded" />
-            <div className="h-5 w-12 bg-graphite/50 rounded" />
+            <div className="h-5 w-16 bg-background-tertiary rounded" />
+            <div className="h-5 w-12 bg-background-tertiary/50 rounded" />
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ function NewsCard({ item }: { item: NewsItem }) {
           )}
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-white text-lg leading-tight group-hover:text-burnt-orange transition-colors line-clamp-2">
+            <h3 className="font-display font-bold text-text-primary text-lg leading-tight group-hover:text-burnt-orange transition-colors line-clamp-2">
               {item.title}
             </h3>
 
@@ -132,7 +132,7 @@ export default function NBANewsPage() {
 
   return (
     <>
-      <main id="main-content">
+      <div>
         {/* Breadcrumb */}
         <Section padding="sm" className="border-b border-border-subtle">
           <Container>
@@ -144,7 +144,7 @@ export default function NBANewsPage() {
                 NBA
               </Link>
               <span className="text-text-tertiary">/</span>
-              <span className="text-white font-medium">News</span>
+              <span className="text-text-primary font-medium">News</span>
             </nav>
           </Container>
         </Section>
@@ -200,7 +200,10 @@ export default function NBANewsPage() {
             ) : news.length === 0 ? (
               <Card variant="default" padding="lg" className="text-center">
                 <div className="py-8">
-                  <div className="text-6xl mb-4">📰</div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-16 h-16 mx-auto mb-4 text-text-tertiary">
+                    <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z" />
+                    <path d="M7 7h4v4H7zM13 7h4M13 11h4M7 15h10" />
+                  </svg>
                   <p className="text-text-secondary text-lg">No NBA news available right now</p>
                   <p className="text-text-tertiary text-sm mt-2">
                     Check back soon for the latest updates from around the league.
@@ -246,7 +249,7 @@ export default function NBANewsPage() {
                               </span>
                             </div>
 
-                            <h2 className="font-display font-bold text-white text-xl md:text-2xl leading-tight group-hover:text-burnt-orange transition-colors">
+                            <h2 className="font-display font-bold text-text-primary text-xl md:text-2xl leading-tight group-hover:text-burnt-orange transition-colors">
                               {news[0].title}
                             </h2>
 
@@ -288,26 +291,26 @@ export default function NBANewsPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/nba/games"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Live Scores →
               </Link>
               <Link
                 href="/nba/standings"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 Standings →
               </Link>
               <Link
                 href="/nba/teams"
-                className="px-6 py-3 bg-graphite rounded-lg text-text-secondary hover:text-white hover:bg-white/10 transition-all"
+                className="px-6 py-3 bg-background-tertiary rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-light transition-all"
               >
                 All Teams →
               </Link>
             </div>
           </Container>
         </Section>
-      </main>
+      </div>
 
       <Footer />
     </>
