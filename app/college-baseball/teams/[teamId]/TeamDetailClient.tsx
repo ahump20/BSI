@@ -14,7 +14,6 @@ import { SocialIntelTeamPanel } from '@/components/college-baseball/SocialIntelT
 import { preseason2026, getTierLabel } from '@/lib/data/preseason-2026';
 import { teamMetadata, getLogoUrl } from '@/lib/data/team-metadata';
 import { useSportData } from '@/lib/hooks/useSportData';
-import { fmt3 } from '@/lib/utils/format';
 import { formatDateInTimezone } from '@/lib/utils/timezone';
 import { withAlpha } from '@/lib/utils/color';
 import { FEATURE_ARTICLES } from '@/app/college-baseball/editorial/page';
@@ -161,6 +160,12 @@ interface ScheduleGame {
 function formatDate(iso: string): string {
   const result = formatDateInTimezone(iso, undefined, 'compact');
   return result === 'Invalid date' ? iso : result;
+}
+
+function fmt3(value: number): string {
+  if (!Number.isFinite(value)) return '—';
+  const fixed = value.toFixed(3);
+  return fixed.startsWith('0.') ? fixed.slice(1) : fixed;
 }
 
 function getAccentColor(primary: string, secondary: string): string {
