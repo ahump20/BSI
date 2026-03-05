@@ -1,9 +1,69 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useGameData } from './layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { LiveGameWidget } from '@/components/LiveGameWidget';
+import { MatchupIntelCard } from '@/components/intel/MatchupIntelCard';
+import { IntelStreamCard } from '@/components/intel/IntelStreamCard';
+
+// ─── Savant stat shapes (internal to this component) ──────────────────────────
+
+interface TeamStats {
+  batting: { wrcPlus: number; obp: number; slg: number };
+  pitching: { fip: number; eraMinus: number; kPct: number; bbPct: number };
+}
+
+interface SavantBatterRow {
+  team: string;
+  wrc_plus: number | null;
+  obp: number | null;
+  slg: number | null;
+}
+
+interface SavantPitcherRow {
+  team: string;
+  fip: number | null;
+  era_minus: number | null;
+  k_pct: number | null;
+  bb_pct: number | null;
+}
+
+function avg(values: number[]): number {
+  return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+}
+
+/** Fuzzy team name match — handles "Texas" vs "Texas Longhorns" etc. */
+function matchesTeam(rowTeam: string, gameName: string): boolean {
+  const a = rowTeam.toLowerCase();
+  const b = gameName.toLowerCase();
+  return a === b || a.includes(b) || b.includes(a);
+}
+
+function buildTeamStats(
+  batters: SavantBatterRow[],
+  pitchers: SavantPitcherRow[],
+  teamName: string
+): TeamStats | undefined {
+  const tb = batters.filter((r) => matchesTeam(r.team, teamName));
+  const tp = pitchers.filter((r) => matchesTeam(r.team, teamName));
+  if (tb.length === 0 && tp.length === 0) return undefined;
+
+  return {
+    batting: {
+      wrcPlus: Math.round(avg(tb.map((r) => r.wrc_plus ?? 100))),
+      obp: parseFloat(avg(tb.map((r) => r.obp ?? 0)).toFixed(3)),
+      slg: parseFloat(avg(tb.map((r) => r.slg ?? 0)).toFixed(3)),
+    },
+    pitching: {
+      fip: parseFloat(avg(tp.map((r) => r.fip ?? 4.0)).toFixed(2)),
+      eraMinus: Math.round(avg(tp.map((r) => r.era_minus ?? 100))),
+      kPct: parseFloat(avg(tp.map((r) => r.k_pct ?? 0)).toFixed(1)),
+      bbPct: parseFloat(avg(tp.map((r) => r.bb_pct ?? 0)).toFixed(1)),
+    },
+  };
+}
 
 /**
  * College Baseball Game Summary Page
@@ -12,6 +72,30 @@ import { LiveGameWidget } from '@/components/LiveGameWidget';
  */
 export default function CollegeGameSummaryClient() {
   const { game, loading, error } = useGameData();
+  const [homeStats, setHomeStats] = useState<TeamStats | undefined>(undefined);
+  const [awayStats, setAwayStats] = useState<TeamStats | undefined>(undefined);
+
+  // Fetch savant team stats only for pregame — skip once a boxscore exists
+  useEffect(() => {
+    if (!game || game.boxscore || game.status.isLive || game.status.isFinal) return;
+
+    const apiKey = typeof window !== 'undefined' ? localStorage.getItem('bsi-api-key') ?? '' : '';
+    const headers: HeadersInit = apiKey ? { 'X-BSI-Key': apiKey } : {};
+
+    Promise.all([
+      fetch('/api/savant/batting/leaderboard?limit=100&min_pa=5', { headers }).then((r) => r.json()),
+      fetch('/api/savant/pitching/leaderboard?limit=100&min_ip=5', { headers }).then((r) => r.json()),
+    ])
+      .then(([battingResp, pitchingResp]) => {
+        const batters: SavantBatterRow[] = (battingResp as { data?: SavantBatterRow[] })?.data ?? [];
+        const pitchers: SavantPitcherRow[] = (pitchingResp as { data?: SavantPitcherRow[] })?.data ?? [];
+        setHomeStats(buildTeamStats(batters, pitchers, game.teams.home.name));
+        setAwayStats(buildTeamStats(batters, pitchers, game.teams.away.name));
+      })
+      .catch(() => {
+        // Stats unavailable — card falls back to contextual analysis
+      });
+  }, [game?.id]);
 
   if (loading || error || !game) {
     return null; // Layout handles loading/error states
@@ -38,27 +122,45 @@ export default function CollegeGameSummaryClient() {
   // Game not started
   if (!game.boxscore && !game.status.isLive && !game.status.isFinal) {
     return (
-      <Card variant="default" padding="lg">
-        <div className="text-center py-8">
-          <svg
-            viewBox="0 0 24 24"
-            className="w-16 h-16 text-text-tertiary mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12,6 12,12 16,14" />
-          </svg>
-          <p className="text-text-secondary">First pitch hasn't happened yet.</p>
-          <p className="text-text-tertiary text-sm mt-2">
-            Come back when the game gets going. This is what ESPN ignores—but we'll have every stat.
-          </p>
-          <p className="text-burnt-orange text-sm mt-4 font-semibold">
-            {game.status.detailedState}
-          </p>
-        </div>
-      </Card>
+      <div className="space-y-4">
+        <MatchupIntelCard
+          homeTeam={game.teams.home.name}
+          awayTeam={game.teams.away.name}
+          gameId={game.id}
+          gameTime={`Game on ${game.date}`}
+          sport="college-baseball"
+          homeStats={homeStats}
+          awayStats={awayStats}
+        />
+        <IntelStreamCard
+          homeTeam={game.teams.home.name}
+          awayTeam={game.teams.away.name}
+          sport="college-baseball"
+          gameId={game.id}
+          analysisType="pregame"
+        />
+        <Card variant="default" padding="lg">
+          <div className="text-center py-8">
+            <svg
+              viewBox="0 0 24 24"
+              className="w-16 h-16 text-text-tertiary mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12,6 12,12 16,14" />
+            </svg>
+            <p className="text-text-secondary">First pitch hasn't happened yet.</p>
+            <p className="text-text-tertiary text-sm mt-2">
+              Come back when the game gets going. This is what ESPN ignores—but we'll have every stat.
+            </p>
+            <p className="text-burnt-orange text-sm mt-4 font-semibold">
+              {game.status.detailedState}
+            </p>
+          </div>
+        </Card>
+      </div>
     );
   }
 
@@ -89,6 +191,31 @@ export default function CollegeGameSummaryClient() {
             </span>
           </div>
         </Card>
+      )}
+
+      {/* Live Intel — streams current-situation analysis */}
+      {game.status.isLive && (
+        <IntelStreamCard
+          homeTeam={game.teams.home.name}
+          awayTeam={game.teams.away.name}
+          sport="college-baseball"
+          gameId={game.id}
+          analysisType="live"
+          score={`${game.linescore?.totals.away.runs ?? 0}-${game.linescore?.totals.home.runs ?? 0}`}
+          inning={`${game.status.inningState} ${game.status.inning}`}
+        />
+      )}
+
+      {/* Postgame Intel — streams game-deciding analysis */}
+      {game.status.isFinal && (
+        <IntelStreamCard
+          homeTeam={game.teams.home.name}
+          awayTeam={game.teams.away.name}
+          sport="college-baseball"
+          gameId={game.id}
+          analysisType="postgame"
+          score={`${game.linescore?.totals.away.runs ?? 0}-${game.linescore?.totals.home.runs ?? 0}`}
+        />
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">
