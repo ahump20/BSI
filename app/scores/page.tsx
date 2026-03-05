@@ -10,8 +10,6 @@ import { ScrollReveal } from '@/components/cinematic';
 import { Footer } from '@/components/layout-ds/Footer';
 import { DataFreshnessIndicator } from '@/components/ui/DataFreshnessIndicator';
 import { DataErrorBoundary } from '@/components/ui/DataErrorBoundary';
-import { SPORT_ICONS } from '@/components/icons/SportIcons';
-
 // ── SVG Sport Icons ──
 
 const BaseballSvg = () => (
