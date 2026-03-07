@@ -15,7 +15,19 @@ export function json(data: unknown, status = 200, extra: Record<string, string> 
 }
 
 export function cachedJson(data: unknown, status: number, maxAge: number, extra: Record<string, string> = {}): Response {
-  return json(data, status, { 'Cache-Control': `public, max-age=${maxAge}`, ...extra });
+  const headers: Record<string, string> = { 'Cache-Control': `public, max-age=${maxAge}`, ...extra };
+  // Auto-fill tier-1 freshness headers when X-Cache is present
+  if (headers['X-Cache']) {
+    if (!headers['X-Last-Updated']) headers['X-Last-Updated'] = new Date().toISOString();
+    if (!headers['X-Cache-State']) {
+      const c = headers['X-Cache'];
+      headers['X-Cache-State'] = c === 'HIT' ? 'cached' : c === 'STALE' ? 'stale' : c === 'ERROR' ? 'error' : 'fresh';
+    }
+    if (!headers['X-Data-Source'] && headers['X-Cache'] === 'HIT') {
+      headers['X-Data-Source'] = 'cache';
+    }
+  }
+  return json(data, status, headers);
 }
 
 export async function kvGet<T>(kv: KVNamespace, key: string): Promise<T | null> {
@@ -50,6 +62,34 @@ export function dataHeaders(lastUpdated: string, source = 'highlightly'): Record
   return {
     'X-Last-Updated': lastUpdated,
     'X-Data-Source': source,
+  };
+}
+
+/** Tier-1 response headers for fresh data (cache MISS). */
+export function freshDataHeaders(source = 'espn'): Record<string, string> {
+  return {
+    'X-Cache': 'MISS',
+    'X-Data-Source': source,
+    'X-Last-Updated': new Date().toISOString(),
+    'X-Cache-State': 'fresh',
+  };
+}
+
+/** Tier-1 response headers for cached data (cache HIT). */
+export function cachedDataHeaders(): Record<string, string> {
+  return {
+    'X-Cache': 'HIT',
+    'X-Data-Source': 'cache',
+    'X-Last-Updated': new Date().toISOString(),
+    'X-Cache-State': 'cached',
+  };
+}
+
+/** Wrap any payload with standard BSI meta attribution. */
+export function withMeta(data: unknown, source = 'espn'): Record<string, unknown> {
+  return {
+    ...(data as Record<string, unknown>),
+    meta: { source, fetched_at: new Date().toISOString(), timezone: 'America/Chicago' },
   };
 }
 

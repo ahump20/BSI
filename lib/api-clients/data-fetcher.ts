@@ -59,6 +59,7 @@ export async function fetchWithFallback<T>(
   ttl: number,
   primarySource = 'sportsdataio',
   fallbackSource = 'espn',
+  opts?: { staleKey?: string },
 ): Promise<FetchResult<T>> {
   // 1. Check KV cache
   const raw = await kv.get(cacheKey, 'text');
@@ -75,15 +76,28 @@ export async function fetchWithFallback<T>(
   try {
     const data = await primary();
     await kv.put(cacheKey, wrapCache(data), { expirationTtl: ttl });
+    if (opts?.staleKey) await kv.put(opts.staleKey, wrapCache(data), { expirationTtl: 86400 });
     return { data, source: primarySource, cached: false };
   } catch (primaryErr) {
     // Primary failed — try fallback
     try {
       const data = await fallback();
       await kv.put(cacheKey, wrapCache(data), { expirationTtl: ttl });
+      if (opts?.staleKey) await kv.put(opts.staleKey, wrapCache(data), { expirationTtl: 86400 });
       return { data, source: fallbackSource, cached: false };
     } catch {
-      // Both failed — try stale cache
+      // Both failed — try stale snapshot (separate key, longer TTL) then regular cache
+      if (opts?.staleKey) {
+        const staleRaw = await kv.get(opts.staleKey, 'text');
+        if (staleRaw) {
+          try {
+            const { data, cachedAt } = unwrapCache<T>(staleRaw);
+            return { data, source: 'stale-cache', cached: true, staleMinutes: minutesSince(cachedAt) };
+          } catch {
+            // Corrupt stale entry
+          }
+        }
+      }
       if (raw) {
         try {
           const { data, cachedAt } = unwrapCache<T>(raw);
