@@ -1,5 +1,3 @@
-import type { Env } from './types';
-
 const WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS = 10;  // per window per IP
 

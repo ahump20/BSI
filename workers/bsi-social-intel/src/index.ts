@@ -15,7 +15,6 @@
  * Deploy: wrangler deploy --config workers/bsi-social-intel/wrangler.toml
  */
 
-import type { Env } from './types';
 import { fetchRedditPosts } from './reddit';
 import { fetchTwitterPosts } from './twitter';
 import { classifyPosts } from './classify';

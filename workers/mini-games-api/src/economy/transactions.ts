@@ -1,5 +1,3 @@
-import type { Env } from '../types';
-
 export async function getTransactions(deviceId: string, env: Env): Promise<Response> {
   const rows = await env.DB.prepare(
     `SELECT id, device_id, type, currency, amount, reason, metadata, created_at

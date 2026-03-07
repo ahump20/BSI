@@ -1,4 +1,4 @@
-import type { Env, MatchResult } from '../types';
+import type { MatchResult } from '../types';
 import { validateMatchResult, calculateEarnings } from './validation';
 import { levelFromXp, xpToNextLevel } from './leveling';
 

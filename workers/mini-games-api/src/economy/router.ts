@@ -1,7 +1,7 @@
-import type { Env } from '../types';
+import type { MatchResult } from '../types';
 import { registerWallet, getWallet } from './wallet';
 import { earnFromMatch } from './earn';
-import { spendCoins } from './spend';
+import { spendCoins, type SpendRequest } from './spend';
 import { getTransactions } from './transactions';
 
 /**
@@ -28,13 +28,13 @@ export async function handleEconomyRoute(
 
   // POST /economy/earn
   if (path === '/api/mini-games/economy/earn' && request.method === 'POST') {
-    const body = await request.json();
+    const body = await request.json() as MatchResult;
     return earnFromMatch(body, env);
   }
 
   // POST /economy/spend
   if (path === '/api/mini-games/economy/spend' && request.method === 'POST') {
-    const body = await request.json();
+    const body = await request.json() as SpendRequest;
     return spendCoins(body, env);
   }
 

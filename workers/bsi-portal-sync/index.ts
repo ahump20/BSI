@@ -189,7 +189,7 @@ export default {
     await env.KV.put(KV_KEY, JSON.stringify(payload), { expirationTtl: KV_TTL });
   },
 
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     if (url.pathname === '/status') {
@@ -218,11 +218,11 @@ export default {
       }
     }
 
-    // Manual trigger
+    // Manual trigger — pass real ctx so waitUntil works
     await this.scheduled!(
       {} as ScheduledController,
       env,
-      { waitUntil: () => {}, passThroughOnException: () => {} } as unknown as ExecutionContext
+      ctx,
     );
 
     return new Response(JSON.stringify({ ok: true, message: 'Portal sync completed' }), {
