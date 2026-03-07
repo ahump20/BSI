@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import Link from 'next/link';
 
 const EXAMPLE_PROMPTS = [
-  'Who leads the SEC in OBP?',
-  'Best pitching staff in the Big 12?',
-  'Is Texas a CWS contender?',
+  'Where can I find live scores?',
+  'Tell me about the Texas Longhorns',
+  'What advanced stats does BSI track?',
 ];
 
 const MAX_FREE_QUESTIONS = 3;
@@ -20,6 +21,55 @@ function incrementAskCount(): number {
   const count = getAskCount() + 1;
   localStorage.setItem(STORAGE_KEY, String(count));
   return count;
+}
+
+/** Parse markdown links [text](url) into React elements with Next.js Link */
+function renderWithLinks(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    // Text before the link
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    const linkText = match[1];
+    const href = match[2];
+    // Only render as Link for internal paths
+    if (href.startsWith('/')) {
+      parts.push(
+        <Link
+          key={`${href}-${match.index}`}
+          href={href}
+          className="text-burnt-orange hover:text-ember underline underline-offset-2 decoration-burnt-orange/40 hover:decoration-ember/60 transition-colors"
+        >
+          {linkText}
+        </Link>
+      );
+    } else {
+      parts.push(
+        <a
+          key={`${href}-${match.index}`}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-burnt-orange hover:text-ember underline underline-offset-2 decoration-burnt-orange/40 hover:decoration-ember/60 transition-colors"
+        >
+          {linkText}
+        </a>
+      );
+    }
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Remaining text after last link
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [text];
 }
 
 export function AskBSI() {
@@ -123,7 +173,7 @@ export function AskBSI() {
                 Ask BSI
               </h3>
               <p className="text-[10px] text-text-muted uppercase tracking-wider">
-                AI-powered college baseball analysis
+                AI-powered analysis &amp; site guide
               </p>
             </div>
           </div>
@@ -151,7 +201,7 @@ export function AskBSI() {
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask anything about college baseball..."
+              placeholder="Ask about teams, stats, or where to find anything on BSI..."
               disabled={streaming}
               className="flex-1 px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.03)] border border-[rgba(245,240,235,0.06)]
                 text-sm text-text-primary placeholder:text-text-muted
@@ -182,7 +232,7 @@ export function AskBSI() {
                 <p className="text-sm text-red-400">{error}</p>
               ) : (
                 <div className="text-sm leading-relaxed text-text-secondary font-serif">
-                  {response}
+                  {renderWithLinks(response)}
                   {streaming && (
                     <span className="inline-block w-1.5 h-4 bg-burnt-orange/60 ml-0.5 animate-pulse" />
                   )}
